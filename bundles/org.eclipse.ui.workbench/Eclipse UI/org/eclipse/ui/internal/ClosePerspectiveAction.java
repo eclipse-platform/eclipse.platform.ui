@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -18,14 +19,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * active perspective in the workbench window's active page.
  */
 public class ClosePerspectiveAction extends Action {
-	private WorkbenchWindow window;
+	private IWorkbenchWindow window;
 	
 	/**
 	 * Create a new instance of <code>ClosePerspectiveAction</code>
 	 * 
 	 * @param window the workbench window this action applies to
 	 */
-	public ClosePerspectiveAction(WorkbenchWindow window) {
+	public ClosePerspectiveAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.getString("ClosePerspectiveAction.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("ClosePerspectiveAction.toolTip")); //$NON-NLS-1$
 		setEnabled(false);

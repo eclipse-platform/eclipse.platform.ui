@@ -26,12 +26,12 @@ public class LockToolBarAction extends Action {
 	 * 
 	 * @param window the workbench window this action applies to
 	 */
-	public LockToolBarAction(WorkbenchWindow window) {
+	public LockToolBarAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.getString("LockToolBarAction.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("LockToolBarAction.toolTip")); //$NON-NLS-1$
 		setEnabled(false);
 		setChecked(false);
-		this.window = window;
+		this.window = (WorkbenchWindow) window;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.LOCK_TOOLBAR_ACTION);
 		// add window listener for updating checked state of this action when
 		// workbench opened

@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.CoolBarManager;
 
 /**
  * Interface providing special access for configuring workbench windows.
@@ -38,6 +41,13 @@ public interface IWorkbenchWindowConfigurer {
 	 * @return the workbench window
 	 */
 	public IWorkbenchWindow getWindow();
+	
+	/**
+	 * Returns the workbench configurer.
+	 * 
+	 * @return the workbench configurer
+	 */
+	public IWorkbenchConfigurer getWorkbenchConfigurer();
 	
 	/**
 	 * Returns the title of the underlying workbench window.
@@ -174,5 +184,30 @@ public interface IWorkbenchWindowConfigurer {
 	 * @param data the data, or <code>null</code> to delete existing data
 	 */
 	public void setData(String key, Object data);
+	
+	/**
+	 * Returns the menu manager for the main menu bar of the workbench window.
+	 * 
+	 * @return the menu manager
+	 * @issue can this return null if you specify no menu bar? looking at the code, it seems impossible
+	 */
+	public IMenuManager getMenuManager();
+	
+	/**
+	 * Returns the cool bar manager for the main tool bar of the workbench window.
+	 * 
+	 * @return the cool bar manager
+	 * @issue can this return null if you specify no menu bar? looking at the code, it seems impossible
+	 * @issue CoolBarManager is internal.
+	 */
+	public CoolBarManager getCoolBarManager();
+	
+	/**
+	 * Returns the status line manager of the workbench window.
+	 * 
+	 * @return the status line manager
+	 * @issue can this return null if you specify no menu bar? looking at the code, it seems impossible
+	 */
+	public IStatusLineManager getStatusLineManager();
 }
 

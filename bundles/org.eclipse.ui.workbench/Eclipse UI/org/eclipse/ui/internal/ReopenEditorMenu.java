@@ -23,7 +23,7 @@ import org.eclipse.ui.*;
  * A dynamic menu item which supports to switch to other Windows.
  */
 public class ReopenEditorMenu extends ContributionItem {
-	private WorkbenchWindow fWindow;
+	private IWorkbenchWindow fWindow;
 	private EditorHistory history;
 	private boolean showSeparator;
 	private boolean dirty = true;
@@ -41,7 +41,7 @@ public class ReopenEditorMenu extends ContributionItem {
 	/**
 	 * Create a new instance.
 	 */
-	public ReopenEditorMenu(WorkbenchWindow window, EditorHistory history, boolean showSeparator) {
+	public ReopenEditorMenu(IWorkbenchWindow window, EditorHistory history, boolean showSeparator) {
 		super("Reopen Editor"); //$NON-NLS-1$
 		fWindow = window;
 		this.history = history;

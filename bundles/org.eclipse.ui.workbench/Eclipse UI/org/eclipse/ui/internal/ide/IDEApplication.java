@@ -37,10 +37,7 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	public Object run(Object args) throws Exception {
 		
 		// create the IDE-specific workbench adviser
-		String[] commandLineArgs = 
-			(args instanceof String[]) ? (String[]) args : new String[0];
-		IDEWorkbenchAdviser workbenchAdviser
-			= new IDEWorkbenchAdviser(commandLineArgs);
+		IDEWorkbenchAdviser workbenchAdviser = new IDEWorkbenchAdviser();
 		
 		// create the workbench with this adviser and run it until it exits
 		// N.B. createWorkbench remembers the adviser, and also registers the

@@ -25,6 +25,7 @@ import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -83,8 +84,10 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getPrimaryFeatureAboutInfo
 	 */
-	public AboutInfo getPrimaryFeatureAboutInfo() {
-		// Assumes readPrimaryFeatureAboutInfo has been called once beforehand.
+	public AboutInfo getPrimaryFeatureAboutInfo() throws WorkbenchException {
+		if (aboutInfo == null) {
+			readPrimaryFeatureAboutInfo();
+		}
 		return aboutInfo;
 	}
 	
@@ -161,7 +164,10 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 		saveAndRestore = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE);
 	}
 	
-	/* package */ void readPrimaryFeatureAboutInfo() throws CoreException {
+	/*
+	 * Reads the about.ini file for the primary feature.
+	 */
+	private void readPrimaryFeatureAboutInfo() throws WorkbenchException {
 		if (aboutInfo != null)
 			return;
 			

@@ -23,7 +23,6 @@ import java.util.PropertyResourceBundle;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -42,6 +41,7 @@ import org.eclipse.ui.PlatformUI;
  * properties file - format being "n = some text", where n is a number.
  */
 public class IniFileReader {
+	private static final Status OK_STATUS = new Status(IStatus.OK,PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 	private static final String NLS_TAG = "$nl$"; //$NON-NLS-1$
@@ -55,11 +55,20 @@ public class IniFileReader {
 	private PropertyResourceBundle properties = null;
 	private String[] mappings = null;
 
+	/**
+	 * Creates an INI file reader that can parse the contents into key,value pairs.
+	 * 
+	 * @param featureId the unique identifier of the feature, must not be <code>null</code>
+	 * @param iniFilename the INI file name, must not be <code>null</code>
+	 * @param propertiesFilename the properties filename, can be <code>null</code> if not required
+	 * @param mappingsFilename the mappings filename, can be <code>null</code> if not required
+	 */
 	public IniFileReader(String featureId, String iniFilename, String propertiesFilename, String mappingsFilename) {
 		super();
 		
-		if (featureId == null)
+		if (featureId == null || iniFilename == null) {
 			throw new IllegalArgumentException();
+		}
 			
 		this.featureId = featureId;
 		this.iniFilename = iniFilename;
@@ -69,64 +78,69 @@ public class IniFileReader {
 
 	/**
 	 * Read the contents of the INI, properties, and mappings files.
-	 * Does nothing if contents already read.
+	 * Does nothing if the content has already been read and parsed.
 	 * 
-	 * @return <code>true</code> if the contents were loaded, <code>false</code>
-	 * if unabled to.
+	 * @return an <code>IStatus</code> indicating the success or failure
+	 * 	of reading and parsing the INI file content
 	 */
-	public boolean load() throws CoreException {
+	public IStatus load() {
 		if (ini != null)
-			return true;
+			return OK_STATUS;
 			
 		// attempt to locate the corresponding plugin
 		IPluginRegistry reg = Platform.getPluginRegistry();
 		if (reg == null) {
-			reportINIFailure(null, "Plugin registry is missing"); //$NON-NLS-1$
-			return false;
+			String message = WorkbenchMessages.getString("IniFileReader.MissingReg"); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null);
 		}
 		if (getPluginDescriptor(reg) == null) {
-			reportINIFailure(null, "Missing plugin descriptor for: " + featureId); //$NON-NLS-1$
-			return false;
+			String message = WorkbenchMessages.format("IniFileReader.MissingDesc", new Object[] {featureId}); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null);
 		}
 
 		// Determine the ini file location
 		URL iniURL = null;
+		IOException ioe = null;
 		try {
 			iniURL = pluginDescriptor.find(new Path(NLS_TAG).append(iniFilename));
 			if (iniURL != null)
 				iniURL = Platform.resolve(iniURL);
 		} catch (IOException e) {
-			// null check below
+			ioe = e;
 		}
 		if (iniURL == null) {
-			reportINIFailure(null, "Unable to load INI file: " + iniFilename); //$NON-NLS-1$
-			return false;
+			String message = WorkbenchMessages.format("IniFileReader.OpenINIError", new Object[] {iniFilename}); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, ioe);
 		}
 		
 		// Determine the properties file location
 		URL propertiesURL = null;
-		try {
-			propertiesURL = pluginDescriptor.find(new Path(NLS_TAG).append(propertiesFilename));
-			if (propertiesURL != null)
-				propertiesURL = Platform.resolve(propertiesURL);
-		} catch (IOException e) {
-			reportINIFailure(null, "Unable to load properties file: " + propertiesFilename); //$NON-NLS-1$
+		if (propertiesFilename != null & propertiesFilename.length() > 0) {
+			try {
+				propertiesURL = pluginDescriptor.find(new Path(NLS_TAG).append(propertiesFilename));
+				if (propertiesURL != null)
+					propertiesURL = Platform.resolve(propertiesURL);
+			} catch (IOException e) {
+				String message = WorkbenchMessages.format("IniFileReader.OpenPropError", new Object[] {propertiesFilename}); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, e);
+			}
 		}
 
 		// Determine the mappings file location
 		URL mappingsURL = null;
-		try {
-			mappingsURL = pluginDescriptor.find(new Path(NLS_TAG).append(mappingsFilename));
-			if (mappingsURL != null)
-				mappingsURL = Platform.resolve(mappingsURL);
-		} catch (IOException e) {
-			reportINIFailure(null, "Unable to load mappings file: " + mappingsURL); //$NON-NLS-1$
+		if (mappingsFilename != null && mappingsFilename.length() > 0) {
+			try {
+				mappingsURL = pluginDescriptor.find(new Path(NLS_TAG).append(mappingsFilename));
+				if (mappingsURL != null)
+					mappingsURL = Platform.resolve(mappingsURL);
+			} catch (IOException e) {
+				String message = WorkbenchMessages.format("IniFileReader.OpenMapError", new Object[] {mappingsFilename}); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, e);
+			}
 		}
 
 		// OK to pass null properties and/or mapping file
-		load(iniURL, propertiesURL, mappingsURL);
-		
-		return ini != null;
+		return load(iniURL, propertiesURL, mappingsURL);
 	}
 		
 	/*
@@ -283,7 +297,6 @@ public class IniFileReader {
 		try {
 			result = properties.getString(key.substring(1));
 		} catch (MissingResourceException e) {
-			reportINIFailure(e, "Property \"" + key + "\" not found");//$NON-NLS-1$ //$NON-NLS-2$
 			return dflt;
 		}
 		if (runtimeMappings != null) {
@@ -311,7 +324,7 @@ public class IniFileReader {
 	/*
 	 * Read the contents of the ini, properties, and mappings files.
 	 */
-	private void load(URL iniURL, URL propertiesURL, URL mappingsURL) throws CoreException {
+	private IStatus load(URL iniURL, URL propertiesURL, URL mappingsURL) {
 
 		InputStream is = null;
 		try {
@@ -319,9 +332,9 @@ public class IniFileReader {
 			ini = new Properties();
 			ini.load(is);
 		} catch (IOException e) {
-			reportINIFailure(e, "Cannot read ini file: " + iniURL); //$NON-NLS-1$
 			ini = null;
-			return;
+			String message = WorkbenchMessages.format("IniFileReader.ReadIniError", new Object[] {iniURL}); //$NON-NLS-1$
+			return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, e);
 		} finally {
 			try {
 				if (is != null)
@@ -336,8 +349,9 @@ public class IniFileReader {
 				is = propertiesURL.openStream();
 				properties = new PropertyResourceBundle(is);
 			} catch (IOException e) {
-				reportINIFailure(e, "Cannot read properties file: " + propertiesURL);  //$NON-NLS-1$
 				properties = null;
+				String message = WorkbenchMessages.format("IniFileReader.ReadPropError", new Object[] {propertiesURL}); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, e);
 			} finally {
 				try {
 					if (is != null)
@@ -354,8 +368,9 @@ public class IniFileReader {
 				is = mappingsURL.openStream();
 				bundle = new PropertyResourceBundle(is);
 			} catch (IOException e) {
-				reportINIFailure(e, "Cannot read mappings file: " + mappingsURL);  //$NON-NLS-1$
 				bundle = null;
+				String message = WorkbenchMessages.format("IniFileReader.ReadMapError", new Object[] {mappingsURL}); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, e);
 			} finally {
 				try {
 					if (is != null)
@@ -379,18 +394,7 @@ public class IniFileReader {
 			}
 		}
 		mappings = (String[])mappingsList.toArray(new String[mappingsList.size()]);
-	}
-	
-	/*
-	 * Reports an ini reading failure.
-	 */
-	private void reportINIFailure(Exception e, String message) {
-		if (!WorkbenchPlugin.DEBUG) {
-			// only report ini problems if the -debug command line argument is used
-			return;
-		}
 		
-		IStatus iniStatus = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, e);
-		WorkbenchPlugin.log("Problem reading configuration info for: " + featureId, iniStatus);//$NON-NLS-1$
+		return OK_STATUS;
 	}
 }

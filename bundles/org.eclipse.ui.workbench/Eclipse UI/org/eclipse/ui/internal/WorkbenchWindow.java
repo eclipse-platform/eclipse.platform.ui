@@ -136,11 +136,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	private CoolBarManager coolBarManager = new CoolBarManager();
 	private Label noOpenPerspective;
-	private boolean showShortcutBar = true;
-	private boolean showStatusLine = true;
-	private boolean showToolBar = true;
-	private boolean showMenuBar = true;
-	private boolean showTitleBar = true;
 	private Rectangle normalBounds;
 	private boolean asMaximizedState = false;
 
@@ -244,7 +239,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			//Layout the toolbar	
 			Control toolBar = getToolBarControl();
 			if (toolBar != null) {
-				if (getShowToolBar()) {
+				if (getWindowConfigurer().getShowToolBar()) {
 					int height = BAR_SIZE;
 
 					if (toolBarChildrenExist()) {
@@ -269,7 +264,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			//Layout side seperator
 			Control sep2 = getSeparator2();
 			if (sep2 != null) {
-				if (getShowToolBar()) {
+				if (getWindowConfigurer().getShowToolBar()) {
 					Point sep2Size =
 						sep2.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 					sep2.setBounds(
@@ -286,10 +281,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			if (getStatusLineManager() != null) {
 				Control statusLine = getStatusLineManager().getControl();
 				if (statusLine != null) {
-					if (getShowStatusLine()) {
+					if (getWindowConfigurer().getShowStatusLine()) {
 
 						int width = 0;
-						if (getShortcutBar() != null && getShowShortcutBar()) {
+						if (getShortcutBar() != null && getWindowConfigurer().getShowShortcutBar()) {
 							Widget shortcutBar = getShortcutBar().getControl();
 							if (shortcutBar != null
 								&& shortcutBar instanceof ToolBar) {
@@ -327,7 +322,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			if (getShortcutBar() != null) {
 				Control shortCutBar = getShortcutBar().getControl();
 				if (shortCutBar != null) {
-					if (getShowShortcutBar()) {
+					if (getWindowConfigurer().getShowShortcutBar()) {
 
 						int width = BAR_SIZE;
 						if (shortCutBar instanceof ToolBar) {
@@ -355,7 +350,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			Control sep3 = getSeparator3();
 
 			if (sep3 != null) {
-				if (getShowShortcutBar()) {
+				if (getWindowConfigurer().getShowShortcutBar()) {
 					Point sep3Size =
 						sep3.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 					sep3.setBounds(
@@ -398,7 +393,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		addStatusLine();
 		addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 
-		updateBarVisibility();
 		actionPresentation = new ActionPresentation(this);
 		
 		this.partDropListener = new IPartDropListener() {
@@ -416,7 +410,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			};
 		};
 		
-		// @issue Should this not be in the open method? Does the restoreState pass thru this?
 		// let the application do further configuration
 		getAdviser().preWindowOpen(getWindowConfigurer());
 	}
@@ -1284,53 +1277,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * Returns whether the shortcut bar should be shown.
-	 * 
-	 * @return <code>true</code> to show it, <code>false</code> to hide it
-	 */
-	public boolean getShowShortcutBar() {
-		return showShortcutBar;
-	}
-
-	/**
-	 * Returns whether the status bar should be shown.
-	 * 
-	 * @return <code>true</code> to show it, <code>false</code> to hide it
-	 */
-	public boolean getShowStatusLine() {
-		return showStatusLine;
-	}
-
-	/**
-	 * Returns whether the tool bar should be shown.
-	 * 
-	 * @return <code>true</code> to show it, <code>false</code> to hide it
-	 */
-	public boolean getShowToolBar() {
-		return showToolBar;
-	}
-
-	/**
-	 * Returns whether the menu bar should be shown.
-	 * 
-	 * @return <code>true</code> to show it, <code>false</code> to hide it
-	 * @since 3.0
-	 */
-	public boolean getShowMenuBar() {
-		return showMenuBar;
-	}
-
-	/**
-	 * Returns whether the title bar should be shown.
-	 * 
-	 * @return <code>true</code> to show it, <code>false</code> to hide it
-	 * @since 3.0
-	 */
-	public boolean getShowTitleBar() {
-		return showTitleBar;
-	}
-
-	/**
 	 * Returns the status line manager for this window (if it has one).
 	 *
 	 * @return the status line manager, or <code>null</code> if
@@ -1823,53 +1769,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * Sets whether the shortcut bar should be visible.
-	 * 
-	 * @param show <code>true</code> to show it, <code>false</code> to hide it
-	 */
-	public void setShowShortcutBar(boolean show) {
-		showShortcutBar = show;
-	}
-
-	/**
-	 * Sets whether the status line should be visible.
-	 * 
-	 * @param show <code>true</code> to show it, <code>false</code> to hide it
-	 */
-	public void setShowStatusLine(boolean show) {
-		showStatusLine = show;
-	}
-
-	/**
-	 * Sets whether the tool bar should be visible.
-	 * 
-	 * @param show <code>true</code> to show it, <code>false</code> to hide it
-	 */
-	public void setShowToolBar(boolean show) {
-		showToolBar = show;
-	}
-
-	/**
-	 * Sets whether the menu bar should be visible.
-	 * 
-	 * @param show <code>true</code> to show it, <code>false</code> to hide it
-	 * @since 3.0
-	 */
-	public void setShowMenuBar(boolean show) {
-		showMenuBar = show;
-	}
-
-	/**
-	 * Sets whether the title bar should be visible.
-	 * 
-	 * @param show <code>true</code> to show it, <code>false</code> to hide it
-	 * @since 3.0
-	 */
-	public void setShowTitleBar(boolean show) {
-		showTitleBar = show;
-	}
-
-	/**
 	 * Shows the popup menu for a page item in the shortcut bar.
 	 */
 	private void showShortcutBarPopup(Point pt) {
@@ -2136,20 +2035,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * Updates the visibility of the shortcut bar, status line, and toolbar.
-	 * Does not cause the shell to relayout.
-	 */
-	public void updateBarVisibility() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
-		setShowShortcutBar(
-			store.getBoolean(IPreferenceConstants.SHOW_SHORTCUT_BAR));
-		setShowStatusLine(
-			store.getBoolean(IPreferenceConstants.SHOW_STATUS_LINE));
-		setShowToolBar(store.getBoolean(IPreferenceConstants.SHOW_TOOL_BAR));
-	}
-
-	/**
 	 * Updates the window title.
 	 */
 	// @issue The adviser should be updating the title. IDE adviser will need to hookup listeners
@@ -2290,6 +2175,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (windowConfigurer == null) {
 			// lazy initialize
 			windowConfigurer = new WorkbenchWindowConfigurer(this);
+			windowConfigurer.init();
 		}
 		return windowConfigurer;
 	}

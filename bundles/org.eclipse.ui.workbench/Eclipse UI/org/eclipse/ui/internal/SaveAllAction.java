@@ -29,11 +29,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class SaveAllAction extends PartEventAction
 	implements IPageListener, IPropertyListener
 {
-	private WorkbenchWindow window;
+	private IWorkbenchWindow window;
 /**
  * The default constructor.
  */
-public SaveAllAction(WorkbenchWindow window) {
+public SaveAllAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("SaveAll.text"));//$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_ALL);

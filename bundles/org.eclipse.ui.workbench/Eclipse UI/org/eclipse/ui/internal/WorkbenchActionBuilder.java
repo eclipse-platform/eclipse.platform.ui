@@ -21,13 +21,14 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
 
 /**
  * Adds actions to a workbench window.
  */
-public class WorkbenchActionBuilder {
+public final class WorkbenchActionBuilder {
 
 	private static final String saveActionDefId = "org.eclipse.ui.file.save"; //$NON-NLS-1$
 	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll"; //$NON-NLS-1$
@@ -52,10 +53,7 @@ public class WorkbenchActionBuilder {
 	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
 	private static final String projectPropertiesActionDefId = "org.eclipse.ui.project.properties"; //$NON-NLS-1$
 
-	/**
-	 * The window to which this is contributing.
-	 */
-	private final WorkbenchWindow window;
+	private IWorkbenchWindowConfigurer windowConfigurer;
 
 	private final IPropertyChangeListener propertyChangeListener =
 		new IPropertyChangeListener() {
@@ -140,32 +138,28 @@ public class WorkbenchActionBuilder {
 
 	/**
 	 * Constructs a new action builder which contributes actions
-	 * to the given window.
+	 * to the given window configurer.
 	 * 
-	 * @window the window
+	 * @windowConfigurer the window configurer
 	 */
-	public WorkbenchActionBuilder(IWorkbenchWindow window) {
-		this.window = (WorkbenchWindow) window;
+	public WorkbenchActionBuilder(IWorkbenchWindowConfigurer windowConfigurer) {
+		super();
+		this.windowConfigurer = windowConfigurer;
 	}
 
 	/**
 	 * Returns the window to which this action builder is contributing.
 	 */
-	protected WorkbenchWindow getWindow() {
-		return window;
+	private IWorkbenchWindow getWindow() {
+		return windowConfigurer.getWindow();
 	}
-	/**
-	 */
-	private WWinActionBars getWWinActionBars() {
-		return (WWinActionBars)getWindow().getActionBars();
-	}
+	
 	/**
 	 * Builds the actions and contributes them to the given window.
 	 */
 	public void buildActions() {
 		makeActions();
 		fillActionBars();
-		fillShortcutBar();
 		hookListeners();
 	}
 
@@ -196,35 +190,23 @@ public class WorkbenchActionBuilder {
 
 		// Listen to workbench perspective lifecycle methods to enable
 		// and disable the perspective menu items as needed.
-		getWindow()
-			.getPerspectiveService()
-			.addPerspectiveListener(new IInternalPerspectiveListener() {
-			public void perspectiveClosed(
-				IWorkbenchPage page,
-				IPerspectiveDescriptor perspective) {
+		// @issue action builder using internal listener hooks
+		((WorkbenchWindow)getWindow()).getPerspectiveService().addPerspectiveListener(new IInternalPerspectiveListener() {
+			public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				enableActions(page.getPerspective() != null);
 			}
-			public void perspectiveOpened(
-				IWorkbenchPage page,
-				IPerspectiveDescriptor perspective) {
+			public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			}
-			public void perspectiveActivated(
-				IWorkbenchPage page,
-				IPerspectiveDescriptor perspective) {
+			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 				enableActions(true);
 			}
-			public void perspectiveChanged(
-				IWorkbenchPage page,
-				IPerspectiveDescriptor perspective,
-				String changeId) {
+			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			}
 		});
 
 		//Listen for the selection changing and update the
 		//actions that are interested
-		getWindow()
-			.getSelectionService()
-			.addSelectionListener(new ISelectionListener() {
+		getWindow().getSelectionService().addSelectionListener(new ISelectionListener() {
 			public void selectionChanged(
 				IWorkbenchPart part,
 				ISelection selection) {
@@ -261,23 +243,23 @@ public class WorkbenchActionBuilder {
 	 * Fills the menu bar and coolbar with the workbench actions.
 	 */
 	private void fillActionBars() {
-		fillActionBars(getWWinActionBars());
+		fillActionBars(windowConfigurer.getMenuManager(), windowConfigurer.getCoolBarManager());
 	}
 	/**
 	 * Fills the given action bars with the workbench actions.
 	 */
-	/* package */ void fillActionBars(WWinActionBars bars) {
-		fillMenuBar(bars.getMenuManager());
-		fillCoolBar(bars.getCoolBarManager());
+	private void fillActionBars(IMenuManager menuManager, CoolBarManager coolBarManager) {
+		fillMenuBar(menuManager);
+		fillCoolBar(coolBarManager);
 		if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 			// Only add the manual incremental build if auto build off.
 			// Only update the coolbar at this point.
-			addManualIncrementalBuildToolAction(bars.getCoolBarManager());
+			addManualIncrementalBuildToolAction(coolBarManager);
 		}
 
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-			addPinEditorAction(bars);
+			addPinEditorAction(coolBarManager);
 		}
 	}
 	/**
@@ -341,7 +323,7 @@ public class WorkbenchActionBuilder {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.file"), IWorkbenchActionConstants.M_FILE); //$NON-NLS-1$
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
 		{
-			this.newWizardMenu = new NewWizardMenu(window);
+			this.newWizardMenu = new NewWizardMenu(getWindow());
 			MenuManager newMenu = new MenuManager(WorkbenchMessages.getString("Workbench.new")); //$NON-NLS-1$
 			newMenu.add(this.newWizardMenu);
 			menu.add(newMenu);
@@ -379,9 +361,10 @@ public class WorkbenchActionBuilder {
 		menu.add(new Separator());
 		menu.add(propertiesAction);
 
+		// @issue casting to workbench to gain editor history 
 		menu.add(
 			new ReopenEditorMenu(
-				window,
+				getWindow(),
 				((Workbench) getWindow().getWorkbench()).getEditorHistory(),
 				true));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));
@@ -448,7 +431,7 @@ public class WorkbenchActionBuilder {
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
 		{
 			MenuManager showInSubMenu = new MenuManager(WorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
-			showInSubMenu.add(new ShowInMenu(window));
+			showInSubMenu.add(new ShowInMenu(getWindow()));
 			menu.add(showInSubMenu);
 		}
 		for (int i = 2; i < 5; ++i) {
@@ -504,7 +487,7 @@ public class WorkbenchActionBuilder {
 	private MenuManager createWindowMenu() {
 		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 
-		OpenInNewWindowAction action = new OpenInNewWindowAction(window);
+		OpenInNewWindowAction action = new OpenInNewWindowAction(getWindow());
 		action.setText(WorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
 		menu.add(action);
 		menu.add(new Separator());
@@ -516,7 +499,7 @@ public class WorkbenchActionBuilder {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
 		menu.add(openPreferencesAction);
-		menu.add(new SwitchToWindowMenu(window, true));
+		menu.add(new SwitchToWindowMenu(getWindow(), true));
 		return menu;
 	}
 
@@ -528,13 +511,13 @@ public class WorkbenchActionBuilder {
 			String openText = WorkbenchMessages.getString("Workbench.openPerspective"); //$NON-NLS-1$
 			MenuManager changePerspMenuMgr = new MenuManager(openText); //$NON-NLS-1$
 			ChangeToPerspectiveMenu changePerspMenuItem =
-				new ChangeToPerspectiveMenu(window);
+				new ChangeToPerspectiveMenu(getWindow());
 			changePerspMenuMgr.add(changePerspMenuItem);
 			menu.add(changePerspMenuMgr);
 		}
 		{
 			MenuManager showViewMenuMgr = new MenuManager(WorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
-			ShowViewMenu showViewMenu = new ShowViewMenu(window);
+			ShowViewMenu showViewMenu = new ShowViewMenu(getWindow());
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);
 		}
@@ -588,19 +571,6 @@ public class WorkbenchActionBuilder {
 		menu.add(new Separator());
 		menu.add(aboutAction);
 		return menu;
-	}
-
-
-	/**
-	 * Fills the shortcut bar
-	 */
-	private void fillShortcutBar() {
-		ToolBarManager shortcutBar = getWindow().getShortcutBar();
-		shortcutBar.add(new PerspectiveContributionItem(window));
-		shortcutBar.add(new Separator(WorkbenchWindow.GRP_PAGES));
-		shortcutBar.add(new Separator(WorkbenchWindow.GRP_PERSPECTIVES));
-		shortcutBar.add(new Separator(WorkbenchWindow.GRP_FAST_VIEWS));
-		shortcutBar.add(new ShowFastViewContribution(window));
 	}
 
 	/**
@@ -657,11 +627,11 @@ public class WorkbenchActionBuilder {
 
 		newWizardAction = new NewWizardAction(getWindow());
 		// images for this action are set in its constructor
-		getWindow().registerGlobalAction(newWizardAction);
+		registerGlobalAction(newWizardAction);
 
 		ISharedImages sharedImages = workbench.getSharedImages();
 		newWizardDropDownAction =
-			new NewWizardDropDownAction(window, newWizardAction);
+			new NewWizardDropDownAction(getWindow(), newWizardAction);
 		newWizardDropDownAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_NEW_WIZARD));
 		newWizardDropDownAction.setHoverImageDescriptor(
@@ -692,13 +662,13 @@ public class WorkbenchActionBuilder {
 				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 
 		rebuildAllAction =
-			new GlobalBuildAction(window, IncrementalProjectBuilder.FULL_BUILD);
+			new GlobalBuildAction(getWindow(), IncrementalProjectBuilder.FULL_BUILD);
 		rebuildAllAction.setActionDefinitionId(rebuildAllActionDefId);
-		getWindow().registerGlobalAction(rebuildAllAction);
+		registerGlobalAction(rebuildAllAction);
 
 		buildAllAction =
 			new GlobalBuildAction(
-				window,
+				getWindow(),
 				IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		buildAllAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
@@ -710,9 +680,9 @@ public class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
 		buildAllAction.setActionDefinitionId(buildAllActionDefId);
-		getWindow().registerGlobalAction(buildAllAction);
+		registerGlobalAction(buildAllAction);
 
-		saveAction = new SaveAction(window);
+		saveAction = new SaveAction(getWindow());
 		saveAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
@@ -724,9 +694,9 @@ public class WorkbenchActionBuilder {
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
 		partService.addPartListener(saveAction);
 		saveAction.setActionDefinitionId(saveActionDefId);
-		getWindow().registerGlobalAction(saveAction);
+		registerGlobalAction(saveAction);
 
-		saveAsAction = new SaveAsAction(window);
+		saveAsAction = new SaveAsAction(getWindow());
 		saveAsAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT));
@@ -738,7 +708,7 @@ public class WorkbenchActionBuilder {
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
 		partService.addPartListener(saveAsAction);
 
-		saveAllAction = new SaveAllAction(window);
+		saveAllAction = new SaveAllAction(getWindow());
 		saveAllAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT));
@@ -750,7 +720,7 @@ public class WorkbenchActionBuilder {
 				IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED));
 		partService.addPartListener(saveAllAction);
 		saveAllAction.setActionDefinitionId(saveAllActionDefId);
-		getWindow().registerGlobalAction(saveAllAction);
+		registerGlobalAction(saveAllAction);
 
 		undoAction = createGlobalAction(IWorkbenchActionConstants.UNDO, "edit", true); //$NON-NLS-1$
 		undoAction.setImageDescriptor(
@@ -812,22 +782,22 @@ public class WorkbenchActionBuilder {
 		//		findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
 		//		findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
 
-		closeAction = new CloseEditorAction(window);
+		closeAction = new CloseEditorAction(getWindow());
 		partService.addPartListener(closeAction);
 		closeAction.setActionDefinitionId(closeActionDefId);
-		getWindow().registerGlobalAction(closeAction);
+		registerGlobalAction(closeAction);
 
-		closeAllAction = new CloseAllAction(window);
+		closeAllAction = new CloseAllAction(getWindow());
 		partService.addPartListener(closeAllAction);
 		closeAllAction.setActionDefinitionId(closeAllActionDefId);
-		getWindow().registerGlobalAction(closeAllAction);
+		registerGlobalAction(closeAllAction);
 
-		closeAllSavedAction = new CloseAllSavedAction(window);
+		closeAllSavedAction = new CloseAllSavedAction(getWindow());
 		partService.addPartListener(closeAllSavedAction);
 		closeAllSavedAction.setActionDefinitionId(closeAllSavedActionDefId);
-		getWindow().registerGlobalAction(closeAllSavedAction);
+		registerGlobalAction(closeAllSavedAction);
 
-		pinEditorAction = new PinEditorAction(window);
+		pinEditorAction = new PinEditorAction(getWindow());
 		partService.addPartListener(pinEditorAction);
 		pinEditorAction.setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(
@@ -839,13 +809,17 @@ public class WorkbenchActionBuilder {
 			WorkbenchImages.getImageDescriptor(
 				IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
 
-		aboutAction = new AboutAction(window);
-		aboutAction.setImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
-		getWindow().registerGlobalAction(aboutAction);
+		try {
+			aboutAction = new AboutAction(getWindow(), windowConfigurer.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo());
+			aboutAction.setImageDescriptor(
+				WorkbenchImages.getImageDescriptor(
+					IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
+			registerGlobalAction(aboutAction);
+		} catch (WorkbenchException e) {
+			// do nothing
+		}
 
-		openPreferencesAction = new OpenPreferencesAction(window);
+		openPreferencesAction = new OpenPreferencesAction(getWindow());
 
 		addBookmarkAction = createGlobalAction(IWorkbenchActionConstants.BOOKMARK, "addBookMark", "edit", "addBookmark", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
@@ -870,12 +844,14 @@ public class WorkbenchActionBuilder {
 		// events.
 		//keyBindingService.registerGlobalAction(deleteAction);
 
+// @issue Need API to get the about info for all features
+/*
 		AboutInfo[] infos =
 			((Workbench) workbench).getConfigurationInfo().getFeaturesInfo();
 		// See if a welcome page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {
-				quickStartAction = new QuickStartAction(window);
+				quickStartAction = new QuickStartAction(getWindow());
 				getWindow().registerGlobalAction(quickStartAction);
 				break;
 			}
@@ -883,80 +859,79 @@ public class WorkbenchActionBuilder {
 		// See if a tips and tricks page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getTipsAndTricksHref() != null) {
-				tipsAndTricksAction = new TipsAndTricksAction(window);
+				tipsAndTricksAction = new TipsAndTricksAction(getWindow());
 				getWindow().registerGlobalAction(tipsAndTricksAction);
 				break;
 			}
 		}
-
+*/
 		// Actions for invisible accelerators
-		showViewMenuAction = new ShowViewMenuAction(window);
+		showViewMenuAction = new ShowViewMenuAction(getWindow());
 		showViewMenuAction.setActionDefinitionId(showViewMenuActionDefId);
-		getWindow().registerGlobalAction(showViewMenuAction);
+		registerGlobalAction(showViewMenuAction);
 
-		showPartPaneMenuAction = new ShowPartPaneMenuAction(window);
+		showPartPaneMenuAction = new ShowPartPaneMenuAction(getWindow());
 		showPartPaneMenuAction.setActionDefinitionId(
 			showPartPaneMenuActionDefId);
-		getWindow().registerGlobalAction(showPartPaneMenuAction);
+		registerGlobalAction(showPartPaneMenuAction);
 
-		nextEditorAction = new CycleEditorAction(window, true);
+		nextEditorAction = new CycleEditorAction(getWindow(), true);
 		nextEditorAction.setActionDefinitionId(nextEditorActionDefId);
-		getWindow().registerGlobalAction(nextEditorAction);
+		registerGlobalAction(nextEditorAction);
 		nextEditorAction.commandForward = nextEditorActionDefId;
 		nextEditorAction.commandBackward = prevEditorActionDefId;
 
-		prevEditorAction = new CycleEditorAction(window, false);
+		prevEditorAction = new CycleEditorAction(getWindow(), false);
 		prevEditorAction.setActionDefinitionId(prevEditorActionDefId);
-		getWindow().registerGlobalAction(prevEditorAction);
+		registerGlobalAction(prevEditorAction);
 		prevEditorAction.commandForward = nextEditorActionDefId;
 		prevEditorAction.commandBackward = prevEditorActionDefId;
 
-		nextPartAction = new CyclePartAction(window, true);
+		nextPartAction = new CyclePartAction(getWindow(), true);
 		nextPartAction.setActionDefinitionId(nextPartActionDefId);
-		getWindow().registerGlobalAction(nextPartAction);
+		registerGlobalAction(nextPartAction);
 		nextPartAction.commandForward = nextPartActionDefId;
 		nextPartAction.commandBackward = prevPartActionDefId;
 
-		prevPartAction = new CyclePartAction(window, false);
+		prevPartAction = new CyclePartAction(getWindow(), false);
 		prevPartAction.setActionDefinitionId(prevPartActionDefId);
-		getWindow().registerGlobalAction(prevPartAction);
+		registerGlobalAction(prevPartAction);
 		prevPartAction.commandForward = nextPartActionDefId;
 		prevPartAction.commandBackward = prevPartActionDefId;
 
-		nextPerspectiveAction = new CyclePerspectiveAction(window, true);
+		nextPerspectiveAction = new CyclePerspectiveAction(getWindow(), true);
 		nextPerspectiveAction.setActionDefinitionId(nextPerspectiveActionDefId);
-		getWindow().registerGlobalAction(nextPerspectiveAction);
+		registerGlobalAction(nextPerspectiveAction);
 		nextPerspectiveAction.commandForward = nextPerspectiveActionDefId;
 		nextPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
 
-		prevPerspectiveAction = new CyclePerspectiveAction(window, false);
+		prevPerspectiveAction = new CyclePerspectiveAction(getWindow(), false);
 		prevPerspectiveAction.setActionDefinitionId(prevPerspectiveActionDefId);
-		getWindow().registerGlobalAction(prevPerspectiveAction);
+		registerGlobalAction(prevPerspectiveAction);
 		prevPerspectiveAction.commandForward = nextPerspectiveActionDefId;
 		prevPerspectiveAction.commandBackward = prevPerspectiveActionDefId;
 
-		activateEditorAction = new ActivateEditorAction(window);
+		activateEditorAction = new ActivateEditorAction(getWindow());
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);
-		getWindow().registerGlobalAction(activateEditorAction);
+		registerGlobalAction(activateEditorAction);
 
-		maximizePartAction = new MaximizePartAction(window);
+		maximizePartAction = new MaximizePartAction(getWindow());
 		maximizePartAction.setActionDefinitionId(maximizePartActionDefId);
-		getWindow().registerGlobalAction(maximizePartAction);
+		registerGlobalAction(maximizePartAction);
 		
-		workbenchEditorsAction = new WorkbenchEditorsAction(window);
-		workbenchEditorsAction.setActionDefinitionId(
-			workbenchEditorsActionDefId);
-		getWindow().registerGlobalAction(workbenchEditorsAction);
+		workbenchEditorsAction = new WorkbenchEditorsAction(getWindow());
+		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);
+		registerGlobalAction(workbenchEditorsAction);
 
-		hideShowEditorAction = new ToggleEditorsVisibilityAction(window);
-		savePerspectiveAction = new SavePerspectiveAction(window);
-		editActionSetAction = new EditActionSetsAction(window);
-		lockToolBarAction = new LockToolBarAction(window);
-		resetPerspectiveAction = new ResetPerspectiveAction(window);
-		closePerspAction = new ClosePerspectiveAction(window);
-		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
+		hideShowEditorAction = new ToggleEditorsVisibilityAction(getWindow());
+		savePerspectiveAction = new SavePerspectiveAction(getWindow());
+		editActionSetAction = new EditActionSetsAction(getWindow());
+		lockToolBarAction = new LockToolBarAction(getWindow());
+		resetPerspectiveAction = new ResetPerspectiveAction(getWindow());
+		closePerspAction = new ClosePerspectiveAction(getWindow());
+		closeAllPerspsAction = new CloseAllPerspectivesAction(getWindow());
 
-		backwardHistoryAction = new NavigationHistoryAction(window, false);
+		backwardHistoryAction = new NavigationHistoryAction(getWindow(), false);
 		backwardHistoryAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 		backwardHistoryAction.setHoverImageDescriptor(
@@ -964,9 +939,9 @@ public class WorkbenchActionBuilder {
 		backwardHistoryAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backwardHistoryAction.setActionDefinitionId(backwardHistoryActionDefId);
-		getWindow().registerGlobalAction(backwardHistoryAction);
+		registerGlobalAction(backwardHistoryAction);
 
-		forwardHistoryAction = new NavigationHistoryAction(window, true);
+		forwardHistoryAction = new NavigationHistoryAction(getWindow(), true);
 		forwardHistoryAction.setImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 		forwardHistoryAction.setHoverImageDescriptor(
@@ -974,7 +949,7 @@ public class WorkbenchActionBuilder {
 		forwardHistoryAction.setDisabledImageDescriptor(
 			sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		forwardHistoryAction.setActionDefinitionId(forwardHistoryActionDefId);
-		getWindow().registerGlobalAction(forwardHistoryAction);
+		registerGlobalAction(forwardHistoryAction);
 
 		revertAction = createGlobalAction(IWorkbenchActionConstants.REVERT, "file", false); //$NON-NLS-1$
 		refreshAction = createGlobalAction(IWorkbenchActionConstants.REFRESH, "file", false); //$NON-NLS-1$
@@ -997,10 +972,10 @@ public class WorkbenchActionBuilder {
 		rebuildProjectAction = createGlobalAction(IWorkbenchActionConstants.REBUILD_PROJECT, "project", false); //$NON-NLS-1$
 		openProjectAction = createGlobalAction(IWorkbenchActionConstants.OPEN_PROJECT, "project", false); //$NON-NLS-1$
 		closeProjectAction = createGlobalAction(IWorkbenchActionConstants.CLOSE_PROJECT, "project", false); //$NON-NLS-1$
-		projectPropertyDialogAction = new ProjectPropertyDialogAction(window);
+		projectPropertyDialogAction = new ProjectPropertyDialogAction(getWindow());
 		projectPropertyDialogAction.setActionDefinitionId(projectPropertiesActionDefId);
 		partService.addPartListener(projectPropertyDialogAction);
-		getWindow().registerGlobalAction(projectPropertyDialogAction);
+		registerGlobalAction(projectPropertyDialogAction);
 	}
 
 	/**
@@ -1035,6 +1010,7 @@ public class WorkbenchActionBuilder {
 		String actionDefPrefix,
 		String actionDefSuffix,
 		boolean labelRetarget) {
+			
 		String text = WorkbenchMessages.getString("Workbench." + messageId); //$NON-NLS-1$
 		String toolTipText = WorkbenchMessages.getString("Workbench." + messageId + "ToolTip"); //$NON-NLS-1$ //$NON-NLS-2$
 		RetargetAction action;
@@ -1046,7 +1022,7 @@ public class WorkbenchActionBuilder {
 		action.setToolTipText(toolTipText);
 		getWindow().getPartService().addPartListener(action);
 		action.setActionDefinitionId(PlatformUI.PLUGIN_ID + "." + actionDefPrefix + "." + actionDefSuffix); //$NON-NLS-1$ //$NON-NLS-2$
-		getWindow().registerGlobalAction(action);
+		registerGlobalAction(action);
 		return action;
 	}
 
@@ -1058,9 +1034,9 @@ public class WorkbenchActionBuilder {
 			WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
-				addPinEditorAction(getWWinActionBars());
+				addPinEditorAction(windowConfigurer.getCoolBarManager());
 			else
-				removePinEditorAction(getWWinActionBars());
+				removePinEditorAction(windowConfigurer.getCoolBarManager());
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
 			pinEditorAction.updateState();
 		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
@@ -1069,15 +1045,15 @@ public class WorkbenchActionBuilder {
 			wb.getEditorHistory().reset(newValue);
 			if (newValue == 0) {
 				// the open recent menu item can go from enabled to disabled
-				getWindow().updateActionBars();
+				// @issue need to cast to workbench window to access updateActionBars, can it be avoided?
+				((WorkbenchWindow)getWindow()).updateActionBars();
 			}
 		}
 	}
 	/**
 	 * Adds the pin action to the toolbar.  Add it to the navigate toolbar.
 	 */
-	private void addPinEditorAction(WWinActionBars bars) {
-		CoolBarManager cBarMgr = bars.getCoolBarManager();
+	private void addPinEditorAction(CoolBarManager cBarMgr) {
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem)cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
 		if (coolBarItem == null) {
 			// error if this happens, navigate toolbar assumed to always exist
@@ -1094,8 +1070,7 @@ public class WorkbenchActionBuilder {
 	/**
 	 * Removes the pin action from the toolbar.
 	 */
-	private void removePinEditorAction(WWinActionBars bars) {
-		CoolBarManager cBarMgr = bars.getCoolBarManager();
+	private void removePinEditorAction(CoolBarManager cBarMgr) {
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_NAVIGATE); //$NON-NLS-1$
 		if (coolBarItem != null) {
 			IContributionManager tBarMgr = coolBarItem.getToolBarManager();
@@ -1114,7 +1089,7 @@ public class WorkbenchActionBuilder {
 	 * to both the menu bar and the tool bar.
 	 */
 	public void addManualIncrementalBuildAction() {
-		IMenuManager menubar = getWWinActionBars().getMenuManager();
+		IMenuManager menubar = windowConfigurer.getMenuManager();
 		IMenuManager manager =
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
@@ -1129,7 +1104,7 @@ public class WorkbenchActionBuilder {
 				// action not found!
 			}
 		}
-		addManualIncrementalBuildToolAction(getWWinActionBars().getCoolBarManager());
+		addManualIncrementalBuildToolAction(windowConfigurer.getCoolBarManager());
 	}
 	private void addManualIncrementalBuildToolAction(CoolBarManager cBarMgr) {
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_FILE);
@@ -1148,7 +1123,7 @@ public class WorkbenchActionBuilder {
 	 * from both the menu bar and the tool bar.
 	 */
 	public void removeManualIncrementalBuildAction() {
-		IMenuManager menubar = getWWinActionBars().getMenuManager();
+		IMenuManager menubar = windowConfigurer.getMenuManager();
 		IMenuManager manager =
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
@@ -1159,7 +1134,7 @@ public class WorkbenchActionBuilder {
 				// action was not in menu
 			}
 		}
-		removeManualIncrementalBuildToolAction(getWWinActionBars().getCoolBarManager());
+		removeManualIncrementalBuildToolAction(windowConfigurer.getCoolBarManager());
 	}
 	private void removeManualIncrementalBuildToolAction(CoolBarManager cBarMgr) {
 		CoolBarContributionItem coolBarItem = (CoolBarContributionItem) cBarMgr.find(IWorkbenchActionConstants.TOOLBAR_FILE);
@@ -1172,5 +1147,10 @@ public class WorkbenchActionBuilder {
 				// action was not in toolbar
 			}
 		}
+	}
+	
+	private void registerGlobalAction(IAction action) {
+		// @issue casting to workbench window to access registerGlobalAction, can it be avoided?
+		((WorkbenchWindow) getWindow()).registerGlobalAction(action);
 	}
 }

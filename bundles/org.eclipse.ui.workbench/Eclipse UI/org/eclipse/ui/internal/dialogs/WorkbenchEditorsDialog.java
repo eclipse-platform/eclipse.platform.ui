@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.*;
  */
 public class WorkbenchEditorsDialog extends SelectionDialog {
 
-	private WorkbenchWindow window;
+	private IWorkbenchWindow window;
 	private Table editorsTable;
 	private Button saveSelected;
 	private Button closeSelected;
@@ -69,7 +69,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	/**
 	 * Constructor for WorkbenchEditorsDialog.
 	 */
-	public WorkbenchEditorsDialog(WorkbenchWindow window) {
+	public WorkbenchEditorsDialog(IWorkbenchWindow window) {
 		super(window.getShell());
 		this.window = window;
 		setTitle(WorkbenchMessages.getString("WorkbenchEditorsDialog.title")); //$NON-NLS-1$

@@ -13,6 +13,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
 
@@ -22,13 +23,13 @@ import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
  */
 public class WorkbenchEditorsAction extends Action {
 
-	WorkbenchWindow window;
+	IWorkbenchWindow window;
 
 	/**
 	 * Constructor for NavigateWorkbenchAction.
 	 * @param text
 	 */
-	public WorkbenchEditorsAction(WorkbenchWindow window) {
+	public WorkbenchEditorsAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
 		this.window = window;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);

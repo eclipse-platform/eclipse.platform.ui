@@ -15,6 +15,7 @@ import org.eclipse.jface.window.WindowManager;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * Interface providing special access for configuring the workbench.
@@ -41,10 +42,12 @@ public interface IWorkbenchConfigurer {
 	/**
 	 * Returns the configuration information found in the
 	 * <code>about.ini</code> file for the primary feature.
+	 * Fails if the <code>about.ini</code> file cannot be opened
+	 * and parsed correctly.
 	 * 
 	 * @return the confirguration information for the primary feature
 	 */
-	public AboutInfo getPrimaryFeatureAboutInfo();
+	public AboutInfo getPrimaryFeatureAboutInfo() throws WorkbenchException;
 	
 	/**
 	 * Returns whether the workbench state should be saved on close and 

@@ -11,9 +11,6 @@
 package org.eclipse.ui.internal.ide;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -27,6 +24,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -39,13 +37,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -61,7 +57,6 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.UISynchronizer;
 import org.eclipse.ui.internal.UIWorkspaceLock;
 import org.eclipse.ui.internal.WorkbenchActionBuilder;
-import org.eclipse.ui.internal.WorkbenchConfigurationInfo;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
@@ -77,29 +72,18 @@ import org.eclipse.update.core.SiteManager;
  * @since 3.0
  */
 class IDEWorkbenchAdviser extends WorkbenchAdviser {
+	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
 	
 	/**
 	 * Special object for configuring the workbench.
 	 */
-	IWorkbenchConfigurer configurer;	
+	private IWorkbenchConfigurer configurer;	
 	
 	/**
 	 * Tracks whether we were autobuilding.
 	 */
 	private boolean autoBuild;
 
-	/**
-	 * Command line arguments.
-	 */
-	private String[] commandLineArgs;
-
-	/**
-	 * Table of action builders keyed by window
-	 * (key type: <code>IWorkbenchWindow</code>;
-	 *  value type: <code>WorkbenchActionBuilder</code>)
-	 */
-	private Map actionBuilders = new HashMap(1);
-	
 	/**
 	 * Preference change listener
 	 */
@@ -111,48 +95,18 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	};
 	
 	/**
-	 * Cached about info. Lazily initialized by getConfigurationInfo().
-	 *
-	 * @return the about info
-	 * @see #getConfigurationInfo
-	 * @issue WorkbenchConfigurationInfo needs to be moved to this package
-	 */
-	private WorkbenchConfigurationInfo configurationInfo;
-	
-	/**
 	 * Creates a new workbench adviser instance.
 	 */
-	IDEWorkbenchAdviser(String[] commandLineArgs) {
+	IDEWorkbenchAdviser() {
 		super();
-		this.commandLineArgs = commandLineArgs;
 	}
 	
-	/**
-	 * Returns the workbench.
-	 * 
-	 * @return the workbench
-	 */
-	IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#initialize
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
 		// remember for future reference
 		this.configurer = configurer;		
-		
-		// retrieve feature and plug-in configuration info to display
-		// in "about" dialogs
-		boolean success = !getConfigurationInfo().readInfo();
-
-		// establish the app name for the display
-		String appName = getConfigurationInfo().getAboutInfo().getAppName();
-		if (appName != null) {
-			// @issue this may be too late - by the time initialize is called the Display has already been created
-			Display.setAppName(appName);
-		}
 		
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
@@ -162,14 +116,11 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			getShowTasksChangeListener(),
 			IResourceChangeEvent.POST_CHANGE);
 
-		// listen for changes to IDE-specific properties
-		// @issue must sure this is the correct preference store
-		getWorkbench().getPreferenceStore().addPropertyChangeListener(preferenceChangeListener);
-		
 		// anti-deadlocking code
 		boolean avoidDeadlock = true;
-		for (int i = 0; i < commandLineArgs.length; i++) {
-			if (commandLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
+		String[] cmdLineArgs = Platform.getCommandLineArgs();
+		for (int i = 0; i < cmdLineArgs.length; i++) {
+			if (cmdLineArgs[i].equalsIgnoreCase("-allowDeadlock")) //$NON-NLS-1$
 				avoidDeadlock = false;
 		}
 		if (avoidDeadlock) {
@@ -198,10 +149,14 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#postStartup()
 	 */
 	public void postStartup() {
-		refreshFromLocal(commandLineArgs);
+		refreshFromLocal();
 		enableAutoBuild();
+		// listen for changes to IDE-specific preferences
+		// @issue must sure this is the correct preference store
+		PlatformUI.getWorkbench().getPreferenceStore().addPropertyChangeListener(preferenceChangeListener);
 		forceOpenPerspective();
-		getConfigurationInfo().openWelcomeEditors(getWorkbench().getActiveWorkbenchWindow());
+		// @issue opening welcome editors is split over restore wnd code and here. it can be combined there is a startup penalty (ie 2 perspective started instead of one)
+		//getConfigurationInfo().openWelcomeEditors(getWorkbench().getActiveWorkbenchWindow());
 		checkUpdates();
 	}
 
@@ -217,14 +172,15 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowOpen
 	 */
-	public void preWindowOpen(IWorkbenchWindowConfigurer window) {
-		WorkbenchActionBuilder actionBuilder = new WorkbenchActionBuilder(window.getWindow());
-		actionBuilders.put(window, actionBuilder);
+	public void preWindowOpen(IWorkbenchWindowConfigurer windowConfigurer) {
+		WorkbenchActionBuilder actionBuilder = new WorkbenchActionBuilder(windowConfigurer);
+		windowConfigurer.setData(ACTION_BUILDER, actionBuilder);
 		actionBuilder.buildActions();
 
 		// include the workspace location in the title 
 		// if the command line option -showlocation is specified
 		// @issue find a home for this
+		String[] commandLineArgs = Platform.getCommandLineArgs();
 		for (int i = 0; i < commandLineArgs.length; i++) {
 			if ("-showlocation".equalsIgnoreCase(commandLineArgs[i])) { //$NON-NLS-1$
 				String workspaceLocation = Platform.getLocation().toOSString();
@@ -236,10 +192,11 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#postWindowClose
 	 */
-	public void postWindowClose(IWorkbenchWindowConfigurer window) {
-		Object o = actionBuilders.remove(window);
-		if (o != null) {
-			((WorkbenchActionBuilder) o).dispose();
+	public void postWindowClose(IWorkbenchWindowConfigurer windowConfigurer) {
+		WorkbenchActionBuilder a = (WorkbenchActionBuilder) windowConfigurer.getData(ACTION_BUILDER);
+		if (a != null) {
+			windowConfigurer.setData(ACTION_BUILDER, null);
+			a.dispose();
 		}
 	}
 
@@ -251,7 +208,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private IResourceChangeListener getShowTasksChangeListener() {
 		return new IResourceChangeListener() {
 			public void resourceChanged(final IResourceChangeEvent event) {	
-				IPreferenceStore store = getWorkbench().getPreferenceStore();
+				IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
 				// @issue IPreferenceConstants.SHOW_TASKS_ON_BUILD is IDE-specific and should be in IDE-specific package
 				if (store.getBoolean(IPreferenceConstants.SHOW_TASKS_ON_BUILD)) {
 					IMarker error = findProblemToShow(event);
@@ -259,7 +216,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
 								try {
-									IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+									IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 									if (window != null && !window.getShell().isDisposed()) { 
 										IWorkbenchPage page = window.getActivePage();
 										if (page != null) {
@@ -314,16 +271,16 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		// record setting of flag for future reference
 		autoBuild = description.isAutoBuilding();
 		if (autoBuild) {
-			IPreferenceStore store = getWorkbench().getPreferenceStore();
+			IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
 			// @issue IPreferenceConstants.AUTO_BUILD is IDE-specific and should be in IDE-specific package
 			store.setValue(IPreferenceConstants.AUTO_BUILD, false);
 			description.setAutoBuilding(false);
 			try {
 				workspace.setDescription(description);
 			} catch (CoreException exception) { 
+				// @issue should not access IDEWorkbenchMessages
 				MessageDialog.openError(
 					null, 
-					// @issue should not access IDEWorkbenchMessages
 					WorkbenchMessages.getString("Workspace.problemsTitle"),	//$NON-NLS-1$
 					WorkbenchMessages.getString("Restoring_Problem"));		//$NON-NLS-1$
 			}
@@ -340,12 +297,12 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	private void enableAutoBuild() {
 		if (autoBuild) {
-			IWorkbenchWindow windows[] = getWorkbench().getWorkbenchWindows();
+			IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 			Shell shell = windows[windows.length - 1].getShell();				
 			try {
 				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 					protected void execute(IProgressMonitor monitor) throws CoreException {
-						// @issue should not be accessing IDEWorkbenchMessages to access IDE-specific message
+						// @issue should not be accessing WorkbenchMessages to access IDE-specific message
 						monitor.setTaskName(WorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
 
 						IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -354,25 +311,25 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 						workspace.setDescription(description);
 					}
 				};
-				IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
+				IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				if (window != null)
 					window.run(true, true, op);
 				else
 					new ProgressMonitorDialog(shell).run(true, true, op);
 			} catch (InterruptedException e) {
 			} catch (InvocationTargetException exception) {
+				// @issue should not access WorkbenchMessages for IDE-specific messages
 				MessageDialog.openError(
 					shell, 
-					// @issue should not access IDEWorkbenchMessages
 					WorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
 					WorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
 			}
 			// update the preference store so that property change listener
 			// get notified of preference change.
-			IPreferenceStore store = getWorkbench().getPreferenceStore();
 			// @issue IPreferenceConstants.AUTO_BUILD is IDE-specific and should be in IDE-specific package
+			IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
 			store.setValue(IPreferenceConstants.AUTO_BUILD, true);
-			updateBuildActions(true);			
+			updateBuildActions(true);
 		}
 	}
 
@@ -385,13 +342,13 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	private void updateBuildActions(boolean autoBuildSetting) {
 		// Update the menu/tool bars for each window.
-		Window[] wins = configurer.getWorkbenchWindowManager().getWindows();
-		for (Iterator it = actionBuilders.keySet().iterator(); it.hasNext(); ) {
-			WorkbenchActionBuilder actionBuilder = (WorkbenchActionBuilder) it.next();
+		IWorkbenchWindow[] wins = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (int i = 0; i < wins.length; i++) {
+			WorkbenchActionBuilder a = (WorkbenchActionBuilder) configurer.getWindowConfigurer(wins[i]).getData(ACTION_BUILDER);
 			if (autoBuildSetting) {
-				actionBuilder.removeManualIncrementalBuildAction();
+				a.removeManualIncrementalBuildAction();
 			} else {
-				actionBuilder.addManualIncrementalBuildAction();
+				a.addManualIncrementalBuildAction();
 			}
 		}
 	}
@@ -406,7 +363,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			// store for use by import/export.
 			IWorkspaceDescription description =	ResourcesPlugin.getWorkspace().getDescription();
 			boolean autoBuildSetting = description.isAutoBuilding();
-			boolean newAutoBuildSetting = getWorkbench().getPreferenceStore().getBoolean(IPreferenceConstants.AUTO_BUILD);
+			boolean newAutoBuildSetting = PlatformUI.getWorkbench().getPreferenceStore().getBoolean(IPreferenceConstants.AUTO_BUILD);
 
 			if (autoBuildSetting != newAutoBuildSetting) {
 				// Update the core setting.
@@ -423,7 +380,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				// build on all the projects.
 				if (newAutoBuildSetting) {
 					GlobalBuildAction action = new GlobalBuildAction(
-						getWorkbench().getActiveWorkbenchWindow(),
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
 						IncrementalProjectBuilder.INCREMENTAL_BUILD);
 					action.doBuild();
 				}
@@ -432,17 +389,20 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		}
 	}
 
-	private void refreshFromLocal(String[] commandLineArgs) {
-		IPreferenceStore store = getWorkbench().getPreferenceStore();
+	private void refreshFromLocal() {
+		String[] commandLineArgs = Platform.getCommandLineArgs();
+		IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
 		// @issue should reference REFRESH_WORKSPACE_ON_STARTUP in IDE-specific package
 		boolean refresh = store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP);
 		if (!refresh)
 			return;
+			
 		//Do not refresh if it was already done by core on startup.
 		for (int i = 0; i < commandLineArgs.length; i++)
 			if (commandLineArgs[i].equalsIgnoreCase("-refresh")) //$NON-NLS-1$
 				return;
-		IWorkbenchWindow windows[] = getWorkbench().getWorkbenchWindows();
+				
+		IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 		Shell shell = windows[windows.length - 1].getShell();
 		ProgressMonitorDialog dlg = new ProgressMonitorDialog(shell);
 		final CoreException ex[] = new CoreException[1];
@@ -468,7 +428,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			//Do nothing. Operation was canceled.
 		} catch (InvocationTargetException e) {
 			String msg = "InvocationTargetException refreshing from local on startup"; //$NON-NLS-1$
-			// @issue should not be using IDEWorkbenchPlugin to log error
+			// @issue should not be using WorkbenchPlugin to log error
 			WorkbenchPlugin.log(msg, new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, msg, e.getTargetException()));
 		}
 	}
@@ -513,6 +473,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	private void checkUpdates() {
 		boolean newUpdates = false;
+		String[] commandLineArgs = Platform.getCommandLineArgs();
 		for (int i = 0; i < commandLineArgs.length; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-newUpdates")) { //$NON-NLS-1$
 				newUpdates = true;
@@ -524,20 +485,15 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			try {
 				SiteManager.handleNewChanges();
 			} catch (CoreException ex) {
-				// @issue should not be using IDEWorkbenchPlugin to log error
+				// @issue should not be using WorkbenchPlugin to log error
 				WorkbenchPlugin.log("Problem opening update manager", ex.getStatus()); //$NON-NLS-1$
 			}
 		}
 	}
 
 	private void forceOpenPerspective() {
-		if (getWorkbench().getWorkbenchWindows().length == 0) {
-			// Something is wrong, there should be at least
-			// one workbench window open by now.
-			return;
-		}
-
 		String perspId = null;
+		String[] commandLineArgs = Platform.getCommandLineArgs();
 		for (int i = 0; i < commandLineArgs.length - 1; i++) {
 			if (commandLineArgs[i].equalsIgnoreCase("-perspective")) { //$NON-NLS-1$
 				perspId = commandLineArgs[i + 1];
@@ -547,17 +503,24 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		if (perspId == null) {
 			return;
 		}
-		IPerspectiveDescriptor desc = getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspId);
+		IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspId);
 		if (desc == null) {
 			return;
 		}
 
-		IWorkbenchWindow win = getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (win == null) {
-			win = getWorkbench().getWorkbenchWindows()[0];
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0) {
+				win = windows[0];
+			}
 		}
 		try {
-			getWorkbench().showPerspective(perspId, win);
+			if (win != null) {
+				PlatformUI.getWorkbench().showPerspective(perspId, win);
+			} else {
+				PlatformUI.getWorkbench().openWorkbenchWindow(perspId, getDefaultWindowInput());
+			}
 		} catch (WorkbenchException e) {
 			String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
 			// @issue should not be using IDEWorkbenchPlugin to log error
@@ -568,16 +531,16 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#isApplicationMenu
 	 */
-	public boolean isApplicationMenu(IWorkbenchWindowConfigurer window, String menuID) {
-		WorkbenchActionBuilder a = (WorkbenchActionBuilder) actionBuilders.get(window);
+	public boolean isApplicationMenu(IWorkbenchWindowConfigurer windowConfigurer, String menuID) {
+		WorkbenchActionBuilder a = (WorkbenchActionBuilder) windowConfigurer.getData(ACTION_BUILDER);
 		return a.isContainerMenu(menuID);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#isWorkbenchCoolItemId
 	 */
-	public boolean isWorkbenchCoolItemId(IWorkbenchWindowConfigurer window, String id) {
-		WorkbenchActionBuilder a = (WorkbenchActionBuilder) actionBuilders.get(window);
+	public boolean isWorkbenchCoolItemId(IWorkbenchWindowConfigurer windowConfigurer, String id) {
+		WorkbenchActionBuilder a = (WorkbenchActionBuilder) windowConfigurer.getData(ACTION_BUILDER);
 		return a.isWorkbenchCoolItemId(id);
 	}
 	
@@ -587,9 +550,13 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 * @return the about info
 	 * @issue WorkbenchConfigurationInfo needs to be moved to this package
 	 */
-	public WorkbenchConfigurationInfo getConfigurationInfo() {
+/*	public WorkbenchConfigurationInfo getConfigurationInfo() {
 		if(configurationInfo == null)
 			configurationInfo = new WorkbenchConfigurationInfo();
 		return configurationInfo;
+	}
+*/	
+	private IAdaptable getDefaultWindowInput() {
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 }

@@ -17,7 +17,7 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.zip.CRC32;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.IniFileReader;
@@ -72,11 +72,14 @@ public final class AboutInfo {
 	 * @param versionId the version id of the feature, or <code>null</code>
 	 * @return the initialized about information for the specified feature
 	 */
-	public final static AboutInfo create(String featureId, PluginVersionIdentifier versionId) throws CoreException {
+	public final static AboutInfo create(String featureId, PluginVersionIdentifier versionId) throws WorkbenchException {
 		AboutInfo info = new AboutInfo(featureId, versionId);
 		if (featureId != null) {
 			IniFileReader reader = new IniFileReader(featureId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
-			reader.load();
+			IStatus status = reader.load();
+			if (!status.isOK()) {
+				throw new WorkbenchException(status);
+			}
 			Hashtable runtimeMappings  = new Hashtable();
 			String featureVersion = info.getVersion();
 			if (featureVersion == null)

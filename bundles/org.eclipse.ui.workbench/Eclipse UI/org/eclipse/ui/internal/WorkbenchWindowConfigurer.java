@@ -13,7 +13,12 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.application.IWorkbenchConfigurer;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 
 /**
@@ -36,6 +41,31 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	private WorkbenchWindow window;
 
 	/**
+	 * Whether the workbench window should show the shortcut bar.
+	 */
+	private boolean showShortcutBar = true;
+	
+	/**
+	 * Whether the workbench window should show the status line.
+	 */
+	private boolean showStatusLine = true;
+	
+	/**
+	 * Whether the workbench window should show the main tool bar.
+	 */
+	private boolean showToolBar = true;
+	
+	/**
+	 * Whether the workbench window should show the main menu bar.
+	 */
+	private boolean showMenuBar = true;
+	
+	/**
+	 * Whether the workbench window should have a title bar.
+	 */
+	private boolean showTitleBar = true;
+
+	/**
 	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
 	 * value type: <code>Object</code>).
 	 * @see #setData
@@ -53,18 +83,38 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * @param window the workbench window that this object configures
 	 * @see WorkbenchAdviser#getWindowConfigurer
 	 */
-	WorkbenchWindowConfigurer(IWorkbenchWindow window) {
-		if (window == null || !(window instanceof WorkbenchWindow)) {
+	WorkbenchWindowConfigurer(WorkbenchWindow window) {
+		if (window == null) {
 			throw new IllegalArgumentException();
 		}
-		this.window = (WorkbenchWindow) window;
+		this.window = window;
 	}
 
+	/**
+	 * Allows the configurer to initialize its state that
+	 * depends on a Display existing.
+	 */
+	/* package */ void init() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		showMenuBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_MENU_BAR);
+		showShortcutBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_SHORTCUT_BAR);
+		showStatusLine = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE);
+		showTitleBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_TITLE_BAR);
+		showToolBar = store.getBoolean(IWorkbenchPreferences.SHOULD_SHOW_TOOL_BAR);
+	}
+	
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWindow
 	 */
 	public IWorkbenchWindow getWindow() {
 		return window;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWorkbenchConfigurer()
+	 */
+	public IWorkbenchConfigurer getWorkbenchConfigurer() {
+		return Workbench.getInstance().getWorkbenchConfigurer();
 	}
 	
 	/* (non-javadoc)
@@ -89,70 +139,70 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowTitleBar
 	 */
 	public boolean getShowTitleBar() {
-		return window.getShowTitleBar();
+		return showTitleBar;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowTitleBar
 	 */
 	public void setShowTitleBar(boolean show) {
-		window.setShowTitleBar(show);
+		showTitleBar = show;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowMenuBar
 	 */
 	public boolean getShowMenuBar() {
-		return window.getShowMenuBar();
+		return showMenuBar;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowMenuBar
 	 */
 	public void setShowMenuBar(boolean show) {
-		window.setShowMenuBar(show);
+		showMenuBar = show;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowToolBar
 	 */
 	public boolean getShowToolBar() {
-		return window.getShowToolBar();
+		return showToolBar;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowToolBar
 	 */
 	public void setShowToolBar(boolean show) {
-		window.setShowToolBar(show);
+		showToolBar = show;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowShortcutBar
 	 */
 	public boolean getShowShortcutBar() {
-		return window.getShowShortcutBar();
+		return showShortcutBar;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowShortcutBar
 	 */
 	public void setShowShortcutBar(boolean show) {
-		window.setShowShortcutBar(show);
+		showShortcutBar = show;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowStatusLine
 	 */
 	public boolean getShowStatusLine() {
-		return window.getShowStatusLine();
+		return showStatusLine;
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowStatusLine
 	 */
 	public void setShowStatusLine(boolean show) {
-		window.setShowStatusLine(show);
+		showStatusLine = show;
 	}
 	
 	/* (non-javadoc)
@@ -177,6 +227,27 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 		} else {
 			extraData.remove(key);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getMenuManager()
+	 */
+	public IMenuManager getMenuManager() {
+		return window.getMenuManager();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getCoolBarManager()
+	 */
+	public CoolBarManager getCoolBarManager() {
+		return window.getCoolBarManager();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getStatusLineManager()
+	 */
+	public IStatusLineManager getStatusLineManager() {
+		return window.getStatusLineManager();
 	}
 }
 

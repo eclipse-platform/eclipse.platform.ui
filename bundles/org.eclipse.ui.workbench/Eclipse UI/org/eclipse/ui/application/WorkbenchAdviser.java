@@ -181,7 +181,7 @@ public abstract class WorkbenchAdviser {
 	 * @param configurer an object for configuring the particular workbench
 	 * window being closed
 	 */
-	public void postWindowClose(IWorkbenchWindowConfigurer window) {
+	public void postWindowClose(IWorkbenchWindowConfigurer configurer) {
 		// do nothing
 	}
 
@@ -199,7 +199,7 @@ public abstract class WorkbenchAdviser {
 	 * @see org.eclipse.ui.IWorkbenchWindow#isApplicationMenu
 	 * @issue investigate whether there's a better way to handle these
 	 */
-	public boolean isApplicationMenu(IWorkbenchWindowConfigurer window, String menuId) {
+	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer, String menuId) {
 		return true;
 	}
 	
@@ -215,7 +215,7 @@ public abstract class WorkbenchAdviser {
 	 * otherwise
 	 * @issue investigate whether there's a better way to handle these
 	 */
-	public boolean isWorkbenchCoolItemId(IWorkbenchWindowConfigurer window, String id) {
+	public boolean isWorkbenchCoolItemId(IWorkbenchWindowConfigurer configurer, String id) {
 		return true;
 	}
 }

@@ -12,8 +12,9 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.jface.action.Action;
-
-import org.eclipse.ui.*;
+import org.eclipse.ui.AboutInfo;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 
@@ -26,9 +27,8 @@ public class AboutAction extends Action {
 /**
  * Creates a new <code>AboutAction</code> with the given label
  */
-public AboutAction(IWorkbenchWindow window) {
+public AboutAction(IWorkbenchWindow window, AboutInfo aboutInfo) {
 	this.workbenchWindow = window;
-	AboutInfo aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getConfigurationInfo().getAboutInfo();
 	String productName = aboutInfo.getProductName();
 	if (productName == null) {
 		productName = ""; //$NON-NLS-1$

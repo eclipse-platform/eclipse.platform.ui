@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -46,10 +45,8 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
@@ -57,11 +54,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -122,13 +121,6 @@ public final class Workbench implements IWorkbench {
 	private boolean isClosing = false;
 	private Object returnCode;
 	private ListenerList windowListeners = new ListenerList();
-	
-	private final IPropertyChangeListener preferenceChangeListener =
-		new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				handlePreferenceChange(event);
-			}
-	};
 	
 	/**
 	 * Adviser providing application-specific configuration and customization
@@ -599,38 +591,31 @@ public final class Workbench implements IWorkbench {
 	}
 		
 	/*
-	 * Handles a change to a workbench-specific preference.
-	 */
-	private void handlePreferenceChange(PropertyChangeEvent event) {
-		// TODO: missing implementation
-	}
-
-	/*
-	 * Initializes the workbench.
+	 * Initializes the workbench now that the display is created.
 	 *
 	 * @return true if init succeeded.
 	 */
-	private boolean init() {	
+	private boolean init(AboutInfo aboutInfo) {	
 		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
 			ModalContext.setDebugMode(true);
 		}
 
-		// allow the workbench configurer to initialize
-		getWorkbenchConfigurer().init();
-				
 		// create workbench window manager
 		windowManager = new WindowManager();
 
-		initializeImages();
+		// allow the workbench configurer to initialize
+		getWorkbenchConfigurer().init();
+
+		initializeImages(aboutInfo);
 		initializeFonts();
 		initializeColors();
-		
-		// application-specific initialization
+
+		// now that the workbench is sufficiently initialized, let the adviser have a turn.
 		adviser.initialize(getWorkbenchConfigurer());
 		
-		// configure use of color icons
+		// configure use of color icons in toolbars
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
 		
@@ -654,9 +639,6 @@ public final class Workbench implements IWorkbench {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
 		}
 				
-		// Listen for changes to workbench properties
-		getPreferenceStore().addPropertyChangeListener(preferenceChangeListener);
-
 		isStarting = false;
 		return true;
 	}
@@ -739,20 +721,19 @@ public final class Workbench implements IWorkbench {
 	 * 
 	 * @since 3.0
 	 */
-	private void initializeImages() {
+	private void initializeImages(AboutInfo aboutInfo) {
 		// initialize the product image obtained from the product info file
-		// @issue How to access the primary feature app icon from its about.ini file?
-		//ImageDescriptor descriptor = getConfigurationInfo().getAboutInfo().getWindowImage();
-//		if (descriptor != null) {
-			//WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
-			//Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
-			//if (image != null) {
-				//Window.setDefaultImage(image);
-			//}
-		//} else {
+		ImageDescriptor descriptor = aboutInfo.getWindowImage();
+		if (descriptor != null) {
+			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, descriptor);
+			Image image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD);
+			if (image != null) {
+				Window.setDefaultImage(image);
+			}
+		} else {
 			// Avoid setting a missing image as the window default image
 			WorkbenchImages.getImageRegistry().put(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD, ImageDescriptor.getMissingImageDescriptor());
-		//}
+		}
 	}
 	
 	/*
@@ -1088,28 +1069,11 @@ public final class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Internal method for running the workbench UI. This entails processing
-	 * and dispatching events until the workbench is closed or restarted.
-	 * 
-	 * @return <code>true</code> if the workbench was terminated with a call
-	 * to <code>restart</code>, and <code>false</code> otherwise
-	 * @since 3.0
-	 * @issue consider returning an int or Object rather than a boolean
+	 * Creates the <code>Display</code> to be used by the workbench.
 	 */
-	private boolean runUI() {
-		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
-
-		// get the primary feature info loaded
-		try {
-			getWorkbenchConfigurer().readPrimaryFeatureAboutInfo();
-		} catch (CoreException e) {
-			WorkbenchPlugin.log("Error reading primary feature's about.ini file", e.getStatus()); //$NON-NLS-1$
-			// @issue we should return a valid return code here indicating something went wrong.
-			return false;
-		}
-		
+	private Display createDisplay(AboutInfo aboutInfo) {
 		// setup the application name used by SWT to lookup resources on some platforms
-		String appName = getWorkbenchConfigurer().getPrimaryFeatureAboutInfo().getAppName();
+		String appName = aboutInfo.getAppName();
 		if (appName != null) {
 			Display.setAppName(appName);
 		}
@@ -1134,13 +1098,41 @@ public final class Workbench implements IWorkbench {
 			}
 		});
 		
+		return display;
+	}
+	
+	/**
+	 * Internal method for running the workbench UI. This entails processing
+	 * and dispatching events until the workbench is closed or restarted.
+	 * 
+	 * @return <code>true</code> if the workbench was terminated with a call
+	 * to <code>restart</code>, and <code>false</code> otherwise
+	 * @since 3.0
+	 * @issue consider returning an int or Object rather than a boolean
+	 */
+	private boolean runUI() {
+		UIStats.start(UIStats.START_WORKBENCH,"Workbench"); //$NON-NLS-1$
+
+		// get the primary feature info loaded
+		AboutInfo aboutInfo = null;
+		try {
+			aboutInfo = getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
+		} catch (WorkbenchException e) {
+			WorkbenchPlugin.log("Error reading primary feature's about.ini file", e.getStatus()); //$NON-NLS-1$
+			// @issue we should return a valid return code here indicating something went wrong.
+			return false;
+		}
+
+		// create and startup the display for the workbench
+		Display display = createDisplay(aboutInfo);
+				
 		try {
 			// install backstop to catch exceptions thrown out of event loop
 			Window.IExceptionHandler handler = new ExceptionHandler(this);
 			Window.setExceptionHandler(handler);
 			
 			// initialize workbench and restore or open one window
-			boolean initOK = init();
+			boolean initOK = init(aboutInfo);
 			
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
@@ -1149,6 +1141,7 @@ public final class Workbench implements IWorkbench {
 			if (initOK) {
 				adviser.postStartup(); // may trigger a close/restart
 			}
+			
 			if (initOK && runEventLoop) {
 				// start eager plug-ins
 				startPlugins();
@@ -1160,7 +1153,7 @@ public final class Workbench implements IWorkbench {
 				});
 				
 				// the event loop
-				runEventLoop(handler);
+				runEventLoop(handler, display);
 			}
 			
 			// shutdown in an orderly way after event loop finishes
@@ -1180,8 +1173,7 @@ public final class Workbench implements IWorkbench {
 	/*
 	 * Runs an event loop for the workbench.
 	 */
-	private void runEventLoop(Window.IExceptionHandler handler) {
-		Display display = Display.getCurrent();
+	private void runEventLoop(Window.IExceptionHandler handler, Display display) {
 		runEventLoop = true;
 		while (runEventLoop) {
 			try {
@@ -1438,13 +1430,11 @@ public final class Workbench implements IWorkbench {
 		adviser.postShutdown();
 		
 		// shutdown the rest of the workbench
-		getPreferenceStore().addPropertyChangeListener(preferenceChangeListener);
 		WorkbenchColors.shutdown();
 		JFaceColors.disposeColors();
 		if(getDecoratorManager() != null) {
 			((DecoratorManager) getDecoratorManager()).shutdown();
 		}
-		getPreferenceStore().removePropertyChangeListener(preferenceChangeListener);
 	}
 
 	/* (non-Javadoc)

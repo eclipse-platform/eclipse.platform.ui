@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -27,7 +28,7 @@ public class ShowPartPaneMenuAction extends PartEventAction {
  * Constructor for ShowPartPaneMenuAction.
  * @param text
  */
-public ShowPartPaneMenuAction(WorkbenchWindow window) {
+public ShowPartPaneMenuAction(IWorkbenchWindow window) {
 	super(""); //$NON-NLS-1$
 	initText();
 	window.getPartService().addPartListener(this);
