@@ -180,6 +180,9 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * The composite change sends <code>setEnabled</code> to all its children.
 	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
+	 * </p> 
 	 */
 	public void setEnabled(boolean enabled) {
 		for (Iterator iter= fChanges.iterator(); iter.hasNext(); ) {
@@ -192,6 +195,9 @@ public class CompositeChange extends Change {
 	 * The composite change sends <code>initializeValidationData</code> to all its 
 	 * children.
 	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
+	 * </p> 
 	 */
 	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
@@ -210,6 +216,9 @@ public class CompositeChange extends Change {
 	 * </code>. If one of the children throws an exception the remaining children
 	 * will not receive the <code>isValid</code> call.
 	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
+	 * </p> 
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
@@ -236,6 +245,9 @@ public class CompositeChange extends Change {
 	 * getUndoUntilException</code> can be used to get an undo object containing the
 	 * undo objects of all executed children.
 	 * </p>
+	 * <p>
+	 * Client are allowed to extend this method.
+	 * </p> 
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		fUndoUntilException= null;
