@@ -205,7 +205,7 @@ public class CVSSyncInfo extends SyncInfo {
 						remote.getStorage(Policy.monitorFor(monitor)).getContents();
 						info = remote.getSyncInfo().cloneMutable();
 					} catch (CoreException e) {
-						TeamException.asTeamException(e);
+						throw TeamException.asTeamException(e);
 					}
 				}
 			} else if (getBase() != null) {
