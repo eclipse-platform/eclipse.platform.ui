@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
- * Standard action for closing the currently selected project(s)
+ * Standard action for closing the currently selected project(s).
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
