@@ -105,7 +105,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	private boolean handleOrphanedSubtree(IContainer resource) {
 		try {
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
-			if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getParent().isCVSFolder()) {
+			if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getIResource().getParent().getType() != IResource.ROOT) {
 				mFolder.unmanage(null);
 				return true;
 			}
