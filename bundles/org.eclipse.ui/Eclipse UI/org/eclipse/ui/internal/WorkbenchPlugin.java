@@ -415,7 +415,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// Temporary option to enable single click
 		store.setDefault("SINGLE_CLICK_METHOD", OpenStrategy.DOUBLE_CLICK); //$NON-NLS-1$
 		// Temporary option to enable cool bars
-		store.setDefault("ENABLE_COOL_BARS", false); //$NON-NLS-1$
+		store.setDefault("ENABLE_COOL_BARS", true); //$NON-NLS-1$
 		// Temporary option to enable new menu organization
 		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$	
 			
