@@ -683,8 +683,27 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		// find "unique" top level features (latest version)
 		ArrayList topFeatures = computeTopFeatures(allPossibleConfiguredFeatures, configuredSite);
 
-		// expand features (compute full nesting structures).
-		ArrayList configuredFeatures = expandFeatures(topFeatures, configuredSite);
+		// find non efix top level features
+		ArrayList topNonEfixFeatures = getNonEfixFeatures(topFeatures);
+
+		// expand non efix top level features (compute full nesting structures).
+		ArrayList configuredFeatures = expandFeatures(topNonEfixFeatures, configuredSite);
+
+		// retrieve efixes that patch enable feature and add them to the list of enabled features
+		if (topFeatures.size() != topNonEfixFeatures.size()){
+			Map patches = getPatches(allPossibleConfiguredFeatures);
+			if (!patches.isEmpty()){
+				// get efixes to enable from all possibles efixes
+				List efixesToEnable = getPatchesToEnable(patches, configuredFeatures);
+				//add them to the enable list
+				for (Iterator iter = efixesToEnable.iterator(); iter.hasNext();) {
+					IFeature element = (IFeature) iter.next();
+					ArrayList expandedEfix = new ArrayList();
+					expandFeature(element, expandedEfix, configuredSite);
+					configuredFeatures.addAll(expandedEfix);
+				}
+			}
+		}
 
 		// compute extra features
 		ArrayList extras = diff(allPossibleConfiguredFeatures, configuredFeatures);
@@ -751,13 +770,16 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				VersionedIdentifier rightVid = right.getVersionedIdentifier();
 				if (leftVid.getIdentifier().equals(rightVid.getIdentifier())) {
 					// duplicate versions ... keep latest
-					if (rightVid.getVersion().isGreaterOrEqualTo(leftVid.getVersion())) {
-						result.remove(left);
-						// debug
-						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-							UpdateCore.debug("Removing \"duplicate\" " + left.getVersionedIdentifier().toString());
-						}
-						break;
+					IFeature oldest = null;
+					// bug 31940. If right>left remove left ELSE REMOVE RIGHT
+					if (rightVid.getVersion().isGreaterOrEqualTo(leftVid.getVersion()))
+						oldest = left;
+					else
+						oldest = right;
+					result.remove(oldest);
+					// debug
+					if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+						UpdateCore.debug("Removing \"duplicate\" " + oldest.getVersionedIdentifier().toString());
 					}
 				}
 			}
@@ -894,4 +916,98 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		UpdateCore.warn("Unknown matching rule:" + featureReference.getMatch());
 		return false;
 	}
+	
+	/*
+	 * get the list of enabled patches
+	 */
+	private static Map getPatches(ArrayList allConfiguredFeatures) {
+		// get all efixes and the associated patched features
+		Map patches = new HashMap();
+		if (allConfiguredFeatures != null) {
+			Iterator iter = allConfiguredFeatures.iterator();
+			while (iter.hasNext()) {
+				List patchedFeaturesID = new ArrayList();
+				IFeature element = (IFeature) iter.next();
+				// add the patched feature identifiers
+				for (int i = 0; i < element.getImports().length; i++) {
+					if (element.getImports()[i].isPatch()) {
+						VersionedIdentifier id = element.getImports()[i].getVersionedIdentifier();
+						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+							UpdateCore.debug("Found patch " + element + " for feature identifier " + id);
+						patchedFeaturesID.add(id);
+					}
+				}
+
+				if (!patchedFeaturesID.isEmpty()) {
+					patches.put(element, patchedFeaturesID);
+				}
+			}
+		}
+
+		return patches;
+	}
+
+	/*
+	 * retruns the list of pathes-feature who patch enabled features
+	 */
+	private static List getPatchesToEnable(Map efixes, ArrayList configuredFeatures) {
+
+		ArrayList enabledVersionedIdentifier = new ArrayList();
+		Iterator iter = configuredFeatures.iterator();
+		while (iter.hasNext()) {
+			IFeature element = (IFeature) iter.next();
+			enabledVersionedIdentifier.add(element.getVersionedIdentifier());
+		}
+
+		// loop through the patches
+		List result = new ArrayList();
+		iter = efixes.keySet().iterator();
+		while (iter.hasNext()) {
+			boolean toEnable = false;
+			IFeature efixFeature = (IFeature) iter.next();
+			List patchedFeatures = (List) efixes.get(efixFeature);
+			// loop through the 'patched features identifier' the for this patch
+			// see if it the patch patches at least one enable feature
+			Iterator patchedFeaturesIter = patchedFeatures.iterator();
+			while (patchedFeaturesIter.hasNext() && !toEnable) {
+				VersionedIdentifier patchedFeatureID = (VersionedIdentifier) patchedFeaturesIter.next();
+				if (enabledVersionedIdentifier.contains(patchedFeatureID)) {
+					toEnable = true;
+				}
+			}
+
+			if (!toEnable) {
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+				UpdateCore.debug("The Patch " + efixFeature + " does not patch any enabled features: it will be disabled");
+			} else {
+				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+					UpdateCore.debug("The patch " + efixFeature + " will be enabled.");
+				result.add(efixFeature);
+			}
+		}
+		return result;
+	}
+
+	/*
+	 * returns the feature that are not patches
+	 */
+	private static ArrayList getNonEfixFeatures(ArrayList topFeatures) {
+		Map efixFeatures = getPatches(topFeatures);
+		Set keySet = efixFeatures.keySet();
+		if (keySet == null || keySet.isEmpty())
+			return topFeatures;
+
+		Iterator iter = topFeatures.iterator();
+		ArrayList result = new ArrayList();
+		while (iter.hasNext()) {
+			IFeature element = (IFeature) iter.next();
+			if (!keySet.contains(element)) {
+				result.add(element);
+			}
+		}
+		return result;
+	}
+
+	
+	
 }
