@@ -267,13 +267,9 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		if (! local.exists()) {
 			local.mkdir();
 		} else {
-			// must not be a managed folder.
-			if(local.isManaged() || local.isCVSFolder()) {
+			// If the folder already has CVS info, check that the remote and local match
+			if(local.isManaged() && local.isCVSFolder() && ! remote.getFolderSyncInfo().equals(local.getFolderSyncInfo())) {
 				throw new CVSException(IStatus.ERROR, 0, "Error making a remote folder in sync with the server. The local folder is already managed.");
-			}
-			// can only makesync on non-project folders, on top level folders use checkout instead.
-			if(local.getParent() == null || !local.getParent().isCVSFolder()) {
-				throw new CVSException(IStatus.ERROR, 0, "Error making a remote folder in sync with the server. The local folder's parent is not a cvs folder.");
 			}
 		}
 		
