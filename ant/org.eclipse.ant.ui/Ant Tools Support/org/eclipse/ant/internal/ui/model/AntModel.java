@@ -487,25 +487,48 @@ public class AntModel implements IAntModel {
 		}
 		List children= fProjectNode.getChildNodes();
 		Iterator iter= children.iterator();
+        boolean checkCircularDependencies= true;
 		while (iter.hasNext()) {
 			AntElementNode node = (AntElementNode) iter.next();
 			AntElementNode originalNode= node;
 			if (node instanceof AntTargetNode) {
-				String missing= ((AntTargetNode)node).checkDependencies();
-				if (missing != null) {
-					String message= MessageFormat.format(AntModelMessages.getString("AntModel.44"), new String[]{missing}); //$NON-NLS-1$
-					AntElementNode importNode= node.getImportNode();
-					if (importNode != null) {
-						node= importNode;
-					}
-					IProblem problem= createProblem(message, node.getOffset(), node.getSelectionLength(), AntModelProblem.SEVERITY_ERROR);
-					acceptProblem(problem);
-					markHierarchy(originalNode, AntModelProblem.SEVERITY_ERROR, message);
-				}
+                if (checkCircularDependencies) {
+                    checkCircularDependencies= false;
+                    checkCircularDependencies(node);
+                }
+				checkMissingDependencies(node, originalNode);
 			}
 		}
-		
 	}
+
+    private void checkMissingDependencies(AntElementNode node, AntElementNode originalNode) {
+        String missing= ((AntTargetNode)node).checkDependencies();
+        if (missing != null) {
+        	String message= MessageFormat.format(AntModelMessages.getString("AntModel.44"), new String[]{missing}); //$NON-NLS-1$
+        	AntElementNode importNode= node.getImportNode();
+        	if (importNode != null) {
+        		node= importNode;
+        	}
+        	IProblem problem= createProblem(message, node.getOffset(), node.getSelectionLength(), AntModelProblem.SEVERITY_ERROR);
+        	acceptProblem(problem);
+        	markHierarchy(originalNode, AntModelProblem.SEVERITY_ERROR, message);
+        }
+    }
+
+    private void checkCircularDependencies(AntElementNode node) {
+        Target target= ((AntTargetNode)node).getTarget();
+        try {
+            target.getProject().topoSort(target.getName(), target.getProject().getTargets());
+        } catch (BuildException be) {
+            //possible circular dependency
+            String message = be.getMessage();
+            if (message.startsWith("Circular")) { //$NON-NLS-1$ //we do our own checking for missing dependencies
+                IProblem problem= createProblem(message, node.getProjectNode().getOffset(), node.getProjectNode().getSelectionLength(), AntModelProblem.SEVERITY_ERROR);
+                acceptProblem(problem);
+                markHierarchy(node.getProjectNode(), AntModelProblem.SEVERITY_ERROR, message);
+            }
+        }
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#handleBuildException(org.apache.tools.ant.BuildException, org.eclipse.ant.internal.ui.model.AntElementNode, int)
