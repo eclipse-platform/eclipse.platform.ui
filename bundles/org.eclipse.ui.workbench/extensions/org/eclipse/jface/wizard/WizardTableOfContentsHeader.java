@@ -22,8 +22,7 @@ import org.eclipse.swt.widgets.*;
 public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 
 	private Composite tableComposite;
-	private ITableOfContentsNode[] nodes =
-		new ITableOfContentsNode[0];
+	private ITableOfContentsNode[] nodes = new ITableOfContentsNode[0];
 	private IWizard initialWizard;
 	private ITableOfContentsNode currentNode;
 
@@ -32,219 +31,41 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 	}
 
 	/**
-	 * Create the contents of the table of contents. The layout data of the
-	 * control should not be set as this will be determined by the creator
-	 * of parent.
-	 * @param parent
-	 */
-	public Control createTableOfContents(Composite parent) {
-
-		tableComposite = new Composite(parent, SWT.NULL);
-		tableComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
-		tableComposite.setForeground(getTitleForeground(parent.getDisplay()));
-		tableComposite.setBackground(getTitleBackground(parent.getDisplay()));
-		
-		//Create the nodes if the wizard has not been set.
-		if (initialWizard != null){
-			addNodesForWizard(initialWizard);
-			currentNode = nodes[0];
-		}
-
-		return tableComposite;
-
-	}
-
-	/**
 	 * Add the nodes for the current wizard. This should be called whenever
 	 * the wizard is updated for a dialog using the WizardTableOfContentsHeader.
 	 */
 	private void addNodesForWizard(IWizard wizard) {
-		
+
 		ITableOfContentsNode[] newNodes;
-		
-		if(wizard instanceof ITableOfContentsWizard){
+
+		if (wizard instanceof ITableOfContentsWizard) {
 			newNodes = ((ITableOfContentsWizard) wizard).getInitialNodes();
+		} else {
+			IWizardPage[] pages = wizard.getPages();
+			newNodes = new WizardTableOfContentsNode[1];
+			newNodes[0] = new WizardTableOfContentsNode(pages[0]);
 		}
-		else{
-		IWizardPage[] pages = wizard.getPages();
-		newNodes = new WizardTableOfContentsNode[1];
-		newNodes[0] =
-				new WizardTableOfContentsNode(pages[0]);
-		}
-				
-				
+
 		int oldSize = nodes.length;
-		ITableOfContentsNode[] mergeNodes = new 
-			ITableOfContentsNode[oldSize + newNodes.length];
-		System.arraycopy(nodes,0,mergeNodes,0,oldSize);
+		ITableOfContentsNode[] mergeNodes =
+			new ITableOfContentsNode[oldSize + newNodes.length];
+		System.arraycopy(nodes, 0, mergeNodes, 0, oldSize);
 		Display display = wizard.getContainer().getShell().getDisplay();
 		Color foreground = getTitleForeground(display);
-		Color background = getTitleBackground(display);		
-		
+		Color background = getTitleBackground(display);
+
 		for (int i = 0; i < newNodes.length; i++) {
-			newNodes[i].createWidgets(tableComposite,foreground,background);
+			newNodes[i].createWidgets(tableComposite, foreground, background);
 			mergeNodes[i + oldSize] = newNodes[i];
 		}
-		nodes = mergeNodes;		
-		
+		nodes = mergeNodes;
+
 	}
 
 	/**
-	* Creates the  title area.
-	*
-	* @param parent the SWT parent for the title area widgets
-	* @return Control with the highest x axis value.
+	* Add the nodes for newWizard. If we haven't created anything
+	* set cache the wizard.
 	*/
-	public Control createTitleArea(
-		Composite parent,
-		FontMetrics parentMetrics) {
-
-		this.metrics = parentMetrics;
-
-		// add a dispose listener
-		parent.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-
-				if (errorMsgAreaBackground != null)
-					errorMsgAreaBackground.dispose();
-			}
-		});
-
-		// Determine the background color of the title bar
-		Display display = parent.getDisplay();
-	Color background = getTitleBackground(display);
-		Color foreground = getTitleForeground(display);
-
-		int verticalSpacing =
-			Dialog.convertVerticalDLUsToPixels(
-				metrics,
-				IDialogConstants.VERTICAL_SPACING);
-		int horizontalSpacing =
-			Dialog.convertHorizontalDLUsToPixels(
-				metrics,
-				IDialogConstants.HORIZONTAL_SPACING);
-		parent.setBackground(background);
-
-		Control tableOfContents = createTableOfContents(parent);
-
-		FormData tocData = new FormData();
-		tocData.top = new FormAttachment(0, verticalSpacing);
-		tocData.left = new FormAttachment(0, horizontalSpacing);
-		tocData.right = new FormAttachment(100, horizontalSpacing);
-		tableOfContents.setLayoutData(tocData);
-
-		// Message image @ bottom, left
-		messageImageLabel = new Label(parent, SWT.CENTER);
-		messageImageLabel.setBackground(background);
-
-		// Message label @ bottom, center
-		messageLabel = new Label(parent, SWT.WRAP);
-		JFaceColors.setColors(messageLabel, foreground, background);
-		messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
-		messageLabel.setFont(JFaceResources.getDialogFont());
-
-		// Filler labels
-		leftFillerLabel = new Label(parent, SWT.CENTER);
-		leftFillerLabel.setBackground(background);
-
-		bottomFillerLabel = new Label(parent, SWT.CENTER);
-		bottomFillerLabel.setBackground(background);
-
-		setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
-
-		return messageLabel;
-
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialogHeader#setLayoutsForNormalMessage(int, int)
-	 */
-
-	protected void setLayoutsForNormalMessage(
-		int verticalSpacing,
-		int horizontalSpacing) {
-
-		FormData messageImageData = new FormData();
-		messageImageData.top =
-			new FormAttachment(tableComposite, verticalSpacing);
-		messageImageData.left = new FormAttachment(0, H_GAP_IMAGE);
-		messageImageLabel.setLayoutData(messageImageData);
-
-		FormData messageLabelData = new FormData();
-		messageLabelData.top =
-			new FormAttachment(tableComposite, verticalSpacing);
-		messageLabelData.right = new FormAttachment(0, horizontalSpacing);
-		messageLabelData.left =
-			new FormAttachment(messageImageLabel, horizontalSpacing);
-
-		messageLabel.setLayoutData(messageLabelData);
-
-		FormData fillerData = new FormData();
-		fillerData.left = new FormAttachment(0, horizontalSpacing);
-		fillerData.top = new FormAttachment(messageImageLabel, 0);
-		fillerData.bottom = new FormAttachment(messageLabel, 0, SWT.BOTTOM);
-		bottomFillerLabel.setLayoutData(fillerData);
-
-		FormData data = new FormData();
-		data.top = new FormAttachment(messageImageLabel, 0, SWT.TOP);
-		data.left = new FormAttachment(0, 0);
-		data.bottom = new FormAttachment(messageImageLabel, 0, SWT.BOTTOM);
-		data.right = new FormAttachment(messageImageLabel, 0);
-		leftFillerLabel.setLayoutData(data);
-	}
-
-	/*
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialogHeader#setLayoutsForErrorMessage(int, int)
-	 */
-	protected void setLayoutsForErrorMessage(
-		int verticalSpacing,
-		int horizontalSpacing) {
-
-		messageImageLabel.setVisible(true);
-		bottomFillerLabel.setVisible(true);
-		leftFillerLabel.setVisible(true);
-
-		/**
-		 * Note that we do not use horizontalSpacing here 
-		 * as when the background of the messages changes
-		 * there will be gaps between the icon label and the
-		 * message that are the background color of the shell.
-		 * We add a leading space elsewhere to compendate for this.
-		 */
-
-		FormData data = new FormData();
-		data.left = new FormAttachment(0, H_GAP_IMAGE);
-		data.top = new FormAttachment(tableComposite, verticalSpacing);
-		messageImageLabel.setLayoutData(data);
-
-		data = new FormData();
-		data.top = new FormAttachment(messageImageLabel, 0);
-		data.left = new FormAttachment(0, 0);
-		data.bottom = new FormAttachment(messageLabel, 0, SWT.BOTTOM);
-		data.right = new FormAttachment(messageImageLabel, 0, SWT.RIGHT);
-		bottomFillerLabel.setLayoutData(data);
-
-		data = new FormData();
-		data.top = new FormAttachment(messageImageLabel, 0, SWT.TOP);
-		data.left = new FormAttachment(0, 0);
-		data.bottom = new FormAttachment(messageImageLabel, 0, SWT.BOTTOM);
-		data.right = new FormAttachment(messageImageLabel, 0);
-		leftFillerLabel.setLayoutData(data);
-
-		FormData messageLabelData = new FormData();
-		messageLabelData.top =
-			new FormAttachment(tableComposite, verticalSpacing);
-		messageLabelData.right = new FormAttachment(100, horizontalSpacing);
-		messageLabelData.left = new FormAttachment(messageImageLabel, 0);
-
-		messageLabel.setLayoutData(messageLabelData);
-
-	}
-
-	/**
-	 * Add the nodes for newWizard. If we haven't created anything
-	 * set cache the wizard.
-	 */
 	public void addWizard(IWizard newWizard) {
 		//Add nodes if the table is already created
 		if (tableComposite == null)
@@ -283,12 +104,12 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 	 * @param IWorkbenchPage
 	 */
 	public void updateFor(IWizardPage page) {
-		
+
 		//We may not have created anything yet
 		int index = indexOfPage(page);
-		if(index == -1)
+		if (index == -1)
 			return;
-			
+
 		currentNode = nodes[index];
 		ITableOfContentsNode checkNode = currentNode;
 		for (int i = index + 1; i < nodes.length; i++) {
@@ -308,6 +129,34 @@ public class WizardTableOfContentsHeader extends TitleAreaDialogHeader {
 				return i;
 		}
 		return -1;
+
+	}
+
+	/**
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialogHeader#getTitleControl()
+	 */
+	protected Control getTitleControl() {
+		return tableComposite;
+	}
+
+	/*
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialogHeader#createTitleControl(Composite, Color, int, int)
+	 */
+	protected void createTitleControl(
+		Composite parent,
+		int verticalSpacing,
+		int horizontalSpacing) {
+
+		tableComposite = new Composite(parent, SWT.NULL);
+		tableComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+		tableComposite.setForeground(getTitleForeground(parent.getDisplay()));
+		tableComposite.setBackground(getTitleBackground(parent.getDisplay()));
+
+		//Create the nodes if the wizard has not been set.
+		if (initialWizard != null) {
+			addNodesForWizard(initialWizard);
+			currentNode = nodes[0];
+		}
 
 	}
 
