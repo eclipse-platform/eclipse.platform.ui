@@ -219,7 +219,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 */
 	public void release() {
 		if (depth == 0)
-			Assert.isTrue(false, "Lock cannot be released because it is not owned."); //$NON-NLS-1$
+			return;
 		//only release the lock when the depth reaches zero
 		Assert.isTrue(depth >= 0, "Lock released too many times"); //$NON-NLS-1$
 		if (--depth == 0)
@@ -249,7 +249,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "SpecialLock(" + number + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return "OrderedLock (" + number + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * This lock has just been granted to a new thread (the thread waited for it).
