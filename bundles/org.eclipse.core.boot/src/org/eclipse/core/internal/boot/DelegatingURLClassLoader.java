@@ -650,7 +650,7 @@ private URL searchVariants (URL[] basePaths, String[] variants, String path) {
 			File file = new File(fileName);
 			if (!file.exists()) {
 				if (DEBUG && DEBUG_SHOW_FAILURE)
-					debug("not found " + path);
+					debug("not found " + file.getAbsolutePath());
 			} else {	
 				if (DEBUG && DEBUG_SHOW_SUCCESS)
 					debug("found " + path + " as " + file.getAbsolutePath());

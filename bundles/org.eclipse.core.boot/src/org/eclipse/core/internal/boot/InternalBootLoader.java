@@ -68,6 +68,9 @@ public final class InternalBootLoader {
 	private static final String BOOTDIR = PLUGINSDIR + BOOTNAME + "/";
 	private static final String RUNTIMEDIR = PLUGINSDIR + RUNTIMENAME + "/";
 	private static final String OPTIONS = ".options";
+	// While we recognize the SunOS operating system, we change
+	// this internally to be Solaris.
+	private static final String INTERNAL_OS_SUNOS = "SunOS";
 
 	/** 
 	 * Execution options for the Runtime plug-in.  They are defined here because
@@ -103,7 +106,9 @@ public final class InternalBootLoader {
 	private static final String CONFIGURATION = "-configuration";
 	private static final String DEV = "-dev";
 	private static final String WS = "-ws";
+	private static final String OS = "-os";
 	private static final String ARCH = "-arch";
+	private static final String NL = "-nl";
 	private static final String USAGE = "-?";
 	// temporary declarations in support of 2.0 startup command line argument. These will
 	// be removed once the startup support is fully transitioned to the R2.0 configuration
@@ -797,10 +802,22 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			ws = arg;
 		}
 
+		// look for the operating system
+		if (args[i - 1].equalsIgnoreCase(OS)) {
+			found = true;
+			os = arg;
+		}
+
 		// look for the system architecture
 		if (args[i - 1].equalsIgnoreCase(ARCH)) {
 			found = true;
 			arch = arg;
+		}
+
+		// look for the system architecture
+		if (args[i - 1].equalsIgnoreCase(NL)) {
+			found = true;
+			nl = arg;
 		}
 
 		// done checking for args.  Remember where an arg was found 
@@ -926,8 +943,9 @@ private static void setupSystemContext() {
 		for (int i = 0; i < OS_LIST.length; i++)
 			if (name.regionMatches(true, 0, OS_LIST[i], 0, 3))
 				os = OS_LIST[i];
+		// EXCEPTION: All mappings of SunOS convert to Solaris
 		if (os == null)
-			os = BootLoader.OS_UNKNOWN;
+			os = name.equals(INTERNAL_OS_SUNOS) ? BootLoader.OS_SOLARIS : BootLoader.OS_UNKNOWN;
 	}
 	if (ws == null)
 		// setup default values for known OSes if nothing was specified

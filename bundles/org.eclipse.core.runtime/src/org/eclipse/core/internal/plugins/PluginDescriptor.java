@@ -60,7 +60,7 @@ private static String[] buildWSVariants() {
 }
 private static String[] buildOSVariants() {
 	ArrayList result = new ArrayList();
-	result.add("os/" + BootLoader.getOS() + "/" + System.getProperty("os.arch"));
+	result.add("os/" + BootLoader.getOS() + "/" + BootLoader.getOSArch());
 	result.add("os/" + BootLoader.getOS());
 	result.add("");
 	return (String[])result.toArray(new String[result.size()]);
