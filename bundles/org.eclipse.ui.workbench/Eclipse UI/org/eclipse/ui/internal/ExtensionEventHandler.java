@@ -101,6 +101,10 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		String id = null;
 		int numPerspectives = 0;
 		int numActionSetPartAssoc = 0;
+		
+		// push action sets and perspectives to the top because incoming 
+		// actionSetPartAssociations and perspectiveExtensions may depend upon 
+		// them for their bindings.		
 		for(int i=0; i<delta.length; i++) {
 			id = delta[i].getExtensionPoint().getSimpleIdentifier();
 			if (delta[i].getKind() == IExtensionDelta.ADDED) {
@@ -783,11 +787,13 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 	}
 	
 	private void loadActionSets(IExtension ext) {
-		ActionSetRegistry aReg = (ActionSetRegistry)WorkbenchPlugin.getDefault().getActionSetRegistry();
+		ActionSetRegistry aReg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		ActionSetRegistryReader reader = new ActionSetRegistryReader(aReg);
 		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for(int i=0; i<elements.length; i++)
 			reader.readElement(elements[i]);
+		
+		resetCurrentPerspective(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_action_set")); //$NON-NLS-1$
 /*
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
@@ -813,8 +819,23 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 */
 	}
 	
+	private void resetCurrentPerspective(String message) {
+		Shell parentShell = null;
+		IWorkbenchWindow window =workbench.getActiveWorkbenchWindow();
+		if (window != null)
+			parentShell = window.getShell();
+
+		message +=  ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_reset"); //$NON-NLS-1$
+		if (MessageDialog.openQuestion(parentShell, ExtensionEventHandlerMessages.getString("ExtensionEventHandler.reset_perspective"), message)) { //$NON-NLS-1$
+			IWorkbenchPage page = window.getActivePage();
+			if (page == null)
+				return;
+			page.resetPerspective();
+		}		
+	}
+
 	private void unloadActionSets(IExtension ext) {
-		ActionSetRegistry aReg = (ActionSetRegistry)WorkbenchPlugin.getDefault().getActionSetRegistry();
+		ActionSetRegistry aReg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		IConfigurationElement[] elements = ext.getConfigurationElements();
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
@@ -851,15 +872,15 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 	}
 
 	private void loadActionSetPartAssociation(IExtension ext) {
-		ActionSetRegistry aReg = (ActionSetRegistry)WorkbenchPlugin.getDefault().getActionSetRegistry();
+		ActionSetRegistry aReg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		ActionSetPartAssociationsReader reader = new ActionSetPartAssociationsReader(aReg);
 		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for(int i=0; i<elements.length; i++)
-			reader.readElement(elements[i]);
+			reader.readElement(elements[i]);		
 	}
 	
 	private void unloadActionSetPartAssociation(IExtension ext) {
-		ActionSetRegistry aReg = (ActionSetRegistry)WorkbenchPlugin.getDefault().getActionSetRegistry();
+		ActionSetRegistry aReg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for(int i = 0; i < elements.length; i++) {
 			String type = elements[i].getName();
