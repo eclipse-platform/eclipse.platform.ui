@@ -3097,9 +3097,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							doSetInput(input);
 						} 
 					} catch (CoreException x) {
-						title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
-						msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
-						ErrorDialog.openError(shell, title, msg, x.getStatus());
+						IStatus status= x.getStatus();
+						if (status == null || status.getSeverity() != IStatus.CANCEL) {
+							title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
+							msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
+							ErrorDialog.openError(shell, title, msg, x.getStatus());
+						}
 					}
 				}
 			}
@@ -3259,18 +3262,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;	
 				
 		try {
+			
 			extension.validateState(input, getSite().getShell());	
-		} catch (CoreException exception) {
-		
-			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
-			ILog log= Platform.getLog(bundle);
-			log.log(exception.getStatus());
-
-			Shell shell= getSite().getShell();
-			String title= EditorMessages.getString("Editor.error.validateEdit.title"); //$NON-NLS-1$
-			String msg= EditorMessages.getString("Editor.error.validateEdit.message"); //$NON-NLS-1$			
-			ErrorDialog.openError(shell, title, msg, exception.getStatus());
-
+			
+		} catch (CoreException x) {
+			IStatus status= x.getStatus();
+			if (status == null || status.getSeverity() != IStatus.CANCEL) {
+				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+				ILog log= Platform.getLog(bundle);
+				log.log(x.getStatus());
+				
+				Shell shell= getSite().getShell();
+				String title= EditorMessages.getString("Editor.error.validateEdit.title"); //$NON-NLS-1$
+				String msg= EditorMessages.getString("Editor.error.validateEdit.message"); //$NON-NLS-1$			
+				ErrorDialog.openError(shell, title, msg, x.getStatus());
+			}
 			return;
 		}
 
@@ -3373,7 +3379,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			editorSaved();
 		
 		} catch (CoreException x) {
-			handleExceptionOnSave(x, progressMonitor);
+			IStatus status= x.getStatus();
+			if (status == null || status.getSeverity() != IStatus.CANCEL)
+				handleExceptionOnSave(x, progressMonitor);
 		} finally {
 			provider.changed(getEditorInput());
 		}
@@ -3499,10 +3507,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			editorSaved();
 			
 		} catch (CoreException x) {
-			Shell shell= getSite().getShell();
-			String title= EditorMessages.getString("Editor.error.revert.title"); //$NON-NLS-1$
-			String msg= EditorMessages.getString("Editor.error.revert.message"); //$NON-NLS-1$
-			ErrorDialog.openError(shell, title, msg, x.getStatus());
+			IStatus status= x.getStatus();
+			if (status == null || status.getSeverity() != IStatus.CANCEL ) {
+				Shell shell= getSite().getShell();
+				String title= EditorMessages.getString("Editor.error.revert.title"); //$NON-NLS-1$
+				String msg= EditorMessages.getString("Editor.error.revert.message"); //$NON-NLS-1$
+				ErrorDialog.openError(shell, title, msg, x.getStatus());
+			}
 		} finally {
 			provider.changed(getEditorInput());
 		}

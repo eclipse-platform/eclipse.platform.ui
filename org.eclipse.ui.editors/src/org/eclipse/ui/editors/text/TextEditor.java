@@ -176,26 +176,26 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 			success= true;
 			
 		} catch (CoreException x) {
-			
-			String title= TextEditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
-			String msg= MessageFormat.format(TextEditorMessages.getString("Editor.error.save.message"), new Object[] { x.getMessage() }); //$NON-NLS-1$
-			
 			IStatus status= x.getStatus();
-			if (status != null) {
-				switch (status.getSeverity()) {
-					case IStatus.INFO:
-						MessageDialog.openInformation(shell, title, msg);
+			if (status == null || status.getSeverity() != IStatus.CANCEL) {
+				String title= TextEditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
+				String msg= MessageFormat.format(TextEditorMessages.getString("Editor.error.save.message"), new Object[] { x.getMessage() }); //$NON-NLS-1$
+				
+				if (status != null) {
+					switch (status.getSeverity()) {
+						case IStatus.INFO:
+							MessageDialog.openInformation(shell, title, msg);
 						break;
-					case IStatus.WARNING:
-						MessageDialog.openWarning(shell, title, msg);
+						case IStatus.WARNING:
+							MessageDialog.openWarning(shell, title, msg);
 						break;
-					default:
-						MessageDialog.openError(shell, title, msg);
+						default:
+							MessageDialog.openError(shell, title, msg);
+					}
+				} else {
+					MessageDialog.openError(shell, title, msg);
 				}
-			} else {
-			  	 MessageDialog.openError(shell, title, msg);
 			}
-						
 		} finally {
 			provider.changed(newInput);
 			if (success)
