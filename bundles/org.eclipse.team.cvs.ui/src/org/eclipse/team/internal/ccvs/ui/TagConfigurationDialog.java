@@ -175,19 +175,21 @@ public class TagConfigurationDialog extends Dialog {
 		data.horizontalSpan = 2;
 		description.setLayoutData(data);
 		
-		Label cvsResourceTreeLabel = new Label (shell, SWT.NONE);
-		cvsResourceTreeLabel.setText (Policy.bind("TagConfigurationDialog.5")); //$NON-NLS-1$
-		data = new GridData ();
-		data.horizontalSpan = 1;
-		cvsResourceTreeLabel.setLayoutData (data);
-
-		Label cvsTagTreeLabel = new Label (shell, SWT.NONE);
-		cvsTagTreeLabel.setText (Policy.bind("TagConfigurationDialog.6")); //$NON-NLS-1$
-		data = new GridData ();
-		data.horizontalSpan = 1;
-		cvsTagTreeLabel.setLayoutData (data);
+		Composite comp = new Composite(shell, SWT.NULL);
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 1;
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		comp.setLayout(gridLayout);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Tree tree = new Tree(shell, SWT.BORDER | SWT.MULTI);
+		Label cvsResourceTreeLabel = new Label(comp, SWT.NONE);
+		cvsResourceTreeLabel.setText(Policy.bind("TagConfigurationDialog.5")); //$NON-NLS-1$
+		data = new GridData();
+		data.horizontalSpan = 1;
+		cvsResourceTreeLabel.setLayoutData(data);
+
+		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI);
 		cvsResourceTree = new TreeViewer (tree);
 		cvsResourceTree.setContentProvider(new RemoteContentProvider());
 		cvsResourceTree.setLabelProvider(new WorkbenchLabelProvider());
@@ -208,7 +210,22 @@ public class TagConfigurationDialog extends Dialog {
 			}
 		});
 
-		Table table = new Table(shell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
+
+		comp = new Composite(shell, SWT.NULL);
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 1;
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		comp.setLayout(gridLayout);
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Label cvsTagTreeLabel = new Label(comp, SWT.NONE);
+		cvsTagTreeLabel.setText(Policy.bind("TagConfigurationDialog.6")); //$NON-NLS-1$
+		data = new GridData();
+		data.horizontalSpan = 1;
+		cvsTagTreeLabel.setLayoutData(data);
+		
+		Table table = new Table(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 150;
 		data.horizontalSpan = 1;
