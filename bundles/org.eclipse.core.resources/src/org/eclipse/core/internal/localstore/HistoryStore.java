@@ -231,14 +231,11 @@ public InputStream getContents(IFileState target) throws CoreException {
  */
 public IFileState[] getStates(final IPath key) {
 	final int max = workspace.internalGetDescription().getMaxFileStates();
-	final long minimumTimestamp = System.currentTimeMillis() - workspace.internalGetDescription().getFileStateLongevity();
 	final List result = new ArrayList(max);
 	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
-			if (entry.getLastModified() < minimumTimestamp)
-				return true;
 			result.add(new FileState(HistoryStore.this, key, entry.getLastModified(), entry.getUUID()));
-			return result.size() < max;
+			return true;
 		}
 	};
 	accept(key, visitor, false);
