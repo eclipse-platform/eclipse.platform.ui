@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.html;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.*;
 import org.osgi.framework.*;
 
 /**
@@ -160,17 +160,17 @@ public final class HTMLUtil {
 	 */
 	public static String getResolvedBundleLocation(Bundle bundle) {
 		try {
-			URL bundleLocation = bundle.getEntry("");
+			URL bundleLocation = bundle.getEntry(""); //$NON-NLS-1$
 			if (bundleLocation == null)
 				return null;
 			bundleLocation = Platform.asLocalURL(bundleLocation);
 			return bundleLocation.toExternalForm();
 		} catch (IllegalStateException e) {
-			Log.error("Failed to access bundle: "
+			Log.error("Failed to access bundle: " //$NON-NLS-1$
 					+ bundle.getSymbolicName(), e);
 			return null;
 		} catch (IOException e) {
-			Log.error("Failed to resolve URL path for bundle: "
+			Log.error("Failed to resolve URL path for bundle: " //$NON-NLS-1$
 					+ bundle.getSymbolicName(), e);
 			return null;
 		}

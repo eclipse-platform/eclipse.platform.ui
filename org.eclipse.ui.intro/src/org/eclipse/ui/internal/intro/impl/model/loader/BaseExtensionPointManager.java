@@ -24,16 +24,16 @@ import org.eclipse.ui.internal.intro.impl.util.*;
 public class BaseExtensionPointManager {
 
     // the config extension id
-    protected static final String CONFIG = "org.eclipse.ui.intro.config";
+    protected static final String CONFIG = "org.eclipse.ui.intro.config"; //$NON-NLS-1$
 
     // the configExtension extension id
-    protected static final String CONFIG_EXTENSION = "org.eclipse.ui.intro.configExtension";
+    protected static final String CONFIG_EXTENSION = "org.eclipse.ui.intro.configExtension"; //$NON-NLS-1$
 
     // the attribute in the config element to specify the intro part id.
-    protected static final String ATT_CONFIG_INTRO_ID = "introId";
+    protected static final String ATT_CONFIG_INTRO_ID = "introId"; //$NON-NLS-1$
 
     // the attribute in the config element to specify the intro part id.
-    protected static final String ATT_CONFIG_EXTENSION_CONFIG_ID = "configId";
+    protected static final String ATT_CONFIG_EXTENSION_CONFIG_ID = "configId"; //$NON-NLS-1$
 
     // the id attribute in any intro element.
     protected static final String ATT_ID = AbstractBaseIntroElement.ATT_ID;
@@ -111,8 +111,8 @@ public class BaseExtensionPointManager {
 
         if (config == null)
             // if there is no valid config, log the fact.
-            Log.warning("No Intro configuration found with " + attrributeName
-                    + " of value = " + attributeValue);
+            Log.warning("No Intro configuration found with " + attrributeName //$NON-NLS-1$
+                    + " of value = " + attributeValue); //$NON-NLS-1$
 
         return config;
     }

@@ -22,8 +22,8 @@ public class IntroModelLabelProvider extends LabelProvider {
 
     static {
         ImageUtil.registerImage(ImageUtil.INTRO_MODEL_CONTAINER,
-                "container_obj.gif");
-        ImageUtil.registerImage(ImageUtil.INTRO_MODEL_LEAF, "topic.gif");
+                "container_obj.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.INTRO_MODEL_LEAF, "topic.gif"); //$NON-NLS-1$
     }
 
     public IntroModelLabelProvider() {
@@ -66,37 +66,37 @@ public class IntroModelLabelProvider extends LabelProvider {
         int elementType = introElement.getType();
         switch (elementType) {
         case AbstractIntroElement.DIV:
-            label = "DIV: " + ((IntroDiv) introElement).getLabel();
+            label = "DIV: " + ((IntroDiv) introElement).getLabel(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.LINK:
-            label = "LINK: " + ((IntroLink) introElement).getLabel();
+            label = "LINK: " + ((IntroLink) introElement).getLabel(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.TEXT:
-            label = "TEXT: " + ((IntroText) introElement).getText();
+            label = "TEXT: " + ((IntroText) introElement).getText(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.IMAGE:
-            label = "IMAGE: " + ((IntroImage) introElement).getId();
+            label = "IMAGE: " + ((IntroImage) introElement).getId(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.HTML:
-            label = "HTML: " + ((IntroHTML) introElement).getId();
+            label = "HTML: " + ((IntroHTML) introElement).getId(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.INCLUDE:
-            label = "Unresolved INCLUDE: "
+            label = "Unresolved INCLUDE: " //$NON-NLS-1$
                     + ((IntroInclude) introElement).getPath();
             break;
         case AbstractIntroElement.PAGE:
-            label = "PAGE: " + ((AbstractIntroPage) introElement).getTitle();
+            label = "PAGE: " + ((AbstractIntroPage) introElement).getTitle(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.HOME_PAGE:
-            label = "HOME PAGE: "
+            label = "HOME PAGE: " //$NON-NLS-1$
                     + ((AbstractIntroPage) introElement).getTitle();
             break;
         case AbstractIntroElement.PRESENTATION:
-            label = "PRESENTATION: "
+            label = "PRESENTATION: " //$NON-NLS-1$
                     + ((IntroPartPresentation) introElement).getTitle();
             break;
         case AbstractIntroElement.CONTAINER_EXTENSION:
-            label = "Unresolved ConfigExtension: "
+            label = "Unresolved ConfigExtension: " //$NON-NLS-1$
                     + ((IntroExtensionContent) introElement).getPath();
             break;
         default:

@@ -54,7 +54,7 @@ public class CustomizableIntroPart extends IntroPart {
 
         // load the correct model based in the current Intro Part id. Set the
         // IntroPartId in the manager class.
-        String introId = getConfigurationElement().getAttribute("id");
+        String introId = getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
         ExtensionPointManager extensionPointManager = IntroPlugin.getDefault()
                 .getExtensionPointManager();
         extensionPointManager.setIntroId(introId);
@@ -72,10 +72,10 @@ public class CustomizableIntroPart extends IntroPart {
         // REVISIT: make sure this is handled better.
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
-                    "Could not find a valid configuration for Intro Part: "
+                    "Could not find a valid configuration for Intro Part: " //$NON-NLS-1$
                             + ModelLoaderUtil.getLogString(
-                                    getConfigurationElement(), "id")
-                            + "\nCheck Log View for details.", null);
+                                    getConfigurationElement(), "id") //$NON-NLS-1$
+                            + "\nCheck Log View for details.", null); //$NON-NLS-1$
 
     }
 

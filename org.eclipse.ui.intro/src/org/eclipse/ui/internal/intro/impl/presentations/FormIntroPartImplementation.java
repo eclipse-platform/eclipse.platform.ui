@@ -43,18 +43,18 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
         // REVISIT: register all common images here. Even if this part
         // implementation is created again, the images will remain in plugin
         // registry.
-        ImageUtil.registerImage(ImageUtil.ROOT_LINK, "overview_96.gif");
-        ImageUtil.registerImage(ImageUtil.ROOT_LINK_SMALL, "overview_64.gif");
-        ImageUtil.registerImage(ImageUtil.FORM_BG, "form_banner.gif");
-        ImageUtil.registerImage(ImageUtil.LINK, "bpel_16.gif");
+        ImageUtil.registerImage(ImageUtil.ROOT_LINK, "overview_96.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.ROOT_LINK_SMALL, "overview_64.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.FORM_BG, "form_banner.gif"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.LINK, "bpel_16.gif"); //$NON-NLS-1$
     }
 
     private Action homeAction = new Action() {
 
         {
             setToolTipText(IntroPlugin
-                    .getResourceString("Browser.homeButton_tooltip"));
-            setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif"));
+                    .getResourceString("Browser.homeButton_tooltip")); //$NON-NLS-1$
+            setImageDescriptor(ImageUtil.createImageDescriptor("home_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -71,7 +71,7 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
 
     public void createPartControl(Composite container) {
         toolkit = new FormToolkit(container.getDisplay());
-        Color bg = sharedStyleManager.getColor(toolkit, "bg");
+        Color bg = sharedStyleManager.getColor(toolkit, "bg"); //$NON-NLS-1$
         if (bg != null) {
             toolkit.setBackground(bg);
         }
@@ -79,15 +79,15 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
                 HyperlinkGroup.UNDERLINE_HOVER);
 
         Form mainForm = toolkit.createForm(container);
-        Color fg = sharedStyleManager.getColor(toolkit, "title.fg");
+        Color fg = sharedStyleManager.getColor(toolkit, "title.fg"); //$NON-NLS-1$
         if (fg != null)
             mainForm.setForeground(fg);
-        Image bgImage = sharedStyleManager.getImage("title.image", null, null);
+        Image bgImage = sharedStyleManager.getImage("title.image", null, null); //$NON-NLS-1$
         if (bgImage != null) {
             mainForm.setBackgroundImage(bgImage);
             String repeat = sharedStyleManager
-                    .getProperty("title.image.repeat");
-            if (repeat != null && repeat.toLowerCase().equals("true"))
+                    .getProperty("title.image.repeat"); //$NON-NLS-1$
+            if (repeat != null && repeat.toLowerCase().equals("true")) //$NON-NLS-1$
                 mainForm.setBackgroundImageTiled(true);
         }
         mainForm.setText(getModelRoot().getPresentation().getTitle());
@@ -144,7 +144,7 @@ public class FormIntroPartImplementation extends AbstractIntroPartImplementation
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             String pageId = getModelRoot().getCurrentPageId();
-            if (pageId == null | pageId.equals(""))
+            if (pageId == null | pageId.equals("")) //$NON-NLS-1$
                 // If page ID was not set properly. exit.
                 return;
 

@@ -27,8 +27,8 @@ import org.w3c.dom.*;
  */
 public abstract class AbstractBaseIntroElement extends AbstractIntroElement {
 
-    public static final String ATT_ID = "id";
-    private static final String ATT_CLASS_ID = "class-id";
+    public static final String ATT_ID = "id"; //$NON-NLS-1$
+    private static final String ATT_CLASS_ID = "class-id"; //$NON-NLS-1$
 
     protected String id;
     protected String class_id;

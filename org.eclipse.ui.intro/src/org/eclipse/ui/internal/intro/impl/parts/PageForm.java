@@ -43,7 +43,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
 
     // Id to this page. There is only a single instance of this page in the
     // main page book.
-    public static String PAGE_FORM_ID = "pageFormId";
+    public static String PAGE_FORM_ID = "pageFormId"; //$NON-NLS-1$
 
     private HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
@@ -59,7 +59,8 @@ public class PageForm implements IIntroConstants, IPropertyListener {
                 Util.openBrowser(introLink.getUrl());
                 return;
             }
-            DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "
+            DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
+                    .getResourceString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
                     + introLink.getUrl());
         }
 
@@ -149,8 +150,8 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     private Control createImageHyperlink(Composite body, IntroLink link) {
         ImageHyperlink imageLink = toolkit.createImageHyperlink(body, SWT.NULL);
 
-        Image image = styleManager.getImage("rootPage.small-icon."
-                + link.getId(), "rootPage.small-icon",
+        Image image = styleManager.getImage("rootPage.small-icon." //$NON-NLS-1$
+                + link.getId(), "rootPage.small-icon", //$NON-NLS-1$
                 ImageUtil.ROOT_LINK_SMALL);
         imageLink.setImage(image);
         imageLink.setToolTipText(link.getLabel());

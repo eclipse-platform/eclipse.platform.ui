@@ -54,7 +54,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     public static final int CURRENT_PAGE_PROPERTY_ID = 1;
 
 
-    private static final String ATT_CONTENT = "content";
+    private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
 
 
     // False if there is no valid contribution to the
@@ -101,7 +101,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected void loadChildren() {
         children = new Vector();
 
-        Log.info("Loading Intro plugin model....");
+        Log.info("Loading Intro plugin model...."); //$NON-NLS-1$
 
         // load presentation first and create the model class for it. If there
         // is more than one presentation, load first one, and log rest.
@@ -109,7 +109,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (presentationElement == null) {
             // no presentations at all, exit.
             setModelState(true, false);
-            Log.warning("Could not find presentation element in intro config.");
+            Log.warning("Could not find presentation element in intro config."); //$NON-NLS-1$
             return;
         }
 
@@ -224,7 +224,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 // no extension content defined.
                 continue;
 
-            if (extensionContentElement.hasAttribute("failed")) {
+            if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
                 // we failed to resolve this configExtension, add the extension
                 // as a child of this model.
                 children.add(new IntroExtensionContent(extensionContentElement,
@@ -277,7 +277,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         AbstractIntroElement target = findTarget(this, path);
         if (target == null)
             // target could not be found. Signal failure.
-            extensionContentElement.setAttribute("failed", "true");
+            extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
         else if (target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER)) {
             // extensions are only for container (ie: divs and pages)
@@ -562,8 +562,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
             localLocation = Platform.asLocalURL(localLocation);
             return localLocation.toExternalForm();
         } catch (Exception e) {
-            String msg = StringUtil.concat("Failed to load resource: ",
-                    resource, " from ", ModelLoaderUtil.getBundleHeader(bundle,
+            String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
+                    resource, " from ", ModelLoaderUtil.getBundleHeader(bundle, //$NON-NLS-1$
                             Constants.BUNDLE_NAME));
             Log.error(msg, e);
             return resource;

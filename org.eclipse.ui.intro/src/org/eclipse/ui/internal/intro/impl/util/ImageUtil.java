@@ -27,19 +27,19 @@ public final class ImageUtil {
      * Image keys, to be used by plugin (intro) registry.
      */
     // Default images
-    public static final String ROOT_LINK = "rootLink";
-    public static final String ROOT_LINK_SMALL = "rootLinkSmall";
-    public static final String FORM_BG = "formBg";
-    public static final String LINK = "link";
+    public static final String ROOT_LINK = "rootLink"; //$NON-NLS-1$
+    public static final String ROOT_LINK_SMALL = "rootLinkSmall"; //$NON-NLS-1$
+    public static final String FORM_BG = "formBg"; //$NON-NLS-1$
+    public static final String LINK = "link"; //$NON-NLS-1$
 
     // Standby images
-    public static final String BACK = "back";
-    public static final String HELP_TOPIC = "helpTopic";
+    public static final String BACK = "back"; //$NON-NLS-1$
+    public static final String HELP_TOPIC = "helpTopic"; //$NON-NLS-1$
 
     // Viewer images
-    public static final String INTRO_MODEL_LEAF = "leaf";
-    public static final String INTRO_MODEL_CONTAINER = "container";
-    public static final String OPEN_ITNRO_VIEW = "introView";
+    public static final String INTRO_MODEL_LEAF = "leaf"; //$NON-NLS-1$
+    public static final String INTRO_MODEL_CONTAINER = "container"; //$NON-NLS-1$
+    public static final String OPEN_ITNRO_VIEW = "introView"; //$NON-NLS-1$
 
     //	Image location
     public static final String ICONS_PATH = "icons/"; //$NON-NLS-1$

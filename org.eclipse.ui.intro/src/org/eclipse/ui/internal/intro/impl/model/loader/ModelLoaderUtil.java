@@ -61,8 +61,8 @@ public class ModelLoaderUtil {
 
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
-        String msg = StringUtil.concat("Loaded ",
-                configElement.getName(), " from ", getLogString(configElement,
+        String msg = StringUtil.concat("Loaded ", //$NON-NLS-1$
+                configElement.getName(), " from ", getLogString(configElement, //$NON-NLS-1$
                         logAttribute));
         Log.info(msg);
 
@@ -71,7 +71,7 @@ public class ModelLoaderUtil {
             for (int i = 1; i < arraySize; i++)
                 // log each extra extension.
                 Log.warning(getLogString(configElements[i], logAttribute)
-                        + " ignored due to multiple contributions");
+                        + " ignored due to multiple contributions"); //$NON-NLS-1$
         }
         return configElement;
     }
@@ -82,17 +82,17 @@ public class ModelLoaderUtil {
      */
     public static String getLogString(IConfigurationElement element,
             String logAttribute) {
-        StringBuffer buffer = new StringBuffer("Bundle:");
+        StringBuffer buffer = new StringBuffer("Bundle:"); //$NON-NLS-1$
         buffer.append(element.getDeclaringExtension().getNamespace());
-        buffer.append("  Extension:");
+        buffer.append("  Extension:"); //$NON-NLS-1$
         buffer.append(element.getDeclaringExtension()
                 .getExtensionPointUniqueIdentifier());
-        buffer.append("  element:");
+        buffer.append("  element:"); //$NON-NLS-1$
         buffer.append(element.getName());
         if (logAttribute != null) {
-            buffer.append("  ");
+            buffer.append("  "); //$NON-NLS-1$
             buffer.append(logAttribute);
-            buffer.append(":");
+            buffer.append(":"); //$NON-NLS-1$
             buffer.append(element.getAttribute(logAttribute));
         }
         return buffer.toString();
@@ -118,8 +118,8 @@ public class ModelLoaderUtil {
 
         // we should only have one, so use first one.
         Element element = (Element) elements[0];
-        String msg = StringUtil.concat("Loaded ", element.getNodeName(),
-                " from ", getLogString(element, logAttribute));
+        String msg = StringUtil.concat("Loaded ", element.getNodeName(), //$NON-NLS-1$
+                " from ", getLogString(element, logAttribute)); //$NON-NLS-1$
         Log.info(msg);
 
         if (arraySize != 1) {
@@ -127,7 +127,7 @@ public class ModelLoaderUtil {
             for (int i = 1; i < arraySize; i++)
                 // log each extra extension.
                 Log.warning(getLogString(element, logAttribute)
-                        + " ignored due to multiple contributions");
+                        + " ignored due to multiple contributions"); //$NON-NLS-1$
         }
         return element;
     }
@@ -137,16 +137,16 @@ public class ModelLoaderUtil {
      * not null, its value is also printed.
      */
     public static String getLogString(Element element, String logAttribute) {
-        StringBuffer buffer = new StringBuffer("XML document:");
+        StringBuffer buffer = new StringBuffer("XML document:"); //$NON-NLS-1$
         buffer.append(element.getOwnerDocument().toString());
-        buffer.append("  Parent:");
+        buffer.append("  Parent:"); //$NON-NLS-1$
         buffer.append(element.getParentNode().getNodeName());
-        buffer.append("  element:");
+        buffer.append("  element:"); //$NON-NLS-1$
         buffer.append(element.getNodeName());
         if (logAttribute != null) {
-            buffer.append("  ");
+            buffer.append("  "); //$NON-NLS-1$
             buffer.append(logAttribute);
-            buffer.append(":");
+            buffer.append(":"); //$NON-NLS-1$
             buffer.append(element.getAttribute(logAttribute));
         }
         return buffer.toString();
@@ -208,13 +208,13 @@ public class ModelLoaderUtil {
                 || bundle.getState() == Bundle.INSTALLED) {
 
             if (bundle == null)
-                Log.error("Intro tried accessing a NULL bundle.", null);
+                Log.error("Intro tried accessing a NULL bundle.", null); //$NON-NLS-1$
             else {
                 String msg = StringUtil.concat(
-                        "Intro tried accessing Bundle: ", getBundleHeader(
-                                bundle, Constants.BUNDLE_NAME), " vendor: ",
+                        "Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
+                                bundle, Constants.BUNDLE_NAME), " vendor: ", //$NON-NLS-1$
                         getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
-                        " bundle state: ", String.valueOf(bundle.getState()));
+                        " bundle state: ", String.valueOf(bundle.getState())); //$NON-NLS-1$
                 Log.error(msg, null);
             }
             return false;

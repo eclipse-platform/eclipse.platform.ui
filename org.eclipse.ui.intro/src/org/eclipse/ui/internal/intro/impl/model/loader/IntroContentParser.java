@@ -25,7 +25,7 @@ import org.xml.sax.*;
  */
 public class IntroContentParser {
 
-    private static String TAG_INTRO_CONTENT = "introContent";
+    private static String TAG_INTRO_CONTENT = "introContent"; //$NON-NLS-1$
 
     private Document document;
 
@@ -42,13 +42,13 @@ public class IntroContentParser {
                 Element rootElement = document.getDocumentElement();
                 if (!rootElement.getTagName().equals(TAG_INTRO_CONTENT)) {
                     document = null;
-                    String msg = "Intro content file has incorrect parent tag: "
+                    String msg = "Intro content file has incorrect parent tag: " //$NON-NLS-1$
                             + content;
                     Log.warning(msg);
                 }
             }
         } catch (Exception e) {
-            Log.error("Could not load Intro content file: " + content, e);
+            Log.error("Could not load Intro content file: " + content, e); //$NON-NLS-1$
         }
     }
 
@@ -62,11 +62,11 @@ public class IntroContentParser {
             return document;
 
         } catch (SAXParseException spe) {
-            StringBuffer buffer = new StringBuffer("IntroParser error in line ");
+            StringBuffer buffer = new StringBuffer("IntroParser error in line "); //$NON-NLS-1$
             buffer.append(spe.getLineNumber());
-            buffer.append(", uri ");
+            buffer.append(", uri "); //$NON-NLS-1$
             buffer.append(spe.getSystemId());
-            buffer.append("\n");
+            buffer.append("\n"); //$NON-NLS-1$
             buffer.append(spe.getMessage());
 
             // Use the contained exception.

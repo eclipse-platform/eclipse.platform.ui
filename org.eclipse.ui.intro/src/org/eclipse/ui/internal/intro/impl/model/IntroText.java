@@ -19,7 +19,7 @@ import org.w3c.dom.*;
  */
 public class IntroText extends AbstractBaseIntroElement {
 
-    protected static final String TAG_TEXT = "text";
+    protected static final String TAG_TEXT = "text"; //$NON-NLS-1$
 
     private String text;
 

@@ -19,10 +19,10 @@ import org.w3c.dom.*;
  */
 public class IntroImage extends AbstractBaseIntroElement {
 
-    protected static final String TAG_IMAGE = "img";
+    protected static final String TAG_IMAGE = "img"; //$NON-NLS-1$
 
-    private static final String ATT_SRC = "src";
-    private static final String ATT_ALT = "alt";
+    private static final String ATT_SRC = "src"; //$NON-NLS-1$
+    private static final String ATT_ALT = "alt"; //$NON-NLS-1$
 
     private String src;
     private String alt;

@@ -46,8 +46,9 @@ public class CategoryForm implements IIntroConstants {
                 Util.openBrowser(introLink.getUrl());
                 return;
             }
-            DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "
-                    + introLink.getUrl());
+            DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
+                    .getResourceString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                    + " " + introLink.getUrl()); //$NON-NLS-1$
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -109,11 +110,11 @@ public class CategoryForm implements IIntroConstants {
                 : false;
         if (hasDivs) {
             String layoutStyle = getLayoutStyle(currentPage);
-            if (layoutStyle.equals("columns")) {
+            if (layoutStyle.equals("columns")) { //$NON-NLS-1$
                 createCategoryColumns(categoriesComposite, currentPage,
                         getShowLinkDescription(currentPage),
                         getVerticalLinkSpacing(currentPage));
-            } else if (layoutStyle.equals("table")) {
+            } else if (layoutStyle.equals("table")) { //$NON-NLS-1$
                 createCategoryTable(categoriesComposite, currentPage,
                         getNumberOfColumns(currentPage),
                         getShowLinkDescription(currentPage),
@@ -136,15 +137,15 @@ public class CategoryForm implements IIntroConstants {
     }
 
     private String getLayoutStyle(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout";
+        String key = "page." + page.getId() + ".layout"; //$NON-NLS-1$ //$NON-NLS-2$
         String value = styleManager.getProperty(key);
         if (value == null)
-            value = "table";
+            value = "table"; //$NON-NLS-1$
         return value;
     }
 
     private int getNumberOfColumns(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout.ncolumns";
+        String key = "page." + page.getId() + ".layout.ncolumns"; //$NON-NLS-1$ //$NON-NLS-2$
         int ncolumns = 0;
         String value = styleManager.getProperty(key);
         try {
@@ -155,8 +156,8 @@ public class CategoryForm implements IIntroConstants {
     }
 
     private int getNumberOfColumns(AbstractIntroPage page, IntroDiv category) {
-        String key = "page." + page.getId() + "." + category.getId()
-                + ".layout.ncolumns";
+        String key = "page." + page.getId() + "." + category.getId() //$NON-NLS-1$ //$NON-NLS-2$
+                + ".layout.ncolumns"; //$NON-NLS-1$
         int ncolumns = 1;
         String value = styleManager.getProperty(key);
         try {
@@ -167,15 +168,15 @@ public class CategoryForm implements IIntroConstants {
     }
 
     private boolean getShowLinkDescription(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout.link-description";
+        String key = "page." + page.getId() + ".layout.link-description"; //$NON-NLS-1$ //$NON-NLS-2$
         String value = styleManager.getProperty(key);
         if (value == null)
-            value = "false";
-        return value.toLowerCase().equals("true");
+            value = "false"; //$NON-NLS-1$
+        return value.toLowerCase().equals("true"); //$NON-NLS-1$
     }
 
     private int getVerticalLinkSpacing(AbstractIntroPage page) {
-        String key = "page." + page.getId() + ".layout.link-vspacing";
+        String key = "page." + page.getId() + ".layout.link-vspacing"; //$NON-NLS-1$ //$NON-NLS-2$
         int vspacing = 5;
         String value = styleManager.getProperty(key);
         try {
@@ -304,7 +305,7 @@ public class CategoryForm implements IIntroConstants {
             boolean showDescription) {
         Control control;
         Hyperlink linkControl;
-        Image linkImage = styleManager.getImage(link, "icon");
+        Image linkImage = styleManager.getImage(link, "icon"); //$NON-NLS-1$
         if (showDescription && link.getText() != null) {
             Composite container = toolkit.createComposite(body);
             TableWrapLayout layout = new TableWrapLayout();

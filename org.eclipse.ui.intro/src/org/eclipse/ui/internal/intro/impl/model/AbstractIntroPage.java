@@ -20,11 +20,11 @@ import org.w3c.dom.*;
  */
 public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
-    protected static final String TAG_PAGE = "page";
+    protected static final String TAG_PAGE = "page"; //$NON-NLS-1$
 
-    private static final String ATT_TITLE = "title";
-    private static final String ATT_STYLE = "style";
-    private static final String ATT_ALT_STYLE = "alt-style";
+    private static final String ATT_TITLE = "title"; //$NON-NLS-1$
+    private static final String ATT_STYLE = "style"; //$NON-NLS-1$
+    private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
 
     private String title;
     private String style;
@@ -235,9 +235,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         Vector vectorDivs = new Vector(Arrays.asList(divs));
         for (int i = 0; i < vectorDivs.size(); i++) {
             IntroDiv aDiv = (IntroDiv) vectorDivs.elementAt(i);
-            if (aDiv.getId().equals("navigation-links")
-                    || aDiv.getId().equals("background-image")
-                    || aDiv.getId().equals("root-background")) {
+            if (aDiv.getId().equals("navigation-links") //$NON-NLS-1$
+                    || aDiv.getId().equals("background-image") //$NON-NLS-1$
+                    || aDiv.getId().equals("root-background")) { //$NON-NLS-1$
                 vectorDivs.remove(aDiv);
                 i--;
             }
@@ -277,7 +277,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         IntroText[] allText = (IntroText[]) container
                 .getChildrenOfType(AbstractIntroElement.TEXT);
         for (int i = 0; i < allText.length; i++) {
-            if (allText[i].getClassId().equals("page-description"))
+            if (allText[i].getClassId().equals("page-description")) //$NON-NLS-1$
                 return allText[i].getText();
         }
         return null;

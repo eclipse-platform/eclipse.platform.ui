@@ -127,7 +127,8 @@ public class RootPageForm implements IIntroConstants {
                 Util.openBrowser(introLink.getUrl());
                 return;
             }
-            DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "
+            DialogUtil.displayInfoMessage(imageLink.getShell(), IntroPlugin
+                    .getResourceString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
                     + introLink.getUrl());
         }
 
@@ -139,7 +140,7 @@ public class RootPageForm implements IIntroConstants {
 
         public void linkExited(HyperlinkEvent e) {
             // empty text on exit.
-            updateDescription("");
+            updateDescription(""); //$NON-NLS-1$
         }
 
         private void updateDescription(String text) {
@@ -242,7 +243,7 @@ public class RootPageForm implements IIntroConstants {
     private void createImageHyperlink(Composite body, IntroLink link,
             FormStyleManager styleManager) {
         ImageHyperlink imageLink = toolkit.createImageHyperlink(body, SWT.NULL);
-        imageLink.setImage(styleManager.getImage(link, "icon"));
+        imageLink.setImage(styleManager.getImage(link, "icon")); //$NON-NLS-1$
         // each link is centered in cell.
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         imageLink.setLayoutData(gd);
@@ -265,8 +266,8 @@ public class RootPageForm implements IIntroConstants {
      * @param body
      */
     private Label createHoverLabel(FormStyleManager styleManager, Composite body) {
-        Label label = toolkit.createLabel(body, "", SWT.WRAP);
-        Color fg = styleManager.getColor(toolkit, "rootPage.hover-text.fg");
+        Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
+        Color fg = styleManager.getColor(toolkit, "rootPage.hover-text.fg"); //$NON-NLS-1$
         if (fg == null)
             fg = toolkit.getColors().getColor(FormColors.TITLE);
         label.setForeground(fg);

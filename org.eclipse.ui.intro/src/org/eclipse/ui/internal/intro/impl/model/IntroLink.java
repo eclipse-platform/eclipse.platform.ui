@@ -20,10 +20,10 @@ import org.w3c.dom.*;
  */
 public class IntroLink extends AbstractTextElement {
 
-    protected static final String TAG_LINK = "link";
+    protected static final String TAG_LINK = "link"; //$NON-NLS-1$
 
-    private static final String ATT_LABEL = "label";
-    private static final String ATT_URL = "url";
+    private static final String ATT_LABEL = "label"; //$NON-NLS-1$
+    private static final String ATT_URL = "url"; //$NON-NLS-1$
 
     private String label;
     private String url;

@@ -19,14 +19,14 @@ import org.w3c.dom.*;
  */
 public class IntroInclude extends AbstractIntroElement {
 
-    protected static final String TAG_INCLUDE = "include";
+    protected static final String TAG_INCLUDE = "include"; //$NON-NLS-1$
 
-    private static final String ATT_CONFIG_ID = "configId";
-    private static final String ATT_PATH = "path";
+    private static final String ATT_CONFIG_ID = "configId"; //$NON-NLS-1$
+    private static final String ATT_PATH = "path"; //$NON-NLS-1$
     /**
      * boolean attribute, default is false.
      */
-    private static final String ATT_MERGE_STYLE = "merge-style";
+    private static final String ATT_MERGE_STYLE = "merge-style"; //$NON-NLS-1$
 
     private String configId;
     private String path;
@@ -38,7 +38,7 @@ public class IntroInclude extends AbstractIntroElement {
         path = getAttribute(element, ATT_PATH);
         String mergeStyleString = getAttribute(element, ATT_MERGE_STYLE);
         mergeStyle = (mergeStyleString != null && mergeStyleString
-                .equalsIgnoreCase("true")) ? true : false;
+                .equalsIgnoreCase("true")) ? true : false; //$NON-NLS-1$
     }
 
     /**

@@ -116,12 +116,12 @@ public class IntroURLParser {
             return properties;
 
         // now extract the key/value pairs from the query.
-        String[] params = query.split("&");
+        String[] params = query.split("&"); //$NON-NLS-1$
         for (int i = 0; i < params.length; i++) {
             // for every parameter, ie: key=value pair, create a property
             // entry. we know we have the key as the first string in the array,
             // and the value as the second array.
-            String[] keyValuePair = params[i].split("=");
+            String[] keyValuePair = params[i].split("="); //$NON-NLS-1$
             properties.setProperty(keyValuePair[0], keyValuePair[1]);
         }
         return properties;

@@ -44,14 +44,14 @@ import org.eclipse.ui.intro.*;
  */
 public class IntroPartPresentation extends AbstractBaseIntroElement {
 
-    protected static final String TAG_PRESENTATION = "presentation";
-    private static final String TAG_IMPLEMENTATION = "implementation";
+    protected static final String TAG_PRESENTATION = "presentation"; //$NON-NLS-1$
+    private static final String TAG_IMPLEMENTATION = "implementation"; //$NON-NLS-1$
 
-    private static final String ATT_TITLE = "title";
-    private static final String ATT_STYLE = "style";
-    private static final String ATT_OS = "os";
-    private static final String ATT_WS = "ws";
-    protected static final String ATT_HOME_PAGE_ID = "home-page-id";
+    private static final String ATT_TITLE = "title"; //$NON-NLS-1$
+    private static final String ATT_STYLE = "style"; //$NON-NLS-1$
+    private static final String ATT_OS = "os"; //$NON-NLS-1$
+    private static final String ATT_WS = "ws"; //$NON-NLS-1$
+    protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
 
     private String title;
     private String style;
@@ -167,20 +167,20 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
 
                 implementation.init(introPart);
                 implementation.createPartControl(parent);
-                Log.info("Loaded config implementation from: "
+                Log.info("Loaded config implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                                "class"));
+                                "class")); //$NON-NLS-1$
                 break;
             } catch (SWTError e) {
-                Log.error("Failed to create implementation from: "
+                Log.error("Failed to create implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                                "class"), e);
+                                "class"), e); //$NON-NLS-1$
                 implementation = null;
                 implementationElement = null;
             } catch (Exception e) {
-                Log.error("Failed to create implementation from: "
+                Log.error("Failed to create implementation from: " //$NON-NLS-1$
                         + ModelLoaderUtil.getLogString(implementationElement,
-                                "class"), e);
+                                "class"), e); //$NON-NLS-1$
                 implementation = null;
                 implementationElement = null;
             }
@@ -197,7 +197,7 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
                 return;
             }
             implementation.createPartControl(parent);
-            Log.warning("Loaded UI Forms implementation as a default Welcome.");
+            Log.warning("Loaded UI Forms implementation as a default Welcome."); //$NON-NLS-1$
         }
     }
 
@@ -281,7 +281,7 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
      *  
      */
     private boolean listValueHasValue(String stringValue, String value) {
-        String[] attributeValues = stringValue.split(",");
+        String[] attributeValues = stringValue.split(","); //$NON-NLS-1$
         for (int i = 0; i < attributeValues.length; i++) {
             if (attributeValues[i].equalsIgnoreCase(value))
                 return true;
@@ -302,10 +302,10 @@ public class IntroPartPresentation extends AbstractBaseIntroElement {
         AbstractIntroPartImplementation implementation = null;
         try {
             implementation = (AbstractIntroPartImplementation) configElement
-                    .createExecutableExtension("class");
+                    .createExecutableExtension("class"); //$NON-NLS-1$
         } catch (Exception e) {
-            Util.handleException("Could not instantiate implementation class "
-                    + configElement.getAttribute("class"), e);
+            Util.handleException("Could not instantiate implementation class " //$NON-NLS-1$
+                    + configElement.getAttribute("class"), e); //$NON-NLS-1$
         }
         return implementation;
     }

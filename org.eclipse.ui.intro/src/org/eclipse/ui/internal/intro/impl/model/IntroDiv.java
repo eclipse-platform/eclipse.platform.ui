@@ -19,9 +19,9 @@ import org.w3c.dom.*;
  */
 public class IntroDiv extends AbstractIntroContainer {
 
-    protected static final String TAG_DIV = "div";
+    protected static final String TAG_DIV = "div"; //$NON-NLS-1$
 
-    private static final String ATT_LABEL = "label";
+    private static final String ATT_LABEL = "label"; //$NON-NLS-1$
 
     private String label;
 
@@ -60,7 +60,7 @@ public class IntroDiv extends AbstractIntroContainer {
      * @todo Generated comment
      */
     public String getText() {
-        IntroText text = (IntroText) findChild("page-description");
+        IntroText text = (IntroText) findChild("page-description"); //$NON-NLS-1$
         if (text == null)
             return null;
         return text.getText();

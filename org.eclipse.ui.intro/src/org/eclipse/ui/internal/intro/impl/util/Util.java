@@ -90,59 +90,59 @@ public class Util {
             public void handleEvent(Event e) {
                 switch (e.type) {
                 case SWT.Selection:
-                    System.out.println("Selection EVENT: " + e.toString());
+                    System.out.println("Selection EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.Dispose:
-                    System.out.println("Dispose EVENT: " + e.toString());
+                    System.out.println("Dispose EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.Paint:
-                    System.out.println("Paint EVENT: " + e.toString());
+                    System.out.println("Paint EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.Resize:
-                    System.out.println("Resize EVENT: " + e.toString());
+                    System.out.println("Resize EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.MouseDoubleClick:
-                    System.out.println("MouseDoubleClick EVENT: "
+                    System.out.println("MouseDoubleClick EVENT: " //$NON-NLS-1$
                             + e.toString());
                     break;
                 case SWT.MouseDown:
-                    System.out.println("MouseDown EVENT: " + e.toString());
+                    System.out.println("MouseDown EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.MouseUp:
-                    System.out.println("MouseUp EVENT: " + e.toString());
+                    System.out.println("MouseUp EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.MouseMove:
-                    System.out.println("MouseMove EVENT: " + e.toString());
+                    System.out.println("MouseMove EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.MouseEnter:
-                    System.out.println("MouseEnter EVENT: " + e.toString());
+                    System.out.println("MouseEnter EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.MouseExit:
-                    System.out.println("MouseExit EVENT: " + e.toString());
+                    System.out.println("MouseExit EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.MouseHover:
-                    System.out.println("MouseHover EVENT: " + e.toString());
+                    System.out.println("MouseHover EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.FocusIn:
-                    System.out.println("FocusIn EVENT: " + e.toString());
+                    System.out.println("FocusIn EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.FocusOut:
-                    System.out.println("FocusOut EVENT: " + e.toString());
+                    System.out.println("FocusOut EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.KeyDown:
-                    System.out.println("KeyDown EVENT: " + e.toString());
+                    System.out.println("KeyDown EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.KeyUp:
-                    System.out.println("KeyUp EVENT: " + e.toString());
+                    System.out.println("KeyUp EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.Traverse:
-                    System.out.println("Traverse EVENT: " + e.toString());
+                    System.out.println("Traverse EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.Show:
-                    System.out.println("Show EVENT: " + e.toString());
+                    System.out.println("Show EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 case SWT.Hide:
-                    System.out.println("Hide EVENT: " + e.toString());
+                    System.out.println("Hide EVENT: " + e.toString()); //$NON-NLS-1$
                     break;
                 default:
                     System.out.println(e.toString());
@@ -260,11 +260,11 @@ public class Util {
                         boolean remote) {
                     StringBuffer cmd = new StringBuffer(browser);
                     if (remote) {
-                        cmd.append(" -remote openURL(");
+                        cmd.append(" -remote openURL("); //$NON-NLS-1$
                         cmd.append(href);
-                        cmd.append(")");
+                        cmd.append(")"); //$NON-NLS-1$
                     } else {
-                        cmd.append(" ");
+                        cmd.append(" "); //$NON-NLS-1$
                         cmd.append(href);
                     }
                     return cmd.toString();
@@ -283,7 +283,7 @@ public class Util {
 
             public void run() {
                 DialogUtil.displayErrorMessage(display.getActiveShell(),
-                        "Failed to launch external browser", e);
+                        "Failed to launch external browser", e); //$NON-NLS-1$
             }
         });
     }

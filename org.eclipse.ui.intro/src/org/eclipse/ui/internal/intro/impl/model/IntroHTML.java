@@ -23,13 +23,13 @@ import org.w3c.dom.*;
  */
 public class IntroHTML extends AbstractTextElement {
 
-    protected static final String TAG_HTML = "html";
+    protected static final String TAG_HTML = "html"; //$NON-NLS-1$
 
-    private static final String ATT_SRC = "src";
+    private static final String ATT_SRC = "src"; //$NON-NLS-1$
     /**
      * type must be "inline" or "embed".
      */
-    private static final String ATT_TYPE = "type";
+    private static final String ATT_TYPE = "type"; //$NON-NLS-1$
 
     private String src;
     private String html_type;
@@ -39,8 +39,8 @@ public class IntroHTML extends AbstractTextElement {
         super(element, bundle);
         src = getAttribute(element, ATT_SRC);
         html_type = getAttribute(element, ATT_TYPE);
-        if (html_type != null && !html_type.equalsIgnoreCase("inline")
-                && !html_type.equalsIgnoreCase("embed"))
+        if (html_type != null && !html_type.equalsIgnoreCase("inline") //$NON-NLS-1$
+                && !html_type.equalsIgnoreCase("embed")) //$NON-NLS-1$
             // if type is not correct, null it.
             html_type = null;
 
@@ -80,7 +80,7 @@ public class IntroHTML extends AbstractTextElement {
      * @return Returns the html type value.
      */
     public boolean isInlined() {
-        return (html_type != null && html_type.equalsIgnoreCase("inline")) ? true
+        return (html_type != null && html_type.equalsIgnoreCase("inline")) ? true //$NON-NLS-1$
                 : false;
     }
 

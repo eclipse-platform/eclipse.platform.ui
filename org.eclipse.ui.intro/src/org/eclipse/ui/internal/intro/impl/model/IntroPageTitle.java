@@ -19,7 +19,7 @@ import org.w3c.dom.*;
  */
 public class IntroPageTitle extends IntroText {
 
-    protected static final String TAG_TITLE = "title";
+    protected static final String TAG_TITLE = "title"; //$NON-NLS-1$
 
     IntroPageTitle(Element element, Bundle bundle) {
         super(element, bundle);

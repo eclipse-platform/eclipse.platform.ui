@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.*;
  */
 public class StandbyPartContent extends AbstractBaseIntroElement {
 
-    public static final String STANDBY_PART_ELEMENT = "standbyPart";
+    public static final String STANDBY_PART_ELEMENT = "standbyPart"; //$NON-NLS-1$
 
-    private static final String PLUGIN_ID_ATTRIBUTE = "pluginId";
-    private static final String CLASS_ATTRIBUTE = "class";
+    private static final String PLUGIN_ID_ATTRIBUTE = "pluginId"; //$NON-NLS-1$
+    private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
 
     private String pluginId;
     private String className;

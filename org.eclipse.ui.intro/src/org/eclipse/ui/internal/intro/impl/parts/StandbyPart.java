@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.parts;
 
 import java.util.*;
@@ -107,7 +105,7 @@ public class StandbyPart {
         container.setLayout(new StandbyLayout());
 
         // return hyper link.
-        ImageUtil.registerImage(ImageUtil.BACK, "home_nav.gif");
+        ImageUtil.registerImage(ImageUtil.BACK, "home_nav.gif"); //$NON-NLS-1$
         returnLink = toolkit.createImageHyperlink(container, SWT.WRAP);
         returnLink.setImage(ImageUtil.getImage(ImageUtil.BACK));
         returnLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -160,17 +158,21 @@ public class StandbyPart {
 
     private void updateReturnLinkLabel() {
         AbstractIntroPage page = model.getCurrentPage();
-        String linkText = "Return to Introduction";
+        String linkText = IntroPlugin
+                .getResourceString("StandbyPart.returnToIntro"); //$NON-NLS-1$
         if (page instanceof IntroPage) {
-            linkText = "Return to " + page.getTitle();
+            linkText = IntroPlugin.getResourceString("StandbyPart.returnTo") //$NON-NLS-1$
+                    + " " + page.getTitle(); //$NON-NLS-1$
         }
         returnLink.setText(linkText);
         returnLink.setToolTipText(returnLink.getText());
     }
 
     private void doReturn() {
-        IIntroPart part = PlatformUI.getWorkbench().getIntroManager().getIntro();
-        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(part, false);
+        IIntroPart part = PlatformUI.getWorkbench().getIntroManager()
+                .getIntro();
+        PlatformUI.getWorkbench().getIntroManager()
+                .setIntroStandby(part, false);
     }
 
     /**

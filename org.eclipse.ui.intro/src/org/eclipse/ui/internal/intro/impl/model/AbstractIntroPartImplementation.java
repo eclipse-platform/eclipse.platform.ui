@@ -48,9 +48,9 @@ public abstract class AbstractIntroPartImplementation {
 
         {
             setToolTipText(IntroPlugin
-                    .getResourceString("IntroPart.showContentButton_tooltip"));
+                    .getResourceString("IntroPart.showContentButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("contents_view.gif"));
+                    .createImageDescriptor("contents_view.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -210,7 +210,7 @@ public abstract class AbstractIntroPartImplementation {
      * @return Returns the locationIsURL.
      */
     protected boolean locationIsURL() {
-        return getCurrentLocation().startsWith("http") ? true : false;
+        return getCurrentLocation().startsWith("http") ? true : false; //$NON-NLS-1$
     }
 
     /**

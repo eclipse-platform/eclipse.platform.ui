@@ -28,7 +28,7 @@ public interface IIntroConstants {
     // Form implementation consts.
     // key to retrieve the into link model object from imageHyperlink widget.
     // convention: actual string value is class name.
-    String INTRO_LINK = "IntroLink";
+    String INTRO_LINK = "IntroLink"; //$NON-NLS-1$
     // default fonts
     Font DEFAULT_FONT = JFaceResources.getBannerFont();
 }

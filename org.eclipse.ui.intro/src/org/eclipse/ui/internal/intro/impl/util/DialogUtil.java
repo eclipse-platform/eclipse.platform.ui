@@ -33,7 +33,7 @@ public class DialogUtil {
     public static void displayCoreErrorDialog(final Shell parent,
             String errorId, CoreException coreEx) {
 
-        String title = IntroPlugin.getResourceString("ErrorDialog.errorTitle");
+        String title = IntroPlugin.getResourceString("ErrorDialog.errorTitle"); //$NON-NLS-1$
         IStatus status = coreEx.getStatus();
         String msg = IntroPlugin.getResourceString(errorId);
         ErrorDialog.openError(parent, title, msg, status);
@@ -47,7 +47,7 @@ public class DialogUtil {
             final String msg, final Throwable ex) {
 
         String title = IntroPlugin
-                .getResourceString("MessageDialog.errorTitle");
+                .getResourceString("MessageDialog.errorTitle"); //$NON-NLS-1$
         MessageDialog.openError(parent, title, msg);
         Log.error(msg, ex);
     }
@@ -77,7 +77,7 @@ public class DialogUtil {
             final String msg) {
 
         String title = IntroPlugin
-                .getResourceString("MessageDialog.warningTitle");
+                .getResourceString("MessageDialog.warningTitle"); //$NON-NLS-1$
         MessageDialog.openWarning(parent, title, msg);
         Log.warning(msg);
     }
@@ -104,7 +104,7 @@ public class DialogUtil {
      */
     public static void displayInfoMessage(final Shell parent, final String msg) {
 
-        String title = IntroPlugin.getResourceString("MessageDialog.infoTitle");
+        String title = IntroPlugin.getResourceString("MessageDialog.infoTitle"); //$NON-NLS-1$
         MessageDialog.openInformation(parent, title, msg);
         Log.info(msg);
 

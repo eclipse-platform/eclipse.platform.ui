@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.html;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
+
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
-import org.eclipse.ui.internal.intro.impl.util.Log;
+import org.eclipse.ui.internal.intro.impl.util.*;
 public class IntroHTMLGenerator {
 	private AbstractIntroPage introPage;
 	private String introTitle;
@@ -37,7 +38,7 @@ public class IntroHTMLGenerator {
 		return generateHTMLElement();
 	}
 	private HTMLElement generateEncoding() {
-		HTMLElement encoding = new HTMLElement("");
+		HTMLElement encoding = new HTMLElement(""); //$NON-NLS-1$
 		// TODO: figure out how to handle locale based encoding
 		// As far as the HTML generator is concerned, this is probably as
 		// simple as asking the model for the information
@@ -796,7 +797,7 @@ public class IntroHTMLGenerator {
 				IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true, false);
 		image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, imageSrc);
 		if (altText == null)
-			altText = "";
+			altText = ""; //$NON-NLS-1$
 		image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ALT, altText);
 		return image;
 	}

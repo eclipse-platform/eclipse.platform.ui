@@ -21,11 +21,11 @@ import org.w3c.dom.*;
  */
 public class IntroExtensionContent extends AbstractBaseIntroElement {
 
-    protected static final String TAG_CONTAINER_EXTENSION = "extensionContent";
+    protected static final String TAG_CONTAINER_EXTENSION = "extensionContent"; //$NON-NLS-1$
 
-    protected static final String ATT_PATH = "path";
-    private static final String ATT_STYLE = "style";
-    private static final String ATT_ALT_STYLE = "alt-style";
+    protected static final String ATT_PATH = "path"; //$NON-NLS-1$
+    private static final String ATT_STYLE = "style"; //$NON-NLS-1$
+    private static final String ATT_ALT_STYLE = "alt-style"; //$NON-NLS-1$
 
     private String path;
     private String style;

@@ -33,7 +33,7 @@ public class IntroPlugin extends AbstractUIPlugin {
     private ResourceBundle resourceBundle;
 
     // The intro resource bundle.
-    private static String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources";
+    private static String INTRO_RESOURCE_BUNDLE = "org.eclipse.ui.internal.intro.impl.IntroPluginResources"; //$NON-NLS-1$
 
     /**
      * The constructor.

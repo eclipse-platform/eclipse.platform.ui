@@ -122,15 +122,15 @@ public class FormStyleManager {
             String qualifier) {
         StringBuffer buff = new StringBuffer();
         if (page instanceof IntroHomePage)
-            buff.append("rootPage.");
+            buff.append("rootPage."); //$NON-NLS-1$
         else {
-            buff.append("page.");
+            buff.append("page."); //$NON-NLS-1$
             buff.append(page.getId());
-            buff.append(".");
+            buff.append("."); //$NON-NLS-1$
         }
         buff.append(qualifier);
         if (link != null) {
-            buff.append(".");
+            buff.append("."); //$NON-NLS-1$
             buff.append(link.getId());
         }
         return buff.toString();

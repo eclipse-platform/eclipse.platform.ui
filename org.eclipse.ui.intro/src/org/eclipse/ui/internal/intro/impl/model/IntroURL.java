@@ -39,33 +39,33 @@ public class IntroURL {
     /**
      * Intro URL constants.
      */
-    public static final String INTRO_PROTOCOL = "http";
-    public static final String INTRO_HOST_ID = "org.eclipse.ui.intro";
+    public static final String INTRO_PROTOCOL = "http"; //$NON-NLS-1$
+    public static final String INTRO_HOST_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
 
     /**
      * Constants that represent Intro URL actions.
      */
-    public static final String SET_STANDBY_MODE = "setStandbyMode";
-    public static final String SHOW_STANDBY = "showStandby";
-    public static final String CLOSE = "close";
-    public static final String SHOW_HELP_TOPIC = "showHelpTopic";
-    public static final String SHOW_HELP = "showHelp";
-    public static final String OPEN_BROWSER = "openBrowser";
-    public static final String RUN_ACTION = "runAction";
-    public static final String SHOW_PAGE = "showPage";
-    public static final String SHOW_MESSAGE = "showMessage";
+    public static final String SET_STANDBY_MODE = "setStandbyMode"; //$NON-NLS-1$
+    public static final String SHOW_STANDBY = "showStandby"; //$NON-NLS-1$
+    public static final String CLOSE = "close"; //$NON-NLS-1$
+    public static final String SHOW_HELP_TOPIC = "showHelpTopic"; //$NON-NLS-1$
+    public static final String SHOW_HELP = "showHelp"; //$NON-NLS-1$
+    public static final String OPEN_BROWSER = "openBrowser"; //$NON-NLS-1$
+    public static final String RUN_ACTION = "runAction"; //$NON-NLS-1$
+    public static final String SHOW_PAGE = "showPage"; //$NON-NLS-1$
+    public static final String SHOW_MESSAGE = "showMessage"; //$NON-NLS-1$
 
     /**
      * Constants that represent valid action keys.
      */
-    public static final String KEY_ID = "id";
-    public static final String KEY_PLUGIN_ID = "pluginId";
-    public static final String KEY_CLASS = "class";
-    public static final String KEY_STANDBY = "standby";
-    public static final String KEY_PART_ID = "partId";
-    public static final String KEY_INPUT = "input";
-    public static final String KEY_MESSAGE = "message";
-    public static final String KEY_URL = "url";
+    public static final String KEY_ID = "id"; //$NON-NLS-1$
+    public static final String KEY_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+    public static final String KEY_CLASS = "class"; //$NON-NLS-1$
+    public static final String KEY_STANDBY = "standby"; //$NON-NLS-1$
+    public static final String KEY_PART_ID = "partId"; //$NON-NLS-1$
+    public static final String KEY_INPUT = "input"; //$NON-NLS-1$
+    public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
+    public static final String KEY_URL = "url"; //$NON-NLS-1$
 
     private String action = null;
     private Properties parameters = null;
@@ -189,7 +189,7 @@ public class IntroURL {
      * @param state
      */
     private void setStandbyState(String state) {
-        boolean standby = state.equals("true") ? true : false;
+        boolean standby = state.equals("true") ? true : false; //$NON-NLS-1$
         CustomizableIntroPart introPart = getCustomizableIntroPart(standby);
         // should rely on Workbench api. If the Intro part was not open when
         // this method was called, the following line simply resets the part
@@ -245,7 +245,7 @@ public class IntroURL {
                 proxy.run();
             }
         } catch (Exception e) {
-            Log.error("Could not run action: " + className, e);
+            Log.error("Could not run action: " + className, e); //$NON-NLS-1$
             return;
         }
     }
@@ -266,7 +266,7 @@ public class IntroURL {
             return aObject;
         } catch (Exception e) {
             Log.error(
-                    "Could not instantiate: " + className + " in " + pluginId,
+                    "Could not instantiate: " + className + " in " + pluginId, //$NON-NLS-1$ //$NON-NLS-2$
                     e);
             return null;
         }
@@ -303,12 +303,12 @@ public class IntroURL {
         // REVISIT: some of the actions run UI code yet they are in
         // model package.
         if (message == null)
-            message = "";
+            message = ""; //$NON-NLS-1$
         else {
             try {
-                message = URLDecoder.decode(message, "UTF-8");
+                message = URLDecoder.decode(message, "UTF-8"); //$NON-NLS-1$
             } catch (UnsupportedEncodingException e) {
-                message = "Failed to decode message";
+                message = "Failed to decode message"; //$NON-NLS-1$
             }
         }
 

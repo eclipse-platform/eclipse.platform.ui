@@ -310,7 +310,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     protected AbstractIntroElement findTarget(IntroModelRoot model, String path) {
         // extract path segments. Get first segment to start search.
-        String[] pathSegments = path.split("/");
+        String[] pathSegments = path.split("/"); //$NON-NLS-1$
         if (model == null)
             // if the target config was not found, return.
             return null;

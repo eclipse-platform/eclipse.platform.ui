@@ -22,10 +22,10 @@ import org.w3c.dom.*;
  */
 public class IntroHomePage extends AbstractIntroPage {
 
-    private static final String ATT_URL = "url";
-    private static final String ATT_STANDBY_URL = "standby-url";
-    private static final String ATT_STANDBY_STYLE = "standby-style";
-    private static final String ATT_STANDBY_ALT_STYLE = "standby-alt-style";
+    private static final String ATT_URL = "url"; //$NON-NLS-1$
+    private static final String ATT_STANDBY_URL = "standby-url"; //$NON-NLS-1$
+    private static final String ATT_STANDBY_STYLE = "standby-style"; //$NON-NLS-1$
+    private static final String ATT_STANDBY_ALT_STYLE = "standby-alt-style"; //$NON-NLS-1$
 
     private String url;
     private String standby_url;
@@ -138,8 +138,8 @@ public class IntroHomePage extends AbstractIntroPage {
         Vector vectorDivs = new Vector(Arrays.asList(divs));
         for (int i = 0; i < vectorDivs.size(); i++) {
             IntroDiv aDiv = (IntroDiv) vectorDivs.elementAt(i);
-            if (aDiv.getId().equals("background-image")
-                    || aDiv.getId().equals("root-background")) {
+            if (aDiv.getId().equals("background-image") //$NON-NLS-1$
+                    || aDiv.getId().equals("root-background")) { //$NON-NLS-1$
                 vectorDivs.remove(aDiv);
                 i--;
             }

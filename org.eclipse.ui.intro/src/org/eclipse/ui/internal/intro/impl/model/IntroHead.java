@@ -21,9 +21,9 @@ import org.w3c.dom.*;
  */
 public class IntroHead extends AbstractIntroElement {
 
-    protected static final String TAG_HEAD = "head";
+    protected static final String TAG_HEAD = "head"; //$NON-NLS-1$
 
-    private static final String ATT_SRC = "src";
+    private static final String ATT_SRC = "src"; //$NON-NLS-1$
 
     private String src;
 

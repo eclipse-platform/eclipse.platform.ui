@@ -24,6 +24,7 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 
@@ -38,7 +39,7 @@ public class ContextHelpPart implements IStandbyContentPart {
     private Text phraseText;
     private FormText text;
     private String defaultText;
-    private static final String HELP_KEY = "org.eclipse.ui.help";
+    private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 
     // private StandbyPart standbyPart;
 
@@ -121,8 +122,9 @@ public class ContextHelpPart implements IStandbyContentPart {
      */
     public void init(IIntroPart introPart) {
         partListener = new PartListener();
-        defaultText = "Click anywhere in the workbench to see a description of the selected part.";
-        ImageUtil.registerImage(ImageUtil.HELP_TOPIC, "help_topic.gif");
+        defaultText = IntroPlugin
+                .getResourceString("ContextHelpPart.defaultText"); //$NON-NLS-1$
+        ImageUtil.registerImage(ImageUtil.HELP_TOPIC, "help_topic.gif"); //$NON-NLS-1$
     }
 
     public void createPartControl(Composite parent, FormToolkit toolkit) {
@@ -176,7 +178,7 @@ public class ContextHelpPart implements IStandbyContentPart {
         text = toolkit.createFormText(form.getBody(), true);
         text.setImage(ImageUtil.HELP_TOPIC, ImageUtil
                 .getImage(ImageUtil.HELP_TOPIC));
-        text.addHyperlinkListener(new HyperlinkAdapter() {   
+        text.addHyperlinkListener(new HyperlinkAdapter() {
 
             public void linkActivated(HyperlinkEvent e) {
                 openLink(e.getHref());
@@ -198,7 +200,7 @@ public class ContextHelpPart implements IStandbyContentPart {
 
     private void doSearch(String phrase) {
         try {
-            String ephrase = URLEncoder.encode(phrase, "UTF-8");
+            String ephrase = URLEncoder.encode(phrase, "UTF-8"); //$NON-NLS-1$
             String query = "tab=search&searchWord=" + ephrase;
             WorkbenchHelp.displayHelpResource(query);
         } catch (UnsupportedEncodingException e) {
@@ -237,9 +239,9 @@ public class ContextHelpPart implements IStandbyContentPart {
         String text = null;
         IWorkbenchPart part = ref.getPart(false);
         if (part != null) {
-        	Display display = part.getSite().getShell().getDisplay();
+            Display display = part.getSite().getShell().getDisplay();
             Control c = display.getFocusControl();
-            if (c!=null && c.isVisible() && !c.isDisposed()) {
+            if (c != null && c.isVisible() && !c.isDisposed()) {
                 IContext helpContext = findHelpContext(c);
                 if (helpContext != null) {
                     text = formatHelpContext(helpContext);
