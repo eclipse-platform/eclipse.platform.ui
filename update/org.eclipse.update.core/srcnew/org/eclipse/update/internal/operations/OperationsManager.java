@@ -19,7 +19,7 @@ import org.eclipse.update.operations.*;
 
 public class OperationsManager implements IAdaptable, IOperationFactory {
 
-	private Vector listeners = new Vector();	
+	private Vector listeners = new Vector();
 	private Vector pendingOperations = new Vector();
 
 	public OperationsManager() {
@@ -28,10 +28,7 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 	public Object getAdapter(Class key) {
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationFactory#createConfigOperation(org.eclipse.update.configuration.IInstallConfiguration, org.eclipse.update.configuration.IConfiguredSite, org.eclipse.update.core.IFeature, org.eclipse.update.operations.IOperationListener)
-	 */
+
 	public IOperation createConfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
@@ -40,17 +37,10 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		return new ConfigOperation(config, targetSite, feature, listener);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationFactory#createBatchInstallOperation(org.eclipse.update.operations.IInstallOperation[])
-	 */
-	public IOperation createBatchInstallOperation(IInstallOperation[] operations) {
+	public IOperation createBatchInstallOperation(IInstallFeatureOperation[] operations) {
 		return new BatchInstallOperation(operations);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationFactory#createInstallOperation(org.eclipse.update.configuration.IInstallConfiguration, org.eclipse.update.configuration.IConfiguredSite, org.eclipse.update.core.IFeature, org.eclipse.update.core.IVerificationListener, org.eclipse.update.operations.IOperationListener)
-	 */
 	public IOperation createInstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
@@ -59,12 +49,16 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		IFeature[] unconfiguredOptionalFeatures,
 		IVerificationListener verifier,
 		IOperationListener listener) {
-		return new InstallOperation(config, targetSite, feature, optionalFeatures, unconfiguredOptionalFeatures, verifier, listener);
+		return new InstallOperation(
+			config,
+			targetSite,
+			feature,
+			optionalFeatures,
+			unconfiguredOptionalFeatures,
+			verifier,
+			listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationFactory#createUnconfigOperation(org.eclipse.update.configuration.IInstallConfiguration, org.eclipse.update.configuration.IConfiguredSite, org.eclipse.update.core.IFeature, org.eclipse.update.operations.IOperationListener)
-	 */
 	public IOperation createUnconfigOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
@@ -73,9 +67,6 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		return new UnconfigOperation(config, targetSite, feature, listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationFactory#createUninstallOperation(org.eclipse.update.configuration.IInstallConfiguration, org.eclipse.update.configuration.IConfiguredSite, org.eclipse.update.core.IFeature, org.eclipse.update.operations.IOperationListener)
-	 */
 	public IOperation createUninstallOperation(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
@@ -84,12 +75,27 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	public ISingleOperation findPendingOperation(IFeature feature) {
+
+	public IOperation createRevertConfigurationOperation(
+		IInstallConfiguration config,
+		IProblemHandler problemHandler,
+		IOperationListener listener) {
+		return new RevertConfigurationOperation(
+			config,
+			problemHandler,
+			listener);
+	}
+
+	public IOperation createToggleSiteOperation(
+		IConfiguredSite site,
+		IOperationListener listener) {
+		return new ToggleSiteOperation(site, listener);
+	}
+
+	public IFeatureOperation findPendingOperation(IFeature feature) {
 		for (int i = 0; i < pendingOperations.size(); i++) {
-			ISingleOperation operation =
-				(ISingleOperation) pendingOperations.elementAt(i);
+			IFeatureOperation operation =
+				(IFeatureOperation) pendingOperations.elementAt(i);
 			if (operation.getFeature().equals(feature))
 				return operation;
 		}
@@ -111,7 +117,6 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		if (operation != null)
 			removePendingOperation(operation);
 	}
-
 
 	public void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (!listeners.contains(listener))
@@ -207,39 +212,6 @@ public class OperationsManager implements IAdaptable, IOperationFactory {
 		}
 		return (PendingOperation[]) list.toArray(
 			new PendingOperation[list.size()]);
-	}
-
-
-	/**
-	 * Returns true if a restart is needed
-	 * @param site
-	 * @return
-	 * @throws CoreException
-	 */
-	public boolean toggleSiteState(IConfiguredSite site) throws CoreException {
-		if (site == null)
-			return false;
-		boolean oldValue = site.isEnabled();
-		site.setEnabled(!oldValue);
-		IStatus status = UpdateManager.getValidator().validateCurrentState();
-		if (status != null) {
-			// revert
-			site.setEnabled(oldValue);
-			throw new CoreException(status);
-		} else {
-			try {
-				SiteManager.getLocalSite().save();
-				UpdateManager.getOperationsManager().fireObjectChanged(
-					site,
-					"");
-				return true; // will restart
-			} catch (CoreException e) {
-				//revert
-				site.setEnabled(oldValue);
-				UpdateManager.logException(e);
-				throw e;
-			}
-		}
 	}
 
 }

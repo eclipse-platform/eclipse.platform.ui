@@ -43,11 +43,7 @@ public class FeatureStateAction extends Action {
 						adapter.getFeature(null),
 						null);
 
-			boolean restartNeeded = toggleOperation.execute(null);
-			
-			// notify the view
-			UpdateManager.getOperationsManager().fireObjectChanged(adapter.getFeature(null), null);
-			
+			boolean restartNeeded = toggleOperation.execute(null);			
 			if (restartNeeded)
 				UpdateUI.informRestartNeeded();
 

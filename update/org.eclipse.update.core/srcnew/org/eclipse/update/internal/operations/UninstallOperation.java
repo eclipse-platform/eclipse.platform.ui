@@ -19,7 +19,7 @@ import org.eclipse.update.operations.*;
  * Configure a feature.
  * ConfigOperation
  */
-public class UninstallOperation extends SingleOperation implements IUninstallOperation{
+public class UninstallOperation extends SingleOperation implements IUninstallFeatureOperation{
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
 	public UninstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {

@@ -18,12 +18,12 @@ import org.eclipse.update.operations.*;
 
 public class BatchInstallOperation
 	extends Operation
-	implements IMultiOperation {
+	implements IBatchOperation {
 		
 	private static final String KEY_INSTALLING = "OperationsManager.installing";
-	protected IInstallOperation[] operations;
+	protected IInstallFeatureOperation[] operations;
 
-	public BatchInstallOperation(IInstallOperation[] operations) {
+	public BatchInstallOperation(IInstallFeatureOperation[] operations) {
 		super(null);
 		this.operations = operations;
 	}
@@ -31,7 +31,7 @@ public class BatchInstallOperation
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IMultiOperation#getOperations()
 	 */
-	public ISingleOperation[] getOperations() {
+	public IFeatureOperation[] getOperations() {
 		return operations;
 	}
 

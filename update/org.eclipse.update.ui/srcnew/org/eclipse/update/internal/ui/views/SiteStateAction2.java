@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
+import java.lang.reflect.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
@@ -17,6 +19,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.operations.*;
 
 /**
  * @author dejan
@@ -46,9 +49,9 @@ public class SiteStateAction2 extends Action {
 			boolean oldValue = site.isEnabled();
 			if (!confirm(!oldValue))
 				return;
-				
-			boolean restartNeeded =
-				UpdateManager.getOperationsManager().toggleSiteState(site);
+			
+			IOperation toggleSiteOperation = UpdateManager.getOperationsManager().createToggleSiteOperation(site, null);
+			boolean restartNeeded = toggleSiteOperation.execute(null);
 					
 			if (restartNeeded)
 				UpdateUI.informRestartNeeded();
@@ -59,6 +62,8 @@ public class SiteStateAction2 extends Action {
 				null,
 				null,
 				e.getStatus());
+		} catch (InvocationTargetException e) {
+			UpdateUI.logException(e);
 		}
 	}
 

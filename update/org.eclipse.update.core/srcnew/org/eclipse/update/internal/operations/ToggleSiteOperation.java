@@ -17,39 +17,46 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.operations.*;
 
-public class RevertConfigurationOperation extends Operation implements IRevertConfigurationOperation {
+public class ToggleSiteOperation
+	extends Operation
+	implements IToggleSiteOperation {
 
-	private IInstallConfiguration config;
-	private IProblemHandler problemHandler;
+	private IConfiguredSite site;
 
-	public RevertConfigurationOperation(
-		IInstallConfiguration config,
-		IProblemHandler problemHandler,
+	public ToggleSiteOperation(
+		IConfiguredSite site,
 		IOperationListener listener) {
 		super(listener);
-		this.config = config;
-		this.problemHandler = problemHandler;
+		this.site = site;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean execute(IProgressMonitor monitor)
-		throws CoreException, InvocationTargetException {
-		IStatus status =
-			UpdateManager.getValidator().validatePendingRevert(config);
+		throws CoreException {
+		if (site == null)
+			return false;
+		boolean oldValue = site.isEnabled();
+		site.setEnabled(!oldValue);
+		IStatus status = UpdateManager.getValidator().validateCurrentState();
 		if (status != null) {
+			// revert
+			site.setEnabled(oldValue);
 			throw new CoreException(status);
-		}
-
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			localSite.revertTo(config, monitor, problemHandler);
-			localSite.save();
-			return true;
-		} catch (CoreException e) {
-			UpdateManager.logException(e);
-			throw e;
+		} else {
+			try {
+				SiteManager.getLocalSite().save();
+				UpdateManager.getOperationsManager().fireObjectChanged(
+					site,
+					"");
+				return true; // will restart
+			} catch (CoreException e) {
+				//revert
+				site.setEnabled(oldValue);
+				UpdateManager.logException(e);
+				throw e;
+			}
 		}
 	}
 }

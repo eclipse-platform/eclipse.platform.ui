@@ -11,7 +11,7 @@
 package org.eclipse.update.operations;
 
 /**
- * IConfigOperation
+ * IConfigFeatureOperation
  */
 public interface IOperationListener {
 	public boolean beforeExecute(IOperation operation);

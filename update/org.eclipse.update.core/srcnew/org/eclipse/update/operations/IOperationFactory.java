@@ -18,9 +18,35 @@ import org.eclipse.update.core.*;
  * IOperation
  */
 public interface IOperationFactory {
-	public IOperation createConfigOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IOperationListener listener);
-	public IOperation createUnconfigOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IOperationListener listener);
-	public IOperation createInstallOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IFeatureReference[] optionalFeatures, IFeature[] unconfiguredOptionalFeatures,IVerificationListener verifier, IOperationListener listener);
-	public IOperation createUninstallOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature, IOperationListener listener);
-	public IOperation createBatchInstallOperation(IInstallOperation[] operations);
+	public IOperation createConfigOperation(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		IFeature feature,
+		IOperationListener listener);
+	public IOperation createUnconfigOperation(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		IFeature feature,
+		IOperationListener listener);
+	public IOperation createInstallOperation(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		IFeature feature,
+		IFeatureReference[] optionalFeatures,
+		IFeature[] unconfiguredOptionalFeatures,
+		IVerificationListener verifier,
+		IOperationListener listener);
+	public IOperation createUninstallOperation(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		IFeature feature,
+		IOperationListener listener);
+	public IOperation createBatchInstallOperation(IInstallFeatureOperation[] operations);
+	public IOperation createToggleSiteOperation(
+		IConfiguredSite site,
+		IOperationListener listener);
+	public IOperation createRevertConfigurationOperation(
+		IInstallConfiguration config,
+		IProblemHandler problemHandler,
+		IOperationListener listener);
 }

@@ -7,13 +7,11 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-
+ */
 package org.eclipse.update.operations;
 
 /**
- * IOperation
+ * IConfigFeatureOperation
  */
-public interface IMultiOperation  extends IOperation {
-	public abstract ISingleOperation[] getOperations();
+public interface IConfigFeatureOperation extends IFeatureOperation {
 }

@@ -7,20 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-
+ */
 package org.eclipse.update.operations;
 
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 /**
- * IOperation
+ * IConfigFeatureOperation
  */
-public interface ISingleOperation extends IOperation {
-	public abstract IFeature getFeature();
-	public abstract IConfiguredSite getTargetSite();
-	public abstract IInstallConfiguration getInstallConfiguration();
-	public abstract IOperationListener getOperationListener();
-	public abstract IFeature getOldFeature();
+public interface IInstallFeatureOperation extends IFeatureOperation {
+	public IFeatureReference[] getOptionalFeatures();
 }

@@ -18,7 +18,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.operations.*;
 
 
-public abstract class SingleOperation extends Operation implements ISingleOperation {
+public abstract class SingleOperation extends Operation implements IFeatureOperation {
 	
 	protected IFeature feature;
 	protected IFeature oldFeature;

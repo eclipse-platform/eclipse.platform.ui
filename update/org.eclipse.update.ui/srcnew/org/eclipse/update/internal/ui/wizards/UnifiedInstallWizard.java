@@ -75,7 +75,7 @@ public class UnifiedInstallWizard
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 					// setup jobs with the correct environment
-				IInstallOperation[] operations = new IInstallOperation[selectedJobs.length];
+				IInstallFeatureOperation[] operations = new IInstallFeatureOperation[selectedJobs.length];
 				for (int i = 0; i < selectedJobs.length; i++) {
 					PendingOperation job = selectedJobs[i];
 					IFeature[] unconfiguredOptionalFeatures = null;
@@ -90,8 +90,8 @@ public class UnifiedInstallWizard
 								job,
 								targetPage.getTargetSite(job));
 					}
-					IInstallOperation op =
-						(IInstallOperation) UpdateManager
+					IInstallFeatureOperation op =
+						(IInstallFeatureOperation) UpdateManager
 							.getOperationsManager()
 							.createInstallOperation(
 							config,
@@ -287,9 +287,9 @@ public class UnifiedInstallWizard
 	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
 	 */
 	public boolean afterExecute(IOperation operation) {
-		if (!(operation instanceof IInstallOperation))
+		if (!(operation instanceof IInstallFeatureOperation))
 			return true;
-		IInstallOperation job = (IInstallOperation) operation;
+		IInstallFeatureOperation job = (IInstallFeatureOperation) operation;
 		IFeature oldFeature = job.getOldFeature();
 		if (oldFeature == null && job.getOptionalFeatures() != null)
 			preserveOriginatingURLs(

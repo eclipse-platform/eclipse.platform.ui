@@ -19,7 +19,7 @@ import org.eclipse.update.operations.*;
  * Unconfigure a feature.
  * UnconfigOperation
  */
-public class UnconfigOperation extends SingleOperation implements IUnconfigOperation {
+public class UnconfigOperation extends SingleOperation implements IUnconfigFeatureOperation {
 	
 	public UnconfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {
 		super(config, site, feature, listener);
@@ -44,7 +44,7 @@ public class UnconfigOperation extends SingleOperation implements IUnconfigOpera
 			IOperation pendingOperation =
 				UpdateManager.getOperationsManager().findPendingOperation(feature);
 
-			if (pendingOperation instanceof IConfigOperation) {
+			if (pendingOperation instanceof IConfigFeatureOperation) {
 				// no need to do either pending change
 				UpdateManager.getOperationsManager().removePendingOperation(
 					pendingOperation);
@@ -59,6 +59,9 @@ public class UnconfigOperation extends SingleOperation implements IUnconfigOpera
 
 			SiteManager.getLocalSite().save();
 
+			// notify the model
+			UpdateManager.getOperationsManager().fireObjectChanged(feature, null);
+			
 			return restartNeeded;
 		} catch (CoreException e) {
 			undo();

@@ -19,7 +19,7 @@ import org.eclipse.update.operations.*;
  * Configure a feature.
  * ConfigOperation
  */
-public class ConfigOperation extends SingleOperation implements IConfigOperation {
+public class ConfigOperation extends SingleOperation implements IConfigFeatureOperation {
 	
 	public ConfigOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature, IOperationListener listener) {
 		super(config, site, feature, listener);
@@ -43,7 +43,7 @@ public class ConfigOperation extends SingleOperation implements IConfigOperation
 			IOperation pendingOperation =
 				UpdateManager.getOperationsManager().findPendingOperation(feature);
 
-			if (pendingOperation instanceof IUnconfigOperation) {
+			if (pendingOperation instanceof IUnconfigFeatureOperation) {
 				// no need to do either pending change
 				UpdateManager.getOperationsManager().removePendingOperation(
 					pendingOperation);
@@ -58,6 +58,9 @@ public class ConfigOperation extends SingleOperation implements IConfigOperation
 
 			SiteManager.getLocalSite().save();
 
+			// notify the model
+			UpdateManager.getOperationsManager().fireObjectChanged(feature, null);
+			
 			return restartNeeded;
 		} catch (CoreException e) {
 			undo();

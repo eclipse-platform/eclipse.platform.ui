@@ -43,12 +43,12 @@ import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.UpdateLabelProvider;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.UpdateUIImages;
 import org.eclipse.update.internal.ui.forms.UIProblemHandler;
+import org.eclipse.update.operations.*;
 
 public class RevertConfigurationWizardPage extends WizardPage {
 
@@ -231,8 +231,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
-				RevertConfigurationOperation revertOperation =
-					new RevertConfigurationOperation(
+				IOperation revertOperation = UpdateManager.getOperationsManager().createRevertConfigurationOperation(
 						target,
 						new UIProblemHandler(),
 						null);
