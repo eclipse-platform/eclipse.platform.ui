@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -107,6 +109,12 @@ public class AntPropertiesBlock {
 		label.setText(propertyLabel);
 
 		propertyTableViewer= createTableViewer(top);
+		propertyTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				edit();
+			}
+		});
+		
 		createButtonGroup(top);
 
 		label = new Label(top, SWT.NONE);
