@@ -15,9 +15,8 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.search.SearchManager;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -109,14 +108,16 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart, 
 		// Syntax description
 		Label label = toolkit.createLabel(container, null, SWT.WRAP);
 		label.setText(HelpUIResources.getString("expression_label").replace('\n', ' ')); //$NON-NLS-1$
-		td = new TableWrapData();
-		td.colspan = 2;
+		td = new TableWrapData(TableWrapData.FILL);
 		label.setLayoutData(td);
 		
-		label = toolkit.createLabel(container, null);
-		td = new TableWrapData();
-		td.colspan = 2;	
-		label.setLayoutData(td);
+		toolkit.createLabel(container, null);
+		
+		// space
+		//label = toolkit.createLabel(container, null);
+		//td = new TableWrapData();
+		//td.colspan = 2;	
+		//label.setLayoutData(td);
 		// Filtering group		
 		scopeSection = toolkit.createSection(container, 
 				Section.TWISTIE|Section.COMPACT|Section.LEFT_TEXT_CLIENT_ALIGNMENT);

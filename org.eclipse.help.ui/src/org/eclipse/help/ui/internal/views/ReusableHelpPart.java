@@ -539,6 +539,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			part = new BrowserPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_SEARCH_RESULT)) {
 			part = new SearchResultsPart(parent, mform.getToolkit());
+		} else if (id.equals(HV_FSEARCH_RESULT)) {
+			part = new FederatedSearchResultsPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_SEE_ALSO)) {
 			part = new SeeAlsoPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH)) {

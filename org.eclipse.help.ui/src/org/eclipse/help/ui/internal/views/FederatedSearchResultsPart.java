@@ -10,23 +10,14 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.search.SearchHit;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 
 public class FederatedSearchResultsPart extends AbstractFormPart implements IHelpPart, ISearchEngineResultCollector { 
 	private ReusableHelpPart parent;
