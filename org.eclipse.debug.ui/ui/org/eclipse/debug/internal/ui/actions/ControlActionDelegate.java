@@ -45,6 +45,12 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 * Whether this delegate has been initialized
 	 */
 	private boolean fInitialized = false;
+	
+	/**
+	 * Whether this delegate has a direct action owner.
+	 * That is it is NOT contributed via XML.
+	 */
+	private boolean fHasOwner = false;
 
 	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
@@ -62,6 +68,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void initializeForOwner(ControlAction controlAction) {
 		setActionImages(controlAction);
+		fHasOwner= true;
 	}
 	
 	/**
@@ -124,7 +131,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	public void selectionChanged(IAction action, ISelection s) {
 		initialize(action);		
 		setAction(action);
-		if (getView() != null) {
+		if (getView() != null || fHasOwner == true) {
 			update(action, s);
 		}
 	}
