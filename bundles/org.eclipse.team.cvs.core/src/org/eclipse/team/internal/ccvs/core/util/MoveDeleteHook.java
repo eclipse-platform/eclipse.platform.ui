@@ -210,7 +210,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 							destination.accept(new IResourceVisitor() {
 								public boolean visit(IResource resource) throws CoreException {
 									if (resource.getType() == IResource.FOLDER && resource.getName().equals(SyncFileWriter.CVS_DIRNAME)) {
-										//tree.standardDeleteFolder((IFolder)resource, updateFlags, monitor);
+										tree.standardDeleteFolder((IFolder)resource, updateFlags, monitor);
 										return false;
 									}
 									return true;
