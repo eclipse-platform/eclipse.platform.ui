@@ -297,7 +297,7 @@
                tooltip="%ShowEditorsAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowEditorsAction"
                menubarPath="team.main/group4"
-               helpContextId="org.eclipse.team.cvs.ui.team_edit_action_context"
+               helpContextId="org.eclipse.team.cvs.ui.team_show_editors_action_context"
                id="org.eclipse.team.ccvs.ui.showeditors">
          </action>
       </objectContribution>

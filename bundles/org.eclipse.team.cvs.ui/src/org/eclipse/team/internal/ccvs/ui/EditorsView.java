@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -150,6 +151,8 @@ public class EditorsView extends ViewPart {
 
 		tableViewer.setContentProvider(new EditorsContentProvider());
 		tableViewer.setLabelProvider(new EditorsLabelProvider());
+		// set F1 help
+		WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.CVS_EDITORS_VIEW);
 	}
 	public void setInput(EditorsInfo[] infos) {
 		tableViewer.setInput(infos);
