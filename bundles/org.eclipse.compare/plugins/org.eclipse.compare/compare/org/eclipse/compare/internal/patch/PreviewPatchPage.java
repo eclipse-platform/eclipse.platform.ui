@@ -190,7 +190,6 @@ import org.eclipse.compare.structuremergeviewer.*;
 					Object data= e.item.getData();
 					if (e.detail == SWT.CHECK) {
 						boolean checked= ti.getChecked();
-						String s= ti.getText();
 						if (data instanceof Hunk) {
 							Hunk hunk= (Hunk) data;
 							checked= checked && hunk.fMatches;

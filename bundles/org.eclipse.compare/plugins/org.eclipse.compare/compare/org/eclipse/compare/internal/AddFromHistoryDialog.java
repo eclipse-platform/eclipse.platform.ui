@@ -7,7 +7,7 @@ import java.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.dialogs.*;
@@ -191,7 +191,19 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		// we need two panes: the left for the elements, the right one for the editions
 		Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
 		
-		fMemberPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
+		Composite c= new Composite(hsplitter, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginHeight= 2;
+		layout.verticalSpacing= 2;
+		layout.numColumns= 1;
+		c.setLayout(layout);
+		Label l1= new Label(c, SWT.NONE);
+		l1.setText(Utilities.getString(fBundle, "memberDescription"));	//$NON-NLS-1$
+		fMemberPane= new CompareViewerPane(c, SWT.BORDER | SWT.FLAT);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		fMemberPane.setLayoutData(gd);
+
 		fMemberTable= new Table(fMemberPane, SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL);
 		fMemberTable.addSelectionListener(
 			new SelectionAdapter() {
@@ -216,7 +228,18 @@ public class AddFromHistoryDialog extends ResizableDialog {
 				
 		fMemberPane.setContent(fMemberTable);
 		
-		fEditionPane= new CompareViewerPane(hsplitter, SWT.BORDER | SWT.FLAT);
+		c= new Composite(hsplitter, SWT.NONE);
+		layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginHeight= 2;
+		layout.verticalSpacing= 2;
+		layout.numColumns= 1;
+		c.setLayout(layout);
+		Label l2= new Label(c, SWT.NONE);
+		l2.setText(Utilities.getString(fBundle, "editionDescription"));	//$NON-NLS-1$
+		fEditionPane= new CompareViewerPane(c, SWT.BORDER | SWT.FLAT);
+		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		fEditionPane.setLayoutData(gd);
 		
 		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL | SWT.V_SCROLL);
 		fEditionTree.addSelectionListener(
