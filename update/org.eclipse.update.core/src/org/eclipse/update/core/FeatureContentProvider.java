@@ -26,6 +26,9 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
  */
 public abstract class FeatureContentProvider implements IFeatureContentProvider {
 
+
+	private static final boolean SWITCH_COPY_LOCAL = true; 
+	
 	/**
 	 * 
 	 */
@@ -142,7 +145,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	public ContentReference asLocalReference(ContentReference ref, InstallMonitor monitor) throws  IOException, CoreException {
 
 		// check to see if this is already a local reference
-		if (ref.isLocalReference())
+		if (ref.isLocalReference() && !SWITCH_COPY_LOCAL)
 			return ref;
 
 		// check to see if we already have a local file for this reference
@@ -225,7 +228,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 */
 	public File asLocalFile(ContentReference ref, InstallMonitor monitor) throws IOException, CoreException {
 		File file = ref.asFile();
-		if (file != null)
+		if (file != null && !SWITCH_COPY_LOCAL)
 			return file;
 		ContentReference localRef = asLocalReference(ref, monitor);
 		file = localRef.asFile();

@@ -120,6 +120,16 @@ public class Utilities {
 	}
 
 	/**
+	 * Flushes all the keys from the local file map.
+	 * Reinitialize the cache.
+     *
+	 * @since 2.1
+	 */
+	public synchronized static void flushLocalFile() {
+		entryMap = null;
+	}
+
+	/**
 	 * Removes the specified key from the local file map. The file is
 	 * not actually deleted until VM termination.
 	 * 
