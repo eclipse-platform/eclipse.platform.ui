@@ -548,12 +548,16 @@ public class ConfiguredSite
 										? site.getURL().toExternalForm()
 										: Policy.bind("ConfiguredSite.NoSite");
 								//$NON-NLS-1$
-								if (!handler
-									.reportProblem(
-										Policy.bind(
+								String errorLabel = Policy.bind(
 											"ConfiguredSite.CannotFindPluginEntry",
 											entry.getVersionedIdentifier().toString(),
-											siteString))) { //$NON-NLS-1$ //$NON-NLS-2$
+											siteString); //$NON-NLS-1$ //$NON-NLS-2$
+								if (handler==null){
+									throw new InterruptedException(errorLabel);
+								}
+								if (!handler
+									.reportProblem(
+										Policy.bind(errorLabel))) { //$NON-NLS-1$ //$NON-NLS-2$
 									throw new InterruptedException();
 								}
 							} // end if not found in site

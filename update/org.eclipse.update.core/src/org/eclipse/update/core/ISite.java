@@ -88,6 +88,7 @@ public interface ISite {
 	
 	/**
 	 * @since 2.0 
+	 * @deprecated use getDescription().getURL()
 	 */
 	URL getInfoURL();
 

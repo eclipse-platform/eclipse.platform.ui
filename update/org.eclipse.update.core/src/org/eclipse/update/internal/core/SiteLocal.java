@@ -57,6 +57,7 @@ public class SiteLocal
 					Policy.bind("Unable to retrieve update state location"),
 					exception);
 			}
+
 			URL configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			localSite.setLocationURLString(configXML.toExternalForm());
 			localSite.resolve(configXML, null);
@@ -117,7 +118,7 @@ public class SiteLocal
 			}
 
 			localSite.reconcile();
-			
+
 		} catch (SAXException exception) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				Utilities.logException(
@@ -268,7 +269,6 @@ public class SiteLocal
 		platformConfig.refresh();
 		long changeStamp = platformConfig.getChangeStamp();
 		this.setStamp(changeStamp);
-
 
 		String gap = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
@@ -750,12 +750,26 @@ public class SiteLocal
 	 * 
 	 * If we find 2 features, the one with a higher version is configured
 	 * If they have teh same version, the first feature is configured
+	 * 
+	 * This is a double loop comparison
+	 * One look goes from 0 to numberOfConfiguredSites -1
+	 * the other from the previous index to numberOfConfiguredSites
+	 * 
 	 */
 	private void checkConfiguredFeatures(IInstallConfiguration newDefaultConfiguration)
 		throws CoreException {
 
 		IConfiguredSite[] configuredSites =
 			newDefaultConfiguration.getConfiguredSites();
+
+		// each configured site
+		for (int indexConfiguredSites = 0;
+			indexConfiguredSites < configuredSites.length;
+			indexConfiguredSites++) {
+			checkConfiguredFeatures(configuredSites[indexConfiguredSites]);
+		}
+
+		// Check configured sites between them
 		if (configuredSites.length > 1) {
 			for (int indexConfiguredSites = 0;
 				indexConfiguredSites < configuredSites.length - 1;
@@ -767,6 +781,8 @@ public class SiteLocal
 					indexConfiguredFeatures++) {
 					IFeatureReference featureToCompare =
 						configuredFeatures[indexConfiguredFeatures];
+
+					// compare with the rest of the configurations
 					for (int i = indexConfiguredSites + 1; i < configuredSites.length; i++) {
 						IFeatureReference[] possibleFeatureReference =
 							configuredSites[i].getConfiguredFeatures();
@@ -774,18 +790,18 @@ public class SiteLocal
 							int result = compare(featureToCompare, possibleFeatureReference[j]);
 							if (result != 0) {
 								if (result == 1) {
-									FeatureReferenceModel FeatureRefModel =
+									FeatureReferenceModel featureRefModel =
 										(FeatureReferenceModel) possibleFeatureReference[j];
 									((ConfiguredSite) configuredSites[i])
 										.getConfigurationPolicy()
-										.addUnconfiguredFeatureReference(FeatureRefModel);
+										.addUnconfiguredFeatureReference(featureRefModel);
 								};
 								if (result == 2) {
-									FeatureReferenceModel FeatureRefModel =
+									FeatureReferenceModel featureRefModel =
 										(FeatureReferenceModel) featureToCompare;
-									((ConfiguredSite) configuredSites[i])
+									((ConfiguredSite) configuredSites[indexConfiguredSites])
 										.getConfigurationPolicy()
-										.addUnconfiguredFeatureReference(FeatureRefModel);
+										.addUnconfiguredFeatureReference(featureRefModel);
 									// do not break, we can continue, even if the feature is unconfigured
 									// if we find another feature in another site, we may unconfigure it.
 									// but it would have been unconfigured anyway because we confured another version of the same feature
@@ -793,6 +809,46 @@ public class SiteLocal
 								}
 							}
 						}
+					}
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * Validate we have only one configured feature per configured site
+	 * 
+	 */
+	private void checkConfiguredFeatures(IConfiguredSite configuredSite)
+		throws CoreException {
+
+		ConfiguredSite cSite = (ConfiguredSite) configuredSite;
+		IFeatureReference[] configuredFeatures = cSite.getConfiguredFeatures();
+		ConfigurationPolicy cPolicy = cSite.getConfigurationPolicy();
+
+		for (int indexConfiguredFeatures = 0;
+			indexConfiguredFeatures < configuredFeatures.length - 1;
+			indexConfiguredFeatures++) {
+
+			IFeatureReference featureToCompare =
+				configuredFeatures[indexConfiguredFeatures];
+
+			// within the configured site
+			// compare with the other configured features of this site
+			for (int restOfConfiguredFeatures = indexConfiguredFeatures+1;
+				restOfConfiguredFeatures < configuredFeatures.length;
+				restOfConfiguredFeatures++) {
+				int result =
+					compare(featureToCompare, configuredFeatures[restOfConfiguredFeatures]);
+				if (result != 0) {
+					if (result == 1) {
+						cPolicy.addUnconfiguredFeatureReference(
+							(FeatureReferenceModel) configuredFeatures[restOfConfiguredFeatures]);
+					};
+					if (result == 2) {
+						cPolicy.addUnconfiguredFeatureReference(
+							(FeatureReferenceModel) featureToCompare);
 					}
 				}
 			}
@@ -815,9 +871,21 @@ public class SiteLocal
 		IFeature feature1 = featureRef1.getFeature();
 		IFeature feature2 = featureRef2.getFeature();
 
-		if (feature1.equals(feature2)) {
-			Version version1 = feature1.getVersionedIdentifier().getVersion();
-			Version version2 = feature2.getVersionedIdentifier().getVersion();
+		if (feature1 == null || feature2 == null) {
+			return 0;
+		}
+
+		VersionedIdentifier id1 = feature1.getVersionedIdentifier();
+		VersionedIdentifier id2 = feature2.getVersionedIdentifier();
+
+		if (id1 == null || id2 == null) {
+			return 0;
+		}
+
+		if (id1.getIdentifier() != null
+			&& id1.getIdentifier().equals(id2.getIdentifier())) {
+			Version version1 = id1.getVersion();
+			Version version2 = id2.getVersion();
 			if (version1 != null) {
 				int result = (version1.compare(version2));
 				if (result == -1) {
