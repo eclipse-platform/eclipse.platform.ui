@@ -4,3 +4,4 @@ org.eclipse.update.core/debug/parsing=true
 org.eclipse.update.core/debug/install=true
 org.eclipse.update.core/debug/configuration=true
 org.eclipse.update.core/debug/type=true
+org.eclipse.update.core/debug/web=true
