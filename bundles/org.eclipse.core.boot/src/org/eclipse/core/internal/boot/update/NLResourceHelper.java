@@ -52,6 +52,9 @@ public java.util.ResourceBundle getResourceBundle(Locale locale) throws MissingR
 		notFound = true;
 		throw e;
 	}
+	catch( Exception ex ) {
+		notFound = true;
+	}
 
 	return bundle;
 }
