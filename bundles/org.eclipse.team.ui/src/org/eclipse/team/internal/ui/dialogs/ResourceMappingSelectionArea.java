@@ -31,18 +31,24 @@ public class ResourceMappingSelectionArea extends DialogArea {
 	public class ResourceMappingLabelProvider extends LabelProvider {
 		WorkbenchLabelProvider provider = new WorkbenchLabelProvider();
 		public String getText(Object element) {
+            String text = provider.getText(element);
+            if (text != null)
+                return text;
 			if (element instanceof ResourceMapping) {
 				ResourceMapping mapping = (ResourceMapping) element;
-				String text = provider.getText(mapping.getModelObject());
+				text = provider.getText(mapping.getModelObject());
 				if (text != null)
 					return text;
 			}
 			return super.getText(element);
 		}
 		public Image getImage(Object element) {
+            Image image = provider.getImage(element);
+            if (image != null)
+                return image;
 			if (element instanceof ResourceMapping) {
 				ResourceMapping mapping = (ResourceMapping) element;
-				Image image = provider.getImage(mapping.getModelObject());
+				image = provider.getImage(mapping.getModelObject());
 				if (image != null)
 					return image;
 			}
