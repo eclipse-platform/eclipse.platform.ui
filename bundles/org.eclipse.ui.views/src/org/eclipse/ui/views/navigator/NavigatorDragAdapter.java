@@ -1,13 +1,20 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Control;
@@ -99,10 +106,23 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 			return;
 
 		// Get the path of each file and set as the drag data
-		final int len = resources.length;
-		String[] fileNames = new String[len];
-		for (int i = 0, length = len; i < length; i++) {
-			fileNames[i] = resources[i].getLocation().toOSString();
+		final int length = resources.length;
+		int actualLength = 0; 
+		String[] fileNames = new String[length];
+		for (int i = 0; i < length; i++) {
+			IPath location = resources[i].getLocation();
+			// location may be null. See bug 29491.
+			if (location != null) 
+				fileNames[actualLength++] = location.toOSString();
+		}
+		if (actualLength == 0)
+			return;
+		// was one or more of the locations null?
+		if (actualLength < length) {
+			String[] tempFileNames = fileNames;
+			fileNames = new String[actualLength];
+			for (int i = 0; i < actualLength; i++)
+				fileNames[i] = tempFileNames[i];
 		}
 		event.data = fileNames;
 	}
