@@ -58,6 +58,9 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	private Combo accelConfigCombo;
 
 	private Button reuseEditors;
+	private Group reuseDirtyEditorGroup;		
+	private Button openNewEditor;
+	private Button promptToReuseEditor;
 	private IntegerFieldEditor reuseEditorsThreshold;
 	private Composite editorReuseGroup;
 	
@@ -104,6 +107,11 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		updateEncodingState(true);
 		acceleratorPerformDefaults(store);
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
+		reuseDirtyEditorGroup.setEnabled(reuseEditors.getSelection());
+		openNewEditor.setSelection(!store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		openNewEditor.setEnabled(reuseEditors.getSelection());
+		promptToReuseEditor.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		promptToReuseEditor.setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.loadDefault();
 		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
@@ -127,6 +135,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
+		store.setValue(IPreferenceConstants.REUSE_DIRTY_EDITORS,promptToReuseEditor.getSelection());
 		reuseEditorsThreshold.store();
 
 		// store the recent files setting
@@ -354,8 +363,40 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 			public void widgetSelected(SelectionEvent e){
 				reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
 				reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
+				reuseDirtyEditorGroup.setEnabled(reuseEditors.getSelection());
+				openNewEditor.setEnabled(reuseEditors.getSelection());
+				promptToReuseEditor.setEnabled(reuseEditors.getSelection());
 			}
 		});
+		
+		reuseDirtyEditorGroup = new Group(editorReuseGroup, SWT.NONE);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = layout.numColumns;
+		reuseDirtyEditorGroup.setLayoutData(data);
+		GridLayout groupLayout = new GridLayout();
+		groupLayout.numColumns = 2;
+		reuseDirtyEditorGroup.setLayout(layout);
+		reuseDirtyEditorGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseDirtyEditorGroupTitle")); //$NON-NLS-1$
+		reuseDirtyEditorGroup.setFont(font);
+		reuseDirtyEditorGroup.setEnabled(reuseEditors.getSelection());
+		
+		promptToReuseEditor = new Button(reuseDirtyEditorGroup, SWT.RADIO);
+		promptToReuseEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.promptToReuseEditor")); //$NON-NLS-1$
+		GridData promptToReuseEditorData = new GridData();
+		promptToReuseEditorData.horizontalSpan = groupLayout.numColumns;
+		promptToReuseEditor.setLayoutData(promptToReuseEditorData);
+		promptToReuseEditor.setFont(font);	
+		promptToReuseEditor.setSelection(store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		promptToReuseEditor.setEnabled(reuseEditors.getSelection());	
+
+		openNewEditor = new Button(reuseDirtyEditorGroup, SWT.RADIO);
+		openNewEditor.setText(WorkbenchMessages.getString("WorkbenchPreference.openNewEditor")); //$NON-NLS-1$
+		GridData reuseDirtyEditorsData = new GridData();
+		reuseDirtyEditorsData.horizontalSpan = groupLayout.numColumns;
+		openNewEditor.setLayoutData(reuseDirtyEditorsData);
+		openNewEditor.setFont(font);	
+		openNewEditor.setSelection(!store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
+		openNewEditor.setEnabled(reuseEditors.getSelection());		
 		
 		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseGroup); //$NON-NLS-1$
 		

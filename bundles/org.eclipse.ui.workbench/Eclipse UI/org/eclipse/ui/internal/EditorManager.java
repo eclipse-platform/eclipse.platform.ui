@@ -353,12 +353,18 @@ public class EditorManager {
 			if (editor.isPinned())
 				continue;
 			if (editor.isDirty()) {
-				dirtyEditor = editor;
+				if (dirtyEditor == null)  //ensure least recently used
+					dirtyEditor = editor;
 				continue;
 			}
 			return editor;
 		}
 		if (dirtyEditor == null)
+			return null;
+		
+		/*fix for 11122*/
+		boolean reuseDirty = store.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS);
+		if (!reuseDirty)
 			return null;
 
 		MessageDialog dialog =
@@ -586,10 +592,10 @@ public class EditorManager {
 				((IReusableEditor) reusableEditor).setInput(input);
 				return reusableEditorRef;
 			} else {
-				//findReusableEditor(...) makes sure its neither pinned nor dirty
+				//findReusableEditor(...) checks pinned and saves editor if necessary
 				IEditorReference ref = new Editor();
 				openInternalEditor(ref,desc, input, true);
-				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor, true);
+				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor, false);
 				return ref;
 			}
 		}

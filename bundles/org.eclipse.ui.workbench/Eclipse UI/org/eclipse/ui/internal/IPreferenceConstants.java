@@ -39,7 +39,10 @@ public interface IPreferenceConstants {
 
 	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
-	//On/Off option for the preceding option.
+	//Boolean:	true = replace dirty editor if no other editors to reuse (prompt for save); 
+	//			false = open a new editor if no other editors to resuse
+	public static final String REUSE_DIRTY_EDITORS = "REUSE_DIRTY_EDITORS"; //$NON-NLS-1$
+	//On/Off option for the two preceding options.
 	public static final String REUSE_EDITORS_BOOLEAN = "REUSE_OPEN_EDITORS_BOOLEAN"; //$NON-NLS-1$
 	
 	// (int) N recently viewed files will be listed in the File->Open Recent menu.
