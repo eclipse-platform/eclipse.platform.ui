@@ -16,9 +16,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -177,4 +179,18 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
     public void openFirstTimeWindow() {
         ((Workbench) getWorkbench()).openFirstTimeWindow();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#recordWorkbenchWindowState(org.eclipse.ui.IWorkbenchWindow, org.eclipse.ui.IMemento)
+	 */
+	public IStatus recordWorkbenchWindowState(IWorkbenchWindow window, IMemento memento) {
+		return ((WorkbenchWindow)window).saveState(memento);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreWorkbenchWindow(org.eclipse.ui.IMemento)
+	 */
+	public IWorkbenchWindow restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
+		return ((Workbench)getWorkbench()).restoreWorkbenchWindow(memento);
+	}
 }

@@ -13,8 +13,10 @@ package org.eclipse.ui.application;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.WindowManager;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * Interface providing special access for configuring the workbench.
@@ -75,6 +77,28 @@ public interface IWorkbenchConfigurer {
      * 	<code>false</code> to forget current workbench state on close.
      */
     public void setSaveAndRestore(boolean enabled);
+
+	/**
+	 * Saves the current state of the specified workbench window 
+	 * using the specified memento.
+	 * 
+	 * @param window the window to be recorded
+	 * @param memento the storage area for object's state
+	 * @return a status object indicating whether the save was successful
+	 * @since 3.1
+	 */
+	public IStatus recordWorkbenchWindowState(IWorkbenchWindow window, IMemento memento);
+	
+	/**
+	 * Restores a workbench window with state using the specified memento.
+	 * 
+	 * @param memento the storage area for object's state
+	 * @return the <code>IWorkbenchWindow</code> that is restored or null if there was an error.
+	 * @throws WorkbenchException 
+	 * @since 3.1
+	 */
+	public IWorkbenchWindow restoreWorkbenchWindow(IMemento memento)
+			throws WorkbenchException;
 
     /**
      * Returns the workbench window manager.

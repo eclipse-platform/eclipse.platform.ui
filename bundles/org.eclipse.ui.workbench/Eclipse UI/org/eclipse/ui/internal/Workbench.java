@@ -1301,7 +1301,32 @@ public final class Workbench implements IWorkbench {
 					WorkbenchMessages.Abnormal_Workbench_Conditi);
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#restoreWorkbenchWindow(org.eclipse.ui.IMemento)
+	 */
+	IWorkbenchWindow restoreWorkbenchWindow(IMemento memento) throws WorkbenchException {
+		WorkbenchWindow newWindow = newWorkbenchWindow();
+		newWindow.create();
 
+		windowManager.add(newWindow);
+
+		// whether the window was opened
+		boolean opened = false;
+
+		try {
+			newWindow.restoreState(memento, null);
+			newWindow.fireWindowRestored();
+			newWindow.open();
+			opened = true;
+		} finally {
+			if (!opened)
+				newWindow.close();
+		}
+
+		return newWindow;
+	}
+	
 	/*
 	 * Record the workbench UI in a document
 	 */
