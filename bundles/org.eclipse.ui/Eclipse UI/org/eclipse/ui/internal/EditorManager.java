@@ -304,8 +304,8 @@ public class EditorManager {
 		// Try to open an OLE editor.
 		IEditorPart componentEditor = ComponentSupport.getComponentEditor(file);
 		if (componentEditor != null) {
-			((Editor)ref).setPart(componentEditor);
 			createSite(componentEditor, desc, input);
+			((Editor)ref).setPart(componentEditor);
 			createEditorTab(ref, null, input, setVisible);
 			Workbench wb = (Workbench) window.getWorkbench();
 			wb.getEditorHistory().add(input, desc);
@@ -410,11 +410,11 @@ public class EditorManager {
 				result = openInternalEditor(ref,desc, input, true);
 		} else if (desc.isOpenInPlace()) {
 			IEditorPart cEditor = ComponentSupport.getComponentEditor();
-			((Editor)ref).setPart(cEditor);
-			if (cEditor == null)
+			if (cEditor == null) {
 				return null;
-			else {
+			} else {				
 				createSite(cEditor, desc, input);
+				((Editor)ref).setPart(cEditor);
 				createEditorTab(ref, desc, input, true);
 			}
 		} else if (desc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID)) {
@@ -494,8 +494,8 @@ public class EditorManager {
 			descArray[i] = innerDesc;
 			partArray[i] = createPart(descArray[i]);
 			refArray[i] = new Editor();
-			((Editor)refArray[i]).setPart(partArray[i]);
-			createSite(partArray[i],descArray[i],inputArray[i]);				
+			createSite(partArray[i],descArray[i],inputArray[i]);
+			((Editor)refArray[i]).setPart(partArray[i]);			
 		}
 		part.setChildren(partArray);
 		return refArray;
@@ -1119,16 +1119,6 @@ public class EditorManager {
 			this.pane = null;	
 			editorMemento = null;
 			tooltip = null;
-			if(image != null && imageDescritor != null) {
-				ReferenceCounter imageCache = WorkbenchImages.getImageCache();
-				if(image != null) {
-					int count = imageCache.removeRef(imageDescritor);
-					if(count <= 0)
-						image.dispose();				
-				}
-				imageDescritor = null;
-				image = null;
-			}
 			return part;
 		}
 		public void setPart(IEditorPart part) {
@@ -1199,8 +1189,6 @@ public class EditorManager {
 				result = ((PartSite)part.getSite()).getPane();
 			else 
 				result = pane;
-			if(result == null)
-				System.err.println("RESULT SHOULD NOT BE NULL");
 			return result;
 		}
 		public String getTitleToolTip() {
