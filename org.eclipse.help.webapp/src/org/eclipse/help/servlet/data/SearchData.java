@@ -75,7 +75,7 @@ public class SearchData extends RequestData {
 					HelpSystem.WORKING_SET))) {
 			HelpPlugin.getDefault().getPluginPreferences().setValue(
 				HelpSystem.WORKING_SET,
-				request.getParameter("workingSet"));
+				workingSet);
 			HelpPlugin.getDefault().savePluginPreferences();
 		}
 	}
