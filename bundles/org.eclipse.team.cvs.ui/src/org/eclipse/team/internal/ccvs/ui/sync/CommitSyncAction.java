@@ -189,7 +189,7 @@ public class CommitSyncAction extends MergeAction {
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+					ErrorDialog.openError(getShell(), Policy.bind("error"), Policy.bind("CommitSyncAction.errorCommitting"), e.getStatus());
 				}
 			});
 			return null;

@@ -278,7 +278,7 @@ public class UpdateSyncAction extends MergeAction {
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+					ErrorDialog.openError(getShell(), Policy.bind("error"), Policy.bind("UpdateSyncAction.errorUpdating"), e.getStatus());
 				}
 			});
 			return null;
