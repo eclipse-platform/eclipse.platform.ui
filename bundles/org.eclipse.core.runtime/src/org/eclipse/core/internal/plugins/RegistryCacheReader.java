@@ -119,7 +119,7 @@ public class RegistryCacheReader {
 	private static final String ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String RESOLVED_VERSION = "resolved_version"; //$NON-NLS-1$
 	private static final String END = "end"; //$NON-NLS-1$
-	private static final String EXPORTS_lENGTH = "<length of export list>"; //$NON-NLS-1$
+	private static final String EXPORTS_LENGTH = "<length of export list>"; //$NON-NLS-1$
 	private static final String SUBELEMENTS_LENGTH = "<length of subelement list>"; //$NON-NLS-1$
 	private static final String PROPERTIES_LENGTH = "<length of properties list>"; //$NON-NLS-1$
 	private static final String PARENT_REGISTRY = "<index of parent registry>"; //$NON-NLS-1$
@@ -224,7 +224,7 @@ public static String decipherLabel(byte labelValue) {
 			retValue += END + IModel.PLUGIN_REQUIRES;
 			break;
 		case LIBRARY_EXPORTS_LENGTH_LABEL:
-			retValue += EXPORTS_lENGTH;
+			retValue += EXPORTS_LENGTH;
 			break;
 		case LIBRARY_EXPORTS_LABEL:
 			retValue += IModel.LIBRARY_EXPORT;
