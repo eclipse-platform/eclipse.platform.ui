@@ -134,32 +134,33 @@ protected void createButtonsForButtonBar(Composite parent) {
 }
 
 
-/*
- * @see Dialog.createContents(Composite)
+/**
+ * This implementation of the <code>Dialog</code> framework 
+ * method creates and lays out a composite and calls 
+ * <code>createMessageArea</code> and <code>createCustomArea</code>
+ * to populate it. Subclasses should override <code>createCustomArea</code>
+ * to add contents below the message.
  */
-protected Control createContents(Composite parent) {
+protected Control createDialogArea(Composite parent) {
 	
-	// initialize the dialog units
-	initializeDialogUnits(parent);
-	
+	 createMessageArea(parent);
+	 
+	// create a composite with standard margins and spacing
+	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
 	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.makeColumnsEqualWidth = false;
-	parent.setLayout(layout);
-	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
-	// create the dialog area and button bar
-	dialogArea = createMessageArea(parent);
-	buttonBar = createButtonBar(parent);
-	
-	
-	return parent;
-}
+	layout.numColumns = 2;
+	composite.setLayout(layout);
+	GridData childData = new GridData(GridData.FILL_BOTH);
+	childData.horizontalSpan = 2;
+	composite.setLayoutData(childData);
+	composite.setFont(parent.getFont());
+	return composite;
 
+}
 
 /*
  * @see IconAndMessageDialog#getImage()
