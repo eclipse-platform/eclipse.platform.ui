@@ -6,6 +6,7 @@ package org.eclipse.core.internal.resources;
  * (c) Copyright IBM Corp 2000
  */
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 public interface ICoreConstants {
@@ -60,7 +61,9 @@ public interface ICoreConstants {
 	public static final int MINIMUM_FOLDER_SEGMENT_LENGTH = 2;
 	public static final int MINIMUM_FILE_SEGMENT_LENGTH = 2;
 
-	// persistence constants
-	// version numbers
-	public static final int WORKSPACE_VERSION = 67305985;
+	public static final int WORKSPACE_TREE_VERSION_1 = 67305985;
+	public static final int WORKSPACE_TREE_VERSION_2 = 67305986;
+	
+	// helper constants for empty structures
+	public static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 }

@@ -23,48 +23,6 @@ public class BuildManager implements ICoreConstants, IManager {
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
 }
-void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
-	monitor = Policy.monitorFor(monitor);
-	try {
-		String message = Policy.bind("building", new String[] { project.getFullPath().toString()});
-		monitor.beginTask(message, Math.max(1, commands.length));
-		for (int i = 0; i < commands.length; i++) {
-			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
-			BuildCommand command = (BuildCommand) commands[i];
-			basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), status, sub);
-			Policy.checkCanceled(monitor);
-		}
-	} finally {
-		monitor.done();
-	}
-}
-void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
-	IncrementalProjectBuilder builder = null;
-	try {
-		builder = getBuilder(builderName, project);
-	} catch (CoreException e) {
-		status.add(e.getStatus());
-		return;
-	}
-	if (builder == null) {
-		String message = Policy.bind("instantiate", new String[] { builderName });
-		status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), message));
-		return;
-	}
-	// get the builder name to be used as a progress message
-	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
-	String message = null;
-	if (extension != null) {
-		String name = extension.getLabel();
-		if (name != null) {
-			message = Policy.bind("invoking", new String[] { name + " on " + project.getFullPath() });
-		}
-	}
-	if (message == null)
-		message = Policy.bind("invoking", new String[] {"builder on " + project.getFullPath()});
-	monitor.subTask(message);
-	basicBuild(project, trigger, builder, args, status, monitor);
-}
 void basicBuild(final IProject project, final int trigger, final IncrementalProjectBuilder builder, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
 	try {
 		// want to invoke some methods not accessible via IncrementalProjectBuilder
@@ -145,36 +103,44 @@ void basicBuild(final IProject project, final int trigger, final MultiStatus sta
 	};
 	Platform.run(code);
 }
-public void build(int trigger, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
+void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
+	IncrementalProjectBuilder builder = null;
 	try {
-		monitor.beginTask("Building workspace.", Policy.totalWork);
-		if (!canRun(trigger))
-			return;
-		try {
-			building = true;
-			IProject[] ordered = workspace.getBuildOrder();
-			IProject[] unordered = null;
-			HashSet leftover = new HashSet(5);
-			leftover.addAll(Arrays.asList(workspace.getRoot().getProjects()));
-			leftover.removeAll(Arrays.asList(ordered));
-			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
-			int num = ordered.length + unordered.length;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
-			for (int i = 0; i < ordered.length; i++)
-				if (ordered[i].isAccessible())
-					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
-			for (int i = 0; i < unordered.length; i++)
-				if (unordered[i].isAccessible())
-					basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
-			// if the status is not ok, throw an exception 
-			if (!status.isOK())
-				throw new ResourceException(status);
-		} finally {
-			building = false;
+		builder = getBuilder(builderName, project);
+	} catch (CoreException e) {
+		status.add(e.getStatus());
+		return;
+	}
+	if (builder == null) {
+		String message = Policy.bind("instantiate", new String[] { builderName });
+		status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), message));
+		return;
+	}
+	// get the builder name to be used as a progress message
+	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
+	String message = null;
+	if (extension != null) {
+		String name = extension.getLabel();
+		if (name != null) {
+			message = Policy.bind("invoking", new String[] { name + " on " + project.getFullPath() });
 		}
+	}
+	if (message == null)
+		message = Policy.bind("invoking", new String[] {"builder on " + project.getFullPath()});
+	monitor.subTask(message);
+	basicBuild(project, trigger, builder, args, status, monitor);
+}
+public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
+	if (!canRun(trigger))
+		return;
+	try {
+		building = true;
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+		basicBuild(project, trigger, status, monitor);
+		if (!status.isOK())
+			throw new ResourceException(status);
 	} finally {
-		monitor.done();
+		building = false;
 	}
 }
 public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
@@ -197,19 +163,6 @@ public void build(IProject project, int kind, String builderName, Map args, IPro
 		monitor.done();
 	}
 }
-public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
-	if (!canRun(trigger))
-		return;
-	try {
-		building = true;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
-		basicBuild(project, trigger, status, monitor);
-		if (!status.isOK())
-			throw new ResourceException(status);
-	} finally {
-		building = false;
-	}
-}
 public boolean canRun(int trigger) {
 	return !building;
 }
@@ -218,26 +171,24 @@ public void changing(IProject project) {
 public void closing(IProject project) {
 }
 /**
- * Creates and returns a Hashtable mapping String(builder name) -> ElementTree, 
- * where the keys are builder names, and the values are the tree of that builder's 
- * last built state.  The table includes entries for all builders that are
+ * Creates and returns a Map mapping String(builder name) -> BuilderPersistentInfo. 
+ * The table includes entries for all builders that are
  * in the builder spec, and that have a last built state, even if they 
  * have not been instantiated this session.
  */
-public Hashtable createBuilderMap(IProject project) throws CoreException {
+public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 	/* get the old builder map */
-	Hashtable oldBuilderMap = getBuilderMap(project);
-
+	Map oldInfos = getBuildersPersistentInfo(project);
 	/* nuke the old builder map */
-	project.setSessionProperty(K_BUILD_MAP, null);
-	ICommand[] buildCommands = ((Project) project).internalGetDescription().getBuildSpec(false);
-	if (buildCommands.length == 0) {
-		return null;
-	}
-	Hashtable instantiatedBuilders = getBuilders(project);
+	setBuildersPersistentInfo(project, null);
 
-	/* build  the table */
-	Hashtable newBuilderTable = new Hashtable(buildCommands.length * 2);
+	ICommand[] buildCommands = ((Project) project).internalGetDescription().getBuildSpec(false);
+	if (buildCommands.length == 0)
+		return null;
+
+	/* build the new map */
+	Map newInfos = new HashMap(buildCommands.length * 2);
+	Hashtable instantiatedBuilders = getBuilders(project);
 	for (int i = 0; i < buildCommands.length; i++) {
 		String builderName = buildCommands[i].getBuilderName();
 		ElementTree tree = null;
@@ -246,15 +197,24 @@ public Hashtable createBuilderMap(IProject project) throws CoreException {
 			tree = ((InternalBuilder) builder).getLastBuiltTree();
 		} else {
 			/* look in the old builder map */
-			if (oldBuilderMap != null) {
-				tree = (ElementTree) oldBuilderMap.get(builderName);
+			if (oldInfos != null) {
+				BuilderPersistentInfo info = (BuilderPersistentInfo) oldInfos.get(builderName);
+				tree = info.getLastBuiltTree();
 			}
 		}
 		if (tree != null) {
-			newBuilderTable.put(builderName, tree);
+			BuilderPersistentInfo info = new BuilderPersistentInfo();
+			info.setProjectName(project.getName());
+			info.setBuilderName(builderName);
+			info.setLastBuildTree(tree);
+			if (builder != null)
+				info.setInterestingProjects(((InternalBuilder) builder).getInterestingProjects());
+			else
+				info.setInterestingProjects(ICoreConstants.EMPTY_PROJECT_ARRAY);
+			newInfos.put(builderName, info);
 		}
 	}
-	return newBuilderTable;
+	return newInfos;
 }
 public void deleting(IProject project) {
 }
@@ -278,14 +238,13 @@ public IncrementalProjectBuilder getBuilder(String builderName, IProject project
 	return result;
 }
 /**
- * Returns a Hashtable mapping String(builder name) -> ElementTree, where the
- * keys are builder names, and the values are the tree of that builder's 
- * last built state.  The table includes entries for all builders that are
- * in the builder spec, and that have a last built state, even if they 
- * have not been instantiated this session.
+ * Returns a Map mapping String(builder name) -> BuilderPersistentInfo.
+ * The map includes entries for all builders that are in the builder spec,
+ * and that have a last built state, even if they have not been instantiated
+ * this session.
  */
-protected Hashtable getBuilderMap(IProject project) throws CoreException {
-	return (Hashtable) project.getSessionProperty(K_BUILD_MAP);
+public Map getBuildersPersistentInfo(IProject project) throws CoreException {
+	return (Map) project.getSessionProperty(K_BUILD_MAP);
 }
 /**
  * Returns a hashtable of all instantiated builders for the given project.
@@ -334,16 +293,17 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProj
 		((InternalBuilder) builder).setPluginDescriptor(config.getDeclaringExtension().getDeclaringPluginDescriptor());
 
 		/* get the map of builders to get the last built tree */
-		Hashtable builderMap = getBuilderMap(project);
-		if (builderMap != null) {
-			ElementTree tree = (ElementTree) builderMap.remove(builderName);
+		Map infos = getBuildersPersistentInfo(project);
+		if (infos != null) {
+			BuilderPersistentInfo info = (BuilderPersistentInfo) infos.remove(builderName);
+			ElementTree tree = info.getLastBuiltTree();
 			if (tree != null) {
 				((InternalBuilder) builder).setLastBuiltTree(tree);
 			}
+			((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
 			/* delete the build map if it's now empty */
-			if (builderMap.size() == 0) {
-				project.setSessionProperty(K_BUILD_MAP, null);
-			}
+			if (infos.size() == 0)
+				setBuildersPersistentInfo(project, null);
 		}
 		return builder;
 	} catch (CoreException e) {
@@ -368,17 +328,63 @@ public void fixBuildersFor(IProject project) {
 }
 /**
  * Sets the builder map for the given project.  The builder map is
- * a Hashtable mapping String(builder name) -> ElementTree, where the
- * keys are builder names, and the values are the tree of that builder's 
- * last built state.  The table includes entries for all builders that are
+ * a Map mapping String(builder name) -> BuilderPersistentInfo.
+ * The map includes entries for all builders that are
  * in the builder spec, and that have a last built state, even if they 
  * have not been instantiated this session.
  */
-public void setBuilderMap(IProject project, Hashtable map) throws CoreException {
+public void setBuildersPersistentInfo(IProject project, Map map) throws CoreException {
 	project.setSessionProperty(K_BUILD_MAP, map);
 }
 public void shutdown(IProgressMonitor monitor) {
 }
 public void startup(IProgressMonitor monitor) {
+}
+void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		String message = Policy.bind("building", new String[] { project.getFullPath().toString()});
+		monitor.beginTask(message, Math.max(1, commands.length));
+		for (int i = 0; i < commands.length; i++) {
+			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
+			BuildCommand command = (BuildCommand) commands[i];
+			basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), status, sub);
+			Policy.checkCanceled(monitor);
+		}
+	} finally {
+		monitor.done();
+	}
+}
+public void build(int trigger, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		monitor.beginTask("Building workspace.", Policy.totalWork);
+		if (!canRun(trigger))
+			return;
+		try {
+			building = true;
+			IProject[] ordered = workspace.getBuildOrder();
+			IProject[] unordered = null;
+			HashSet leftover = new HashSet(5);
+			leftover.addAll(Arrays.asList(workspace.getRoot().getProjects()));
+			leftover.removeAll(Arrays.asList(ordered));
+			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
+			int num = ordered.length + unordered.length;
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+			for (int i = 0; i < ordered.length; i++)
+				if (ordered[i].isAccessible())
+					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+			for (int i = 0; i < unordered.length; i++)
+				if (unordered[i].isAccessible())
+					basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+			// if the status is not ok, throw an exception 
+			if (!status.isOK())
+				throw new ResourceException(status);
+		} finally {
+			building = false;
+		}
+	} finally {
+		monitor.done();
+	}
 }
 }
