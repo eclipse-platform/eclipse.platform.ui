@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 
@@ -22,7 +23,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
  */
 public abstract class AbstractIntegerRendering extends AbstractTableRendering {
 	
-	private int fCurrentEndianess = RenderingsUtil.BIG_ENDIAN;
+	private int fDisplayEndianess = RenderingsUtil.ENDIANESS_UNKNOWN;
 	
 	public AbstractIntegerRendering(String renderingId){
 		super(renderingId);
@@ -31,31 +32,48 @@ public abstract class AbstractIntegerRendering extends AbstractTableRendering {
 	public void init(IMemoryRenderingContainer container, IMemoryBlock block) {
 		super.init(container, block);
 		
-		if (getMemoryBlock() instanceof IMemoryBlockExtension)
-		{
-			IMemoryBlockExtension exBlk = (IMemoryBlockExtension)getMemoryBlock();
-			
-			if(exBlk.isBigEndian()){
-				fCurrentEndianess = RenderingsUtil.BIG_ENDIAN;
-			}
-			else
-			{
-				fCurrentEndianess = RenderingsUtil.LITTLE_ENDIAN;
-			}
-		}
+		// default to big endian for simple memory block
+		if (!(block instanceof IMemoryBlockExtension))
+			fDisplayEndianess = RenderingsUtil.BIG_ENDIAN;
 	}
 	
 	/**
 	 * @return Returns the currentEndianess.
 	 */
-	public int getCurrentEndianess() {
-		return fCurrentEndianess;
+	public int getDisplayEndianess() {
+		return fDisplayEndianess;
 	}
 
 	/**
 	 * @param currentEndianess The currentEndianess to set.
 	 */
-	public void setCurrentEndianess(int currentEndianess) {
-		fCurrentEndianess = currentEndianess;
+	public void setDisplayEndianess(int currentEndianess) {
+		fDisplayEndianess = currentEndianess;
+	}
+
+	protected int getBytesEndianess(MemoryByte[] data) {
+		int endianess = RenderingsUtil.ENDIANESS_UNKNOWN;
+		
+		if (!data[0].isEndianessKnown())
+			return endianess;
+		
+		if (data[0].isBigEndian())
+			endianess = RenderingsUtil.BIG_ENDIAN;
+		else
+			endianess = RenderingsUtil.LITTLE_ENDIAN;
+		for (int i=1; i<data.length; i++)
+		{
+			// if endianess is not known for a byte, return unknown
+			if (!data[i].isEndianessKnown())
+				return RenderingsUtil.ENDIANESS_UNKNOWN;
+			
+			int byteEndianess = data[i].isBigEndian()?RenderingsUtil.BIG_ENDIAN:RenderingsUtil.LITTLE_ENDIAN;
+			if (byteEndianess != endianess)
+			{
+				endianess = RenderingsUtil.ENDIANESS_UNKNOWN;
+				break;
+			}
+		}
+		return endianess;
 	}
 }

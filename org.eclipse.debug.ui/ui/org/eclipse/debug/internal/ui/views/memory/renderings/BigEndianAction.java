@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
-import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -38,8 +38,8 @@ public class BigEndianAction implements IObjectActionDelegate {
 		if (fRendering == null)
 			return;
 		
-		if (fRendering.getCurrentEndianess() != RenderingsUtil.BIG_ENDIAN){
-			fRendering.setCurrentEndianess(RenderingsUtil.BIG_ENDIAN);
+		if (fRendering.getDisplayEndianess() != RenderingsUtil.BIG_ENDIAN){
+			fRendering.setDisplayEndianess(RenderingsUtil.BIG_ENDIAN);
 			fRendering.refresh();
 		}
 	}
@@ -48,26 +48,54 @@ public class BigEndianAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		
+		if (selection == null)
+			return;
+		
 		if (selection instanceof IStructuredSelection)
-		{	
-			IStructuredSelection strucSelection = (IStructuredSelection)selection;
+		{
+			Object obj = ((IStructuredSelection)selection).getFirstElement();
+			if (obj == null)
+				return;
 			
-			if(strucSelection.getFirstElement() instanceof AbstractIntegerRendering){
-				fRendering = (AbstractIntegerRendering)strucSelection.getFirstElement();
-				
-				if (fRendering.getMemoryBlock() instanceof IMemoryBlockExtension)
-					action.setEnabled(false);
-				else
-					action.setEnabled(true);
-				
-
-				int endianess = fRendering.getCurrentEndianess();
-				
-				if(endianess == RenderingsUtil.BIG_ENDIAN)
-					action.setChecked(true);
-				else
-					action.setChecked(false);
+			if (obj instanceof AbstractIntegerRendering)
+			{
+				fRendering = (AbstractIntegerRendering)obj;
 			}
+			
+			int endianess = RenderingsUtil.ENDIANESS_UNKNOWN;
+			if (fRendering.getDisplayEndianess() == RenderingsUtil.ENDIANESS_UNKNOWN)
+			{
+				MemoryByte[] selectedBytes = fRendering.getSelectedAsBytes();
+				for (int i=0; i<selectedBytes.length; i++)
+				{
+					if (!selectedBytes[i].isEndianessKnown())
+					{
+						endianess = RenderingsUtil.ENDIANESS_UNKNOWN;
+						break;
+					}
+					if (i==0)
+					{
+						endianess = selectedBytes[i].isBigEndian()?RenderingsUtil.BIG_ENDIAN:RenderingsUtil.LITTLE_ENDIAN;
+					}
+					else
+					{
+						int byteEndianess = selectedBytes[i].isBigEndian()?RenderingsUtil.BIG_ENDIAN:RenderingsUtil.LITTLE_ENDIAN;
+						if (endianess != byteEndianess)
+						{
+							endianess = RenderingsUtil.ENDIANESS_UNKNOWN;
+							break;
+						}
+					}
+				}
+			}
+			else
+				endianess = fRendering.getDisplayEndianess();
+			
+			if (endianess == RenderingsUtil.BIG_ENDIAN)
+				action.setChecked(true);
+			else
+				action.setChecked(false);
 		}
 	}
 }

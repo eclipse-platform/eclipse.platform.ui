@@ -160,7 +160,12 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 		}
 		
 		int columnSize = getBytesPerColumn();
-		int endianess = getCurrentEndianess();
+		
+		// if the user has not set an endianess to the rendering
+		// take default endianess from bytes
+		int endianess = getDisplayEndianess();
+		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN)
+			endianess = getBytesEndianess(data);
 		
 		byte[] byteArray = new byte[data.length];
 		for (int i=0; i<byteArray.length;i ++)
@@ -168,6 +173,16 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 			byteArray[i] = data[i].getValue();
 		}
 		
+		// if endianess is unknown, do not render, just return padded string		
+		if (RenderingsUtil.ENDIANESS_UNKNOWN == endianess)
+		{
+			StringBuffer strBuf = new StringBuffer();
+			for (int i=0; i<byteArray.length; i++)
+			{
+				strBuf.append(paddedStr);
+			}
+			return strBuf.toString();
+		}
 		return convertToString(byteArray, columnSize, endianess);
 	}
 
@@ -177,7 +192,21 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		
 		int columnSize = getBytesPerColumn();
-		int endianess = getCurrentEndianess();
+		
+		// if the user has not set an endianess to the rendering
+		// take default
+		int endianess = getDisplayEndianess();
+		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN)
+			endianess = getBytesEndianess(currentValues);
+		
+		// if endianess is unknown, do not try to render new data to bytes
+		if (endianess == RenderingsUtil.ENDIANESS_UNKNOWN)
+		{
+			byte[] retBytes = new byte[currentValues.length];
+			for (int i=0 ;i<currentValues.length; i++)
+				retBytes[i] = currentValues[i].getValue();
+			return retBytes;
+		}
 		
 		return convertToBytes(columnSize, data, endianess);
 	}

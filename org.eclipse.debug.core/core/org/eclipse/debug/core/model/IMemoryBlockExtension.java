@@ -177,13 +177,6 @@ public interface IMemoryBlockExtension extends IMemoryBlock {
 	 * @see org.eclipse.debug.core.DebugEvent
 	 */
 	public void setValue(BigInteger offset, byte[] bytes) throws DebugException;
-	
-	/**
-	 * Returns whether this memory block is in big endian format.
-	 * 
-	 * @return whether this memory block is in big endian format
-	 */
-	public boolean isBigEndian();
 
 	/**
 	 * Connects the given client to this memory block. Allows a memory block

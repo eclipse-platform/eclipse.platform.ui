@@ -52,6 +52,20 @@ public class MemoryByte {
 	public static final byte 	KNOWN		= 0x08;
 	
 	/**
+	 * Bit mask used to indicate a this byte of memory
+	 * is big endian.  If this byte of memory is little endian,
+	 * turn this bit mask to off.
+	 */
+	public static final byte	BIG_ENDIAN	= 0x10;
+	
+	/**
+	 * Bit mask used to indicate that the endianess of this byte
+	 * of memory is known.  When a memory byte's endianess is
+	 * unknown, the endianess of this byte has no meaning.  
+	 */
+	public static final byte	ENDIANESS_KNOWN = 0x20;
+	
+	/**
 	 * Value of this byte.
 	 */
 	protected byte value;
@@ -67,21 +81,23 @@ public class MemoryByte {
 	
 	/**
 	 * Constructs a read-write, valid memory byte without a change history,
-	 * and a value of 0.
+	 * and a value of 0.  The byte's endianess is known and is little endian
+	 * by default.
 	 */
 	public MemoryByte() {
-	    this((byte)0, VALID);
+	    this((byte)0, (byte)(VALID | ENDIANESS_KNOWN));
 	}
 	
 	/**
 	 * Constructs a read-write, valid memory byte without a change history,
-	 * with the given value.
+	 * with the given value.  The byte's endianess is known and is little endian
+	 * by default.  
 	 * 
 	 * @param byteValue value of this memory byte
 	 * 
 	 */
 	public MemoryByte(byte byteValue) {
-	    this(byteValue, VALID);
+	    this(byteValue, (byte)(VALID | ENDIANESS_KNOWN));
 	}
 	
 	/**
@@ -216,5 +232,52 @@ public class MemoryByte {
 		return ((flags & MemoryByte.KNOWN) == MemoryByte.KNOWN);
 	}
 	
+	/**
+	 * Sets whether this byte of memory is big endian.
+	 * 
+	 * @param isBigEndian whether the byte of memory is big endian.
+	 */
+	public void setBigEndian(boolean isBigEndian)
+	{
+		flags |= MemoryByte.BIG_ENDIAN;
+		if (!isBigEndian)
+			flags ^= MemoryByte.BIG_ENDIAN;
+	}
+	
+	/**
+	 * Returns whether this byte of memory is big endian.
+	 * 
+	 * @return whether the byte of memory is big endian.
+	 */
+	public boolean isBigEndian()
+	{
+		return ((flags & MemoryByte.BIG_ENDIAN) == MemoryByte.BIG_ENDIAN);
+	}
+	
+	/**
+	 * Sets whether the endianess of this byte of memory is known.
+	 * If the endianess is unknown, the endianess of this byte
+	 * has no meaning. 
+	 * 
+	 * @param isEndianessKnown whether the endianess of this byte is known.
+	 */
+	public void setEndianessKnown(boolean isEndianessKnown)
+	{
+		flags |= MemoryByte.ENDIANESS_KNOWN;
+		if (!isEndianessKnown)
+			flags ^= MemoryByte.ENDIANESS_KNOWN;
+	}
+	
+	/**
+	 * Returns whether the endianess of this byte of memory is known.
+	 * If the endianess is unknown, the endianess of this byte
+	 * has no meaning.
+	 *  
+	 * @return whether the endianess of this byte of memory is known.
+	 */
+	public boolean isEndianessKnown()
+	{
+		return ((flags & MemoryByte.ENDIANESS_KNOWN) == MemoryByte.ENDIANESS_KNOWN);
+	}
 	
 }

@@ -289,6 +289,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					tmp.setValue((byte)0);
 					tmp.setReadonly(true);
 					tmp.setValid(false);
+					tmp.setEndianessKnown(false);
 					memoryBuffer[i] = tmp;
 				}
 				
@@ -299,6 +300,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					MemoryByte tmp = new MemoryByte();
 					tmp.setValue(memory[i]);
 					tmp.setValid(true);
+					tmp.setEndianessKnown(false);
 					memoryBuffer[j] = tmp;
 					j++;
 				}
@@ -310,6 +312,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					tmp.setValue((byte)0);
 					tmp.setReadonly(true);
 					tmp.setValid(false);
+					tmp.setEndianessKnown(false);
 					memoryBuffer[i] = tmp;
 				}
 			}
@@ -345,10 +348,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			
 			for (int i=memoryBuffer.length; i<reqNumBytes; i++)
 			{
-				byte value = 0;
-				byte flags = 0;
-				flags |= MemoryByte.READONLY;
-				newBuffer.add(new MemoryByte(value, flags));
+				MemoryByte mb = new MemoryByte();
+				mb.setReadonly(true);
+				mb.setEndianessKnown(false);
+				newBuffer.add(mb);
 			}
 			
 			memoryBuffer = (MemoryByte[])newBuffer.toArray(new MemoryByte[newBuffer.size()]);
@@ -505,6 +508,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			memoryBuffer[i] = new MemoryByte();
 			memoryBuffer[i].setValue((byte)0);
 			memoryBuffer[i].setReadonly(true);
+			memoryBuffer[i].setEndianessKnown(false);
 		}
 		return memoryBuffer;
 	}

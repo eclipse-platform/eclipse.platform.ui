@@ -20,6 +20,7 @@ public class RenderingsUtil {
 	
 	public static final int LITTLE_ENDIAN = 0;
 	public static final int BIG_ENDIAN = 1;
+	public static final int ENDIANESS_UNKNOWN = 2;
 
 	/**
 	 * Pad byte array with zero's with the byte array's length

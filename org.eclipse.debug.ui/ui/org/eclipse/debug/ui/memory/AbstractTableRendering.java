@@ -2517,7 +2517,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	 * 
 	 * @return the currently selected content in this rendering
 	 */
-	public String getSelectedContent() {
+	public String getSelectedAsString() {
 
 		if (isAddressOutOfRange(fSelectedAddress))
 			return ""; //$NON-NLS-1$
@@ -2535,6 +2535,44 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		TableItem tableItem = getTableViewer().getTable().getItem(row);
 		
 		return tableItem.getText(col);	
+	}
+	
+	/**
+	 * Returns the currently selected content in this rendering as MemoryByte.
+	 * 
+	 * @return the currently selected content in array of MemoryByte.  
+	 * Returns an empty array if the selected address is out of buffered range.
+	 */
+	public MemoryByte[] getSelectedAsBytes()
+	{
+		if (isAddressOutOfRange(fSelectedAddress))
+			return new MemoryByte[0];
+		
+		int col = fTableCursor.getColumn();
+		TableItem rowItem = fTableCursor.getRow();
+		
+		// check precondition
+		if (col == 0 || col > getBytesPerLine()/getBytesPerColumn())
+		{
+			return new MemoryByte[0];
+		}
+		
+		Object data = rowItem.getData();
+		if (data == null || !(data instanceof TableRenderingLine))
+			return new MemoryByte[0];
+		
+		TableRenderingLine line = (TableRenderingLine)data;
+		int offset = (col-1)*(getAddressableUnitPerColumn()*getAddressableSize());
+		int end = offset + (getAddressableUnitPerColumn()*getAddressableSize());
+		
+		// make a copy of the bytes to ensure that data cannot be changed
+		// by caller
+		MemoryByte[] bytes = line.getBytes(offset, end);
+		MemoryByte[] retBytes = new MemoryByte[bytes.length];
+		
+		System.arraycopy(bytes, 0, retBytes, 0, bytes.length);
+		
+		return retBytes;
 	}
 	
 	/**

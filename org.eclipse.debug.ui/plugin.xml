@@ -1359,10 +1359,17 @@
                label="%Endianess"
                path="additions"
                id="org.eclipse.debug.ui.memory.rendering.setendianess">
-            <separator
-                  name="setEndianessGroup">
-            </separator>
-         </menu>            
+            <separator name="setEndianessGroup"/>
+            <groupMarker name="defaultEndianessGroup"/>
+         </menu>
+          <action
+                helpContextId="LittleEndianAction_context"
+                enablesFor="1"
+                label="%LittleEndianActionName"
+                class="org.eclipse.debug.internal.ui.views.memory.renderings.LittleEndianAction"
+                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
+                id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
+         </action>            
          <action
                helpContextId="BigEndianAction_context"
                enablesFor="1"
@@ -1371,14 +1378,13 @@
                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
                id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"> 
          </action>
-          <action
-                helpContextId="LittleEndianAction_context"
-                enablesFor="1"
-                label="%LittleEndianActionName"
-                class="org.eclipse.debug.internal.ui.views.memory.renderings.LittleEndianAction"
-                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
-                id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
-         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.DefaultEndianessAction"
+               enablesFor="1"
+               helpContextId="RestoreDefEndianessAction_context"
+               id="org.eclipse.debug.ui.memory.rendering.DefaultEndianAction"
+               label="%RestoreDefEndianessActionName"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/defaultEndianessGroup"/>
       </objectContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"
