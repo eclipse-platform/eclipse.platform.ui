@@ -22,7 +22,7 @@ import java.io.IOException;
  * <p>
  * Tag handlers are used by translators via tag handler factories.</p>
  * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
+ * XXX: This is work in progress and can change any time until API for 3.0 is frozen.
  * </p>
  * @see org.eclipse.jface.text.source.ITranslator
  * @see org.eclipse.jface.text.source.ITagHandlerFactory

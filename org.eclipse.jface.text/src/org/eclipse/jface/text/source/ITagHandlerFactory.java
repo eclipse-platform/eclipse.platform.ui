@@ -15,7 +15,7 @@ package org.eclipse.jface.text.source;
  * A tag handler factory provides access to tag
  * handlers.
  * <p>
- * XXX: This is work in progress and can change anytime until API for 3.0 is frozen.
+ * XXX: This is work in progress and can change any time until API for 3.0 is frozen.
  * </p>
  * @since 3.0
  */
