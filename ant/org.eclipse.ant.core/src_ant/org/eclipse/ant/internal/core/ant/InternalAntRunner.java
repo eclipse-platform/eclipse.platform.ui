@@ -199,7 +199,7 @@ public class InternalAntRunner {
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		if (prefs.getAntHome() != null) {
-			project.setProperty("ant.home", prefs.getAntHome());
+			System.setProperty("ant.home", prefs.getAntHome());
 		}
 		
 		Property[] properties= prefs.getCustomProperties();
