@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -63,6 +65,13 @@ final class PluginRegistry extends AbstractRegistry {
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
+	private List activeKeyConfigurations;
+	private List categories; 
+	private List commands; 
+	private List contextBindings;
+	private List imageBindings;
+	private List keyBindings;
+	private List keyConfigurations;	
 	private IPluginRegistry pluginRegistry;
 	private PluginRegistryReader pluginRegistryReader;
 	
@@ -81,12 +90,12 @@ final class PluginRegistry extends AbstractRegistry {
 			activeKeyConfigurations = new ArrayList();
 		else 
 			activeKeyConfigurations.clear();		
-		
+	
 		if (categories == null)
 			categories = new ArrayList();
 		else 
 			categories.clear();
-			
+		
 		if (commands == null)
 			commands = new ArrayList();
 		else 
@@ -101,7 +110,7 @@ final class PluginRegistry extends AbstractRegistry {
 			imageBindings = new ArrayList();
 		else 
 			imageBindings.clear();
-			
+		
 		if (keyBindings == null)
 			keyBindings = new ArrayList();
 		else 
@@ -115,7 +124,14 @@ final class PluginRegistry extends AbstractRegistry {
 		if (pluginRegistryReader == null)
 			pluginRegistryReader = new PluginRegistryReader();
 
-		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
+		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);		
+		super.activeKeyConfigurations = Collections.unmodifiableList(activeKeyConfigurations);
+		super.categories = Collections.unmodifiableList(categories);
+		super.commands = Collections.unmodifiableList(commands);
+		super.contextBindings = Collections.unmodifiableList(contextBindings);
+		super.imageBindings = Collections.unmodifiableList(imageBindings);
+		super.keyBindings = Collections.unmodifiableList(keyBindings);
+		super.keyConfigurations = Collections.unmodifiableList(keyConfigurations);
 	}
 
 	private String getPluginId(IConfigurationElement element) {

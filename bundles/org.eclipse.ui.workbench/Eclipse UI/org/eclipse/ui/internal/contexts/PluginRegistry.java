@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.contexts;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -39,6 +41,7 @@ final class PluginRegistry extends AbstractRegistry {
 
 	private final static String TAG_ROOT = Persistence.PACKAGE_BASE;
 	
+	private List contexts;
 	private IPluginRegistry pluginRegistry;
 	private PluginRegistryReader pluginRegistryReader;
 	
@@ -62,6 +65,7 @@ final class PluginRegistry extends AbstractRegistry {
 			pluginRegistryReader = new PluginRegistryReader();
 
 		pluginRegistryReader.readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, TAG_ROOT);
+		super.contexts = Collections.unmodifiableList(contexts);		
 	}
 
 	private String getPluginId(IConfigurationElement element) {

@@ -29,30 +29,30 @@ abstract class AbstractRegistry implements IRegistry {
 	}
 
 	public List getActiveKeyConfigurations() {
-		return Collections.unmodifiableList(activeKeyConfigurations);
+		return activeKeyConfigurations;
 	}
 
 	public List getCategories() {
-		return Collections.unmodifiableList(categories);
+		return categories;
 	}
 	
 	public List getCommands() {
-		return Collections.unmodifiableList(commands);
+		return commands;
 	}
 
 	public List getContextBindings() {
-		return Collections.unmodifiableList(contextBindings);
+		return contextBindings;
 	}
 
 	public List getImageBindings() {
-		return Collections.unmodifiableList(imageBindings);
+		return imageBindings;
 	}
 	
 	public List getKeyBindings() {
-		return Collections.unmodifiableList(keyBindings);
+		return keyBindings;
 	}
 
 	public List getKeyConfigurations() {
-		return Collections.unmodifiableList(keyConfigurations);
+		return keyConfigurations;
 	}
 }	

@@ -23,6 +23,6 @@ abstract class AbstractRegistry implements IRegistry {
 	}
 
 	public List getContexts() {
-		return Collections.unmodifiableList(contexts);
+		return contexts;
 	}
 }	
