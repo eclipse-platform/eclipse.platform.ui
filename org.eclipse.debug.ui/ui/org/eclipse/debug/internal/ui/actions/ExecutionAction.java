@@ -21,7 +21,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -42,10 +41,6 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		//Eventually, the launcher-based support will be removed.
-		//boolean shiftHeld = (event.stateMask & SWT.SHIFT) != 0;		
-
-		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		runLaunchConfiguration();
 	}
 	
@@ -56,7 +51,6 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 		lcd.open();
 	}
 	
-
 	/**
 	 * Returns the mode of a launcher to use for this action
 	 */
