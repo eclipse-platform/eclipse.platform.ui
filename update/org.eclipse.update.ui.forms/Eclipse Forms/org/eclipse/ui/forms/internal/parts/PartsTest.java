@@ -32,14 +32,11 @@ public class PartsTest {
 		//sc.setBackground(sc.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		final Composite c = new Composite(sc, SWT.NONE);
 		sc.setContent(c);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
 		sc.addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
-				Rectangle ssize = sc.getClientArea();
-				int swidth = ssize.width;
-				Point size = c.computeSize(swidth, SWT.DEFAULT, true);
-				Rectangle trim = c.computeTrim(0, 0, size.x, size.y);
-				size = new Point(trim.width, trim.height);
-				c.setSize(size);
+				updateSize(sc, c);
 			}
 		});
 		//c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_WHITE));
@@ -291,6 +288,7 @@ public class PartsTest {
 		Rectangle trim = c.computeTrim(0, 0, size.x, size.y);
 		size = new Point(trim.width, trim.height);
 		c.setSize(size);
+		sc.setMinSize(size);
 	}
 
 }

@@ -35,8 +35,8 @@ public class HyperlinkSettings {
 	}
 	
 	public void initializeDefaultForegrounds(Display display) {
-		foreground = JFaceColors.getHyperlinkText(display);
-		activeForeground = JFaceColors.getActiveHyperlinkText(display);
+		setForeground(JFaceColors.getHyperlinkText(display));
+		setActiveForeground(JFaceColors.getActiveHyperlinkText(display));
 	}
 
 	public Color getActiveBackground() {

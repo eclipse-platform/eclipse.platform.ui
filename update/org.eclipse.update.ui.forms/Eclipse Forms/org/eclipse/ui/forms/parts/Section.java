@@ -35,6 +35,11 @@ public class Section extends ExpandableComposite {
 			descriptionLabel = new Label(this, SWT.WRAP);
 		}
 	}
+	
+	protected void internalSetExpanded(boolean expanded) {
+		super.internalSetExpanded(expanded);
+		reflow();
+	}
 
 	protected void reflow() {
 		setRedraw(false);
