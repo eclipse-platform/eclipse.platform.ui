@@ -353,15 +353,18 @@ public class TextUtilities {
 	 * @param document the document
 	 * @param partitioning the partitioning to be used
 	 * @param offset the offset
+	 * @param preferOpenPartitions <code>true</code> if precedence should be
+	 *        given to a open partition ending at <code>offset</code> over a
+	 *        closed partition starting at <code>offset</code>
 	 * @return the content type at the given offset of the document
 	 * @throws BadLocationException if offset is invalid in the document
 	 * @since 3.0
 	 */
-	public static String getContentType(IDocument document, String partitioning, int offset) throws BadLocationException {
+	public static String getContentType(IDocument document, String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
 			try {
-				return extension3.getContentType(partitioning, offset);
+				return extension3.getContentType(partitioning, offset, preferOpenPartitions);
 			} catch (BadPartitioningException x) {
 				return IDocument.DEFAULT_CONTENT_TYPE;
 			}
@@ -372,19 +375,23 @@ public class TextUtilities {
 	
 	/**
 	 * Returns the partition of the given offset of the given document.
-	 * 
+	 *  
 	 * @param document the document
 	 * @param partitioning the partitioning to be used
 	 * @param offset the offset
-	 * @return the content type at the given offset of this viewer's input document
+	 * @param preferOpenPartitions <code>true</code> if precedence should be
+	 *        given to a open partition ending at <code>offset</code> over a
+	 *        closed partition starting at <code>offset</code>
+	 * @return the content type at the given offset of this viewer's input
+	 *         document
 	 * @throws BadLocationException if offset is invalid in the given document
 	 * @since 3.0
 	 */
-	public static ITypedRegion getPartition(IDocument document, String partitioning, int offset) throws BadLocationException {
+	public static ITypedRegion getPartition(IDocument document, String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
 			try {
-				return extension3.getPartition(partitioning, offset);
+				return extension3.getPartition(partitioning, offset, preferOpenPartitions);
 			} catch (BadPartitioningException x) {
 				return new TypedRegion(0, document.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
 			}
@@ -394,21 +401,25 @@ public class TextUtilities {
 	}
 
 	/**
-	 * Computes and returns the partitioning for the given region of the given document for the given partitioning name.
+	 * Computes and returns the partitioning for the given region of the given
+	 * document for the given partitioning name.
 	 * 
 	 * @param document the document
 	 * @param partitioning the partitioning name
 	 * @param offset the region offset
 	 * @param length the region length
-	 * @return  the partitioning for the given region of the given document for the given partitioning name
-	 * @throws BadLocationException if the given region is invalid for the given document
+	 * @param includeZeroLengthPartitions whether to include zero-length partitions
+	 * @return the partitioning for the given region of the given document for
+	 *         the given partitioning name
+	 * @throws BadLocationException if the given region is invalid for the given
+	 *         document
 	 * @since 3.0
 	 */
-	public static ITypedRegion[] computePartitioning(IDocument document, String partitioning, int offset, int length) throws BadLocationException {
+	public static ITypedRegion[] computePartitioning(IDocument document, String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException {
 		if (document instanceof IDocumentExtension3) {
 			IDocumentExtension3 extension3= (IDocumentExtension3) document;
 			try {
-				return extension3.computePartitioning(partitioning, offset, length);
+				return extension3.computePartitioning(partitioning, offset, length, includeZeroLengthPartitions);
 			} catch (BadPartitioningException x) {
 				return new ITypedRegion[0];
 			}

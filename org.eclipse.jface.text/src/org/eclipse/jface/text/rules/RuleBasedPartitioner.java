@@ -455,59 +455,7 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 	 * @see IDocumentPartitioner#computePartitioning
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length) {
-		
-		List list= new ArrayList();
-		
-		try {
-			
-			int endOffset= offset + length;
-			
-			Position[] category= fDocument.getPositions(fPositionCategory);
-			
-			TypedPosition previous= null, current= null;
-			int start, end, gapOffset;
-			Position gap= null;
-			
-			for (int i= 0; i < category.length; i++) {
-				
-				current= (TypedPosition) category[i];
-				
-				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
-				gap= new Position(gapOffset, current.getOffset() - gapOffset);
-				if (gap.getLength() > 0 && gap.overlapsWith(offset, length)) {
-					start= Math.max(offset, gapOffset);
-					end= Math.min(endOffset, gap.getOffset() + gap.getLength());
-					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
-				}
-				
-				if (current.overlapsWith(offset, length)) {
-					start= Math.max(offset, current.getOffset());
-					end= Math.min(endOffset, current.getOffset() + current.getLength());
-					list.add(new TypedRegion(start, end - start, current.getType()));
-				}
-				
-				previous= current;
-			}
-			
-			if (previous != null) {
-				gapOffset= previous.getOffset() + previous.getLength();
-				gap= new Position(gapOffset, fDocument.getLength() - gapOffset);
-				if (gap.getLength() > 0 && gap.overlapsWith(offset, length)) {
-					start= Math.max(offset, gapOffset);
-					end= Math.min(endOffset, fDocument.getLength());
-					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
-				}
-			}
-			
-			if (list.isEmpty())
-				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
-				
-		} catch (BadPositionCategoryException x) {
-		}
-		
-		TypedRegion[] result= new TypedRegion[list.size()];
-		list.toArray(result);
-		return result;
+		return computePartitioning(offset, length, false);
 	}
 	
 	/*
@@ -547,5 +495,90 @@ public class RuleBasedPartitioner implements IDocumentPartitioner, IDocumentPart
 		if (data instanceof String) 
 			return (String) data;
 		return null;
+	}
+
+    /* zero-length partition support */
+    
+	/*
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthContentType(int)
+	 */
+	public String getContentType(int offset, boolean preferOpenPartitions) {
+		return getPartition(offset, preferOpenPartitions).getType();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthPartition(int)
+	 */
+	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
+		ITypedRegion region= getPartition(offset);
+		if (preferOpenPartitions) {
+			if (region.getOffset() == offset && !region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+				if (offset > 0) {
+					region= getPartition(offset - 1);
+					if (region.getType().equals(IDocument.DEFAULT_CONTENT_TYPE))
+						return region;
+				}
+				return new TypedRegion(offset, 0, IDocument.DEFAULT_CONTENT_TYPE);
+			}
+		}
+        return region;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computeZeroLengthPartitioning(int, int)
+	 */
+	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
+		List list= new ArrayList();
+		
+		try {
+			
+			int endOffset= offset + length;
+			
+			Position[] category= fDocument.getPositions(fPositionCategory);
+			
+			TypedPosition previous= null, current= null;
+			int start, end, gapOffset;
+			Position gap= null;
+			
+			for (int i= 0; i < category.length; i++) {
+				
+				current= (TypedPosition) category[i];
+				
+				gapOffset= (previous != null) ? previous.getOffset() + previous.getLength() : 0;
+				gap= new Position(gapOffset, current.getOffset() - gapOffset);
+				if ((includeZeroLengthPartitions || gap.getLength() > 0) && gap.overlapsWith(offset, length)) {
+					start= Math.max(offset, gapOffset);
+					end= Math.min(endOffset, gap.getOffset() + gap.getLength());
+					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
+				}
+				
+				if (current.overlapsWith(offset, length)) {
+					start= Math.max(offset, current.getOffset());
+					end= Math.min(endOffset, current.getOffset() + current.getLength());
+					list.add(new TypedRegion(start, end - start, current.getType()));
+				}
+				
+				previous= current;
+			}
+			
+			if (previous != null) {
+				gapOffset= previous.getOffset() + previous.getLength();
+				gap= new Position(gapOffset, fDocument.getLength() - gapOffset);
+				if ((includeZeroLengthPartitions || gap.getLength() > 0) && ((includeZeroLengthPartitions && offset + length == gapOffset && gap.length == 0) || gap.overlapsWith(offset, length))) {
+					start= Math.max(offset, gapOffset);
+					end= Math.min(endOffset, fDocument.getLength());
+					list.add(new TypedRegion(start, end - start, IDocument.DEFAULT_CONTENT_TYPE));
+				}
+			}
+			
+			if (list.isEmpty())
+				list.add(new TypedRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE));
+				
+		} catch (BadPositionCategoryException x) {
+		}
+		
+		TypedRegion[] result= new TypedRegion[list.size()];
+		list.toArray(result);
+		return result;
 	}
 }

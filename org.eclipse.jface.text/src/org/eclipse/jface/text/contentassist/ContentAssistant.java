@@ -1374,7 +1374,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		try {
 			
 			IDocument document= viewer.getDocument();
-			String type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset);
+			String type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true);
 			
 			return getContentAssistProcessor(type);
 		
@@ -1398,7 +1398,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			IDocument document= contentAssistSubject.getDocument();
 			String type;
 			if (document != null)
-				type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset);
+				type= TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true);
 			else 
 				type= IDocument.DEFAULT_CONTENT_TYPE;
 			

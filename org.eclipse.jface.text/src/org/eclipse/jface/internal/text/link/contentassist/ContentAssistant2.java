@@ -1366,7 +1366,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	private IContentAssistProcessor getProcessor(ITextViewer viewer, int offset) {
 		try {
-			String type= TextUtilities.getContentType(viewer.getDocument(), getDocumentPartitioning(), offset);
+			String type= TextUtilities.getContentType(viewer.getDocument(), getDocumentPartitioning(), offset, true);
 			return getContentAssistProcessor(type);
 		} catch (BadLocationException x) {
 		}

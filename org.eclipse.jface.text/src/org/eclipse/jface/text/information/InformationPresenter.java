@@ -320,7 +320,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			
 		IInformationProvider provider= null;
 		try {
-			String contentType= TextUtilities.getContentType(fTextViewer.getDocument(), getDocumentPartitioning(), offset);
+			String contentType= TextUtilities.getContentType(fTextViewer.getDocument(), getDocumentPartitioning(), offset, true);
 			provider= getInformationProvider(contentType);
 		} catch (BadLocationException x) {
 		}

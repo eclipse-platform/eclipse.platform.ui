@@ -715,7 +715,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public String getContentType(int offset) throws BadLocationException {
 		String contentType= null;
 		try {
-			contentType= getContentType(DEFAULT_PARTITIONING, offset);
+			contentType= getContentType(DEFAULT_PARTITIONING, offset, false);
 			Assert.isNotNull(contentType);
 		} catch (BadPartitioningException e) {
 			Assert.isTrue(false);
@@ -820,7 +820,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public ITypedRegion getPartition(int offset) throws BadLocationException {
 		ITypedRegion partition= null;
 		try {
-			partition= getPartition(DEFAULT_PARTITIONING, offset);
+			partition= getPartition(DEFAULT_PARTITIONING, offset, false);
 			Assert.isNotNull(partition);
 		} catch (BadPartitioningException e) {
 			Assert.isTrue(false);
@@ -834,7 +834,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	public ITypedRegion[] computePartitioning(int offset, int length) throws BadLocationException {
 		ITypedRegion[] partitioning= null;
 		try {
-			partitioning= computePartitioning(DEFAULT_PARTITIONING, offset, length);
+			partitioning= computePartitioning(DEFAULT_PARTITIONING, offset, length, false);
 			Assert.isNotNull(partitioning);
 		} catch (BadPartitioningException e) {
 			Assert.isTrue(false);
@@ -1177,35 +1177,43 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension3#computePartitioning(java.lang.String, int, int)
-	 * @since 3.0
+	 * @see org.eclipse.jface.text.IDocumentExtension3#computeZeroLengthPartitioning(java.lang.String, int, int)
 	 */
-	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length) throws BadLocationException, BadPartitioningException {
+	public ITypedRegion[] computePartitioning(String partitioning, int offset, int length, boolean includeZeroLengthPartitions) throws BadLocationException, BadPartitioningException {
 		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
 			throw new BadLocationException();
+		
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
-		if (partitioner != null)
+		
+		if (partitioner instanceof IDocumentPartitionerExtension2)
+			return ((IDocumentPartitionerExtension2) partitioner).computePartitioning(offset, length, includeZeroLengthPartitions);
+		else if (partitioner != null)
 			return partitioner.computePartitioning(offset, length);
-		if (DEFAULT_PARTITIONING.equals(partitioning))
+		else if (DEFAULT_PARTITIONING.equals(partitioning))
 			return new TypedRegion[] { new TypedRegion(offset, length, DEFAULT_CONTENT_TYPE) };
-		throw new BadPartitioningException();
+		else
+			throw new BadPartitioningException();
 	}
-
+	
 	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension3#getContentType(java.lang.String, int)
-	 * @since 3.0
+	 * @see org.eclipse.jface.text.IDocumentExtension3#getZeroLengthContentType(java.lang.String, int)
 	 */
-	public String getContentType(String partitioning, int offset) throws BadLocationException, BadPartitioningException {
+	public String getContentType(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException {
 		if ((0 > offset) || (offset > getLength()))
 			throw new BadLocationException();
+		
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
-		if (partitioner != null)
-			return partitioner.getContentType(offset);
-		if (DEFAULT_PARTITIONING.equals(partitioning))
-			return DEFAULT_CONTENT_TYPE;
-		throw new BadPartitioningException();
-	}
 
+		if (partitioner instanceof IDocumentPartitionerExtension2)
+			return ((IDocumentPartitionerExtension2) partitioner).getContentType(offset, preferOpenPartitions);
+		else if (partitioner != null)
+			return partitioner.getContentType(offset);
+		else if (DEFAULT_PARTITIONING.equals(partitioning))
+			return DEFAULT_CONTENT_TYPE;
+		else
+			throw new BadPartitioningException();
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension3#getDocumentPartitioner(java.lang.String)
 	 * @since 3.0
@@ -1228,20 +1236,24 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension3#getPartition(java.lang.String, int)
-	 * @since 3.0
+	 * @see org.eclipse.jface.text.IDocumentExtension3#getZeroLengthPartition(java.lang.String, int)
 	 */
-	public ITypedRegion getPartition(String partitioning, int offset) throws BadLocationException, BadPartitioningException {
+	public ITypedRegion getPartition(String partitioning, int offset, boolean preferOpenPartitions) throws BadLocationException, BadPartitioningException {
 		if ((0 > offset) || (offset > getLength()))
 			throw new BadLocationException();
+		
 		IDocumentPartitioner partitioner= getDocumentPartitioner(partitioning);
-		if (partitioner != null)
+		
+		if (partitioner instanceof IDocumentPartitionerExtension2)
+			return ((IDocumentPartitionerExtension2) partitioner).getPartition(offset, preferOpenPartitions);
+		else if (partitioner != null)
 			return partitioner.getPartition(offset);
-		if (DEFAULT_PARTITIONING.equals(partitioning))
+		else if (DEFAULT_PARTITIONING.equals(partitioning))
 			return new TypedRegion(0, getLength(), DEFAULT_CONTENT_TYPE);
-		throw new BadPartitioningException();
+		else
+			throw new BadPartitioningException();
 	}
-
+	
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension3#getPartitionings()
 	 * @since 3.0

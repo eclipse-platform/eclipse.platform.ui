@@ -211,7 +211,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			try {
 				offset += fChildDocument.getParentDocumentRange().getOffset();
 				if (fParentDocument3 != null)
-					return fParentDocument3.getPartition(fPartitioning, offset);
+					return fParentDocument3.getPartition(fPartitioning, offset, false);
 				return fParentDocument.getPartition(offset);
 			} catch (BadLocationException x) {
 			} catch (BadPartitioningException x) {
@@ -227,7 +227,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			try {
 				offset += fChildDocument.getParentDocumentRange().getOffset();
 				if (fParentDocument3 != null)
-					return fParentDocument3.computePartitioning(fPartitioning, offset, length);
+					return fParentDocument3.computePartitioning(fPartitioning, offset, length, false);
 				return fParentDocument.computePartitioning(offset, length);
 			} catch (BadLocationException x) {
 			} catch (BadPartitioningException x) {
@@ -243,7 +243,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 			try {
 				offset += fChildDocument.getParentDocumentRange().getOffset();
 				if (fParentDocument3 != null)
-					return fParentDocument3.getContentType(fPartitioning, offset);
+					return fParentDocument3.getContentType(fPartitioning, offset, false);
 				return fParentDocument.getContentType(offset);
 			} catch (BadLocationException x) {
 			} catch (BadPartitioningException x) {

@@ -451,7 +451,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 */
 	private TypedPosition[] getPartitioning(IRegion region) throws BadLocationException {
 		
-		ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, region.getOffset(), region.getLength());
+		ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, region.getOffset(), region.getLength(), false);
 		TypedPosition[] positions= new TypedPosition[regions.length];
 		
 		for (int i= 0; i < regions.length; i++) {

@@ -210,7 +210,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	private ITypedRegion[] computePartitioning(int offset, int length) {
 		ITypedRegion[] regions= null;
 		try {
-			regions= TextUtilities.computePartitioning(getDocument(), getDocumentPartitioning(), offset, length);
+			regions= TextUtilities.computePartitioning(getDocument(), getDocumentPartitioning(), offset, length, false);
 		} catch (BadLocationException x) {
 			regions= new TypedRegion[0];
 		}

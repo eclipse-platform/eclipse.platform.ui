@@ -1766,7 +1766,7 @@ public class TextViewer extends Viewer implements
 			return null;
 
 		try {
-			TextHoverKey key= new TextHoverKey(TextUtilities.getContentType(document, getDocumentPartitioning(), offset), stateMask);
+			TextHoverKey key= new TextHoverKey(TextUtilities.getContentType(document, getDocumentPartitioning(), offset, true), stateMask);
 			Object textHover= fTextHovers.get(key);
 			if (textHover == null) {
 				// Use default text hover
@@ -2775,7 +2775,7 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Returns the width of the text when being drawn into this viewer's widget.
 	 * 
-	 * @param the string to measure
+	 * @param text the string to measure
 	 * @return the width of the presentation of the given string
 	 * @deprecated use <code>getWidthInPixels(int, int)</code> instead
 	 */
@@ -3151,7 +3151,7 @@ public class TextViewer extends Viewer implements
 	 */
 	protected Object selectContentTypePlugin(int offset, Map plugins) {
 		try {
-			return selectContentTypePlugin(TextUtilities.getContentType(getDocument(), getDocumentPartitioning(), offset), plugins);
+			return selectContentTypePlugin(TextUtilities.getContentType(getDocument(), getDocumentPartitioning(), offset, true), plugins);
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.selectContentTypePlugin")); //$NON-NLS-1$
@@ -3639,7 +3639,7 @@ public class TextViewer extends Viewer implements
 			
 			Point selection= getSelectedRange();
 			IRegion block= getTextBlockFromSelection(selection);
-			ITypedRegion[] regions= TextUtilities.computePartitioning(d, getDocumentPartitioning(), block.getOffset(), block.getLength());
+			ITypedRegion[] regions= TextUtilities.computePartitioning(d, getDocumentPartitioning(), block.getOffset(), block.getLength(), false);
 
 			int lineCount= 0;			
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]

@@ -239,15 +239,15 @@ public class MultiPassContentFormatter implements IContentFormatter, IContentFor
 		Map partitioners= new HashMap(0);
 		try {
 
-			final ITypedRegion[] partitions= TextUtilities.computePartitioning(document, fPartitioning, offset, length);
+			final ITypedRegion[] partitions= TextUtilities.computePartitioning(document, fPartitioning, offset, length, false);
 
 			if (!fType.equals(partitions[0].getType()))
-				partitions[0]= TextUtilities.getPartition(document, fPartitioning, partitions[0].getOffset());
+				partitions[0]= TextUtilities.getPartition(document, fPartitioning, partitions[0].getOffset(), false);
 
 			if (partitions.length > 1) {
 
 				if (!fType.equals(partitions[partitions.length - 1].getType()))
-					partitions[partitions.length - 1]= TextUtilities.getPartition(document, fPartitioning, partitions[partitions.length - 1].getOffset());
+					partitions[partitions.length - 1]= TextUtilities.getPartition(document, fPartitioning, partitions[partitions.length - 1].getOffset(), false);
 			}
 
 			String type= null;

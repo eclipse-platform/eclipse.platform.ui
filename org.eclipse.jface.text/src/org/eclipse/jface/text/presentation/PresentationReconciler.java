@@ -434,7 +434,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 			
 			TextPresentation presentation= new TextPresentation(damage, 1000);
 			
-			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, getDocumentPartitioning(), damage.getOffset(), damage.getLength());
+			ITypedRegion[] partitioning= TextUtilities.computePartitioning(document, getDocumentPartitioning(), damage.getOffset(), damage.getLength(), false);
 			for (int i= 0; i < partitioning.length; i++) {
 				ITypedRegion r= partitioning[i];
 				IPresentationRepairer repairer= getRepairer(r.getType());
@@ -573,6 +573,6 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @since 3.0
 	 */
 	private ITypedRegion getPartition(IDocument document, int offset) throws BadLocationException {
-		return TextUtilities.getPartition(document, getDocumentPartitioning(), offset);
+		return TextUtilities.getPartition(document, getDocumentPartitioning(), offset, false);
 	}
 }
