@@ -6,6 +6,9 @@ package org.eclipse.jface.preference;
  */
 import java.io.*;
 import java.util.*;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 
 /**
@@ -98,14 +101,19 @@ public boolean contains(String name) {
  * Method declared on IPreferenceStore.
  */
 public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
-	Object[] listeners = this.listeners.getListeners();
+	final Object[] listeners = this.listeners.getListeners();
 	// Do we need to fire an event.
 	if (listeners.length > 0 && (oldValue == null || !oldValue.equals(newValue))) {
-		PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-		for (int i = 0; i < listeners.length; ++i) {
-			IPropertyChangeListener l = (IPropertyChangeListener) listeners[i];
-			l.propertyChange(pe);
-		}
+		final PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
+		
+		Platform.run(new SafeRunnable(JFaceResources.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
+			public void run() {
+				for (int i = 0; i < listeners.length; ++i) {
+					IPropertyChangeListener l = (IPropertyChangeListener) listeners[i];
+					l.propertyChange(pe);
+				}
+			}
+		});
 	}
 }
 /* (non-Javadoc)

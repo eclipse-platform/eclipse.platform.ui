@@ -11,6 +11,7 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 
@@ -264,12 +265,17 @@ private FontData[] defaultFontData() {
  * Fires a PropertyChangeEvent.
  */
 private void fireFontMappingChanged(String name) {
-	Object[] listeners = this.listeners.getListeners();
+	final String finalName = name;
+	final Object[] listeners = this.listeners.getListeners();
 	if (listeners.length > 0) {
-		PropertyChangeEvent event = new PropertyChangeEvent(this, name, null, null);
-		for (int i = 0; i < listeners.length; ++i) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
-		}
+		Platform.run(new SafeRunnable(JFaceResources.getString("FontRegistry.changeError")) { //$NON-NLS-1$
+			public void run() {
+				PropertyChangeEvent event = new PropertyChangeEvent(this, finalName, null, null);
+				for (int i = 0; i < listeners.length; ++i) {
+					((IPropertyChangeListener) listeners[i]).propertyChange(event);
+				}
+			}	
+		});
 	}
 }
 /**
