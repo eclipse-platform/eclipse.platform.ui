@@ -42,10 +42,11 @@ public class PreferencesURL extends HelpURL {
 		gen.pad++;
 
 		gen.printPad();
-		gen.println("<pref name=\""+HelpSystem.LOG_LEVEL_KEY+"\" value=\""+pref.getInt(HelpSystem.LOG_LEVEL_KEY)+"\"/>");
-		gen.println("<pref name=\""+HelpSystem.BANNER_KEY+"\" value=\""+pref.getString(HelpSystem.BANNER_KEY)+"\"/>");
-		gen.println("<pref name=\""+HelpSystem.BANNER_HEIGHT_KEY+"\" value=\""+pref.getInt(HelpSystem.BANNER_HEIGHT_KEY)+"\"/>");
-		
+		String[] names = pref.defaultPropertyNames();
+		for (int i=0; i<names.length; i++)
+		{
+			gen.println("<pref name=\""+names[i]+"\" value=\""+pref.getString(names[i])+"\"/>");
+		}
 		gen.pad--;
 		gen.println("</prefs>");
 		gen.close();
