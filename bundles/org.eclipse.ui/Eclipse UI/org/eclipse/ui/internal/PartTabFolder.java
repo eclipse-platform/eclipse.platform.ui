@@ -652,11 +652,8 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 				oldChild.setBounds(new Rectangle(0, 0, 0, 0));
 				oldChild.setContainer(null);
 				newChild.setContainer(this);
-				if (tabFolder.getItemCount() > 0) {
-					if (partIsActive) 
-						setSelection(0);
-					else
-						setControlSize(current);
+				if (tabFolder.getItemCount() > 0 && !partIsActive) {
+					setControlSize(current);
 				}
 				break;
 			}

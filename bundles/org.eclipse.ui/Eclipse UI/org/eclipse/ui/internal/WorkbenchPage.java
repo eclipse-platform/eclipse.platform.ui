@@ -837,7 +837,7 @@ public void dispose() {
 		view.dispose();
 	}
 	activePart = null;
-	activationList = null;
+	activationList = new ActivationList();;
 
 	// Get rid of editor presentation.
 	editorPresentation.dispose();
@@ -982,6 +982,12 @@ public IActionSetDescriptor[] getActionSets() {
 		return persp.getActionSets();
 	else
 		return new IActionSetDescriptor[0];
+}
+/**
+ * Returns the activation list
+ */
+/*package*/ ActivationList getActivationList() {
+	return activationList;
 }
 /**
  * @see IWorkbenchPage
@@ -2283,6 +2289,14 @@ class ActivationList {
 			}
 		}
 		return null;
+	}
+	/*
+	 * Retuns the index of the part within the activation
+	 * list. The higher the index, the more recent it
+	 * was used.
+	 */
+	int indexOf(IWorkbenchPart part) {
+		return parts.indexOf(part);
 	}
 	/*
 	 * Remove a part from the list

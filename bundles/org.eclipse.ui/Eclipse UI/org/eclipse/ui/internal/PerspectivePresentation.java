@@ -7,7 +7,6 @@ are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.window.*;
@@ -424,6 +423,8 @@ private void derefPart(LayoutPart part) {
 		return;
 		
 	oldContainer.remove(part);
+	updateContainerVisibleTab(oldContainer);
+	
 	LayoutPart[] children = oldContainer.getChildren();
 	if (oldWindow instanceof WorkbenchWindow) {
 		boolean hasChildren = (children != null) && (children.length > 0);
@@ -1195,6 +1196,7 @@ public void removePart(LayoutPart part) {
 	ILayoutContainer container = part.getContainer();
 	if (container != null) {
 		container.replace(part, new PartPlaceholder(part.getID()));
+		updateContainerVisibleTab(container);
 
 		// If the parent is root we're done.  Do not try to replace
 		// it with placeholder.
@@ -1393,6 +1395,40 @@ private void stackView(ViewPane newPart, LayoutPart refPart) {
 		if (refPart instanceof ViewPane)
 			folder.enableDrag((ViewPane)refPart, partDropListener);
 		folder.enableDrag(newPart, partDropListener);
+	}
+}
+/**
+ * Update the container to show the correct visible
+ * tab based on the activation list.
+ * 
+ * @param org.eclipse.ui.internal.ILayoutContainer
+ */
+private void updateContainerVisibleTab(ILayoutContainer container) {
+	if (!(container instanceof PartTabFolder))
+		return;
+		
+	PartTabFolder folder = (PartTabFolder) container;
+	LayoutPart[] parts = folder.getChildren();
+	if (parts.length < 1)
+		return;
+		
+	LayoutPart selPart = null;
+	int topIndex = 0;
+	for (int i = 0; i < parts.length; i++) {
+		if (parts[i] instanceof PartPane) {
+			IWorkbenchPart part = ((PartPane) parts[i]).getPart();
+			int index = page.getActivationList().indexOf(part);
+			if (index >= topIndex) {
+				topIndex = index;
+				selPart = parts[i];
+			}
+		}
+	}
+
+	if (selPart != null) {
+		int selIndex = folder.indexOf(selPart);
+		if (folder.getSelection() != selIndex)
+			folder.setSelection(selIndex);
 	}
 }
 /**
