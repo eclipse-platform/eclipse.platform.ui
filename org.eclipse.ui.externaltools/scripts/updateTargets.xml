@@ -1,0 +1,12 @@
+<project name="exportplugins" default="export to remote targets" basedir=".">
+	<target name="init">
+		<tstamp/>
+	</target>
+
+	<target name="export to remote targets" depends="init">
+		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ant.core" target="export"/>
+		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ant.core" target="copy"/>
+		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ui.externalTools" target="export"/>
+		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ui.externalTools" target="copy"/>
+	</target>
+</project>
