@@ -281,7 +281,6 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			// the location points to a file
 			File file = new File(location.getFile());
 			export(file);
-			System.out.println("Export :"+file+" date:"+date.getTime());
 		}
 	}
 	/*

@@ -252,9 +252,8 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			// for the history
 			// remove the one that are configured 
 			// (may have been unconfigured in teh past, but the revert makes it configurd)
-			for (int i = 0; i < configuredFeatures.length; i++) {
-				remove(configuredFeatures[i], featureToUnconfigure);
-			}
+			featureToUnconfigure = remove(configuredFeatures, featureToUnconfigure);
+
 
 			// for each unconfigured feature
 			// check if it still exists
@@ -315,7 +314,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				}
 			}
 		}
-
+		
 		return featureToUnconfigure;
 	}
 
@@ -385,17 +384,26 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	 * @param feature
 	 * @param list
 	 */
-	private void remove(IFeatureReference feature, List list) {
-		String featureURLString = feature.getURL().toExternalForm();
-		boolean found = false;
+	// FIXME preventive NullPointerException ?
+	private List remove(IFeatureReference[] featureRefs, List list) {
+		String featureURLString = null; 
 		Iterator iter = list.iterator();
-		while (iter.hasNext() && !found) {
+		List result= new ArrayList(0);
+		
+		// if an element of the list is not found in the array, add it to teh result list
+		while (iter.hasNext()) {
 			IFeatureReference element = (IFeatureReference) iter.next();
-			if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
-				list.remove(element);
-				found = true;
+			boolean found = false;
+			for (int i = 0; i < featureRefs.length; i++) {
+				if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureRefs[i].getURL().toExternalForm())) {
+					found = true;
+				}
 			}
+			if (!found)
+				result.add(element);
 		}
+		
+		return result;
 	}
 
 	/**
@@ -415,5 +423,6 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		}
 		return found;
 	}
+
 
 }

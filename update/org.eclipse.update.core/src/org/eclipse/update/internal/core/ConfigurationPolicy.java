@@ -220,7 +220,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 							// make it relative to teh site
 							String path = UpdateManagerUtils.getURLAsString(site.getURL(), url);
 							// add end "/"
-							path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : File.separator;
+							path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";
 							// add plugin.xml or fragment.xml
 							path += entry.isFragment() ? "fragment.xml" : "plugin.xml"; //FIXME: fragments
 							pluginsString.add(path);

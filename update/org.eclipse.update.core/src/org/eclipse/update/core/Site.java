@@ -306,7 +306,6 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 	/**
 	 * @see IPluginContainer#getPluginEntries()
-	 * @deprecated should use getArchiveEntries ?
 	 */
 	public IPluginEntry[] getPluginEntries() {
 		IPluginEntry[] result = new IPluginEntry[0];

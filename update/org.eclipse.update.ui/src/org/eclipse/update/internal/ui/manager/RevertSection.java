@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.manager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.core.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.update.ui.forms.internal.*;
@@ -13,6 +14,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import java.lang.reflect.InvocationTargetException;
 
 public class RevertSection extends UpdateSection {
@@ -24,6 +26,9 @@ private static final String KEY_REVERT_TEXT = "SnapshotPage.RevertSection.revert
 private static final String KEY_REVERT_BUTTON = "SnapshotPage.RevertSection.revertButton";
 private static final String KEY_RESTORE_TEXT = "SnapshotPage.RevertSection.restoreText";
 private static final String KEY_RESTORE_BUTTON = "SnapshotPage.RevertSection.restoreButton";
+private static final String KEY_DIALOG_TITLE="SnapshotPage.RevertSection.dialog.title";
+private static final String KEY_DIALOG_MESSAGE="SnapshotPage.RevertSection.dialog.message";
+
 	
 	private Composite container;
 	private FormWidgetFactory factory;
@@ -114,14 +119,20 @@ private static final String KEY_RESTORE_BUTTON = "SnapshotPage.RevertSection.res
 	
 	public static void performRevert(final IInstallConfiguration target) {
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
+		
 			public void run(IProgressMonitor monitor) {
+				boolean isSucess = false;				
 				try {
 					ILocalSite localSite = SiteManager.getLocalSite();
 					localSite.revertTo(target, monitor, new UIProblemHandler());
+					saveLocalSite();
+					isSucess = true;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				} finally {
 					monitor.done();
+					if (isSucess)
+						informRestartNeeded();
 				}
 			}
 		};
@@ -135,4 +146,18 @@ private static final String KEY_RESTORE_BUTTON = "SnapshotPage.RevertSection.res
 		catch (InterruptedException e) {
 		}
 	}
+	
+	private static void saveLocalSite() throws CoreException {
+		ILocalSite localSite = SiteManager.getLocalSite();
+		localSite.save();
+	}
+	
+	
+	
+	public static void informRestartNeeded(){
+		String title = UpdateUIPlugin.getResourceString(KEY_DIALOG_TITLE);
+		String message= UpdateUIPlugin.getResourceString(KEY_DIALOG_MESSAGE);
+		MessageDialog.openInformation(UpdateUIPlugin.getActiveWorkbenchShell(), title, message);
+	}	
+	
 }

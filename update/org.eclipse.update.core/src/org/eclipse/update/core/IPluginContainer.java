@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.*;
  * A feature and a site are plugin container as they both
  * logically or physically manage the archives that contain
  * plug-ins.
- * @deprecated
  */
 //FIXME: javadoc
 
@@ -25,8 +24,6 @@ public interface IPluginContainer extends IAdaptable {
 	 * 
 	 * @return the accessible plug-ins. Returns an empty array
 	 * if there are no plug-ins.
-	 * @since 2.0 
-	 * @deprecated
 	 */
 
 	IPluginEntry [] getPluginEntries()  ;
@@ -34,8 +31,6 @@ public interface IPluginContainer extends IAdaptable {
 	/**
 	 * Returns the number of managed plug-ins
 	 * @return the number of plug-ins
-	 * @since 2.0 
-	 * @deprecated 
 	 */
 
 	int getPluginEntryCount() ;

@@ -340,7 +340,6 @@ public class SiteLocal implements ILocalSite, IWritable {
 			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
-			System.out.println("Clone URL:"+newFile.toExternalForm()+" name:"+name+" date:"+currentDate.getTime());
 		} catch (MalformedURLException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create a new configuration in:" + newFileName, e);
