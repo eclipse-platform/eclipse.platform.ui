@@ -21,11 +21,11 @@ package org.eclipse.core.resources;
  *    as a hierarchical resource delta. Event type is
  *    <code>PRE_BUILD</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
- *    workspace root.  These events are broadcast to interested parties immediately before
- *    any auto-building and happen whether or not auto-building is enabled.  These
- *    events are also broadcast prior to manual workspace builds, both full and
- *    incremental. The workspace is open for change during notification of these events.	 
- *    The delta reported in this event cycle is identical across
+ *    workspace root.  These events are broadcast to interested parties immediately 
+ *    before the first build of any kind in a workspace modifying operation.  If
+ *    autobuilding is not enabled, these events still occur at times when autobuild
+ *    would have occurred. The workspace is open for change during notification of 
+ *    these events. The delta reported in this event cycle is identical across
  *    all listeners registered for this type of event.
  *    Resource changes attempted during a <code>PRE_AUTO_BUILD</code> callback
  *    <b>must</b> be done in the thread doing the notification.
@@ -36,11 +36,11 @@ package org.eclipse.core.resources;
  *    as a hierarchical resource delta. Event type is
  *    <code>POST_AUTO_BUILD</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
- *    workspace root.  These events are broadcast to interested parties immediately after
- *    any auto-building and happen whether or not auto-building is enabled.  These
- *    events are also broadcast after manual workspace builds, both full and
- *    incremental. The workspace is open for change during notification of these events.	 
- *    The delta reported in this event cycle is identical across
+ *    workspace root.  These events are broadcast to interested parties at the
+ *    end of every workspace operation in which a build of any kind occurred.
+ *    If autobuilding is not enabled, these events still occur at times when autobuild
+ *    would have occurred. The workspace is open for change during notification of 
+ *    these events. The delta reported in this event cycle is identical across
  *    all listeners registered for this type of event.
  *    Resource changes attempted during a <code>POST_AUTO_BUILD</code> callback
  *    <b>must</b> be done in the thread doing the notification.
