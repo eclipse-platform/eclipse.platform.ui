@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
@@ -543,5 +544,23 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
      */
     protected ISyncInfoSetChangeListener getChangeSetChangeListener() {
         return this;
+    }
+
+    /**
+     * Wait until the collector is done processing any events.
+     * This method is for testing purposes only.
+     */
+    public void waitUntilDone(IProgressMonitor monitor) {
+		monitor.worked(1);
+		// wait for the event handler to process changes.
+		while(handler.getEventHandlerJob().getState() != Job.NONE) {
+			monitor.worked(1);
+			try {
+				Thread.sleep(10);		
+			} catch (InterruptedException e) {
+			}
+			Policy.checkCanceled(monitor);
+		}
+		monitor.worked(1);
     }
 }

@@ -101,7 +101,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	 * Return the provider that is currently active.
 	 * @return the provider that is currently active
 	 */
-	protected ISynchronizeModelProvider getActiveModelProvider() {
+	public ISynchronizeModelProvider getActiveModelProvider() {
 		return modelProvider;
 	}
     

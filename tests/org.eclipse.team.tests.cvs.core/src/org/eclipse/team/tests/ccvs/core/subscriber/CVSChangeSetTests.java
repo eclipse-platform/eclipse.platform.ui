@@ -182,12 +182,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
      * Wait until all the background handlers have settled and then return the root element in the sync view
      */
     private ISynchronizeModelElement getModelRoot(Subscriber workspaceSubscriber) throws CoreException {
-        SynchronizeViewTestAdapter.getCollector(workspaceSubscriber);
-        ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
-        SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
-        ChangeSetModelManager manager = (ChangeSetModelManager)page.getConfiguration().getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
-        AbstractSynchronizeModelProvider provider = (AbstractSynchronizeModelProvider)manager.getActiveModelProvider();
-        provider.waitUntilDone(new IProgressMonitor() {
+        IProgressMonitor eventLoopProgressMonitor = new IProgressMonitor() {
 			public void beginTask(String name, int totalWork) {
 			}
 			public void done() {
@@ -206,7 +201,16 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
 			public void worked(int work) {
 				while (Display.getCurrent().readAndDispatch()) {}
 			}
-		});
+		};
+        SynchronizeViewTestAdapter.getCollector(workspaceSubscriber);
+        ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
+        ChangeSetCapability capability = participant.getChangeSetCapability();
+        SubscriberChangeSetCollector activeManager = capability.getActiveChangeSetManager();
+        activeManager.waitUntilDone(eventLoopProgressMonitor);
+        SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);
+        ChangeSetModelManager manager = (ChangeSetModelManager)page.getConfiguration().getProperty(SynchronizePageConfiguration.P_MODEL_MANAGER);
+        AbstractSynchronizeModelProvider provider = (AbstractSynchronizeModelProvider)manager.getActiveModelProvider();
+        provider.waitUntilDone(eventLoopProgressMonitor);
         return provider.getModelRoot();
     }
 
@@ -288,6 +292,18 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
     }
 
     private void assertResourcesAreTheSame(IResource[] resources1, IResource[] resources2) {
+        if (resources1.length != resources2.length) {
+            System.out.println("Expected");
+            for (int i = 0; i < resources1.length; i++) {
+                IResource resource = resources1[i];
+                System.out.println(resource.getFullPath().toString());
+            }
+            System.out.println("Actual");
+            for (int i = 0; i < resources2.length; i++) {
+                IResource resource = resources2[i];
+                System.out.println(resource.getFullPath().toString());
+            }
+        }
         assertEquals("The number of resources do not match the expected number", resources1.length, resources2.length);
         for (int i = 0; i < resources1.length; i++) {
             IResource resource = resources1[i];
@@ -299,7 +315,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
                     break;
                 }
             }
-            assertTrue("Expected resource " + resource.getFullPath().toString() + " was not presebt", found);
+            assertTrue("Expected resource " + resource.getFullPath().toString() + " was not present", found);
         }
     }
 

@@ -991,6 +991,7 @@ public class EclipseTest extends ResourceTest {
             // Transfer the recorded debug info to stdout
             Policy.recorder.close();
             System.out.println(new String(os.toByteArray()));
+            throw e;
         } finally {
             Policy.recorder.close();
             Policy.recorder = null;

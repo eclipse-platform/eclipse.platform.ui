@@ -61,6 +61,8 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     private SynchronizePageActionGroup actionGroup;
 
     private ListenerList listeners;
+
+    private static final boolean DEBUG = false;
 	
 	/**
 	 * Constructor for creating a sub-provider
@@ -441,7 +443,13 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			ArrayList paths = new ArrayList();
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
-				paths.add(resource.getFullPath().toString());
+				String path = resource.getFullPath().toString();
+				if (resource.getType() != IResource.FILE && path.charAt(path.length() - 1) != Path.SEPARATOR) {
+				    // Include a trailing slash on folders and projects.
+				    // It is used when recreating cached resources that don't exist locally
+				    path += Path.SEPARATOR;
+				}
+                paths.add(path);
 			}
 			config.setProperty(configProperty, paths);
 		} else {
@@ -531,13 +539,17 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     private IResource getResourceForPath(IContainer container, String path) {
         IResource resource = container.findMember(path, true /* include phantoms */);
         if (resource == null) {
-            // The resource doesn't have an entry on the resources tree 
-            // but may still appear in the view so try to deduce the type
-            // from the path
-            if (path.endsWith(Character.toString(Path.SEPARATOR))) {
-                resource = container.getFolder(new Path(null, path));
-            } else {
-                resource = container.getFile(new Path(null, path));
+            try {
+                // The resource doesn't have an entry on the resources tree 
+                // but may still appear in the view so try to deduce the type
+                // from the path
+                if (path.endsWith(Character.toString(Path.SEPARATOR))) {
+                    resource = container.getFolder(new Path(null, path));
+                } else {
+                    resource = container.getFile(new Path(null, path));
+                }
+            } catch (IllegalArgumentException e) {
+                // Couldn't get a resource handle so ignore
             }
         }
         return resource;
@@ -710,6 +722,9 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     }
     
 	protected void addToViewer(ISynchronizeModelElement node) {
+	    if (DEBUG) {
+	        System.out.println("Adding model element " + node.getName()); //$NON-NLS-1$
+	    }
 		propogateConflictState(node, false);
 		// Set the marker property on this node.
 		// There is no need to propogate this to the parents 
@@ -751,7 +766,13 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	    List rootsToClear = new ArrayList();
 	    for (int i = 0; i < nodes.length; i++) {
             ISynchronizeModelElement node = nodes[i];
+    	    if (DEBUG) {
+    	        System.out.println("Removing model element " + node.getName()); //$NON-NLS-1$
+    	    }
 			ISynchronizeModelElement rootToClear = getRootToClear(node);
+    	    if (DEBUG && rootToClear != node) {
+    	        System.out.println("Removing parent element " + rootToClear.getName()); //$NON-NLS-1$
+    	    }
 			propogateConflictState(rootToClear, true /* clear the conflict */);
 			clearModelObjects(rootToClear);
 			rootsToClear.add(rootToClear);
@@ -858,6 +879,9 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      * @param element the element to be added to the viewer
      */
 	protected void doAdd(ISynchronizeModelElement parent, ISynchronizeModelElement element) {
+	    if (DEBUG) {
+	        System.out.println("Adding view item " + element.getName()); //$NON-NLS-1$
+	    }
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
 		viewer.add(parent, element);		
 	}
@@ -868,7 +892,13 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 */
 	protected void doRemove(ISynchronizeModelElement[] elements) {
 		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
-		viewer.remove(elements);		
+		viewer.remove(elements);
+	    if (DEBUG) {
+	        for (int i = 0; i < elements.length; i++) {
+                ISynchronizeModelElement element = elements[i];        
+		        System.out.println("Removing view item " + element.getName()); //$NON-NLS-1$
+            }
+	    }
 	}
 	
 	/**

@@ -95,4 +95,13 @@ public class SyncInfoSource {
 		// Do nothing
 		
 	}
+	
+	/**
+	 * Assert that the model for the subscriber matches what is being displayed.
+	 * Default is to do nothing. Subclasses may override
+	 * @param subscriber the subscriber
+	 */
+	public void assertViewMatchesModel(Subscriber subscriber) {
+	    // Default is to do nothing. Subclasses may override
+	}
 }
