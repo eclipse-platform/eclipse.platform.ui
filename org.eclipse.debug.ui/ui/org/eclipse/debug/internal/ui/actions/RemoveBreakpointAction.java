@@ -37,7 +37,7 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 	public void run(IAction action) {
 		IStructuredSelection selection= getSelection();
 		final Iterator itr= selection.iterator();
-		final CoreException[] exception= new CoreException[0];
+		final CoreException[] exception= new CoreException[1];
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
 				IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
