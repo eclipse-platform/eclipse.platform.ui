@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.search.*;
@@ -84,6 +85,8 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		
 		Dialog.applyDialogFont(parent);
 		
+		WorkbenchHelp.setHelp(composite, "org.eclipse.update.ui.ModeSelectionPage"); //$NON-NLS-1$
+
 		return composite;
 	}
 	

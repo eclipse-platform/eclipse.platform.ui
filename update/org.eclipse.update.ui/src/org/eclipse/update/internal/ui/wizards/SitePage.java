@@ -14,6 +14,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -245,6 +246,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		envFilterCheck.setLayoutData(gd);
 
 		Dialog.applyDialogFont(parent);
+
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.SitePage"); //$NON-NLS-1$
 
 		return client;
 	}
