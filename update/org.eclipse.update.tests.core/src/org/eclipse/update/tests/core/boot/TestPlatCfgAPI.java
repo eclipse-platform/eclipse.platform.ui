@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.Date;
 
 import junit.framework.Assert;
-import org.eclipse.core.boot.BootLoader2;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
 import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
@@ -26,7 +26,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		// get new config object
 		IPlatformConfiguration cfig = null;
 		try {
-			cfig = BootLoader2.getPlatformConfiguration(null);
+			cfig = BootLoader.getPlatformConfiguration(null);
 		} catch (IOException e) {
 			Assert.fail("0.0.0 "+e.toString());
 		}
@@ -103,7 +103,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		// get new config object
 		IPlatformConfiguration cfig = null;
 		try {
-			cfig = BootLoader2.getPlatformConfiguration(null);
+			cfig = BootLoader.getPlatformConfiguration(null);
 		} catch (IOException e) {
 			Assert.fail("0.0.0 "+e.toString());
 		}
@@ -167,7 +167,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		// reload configuration	
 		IPlatformConfiguration newCfig = null;	
 		try {
-			newCfig = BootLoader2.getPlatformConfiguration(cfigURL);
+			newCfig = BootLoader.getPlatformConfiguration(cfigURL);
 		} catch (IOException e) {
 			Assert.fail("2.3 "+e.toString());
 		}
@@ -199,11 +199,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		
 		// get new config object
 		IPlatformConfiguration cfig = null;
-		try {
-			cfig = BootLoader2.getCurrentPlatformConfiguration();
-		} catch (IOException e) {
-			Assert.fail("0.0.0 "+e.toString());
-		}
+		cfig = BootLoader.getCurrentPlatformConfiguration();
 		URL[] path = cfig.getPluginPath();
 		cfig.save();
 	}
