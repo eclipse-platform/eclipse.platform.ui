@@ -32,7 +32,7 @@ public class SystemMenuSizeFastView extends ContributionItem {
     }
 
     public void fill(Menu menu, int index) {
-        MenuItem item = new MenuItem(menu, SWT.NONE);
+        MenuItem item = new MenuItem(menu, SWT.NONE, index);
         item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
         item.addSelectionListener(new SelectionAdapter() {
 
