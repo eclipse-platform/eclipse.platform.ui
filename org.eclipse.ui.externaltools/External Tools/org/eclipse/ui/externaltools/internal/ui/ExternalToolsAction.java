@@ -14,31 +14,19 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
-import org.eclipse.ui.externaltools.internal.core.DefaultRunnerContext;
-import org.eclipse.ui.externaltools.internal.core.ExternalTool;
-import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
-import org.eclipse.ui.externaltools.internal.core.ToolUtil;
+import org.eclipse.ui.externaltools.internal.core.*;
 
 /**
  * This action will display the external tool configuration dialog.
@@ -176,7 +164,8 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 		// Otherwise incorrect selection is used. Selection is assigned outside
 		// runnable.run(IProgressMonitor) to avoid invalid thread access.
 		final ISelection sel = window.getSelectionService().getSelection();
-								
+		final IWorkbenchPart activePart = window.getPartService().getActivePart();
+									
 		if (tool.getShowLog()) {
 			ToolUtil.showLogConsole(window);
 			ToolUtil.clearLogDocument();
@@ -185,16 +174,26 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				IResource resource = null;
+
+				// Get the focused resource.
 				if (sel instanceof IStructuredSelection) {
 					Object result = ((IStructuredSelection)sel).getFirstElement();
-					if (result instanceof IResource)
+					if (result instanceof IResource) {
 						resource = (IResource) result;
-					else if (result instanceof IAdaptable) {
-						Object temp = ((IAdaptable) result).getAdapter(IResource.class);
-						if (temp instanceof IResource)
-							resource = (IResource) temp;
+					} else if (result instanceof IAdaptable) {
+						resource = (IResource)((IAdaptable) result).getAdapter(IResource.class);
 					}
 				}
+				
+				if (resource == null) {
+					// If the active part is an editor, get the file resource used as input.
+					if (activePart instanceof IEditorPart) {
+						IEditorPart editorPart = (IEditorPart) activePart;
+						IEditorInput input = editorPart.getEditorInput();
+						resource = (IResource) input.getAdapter(IResource.class);
+					} 
+				}
+
 				DefaultRunnerContext context;
 				if (resource != null)
 					context = new DefaultRunnerContext(tool, resource.getProject(), resource, window.getWorkbench().getWorkingSetManager());
