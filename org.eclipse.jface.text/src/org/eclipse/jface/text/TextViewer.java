@@ -35,7 +35,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -162,7 +161,7 @@ public class TextViewer extends Viewer implements
 	 * purposes.
 	 */
 	class ViewportGuard extends MouseAdapter 
-		implements ControlListener, KeyListener, MouseMoveListener, SelectionListener {
+		implements ControlListener, KeyListener, SelectionListener {
 		
 		/*
 		 * @see ControlListener#controlResized(ControlEvent)
@@ -196,7 +195,7 @@ public class TextViewer extends Viewer implements
 		 */
 		public void mouseUp(MouseEvent e) {
 			if (fTextWidget != null)
-				fTextWidget.removeMouseMoveListener(this);
+				fTextWidget.removeSelectionListener(this);
 			updateViewportListeners(MOUSE_END);
 		}
 
@@ -205,21 +204,17 @@ public class TextViewer extends Viewer implements
 		 */
 		public void mouseDown(MouseEvent e) {
 			if (fTextWidget != null)
-				fTextWidget.addMouseMoveListener(this);
+				fTextWidget.addSelectionListener(this);
 		}
-
-		/*
-		 * @see MouseMoveListener#mouseMove
-		 */
-		public void mouseMove(MouseEvent e) {
-			updateViewportListeners(MOUSE);
-		}
-
+		
 		/*
 		 * @see SelectionListener#widgetSelected
 		 */
 		public void widgetSelected(SelectionEvent e) {
-			updateViewportListeners(SCROLLER);
+			if (e.widget == fScroller)
+				updateViewportListeners(SCROLLER);
+			else
+				updateViewportListeners(MOUSE);
 		}
 
 		/*
