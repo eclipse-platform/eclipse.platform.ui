@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 
 /**
  * The ICVSProvider interface provides access to CVS operations that create repository locations,
@@ -55,20 +56,8 @@ public interface ICVSProvider {
 	 * The contents of the project are not imported.
 	 * 
 	 * Consideration: What if the project already exists?
-	 * 
-	 * The supported properties are:
-	 * 	 connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 *   message The message to be attached (optional)
-	 *   vendor The vendor tag (optional)
-	 *   tag The version tag (optional)
-	 * 
 	 */
-	public void createModule(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException;
+	public void createModule(ICVSRepositoryLocation location, IProject project, String moduleName, IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Create a repository instance from the given properties.
@@ -84,6 +73,9 @@ public interface ICVSProvider {
 	 * The created instance will be cached with the provider as a result of the
 	 * invokation of this method. When the client is done with the instance, disposeRepository
 	 * should be called.
+	 * 
+	 * This method will throw a CVSException if the location for the given configuration already
+	 * exists.
 	 */
 	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException;
 	
@@ -98,21 +90,6 @@ public interface ICVSProvider {
 	 * Return a list of the know repository locations
 	 */
 	public ICVSRepositoryLocation[] getKnownRepositories();
-	
-	/**
-	 * Get the repository location that matches the given properties.
-	 * The supported properties are:
-	 * 
-	 *   connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 * 
-	 * If no known repositories mathc the given properties, null is returned.
-	 */
-	public ICVSRepositoryLocation getRepository(Properties configuration) throws CVSException;
 	
 	/**
 	 * Get the repository instance which matches the given String. The format of the String is
@@ -144,7 +121,7 @@ public interface ICVSProvider {
 	 * This method only sets the folder sync info for the project folder and the info
 	 * is only set to the provided parameters if there is no sync info already.
 	 */
-	public void setSharing(IProject project, ICVSRepositoryLocation location, String remotePath, CVSTag tag, IProgressMonitor monitor) throws TeamException;
+	public void setSharing(IProject project, FolderSyncInfo info, IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Get the names of the registered connection methods.

@@ -78,17 +78,6 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Answer the root corresponding with the given properties.
-	 * If the root is in the list of known roots, it is returned.
-	 * If it is not in the list of known roots, it is created and
-	 * added.
-	 */
-	public ICVSRepositoryLocation getRoot(Properties properties) throws TeamException {
-		// We use createRepository instead of getRepository since create will return 
-		// an existing location or create it if it doesn't exist
-		return getCVSProvider().createRepository(properties);
-	}
-	/**
 	 * Get the list of known branch tags for a given remote root.
 	 */
 	public BranchTag[] getKnownBranchTags(ICVSRepositoryLocation root) {

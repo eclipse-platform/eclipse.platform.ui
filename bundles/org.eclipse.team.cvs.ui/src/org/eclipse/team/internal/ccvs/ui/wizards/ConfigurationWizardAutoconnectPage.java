@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
-import java.util.Properties;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -20,10 +18,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -36,8 +34,9 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 	private boolean validate = true;
-	private Properties properties;
-	
+	private FolderSyncInfo info;
+	ICVSRepositoryLocation location;
+
 	public ConfigurationWizardAutoconnectPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
@@ -56,30 +55,36 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		description.setLayoutData(data);
 		description.setText(Policy.bind("ConfigurationWizardAutoconnectPage.description"));
 		
-		if (properties == null) return;
-		
+		if (location == null) return;
+
 		// Spacer
 		createLabel(composite, "");
 		createLabel(composite, "");
 		
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.user"));
-		createLabel(composite, properties.getProperty("user"));
+		createLabel(composite, location.getUsername());
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.host"));
-		createLabel(composite, properties.getProperty("host"));
+		createLabel(composite, location.getHost());
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.port"));
-		String port = properties.getProperty("port");
-		if (port == null) {
+		int port = location.getPort();
+		if (port == location.USE_DEFAULT_PORT) {
 			createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.default"));
 		} else {
-			createLabel(composite, port);
+			createLabel(composite, "" + port);
 		}
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.connectionType"));
-		createLabel(composite, properties.getProperty("connection"));
+		createLabel(composite, location.getMethod().getName());
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.repositoryPath"));
-		createLabel(composite, properties.getProperty("root"));
+		createLabel(composite, location.getRootDirectory());
 		createLabel(composite, Policy.bind("ConfigurationWizardAutoconnectPage.module"));
-		createLabel(composite, properties.getProperty("module"));
+		createLabel(composite, info.getRepository());
 		
+		CVSTag tag = info.getTag();
+		if (tag != null) {
+			// XXX Should we show a tag
+			//properties.setProperty("tag", tag.getName());
+		}
+		 
 		// Spacer
 		createLabel(composite, "");
 		createLabel(composite, "");
@@ -96,8 +101,8 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		check.setSelection(true);		
 	}
 	
-	public Properties getProperties() {
-		return properties;
+	public FolderSyncInfo getFolderSyncInfo() {
+		return info;
 	}
 	public boolean getValidate() {
 		return validate;
@@ -105,30 +110,13 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 	public void setProject(IProject project) {
 		try {
 			ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
-			FolderSyncInfo info = folder.getFolderSyncInfo();
+			info = folder.getFolderSyncInfo();
 			if (info == null) {
 				// This should never happen
 				ErrorDialog.openError(getContainer().getShell(), Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null);
 				return;
 			}
-			ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(info.getRoot());
-			properties = new Properties();
-			properties.setProperty("connection", location.getMethod().getName());
-			properties.setProperty("host", location.getHost());
-			int port = location.getPort();
-			if (port != location.USE_DEFAULT_PORT) {
-				properties.setProperty("port", "" + port);
-			}
-			properties.setProperty("user", location.getUsername());
-			properties.setProperty("root", location.getRootDirectory());
-			
-			String repository = info.getRepository();
-			properties.setProperty("module", repository);
-
-			CVSEntryLineTag tag = info.getTag();
-			if (tag != null) {
-				properties.setProperty("tag", tag.getName());
-			}
+			location = CVSProviderPlugin.getProvider().getRepository(info.getRoot());
 		} catch (TeamException e) {
 			Shell shell = new Shell(Display.getDefault());
 			ErrorDialog.openError(shell, null, null, e.getStatus());

@@ -57,12 +57,6 @@ public class NewLocationWizard extends Wizard {
 		ICVSRepositoryLocation root = null;
 		ICVSProvider provider = CVSProviderPlugin.getProvider();
 		try {
-			// See if it already exists
-			root = provider.getRepository(properties);
-			if (root != null) {
-				MessageDialog.openInformation(getContainer().getShell(), Policy.bind("NewLocationWizard.alreadyExistsTitle"), Policy.bind("NewLocationWizard.alreadyExists"));
-				return false;
-			}
 			root = provider.createRepository(properties);
 			if (mainPage.getValidate()) {
 				root.validateConnection(new NullProgressMonitor());
@@ -71,7 +65,7 @@ public class NewLocationWizard extends Wizard {
 			IStatus error = e.getStatus();
 			if (root == null) {
 				// Exception creating the root, we cannot continue
-				ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, error);
+				ErrorDialog.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.exception"), null, error);
 				return false;
 			} else {
 				// Exception validating. We can continue if the user wishes.

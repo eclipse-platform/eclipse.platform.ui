@@ -138,23 +138,14 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						if (autoconnectPage != null) {
 							// Autoconnect to the repository using CVS/ directories
 							
-							// Create the repository location
-							Properties properties = autoconnectPage.getProperties();
-							ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(properties);
-							boolean created = false;
-							if (location == null) {
-								location = CVSProviderPlugin.getProvider().createRepository(properties);
-								created = true;
-							}
-							
-							// Associate project with provider
-							ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
-							FolderSyncInfo info = folder.getFolderSyncInfo();
+							FolderSyncInfo info = autoconnectPage.getFolderSyncInfo();
 							if (info == null) {
 								// Error!
 								return;
 							}
-							CVSTag tag = info.getTag();
+							
+							// Get the repository location
+							ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(info.getRoot());
 	
 							// Validate the connection if the user wants to
 							boolean validate = autoconnectPage.getValidate();					
@@ -182,7 +173,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Set the sharing
-							CVSProvider.getInstance().setSharing(project, location, properties.getProperty("module"), tag, new SubProgressMonitor(monitor, 50));
+							CVSProvider.getInstance().setSharing(project, info, new SubProgressMonitor(monitor, 50));
 						} else {
 							// Import
 							doSync[0] = true;
@@ -213,7 +204,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								return;
 							}
 							// Create the remote module for the project
-							CVSProviderPlugin.getProvider().createModule(project, getProperties(), new SubProgressMonitor(monitor, 50));
+							CVSProviderPlugin.getProvider().createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
 						}
 						CVSDecorator.refresh(project);
 					} catch (TeamException e) {
@@ -254,31 +245,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 
 		return result[0];
 	}
-	/**
-	 * Return a Properties with connection info populated.
-	 */
-	private Properties getProperties() {
-		// If the import page has a location, use it.
-		if (locationPage != null) {
-			ICVSRepositoryLocation location = locationPage.getLocation();
-			if (location != null) {
-				Properties result = new Properties();
-				result.setProperty("host", location.getHost());
-				result.setProperty("connection", location.getMethod().getName());
-				result.setProperty("user", location.getUsername());
-				int port = location.getPort();
-				if (port != ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-					result.setProperty("port", "" + port);
-				}
-				result.setProperty("root", location.getRootDirectory());
-				result.setProperty("module", getModuleName());
-				return result;
-			}
-		}
-		Properties properties = createLocationPage.getProperties();
-		properties.setProperty("module", getModuleName());
-		return properties;
-	}
+
 	/**
 	 * Return an ICVSRepositoryLocation
 	 */

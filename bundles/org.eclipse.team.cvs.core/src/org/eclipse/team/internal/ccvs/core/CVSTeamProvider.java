@@ -160,58 +160,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public void configureProvider(Properties configuration) throws TeamException {
 		// Do nothing
 	}
-			
-	/*
-	 * Build the repository instance from the given properties.
-	 * The supported properties are:
-	 * 
-	 *   connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 */
-	private static CVSRepositoryLocation buildRepository(Properties configuration) throws TeamException {
-		StringBuffer repository = new StringBuffer(":");
-		String connection = configuration.getProperty("connection");
-		if (connection == null)
-			repository.append("pserver");
-		else 
-			repository.append(connection);
-		repository.append(":");
-		String user = configuration.getProperty("user");
-		if (user == null)
-			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noUser"), null));
-		else 
-			repository.append(user);
-		repository.append("@");
-		String host = configuration.getProperty("host");
-		if (host == null)
-			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noHost"), null));
-		else 
-			repository.append(host);
-		String port = configuration.getProperty("port");
-		if (port != null) {
-			repository.append("#");
-			repository.append(port);
-		}
-		repository.append(":");
-		String root = configuration.getProperty("root");
-		if (root == null)
-			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noRoot"), null));
-		else 
-			repository.append(root);
-		
-		CVSRepositoryLocation location  = CVSRepositoryLocation.fromString(repository.toString());
-		
-		String password = configuration.getProperty("password");
-		if (password != null) {
-			location.setPassword(password);
-		}
-		
-		return location;
-	}
 	
 	/**
 	 * Add the given resources to the project. 
