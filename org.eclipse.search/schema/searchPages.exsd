@@ -2,16 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.search">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.search" id="searchPages" name="Search Pages"/>
-   </appInfo>
-   <documentation>
-      This extension point allows a plug-in to register search 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.search" id="searchPages" name="Search Pages"/>
+      </appInfo>
+      <documentation>
+         This extension point allows a plug-in to register search 
 pages for specialized searches. When the search action 
 is performed on a resource, the search infrastructure 
 locates the most specific registered search page for it.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -81,7 +81,7 @@ page tab
                <documentation>
                   a relative name of the image that will be used 
 for all resources that match the specified extensions. 
-If omitted, the search page's tab will only contain a label.
+If omitted, the search page&apos;s tab will only contain a label.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -93,7 +93,7 @@ If omitted, the search page's tab will only contain a label.
                <documentation>
                   a hint for the initial size of the page. This is a string 
 containing the width and height separated by 
-comma (e.g. "50, 60"). In the case this hint is 
+comma (e.g. &quot;50, 60&quot;). In the case this hint is 
 omitted the page will be no larger than the other pages.
                </documentation>
             </annotation>
@@ -132,15 +132,15 @@ also include a weight (0 meaning lowest weight)
 which enables the search infrastructure to find the 
 best fitting page. The weight is separated from 
 the extension by a colon. If a search page can 
-search all possible resources then "*" can be used.
+search all possible resources then &quot;*&quot; can be used.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="showScopeSection" type="boolean">
             <annotation>
                <documentation>
-                  If this attribute is missing or set to "false", then the scope section is not shown in the Search dialog.
-To see the scope section, this attribute has to be set to "true".
+                  If this attribute is missing or set to &quot;false&quot;, then the scope section is not shown in the Search dialog.
+To see the scope section, this attribute has to be set to &quot;true&quot;.
 Plug-ins which add their own Search page and want to see the scope section have to add this to their plugin.xml.
                </documentation>
             </annotation>
@@ -148,8 +148,8 @@ Plug-ins which add their own Search page and want to see the scope section have 
          <attribute name="enabled" type="boolean">
             <annotation>
                <documentation>
-                  If this attribute is missing or set to "false", then the page is not initially shown in the Search dialog.
-The page can be activated by the user via the "Customize..." button on the Search dialog.
+                  If this attribute is missing or set to &quot;false&quot;, then the page is not initially shown in the Search dialog.
+The page can be activated by the user via the &quot;Customize...&quot; button on the Search dialog.
                </documentation>
             </annotation>
          </attribute>
@@ -166,16 +166,16 @@ definition:
 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.search.searchPages"&gt; 
+   &lt;extension point=&quot;org.eclipse.search.searchPages&quot;&gt; 
       &lt;page 
-         id="org.eclipse.search.ui.text.TextSearchPage" 
-         label="Text Search" 
-         icon="icons/full/obj16/tsearch_pref.gif" 
-         sizeHint="250,160" 
-         tabPosition="1" 
-         extensions="*:1" 
-         showScopeSection="true"
-         class="org.eclipse.search.ui.text.TextSearchPage" 
+         id=&quot;org.eclipse.search.ui.text.TextSearchPage&quot; 
+         label=&quot;Text Search&quot; 
+         icon=&quot;icons/full/obj16/tsearch_pref.gif&quot; 
+         sizeHint=&quot;250,160&quot; 
+         tabPosition=&quot;1&quot; 
+         extensions=&quot;*:1&quot; 
+         showScopeSection=&quot;true&quot;
+         class=&quot;org.eclipse.search.ui.text.TextSearchPage&quot;&gt;
       &lt;/page&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -208,10 +208,10 @@ for full-text search.
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
-	&lt;img	SRC="ngibmcpy.gif"
-			ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
-			BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
