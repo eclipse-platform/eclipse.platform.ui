@@ -47,7 +47,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	private IStackFrame fLastStackFrame = null;
 
-    private IThread fSelectedThread;
+    private boolean fSelectedThread = false;
 	
 	/**
 	 * Constructs an event handler for the given launch view.
@@ -181,12 +181,11 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		refresh(source);
 		if (source instanceof IThread) {
 		    if (data instanceof IStackFrame) {
-                IStackFrame frame = (IStackFrame) data;
-                fSelectedThread = frame.getThread();
-				selectAndReveal(frame);
+                fSelectedThread = true;
+				selectAndReveal(data);
 				return;
 			}
-            fSelectedThread = null;
+            fSelectedThread = false;
 			return;
 		}
 	}
@@ -263,9 +262,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			// of an evaluation
 			getLaunchView().autoExpand(thread, false);
 			if (fLastStackFrame != null) {
-                boolean select = (!evaluationEvent) && (fSelectedThread==null);
-                if (fSelectedThread == null) {
-                    fSelectedThread = thread;
+                boolean select = (!evaluationEvent) && (!fSelectedThread);
+                if (!fSelectedThread) {
+                    fSelectedThread = true;
                 }
 			    getLaunchView().autoExpand(fLastStackFrame, select);
 			}
