@@ -58,7 +58,8 @@ public class Search extends Object {
 			fPluralLabelPattern= ""; //$NON-NLS-1$
 	}
 
-	/**
+	/*
+	 * XXX: Activate deprecate tag after 2.0
 	 * @deprecated	As of build > 20020514
 	 */
 	public Search(String pageId, String singularLabel, String pluralLabelPattern, ILabelProvider labelProvider, ImageDescriptor imageDescriptor, IAction gotoMarkerAction, IContextMenuContributor contextMenuContributor, IGroupByKeyComputer groupByKeyComputer, IRunnableWithProgress operation) {
@@ -182,7 +183,8 @@ public class Search extends Object {
 		return fGotoMarkerAction;
 	}
 
-	/**
+	/*
+	 * XXX: Activate deprecate tag after 2.0
 	 * @deprecated	As of build > 20020514 use #getActionGroupFactory
 	 */
 	IContextMenuContributor getContextMenuContributor() {
