@@ -15,10 +15,29 @@ import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.jface.viewers.*;
 
 public class FederatedSearchSorter extends ViewerSorter {
+	
+    public int category(Object element) {
+		if (element instanceof ISearchEngineResult) {
+			ISearchEngineResult r = (ISearchEngineResult)element;
+			IHelpResource c = r.getCategory();
+			if (c!=null) {
+				String label = c.getLabel();
+				if (label.length()==0)
+					return 10;
+				return 5;
+			}
+		}
+        return super.category(element);
+    }
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,java.lang.Object,java.lang.Object)
 	 */
 	public int compare(Viewer viewer, Object e1, Object e2) {
+	    int cat1 = category(e1);
+	    int cat2 = category(e2);
+
+	    if (cat1 != cat2)
+	    	return cat1 - cat2;
 		try {
 			ISearchEngineResult r1 = (ISearchEngineResult) e1;
 			ISearchEngineResult r2 = (ISearchEngineResult) e2;

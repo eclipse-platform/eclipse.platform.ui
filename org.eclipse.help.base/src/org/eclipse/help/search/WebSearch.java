@@ -120,15 +120,6 @@ public final class WebSearch implements ISearchEngine {
 				.add(new SearchResult(query, ((Scope) scope).getURLTemplate()));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.internal.search.federated.ISearchEngine#cancel()
-	 */
-	public void cancel() {
-		// TODO Auto-generated method stub
-	}
-
 	private static String composeURL(String query, String urlTemplate) {
 		StringBuffer result = new StringBuffer();
 		boolean inSubstitution = false;

@@ -153,10 +153,12 @@ public final class InfoCenter implements ISearchEngine {
 		tocs.clear();
 		try {
 			URLConnection connection = url.openConnection();
+			monitor.beginTask("Connecting...", 5);
 			is = connection.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, "utf-8"));//$NON-NLS-1$
-			load(((Scope) scope).url, reader, collector, monitor);
+			monitor.worked(1);
+			load(((Scope) scope).url, reader, collector, new SubProgressMonitor(monitor, 4));
 			reader.close();
 		} catch (FileNotFoundException e) {
 			reportError(
@@ -187,16 +189,24 @@ public final class InfoCenter implements ISearchEngine {
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
-			// parser.setProcessNamespace(true);
+			if (monitor.isCanceled())
+				return;
+			monitor.beginTask("", 5);
+			monitor.subTask("Searching...");
 			document = parser.parse(new InputSource(r));
+			if (monitor.isCanceled())
+				return;
 
 			// Strip out any comments first
 			Node root = document.getFirstChild();
 			while (root.getNodeType() == Node.COMMENT_NODE) {
 				document.removeChild(root);
 				root = document.getFirstChild();
+				if (monitor.isCanceled())
+					return;
 			}
-			load(baseURL, document, (Element) root, collector, monitor);
+			monitor.worked(1);
+			load(baseURL, document, (Element) root, collector, new SubProgressMonitor(monitor, 4));
 		} catch (ParserConfigurationException e) {
 			// ignore
 		} catch (IOException e) {
@@ -212,9 +222,14 @@ public final class InfoCenter implements ISearchEngine {
 		NodeList topics = root.getElementsByTagName("topic"); //$NON-NLS-1$
 		ISearchEngineResult[] results = new ISearchEngineResult[topics
 				.getLength()];
+		monitor.subTask("Processing results...");
+		monitor.beginTask("", results.length);
 		for (int i = 0; i < topics.getLength(); i++) {
 			Element el = (Element) topics.item(i);
+			if (monitor.isCanceled())
+				break;
 			results[i] = new InfoCenterResult(baseURL, el);
+			monitor.worked(1);
 		}
 		collector.add(results);
 	}
@@ -251,14 +266,5 @@ public final class InfoCenter implements ISearchEngine {
 		} catch (MalformedURLException e) {
 			return null;
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see ISearchEngine#cancel()
-	 */
-
-	public void cancel() {
 	}
 }

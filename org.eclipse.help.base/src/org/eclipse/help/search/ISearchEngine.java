@@ -42,9 +42,4 @@ public interface ISearchEngine {
 	 * @throws CoreException when there are problems in the engine
 	 */
 	void run(String query, ISearchScope scope, ISearchEngineResultCollector collector, IProgressMonitor monitor) throws CoreException;
-	/**
-	 * Called when the entire search or this individual engine has been
-	 * cancelled.
-	 */
-	void cancel();
 }

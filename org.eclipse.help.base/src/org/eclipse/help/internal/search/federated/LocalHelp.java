@@ -75,14 +75,6 @@ public class LocalHelp implements ISearchEngine {
 				.toArray(new SearchHit[enabledHits.size()]));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.internal.search.federated.ISearchEngine#cancel()
-	 */
-	public void cancel() {
-	}
-
 	public String toAbsoluteHref(String href, boolean frames) {
 		return null;
 	}

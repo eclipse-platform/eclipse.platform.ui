@@ -216,6 +216,20 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		}
 		reflow();
 	}
+	
+	void completed() {
+		for (int i = 0; i < results.size(); i++) {
+			EngineResultSection section = (EngineResultSection) results.get(i);
+			section.completed();
+		}
+	}
+	
+	void canceling() {
+		for (int i = 0; i < results.size(); i++) {
+			EngineResultSection section = (EngineResultSection) results.get(i);
+			section.canceling();
+		}
+	}
 
 	void doOpenLink(Object href) {
 		String url = (String) href;

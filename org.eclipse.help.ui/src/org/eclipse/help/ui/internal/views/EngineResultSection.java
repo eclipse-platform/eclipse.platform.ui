@@ -202,6 +202,23 @@ public class EngineResultSection {
 		errorStatus = status;
 		asyncUpdateResults(false, false);		
 	}
+	
+	public synchronized void completed() {
+		if (hits.size()==0 && !searchResults.isDisposed())
+			asyncUpdateResults(false, false);
+	}
+	
+	public synchronized void canceling() {
+		if (hits.size()==0 && !searchResults.isDisposed()) {
+			StringBuffer buff = new StringBuffer();
+			buff.append("<form>"); //$NON-NLS-1$
+			buff.append("<p><span color=\"summary\">");//$NON-NLS-1$
+			buff.append(HelpUIResources.getString("EngineResultSection.canceling")); //$NON-NLS-1$
+			buff.append("</span></p>");
+			buff.append("</form>");
+			searchResults.setText(buff.toString(), true, false);
+		}
+	}
 
 	private void asyncUpdateResults(boolean now, final boolean scrollToBeginning) {
 		Runnable runnable = new Runnable() {

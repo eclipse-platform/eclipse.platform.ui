@@ -29,7 +29,7 @@ public class FederatedSearchJob extends Job {
 		this.expression = expression;
 		this.entry = entry;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -43,6 +43,6 @@ public class FederatedSearchJob extends Job {
 		}
 	}
 	public boolean belongsTo(Object family) {
-		return family == FAMILY;
+		return family.equals(FAMILY);
 	}
 }

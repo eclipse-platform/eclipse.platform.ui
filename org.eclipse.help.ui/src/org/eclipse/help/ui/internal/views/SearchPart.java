@@ -83,6 +83,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 					// search finished
 					searchInProgress = false;
 					container.getDisplay().asyncExec(this);
+					SearchResultsPart results = (SearchResultsPart) parent
+					.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
+					results.completed();
 				}
 			}
 		}
@@ -103,7 +106,13 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 		public void run() {
 			searchWordCombo.setEnabled(!searchInProgress);
-			goButton.setEnabled(!searchInProgress);
+			if (!searchInProgress)
+				goButton.setEnabled(true);
+			if (searchInProgress)
+				goButton.setText(HelpUIResources.getString("SearchPart.stop")); //$NON-NLS-1$
+			else
+				goButton.setText(HelpUIResources.getString("SearchPart.go")); //$NON-NLS-1$
+			goButton.getParent().layout();
 		}
 	}
 
@@ -162,10 +171,10 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				 */
 			}
 		});
-		goButton = toolkit.createButton(container, "Go", SWT.PUSH); //$NON-NLS-1$
+		goButton = toolkit.createButton(container, HelpUIResources.getString("SearchPart.go"), SWT.PUSH); //$NON-NLS-1$
 		goButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				doSearch(searchWordCombo.getText());
+				handleButtonPressed();
 			}
 		});
 		goButton.setEnabled(false);
@@ -392,6 +401,15 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		searchWordCombo.setText(text);
 		doSearch(text);
 	}
+	
+	private void handleButtonPressed() {
+		if (searchWordCombo.isEnabled())
+			doSearch(searchWordCombo.getText());
+		else {
+			goButton.setEnabled(false);
+			stop();
+		}
+	}
 
 	private void doSearch(String text) {
 		ScopeSet set = scopeSetManager.getActiveSet();
@@ -532,6 +550,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 	
 	public void stop() {
+		SearchResultsPart results = (SearchResultsPart) parent
+		.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
+		results.canceling();
 		Platform.getJobManager().cancel(FederatedSearchJob.FAMILY);
 	}
 }
