@@ -803,7 +803,7 @@ public class OverviewRuler implements IOverviewRuler {
 					}
 					
 					if (posOffset <= end && posEnd >= start) {
-						if ((found == null || posOffset < found.getOffset()) && (ignoreSelectedAnnotation || currentSelection.x != posOffset || currentSelection.y != p.getLength()))
+						if (ignoreSelectedAnnotation || currentSelection.x != posOffset || currentSelection.y != p.getLength())
 							found= p;
 					}
 				}
