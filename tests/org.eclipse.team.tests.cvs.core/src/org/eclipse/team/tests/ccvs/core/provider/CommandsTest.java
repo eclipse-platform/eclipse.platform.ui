@@ -46,7 +46,7 @@ public class CommandsTest extends JUnitTestCase {
 	public void setUp() throws Exception {
 		if (!isSetUp) {
 			try {
-				magicSetUpRepo("proj1", new String[] { "folder1/c.txt", "folder1/d.txt", "folder2/test.flag"});
+				createRemoteProject("proj1", new String[] { "folder1/c.txt", "folder1/d.txt", "folder2/test.flag"});
 			} catch (Exception e) {
 				System.err.println("Could not setup repository");
 			}
@@ -168,8 +168,8 @@ public class CommandsTest extends JUnitTestCase {
 		
 		
 		// Do the setup ...
-		magicSetUpRepo("coProject1",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
-		magicSetUpRepo("coProject2",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
+		createRemoteProject("coProject1",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
+		createRemoteProject("coProject2",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
 		
 		execute("co",
 							globalOptions,
@@ -437,8 +437,8 @@ public class CommandsTest extends JUnitTestCase {
 	
 	public void testDoubleCheckout() throws Exception {
 		
-		magicSetUpRepo("coProject1",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
-		magicSetUpRepo("coProject2",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
+		createRemoteProject("coProject1",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
+		createRemoteProject("coProject2",new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"});
 		execute("co",
 							globalOptions,
 							EMPTY_ARGS,
@@ -464,7 +464,7 @@ public class CommandsTest extends JUnitTestCase {
 		String[] fileStructure = new String[]{"im/a.txt","im/f1/a.txt","im/f1/b.txt"};
 		createRandomFile(ioFolder,fileStructure);
 		
-		magicDeleteProject("im");
+		deleteRemoteResource("im");
 		
 		execute("import",globalOptions,
 					   new String[]{"-m","Initial Release"},

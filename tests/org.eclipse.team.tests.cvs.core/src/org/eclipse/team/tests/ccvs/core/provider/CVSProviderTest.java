@@ -40,8 +40,8 @@ public class CVSProviderTest extends EclipseTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CVSProviderTest.class);
-		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new CVSProviderTest("testPruning"));
+		//return new CVSTestSetup(suite);
+		return new CVSTestSetup(new CVSProviderTest("testGet"));
 	}
 	
 	public void testAddAndDelete() throws TeamException, CoreException {
@@ -159,6 +159,7 @@ public class CVSProviderTest extends EclipseTest {
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		deleteResources(copy, new String[] {"deleted.txt"}, false);
 		IFile file = copy.getFile("changed.txt");
+		JUnitTestCase.waitMsec(1500);
 		file.setContents(getRandomContents(), false, false, null);
 
 		// get the remote conetns

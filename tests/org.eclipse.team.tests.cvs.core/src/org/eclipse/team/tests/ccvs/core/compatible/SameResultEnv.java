@@ -88,33 +88,20 @@ public final class SameResultEnv extends JUnitTestCase {
 	/**
 	 * Deletes files on the both of the cvs-servers.
 	 */
-	public void magicDeleteRemote(String project) throws CVSException {
-		magicDeleteProject(CompatibleTestSetup.referenceClientRepository,project);
-		magicDeleteProject(CompatibleTestSetup.eclipseClientRepository,project);		
-	}
-	
-	/**
-	 * Set up both of the repos on the cvs-server(s) with the standard
-	 * file-structure:
-	 * project
-	 *   a.txt
-	 *   f1
-	 *     b.txt
-	 *     c.txt
-	 */
-	public void magicSetUpRepo(String project) throws CVSException {
-		magicSetUpRepo(project,new String[]{"a.txt","f1/b.txt","f1/c.txt"});
+	public void deleteRemoteResource(String project) throws CVSException {
+		deleteRemoteResource(CompatibleTestSetup.referenceClientRepository,project);
+		deleteRemoteResource(CompatibleTestSetup.eclipseClientRepository,project);		
 	}
 	
 	/**
 	 * Set up both of the repos on the cvs-server(s) with a filestructre
 	 * resulting for your input in the parameter createResources.
 	 */
-	public void magicSetUpRepo(String project,String[] createResources) throws CVSException {
+	public void createRemoteProject(String project,String[] createResources) throws CVSException {
 		
 		// This will trigger asynchronizer reload
 		// deleteFile(project);
-		magicDeleteRemote(project);
+		deleteRemoteResource(project);
 		
 		createRandomFile(createResources, project);
 		execute("import",new String[]{"-m","msg"},new String[]{project,"a","b"},project);

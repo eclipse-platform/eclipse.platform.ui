@@ -29,7 +29,7 @@ public class ConflictTest extends JUnitTestCase {
 		env2.setUp();
 
 		// Set the project to the content we need ...
-		env1.magicSetUpRepo("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
+		env1.createRemoteProject("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
 		env2.deleteFile("proj2");
 	}
 	

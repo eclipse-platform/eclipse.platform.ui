@@ -47,7 +47,7 @@ public class ModuleTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ModuleTest.class);
 		//return new CVSTestSetup(suite);
-		return new CVSTestSetup(new ModuleTest("testSimpleAlias"));
+		return new CVSTestSetup(new ModuleTest("testAliasForFiles"));
 	}
 	
 	private static boolean isSetUp = false;

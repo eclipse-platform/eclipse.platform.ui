@@ -23,7 +23,7 @@ public class BasicTest extends JUnitTestCase {
 	}
 	
 	public BasicTest() {
-		this("BasicTest");
+		this(null);
 	}
 
 	public static void main(String[] args) {	
@@ -40,7 +40,7 @@ public class BasicTest extends JUnitTestCase {
 		env2.setUp();
 
 		// Set the project to the content we need ...
-		env1.magicSetUpRepo("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
+		env1.createRemoteProject("proj2",new String[]{"a.txt","f1/b.txt","f1/c.txt"});
 		env2.deleteFile("proj2");
 	}
 	
@@ -383,7 +383,7 @@ public class BasicTest extends JUnitTestCase {
 	
 	public void testImportWrappers() throws Exception {
 		// Make the project empty
-		env1.magicSetUpRepo("proj3",new String[]{"NoImportant.txt"});
+		env1.createRemoteProject("proj3",new String[]{"NoImportant.txt"});
 		env2.deleteFile("proj3");
 		
 		// Create resouces and import them with the 
@@ -400,7 +400,7 @@ public class BasicTest extends JUnitTestCase {
 	
 	public void testImportIgnores() throws Exception {
 		// Make the project empty
-		env1.magicSetUpRepo("proj3",new String[]{"NoImportant.txt"});
+		env1.createRemoteProject("proj3",new String[]{"NoImportant.txt"});
 		env2.deleteFile("proj3");
 		
 		// Create resouces and import them with the 

@@ -5,6 +5,7 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  */
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -14,6 +15,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
+import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 /**
  * This class is responsible for executing cvs commands using
@@ -22,6 +24,9 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 public class ReferenceClient {
 	
 	public static final String cvsLocation = System.getProperty("eclipse.cvs.command");
+	
+	private static final String logFileName = "cvslog";
+	
 	/**
 	 * Puts opetions into one String seperated by
 	 * space.
@@ -85,7 +90,12 @@ public class ReferenceClient {
 		// System.out.println(ioRoot.getPath() + "> " + commandLine);
 		
 		try {
-			process = runtime.exec(commandLine, null, ioRoot);
+			String[] envVars = null;
+			if (CVSTestSetup.DEBUG) {
+				// XXX This doesn't work.
+//				envVars = new String[] { "CVS_CLIENT_LOG=" + logFileName };
+			}
+			process = runtime.exec(commandLine, envVars, ioRoot);
 		} catch (IOException e) {
 			throw new CVSException("IOException while executing ReferenceClient",e);
 		}
@@ -102,6 +112,19 @@ public class ReferenceClient {
 			throw new CVSException("InterruptedException while executing ReferenceClient",e);
 		}
 		
+		if (CVSTestSetup.DEBUG) {
+//			try {
+//				File logFileIn = new File(ioRoot, logFileName + ".in");
+//				File logFileOut = new File(ioRoot, logFileName + ".out");
+//				printLogFile(logFileIn);
+//				printLogFile(logFileOut);
+//				logFileIn.delete();
+//				logFileOut.delete();
+//			} catch (IOException e) {
+//				throw new ReferenceException("Error reading log files");
+//			}
+		}
+			
 		if (process.exitValue() != 0) {
 			throw new ReferenceException("Return Code of CVS reference client: " + 
 									process.exitValue() + "\nwhile executing: " + 
@@ -155,6 +178,15 @@ public class ReferenceClient {
 		}
 		
 		return repoName.substring(0,colonPlace) + repoName.substring(atPlace);
+	}
+	
+	private static void printLogFile(File logFile) throws IOException {
+		System.out.println("/nReference client: " + logFile.getName());
+		BufferedReader reader = new BufferedReader(new FileReader(logFile));
+		String line;
+		while ((line = reader.readLine()) != null) {
+			System.out.println(line);
+		}
 	}
 }
 

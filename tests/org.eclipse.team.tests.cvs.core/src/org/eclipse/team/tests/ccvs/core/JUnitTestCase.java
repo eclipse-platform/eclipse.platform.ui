@@ -210,17 +210,17 @@ public abstract class JUnitTestCase extends TestCase {
 	/**
 	 * Delete a project/resource form the standard cvs-server
 	 */
-	protected void magicDeleteProject(String project) throws CVSException {
+	protected void deleteRemoteResource(String project) throws CVSException {
 		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(REPOSITORY_NAME);
 		String host = location.getHost();
 		String repoRoot = location.getRootDirectory();
-		magicDeleteProject(location, project);
+		deleteRemoteResource(location, project);
 	}
 
 	/**
 	 * Delete a project/resource form the standard cvs-server
 	 */
-	protected static void magicDeleteProject(ICVSRepositoryLocation location, String project) throws CVSException {
+	protected static void deleteRemoteResource(ICVSRepositoryLocation location, String project) throws CVSException {
 		
 		String commandLine;
 		Process process;
@@ -246,9 +246,9 @@ public abstract class JUnitTestCase extends TestCase {
 	 * Set the project on the standard cvs-server up so that it contains the resources
 	 * in createResources. The files have random content.
 	 */
-	public void magicSetUpRepo(String project, String[] createResources) throws CVSException {
+	public void createRemoteProject(String project, String[] createResources) throws CVSException {
 		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(REPOSITORY_NAME);
-		magicSetUpRepo(workspaceRoot, location ,project, createResources);
+		createRemoteProject(workspaceRoot, location ,project, createResources);
 	}
 	
 	/**
@@ -262,7 +262,7 @@ public abstract class JUnitTestCase extends TestCase {
 	 * @param project e.g. org.eclipse.swt
 	 * @param createResources e.g. new String[]{"a.txt","f1/b.txt","f1/c.txt","f2/d.txt"}
 	 */
-	private static void magicSetUpRepo(File root, ICVSRepositoryLocation location, String project, String[] createResources) throws CVSException {
+	private static void createRemoteProject(File root, ICVSRepositoryLocation location, String project, String[] createResources) throws CVSException {
 		
 		File workFolder;
 		
@@ -270,7 +270,7 @@ public abstract class JUnitTestCase extends TestCase {
 		
 		createRandomFile(workFolder, createResources);
 		
-		magicDeleteProject(location, project);
+		deleteRemoteResource(location, project);
 		
 		String[] gOptions = new String[]{"-d", location.getLocation()};
 		String[] lOptions = new String[]{"-m","msg"};
