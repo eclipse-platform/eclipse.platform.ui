@@ -328,6 +328,9 @@ public class InstallConfiguration
 				configuredFeatureEntries[i]);
 		}
 
+		//Unconfigure sites
+		unconfigureSites(configurationSites,runtimeConfiguration);
+
 		// Write the plugin path, primary feature and platform
 		// into platform.cfg
 		for (int i = 0; i < configurationSites.length; i++) {
@@ -368,6 +371,7 @@ public class InstallConfiguration
 
 	/*
 	 * Write the plugin path for each site
+	 * Do not check if the site already existed before [16696]
 	 */
 	private void savePluginPath(
 		ConfiguredSite cSite,
@@ -404,22 +408,10 @@ public class InstallConfiguration
 			//$NON-NLS-1$
 		}
 
-		// if the URL already exist, set the policy
+		// create the policy
 		IPlatformConfiguration.ISiteEntry siteEntry =
-			runtimeConfiguration.findConfiguredSite(urlToCheck);
-		if (siteEntry != null) {
-			siteEntry.setSitePolicy(sitePolicy);
-		} else {
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"InstallConfiguration.UnableToFindConfiguredSite",
-					urlToCheck.toExternalForm(),
-					runtimeConfiguration
-						.getConfigurationLocation()
-						.toExternalForm()),
-				null);
-			//$NON-NLS-1$
-		}
+			runtimeConfiguration.createSiteEntry(urlToCheck,sitePolicy);
+		runtimeConfiguration.configureSite(siteEntry);
 	}
 
 	/*
@@ -498,6 +490,62 @@ public class InstallConfiguration
 			}
 		}
 	}
+
+	/*
+	 * Unconfigures all Site entries from platform.cfg
+	 * Log if we are about to create a site that didn't exist before
+	 * in platform.cfg [16696]
+	 */
+	private void unconfigureSites(
+		ConfiguredSiteModel[] configurationSites,
+		IPlatformConfiguration runtimeConfiguration) throws CoreException {
+
+			
+		// check all the sites we are about to write already existed
+		// they should have existed either because they were created by
+		// updateManager or because we read them from platform.cfg
+		for (int i = 0; i < configurationSites.length; i++) {
+			// get the URL of the site that matches the one platform.cfg gave us
+			URL urlToCheck = null;
+			try {
+				urlToCheck = new URL(configurationSites[i].getPlatformURLString());
+			} catch (MalformedURLException e) {
+				UpdateManagerPlugin.warn(
+					Policy.bind(
+						"InstallConfiguration.UnableToCreateURL",
+						configurationSites[i].getPlatformURLString()),
+					e);
+				//$NON-NLS-1$
+			} catch (ClassCastException e) {
+				UpdateManagerPlugin.warn(
+					Policy.bind("InstallConfiguration.UnableToCast"),
+					e);
+				//$NON-NLS-1$
+			}
+	
+			// if the URL doesn't exits log it
+			IPlatformConfiguration.ISiteEntry siteEntry =
+				runtimeConfiguration.findConfiguredSite(urlToCheck);
+			if (siteEntry == null) {
+				UpdateManagerPlugin.warn(
+					Policy.bind(
+						"Unable to find site {0} in platform configuration {1}.",
+						urlToCheck.toExternalForm(),
+						runtimeConfiguration
+							.getConfigurationLocation()
+							.toExternalForm()));
+				//$NON-NLS-1$
+			}
+		}
+		
+		
+		// disable all the sites
+		IPlatformConfiguration.ISiteEntry[] platformSites = runtimeConfiguration.getConfiguredSites();
+		for (int i = 0; i < platformSites.length; i++) {
+			runtimeConfiguration.unconfigureSite(platformSites[i]);
+		}
+		
+	}	 
 
 	/*
 	 * 
