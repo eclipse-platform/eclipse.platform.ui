@@ -92,6 +92,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class SyncViewer extends ViewPart implements ITeamResourceChangeListener, ISyncSetChangedListener, ISyncViewer {
 	
@@ -251,7 +252,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		viewer = new SyncTreeViewer(this, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		setTreeViewerContentProvider();
 		viewer.setLabelProvider(SyncViewerLabelProvider.getDecoratingLabelProvider());
-		viewer.setSorter(new SyncViewerSorter());
+		viewer.setSorter(new SyncViewerSorter(ResourceSorter.NAME));
 	}
 	
 	private void setTreeViewerContentProvider() {

@@ -11,31 +11,27 @@
 package org.eclipse.team.internal.ui.sync.views;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * This class sorts the model elements that appear in the SyncViewer
  */
-public class SyncViewerSorter extends ViewerSorter {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
-	 */
-	public int category(Object element) {
-		IResource resource = getResource(element);
-		if (resource != null) {
-			switch(resource.getType()) {
-				case IResource.PROJECT: return 1;
-				case IResource.FOLDER: return 2;
-				case IResource.FILE: return 3;
-			}
-		}
-		return super.category(element);
+public class SyncViewerSorter extends ResourceSorter {
+			
+	public SyncViewerSorter(int criteria) {
+		super(criteria);
 	}
 
+	/* (non-Javadoc)
+	 * Method declared on ViewerSorter.
+	 */
+	public int compare(Viewer viewer, Object o1, Object o2) {
+		return super.compare(viewer, getResource(o1), getResource(o2));
+	}
+	
 	protected IResource getResource(Object obj) {
 		return (IResource)TeamAction.getAdapter(obj, IResource.class);
 	}
-
 }
