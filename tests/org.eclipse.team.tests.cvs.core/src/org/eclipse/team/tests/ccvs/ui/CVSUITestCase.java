@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -31,6 +32,7 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
@@ -91,6 +93,9 @@ public class CVSUITestCase extends LoggingTestCase {
 		description.setAutoBuilding(false);
 		workspace.setDescription(description);
 		
+		// disable CVS console
+		CVSProviderPlugin.getPlugin().setConsoleListener(null);
+		
 		// wait for UI to settle
 		Util.processEventsUntil(100);
 	}
@@ -135,7 +140,12 @@ public class CVSUITestCase extends LoggingTestCase {
 	 */
 	protected void actionCheckoutProjects(String[] projectNames, CVSTag[] tags) throws Exception {
 		ICVSRemoteFolder[] projects = lookupRemoteProjects(projectNames, tags);
-		runActionDelegate(new AddToWorkspaceAction(), projects, "Repository View Checkout action");
+		AddToWorkspaceAction action = new AddToWorkspaceAction() {
+			protected int confirmOverwrite(IProject project) {
+				return 2; // yes to all
+			}
+		};
+		runActionDelegate(action, projects, "Repository View Checkout action");
 		timestampGranularityHiatus();
 	}
 
@@ -293,15 +303,16 @@ public class CVSUITestCase extends LoggingTestCase {
 	 * Gets an instance of the Synchronize view
 	 */
 	protected SyncView getSyncView() {
-		// based on org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard
-		try {
-			CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
-		} catch (PartInitException e) {
-			CVSUIPlugin.log(e.getStatus());
-		}
-		SyncView view = (SyncView) CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
+		SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
 		if (view == null) {
 			view = SyncView.findInActivePerspective();
+		}
+		if (view != null) {
+			try {
+				CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
+			} catch (PartInitException e) {
+				CVSUIPlugin.log(e.getStatus());
+			}
 		}
 		assertNotNull("Could not obtain a Sync View.", view);
 		return view;

@@ -26,6 +26,11 @@ public class LoggingTestCase extends TestCase {
 	 * @param result the result object
 	 */
 	public void run(TestResult result) {
+		// run the garbage collector now to improve benchmark precision
+		for (int i = 0; i < 4; ++i) {
+			System.runFinalization();
+			System.gc();
+		}
 		if (result instanceof LoggingTestResult) {
 			logResult = (LoggingTestResult) result;
 			disableLogStack = 0;

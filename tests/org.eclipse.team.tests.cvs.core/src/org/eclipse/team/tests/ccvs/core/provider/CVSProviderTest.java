@@ -131,7 +131,7 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Commit the copy and update the project
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, null, null, DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, null, true /*createBackups*/, DEFAULT_MONITOR);
 		assertEquals(project, copy);
 	}
 	

@@ -160,7 +160,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		if(ignoreLocalChanges) {
 			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
 		}	
-		getProvider(container).update(resources, options, null, null, DEFAULT_MONITOR);
+		getProvider(container).update(resources, options, null, true /*createBackups*/, DEFAULT_MONITOR);
 		return resources;
 	}
 	
@@ -169,7 +169,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		if(ignoreLocalChanges) {
 			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
 		}
-		getProvider(project).update(new IResource[] {project}, options, tag, null, DEFAULT_MONITOR);
+		getProvider(project).update(new IResource[] {project}, options, tag, true /*createBackups*/, DEFAULT_MONITOR);
 	}
 	
 	public void commitProject(IProject project) throws TeamException {

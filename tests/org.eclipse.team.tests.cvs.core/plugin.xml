@@ -82,6 +82,12 @@
                class="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests">
          </run>
       </test>
+      <test
+            id="cvsui.benchmark.command">
+         <run
+               class="org.eclipse.team.tests.ccvs.ui.benchmark.CommandTests">
+         </run>
+      </test>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

@@ -5,11 +5,14 @@ package org.eclipse.team.tests.ccvs.ui.logformatter;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.xml.sax.Attributes;
 
 public class TaskEntry extends LogEntry {
-	private int totalMillis = 0;
-	private int totalRuns = 0;
+	private List /* of Result */ results = new ArrayList();
 	
 	public TaskEntry(LogEntryContainer parent, Attributes attributes) {
 		this(parent, attributes.getValue("name"));
@@ -27,46 +30,71 @@ public class TaskEntry extends LogEntry {
 	 * Returns the average number of milliseconds elapsed, or -1 if unknown.
 	 */
 	public int getAverageMillis() {
+		int totalMillis = 0;
+		int totalRuns = 0;
+		for (Iterator it = results.iterator(); it.hasNext();) {
+			Result result = (Result) it.next();
+			totalMillis += result.getMillis();
+			totalRuns += result.getRuns();
+		}
 		if (totalRuns == 0) return -1;
 		return totalMillis / totalRuns;
 	}
 	
 	/**
-	 * Returns the total number over all runs, or 0 if no runs.
+	 * Returns the standard deviation of the sample.
+	 * sqrt((n * sum(X^2) - sum(X)^2) / (n * (n-1)))
 	 */
-	public int getTotalMillis() {
-		return totalMillis;
+	public double getStandardDeviation() {
+		double sumOfSquares = 0.0, sum = 0.0;
+		int totalRuns = 0;
+		for (Iterator it = results.iterator(); it.hasNext();) {
+			Result result = (Result) it.next();
+			if (result.getRuns() == 0) continue;
+			totalRuns += result.getRuns();
+			sum += result.getMillis();
+			double average = (double)result.getMillis() / result.getRuns();
+			sumOfSquares += average * average * result.getRuns();
+		}
+		if (totalRuns == 0) return 0;
+		return Math.sqrt((sumOfSquares * totalRuns - sum * sum) / (totalRuns * (totalRuns - 1)));
+	}
+	
+	/**
+	 * Returns a 95% confidence interval from the mean represented by getAverageMillis()
+	 * Uses the formula:
+	 *   1.960 *  / sqrt(n)
+	 */
+	public int getConfidenceInterval() {
+		return (int) (1.960 * getStandardDeviation() / Math.sqrt(getTotalRuns()));
 	}
 	
 	/**
 	 * Returns the number of times this task was run.
 	 */
 	public int getTotalRuns() {
+		int totalRuns = 0;
+		for (Iterator it = results.iterator(); it.hasNext();) {
+			Result result = (Result) it.next();
+			totalRuns += result.getRuns();
+		}
 		return totalRuns;
 	}
 	
 	/**
-	 * Adds a set of runs.
-	 * @param millisElapsed the number of milliseconds elapsed over all runs
-	 * @param runs the number of runs to add
+	 * Returns an array of all Results for this task.
 	 */
-	public void addRuns(int millisElapsed, int runs) {
-		totalMillis += millisElapsed;
-		totalRuns += runs;
+	public Result[] getResults() {
+		return (Result[]) results.toArray(new Result[results.size()]);
 	}
 	
-	/*
-	 * Adds some results corresponding to this task.
+	/**
+	 * Adds a result.
+	 * @param result the result
 	 */
-	void addResult(Attributes attributes) {
-		int elapsed = 0;
-		int runs = 0;
-		boolean aborted = false;
-		String value = attributes.getValue("elapsed");
-		if (value != null) {
-			elapsed = Integer.parseInt(value, 10);
-			runs = 1;
-		}
-		addRuns(elapsed, runs);
+	public void addResult(Result result) {
+		results.add(result);
 	}
+	
+
 }

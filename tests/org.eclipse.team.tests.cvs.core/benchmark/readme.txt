@@ -102,29 +102,21 @@ Inspecting the Output
    
 3. Run any of the following Java programs:
 
-   org.eclipse.team.tests.ccvs.ui.logformatter.PrintAverageMain
+   org.eclipse.team.tests.ccvs.ui.logformatter.PrintSummaryMain
    ------------------------------------------------------------
    
    Synopsis:
-     Prints the average of the output of all runs contained in a particular
+     Prints a summary of the output of all runs contained in a particular
      XML log file.  It is not possible to average runs in multiple log files
      at once without merging the files together on disk.  [Strip the closing
      tag of the first file, and the opening tag of the second file, then
      append the second file to the first]
    
    Program arguments:
-     <log> : the path of the log file to print
-
-
-   org.eclipse.team.tests.ccvs.ui.logformatter.PrintRawMain
-   --------------------------------------------------------
-   
-   Synopsis:
-     Prints the raw output of each individual run contained in a particular
-     XML log file without summarizing the data in any way.
-
-   Program arguments:
-     <log> : the path of the log file to print
+     <log>       : the path of the log file to print
+     -out <file> : specify an output file, otherwise sends to stdout
+     -csv        : writes the data in comma separated values format
+     -raw        : prints a raw dump without collating or averaging results
 
 
    org.eclipse.team.tests.ccvs.ui.logformatter.PrintDiffMain
@@ -139,8 +131,18 @@ Inspecting the Output
    Program arguments:
      <newer log> : the path of the "newer" log file
      <older log> : the path of the "older" log file
-     -t <thresh> : specify the minimum non-negligible absolute difference in ms
+     -out <file> : specify an output file, otherwise sends to stdout
+     -csv        : writes the data in comma separated values format
+     -t <thresh> : specify the minimum non-negligible absolute % change
      -i          : ignore negligible changes in results [filter them out]
+
+
+   org.eclipse.team.tests.ccvs.ui.logformatter.LogFormatterUIMain
+   ---------------------------------------------------------
+
+   Synopsis:
+     Provides a GUI frontend to the log formatting tools.  To run this,
+     you must ensure that the SWT DLL is on the java library path.
 
 
 

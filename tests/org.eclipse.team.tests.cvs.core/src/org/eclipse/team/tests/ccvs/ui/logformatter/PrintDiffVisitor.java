@@ -5,160 +5,70 @@ package org.eclipse.team.tests.ccvs.ui.logformatter;
  * All Rights Reserved.
  */
 
-import java.io.PrintStream;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+public abstract class PrintDiffVisitor implements ILogEntryVisitor {
+	protected RootEntry olderRoot;
+	protected int threshold; // threshold for negligible changes
+	protected boolean ignoreNegligible; // if true, ignores negligible changes
+	protected LogEntryContainer olderParent; // corresponding parent in older root
 
-public class PrintDiffVisitor implements ILogEntryVisitor {
-	private PrintStream os;
-	private RootEntry olderRoot;
-	private int threshold; // threshold for negligible changes
-	private boolean ignoreNegligible; // if true, ignores negligible changes
-	private LogEntryContainer olderParent; // corresponding parent in older root
-	private List diffText; // list of things to print
-	private String indent;
-	
 	/**
 	 * Creates a visitor to print a summary of the changes between a log
 	 * and an older one.  Optionally ignores differences within a certain threshold.
 	 * Does not print older entries for which there are no corresponding newer ones.
 	 * 
-	 * @param os the output stream
 	 * @param olderRoot the root of the older log
-	 * @param threshold the smallest non-negligible difference
+	 * @param threshold the minimum non-negligible % change
 	 * @param ignoreNegligible if true, does not display negligible changes
 	 */
-	public PrintDiffVisitor(PrintStream os, RootEntry olderRoot, int threshold, boolean ignoreNegligible) {
-		this.os = os;
+	public PrintDiffVisitor(RootEntry olderRoot, int threshold, boolean ignoreNegligible) {
 		this.olderRoot = olderRoot;
 		this.olderParent = null;
 		this.threshold = threshold;
 		this.ignoreNegligible = ignoreNegligible;
-		this.diffText = null;
-		this.indent = "";
 	}
 	
-	private void visitContainer(LogEntryContainer container) {
+	protected abstract void visitRootEntry(RootEntry entry, RootEntry olderEntry);
+	protected abstract void visitCaseEntry(CaseEntry entry, CaseEntry olderEntry);
+	protected abstract void visitGroupEntry(GroupEntry entry, GroupEntry olderEntry);
+	protected abstract void visitTaskEntry(TaskEntry entry, TaskEntry olderEntry);
+
+	public void visitRootEntry(RootEntry entry) {
+		olderParent = olderRoot;
+		visitRootEntry(entry, olderRoot);
+	}
+	
+	public void visitCaseEntry(CaseEntry entry) {
 		LogEntryContainer prevOlderParent = olderParent;
-		indent += "  ";
 		if (olderParent != null) {
-			olderParent = (LogEntryContainer) olderParent.findMember(
-				container.getName(), container.getClass());
+			olderParent = (LogEntryContainer) olderParent.findMember(entry.getName(), CaseEntry.class);
 		}
-		container.acceptChildren(this);
-		indent = indent.substring(2);
+		visitCaseEntry(entry, (CaseEntry) olderParent);
 		olderParent = prevOlderParent;
 	}
 
-	/**
-	 * Prints the root entry information.
-	 */
-	public void visitRootEntry(RootEntry entry) {
-		olderParent = olderRoot;
-		entry.acceptChildren(this);
-	}
-	
-	/**
-	 * Visits all of the subgroups and subtasks of the newer log's test cases
-	 */
-	public void visitCaseEntry(CaseEntry entry) {
-		StringBuffer line = new StringBuffer(indent);
-		line.append("%%% ");
-		line.append(entry.getName());
-		line.append(", class=");
-		line.append(entry.getClassName());
-		line.append(':');
-		os.println(line);
-		diffText = null;
-		visitContainer(entry);
-		if (diffText != null) {
-			Iterator it = diffText.iterator();
-			while (it.hasNext()) os.println((String) it.next());
+	public void visitGroupEntry(GroupEntry entry) {
+		LogEntryContainer prevOlderParent = olderParent;
+		if (olderParent != null) {
+			olderParent = (LogEntryContainer) olderParent.findMember(entry.getName(), GroupEntry.class);
 		}
-		diffText = null;
-		os.println();
+		visitGroupEntry(entry, (GroupEntry) olderParent);
+		olderParent = prevOlderParent;
 	}
 
-	/**
-	 * Visits all of the subgroups and subtasks of the newer log's test cases
-	 */
-	public void visitGroupEntry(GroupEntry entry) {
-		List oldDiffText = diffText;
-		diffText = null;
-		visitContainer(entry);
-		if (diffText != null) {			
-			StringBuffer line = new StringBuffer(indent);
-			line.append("+ ");
-			line.append(entry.getName());
-			line.append(':');
-			diffText.add(0, line.toString());
-			if (oldDiffText != null) diffText.addAll(0, oldDiffText);
-		} else {
-			diffText = oldDiffText;
-		}
-	}
-	
-	/**
-	 * Prints the average amount of time spent by a task.
-	 */
-	public void visitTaskEntry(TaskEntry task) {
-		int diff = Integer.MAX_VALUE;
-		TaskEntry olderTask = null;
+	public void visitTaskEntry(TaskEntry entry) {
+		TaskEntry olderEntry = null;
 		if (olderParent != null) {
-			olderTask = (TaskEntry) olderParent.findMember(task.getName(), TaskEntry.class);
-			if (olderTask != null && task.getTotalRuns() != 0 && olderTask.getTotalRuns() != 0) {
-				diff = task.getAverageMillis() - olderTask.getAverageMillis();
-				// ignore negligible changes
-				if (ignoreNegligible && Math.abs(diff) <= threshold) return;
-			}
+			olderEntry = (TaskEntry) olderParent.findMember(entry.getName(), TaskEntry.class);
 		}
-		// print task description
-		if (diffText == null) diffText = new LinkedList(); // using a list for speedy prepending
-		StringBuffer line = new StringBuffer(indent);
-		line.append("- ");
-		line.append(task.getName());
-		line.append(": ");
-		diffText.add(line.toString());
-		
-		// print new entry performance
-		printTaskEntry("  newer: ", task);
-		
-		// print older entry performance
-		if (olderTask == null) return;
-		printTaskEntry("  older: ", olderTask);
-		
-		// print difference
-		if (diff == Integer.MAX_VALUE) return;
-		line = new StringBuffer(indent);
-		line.append("  diff : ");
-		if (Math.abs(diff) > threshold) {
-			if (diff > 0) line.append("SLOWER");
-			else line.append("FASTER");
-			line.append(" by ");
-			line.append(Integer.toString(Math.abs(diff)));
-			line.append(" ms avg.");
-		} else {
-			line.append("NEGLIGIBLE");
-		}
-		diffText.add(line.toString());
+		if (ignoreNegligible && isNegligible(entry, olderEntry)) return;
+		visitTaskEntry(entry, olderEntry);
 	}
 	
-	protected void printTaskEntry(String prefix, TaskEntry task) {
-		StringBuffer line = new StringBuffer(indent);
-		line.append(prefix);
-		if (task.getTotalRuns() != 0) {
-			int averageTime = task.getAverageMillis();
-			line.append(Integer.toString(averageTime));
-			line.append(" ms");
-			if (task.getTotalRuns() > 1) {
-				line.append(" avg. over ");
-				line.append(Integer.toString(task.getTotalRuns()));
-				line.append(" runs");
-			}
-		} else {
-			line.append("skipped!");
-		}
-		diffText.add(line.toString());
+	protected boolean isNegligible(TaskEntry newerEntry, TaskEntry olderEntry) {
+		if (newerEntry.getTotalRuns() == 0 || olderEntry.getTotalRuns() == 0) return false;
+		int olderMean = olderEntry.getAverageMillis();
+		if (olderMean == 0) return true;
+		int diff = Math.abs(newerEntry.getAverageMillis() - olderMean);
+		return diff * 100 / olderMean < threshold;
 	}
 }

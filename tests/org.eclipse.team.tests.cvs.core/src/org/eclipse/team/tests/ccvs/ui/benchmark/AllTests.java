@@ -13,6 +13,7 @@ public class AllTests extends TestSuite {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(SyncTests.class);
 		suite.addTestSuite(WorkflowTests.class);
+		//suite.addTestSuite(CommandTests.class);
     	return new BenchmarkTestSetup(suite);
 	}	
 	

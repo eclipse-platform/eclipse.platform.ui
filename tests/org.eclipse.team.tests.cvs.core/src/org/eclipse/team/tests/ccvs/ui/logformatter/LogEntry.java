@@ -8,10 +8,6 @@ package org.eclipse.team.tests.ccvs.ui.logformatter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.SAXParserFactory;
 
 import junit.framework.Assert;
 import org.xml.sax.Attributes;
@@ -96,7 +92,7 @@ public abstract class LogEntry {
 			} else if ("result".equals(localName)) {
 				Assert.assertNotNull(current);
 				Assert.assertTrue(current instanceof TaskEntry);
-				((TaskEntry) current).addResult(attributes);
+				((TaskEntry) current).addResult(new Result(attributes));
 			} else if ("abort".equals(localName)) {
 				// currently we ignore failure entries
 				// XXX need a good way to represent failures

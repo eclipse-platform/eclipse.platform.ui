@@ -7,7 +7,7 @@ package org.eclipse.team.tests.ccvs.ui.logformatter;
 
 import java.io.PrintStream;
 
-public class PrintSummaryVisitor implements ILogEntryVisitor {
+public class PrintTextSummaryVisitor implements ILogEntryVisitor {
 	private PrintStream os;
 	private String indent;
 	private int totalAverageTime;
@@ -16,7 +16,7 @@ public class PrintSummaryVisitor implements ILogEntryVisitor {
 	 * Creates a visitor to print a summary of all entries contained in a log.
 	 * @param os the output stream
 	 */
-	public PrintSummaryVisitor(PrintStream os) {
+	public PrintTextSummaryVisitor(PrintStream os) {
 		this.os = os;
 		this.indent = "";
 		this.totalAverageTime = 0;
@@ -86,6 +86,14 @@ public class PrintSummaryVisitor implements ILogEntryVisitor {
 				line.append(" avg. over ");
 				line.append(Integer.toString(task.getTotalRuns()));
 				line.append(" runs");
+				if (averageTime != 0) {
+					int confidence = task.getConfidenceInterval();
+					line.append(" (95% C.I. +/- ");
+					line.append(Integer.toString(confidence));
+					line.append(" ms = ");
+					line.append(Util.formatPercentageRatio(confidence, averageTime));
+					line.append(")");
+				}
 			}
 		} else {
 			line.append("skipped!");

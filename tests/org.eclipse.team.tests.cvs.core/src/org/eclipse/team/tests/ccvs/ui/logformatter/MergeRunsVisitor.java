@@ -62,6 +62,9 @@ public class MergeRunsVisitor implements ILogEntryVisitor {
 		if (newEntry == null) {
 			newEntry = new TaskEntry(parent, entry.getName());
 		}
-		newEntry.addRuns(entry.getTotalMillis(), entry.getTotalRuns());
+		Result[] results = entry.getResults();
+		for (int i = 0; i < results.length; i++) {
+			newEntry.addResult(results[i]);
+		}
 	}
 }
