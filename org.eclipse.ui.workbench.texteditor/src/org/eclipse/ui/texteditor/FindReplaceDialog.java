@@ -1028,15 +1028,15 @@ class FindReplaceDialog extends Dialog {
 		if (findString != null && findString.length() > 0) {
 
 			class ReplaceAllRunnable implements Runnable {
-				public int replaceCount;
+				public int numberOfOccurrences;
 				public void run() {
-					replaceCount= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isGlobalSearch());	//$NON-NLS-1$
+					numberOfOccurrences= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isGlobalSearch());	//$NON-NLS-1$
 				}				
 			}
 			
 			ReplaceAllRunnable runnable= new ReplaceAllRunnable();						
 			BusyIndicator.showWhile(fActiveShell.getDisplay(), runnable);
-			replaceCount= runnable.replaceCount;
+			replaceCount= runnable.numberOfOccurrences;
 
 			if (replaceCount != 0) {
 				if (replaceCount == 1) { // not plural
