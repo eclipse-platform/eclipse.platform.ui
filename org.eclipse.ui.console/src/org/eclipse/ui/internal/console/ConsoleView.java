@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.console;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.IToolBarManager;
@@ -48,6 +50,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * Whether this console is pinned.
 	 */
 	private boolean fPinned = false;
+	
+	/**
+	 * Stack of consoles in MRU order
+	 */
+	private List fStack = new ArrayList();
 	
 	/**
 	 * The console being displayed, or <code>null</code> if none
@@ -114,12 +121,23 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		if (!isPinned()) {
 			super.showPageRec(pageRec);
 			fActiveConsole = (IConsole)fPartToConsole.get(pageRec.part);
+			fStack.remove(fActiveConsole);
+			fStack.add(0,fActiveConsole);
 			updateTitle();		
 			// update console actions
 			if (fPinAction != null) {
 				fPinAction.update();
 			}
 		}
+	}
+	
+	/**
+	 * Returns a stack of consoles in the view in MRU order.
+	 * 
+	 * @return a stack of consoles in the view in MRU order
+	 */
+	protected List getConsoleStack() {
+		return fStack;
 	}
 
 	/**
@@ -224,6 +242,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 					for (int i = 0; i < consoles.length; i++) {
 						if (isAvailable()) {
 							IConsole console = consoles[i];
+							fStack.remove(console);
 							ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)fConsoleToPart.get(console);
 							if (part != null) {
 								partClosed(part);

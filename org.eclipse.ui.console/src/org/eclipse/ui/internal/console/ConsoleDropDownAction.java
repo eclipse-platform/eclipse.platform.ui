@@ -11,6 +11,8 @@
 package org.eclipse.ui.internal.console;
 
 
+import java.util.List;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
@@ -104,7 +106,11 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		// do nothing - this is a menu
+		List stack = ((ConsoleView)fView).getConsoleStack();
+		if (stack.size() > 1) {
+			IConsole console = (IConsole) stack.get(1);
+			fView.display(console);
+		}
 	}
 	
 	/* (non-Javadoc)
