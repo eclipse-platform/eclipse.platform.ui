@@ -124,11 +124,4 @@ public interface IActivityManager {
 	 *                           <code>String</code>.	
 	 */
 	void setEnabledActivityIds(Set enabledActivityIds);		
-	
-	/**
-	 * @deprecated use IActivationService.getActiveActivityIds()
-	 * 
-	 * @issue needed to satisfy reference from HelpRoleManager
-	 */
-	Set getActiveActivityIds();
 }
