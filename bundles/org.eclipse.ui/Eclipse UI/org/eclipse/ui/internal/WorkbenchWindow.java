@@ -204,7 +204,7 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	addMenuBar();
 	addToolBar(SWT.FLAT | SWT.WRAP);
 	addStatusLine();
-	addShortcutBar(SWT.FLAT | SWT.WRAP);
+	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
 
 	// Add actions.
 	actionPresentation = new ActionPresentation(this);
