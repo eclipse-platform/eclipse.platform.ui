@@ -83,6 +83,17 @@ class ImplicitJobs {
 			}
 			ruleStack[top] = rule;
 		}
+		public void recycle() {
+			//clear and reset all fields
+			running = queued = false;
+			setRule(null);
+			setThread(null);
+			if (ruleStack.length != 2)
+				ruleStack = new ISchedulingRule[2];
+			else
+				ruleStack[0] = ruleStack[1] = null;
+			top = -1;
+		}
 		public IStatus run(IProgressMonitor monitor) {
 			synchronized (this) {
 				running = true;
@@ -131,6 +142,7 @@ class ImplicitJobs {
 					if (rule != null)
 						manager.getLockManager().addLockThread(currentThread);
 				}
+				threadJob.setThread(currentThread);
 				threadJobs.put(currentThread, threadJob);
 			}
 			threadJob.push(rule);
@@ -177,7 +189,7 @@ class ImplicitJobs {
 	 */
 	private void recycle(ThreadJob job) {
 		if (jobCache == null) {
-			job.setRule(null);
+			job.recycle();
 			jobCache = job;
 		}
 	}
