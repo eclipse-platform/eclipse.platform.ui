@@ -97,10 +97,12 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 		Object element = resolveSelectedElement(DebugUIPlugin.getActiveWorkbenchWindow());
 	
 		Menu menu= new Menu(parent);
+		int menuCount= 1;
 		for (int i= 0; i < launchers.length; i++) {
 			if (DebugUIPlugin.getDefault().isVisible(launchers[i])) {
 				LaunchSelectionAction newAction= new LaunchSelectionAction(launchers[i], element, getMode());
-				createMenuForAction(menu, newAction, i+1);
+				createMenuForAction(menu, newAction, menuCount);
+				menuCount++;
 			}
 		}
 		return menu;
