@@ -79,7 +79,7 @@ public interface IConsole {
 	 * @param offset the character offset within the console document where the
 	 * text assoicated with the hyperlink begins
 	 * @param length the length of the associated hyperlink text
-	 * @ since 3.1
+	 * @since 3.1
 	 */
 	public void addLink(IHyperlink link, int offset, int length);
 	
@@ -130,7 +130,7 @@ public interface IConsole {
     /**
      * Removes the given pattern match listener from this console. The listener will be
      * disconnected and will no longer receive match notifications. 
-     * @param listener the pattern match listener to remove.
+     * @param matchListener the pattern match listener to remove.
      * @since 3.1
      */
 	public void removePatternMatchListener(IPatternMatchListener matchListener);
