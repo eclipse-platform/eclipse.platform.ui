@@ -70,10 +70,10 @@ public class ConfigurationActivator implements BundleActivator {
 
 	private void initialize() {
 		platform = acquirePlatform();
-		String metaPath = platform.getLocation().append(".metadata").toOSString();
 		URL installURL = platform.getInstallURL();
+		String configPath = platform.getConfigurationMetadataLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
-		configuration = getPlatformConfiguration(allArgs, metaPath, installURL);
+		configuration = getPlatformConfiguration(allArgs, installURL, configPath);
 		
 		String configArea = (String) System.getProperty("osgi.configuration.area");
 		try {
@@ -265,9 +265,9 @@ public class ConfigurationActivator implements BundleActivator {
 	 * @param metaPath
 	 * @return
 	 */
-	private PlatformConfiguration getPlatformConfiguration(String[] args, String metaPath, URL installURL) {
+	private PlatformConfiguration getPlatformConfiguration(String[] args, URL installURL, String configPath) {
 		try {
-			PlatformConfiguration.startup(args, null, null, metaPath, installURL);
+			PlatformConfiguration.startup(args, null, null, installURL, configPath);
 		} catch (Exception e) {
 			if (platformTracker != null) {
 				String message = e.getMessage();

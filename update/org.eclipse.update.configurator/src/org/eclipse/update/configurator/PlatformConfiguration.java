@@ -42,7 +42,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private RandomAccessFile cfgLockFileRAF;
 	private BootDescriptor runtimeDescriptor;
 
-	private static String cmdConfiguration = null;
 	private static String cmdFeature = null;
 	private static String cmdApplication = null;
 	private static URL cmdPlugins = null;
@@ -62,7 +61,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
 	private static final String FEATURES = "features"; //$NON-NLS-1$
 	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
-	private static final String CONFIG_FILE = CONFIG_DIR + "/platform.cfg"; //$NON-NLS-1$
+	private static final String CONFIG_NAME = "platform.cfg"; //$NON-NLS-1$
+	private static final String CONFIG_FILE = CONFIG_DIR + "/" + CONFIG_NAME; //$NON-NLS-1$
 	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
@@ -863,21 +863,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private PlatformConfiguration(String configArg, String metaPath, URL pluginPath) throws IOException {
+	private PlatformConfiguration(String configPath, URL pluginPath) throws IOException {
 		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
 		this.cfgdFeatures = new HashMap();
 		this.bootPlugins = new HashMap();
 
-		// Determine configuration URL to use (based on command line argument)
-		URL configURL = null;
-		if (configArg != null && !configArg.trim().equals("")) { //$NON-NLS-1$
-			configURL = new URL(configArg);
-		}
-
 		// initialize configuration
 		boolean createRootSite = (pluginPath == null);
-		initializeCurrent(configURL, metaPath, createRootSite);
+		initializeCurrent(configPath, createRootSite);
 
 		// merge in any plugin-path entries (converted to site(s))
 		if (pluginPath != null) {
@@ -1354,9 +1348,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * or BootLoader.startup(...) method. Supported for R1.0 compatibility
 	 * @param r10apps application identifies as passed on the BootLoader.run(...)
 	 * method. Supported for R1.0 compatibility.
-	 * @param metaPath path to the platform metadata area
 	 */
-	static synchronized String[] startup(String[] cmdArgs, URL r10plugins, String r10app, String metaPath, URL installURL) throws Exception {
+	static synchronized String[] startup(String[] cmdArgs, URL r10plugins, String r10app, URL installURL, String configPath) throws Exception {
 		PlatformConfiguration.installURL = installURL;
 
 		// if BootLoader was invoked directly (rather than via Main), it is possible
@@ -1374,7 +1367,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		// create current configuration
 		if (currentPlatformConfiguration == null)
-			currentPlatformConfiguration = new PlatformConfiguration(cmdConfiguration, metaPath, cmdPlugins);
+			currentPlatformConfiguration = new PlatformConfiguration(configPath, cmdPlugins);
 
 		// check if we will be forcing reconciliation
 		passthruArgs = checkForFeatureChanges(passthruArgs, currentPlatformConfiguration);
@@ -1401,7 +1394,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private synchronized void initializeCurrent(URL url, String metaPath, boolean createRootSite) throws IOException {
+	private synchronized void initializeCurrent(String configPath, boolean createRootSite) throws IOException {
 		// FIXME: commented out for now. Remove if not needed.
 		//boolean concurrentUse = false;
 
@@ -1410,7 +1403,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// line argument). Ignore any configuration URL passed in.
 			// Force the configuration to be saved in the install location.
 			// Allow an existing configuration to be re-initialized.
-			url = new URL(getInstallURL(), CONFIG_FILE); // if we fail here, return exception
+			URL url = new URL(getInstallURL(), CONFIG_FILE); // if we fail here, return exception
 			// FIXME: commented out for now. Remove if not needed. 
 			// I left the call to #getConfigurationLock in just in case
 			// calling it has useful side effect. If not, then it can be removed too.
@@ -1427,96 +1420,55 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return;
 		}
 
-		if (url != null) {
-			// configuration URL was specified. Use it (if exists), or create one
-			// in specified location
+		// Configuration URL was is specified by the OSGi layer. 
+		// Default behavior is to look
+		// for configuration in the specified meta area. If not found, look
+		// for pre-initialized configuration in the installation location.
+		// If it is found it is used as the initial configuration. Otherwise
+		// a new configuration is created. In either case the resulting
+		// configuration is written into the specified configuration area.
 
+		URL configDirURL = new URL("file", "", configPath);
+		URL configFileURL = new URL("file", "", configPath + "/" + CONFIG_NAME);
+		try {	
 			// check concurrent use lock
 			// FIXME: might not need this method call.
-			getConfigurationLock(url);
+			getConfigurationLock(configFileURL);
 
 			// try loading the configuration
 			try {
-				load(url);
+				load(configFileURL);
 				if (DEBUG)
-					debug("Using configuration " + url.toString()); //$NON-NLS-1$
+					debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
 			} catch (IOException e) {
-				cmdFirstUse = true;
-				if (createRootSite)
-					configureSite(getRootSite());
-				if (DEBUG)
-					debug("Creating configuration " + url.toString()); //$NON-NLS-1$
-			}
-			configLocation = url;
-			verifyPath(configLocation);
-			return;
-
-		} else {
-			// configuration URL was not specified. Default behavior is to look
-			// for configuration in the workspace meta area. If not found, look
-			// for pre-initialized configuration in the installation location.
-			// If it is found it is used as the initial configuration. Otherwise
-			// a new configuration is created. In either case the resulting
-			// configuration is written into the default state area.
-			// The default state area is computed as follows:
-			// 1) We store the config state relative to the 'eclipse' directory if possible
-			// 2) If this directory is read-only OR 
-			//    if shared install is desired (using command line argument -shared), 
-			//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
-			//    is unique for each local user, and <application-id> is the one 
-			//    defined in .eclipseproduct marker file. If .eclipseproduct does not
-			//    exist, use "eclipse" as the application-id.
-
-			//	if we fail here, return exception
-			URL defaultStateURL = getDefaultStateLocation();
-			URL cfigURL = new URL(defaultStateURL, CONFIG_FILE);
-
-			// check concurrent use lock
-			// FIXME: might not need this method call
-			getConfigurationLock(cfigURL);
-
-			// if we can load it, use it
-			try {
-				load(cfigURL);
-				configLocation = cfigURL;
-				verifyPath(configLocation);
-				if (DEBUG)
-					debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
-				return;
-			} catch (IOException e) {
-				cmdFirstUse = true; // we are creating new configuration
-			}
-
-			// failed to load, see if we can find pre-initialized configuration.
-			// Don't attempt this initialization when self-hosting (is unpredictable)
-			if (createRootSite) {
+				// failed to load, see if we can find pre-initialized configuration.
+				// Don't attempt this initialization when self-hosting (is unpredictable)
 				try {
-					url = new URL(getInstallURL(), CONFIG_FILE);
-					load(url);
+					URL sharedConfigDirURL = new URL(getInstallURL(), CONFIG_DIR);
+					URL sharedConfigFileURL = new URL(getInstallURL(), CONFIG_FILE);
+
+					load(sharedConfigFileURL);
+					
 					// pre-initialized config loaded OK ... copy any remaining update metadata
 					// Only copy if the default config location is not the install location
-					if (getInstallURL() != defaultStateURL)
-						copyInitializedState(getInstallURL(), defaultStateURL.getFile(), CONFIG_DIR);
-					configLocation = cfigURL; // config in default location is the right URL
-					verifyPath(configLocation);
-					if (DEBUG) {
-						debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
-						debug("Initialized from    " + url.toString()); //$NON-NLS-1$
+					if (!sharedConfigDirURL.equals(configDirURL)) {
+						copyInitializedState(sharedConfigDirURL, configPath);
+						if (DEBUG)
+							debug("Configuration initialized from    " + sharedConfigDirURL.toString()); //$NON-NLS-1$
 					}
 					return;
-				} catch (IOException e) {
-					// continue ...
+				} catch (IOException ioe) {
+					cmdFirstUse = true;
+					// we are creating new configuration
+					if (createRootSite)
+						configureSite(getRootSite());
 				}
 			}
-
-			// if load failed, initialize with default site info
-			if (createRootSite)
-				configureSite(getRootSite());
-			configLocation = cfigURL;
+		} finally {
+			configLocation = configFileURL;
 			verifyPath(configLocation);
 			if (DEBUG)
-				debug("Creating configuration " + configLocation.toString()); //$NON-NLS-1$
-			return;
+				debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
 		}
 	}
 
@@ -1570,32 +1522,30 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 
 	private boolean getConfigurationLock(URL url) {
-		if (configurationInWorkspace(url))
-			return false;
 
-		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
-			return false;
-
-		verifyPath(url);
-		String cfgName = url.getFile().replace('/', File.separatorChar);
-		String lockName = cfgName + CONFIG_FILE_LOCK_SUFFIX;
-		cfgLockFile = new File(lockName);
-
-		//if the lock file already exists, try to delete,
-		//assume failure means another eclipse has it open
-		if (cfgLockFile.exists())
-			cfgLockFile.delete();
-		if (cfgLockFile.exists()) {
-			throw new RuntimeException(Policy.bind("cfig.inUse", cfgName, lockName)); //$NON-NLS-1$
-		}
-
-		// OK so far ... open the lock file so other instances will fail
-		try {
-			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw"); //$NON-NLS-1$
-			cfgLockFileRAF.writeByte(0);
-		} catch (IOException e) {
-			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName)); //$NON-NLS-1$
-		}
+//		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
+//			return false;
+//
+//		verifyPath(url);
+//		String cfgName = url.getFile().replace('/', File.separatorChar);
+//		String lockName = cfgName + CONFIG_FILE_LOCK_SUFFIX;
+//		cfgLockFile = new File(lockName);
+//
+//		//if the lock file already exists, try to delete,
+//		//assume failure means another eclipse has it open
+//		if (cfgLockFile.exists())
+//			cfgLockFile.delete();
+//		if (cfgLockFile.exists()) {
+//			throw new RuntimeException(Policy.bind("cfig.inUse", cfgName, lockName)); //$NON-NLS-1$
+//		}
+//
+//		// OK so far ... open the lock file so other instances will fail
+//		try {
+//			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw"); //$NON-NLS-1$
+//			cfgLockFileRAF.writeByte(0);
+//		} catch (IOException e) {
+//			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName)); //$NON-NLS-1$
+//		}
 
 		return false;
 	}
@@ -1613,11 +1563,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			cfgLockFile.delete();
 			cfgLockFile = null;
 		}
-	}
-
-	private boolean configurationInWorkspace(URL url) {
-		// the configuration file is now in the workspace, so return true
-		return true;
 	}
 
 	private void computeChangeStamp() {
@@ -1868,12 +1813,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private void copyInitializedState(URL source, String target, String dir) {
+	private void copyInitializedState(URL source, String target) {
 		try {
 			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
 				return; // need to be able to do "dir"
 
-			copy(new File(source.getFile()), new File(target), dir);
+			copy(new File(source.getFile()), new File(target));
 
 		} catch (IOException e) {
 			// this is an optimistic copy. If we fail, the state will be reconciled
@@ -1881,18 +1826,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private void copy(File srcDir, File tgtDir, String extraPath) throws IOException {
-		File src = new File(srcDir, extraPath);
-		File tgt = new File(tgtDir, extraPath);
-
+	private void copy(File src, File tgt) throws IOException {
 		if (src.isDirectory()) {
 			// copy content of directories
 			tgt.mkdir();
-			String[] list = src.list();
+			File[] list = src.listFiles();
 			if (list == null)
 				return;
 			for (int i = 0; i < list.length; i++) {
-				copy(srcDir, tgtDir, extraPath + File.separator + list[i]);
+				copy(list[i], new File(tgt, list[i].getName()));
 			}
 		} else {
 			// copy individual files
@@ -2721,12 +2663,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 			String arg = args[++i];
 
-			// look for the platform configuration to use.
-			if (args[i - 1].equalsIgnoreCase(CMD_CONFIGURATION)) {
-				found = true;
-				cmdConfiguration = arg;
-			}
-
 			// look for the feature to use for customization.
 			if (args[i - 1].equalsIgnoreCase(CMD_FEATURE)) {
 				found = true;
@@ -2893,44 +2829,5 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static URL getInstallURL() {
 		return installURL;
-	}
-
-	private URL getDefaultStateLocation() throws IOException {
-		// 1) We store the config state relative to the 'eclipse' directory if possible
-		// 2) If this directory is read-only 
-		//    we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
-		//    is unique for each local user, and <application-id> is the one 
-		//    defined in .eclipseproduct marker file. If .eclipseproduct does not
-		//    exist, use "eclipse" as the application-id.
-
-		URL installURL = getInstallURL();
-		File installDir = new File(installURL.getFile());
-
-		if ("file".equals(installURL.getProtocol()) && installDir.canWrite()) { //$NON-NLS-1$
-			if (DEBUG)
-				debug("Using the installation directory."); //$NON-NLS-1$
-			return installURL;
-		} else {
-			if (DEBUG)
-				debug("Using the user.home location."); //$NON-NLS-1$
-			String appName = "." + ECLIPSE; //$NON-NLS-1$
-			File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER);
-			if (eclipseProduct.exists()) {
-				Properties props = new Properties();
-				props.load(new FileInputStream(eclipseProduct));
-				String appId = props.getProperty(PRODUCT_SITE_ID);
-				if (appId == null || appId.trim().length() == 0)
-					appId = ECLIPSE;
-				String appVersion = props.getProperty(PRODUCT_SITE_VERSION);
-				if (appVersion == null || appVersion.trim().length() == 0)
-					appVersion = ""; //$NON-NLS-1$
-				appName += File.separator + appId + "_" + appVersion; //$NON-NLS-1$
-			}
-
-			String userHome = System.getProperty("user.home"); //$NON-NLS-1$
-			File configDir = new File(userHome, appName);
-			configDir.mkdirs();
-			return configDir.toURL();
-		}
 	}
 }
