@@ -470,7 +470,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			setRule(EXTENSION_EVENT_RULE);
 		}
 		public IStatus run(IProgressMonitor monitor) {
-			MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("pluginEvent.errorListener"), null); //$NON-NLS-1$			
+			MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$			
 			for (Iterator iter = listeners.entrySet().iterator(); iter.hasNext();) {
 				Map.Entry entry = (Map.Entry) iter.next();
 				IRegistryChangeListener listener = (IRegistryChangeListener) entry.getKey();
