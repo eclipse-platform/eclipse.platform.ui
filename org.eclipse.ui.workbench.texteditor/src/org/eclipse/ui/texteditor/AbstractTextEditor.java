@@ -4190,7 +4190,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		if (IVerticalRulerInfo.class.equals(required)) {
-			if (fVerticalRuler != null)
+			if (fVerticalRuler instanceof IVerticalRulerInfo)
 				return fVerticalRuler;
 		}
 		
