@@ -19,9 +19,8 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -38,6 +37,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -47,6 +49,11 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.keys.SWTKeySupport;
+
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -54,10 +61,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.ParseException;
-import org.eclipse.ui.keys.SWTKeySupport;
 
 /**
  * <p>
@@ -542,19 +545,10 @@ public final class WorkbenchKeyboard {
         if (isOutOfOrderKey(keyStrokes)) {
             if (event.type == SWT.KeyDown) {
                 Widget widget = event.widget;
-                if (widget instanceof StyledText) {
-                    /*
-                     * KLUDGE. Some people try to do useful work in verify
-                     * listeners. The way verify listeners work in SWT, we need
-                     * to verify the key as well; otherwise, we can detect that
-                     * useful work has been done.
-                     */
-                    ((StyledText) widget)
-                            .addVerifyKeyListener(new OutOfOrderVerifyListener(
-                                    new OutOfOrderListener(this, dialogOnly)));
-                } else {
-                    widget.addListener(SWT.KeyDown, new OutOfOrderListener(
-                            this, dialogOnly));
+                if (widget instanceof Control) {
+                    Control control = (Control) widget;
+                    control.getShell().addListener(SWT.KeyDown,
+                            new OutOfOrderListener(this, dialogOnly));
                 }
             }
 
