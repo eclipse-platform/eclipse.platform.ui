@@ -120,18 +120,18 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			coolBar.setLocked(false);
 			coolBar.addListener(SWT.Resize, new Listener() {
 				public void handleEvent(Event event) {
-					coolBar.getParent().layout();
+					coolBar.getShell().layout();
 				}
 			});
 			coolBar.setMenu(getCoolBarMenu());
-			coolBar.getParent().addListener(SWT.Resize, new Listener() {
+			coolBar.getShell().addListener(SWT.Resize, new Listener() {
 				public void handleEvent(Event e) {
 					// TEMPORARY CODE
 					// workaround for wrapping coolbar
-					coolBar.getParent().layout(false);
-					FormData data = (FormData)(coolBar.getLayoutData());
+					coolBar.getShell().layout(false);
+					FormData data = (FormData)(coolBar.getParent().getLayoutData());
 					FormAttachment attach = data.left;
-					int width = coolBar.getParent().getClientArea().width;
+					int width = coolBar.getShell().getClientArea().width;
 					if (attach != null && attach.control != null) {
 						Rectangle rect = attach.control.getBounds();
 						width -= rect.x + rect.width;

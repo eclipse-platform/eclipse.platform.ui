@@ -38,8 +38,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -62,9 +60,7 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.jface.window.ColorSchemeService;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
@@ -1165,6 +1161,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (item != null) {
 			perspectiveBar.remove(item);
 			perspectiveBar.update(false);
+			topBar.layout(true);
 		}
 	}
 	private IStatus unableToRestorePage(IMemento pageMem) {
