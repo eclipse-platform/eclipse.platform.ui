@@ -469,6 +469,7 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.copyToClipboard"
 			menubarPath = "editGroup"
+			icon = "icons/full/clcl16/copy_edit_co.gif"
 			helpContextId = "copy_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
 			label="%CopyToClipboardAction.label">
@@ -614,6 +615,7 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
 			menubarPath = "variableGroup"
+			icon = "icons/full/clcl16/copy_edit_co.gif"
 			helpContextId = "copy_variables_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">
@@ -647,6 +649,7 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
 			menubarPath = "expressionGroup"
+			icon = "icons/full/clcl16/copy_edit_co.gif"
 			helpContextId = "copy_variables_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">

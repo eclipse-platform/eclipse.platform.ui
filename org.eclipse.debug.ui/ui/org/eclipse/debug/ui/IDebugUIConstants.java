@@ -250,54 +250,12 @@ public interface IDebugUIConstants {
 	 * Run action image identifier.
 	 */
 	public static final String IMG_ACT_RUN= "IMG_ACT_RUN"; //$NON-NLS-1$
-		
-	/** Resume action image identifier. */
-	public static final String IMG_LCL_RESUME= "IMG_LCL_RESUME"; //$NON-NLS-1$
-	
-	/** Suspend action image identifier. */
-	public static final String IMG_LCL_SUSPEND= "IMG_LCL_SUSPEND"; //$NON-NLS-1$
-	
-	/** Terminate action image identifier. */
-	public static final String IMG_LCL_TERMINATE= "IMG_LCL_TERMINATE"; //$NON-NLS-1$
-	
-	/** Terminate all action image identifier. */
-	public static final String IMG_LCL_TERMINATE_ALL= "IMG_LCL_TERMINATE_ALL"; //$NON-NLS-1$
-	
-	/** Terminate and remove action image identifier. */
-	public static final String IMG_LCL_TERMINATE_AND_REMOVE= "IMG_LCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
-	
-	/** Disconnect action image identifier. */
-	public static final String IMG_LCL_DISCONNECT= "IMG_LCL_DISCONNECT"; //$NON-NLS-1$
-	
-	/** Step into action image identifier. */
-	public static final String IMG_LCL_STEPINTO= "IMG_LCL_STEPINTO"; //$NON-NLS-1$
-	
-	/** Step over action image identifier. */
-	public static final String IMG_LCL_STEPOVER= "IMG_LCL_STEPOVER"; //$NON-NLS-1$
-	
-	/** Step return action image identifier. */
-	public static final String IMG_LCL_STEPRETURN= "IMG_LCL_STEPRETURN"; //$NON-NLS-1$
 	
 	/** Clear action image identifier. */
 	public static final String IMG_LCL_CLEAR= "IMG_LCL_CLEAR"; //$NON-NLS-1$
 	
-	/** Remove all terminated action image identifier. */
-	public static final String IMG_LCL_REMOVE_TERMINATED= "IMG_LCL_REMOVE_TERMINATED"; //$NON-NLS-1$
-	
 	/** Display variable type names action image identifier. */
 	public static final String IMG_LCL_TYPE_NAMES= "IMG_LCL_TYPE_NAMES"; //$NON-NLS-1$
-	
-	/** Remove action image identifier. */
-	public static final String IMG_LCL_REMOVE= "IMG_LCL_REMOVE"; //$NON-NLS-1$
-	
-	/** Remove all action image identifier. */
-	public static final String IMG_LCL_REMOVE_ALL= "IMG_LCL_REMOVE_ALL"; //$NON-NLS-1$
-	
-	/** Re-launch action image identifier.*/
-	public static final String IMG_LCL_RELAUNCH= "IMG_LCL_RELAUNCH"; //$NON-NLS-1$
-
-	/** Copy-to-clipboard action image identifier.*/
-	public static final String IMG_LCL_COPY= "IMG_LCL_COPY"; //$NON-NLS-1$
 	
 	/** Toggle detail pane action image identifier.*/
 	public static final String IMG_LCL_DETAIL_PANE= "IMG_LCL_DETAIL_PANE"; //$NON-NLS-1$
