@@ -54,7 +54,8 @@ public class ProgressRegion {
 		region.setLayout(regionLayout);
 		region.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		
-		item = new AnimationItem(window);
+		item = new IconAnimationItem(window,AnimationManager.getInstance().animationProcessor);
+		
 		item.createControl(region);
 		item.setAnimationContainer(getAnimationContainer());
 		Control itemControl = item.getControl();

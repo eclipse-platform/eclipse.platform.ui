@@ -12,36 +12,27 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleControlAdapter;
-import org.eclipse.swt.accessibility.AccessibleControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
+
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
  * The AnimationItem is the class that manages the animation for the progress.
  */
-public class AnimationItem {
+public abstract class AnimationItem {
 	WorkbenchWindow window;
 	private ProgressFloatingWindow floatingWindow;
-	Canvas imageCanvas;
-	GC imageCanvasGC;
+	
 	interface IAnimationContainer {
 		/**
 		 * The animation has started. 
@@ -87,21 +78,10 @@ public class AnimationItem {
 	 * @param parent
 	 */
 	public void createControl(Composite parent) {
-		final AnimationManager manager = AnimationManager.getInstance();
-		// Canvas to show the image.
-		imageCanvas = new Canvas(parent, SWT.NONE);
-		imageCanvas.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent event) {
-				paintImage(event, manager.getImage(), manager.getImageData()[0]);
-			}
-		});
-		imageCanvasGC = new GC(imageCanvas);
-		imageCanvas.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				imageCanvasGC.dispose();
-			}
-		});
-		imageCanvas.addMouseListener(new MouseListener() {
+		
+		Control animationItem = createAnimationItem(parent);
+		
+		animationItem.addMouseListener(new MouseListener() {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -127,7 +107,7 @@ public class AnimationItem {
 				//Do nothing
 			}
 		});
-		imageCanvas.addMouseTrackListener(new MouseTrackListener() {
+		animationItem.addMouseTrackListener(new MouseTrackListener() {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -153,31 +133,17 @@ public class AnimationItem {
 				openFloatingWindow();
 			}
 		});
-		imageCanvas.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.AccessibleControlEvent)
-			 */
-			public void getValue(AccessibleControlEvent arg0) {
-				if (manager.isAnimated())
-					arg0.result = ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
-				else
-					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
-			}
-		});
-		imageCanvas.addHelpListener(new HelpListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
-			 */
-			public void helpRequested(HelpEvent e) {
-				// XXX Auto-generated method stub
-			}
-		});
-		manager.addItem(this);
+		
+		AnimationManager.getInstance().addItem(this);
 	}
+	
+	/**
+	 * Create the animation item control.
+	 * @param parent the parent Composite
+	 * @return Control
+	 */
+	protected abstract Control createAnimationItem(Composite parent);
+	
 	/**
 	 * Paint the image in the canvas.
 	 * 
@@ -196,17 +162,9 @@ public class AnimationItem {
 	 * 
 	 * @return Control
 	 */
-	public Control getControl() {
-		return imageCanvas;
-	}
-	/**
-	 * Get the bounds of the image being displayed here.
-	 * 
-	 * @return Rectangle
-	 */
-	public Rectangle getImageBounds() {
-		return AnimationManager.getInstance().getImageBounds();
-	}
+	public abstract Control getControl();
+	
+	
 	/**
 	 * Open a floating window for the receiver.
 	 * 
@@ -220,7 +178,7 @@ public class AnimationItem {
 			//Don't bother if there is nothing showing yet
 			if (!window.getShell().isVisible())
 				return;
-			floatingWindow = new ProgressFloatingWindow(window, imageCanvas);
+			floatingWindow = new ProgressFloatingWindow(window, getControl());
 		}
 		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages
 				.getString("AnimationItem.openFloatingWindowJob")) {//$NON-NLS-1$
