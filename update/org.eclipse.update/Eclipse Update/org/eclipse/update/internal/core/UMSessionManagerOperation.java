@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.webdav.http.client.Response;
 import java.util.jar.*;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.internal.boot.LaunchInfo;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.core.internal.boot.update.*;
 import java.io.*;
@@ -390,11 +391,17 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 	}
 
 	// For unzipping plugins or component/configuration jar, 
-	// set up the list of directories to look for
+	// set up the list of directories to look for, also call
+	// LaunchInfo.installPending
 	//-----------------------------------------------------
 	Vector dirNames = new Vector();
 	Vector dirNamesInstalled = new Vector();// keep track of plugins/fragments unzipped
 	Vector dirNamesUnexpected = new Vector();	// keep track of unexpected plugins/fragments dir
+	ArrayList productVIDs = new ArrayList();
+	ArrayList componentVIDs = new ArrayList();
+	ArrayList pluginVIDs = new ArrayList();
+	ArrayList fragmentVIDs = new ArrayList();
+
 	if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
 		IComponentDescriptor comp = null;
 		if (getData() instanceof IComponentEntryDescriptor) {
@@ -404,22 +411,39 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		}
 		if (comp != null) {
 			IPluginEntryDescriptor[] plugins = comp.getPluginEntries();
-			for (int i=0; i<plugins.length; i++) 
+			for (int i=0; i<plugins.length; i++) {
 				dirNames.addElement( UMEclipseTree.PLUGINS_DIR + "/" + plugins[i].getDirName());
+				pluginVIDs.add(new LaunchInfo.VersionedIdentifier(plugins[i].getUniqueIdentifier(), plugins[i].getVersionStr()));
+			}
 			IFragmentEntryDescriptor[] fragments = comp.getFragmentEntries();
-			for (int i=0; i<fragments.length; i++) 
+			for (int i=0; i<fragments.length; i++) {
 				dirNames.addElement( UMEclipseTree.FRAGMENTS_DIR + "/" + fragments[i].getDirName());	
+				fragmentVIDs.add(new LaunchInfo.VersionedIdentifier(plugins[i].getUniqueIdentifier(), plugins[i].getVersionStr()));
+			}
 		} else {
 			strErrorMessage = UpdateManagerStrings.getString("S_Error_in_registry");
 		}
 	} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
 		rc = UpdateManagerConstants.INSTALL_XML_MISSING;
-		IInstallable desc = (IInstallable) getData();
-		if (getData() instanceof IProductDescriptor) 
+		if (getData() instanceof IProductDescriptor) {
+			IProductDescriptor desc = (IProductDescriptor) getData();
 			dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.PRODUCTS_DIR + "/" + desc.getDirName());
-		else 
+			productVIDs.add(new LaunchInfo.VersionedIdentifier(desc.getUniqueIdentifier(), desc.getVersionStr()));
+		} else { 
+			IComponentDescriptor desc = null;
+			if (getData() instanceof IComponentEntryDescriptor) {
+				desc = ((IComponentEntryDescriptor) getData()).getComponentDescriptor();
+			} else {
+				desc = (IComponentDescriptor) getData();
+			}
 			dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.COMPONENTS_DIR + "/" + desc.getDirName());
+			componentVIDs.add(new LaunchInfo.VersionedIdentifier(desc.getUniqueIdentifier(), desc.getVersionStr()));
+		}
 	}
+	if (!LaunchInfo.getCurrent().installPending(productVIDs, componentVIDs, pluginVIDs, fragmentVIDs)) {
+		strErrorMessage = UpdateManagerStrings.getString("S_Error_calling_installPending_in_LaunchInfo");
+	}
+	
 	
 	// Create a file specification from the input URL
 	//-----------------------------------------------
@@ -434,7 +458,7 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		strErrorMessage = createMessageString(UpdateManagerStrings.getString("S_Unable_to_open_Jar_file"), ex);
 	}
 
-	if (jarFile != null) {
+	if ((jarFile != null) && (strErrorMessage == null)) {
 
 		JarEntry entry = null;
 		InputStream streamInputEntry = null;
@@ -455,11 +479,6 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 			progressMonitor.beginTask(UpdateManagerStrings.getString("S_Install") + ": " + strFilename, iCount);
 		}
 
-		// Write out a safety lock
-		//------------------------
-		IUMLock lock = new UMLock();
-		if (!lock.exists())
-			lock.set(strFilename);					
 
 		// Do each jar file entry
 		//-----------------------
@@ -593,16 +612,13 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 			jarFile.close();
 		} catch (java.io.IOException ex) {
 			// unchecked
-		}
-							
-		// Remove safety lock
-		//-------------------
-		lock.remove();
+		}		
 	}	// if jarFile is not null
 
+	// tally up what's unzipped and what's not
+	//---------------------------------
 	if (strErrorMessage == null) {
 		if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
-			// tally up what's unzipped and what's not
 			if (dirNamesUnexpected.size() > 0) {
 				rc = UpdateManagerConstants.UNDEFINED_CONTENTS;
 				strErrorMessage = UpdateManagerStrings.getString("S_Undefined_contents_found_in_Jar");
@@ -614,9 +630,17 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
 			if (rc != UpdateManagerConstants.OK)
 				strErrorMessage = UpdateManagerStrings.getString("S_Unable_to_find_install_manifest_file_in_Jar");
-		}		
+		}
+	}		
+	
+	// Call LaunchInfo.installConfirmed if all clean
+	// Otherwise, call after we've cleaned up (undo*)
+	//-----------------------------------------------
+	if (strErrorMessage == null) {
+		if (!LaunchInfo.getCurrent().installConfirmed(productVIDs, componentVIDs, pluginVIDs, fragmentVIDs)) {
+			strErrorMessage = UpdateManagerStrings.getString("S_Error_calling_installConfirmed_in_LaunchInfo");
+		}
 	}
-
 	
 	if (progressMonitor != null) progressMonitor.done();
 
@@ -967,6 +991,10 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 	// This section contains subtle differences from doUnzip()
 	//--------------------------------------------------------
 	Vector dirNames = new Vector();
+	ArrayList productVIDs = new ArrayList();
+	ArrayList componentVIDs = new ArrayList();
+	ArrayList pluginVIDs = new ArrayList();
+	ArrayList fragmentVIDs = new ArrayList();
 	if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_PLUGINS ) {
 		IComponentDescriptor comp = null;
 		if (getData() instanceof IComponentEntryDescriptor) {
@@ -976,22 +1004,32 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		}
 		if (comp != null) {
 			IPluginEntryDescriptor[] plugins = comp.getPluginEntries();
-			for (int i=0; i<plugins.length; i++) 
+			for (int i=0; i<plugins.length; i++) {
 				dirNames.addElement( UMEclipseTree.PLUGINS_DIR + "/" + plugins[i].getDirName());
+				pluginVIDs.add(new LaunchInfo.VersionedIdentifier(plugins[i].getUniqueIdentifier(), plugins[i].getVersionStr()));
+			}
 			IFragmentEntryDescriptor[] fragments = comp.getFragmentEntries();
-			for (int i=0; i<fragments.length; i++) 
+			for (int i=0; i<fragments.length; i++) {
 				dirNames.addElement( UMEclipseTree.FRAGMENTS_DIR + "/" + fragments[i].getDirName());	
+				fragmentVIDs.add(new LaunchInfo.VersionedIdentifier(plugins[i].getUniqueIdentifier(), plugins[i].getVersionStr()));
+			}
 		} else {
 			strErrorMessage = UpdateManagerStrings.getString("S_Error_in_registry");
 		}
 	} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
-		IInstallable desc = (IInstallable) getData();
-		if (getData() instanceof IProductDescriptor) 
+		// rc = UpdateManagerConstants.INSTALL_XML_MISSING;
+		if (getData() instanceof IProductDescriptor) {
+			IProductDescriptor desc = (IProductDescriptor) getData();
 			dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.PRODUCTS_DIR + "/" + desc.getDirName() + "/");
-		else 
+			productVIDs.add(new LaunchInfo.VersionedIdentifier(desc.getUniqueIdentifier(), desc.getVersionStr()));
+		} else { 
+			IComponentDescriptor desc = (IComponentDescriptor) getData();
 			dirNames.addElement(UMEclipseTree.INSTALL_DIR + "/" + UMEclipseTree.COMPONENTS_DIR + "/" + desc.getDirName() + "/");
+			componentVIDs.add(new LaunchInfo.VersionedIdentifier(desc.getUniqueIdentifier(), desc.getVersionStr()));
+		}
 	}
-	
+
+		
 	// Create a file specification from the input URL
 	//-----------------------------------------------
 	String strFilespec = UMEclipseTree.getFileInPlatformString(urlInput);
@@ -1022,12 +1060,6 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		}
 		
 		if (progressMonitor != null) progressMonitor.beginTask(UpdateManagerStrings.getString("S_Undo") + ": " + strFilename, iCount);
-		
-		// Write out a safety lock
-		//------------------------
-		IUMLock lock = new UMLock();
-		if (!lock.exists())
-			lock.set(strFilename);		
 
 		// Do each jar file entry
 		//-----------------------
@@ -1048,6 +1080,17 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 				if ((entryName.equals(UMEclipseTree.PLUGINS_DIR + "/")) ||
 					(entryName.equals(UMEclipseTree.FRAGMENTS_DIR + "/"))) {
 					if (progressMonitor != null) progressMonitor.worked(1);
+					continue;
+				}
+				// Don't bother cleaning up the entries not matching the expected list
+				// They weren't unzipped in the first place
+				//--------------------------------------------------------------------
+				String prefix = entryName;
+				int second_slash = entryName.indexOf("/", (entryName.indexOf("/")+1));
+				if (second_slash > 0) 
+					prefix = entryName.substring(0,second_slash);
+				int match = dirNames.indexOf(prefix);
+				if (match < 0) {   // not a valid plugin
 					continue;
 				}
 			} else if (getAction().equals(UpdateManagerConstants.OPERATION_UNZIP_INSTALL)) {
@@ -1092,14 +1135,16 @@ public boolean undoUnzip(IProgressMonitor progressMonitor) {
 		} catch (java.io.IOException ex) {
 			// unchecked
 		}
-									
-		// Remove safety lock
-		//-------------------
-		lock.remove();			
 	} // if jarFile is not null
 
-
-
+	// Call LaunchInfo.installConfirmed if all clean
+	//-----------------------------------------------
+	if (strErrorMessage == null) {
+		if (!LaunchInfo.getCurrent().installConfirmed(productVIDs, componentVIDs, pluginVIDs, fragmentVIDs)) {
+			strErrorMessage = UpdateManagerStrings.getString("S_Error_calling_installConfirmed_in_LaunchInfo");
+		}
+	}
+	
 	if (progressMonitor != null) progressMonitor.done();
 	
 	// Reset the number of attempts
