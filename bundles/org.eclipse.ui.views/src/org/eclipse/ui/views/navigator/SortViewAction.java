@@ -10,7 +10,6 @@ Contributors:
 ************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -18,7 +17,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * @since 2.0
  */
 public class SortViewAction extends ResourceNavigatorAction {
-	private int sortCriteria = ResourceSorter.TYPE;
+	private int sortCriteria;
 
 /**
  * Creates the action.
@@ -38,17 +37,15 @@ public SortViewAction(IResourceNavigator navigator, boolean sortByType) {
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.SORT_VIEW_ACTION);
 }
 public void run() {
-	ResourceSorter sorter = getNavigator().getSorter();
-	
+	IResourceNavigator navigator = getNavigator();
+	ResourceSorter sorter = navigator.getSorter();
+		
 	if (sorter == null)
-		getNavigator().setSorter(new ResourceSorter(sortCriteria));
+		navigator.setSorter(new ResourceSorter(sortCriteria));
 	else {
-		Viewer viewer = getNavigator().getViewer();
-		viewer.getControl().setRedraw(false);
 		sorter.setCriteria(sortCriteria);
-		getNavigator().setSorter(sorter);
-		viewer.refresh();
-		viewer.getControl().setRedraw(true);		
-	}		
+		navigator.setSorter(sorter);
+	}
+		
 }
 }
