@@ -357,7 +357,10 @@ public class EditDialog extends TitleAreaDialog {
 		locationBrowseWorkspace.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ResourceSelectionDialog dialog;
-				dialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot());
+				dialog = new ResourceSelectionDialog(
+					getShell(), 
+					ResourcesPlugin.getWorkspace().getRoot(),
+					ToolMessages.getString("EditDialog.selectTool")); //$NON-NLS-1$
 				dialog.open();
 				Object[] results = dialog.getResult();
 				if (results == null || results.length < 1)
@@ -586,12 +589,14 @@ public class EditDialog extends TitleAreaDialog {
 	 * the user can select one
 	 */
 	private class ResourceSelectionDialog extends SelectionDialog {
+		String labelText;
 		IContainer root;
 		TreeViewer wsTree;
 		
-		public ResourceSelectionDialog(Shell parent, IContainer root) {
+		public ResourceSelectionDialog(Shell parent, IContainer root, String labelText) {
 			super(parent);
 			this.root = root;
+			this.labelText = labelText;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			setTitle(ToolMessages.getString("EditDialog.browseWorkspaceTitle")); //$NON-NLS-1$
 			WorkbenchHelp.setHelp(parent, IHelpContextIds.RESOURCE_SELECTION_DIALOG);
@@ -605,7 +610,7 @@ public class EditDialog extends TitleAreaDialog {
 			Composite dialogArea = (Composite)super.createDialogArea(parent);
 			
 			Label label = new Label(dialogArea, SWT.LEFT);
-			label.setText(ToolMessages.getString("EditDialog.selectResource")); //$NON-NLS-1$
+			label.setText(labelText);
 			
 			Tree tree = new Tree(dialogArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER);
 			GridData data = new GridData(GridData.FILL_BOTH);
@@ -661,17 +666,32 @@ public class EditDialog extends TitleAreaDialog {
 			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
 			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
 			list.setLayoutData(data);
-			
-			list.add(ToolMessages.getString("EditDialog.varWorkspaceDirLabel")); //$NON-NLS-1$
-			list.add(ToolMessages.getString("EditDialog.varProjectDirLabel")); //$NON-NLS-1$
-			list.add(ToolMessages.getString("EditDialog.varProjectXDirLabel")); //$NON-NLS-1$
-			list.add(ToolMessages.getString("EditDialog.varResourceDirLabel")); //$NON-NLS-1$
-			list.add(ToolMessages.getString("EditDialog.varResourceXDirLabel")); //$NON-NLS-1$	
-			
+
+			list.add(ToolMessages.getString("EditDialog.varWorkspaceLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varProjectLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varContainerLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourceLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varProjectPathLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varContainerPathLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourcePathLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varProjectNameLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varContainerNameLabel")); //$NON-NLS-1$	
+			list.add(ToolMessages.getString("EditDialog.varResourceNameLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varProjectXLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varContainerXLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourceXLocLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varProjectXPathLabel")); //$NON-NLS-1$	
+			list.add(ToolMessages.getString("EditDialog.varContainerXPathLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourceXPathLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varProjectXNameLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varContainerXNameLabel")); //$NON-NLS-1$
+			list.add(ToolMessages.getString("EditDialog.varResourceXNameLabel")); //$NON-NLS-1$	
+
 			location = ToolUtil.getLocationFromText(locationField.getText().trim());
 			if (location != null && location.endsWith(".xml")) { //$NON-NLS-1$
 				list.add(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
 			}		
+			
 			return dialogArea;
 		}
 		
@@ -692,28 +712,74 @@ public class EditDialog extends TitleAreaDialog {
 					break;
 
 				case 2 :
-					ProjectSelectionDialog dialog;
-					dialog = new ProjectSelectionDialog(getShell());
-					dialog.open();
-					Object[] name = dialog.getResult();
-					if (name != null && name.length > 0)
-						result = ToolUtil.buildVariableTag(ExternalTool.VAR_PROJECT_LOC, (String)name[0]);
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_CONTAINER_LOC, null);
 					break;
-					
+
 				case 3 :
 					result = ToolUtil.buildVariableTag(ExternalTool.VAR_RESOURCE_LOC, null);
 					break;
 
 				case 4 :
-					ResourceSelectionDialog resDialog;
-					resDialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot());
-					resDialog.open();
-					Object[] resource = resDialog.getResult();
-					if (resource != null && resource.length > 0)
-						result = ToolUtil.buildVariableTag(ExternalTool.VAR_RESOURCE_LOC, ((IResource)resource[0]).getFullPath().toString());
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_PROJECT_PATH, null);
 					break;
 
 				case 5 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_CONTAINER_PATH, null);
+					break;
+
+				case 6 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_RESOURCE_PATH, null);
+					break;
+
+				case 7 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_PROJECT_NAME, null);
+					break;
+
+				case 8 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_CONTAINER_NAME, null);
+					break;
+
+				case 9 :
+					result = ToolUtil.buildVariableTag(ExternalTool.VAR_RESOURCE_NAME, null);
+					break;
+
+				case 10 :
+					result = showResourceDialog(ExternalTool.VAR_PROJECT_LOC);
+					break;
+
+				case 11 :
+					result = showResourceDialog(ExternalTool.VAR_CONTAINER_LOC);
+					break;
+
+				case 12 :
+					result = showResourceDialog(ExternalTool.VAR_RESOURCE_LOC);
+					break;
+
+				case 13 :
+					result = showResourceDialog(ExternalTool.VAR_PROJECT_PATH);
+					break;
+
+				case 14 :
+					result = showResourceDialog(ExternalTool.VAR_CONTAINER_PATH);
+					break;
+
+				case 15 :
+					result = showResourceDialog(ExternalTool.VAR_RESOURCE_PATH);
+					break;
+
+				case 16 :
+					result = showResourceDialog(ExternalTool.VAR_PROJECT_NAME);
+					break;
+
+				case 17 :
+					result = showResourceDialog(ExternalTool.VAR_CONTAINER_NAME);
+					break;
+
+				case 18 :
+					result = showResourceDialog(ExternalTool.VAR_RESOURCE_NAME);
+					break;
+					
+				case 19 :
 					AntTargetList targetList = null;
 					try {
 						targetList = AntUtil.getTargetList(new Path(location));
@@ -749,6 +815,20 @@ public class EditDialog extends TitleAreaDialog {
 			if (result != null)
 				setSelectionResult(new Object[] {result});
 			super.okPressed();
+		}
+		
+		private String showResourceDialog(String varName) {
+			ResourceSelectionDialog resDialog;
+			resDialog = new ResourceSelectionDialog(
+				getShell(), 
+				ResourcesPlugin.getWorkspace().getRoot(),
+				ToolMessages.getString("EditDialog.selectResource")); //$NON-NLS-1$
+			resDialog.open();
+			Object[] resource = resDialog.getResult();
+			if (resource != null && resource.length > 0)
+				return ToolUtil.buildVariableTag(varName, ((IResource)resource[0]).getFullPath().toString());
+			else
+				return null;
 		}
 	}
 	
