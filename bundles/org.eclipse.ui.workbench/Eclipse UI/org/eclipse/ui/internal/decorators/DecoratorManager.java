@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.LegacyResourceSupport;
@@ -211,9 +212,22 @@ public class DecoratorManager
 	 * @param event the event with the update details
 	 */
 	void fireListenersInUIThread(final LabelProviderChangedEvent event){
+
+		//No updates if there is no UI
+		if(!PlatformUI.isWorkbenchRunning())
+			return;
 		
-		WorkbenchJob updateJob = new WorkbenchJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")){
-			/* (non-Javadoc)
+		//Only bother with the job if in the UI Thread
+		if (Thread.currentThread() == PlatformUI.getWorkbench().getDisplay().getThread()){
+			fireListeners(event);
+			return;
+		}
+
+		WorkbenchJob updateJob = new WorkbenchJob(WorkbenchMessages
+				.getString("DecorationScheduler.UpdateJobName")) {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -223,7 +237,7 @@ public class DecoratorManager
 		};
 		updateJob.setSystem(true);
 		updateJob.schedule();
-		
+
 	}
 
 	/**
