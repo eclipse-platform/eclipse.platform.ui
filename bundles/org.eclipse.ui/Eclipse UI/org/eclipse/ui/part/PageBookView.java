@@ -116,7 +116,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	private IPropertyChangeListener actionBarPropListener =
 		new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty() == SubActionBars.P_ACTION_HANDLERS
+				if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS)
 					&& activeRec != null
 					&& event.getSource() == activeRec.subActionBars) {
 					refreshGlobalActionHandlers(); 
