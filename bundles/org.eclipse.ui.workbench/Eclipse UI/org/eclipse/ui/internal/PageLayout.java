@@ -183,20 +183,7 @@ public class PageLayout implements IPageLayout {
         return rec;
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageLayout#addFixedView(java.lang.String, int, float, java.lang.String)
-	 */
-	public void addFixedView(		
-			String viewId,
-			int relationship,
-			float ratio,
-			String refId) {
-		addView(viewId, relationship, ratio, refId);
-		IViewLayout layout = getViewLayout(viewId);
-		layout.setCloseable(false);
-	}
-
-	/**
+    /**
 	 * Adds a creation wizard to the File New menu.
 	 * The id must name a new wizard extension contributed to the 
 	 * workbench's extension point (named <code>"org.eclipse.ui.newWizards"</code>).
@@ -271,22 +258,6 @@ public class PageLayout implements IPageLayout {
 		// force creation of the view layout rec
 		getViewLayoutRec(viewId, true);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageLayout#addFixedPlaceholder(java.lang.String, int, float, java.lang.String)
-	 */
-	public void addFixedPlaceholder(
-		String viewId,
-		int relationship,
-		float ratio,
-		String refId) {
-		if (checkPartInLayout(viewId))
-			return;
-
-		addPlaceholder(viewId, relationship, ratio, refId);
-		IViewLayout layout = getViewLayout(viewId);
-		layout.setCloseable(false);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageLayout#addShowInPart(java.lang.String)
 	 */

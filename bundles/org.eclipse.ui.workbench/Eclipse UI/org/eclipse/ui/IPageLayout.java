@@ -223,33 +223,6 @@ public void addPerspectiveShortcut(String id);
 public void addPlaceholder(String viewId, int relationship, float ratio, String refId);
 
 /**
- * Adds a placeholder for a fixed view with the given id to this page layout.
- * Once added, a fixed view cannot be closed.  
- * A view placeholder is used to define the position of a view before the view
- * appears.  Initially, it is invisible; however, if the user ever opens a view
- * with the same id as a placeholder, the view will replace the placeholder
- * as it is being made visible.
- * The id must name a view contributed to the workbench's view extension point 
- * (named <code>"org.eclipse.ui.views"</code>).
- *
- * @param viewId the view id
- * @param relationship the position relative to the reference part;
- *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
- *  or <code>RIGHT</code>
- * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
- *    in the range <code>0.05f</code> to <code>0.95f</code>.
- *    Values outside this range will be clipped to facilitate direct manipulation.
- *    For a vertical split, the part on top gets the specified ratio of the current space
- *    and the part on bottom gets the rest.
- *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
- *    and the part at right gets the rest.
- * @param refId the id of the reference part; either a view id, a folder id,
- *   or the special editor area id returned by <code>getEditorArea</code>
- * @since 3.0
- */
-public void addFixedPlaceholder(String viewId, int relationship, float ratio, String refId);
-
-/**
  * Adds an item to the Show In prompter.
  * The id must name a view contributed to the workbench's view extension point 
  * (named <code>"org.eclipse.ui.views"</code>).
@@ -288,28 +261,6 @@ public void addShowViewShortcut(String id);
  *   or the special editor area id returned by <code>getEditorArea</code>
  */
 public void addView(String viewId, int relationship, float ratio, String refId);
-/**
- * Adds a fixed view with the given id to this page layout.  
- * Once added, a fixed view cannot be closed.
- * The id must name a view contributed to the workbench's view extension point 
- * (named <code>"org.eclipse.ui.views"</code>).
- *
- * @param viewId the view id
- * @param relationship the position relative to the reference part;
- *  one of <code>TOP</code>, <code>BOTTOM</code>, <code>LEFT</code>,
- *  or <code>RIGHT</code>
- * @param ratio a ratio specifying how to divide the space currently occupied by the reference part,
- *    in the range <code>0.05f</code> to <code>0.95f</code>.
- *    Values outside this range will be clipped to facilitate direct manipulation.
- *    For a vertical split, the part on top gets the specified ratio of the current space
- *    and the part on bottom gets the rest.
- *    Likewise, for a horizontal split, the part at left gets the specified ratio of the current space
- *    and the part at right gets the rest.
- * @param refId the id of the reference part; either a view id, a folder id,
- *   or the special editor area id returned by <code>getEditorArea</code>
- * @since 3.0
- */
-public void addFixedView(String viewId, int relationship, float ratio, String refId);
 /**
  * Creates and adds a new folder with the given id to this page layout.
  * The position and relative size of the folder is expressed relative to

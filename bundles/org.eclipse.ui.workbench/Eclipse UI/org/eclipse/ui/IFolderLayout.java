@@ -30,14 +30,4 @@ public interface IFolderLayout extends IPlaceholderFolderLayout {
  * @param viewId the view id
  */
 public void addView(String viewId);
-/**
- * Adds a fixed view with the given id to this folder.
- * Once added, a fixed view cannot be moved or closed.
- * The id must name a view contributed to the workbench's view extension point 
- * (named <code>"org.eclipse.ui.views"</code>).
- *
- * @param viewId the view id
- * @since 3.0
- */
-public void addFixedView(String viewId);
 }

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.ui.IPlaceholderFolderLayout;
-import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.internal.registry.*;
 
 /**
@@ -57,14 +56,7 @@ public class PlaceholderFolderLayout implements IPlaceholderFolderLayout{
 		// Add it to the placeholder layout.
 		placeholder.add(newPart);		
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPlaceholderFolderLayout#addFixedPlaceholder(java.lang.String)
-	 */
-	public void addFixedPlaceholder(String viewId) {
-		addPlaceholder(viewId);
-		IViewLayout layout = pageLayout.getViewLayout(viewId);
-		layout.setCloseable(false);
-	}
+
 	/**
 	 * Inform the page layout of the new part created
 	 * and the placeholder the part belongs to.

@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IFolderLayout;
-import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
@@ -72,14 +71,6 @@ public class FolderLayout implements IFolderLayout {
 		// Add it to the folder layout.
 		folder.add(newPart);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPlaceholderFolderLayout#addFixedPlaceholder(java.lang.String)
-	 */
-	public void addFixedPlaceholder(String viewId) {
-		addPlaceholder(viewId);
-		IViewLayout viewLayout = pageLayout.getViewLayout(viewId);
-		viewLayout.setCloseable(false);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IFolderLayout#addView(java.lang.String)
@@ -107,15 +98,6 @@ public class FolderLayout implements IFolderLayout {
 			// cannot safely open the dialog so log the problem
 			WorkbenchPlugin.log(e.getMessage());
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IFolderLayout#addFixedView(java.lang.String)
-	 */
-	public void addFixedView(String viewId) {
-		addView(viewId);
-		IViewLayout layout = pageLayout.getViewLayout(viewId);
-		layout.setCloseable(false);
 	}
 
 	/**

@@ -35,18 +35,4 @@ public interface IPlaceholderFolderLayout {
  * @param viewId the view id
  */
 public void addPlaceholder(String viewId);
-/**
- * Adds an invisible placeholder for a fixed view with the given id to this folder.
- * Once added, a fixed view cannot be closed.  
- * A view placeholder is used to define the position of a view before the view
- * appears.  Initially, it is invisible; however, if the user ever opens a view
- * with the same id as a placeholder, the view will replace the placeholder
- * as it is being made visible.
- * The id must name a view contributed to the workbench's view extension point 
- * (named <code>"org.eclipse.ui.views"</code>).
- *
- * @param viewId the view id
- * @since 3.0
- */
-public void addFixedPlaceholder(String viewId);
 }
