@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -20,16 +18,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.commands.AbstractHandler;
+
 import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
