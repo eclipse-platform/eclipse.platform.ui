@@ -1621,7 +1621,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	/*
-	 * R1.0 compatibility
+	 * R1.0 compatibility mode ... -plugins was specified (possibly with -configuration)
 	 */
 	private static String createConfigurationFromPlugins(URL file, String cfigCmd) throws Exception {
 		// get the actual plugin path
@@ -1695,9 +1695,26 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// persist the new configuration. Otherwise a transient configuration will be
 		// created in temp space.
 		URL tmpURL = null;
-		try {
-			tmpURL = getConfigurationURL(cfigCmd);
-		} catch(MalformedURLException e) {
+		if (cfigCmd != null && !cfigCmd.trim().equals("")) {
+			try {
+				tmpURL = getConfigurationURL(cfigCmd);
+				try {
+					// attemp to load the specified configuration. If found, merge
+					// it with the newly computed one. The merge algorithm includes
+					// sites from the old configuration that are not part of the new
+					// configuration. Note, that this does not provide for a complete
+					// merge, but the assumption is that if -plugins was specified,
+					// the sites included in the specification are explicitly
+					// controlled.
+					PlatformConfiguration oldConfig = new PlatformConfiguration(tmpURL);
+					ISiteEntry[] oldSites = oldConfig.getConfiguredSites();
+					for (int i=0; i<oldSites.length; i++) {
+						tempConfig.configureSite(oldSites[i], false /*no not replace*/);
+					}
+				} catch(IOException e) {
+				}
+			} catch(MalformedURLException e) {
+			}
 		}
 		
 		if (tmpURL == null) {		
