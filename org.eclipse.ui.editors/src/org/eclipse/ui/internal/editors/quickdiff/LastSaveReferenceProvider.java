@@ -230,9 +230,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				// 1) we don't mind waiting for someone else here
 				// 2) we do not take long, or require other locks etc. -> short
 				// delay for any other job requiring the lock on file
-				lockDocument(monitor, jobMgr, storage);
-				
 				try {
+					lockDocument(monitor, jobMgr, storage);
+					
 					InputStream stream= getFileContents(storage);
 					if (stream == null)
 						return;
@@ -276,8 +276,14 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	/* utility methods */
 
 	private void lockDocument(IProgressMonitor monitor, IJobManager jobMgr, IStorage storage) {
-		if (storage instanceof ISchedulingRule) {
-			jobMgr.beginRule((ISchedulingRule) storage, monitor);
+		ISchedulingRule rule= null;
+		if (storage instanceof ISchedulingRule)
+			rule= (ISchedulingRule) storage;
+		else if (storage != null)
+			rule= (ISchedulingRule) storage.getAdapter(ISchedulingRule.class);
+		
+		if (rule != null) {
+			jobMgr.beginRule(rule, monitor);
 		} else synchronized (fDocumentAccessorLock) {
 			while (fDocumentLocked) {
 				try {
@@ -292,8 +298,14 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	}
 
 	private void unlockDocument(IJobManager jobMgr, IStorage storage) {
-		if (storage instanceof ISchedulingRule) {
-			jobMgr.endRule((ISchedulingRule) storage);
+		ISchedulingRule rule= null;
+		if (storage instanceof ISchedulingRule)
+			rule= (ISchedulingRule) storage;
+		else if (storage != null)
+			rule= (ISchedulingRule) storage.getAdapter(ISchedulingRule.class);
+		
+		if (rule != null) {
+			jobMgr.endRule(rule);
 		} else synchronized (fDocumentAccessorLock) {
 			fDocumentLocked= false;
 			fDocumentAccessorLock.notify();
