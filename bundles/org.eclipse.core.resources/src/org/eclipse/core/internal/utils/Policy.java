@@ -23,6 +23,8 @@ public class Policy {
 	public static int endOpWork = 1;
 	public static final int totalWork = 100;
 
+	//general debug flag for the plugin
+	public static boolean DEBUG = false;
 	//debug constants
 	public static boolean DEBUG_BUILD_FAILURE = false;
 	public static boolean DEBUG_NEEDS_BUILD = false;
@@ -54,6 +56,7 @@ public class Policy {
 	static {
 		//init debug options
 		if (ResourcesPlugin.getPlugin().isDebugging()) {
+			DEBUG = true;
 			String sTrue = Boolean.TRUE.toString();
 			DEBUG_BUILD_FAILURE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/failure")); //$NON-NLS-1$ 
 			DEBUG_NEEDS_BUILD = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/needbuild")); //$NON-NLS-1$ 
