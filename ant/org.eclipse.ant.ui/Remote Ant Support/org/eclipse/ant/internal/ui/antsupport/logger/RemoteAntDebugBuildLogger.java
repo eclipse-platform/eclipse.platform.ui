@@ -51,6 +51,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	private Target fCurrentTarget;
 	private Task fCurrentTask;
 	private Task fStepOverTask;
+	private Task fLastTaskFinished;
 	
 	private int[] fBreakpoints= null;
 	
@@ -250,7 +251,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	 */
 	public void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
-		fTasks.pop();
+		fLastTaskFinished= (Task)fTasks.pop();
 		fCurrentTask= null;
 		if (fDebugMode) {
 			marshalMessage(-1, DebugMessageIds.TASK_FINISHED + event.getTask().getTaskName());
@@ -271,7 +272,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 					detail= DebugMessageIds.STEP;
 					fStepIntoSuspend= false;
 				} else if (fStepOverSuspend) {
-				    if (fCurrentTask == fStepOverTask) {
+				    if (fLastTaskFinished == fStepOverTask) {
 				        detail= DebugMessageIds.STEP;
 				        fStepOverSuspend= false;
 				        fStepOverTask= null;

@@ -41,6 +41,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -227,17 +228,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Exception_launching"), new String[] {file.getName()}), exception); //$NON-NLS-1$
 			return;
 		}
-		if (fShowDialog) {
-			// Offer to save dirty editors before opening the dialog as the contents
-			// of an Ant editor often affect the contents of the dialog.
-			if (!DebugUITools.saveBeforeLaunch()) {
-				return;
-			}
-			IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
-			DebugUITools.openLaunchConfigurationDialog(AntUIPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
-		} else {
-			DebugUITools.launch(configuration, mode);
-		}
+		launch(mode, configuration);
 	}
 	
 	/**
@@ -324,20 +315,30 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Exception_launching"), new String[] {filePath.toFile().getName()}), exception); //$NON-NLS-1$
 			return;
 		}
-		if (fShowDialog) {
+		launch(mode, configuration);
+	}
+	
+	private void launch(String mode, ILaunchConfiguration configuration) {
+        if (fShowDialog) {
 			// Offer to save dirty editors before opening the dialog as the contents
 			// of an Ant editor often affect the contents of the dialog.
 			if (!DebugUITools.saveBeforeLaunch()) {
 				return;
 			}
 			IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
-			DebugUITools.openLaunchConfigurationDialog(AntUIPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
+			String groupId;
+			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			    groupId= IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
+			} else {
+			    groupId= IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP;
+			}
+			DebugUITools.openLaunchConfigurationDialog(AntUIPlugin.getActiveWorkbenchWindow().getShell(), configuration, groupId, status);
 		} else {
 			DebugUITools.launch(configuration, mode);
 		}
-	}
-	
-	/**
+    }
+
+    /**
 	 * Walks the file hierarchy looking for a build file.
 	 * Returns the first build file found that matches the 
 	 * search criteria.
