@@ -79,6 +79,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * associated windows closed.
 	 */
 	class Closer implements ControlListener, MouseListener, FocusListener, DisposeListener, IViewportListener {
+		
+		/** The shell on which we add listeners. */ 
+		private Shell fShell;
 
 		/**
 		 * Installs this closer on it's viewer's text widget.
@@ -87,7 +90,8 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			Control w= fViewer.getTextWidget();
 			if (Helper2.okToUse(w)) {
 				
-				Control shell= w.getShell();
+				Shell shell= w.getShell();
+				fShell= shell;
 				shell.addControlListener(this);
 					
 				w.addMouseListener(this);
@@ -106,12 +110,13 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		 * Uninstalls this closer from the viewer's text widget.
 		 */
 		protected void uninstall() {
+			Shell shell= fShell;
+			fShell= null;
+			if (Helper2.okToUse(shell))
+				shell.removeControlListener(this);
+			
 			Control w= fViewer.getTextWidget();
 			if (Helper2.okToUse(w)) {
-				
-				Control shell= w.getShell();
-				if (Helper2.okToUse(shell))
-					shell.removeControlListener(this);
 				
 				w.removeMouseListener(this);
 				w.removeFocusListener(this);
