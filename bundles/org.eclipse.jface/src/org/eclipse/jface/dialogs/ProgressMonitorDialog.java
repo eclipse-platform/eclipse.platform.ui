@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * A modal dialog that displays progress during a long running operation.
  * <p>
- * This concete dialog class can be instantiated as is, 
+ * This concrete dialog class can be instantiated as is, 
  * or further subclassed as required.
  * </p>
  * <p>
@@ -111,9 +111,9 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 	private String task;
 
 	/**
-	 * The number of currently running runnables.
+	 * The nesting depth of currently running runnables.
 	 */
-	private int runningRunnables;
+	private int nestingDepth;
 	
 	/**
 	 * The cursor used in the cancel button;
@@ -124,6 +124,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 	 * The cursor used in the shell;
 	 */
 	private Cursor waitCursor;
+	
+	/**
+	 * Flag indicating whether to open or merely
+	 * create the dialog before run.
+	 */
+	private boolean openOnRun = true;
 	
 	/**
 	 * Internal progress monitor implementation.
@@ -241,7 +247,7 @@ private void asyncSetOperationCancelButtonEnabled(final boolean b) {
  * only closes the dialog if there are no currently running runnables.
  */
 public boolean close() {
-	if (runningRunnables <= 0) {
+	if (getNestingDepth() <= 0) {
 		if (cancel != null && !cancel.isDisposed()) {
 			cancel.setCursor(null);
 		}
@@ -348,18 +354,86 @@ public IProgressMonitor getProgressMonitor() {
  */
 public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 	setCancelable(cancelable);
-	open();
 	try {
-		runningRunnables++;
-		
+		aboutToRun();
 		//Let the progress monitor know if they need to update in UI Thread
 		progressMonitor.forked = fork;
 		ModalContext.run(runnable, fork, getProgressMonitor(), getShell().getDisplay());
-	} finally {	
-		runningRunnables--;
-		close();
+	} finally {
+		finishedRun();
 	}
 }
+
+/**
+ * Returns whether the dialog should be opened before the operation
+ * is run.  Defaults to <code>true</code>
+ * 
+ * @return <code>true</code> to open the dialog before run,
+ *   <code>false</code> to only create the dialog, but not open it
+ */
+public boolean getOpenOnRun() {
+	return openOnRun;
+}
+
+/**
+ * Sets whether the dialog should be opened before the operation
+ * is run. 
+ * NOTE: Setting this to false and not forking a process may starve
+ * any asyncExec that tries to open the dialog later.
+ * 
+ * @param openOnRun <code>true</code> to open the dialog before run,
+ *   <code>false</code> to only create the dialog, but not open it
+ */
+public void setOpenOnRun(boolean openOnRun) {
+	this.openOnRun = openOnRun;
+}
+
+/**
+ * Returns the nesting depth of running operations.
+ * 
+ * @return the nesting depth of running operations
+ */
+protected int getNestingDepth() {
+	return nestingDepth;
+}
+
+/**
+ * Increments the nesting depth of running operations.
+ */
+protected void incrementNestingDepth() {
+	nestingDepth++;
+}
+
+protected void decrementNestingDepth() {
+	nestingDepth--;
+}
+
+/**
+ * Called just before the operation is run.
+ * Default behaviour is to open or create the dialog,
+ * based on the setting of <code>getOpenOnRun</code>,
+ * and increment the nesting depth.
+ */
+protected void aboutToRun() {
+	if (getOpenOnRun()) {
+		open();
+	}
+	else {
+		create();
+	}
+	incrementNestingDepth();
+}
+
+/**
+ * Called just after the operation is run.
+ * Default behaviour is to decrement the nesting depth,
+ * and close the dialog.
+ */
+protected void finishedRun() {
+	decrementNestingDepth();
+	close();
+}
+
 /**
  * Sets whether the progress dialog is cancelable or not.
  *
