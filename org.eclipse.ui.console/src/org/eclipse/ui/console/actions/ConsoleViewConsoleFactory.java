@@ -35,7 +35,8 @@ public class ConsoleViewConsoleFactory implements IConsoleFactory {
             if (page != null) {
                 try {
                     String secondaryId = ConsoleMessages.getString("ConsoleViewConsoleFactory.0") + counter; //$NON-NLS-1$
-                    page.showView(IConsoleConstants.ID_CONSOLE_VIEW, secondaryId, 1); 
+                    page.showView(IConsoleConstants.ID_CONSOLE_VIEW, secondaryId, 1);
+                    counter++;
                 } catch (PartInitException e) {
                     ConsolePlugin.log(e);
                 }
