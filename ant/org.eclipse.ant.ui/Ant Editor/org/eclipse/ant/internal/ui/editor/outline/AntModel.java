@@ -205,7 +205,7 @@ public class AntModel {
     		ProjectHelper projectHelper= null;
 			if (region == null || fProjectNode == null) {  //full parse
 				if (fProjectNode == null) {
-					project = new Project();
+					project = new AntModelProject();
 					projectHelper= prepareForFullParse(project);
 					textToParse= input.get(); //the entire document
 				} else {
