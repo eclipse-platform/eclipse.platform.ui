@@ -66,8 +66,7 @@ public class Bug43597Test extends UITestCase {
         Font fontAfter = text.getFont();
 
         // Test.
-        assertEquals(
-                "Clearing text resets font.", fontBefore.handle, fontAfter.handle); //$NON-NLS-1$
+		assertEquals("Clearing text resets font.", fontBefore, fontAfter); //$NON-NLS-1$
 
         // Clean up after myself.
         shell.close();
