@@ -417,6 +417,7 @@ public class AnimationItem {
 				}
 			}
 		} finally {
+			image.dispose();
 			offScreenImage.dispose();
 			offScreenImageGC.dispose();
 		}
