@@ -25,6 +25,12 @@ import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
@@ -34,12 +40,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextEvent;
-
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 /**
  * An incremental find target. Replace is always disabled.
@@ -332,7 +332,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		ISelectionProvider selectionProvider= fTextViewer.getSelectionProvider();
 		if (selectionProvider != null)
 			selectionProvider.addSelectionChangedListener(this);
-					
+
 		if (fTextViewer instanceof ITextViewerExtension)
 			((ITextViewerExtension) fTextViewer).prependVerifyKeyListener(this);
 		else
@@ -450,7 +450,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				break;		
 			
 			default:
-				if (event.stateMask == 0 || event.stateMask == SWT.SHIFT) {
+				if (event.stateMask == 0 || event.stateMask == SWT.SHIFT || event.stateMask == (SWT.ALT | SWT.CTRL)) { // SWT.ALT | SWT.CTRL covers AltGr (see bug 43049)  
 					saveState();
 					addCharSearch(event.character);
 					event.doit= false;
