@@ -419,31 +419,31 @@
       <command
             name="%Views.Problem"
             description="%command.showProblemsView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.ProblemView">
       </command>
       <command
             name="%Views.ResourceNavigator"
             description="%command.showResourceNavigator.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.ResourceNavigator">
       </command>  
       <command
             name="%Views.Progress"
             description="%command.showProgressView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.ProgressView">
       </command>
       <command
             name="%Views.Bookmark"
             description="%command.showBookmarkView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.BookmarkView">
       </command>
       <command
             name="%Views.Task"
             description="%command.showTaskView.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.TaskList">
       </command>
       <command
@@ -572,63 +572,63 @@
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.navigate.showInQuickMenu"
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.window"
             keySequence="Alt+Shift+W"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId=""
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.window"
             keySequence="Alt+Shift+W"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.navigate.showInQuickMenu"
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.window"
             keySequence="Command+Alt+W"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.file.newQuickMenu"
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.window"
             keySequence="Alt+Shift+N"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId=""
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.window"
             keySequence="Alt+Shift+N"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.file.newQuickMenu"
-            scope="org.eclipse.ui.globalScope"
+            contextId="org.eclipse.ui.contexts.window"
             keySequence="Command+Alt+N"
-             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+Shift+Q X"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.views.ProblemView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            string="Alt+Shift+Q X"
-            scope="org.eclipse.ui.globalScope"
-            command=""
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            keySequence="Alt+Shift+Q X"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.ui.views.ProblemView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Alt+Q X"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.views.ProblemView"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            keySequence="Alt+Shift+Q X"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId=""
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            platform="carbon"
+            keySequence="Command+Alt+Q X"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.ui.views.ProblemView"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    <extension

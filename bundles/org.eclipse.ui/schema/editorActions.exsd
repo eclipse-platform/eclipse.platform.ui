@@ -52,6 +52,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -111,6 +114,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   a translatable name used either as the menu item text or toolbar button label. The name can include mnenomic information.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="accelerator" type="string">
@@ -118,6 +124,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;definitionId&lt;/samp&gt; attribute instead.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="definitionId" type="string">
@@ -179,6 +188,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a translatable text representing the action&apos;s tool tip. Only used if the action appears in the toolbar.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">

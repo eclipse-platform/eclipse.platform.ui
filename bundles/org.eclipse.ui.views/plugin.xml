@@ -42,34 +42,34 @@
       <command
             name="%ViewCommand.propertySheet.name"
             description="%ViewCommand.propertySheet.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.PropertySheet">
       </command>
       <command
             name="%ViewCommand.contentOutline.name"
             description="%ViewCommand.contentOutline.description"
-            category="org.eclipse.ui.category.views"
+            categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.ContentOutline">
       </command>
       <keyBinding
-            string="Alt+Shift+Q O"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.views.ContentOutline"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            keySequence="Alt+Shift+Q O"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.ui.views.ContentOutline"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Alt+Shift+Q O"
-            scope="org.eclipse.ui.globalScope"
-            command=""
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            keySequence="Alt+Shift+Q O"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId=""
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Alt+Q O"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.views.ContentOutline"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+            keySequence="Command+Alt+Q O"
+            contextId="org.eclipse.ui.contexts.window"
+            commandId="org.eclipse.ui.views.ContentOutline"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
    

@@ -41,12 +41,20 @@ An accelerator set is registered with an accelerator configuration (see the Acce
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="acceleratorSet">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="accelerator" minOccurs="1" maxOccurs="unbounded"/>
@@ -69,6 +77,11 @@ An accelerator set is registered with an accelerator configuration (see the Acce
    </element>
 
    <element name="accelerator">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="id" type="string">
             <annotation>

@@ -39,6 +39,9 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -72,6 +75,9 @@
                <documentation>
                   a translatable name of the theme to be presented to the user.  At least one theme definition with any given id should contain this attribute.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -116,6 +122,9 @@
                <documentation>
                   a translatable name of the theme element category to be presented to the user
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -145,6 +154,9 @@
                <documentation>
                   a translatable name of the color to be presented to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="defaultsTo" type="string">
@@ -218,6 +230,9 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
                <documentation>
                   a translatable name of the font to be presented to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="value" type="string">
@@ -332,6 +347,9 @@ Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&
 
    <element name="description" type="string">
       <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
          <documentation>
             A short description of the elements usage.
          </documentation>

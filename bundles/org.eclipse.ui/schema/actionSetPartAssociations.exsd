@@ -36,6 +36,9 @@ In the case of a view, the action set will be visible when the view is the activ
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

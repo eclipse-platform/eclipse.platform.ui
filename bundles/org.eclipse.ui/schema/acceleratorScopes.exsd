@@ -41,12 +41,20 @@ An accelerator set declares what scope it is applicable for by listing the scope
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="acceleratorScope">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -60,6 +68,9 @@ An accelerator set declares what scope it is applicable for by listing the scope
                <documentation>
                   a translatable name of the accelerator scope.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string" use="required">
@@ -67,6 +78,9 @@ An accelerator set declares what scope it is applicable for by listing the scope
                <documentation>
                   a short description of the accelerator scope.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parentScope" type="string">

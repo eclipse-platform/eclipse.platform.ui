@@ -34,6 +34,9 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="point" type="string" use="required">
@@ -58,6 +61,9 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                <documentation>
                   a translatable short description of this activity for display in the UI
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -72,6 +78,9 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                <documentation>
                   the translatable name of this activity for display in the UI
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -137,6 +146,9 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                <documentation>
                   a translatable short description of this category for display in the UI
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -151,6 +163,9 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                <documentation>
                   the translatable name of this category for display in the UI
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

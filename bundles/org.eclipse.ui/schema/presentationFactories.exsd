@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>  
+<?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui.workbench">
 <annotation>
@@ -36,6 +36,9 @@
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -65,6 +68,9 @@
                <documentation>
                   a translatable name that can be used to show this presentation factory in the UI
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -91,7 +97,6 @@
         class=&quot;org.eclipse.ui.workbench.ExampleWorkbenchPresentationFactory&quot;/&gt;
   &lt;/extension&gt;
   &lt;/pre&gt;
-  
       </documentation>
    </annotation>
 

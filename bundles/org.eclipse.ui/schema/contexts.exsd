@@ -30,6 +30,9 @@ The &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point is used to 
                <documentation>
                   An optional name of the extension instance.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="point" type="string" use="required">
@@ -54,6 +57,9 @@ The &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point is used to 
                <documentation>
                   A translatable short description of this context for display in the UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -68,6 +74,9 @@ The &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point is used to 
                <documentation>
                   The translatable name of this context for display in the UI.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parentId" type="string">

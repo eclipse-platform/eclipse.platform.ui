@@ -42,6 +42,9 @@ The resource navigator uses a working set to filter elements from the navigator 
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -61,6 +64,9 @@ The resource navigator uses a working set to filter elements from the navigator 
                <documentation>
                   the name of the element type that will be displayed and edited by the working set page. This should be a descriptive name like &quot;Resource&quot; or &quot;Java Element&quot;.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">

@@ -42,6 +42,9 @@ Workbench window by the user customizing a perspective.
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -73,6 +76,9 @@ Workbench window by the user customizing a perspective.
                <documentation>
                   a translatable name used by the Workbench to represent this action set to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="visible" type="boolean">
@@ -87,6 +93,9 @@ Workbench window by the user customizing a perspective.
                <documentation>
                   a translatable description used by the Workbench to represent this action set to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -118,6 +127,9 @@ Workbench window by the user customizing a perspective.
                <documentation>
                   a translatable name used either as the menu item text or toolbar button label. The name can include mnenomic information.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="accelerator" type="string">
@@ -125,6 +137,9 @@ Workbench window by the user customizing a perspective.
                <documentation>
                   &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;definitionId&lt;/samp&gt; attribute instead.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="definitionId" type="string">
@@ -186,6 +201,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a translatable text representing the action&apos;s tool tip. Only used if the action appears in the toolbar.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
@@ -248,6 +266,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;style&lt;/samp&gt; attribute with the value &lt;samp&gt;pulldown&lt;/samp&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute deprecated="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">

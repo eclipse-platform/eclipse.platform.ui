@@ -45,12 +45,20 @@ Note the accelerator configuration name presented to the user is the same as the
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="acceleratorConfiguration">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -64,6 +72,9 @@ Note the accelerator configuration name presented to the user is the same as the
                <documentation>
                   a translatable name of the accelerator configuration to be presented to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string" use="required">
@@ -71,6 +82,9 @@ Note the accelerator configuration name presented to the user is the same as the
                <documentation>
                   a short description of the accelerator configuration.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

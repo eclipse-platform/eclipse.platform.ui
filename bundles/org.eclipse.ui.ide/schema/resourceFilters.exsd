@@ -35,6 +35,9 @@ These filters can be selected to hide resources whose names match the filter&apo
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -64,6 +67,9 @@ These filters can be selected to hide resources whose names match the filter&apo
 
    <element name="description" type="string">
       <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
          <documentation>
             the description of the purpose of this filter.
          </documentation>

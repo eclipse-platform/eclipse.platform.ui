@@ -36,6 +36,9 @@ The supplied image is drawn over the top right corner of the base image.
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -75,6 +78,9 @@ The supplied image is drawn over the top right corner of the base image.
 
    <element name="description" type="string">
       <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
          <documentation>
             a short description of what this image represents.
          </documentation>
