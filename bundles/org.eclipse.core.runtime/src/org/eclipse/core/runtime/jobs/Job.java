@@ -241,7 +241,15 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <li>Job.SLEEPING - if the job is sleeping.</li>
 	 * <li>Job.NONE - in all other cases.</li>
 	 * </ul>
-	 * Return the job state
+	 * <p>
+	 * Note that job state is inherently volatile, and in most cases you cannot
+	 * rely on the result of this method being valid by the time the result is obtained.  
+	 * For example, if <tt>getState</tt> returns <tt>RUNNING</tt>, the job may 
+	 * have actually completed by the time the <tt>getState</tt> method returns.
+	 * All you can ascertain from invoking this method is that the job was recently
+	 * in the returned state.
+	 * 
+	 * @return the job state
 	 */
 	public final int getState() {
 		return super.getState();
