@@ -41,7 +41,7 @@ abstract public class RepositoryProviderType {
 	 * 
 	 * @throws TeamException if the provider type is already registered.
 	 */
-	final public static void addProviderType(RepositoryProviderType providerType) throws TeamException {
+	/*package*/ final static void addProviderType(RepositoryProviderType providerType) throws TeamException {
 		if(providerTypes.containsKey(providerType.getID())) {
 			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeduplicate_provider_found_in_plugin.xml___1") + providerType.getID(), null)); //$NON-NLS-1$
 		} else {

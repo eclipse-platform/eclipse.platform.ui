@@ -76,15 +76,25 @@ public abstract class RepositoryProvider implements IProjectNature {
 				count++;
 			}
 		}
-		if(count>1) {
+		if(count==1) {
+			configureProject();
+		} else {
+			// FIXME: Must confirm with core how to correctly back-out/revert a nature application to a project
+			// remove this nature from the provider. I'm not sure 
 			try {
 				TeamPlugin.removeNatureFromProject(getProject(), getProviderType().getID(), null);
 			} catch(TeamException e) {
 				throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProvider_Error_removing_nature_from_project___1") + provider, null)); //$NON-NLS-1$
 			}
-			throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProvider_Too_many_providers_associated_with_project___2") + provider, null)); //$NON-NLS-1$
-		}			
-		configureProject();
+			if(count>1) {
+				// another provider id is already associated with the project
+				throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProvider_Too_many_providers_associated_with_project___2") + provider, null)); //$NON-NLS-1$
+			} else if(count==0) {
+				// although a subclass of RepositoryProvider is registered as a nature, the id has not been registered with 
+				// the org.eclipse.team.core.repository-provider-type extension point.
+				throw new CoreException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProvider_providerTypeIdNotRegistered") + provider, null)); //$NON-NLS-1$
+			}			
+		}
 	}
 
 	/**
