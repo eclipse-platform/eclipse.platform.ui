@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
@@ -20,6 +21,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
@@ -51,14 +53,14 @@ public class UnifiedReviewPage extends BannerPage {
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
+	private PropertyDialogAction propertiesAction;
 	private Text descLabel;
 	private Button statusButton;
 	private Button moreInfoButton;
+	private Button propertiesButton;
 	private Button filterCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
 	private SearchRunner searchRunner;
-	private MoreInfoGenerator moreInfoGenerator;
-
 	class JobsContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -152,13 +154,11 @@ public class UnifiedReviewPage extends BannerPage {
 		setDescription(UpdateUI.getString(KEY_DESC));
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		this.searchRunner = searchRunner;
-		moreInfoGenerator = new MoreInfoGenerator();
 		setBannerVisible(false);
 	}
 
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
-		moreInfoGenerator.dispose();
 		super.dispose();
 	}
 
@@ -247,6 +247,21 @@ public class UnifiedReviewPage extends BannerPage {
 			}
 		});
 		moreInfoButton.setEnabled(false);
+		
+		propertiesButton = new Button(buttonContainer, SWT.PUSH);
+		propertiesButton.setText("&Properties");
+		gd =
+			new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_BEGINNING);
+		propertiesButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(propertiesButton);
+		propertiesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleProperties();
+			}
+		});
+		propertiesButton.setEnabled(false);
 
 		statusButton = new Button(buttonContainer, SWT.PUSH);
 		statusButton.setText("&Show Status...");
@@ -335,7 +350,7 @@ public class UnifiedReviewPage extends BannerPage {
 		});
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				handleMoreInfo();
+				handleProperties();
 			}
 		});
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
@@ -367,7 +382,8 @@ public class UnifiedReviewPage extends BannerPage {
 		if (desc == null)
 			desc = "";
 		descLabel.setText(desc);
-		moreInfoButton.setEnabled(feature != null);
+		propertiesButton.setEnabled(feature != null);
+		moreInfoButton.setEnabled(job!=null && getMoreInfoURL(job)!=null);
 	}
 
 	private void pageChanged() {
@@ -395,6 +411,39 @@ public class UnifiedReviewPage extends BannerPage {
 		pageChanged();
 	}
 
+	private void handleProperties() {
+		IStructuredSelection selection =
+			(IStructuredSelection) tableViewer.getSelection();
+		final PendingChange selectedJob =
+			(PendingChange) selection.getFirstElement();
+		if (selectedJob == null)
+			return;
+
+		if (propertiesAction==null) {
+			propertiesAction =
+				new PropertyDialogAction(
+					getShell(),
+					tableViewer);
+		}
+		
+		BusyIndicator
+			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				propertiesAction.selectionChanged(new StructuredSelection(createAdapter(selectedJob)));
+				propertiesAction.run();
+			}
+		});
+	}
+
+	private String getMoreInfoURL(PendingChange job) { 
+		IFeature feature = job.getFeature();
+		IURLEntry desc = feature.getDescription();
+		if (desc==null) return null;
+		URL url = desc.getURL();
+		if (url==null) return null;
+		return url.toString();
+	}
+	
 	private void handleMoreInfo() {
 		IStructuredSelection selection =
 			(IStructuredSelection) tableViewer.getSelection();
@@ -402,13 +451,21 @@ public class UnifiedReviewPage extends BannerPage {
 			(PendingChange) selection.getFirstElement();
 		if (selectedJob == null)
 			return;
+			
+		final String moreInfoURL = getMoreInfoURL(selectedJob);
+		if (moreInfoURL==null) return;
+
 		BusyIndicator
 			.showWhile(tableViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				String tempURL = moreInfoGenerator.createURL(selectedJob);
-				DetailsView.showURL(tempURL, false);
+				DetailsView.showURL(moreInfoURL, false);
 			}
 		});
+	}
+	
+	private IFeatureAdapter createAdapter(PendingChange job) {
+		IFeature feature = job.getFeature();
+		return new SimpleFeatureAdapter(feature);
 	}
 
 	PendingChange[] orderJobs(PendingChange[] jobs) {
