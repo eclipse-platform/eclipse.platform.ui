@@ -44,7 +44,7 @@ public class EditionAction extends BaseCompareAction {
 	 * Implements the IStreamContentAccessor and ITypedElement protocols
 	 * for a Document.
 	 */
-	class DocumentBufferNode implements ITypedElement, IStreamContentAccessorExtension2 {
+	class DocumentBufferNode implements ITypedElement, IEncodedStreamContentAccessor {
 		private static final String UTF_16= "UTF-16"; //$NON-NLS-1$
 		private IDocument fDocument;
 		private IFile fFile;

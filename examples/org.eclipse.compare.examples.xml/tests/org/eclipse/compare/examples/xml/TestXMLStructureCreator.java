@@ -17,7 +17,7 @@ import junit.framework.*;
 
 import org.eclipse.jface.text.Document;
 
-import org.eclipse.compare.IStreamContentAccessorExtension2;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.examples.xml.XMLChildren;
 import org.eclipse.compare.examples.xml.XMLNode;
 import org.eclipse.compare.examples.xml.XMLStructureCreator;
@@ -28,7 +28,7 @@ public class TestXMLStructureCreator extends TestCase {
 	Document fdoc;
 	XMLStructureCreator fsc;
 	
-	public class TestStream implements IStreamContentAccessorExtension2 {
+	public class TestStream implements IEncodedStreamContentAccessor {
 		String fString;
 		
 		public TestStream(String string) {

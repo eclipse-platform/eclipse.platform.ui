@@ -28,7 +28,7 @@ public class CompareOutlinePage implements IContentOutlinePage {
 	private Control fControl;
 	private ListenerList fListeners= new ListenerList();
 	private ISelection fSelection;
-	private IActionBars fActionBars;
+	//private IActionBars fActionBars;
 	private CompareEditorInput fCompareEditorInput;
 	
 	CompareOutlinePage(CompareEditorInput input) {
@@ -63,9 +63,9 @@ public class CompareOutlinePage implements IContentOutlinePage {
 	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
 	 */
 	public void setActionBars(IActionBars actionBars) {
-		fActionBars= actionBars;
-		if (fControl != null)
-			fControl.setData("actionBars", actionBars);
+		//fActionBars= actionBars;
+		//if (fControl != null)
+		//	fControl.setData("actionBars", actionBars);
 	}
 
 	/* (non-Javadoc)

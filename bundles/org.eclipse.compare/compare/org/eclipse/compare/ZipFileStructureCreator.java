@@ -124,7 +124,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 		}
 	}
 
-	static class ZipFile extends ZipResource implements IStreamContentAccessorExtension2 {
+	static class ZipFile extends ZipResource implements IEncodedStreamContentAccessor {
 
 		private byte[] fContents;
 

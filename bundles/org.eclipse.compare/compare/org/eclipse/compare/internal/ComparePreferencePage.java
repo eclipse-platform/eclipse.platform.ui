@@ -34,7 +34,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 
 public class ComparePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	class FakeInput implements ITypedElement, IStreamContentAccessorExtension2 {
+	class FakeInput implements ITypedElement, IEncodedStreamContentAccessor {
 		static final String UTF_16= "UTF-16"; //$NON-NLS-1$
 		String fContent;
 		

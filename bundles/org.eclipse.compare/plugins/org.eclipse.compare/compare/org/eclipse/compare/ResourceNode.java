@@ -34,7 +34,7 @@ import org.eclipse.compare.structuremergeviewer.IStructureComparator;
  * @see EditionSelectionDialog
  */
 public class ResourceNode extends BufferedContent
-			implements IStreamContentAccessorExtension2, IStructureComparator, ITypedElement,
+			implements IEncodedStreamContentAccessor, IStructureComparator, ITypedElement,
 							IEditableContent, IModificationDate {
 			
 	private IResource fResource;
@@ -210,7 +210,7 @@ public class ResourceNode extends BufferedContent
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.compare.IStreamContentAccessor#getEncoding()
+	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
 	 */
 	public String getCharset() {
 		return Utilities.getCharset(fResource);

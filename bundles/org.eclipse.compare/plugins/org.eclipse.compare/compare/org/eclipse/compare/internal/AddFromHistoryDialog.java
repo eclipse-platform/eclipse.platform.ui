@@ -32,7 +32,7 @@ import org.eclipse.compare.*;
 
 public class AddFromHistoryDialog extends ResizableDialog {
 	
-	static class HistoryInput implements ITypedElement, IStreamContentAccessorExtension2, IModificationDate {
+	static class HistoryInput implements ITypedElement, IEncodedStreamContentAccessor, IModificationDate {
 		IFile fFile;
 		IFileState fFileState;
 		

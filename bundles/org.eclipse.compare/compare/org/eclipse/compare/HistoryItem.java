@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  * Clients may instantiate this class; it is not intended to be subclassed.
  * </p>
  */
-public class HistoryItem implements IStreamContentAccessorExtension2, ITypedElement, IModificationDate {
+public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement, IModificationDate {
 	
 	private ITypedElement fBase;
 	private IFileState fFileState; 
@@ -82,7 +82,7 @@ public class HistoryItem implements IStreamContentAccessorExtension2, ITypedElem
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.compare.IStreamContentAccessor#getEncoding()
+	 * @see org.eclipse.compare.IEncodedStreamContentAccessor#getCharset()
 	 */
 	public String getCharset() {
 		return Utilities.guessCharset(getName());

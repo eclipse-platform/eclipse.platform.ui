@@ -54,7 +54,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 	/**
 	 * Used with CompareInput
 	 */
-	static class HunkInput implements ITypedElement, IStreamContentAccessorExtension2 {
+	static class HunkInput implements ITypedElement, IEncodedStreamContentAccessor {
 		static final String UTF_16= "UTF-16"; //$NON-NLS-1$
 		String fContent;
 		String fType;

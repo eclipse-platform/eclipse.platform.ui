@@ -41,7 +41,7 @@ import org.eclipse.compare.contentmergeviewer.IDocumentRange;
  * @see Differencer
  */
 public class DocumentRangeNode
-		implements IDocumentRange, IStructureComparator, IEditableContent, IStreamContentAccessorExtension2 {
+		implements IDocumentRange, IStructureComparator, IEditableContent, IEncodedStreamContentAccessor {
 
 	private static final boolean POS_UPDATE= true;
 	private static final String UTF_16= "UTF-16"; //$NON-NLS-1$

@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.compare.IStreamContentAccessor;
-import org.eclipse.compare.IStreamContentAccessorExtension2;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
@@ -70,8 +70,8 @@ public class Util {
 	static String readString(IStreamContentAccessor sa) throws CoreException {
 		InputStream is= sa.getContents();
 		String encoding= null;
-		if (sa instanceof IStreamContentAccessorExtension2)
-			encoding= ((IStreamContentAccessorExtension2)sa).getCharset();
+		if (sa instanceof IEncodedStreamContentAccessor)
+			encoding= ((IEncodedStreamContentAccessor)sa).getCharset();
 		if (encoding == null)
 			encoding= ResourcesPlugin.getEncoding();
 		return readString(is, encoding);
