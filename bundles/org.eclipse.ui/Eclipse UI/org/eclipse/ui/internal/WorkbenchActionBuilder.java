@@ -55,7 +55,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private NewWizardAction newWizardAction;
 	private NewWizardDropDownAction newWizardDropDownAction;
 	private NewWizardMenu newWizardMenu;
-	private ReopenEditorMenu reopenMenu;
 	private CloseEditorAction closeAction;
 	private CloseAllAction closeAllAction;
 	private ImportResourcesAction importResourcesAction;
@@ -192,9 +191,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		newWizardMenu.setEnabled(value);
 		newWizardDropDownAction.setEnabled(value);
 		importResourcesAction.setEnabled(value);
-		exportResourcesAction.setEnabled(value);
-		reopenMenu.setEnabledAllowed(value);
-		
+		exportResourcesAction.setEnabled(value);		
 	}
 	
 	/**
@@ -229,8 +226,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		{
 			MenuManager openRecentMenu = new DynamicMenuManager(WorkbenchMessages.getString("Workbench.openRecent")); //$NON-NLS-1$
 			menu.add(openRecentMenu);
-			this.reopenMenu = new ReopenEditorMenu(window, ((Workbench) window.getWorkbench()).getEditorHistory(), false);
-			openRecentMenu.add(this.reopenMenu);
+			openRecentMenu.add( new ReopenEditorMenu(window, ((Workbench) window.getWorkbench()).getEditorHistory(), false));
 		}
 		
 		menu.add(closeAction);
