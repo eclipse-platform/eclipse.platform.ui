@@ -11,6 +11,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.IActionBarConfigurer;
+import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 
@@ -20,6 +21,11 @@ public class RcpWorkbenchAdvisor extends WorkbenchAdvisor {
         return RcpPerspective.ID_PERSPECTIVE;
     }
 
+	public void initialize(IWorkbenchConfigurer configurer) {
+        super.initialize(configurer);
+        configurer.setSaveAndRestore(true);
+    }
+	
     public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
         super.preWindowOpen(configurer);
         configurer.setInitialSize(new Point(400, 300));
