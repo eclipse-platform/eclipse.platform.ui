@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.views.properties;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
@@ -50,7 +49,7 @@ import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.Page;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 
 /**
  * The standard implementation of property sheet page which presents
@@ -126,7 +125,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		// add a listener to track when the entry selection changes
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleEntrySelection((IStructuredSelection) event.getSelection());
+				handleEntrySelection(event.getSelection());
 			}
 		});
 		initDragAndDrop();
@@ -200,6 +199,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	}
 	/**
 	 * Returns the cell editor activation listener for this page
+	 * @return ICellEditorActivationListener the cell editor activation listener for this page
 	 */
 	private ICellEditorActivationListener getCellEditorActivationListener() {
 		if (cellEditorActivationListener == null) {
@@ -226,19 +226,16 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	}
 	/**
 	 * Returns the image descriptor with the given relative path.
+	 * @param relativePath The path relative to the workspace root
+	 * @return ImageDescriptor the descriptor for the receiver
 	 */
 	private ImageDescriptor getImageDescriptor(String relativePath) {
 		String iconPath = "icons/full/"; //$NON-NLS-1$
-
-		try {
-			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			URL installURL = plugin.getDescriptor().getInstallURL();
-			URL url = new URL(installURL, iconPath + relativePath);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException e) {
-			// Should not happen
-			return null;
-		}
+		
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+		URL url =  bundle.getEntry(iconPath + relativePath);
+		return ImageDescriptor.createFromURL(url);
+		
 	}
 	/**
 	 * Handles a selection change in the entry table.
@@ -268,6 +265,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 				performDragSetData(event);
 			}
 			public void dragFinished(DragSourceEvent event){
+				//Nothing to do here
 			}
 		};
 		DragSource dragSource = new DragSource(((TableTree)viewer.getControl()).getTable(), operations);
@@ -277,6 +275,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	/**
 	 * The user is attempting to drag.  Add the appropriate
 	 * data to the event.
+	 * @param event The event sent from the drag and drop support.
 	 */
 	void performDragSetData(DragSourceEvent event) {
 		// Get the selected property

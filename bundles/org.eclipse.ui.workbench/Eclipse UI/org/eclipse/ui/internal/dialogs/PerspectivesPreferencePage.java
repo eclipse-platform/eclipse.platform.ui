@@ -204,6 +204,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	/**
 	 * Create a table of 3 buttons to enable the user to manage customized
 	 * perspectives.
+	 * @param parent the parent for the button parent
+	 * @return Composite that the buttons are created in.
 	 */
 	protected Composite createCustomizePerspective(Composite parent) {
 		
@@ -270,12 +272,10 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 * </p>
 	 *
 	 * @param parent the parent composite
-	 * @param buttonId the id of the button (see
-	 *  <code>IDialogConstants.*_ID</code> constants 
-	 *  for standard dialog button ids)
 	 * @param label the label from the button
 	 * @param defaultButton <code>true</code> if the button is to be the
 	 *   default button, and <code>false</code> otherwise
+	 * @return Button The created button.
 	 */
 	protected Button createVerticalButton(
 		Composite parent,
@@ -375,6 +375,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	/**
 	 * Deletes the perspectives selected by the user if there is no
 	 * opened instance of that perspective.
+	 * @return boolean <code>true</code> if all of the perspectives
+	 * could be deleted.
 	 */
 	private boolean deletePerspectives() {
 		IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
@@ -474,8 +476,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	/**
 	 * Notifies that this page's button with the given id has been pressed.
 	 *
-	 * @param buttonId the id of the button that was pressed (see
-	 *  <code>IDialogConstants.*_ID</code> constants)
+	 * @param button the button that was pressed 
 	 */
 	protected void verticalButtonPressed(Widget button) {
 		// Get selection.

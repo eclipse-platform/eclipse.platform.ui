@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -41,10 +40,10 @@ public final class ViewsPlugin extends AbstractUIPlugin {
 	/**
 	 * Creates a new instance of the receiver.
 	 * 
-	 * @see org.eclipse.core.runtime.Plugin#Plugin(IPluginDescriptor)
+	 * @see org.eclipse.core.runtime.Plugin#Plugin()
 	 */
-	public ViewsPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public ViewsPlugin() {
+		super();
 		instance = this;
 	}
 }

@@ -35,14 +35,13 @@ public final class UIPlugin extends AbstractUIPlugin {
 		super();
 		inst = this;
 	}
-	
 	/**
 	 * Returns the image registry for this plugin.
 	 *
 	 * Where are the images?  The images (typically gifs) are found in the 
 	 * same plugins directory.
 	 *
-	 * @see JFace's ImageRegistry
+	 * @see ImageRegistry
 	 *
 	 * Note: The workbench uses the standard JFace ImageRegistry to track its images. In addition 
 	 * the class WorkbenchGraphicResources provides convenience access to the graphics resources 
@@ -67,7 +66,8 @@ public final class UIPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the default instance of the receiver. This represents the runtime plugin.
 	 *
-	 * @see AbstractPlugin for the typical implementation pattern for plugin classes.
+	 * @return UIPlugin the singleton instance of the receiver.
+	 * @see AbstractUIPlugin for the typical implementation pattern for plugin classes.
 	 */
 	public static UIPlugin getDefault() {
 		return inst;

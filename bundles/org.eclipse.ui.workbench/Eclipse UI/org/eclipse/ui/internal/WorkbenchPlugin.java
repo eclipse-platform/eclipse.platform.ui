@@ -90,8 +90,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	// The context within which this plugin was started.
 	private BundleContext bundleContext;
 
-	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
-	// All other plugins, examples, or test cases must *not* use this flag.
+	/**
+	 * Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
+	 * All other plugins, examples, or test cases must *not* use this flag.
+	 */ 
 	public static boolean DEBUG = false;
 
 	/**
@@ -167,6 +169,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @param element the config element defining the extension
 	 * @param classAttribute the name of the attribute carrying the class
 	 * @return the extension object
+	 * @throws CoreException if the extension cannot be created
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		try {
@@ -174,23 +177,22 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			// Otherwise, show busy cursor then create extension.
 			if(BundleUtility.isActivated(element.getDeclaringExtension().getNamespace())) {
 				return element.createExecutableExtension(classAttribute);
-			} else {
-				final Object[] ret = new Object[1];
-				final CoreException[] exc = new CoreException[1];
-				BusyIndicator.showWhile(null, new Runnable() {
-					public void run() {
-						try {
-							ret[0] = element.createExecutableExtension(classAttribute);
-						} catch (CoreException e) {
-							exc[0] = e;
-						}
+			} 
+			final Object[] ret = new Object[1];
+			final CoreException[] exc = new CoreException[1];
+			BusyIndicator.showWhile(null, new Runnable() {
+				public void run() {
+					try {
+						ret[0] = element.createExecutableExtension(classAttribute);
+					} catch (CoreException e) {
+						exc[0] = e;
 					}
-				});
-				if (exc[0] != null)
-					throw exc[0];
-				else
-					return ret[0];
-			}
+				}
+			});
+			if (exc[0] != null)
+				throw exc[0];
+			return ret[0];
+			
 		}
 		catch (CoreException core) {
 			throw core;			
@@ -211,7 +213,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * Where are the images?  The images (typically gifs) are found in the 
 	 * same plugins directory.
 	 *
-	 * @see JFace's ImageRegistry
+	 * @see ImageRegistry
 	 *
 	 * Note: The workbench uses the standard JFace ImageRegistry to track its images. In addition 
 	 * the class WorkbenchGraphicResources provides convenience access to the graphics resources 
@@ -233,16 +235,20 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return actionSetRegistry;
 	}
 
-	/* Return the default instance of the receiver. This represents the runtime plugin.
-	 *
-	 * @see AbstractPlugin for the typical implementation pattern for plugin classes.
+	/**
+	 * Return the default instance of the receiver. This represents the runtime plugin.
+	 * @return WorkbenchPlugin
+	 * @see AbstractUIPlugin for the typical implementation pattern for plugin classes.
 	 */
 	public static WorkbenchPlugin getDefault() {
 		return inst;
 	}
-	/* Answer the manager that maps resource types to a the 
+	/**
+	 * Answer the manager that maps resource types to a the 
 	 * description of the editor to use
-	*/
+	 * @return IEditorRegistry the editor registry used
+	 * by this plug-in.
+	 */
 
 	public IEditorRegistry getEditorRegistry() {
 		if (editorRegistry == null) {
@@ -251,7 +257,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return editorRegistry;
 	}
 	/**
-	 * Answer the element factory for an id, or null if not found.
+	 * Answer the element factory for an id, or <code>null</code. if not found.
+	 * @param targetID
+	 * @return
 	 */
 	public IElementFactory getElementFactory(String targetID) {
 
@@ -293,17 +301,18 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the presentation factory with the given id, or null if not found.
+	 * Returns the presentation factory with the given id, or <code>null</code> if not found.
+	 * @param targetID The id of the presentation factory to use.
+	 * @return AbstractPresentationFactory or <code>null</code>
+	 * if not factory matches that id.
 	 */
 	public AbstractPresentationFactory getPresentationFactory(String targetID) {
 	    Object o = createExtension(IWorkbenchConstants.PL_PRESENTATION_FACTORIES, "factory", targetID); //$NON-NLS-1$
 	    if (o instanceof AbstractPresentationFactory) {
 	        return (AbstractPresentationFactory) o;
 	    }
-	    else {
-			WorkbenchPlugin.log("Error creating presentation factory: " + targetID + " -- class is not an AbstractPresentationFactory"); //$NON-NLS-1$ //$NON-NLS-2$
-			return null;
-	    }
+	    WorkbenchPlugin.log("Error creating presentation factory: " + targetID + " -- class is not an AbstractPresentationFactory"); //$NON-NLS-1$ //$NON-NLS-2$
+		return null;
 	}
 
 	/**
@@ -357,6 +366,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 	/**
 	 * Return the perspective registry.
+	 * @return IPerspectiveRegistry. The registry for the receiver.
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
 		if (perspRegistry == null) {
@@ -407,8 +417,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return introRegistry;
 	}
 	
-	/*
+	/**
 	 * Get the preference manager.
+	 * @return PreferenceManager the preference manager for
+	 * the receiver.
 	 */
 	public PreferenceManager getPreferenceManager() {
 		if (preferenceManager == null) {
@@ -459,6 +471,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	
 	/**
 	 * Answer the view registry.
+	 * @return IViewRegistry the view registry for the
+	 * receiver.
 	 */
 	public IViewRegistry getViewRegistry() {
 		if (viewRegistry == null) {
@@ -567,6 +581,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
+	 * @param aWorkbench the workbench for the receiver.
 	 * @deprecated Use <code>PlatformUI.createAndRunWorkbench</code>.
 	 */
 	public void setWorkbench(IWorkbench aWorkbench) {
@@ -575,8 +590,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Get the decorator manager for the receiver
+	 * @return DecoratorManager the decorator manager
+	 * for the receiver.
 	 */
-
 	public DecoratorManager getDecoratorManager() {
 		if (this.decoratorManager == null) {
 			this.decoratorManager = new DecoratorManager();
@@ -585,13 +601,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return decoratorManager;
 	}
 
-	public void startup() throws CoreException {
-		// Previously this impl. managed migration from 2.0 to 2.1, which is no longer
-		// required.  However, that previous impl. didn't call the parent method, so
-		// this empty impl. has been left to continue to prevent the parent behaviour
-		// from being invoked.
-	}
-
+	/*
+	 *  (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
     public void start(BundleContext context) throws Exception {
     	super.start(context);
     	bundleContext = context;
@@ -654,6 +667,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns an instance that describes this plugin's product (formerly "primary
 	 * plugin").
+	 * @return ProductInfo the product info for the receiver
 	 */
 	private ProductInfo getProductInfo() {
 		if(productInfo == null)

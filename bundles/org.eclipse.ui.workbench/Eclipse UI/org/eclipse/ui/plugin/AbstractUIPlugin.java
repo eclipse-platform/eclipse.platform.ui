@@ -496,7 +496,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * <p>
 	 * 
 	 * @param descriptor the plug-in descriptor
-	 * @see Plugin#Plugin(IPluginDescriptor)
+	 * @see Plugin#Plugin(org.eclipse.core.runtime.IPluginDescriptor descriptor)
 	 * @deprecated
 	 * In Eclipse 3.0 this constructor has been replaced by
 	 * {@link #AbstractUIPlugin()}. Implementations of
@@ -620,6 +620,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * This method exists as a convenience for plugin implementors.  The
 	 * workbench can also be accessed by invoking <code>PlatformUI.getWorkbench()</code>.
 	 * </p>
+	 * @return IWorkbench the workbench for this plug-in
 	 */
 	public IWorkbench getWorkbench() {
 		return PlatformUI.getWorkbench();
@@ -701,6 +702,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * </p><p>
 	 * Subclasses may override this method to fill the image registry.
 	 * </p>
+	 * @param reg the registry to initalize
 	 *
 	 * @see #getImageRegistry
 	 */
