@@ -75,7 +75,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 				}
 				if (configType.equals(programType)) {
 					if (!launches[i].isTerminated()) {
-						MessageDialog.openWarning(window.getShell(), "Workbench Closing", "The workbench is exiting and a program launched from an external tool appears to still be running. These programs will be terminated when the workbench exits. It is recommended that you exit any external programs launched from the workbench before you proceed.\n\nClick OK to continue exiting the workbench.");
+						MessageDialog.openWarning(window.getShell(), ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.Workbench_Closing_1"), ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.The_workbench_is_exiting_and_a_program_launched_from_an_external_tool_appears_to_still_be_running._These_programs_will_be_terminated_when_the_workbench_exits._It_is_recommended_that_you_exit_any_external_programs_launched_from_the_workbench_before_you_proceed._n_nClick_OK_to_continue_exiting_the_workbench._2")); //$NON-NLS-1$ //$NON-NLS-2$
 						break;
 					}
 				}
