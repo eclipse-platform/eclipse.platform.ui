@@ -401,6 +401,29 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		});
 		isvToolBarMgr = new PaneToolBarManager(isvToolBar);
 	}
+	
+	public boolean isTitleVisible() {
+		if (control == null || control.isDisposed())
+			return false;
+		
+		return control.getTopLeft() != null;
+	}
+	
+	public void setTitleVisible(boolean visible) {
+		if (control == null || control.isDisposed())
+			return;
+		
+		control.setRedraw(false);
+		try {
+			control.setTopCenter(visible ? isvToolBar : null);
+			control.setTopLeft(visible ? titleLabel :null);
+			control.setTopRight(visible ? viewToolBar : null);
+		}
+		finally {
+			control.setRedraw(true);
+		}
+	}
+	
 	public void dispose() {
 		super.dispose();
 
