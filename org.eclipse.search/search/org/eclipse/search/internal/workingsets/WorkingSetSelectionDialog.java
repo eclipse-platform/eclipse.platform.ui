@@ -225,7 +225,6 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 	}
 
 	private void removeSelectedWorkingSets() {
-		List result= new ArrayList(1);
 		ISelection selection= fListViewer.getSelection();
 		if (selection instanceof  IStructuredSelection) {
 			Iterator iter= ((IStructuredSelection)selection).iterator();

@@ -48,7 +48,6 @@ public class FileLabelProvider extends LabelProvider {
 		if (resource == null || !resource.exists())
 			return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
 		
-		StringBuffer buf;
 		IPath path= resource.getFullPath().removeLastSegments(1);
 		if (path.getDevice() == null)
 			path= path.makeRelative();
