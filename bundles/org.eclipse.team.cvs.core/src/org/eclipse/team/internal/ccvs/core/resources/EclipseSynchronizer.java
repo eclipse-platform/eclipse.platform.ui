@@ -412,7 +412,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		}
 		ISchedulingRule rule = null;
 		try {
-			rule = beginBatching(folder, null);
+			rule = beginBatching(folder.getFile(new Path(SyncFileWriter.IGNORE_FILE)), null);
 			try {
 				beginOperation();
 				String[] ignores = SyncFileWriter.readCVSIgnoreEntries(folder);
