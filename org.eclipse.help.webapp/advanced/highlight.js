@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+var isSafari = navigator.userAgent.indexOf('Safari/') != -1;
 var highlighted=false;
 var startTime;
 var MAX_DURATION=3000;
@@ -73,8 +74,13 @@ function highlightWordInText(aWord, textNode){
 			newBefore=document.createTextNode(before);
 			replacementNode.appendChild(newBefore);
 			spanNode=document.createElement("span");
-			spanNode.style.background="Highlight";
-			spanNode.style.color="HighlightText";
+			if(isSafari){
+				spanNode.style.color="#000000";
+				spanNode.style.background="#B5D5FF";
+			}else{
+				spanNode.style.background="Highlight";
+				spanNode.style.color="HighlightText";
+			}
 			replacementNode.appendChild(spanNode);
 			boldText=document.createTextNode(allText.substring(index,index+aWord.length));
 			spanNode.appendChild(boldText);
