@@ -548,8 +548,9 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 		String message = Policy.bind("resources.creatingLink", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FOLDER, true);
+		ISchedulingRule rule = getProject();
 		try {
-			workspace.prepareOperation(getProject());
+			workspace.prepareOperation(rule);
 			assertLinkRequirements(localLocation, updateFlags);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 			workspace.beginOperation(true);
@@ -575,7 +576,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(getProject(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
