@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -46,6 +45,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.DetailsDialogWithProjects;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -320,8 +320,10 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		final String password = passwordText.getText();
 		final boolean[] result = new boolean[] { false };
 		try {
-			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			// This operation is done inside a workspace operation in case the sharing
+			// info for existing projects is changed
+			new ProgressMonitorDialog(getShell()).run(false, false, new WorkspaceModifyOperation() {
+				public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
 						// Check if the password was the only thing to change.
 						if (passwordChanged && !connectionInfoChanged) {
