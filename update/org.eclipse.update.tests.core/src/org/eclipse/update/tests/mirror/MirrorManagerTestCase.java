@@ -148,6 +148,7 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 		final String FLAG_TO = "-to";
 		final String FLAG_URL = "-mirrorURL";
 		final String FLAG_SPLASH = "-nosplash";
+		final String FLAG_CONSOLELOG = "-consolelog";
 		final String data =
 			UpdateCore.getPlugin().getStateLocation().toOSString();
 		String[] cmd =
@@ -172,7 +173,8 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 				(mirUrl != null ? mirUrl : ""),
 				FLAG_SPLASH,
 				FLAG_DATA,
-				data };
+				data,
+				FLAG_CONSOLELOG};
 		return cmd;
 	}
 	

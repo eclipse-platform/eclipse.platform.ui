@@ -26,8 +26,8 @@ public class TestRemoteDoubleEmbeddedFeatureMirror extends MirrorManagerTestCase
 	}
 
 	public void umSetUp() {
-		String featureId = "update.feature1b";
-		String version = "2.0.0";
+		String featureId = "update.feature1c";
+		String version = "3.0.0";
 		String toLocalSiteUrl =
 			UpdateTestsPlugin.getPlugin().getStateLocation()
 				+ "/temp/testRemoteDoubleEmbeddedFeatureMirror";
@@ -46,7 +46,7 @@ public class TestRemoteDoubleEmbeddedFeatureMirror extends MirrorManagerTestCase
 		fromRemoteSiteUrl =
 			"file:"
 			+ dataPath
-			+ "mirrors/update-site3";
+			+ "mirrors/update-site5";
 			exitValue =
 				performMirror(
 					getCommand(fromRemoteSiteUrl,toLocalSiteUrl, featureId, version, mirrorURL));
@@ -58,15 +58,15 @@ public class TestRemoteDoubleEmbeddedFeatureMirror extends MirrorManagerTestCase
 	public void testFeatureCategories() throws Exception{
 		String fromRemoteSiteUrl =
 		        dataPath
-				+ "mirrors/update-site3";
+				+ "mirrors/update-site5";
 		String toLocalSiteUrl =
 			UpdateTestsPlugin.getPlugin().getStateLocation()
 				+ "/temp/testRemoteDoubleEmbeddedFeatureMirror";
 		FeatureCategory[] mirrorFeatures = getFeatureCategories(toLocalSiteUrl);
 		FeatureCategory[] required = new FeatureCategory[1];
 		required[0] = new FeatureCategory();
-		required[0].setFeatureID("update.feature1b");
-		required[0].addCategory("Site3-Category1");
+		required[0].setFeatureID("update.feature1c");
+		required[0].addCategory("Site5-Category1");
 		assertTrue(checkFeatureCategoriesContained(required, mirrorFeatures));
 	}
 	
@@ -88,8 +88,8 @@ public class TestRemoteDoubleEmbeddedFeatureMirror extends MirrorManagerTestCase
 		String toLocalSiteUrl =
 			UpdateTestsPlugin.getPlugin().getStateLocation()
 				+ "/temp/testRemoteDoubleEmbeddedFeatureMirror";
-		String featureId = "update.feature1b";
-		String version = "2.0.0";
+		String featureId = "update.feature1c";
+		String version = "3.0.0";
 		assertTrue(
 			checkFeatureInSiteXMLExists(toLocalSiteUrl, featureId, version));
 	}

@@ -26,8 +26,8 @@ public class TestRemoteEmbeddedFeatureMirror extends MirrorManagerTestCase {
 	}
 
 	public void umSetUp() {
-		String featureId = "update.feature1b";
-		String version = "2.0.0";
+		String featureId = "update.feature1c";
+		String version = "3.0.0";
 		String toLocalSiteUrl =
 			UpdateTestsPlugin.getPlugin().getStateLocation()
 				+ "/temp/testRemoteEmbeddedFeatureMirror";
@@ -35,7 +35,7 @@ public class TestRemoteEmbeddedFeatureMirror extends MirrorManagerTestCase {
 		String fromRemoteSiteUrl =
 				"file:"
 				+ dataPath
-				+ "mirrors/update-site3";
+				+ "mirrors/update-site4";
 		if (!isMirrored) {
 			exitValue =
 				performMirror(
@@ -61,8 +61,8 @@ public class TestRemoteEmbeddedFeatureMirror extends MirrorManagerTestCase {
 		String toLocalSiteUrl =
 			UpdateTestsPlugin.getPlugin().getStateLocation()
 				+ "/temp/testRemoteEmbeddedFeatureMirror";
-		String featureId = "update.feature1b";
-		String version = "2.0.0";
+		String featureId = "update.feature1c";
+		String version = "3.0.0";
 		assertTrue(
 			checkFeatureInSiteXMLExists(toLocalSiteUrl, featureId, version));
 	}
@@ -97,7 +97,7 @@ public class TestRemoteEmbeddedFeatureMirror extends MirrorManagerTestCase {
 		String toLocalSiteUrl =
 			UpdateTestsPlugin.getPlugin().getStateLocation()
 				+ "/temp/testRemoteEmbeddedFeatureMirror";
-		String[] featureJars = { "update.feature1b_2.0.0.jar" };
+		String[] featureJars = { "update.feature1_1.0.0.jar", "update.feature1_1.0.1.jar", "update.feature1b_2.0.0.jar", "update.feature1c_3.0.0.jar" };
 		assertTrue(checkAllFeatureJars(toLocalSiteUrl, featureJars));
 	}
 
@@ -178,7 +178,7 @@ public class TestRemoteEmbeddedFeatureMirror extends MirrorManagerTestCase {
 				+ "/temp/testRemoteEmbeddedFeatureMirror";
 		String fromRemoteSiteUrl =
 		        dataPath
-				+ "mirrors/update-site3";
+				+ "mirrors/update-site4";
 		CategoryDefinition[] localDefs = getCategoryDefinitions(toLocalSiteUrl);
 		CategoryDefinition[] remoteDefs = getCategoryDefinitions(fromRemoteSiteUrl);
 		assertTrue(checkCategoryDefinitionsContained(localDefs, remoteDefs));
