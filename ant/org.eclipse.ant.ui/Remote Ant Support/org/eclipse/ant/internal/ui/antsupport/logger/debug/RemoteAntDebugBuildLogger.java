@@ -321,16 +321,14 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
 	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	    Map currentProperties= null;
-	    Map currentUserProperties= null;
 	    if (!fTasks.isEmpty()) {
 	        currentProperties= ((Task)fTasks.peek()).getProject().getProperties();
-	        currentUserProperties= ((Task)fTasks.peek()).getProject().getUserProperties();
 	        if (fProperties != null && currentProperties.size() == fProperties.size()) {
 	            //no new properties
 	            sendRequestResponse(propertiesRepresentation.toString());
 	            return;
 	        }
-	        
+            Map currentUserProperties= ((Task)fTasks.peek()).getProject().getUserProperties();
 	        Iterator iter= currentProperties.keySet().iterator();
 	        String propertyName;
 	        String propertyValue;
