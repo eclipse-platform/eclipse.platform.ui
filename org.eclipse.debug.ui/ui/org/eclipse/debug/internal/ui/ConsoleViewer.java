@@ -5,7 +5,16 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.text.*;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyleRange;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.events.VerifyListener;import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Composite;
 
 public class ConsoleViewer extends TextViewer implements IPropertyChangeListener{
 
@@ -53,14 +62,6 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		getTextWidget().setDoubleClickEnabled(true);
-		getTextWidget().addVerifyListener( new VerifyListener() {
-			public void verifyText(VerifyEvent e) {
-				ConsoleDocument doc= (ConsoleDocument) getDocument();
-				if (doc != null && doc.getStartOfEditableContent() > e.start) {
-					e.doit= false;
-				}
-			}
-		});
 		
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		FontData data= ConsolePreferencePage.getConsoleFontData();
@@ -163,6 +164,29 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	protected void dispose() {
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		fFont.dispose();
+	}
+	
+	/*
+	 * @see ITextViewer#isEditable
+	 */
+	public boolean isEditable() {
+		StyledText widget= getTextWidget();
+		int caretPos= widget.getCaretOffset();
+		ConsoleDocument doc= (ConsoleDocument) getDocument();
+		if (doc != null && doc.getStartOfEditableContent() > caretPos) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @see VerifyListener#verifyText
+	 */
+	protected void handleVerifyEvent(VerifyEvent e) {
+		ConsoleDocument doc= (ConsoleDocument) getDocument();
+		if (doc != null && doc.getStartOfEditableContent() > e.start) {
+			e.doit= false;
+		}
 	}
 }
 
