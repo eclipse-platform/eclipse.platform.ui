@@ -25,6 +25,7 @@ import org.eclipse.jface.text.ChildDocumentManager;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
@@ -279,8 +280,10 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	/**
 	 * Creates a new content formatter. The content formatter operates by default
 	 * in the partition-aware mode. There are no preconfigured formatting strategies.
+	 * Will use the default document partitioning if not further configured.
 	 */
 	public ContentFormatter() {
+		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
 		
 	/**

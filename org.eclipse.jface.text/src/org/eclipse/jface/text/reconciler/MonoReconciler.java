@@ -22,7 +22,7 @@ import org.eclipse.jface.text.Region;
 /**
  * Standard implementation of <code>IReconciler</code>. The reconciler
  * is configured with a single <code>IReconcilingStrategy</code> that is
- * used independ from where a dirty region is located in the reconciler's
+ * used independly from where a dirty region is located in the reconciler's
  * document. <p>
  * Usually, clients instantiate this class and configure it before using it.
  *

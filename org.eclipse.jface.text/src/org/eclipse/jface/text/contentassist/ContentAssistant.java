@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IEventConsumer;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
@@ -676,6 +677,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * is activated after a 500 ms delay. It uses the default partitioning.
 	 */	
 	public ContentAssistant() {
+		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
 	
 	/**
