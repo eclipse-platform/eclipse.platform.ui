@@ -363,7 +363,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
                 tempTaskString = getTaskStringFromDocumentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
-                String tempAttributeString = getAttributeStringFromDocmentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
+                String tempAttributeString = getAttributeStringFromDocumentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
                 return getAttributeValueProposals(tempTaskString, tempAttributeString, aPrefix);
 
             case PROPOSAL_MODE_PROPERTY_PROPOSAL:
@@ -511,7 +511,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                     tempReplacementLength += 1;
                 }
                  
-                String tempReplacementString = new StringBuffer("${").append(tempPropertyName).append(')').toString();  //$NON-NLS-1$
+                String tempReplacementString = new StringBuffer("${").append(tempPropertyName).append('}').toString();  //$NON-NLS-1$
                 Image tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
                 
                 ICompletionProposal tempProposal = 
@@ -900,7 +900,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * Calling this method is only safe if the current proposal mode is really
      * <code>PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL</code>.
      */
-    private String getAttributeStringFromDocmentStringToPrefix(String aDocumentStringToPrefix) {
+    private String getAttributeStringFromDocumentStringToPrefix(String aDocumentStringToPrefix) {
         int tempIndex = aDocumentStringToPrefix.lastIndexOf('=');
         String tempSubString = aDocumentStringToPrefix.substring(0, tempIndex);
         tempSubString = tempSubString.trim();
@@ -922,7 +922,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 
 
     /**
-     * Returns wether the specified task name is known according to the DTD.
+     * Returns whether the specified task name is known according to the DTD.
      */
     private boolean isNamedTaskKnown(String aTaskName) {
         return dtd.getElement(aTaskName) != null;
