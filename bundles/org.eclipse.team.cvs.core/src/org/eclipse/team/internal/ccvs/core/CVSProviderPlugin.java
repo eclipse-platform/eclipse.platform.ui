@@ -32,28 +32,28 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProviderPlugin extends Plugin {
 
-	private static CVSProviderPlugin instance;
-	
-	private static ICVSSynchronizer synchronizer;
-	
-	/** 
-	 * Int used for the communications timeout on server connections (in seconds)
-	 */
-	public static final int DEFAULT_TIMEOUT = 60;
-	private int communicationsTimeout = DEFAULT_TIMEOUT;
-
-	/**
-	 * Boolean which determines if empty directories received
-	 * from the server should be pruned
-	 */
+	// external command to run for ext connection method
+	public static final String DEFAULT_CVS_RSH = "ssh"; //$NON-NLS-1$
+	// remote command to run for ext connection method
+	public static final String DEFAULT_CVS_SERVER = "cvs"; //$NON-NLS-1$
+	// determines if empty directories received from the server should be pruned.
 	public static final boolean DEFAULT_PRUNE = true;
-	private boolean pruneEmptyDirectories = DEFAULT_PRUNE; 
+	// communication timeout with the server
+	public static final int DEFAULT_TIMEOUT = 60;
 
-	private QuietOption quietness;
-	
+	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
+	
+	private QuietOption quietness;
+	private int communicationsTimeout = DEFAULT_TIMEOUT;
+	private boolean pruneEmptyDirectories = DEFAULT_PRUNE;
+	private String cvsRshCommand = DEFAULT_CVS_RSH;
+	private String cvsServer = DEFAULT_CVS_SERVER;
+	
+	private static CVSProviderPlugin instance;
+	private static ICVSSynchronizer synchronizer;
 	
 	/**
 	 * The identifier for the CVS nature
@@ -218,6 +218,38 @@ public class CVSProviderPlugin extends Plugin {
 			}
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(projectChangeListener, IResourceChangeEvent.POST_AUTO_BUILD);
+	}
+	
+	/**
+	 * Gets the cvsRshCommand.
+	 * @return Returns a String
+	 */
+	public String getCvsRshCommand() {
+		return cvsRshCommand;
+	}
+
+	/**
+	 * Sets the cvsRshCommand.
+	 * @param cvsRshCommand The cvsRshCommand to set
+	 */
+	public void setCvsRshCommand(String cvsRshCommand) {
+		this.cvsRshCommand = cvsRshCommand;
+	}
+
+	/**
+	 * Gets the cvsServer.
+	 * @return Returns a String
+	 */
+	public String getCvsServer() {
+		return cvsServer;
+	}
+
+	/**
+	 * Sets the cvsServer.
+	 * @param cvsServer The cvsServer to set
+	 */
+	public void setCvsServer(String cvsServer) {
+		this.cvsServer = cvsServer;
 	}
 }
 
