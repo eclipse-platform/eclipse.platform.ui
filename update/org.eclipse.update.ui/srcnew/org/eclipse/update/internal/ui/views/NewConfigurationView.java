@@ -998,13 +998,13 @@ public class NewConfigurationView
 				revertAction));
 		array.add(
 			new PreviewTask(
-				"Add an Extension Location",
-				"This task allows you to locate and add an extension location to the current configuration.",
+				"Link an Extension Location",
+				"Locate and link an extension location to the current configuration.",
 				newExtensionLocationAction));
 		array.add(
 			new PreviewTask(
 				"Show Activities",
-				"This task allows you to view the activities that caused the creation of this configuration.",
+				"View the activities that caused the creation of this configuration.",
 				propertiesAction));
 		array.add(
 			new PreviewTask(
@@ -1014,7 +1014,7 @@ public class NewConfigurationView
 		array.add(
 			new PreviewTask(
 				"View Installation History",
-				"This task allows you to view all activities since the installation of the product.",
+				"View all activities since the installation of the product.",
 				installationHistoryAction));
 
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
@@ -1055,7 +1055,7 @@ public class NewConfigurationView
 		array.add(
 			new PreviewTask(
 				"Replace With Another Version",
-				"This task will disable the current version of the feature and replace it with another version from the list of the currently disabled features.",
+				"Disables the current version of the feature and replaces it with another version from the list of the currently disabled features.",
 				swapVersionAction));
 		array.add(
 			new PreviewTask(
