@@ -7,6 +7,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
@@ -27,6 +28,9 @@ public class DecoratorDefinition {
 	private boolean adaptable;
 	private boolean enabled;
 	private boolean defaultEnabled;
+
+	//A flag that is set if there is an error creating the decorator
+	private boolean decoratorCreationFailed = false;
 	private String id;
 	private IConfigurationElement element;
 
@@ -62,27 +66,11 @@ public class DecoratorDefinition {
 	}
 
 	/**
-	 * Sets the name.
-	 * @param name The name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	/**
 	 * Returns the description.
 	 * @return String
 	 */
 	public String getDescription(){
 		return this.description;
-	}
-	
-	/**
-	 * Sets the description.
-	 * @param String
-	 */
-	public void setDescription(String newDescription){
-		this.description = newDescription;
 	}
 
 	/**
@@ -94,14 +82,6 @@ public class DecoratorDefinition {
 	}
 
 	/**
-	 * Sets the objectClass.
-	 * @param objectClass The objectClass to set
-	 */
-	public void setObjectClass(String objectClass) {
-		this.objectClass = objectClass;
-	}
-
-	/**
 	 * Gets the decorator and creates it if it does
 	 * not exist yet. Throws a CoreException if there is a problem
 	 * creating the decorator.
@@ -110,22 +90,36 @@ public class DecoratorDefinition {
 	 * @return Returns a ILabelDecorator
 	 */
 	private ILabelDecorator internalGetDecorator() throws CoreException {
-		if (decorator == null)
-			decorator =
-				(ILabelDecorator) WorkbenchPlugin.createExtension(
-					element,
-					WizardsRegistryReader.ATT_CLASS);
+		if (decoratorCreationFailed)
+			return null;
+
+		final CoreException[] exceptions = new CoreException[1];
+
+		if (decorator == null) {
+			Platform.run(new SafeRunnableAdapter(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
+				public void run() {
+					try {
+						decorator =
+							(ILabelDecorator) WorkbenchPlugin.createExtension(
+								element,
+								WizardsRegistryReader.ATT_CLASS);
+					} catch (CoreException exception) {
+						exceptions[0] = exception;
+					}
+				}
+			});
+		}
+
+		if (decorator == null) {
+			this.decoratorCreationFailed = true;
+			this.enabled = false;
+			return null;
+		}
+
+		if (exceptions[0] != null)
+			throw exceptions[0];
 
 		return decorator;
-
-	}
-
-	/**
-	 * Sets the decorator.
-	 * @param decorator The decorator to set
-	 */
-	public void setDecorator(ILabelDecorator decorator) {
-		this.decorator = decorator;
 	}
 
 	/**
@@ -141,27 +135,26 @@ public class DecoratorDefinition {
 	 * manager as a listener as appropriate.
 	 * @param enabled The enabled to set
 	 */
-	public void setEnabled(boolean newState) throws CoreException{
-		
+	public void setEnabled(boolean newState) throws CoreException {
+
 		//Only refresh if there has been a change
-		if(this.enabled != newState){
+		if (this.enabled != newState) {
 			this.enabled = newState;
 			refreshDecorator();
 		}
 	}
-	
+
 	/**
 	 * Sets the enabled flag and adds or removes the decorator
 	 * manager as a listener as appropriate. Handle any exceptions
 	 * within this class
 	 * @param enabled The enabled to set
 	 */
-	public void setEnabledWithErrorHandling(boolean newState){
-		
-		try{
+	public void setEnabledWithErrorHandling(boolean newState) {
+
+		try {
 			setEnabled(newState);
-		}
-		catch(CoreException exception){
+		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
 	}
@@ -170,13 +163,19 @@ public class DecoratorDefinition {
 	 * Refresh the current decorator based on our enable
 	 * state.
 	 */
-	
-	private void refreshDecorator() throws CoreException{
-		DecoratorManager manager = (DecoratorManager) WorkbenchPlugin.getDefault().getDecoratorManager();
-		
-		if (this.enabled)
-			internalGetDecorator().addListener(manager);
-		else {
+
+	private void refreshDecorator() throws CoreException {
+		DecoratorManager manager =
+			(DecoratorManager) WorkbenchPlugin
+				.getDefault()
+				.getDecoratorManager();
+
+		if (this.enabled) {
+			//Internal decorator might be null so be prepared
+			ILabelDecorator currentDecorator = internalGetDecorator();
+			if (currentDecorator != null)
+				currentDecorator.addListener(manager);
+		} else {
 			if (decorator != null) {
 				ILabelDecorator cached = decorator;
 				cached.removeListener(manager);
@@ -185,7 +184,7 @@ public class DecoratorDefinition {
 				cached.dispose();
 			}
 		}
-		
+
 	}
 
 	/**
@@ -227,12 +226,16 @@ public class DecoratorDefinition {
 	 */
 	Image decorateImage(Image image, Object element) {
 		try {
-			return internalGetDecorator().decorateImage(image, element);
+			//Internal decorator might be null so be prepared
+			ILabelDecorator currentDecorator = internalGetDecorator();
+			if (currentDecorator != null)
+				return currentDecorator.decorateImage(image, element);
+
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
 		return null;
-	}	
+	}
 	/**
 	 * Decorate the text provided for the element type.
 	 * This method should not be called unless a check for
@@ -241,7 +244,10 @@ public class DecoratorDefinition {
 	 */
 	String decorateText(String text, Object element) {
 		try {
-			return internalGetDecorator().decorateText(text, element);
+			//Internal decorator might be null so be prepared
+			ILabelDecorator currentDecorator = internalGetDecorator();
+			if (currentDecorator != null)
+				return currentDecorator.decorateText(text, element);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
@@ -256,7 +262,10 @@ public class DecoratorDefinition {
 	 */
 	void addListener(ILabelProviderListener listener) {
 		try {
-			internalGetDecorator().addListener(listener);
+			//Internal decorator might be null so be prepared
+			ILabelDecorator currentDecorator = internalGetDecorator();
+			if (currentDecorator != null)
+				currentDecorator.addListener(listener);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 		}
@@ -270,14 +279,17 @@ public class DecoratorDefinition {
 	* isEnabled() has been done first.
 	*/
 	boolean isLabelProperty(Object element, String property) {
-		try {
-			return internalGetDecorator().isLabelProperty(element, property);
+		try { //Internal decorator might be null so be prepared
+			ILabelDecorator currentDecorator = internalGetDecorator();
+			if (currentDecorator != null)
+				return currentDecorator.isLabelProperty(element, property);
 		} catch (CoreException exception) {
 			handleCoreException(exception);
 			return false;
 		}
+		return false;
 	}
-	
+
 	/**
 	 * Return the default value for this type - this value
 	 * is the value read from the element description.
