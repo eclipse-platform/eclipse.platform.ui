@@ -13,8 +13,11 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
@@ -50,6 +53,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -245,7 +249,17 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	
 	private SelectionListener fSelectionListener;
 	protected Map fWorkingValues;
-	protected ArrayList fComboBoxes;
+	protected List fComboBoxes;
+	private List fProblemLabels;
+
+	private Button fIgnoreAllProblems;
+
+	private Text fBuildFilesToIgnoreProblems;
+	private Label fBuildFilesToIgnoreProblemsLabel;
+
+	private Label fSeverityLabel;
+
+	private Label fBuildFilesToIgnoreProblemsDescription;
 	
 	public AntEditorPreferencePage() {
 		super();
@@ -282,6 +296,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL));
+		
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE));
 		
 		for (int i= 0; i < fSyntaxColorListModel.length; i++) {
 			String colorKey= fSyntaxColorListModel[i][1];
@@ -561,6 +579,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	
 	private Composite createProblemsTabContent(TabFolder folder) {
 		fComboBoxes= new ArrayList();
+		fProblemLabels= new ArrayList();
 		initializeWorkingValues();
 		
 		String[] errorWarningIgnoreLabels= new String[] {
@@ -578,11 +597,26 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		Composite othersComposite= new Composite(folder, SWT.NULL);
 		othersComposite.setLayout(layout);
 		
-		Label description= new Label(othersComposite, SWT.WRAP);
-		description.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.14")); //$NON-NLS-1$
+		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.28"); //$NON-NLS-1$
+		fIgnoreAllProblems= addCheckBox(othersComposite, labelText, AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL, 0);
+		
+		fIgnoreAllProblems.addSelectionListener(getSelectionListener());
+		
+		fBuildFilesToIgnoreProblemsDescription = new Label(othersComposite, SWT.WRAP);
+		fBuildFilesToIgnoreProblemsDescription.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.29")); //$NON-NLS-1$
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan= nColumns;
-		description.setLayoutData(gd);
+		fBuildFilesToIgnoreProblemsDescription.setLayoutData(gd);
+		
+		Control[] controls= addLabelledTextField(othersComposite, AntPreferencesMessages.getString("AntEditorPreferencePage.30"), AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE, 50, 0, null); //$NON-NLS-1$
+		fBuildFilesToIgnoreProblems= getTextControl(controls); 
+		fBuildFilesToIgnoreProblemsLabel= getLabelControl(controls);
+		
+		fSeverityLabel= new Label(othersComposite, SWT.WRAP);
+		fSeverityLabel.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.14")); //$NON-NLS-1$
+		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan= nColumns;
+		fSeverityLabel.setLayoutData(gd);
 				
 		String label= AntPreferencesMessages.getString("AntEditorPreferencePage.18"); //$NON-NLS-1$
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_TASKS, errorWarningIgnore, errorWarningIgnoreLabels, 0);
@@ -599,6 +633,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
         label= AntPreferencesMessages.getString("AntEditorPreferencePage.27"); //$NON-NLS-1$
         addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_SECURITY, errorWarningIgnore, errorWarningIgnoreLabels, 0);
 		
+		updateControlsForProblemReporting(!AntUIPlugin.getDefault().getCombinedPreferenceStore().getBoolean(AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL));
 		return othersComposite;
 	}
 	
@@ -641,6 +676,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		String currValue= (String)fWorkingValues.get(key);	
 		comboBox.select(data.getSelection(currValue));
 		
+		fProblemLabels.add(labelControl);
 		fComboBoxes.add(comboBox);
 		return comboBox;
 	}
@@ -662,6 +698,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		ControlData data= (ControlData) widget.getData();
 		String newValue= null;
 		if (widget instanceof Button) {
+			if (widget == fIgnoreAllProblems) {
+				updateControlsForProblemReporting(!((Button)widget).getSelection());
+				return;
+			}
 			newValue= data.getValue(((Button)widget).getSelection());			
 		} else if (widget instanceof Combo) {
 			newValue= data.getValue(((Combo)widget).getSelectionIndex());
@@ -671,6 +711,17 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		fWorkingValues.put(data.getKey(), newValue);
 	}
 	
+	private void updateControlsForProblemReporting(boolean reportProblems) {
+		for (int i= fComboBoxes.size() - 1; i >= 0; i--) {
+			((Control) fComboBoxes.get(i)).setEnabled(reportProblems);
+			((Control) fProblemLabels.get(i)).setEnabled(reportProblems);
+		}
+		fSeverityLabel.setEnabled(reportProblems);
+		fBuildFilesToIgnoreProblems.setEnabled(reportProblems);
+		fBuildFilesToIgnoreProblemsDescription.setEnabled(reportProblems);
+		fBuildFilesToIgnoreProblemsLabel.setEnabled(reportProblems);
+	}
+
 	protected void updateControls() {
 		// update the UI
 		for (int i= fComboBoxes.size() - 1; i >= 0; i--) {

@@ -64,7 +64,7 @@ public class AntEditorPreferenceConstants {
 	 * </p>
 	 * @since 3.0
 	 */
-	public final static String CODEASSIST_USER_DEFINED_TASKS= "content_assist_userDefinedTasks"; //$NON-NLS-1$	
+	public final static String CODEASSIST_USER_DEFINED_TASKS= "content_assist_userDefinedTasks"; //$NON-NLS-1$
 	
 	/**
 	 * The symbolic names for colors for displaying code assist proposals
@@ -187,6 +187,26 @@ public class AntEditorPreferenceConstants {
 	public static final String BUILDFILE_IGNORE = "ignore"; //$NON-NLS-1$
 	
 	/**
+	 * A named preference that controls whether problem reporting is enabled in the Ant editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static String BUILDFILE_IGNORE_ALL = "ignoreAll"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that lists the names of buildfiles to not do problem reporting for
+	 * <p>
+	 * Value is of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static String BUILDFILE_NAMES_TO_IGNORE = "ignoreNames"; //$NON-NLS-1$
+	
+	/**
 	 * A named preference that controls whether folding is enabled in the Ant editor.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -307,5 +327,6 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(EDITOR_MARK_OCCURRENCES, false);
 		store.setDefault(EDITOR_STICKY_OCCURRENCES, true);
 		
+		store.setDefault(BUILDFILE_IGNORE_ALL, false);
 	}
 }

@@ -47,6 +47,7 @@ import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.core.AntSecurityManager;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThread;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorMarkerUpdater;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
@@ -150,6 +151,8 @@ public class AntModel implements IAntModel {
 					AntUIPlugin.getDefault().getPluginPreferences().setToDefault(AntEditorPreferenceConstants.PROBLEM);
 					AntUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(fUIPropertyChangeListener);
 				} else if (property.equals(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS)) {
+					reconcileForPropertyChange(false);
+				} else if (property.equals(AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE) || property.equals(AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL)) {
 					reconcileForPropertyChange(false);
 				}
 			}
@@ -487,7 +490,7 @@ public class AntModel implements IAntModel {
 	 * target dependencies exist. 
 	 */
 	private void checkTargets() {
-		if (fProjectNode == null) {
+		if (fProjectNode == null || doNotReportProblems()) {
 			return;
 		}
 		String defaultTargetName= fProjectNode.getDefaultTargetName();
@@ -531,7 +534,28 @@ public class AntModel implements IAntModel {
         }
     }
 
-    private void checkCircularDependencies(AntElementNode node) {
+    private boolean doNotReportProblems() {
+		if (AntUIPlugin.getDefault().getCombinedPreferenceStore().getBoolean(AntEditorPreferenceConstants.BUILDFILE_IGNORE_ALL)) {
+			return true;
+		}
+		String buildFileNames= AntUIPlugin.getDefault().getCombinedPreferenceStore().getString(AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE);
+		if (buildFileNames.length() == 0) {
+			//the user has not specified any names to not report problems for
+			return false;
+		}
+		String[] names= AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
+		for (int i = 0; i < names.length; i++) {
+			String string = names[i];
+			File editedFile= getEditedFile();
+			if (string.equals(editedFile.getName())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	private void checkCircularDependencies(AntElementNode node) {
         Target target= ((AntTargetNode)node).getTarget();
         String name= target.getName();
         if (name == null) {
@@ -980,7 +1004,7 @@ public class AntModel implements IAntModel {
 		}
 	}
 	
-	public void acceptProblem(IProblem problem) {
+	private void acceptProblem(IProblem problem) {
 		if (fProblemRequestor != null) {
 			fProblemRequestor.acceptProblem(problem);
 		}
@@ -1028,6 +1052,9 @@ public class AntModel implements IAntModel {
 	}
 
 	private void notifyProblemRequestor(Exception exception, AntElementNode element, int severity) {
+		if (doNotReportProblems()) {
+			return;
+		}
 		AntElementNode importNode= element.getImportNode();
 		if (importNode != null) {
 			element= importNode;
@@ -1038,6 +1065,9 @@ public class AntModel implements IAntModel {
 	}
 	
 	private void notifyProblemRequestor(Exception exception, int offset, int length, int severity) {
+		if (doNotReportProblems()) {
+			return;
+		}
 		if (fProblemRequestor != null) {
 			IProblem problem= createProblem(exception, offset, length, severity);
 			acceptProblem(problem);
@@ -1072,6 +1102,9 @@ public class AntModel implements IAntModel {
 			return;
 		}
 		computeEndLocationForErrorNode(node, start, count);
+		if (doNotReportProblems()) {
+			return;
+		}
 		notifyProblemRequestor(exception, start, count, AntModelProblem.SEVERITY_ERROR);
 		markHierarchy(fLastNode, AntModelProblem.SEVERITY_ERROR, exception.getMessage());
 	} 
@@ -1088,6 +1121,9 @@ public class AntModel implements IAntModel {
 			}
 		}
 		computeEndLocationForErrorNode(node, lineNumber, column);
+		if (doNotReportProblems()) {
+			return;
+		}
 		notifyProblemRequestor(exception, node, AntModelProblem.SEVERITY_ERROR);
 		markHierarchy(node, AntModelProblem.SEVERITY_ERROR, exception.getMessage());
 	}
@@ -1518,6 +1554,9 @@ public class AntModel implements IAntModel {
     	fIsDirty= true;
     	reconcile();
     	AntModelCore.getDefault().notifyAntModelListeners(new AntModelChangeEvent(this, true));
+		if (doNotReportProblems()) {
+			return;
+		}
     	fMarkerUpdater.updateMarkers();
     }
 
