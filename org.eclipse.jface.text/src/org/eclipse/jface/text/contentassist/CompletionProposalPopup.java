@@ -106,7 +106,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					
 					if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting())
 						
-						insertProposal(fComputedProposals[0], (char) 0, fInvocationOffset);
+						insertProposal(fComputedProposals[0], (char) 0, 0, fInvocationOffset);
 					
 					else {
 					
@@ -157,7 +157,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
-			fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+		fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
 		
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -172,15 +172,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalShell.pack();
 		
 		if (fAdditionalInfoController != null) {
-			fProposalShell.addControlListener(new ControlListener() {
-				
-				public void controlMoved(ControlEvent e) {}
-				
-				public void controlResized(ControlEvent e) {
-					// resets the cached resize constraints
-					fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
-				}
-			});
+		fProposalShell.addControlListener(new ControlListener() {
+			
+			public void controlMoved(ControlEvent e) {}
+			
+			public void controlResized(ControlEvent e) {
+				// resets the cached resize constraints
+				fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+			}
+		});
 		}
 
 		
@@ -201,7 +201,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				selectProposal();
+				selectProposalWithMask(e.stateMask);
 			}
 		});
 
@@ -228,11 +228,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * Takes the selected proposal and applies it.
 	 * @since 2.0
 	 */
-	private void selectProposal() {
+	private void selectProposalWithMask(int stateMask) {
 		ICompletionProposal p= getSelectedProposal();
 		hide();
 		if (p != null)
-			insertProposal(p, (char) 0, fViewer.getSelectedRange().x);
+			insertProposal(p, (char) 0, stateMask, fViewer.getSelectedRange().x);
 	}
 	
 	/**
@@ -243,16 +243,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @param trigger the trigger character
 	 * @param offset the offset
 	 * 
-	 * @since 2.0
+	 * @since 2.1
 	 */
-	private void insertProposal(ICompletionProposal p, char trigger, int offset) {
+	private void insertProposal(ICompletionProposal p, char trigger, int stateMask, int offset) {
 			
 		fInserting= true;
 		
 		try {
 			IDocument document= fViewer.getDocument();
 			
-			if (p instanceof ICompletionProposalExtension) {
+			if (p instanceof ICompletionProposalExtension2) {
+				ICompletionProposalExtension2 e= (ICompletionProposalExtension2) p;
+				e.apply(fViewer, trigger, stateMask, offset);				
+			} else if (p instanceof ICompletionProposalExtension) {
 				ICompletionProposalExtension e= (ICompletionProposalExtension) p;
 				e.apply(document, trigger, offset);
 			} else {
@@ -302,6 +305,15 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * Hides this popup.
 	 */
 	public void hide() {
+
+		if (Helper.okToUse(fProposalTable)) {
+			ICompletionProposal proposal= getSelectedProposal();
+			if (proposal instanceof ICompletionProposalExtension2) {
+				ICompletionProposalExtension2 extension= (ICompletionProposalExtension2) proposal;
+				extension.unselected(fViewer);
+			}
+		}
+
 		if (Helper.okToUse(fProposalShell)) {
 			
 			fContentAssistant.removeContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
@@ -312,7 +324,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell= null;
 		}
 		
-		fFilteredProposals= null;
+		fFilteredProposals= null;		
 	}
 	
 	/**
@@ -457,7 +469,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					
 				case 0x0D : // Enter
 					e.doit= false;
-					selectProposal();
+					selectProposalWithMask(e.stateMask);
 					break;
 					
 				default:
@@ -475,7 +487,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 						if (contains(triggers, key)) {		
 							e.doit= false;
 							hide();
-							insertProposal(p, key, fViewer.getSelectedRange().x);
+							insertProposal(p, key, e.stateMask, fViewer.getSelectedRange().x);
 						}
 					}
 			}
@@ -492,6 +504,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 2.0
 	 */
 	private void selectProposal(int index) {
+
+		ICompletionProposal proposal= fFilteredProposals[index];
+		if (proposal instanceof ICompletionProposalExtension2)
+			((ICompletionProposalExtension2) proposal).selected(fViewer);
+		
 		fProposalTable.setSelection(index);
 		fProposalTable.showSelection();
 		if (fAdditionalInfoController != null)
