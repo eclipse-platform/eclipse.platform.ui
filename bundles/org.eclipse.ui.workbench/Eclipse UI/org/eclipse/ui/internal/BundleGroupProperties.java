@@ -33,14 +33,14 @@ public abstract class BundleGroupProperties extends BrandingProperties
      * An image which can be shown in an "about features" dialog (32x32).
      */
     public static ImageDescriptor getFeatureImage(IBundleGroup bundleGroup) {
-        return getImage(bundleGroup.getProperty(FEATURE_IMAGE));
+        return getImage(bundleGroup.getProperty(FEATURE_IMAGE), null);
     }
 
     /**
      * The URL to an image which can be shown in an "about features" dialog (32x32).
      */
     public static URL getFeatureImageUrl(IBundleGroup bundleGroup) {
-        return getUrl(bundleGroup.getProperty(FEATURE_IMAGE));
+        return getUrl(bundleGroup.getProperty(FEATURE_IMAGE), null);
     }
 
     /**
@@ -56,7 +56,7 @@ public abstract class BundleGroupProperties extends BrandingProperties
      * designed to run "headless" typically would not have such a page.
      */
     public static URL getWelcomePageUrl(IBundleGroup bundleGroup) {
-        return getUrl(bundleGroup.getProperty(WELCOME_PAGE));
+        return getUrl(bundleGroup.getProperty(WELCOME_PAGE), null);
     }
 
     /**
@@ -71,6 +71,6 @@ public abstract class BundleGroupProperties extends BrandingProperties
      * A URL for the feature's license page.
      */
     public static URL getLicenseUrl(IBundleGroup bundleGroup) {
-        return getUrl(bundleGroup.getProperty(LICENSE_HREF));
+        return getUrl(bundleGroup.getProperty(LICENSE_HREF), null);
     }
 }

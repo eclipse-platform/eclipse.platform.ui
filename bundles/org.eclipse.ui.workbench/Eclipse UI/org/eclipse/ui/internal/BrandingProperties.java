@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.osgi.framework.Bundle;
 
 /**
  * The branding properties are retrieved as strings, but often used as other
@@ -26,44 +28,67 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public abstract class BrandingProperties {
 
-    public static URL getUrl(String property) {
+    /**
+     * Create an url from the argument absolute or relative path. The bundle
+     * parameter is used as the base for relative paths and is allowed to be
+     * null.
+     * 
+     * @param value
+     *            the absolute or relative path
+     * @param definingBundle
+     *            bundle to be used for relative paths (may be null)
+     * @return
+     */
+    public static URL getUrl(String value, Bundle definingBundle) {
         try {
-            if (property != null)
-                return new URL(property);
+            if (value != null)
+                return new URL(value);
         } catch (MalformedURLException e) {
-            // do nothing
+            if (definingBundle != null)
+                return Platform.find(definingBundle, new Path(value));
         }
 
         return null;
     }
 
-    public static ImageDescriptor getImage(String property) {
-        URL url = getUrl(property);
+    /**
+     * Create a descriptor from the argument absolute or relative path to an
+     * image file. bundle parameter is used as the base for relative paths and
+     * is allowed to be null.
+     * 
+     * @param value
+     *            the absolute or relative path
+     * @param definingBundle
+     *            bundle to be used for relative paths (may be null)
+     * @return
+     */
+    public static ImageDescriptor getImage(String value, Bundle definingBundle) {
+        URL url = getUrl(value, definingBundle);
         return url == null ? null : ImageDescriptor.createFromURL(url);
     }
 
     /**
      * Returns a array of URL for the given property or <code>null</code>.
-     * The property value should be a comma separated list of urls, tokens for
-     * which the product cannot build an url will have a null entry.
+     * The property value should be a comma separated list of urls (either
+     * absolute or relative to the argument bundle). Tokens that do not
+     * represent a valid url will be represented with a null entry in the
+     * returned array.
      * 
-     * @param property
+     * @param value
      *            value of a property that contains a comma-separated list of
      *            product relative urls
+     * @param definingBundle
+     *            bundle to be used as base for relative paths (may be null)
      * @return a URL for the given property, or <code>null</code>
      */
-    public static URL[] getURLs(String property) {
-        if(property == null)
+    public static URL[] getURLs(String value, Bundle definingBundle) {
+        if(value == null)
             return null;
 
-        StringTokenizer tokens = new StringTokenizer(property, ","); //$NON-NLS-1$
+        StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
         ArrayList array = new ArrayList(10);
         while (tokens.hasMoreTokens())
-            try {
-                array.add(new URL(tokens.nextToken().trim()));
-            } catch (IOException e) {
-                // do nothing
-            }
+            array.add(getUrl(tokens.nextToken().trim(), definingBundle));
 
         return (URL[]) array.toArray(new URL[array.size()]);
     }
@@ -71,16 +96,19 @@ public abstract class BrandingProperties {
     /**
      * Returns an array of image descriptors for the given property, or
      * <code>null</code>. The property value should be a comma separated list
-     * of image paths.
+     * of image paths. Each path should either be absolute or relative to the
+     * optional bundle parameter.
      * 
-     * @param property
+     * @param value
      *            value of a property that contains a comma-separated list of
      *            product relative urls describing images
+     * @param definingBundle
+     *            bundle to be used for relative paths (may be null)
      * @return an array of image descriptors for the given property, or
      *         <code>null</code>
      */
-    public static ImageDescriptor[] getImages(String property) {
-        URL[] urls = getURLs(property);
+    public static ImageDescriptor[] getImages(String value, Bundle definingBundle) {
+        URL[] urls = getURLs(value, definingBundle);
         if (urls == null || urls.length <= 0)
             return null;
 

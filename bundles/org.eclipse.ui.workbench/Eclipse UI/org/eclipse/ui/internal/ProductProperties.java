@@ -63,7 +63,7 @@ public abstract class ProductProperties extends BrandingProperties implements
      * blurb beside it.
      */
 	public static ImageDescriptor getAboutImage(IProduct product) {
-	    return getImage(product.getProperty(ABOUT_IMAGE));
+	    return getImage(product.getProperty(ABOUT_IMAGE), product.getDefiningBundle());
 	}
 
 	/**
@@ -78,10 +78,10 @@ public abstract class ProductProperties extends BrandingProperties implements
 	public static ImageDescriptor[] getWindowImages(IProduct product) {
 	    String property = product.getProperty(WINDOW_IMAGES);
 
-	    // for compatibility with older plugins that may still use WINDOW_IMAGE
+	    // for compatibility with pre-3.0 plugins that may still use WINDOW_IMAGE
 	    if(property == null)
 	        property = product.getProperty(WINDOW_IMAGE);
 
-	    return getImages(property);
+	    return getImages(property, product.getDefiningBundle());
 	}
 }
