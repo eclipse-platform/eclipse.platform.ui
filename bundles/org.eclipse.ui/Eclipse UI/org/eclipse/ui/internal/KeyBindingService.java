@@ -49,6 +49,8 @@ public class KeyBindingService implements IKeyBindingService {
 	 * when it is out of sync.
 	 */
 	private long parentUpdateNumber;
+	/* */
+	private boolean enabled = false;
 	/**
 	 * Create an instance of KeyBindingService and initializes 
 	 * it with its parent.
@@ -91,6 +93,13 @@ public class KeyBindingService implements IKeyBindingService {
 		if(scope != null)
 			scope.registerAction(action.getAccelerator(),action);
     }
+    /*
+	 * @see IKeyBindingService#registerAction(IAction)
+	 */
+	public void enable(boolean enable) {
+		enabled = enable;
+		parent.update(this);
+	}
     /**
      * Returns the action mapped with the specified <code>definitionId</code>
      */
@@ -117,6 +126,6 @@ public class KeyBindingService implements IKeyBindingService {
      * Return if this service is participating on the key bindings
      */       
  	public boolean isParticipating() {
- 		return defIdToAction.size() != 0;
+ 		return (defIdToAction.size() != 0) && enabled;
  	}
 }

@@ -67,4 +67,9 @@ public interface IKeyBindingService {
 	 * @param scopeId the new accelerator scope id
 	 */
 	public void setActiveAcceleratorScopeId(String scopeId);
+	/**
+	 * Enables or Disables this service. The default is false. Registered accelerators
+	 * have no efect until the service is enabled;
+	 */	
+	public void enable(boolean enable);
 }

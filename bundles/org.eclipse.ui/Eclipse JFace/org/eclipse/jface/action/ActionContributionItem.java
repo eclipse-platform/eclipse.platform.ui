@@ -509,7 +509,8 @@ public void update(String propertyName) {
 			if (textChanged) {
 				String text = action.getText();
 				if (text != null) {
-					if (isContextMenu)
+					boolean accAllowed = MenuManager.getAcceleratorsAllowed(mi.getParent());
+					if (isContextMenu || !accAllowed)
 						text = Action.removeAcceleratorText(text);
 					else {
 						// We only install an accelerator if the menu item doesn't

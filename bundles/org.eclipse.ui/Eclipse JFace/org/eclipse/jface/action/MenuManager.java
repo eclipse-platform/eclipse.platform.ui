@@ -534,7 +534,7 @@ private void updateMenuItem() {
 /*
  * Returns whether menus can have accelerators or not.
  */
-public boolean getAcceleratorsAllowed() {
+public static boolean getAcceleratorsAllowed(Menu menu) {
 	if(menu == null)
 		return true;
 	Shell s = menu.getShell();
@@ -548,7 +548,7 @@ public boolean getAcceleratorsAllowed() {
 /*
  * Set whether menus can have accelerators or not.
  */
-public void setAcceleratorsAllowed(boolean b) {
+public static void setAcceleratorsAllowed(Menu menu,boolean b) {
 	menu.getShell().getMenuBar().setData(ACCELERATORS_ALLOWED,new Boolean(b));
 }
 /*
@@ -557,7 +557,7 @@ public void setAcceleratorsAllowed(boolean b) {
 private void updateAccelerators() {
 	Menu m = getMenu();
 	if (m != null) {
-		if (getAcceleratorsAllowed()) {
+		if (getAcceleratorsAllowed(menu)) {
 			restoreAccelerators(m);
 		} else {
 			clearAccelerators(m);

@@ -41,10 +41,13 @@ public class WWinKeyBindingService {
 	 * without one 
 	 */
 	private long fakeDefinitionId = 0;
+	/* The window this service is managing the accelerators for.*/
+	private WorkbenchWindow window;
 	/**
 	 * Create an instance of WWinKeyBindingService and initializes it.
 	 */			
 	public WWinKeyBindingService(final WorkbenchWindow window) {
+		this.window = window;
 		IWorkbenchPage[] pages = window.getPages();
 		final IPartListener partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {
@@ -146,7 +149,19 @@ public class WWinKeyBindingService {
 		result.putAll(actionSetDefIdToAction);
 		return result;
 	}
-	/*
+	/**
+	 * Remove or restore the accelerators in the menus.
+	 * If the service is the active part's service.
+	 */	
+   	public void update(KeyBindingService service) {
+   		IWorkbenchPart part = window.getActivePage().getActivePart();
+   		if(part instanceof IEditorPart) {
+   			KeyBindingService currServ = (KeyBindingService)((IEditorPart)part).getEditorSite().getKeyBindingService();
+   			if(currServ == service)
+   				update(part);
+   		}
+   	}
+	/**
 	 * Remove or restore the accelerators in the menus.
 	 */
    	private static void update(IWorkbenchPart part) {
@@ -156,15 +171,15 @@ public class WWinKeyBindingService {
     	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
     	MenuManager menuManager = w.getMenuManager();
     	if(part instanceof IViewPart) {
-    		menuManager.setAcceleratorsAllowed(true);
+    		menuManager.setAcceleratorsAllowed(menuManager.getMenu(),true);
     	} else if(part instanceof IEditorPart) {
     		KeyBindingService service = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
     		AcceleratorConfiguration config = ((Workbench)w.getWorkbench()).getActiveAcceleratorConfiguration();
     		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID))) {
     			boolean useAcc = !service.isParticipating();
-				menuManager.setAcceleratorsAllowed(useAcc);
+				menuManager.setAcceleratorsAllowed(menuManager.getMenu(),useAcc);
     		} else {
-				menuManager.setAcceleratorsAllowed(true);
+				menuManager.setAcceleratorsAllowed(menuManager.getMenu(),true);
     		}
     	}
 		menuManager.updateAll(true);
