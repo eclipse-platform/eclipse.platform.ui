@@ -33,6 +33,16 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 /**
  * Abstract implementation of a memory rendering.
  * <p>
+ * To contribute an action to a rendering, an <code>objectContribution</code> can
+ * be used on a rendering implementation class itself using a 
+ * <code>popupMenus</code> extension. Additionaly, the context menu created
+ * by <code>createPopupMenu()</code> is registered with an identifier of this
+ * rendering's container identifier. Actions may also be contributed to the
+ * container's context menu specifically by using a  <code>viewerContribution</code>
+ * on a <code>popupMenus</code> extension that has a <code>targetID</code> refering
+ * to this rendering container's identifier. 
+ * </p>
+ * <p>
  * Clients implementing memory renderings must subclass this class.
  * </p>
  * @since 3.1

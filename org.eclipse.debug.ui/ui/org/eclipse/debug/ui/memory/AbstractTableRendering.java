@@ -86,18 +86,28 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
 
 /**
- * This is an abstract implementation to a table rendering.  Clients should
- * subclass from this class if they wish to provide a table rendering.
- * 
+ * Abstract implementation of a table rendering.
+ * <p>
+ * Clients should subclass from this class if they wish to provide a
+ * table rendering.
+ * </p>
  * @since 3.1
  */
 public abstract class AbstractTableRendering extends AbstractMemoryRendering implements IPropertyChangeListener{	
 
-	// Property Ids for the selected address in a table rendering
+	/**
+	 *  Property identifier for the selected address in a table rendering
+	 */
 	public static final String PROPERTY_SELECTED_ADDRESS = "selectedAddress"; //$NON-NLS-1$
-	// Property Ids for the column size in a table rendering
+	
+	/**
+	 * Property identifier for the column size in a table rendering
+	 */
 	public static final String PROPERTY_COL_SIZE = "columnSize"; //$NON-NLS-1$
-	// Property Ids for the top row address in a table rendering
+	
+	/**
+	 * Property identifier for the top row address in a table rendering
+	 */
 	public static final String PROPERTY_TOP_ADDRESS = "topAddress"; //$NON-NLS-1$
 	
 	private PageBook fPageBook;
@@ -204,12 +214,17 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * @param renderingId
+	 * Constructs a new table rendering of the specified type.
+	 * 
+	 * @param renderingId memory rendering type identifier
 	 */
 	public AbstractTableRendering(String renderingId) {
 		super(renderingId);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		// if memory view table font has changed
 		if (event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME))
@@ -409,8 +424,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 
 	/**
 	 * Create the table viewer and other support controls
-	 * for this rendering
-	 * @param parent
+	 * for this rendering.
+	 * 
+	 * @param parent parent composite
 	 */
 	private void createTableViewer(Composite parent) {
 		
@@ -837,7 +853,8 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	
 	/**
-	 * Format view tab based on parameters.
+	 * Format view tab based on the bytes per line and column.
+	 * 
 	 * @param bytesPerLine - number of bytes per line, possible values: 16 * addressableSize
 	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16) * addressableSize
 	 * @return true if format is successful, false, otherwise
@@ -1022,7 +1039,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * Display content of the table viewer
+	 * Displays the content of the table viewer.
 	 */
 	public void displayTable()
 	{
@@ -1031,9 +1048,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * Display an error in the view tab.
-	 * Make use of the text viewer instead of the table viewer.
-	 * @param e
+	 * Displays an error message for the given exception.
+	 * 
+	 * @param e exception to display 
 	 */
 	public void displayError(DebugException e)
 	{
@@ -1050,19 +1067,27 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fContentProvider.clearContentCache();
 	}
 	
+	/**
+	 * Returns whether the error page is displayed.
+	 * 
+	 * @return whether the error page is displayed
+	 */
 	public boolean isDisplayingError()
 	{	
 		return fIsShowingErrorPage;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getControl()
+	 */
 	public Control getControl() {
 		return fPageBook;
 	}
 	
-	
-	
 	/**
-	 * @return addressable size in bytes
+	 * Returns the addressible size of this rendering's memory block in bytes.
+	 * 
+	 * @return the addressible size of this rendering's memory block in bytes
 	 */
 	public int getAddressableSize() {
 		return fAddressableSize;
@@ -1192,7 +1217,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * Resize column to the preferred size
+	 * Resize column to the preferred size.
 	 */
 	public void resizeColumnsToPreferredSize() {
 		// pack columns
@@ -1246,8 +1271,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * Fill context menu of this rendering
-	 * @param menu
+	 * Fills the context menu for this rendering
+	 * 
+	 * @param menu menu to fill
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
 	
@@ -1293,13 +1319,17 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * @return number of addressable units per line
+	 * Returns the number of addressable units per row.
+	 *  
+	 * @return number of addressable units per row
 	 */
 	public int getAddressableUnitPerLine() {
 		return fBytePerLine / fAddressableSize;
 	}
 	
 	/**
+	 * Returns the number of addressable units per column.
+	 * 
 	 * @return number of addressable units per column
 	 */
 	public int getAddressableUnitPerColumn() {
@@ -1307,7 +1337,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * @return current column size
+	 * Returns the number of bytes displayed in a single column cell.
+	 * 
+	 * @return the number of bytes displayed in a single column cell
 	 */
 	public int getBytesPerColumn()
 	{
@@ -1315,7 +1347,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 
 	/**
-	 * @return number of bytes per line
+	 * Returns the number of bytes displayed in a row.
+	 * 
+	 * @return the number of bytes displayed in a row
 	 */
 	public int getBytesPerLine()
 	{
@@ -1323,8 +1357,7 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * Update labels of this rendering without regetting memory from the
-	 * memory block.
+	 * Updates labels of this rendering.
 	 */
 	public void updateLabels()
 	{
@@ -1338,7 +1371,13 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 			fTableViewer.refresh();
 		}
 	}
-	
+	/**
+	 * Updates the label of this rendering, optionally displaying the
+	 * base address of this rendering's memory block.
+	 * 
+	 * @param showAddress whether to display the base address of this
+	 *  rendering's memory block in this rendering's label
+	 */
 	protected void updateRenderingLabel(boolean showAddress)
 	{	
 		fLabel = ""; //$NON-NLS-1$
@@ -1579,11 +1618,17 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		return index;
 	}
 	
+	/**
+	 * Returns this rendering's table viewer.
+	 */
 	public TableViewer getTableViewer()
 	{
 		return fTableViewer;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#dispose()
+	 */
 	public void dispose() {
 		try {	
 			// prevent rendering from being disposed again
@@ -1663,10 +1708,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	
 	
 	/**
-	 * Move cursor to the specified address.
+	 * Moves the cursor to the specified address.
 	 * Will load more memory if the address is not currently visible.
-	 * @param address
-	 * @throws DebugException
+	 * 
+	 * @param address address to position cursor at
+	 * @throws DebugException if an exception occurrs
 	 */
 	public void goToAddress(BigInteger address) throws DebugException {
 		Object evtLockClient = new Object();
@@ -2355,6 +2401,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fTableViewer.getCellModifier().modify(tableItem, (String)property, newValue);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
+	 */
 	public void becomesHidden() {
 		
 		if (isVisible() == false)
@@ -2373,6 +2422,10 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 		fContentProvider.resetDeltas();
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesVisible()
+	 */
 	public void becomesVisible() {
 		
 		// do not do anything if already visible
@@ -2425,9 +2478,9 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * Reset this memory rendering.
-	 * Cursor will be moved to the base address of the memory block.
-	 * The table will be positioned back to have the base address
+	 * Resets this memory rendering.
+	 * The cursor will be moved to the base address of the memory block.
+	 * The table will be positioned to have the base address
 	 * at the top.
 	 */
 	public void reset()
@@ -2451,14 +2504,18 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * @return the current selected address in the rendering.
+	 * Returns the currently selected address in this rendering.
+	 * 
+	 * @return the currently selected address in this rendering
 	 */
 	public BigInteger getSelectedAddress() {
 		return fSelectedAddress;
 	}
 
 	/**
-	 * @return the content at the selected address.
+	 * Returns the currently selected content in this rendering as a String.
+	 * 
+	 * @return the currently selected content in this rendering
 	 */
 	public String getSelectedContent() {
 
@@ -2481,8 +2538,11 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * @return number of characters a byte will converted to.  Return
-	 * -1 if this value is unknown.
+	 * Returns the number of characters a byte will convert to
+	 * or -1 if unknown.
+	 * 
+	 * @return the number of characters a byte will convert to
+	 *  or -1 if unknown
 	 */
 	public int getNumCharsPerByte()
 	{
@@ -2515,33 +2575,34 @@ public abstract class AbstractTableRendering extends AbstractMemoryRendering imp
 	}
 	
 	/**
-	 * This is called by the label provider for <code>AbstractTableRendering</code> Implementor can
-	 * reuse a memory view tab and presents data in a different format.
+	 * Returns text for the given memory bytes at the specified address for the specified
+	 * rendering type. This is called by the label provider for.
+	 * Subclasses must override.
 	 * 
-	 * @param dataType -
-	 *            type of data the bytes hold
-	 * @param address -
-	 *            addres where the bytes belong to
-	 * @param data -
-	 *            the bytes
-	 * @return a string to represent the memory. Do not return null. Return a
-	 *         string to pad the cell if the memory cannot be converted
-	 *         successfully.
+	 * @param renderingTypeId rendering type identifier
+	 * @param address address where the bytes belong to
+	 * @param data the bytes
+	 * @return a string to represent the memory. Cannot not return <code>null</code>.
+	 * 	Returns a string to pad the cell if the memory cannot be converted
+	 *  successfully.
 	 */
-	abstract public String getString(String dataType, BigInteger address, MemoryByte[] data);
+	abstract public String getString(String renderingTypeId, BigInteger address, MemoryByte[] data);
 	
 	/**
-	 * This is called by the cell modifier from an AbstractTableRendering.
-	 * Implementor will convert the string value to an array of bytes.  The bytes will
+	 * Returns bytes for the given text corresponding to bytes at the given
+	 * address for the specified rendering type. This is called by the cell modifier
+	 * when modifying bytes in a memory block.
+	 * Subclasses must convert the string value to an array of bytes.  The bytes will
 	 * be passed to the debug adapter for memory block modification.
-	 * Return null if the byte cannot be formatted properly.
-	 * @param dataType - type of data the string represents
-	 * @param address - address where the bytes belong to
-	 * @param currentValues - current values of the data in bytes format
-	 * @param newValue - the string to be converted to bytes
-	 * @return the bytes to be passed to debug adapter for modification.
+	 * Returns <code>null</code> if the bytes cannot be formatted properly.
+	 * 
+	 * @param renderingTypeId rendering type identifier
+	 * @param address address the bytes begin at
+	 * @param currentValues current values of the data in bytes format
+	 * @param newValue the string to be converted to bytes
+	 * @return the bytes converted from a string
 	 */
-	abstract public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String newValue);
+	abstract public byte[] getBytes(String renderingTypeId, BigInteger address, MemoryByte[] currentValues, String newValue);
 
 }	
 
