@@ -10,16 +10,29 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.io.File;
-import java.util.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.*;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Request;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -39,161 +52,6 @@ public class CVSWorkspaceRoot {
 	
 	public CVSWorkspaceRoot(IContainer resource){
 		this.localRoot = getCVSFolderFor(resource);
-	}
-
-	/**
-	 * Checkout a CVS module.
-	 * 
-	 * The provided project represents the target project. Any existing contents
-	 * may or may not get overwritten. If project is <code>null</code> then a project
-	 * will be created based on the provided sourceModule. If soureModule is null, 
-	 * then the project name will be used as the module to
-	 * check out. If both are absent, an exception is thrown.
-	 * 
-	 * Resources existing in the local file system at the target project location but now 
-	 * known to the workbench will be overwritten.
-	 * 
-	 * After the successful completion of this method, the project will exist
-	 * and be open.
-	 */
-	public static void checkout(
-		ICVSRepositoryLocation repository,
-		IProject project,
-		String sourceModule,
-		CVSTag tag,
-		IProgressMonitor monitor)
-		throws TeamException {
-		
-		if (sourceModule == null)
-			sourceModule = project.getName();
-		checkout(new ICVSRemoteFolder[] { new RemoteFolder(null, repository, sourceModule, tag)},
-			new IProject[] { project }, monitor);
-	}
-
-	/**
-	 * Checkout the remote resources into the local workspace. Each resource will 
-	 * be checked out into the corresponding project. If the corresponding project is
-	 * null or if projects is null, the name of the remote resource is used as the name of the project.
-	 * 
-	 * Resources existing in the local file system at the target project location but now 
-	 * known to the workbench will be overwritten.
-	 */
-	public static void checkout(final ICVSRemoteFolder[] resources, final IProject[] projects, final IProgressMonitor monitor) throws TeamException {
-		final TeamException[] eHolder = new TeamException[1];
-		try {
-			IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor pm) throws CoreException {
-					try {
-						pm.beginTask(null, 1000 * resources.length);
-						
-						// Get the location of the workspace root
-						ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
-						
-						for (int i=0;i<resources.length;i++) {
-							IProject project = null;
-							RemoteFolder resource = (RemoteFolder)resources[i];
-							
-							// Determine the provided target project if there is one
-							if (projects != null) 
-								project = projects[i];
-							
-							// Determine the remote module to be checked out
-							String moduleName;
-							if (resource instanceof RemoteModule) {
-								moduleName = ((RemoteModule)resource).getName();
-							} else {
-								moduleName = resource.getRepositoryRelativePath();
-							}
-							
-							// Open a connection session to the repository
-							ICVSRepositoryLocation repository = resource.getRepository();
-							Session session = new Session(repository, root);
-							try {
-								session.open(Policy.subMonitorFor(pm, 50), false /* read-only */);
-								
-								// Determine the local target projects (either the project provider or the module expansions) 
-								final Set targetProjects = new HashSet();
-								if (project == null) {
-									
-									// Fetch the module expansions
-									IStatus status = Request.EXPAND_MODULES.execute(session, new String[] {moduleName}, Policy.subMonitorFor(pm, 50));
-									if (status.getCode() == CVSStatus.SERVER_ERROR) {
-										throw new CVSServerException(status);
-									}
-									
-									// Convert the module expansions to local projects
-									String[] expansions = session.getModuleExpansions();
-									for (int j = 0; j < expansions.length; j++) {
-										targetProjects.add(ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(expansions[j]).segment(0)));
-									}
-									
-								} else {
-									targetProjects.add(project);
-								}
-								
-								// Prepare the target projects to receive resources
-								root.run(new ICVSRunnable() {
-									public void run(IProgressMonitor monitor) throws CVSException {
-										scrubProjects((IProject[]) targetProjects.toArray(new IProject[targetProjects.size()]), monitor);
-									}
-								}, Policy.subMonitorFor(pm, 100));
-							
-								// Build the local options
-								List localOptions = new ArrayList();
-								// Add the option to load into the target project if one was supplied
-								if (project != null) {
-									localOptions.add(Checkout.makeDirectoryNameOption(project.getName()));
-								}
-								// Prune empty directories if pruning enabled
-								if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
-									localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
-								// Add the options related to the CVSTag
-								CVSTag tag = resource.getTag();
-								if (tag == null) {
-									// A null tag in a remote resource indicates HEAD
-									tag = CVSTag.DEFAULT;
-								}
-								localOptions.add(Update.makeTagOption(tag));
-		
-								// Perform the checkout
-								IStatus status = Command.CHECKOUT.execute(session,
-									Command.NO_GLOBAL_OPTIONS,
-									(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-									new String[]{moduleName},
-									null,
-									Policy.subMonitorFor(pm, 800));
-								if (status.getCode() == CVSStatus.SERVER_ERROR) {
-									// XXX Should we cleanup any partially checked out projects?
-									throw new CVSServerException(status);
-								}
-								
-								// Bring the project into the workspace
-								refreshProjects((IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), Policy.subMonitorFor(pm, 100));
-
-							} finally {
-								session.close();
-							}
-						}
-					}
-					catch (TeamException e) {
-						// Pass it outside the workspace runnable
-						eHolder[0] = e;
-					} finally {
-						pm.done();
-					}
-					// CoreException and OperationCanceledException are propagated
-				}
-			};
-			ResourcesPlugin.getWorkspace().run(workspaceRunnable, monitor);
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		} finally {
-			monitor.done();
-		}		
-		// Re-throw the TeamException, if one occurred
-		if (eHolder[0] != null) {
-			throw eHolder[0];
-		}
 	}
 					
 	/**
@@ -251,84 +109,6 @@ public class CVSWorkspaceRoot {
 		}
 		
 		return s.getModuleExpansions();
-	}
-
-	/*
-	 * Delete the target projects before checking out
-	 */
-	/* internal use only */ static void scrubProjects(IProject[] projects, IProgressMonitor monitor) throws CVSException {
-		if (projects == null) {
-			monitor.done();
-			return;
-		}
-		monitor.beginTask(Policy.bind("CVSProvider.Scrubbing_projects_1"), projects.length * 100); //$NON-NLS-1$
-		try {	
-			for (int i=0;i<projects.length;i++) {
-				IProject project = projects[i];
-				if (project != null && project.exists()) {
-					if(!project.isOpen()) {
-						project.open(Policy.subMonitorFor(monitor, 10));
-					}
-					// We do not want to delete the project to avoid a project deletion delta
-					// We do not want to delete the .project to avoid core exceptions
-					monitor.subTask(Policy.bind("CVSProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
-					// unmap the project from any previous repository provider
-					if (RepositoryProvider.getProvider(project) != null)
-						RepositoryProvider.unmap(project);
-					IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 80);
-					subMonitor.beginTask(null, children.length * 100);
-					try {
-						for (int j = 0; j < children.length; j++) {
-							if ( ! children[j].getName().equals(".project")) {//$NON-NLS-1$
-								children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
-							}
-						}
-					} finally {
-						subMonitor.done();
-					}
-				} else if (project != null) {
-					// Make sure there is no directory in the local file system.
-					File location = new File(project.getParent().getLocation().toFile(), project.getName());
-					if (location.exists()) {
-						deepDelete(location);
-					}
-				}
-			}
-		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
-		} finally {
-			monitor.done();
-		}
-	}
-	
-	private static void deepDelete(File resource) {
-		if (resource.isDirectory()) {
-			File[] fileList = resource.listFiles();
-			for (int i = 0; i < fileList.length; i++) {
-				deepDelete(fileList[i]);
-			}
-		}
-		resource.delete();
-	}
-	
-	/*
-	 * Bring the provied projects into the workspace
-	 */
-	/* internal use only */ static void refreshProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException, TeamException {
-		monitor.beginTask(Policy.bind("CVSProvider.Creating_projects_2"), projects.length * 100); //$NON-NLS-1$
-		try {
-			for (int i = 0; i < projects.length; i++) {
-				IProject project = projects[i];
-				// Register the project with Team
-				RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
-				CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-				provider.setWatchEditEnabled(CVSProviderPlugin.getPlugin().isWatchEditEnabled());
-			}
-			
-		} finally {
-			monitor.done();
-		}
 	}
 					
 	public static ICVSFolder getCVSFolderFor(IContainer resource) {

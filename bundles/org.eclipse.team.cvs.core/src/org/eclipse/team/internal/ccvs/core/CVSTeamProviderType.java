@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
+import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.RepositoryProviderType;
 
 
@@ -27,5 +28,10 @@ public class CVSTeamProviderType extends RepositoryProviderType {
 		return false;
 	}
 
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProviderType#getProjectSetCapability()
+	 */
+	public ProjectSetCapability getProjectSetCapability() {
+		return new CVSProjectSetCapability();
+	}
 }

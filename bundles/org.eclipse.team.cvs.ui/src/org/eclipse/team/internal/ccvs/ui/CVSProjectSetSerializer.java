@@ -11,7 +11,9 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -20,12 +22,21 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.*;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.core.IProjectSetSerializer;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSProjectSetSerializer implements IProjectSetSerializer {
@@ -142,11 +153,11 @@ public class CVSProjectSetSerializer implements IProjectSetSerializer {
 				try {
 					for (int i = 0; i < size; i++) {
 						if (locations[i] != null) {
-							CVSWorkspaceRoot.checkout(locations[i], projects[i], modules[i], tags[i], new SubProgressMonitor(monitor, 1000));
+							ICVSRemoteFolder remote = new RemoteFolder(null, locations[i], modules[i], tags[i]);
+							new CheckoutSingleProjectOperation(null /* no part */, remote, projects[i], null /* location */, true)
+								.run(new SubProgressMonitor(monitor, 1000));
 						}
 					}
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
 				}
