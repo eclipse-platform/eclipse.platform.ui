@@ -1,27 +1,7 @@
 package org.eclipse.update.internal.ui;
 
-import java.util.Enumeration;
-import org.eclipse.swt.graphics.*;
-import java.util.Iterator;
-import java.util.TreeSet;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.swt.custom.*;
-import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.core.internal.boot.update.*;
-import java.net.*;
-import java.util.Hashtable;
-import java.util.Vector;
-import org.eclipse.jface.dialogs.MessageDialog;
-import java.util.Collection;
-import java.io.InputStream;
+import java.io.InputStream;import java.lang.reflect.InvocationTargetException;import java.net.MalformedURLException;import java.net.URL;import java.util.Hashtable;import java.util.Iterator;import java.util.TreeSet;import java.util.Vector;import org.eclipse.core.internal.boot.update.IComponentDescriptor;import org.eclipse.core.internal.boot.update.IComponentEntryDescriptor;import org.eclipse.core.internal.boot.update.IManifestDescriptor;import org.eclipse.core.internal.boot.update.IProductDescriptor;import org.eclipse.core.internal.boot.update.IUMRegistry;import org.eclipse.core.internal.boot.update.URLNamePair;import org.eclipse.core.internal.boot.update.UpdateManagerConstants;import org.eclipse.core.internal.boot.update.BaseURLHandler.Response;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.viewers.ColumnLayoutData;import org.eclipse.jface.viewers.ColumnWeightData;import org.eclipse.jface.viewers.TableLayout;import org.eclipse.jface.wizard.WizardPage;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.SashForm;import org.eclipse.swt.custom.TableTree;import org.eclipse.swt.custom.TableTreeItem;import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseMoveListener;import org.eclipse.swt.events.MouseTrackListener;import org.eclipse.swt.events.SelectionEvent;import org.eclipse.swt.events.SelectionListener;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.layout.GridData;import org.eclipse.swt.layout.GridLayout;import org.eclipse.swt.widgets.Button;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.TableColumn;import org.eclipse.swt.widgets.TableItem;import org.eclipse.swt.widgets.Text;import org.eclipse.update.internal.core.URLHandler;import org.eclipse.update.internal.core.UpdateManagerStrings;
+import org.eclipse.webdav.http.client.IStatusCodes;
 
 /**
  * Presents products and components that may be selected for installation.
@@ -728,10 +708,12 @@ protected void initializeContent() {
 
 			Iterator iter = _treeSetLocations.iterator();
 
-			boolean bUrlOk = true;
+			boolean bUrlOk = false;
 
 			while (iter.hasNext() == true) {
-
+				
+				bUrlOk = false;
+				
 				// Obtain the registry for the URL
 				// This will download the information
 				//-----------------------------------
@@ -742,22 +724,19 @@ protected void initializeContent() {
 				// Attempt to open the stream
 				//---------------------------
 				try {
-					bUrlOk = true;
-
 					URL url = new URL(pair._getURL());
 
-					InputStream stream = URLHandler.open(url).getInputStream();
+					Response response = URLHandler.open(url);
+					if( response.getResponseCode() == IStatusCodes.HTTP_OK ){
+						InputStream stream = response.getInputStream();
 
-					if (stream != null)
-						stream.close();
-					else {
-						bUrlOk = false;
-						vectorURLsFailed.add(pair);
+						if (stream != null){
+							stream.close();
+							bUrlOk = true;
+						}
 					}
 				}
 				catch (Exception ex) {
-					bUrlOk = false;
-					vectorURLsFailed.add(pair);
 				}
 
 				if (bUrlOk == true) {
@@ -767,6 +746,9 @@ protected void initializeContent() {
 					//-------------------
 					if (registry != null)
 						vectorRegistries.add(registry);
+				}
+				else{
+					vectorURLsFailed.add(pair);					
 				}
 
 				progressMonitor.worked(1);
