@@ -36,8 +36,7 @@ public class JarVerificationPage extends BannerPage {
 		_strId = verificationResult.getFeature().getVersionedIdentifier().toString();
 		_strFeatureName = verificationResult.getFeature().getLabel();
 		_strProviderName = verificationResult.getFeature().getProvider();
-		componentVerified =
-			(verificationResult.isFeatureVerification()) ? "feature" : "feature file";
+		componentVerified =	(verificationResult.isFeatureVerification()) ? ".Feature" : ".File";
 		okToInstall = false;
 	}
 
@@ -119,19 +118,19 @@ public class JarVerificationPage extends BannerPage {
 
 			case IVerificationResult.TYPE_ENTRY_NOT_SIGNED :
 				String msg =
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.AboutToInstall",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.AboutToInstall"+
 						componentVerified);
 				setMessage(msg, WARNING);
 				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.NotDigitallySigned",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.NotDigitallySigned"+
 						componentVerified));
 				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.CannotVerifyProvider",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.CannotVerifyProvider"+
 						componentVerified));
 				//$NON-NLS-1$
 /*				strb.append("\r\n"); //$NON-NLS-1$
@@ -150,8 +149,8 @@ public class JarVerificationPage extends BannerPage {
 
 			case IVerificationResult.TYPE_ENTRY_CORRUPTED :
 				msg =
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.CorruptedContent",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.CorruptedContent"+
 						componentVerified);
 				setMessage(msg, ERROR);
 				//$NON-NLS-1$
@@ -164,23 +163,23 @@ public class JarVerificationPage extends BannerPage {
 
 			case IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED :
 				msg =
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.SignedComponent",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.SignedComponent"+
 						componentVerified);
 				//$NON-NLS-1$
 				setMessage(msg, WARNING);
 				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.UnknownCertificate",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.UnknownCertificate"+
 						componentVerified));
 				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.UnableToVerifyProvider",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.UnableToVerifyProvider"+
 						componentVerified));
 				//$NON-NLS-1$
-				strb.append("\r\n"); //$NON-NLS-1$
+/*				strb.append("\r\n"); //$NON-NLS-1$
 				if (_VerificationResult.isFeatureVerification()) {
 					strb.append(
 						UpdateUIPlugin.getResourceString("JarVerificationDialog.InstallMayCorrupt"));
@@ -190,25 +189,26 @@ public class JarVerificationPage extends BannerPage {
 						UpdateUIPlugin.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
 					//$NON-NLS-1$ 					
 				}
+				*/
 				labelInformation.setText(strb.toString());
 				break;
 
 			case IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED :
 				msg =
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.SignedComponent",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.SignedComponent"+
 						componentVerified);
 				//$NON-NLS-1$
 				setMessage(msg, WARNING);
 				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.KnownCertificate",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.KnownCertificate"+
 						componentVerified));
 				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.ProviderKnown",
+					UpdateUIPlugin.getResourceString(
+						"JarVerificationDialog.ProviderKnown"+
 						componentVerified));
 				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
