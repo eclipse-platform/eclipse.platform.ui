@@ -92,6 +92,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
@@ -101,6 +102,7 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
@@ -307,14 +309,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 	private void updateCommandsAndContexts() {
 		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
-		ICommandHandlerService activeWorkbenchWindowCommandHandlerService = (activeWorkbenchWindow != null) ? ((WorkbenchWindow) activeWorkbenchWindow).getCommandHandlerService() : null;
-		IContextActivationService activeWorkbenchWindowContextActivationService = (activeWorkbenchWindow != null) ? ((WorkbenchWindow) activeWorkbenchWindow).getContextActivationService() : null;
+		ICommandHandlerService activeWorkbenchWindowCommandHandlerService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getCommandHandlerService() : null;
+		IContextActivationService activeWorkbenchWindowContextActivationService = activeWorkbenchWindow != null ? ((WorkbenchWindow) activeWorkbenchWindow).getContextActivationService() : null;
 		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
-		ICommandHandlerService activeWorkbenchPageCommandHandlerService = (activeWorkbenchPage != null) ? ((WorkbenchPage) activeWorkbenchPage).getCommandHandlerService() : null;
-		IContextActivationService activeWorkbenchPageContextActivationService = (activeWorkbenchPage != null) ? ((WorkbenchPage) activeWorkbenchPage).getContextActivationService() : null;
-		IWorkbenchPart activeWorkbenchPart = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService().getActivePart() : null;
-		ICommandHandlerService activeWorkbenchPartCommandHandlerService = (activeWorkbenchPart != null) ? ((PartSite) activeWorkbenchPart.getSite()).getCommandHandlerService() : null;
-		IContextActivationService activeWorkbenchPartContextActivationService = (activeWorkbenchPart != null) ? ((PartSite) activeWorkbenchPart.getSite()).getContextActivationService() : null;
+		ICommandHandlerService activeWorkbenchPageCommandHandlerService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getCommandHandlerService() : null;
+		IContextActivationService activeWorkbenchPageContextActivationService = activeWorkbenchPage != null ? ((WorkbenchPage) activeWorkbenchPage).getContextActivationService() : null;		
+		IPartService activePartService = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService() : null;
+		IWorkbenchPart activeWorkbenchPart = activePartService != null ? activePartService.getActivePart() : null;
+		IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart != null ? activeWorkbenchPart.getSite() : null;
+		ICommandHandlerService activeWorkbenchPartCommandHandlerService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getCommandHandlerService() : null;
+		IContextActivationService activeWorkbenchPartContextActivationService = activeWorkbenchPartSite != null ? ((PartSite) activeWorkbenchPartSite).getContextActivationService() : null;
 
 		if (activeWorkbenchWindow != this.activeWorkbenchWindow) {
 			if (this.activeWorkbenchWindow != null) {
