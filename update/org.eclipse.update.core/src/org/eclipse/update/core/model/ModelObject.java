@@ -214,7 +214,7 @@ public abstract class ModelObject {
 			return s;
 	
 		if (!s.startsWith(KEY_PREFIX)) 
-			return s;
+			return string;
 
 		if (s.startsWith(KEY_DOUBLE_PREFIX)) 
 			return s.substring(1);
