@@ -59,20 +59,21 @@
             id="org.eclipse.search.menu"
             label="%searchMenu.label"
             path="navigate">
-         	<separator name="dialogGroup"/>
+			<groupMarker name="internalDialogGroup"/>   <!-- not to be used by clients  -->
+			<groupMarker name="dialogGroup"/>           <!-- to be used by clients      -->
          	<separator name="contextMenuActionsGroup"/>
       	</menu>
       	
-      	<!-- dialog group  -->		
+      	<!-- dialog group  -->
 		<action id="org.eclipse.search.OpenFileSearchPage"
-			menubarPath="org.eclipse.search.menu/dialogGroup"
+			menubarPath="org.eclipse.search.menu/internalDialogGroup"
 			label="%openFileSearchPageAction.label"
 			icon="icons/full/obj16/tsearch_obj.gif"
 			class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
 
 		<action id="org.eclipse.search.OpenSearchDialog"
 			toolbarPath="Normal/Search"			
-			menubarPath="org.eclipse.search.menu/dialogGroup"
+			menubarPath="org.eclipse.search.menu/internalDialogGroup"
 			label="%openSearchDialogAction.label"
 			tooltip="%openSearchDialogAction.tooltip"
 			icon="icons/full/ctool16/search.gif"
