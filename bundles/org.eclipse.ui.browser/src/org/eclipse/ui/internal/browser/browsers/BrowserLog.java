@@ -71,6 +71,7 @@ public class BrowserLog {
 				try {
 					outWriter.close();
 				} catch (IOException ioe) {
+					// ignore
 				}
 			}
 		}

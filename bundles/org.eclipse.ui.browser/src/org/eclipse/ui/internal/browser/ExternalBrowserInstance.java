@@ -76,7 +76,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 					process.waitFor();
 					DefaultBrowserSupport.getInstance().removeBrowser(getId());
 				} catch (Exception e) {
-					
+					// ignore
 				}
 			}
 		};

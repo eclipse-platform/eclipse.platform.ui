@@ -233,7 +233,6 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 		
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				Object obj = getSelection(event.getSelection());
 				boolean sel = !tableViewer.getSelection().isEmpty();
 				remove.setEnabled(sel);
 				edit.setEnabled(sel);
@@ -511,7 +510,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements IWorkben
 			if (wc != null)
 				foundBrowsers.add(wc);
 
-			try {
+			try { // TODO: limit status to just the folder paths
 				monitor.subTask(
 					MessageFormat.format(WebBrowserUIPlugin.getResource("%searching"),
 						new String[] { Integer.toString(foundBrowsers.size()), file.getCanonicalPath()}));

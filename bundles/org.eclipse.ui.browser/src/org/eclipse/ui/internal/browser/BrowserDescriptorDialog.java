@@ -144,8 +144,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		
 		new Label(composite, SWT.NONE);
 		Label urlLabel = new Label(composite, SWT.NONE);
-		urlLabel.setText(WebBrowserUIPlugin.getResource("%parametersMessage", BrowserDescriptor.URL_PARAMETER));
-	
+		urlLabel.setText(WebBrowserUIPlugin.getResource("%parametersMessage", IBrowserDescriptor.URL_PARAMETER));
 		
 		return composite;
 	}

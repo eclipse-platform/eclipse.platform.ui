@@ -109,8 +109,8 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static IBrowserExt findBrowsers(String executable) {
-		IBrowserExt[] browsers = getBrowsers();
-		if (browsers == null || executable == null)
+		IBrowserExt[] browsers2 = getBrowsers();
+		if (browsers2 == null || executable == null)
 			return null;
 		
 		int ind1 = executable.lastIndexOf("/");
@@ -120,13 +120,13 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 		executable = executable.substring(ind1 + 1);
 		
 		String os = Platform.getOS();
-		int size = browsers.length;
+		int size = browsers2.length;
 		for (int i = 0; i < size; i++) {
-			if (browsers[i].getOS().toLowerCase().indexOf(os) != -1) {
-				if (browsers[i].isAvailable()) {
-					String executable2 = browsers[i].getExecutable();
+			if (browsers2[i].getOS().toLowerCase().indexOf(os) != -1) {
+				if (browsers2[i].isAvailable()) {
+					String executable2 = browsers2[i].getExecutable();
 					if (executable.startsWith(executable2))
-						return browsers[i];
+						return browsers2[i];
 				}
 			}
 		}
@@ -141,7 +141,7 @@ public class WebBrowserUIPlugin extends AbstractUIPlugin {
 			return;
 		Trace.trace(Trace.CONFIG, "->- Loading .browsers extension point ->-");
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] cf = registry.getConfigurationElementsFor(PLUGIN_ID, "internalBrowsers");
+		IConfigurationElement[] cf = registry.getConfigurationElementsFor(PLUGIN_ID, "browsers");
 
 		int size = cf.length;
 		browsers = new ArrayList(size);

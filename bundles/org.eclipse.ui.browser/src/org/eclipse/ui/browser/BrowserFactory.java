@@ -8,29 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.browser.provisional;
+package org.eclipse.ui.browser;
 
 import org.eclipse.ui.browser.IWebBrowser;
 /**
  * Implementators of <code>org.eclipse.ui.browser.browsers</code> extension
- * points must provide implementation of this interface.
+ * points must provide an implementation of this abstract class.
  * 
- * @since 1.0
+ * @since 3.1
  */
-public interface IBrowserFactory {
+public abstract class BrowserFactory {
 	/**
 	 * Checks whether the factory can work on the user system.
 	 * 
-	 * @return false if the factory cannot work on this system; for example the
-	 *    required native browser required by browser adapters that it
-	 *    creates is not installed
+	 * @return <code>false</code> if the factory can work on this system; for
+	 *    example the required native browser required by browser adapters that
+	 *    it creates is not installed, or <code>true</code> otherwise
 	 */
-	public boolean isAvailable();
+	public boolean isAvailable() {
+		return true;
+	}
 
 	/**
 	 * Obtains a new instance of a web browser.
 	 * 
-	 * @return instance of IBrowser
+	 * @param id the browser id
+	 * @param location the browser location
+	 * @param parameters the browser parameters
+	 * @return an instance of IWebBrowser
 	 */
-	public IWebBrowser createBrowser(String id, String location, String parameters);
+	public abstract IWebBrowser createBrowser(String id, String location, String parameters);
 }

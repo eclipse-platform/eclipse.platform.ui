@@ -10,28 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.macosx;
 
+import org.eclipse.ui.browser.BrowserFactory;
 import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.internal.browser.provisional.IBrowserFactory;
 
-public class DefaultBrowserFactory implements IBrowserFactory {
-
-	public DefaultBrowserFactory() {
-		super();
-	}
-
+public class DefaultBrowserFactory extends BrowserFactory {
 	/*
-	 * @see IBrowserFactory#isAvailable()
-	 */
-	public boolean isAvailable() {
-		return System.getProperty("os.name").equals("Mac OS X");
-		/*
-		 * we assume that every Mac OS X has an "/usr/bin/osascript" so we don't
-		 * test any further
-		 */
-	}
-
-	/*
-	 * @see IBrowserFactory#createBrowser()
+	 * @see BrowserFactory#createBrowser()
 	 */
 	public IWebBrowser createBrowser(String id, String location, String parameters) {
 		return new DefaultBrowser(id);

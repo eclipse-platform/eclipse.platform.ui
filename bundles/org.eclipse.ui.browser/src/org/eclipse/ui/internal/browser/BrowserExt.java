@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.ui.browser.BrowserFactory;
 import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.internal.browser.provisional.IBrowserFactory;
 /**
  * 
  * @since 1.0
  */
 public class BrowserExt implements IBrowserExt {
 	private IConfigurationElement element;
-	private IBrowserFactory delegate;
+	private BrowserFactory delegate;
 
 	/**
 	 * BrowserExt constructor comment.
@@ -78,10 +78,10 @@ public class BrowserExt implements IBrowserExt {
 		return s;
 	}
 
-	protected IBrowserFactory getDelegate() {
+	protected BrowserFactory getDelegate() {
 		if (delegate == null) {
 			try {
-				delegate = (IBrowserFactory) element.createExecutableExtension("class");
+				delegate = (BrowserFactory) element.createExecutableExtension("class");
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Could not create delegate" + toString() + ": " + e.getMessage());
 			}

@@ -11,13 +11,12 @@
 package org.eclipse.ui.internal.browser.browsers;
 import java.io.*;
 
+import org.eclipse.ui.browser.BrowserFactory;
 import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.internal.browser.provisional.IBrowserFactory;
 
-public class MozillaFactory implements IBrowserFactory {
+public class MozillaFactory extends BrowserFactory {
 	private String executable;
 	private String executableName;
-	private String osList;
 	private MozillaBrowser browserInstance = null;
 	
 	/**
@@ -28,7 +27,7 @@ public class MozillaFactory implements IBrowserFactory {
 	}
 	
 	/*
-	 * @see IBrowserFactory#isAvailable()
+	 * @see BrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
 		try {
@@ -38,12 +37,11 @@ public class MozillaFactory implements IBrowserFactory {
 			StreamConsumer errors = new StreamConsumer(pr.getErrorStream());
 			(errors).start();
 			pr.waitFor();
+			
 			int ret = pr.exitValue();
-			if (ret == 0) {
+			if (ret == 0)
 				return !errorsInOutput(outputs, errors);
-			} else {
-				return false;
-			}
+			return false;
 		} catch (InterruptedException e) {
 			return false;
 		} catch (IOException e) {
@@ -83,7 +81,7 @@ public class MozillaFactory implements IBrowserFactory {
 	}
 	
 	/*
-	 * @see IBrowserFactory#createBrowser()
+	 * @see BrowserFactory#createBrowser()
 	 */
 	public IWebBrowser createBrowser(String id, String location, String parameters) {
 		// Create single browser for all clients

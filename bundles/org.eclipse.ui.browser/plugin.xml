@@ -17,10 +17,9 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.ide"/>
    </requires>
 
-   <extension-point id="internalBrowsers" name="%browser_extension_point_name" schema="schema/internalBrowsers.exsd"/>
+   <extension-point id="browsers" name="%browser_extension_point_name" schema="schema/browsers.exsd"/>
 
    <extension point="org.eclipse.ui.preferencePages">
       <page
@@ -36,26 +35,28 @@
          class="org.eclipse.ui.internal.browser.DefaultBrowserSupport"/>
    </extension>
    
-   <extension point="org.eclipse.ui.views"> 
+   <extension point="org.eclipse.ui.views">
       <view
-         id="org.eclipse.ui.browser.view"
-         name="%viewWebBrowserTitle"
-         category="org.eclipse.ui"
-         class="org.eclipse.ui.internal.browser.WebBrowserView"
-         icon="icons/obj16/internal_browser.gif"/>
+            allowMultiple="true"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.browser.WebBrowserView"
+            icon="icons/obj16/internal_browser.gif"
+            id="org.eclipse.ui.browser.view"
+            name="%viewWebBrowserTitle"/>
    </extension>
 
    <extension point="org.eclipse.ui.editors">
       <editor
-         id="org.eclipse.ui.browser.editor"
-         name="%viewWebBrowserTitle"
-         icon="icons/obj16/internal_browser.gif"
-         class="org.eclipse.ui.internal.browser.WebBrowserEditor"
-         contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"/>
+            class="org.eclipse.ui.internal.browser.WebBrowserEditor"
+            contributorClass="org.eclipse.ui.internal.browser.WebBrowserEditorActionBarContributor"
+            extensions="htm,html,shtml"
+            icon="icons/obj16/internal_browser.gif"
+            id="org.eclipse.ui.browser.editor"
+            name="%viewWebBrowserTitle"/>
   </extension>
 
    <!-- Web Browsers -->
-   <extension point="org.eclipse.ui.browser.internalBrowsers">
+   <extension point="org.eclipse.ui.browser.browsers">
       <!-- Linux -->
       <browser
          id="org.eclipse.ui.browser.mozilla"

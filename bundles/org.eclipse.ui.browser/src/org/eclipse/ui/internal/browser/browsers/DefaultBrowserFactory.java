@@ -10,21 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.browsers;
 
+import org.eclipse.ui.browser.BrowserFactory;
 import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.internal.browser.provisional.IBrowserFactory;
 /**
  * Produces Custom Browser
  */
-public class DefaultBrowserFactory implements IBrowserFactory {
+public class DefaultBrowserFactory extends BrowserFactory {
 	/**
-	 * @see org.eclipse.ui.browser.provisional.IBrowserFactory#isAvailable()
-	 */
-	public boolean isAvailable() {
-		return true;
-	}
-
-	/**
-	 * @see org.eclipse.ui.browser.provisional.IBrowserFactory#createBrowser()
+	 * @see org.eclipse.ui.browser.provisional.BrowserFactory#createBrowser()
 	 */
 	public IWebBrowser createBrowser(String id, String location, String parameters) {
 		return new DefaultBrowser(id, location, parameters);

@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui.browser">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.browser" id="internalBrowsers" name="Browsers"/>
+         <meta.schema plugin="org.eclipse.ui.browser" id="browsers" name="Browsers"/>
       </appInfo>
       <documentation>
          For providing web browsers capable of displaying html documents at a given URL.
@@ -57,7 +57,7 @@
          <attribute name="factoryclass" type="string">
             <annotation>
                <documentation>
-                  the implementation class for the browser factory. This class must implement the &lt;samp&gt;org.eclipse.ui.internal.browser.provisional.IBrowserFactory&lt;/samp&gt; interface.
+                  the implementation class for the browser factory. This class must implement the &lt;samp&gt;org.eclipse.ui.browser.BrowserFactory&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.browser.IBrowserFactory"/>
@@ -77,7 +77,7 @@
          <attribute name="os" type="string">
             <annotation>
                <documentation>
-                  comma separated list of operating systems. Only browsers with the correct OS will be used
+                  comma separated list of operating systems. Only browsers with the correct OS will be used. If the os parameter is empty, the browser will be assumed to work on all OS
                </documentation>
             </annotation>
          </attribute>

@@ -51,7 +51,7 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 			editor = (WebBrowserEditor) targetEditor;
 			WebBrowserEditorInput input = editor.getWebBrowserEditorInput();
 			
-			if (input.isLocationBarLocal()) {
+			if (input == null || input.isLocationBarLocal()) {
 				IActionBars actionBars = getActionBars();
 				actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), editor.getCopyAction());
 				actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), editor.getCutAction());

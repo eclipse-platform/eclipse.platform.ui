@@ -18,12 +18,11 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -31,6 +30,7 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -69,13 +69,13 @@ public class WebBrowserEditor extends EditorPart {
 		WebBrowserEditorInput input = getWebBrowserEditorInput();
 		
 		int style = 0;
-		if (input.isLocationBarLocal()) {
+		if (input == null || input.isLocationBarLocal()) {
 			cutAction = new TextAction(webBrowser, TextAction.CUT);
 			copyAction = new TextAction(webBrowser, TextAction.COPY);
 			pasteAction = new TextAction(webBrowser, TextAction.PASTE);
 			style += BrowserViewer.LOCATION_BAR;
 		}
-		if (input.isToolbarLocal()) {
+		if (input == null || input.isToolbarLocal()) {
 			style += BrowserViewer.BUTTON_BAR;
 		}
 		webBrowser = new BrowserViewer(parent, style);
@@ -134,7 +134,8 @@ public class WebBrowserEditor extends EditorPart {
 	}
 	
 	/**
-	 * Returns the web editor input, if available.
+	 * Returns the web editor input, if available. If the input was of
+	 * another type, <code>null</code> is returned.
 	 *
 	 * @return org.eclipse.ui.internal.browser.IWebBrowserEditorInput
 	 */
@@ -142,7 +143,7 @@ public class WebBrowserEditor extends EditorPart {
 		IEditorInput input = getEditorInput();
 		if (input instanceof WebBrowserEditorInput)
 			return (WebBrowserEditorInput) input;
-		throw new RuntimeException("Incorrect editor input");
+		return null;
 	}
 
 	/**
@@ -167,20 +168,33 @@ public class WebBrowserEditor extends EditorPart {
 	 */
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		Trace.trace(Trace.FINEST, "Opening browser: " + input);
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fei = (IFileEditorInput) input;
-			IFile file = fei.getFile();
+		if (input instanceof IPathEditorInput) {
+			IPathEditorInput pei = (IPathEditorInput) input;
+			IPath path = pei.getPath();
 			URL url = null;
 			try {
-				if (file != null && file.exists())
-					url = file.getLocation().toFile().toURL();
+				if (path != null && path.toFile().exists())
+					url = path.toFile().toURL();
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error getting URL to file");
 			}
-			addResourceListener(file);
-			input = new WebBrowserEditorInput(url, 0);
-		}
-		if (input instanceof WebBrowserEditorInput) {
+			initialURL = url.toExternalForm();
+			if (webBrowser != null) {
+				webBrowser.setURL(initialURL);
+				site.getWorkbenchWindow().getActivePage().bringToTop(this);
+			}
+			
+			setPartName(url.getFile());
+			setTitleToolTip(url.getFile());
+
+			Image oldImage = image;
+			image = ImageResource.getImage(ImageResource.IMG_INTERNAL_BROWSER);
+
+			setTitleImage(image);
+			if (oldImage != null && !oldImage.isDisposed())
+				oldImage.dispose();
+			//addResourceListener(file);
+		} else if (input instanceof WebBrowserEditorInput) {
 			WebBrowserEditorInput wbei = (WebBrowserEditorInput) input;
 			initialURL = null;
 			if (wbei.getURL() != null)
@@ -237,7 +251,8 @@ public class WebBrowserEditor extends EditorPart {
 					IEditorPart editor = editors[i].getEditor(true);
 					if (editor != null && editor instanceof WebBrowserEditor) {
 						WebBrowserEditor webEditor = (WebBrowserEditor) editor;
-						if (input.canReplaceInput(webEditor.getWebBrowserEditorInput())) {
+						WebBrowserEditorInput input2 = webEditor.getWebBrowserEditorInput();
+						if (input2 == null || input.canReplaceInput(input2)) {
 							editor.init(editor.getEditorSite(), input);
 							return;
 						}

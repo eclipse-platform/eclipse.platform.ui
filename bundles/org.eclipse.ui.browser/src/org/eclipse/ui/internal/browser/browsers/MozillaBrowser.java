@@ -87,6 +87,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 				}
 				return ret;
 			} catch (InterruptedException e) {
+				// ignore
 			} catch (IOException e) {
 				WebBrowserUIPlugin.logError("Launching " + executableName //$NON-NLS-1$
 					+ " has failed.", e); //$NON-NLS-1$
@@ -160,6 +161,7 @@ public class MozillaBrowser extends AbstractWebBrowser {
 						return;
 					Thread.sleep(100);
 				} catch (InterruptedException ie) {
+					// ignore
 				}
 		}
 	}
