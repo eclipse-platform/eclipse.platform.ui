@@ -3,6 +3,7 @@
 	<name>org.eclipse.ant.core</name>
 	<comment></comment>
 	<projects>
+		<project>org.apache.ant</project>
 		<project>org.apache.xerces</project>
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.runtime</project>
@@ -17,16 +18,8 @@
 			<name>org.eclipse.ui.externaltools.ExternalToolBuilder</name>
 			<arguments>
 				<dictionary>
-					<key>!{tool_args}</key>
-					<value>-DbuildType=${build_type}</value>
-				</dictionary>
-				<dictionary>
-					<key>!{tool_loc}</key>
-					<value>${workspace_loc:/org.eclipse.ant.core/scripts/buildExtraJAR.xml}</value>
-				</dictionary>
-				<dictionary>
-					<key>!{tool_dir}</key>
-					<value></value>
+					<key>!{tool_show_log}</key>
+					<value>true</value>
 				</dictionary>
 				<dictionary>
 					<key>!{tool_refresh}</key>
@@ -37,12 +30,20 @@
 					<value>org.eclipse.ant.core extra builder</value>
 				</dictionary>
 				<dictionary>
-					<key>!{tool_type}</key>
-					<value>org.eclipse.ui.externaltools.type.ant</value>
+					<key>!{tool_dir}</key>
+					<value></value>
 				</dictionary>
 				<dictionary>
-					<key>!{tool_show_log}</key>
-					<value>true</value>
+					<key>!{tool_args}</key>
+					<value>-DbuildType=${build_type}</value>
+				</dictionary>
+				<dictionary>
+					<key>!{tool_loc}</key>
+					<value>${workspace_loc:/org.eclipse.ant.core/scripts/buildExtraJAR.xml}</value>
+				</dictionary>
+				<dictionary>
+					<key>!{tool_type}</key>
+					<value>org.eclipse.ui.externaltools.type.ant</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
