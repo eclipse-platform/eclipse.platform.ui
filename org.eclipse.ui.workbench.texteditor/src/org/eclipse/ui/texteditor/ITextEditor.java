@@ -62,7 +62,7 @@ public interface ITextEditor extends IEditorPart {
 	/**
 	 * Returns this text editor's document provider.
 	 *
-	 * @return the document provider
+	 * @return the document provider or <code>null</code> if none, e.g. after closing the editor
 	 */
 	IDocumentProvider getDocumentProvider();
 	
