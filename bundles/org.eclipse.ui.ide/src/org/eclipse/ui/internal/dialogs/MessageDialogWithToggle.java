@@ -20,12 +20,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * A message dialog which also allows the user to adjust a toggle setting.
@@ -89,7 +88,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 		final Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
 		String text = toggleMessage; 
 		if (text == null) {
-			text = WorkbenchMessages.getString("MessageDialogWithToggle.defaultToggleMessage"); //$NON-NLS-1$
+			text = IDEWorkbenchMessages.getString("MessageDialogWithToggle.defaultToggleMessage"); //$NON-NLS-1$
 		}
 		button.setText(text);
 		button.setSelection(toggleState);

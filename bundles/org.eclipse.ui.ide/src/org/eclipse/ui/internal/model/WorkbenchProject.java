@@ -52,9 +52,7 @@ protected ImageDescriptor getBaseImage(IResource resource) {
 				}
 				ImageDescriptor natureImage = IDEWorkbenchPlugin.getDefault().getProjectImageRegistry().getNatureImage(natureIds[i]);
 				if (natureImage != null) {
-					// @issue move IDE specific images
 					ImageDescriptor baseImage = IDEInternalWorkbenchImages.getImageDescriptor(baseKey);
-					// @issue ref to internal generic workbench class
 					overlayImage = new OverlayIcon(baseImage, new ImageDescriptor[][] {{ natureImage }}, new Point(16, 16));
 					imageCache.put(imageKey, overlayImage);
 					return overlayImage;
