@@ -10,14 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.datatransfer;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,13 +19,12 @@ import java.util.List;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Javac;
-import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
-import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
-import org.eclipse.ant.internal.ui.model.LocationProvider;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -41,8 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -75,15 +65,13 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	private Text fLocationPathField;
 	private Button fBrowseButton;
 	
-	private AntModel fAntModel;
+	private IAntModel fAntModel;
 
 	private ModifyListener fLocationModifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-			fAntModel= null;
-			File buildfile= getBuildFile(getProjectLocationFieldValue());
-			if (buildfile != null) {
-				fAntModel= getAntModel(buildfile);
-				setProjectName(); // page will be validated on setting the project name
+			fAntModel= AntUtil.getAntModel(getProjectLocationFieldValue(), true, false, false);
+			if (fAntModel != null) {
+			    setProjectName(); // page will be validated on setting the project name
 			} else {
 				setPageComplete(validatePage());
 			}
@@ -327,11 +315,6 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	 * the file
 	 */
 	private void setProjectName() {
-
-		if (fAntModel == null) {
-			return;
-		}
-
 		AntProjectNode node= fAntModel.getProjectNode();
 		String projectName= getProjectName(node);
 		
@@ -446,66 +429,6 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			}	
 		}
 		return resolvedJavacTasks;
-	}
-	
-	private AntModel getAntModel(final File buildFile) {
-		IDocument doc= getDocument(buildFile);
-		if (doc == null) {
-			return null;
-		}
-		AntModel model= new AntModel(doc, null, new LocationProvider(null) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
-			 */
-			public IPath getLocation() {
-				return new Path(buildFile.getAbsolutePath());
-			}
-		});
-		model.reconcile();
-		return model;
-	}
-	
-	private IDocument getDocument(File buildFile) {
-		InputStream in;
-		try {
-			in = new FileInputStream(buildFile);
-		} catch (FileNotFoundException e) {
-			return null;
-		}
-		String initialContent= getStreamContentAsString(in);
-		return new Document(initialContent);
-	}
-	
-	private String getStreamContentAsString(InputStream inputStream) {
-		InputStreamReader reader;
-		try {
-			reader = new InputStreamReader(inputStream, ResourcesPlugin.getEncoding());
-		} catch (UnsupportedEncodingException e) {
-			AntUIPlugin.log(e);
-			return ""; //$NON-NLS-1$
-		}
-
-		return getReaderContentAsString( new BufferedReader(reader));
-	}
-	
-	private String getReaderContentAsString(BufferedReader bufferedReader) {
-		StringBuffer result = new StringBuffer();
-		try {
-			String line= bufferedReader.readLine();
-
-			while(line != null) {
-				if(result.length() != 0) {
-					result.append("\n"); //$NON-NLS-1$
-				}
-				result.append(line);
-				line = bufferedReader.readLine();
-			}
-		} catch (IOException e) {
-			AntUIPlugin.log(e);
-			return null;
-		}
-
-		return result.toString();
 	}
 	
 	private void getJavacNodes(List javacNodes, AntElementNode parent) {
