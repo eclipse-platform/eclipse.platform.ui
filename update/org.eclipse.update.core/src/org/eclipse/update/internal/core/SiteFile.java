@@ -115,8 +115,11 @@ public class SiteFile extends SiteURL {
 			URL featureURL;
 			try {
 				dir = featureFile.list();
+				String newFilePath = null;
 				for (int index = 0; index < dir.length; index++) {
-					featureURL = new URL("file", null, featurePath + dir[index]);
+					// teh URL must ends with '/' for teh bundle to be resolved
+					newFilePath =  featurePath + dir[index] +"/";
+					featureURL = new URL("file", null,newFilePath);
 					featureRef = new FeatureReference(this, featureURL);
 					addFeatureReference(featureRef);
 				}

@@ -166,23 +166,37 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("feature info not installed locally", featureFile.exists());
 
 		//cleanup
+		File file = new File(site.getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		UpdateManagerUtils.removeFromFileSystem(file);
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
-		
+
 		assertTrue("Listener hasn't received notification",listener.isNotified());
 	}
 	
 	
 	public void testFileSiteWithoutSiteXML() throws Exception {
 		
-		
-		ISite remoteSite = SiteManager.getLocalSite().getCurrentConfiguration().getInstallSites()[0];
-		IFeatureReference[] features = remoteSite.getFeatureReferences();
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
+		IFeature remoteFeature = getFeature1(remoteSite);
+		ISite localSite = SiteManager.getLocalSite().getCurrentConfiguration().getInstallSites()[0];
+		localSite.install(remoteFeature, null);
+
+		IFeatureReference[] features = localSite.getFeatureReferences();
 		if (features.length==0) fail("The local site does not contain feature, should not contain an XML file but features should be found anyway by parsing");
 		
-		remoteSite = SiteManager.getSite(new URL("http://www.eclipse.org/"));
-		features = remoteSite.getFeatureReferences();
+		//cleanup
+		File file = new File(localSite.getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		UpdateManagerUtils.removeFromFileSystem(file);
+		file = new File(localSite.getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin1_3.5.6");
+		UpdateManagerUtils.removeFromFileSystem(file);
+		file = new File(localSite.getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
+		UpdateManagerUtils.removeFromFileSystem(file);
+		
+		localSite = SiteManager.getSite(new URL("http://www.eclipse.org/"));
+		features = localSite.getFeatureReferences();
 		if (features.length!=0) fail("The site contains feature... it is an HTTP site without an XML file, so it should not contain any features");
 		
 	}
+	
 	
 }

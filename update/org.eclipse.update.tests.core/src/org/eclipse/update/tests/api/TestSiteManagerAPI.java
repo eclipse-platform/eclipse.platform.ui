@@ -3,10 +3,13 @@ package org.eclipse.update.tests.api;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.SiteFile;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestSiteManagerAPI extends UpdateManagerTestCase {
@@ -53,6 +56,13 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		
 		IFeatureReference[] features = site.getCurrentConfiguration().getFeatures();
 		assertTrue(features.length>0);
+
+		//cleanup
+		File file = new File(instSites[0].getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());
+		UpdateManagerUtils.removeFromFileSystem(file);
+		file = new File(instSites[0].getURL().getFile()+File.separator+SiteFile.DEFAULT_PLUGIN_PATH+"org.eclipse.update.plugin1_1.1.1");
+		UpdateManagerUtils.removeFromFileSystem(file);		
+
 	}
 	
 
