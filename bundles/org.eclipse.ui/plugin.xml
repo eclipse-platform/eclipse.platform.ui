@@ -47,7 +47,7 @@
 <extension-point name="%ExtPoint.dropActions" id="dropActions"/>
 <extension-point name="%ExtPoint.resourceFilters" id="resourceFilters"/>
 <extension-point name="%ExtPoint.markerImageProviders" id="markerImageProviders"/>
-<extension-point name="%ExtPoint.projectNatureImages " id="projectNatureImages"/>
+<extension-point name="%ExtPoint.projectNatureImages" id="projectNatureImages"/>
 
 <!-- Extensions -->
 
