@@ -54,17 +54,17 @@
    <!-- Tasks -->
    <extension point="org.eclipse.ant.core.antTasks">
       <antTask
-         name="resources.convertPath"
+         name="eclipse.convertPath"
          class="org.eclipse.core.resources.ant.ConvertPath"
          library="lib/resources-ant.jar">
       </antTask>
       <antTask
-         name="resources.incrementalBuild"
+         name="eclipse.incrementalBuild"
          class="org.eclipse.core.resources.ant.IncrementalBuild"
          library="lib/resources-ant.jar">
       </antTask>
       <antTask
-         name="resources.refreshLocal"
+         name="eclipse.refreshLocal"
          class="org.eclipse.core.resources.ant.RefreshLocalTask"
          library="lib/resources-ant.jar">
       </antTask>
@@ -74,7 +74,7 @@
          library="lib/resources-ant.jar">
       </antTask>
    </extension>
-   
+
    <!-- Objects -->
    <extension point="org.eclipse.ant.core.antObjects">
       <antObject
