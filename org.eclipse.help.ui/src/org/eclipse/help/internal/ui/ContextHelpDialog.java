@@ -6,6 +6,8 @@ package org.eclipse.help.internal.ui;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.help.internal.util.Logger;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
@@ -17,6 +19,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * ContextHelpDialog
  */
 public class ContextHelpDialog {
+	private static final String IMAGE_TOPIC = "topic_icon";
+	private static ImageRegistry imgRegistry = null;
 	private Color backgroundColour = null;
 	private IContext context;
 	private Color foregroundColour = null;
@@ -130,7 +134,7 @@ public class ContextHelpDialog {
 	}
 	private Control createLink(Composite parent, IHelpResource topic) {
 		Label image = new Label(parent, SWT.NONE);
-		image.setImage(ElementLabelProvider.getDefault().getImage(topic));
+		image.setImage(getImage());
 		image.setBackground(backgroundColour);
 		GridData data = new GridData();
 		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
@@ -215,5 +219,15 @@ public class ContextHelpDialog {
 		public void linkActivated(Control c) {
 			launchLinks(topic);
 		}
+
+	}
+	private Image getImage() {
+		if (imgRegistry == null) {
+			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
+			imgRegistry.put(
+				IMAGE_TOPIC,
+				ImageDescriptor.createFromURL(WorkbenchResources.getImagePath(IMAGE_TOPIC)));
+		}
+		return imgRegistry.get(IMAGE_TOPIC);
 	}
 }
