@@ -79,30 +79,6 @@ public class NavigatorDropAdapter
 	}
 
 	/**
-	 * Returns an error status, indicating why the given source
-	 * could not be copied or moved.
-	 */
-	private IStatus error(IResource source, String message) {
-		if (getCurrentOperation() == DND.DROP_COPY) {
-			return error(ResourceNavigatorMessages.format("DropAdapter.canNotCopy", new Object[] { source.getName(), message }), null); //$NON-NLS-1$
-		} else {
-			return error(ResourceNavigatorMessages.format("DropAdapter.canNotMove", new Object[] { source.getName(), message }), null); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Expands the selection of the given tree viewer.
-	 */
-	private void expandSelection(TreeItem selection) {
-		if (selection == null)
-			return;
-		if (!selection.getExpanded()) {
-			TreeViewer treeViewer = (TreeViewer) getViewer();
-			treeViewer.expandToLevel(selection.getData(), 1);
-		}
-	}
-	
-	/**
 	 * Returns the actual target of the drop, given the resource
 	 * under the mouse.  If the mouse target is a file, then the drop actually 
 	 * occurs in its parent.  If the drop location is before or after the
@@ -169,19 +145,6 @@ public class NavigatorDropAdapter
 	private void mergeStatus(MultiStatus status, IStatus toMerge) {
 		if (!toMerge.isOK()) {
 			status.merge(toMerge);
-		}
-	}
-	
-	/**
-	 * Creates a status object from the given list of problems.
-	 */
-	private IStatus multiStatus(List problems, String message) {
-		IStatus[] children = new IStatus[problems.size()];
-		problems.toArray(children);
-		if (children.length == 1) {
-			return children[0];
-		} else {
-			return new MultiStatus(PlatformUI.PLUGIN_ID, 0, children, message, null);
 		}
 	}
 	
