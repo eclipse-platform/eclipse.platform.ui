@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SimpleWildcardTester;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -31,7 +36,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * generic workbench registers IActionFilter for "size" property against IStructuredSelection
  * workbench text registers IActionFilter for "size" property against ITextSelection
  * code here: sel.getAdapter(IActionFilter.class)
- * fallback: use reflection to access selections implementing ITextSelection 
+ * As an interim solution, use reflection to access selections
+ * implementing ITextSelection
  */
 public class SelectionEnabler {
 	public static final int ONE_OR_MORE = -1;
@@ -65,21 +71,62 @@ public SelectionEnabler(IConfigurationElement configElement) {
  */
 public boolean isEnabledForSelection(ISelection selection) {
 	// Optimize it.
-	if (mode == UNKNOWN) return false;
+	if (mode == UNKNOWN) {
+		return false;
+	}
 
 	// Handle undefined selections.	
-	if (selection == null) 
+	if (selection == null) { 
 		selection = StructuredSelection.EMPTY;
+	}
 		
 	// According to the dictionary, a selection is "one that
 	// is selected", or "a collection of selected things".  
 	// In reflection of this, we deal with one or a collection.
-	if (selection instanceof IStructuredSelection)
+
+	// special case: structured selections
+	if (selection instanceof IStructuredSelection) {
 		return isEnabledFor((IStructuredSelection)selection);
-	else if (selection instanceof ITextSelection)
-		return isEnabledFor((ITextSelection)selection);
-	else
-		return isEnabledFor(selection);
+	}
+
+	// special case: text selections
+	// Code should read
+	// if (selection instanceof ITextSelection) {
+	//    int count = ((ITextSelection) selection).getLength();
+	//    return isEnabledFor(selection, count);
+	// }
+	// use Java reflection to avoid dependence of org.eclipse.jface.text
+	// which is in an optional part of the generic workbench
+	if (selection.getClass().getName().equals("org.eclipse.jface.text.ITextSelection")) { //$NON-NLS-1$
+		int count = 0;
+		try {
+			Class tselClass = Class.forName("org.eclipse.jface.text.ITextSelection"); //$NON-NLS-1$
+			Method m = tselClass.getDeclaredMethod("getLength", new Class[0]); //$NON-NLS-1$
+			Object r = m.invoke(selection, new Object[0]);
+			if (r instanceof Integer) {
+				count = ((Integer) r).intValue();
+			} else {
+				// should not happen - but enable if it does
+				return true;
+			}
+		} catch (ClassNotFoundException e) {
+			// should not happen - but enable if it does
+			return true;
+		} catch (NoSuchMethodException e) {
+			// should not happen - but enable if it does
+			return true;
+		} catch (IllegalAccessException e) {
+			// should not happen - but enable if it does
+			return true;
+		} catch (InvocationTargetException e) {
+			// should not happen - but enable if it does
+			return true;
+		}
+		return isEnabledFor(selection, count);
+	}
+	
+	// all other cases
+	return isEnabledFor(selection);
 }
 /**
  * Compare selection count with requirements.
@@ -120,14 +167,12 @@ private boolean isEnabledFor(ISelection sel) {
 	
 	return true;
 }
+
 /**
  * Returns true if given text selection matches the
  * conditions specified in the registry for this action.
  */
-private boolean isEnabledFor(ITextSelection sel) {
-	// @issue ref to ITextSelection to get size for enablesFor attribute
-	int count = sel.getLength();
-	
+private boolean isEnabledFor(ISelection sel, int count) {
 	if(verifySelectionCount(count) == false)
 		return false;
 
@@ -136,8 +181,15 @@ private boolean isEnabledFor(ITextSelection sel) {
 		return enablementExpression.isEnabledFor(sel);
 
 	// Compare selection to class requirements.
-	return verifyElement(sel);
+	if (classes.isEmpty()) return true;
+	for (int i = 0; i < classes.size(); i++) {
+		SelectionClass sc = (SelectionClass) classes.get(i);
+		if (verifyClass(sel, sc.className))
+			return true;
+	}
+	return false;
 }
+
 
 /**
  * Returns true if given structured selection matches the
@@ -251,21 +303,6 @@ private boolean verifyClass(Object element, String className) {
 		clazz = clazz.getSuperclass();
 	}
 	return match;
-}
-/**
- * Verifies if the given element matches one of the
- * selection requirements. Element must at pass the 
- * type test. Filters are ignored in case of 
- * ITextSelection.
- */
-private boolean verifyElement(ITextSelection element) {
-	if (classes.isEmpty()) return true;
-	for (int i = 0; i < classes.size(); i++) {
-		SelectionClass sc = (SelectionClass) classes.get(i);
-		if (verifyClass(element, sc.className))
-			return true;
-	}
-	return false;
 }
 /**
  * Verifies if the given element matches one of the
