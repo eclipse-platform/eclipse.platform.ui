@@ -83,10 +83,12 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
 	public Menu getMenu(Control parent) {
-		if (fMenu == null) {
-			fMenu= new Menu(parent);
-			fillMenu(fMenu);
-		}
+		if (fMenu != null)
+			fMenu.dispose();
+			
+		fMenu= new Menu(parent);
+		fillMenu(fMenu);
+
 		return fMenu;
 	}
 
@@ -148,9 +150,20 @@ public abstract class NextPreviousPulldownActionDelegate extends Action implemen
 		while (iter.hasNext()) {
 			AnnotationPreference preference= (AnnotationPreference)iter.next();
 			String key= preference.getShowInNextPrevDropdownToolbarActionKey();
-			if (key != null && fStore.getBoolean(key))
-				if (getPreferenceKey(preference) != null)
-					containers.add(new NavigationEnablementAction(preference.getPreferenceLabel(), fStore, getPreferenceKey(preference)));
+			if (key != null && fStore.getBoolean(key)) {
+				String preferenceKey= getPreferenceKey(preference);
+				
+				/*
+				 * Fixes bug 41689
+				 * This code can be simplified if we decide that
+				 * we don't allow to use different settings for go to
+				 * previous and go to next annotation.
+				 */
+				preferenceKey= preference.getIsGoToNextNavigationTargetKey();
+				
+				if (preferenceKey != null)
+					containers.add(new NavigationEnablementAction(preference.getPreferenceLabel(), fStore, preferenceKey));
+			}
 		}
 
 		return (IAction[]) containers.toArray(new Action[containers.size()]);
