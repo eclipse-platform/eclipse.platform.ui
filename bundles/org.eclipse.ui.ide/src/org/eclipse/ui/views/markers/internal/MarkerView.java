@@ -449,12 +449,12 @@ public abstract class MarkerView extends TableView {
      */
     private void performDragSetData(DragSourceEvent event) {
         if (MarkerTransfer.getInstance().isSupportedType(event.dataType)) {
-            event.data = ((IStructuredSelection) getViewer().getSelection())
+            event.data = ((IStructuredSelection)getSelectionProvider().getSelection())
                     .toArray();
             return;
         }
         if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-            List selection = ((IStructuredSelection) getViewer().getSelection())
+            List selection = ((IStructuredSelection)getSelectionProvider().getSelection())
                     .toList();
             try {
                 IMarker[] markers = new IMarker[selection.size()];
