@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.PollingInputStream;
 import org.eclipse.team.internal.core.streams.PollingOutputStream;
 import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
@@ -105,7 +106,7 @@ public class PServerConnection implements IServerConnection {
 		monitor.subTask(Policy.bind("PServerConnection.authenticating"));//$NON-NLS-1$
 		monitor.worked(1);
 		
-		fSocket = createSocket();
+		fSocket = createSocket(monitor);
 		boolean connected = false;
 		try {
 			this.inputStream = new BufferedInputStream(new PollingInputStream(fSocket.getInputStream(),
@@ -215,7 +216,7 @@ public class PServerConnection implements IServerConnection {
 	/**
 	 * Creates the actual socket
 	 */
-	protected Socket createSocket() throws IOException {
+	protected Socket createSocket(IProgressMonitor monitor) throws IOException {
 		// Determine what port to use
 		int port = cvsroot.getPort();
 		if (port == cvsroot.USE_DEFAULT_PORT)
@@ -223,7 +224,7 @@ public class PServerConnection implements IServerConnection {
 		// Make the connection
 		Socket result;
 		try {
-			result= new Socket(cvsroot.getHost(), port);
+			result= Util.createSocket(cvsroot.getHost(), port, monitor);
 		} catch (InterruptedIOException e) {
 			// If we get this exception, chances are the host is not responding
 			throw new InterruptedIOException(Policy.bind("PServerConnection.socket", new Object[] {cvsroot.getHost()}));//$NON-NLS-1$

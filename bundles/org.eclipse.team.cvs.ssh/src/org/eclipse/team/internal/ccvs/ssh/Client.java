@@ -18,6 +18,7 @@ import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.PollingInputStream;
 import org.eclipse.team.internal.core.streams.PollingOutputStream;
 import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
@@ -357,7 +358,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		// Create the socket (the socket should always be null here)
 		if (socket == null) {
 			try {
-				socket = new Socket(host, port);
+				socket = Util.createSocket(host, port, monitor);
 			} catch (InterruptedIOException e) {
 				// If we get this exception, chances are the host is not responding
 				throw new InterruptedIOException(Policy.bind("Client.socket", new Object[] {host}));//$NON-NLS-1$
