@@ -31,6 +31,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	static final int ABOUT_TO_RUN = 0x10;
 
+	/** 
+	 * Job state code (value 32) indicating that a job has passed scheduling
+	 * precondition checks and is about to be added to the wait queue. From an API point of view, 
+	 * this is the same as NONE.
+	 */
+	static final int ABOUT_TO_SCHEDULE = 0x20;
+
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
 	private static final int M_SYSTEM = 0x0100;
@@ -208,6 +215,8 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 				return Job.WAITING;
 			case ABOUT_TO_RUN :
 				return Job.RUNNING;
+			case ABOUT_TO_SCHEDULE:
+				return Job.NONE;
 			default :
 				return state;
 		}

@@ -217,6 +217,7 @@ public class JobManager implements IJobManager {
 			//			System.out.println("changeState (" + job + "): " + printState(oldState) +"->" + printState(newState));
 			switch (oldState) {
 				case Job.NONE :
+				case InternalJob.ABOUT_TO_SCHEDULE:
 					break;
 				case InternalJob.BLOCKED :
 					//remove this job from the linked list of blocked jobs
@@ -260,6 +261,8 @@ public class JobManager implements IJobManager {
 					job.setStartTime(InternalJob.T_NONE);
 					running.add(job);
 					break;
+				case InternalJob.ABOUT_TO_SCHEDULE:
+					break;
 				default :
 					Assert.isLegal(false, "Invalid job state: " + job + ", state: " + newState); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -285,7 +288,9 @@ public class JobManager implements IJobManager {
 	protected IProgressMonitor createMonitor(InternalJob job, IProgressMonitor group, int ticks) {
 		synchronized (lock) {
 			//group must be set before the job is scheduled
-			if (job.internalGetState() != Job.NONE)
+			//this includes the ABOUT_TO_SCHEDULE state, during which it is still
+			//valid to set the progress monitor
+			if (job.getState() != Job.NONE)
 				return null;
 			IProgressMonitor monitor = null;
 			if (progressProvider != null)
@@ -792,8 +797,11 @@ public class JobManager implements IJobManager {
 				return;
 			}
 			//can't schedule a job that is waiting or sleeping
-			if (job.getState() != Job.NONE)
+			if (job.internalGetState() != Job.NONE)
 				return;
+			//remember that we are about to schedule the job
+			//to prevent multiple schedule attempts from succeeding (bug 68452)
+			changeState(job, InternalJob.ABOUT_TO_SCHEDULE);
 		}
 		//notify listeners outside sync block
 		jobListeners.scheduled((Job) job, delay, reschedule);
