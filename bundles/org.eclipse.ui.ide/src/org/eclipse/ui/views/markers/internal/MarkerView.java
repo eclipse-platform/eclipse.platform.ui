@@ -685,8 +685,6 @@ public abstract class MarkerView extends TableView {
     }
 
     void updateTitle() {
-        String currentTitle = getTitle();
-        String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
         String status = ""; //$NON-NLS-1$
         int filteredCount = currentMarkers.getItemCount();
         int totalCount = getTotalMarkers();

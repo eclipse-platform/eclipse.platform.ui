@@ -1211,7 +1211,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     public void updateTitle() {
         Object input = getViewer().getInput();
-        String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
         IWorkingSet workingSet = workingSetFilter.getWorkingSet();
 

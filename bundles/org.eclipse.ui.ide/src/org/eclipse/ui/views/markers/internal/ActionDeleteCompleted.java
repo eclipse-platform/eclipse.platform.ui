@@ -91,8 +91,6 @@ public class ActionDeleteCompleted extends SelectionProviderAction {
     private List getCompletedTasks() {
         List completed = new ArrayList();
 
-        ISelectionProvider sel = getSelectionProvider();
-
         MarkerList markerList = part.getVisibleMarkers();
 
         ConcreteMarker[] markers = markerList.toArray();
