@@ -600,6 +600,11 @@ final class Persistence {
 			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
+        // We treat null context identifiers as the window context.
+        if (contextId == null) {
+            contextId = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
+        }
+
 		return new KeySequenceBindingDefinition(
 			contextId,
 			commandId,
