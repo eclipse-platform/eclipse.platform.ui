@@ -1789,11 +1789,11 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 	IContainer parent = resource.getParent();
 	if (parent == null || parent.getType() != IResource.PROJECT) {
 		message = Policy.bind("links.parentNotProject", resource.getName());//$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 	}
 	if (!parent.isAccessible()) {
 		message = Policy.bind("links.parentNotAccessible", resource.getFullPath().toString());//$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 	}
 	IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
 	//check nature veto
@@ -1823,23 +1823,24 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 	IPath testLocation = getMetaArea().getLocation();
 	if (isOverlapping(location, testLocation)) {
 		message = Policy.bind("links.invalidLocation", location.toOSString()); //$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 	}
 	//test if the given path overlaps the location of the given project
 	testLocation = resource.getProject().getLocation();
 	if (isOverlapping(location, testLocation)) {
 		message = Policy.bind("links.locationOverlapsProject", location.toOSString()); //$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 	}
-	
+	if (location.isEmpty()) {
+		message = Policy.bind("links.noPath");//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
+	}
 	//warnings (all errors must be checked before all warnings)
 	//check that the location is absolute
 	if (!location.isAbsolute()) {
-		if (location.segmentCount() > 0)
-			message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0));//$NON-NLS-1$
-		else
-			message = Policy.bind("links.noPath");//$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, null, message);
+		//we know there is at least one segment, because of previous isEmpty check
+		message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0));//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, resource.getFullPath(), message);
 	}
 	// Iterate over each known project and ensure that the location does not
 	// conflict with any project locations or linked resource locations
@@ -1852,7 +1853,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		testLocation = desc.getLocation();
 		if (testLocation != null && isOverlapping(location, testLocation)) {
 			message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
-			return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
+			return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 		}
 		//iterate over linked resources and check for overlap
 		if (!project.isOpen())
@@ -1870,7 +1871,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 				testLocation = children[j].getLocation();
 				if (testLocation != null && isOverlapping(location, testLocation)) {
 					message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
-					return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
+					return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 				}
 			}				
 		}
