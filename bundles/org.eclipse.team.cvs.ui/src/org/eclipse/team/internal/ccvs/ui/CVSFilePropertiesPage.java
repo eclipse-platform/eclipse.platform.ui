@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import java.util.Date;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
@@ -49,17 +51,24 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			}
 			ResourceSyncInfo syncInfo = cvsResource.getSyncInfo();
 			
-			// Base
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseRevision"));
-			createLabel(composite, syncInfo.getRevision());
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseTimestamp"));
-			createLabel(composite, CVSDateFormatter.dateToEntryLine(syncInfo.getTimeStamp()));
+
 			
-			// Dirty and Modified
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.dirty"));
-			createLabel(composite, cvsResource.isDirty() ? Policy.bind("yes") : Policy.bind("no"));
-			createLabel(composite, Policy.bind("CVSFilePropertiesPage.modified"));
-			createLabel(composite, cvsResource.isModified() ? Policy.bind("yes") : Policy.bind("no"));
+			if (syncInfo.isAdded()) {
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.isAdded"), 2);
+			} else {
+				// Base
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseRevision"));
+				createLabel(composite, syncInfo.getRevision());
+				Date baseTime = syncInfo.getTimeStamp();
+				if (baseTime != null) {
+					createLabel(composite, Policy.bind("CVSFilePropertiesPage.baseTimestamp"));
+					createLabel(composite, CVSDateFormatter.dateToEntryLine(syncInfo.getTimeStamp()));
+				}
+				
+				// Modified
+				createLabel(composite, Policy.bind("CVSFilePropertiesPage.modified"));
+				createLabel(composite, cvsResource.isModified() ? Policy.bind("yes") : Policy.bind("no"));
+			}
 			
 			// Keyword Mode
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.keywordMode"));
@@ -110,14 +119,17 @@ public class CVSFilePropertiesPage extends PropertyPage {
 	 * @param text  the text for the new label
 	 * @return the new label
 	 */
-	protected Label createLabel(Composite parent, String text) {
+	protected Label createLabel(Composite parent, String text, int span) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
 		GridData data = new GridData();
-		data.horizontalSpan = 1;
+		data.horizontalSpan = span;
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData(data);
 		return label;
+	}
+	protected Label createLabel(Composite parent, String text) {
+		return createLabel(parent, text, 1);
 	}
 	/**
 	 * Initializes the page
