@@ -998,15 +998,15 @@ public class PerspectivePresentation {
 			}
 
 			// If drag source's folder same as target
-			if (e.dragSource.getContainer() == e.dropTarget) {
-				// Reject stack/detach/attach to ourself
-				if (e.relativePosition == DragCursors.CENTER 
-						|| (((PartTabFolder) e.dragSource.getContainer()).getItemCount() == 1)) {
-					e.dropTarget = null;
-					e.relativePosition = DragCursors.INVALID;
-					return;
-				}
-			}
+//			if (e.dragSource.getContainer() == e.dropTarget) {
+//				// Reject stack/detach/attach to ourself
+//				if (e.relativePosition == DragCursors.CENTER 
+//						|| (((PartTabFolder) e.dragSource.getContainer()).getItemCount() == 1)) {
+//					e.dropTarget = null;
+//					e.relativePosition = DragCursors.INVALID;
+//					return;
+//				}
+//			}
 
 			// All seems well
 			return;
@@ -1097,7 +1097,9 @@ public class PerspectivePresentation {
 //						break;
 //					}
 //				}
-				stack(e.dragSource, e.dropTarget);
+				if (e.dragSource != e.dropTarget && e.dragSource.getContainer() != e.dropTarget) {
+					stack(e.dragSource, e.dropTarget);
+				}
 				break;
 			case DragCursors.LEFT :
 			case DragCursors.RIGHT :
@@ -1106,7 +1108,17 @@ public class PerspectivePresentation {
 				// If layout is modified always zoom out.
 				if (isZoomed())
 					zoomOut();
-				movePart(e.dragSource, e.relativePosition, e.dropTarget);
+
+				if (!(e.dragSource.getContainer() == e.dropTarget 
+						&& e.dropTarget instanceof PartTabFolder 
+						&& (((PartTabFolder)e.dropTarget).getItemCount() == 1))) {
+					
+						movePart(e.dragSource, e.relativePosition, e.dropTarget);
+					
+						return;
+				}
+
+				
 				break;
 		}
 	}

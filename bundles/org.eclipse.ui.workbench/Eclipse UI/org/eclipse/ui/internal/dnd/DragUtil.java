@@ -160,7 +160,14 @@ public class DragUtil {
 									sourceBounds.height); 					
 							}
 							
-							tracker.setRectangles(new Rectangle[] {snapTarget});
+							// Try to prevent flicker: don't change the rectangles if they're already in
+							// the right location
+							
+							Rectangle[] currentRectangles = tracker.getRectangles();
+							
+							if (!(currentRectangles.length == 1 && currentRectangles[0].equals(snapTarget))) {
+								tracker.setRectangles(new Rectangle[] {snapTarget});
+							}
 						}
 					}
 				});
