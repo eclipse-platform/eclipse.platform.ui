@@ -291,7 +291,7 @@ public class InternalAntRunner {
 	 * project name, and the last elements is an array of dependencies.
 	 */
 	public List getTargets() {
-		Project antProject= new Project();
+		Project antProject;
 		
 		if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 			//in Ant version 1.6 or greater all tasks can exist outside the scope of a target
