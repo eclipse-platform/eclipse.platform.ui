@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Drop down action that displays available logical structues for a selected
+ * Drop down action that displays available logical structures for a selected
  * variable or expression.
  */
 public class AvailableLogicalStructuresAction extends Action implements IMenuCreator {
@@ -42,15 +42,15 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	public AvailableLogicalStructuresAction(VariablesView view) {
 		setView(view);
 		setToolTipText(VariablesViewMessages.getString("AvailableLogicalStructuresAction.0")); //$NON-NLS-1$
-		setText("Show As");
+		setText(VariablesViewMessages.getString("AvailableLogicalStructuresAction.1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.VARIABLES_SELECT_LOGICAL_STRUCTURE);
 		setEnabled(false);
 		setMenuCreator(this);
 		init();
 	}
 
-	/**
-	 * @see Action#run()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 	}
@@ -175,5 +175,4 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	private void setValue(IValue value) {
 		fValue = value;
 	}
-
 }
