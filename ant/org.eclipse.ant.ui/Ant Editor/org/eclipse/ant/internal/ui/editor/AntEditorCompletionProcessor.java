@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.taskdefs.Sequential;
 import org.apache.tools.ant.taskdefs.UpToDate;
 import org.apache.tools.ant.taskdefs.condition.Condition;
+import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.eclipse.ant.internal.ui.dtd.IAttribute;
 import org.eclipse.ant.internal.ui.dtd.IDfm;
 import org.eclipse.ant.internal.ui.dtd.IElement;
@@ -522,30 +524,87 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * @param prefix the prefix that all proposals should start with. The prefix
      * may be an empty string.
      */
-    private ICompletionProposal[] getAttributeValueProposals(String aTaskName, String anAttributeName, String prefix) {
+    private ICompletionProposal[] getAttributeValueProposals(String taskName, String attributeName, String prefix) {
         List proposals = new ArrayList();
-        IElement taskElement = dtd.getElement(aTaskName);
+        IElement taskElement = dtd.getElement(taskName);
         if (taskElement != null) {
-        	IAttribute attribute = (IAttribute) taskElement.getAttributes().get(anAttributeName);
+        	IAttribute attribute = (IAttribute) taskElement.getAttributes().get(attributeName);
         	if (attribute != null) {
         		String[] items = attribute.getEnum();
         		if (items != null) {
 					String item;
                     for (int i = 0; i < items.length; i++) {
                         item= items[i];
-                        if(prefix.length() ==0 || item.toLowerCase().startsWith(prefix)) {
-                            ICompletionProposal proposal = new AntCompletionProposal(item, cursorPosition - prefix.length(), prefix.length(), item.length(), null, item, null, AntCompletionProposal.TASK_PROPOSAL);
-                            proposals.add(proposal);
+                        if(prefix.length() ==0 || item.toLowerCase().startsWith(prefix)) { 
+                            proposals.add(
+                            	new AntCompletionProposal(item, cursorPosition - prefix.length(), prefix.length(), item.length(), null, item, null, AntCompletionProposal.TASK_PROPOSAL));
                         }
                     }
         		}
             }
+        } else { //possibly a user defined task or type
+        	Class taskClass= getTaskClass(taskName);
+        	if (taskClass != null) {
+        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+        		Enumeration attributes= helper.getAttributes();
+	        	while (attributes.hasMoreElements()) {
+					String attribute= (String) attributes.nextElement();
+					if (attribute.equals(attributeName)) {
+						Class attributeType= helper.getAttributeType(attribute);
+						addAttributeValueProposalsForAttributeType(attributeType, prefix, proposals);
+					}
+				}
+        	}
         }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
-    
-    /**
+	private List addAttributeValueProposalsForAttributeType(Class attributeType, String prefix, List proposals) {
+		if (prefix.length() > 5) {
+			return Collections.EMPTY_LIST;
+		}
+		
+		if (attributeType == Boolean.TYPE) {
+			addBooleanAttributeValueProposals(prefix, proposals);
+		} else if (attributeType == EnumeratedAttribute.class) {
+			//TODO bug 56297
+		}
+		return Collections.EMPTY_LIST;
+	}
+
+	private void addBooleanAttributeValueProposals(String prefix, List proposals) {
+		String trueString= "true"; //$NON-NLS-1$
+		String falseString= "false"; //$NON-NLS-1$
+		String onString= "on"; //$NON-NLS-1$
+		String offString= "off"; //$NON-NLS-1$
+		String yesString= "yes"; //$NON-NLS-1$
+		String noString= "no"; //$NON-NLS-1$
+		if (prefix.length() == 0) {
+			proposals.add(new AntCompletionProposal(trueString, cursorPosition - prefix.length(), prefix.length(), 4, null, trueString, null, AntCompletionProposal.TASK_PROPOSAL));
+			proposals.add(new AntCompletionProposal(falseString, cursorPosition - prefix.length(), prefix.length(), 5, null, falseString, null, AntCompletionProposal.TASK_PROPOSAL));
+			proposals.add(new AntCompletionProposal(onString, cursorPosition - prefix.length(), prefix.length(), 2, null, onString, null, AntCompletionProposal.TASK_PROPOSAL));
+			proposals.add(new AntCompletionProposal(offString, cursorPosition - prefix.length(), prefix.length(), 3, null, offString, null, AntCompletionProposal.TASK_PROPOSAL));
+			proposals.add(new AntCompletionProposal(yesString, cursorPosition - prefix.length(), prefix.length(), 3, null, yesString, null, AntCompletionProposal.TASK_PROPOSAL));
+			proposals.add(new AntCompletionProposal(noString, cursorPosition - prefix.length(), prefix.length(), 2, null, noString, null, AntCompletionProposal.TASK_PROPOSAL));
+		} else if (trueString.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(trueString, cursorPosition - prefix.length(), prefix.length(), 4, null, trueString, null, AntCompletionProposal.TASK_PROPOSAL));
+			} else if (falseString.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(falseString, cursorPosition - prefix.length(), prefix.length(), 5, null, falseString, null, AntCompletionProposal.TASK_PROPOSAL));
+			} else if (onString.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(onString, cursorPosition - prefix.length(), prefix.length(), 2, null, onString, null, AntCompletionProposal.TASK_PROPOSAL));
+				if (offString.startsWith(prefix)) {
+					proposals.add(new AntCompletionProposal(offString, cursorPosition - prefix.length(), prefix.length(), 3, null, offString, null, AntCompletionProposal.TASK_PROPOSAL));
+				}
+			} else if (offString.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(offString, cursorPosition - prefix.length(), prefix.length(), 3, null, offString, null, AntCompletionProposal.TASK_PROPOSAL));
+			} else if (yesString.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(yesString, cursorPosition - prefix.length(), prefix.length(), 3, null, yesString, null, AntCompletionProposal.TASK_PROPOSAL));
+			} else if (noString.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(noString, cursorPosition - prefix.length(), prefix.length(), 2, null, noString, null, AntCompletionProposal.TASK_PROPOSAL));
+			}
+	}
+
+	/**
      * Returns all possible properties for the specified prefix.
      * <P>
      * Note that the completion mode must be property mode, otherwise it is not
