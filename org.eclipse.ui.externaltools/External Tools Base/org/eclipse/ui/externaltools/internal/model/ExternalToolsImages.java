@@ -55,14 +55,14 @@ public class ExternalToolsImages {
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
-	private final static String CTOOL= "ctool16/"; //basic colors - size 16x16 //$NON-NLS-1$
+	//private final static String CTOOL= "ctool16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String LOCALTOOL= "clcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
-	private final static String DLCL= "dlcl16/"; //disabled - size 16x16 //$NON-NLS-1$
-	private final static String ELCL= "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
+	//private final static String DLCL= "dlcl16/"; //disabled - size 16x16 //$NON-NLS-1$
+	//private final static String ELCL= "elcl16/"; //enabled - size 16x16 //$NON-NLS-1$
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String WIZBAN= "wizban/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
-	private final static String VIEW= "cview16/"; // views //$NON-NLS-1$
+	//private final static String VIEW= "cview16/"; // views //$NON-NLS-1$
 	
 	/**
 	 * Declare all images
@@ -239,6 +239,7 @@ public class ExternalToolsImages {
 		buffer.append(name);
 		return new URL(ICON_BASE_URL, buffer.toString());
 	}
+	
 	private static ImageDescriptor create(String prefix, String name) {
 		try {
 			return ImageDescriptor.createFromURL(makeIconFileURL(prefix, name));
