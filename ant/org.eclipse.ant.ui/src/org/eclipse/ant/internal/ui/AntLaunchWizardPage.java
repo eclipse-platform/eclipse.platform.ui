@@ -11,11 +11,11 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 	private CheckboxTableViewer listViewer;
 	private EclipseProject project;
 	private TargetsListLabelProvider labelProvider = new TargetsListLabelProvider();
+	private String initialTargetSelections[];
+	private Button showLogOnSuccess;
 	
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 100;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 500;
-	private final static int SIZING_OUTPUT_HEIGHT = 300;
-	private final static int SIZING_OUTPUT_WIDTH = 500;
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
 	
 	public AntLaunchWizardPage(EclipseProject project) {
 		super("execute ant script","Execute Ant Script",null);
@@ -51,7 +51,6 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 			}
 		});
 		
-		listViewer.addCheckStateListener(this);
 		listViewer.getTable().setLayoutData(data);
 		listViewer.setLabelProvider(labelProvider);
 		listViewer.setContentProvider(TargetsListContentProvider.getInstance());
@@ -60,18 +59,43 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 		new Label(composite,SWT.NONE).setText("Arguments:");
 		Text argumentsField = new Text(composite,SWT.BORDER);
 		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		new Label(composite,SWT.NONE).setText("Output:");
-		Text output = new Text(composite,SWT.BORDER | SWT.READ_ONLY);
-		data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = SIZING_OUTPUT_HEIGHT;
-		data.widthHint = SIZING_OUTPUT_WIDTH;
-		output.setLayoutData(data);
 		
+		showLogOnSuccess = new Button(composite, SWT.CHECK);
+		showLogOnSuccess.setText("Display log after successful script execution");
+
+		restorePreviousSelectedTargets();
+		listViewer.addCheckStateListener(this);
+		listViewer.refresh();
 		setControl(composite);
 	}
 	
 	public Vector getSelectedTargets() {
 		return (Vector)selectedTargets.clone();
 	}
+	
+	protected void restorePreviousSelectedTargets() {
+		if (initialTargetSelections == null)
+			return;
+		
+		Vector result = new Vector();
+		Object availableTargets[] = TargetsListContentProvider.getInstance().getElements(project);
+		for (int i = 0; i < initialTargetSelections.length; i++) {
+			String currentTargetName = initialTargetSelections[i];
+			for (int j = 0; j < availableTargets.length; j++) {
+				if (((Target)availableTargets[j]).getName().equals(currentTargetName)) {
+					result.addElement(availableTargets[j]);
+					listViewer.setChecked(availableTargets[j],true);
+					continue;
+				}
+			}
+		}
+		
+		selectedTargets = result;
+		labelProvider.setSelectedTargets(selectedTargets);
+	}
+
+	public void setInitialTargetSelections(String value[]) {
+		initialTargetSelections = value;
+	}
+	
 }

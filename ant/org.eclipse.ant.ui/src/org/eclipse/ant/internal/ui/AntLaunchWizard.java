@@ -1,4 +1,4 @@
-package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import java.lang.reflect.InvocationTargetException;import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.*;import org.eclipse.core.resources.IFile;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.wizard.Wizard;
+package org.eclipse.ant.internal.ui;/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */import java.lang.reflect.InvocationTargetException;import java.util.*;import org.apache.tools.ant.Target;import org.eclipse.ant.core.*;import org.eclipse.core.resources.IFile;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.QualifiedName;import org.eclipse.core.runtime.Status;import org.eclipse.jface.operation.IRunnableWithProgress;import org.eclipse.jface.wizard.Wizard;
 
 public class AntLaunchWizard extends Wizard {
 	
@@ -6,12 +6,46 @@ public class AntLaunchWizard extends Wizard {
 	private AntLaunchWizardPage page1 = null;
 	private IFile antFile = null;
 	
+	private final static String SEPARATOR_TARGETS = "\"";
+	private final static String PROPERTY_SELECTEDTARGETS = "selectedTargets";
+	
 	public AntLaunchWizard(EclipseProject project,IFile antFile) {
 		super();
 		this.project = project;
 		this.antFile = antFile;
 	}
 	
+	public void addPages() {
+		page1 = new AntLaunchWizardPage(project);
+		addPage(page1);
+		page1.setInitialTargetSelections(getTargetNamesToPreselect());
+	}
+	
+	public String[] getTargetNamesToPreselect() {
+		String propertyString = "";
+		try {
+			propertyString = antFile.getPersistentProperty(
+				new QualifiedName(AntUIPlugin.PI_ANTUI,PROPERTY_SELECTEDTARGETS));
+		} catch (CoreException e) {
+			new Status(
+				IStatus.WARNING,
+				AntUIPlugin.PI_ANTUI,
+				IStatus.WARNING,
+				"Could not read ant targets property from resource: " + antFile.getFullPath().toString(),
+				e);
+		}
+		
+		StringTokenizer tokenizer = new StringTokenizer(propertyString,SEPARATOR_TARGETS);
+		String result[] = new String[tokenizer.countTokens()];
+		int index = 0;
+		while (tokenizer.hasMoreTokens())
+			result[index++] = tokenizer.nextToken();
+
+		return result;
+	}
+			
+	
+			
 	public boolean performFinish() {
 		Vector targetVect = page1.getSelectedTargets();
 
@@ -42,13 +76,34 @@ public class AntLaunchWizard extends Wizard {
 				}
 			};
 		});
-*/			
+*/
+
+		// asuming that all went well...
+		storeTargetsOnFile(targetVect);
 		return true;
 	}
-	
-	public void addPages() {
-		page1 = new AntLaunchWizardPage(project);
-		addPage(page1);
-	}
 
+	protected void storeTargetsOnFile(Vector targets) {
+		StringBuffer targetString = new StringBuffer();
+		Iterator targetsIt = targets.iterator();
+		
+		while (targetsIt.hasNext()) {
+			targetString.append(((Target)targetsIt.next()).getName());
+			targetString.append(SEPARATOR_TARGETS);
+		}
+		
+		try {
+			antFile.setPersistentProperty(
+				new QualifiedName(AntUIPlugin.PI_ANTUI,PROPERTY_SELECTEDTARGETS),
+				targetString.toString());
+		} catch (CoreException e) {
+			AntUIPlugin.getPlugin().getLog().log(
+				new Status(
+					IStatus.WARNING,
+					AntUIPlugin.PI_ANTUI,
+					IStatus.WARNING,
+					"Could not write ant targets property to resource: " + antFile.getFullPath().toString(),
+					e));
+		}
+	}
 }
