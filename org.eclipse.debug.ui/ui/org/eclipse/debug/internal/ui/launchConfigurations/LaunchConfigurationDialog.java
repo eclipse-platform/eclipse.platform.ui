@@ -1143,7 +1143,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				setWorkingCopy(config.getWorkingCopy());
 			}
 			fUnderlyingConfig = getLaunchConfiguration().getOriginal();
-	 			 		
+	 		
+	 		// update the name field before to avoid verify error 
+	 		getNameTextWidget().setText(config.getName());	 		
+	 		
 	 		// update the tabs with the new working copy
 	 		ILaunchConfigurationTab[] tabs = getTabs();
 	 		for (int i = 0; i < tabs.length; i++) {
@@ -1151,10 +1154,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 				tabs[i].setDefaults(getLaunchConfiguration());
 	 			}
 				tabs[i].initializeFrom(getLaunchConfiguration());
-	 		}
+	 		}	 		
 	 		
-	 		// update the name field
-	 		getNameTextWidget().setText(config.getName());	 		
+	 		// update the name field after in case client changed it 
+	 		getNameTextWidget().setText(config.getName());
 	 				
 	 		refreshStatus();
 	 		
