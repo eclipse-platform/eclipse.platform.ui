@@ -286,7 +286,7 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public IStatus run(IProgressMonitor monitor) {
-			synchronized(this) {
+			synchronized(DebugViewLabelDecorator.this) {
 				fNextJob= null;
 			}
 
