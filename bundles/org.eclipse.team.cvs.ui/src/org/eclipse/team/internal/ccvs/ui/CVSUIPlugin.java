@@ -677,10 +677,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		initializePreferences();
 		
 		Console.startup();
-		
-		// Enable CVS decorators so that users don't have to enable via
-		// the preference pages.
-		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(CVSLightweightDecorator.ID, true);
 	}
 	
 	public static IWorkingSet getWorkingSet(IResource[] resources, String name) {
