@@ -7,10 +7,10 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -18,6 +18,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -26,6 +27,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -41,8 +43,41 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
 
 	private static class WorkingSetLabelProvider extends LabelProvider {
+		private Map icons;
+
+		public WorkingSetLabelProvider() {
+			icons = new Hashtable();
+		}
+		public void dispose() {
+			Iterator iterator = icons.values().iterator();
+			
+			while (iterator.hasNext()) {
+				Image icon = (Image) iterator.next();
+				icon.dispose();
+			}
+			super.dispose();
+		}
+		public Image getImage(Object workingSet) {
+			Assert.isTrue(workingSet instanceof WorkingSet);
+			WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+			WorkingSetDescriptor descriptor = registry.getWorkingSetDescriptor(((WorkingSet) workingSet).getEditPageId());
+			
+			if (descriptor == null) {
+				return null;
+			}
+			ImageDescriptor imageDescriptor = descriptor.getIcon();
+			if (imageDescriptor == null) {
+				return null;
+			}
+			Image icon = (Image) icons.get(imageDescriptor);
+			if (icon == null) {
+				icon = imageDescriptor.createImage();
+				icons.put(imageDescriptor, icon);
+			}
+			return icon;
+		}
 		public String getText(Object workingSet) {
-			Assert.isTrue(workingSet instanceof IWorkingSet);
+			Assert.isTrue(workingSet instanceof WorkingSet);
 			return ((IWorkingSet) workingSet).getName();
 		}
 	}

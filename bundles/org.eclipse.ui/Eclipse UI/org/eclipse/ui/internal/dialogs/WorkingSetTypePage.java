@@ -10,9 +10,15 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -33,6 +39,7 @@ public class WorkingSetTypePage extends WizardPage {
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 
 	private TableViewer typesListViewer;
+	private Map icons;
 
 	/**
 	 * Creates a new instance of the receiver
@@ -40,6 +47,7 @@ public class WorkingSetTypePage extends WizardPage {
 	public WorkingSetTypePage() {
 		super("workingSetTypeSelectionPage"); //$NON-NLS-1$
 		setDescription(WorkbenchMessages.getString("WorkingSetTypePage.description")); //$NON-NLS-1$				
+		icons = new Hashtable();
 	}
 	/** 
 	 * Overrides method in WizardPage
@@ -59,6 +67,16 @@ public class WorkingSetTypePage extends WizardPage {
 
 		for (int i = 0; i < descriptors.length; i++) {
 			TableItem tableItem = new TableItem(table, SWT.NULL);
+			ImageDescriptor imageDescriptor = descriptors[i].getIcon();
+			
+			if (imageDescriptor != null) {
+				Image icon = (Image) icons.get(imageDescriptor);
+				if (icon == null) {
+					icon = imageDescriptor.createImage();
+					icons.put(imageDescriptor, icon);
+				}
+				tableItem.setImage(icon);
+			}
 			tableItem.setText(descriptors[i].getName());
 			tableItem.setData(descriptors[i]);
 		}
@@ -97,6 +115,20 @@ public class WorkingSetTypePage extends WizardPage {
 		});		
 		createContent();
 		setPageComplete(false);
+	}
+	/** 
+	 * Overrides method in DialogPage
+	 * 
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		Iterator iterator = icons.values().iterator();
+		
+		while (iterator.hasNext()) {
+			Image icon = (Image) iterator.next();
+			icon.dispose();
+		}
+		super.dispose();
 	}
 	/**
 	 * Returns the page id of the selected working set type.

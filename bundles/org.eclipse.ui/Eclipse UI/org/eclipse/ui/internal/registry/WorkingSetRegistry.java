@@ -43,6 +43,15 @@ public class WorkingSetRegistry {
 		return null;
 	}
 	/**
+	 * Returns the working set descriptor with the given id.
+	 * 
+	 * @param pageId working set page id
+	 * @return the working set descriptor with the given id.
+	 */
+	public WorkingSetDescriptor getWorkingSetDescriptor(String pageId) {
+		return (WorkingSetDescriptor) workingSetDescriptors.get(pageId);
+	}
+	/**
 	 * Returns an array of all working set descriptors.
 	 * 
 	 * @return an array of all working set descriptors.

@@ -3,7 +3,11 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -16,11 +20,13 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class WorkingSetDescriptor {
 	private String id;
 	private String name;
+	private String icon;	
 	private String pageClassName;
 	private IConfigurationElement configElement;
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_NAME = "name"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
 	private static final String ATT_PAGE_CLASS = "pageClass"; //$NON-NLS-1$	
 
 	/**
@@ -33,6 +39,7 @@ public class WorkingSetDescriptor {
 		this.configElement = configElement;
 		id = configElement.getAttribute(ATT_ID);
 		name = configElement.getAttribute(ATT_NAME);
+		icon = configElement.getAttribute(ATT_ICON);		
 		pageClassName = configElement.getAttribute(ATT_PAGE_CLASS);
 
 		if (name == null) {
@@ -64,12 +71,33 @@ public class WorkingSetDescriptor {
 		if (pageClassName != null) {
 			try {
 				page = WorkbenchPlugin.createExtension(configElement, ATT_PAGE_CLASS);
-			} catch (CoreException e) {
+			} catch (CoreException exception) {
 				WorkbenchPlugin.log("Unable to create working set page: " + //$NON-NLS-1$
-				pageClassName, e.getStatus());
+				pageClassName, exception.getStatus());
 			}
 		}
 		return (IWorkingSetPage) page;
+	}
+	/**
+	 * Returns the page's icon
+	 */
+	public ImageDescriptor getIcon() {
+		if (icon == null)
+			return null;
+		URL url;
+		try {
+			url= new URL(WorkbenchPlugin.getDefault().getDescriptor().getInstallURL(), icon);
+		} catch (MalformedURLException exception) {
+			WorkbenchPlugin.log("Unable to load working set icon"); //$NON-NLS-1$
+			return null;
+		}
+		return ImageDescriptor.createFromURL(url);
+	}
+	/**
+	 * Returns the working set page id.
+	 */
+	public String getId() {
+		return id;
 	}
 	/**
 	 * Returns the working set page class name
@@ -87,11 +115,5 @@ public class WorkingSetDescriptor {
 	 */
 	public String getName() {
 		return name;
-	}
-	/**
-	 * Returns the working set page id.
-	 */
-	public String getId() {
-		return id;
 	}
 }
