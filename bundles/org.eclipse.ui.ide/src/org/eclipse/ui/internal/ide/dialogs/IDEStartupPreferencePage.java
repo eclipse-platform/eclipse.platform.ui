@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
 /**
  * Extends the Startup and Shutdown preference page with IDE-specific settings.
  * 
- * @issue want IDE settings to appear in main Workbench preference page (via subclassing),
+ * Note: want IDE settings to appear in main Workbench preference page (via subclassing),
  *   however the superclass, StartupPreferencePage, is internal
  * @since 3.0
  */

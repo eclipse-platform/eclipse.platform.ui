@@ -253,8 +253,7 @@ public class TableSortDialog extends Dialog {
 	}
 
 	/**
-	 * Sets the dirty flag to true;
-	 * @param dirty The dirty to set
+	 * Sets the dirty flag to true.
 	 */
 	public void markDirty() {
 		dirty = true;

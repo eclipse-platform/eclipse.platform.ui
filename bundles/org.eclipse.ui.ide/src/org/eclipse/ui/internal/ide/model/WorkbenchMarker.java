@@ -27,25 +27,26 @@ import org.eclipse.ui.model.WorkbenchAdapter;
 public class WorkbenchMarker
 	extends WorkbenchAdapter
 	implements IMarkerActionFilter {
-/**
- * @see IWorkbenchAdapter#getImageDescriptor(Object)
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
  */
 public ImageDescriptor getImageDescriptor(Object o) {
 	if(!(o instanceof IMarker))
 			return null;
 	return IDEWorkbenchPlugin.getDefault().getMarkerImageProviderRegistry().getImageDescriptor((IMarker)o);
 }
-/**
- * Returns the name of this element.  This will typically
- * be used to assign a label to this object when displayed
- * in the UI.
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
  */
 public String getLabel(Object o) {
 	IMarker marker = (IMarker) o;
 	return marker.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
 }
-/**
- * Returns the logical parent of the given object in its tree.
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
  */
 public Object getParent(Object o) {
 	return ((IMarker)o).getResource();

@@ -53,8 +53,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 		setType(IMarker.TASK);
 	}
 	
-	/**
-	 * @see DialogMarkerProperties#createAttributesArea(Composite)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#createAttributesArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createAttributesArea(Composite parent) {
 		super.createAttributesArea(parent);
@@ -133,8 +134,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 		return priority;
 	}
 	
-	/**
-	 * @see DialogMarkerProperties#updateEnablement()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#updateEnablement()
 	 */
 	protected void updateEnablement() {
 		super.updateEnablement();
@@ -142,8 +144,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 		completedCheckbox.setEnabled(isEditable());
 	}
 	
-	/**
-	 * @see DialogMarkerProperties#updateDialogForNewMarker()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#updateDialogForNewMarker()
 	 */
 	protected void updateDialogForNewMarker() {
 		Map initialAttributes = getInitialAttributes();
@@ -164,8 +167,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 		super.updateDialogForNewMarker();
 	}
 
-	/**
-	 * @see DialogMarkerProperties#updateDialogFromMarker()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#updateDialogFromMarker()
 	 */
 	protected void updateDialogFromMarker() {
 		Map initialAttributes = getInitialAttributes();
@@ -197,8 +201,9 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 		return priority;
 	}
 	
-	/**
-	 * @see DialogMarkerProperties#getMarkerAttributes()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.DialogMarkerProperties#getMarkerAttributes()
 	 */
 	protected Map getMarkerAttributes() {
 		Map attrs = super.getMarkerAttributes();

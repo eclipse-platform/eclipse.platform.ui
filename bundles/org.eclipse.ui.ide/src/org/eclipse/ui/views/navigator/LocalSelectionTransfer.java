@@ -48,6 +48,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 	}
 	/**
 	 * Returns the singleton.
+	 * @return LocalSelectionTransfer
 	 */
 	public static LocalSelectionTransfer getInstance() {
 		return INSTANCE;
@@ -146,7 +147,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 	 * 
 	 * @param time the time when the selection operation was started
 	 * 
-	 * @see org.eclipse.swt.events.TypeddEvent#time
+	 * @see org.eclipse.swt.events.TypedEvent#time
 	 */
 	public void setSelectionSetTime(long time) {
 		selectionSetTime = time;

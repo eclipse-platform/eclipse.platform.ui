@@ -29,36 +29,41 @@ public class FieldCreationTime implements IField {
 		description = Messages.getString("description.creationTime"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getDescription()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 	 */
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getDescriptionImage()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
 	 */
 	public Image getDescriptionImage() {
 		return image;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getColumnHeaderText()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
 		return description;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getColumnHeaderImage()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
 	 */
 	public Image getColumnHeaderImage() {
 		return image;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getValue(java.lang.Object)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
 	 */
 	public String getValue(Object obj) {
 		if (obj == null || !(obj instanceof ConcreteMarker)) {
@@ -68,15 +73,17 @@ public class FieldCreationTime implements IField {
 		return Util.getCreationTime(marker.getCreationTime());
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#getImage(java.lang.Object)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object obj) {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.markerview.IField#compare(java.lang.Object, java.lang.Object)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object obj1, Object obj2) {
 		if (obj1 == null || obj2 == null || !(obj1 instanceof ConcreteMarker) || !(obj2 instanceof ConcreteMarker)) {

@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
 /**
  * Extends the Perspectives preference page with IDE-specific settings.
  * 
- * @issue want IDE settings to appear in main Perspectives preference page (via
+ * Note: want IDE settings to appear in main Perspectives preference page (via
  * subclassing), however the superclass, PerspectivesPreferencePage, is
  * internal
  */

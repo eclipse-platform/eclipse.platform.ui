@@ -43,7 +43,7 @@ import org.eclipse.ui.internal.ide.misc.WorkInProgressMessages;
 /**
  * The IDE workbench main preference page.
  * 
- * @issue want IDE settings to appear in main Workbench preference page (via subclassing),
+ *Note: want IDE settings to appear in main Workbench preference page (via subclassing),
  *   however the superclass, WorkbenchPreferencePage, is internal
  */
 public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage

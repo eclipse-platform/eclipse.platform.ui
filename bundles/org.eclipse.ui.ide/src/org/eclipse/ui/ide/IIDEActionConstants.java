@@ -17,7 +17,7 @@ package org.eclipse.ui.ide;
  * or extended.
  * </p>
  * 
- * @issue want to move IDE-specific stuff out of IWorkbenchActionConstants.
+ * Note: want to move IDE-specific stuff out of IWorkbenchActionConstants.
  *   There's still some cleanup to be done here (and there).
  * 
  * @since 3.0
@@ -245,7 +245,7 @@ public interface IIDEActionConstants {
 	 * Navigate menu: name of standard Go To Resource global action
 	 * (value <code>"goToResource"</code>).
 	 * 
-	 * @issue should be in an action factory
+	 * Note:should be in an action factory
 	 */
 	public static final String GO_TO_RESOURCE = "goToResource";	// Global action. //$NON-NLS-1$
 

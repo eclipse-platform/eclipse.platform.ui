@@ -53,7 +53,7 @@ public class MarkerList {
 	/**
 	 * Creates a list containing the given set of markers
 	 * 
-	 * @param markerList
+	 * @param markers
 	 */
 	public MarkerList(ConcreteMarker[] markers) {
 		this.markers = markers;
@@ -151,9 +151,11 @@ public class MarkerList {
 	
 	/**
 	 * Computes the set of markers that match the given filter
-	 * 
-	 * @param filter
-	 * @param mon
+	 * @param filter the filter to apply
+	 * @param mon the monitor to update
+	 * @param ignoreExceptions whether or not exception will be shown
+	 * @return MarkerList
+	 * @throws CoreException
 	 */
 	public static MarkerList compute(MarkerFilter filter, IProgressMonitor mon, 
 									 boolean ignoreExceptions) throws CoreException {
@@ -162,10 +164,9 @@ public class MarkerList {
 	
 	/**
 	 * Returns a new MarkerList containing all markers in the workspace of the specified types
-	 * 
 	 * @param types
-	 * @param mon
-	 * @return IMarker[] array of markers 
+	 * @return  IMarker[]
+	 * @throws CoreException
 	 */
 	public static IMarker[] compute(String[] types) throws CoreException {
 		

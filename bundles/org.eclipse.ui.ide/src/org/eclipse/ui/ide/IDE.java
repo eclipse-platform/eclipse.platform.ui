@@ -224,8 +224,7 @@ public final class IDE {
      *         opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
-     *      String)
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
      */
     public static IEditorPart openEditor(IWorkbenchPage page,
             IEditorInput input, String editorId) throws PartInitException {
@@ -256,8 +255,7 @@ public final class IDE {
      *         opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
-     *      String, boolean)
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String, boolean)
      */
     public static IEditorPart openEditor(IWorkbenchPage page,
             IEditorInput input, String editorId, boolean activate)
@@ -287,7 +285,7 @@ public final class IDE {
      *         opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput,
      *      String, boolean)
      */
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
@@ -316,8 +314,7 @@ public final class IDE {
      *         opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
-     *      String)
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
      */
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input)
             throws PartInitException {
@@ -346,8 +343,7 @@ public final class IDE {
      *         opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
-     *      String)
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
      */
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
             String editorId) throws PartInitException {
@@ -378,8 +374,7 @@ public final class IDE {
      *         opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
-     *      String, boolean)
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String, boolean)
      */
     public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
             String editorId, boolean activate) throws PartInitException {

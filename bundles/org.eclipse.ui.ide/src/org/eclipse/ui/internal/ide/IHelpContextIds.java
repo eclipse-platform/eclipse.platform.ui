@@ -18,7 +18,7 @@ package org.eclipse.ui.internal.ide;
  * or extended.
  * </p>
  * 
- * @issue pare down entries to just the IDE-specific ones
+ * Note: pare down entries to just the IDE-specific ones
  */
 public interface IHelpContextIds {
 	public static final String PREFIX = IDEWorkbenchPlugin.IDE_WORKBENCH + "."; //$NON-NLS-1$

@@ -63,6 +63,7 @@ public void addSelectionChangedListener(ISelectionChangedListener listener) {
  * <code>IContentOutlinePage</code> method creates a tree viewer. Subclasses
  * must extend this method configure the tree viewer with a proper content 
  * provider, label provider, and input element.
+ * @param parent
  */
 public void createControl(Composite parent) {
 	treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -71,7 +72,7 @@ public void createControl(Composite parent) {
 /**
  * Fires a selection changed event.
  *
- * @param selction the new selection
+ * @param selection the new selection
  */
 protected void fireSelectionChanged(ISelection selection) {
 	// create an event
@@ -113,10 +114,9 @@ public ISelection getSelection() {
 protected TreeViewer getTreeViewer() {
 	return treeViewer;
 }
-/**
- * The <code>ContentOutlinePage</code> implementation of this 
- * <code>IPageBookViewPage</code> method registers itself as a selection 
- * provider with the site.
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
  */
 public void init(IPageSite pageSite) {
 	super.init(pageSite);

@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 /**
  * Extends the Editors preference page with IDE-specific settings.
  *
- * @issue want IDE settings to appear in main Editors preference page (via subclassing),
+ * Note: want IDE settings to appear in main Editors preference page (via subclassing),
  *   however the superclass, EditorsPreferencePage, is internal
  */
 public class IDEEditorsPreferencePage extends EditorsPreferencePage {

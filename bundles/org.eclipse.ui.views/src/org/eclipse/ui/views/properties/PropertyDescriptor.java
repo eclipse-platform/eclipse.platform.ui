@@ -302,7 +302,7 @@ public void setFilterFlags(String value[]) {
  * The plural name for this method is unfortunate.
  * </p>
  * 
- * @param contextId the help context id, or <code>null</code> if none
+ * @param contextIds the help context ids, or <code>null</code> if none
  * @see #getHelpContextIds
  */
 public void setHelpContextIds(Object contextIds) {
@@ -315,7 +315,7 @@ public void setHelpContextIds(Object contextIds) {
  * will be created as the default when needed.
  * </p>
  * 
- * @param labelProvider the label provider for the descriptor, or 
+ * @param provider the label provider for the descriptor, or 
  *   <code>null</code> if the default label provider should be used
  * @see #getLabelProvider
  */

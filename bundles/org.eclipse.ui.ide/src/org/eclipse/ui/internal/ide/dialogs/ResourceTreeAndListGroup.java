@@ -172,7 +172,8 @@ public void checkStateChanged(final CheckStateChangedEvent event) {
  *	Lay out and initialize self's visual components.
  *
  *	@param parent org.eclipse.swt.widgets.Composite
- *	@param useHeightHint. If true yse the preferredHeight.
+ *  @param style the style flags for the new Composite
+ *	@param useHeightHint If true yse the preferredHeight.
  */
 protected void createContents(Composite parent, int style, boolean useHeightHint) {
 	// group pane
@@ -231,9 +232,9 @@ protected void createTreeViewer(Composite parent, boolean useHeightHint) {
  * To determine whether a tree item should be white-checked use method
  * #determineShouldBeWhiteChecked(Object).
  *
- * @param element java.lang.Object
+ * @param treeElement java.lang.Object
  * @return boolean
- * @see #determineShouldBeWhiteChecked(java.lang.Object)
+ * @see #determineShouldBeWhiteChecked(Object)
  */
 protected boolean determineShouldBeAtLeastGrayChecked(Object treeElement) {
 	// if any list items associated with treeElement are checked then it
@@ -698,7 +699,7 @@ public void removeCheckStateListener(ICheckStateListener listener) {
 /**
  *	Handle the selection of an item in the tree viewer
  *
- *	@param selection ISelection
+ *	@param event SelectionChangedEvent
  */
 public void selectionChanged(SelectionChangedEvent event) {
 	IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -898,8 +899,9 @@ protected void updateHierarchy(Object treeElement) {
 /**
  * Update the selections of the tree elements in items to reflect the new
  * selections provided.
- * @param Map with keys of Object (the tree element) and values of List (the selected
- * list elements).  NOTE: This method does not special case keys with no values (i.e., 
+ * @param items Map with keys of Object (the tree element) and values of List (the selected
+ * list elements).  
+ * NOTE: This method does not special case keys with no values (i.e., 
  * a tree element with an empty list).  If a tree element does not have any selected
  * items, do not include the element in the Map.
  */
