@@ -216,9 +216,8 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		ISelection selection=  this.listViewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			return (IStructuredSelection)selection;
-		} else {
-			return StructuredSelection.EMPTY;
-		}
+		} 
+		return StructuredSelection.EMPTY;
 	}
 	
 	protected void initialListItem(Object element) {

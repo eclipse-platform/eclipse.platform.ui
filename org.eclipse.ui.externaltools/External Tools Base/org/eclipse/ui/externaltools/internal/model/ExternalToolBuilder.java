@@ -196,12 +196,11 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			if (delta == null) {
 				//project just added to the workspace..no previous build tree
 				return true;
-			} else {	
-				IPath path= resources[i].getProjectRelativePath();
-				IResourceDelta change= delta.findMember(path);
-				if (change != null) {
-					return true;
-				}
+			} 
+			IPath path= resources[i].getProjectRelativePath();
+			IResourceDelta change= delta.findMember(path);
+			if (change != null) {
+				return true;
 			}
 		}
 		return false;

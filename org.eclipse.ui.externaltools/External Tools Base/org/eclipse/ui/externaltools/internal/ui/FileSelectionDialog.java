@@ -197,9 +197,9 @@ public class FileSelectionDialog extends MessageDialog {
 						}
 					}
 					return results.toArray();
-				} else {
-					return new Object[0];
 				}
+				
+				return new Object[0];
 			}
 		};
 	}
