@@ -154,7 +154,10 @@ public class InternalAntRunner {
 	protected void addBuildListeners(Project project) {
 		String className= null;
 		try {
-			project.addBuildListener(createLogger());
+			BuildLogger logger= createLogger();
+			if (logger != null) {
+				project.addBuildListener(logger);
+			}
 			if (buildListeners != null) {
 				for (Iterator iterator = buildListeners.iterator(); iterator.hasNext();) {
 					className = (String) iterator.next();
@@ -166,6 +169,8 @@ public class InternalAntRunner {
 			String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.{0}_which_was_specified_to_be_a_build_listener_is_not_an_instance_of_org.apache.tools.ant.BuildListener._1"), new String[]{className}); //$NON-NLS-1$
 			logMessage(null, message, Project.MSG_ERR);
 			throw new BuildException(message);
+		} catch (BuildException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new BuildException(e);
 		}
@@ -494,6 +499,7 @@ public class InternalAntRunner {
 	 * Creates and returns the default build logger for logging build events to the ant log.
 	 * 
 	 * @return the default build logger for logging build events to the ant log
+	 * 		Can return <code>null</code> if no logging is to occur.
 	 */
 	protected BuildLogger createLogger() {
 		if (loggerClassname != null) {
@@ -506,15 +512,14 @@ public class InternalAntRunner {
 			} catch (Exception e) {
 				String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unable_to_instantiate_logger__{0}_6"), new String[]{loggerClassname}); //$NON-NLS-1$
 				logMessage(null, message, Project.MSG_ERR);
-				throw new BuildException(e);
+				throw new BuildException(message, e);
 			}
-		} else {
-			buildLogger = new DefaultLogger();
-		}
-		buildLogger.setMessageOutputLevel(messageOutputLevel);
-		buildLogger.setOutputPrintStream(out);
-		buildLogger.setErrorPrintStream(err);
-		buildLogger.setEmacsMode(emacsMode);
+			buildLogger.setMessageOutputLevel(messageOutputLevel);
+			buildLogger.setOutputPrintStream(out);
+			buildLogger.setErrorPrintStream(err);
+			buildLogger.setEmacsMode(emacsMode);
+		} 
+
 		return buildLogger;
 	}
 
@@ -669,6 +674,9 @@ public class InternalAntRunner {
 		
 		String[] args = getArguments(commands, "-listener"); //$NON-NLS-1$
 		if (args != null) {
+			if (args.length == 0) {
+				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
+			} 
 			if (buildListeners == null) {
 				buildListeners= new ArrayList(1);
 			}
@@ -677,6 +685,9 @@ public class InternalAntRunner {
 
 		args = getArguments(commands, "-logger"); //$NON-NLS-1$
 		if (args != null) {
+			if (args.length == 0) {
+				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-logger_argument_2")); //$NON-NLS-1$
+			} 
 			loggerClassname = args[0];
 		}
 		
@@ -725,6 +736,10 @@ public class InternalAntRunner {
 			args = getArguments(commands, "-l"); //$NON-NLS-1$
 		}
 		if (args != null) {
+			if (args.length == 0) {
+				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_log_file_when_using_the_-log_argument_3"), Project.MSG_ERR); //$NON-NLS-1$
+				return false;
+			} 
 			try {
 				createLogFile(args[0]);
 			} catch (IOException e) {
@@ -732,6 +747,7 @@ public class InternalAntRunner {
 				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_write_to_the_specified_log_file__{0}._Make_sure_the_path_exists_and_you_have_write_permissions._2"), new String[]{args[0]}), Project.MSG_ERR); //$NON-NLS-1$
 				return false;
 			}
+		
 		}
 		
 		args = getArguments(commands, "-buildfile"); //$NON-NLS-1$
@@ -741,12 +757,35 @@ public class InternalAntRunner {
 				args = getArguments(commands, "-f"); //$NON-NLS-1$
 			}
 		}
+		
 		if (args != null) {
+			if (args.length == 0) {
+				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_buildfile_when_using_the_-buildfile_argument_4"), Project.MSG_ERR); //$NON-NLS-1$
+				return false;
+			} 
 			buildFileLocation = args[0];
 			targets = new Vector(args.length - 1);
 			for (int i = 1; i < args.length; i++) {
 				targets.add(args[i]);
 			}
+		}
+		
+		args= getArguments(commands, "-propertyfile"); //$NON-NLS-1$
+		if (args != null) {
+			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-propertyfile_option_not_yet_implemented_6"), Project.MSG_INFO); //$NON-NLS-1$
+			return false;
+		}
+		
+		args= getArguments(commands, "-inputhandler"); //$NON-NLS-1$
+		if (args != null) {
+			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-inputhandler_option_not_yet_implemented_8"), Project.MSG_INFO); //$NON-NLS-1$
+			return false;
+		}
+		
+		args= getArguments(commands, "-find"); //$NON-NLS-1$
+		if (args != null) {
+			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_option_not_yet_implemented_10"), Project.MSG_INFO); //$NON-NLS-1$
+			return false;
 		}
 
 		processProperties(commands);
@@ -776,8 +815,10 @@ public class InternalAntRunner {
 		out = new PrintStream(new FileOutputStream(logFile));
 		err = out;
 		logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Using_{0}_file_as_build_log._1"), new String[]{logFile.getCanonicalPath()}), Project.MSG_INFO); //$NON-NLS-1$
-		buildLogger.setErrorPrintStream(err);
-		buildLogger.setOutputPrintStream(out);
+		if (buildLogger != null) {
+			buildLogger.setErrorPrintStream(err);
+			buildLogger.setOutputPrintStream(out);
+		}
 	}
 
 	protected void processProperties(List commands) {
@@ -859,10 +900,15 @@ public class InternalAntRunner {
 		msg.append("\t-version\t\t\t\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.print_the_version_information_and_exit_27")); //$NON-NLS-1$
 		msg.append(lSep); 
-		msg.append("\t-quiet\t\t\t\t\t\t\t\t"); //$NON-NLS-1$
+	 	msg.append("\t-diagnostics\t\t\t\t\t\t"); //$NON-NLS-1$
+	 	msg.append(InternalAntMessages.getString("InternalAntRunner.print_information_that_might_be_helpful_to_12")); //$NON-NLS-1$
+	 	msg.append(lSep);
+        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tdiagnose_or_report_problems._13")); //$NON-NLS-1$
+		msg.append(lSep);
+		msg.append("\t-quiet, -q\t\t\t\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_quiet_29")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-verbose\t\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-verbose, -v\t\t\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_verbose_31")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-debug\t\t\t\t\t\t\t\t"); //$NON-NLS-1$
@@ -871,8 +917,10 @@ public class InternalAntRunner {
 		msg.append("\t-emacs\t\t\t\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.produce_logging_information_without_adornments_35")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-logfile <file>\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-logfile\t<file>\t\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_file_for_log_37")); //$NON-NLS-1$
+		msg.append(lSep);
+		msg.append("\t\t-l\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_____15")); //$NON-NLS-1$
 		msg.append(lSep);  
 		msg.append("\t-logger <classname>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_is_to_perform_logging_39")); //$NON-NLS-1$
@@ -880,13 +928,28 @@ public class InternalAntRunner {
 		msg.append("\t-listener <classname>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.add_an_instance_of_class_as_a_project_listener_41")); //$NON-NLS-1$
 		msg.append(lSep); 
-		msg.append("\t-buildfile <file>\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-buildfile\t<file>\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_buildfile_43")); //$NON-NLS-1$
+		msg.append(lSep); 
+		msg.append("\t\t-file\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1"));  //$NON-NLS-1$
+		msg.append(lSep);
+        msg.append("\t\t-f\t\t\t<file>"); //$NON-NLS-1$        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-D<property>=<value>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_value_for_given_property_45")); //$NON-NLS-1$
-		msg.append(lSep);  
-		//	msg.append("  -find <file>           " + Policy.bind("usage.findFileToBuild") + lSep);
+		msg.append(lSep);
+		msg.append("\t-propertyfile <name>\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.load_all_properties_from_file_with_-D_19")); //$NON-NLS-1$
+		msg.append(lSep);
+        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tproperties_taking_precedence_20")); //$NON-NLS-1$
+        msg.append(lSep);
+        msg.append("\t-inputhandler <class>\t\t"); //$NON-NLS-1$       	msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_will_handle_input_requests_22")); //$NON-NLS-1$
+        msg.append(lSep);
+        msg.append("\t-find <file>\t\t\t\t\t\t"); //$NON-NLS-1$
+        msg.append(InternalAntMessages.getString("InternalAntRunner.search_for_buildfile_towards_the_root_of_the_24")); //$NON-NLS-1$
+        msg.append(lSep);
+        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tfilesystem_and_use_it_25")); //$NON-NLS-1$
+        msg.append(lSep);
 
 		logMessage(getCurrentProject(), msg.toString(), Project.MSG_INFO);
 	}
@@ -894,7 +957,9 @@ public class InternalAntRunner {
 	/**
 	 * From a command line list, get the array of arguments of a given parameter.
 	 * The parameter and its arguments are removed from the list.
-	 * @return null if the parameter is not found or has no arguments
+	 * 
+	 * @return null if the parameter is not found 
+	 * 			or an empty array if no arguments are found
 	 */
 	protected String[] getArguments(List commands, String param) {
 		int index = commands.indexOf(param);
@@ -903,7 +968,7 @@ public class InternalAntRunner {
 		}
 		commands.remove(index);
 		if (index == commands.size()) {// if this is the last command
-			return null;
+			return new String[]{};
 		}
 		List args = new ArrayList(commands.size());
 		while (index < commands.size()) { // while not the last command
@@ -915,7 +980,7 @@ public class InternalAntRunner {
 			commands.remove(index);
 		}
 		if (args.isEmpty()) {
-			return null;
+			return new String[]{};
 		}
 		return (String[]) args.toArray(new String[args.size()]);
 	}
