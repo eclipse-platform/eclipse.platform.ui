@@ -49,7 +49,7 @@
    <extension
          point="org.eclipse.help.contexts">
       <contexts
-            name="HelpContexts.xml">
+            file="HelpContexts.xml">
       </contexts>
    </extension>
 
