@@ -107,7 +107,9 @@ public final class PlatformUI {
 	 * {@link #RETURN_RESTART RETURN_RESTART} if the workbench was terminated
 	 * with a call to {@link IWorkbench#restart IWorkbench.restart}; 
 	 * {@link #RETURN_UNSTARTABLE RETURN_UNSTARTABLE} if the workbench could
-	 * not be started; other values reserved for future use
+	 * not be started; 
+	 * {@link #RETURN_EMERGENCY_CLOSE RETURN_EMERGENCY_CLOSE} if the UI quit
+	 * because of an emergency; other values reserved for future use
 	 * @since 3.0
 	 */
 	public static int createAndRunWorkbench(WorkbenchAdviser adviser) {
