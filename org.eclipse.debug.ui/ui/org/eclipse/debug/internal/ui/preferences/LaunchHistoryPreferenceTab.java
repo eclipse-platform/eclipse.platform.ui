@@ -17,13 +17,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -33,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -488,14 +483,10 @@ public class LaunchHistoryPreferenceTab {
 				return new ILaunchConfiguration[0];
 			}
 			List list = new ArrayList(all.length);
-			String mode = (String)inputElement;
+			ViewerFilter filter = new LaunchGroupFilter(getLaunchHistory().getLaunchGroup());
 			for (int i = 0; i < all.length; i++) {
-				try {
-					if (all[i].getType().supportsMode(mode) && LaunchConfigurationManager.isVisible(all[i])) {
-						list.add(all[i]);
-					}
-				} catch (CoreException e) {
-					// ignore
+				if (filter.select(null, null, all[i])) {
+					list.add(all[i]);
 				}
 			}
 			list.removeAll(getFavorites());
