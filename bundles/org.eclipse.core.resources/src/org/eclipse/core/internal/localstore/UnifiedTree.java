@@ -15,6 +15,8 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.*;
+//import "queue" explicitly here to prevent ambiguity when running against 1.5.
+import org.eclipse.core.internal.utils.Queue;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
