@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
  
 /**
@@ -106,7 +107,12 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 				getTreeViewer().getControl().setRedraw(false);
 				for (int i = 0; i < expressions.length; i++) {
 					IExpression expression = expressions[i];
-					refresh(expression);	
+					refresh(expression);
+					// update details if selected
+					IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+					if (selection.size() == 1 && selection.getFirstElement().equals(expression)) {
+						getVariablesView().populateDetailPane();	
+					}
 				}
 				getTreeViewer().getControl().setRedraw(true);
 			}

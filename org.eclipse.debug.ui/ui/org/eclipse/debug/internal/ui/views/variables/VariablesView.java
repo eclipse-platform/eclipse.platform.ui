@@ -549,7 +549,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Ask the variables tree for its current selection, and use this to populate
 	 * the detail pane.
 	 */
-	protected void populateDetailPane() {
+	public void populateDetailPane() {
 		if (isDetailPaneVisible()) {
 			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
 			populateDetailPaneFromSelection(selection);		
