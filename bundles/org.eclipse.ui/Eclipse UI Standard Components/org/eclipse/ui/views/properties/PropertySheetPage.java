@@ -11,6 +11,7 @@ import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -20,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.CopyProjectAction;
 import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -67,6 +69,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	private DefaultsAction defaultsAction;
 	private FilterAction filterAction;
 	private CategoriesAction categoriesAction;
+	private CopyPropertyAction copyAction;
 
 	private IActionBars actionBars;
 	private ICellEditorActivationListener cellEditorActivationListener;
@@ -101,6 +104,16 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 				handleEntrySelection((IStructuredSelection) event.getSelection());
 			}
 		});
+
+		// Create the popup menu for the page.
+		copyAction = new CopyPropertyAction(viewer, "copy"); //$NON-NLS-1$
+		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif")); //$NON-NLS-1$
+		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif")); //$NON-NLS-1$
+		
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+		menuMgr.add(copyAction);
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
 
 		// Set help on the viewer 
 		viewer.getControl().addHelpListener(new HelpListener() {
