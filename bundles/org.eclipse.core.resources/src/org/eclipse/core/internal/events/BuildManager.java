@@ -685,13 +685,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		rebuildRequested = true;
 	}
 	/**
-	 * Temporary backwards compatibility method until background
-	 * autobuild is released
-	 */
-	public IStatus runAutoBuild(IProgressMonitor monitor) {
-		return autoBuildJob.run(monitor);
-	}
-	/**
 	 * Sets the builder map for the given project.  The builder map is
 	 * a Map mapping String(builder name) -> BuilderPersistentInfo.
 	 * The map includes entries for all builders that are
