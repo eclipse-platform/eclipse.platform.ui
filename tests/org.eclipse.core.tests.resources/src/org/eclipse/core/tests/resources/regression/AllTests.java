@@ -51,6 +51,7 @@ public class AllTests extends TestCase {
 		suite.addTest(PR_1GEAB3C_Test.suite());
 		suite.addTest(PR_1GH2B0N_Test.suite());
 		suite.addTest(PR_1GHOM0N_Test.suite());
+		suite.addTest(TestMultipleBuildersOfSameType.suite());
 		return suite;
 	}
 }

@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.FileSystemHelper;
 
 /**
  * This class extends <code>LinkedResourceTest</code> in order to use
@@ -56,17 +57,14 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		IPathVariableManager pathVars = getWorkspace().getPathVariableManager();
 		//low order bits are current time, high order bits are static counter
 		IPath parent = new Path(VARIABLE_NAME);
-		final long mask = 0x00000000FFFFFFFFL;
-		long segment = (((long) ++nextLocationCounter) << 32) | (System.currentTimeMillis() & mask);
-		IPath path = parent.append(Long.toString(segment));
+		IPath path = FileSystemHelper.computeRandomLocation(parent);
 		while (pathVars.resolvePath(path).toFile().exists()) {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				//ignore
 			}
-			segment = (((long) ++nextLocationCounter) << 32) | (System.currentTimeMillis() & mask);
-			path = parent.append(Long.toString(segment));
+			path = FileSystemHelper.computeRandomLocation(parent);
 		}
 		return path;
 	}

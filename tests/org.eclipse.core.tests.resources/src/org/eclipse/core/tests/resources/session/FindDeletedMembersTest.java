@@ -12,9 +12,12 @@ package org.eclipse.core.tests.resources.session;
 
 import java.util.Arrays;
 import java.util.List;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Copies the tests from HistoryStoreTest#testFindDeleted, phrased
@@ -373,5 +376,9 @@ public class FindDeletedMembersTest extends WorkspaceSessionTest {
 		} catch (CoreException e) {
 			fail("4.00", e);
 		}
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, FindDeletedMembersTest.class);
 	}
 }

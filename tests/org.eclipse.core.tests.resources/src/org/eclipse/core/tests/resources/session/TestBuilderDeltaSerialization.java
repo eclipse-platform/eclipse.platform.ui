@@ -12,10 +12,13 @@ package org.eclipse.core.tests.resources.session;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests that builder deltas are correctly serialized.
@@ -123,6 +126,10 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 		assertTrue("1.1", builders[0].wasBuilt());
 		assertTrue("1.2", builders[0].wasIncrementalBuild());
 		assertTrue("1.3", !builders[1].wasBuilt());
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestBuilderDeltaSerialization.class);
 	}
 
 }

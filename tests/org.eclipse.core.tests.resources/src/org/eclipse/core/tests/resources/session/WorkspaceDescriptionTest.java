@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Ensures that the workspace description is correctly persisted across
@@ -59,5 +62,9 @@ public class WorkspaceDescriptionTest extends WorkspaceSessionTest {
 		assertEquals("2.3", MAX_STATES, desc.getMaxFileStates());
 		assertEquals("2.4", MAX_FILE_SIZE, desc.getMaxFileStateSize());
 		assertEquals("2.5", SNAPSHOT_INTERVAL, desc.getSnapshotInterval());
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, WorkspaceDescriptionTest.class);
 	}
 }

@@ -11,11 +11,14 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.ByteArrayInputStream;
 import java.util.Map;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests that multiple builders of the same type can be installed on a single
@@ -64,9 +67,7 @@ public class TestMultipleBuildersOfSameType extends WorkspaceSessionTest {
 
 			//configure builder for project1
 			IProjectDescription description = project1.getDescription();
-			description.setBuildSpec(new ICommand[] {
-					createCommand(description, "Project1Build1"),
-					createCommand(description, "Project1Build2")});
+			description.setBuildSpec(new ICommand[] {createCommand(description, "Project1Build1"), createCommand(description, "Project1Build2")});
 			project1.setDescription(description, getMonitor());
 
 			//initial build -- created sortedFile1
@@ -77,6 +78,7 @@ public class TestMultipleBuildersOfSameType extends WorkspaceSessionTest {
 			fail("2.0", e);
 		}
 	}
+
 	protected ICommand createCommand(IProjectDescription description, String builderId) {
 		ICommand command = description.newCommand();
 		Map args = command.getArguments();
@@ -102,6 +104,10 @@ public class TestMultipleBuildersOfSameType extends WorkspaceSessionTest {
 		assertTrue("1.1", builders[0].wasBuilt());
 		assertTrue("1.2", builders[0].wasIncrementalBuild());
 		assertTrue("1.3", !builders[1].wasBuilt());
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMultipleBuildersOfSameType.class);
 	}
 
 }

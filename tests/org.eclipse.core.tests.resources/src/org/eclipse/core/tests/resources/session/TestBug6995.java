@@ -11,11 +11,14 @@
 package org.eclipse.core.tests.resources.session;
 
 import java.util.Map;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests the fix for bug 6995.  In this bug, a snapshot immediately after startup and
@@ -112,5 +115,9 @@ public class TestBug6995 extends WorkspaceSessionTest {
 		SortBuilder builder = SortBuilder.getInstance();
 		assertTrue("3.0", !builder.wasDeltaNull());
 		assertTrue("3.1", builder.wasIncrementalBuild());
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestBug6995.class);
 	}
 }

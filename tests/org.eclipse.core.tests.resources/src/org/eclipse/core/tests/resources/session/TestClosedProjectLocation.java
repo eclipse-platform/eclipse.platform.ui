@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * This is a test for bug 12507.  Immediately after workspace startup, closed projects
@@ -75,5 +78,9 @@ public class TestClosedProjectLocation extends WorkspaceSerializationTest {
 		} finally {
 			ensureDoesNotExistInFileSystem(location.toFile());
 		}
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestClosedProjectLocation.class);
 	}
 }

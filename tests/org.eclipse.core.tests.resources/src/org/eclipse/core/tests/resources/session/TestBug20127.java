@@ -11,10 +11,13 @@
 package org.eclipse.core.tests.resources.session;
 
 import java.util.Map;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests regression of bug 20127 - error restoring builder state after
@@ -83,5 +86,9 @@ public class TestBug20127 extends WorkspaceSerializationTest {
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestBug20127.class);
 	}
 }

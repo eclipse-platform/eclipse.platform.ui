@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests recovery after adding a project and not saving
@@ -57,5 +60,9 @@ public class TestSaveCreateProject extends WorkspaceSerializationTest {
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestSaveCreateProject.class);
 	}
 }

@@ -12,11 +12,14 @@ package org.eclipse.core.tests.resources.session;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.internal.builders.SnowBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests persistence cases for builders that are missing or disabled.
@@ -176,4 +179,7 @@ public class TestMissingBuilder extends WorkspaceSessionTest {
 		assertTrue("2.1", builder.wasDeltaNull());
 
 	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMissingBuilder.class);	}
 }

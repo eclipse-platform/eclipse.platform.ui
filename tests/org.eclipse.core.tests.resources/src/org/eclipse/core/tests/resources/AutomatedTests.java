@@ -18,6 +18,8 @@ import junit.framework.*;
  */
 public class AutomatedTests extends TestCase {
 
+	public static final String PI_RESOURCES_TESTS = "org.eclipse.core.tests.resources"; //$NON-NLS-1$
+
 	public AutomatedTests() {
 		super(null);
 	}
@@ -43,6 +45,7 @@ public class AutomatedTests extends TestCase {
 		suite.addTest(org.eclipse.core.tests.resources.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.resources.regression.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.resources.usecase.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.resources.session.AllTests.suite());		
 		return suite;
 	}
 }

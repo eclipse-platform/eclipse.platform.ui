@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests performing multiple snapshots on a workspace that has
@@ -34,6 +37,7 @@ public class TestMultiSnap extends WorkspaceSerializationTest {
 	}
 
 	public void test1() throws Exception {
+		
 		/* create some resource handles */
 		IProject project = getWorkspace().getRoot().getProject(PROJECT);
 		project.create(getMonitor());
@@ -72,5 +76,9 @@ public class TestMultiSnap extends WorkspaceSerializationTest {
 		assertTrue("1.3", project.isOpen());
 
 		assertExistsInWorkspace("1.4", new IResource[] {project, folder, file});
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMultiSnap.class);
 	}
 }

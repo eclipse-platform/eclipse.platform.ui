@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * This class is a simple example of how session tests operate.  Each method 
@@ -46,4 +49,9 @@ public class SampleSessionTest extends WorkspaceSessionTest {
 		assertTrue("1.0", p1.exists());
 		assertTrue("1.1", file.exists());
 	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, SampleSessionTest.class);
+	}
+
 }

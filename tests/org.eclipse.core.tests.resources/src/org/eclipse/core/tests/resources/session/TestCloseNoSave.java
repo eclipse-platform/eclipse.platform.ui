@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests closing a workspace without save.
@@ -62,5 +65,9 @@ public class TestCloseNoSave extends WorkspaceSerializationTest {
 		assertTrue("2.1", folder.exists());
 		assertTrue("2.2", file.exists());
 	}
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestCloseNoSave.class);
+	}
+	
 }
 

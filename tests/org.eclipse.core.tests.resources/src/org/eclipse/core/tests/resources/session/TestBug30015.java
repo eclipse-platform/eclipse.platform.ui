@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests regression of bug 30015.  Due to this bug, it was impossible to restore
@@ -76,5 +79,9 @@ public class TestBug30015 extends WorkspaceSessionTest {
 		assertTrue("1.2", project.isOpen());
 		assertEquals("1.3", rawLocation, project.getRawLocation());
 		assertEquals("1.4", varValue.append(rawLocation.lastSegment()), project.getLocation());
+	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestBug30015.class);
 	}
 }

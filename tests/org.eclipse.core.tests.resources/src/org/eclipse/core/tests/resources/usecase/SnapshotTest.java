@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
+import junit.framework.Test;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.resources.session.TestBug30015;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Runs all the snapshot usecase tests as a single session test.
@@ -67,4 +71,9 @@ public class SnapshotTest extends WorkspaceSessionTest {
 		test.testVerifyPreviousSession();
 		test.cleanUp();
 	}
+	
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, SnapshotTest.class);
+	}
+	
 }

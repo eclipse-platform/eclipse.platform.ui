@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Create a project, close it, save, crash, recover.  Recovered project should still be closed.
@@ -65,4 +68,7 @@ public class TestSaveWithClosedProject extends WorkspaceSerializationTest {
 		assertTrue("2.0", project.isOpen());
 		assertTrue("2.1", file.exists());
 	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestSaveWithClosedProject.class);	}
 }

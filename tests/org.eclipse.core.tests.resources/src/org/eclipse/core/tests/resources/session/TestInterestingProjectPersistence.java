@@ -12,11 +12,14 @@ package org.eclipse.core.tests.resources.session;
 
 import java.util.ArrayList;
 import java.util.Map;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * When a builder is run, it reports what projects it is interested in obtaining
@@ -170,4 +173,7 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 			fail("1.99", e);
 		}
 	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestInterestingProjectPersistence.class);	}
 }

@@ -10,10 +10,13 @@
 package org.eclipse.core.tests.resources.session;
 
 import java.util.Properties;
+import junit.framework.Test;
 import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * This is an internal test that makes sure the workspace master table does
@@ -66,5 +69,9 @@ public class TestMasterTableCleanup extends WorkspaceSerializationTest {
 		IProject closeDelete = getWorkspace().getRoot().getProject(CLOSE_DELETE);
 		assertTrue("2.0", !masterTable.containsKey(closeOpen.getFullPath().append(".tree").toString()));
 		assertTrue("2.1", !masterTable.containsKey(closeDelete.getFullPath().append(".tree").toString()));
+	}
+	
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestMasterTableCleanup.class);		
 	}
 }

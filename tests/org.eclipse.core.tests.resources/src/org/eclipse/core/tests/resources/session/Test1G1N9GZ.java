@@ -11,10 +11,13 @@
 package org.eclipse.core.tests.resources.session;
 
 import java.io.ByteArrayInputStream;
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
 import org.eclipse.core.tests.internal.builders.TestBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Regression test for 1G1N9GZ: ITPCORE:WIN2000 - ElementTree corruption when linking trees
@@ -88,4 +91,8 @@ public class Test1G1N9GZ extends WorkspaceSerializationTest {
 			fail("1.1", e);
 		}
 	}
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, Test1G1N9GZ.class);
+	}
+	
 }

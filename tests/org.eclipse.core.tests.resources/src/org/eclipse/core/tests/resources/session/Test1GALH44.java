@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.*;
 
 public class Test1GALH44 extends WorkspaceSessionTest {
+
+	public Test1GALH44(String name) {
+		super(name);
+	}
+
 	/**
 	 * Prepares the environment.  Create some resources and save the workspace.
 	 */
@@ -79,5 +87,13 @@ public class Test1GALH44 extends WorkspaceSessionTest {
 		} catch (CoreException e) {
 			fail("99.99", e);
 		}
+	}
+	
+	public static Test suite() {
+		SessionTestSuite suite = new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, Test1GALH44.class.getName());
+		suite.addTest(new Test1GALH44("test1"));
+		suite.addCrashTest(new Test1GALH44("test2"));
+		suite.addTest(new Test1GALH44("test3"));
+		return suite;
 	}
 }

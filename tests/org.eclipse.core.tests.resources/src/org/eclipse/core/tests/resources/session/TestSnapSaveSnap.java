@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
+import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**
  * Tests snapshoting, saving, snapshoting, then crash and recover.
@@ -77,4 +80,7 @@ public class TestSnapSaveSnap extends WorkspaceSerializationTest {
 
 		assertExistsInWorkspace("1.4", new IResource[] {project, folder, file});
 	}
+
+	public static Test suite() {
+		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestSnapSaveSnap.class);	}
 }
