@@ -59,6 +59,8 @@ public class ResizeTest extends BasicPerformanceTest {
                 widget.setSize(xSize, ySize);
                 // Try to ensure that the resize event wasn't deferred by asking for the bounds
                 widget.getBounds();
+                
+                performanceMeter.stop();
             }
         }
         
