@@ -1734,32 +1734,32 @@
 	<extension point="org.eclipse.core.runtime.adapters">
          <factory 
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceElementAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage">
+            adaptableType="org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
          <factory 
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceElementAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.ZipEntryStorage">
+            adaptableType="org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>         
          <factory 
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer">
+            adaptableType="org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>         
          <factory 
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainer">
+            adaptableType="org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>          
          <factory 
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer">
+            adaptableType="org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>
          <factory 
             class="org.eclipse.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainer">
+            adaptableType="org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
          </factory>                            
     </extension>

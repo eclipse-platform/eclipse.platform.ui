@@ -14,9 +14,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.internal.ui.sourcelookup.BasicContainerContentProvider;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;

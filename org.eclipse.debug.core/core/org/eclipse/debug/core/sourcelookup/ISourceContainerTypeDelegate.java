@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup;
+package org.eclipse.debug.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.CoreException;
  * 
  * TODO: example plug-in XML definition/description
  * 
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType
+ * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
+ * @see org.eclipse.debug.core.sourcelookup.ISourceContainerType
  * @since 3.0
  */
 public interface ISourceContainerTypeDelegate {

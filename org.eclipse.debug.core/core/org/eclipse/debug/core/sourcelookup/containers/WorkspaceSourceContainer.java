@@ -8,18 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup.containers;
+package org.eclipse.debug.core.sourcelookup.containers;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainerType;
 
 /**
  * All projects in the workspace.
+ * 
+ * TODO: need workspace browser/workbench adapter
  * 
  * @since 3.0
  */

@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
+import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 
 /**
  * The launch manager manages the set of registered launches, maintaining

@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 
 /**

@@ -12,9 +12,9 @@ package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;

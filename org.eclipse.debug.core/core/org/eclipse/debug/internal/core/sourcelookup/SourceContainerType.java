@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.sourcelookup.*;
 
 /**
  * Proxy to contributed source container type extension.

@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup.containers;
+package org.eclipse.debug.core.sourcelookup.containers;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainerType;
 
 /**
  * Archive source container for an archive in the workspace. Returns instances

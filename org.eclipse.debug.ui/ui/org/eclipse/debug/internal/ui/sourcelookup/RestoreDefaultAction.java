@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 /**

@@ -45,7 +45,7 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
-import org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLocator2;
+import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;

@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
-import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
+import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 
 /**
  * Describes and creates instances of a specific type of

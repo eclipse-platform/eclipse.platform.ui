@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.internal.core.sourcelookup.containers.LocalFileStorage;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ZipEntryStorage;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
+import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;

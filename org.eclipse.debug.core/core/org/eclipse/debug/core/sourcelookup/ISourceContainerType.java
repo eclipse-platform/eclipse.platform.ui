@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup;
+package org.eclipse.debug.core.sourcelookup;
+
 
 
 /**
@@ -22,8 +23,8 @@ package org.eclipse.debug.internal.core.sourcelookup;
  * type.
  * </p>
  * 
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerTypeDelegate
+ * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
+ * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate
  * @since 3.0
  */
 public interface ISourceContainerType extends ISourceContainerTypeDelegate {

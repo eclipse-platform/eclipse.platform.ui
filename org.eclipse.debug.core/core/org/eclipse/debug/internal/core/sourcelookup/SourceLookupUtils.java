@@ -40,6 +40,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.sourcelookup.*;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,7 +53,7 @@ import org.xml.sax.SAXException;
  * <p>
  * This class is experimental and temporary.
  * </p>
- * @see org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector
+ * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector
  * @since 3.0
  */
 public class SourceLookupUtils {

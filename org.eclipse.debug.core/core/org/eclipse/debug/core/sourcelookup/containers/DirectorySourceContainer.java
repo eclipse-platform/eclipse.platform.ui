@@ -8,17 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup.containers;
+package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainerType;
 
 /**
  * A folder in the local file system. Source elements returned

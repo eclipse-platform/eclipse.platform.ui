@@ -8,20 +8,23 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup.containers;
+package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainerType;
 
 /**
  * A project in the workspace. Source is searched for in the root project
  * folder and all folders within the project recursively. Optionally,
  * referenced projects may be searched as well.
+ * 
+ * TODO: need project browser/workbench adapter
  * 
  * @since 3.0
  */

@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup.containers;
+package org.eclipse.debug.core.sourcelookup.containers;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
+import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainerType;
 
 /**
  * A folder in the workspace. Source elements are searched

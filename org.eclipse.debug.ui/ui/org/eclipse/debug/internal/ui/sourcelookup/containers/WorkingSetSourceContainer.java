@@ -17,12 +17,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.containers.CompositeSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.debug.internal.core.sourcelookup.containers.CompositeSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ProjectSourceContainer;
 import org.eclipse.ui.IWorkingSet;
 
 /**

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup;
+package org.eclipse.debug.core.sourcelookup;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -29,7 +29,9 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.internal.core.sourcelookup.containers.DefaultSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -59,10 +61,10 @@ import org.w3c.dom.NodeList;
  * </p>
  * @since 3.0
  * @see org.eclipse.debug.core.model.ISourceLocator
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer
- * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupParticipant
+ * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
+ * @see org.eclipse.debug.core.sourcelookup.ISourceContainerType
+ * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputer
+ * @see org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant
  */
 public abstract class AbstractSourceLookupDirector implements ISourceLookupDirector, ILaunchConfigurationListener, ILaunchListener {
 	

@@ -13,9 +13,9 @@ package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;

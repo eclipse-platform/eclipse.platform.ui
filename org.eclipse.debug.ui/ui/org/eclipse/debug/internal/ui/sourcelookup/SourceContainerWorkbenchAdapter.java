@@ -14,10 +14,10 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 

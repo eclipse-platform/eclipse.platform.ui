@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.core.sourcelookup;
+package org.eclipse.debug.core.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.List;

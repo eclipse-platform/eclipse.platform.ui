@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
-import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.core.sourcelookup.containers.WorkspaceSourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.swt.widgets.Shell;
 
