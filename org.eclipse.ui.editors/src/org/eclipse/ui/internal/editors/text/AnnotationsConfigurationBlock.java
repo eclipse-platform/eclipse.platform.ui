@@ -422,8 +422,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
-	 * @since 3.0
+	 * @see IPreferenceConfigurationBlock#dispose()
 	 */
 	public void dispose() {
 	}

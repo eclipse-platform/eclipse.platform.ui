@@ -396,11 +396,9 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.preferences.IPreferenceConfigurationBlock#dispose()
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#dispose()
 	 * @since 3.0
 	 */
 	public void dispose() {
-		// XXX Auto-generated method stub
-		
 	}
 }

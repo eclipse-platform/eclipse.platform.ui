@@ -24,14 +24,14 @@ package org.eclipse.ui.internal.editors.text;
 public class AnnotationsPreferencePage extends AbstractConfigurationBlockPreferencePage {
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.preferences.AbstractConfigureationBlockPreferencePage#getHelpId()
+	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
 	protected String getHelpId() {
 		return null; // FIXME: Needs help context ID
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.preferences.AbstractConfigurationBlockPreferencePage#setDescription()
+	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
 		String description= TextEditorMessages.getString("AnnotationConfigurationBlock.description"); //$NON-NLS-1$
@@ -39,14 +39,14 @@ public class AnnotationsPreferencePage extends AbstractConfigurationBlockPrefere
 	}
 	
 	/*
-	 * @see org.eclipse.jdt.internal.ui.preferences.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
+	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setPreferenceStore()
 	 */
 	protected void setPreferenceStore() {
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.preferences.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.jdt.internal.ui.preferences.OverlayPreferenceStore)
+	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#createConfigurationBlock(org.eclipse.ui.internal.editors.text.OverlayPreferenceStore)
 	 */
 	protected IPreferenceConfigurationBlock createConfigurationBlock(OverlayPreferenceStore overlayPreferenceStore) {
 		return new AnnotationsConfigurationBlock(overlayPreferenceStore);
