@@ -46,6 +46,10 @@
 TocData tocData = new TocData(application, request, response);
 for (int toc=0; toc<tocData.getTocCount(); toc++)
 {
+		if(!tocData.isEnabled(toc)){
+			// do not show
+			continue;
+		}
 	String label = tocData.getTocLabel(toc);
 	String checked="checked=\"yes\" ";
 	if( data.isSearchRequest() && !data.isTocSelected(toc) ){
