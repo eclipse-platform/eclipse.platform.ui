@@ -29,7 +29,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
 /**
- * Launch delegate for ant scripts
+ * Launch delegate for ant builds
  */
 public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 	

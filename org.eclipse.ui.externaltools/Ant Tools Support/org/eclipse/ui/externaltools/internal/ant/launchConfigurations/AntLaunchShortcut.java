@@ -272,7 +272,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	protected boolean verifyMode(String mode) {
 		if (!mode.equals(ILaunchManager.RUN_MODE)) {
-			reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_scripts_only_support___run___mode._6"), null); //$NON-NLS-1$
+			reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_builds_only_support___run___mode._6"), null); //$NON-NLS-1$
 			return false;
 		}
 		return true;
