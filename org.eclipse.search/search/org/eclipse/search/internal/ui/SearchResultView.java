@@ -84,7 +84,6 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			fViewer.setPageId(search.getPageId());
 		fViewer.setInput(SearchManager.getDefault().getCurrentResults());
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
-		getSite().setSelectionProvider(fViewer);
 		
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -144,6 +143,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	}
 
 	public ILabelProvider getLabelProvider() {
+		if (fViewer == null)
+			return null;
 		IBaseLabelProvider labelProvider= fViewer.getLabelProvider();
 		if (labelProvider instanceof SearchResultLabelProvider)
 			return ((SearchResultLabelProvider)labelProvider).getLabelProvider();

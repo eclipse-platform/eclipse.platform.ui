@@ -63,7 +63,7 @@ public class SearchResultViewer extends TableViewer {
 	private boolean fFirstTime= true;
 	private ShowNextResultAction fShowNextResultAction;
 	private ShowPreviousResultAction fShowPreviousResultAction;
-	private GotoMarkerAction fGotoMarkerAction;
+	private GotoMarkerAction fGotoMarkerActionProxy;
 	private SearchAgainAction fSearchAgainAction;
 	private RemoveResultAction fRemoveSelectedMatchesAction;
 	private RemoveAllResultsAction fRemoveAllMatchesAction;
@@ -76,14 +76,9 @@ public class SearchResultViewer extends TableViewer {
 	private boolean fCurrentMatchRemoved= false;
 	private Color fPotentialMatchFgColor;
 	private ActionGroup fActionGroup;
-	
-	/*
-	 * These static fields will go away when support for 
-	 * multiple search will be implemented
-	 */
-	private static IContextMenuContributor fgContextMenuContributor;
-	private static IActionGroupFactory fgActionGroupFactory;	
-	private static IAction fgGotoMarkerAction;
+	private IContextMenuContributor fContextMenuContributor;
+	private IActionGroupFactory fActionGroupFactory;	
+	private IAction fGotoMarkerAction;
 	
 	public SearchResultViewer(SearchResultView outerPart, Composite parent) {
 		super(new Table(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION));
@@ -105,8 +100,8 @@ public class SearchResultViewer extends TableViewer {
 		fShowNextResultAction.setEnabled(false);
 		fShowPreviousResultAction= new ShowPreviousResultAction(this);
 		fShowPreviousResultAction.setEnabled(false);
-		fGotoMarkerAction= new GotoMarkerAction(this);
-		fGotoMarkerAction.setEnabled(false);
+		fGotoMarkerActionProxy= new GotoMarkerAction(this);
+		fGotoMarkerActionProxy.setEnabled(false);
 		fRemoveSelectedMatchesAction= new RemoveResultAction(this, false);
 		fRemoveSelectedMatchesAction.setEnabled(false);
 		fSearchAgainAction= new SearchAgainAction();
@@ -154,6 +149,19 @@ public class SearchResultViewer extends TableViewer {
 			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.NEXT, fShowNextResultAction);
 			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, fShowPreviousResultAction);
 		}
+
+		fOuterPart.getSite().setSelectionProvider(this);
+
+		Search search= SearchManager.getDefault().getCurrentSearch();
+		if (search != null) {				
+			setGotoMarkerAction(search.getGotoMarkerAction());
+			setContextMenuTarget(search.getContextMenuContributor());
+			setActionGroupFactory(null);
+			setInput(search.getResults());
+			setActionGroupFactory(search.getActionGroupFactory());
+			setSelection(search.getSelection(), true);
+			setPageId(search.getPageId());
+		}
 	}
 
 	/**
@@ -174,7 +182,7 @@ public class SearchResultViewer extends TableViewer {
 		boolean hasElements= getItemCount() > 0;
 		fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 		fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
-		fGotoMarkerAction.setEnabled(hasSingleSelection);
+		fGotoMarkerActionProxy.setEnabled(hasSingleSelection);
 		fRemoveSelectedMatchesAction.setEnabled(selectionCount > 0);
 
 		if (fHandleSelectionChangedEvents) {
@@ -217,8 +225,8 @@ public class SearchResultViewer extends TableViewer {
 			fSearchAgainAction.setEnabled(state);
 
 		state= !getSelection().isEmpty();
-		if (state != fGotoMarkerAction.isEnabled())
-			fGotoMarkerAction.setEnabled(state);
+		if (state != fGotoMarkerActionProxy.isEnabled())
+			fGotoMarkerActionProxy.setEnabled(state);
 		if (state != fRemoveSelectedMatchesAction.isEnabled())
 			fRemoveSelectedMatchesAction.setEnabled(state);
 	}
@@ -270,12 +278,12 @@ public class SearchResultViewer extends TableViewer {
 			fActionGroup.setContext(null);
 		}
 		
-		if (fgContextMenuContributor != null)
-			fgContextMenuContributor.fill(menu, this);
+		if (fContextMenuContributor != null)
+			fContextMenuContributor.fill(menu, this);
 		
 		if (!selection.isEmpty()) {
 			menu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
-			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerAction);
+			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerActionProxy);
 			if (enableRemoveMatchMenuItem())
 				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveMatchAction(this));
 			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveResultAction(this, true));
@@ -293,16 +301,16 @@ public class SearchResultViewer extends TableViewer {
 
 	IAction getGotoMarkerAction() {
 		// null as return value is covered (no action will take place)
-		return fgGotoMarkerAction;
+		return fGotoMarkerAction;
 	}
 
 	void setGotoMarkerAction(IAction gotoMarkerAction) {
-		fgGotoMarkerAction= gotoMarkerAction;
+		fGotoMarkerAction= gotoMarkerAction;
 	}
 
 
 	void setContextMenuTarget(IContextMenuContributor contributor) {
-		fgContextMenuContributor= contributor;
+		fContextMenuContributor= contributor;
 	}
 
 	void setActionGroupFactory(IActionGroupFactory groupFactory) {
