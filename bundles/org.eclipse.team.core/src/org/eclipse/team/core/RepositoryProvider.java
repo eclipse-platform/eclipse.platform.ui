@@ -43,7 +43,7 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
  * To create a repository provider and have it registered with the platform, a client
  * must minimally:
  * <ol>
- * 	<li>extend <code>RepositoryProvider<code>
+ * 	<li>extend <code>RepositoryProvider</code>
  * 	<li>define a repository extension in <code>plugin.xml</code>. 
  *     Here is an example extension point definition:
  * 
