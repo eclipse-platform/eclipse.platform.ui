@@ -18,10 +18,10 @@
 
 	<target name="lib/antUITestsSupport.jar" depends="init" description= "Builds the support JAR">
 		<property name="destdir" value="${temp.folder}/lib/antUITestsSupport.jar.bin"/>
-		<delete dir="${temp.folder}/lib/antUITestsSupport.jar.bin"/>
-		<mkdir dir="${temp.folder}/lib/antUITestsSupport.jar.bin"/>
+		<delete dir="${destdir}"/>
+		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.1" destdir="${temp.folder}/lib/antUITestsSupport.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes" bootclasspath="${bootclasspath}" 
+		<javac target="1.1" destdir="${destdir}" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes" bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/bin;
 			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
 			${basedir}/../org.eclipse.ant.core/bin
@@ -30,7 +30,7 @@
 			<src path="test support/"/>
 		</javac>
 		<mkdir dir="${build.result.folder}/lib"/>
-		<jar destfile="${build.result.folder}/lib/antUITestsSupport.jar" basedir="${temp.folder}/lib/antUITestsSupport.jar.bin"/>
+		<jar destfile="${build.result.folder}/lib/antUITestsSupport.jar" basedir="${destdir}"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
