@@ -63,13 +63,12 @@ public class TarFileExporter implements IFileExporter {
     }
 
     /**
-     *	Create a new TarEntry with the passed pathname and contents, and write it
-     *	to the current archive.
+     *	Write the contents of the file to the tar archive.
      *
      *	@param entry
-     *	@param contents byte[]
-     *	@exception java.io.IOException
-     * @throws CoreException 
+     *	@param contents
+     *  @exception java.io.IOException
+     *  @exception org.eclipse.core.runtime.CoreException
      */
     private void write(TarEntry entry, IFile contents) throws IOException, CoreException {
 		IPath location = contents.getLocation();
