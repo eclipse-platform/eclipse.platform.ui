@@ -63,7 +63,7 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
  * Once a repository provider is registered with Team, then you
  * can associate a repository provider with a project by invoking <code>RepositoryProvider.map()</code>.
  * </p>
- * @see RepositoryProvider.map(IProject, String)
+ * @see RepositoryProvider#map(IProject, String)
  *
  * @since 2.0
  */
@@ -299,7 +299,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * <p>
 	 * Returning <code>null</code> signals that the default move and delete behavior is desired.
 	 * 
-	 * @see org.eclipse.core.resources.IMoveDeleteHook
+	 * @see org.eclipse.core.resources.team.IMoveDeleteHook
 	 */
 	public IMoveDeleteHook getMoveDeleteHook() {
 		return null;
@@ -454,7 +454,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * @param project the project being tested.
 	 * @return boolean
 	 * 
-	 * @see getProvider(IProject)
+	 * @see #getProvider(IProject)
 	 * 
 	 * @since 2.1
 	 */
@@ -599,13 +599,13 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * Method canHandleLinkedResources should be overridden by subclasses who
 	 * support linked resources. At a minimum, supporting linked resources
 	 * requires changes to the move/delete hook 
-	 * (see org.eclipe.team.resources.team.IMoveDeleteHook). This method is
+	 * (see org.eclipe.core.resources.team.IMoveDeleteHook). This method is
 	 * called after the RepositoryProvider is instantiated but before
 	 * <code>setProject()</code> is invoked so it will not have access to any
 	 * state determined from the <code>setProject()</code> method.
 	 * @return boolean
 	 * 
-	 * @see org.eclipe.team.resources.team.IMoveDeleteHook
+	 * @see org.eclipse.core.resources.team.IMoveDeleteHook
 	 * 
 	 * @since 2.1
 	 */

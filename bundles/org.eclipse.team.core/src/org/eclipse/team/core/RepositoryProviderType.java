@@ -55,7 +55,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * can access the singleton instance of the class by invoking <code>RepositoryProviderType.getProviderType()</code>.
  * </p>
  * 
- * @see RepositoryProviderType.getProviderType(String)
+ * @see RepositoryProviderType#getProviderType(String)
  * 
  * @since 2.1
  */
@@ -74,7 +74,7 @@ public abstract class RepositoryProviderType {
 	 * @param id the ID of the provider
 	 * @return RepositoryProviderType
 	 * 
-	 * @see getID()
+	 * @see #getID()
 	 */
 	public static RepositoryProviderType getProviderType(String id) {
 		RepositoryProviderType type = (RepositoryProviderType) allProviderTypes.get(id);

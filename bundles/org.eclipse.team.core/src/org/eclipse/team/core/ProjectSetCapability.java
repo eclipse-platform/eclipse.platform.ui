@@ -23,7 +23,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * At the current time it only complements this API by providing a notification mechanism
  * for informing repository providers when a project set has been created.
  * 
- * @see IProjectSetSerializer, RepositoryProviderType
+ * @see IProjectSetSerializer
+ * @see RepositoryProviderType
  * 
  * @since 2.1
  */
