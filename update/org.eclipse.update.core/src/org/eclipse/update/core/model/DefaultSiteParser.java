@@ -156,7 +156,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			stateStack.push(new Integer(STATE_SITE));
 			processSite(attributes);
 		} else{
-			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.unknownRootElement") + elementName); //$NON-NLS-1$
+			internalErrorUnknownTag(Policy.bind("DefaultSiteParser.unknownRootElement",elementName)); //$NON-NLS-1$
 			// what we received was not a site.xml, no need to continue
 			throw new SAXException(new ParsingException(new InvalidSiteTypeException(null)));
 		}

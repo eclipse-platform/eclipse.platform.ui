@@ -13,9 +13,6 @@ import org.eclipse.update.core.InstallMonitor;
 
 public class UpdateManagerUtils {
 	
-	
-	public static int AVAILABLE = 1000;
-	
 	/**
 	 * 
 	 */
@@ -27,6 +24,12 @@ public class UpdateManagerUtils {
 	private static Map entryMap;
 	private static Stack bufferPool;	
 	private static final int BUFFER_SIZE = 1024;
+	
+	/**
+	 * 
+	 */
+	public static final String EMPTY_STRING = "";
+	public static final String FILE_URL_PROTOCOL = "file";
 
 
 	/**

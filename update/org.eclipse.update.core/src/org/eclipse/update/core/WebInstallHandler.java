@@ -54,7 +54,7 @@ public abstract class WebInstallHandler {
 		if (url == null)
 			return null;
 		else
-			return "?eclipse="+url;
+			return "?eclipse="+url; //$NON-NLS-1$
 	}
 		
 	/**
@@ -70,7 +70,7 @@ public abstract class WebInstallHandler {
 		if (host==null || port==0)
 			return null;
 		else
-			return "http://" + host + ":" + port + "/install";
+			return "http://" + host + ":" + port + "/install"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 		
 	/**

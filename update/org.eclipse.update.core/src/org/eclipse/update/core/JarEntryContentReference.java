@@ -59,7 +59,7 @@ public class JarEntryContentReference extends ContentReference {
 	 */
 	public URL asURL() throws IOException {
 		String fileName = jarContentReference.asFile().getAbsolutePath().replace(File.separatorChar,'/');
-		return new URL("jar:file:"+fileName+"!/"+entry.getName());
+		return new URL("jar:file:"+fileName+"!/"+entry.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -75,6 +75,6 @@ public class JarEntryContentReference extends ContentReference {
 		if (url != null)
 			return url.toExternalForm();
 		else
-			return getClass().getName()+"@"+hashCode();
+			return getClass().getName()+"@"+hashCode(); //$NON-NLS-1$
 	}
 }

@@ -23,7 +23,6 @@ import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.JarContentReference.ContentSelector;
-import org.eclipse.update.core.model.DefaultModelWriter;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 

@@ -12,6 +12,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.core.internal.boot.Policy;
 
 /**
  * Local jar content reference. 
@@ -107,7 +108,7 @@ public class JarContentReference extends ContentReference {
 		try {			
 			if (monitor != null) {
 				monitor.saveState();
-				monitor.setTaskName("Unpacking ");
+				monitor.setTaskName(Policy.bind("JarContentReference.Unpacking")); //$NON-NLS-1$
 				monitor.subTask(this.getIdentifier());
 				monitor.showCopyDetails(false);
 			}
@@ -174,7 +175,7 @@ public class JarContentReference extends ContentReference {
 			} else
 				return null; // entry was a directory
 		} else
-			throw new FileNotFoundException(this.asFile().getAbsolutePath()+" "+entryName);
+			throw new FileNotFoundException(this.asFile().getAbsolutePath()+" "+entryName); //$NON-NLS-1$
 	}
 
 

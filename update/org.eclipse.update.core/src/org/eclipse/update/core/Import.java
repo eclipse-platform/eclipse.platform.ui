@@ -19,10 +19,10 @@ public class Import extends ImportModel implements IImport {
 	
 	static {
 		table = new HashMap();
-		table.put("compatible",new Integer(IImport.RULE_COMPATIBLE));
-		table.put("perfect",new Integer(IImport.RULE_PERFECT));
-		table.put("equivalent",new Integer(IImport.RULE_EQUIVALENT));	
-		table.put("greaterOrHigher",new Integer(IImport.RULE_GRATER_OR_EQUAL));
+		table.put("compatible",new Integer(IImport.RULE_COMPATIBLE)); //$NON-NLS-1$
+		table.put("perfect",new Integer(IImport.RULE_PERFECT)); //$NON-NLS-1$
+		table.put("equivalent",new Integer(IImport.RULE_EQUIVALENT));	 //$NON-NLS-1$
+		table.put("greaterOrHigher",new Integer(IImport.RULE_GRATER_OR_EQUAL)); //$NON-NLS-1$
 	}
 
 	/**

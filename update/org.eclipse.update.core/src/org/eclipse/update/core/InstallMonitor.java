@@ -8,6 +8,7 @@ package org.eclipse.update.core;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.internal.boot.Policy;
 
 /**
  * Delegating wrapper for IProgressMonitor used for 
@@ -59,8 +60,8 @@ public class InstallMonitor implements IProgressMonitor {
 	public InstallMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
 		this.tasks = new Stack();
-		this.taskString = "";
-		this.subTaskString = "";
+		this.taskString = ""; //$NON-NLS-1$
+		this.subTaskString = ""; //$NON-NLS-1$
 		this.showDetails = false;
 		this.totalCopyCount = 0;
 	}
@@ -106,10 +107,10 @@ public class InstallMonitor implements IProgressMonitor {
 	 */
 	public void setTaskName(String name) {
 		this.taskString = name;
-		this.subTaskString = "";
+		this.subTaskString = ""; //$NON-NLS-1$
 		this.showDetails = false;
 		this.totalCopyCount = 0;
-		monitor.subTask("");
+		monitor.subTask(""); //$NON-NLS-1$
 		monitor.setTaskName(name);
 	}
 
@@ -156,7 +157,7 @@ public class InstallMonitor implements IProgressMonitor {
 		if (showDetails && count > 0) {
 			long countK = count / 1024;
 			long totalK = totalCopyCount / 1024;
-			String msg = "(" + countK + "K" + ((totalK <= 0) ? " bytes)" : " of " + totalK + "K bytes)");
+			String msg = "(" + countK + Policy.bind("InstallMonitor.Kilo") + ((totalK <= 0) ? Policy.bind("InstallMonitor.bytes") : Policy.bind("InstallMonitor.of") + totalK + Policy.bind("InstallMonitor.KiloBytes")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			monitor.subTask(subTaskString + msg);
 		}
 	}

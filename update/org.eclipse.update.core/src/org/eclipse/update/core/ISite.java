@@ -15,7 +15,7 @@ public interface ISite extends IPluginContainer {
 	/**
 	 * extension point ID
 	 */
-	public static final String SIMPLE_EXTENSION_ID = "siteTypeProtocols";
+	public static final String SIMPLE_EXTENSION_ID = "siteTypeProtocols"; //$NON-NLS-1$
 		
 	/**
 	 * Returns an array of feature this site contains

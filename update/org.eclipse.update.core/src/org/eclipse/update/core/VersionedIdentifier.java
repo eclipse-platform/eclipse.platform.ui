@@ -1,4 +1,5 @@
 package org.eclipse.update.core;
+import org.eclipse.core.internal.boot.Policy;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -8,15 +9,15 @@ package org.eclipse.update.core;
 public class VersionedIdentifier {
 	private String id;
 	private Version version;
-	private static final String	SEPARATOR = "_";
+	private static final String	SEPARATOR = "_"; //$NON-NLS-1$
 	
 /**
 * @since 2.0 
 	 */
 	public VersionedIdentifier(String idWithVersion) {
 		
-		if (idWithVersion==null || (idWithVersion=idWithVersion.trim()).equals("")) {
-				this.id = "";
+		if (idWithVersion==null || (idWithVersion=idWithVersion.trim()).equals("")) { //$NON-NLS-1$
+				this.id = ""; //$NON-NLS-1$
 				this.version = new Version(0,0,0);
 			}
 		
@@ -26,7 +27,7 @@ public class VersionedIdentifier {
 			String versionName = idWithVersion.substring(loc+1);
 			version = new Version(versionName);
 		} else {
-			this.id = "";			
+			this.id = "";			 //$NON-NLS-1$
 			version = new Version(0,0,0);
 		}
 	}
@@ -35,8 +36,8 @@ public class VersionedIdentifier {
 * @since 2.0 
 	 */
 	public VersionedIdentifier(String id, String versionName) {
-		if (id==null || (id=id.trim()).equals("") || versionName==null)
-				throw new IllegalArgumentException("The id or the version of an identifier is null or empty");
+		if (id==null || (id=id.trim()).equals("") || versionName==null) //$NON-NLS-1$
+				throw new IllegalArgumentException(Policy.bind("VersionedIdentifier.IdOrVersionNull",id,versionName)); //$NON-NLS-1$
 		this.id = id;
 		this.version = new Version(versionName);
 	}
@@ -59,7 +60,7 @@ public class VersionedIdentifier {
 * @since 2.0 
 	 */
 	public String toString(){
-		return id.equals("")?"":id+SEPARATOR+version.toString();
+		return id.equals("")?"":id+SEPARATOR+version.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 

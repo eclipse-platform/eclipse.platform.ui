@@ -47,7 +47,7 @@ public final class Version {
 	private int service = 0;
 	private String qualifier = null;
 	
-	private static final String	SEPARATOR = ".";
+	private static final String	SEPARATOR = "."; //$NON-NLS-1$
 	
 private Version () {}
 
@@ -80,7 +80,7 @@ public Version(int major, int minor, int service, String qualifier) {
 	if(major<0) major=0;
 	if(minor<0) minor=0;
 	if(service<0) service=0;
-	if(qualifier==null) qualifier="";
+	if(qualifier==null) qualifier=""; //$NON-NLS-1$
 	
 	this.major = major;
 	this.minor = minor;
@@ -114,12 +114,12 @@ public Version(String versionId) {
 	this.major   = 0;
 	this.minor   = 0;
 	this.service = 0;
-	this.qualifier = "";
+	this.qualifier = ""; //$NON-NLS-1$
 		
 	// parse string value
 	try{
 		if( versionId == null )
-			versionId = "0.0.0";
+			versionId = "0.0.0"; //$NON-NLS-1$
 			
 		String s = versionId.trim();
 	
@@ -244,7 +244,7 @@ public int compare(Version id) {
 
 public String toString() {
 	String s = major+SEPARATOR+minor+SEPARATOR+service;
-	if (!qualifier.equals(""))
+	if (!qualifier.equals("")) //$NON-NLS-1$
 		s += SEPARATOR + qualifier;
 	return s;
 }

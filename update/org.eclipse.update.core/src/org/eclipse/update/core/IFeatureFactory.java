@@ -20,9 +20,9 @@ public interface IFeatureFactory {
 	/**
 	 * extension point ID
 	 */
-	public static final String SIMPLE_EXTENSION_ID = "featureTypes";
-	public static final String INSTALLABLE_FEATURE_TYPE = "jar";
-	public static final String EXECUTABLE_FEATURE_TYPE = "exe";	
+	public static final String SIMPLE_EXTENSION_ID = "featureTypes"; //$NON-NLS-1$
+	public static final String INSTALLABLE_FEATURE_TYPE = "jar"; //$NON-NLS-1$
+	public static final String EXECUTABLE_FEATURE_TYPE = "exe";	 //$NON-NLS-1$
 	
 	/**
 	 * Returns a feature based on the URL and the site in which the DefaultFeature is.

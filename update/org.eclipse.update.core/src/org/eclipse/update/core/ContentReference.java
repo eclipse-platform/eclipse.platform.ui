@@ -15,6 +15,7 @@ import java.net.URLConnection;
 
 import org.eclipse.update.internal.core.URLEncoder;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * Default content reference. 
@@ -31,6 +32,9 @@ public class ContentReference {
 	private URLConnection connection;
 	
 	public static final long UNKNOWN_SIZE = -1;
+	
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	public static final String FILE_URL_PROTOCOL = "file";	 //$NON-NLS-1$
 
 	/**
 	 * Constructor for ContentRef.
@@ -41,7 +45,7 @@ public class ContentReference {
 	 * Constructor for ContentRef.
 	 */
 	public ContentReference(String id, URL url) {
-		this.id = (id==null ? "" : id);
+		this.id = (id==null ? EMPTY_STRING : id); //$NON-NLS-1$
 		this.url = url; // can be null
 		this.file = null;
 	}
@@ -50,7 +54,7 @@ public class ContentReference {
 	 * Constructor for ContentRef.
 	 */
 	public ContentReference(String id, File file) {
-		this.id = (id==null ? "" : id);
+		this.id = (id==null ? EMPTY_STRING : id); //$NON-NLS-1$
 		this.file = file; // can be null
 		this.url = null;
 	}
@@ -84,7 +88,7 @@ public class ContentReference {
 			}
 			return connection.getInputStream();
 		} else
-			throw new IOException("Unable to create input stream");
+			throw new IOException(Policy.bind("ContentReference.UnableToCreateInputStream",this.toString())); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -115,7 +119,7 @@ public class ContentReference {
 		if (file != null)
 			return true;
 		else if (url != null)
-			return url.getProtocol().equals("file");
+			return FILE_URL_PROTOCOL.equals(url.getProtocol()); 
 		else
 			return false;
 	}	
@@ -133,10 +137,10 @@ public class ContentReference {
 		if (file != null)
 			return file;
 			
-		if (url!=null && url.getProtocol().equals("file"))
+		if (url!=null && FILE_URL_PROTOCOL.equals(url.getProtocol())) 
 			return new File(url.getFile());
 			
-		throw new IOException("Unable to return reference "+(url==null ? "" : url.toExternalForm())+" as file");
+		throw new IOException(Policy.bind("ContentReference.UnableToReturnReferenceAsFile",this.toString())); //$NON-NLS-1$ 
 	}
 		
 	/**
@@ -153,7 +157,7 @@ public class ContentReference {
 		if (file != null)
 			return file.toURL();
 			
-		throw new IOException("Unable to return reference as URL");
+		throw new IOException(Policy.bind("ContentReference.UnableToReturnReferenceAsURL",this.toString())); //$NON-NLS-1$
 	}
 			
 	/**

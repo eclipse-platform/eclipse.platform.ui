@@ -12,31 +12,32 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Writer;
+import org.eclipse.core.internal.boot.Policy;
 
 public class Site extends SiteMapModel implements ISite, IWritable {
 
 	/**
 	 * default path under the site where features will be installed
 	 */
-	public static final String INSTALL_FEATURE_PATH = "install/features/";
+	public static final String INSTALL_FEATURE_PATH = "install/features/"; //$NON-NLS-1$
 
 	/**
 	 * default path under the site where plugins will be installed
 	 */
-	public static final String DEFAULT_PLUGIN_PATH = "plugins/";
+	public static final String DEFAULT_PLUGIN_PATH = "plugins/"; //$NON-NLS-1$
 	/**
 	 * default path under the site where plugins will be installed
 	 */
 	//FIXME: fragment
-	public static final String DEFAULT_FRAGMENT_PATH = "fragments/";
+	public static final String DEFAULT_FRAGMENT_PATH = "fragments/"; //$NON-NLS-1$
 
 	/**
 	 * default path, under site, where featuresConfigured will be installed
 	 */
-	public static final String DEFAULT_FEATURE_PATH = "features/";
+	public static final String DEFAULT_FEATURE_PATH = "features/"; //$NON-NLS-1$
 
-	public static final String SITE_FILE = "site";
-	public static final String SITE_XML = SITE_FILE + ".xml";
+	public static final String SITE_FILE = "site"; //$NON-NLS-1$
+	public static final String SITE_XML = SITE_FILE + ".xml"; //$NON-NLS-1$
 
 	private ListenersList listeners = new ListenersList();
 	/**
@@ -83,7 +84,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 			fileWriter.close();
 		} catch (FileNotFoundException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save site into " + file.getAbsolutePath(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotSaveSiteInto", file.getAbsolutePath()), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}
@@ -173,7 +174,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot remove feature:" + feature.getVersionIdentifier().getIdentifier(), e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemoveFeature", feature.getVersionIdentifier().getIdentifier(),getURL().toExternalForm()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -210,7 +211,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 				UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
 			} catch (IOException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot remove plugin:" + pluginEntry.getVersionIdentifier(), e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.CannotRemovePlugin",pluginEntry.getVersionIdentifier().toString(),getURL().toExternalForm()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -307,9 +308,9 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 		//DEBUG:
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS && !found) {
-			UpdateManagerPlugin.getPlugin().debug("Cannot find:" + key + " category in site:" + this.getURL().toExternalForm());
+			UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.CannotFindCategory", key , this.getURL().toExternalForm())); //$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
-				UpdateManagerPlugin.getPlugin().debug("The Site does not contain any categories.");
+				UpdateManagerPlugin.getPlugin().debug(Policy.bind("Site.NoCategories")); //$NON-NLS-1$
 		}
 
 		return result;
@@ -347,7 +348,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	public ISiteContentProvider getSiteContentProvider() throws CoreException {
 		if (siteContentProvider == null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Content Provider not set for site:", null);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Site.NoContentProvider"), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return siteContentProvider;
@@ -358,69 +359,69 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 */
 	public void write(int indent, PrintWriter w) {
 
-		String gap = "";
+		String gap = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
-			gap += " ";
-		String increment = "";
+			gap += " "; //$NON-NLS-1$
+		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " ";
+			increment += " "; //$NON-NLS-1$
 
-		w.print(gap + "<site ");
+		w.print(gap + "<site "); //$NON-NLS-1$
 		// site type 
 		if (getType() != null) {
-			w.print("type=\"" + Writer.xmlSafe(getType()) + "\"");
-			w.print(" ");
+			w.print("type=\"" + Writer.xmlSafe(getType()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			w.print(" "); //$NON-NLS-1$
 		}		
 		
 		// Site URL
 		String URLInfoString = null;
 		if (getInfoURL() != null) {
 			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), getInfoURL());
-			w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+			w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.println(">");
-		w.println("");
+		w.println(">"); //$NON-NLS-1$
+		w.println(""); //$NON-NLS-1$
 
 		IFeatureReference[] refs = getFeatureReferences();
 		for (int index = 0; index < refs.length; index++) {
 			FeatureReference element = (FeatureReference) refs[index];
 			element.write(indent, w);
 		}
-		w.println("");
+		w.println(""); //$NON-NLS-1$
 
 		IArchiveEntry[] archives = getArchives();
 		for (int index = 0; index < archives.length; index++) {
 			IArchiveEntry element = (IArchiveEntry) archives[index];
 			URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), element.getURL());
-			w.println(gap + "<archive " + "path = \"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>");
+			w.println(gap + "<archive " + "path = \"" + Writer.xmlSafe(element.getPath()) + "\" url=\"" + Writer.xmlSafe(URLInfoString) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
-		w.println("");
+		w.println(""); //$NON-NLS-1$
 
 		ICategory[] categories = getCategories();
 		for (int index = 0; index < categories.length; index++) {
 			Category element = (Category) categories[index];
-			w.println(gap + "<category-def " + "label = \"" + Writer.xmlSafe(element.getLabel()) + "\" name=\"" + Writer.xmlSafe(element.getName()) + "\">");
+			w.println(gap + "<category-def " + "label = \"" + Writer.xmlSafe(element.getLabel()) + "\" name=\"" + Writer.xmlSafe(element.getName()) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 			IURLEntry info = element.getDescription();
 			if (info != null) {
-				w.print(gap + increment + "<description ");
+				w.print(gap + increment + "<description "); //$NON-NLS-1$
 				URLInfoString = null;
 				if (info.getURL() != null) {
 					URLInfoString = UpdateManagerUtils.getURLAsString(this.getURL(), info.getURL());
-					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				w.println(">");
+				w.println(">"); //$NON-NLS-1$
 				if (info.getAnnotation() != null) {
 					w.println(gap + increment + increment + Writer.xmlSafe(info.getAnnotation()));
 				}
-				w.print(gap + increment + "</description>");
+				w.print(gap + increment + "</description>"); //$NON-NLS-1$
 			}
-			w.println(gap + "</category-def>");
+			w.println(gap + "</category-def>"); //$NON-NLS-1$
 
 		}
-		w.println("");
+		w.println(""); //$NON-NLS-1$
 		// end
-		w.println("</site>");
+		w.println("</site>"); //$NON-NLS-1$
 
 	}
 
@@ -470,7 +471,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	 * @see ISite#getDefaultInstallableFeatureType()
 	 */
 	public String getDefaultInstallableFeatureType() {
-		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + ".";
+		String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier() + "."; //$NON-NLS-1$
 		return pluginID + IFeatureFactory.INSTALLABLE_FEATURE_TYPE;
 	}
 

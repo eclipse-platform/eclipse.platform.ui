@@ -63,7 +63,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 						}
 					} catch (MalformedURLException e1) {
 						if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-							UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory") + url);  //$NON-NLS-1$
+							UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotRetriveParentDirectory", url.toExternalForm()));  //$NON-NLS-1$
 						}
 					} catch (MissingResourceException e2) { //ok, there is no bundle, keep it as null
 						//DEBUG:
@@ -75,7 +75,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 			}
 		} catch (MalformedURLException e1) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotEncodeURL") + url);  //$NON-NLS-1$
+				UpdateManagerPlugin.getPlugin().debug(Policy.bind("BaseSiteFactory.CannotEncodeURL", url.toExternalForm()));  //$NON-NLS-1$
 			}
 		}
 

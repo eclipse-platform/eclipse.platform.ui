@@ -25,8 +25,8 @@ public class URLEntry extends URLEntryModel implements IURLEntry{
 	 * @see Object#toString()
 	 */
 	public String toString() {
-		String result = "IURLEntry: ";
-		 result = result +( (getAnnotation()==null)?getURL().toExternalForm():getAnnotation() + " : "+getURL().toExternalForm());
+		String result = "IURLEntry: "; //$NON-NLS-1$
+		 result = result +( (getAnnotation()==null)?getURL().toExternalForm():getAnnotation() + " : "+getURL().toExternalForm()); //$NON-NLS-1$
 		return result;
 	}
 

@@ -26,6 +26,7 @@ import java.util.jar.JarFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.core.internal.boot.Policy;
 
 /**
  * Base class for feature content providers.
@@ -95,8 +96,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		try {
 			if (monitor != null) {
 				monitor.saveState();
-				monitor.setTaskName("Downloading ");
-				monitor.subTask(ref.getIdentifier() + " ");
+				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading")); //$NON-NLS-1$
+				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
 				monitor.setTotalCount(ref.getInputSize());
 				monitor.showCopyDetails(true);
 			}

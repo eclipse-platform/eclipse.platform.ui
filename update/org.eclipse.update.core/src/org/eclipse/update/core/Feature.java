@@ -19,6 +19,7 @@ import org.eclipse.update.core.model.NonPluginEntryModel;
 import org.eclipse.update.core.model.PluginEntryModel;
 import org.eclipse.update.core.model.URLEntryModel;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.core.internal.boot.Policy;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
@@ -33,12 +34,17 @@ public class Feature extends FeatureModel implements IFeature {
 	/**
 	 * 
 	 */
-	public static final String FEATURE_FILE = "feature";
+	public static final String FEATURE_FILE = "feature"; //$NON-NLS-1$
 
 	/**
 	 * 
 	 */
-	public static final String FEATURE_XML = FEATURE_FILE + ".xml";
+	public static final String FEATURE_XML = FEATURE_FILE + ".xml"; //$NON-NLS-1$
+	
+	/**
+	 * 
+	 */
+	public static final String EMPTY_STRING = "";	 //$NON-NLS-1$
 
 	/**
 	 * Site in which teh feature resides
@@ -62,8 +68,8 @@ public class Feature extends FeatureModel implements IFeature {
 	static {
 		//	in case we throw a cancel exception
 		Plugin um = UpdateManagerPlugin.getPlugin();
-		String pluginId = um==null ? "undefined" : um.getDescriptor().getUniqueIdentifier();
-		IStatus cancelStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, "Install has been Cancelled", null);
+		String pluginId = um==null ? Policy.bind("Feature.UndefinedPluginID") : um.getDescriptor().getUniqueIdentifier(); //$NON-NLS-1$
+		IStatus cancelStatus = new Status(IStatus.ERROR, pluginId, IStatus.OK, Policy.bind("Feature.InstallHasBeenCancelled"), null); //$NON-NLS-1$
 		//		IStatus cancelStatus = new Status(IStatus.ERROR, "org.eclipse.update", IStatus.OK, "Install has been Cancelled", null);
 		CANCEL_EXCEPTION = new CoreException(cancelStatus);
 	}
@@ -109,9 +115,7 @@ public class Feature extends FeatureModel implements IFeature {
 			contentProvider = getFeatureContentProvider();
 		} catch (CoreException e) {
 			// no content provider, log status
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			Status status = new Status(IStatus.ERROR, id, IStatus.OK, "The feature does not have a content provider", e);
-			UpdateManagerPlugin.getPlugin().getLog().log(status);
+			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 		}
 		return (contentProvider != null) ? contentProvider.getURL() : null;
 	}
@@ -168,8 +172,8 @@ public class Feature extends FeatureModel implements IFeature {
 	public void setSite(ISite site) throws CoreException {
 		if (this.site != null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			String featureURLString = (getURL() != null) ? getURL().toExternalForm() : "";
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Site already set for the feature " + featureURLString, null);
+			String featureURLString = (getURL() != null) ? getURL().toExternalForm() : EMPTY_STRING; 
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.SiteAlreadySet", featureURLString), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		this.site = site;
@@ -295,11 +299,11 @@ public class Feature extends FeatureModel implements IFeature {
 	+getNonPluginEntries().length; // one task for each non-plugin file to install
 
 			if (monitor != null)
-				monitor.beginTask("", taskCount);
+				monitor.beginTask(EMPTY_STRING, taskCount); 
 
 			//finds the contentReferences for this IFeature
 			if (monitor != null)
-				monitor.setTaskName("Installing feature files: ");
+				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles")); //$NON-NLS-1$
 			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
 			for (int i = 0; i < references.length; i++) {
 				if (monitor != null)
@@ -312,7 +316,7 @@ public class Feature extends FeatureModel implements IFeature {
 			// download and install plugin plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (monitor != null)
-					monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getVersionIdentifier().getIdentifier() + "]: ");
+					monitor.setTaskName(Policy.bind("Feature.TaskInstallPluginFiles") + pluginsToInstall[i].getVersionIdentifier().getIdentifier() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
@@ -330,7 +334,7 @@ public class Feature extends FeatureModel implements IFeature {
 			INonPluginEntry[] nonPluginsContentReferencesToInstall = getNonPluginEntries();
 			for (int i = 0; i < nonPluginsContentReferencesToInstall.length; i++) {
 				if (monitor != null)
-					monitor.setTaskName("Installing non-plug-in files: ");
+					monitor.setTaskName(Policy.bind("Feature.TaskInstallNonPluginsFiles")); //$NON-NLS-1$
 				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
 				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
@@ -458,7 +462,7 @@ public class Feature extends FeatureModel implements IFeature {
 	public IFeatureContentProvider getFeatureContentProvider() throws CoreException {
 		if (featureContentProvider == null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Content Provider not set for feature.", null);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoContentProvider", getURL().toExternalForm()), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return this.featureContentProvider;
@@ -470,7 +474,7 @@ public class Feature extends FeatureModel implements IFeature {
 	public IFeatureContentConsumer getContentConsumer() throws CoreException {
 		if (this.contentConsumer == null) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "FeatureContentConsumer not set for feature:" + getURL().toExternalForm(), null);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoFeatureContentConsumer", getURL().toExternalForm()), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		return contentConsumer;

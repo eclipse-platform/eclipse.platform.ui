@@ -7,11 +7,7 @@ package org.eclipse.update.examples.buildzip;
 
 import java.net.URL;
 
-import org.eclipse.update.core.ContentReference;
-import org.eclipse.update.core.Feature;
-import org.eclipse.update.core.INonPluginEntry;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.model.DefaultModelWriter;
+import org.eclipse.update.core.*;
  
 /**
  * unit test harness
