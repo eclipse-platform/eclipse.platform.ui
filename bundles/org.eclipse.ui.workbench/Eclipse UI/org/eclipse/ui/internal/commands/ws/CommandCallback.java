@@ -11,9 +11,11 @@
 package org.eclipse.ui.internal.commands.ws;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -45,6 +47,15 @@ public final class CommandCallback implements ICallback {
      */
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(CommandCallback.class.getName());
+
+    /**
+     * A set of all the command identifiers that have been logged as broken so
+     * far. For each of these, there will be a listener on the corresponding
+     * command. If the command ever becomes defined, the item will be removed
+     * from this set and the listener removed. This value may be empty, but
+     * never <code>null</code>.
+     */
+    private final Set loggedCommandIds = new HashSet();
 
     /**
      * The list of listeners that have registered for property change
@@ -186,7 +197,7 @@ public final class CommandCallback implements ICallback {
             final ICommand command = workbench.getCommandSupport()
                     .getCommandManager().getCommand(commandId);
 
-            if (!command.isDefined()) {
+            if (!command.isDefined() && (!loggedCommandIds.contains(commandId))) {
                 // The command is not yet defined, so we should log this.
                 final StringBuffer message = new StringBuffer();
                 message.append("The command '"); //$NON-NLS-1$
@@ -198,6 +209,24 @@ public final class CommandCallback implements ICallback {
                                 RESOURCE_BUNDLE,
                                 "undefinedCommand.WarningMessage"), null); //$NON-NLS-1$
                 WorkbenchPlugin.log(message.toString(), status);
+
+                // And remember this item so we don't log it again.
+                loggedCommandIds.add(commandId);
+                command.addCommandListener(new ICommandListener() {
+                    /*
+                     * (non-Javadoc)
+                     * 
+                     * @see org.eclipse.ui.commands.ICommandListener#commandChanged(org.eclipse.ui.commands.CommandEvent)
+                     */
+                    public final void commandChanged(
+                            final CommandEvent commandEvent) {
+                        if (command.isDefined()) {
+                            command.removeCommandListener(this);
+                            loggedCommandIds.remove(commandId);
+                        }
+                    }
+                });
+
                 return false;
             }
 
