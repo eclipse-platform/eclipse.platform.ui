@@ -12,63 +12,94 @@ package org.eclipse.ui.cheatsheets;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchPage;
-
-import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.WorkbenchPage; // illegal
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
 
 /**
- * <p>This action class can be used to launch a cheat sheet in the cheat sheets view.
- * A cheat sheet may be launched using it's id, or by passing a URL of the cheat sheet content file
- * location.</p>
+ * Action for opening a cheat sheet. The cheat sheet can be specified 
+ * either by a cheat sheet id or by a URL of a cheat sheet content file.
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  * 
+ * TODO (lorne) - should rename this to "OpenCheatSheetAction" to be consistent with terms used elsewhere
+ * TODO (lorne) - marked as final
  * @since 3.0
  */
-public class LaunchCheatSheetAction extends Action {
+public final class LaunchCheatSheetAction extends Action {
 	CheatSheetElement element;
 	URL csURL;
 
 	/**
-	 * Constructor.  The id of passed to this constructor must match the id
-	 * of a cheat sheet specified in a client's implementation of the cheatsheetContent extension point.
-	 * @param id the id of the cheat sheet to launch
+	 * Creates an action that opens the cheat sheet with the given id.
+	 * The cheat sheet content file is located via the
+	 * <code>org.eclipse.ui.cheatsheet.cheatSheetContent</code>
+	 * extension point.
+	 * 
+	 * @param id the cheat sheet id
+	 * @exception IllegalArgumentException if <code>id</code>
+	 * is <code>null</code>
 	 */
 	public LaunchCheatSheetAction(String id) {
+		if (id == null) {
+			throw new IllegalArgumentException();
+		}
 		this.element = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
 	}
 	
 	/**
-	 * This constructor can be used to launch a cheat sheet that is not specified by a plugin
-	 * implementing the cheatsheetContent extension point.  
-	 * @param url the url of the cheat sheet content file location.
-	 * @param name the name to give this cheat sheet.
-	 * @param id the unique id to assign this cheat sheet.
+	 * Creates an action that opens the cheat sheet with the 
+	 * given cheat sheet content file.
+	 * 
+	 * @param url URL of the cheat sheet content file
+	 * @param name the name to give this cheat sheet; 
+	 * <code>null</code> is equivalent to the empty string
+	 * @param id the id to give this cheat sheet;
+	 * <code>null</code> is equivalent to the empty string
+	 * @exception IllegalArgumentException if <code>url</code>
+	 * is <code>null</code>
 	 */
 	public LaunchCheatSheetAction(URL url, String name, String id){
-		csURL = url;
-		if(name == null)
+		if (url == null) {
+			throw new IllegalArgumentException();
+		}
+		this.csURL = url;
+		if (name == null) {
 			name = ""; //$NON-NLS-1$
+		}
 		element = new CheatSheetElement(name);
-		if(id == null)
+		if (id == null) {
 			id = ""; //$NON-NLS-1$
+		}
 		element.setID(id);
 		
 		element.setContentFile(url.toString());
 	}
 
-	/**
-	 * Method called when this action is run.
-	 * This action will try to launch the cheat sheets view and populate it with the content 
-	 * specified either in the URL or the content file specified in the cheatsheetContent extension point
+	/* (non-javadoc)
+	 * This action will try to launch the cheat sheet view and populate
+	 * it with the content specified either in the URL or the content
+	 * file specified in the cheatsheetContent extension point
 	 * for the cheat sheet with the id passed to this action.
+	 * @see IAction#run()
 	 */
 	public void run() {
 
+		/* TODO (lorne) - action fails silently when id does not correspond to a known cheatsheet
+		 * it would better to report some kind of error in this case.
+		 */
 		if (element == null) {
 			return;
 		}
@@ -77,10 +108,12 @@ public class LaunchCheatSheetAction extends Action {
 		IWorkbenchWindow window = myworkbench.getActiveWorkbenchWindow();
 
 		IWorkbenchPage page = window.getActivePage();
+		// TODO (lorne) - the plug-in must not reference internal classes (like WorkbenchPage) of other plug-ins
 		WorkbenchPage realpage = (WorkbenchPage) page;
 
 		CheatSheetView newview = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 		if (newview != null) {
+			// TODO (lorne) - won't setContent clobber a cheat sheet execution already in progress?
 			newview.setContent(element);
 			page.bringToTop(newview);
 		} else {

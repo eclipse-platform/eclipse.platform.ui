@@ -14,33 +14,43 @@ import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * <p>This action class can be used to launch a cheat sheet from the eclipse help system
- * using a live help link.  To use this action, the initialization string must correspond to the id of a 
- * cheat sheet that has been declared using the cheatsheetContent extension point.
- * See ILiveHelpAction for further details on how to run an action from eclipse help pages. </p>
+ * Live help action for launching a cheat sheet from a help book.
+ * <p>
+ * The initialization string passed to {@link #setInitializationString(String)}
+ * is the id of a cheat sheet contributed to the <code>cheatsheetContent</code>
+ * extension point.
+ * </p>
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
  * 
+ * TODO (lorne) - marked as final
  * @since 3.0
  */
-public class OpenCheatSheetFromHelpAction implements ILiveHelpAction {
-	private String cheatsheetID;
+public final class OpenCheatSheetFromHelpAction implements ILiveHelpAction {
+	
+	/**
+	 * Cheat sheet id; null until initialized.
+	 */
+	private String cheatsheetID = null;
 
 	/**
-	 * Constructor for OpenCheatSheetFromHelpAction.
+	 * Creates a new live help action.
 	 */
 	public OpenCheatSheetFromHelpAction() {
 		super();
 	}
 
-	/**
+	/* (non-javadoc)
 	 * This method is called by the eclipse framework.  The initialization string must be the id of a 
 	 * registered cheat sheet in order for the action to work.
-	 * @see org.eclipse.help.ILiveHelpAction#setInitializationString(String)
+	 * @see ILiveHelpAction#setInitializationString(String)
 	 */
 	public void setInitializationString(String data) {
 		cheatsheetID = data;
 	}
 
-	/**
+	/* (non-javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
