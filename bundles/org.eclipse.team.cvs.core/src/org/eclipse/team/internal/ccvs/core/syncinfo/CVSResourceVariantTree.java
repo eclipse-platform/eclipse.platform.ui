@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -169,6 +170,16 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 		}
 		return bytes;
 	}
+	
+	private boolean hasLocalSyncInfo(IContainer folder) {
+		ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor(folder);
+		try {
+			return local.getFolderSyncInfo() != null;
+		} catch (CVSException e) {
+			// Say that there is sync info and let the failure occur elsewhere
+			return true;
+		}
+	}
 
 	public CVSTag getTag(IResource resource) {
 		return tag;
@@ -185,6 +196,17 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	 * @see org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree#setVariant(org.eclipse.core.resources.IResource, org.eclipse.team.core.synchronize.IResourceVariant)
 	 */
 	protected boolean setVariant(IResource local, IResourceVariant remote) throws TeamException {
+		if (local.getType() == IResource.FOLDER && remote != null 
+				&& !hasLocalSyncInfo((IFolder)local)
+				&& hasLocalSyncInfo(local.getParent())) {
+			// Manage the folder locally since folders exist in all versions, etc
+			// Use the info from the remote except get the tag from the locla parent
+			CVSTag tag = CVSWorkspaceRoot.getCVSFolderFor(local.getParent()).getFolderSyncInfo().getTag();
+			FolderSyncInfo info = FolderSyncInfo.getFolderSyncInfo(remote.asBytes());
+			FolderSyncInfo newInfo = new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic());
+			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IFolder)local);
+			cvsFolder.setFolderSyncInfo(newInfo);
+		}
 		boolean changed = super.setVariant(local, remote);
 		if (local.getType() == IResource.FILE && getByteStore().getBytes(local) != null && !parentHasSyncBytes(local)) {
 			// Log a warning if there is no sync bytes available for the resource's

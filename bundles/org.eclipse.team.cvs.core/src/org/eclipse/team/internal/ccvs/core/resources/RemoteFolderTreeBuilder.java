@@ -732,7 +732,7 @@ public class RemoteFolderTreeBuilder {
 	}
 
 	private boolean pruneEmptyDirectories() {
-		return CVSProviderPlugin.getPlugin().getPruneEmptyDirectories();
+		return false;
 	}
 	/*
 	 * Record the deltas in a double map where the outer key is the parent directory
