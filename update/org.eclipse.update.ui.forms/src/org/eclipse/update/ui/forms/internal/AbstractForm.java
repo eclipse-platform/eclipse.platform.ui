@@ -15,7 +15,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
 
 /**
  * This class implements IForm interface and
@@ -202,23 +202,23 @@ public abstract class AbstractForm implements IForm, IPropertyChangeListener {
 	protected boolean canPerformDirectly(String id, Control control) {
 		if (control instanceof Text) {
 			Text text = (Text) control;
-			if (id.equals(IWorkbenchActionConstants.CUT)) {
+			if (id.equals(ActionFactory.CUT.getId())) {
 				text.cut();
 				return true;
 			}
-			if (id.equals(IWorkbenchActionConstants.COPY)) {
+			if (id.equals(ActionFactory.COPY.getId())) {
 				text.copy();
 				return true;
 			}
-			if (id.equals(IWorkbenchActionConstants.PASTE)) {
+			if (id.equals(ActionFactory.PASTE.getId())) {
 				text.paste();
 				return true;
 			}
-			if (id.equals(IWorkbenchActionConstants.SELECT_ALL)) {
+			if (id.equals(ActionFactory.SELECT_ALL.getId())) {
 				text.selectAll();
 				return true;
 			}
-			if (id.equals(IWorkbenchActionConstants.DELETE)) {
+			if (id.equals(ActionFactory.DELETE.getId())) {
 				int count = text.getSelectionCount();
 				if (count == 0) {
 					int caretPos = text.getCaretPosition();

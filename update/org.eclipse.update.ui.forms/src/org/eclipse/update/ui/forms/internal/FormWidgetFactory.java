@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
 public class FormWidgetFactory {
@@ -311,7 +311,7 @@ public class FormWidgetFactory {
 			parent = parent.getParent()) {
 			if (parent.getData() instanceof FormSection) {
 				FormSection section = (FormSection) parent.getData();
-				section.doGlobalAction(IWorkbenchActionConstants.DELETE);
+				section.doGlobalAction(ActionFactory.DELETE.getId());
 				break;
 			}
 		}
