@@ -132,12 +132,48 @@ public class HelpNavigationManager {
 	 */
 	public NavigationModel getCurrentNavigationModel() {
 		if (currentModel == null) {
-			// no previous InfoSet loaded, find an InfoSet
-			if (infosetsMap.size() > 0)
-				setCurrentInfoSet((String) infosetsMap.keys().nextElement());
+			// no previous InfoSet loaded, use default InfoSet
+			if (infosetsMap.size() > 0) {
+				InfoSet defaultInfoset = getDefaultInfoSet();
+				// this also sets the current NavigationModel
+				setCurrentInfoSet(defaultInfoset.getID());
+			}
 		}
 		return currentModel;
 	}
+	
+	/**
+	 * Returns the default infoset. 
+	 */
+	public InfoSet getDefaultInfoSet() {
+		NavigationModel navModel = getDefaultNavigationModel();
+		if (navModel == null)
+			return null;
+		else
+			return (InfoSet) navModel.getRootElement();
+	}
+	
+	/**
+	 * Returns the default navigation model.
+	 */
+	public NavigationModel getDefaultNavigationModel() {
+		// currently this implementation returns the first infoset as 
+		// defined by product.ini. This may be revisited if a 
+		// "default infoset" attribute is added to product.ini
+		Collection orderedInfosets = getInfoSetIds();
+		
+		// we are guaranteed proper order here because Collection is ArrayList.
+		Iterator anIterator = orderedInfosets.iterator();
+		if ((anIterator != null) && (anIterator.hasNext()) ) {
+			String infosetId = (String)(anIterator.next());
+			return getNavigationModel(infosetId);
+		}
+		return null;
+	}
+	
+	
+	
+	
 	/**
 	 * Returns the navigation model for an infoset
 	 */
