@@ -349,9 +349,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		if (getTitleFont() != null)
 			titleLabel.setFont(getTitleFont());
 		titleLabel.setAlignment(SWT.LEFT);
-		titleLabel.setBackground(getNormalGradient(), getNormalGradientPercents());
-		//  @issue should not overload setAlignment;  new method: setGradientDirection(int)?
-		//	titleLabel.setAlignment(getGradientDirection());
+		titleLabel.setBackground(getNormalGradient(), getNormalGradientPercents(), isGradientVertical());
 		titleLabel.setForeground(getNormalForeground());
 		titleLabel.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
@@ -454,23 +452,18 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
 		if (showFocus) {
 			if (getShellActivated()) {
-				titleLabel.setBackground(getActiveGradient(), getActiveGradientPercents());
+                titleLabel.setBackground(getActiveGradient(),
+                        getActiveGradientPercents(), isGradientVertical());
 				titleLabel.setForeground(getActiveForeground());
-				// see issue above
-				//			titleLabel.setAlignment(getGradientDirection());
 			} else {
-				titleLabel.setBackground(
-					getDeactivatedGradient(),
-					getDeactivatedGradientPercents());
+                titleLabel.setBackground(getDeactivatedGradient(),
+                        getDeactivatedGradientPercents(), isGradientVertical());
 				titleLabel.setForeground(getDeactivatedForeground());
-				// see issue above
-				//			titleLabel.setAlignment(getGradientDirection());
 			}
 		} else {
-			titleLabel.setBackground(getNormalGradient(), getNormalGradientPercents());
+            titleLabel.setBackground(getNormalGradient(),
+                    getNormalGradientPercents(), isGradientVertical());
 			titleLabel.setForeground(getNormalForeground());
-			// see issue above
-			//		titleLabel.setAlignment(getGradientDirection());
 		}
 
 		titleLabel.update();
@@ -891,6 +884,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		return SWT.HORIZONTAL;
 	}
 
+	private boolean isGradientVertical() {
+	    return getGradientDirection() == SWT.VERTICAL;
+	}
+	
 	private Font getTitleFont() {
 		if (theme != null) {
 			return WorkbenchThemeManager.getInstance().getViewFont(

@@ -43,7 +43,7 @@ public class ViewThemeDescriptor implements IViewThemeDescriptor {
 	private static final String ATT_TITLE_FONT = "font";//$NON-NLS-1$
 		
 	private IConfigurationElement configElement;
-	private int borderStyle;
+	private int borderStyle = SWT.BORDER;
 	private String normalTextColor;
 	private String activeTextColor;
 	private String deactivatedTextColor;
@@ -53,12 +53,11 @@ public class ViewThemeDescriptor implements IViewThemeDescriptor {
 	private int [] normalGradPercents;
 	private int [] activeGradPercents;
 	private int [] deactivatedGradPercents;
-	private int gradientDirection;
+	private int gradientDirection = SWT.HORIZONTAL;
 	private String titleFont;
 	
 	public ViewThemeDescriptor (IConfigurationElement element) throws CoreException {
 		configElement = element;
-		borderStyle = SWT.BORDER;
 		processExtension();
 	}
 	
