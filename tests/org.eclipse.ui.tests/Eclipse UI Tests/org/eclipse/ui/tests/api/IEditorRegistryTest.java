@@ -22,6 +22,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.tests.util.ArrayUtil;
@@ -164,19 +165,19 @@ public class IEditorRegistryTest extends TestCase {
 		IFile file = FileUtil.createFile("good.file", proj);
 
 		String id = MockEditorPart.ID1;
-		fReg.setDefaultEditor( file.getName(), id );	
-		IEditorDescriptor editor = fReg.getDefaultEditor( file.getName() );
+		IDE.setDefaultEditor( file, id );	
+		IEditorDescriptor editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//change the default editor
 		id = MockEditorPart.ID2;
-		fReg.setDefaultEditor( file.getName(), id );	
-		editor = fReg.getDefaultEditor( file.getName() );
+		IDE.setDefaultEditor( file, id );	
+		editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//register the default editor with an invalid editor id
-		fReg.setDefaultEditor( file.getName(), IConstants.FakeID );	
-		assertNull( fReg.getDefaultEditor( file.getName() ) );		
+		IDE.setDefaultEditor( file, IConstants.FakeID );	
+		assertNull( IDE.getDefaultEditor( file ) );		
 	}
 	
 	/**
