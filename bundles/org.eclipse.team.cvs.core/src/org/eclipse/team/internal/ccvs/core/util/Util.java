@@ -5,11 +5,15 @@ package org.eclipse.team.internal.ccvs.core.util;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
@@ -283,5 +287,24 @@ public class Util {
 	
 	public static void logError(String message, Throwable throwable) {
 		CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, IStatus.ERROR, message, throwable));
+	}
+	
+	/**
+	 * If the number of segments in the relative path of <code>resource</code> to <code>root</code> is 
+	 * greater than <code>split</code> then the returned path is truncated to <code>split</code> number
+	 * of segments and '...' is shown as the first segment of the path.
+	 */
+	public static String toTruncatedPath(ICVSResource resource, ICVSFolder root, int split) {
+		try {
+			IPath path = new Path(resource.getRelativePath(root));
+			int segments = path.segmentCount();
+			if(segments>split) {				
+				IPath last = path.removeFirstSegments(segments - split);
+				return "..." + path.SEPARATOR + last.toString();
+			}
+			return path.toString();
+		} catch(CVSException e) {
+			return resource.getName();
+		}
 	}
 }

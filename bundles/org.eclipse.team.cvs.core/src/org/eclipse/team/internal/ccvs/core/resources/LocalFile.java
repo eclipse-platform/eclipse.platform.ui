@@ -88,7 +88,6 @@ public class LocalFile extends LocalResource implements ICVSFile {
 	}
 	
 	public boolean isDirty() throws CVSException {
-		// XXX Is the below correct for isDirty?
 		if (!exists() || !isManaged()) {
 			return true;
 		} else {

@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Maintains CVS communication state for the lifetime of a connection
@@ -529,7 +530,7 @@ public class Session {
 	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
 		// update progress monitor
-		String title = Policy.bind("Session.sending", new Object[]{ file.getName() }); //$NON-NLS-1$
+		String title = Policy.bind("Session.sending", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// obtain an input stream for the file and its size
 		long size = file.getSize();
@@ -622,7 +623,7 @@ public class Session {
 	public void receiveFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 	throws CVSException {
 		// update progress monitor
-		String title = Policy.bind("Session.receiving", new Object[]{ file.getName() }); //$NON-NLS-1$
+		String title = Policy.bind("Session.receiving", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// get the file size from the server
 		long size;

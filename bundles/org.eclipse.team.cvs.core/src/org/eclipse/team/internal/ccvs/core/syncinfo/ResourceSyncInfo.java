@@ -37,7 +37,10 @@ public class ResourceSyncInfo {
 	
 	// Timestamp constants used to identify special cases
 	public static final String DUMMY_TIMESTAMP = "dummy timestamp"; //$NON-NLS-1$
-	public static final String RESULT_OF_MERGE = "Result of merge+"; //$NON-NLS-1$
+	public static final String RESULT_OF_MERGE = "Result of merge"; //$NON-NLS-1$
+	public static final String RESULT_OF_MERGE_CONFLICT = RESULT_OF_MERGE + "+"; //$NON-NLS-1$
+	public static final String MERGE_MODIFIED = "+modified"; //$NON-NLS-1$
+	public static final String MERGE_UNMODIFIED = "+="; //$NON-NLS-1$
 	
 	// safe default permissions. Permissions are saved separatly so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
@@ -133,6 +136,33 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
+	 * Answers if this sync information is for a resource that has been merged by the cvs server with
+	 * conflicts.
+	 * 
+	 * @return <code>true</code> if the sync information is for a file that has been merged and
+	 * <code>false</code> for folders and for files that have not been merged.
+	 */
+	public boolean isNeedsMerge(String fileTimestamp) {
+		if(timeStamp.indexOf(RESULT_OF_MERGE_CONFLICT) != -1) {
+			String t = timeStamp.substring(timeStamp.indexOf("+") + 1);
+			return t.equals(fileTimestamp);
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Answers if this sync information is for a resource that has been merged by the cvs server with
+	 * conflicts.
+	 * 
+	 * @return <code>true</code> if the sync information is for a file that has been merged and
+	 * <code>false</code> for folders and for files that have not been merged.
+	 */
+	public boolean isMerged() {
+		return timeStamp.indexOf(RESULT_OF_MERGE) != -1;
+	}
+		
+	/**
 	 * Answers if this sync information is for a file that has been added but not comitted
 	 * to the CVS repository yet.
 	 * 
@@ -200,6 +230,31 @@ public class ResourceSyncInfo {
 		}
 
 		return result.toString();
+	}
+	
+	/**
+	 * Same as <code>getEntryLine</code> except it considers merged files in entry line format. This is only 
+	 * valid for sending the file to the server.
+	 * 
+	 * @param includeTimeStamp determines if the timestamp will be included in the returned entry line. In 
+	 * some usages the timestamp should not be included in entry lines, for example when sending the entries 
+	 * to the server.
+	 * @param isModified is the resource associated with this sync info modified.
+	 * 
+	 * @return a file or folder entry line reflecting the state of this sync object.
+	 */
+	public String getEntryLine(boolean includeTimeStamp, String fileTimestamp) {
+		String serverTimestamp;
+		if(isMerged()) {
+			if(isNeedsMerge(fileTimestamp)) {
+				serverTimestamp = MERGE_UNMODIFIED;
+			} else {
+				serverTimestamp = MERGE_MODIFIED;
+			}
+			return new ResourceSyncInfo(getName(), getRevision(), serverTimestamp, getKeywordMode(), getTag(), getPermissions()).getEntryLine(true);
+		} else {
+			return getEntryLine(includeTimeStamp);
+		}		
 	}
 	
 	/**

@@ -87,7 +87,18 @@ class UpdatedHandler extends ResponseHandler {
 		if (updateResponse) {
 			timestamp = mFile.getTimeStamp();
 		} else {
-			timestamp = ResourceSyncInfo.RESULT_OF_MERGE + mFile.getTimeStamp();
+			// This is to handle the Merged response. The server will send a timestamp of "+=" if
+			// the file was merged with conflicts. The '+' indicates that there are conflicts and the
+			// '=' indicate that the timestamp for the file should be used. If the merge does not
+			// have conflicts, simply add a text only timestamp and the file will be regarded as
+			// having outgoing changes.
+			// The purpose for having the two different timestamp options for merges is to 
+			// dissallow commit of files that have conflicts until they have been manually edited.			
+			if(entryLine.indexOf(ResourceSyncInfo.MERGE_UNMODIFIED) != -1) {
+				timestamp = ResourceSyncInfo.RESULT_OF_MERGE_CONFLICT + mFile.getTimeStamp();
+			} else {
+				timestamp = ResourceSyncInfo.RESULT_OF_MERGE;
+			}
 		}			
 		mFile.setSyncInfo(new ResourceSyncInfo(entryLine, permissionsLine, timestamp));
 	}
