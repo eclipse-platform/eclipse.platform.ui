@@ -164,17 +164,20 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		final IProgressMonitor progress = Policy.monitorFor(monitor);
 		
 		// Create the listener for remote files and folders
-		final boolean[] exists = new boolean[] {false};
+		final boolean[] exists = new boolean[] {true};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				exists[0] = true;
 			}
 			public void directoryDoesNotExist(IPath path) {
+				exists[0] = false;
 			}
 			public void fileInformation(int type, String filename) {
-				exists[0] = true;
+				// We can't set exists true here as we may get a conflict on a deleted file.
+				// i.e. remote files are always communicated to the server as modified.
 			}
 			public void fileDoesNotExist(String filename) {
+				exists[0] = false;
 			}
 		};
 		
@@ -201,14 +204,18 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		}
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			CVSServerException e = new CVSServerException(status);
-			if ( ! e.isNoTagException() || ! child.isContainer())
-				if (e.containsErrors())
+			if ( ! e.isNoTagException() || ! child.isContainer()) {
+				if (e.containsErrors()) {
 					throw e;
+				}
+			}
 			// we now know that this is an exception caused by a cvs bug.
 			// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
 			// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(progress);
-			return exists(child, null, progress);
+			if (e.isNoTagException()) {
+				return exists(child, null, progress);
+			}
 		}
 		return exists[0];
 	}
