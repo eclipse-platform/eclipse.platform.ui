@@ -18,7 +18,7 @@ import java.net.URLClassLoader;
 public class AntClassLoader extends URLClassLoader {
 
 	protected ClassLoader[] pluginLoaders;
-	private static final String ANT_PACKAGES_PREFIX= "org.apache.tools.ant"; //$NON-NLS-1$
+	private static final String ANT_PACKAGES_PREFIX= "org.apache.tools"; //$NON-NLS-1$
 	
 	public AntClassLoader(URL[] urls, ClassLoader[] pluginLoaders) {
 		super(urls, ClassLoader.getSystemClassLoader());
