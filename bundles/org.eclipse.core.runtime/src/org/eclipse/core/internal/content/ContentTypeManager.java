@@ -81,9 +81,6 @@ public class ContentTypeManager implements IContentTypeManager {
 		return instance;
 	}
 
-	/*
-	 * Returns null if no bytes can be read
-	 */
 	protected static LazyInputStream readBuffer(InputStream contents) {
 		return new LazyInputStream(contents, MARK_LIMIT);
 	}
