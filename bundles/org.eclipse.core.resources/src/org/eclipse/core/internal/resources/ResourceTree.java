@@ -561,13 +561,12 @@ class ResourceTree implements IResourceTree {
 				deletedFile(file);
 				// Indicate that the delete was successful.
 				return true;
-			} else {
-				message = Policy.bind("resources.couldnotDelete", file.getLocation().toOSString()); //$NON-NLS-1$
-				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
-				failed(status);
-				// Indicate that the delete was unsuccessful.
-				return false;
 			}
+			message = Policy.bind("resources.couldnotDelete", file.getLocation().toOSString()); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
+			failed(status);
+			// Indicate that the delete was unsuccessful.
+			return false;
 		} finally {
 			monitor.done();
 		}
@@ -719,13 +718,12 @@ class ResourceTree implements IResourceTree {
 			deletedFolder(folder);
 			// Indicate that the delete was successful.
 			return true;
-		} else {
-			String message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString()); //$NON-NLS-1$
-			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
-			failed(status);
-			// Indicate that the delete was unsuccessful.
-			return false;
 		}
+		String message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString()); //$NON-NLS-1$
+		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
+		failed(status);
+		// Indicate that the delete was unsuccessful.
+		return false;
 	}
 
 	/**
@@ -1081,15 +1079,14 @@ class ResourceTree implements IResourceTree {
 					failed(status);
 					// Indicate that the delete was unsuccessful.
 					return false;
-				} else {
-					boolean deletedProjectFile = internalDeleteFile((IFile) file, updateFlags, Policy.monitorFor(null));
-					if (!deletedProjectFile) {
-						String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString()); //$NON-NLS-1$
-						IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
-						failed(status);
-						// Indicate that the delete was unsuccessful.
-						return false;
-					}
+				}
+				boolean deletedProjectFile = internalDeleteFile((IFile) file, updateFlags, Policy.monitorFor(null));
+				if (!deletedProjectFile) {
+					String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString()); //$NON-NLS-1$
+					IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
+					failed(status);
+					// Indicate that the delete was unsuccessful.
+					return false;
 				}
 			}
 		} else {
@@ -1119,13 +1116,12 @@ class ResourceTree implements IResourceTree {
 			deletedProject(project);
 			// Indicate that the delete was successful.
 			return true;
-		} else {
-			String message = Policy.bind("resources.couldnotDelete", project.getLocation().toOSString()); //$NON-NLS-1$
-			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
-			failed(status);
-			// Indicate that the delete was unsuccessful.
-			return false;
 		}
+		String message = Policy.bind("resources.couldnotDelete", project.getLocation().toOSString()); //$NON-NLS-1$
+		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
+		failed(status);
+		// Indicate that the delete was unsuccessful.
+		return false;
 	}
 
 	/**
