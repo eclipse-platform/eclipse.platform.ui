@@ -218,8 +218,12 @@ public abstract class ResourceState {
 					delete(Policy.subMonitorFor(progress, 80));
 				}
 			} else {
+				// Ensure the necessary remote direcotories exist
+				mkRemoteDirs(Policy.subMonitorFor(progress, 10));
 				// Copy from the local resource to the repository.
-				upload(Policy.subMonitorFor(progress, 90));
+				if (getLocal().getType() == IResource.FILE) {
+					upload(Policy.subMonitorFor(progress, 80));
+				}
 			}
 			//if we got to here the upload succeeded (didn't throw)
 			checkedOut = false;
