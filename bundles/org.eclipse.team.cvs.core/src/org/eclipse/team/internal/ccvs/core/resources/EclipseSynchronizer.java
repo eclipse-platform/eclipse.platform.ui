@@ -1565,7 +1565,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @param time
 	 * @throws CVSException
 	 */
-	public void setTimeStamp(ICVSFile cvsFile, long time) throws CVSException {
+	public void setTimeStamp(EclipseFile cvsFile, long time) throws CVSException {
 		ISchedulingRule rule = null;
 		IFile file = (IFile)cvsFile.getIResource();
 		try {
@@ -1663,25 +1663,12 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * @param modificationState
 	 * @return true if the file is dirty
 	 */
-	public boolean setModified(ICVSFile cvsFile, int modificationState) throws CVSException {
+	public boolean setModified(EclipseFile cvsFile, int modificationState) throws CVSException {
 		try {
 			beginOperation();
 			boolean dirty;
 			if (modificationState == ICVSFile.UNKNOWN) {
-				// if there is no sync info and it doesn't exist then it is a phantom we don't care about.
-				ResourceSyncInfo info = cvsFile.getSyncInfo();
-				if (info == null) {
-					dirty = cvsFile.exists();
-				} else {
-					// isMerged() must be called because when a file is updated and merged by the cvs server the timestamps
-					// are equal. Merged files should however be reported as dirty because the user should take action and commit
-					// or review the merged contents.
-					if(info.isAdded() || info.isMerged() || !cvsFile.exists()) {
-						dirty = true;
-					} else {
-						dirty = !cvsFile.getTimeStamp().equals(info.getTimeStamp());
-					}
-				}
+				dirty = cvsFile.isDirty();
 			} else {
 				dirty = modificationState == ICVSFile.DIRTY;
 			}

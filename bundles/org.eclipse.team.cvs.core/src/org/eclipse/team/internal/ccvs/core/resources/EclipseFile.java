@@ -125,7 +125,12 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		int state = EclipseSynchronizer.getInstance().getModificationState(getIFile());
 
 		if (state != UNKNOWN) {
-			return state != CLEAN;
+			boolean dirty = state != CLEAN;
+			// Check to make sure that cached state is the real state.
+			// They can be different if deltas happen in the wrong order.
+			if (dirty == isDirty()) {
+				return dirty;
+			}
 		}
 		
 		// nothing cached, need to manually check (and record)
@@ -531,6 +536,26 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		String parentPath = getParent().getRepositoryRelativePath();
 		if (parentPath == null) return null;
 		return parentPath + Session.SERVER_SEPARATOR + getName();
+	}
+	
+	protected boolean isDirty() throws CVSException {
+		boolean dirty;
+		byte[] syncBytes = getSyncBytes();
+		if (syncBytes == null) {
+			dirty = exists();
+		} else {
+			// isMerged() must be called because when a file is updated and merged by the cvs server the timestamps
+			// are equal. Merged files should however be reported as dirty because the user should take action and commit
+			// or review the merged contents.
+			if(ResourceSyncInfo.isAddition(syncBytes) || ResourceSyncInfo.isMerge(syncBytes) || !exists()) {
+				dirty = true;
+			} else {
+				// TODO: non-optimal as ResourceSyncInfo is created each time
+				ResourceSyncInfo info = new ResourceSyncInfo(syncBytes);
+				dirty = !getTimeStamp().equals(info.getTimeStamp());
+			}
+		}
+		return dirty;
 	}
 
 }
