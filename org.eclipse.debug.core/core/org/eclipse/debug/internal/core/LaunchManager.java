@@ -1561,10 +1561,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		Iterator iter= envMap.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry entry= (Map.Entry) iter.next();
+			String key= (String) entry.getKey();
+			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+				// Win32 vars are case insensitive. Lowercase everything so
+				// that (for example) "pAtH" will correctly replace "PATH"
+				key= key.toLowerCase();
+			}
 			String value = (String) entry.getValue();
 			// translate any string substitution variables
 			String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
-			env.put(entry.getKey(), translated);
+			env.put(key, translated);
 		}		
 		
 		iter= env.entrySet().iterator();
@@ -1591,7 +1597,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		fgNativeEnv= new HashMap();
 		try {
 			String nativeCommand= null;
+			boolean windowsOS= false;
 			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+				windowsOS= true;
 				String osName= System.getProperty("os.name"); //$NON-NLS-1$
 				if (osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME"))) { //$NON-NLS-1$ //$NON-NLS-2$
 					// Win 95, 98, and ME
@@ -1613,6 +1621,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				int separator= line.indexOf('=');
 				if (separator > 0) {
 					String key= line.substring(0, separator);
+					if (windowsOS) {
+						// Win32's environment vars are case insensitive. Put everything
+						// to lowercase so that (for example) the "PATH" variable will match
+						// "pAtH" correctly on Windows.
+						key= key.toLowerCase();
+					}
 					String value= line.substring(separator + 1);
 					fgNativeEnv.put(key, value);
 				}
