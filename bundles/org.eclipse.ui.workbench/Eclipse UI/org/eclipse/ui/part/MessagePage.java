@@ -11,8 +11,10 @@
 package org.eclipse.ui.part;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;		
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 /**
  * A message page display a message in a pagebook view.
@@ -30,6 +32,7 @@ public class MessagePage extends Page {
  * Creates a new page. The message is the empty string.
  */
 public MessagePage() {
+    // do nothing
 }
 /* (non-Javadoc)
  * Method declared on IPage.
@@ -52,7 +55,10 @@ public Control getControl() {
  * Sets focus to a part in the page.
  */
 public void setFocus() {
-	msgLabel.setFocus();
+    // important to give focus to the composite rather than the label
+    // as the composite will actually take focus (though hidden),
+    // but setFocus on a Label is a no-op
+    pgComp.setFocus();
 }
 /**
  * Sets the message to the given string.

@@ -114,7 +114,7 @@ public IPageSite getSite() {
 	
 /**
  * The <code>Page</code> implementation of this <code>IPage</code> method
- * does nothing. Subclasses may reimplement.
+ * does nothing. Subclasses must implement.
  */
 public abstract void setFocus();
 }
