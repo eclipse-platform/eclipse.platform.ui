@@ -11,18 +11,15 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -48,6 +45,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 	 * The editor to open.
 	 */
 	private IEditorDescriptor editorDescriptor;
+	
 /**
  * Creates a new action that will open editors on the then-selected file 
  * resources. Equivalent to <code>OpenFileAction(page,null)</code>.
@@ -57,6 +55,7 @@ public class OpenFileAction extends OpenSystemEditorAction {
 public OpenFileAction(IWorkbenchPage page) {
 	this(page, null);
 }
+
 /**
  * Creates a new action that will open instances of the specified editor on 
  * the then-selected file resources.
@@ -91,20 +90,14 @@ boolean ensureFileLocal(final IFile file) {
  * @param file the file resource
  */
 void openFile(IFile file) {
-	if (getWorkbenchPage() == null) {
-		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.getString("OpenFileAction.openFileError"), null); //$NON-NLS-1$
-		IDEWorkbenchPlugin.log(IDEWorkbenchMessages.getString("OpenFileAction.openFileErrorTitle"), status); //$NON-NLS-1$
-		return;
-	}
-	IEditorInput fileInput = new FileEditorInput(file);
 	try {
 		boolean activate = OpenStrategy.activateOnOpen();
 		if (editorDescriptor == null) {
-			// @issue must fix - not kosher to pass null for editor id
-			getWorkbenchPage().openEditor(fileInput, null, activate);
+			IDE.openEditor(getWorkbenchPage(), file, activate);
 		} else {
-			if (ensureFileLocal(file))
-				getWorkbenchPage().openEditor(fileInput, editorDescriptor.getId(),activate);
+			if (ensureFileLocal(file)) {
+				getWorkbenchPage().openEditor(new FileEditorInput(file), editorDescriptor.getId(), activate);
+			}
 		}
 	} catch (PartInitException e) {
 		DialogUtil.openError(
