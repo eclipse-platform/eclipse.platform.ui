@@ -221,9 +221,23 @@ public void setLabelProvider(IBaseLabelProvider labelProvider) {
  * Method declared in AbstractTreeViewer.
  */
 protected void setSelection(List items) {
+	
+	//Cache the current position first
+	Tree cachedTree = getTree();
+	cachedTree.setRedraw(false);
+	TreeItem topItem = cachedTree.getTopItem();
+	
 	TreeItem[] newItems = new TreeItem[items.size()];
 	items.toArray(newItems);
 	getTree().setSelection(newItems);
+		
+	//Restore the current position
+	if(topItem != null)
+		cachedTree.setTopItem(topItem);
+	cachedTree.setRedraw(true);
+			
+			
+	
 }
 /* (non-Javadoc)
  * Method declared in AbstractTreeViewer.
