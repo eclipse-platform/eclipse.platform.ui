@@ -136,7 +136,7 @@ public class ColorSchemeService {
         vertical = theme.getBoolean(IWorkbenchThemeConstants.INACTIVE_TAB_VERTICAL);
 	        
 
-        presentation.setBackgroundColors(c[0], c[1], c[1]);
+        presentation.setBackgroundColor(c[1]);
 
         if (presentation.isActive()) {                
 			control.setSelectionForeground(colorRegistry.get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));

@@ -1133,9 +1133,11 @@
             %Color.activeHyperlinkTextDesc
          </description>
       </colorDefinition>
+
+      <!-- Active Tab Colors -->
       <colorDefinition
             label="%Color.activeTabText"
-            value="COLOR_WIDGET_FOREGROUND"
+            value="COLOR_TITLE_FOREGROUND"
             categoryId="org.eclipse.ui.workbenchMisc"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
          <description>
@@ -1143,24 +1145,15 @@
          </description>
       </colorDefinition>
       <colorDefinition
-            label="%Color.inactiveTabText"
-            value="COLOR_WIDGET_FOREGROUND"
+            label="%Color.activeTabBGEnd"
             categoryId="org.eclipse.ui.workbenchMisc"
-            id="org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_COLOR">
-         <description>
-            %Color.inactiveTabTextDesc
-         </description>
-      </colorDefinition>
-      <colorDefinition
-            label="%Color.activeTabBGStart"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
+            id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END">
          <colorFactory
                plugin="org.eclipse.ui"
                class="org.eclipse.ui.themes.RGBBlendColorFactory">
             <parameter
                   name="color1"
-                  value="COLOR_WHITE">
+                  value="COLOR_TITLE_BACKGROUND_GRADIENT">
             </parameter>
             <parameter
                   name="color2"
@@ -1172,12 +1165,23 @@
          </description>
       </colorDefinition>
       <colorDefinition
-            label="%Color.activeTabBGEnd"            
+            label="%Color.activeTabBGStart"            
             categoryId="org.eclipse.ui.workbenchMisc"
-            value="COLOR_TITLE_BACKGROUND_GRADIENT"
-            id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END">
+            value="COLOR_TITLE_BACKGROUND"
+            id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
           <description>
             %Color.activeTabBGEndDesc
+         </description>
+
+      <!-- Inactive Tab Colors -->
+      </colorDefinition>
+            <colorDefinition
+            label="%Color.inactiveTabText"
+            value="COLOR_WIDGET_FOREGROUND"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            id="org.eclipse.ui.workbench.INACTIVE_TAB_TEXT_COLOR">
+         <description>
+            %Color.inactiveTabTextDesc
          </description>
       </colorDefinition>
       <colorDefinition
@@ -1192,7 +1196,7 @@
       <colorDefinition
             label="%Color.inactiveTabBGEnd"
             categoryId="org.eclipse.ui.workbenchMisc"
-            value="COLOR_WIDGET_LIGHT_SHADOW"
+            value="COLOR_WIDGET_BACKGROUND"
             id="org.eclipse.ui.workbench.INACTIVE_TAB_BG_END">
          <description>
             %Color.inactiveTabBGEndDesc

@@ -47,8 +47,8 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                 IContributionManager parent = getParent();
                 if (parent != null) {
                     parent.update(true);
-                    if (parent instanceof PerspectiveBarManager)
-                            ((PerspectiveBarManager) parent).layout(true);
+/*                    if (parent instanceof PerspectiveBarManager)
+                            ((PerspectiveBarManager) parent).layout(true);*/
                 }
             }
         }
@@ -105,17 +105,21 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             toolItem.addSelectionListener(new SelectionAdapter() {
 
                 public void widgetSelected(SelectionEvent event) {
-                    if (workbenchPage.getPerspective() != perspective) {
-                        workbenchPage.setPerspective(perspective);
-                        update();
-                        getParent().update(true);
-                    } else
-                        toolItem.setSelection(true);
+                	select();
                 }
             });
             toolItem.setData(this); //TODO review need for this
             update();
         }
+    }
+
+    public void select() {
+    	if (workbenchPage.getPerspective() != perspective) {
+    		workbenchPage.setPerspective(perspective);
+    		update();
+    		getParent().update(true);
+    	} else
+    		toolItem.setSelection(true);
     }
 
     public void update() {

@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.commands.ws.HandlerProxy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;

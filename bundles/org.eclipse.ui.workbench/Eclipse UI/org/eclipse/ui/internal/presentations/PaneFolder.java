@@ -317,7 +317,7 @@ public final class PaneFolder {
 		viewFormTopLeftProxy.layout();
 		viewFormTopCenterProxy.layout();
 		
-		updateBackgroundColors();
+		updateBackgroundColor();
 	}
 	
 	/**
@@ -431,11 +431,9 @@ public final class PaneFolder {
 	 * @param gradientEnd
 	 * @param background
 	 */
-	public void setBackgroundColors(Color gradientStart, Color gradientEnd, Color background) {
-		backgroundGradientStart = gradientStart;
-		backgroundGradientEnd = gradientEnd;
+	public void setBackground(Color background) {
 		this.background = background;
-		updateBackgroundColors();
+		updateBackgroundColor();
 		
 		updateTrimColours();
 		
@@ -449,9 +447,8 @@ public final class PaneFolder {
 	 * currently in the title bar or below it.
 	 */
 	protected void updateTrimColours() {
-		Color background = putTrimOnTop ? getBackgroundGradientEnd() : getBackground() ;
+		Color background = getBackground();
 		
-		Control control;
 		if (topCenterCache.getControl() != null) {
 			topCenterCache.getControl().setBackground(background);
 		}
@@ -460,17 +457,8 @@ public final class PaneFolder {
 		}
 	}
 
-	
-	public Color getBackgroundGradientEnd() {
-		return backgroundGradientEnd;
-	}
-	
 	public Color getBackground() {
 		return background;
-	}
-	
-	public Color getBackgroundGradientStart() {
-		return backgroundGradientStart;
 	}
 	
 	/**
@@ -479,38 +467,9 @@ public final class PaneFolder {
 	 * or repositioned, since the gradient percentage is computed as a function of the toolbar
 	 * position.
 	 */
-	protected void updateBackgroundColors() {
-		Color [] c = new Color[3];
-		c[0] = backgroundGradientStart;
-		c[1] = backgroundGradientEnd;
-		c[2] = c[1];
-	
-		int[] percents = new int[] {getGradientPercentage(), 100};				
-	   
-		tabFolder.setBackground(c, percents, false);
+	protected void updateBackgroundColor() {	
 		tabFolder.setBackground(background);
 		viewForm.setBackground(background);
-	}
-	
-	/**
-	 * Returns the current percentage for the background gradient (this is the percentage
-	 * of the way along the tab folder where the toolbar begins) 
-	 * 
-	 * @return a percentage (0 - 100)
-	 */
-	private int getGradientPercentage() {
-		Rectangle clientBounds = tabFolder.getBounds();
-		
-		int topTrimStart = putTrimOnTop ? trimStart : clientBounds.width; 
-		
-		int percentage = clientBounds.width == 0 ? 100 : Math.min(100, 
-				100 * topTrimStart / clientBounds.width);
-		
-		if (percentage < 0) {
-			percentage = 0;
-		}
-		
-		return percentage;	    
 	}
 
 	public CTabItem createItem(int style, int index) {

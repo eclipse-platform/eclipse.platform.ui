@@ -746,8 +746,9 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param gradientEnd
 	 * @param background
 	 */
-	public void setBackgroundColors(Color gradientStart, Color gradientEnd, Color background) {
-		tabFolder.setBackgroundColors(gradientStart, gradientEnd, background);
+	public void setBackgroundColor(Color background) {
+		getTabFolder().setBackground(background);
+		//updateTrimColours(background);
 	}
 
 	/* (non-Javadoc)

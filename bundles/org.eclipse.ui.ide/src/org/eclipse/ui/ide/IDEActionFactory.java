@@ -19,10 +19,10 @@ import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.NewWizardDropDownAction;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
-import org.eclipse.ui.internal.ide.actions.*;
 import org.eclipse.ui.internal.ide.actions.AboutAction;
 import org.eclipse.ui.internal.ide.actions.BuildCleanAction;
 import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
+import org.eclipse.ui.internal.ide.actions.ToggleAutoBuildAction;
 
 /**
  * Access to standard actions provided by the IDE workbench (including
