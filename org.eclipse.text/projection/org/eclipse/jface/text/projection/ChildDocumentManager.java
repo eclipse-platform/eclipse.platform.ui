@@ -13,9 +13,20 @@ package org.eclipse.jface.text.projection;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * ChildDocumentManager
+ * Implementation of a child document manager based on
+ * <code>ProjectionDocumentManager</code>. This class exists for
+ * compatibility reasons.
+ * <p>
+ * Internal class. Do not use. Only public for testing purposes.
+ * 
+ * @since 3.0
  */
 public class ChildDocumentManager extends ProjectionDocumentManager {
+	
+	/**
+	 * The position category used to manage the child documents.
+	 */
+	public final static String CHILDDOCUMENTS= FRAGMENTS_CATEGORY;
 	
 	/*
 	 * @see org.eclipse.jface.text.projection.ProjectionDocumentManager#createProjectionDocument(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.projection.FragmentUpdater)

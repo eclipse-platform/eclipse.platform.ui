@@ -17,10 +17,19 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 
 /**
- * ChildDocument
+ * Implementation of a child document based on <code>ProjectionDocument</code>.
+ * This class exists for compatibility reasons.
+ * <p>
+ * Internal class. Do not use. Public only for testing purposes.
+ * 
+ * @since 3.0
  */
 public class ChildDocument extends ProjectionDocument {
 	
+	/**
+	 * Position reflecting a visible region. The exclusive end offset of the position
+	 * is considered being overlapping with the visible region.
+	 */
 	static private class VisibleRegion extends Position {
 		
 		public VisibleRegion(int offset, int length) {
@@ -38,25 +47,33 @@ public class ChildDocument extends ProjectionDocument {
 	}
 
 	/**
-	 * @param masterDocument
-	 * @param fragmentsCategory
-	 * @param fragmentUpdater
-	 * @param segmentsCategory
+	 * Creates a new child document.
+	 * 
+	 * @param masterDocument @inheritDoc
+	 * @param fragmentsCategory @inheritDoc
+	 * @param fragmentUpdater @inheritDoc
+	 * @param segmentsCategory @inheritDoc
 	 */
 	public ChildDocument(IDocument masterDocument, String fragmentsCategory, FragmentUpdater fragmentUpdater, String segmentsCategory) {
 		super(masterDocument, fragmentsCategory, fragmentUpdater, segmentsCategory);
 	}
 
 	/**
-	 * @return
+	 * Returns the parent document of this child document.
+	 * 
+	 * @return the parent document of this child document
+	 * @see ProjectionDocument#getMasterDocument()
 	 */
 	public IDocument getParentDocument() {
 		return getMasterDocument();
 	}
 
 	/**
-	 * @param offset
-	 * @param length
+	 * Sets the parent document range covered by this child document to the
+	 * given range.
+	 * 
+	 * @param offset the offset of the range
+	 * @param length the length of the range
 	 */
 	public void setParentDocumentRange(int offset, int length) throws BadLocationException {
 		try {
@@ -83,7 +100,9 @@ public class ChildDocument extends ProjectionDocument {
 	}
 
 	/**
-	 * @return
+	 * Returns the parent document range of this child document.
+	 * 
+	 * @return the parent document range of this child document
 	 */
 	public Position getParentDocumentRange() {
 		IRegion coverage= getProjectionMapping().getCoverage();

@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.ChildDocumentManager;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -32,11 +31,12 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
+import org.eclipse.jface.text.projection.ChildDocumentManager;
 
 
 /**
  * Standard implementation of <code>IContentFormatter</code>.
- * The formatter supports two operation modi: partition aware and
+ * The formatter supports two operation modes: partition aware and
  * partition unaware. <p>
  * In the partition aware mode, the formatter determines the 
  * partitioning of the document region to be formatted. For each 
@@ -47,7 +47,7 @@ import org.eclipse.jface.text.TypedPosition;
  * registered for the partition's content type. The formatting strategy
  * returns a string containing the formatted document partition as well
  * as the adapted character positions. The formatted partition replaces
- * the old content of the partition. The remembered document postions 
+ * the old content of the partition. The remembered document positions 
  * are updated with the adapted character positions. In addition, all
  * other document positions are accordingly adapted to the formatting 
  * changes.<p>
@@ -83,7 +83,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		 * 
 		 * @param position the position to be referenced
 		 * @param refersToOffset <code>true</code> if position offset should be referenced
-		 * @param category the categpry the given position belongs to
+		 * @param category the category the given position belongs to
 		 */
 		protected PositionReference(Position position, boolean refersToOffset, String category) {
 			fPosition= position;
@@ -128,7 +128,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		}
 		
 		/**
-		 * Returns whether this reference points to the offset or endoffset
+		 * Returns whether this reference points to the offset or end offset
 		 * of the references position.
 		 * 
 		 * @return <code>true</code> if the offset of the position is referenced, <code>false</code> otherwise
@@ -208,7 +208,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	/**
 	 * The position updater which runs as first updater on the document's positions.
 	 * Used to remove all affected positions from their categories to avoid them
-	 * from being regularily updated.
+	 * from being regularly updated.
 	 * 
 	 * @see IPositionUpdater
 	 */
@@ -443,7 +443,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * probably change the length of the formatted partition, it must be kept 
 	 * track of the modifications in order to submit the correct partition to all 
 	 * formatting strategies. For this, all partitions are remembered as positions
-	 * in a dedicated position category. (As formatting stratgies might rely on each
+	 * in a dedicated position category. (As formatting strategies might rely on each
 	 * other, calling them in reversed order is not an option.)
 	 *
 	 * @param region the region for which the partitioning must be determined
@@ -501,11 +501,11 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * Formats the given region of the document using the specified formatting
 	 * strategy. In order to maintain positions correctly, first all affected 
 	 * positions determined, after all document listeners have been informed about
-	 * the upcoming change, the affected positions are removed to avoid that they
-	 * are regularily updated. After all position updaters have run, the affected
+	 * the coming change, the affected positions are removed to avoid that they
+	 * are regularly updated. After all position updaters have run, the affected
 	 * positions are updated with the formatter's information and added back to 
 	 * their categories, right before the first document listener is informed about
-	 * that a change happend.
+	 * that a change happened.
 	 * 
 	 * @param strategy the strategy to be used
 	 * @param region the region to be formatted
@@ -748,7 +748,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * managing slave documents it is ensured that the slave document starts at a line offset.
 	 * 
 	 * @param document the document
-	 * @param category the position categroy
+	 * @param category the position category
 	 * @param position the position that will be added
 	 * @return <code>true</code> if the position can be added, <code>false</code> if it should be ignored
 	 */
