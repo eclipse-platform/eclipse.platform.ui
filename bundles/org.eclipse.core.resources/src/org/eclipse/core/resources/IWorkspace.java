@@ -800,7 +800,8 @@ public void setWorkspaceLock(WorkspaceLock lock);
  * <li> it must not be a single period character (".")
  * <li> it must not contain two or more consecutive period characters
  * <li> it must not end in a period character
- * <li> it must not contain any of the characters </code>"*?:;'&lt&gt|"</code>
+ * <li> it must not contain any characters or substrings that are not valid 
+ *		   on the filesystem on which workspace root is located.
  * </ul>
  * </p>
  * <p>

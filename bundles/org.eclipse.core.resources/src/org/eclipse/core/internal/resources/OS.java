@@ -27,9 +27,10 @@ static {
 				"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", 
 				"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"};
 	} else {
-			//this minimal list is invalid on any platform (such as UNIXes)
+			//only front slash and null char are invalid on UNIXes
 			//taken from http://www.faqs.org/faqs/unix-faq/faq/part2/section-2.html
-			chars = new char[] {'/', '\0'};
+			//backslash and colon are illegal path segments regardless of filesystem.
+			chars = new char[] {'\\', '/', ':', '\0',};
 	}
 	INVALID_RESOURCE_CHARACTERS = chars == null ? new char[0] : chars;
 	INVALID_RESOURCE_NAMES = names == null ? new String[0] : names;
