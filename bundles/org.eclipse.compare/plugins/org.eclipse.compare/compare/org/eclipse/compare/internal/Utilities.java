@@ -295,8 +295,16 @@ public class Utilities {
 	}
 	
 	public static String getFormattedString(String key, String arg) {
-		try{
+		try {
 			return MessageFormat.format(CompareUI.getResourceBundle().getString(key), new String[] { arg });
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
+		}	
+	}
+
+	public static String getFormattedString(String key, String arg0, String arg1) {
+		try {
+			return MessageFormat.format(CompareUI.getResourceBundle().getString(key), new String[] { arg0, arg1 });
 		} catch (MissingResourceException e) {
 			return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
 		}	

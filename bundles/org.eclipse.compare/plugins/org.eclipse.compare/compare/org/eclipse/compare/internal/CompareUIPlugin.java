@@ -69,7 +69,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
  
 	    	void register(IConfigurationElement element, Object data) {
 	    	    String id= element.getAttribute(ID_ATTRIBUTE);
-	    	    if (id != null) {
+	    	    if (id != null) {      
 	    	        if (fIdMap == null)
 	    	            fIdMap= new HashMap();
 	    	        fIdMap.put(id, data);
@@ -269,12 +269,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(PLUGIN_ID, STREAM_MERGER_EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {
 		    IConfigurationElement element= elements[i];
-		    String name= element.getName();
-	    		if (CONTENT_TYPE_BINDING.equals(name)) {
-	    		    fStreamMergers.createBinding(element, STREAM_MERGER_ID_ATTRIBUTE);
-	    		} else if (STREAM_MERGER.equals(name)) {
+	    		if (STREAM_MERGER.equals(element.getName()))
 				fStreamMergers.register(element, new StreamMergerDescriptor(element));
-		    }
+		}
+		for (int i= 0; i < elements.length; i++) {
+		    IConfigurationElement element= elements[i];
+	    		if (CONTENT_TYPE_BINDING.equals(element.getName()))
+	    		    fStreamMergers.createBinding(element, STREAM_MERGER_ID_ATTRIBUTE);
 		}
 				
 		// collect all IStructureCreators
@@ -282,11 +283,16 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		for (int i= 0; i < elements.length; i++) {
 		    IConfigurationElement element= elements[i];
 		    String name= element.getName();
-		    if (CONTENT_TYPE_BINDING.equals(name)) {
-		        fStructureCreators.createBinding(element, STRUCTURE_CREATOR_ID_ATTRIBUTE);
-		    } else /* if (STRUCTURE_CREATOR.equals(name))*/ {
+		    if (!CONTENT_TYPE_BINDING.equals(name)) {
+		        if (!STRUCTURE_CREATOR.equals(name))
+	                logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.unexpectedTag", name, STRUCTURE_CREATOR)); //$NON-NLS-1$		            
 		        fStructureCreators.register(element, new StructureCreatorDescriptor(element));
 		    }
+		}
+		for (int i= 0; i < elements.length; i++) {
+		    IConfigurationElement element= elements[i];
+		    if (CONTENT_TYPE_BINDING.equals(element.getName()))
+		        fStructureCreators.createBinding(element, STRUCTURE_CREATOR_ID_ATTRIBUTE);
 		}
 				
 		// collect all viewers which define the structure mergeviewer extension point
@@ -294,11 +300,16 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		for (int i= 0; i < elements.length; i++) {
 		    IConfigurationElement element= elements[i];
 		    String name= element.getName();
-		    if (CONTENT_TYPE_BINDING.equals(name)) {
-		        fStructureMergeViewers.createBinding(element, STRUCTURE_MERGE_VIEWER_ID_ATTRIBUTE);
-		    } else if (VIEWER_TAG.equals(name)) {
+		    if (!CONTENT_TYPE_BINDING.equals(name)) {
+		        if (!VIEWER_TAG.equals(name))
+	                logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.unexpectedTag", name, VIEWER_TAG)); //$NON-NLS-1$		            
 		        fStructureMergeViewers.register(element, new ViewerDescriptor(element));
 		    }
+		}
+		for (int i= 0; i < elements.length; i++) {
+		    IConfigurationElement element= elements[i];
+		    if (CONTENT_TYPE_BINDING.equals(element.getName()))
+		        fStructureMergeViewers.createBinding(element, STRUCTURE_MERGE_VIEWER_ID_ATTRIBUTE);
 		}
 		
 		// collect all viewers which define the content mergeviewer extension point
@@ -306,11 +317,16 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		for (int i= 0; i < elements.length; i++) {
 		    IConfigurationElement element= elements[i];
 		    String name= element.getName();
-		    if (CONTENT_TYPE_BINDING.equals(name)) {
-		        fContentMergeViewers.createBinding(element, CONTENT_MERGE_VIEWER_ID_ATTRIBUTE);
-		    } else if (VIEWER_TAG.equals(name)) {
+		    if (!CONTENT_TYPE_BINDING.equals(name)) {
+		        if (!VIEWER_TAG.equals(name))
+	                logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.unexpectedTag", name, VIEWER_TAG)); //$NON-NLS-1$		            
 		        fContentMergeViewers.register(element, new ViewerDescriptor(element));
 		    }
+		}
+		for (int i= 0; i < elements.length; i++) {
+		    IConfigurationElement element= elements[i];
+		    if (CONTENT_TYPE_BINDING.equals(element.getName()))
+		        fContentMergeViewers.createBinding(element, CONTENT_MERGE_VIEWER_ID_ATTRIBUTE);
 		}
 		
 		// collect all viewers which define the content viewer extension point
@@ -318,11 +334,16 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		for (int i= 0; i < elements.length; i++) {
 		    IConfigurationElement element= elements[i];
 		    String name= element.getName();
-		    if (CONTENT_TYPE_BINDING.equals(name)) {
-		        fContentViewers.createBinding(element, CONTENT_VIEWER_ID_ATTRIBUTE);
-		    } else if (VIEWER_TAG.equals(name)) {
+		    if (!CONTENT_TYPE_BINDING.equals(name)) {
+		        if (!VIEWER_TAG.equals(name))
+	                logErrorMessage(Utilities.getFormattedString("CompareUIPlugin.unexpectedTag", name, VIEWER_TAG)); //$NON-NLS-1$		            
 		        fContentViewers.register(element, new ViewerDescriptor(element));
 		    }
+		}
+		for (int i= 0; i < elements.length; i++) {
+		    IConfigurationElement element= elements[i];
+		    if (CONTENT_TYPE_BINDING.equals(element.getName()))
+		        fContentViewers.createBinding(element, CONTENT_VIEWER_ID_ATTRIBUTE);
 		}
 	}
 	
