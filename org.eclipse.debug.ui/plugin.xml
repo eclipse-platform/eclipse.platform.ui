@@ -916,6 +916,7 @@
 <!-- Render Group -->   
          <action
                menubarPath="renderGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.toggleAutoManageViews"
                class="org.eclipse.debug.internal.ui.actions.ToggleAutoManageViewsActionDelegate"
                icon="icons/full/clcl16/synced.gif"
                label="%AutoManageViewsAction.label"
