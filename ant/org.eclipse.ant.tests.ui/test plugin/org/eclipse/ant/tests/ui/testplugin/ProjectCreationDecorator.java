@@ -83,7 +83,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.ant.internal.ui.antsupport.InternalAntRunner"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
-		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + ProjectHelper.PROJECT_NAME + "/buildfiles/" + launchConfigName + ".xml}");
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 		config.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
 		 
@@ -102,7 +102,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
 	
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
-		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + ProjectHelper.PROJECT_NAME + "/buildfiles/" + launchConfigName + ".xml}");
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 			
 		config.doSave();

@@ -19,6 +19,7 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.tests.ui.AbstractAntUIBuildTest;
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
+import org.eclipse.ant.tests.ui.testplugin.ProjectHelper;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -98,6 +99,6 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		launchAndTerminate(copy, 10000);
 		ConsoleLineTracker.waitForConsole();
 		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
-		assertTrue("Incorrect last message. Should end with AntUITests. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith("AntUITests"));
+		assertTrue("Incorrect last message. Should end with " + ProjectHelper.PROJECT_NAME + ". Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith(ProjectHelper.PROJECT_NAME));
 	}
 }
