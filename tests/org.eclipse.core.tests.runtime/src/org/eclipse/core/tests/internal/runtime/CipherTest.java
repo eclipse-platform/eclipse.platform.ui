@@ -123,7 +123,7 @@ protected void doCipherTest(String password, byte[] data) throws Exception {
 	byte[] encryptedData = cipher.cipher(data);
 	assertEquals("00", data.length, encryptedData.length);
 	
-	cipher = new Cipher(cipher.DECRYPT_MODE, password);
+	cipher = new Cipher(Cipher.DECRYPT_MODE, password);
 	byte[] decryptedData = cipher.cipher(encryptedData);
 	assertEquals("02", data.length, decryptedData.length);
 	for(int i = 0; i < data.length; ++i){

@@ -496,7 +496,7 @@ public void ensureOutOfSync(final IResource resource) {
 	while (file.isSynchronized(IResource.DEPTH_ZERO)) {
 		modifyInFileSystem(file);
 		try {
-			Thread.currentThread().sleep(100);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 		}
 	}
@@ -677,7 +677,7 @@ public IPath getRandomLocation() {
 	IPath path = parent.append(Long.toString(segment));
 	while (path.toFile().exists()) {
 		try {
-			Thread.currentThread().sleep(10);
+			Thread.sleep(10);
 		} catch (InterruptedException e) {
 		}
 		segment = (((long)++nextLocationCounter) << 32) | (System.currentTimeMillis() & mask);
