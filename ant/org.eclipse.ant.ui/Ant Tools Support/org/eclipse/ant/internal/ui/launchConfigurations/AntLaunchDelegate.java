@@ -181,7 +181,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			if (userProperties == null) {
 				userProperties= new HashMap();
 			}
-			port= SocketUtil.findFeePort();
+			port= SocketUtil.findFreePort();
 			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 			userProperties.put("eclipse.connect.port", Integer.toString(port)); //$NON-NLS-1$
 		}
