@@ -17,7 +17,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * A file context can be used to annotate a </code>RefactoringStatusEntry<code> with
+ * A file context can be used to annotate a <code>RefactoringStatusEntry</code> with
  * detailed information about a problem detected in an <code>IFile</code>.
  * <p> 
  * Note: this class is not intended to be extended by clients.

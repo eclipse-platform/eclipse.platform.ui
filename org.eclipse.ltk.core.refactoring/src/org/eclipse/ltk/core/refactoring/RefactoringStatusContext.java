@@ -11,7 +11,7 @@
 package org.eclipse.ltk.core.refactoring;
 
 /**
- * A <code>RefactoringStatusContext<code> can be used to annotate a 
+ * A <code>RefactoringStatusContext</code> can be used to annotate a 
  * {@link RefactoringStatusEntry} with additional information 
  * typically presented in the user interface.
  * <p>

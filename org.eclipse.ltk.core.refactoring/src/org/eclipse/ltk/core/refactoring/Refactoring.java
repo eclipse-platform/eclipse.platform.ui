@@ -23,21 +23,21 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * <ol> 
  *   <li>methods to check conditions to determine if the refactoring can be carried out 
  *       in general and if transformation will be behavioural persevering.
- *   </li>
+ *       </li>
  *   <li>a method to create a {@link org.eclipse.ltk.core.refactoring.Change} object
  *       that represents the actual work space modifications.
- *   </li> 
- * <p>
+ *       </li> 
+ * </ol>
  * The life cycle of a refactoring is as follows:
  * <ul>
  *   <li>the refactoring gets created</li>
  *   <li>the refactoring is initialized with the elements to be refactored. It is
- *       up to a concrete refactoring implementation to provide corresponding API.
+ *       up to a concrete refactoring implementation to provide corresponding API.</li>
  *   <li>{@link #checkInitialConditions(IProgressMonitor)} is called. The method 
  *       can be called more than once.</li>
  *   <li>additional arguments are provided to perform the refactoring (for example
  *       the new name of a element in the case of a rename refactoring). It is up
- *       to a concrete implementation to provide corresponding API.
+ *       to a concrete implementation to provide corresponding API.</li>
  *   <li>{@link #checkFinalConditions(IProgressMonitor)} is called. The method 
  *       can be called more than once. The method must not be called if  
  *       {@link #checkInitialConditions(IProgressMonitor)} returns a refactoring

@@ -40,19 +40,19 @@ import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
 public class TextFileChange extends TextChange {
 	
 	/** 
-	 * Flag indicating that the file's save state has to be kept. This means an 
+	 * Flag (value 1) indicating that the file's save state has to be kept. This means an 
 	 * unsaved file is still unsaved after performing the change and a saved one 
 	 * will be saved. 
 	 */
 	public static final int KEEP_SAVE_STATE= 1 << 0;
 	
 	/**
-	 * Flag indicating that the file is to be saved after the change has been applied.
+	 * Flag (value 2) indicating that the file is to be saved after the change has been applied.
 	 */
 	public static final int FORCE_SAVE= 1 << 1;
 	
 	/**
-	 * Flag indicating that the file will not be saved after the change has been applied.
+	 * Flag (value 4) indicating that the file will not be saved after the change has been applied.
 	 */
 	public static final int LEAVE_DIRTY= 1 << 2;
 	

@@ -180,9 +180,6 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * The composite change sends <code>setEnabled</code> to all its children.
 	 * </p>
-	 * <p>
-	 * Client are allowed to extend this method.
-	 * </p>
 	 */
 	public void setEnabled(boolean enabled) {
 		for (Iterator iter= fChanges.iterator(); iter.hasNext(); ) {
@@ -194,9 +191,6 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * The composite change sends <code>initializeValidationData</code> to all its 
 	 * children.
-	 * </p>
-	 * <p>
-	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public void initializeValidationData(IProgressMonitor pm) {
@@ -215,9 +209,6 @@ public class CompositeChange extends Change {
 	 * until the first one returns a status with a severity of <code>FATAL
 	 * </code>. If one of the children throws an exception the remaining children
 	 * will not receive the <code>isValid</code> call.
-	 * </p>
-	 * <p>
-	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
@@ -239,14 +230,11 @@ public class CompositeChange extends Change {
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * The composite change sends <code>perform</code> to all its <em>enabled</code>
+	 * The composite change sends <code>perform</code> to all its <em>enabled</em>
 	 * children. If one of the children throws an exception the remaining children
 	 * will not receive the <code>perform</code> call. In this case the method <code>
 	 * getUndoUntilException</code> can be used to get an undo object containing the
 	 * undo objects of all executed children.
-	 * </p>
-	 * <p>
-	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
@@ -341,9 +329,6 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * The composite change sends <code>dispose</code> to all its children. It is guaranteed
 	 * that all children receive the <code>dispose</code> call.
-	 * </p>
-	 * <p>
-	 * Client are allowed to extend this method.
 	 * </p>
 	 */
 	public void dispose() {
