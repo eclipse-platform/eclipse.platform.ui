@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -243,7 +244,12 @@ public class DebugUITools {
 			return (IProcess)context;
 		}
 		if (context instanceof ILaunch) {
-			IProcess[] ps = ((ILaunch)context).getProcesses();
+			ILaunch launch= (ILaunch)context;
+			IDebugTarget target= launch.getDebugTarget();
+			if (target != null) {
+				return target.getProcess();
+			}
+			IProcess[] ps = launch.getProcesses();
 			if (ps.length > 0) {
 				return ps[ps.length - 1];
 			}
