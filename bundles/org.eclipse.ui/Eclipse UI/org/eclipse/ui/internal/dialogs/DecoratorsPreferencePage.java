@@ -76,6 +76,7 @@ public class DecoratorsPreferencePage
 				decoratorsComposite,
 				SWT.SINGLE | SWT.TOP | SWT.BORDER);
 		checkboxViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		checkboxViewer.getTable().setFont(decoratorsComposite.getFont());
 		checkboxViewer.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
 				return ((DecoratorDefinition) element).getName();

@@ -59,6 +59,7 @@ protected Control createContents(Composite parent) {
 	composite.setFont(font);
 
 	listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
+	listViewer.getTable().setFont(font);
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;

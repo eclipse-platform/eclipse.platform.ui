@@ -70,6 +70,7 @@ public void createControl(Composite parent) {
 	referenceLabel.setFont(font);
 
 	referenceProjectsViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
+	referenceProjectsViewer.getTable().setFont(composite.getFont());
 	GridData data = new GridData();
 	data.horizontalAlignment = GridData.FILL;
 	data.grabExcessHorizontalSpace = true;
