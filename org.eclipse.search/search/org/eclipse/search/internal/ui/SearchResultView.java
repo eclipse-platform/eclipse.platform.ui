@@ -43,6 +43,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	private SearchResultViewer fViewer;
 	private Map fResponse;
 	private IMemento fMemento;
+	private IPropertyChangeListener fPropertyChangeListener;
 
 	/*
 	 * Implements method from IViewPart.
@@ -82,13 +83,15 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 		getSite().setSelectionProvider(fViewer);
 		
-		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty() == SearchPreferencePage.POTENTIAL_MATCH_BG_COLOR) 
+				if (event.getProperty() == SearchPreferencePage.POTENTIAL_MATCH_FG_COLOR) 
 					if (fViewer != null)
 						fViewer.updatedPotentialMatchBgColor();
 			}
-		});
+		};
+		
+		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
 		
 		WorkbenchHelp.setHelp(fViewer.getControl(), ISearchHelpContextIds.SEARCH_VIEW);
 	}
@@ -111,6 +114,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 			SearchManager.getDefault().removeSearchChangeListener(fViewer);
 			fViewer= null;
 		}
+		if (fPropertyChangeListener != null)
+			SearchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
 		super.dispose();
 	}
 	
@@ -286,5 +291,6 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	 */
 	public void searchFinished() {
 		SearchManager.getDefault().setCurrentResults(new ArrayList(fResponse.values()));
-	}	
+		fResponse= null;
+	}
 }
