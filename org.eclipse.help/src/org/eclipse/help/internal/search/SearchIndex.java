@@ -30,9 +30,6 @@ public class SearchIndex {
 		"indexed_contributions";
 	public static final String INDEXED_DOCS_FILE = "indexed_docs";
 	private static final String ANALYZER_VERSION_FILENAME = "indexed_analyzer";
-	public static final String PREF_KEY_USE_DEFAULT_CHARSET =
-		"charset_UseDefault";
-	public static final String PREF_KEY_LOCALE_KEY_PREFIX = "charset_";
 	private File analyzerVersionFile;
 	private File inconsistencyFile;
 	private HTMLDocParser parser;
@@ -364,49 +361,6 @@ public class SearchIndex {
 			inconsistencyFile.delete();
 	}
 
-	/**
-	 * @return String name of the character set for reading
-	 * HTML documents,
-	 * or null if not character set not found in preferences.
-	 */
-	public String getCharset() {
-		if (HelpPlugin
-			.getDefault()
-			.getPluginPreferences()
-			.getBoolean(PREF_KEY_USE_DEFAULT_CHARSET)) {
-			// default specified
-			return null;
-		}
-		// find charset for variant
-		if (locale.length() > 5) {
-			String charset =
-				HelpPlugin.getDefault().getPluginPreferences().getString(
-					PREF_KEY_LOCALE_KEY_PREFIX + locale);
-			if (charset.length() > 0) {
-				return charset;
-			}
-		}
-		// find charset for country
-		if (locale.length() >= 5) {
-			String charset =
-				HelpPlugin.getDefault().getPluginPreferences().getString(
-					PREF_KEY_LOCALE_KEY_PREFIX + locale.substring(0, 5));
-			if (charset.length() > 0) {
-				return charset;
-			}
-		}
-		// find charset for language
-		if (locale.length() >= 2) {
-			String charset =
-				HelpPlugin.getDefault().getPluginPreferences().getString(
-					PREF_KEY_LOCALE_KEY_PREFIX + locale.substring(0, 2));
-			if (charset.length() > 0) {
-				return charset;
-			}
-		}
-		// charset not specified, use default
-		return null;
-	}
 	public synchronized void openSearcher() throws IOException {
 		if (searcher == null) {
 			searcher = new IndexSearcher(indexDir.getAbsolutePath());
