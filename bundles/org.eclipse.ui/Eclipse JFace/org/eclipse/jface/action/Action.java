@@ -10,6 +10,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import java.util.*;
 
@@ -234,11 +235,11 @@ public static int findKeyCode(String token) {
  */
 public static int findModifier(String token) {
 	token= token.toUpperCase();
-	if (token.equals("CTRL"))//$NON-NLS-1$
+	if (token.equals(JFaceResources.getString("ControlKeyCaps")))//$NON-NLS-1$
 		return SWT.CTRL;
-	if (token.equals("SHIFT"))//$NON-NLS-1$
+	if (token.equals(JFaceResources.getString("ShiftKeyCaps")))//$NON-NLS-1$
 		return SWT.SHIFT;
-	if (token.equals("ALT"))//$NON-NLS-1$
+	if (token.equals(JFaceResources.getString("AltKeyCaps")))//$NON-NLS-1$
 		return SWT.ALT;
 	return 0;
 }
