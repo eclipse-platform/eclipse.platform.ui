@@ -124,7 +124,8 @@ public final class AntUtil {
 		for (int i=0; i < targetMementos.length; i++) {
 			IMemento targetMemento = targetMementos[i];
 			String target = targetMemento.getString(ATT_NAME);
-			targets.add(target);
+			if (target!= null)
+				targets.add(target);
 		}
 		
 		// If the file has no targets, then it is not a
