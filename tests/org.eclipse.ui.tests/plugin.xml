@@ -109,12 +109,22 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
+
+      <view
+      		name="ERROR: View that caches its shell"
+      		icon="icons\view.gif"
+      		class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.api.workbenchpart.ViewThatCachesItsShell"
+      		id="org.eclipse.ui.test.api.workbenchpart.ViewThatCachesItsShell">
+      </view>
+      
       <view
        		name="Title Test View"
        		icon="icons\view.gif"
        		class="org.eclipse.ui.tests.api.workbenchpart.TitleTestView"
        		id="org.eclipse.ui.tests.api.TitleTestView">
       </view>
+      
+
       <view
             name="Mock View 1"
             icon="icons\view.gif"

@@ -212,7 +212,12 @@ public class PartSite implements IWorkbenchPartSite {
      * @return the shell containing this part
      */
     public Shell getShell() {
-        return page.getWorkbenchWindow().getShell();
+        PartPane pane = getPane();
+        if (pane == null) {
+            return getWorkbenchWindow().getShell();
+        }
+        
+        return getPane().getShell();
     }
 
     /**

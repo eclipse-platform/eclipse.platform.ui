@@ -16,12 +16,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.dnd.IDropTarget;
@@ -146,18 +146,6 @@ abstract public class LayoutPart implements ISizeProvider {
     }
 
     /**
-     * Return whether the window's shell is activated
-     */
-    /* package */
-    boolean getShellActivated() {
-        Window window = getWindow();
-        if (window instanceof WorkbenchWindow)
-            return ((WorkbenchWindow) window).getShellActivated();
-        else
-            return false;
-    }
-
-    /**
      * Gets the presentation size.
      */
     public Point getSize() {
@@ -189,31 +177,51 @@ abstract public class LayoutPart implements ISizeProvider {
         return null;
     }
 
-    /**
-     * Returns the top level window for a part.
-     */
-    public Window getWindow() {
+//    /**
+//     * Returns the top level window for a part.
+//     */
+//    public Window getWindow() {
+//        Control ctrl = getControl();
+//        if (!SwtUtil.isDisposed(ctrl)) {
+//            Object data = ctrl.getShell().getData();
+//            if (data instanceof Window)
+//                return (Window) data;
+//        }
+//        return null;
+//    }
+    
+    public boolean isDocked() {
+        Shell s = getShell();
+        if (s == null) {
+            return false;
+        }
+        
+        return s.getData() instanceof IWorkbenchWindow;
+    }
+    
+    public Shell getShell() {
         Control ctrl = getControl();
         if (!SwtUtil.isDisposed(ctrl)) {
-            Object data = ctrl.getShell().getData();
-            if (data instanceof Window)
-                return (Window) data;
+            return ctrl.getShell();
         }
-        return null;
+        return null;        
     }
 
     /**
      * Returns the workbench window window for a part.
      */
     public IWorkbenchWindow getWorkbenchWindow() {
-        Window parentWindow = getWindow();
-        if (parentWindow instanceof IWorkbenchWindow)
-            return (IWorkbenchWindow) parentWindow;
-        if (parentWindow instanceof DetachedWindow)
-            return ((DetachedWindow) parentWindow).getWorkbenchPage()
-                    .getWorkbenchWindow();
-
+        Shell s = getShell();
+        Object data = s.getData();
+        if (data instanceof IWorkbenchWindow) {
+            return (IWorkbenchWindow)data;
+        } else if (data instanceof DetachedWindow) {
+            return ((DetachedWindow) data).getWorkbenchPage()
+                .getWorkbenchWindow();
+        }
+        
         return null;
+        
     }
 
     /**
@@ -231,13 +239,7 @@ abstract public class LayoutPart implements ISizeProvider {
             return;
         }
 
-        if (!control.isReparentable()) {
-            // WARNING!!! The commented code here doesn't work... but something
-            // similar will be needed to get undockable views working on all
-            // platforms.
-            //dispose();
-            //createControl(newParent);
-        } else {
+        if (control.isReparentable()) {
             // make control small in case it is not resized with other controls
             control.setBounds(0, 0, 0, 0);
             // By setting the control to disabled before moving it,

@@ -210,6 +210,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
     private Workbench workbench;
 
+    private static final String DISPOSE_LISTENER = "WorkbenchContextSupport dispose listener"; //$NON-NLS-1$
+
     /**
      * Constructs a new instance of <code>WorkbenchCommandSupport</code>.
      * This attaches the key binding support, and adds a global shell activation
@@ -783,8 +785,9 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         registeredWindows.put(shell, submissions);
         addEnabledSubmissions(submissions);
 
-        // Make sure the submissions will be removed in event of disposal.
-        shell.addDisposeListener(new DisposeListener() {
+        // Remember the dispose listener so that we can remove it later if we unregister
+        // the shell.
+        DisposeListener shellDisposeListener = new DisposeListener() {
 
             /*
              * (non-Javadoc)
@@ -808,7 +811,11 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                             .next());
                 }
             }
-        });
+        }; 
+        
+        // Make sure the submissions will be removed in event of disposal.
+        shell.addDisposeListener(shellDisposeListener);
+        shell.setData(DISPOSE_LISTENER, shellDisposeListener);
 
         return returnValue;
     }
@@ -900,6 +907,13 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             return false;
         }
 
+        // If we're unregistering the shell but we're not about to dispose it,
+        // then we'll end up leaking the DisposeListener unless we remove it here.
+        DisposeListener oldListener = (DisposeListener)shell.getData(DISPOSE_LISTENER);
+        if (oldListener != null) {
+            shell.removeDisposeListener(oldListener);
+        }
+        
         List previousSubmissions = (List) registeredWindows.get(shell);
         if (previousSubmissions != null) {
             registeredWindows.remove(shell);

@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.internal.DetachedWindow;
 import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -34,7 +33,7 @@ public class SystemMenuDetach extends Action implements ISelfUpdatingAction {
     	IPresentablePart presentablePart = site.getSelectedPart();
     	setEnabled(presentablePart != null && site.isPartMoveable(presentablePart));
     	if(viewPane != null){
-    		setChecked(viewPane.getWindow() instanceof DetachedWindow);
+    		setChecked(!viewPane.isDocked());
         	page = viewPane.getPage();
     	}
     }

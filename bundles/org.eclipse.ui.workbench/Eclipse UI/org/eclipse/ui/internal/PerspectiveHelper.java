@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -118,12 +118,12 @@ public class PerspectiveHelper {
 
         public void drop() {
 
-            Window window = part.getWindow();
-            if (window instanceof DetachedWindow) {
+            Shell shell = part.getShell();
+            if (shell.getData() instanceof DetachedWindow) {
                 // only one tab folder in a detach window, so do window
                 // move
                 if (part instanceof ViewStack) {
-                    window.getShell().setLocation(dragRectangle.x,
+                    shell.setLocation(dragRectangle.x,
                             dragRectangle.y);
                     return;
                 }
@@ -131,7 +131,7 @@ public class PerspectiveHelper {
                 ILayoutContainer container = part.getContainer();
                 if (container instanceof ViewStack) {
                     if (((ViewStack) container).getItemCount() == 1) {
-                        window.getShell().setLocation(dragRectangle.x,
+                        shell.setLocation(dragRectangle.x,
                                 dragRectangle.y);
                         return;
                     }
@@ -570,7 +570,7 @@ public class PerspectiveHelper {
             LayoutPart part = (LayoutPart) itr.nextElement();
             part.reparent(parent);
         }
-
+        
         // Dispose main layout.
         mainLayout.dispose();
 
@@ -579,7 +579,7 @@ public class PerspectiveHelper {
             DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
             window.close();
         }
-
+        
         active = false;
     }
     
@@ -634,7 +634,9 @@ public class PerspectiveHelper {
         }
 
         // Get vital part stats before reparenting.
-        Window oldWindow = part.getWindow();
+        //Window oldWindow = part.getWindow();
+        boolean wasDocked = part.isDocked();
+        Shell oldShell = part.getShell();
         ILayoutContainer oldContainer = part.getContainer();
 
         // Reparent the part back to the main window
@@ -647,7 +649,7 @@ public class PerspectiveHelper {
         oldContainer.remove(part);
 
         LayoutPart[] children = oldContainer.getChildren();
-        if (oldWindow instanceof WorkbenchWindow) {
+        if (wasDocked) {
             boolean hasChildren = (children != null) && (children.length > 0);
             if (hasChildren) {
                 // make sure one is at least visible
@@ -687,14 +689,15 @@ public class PerspectiveHelper {
                     }
                 }
             }
-        } else if (oldWindow instanceof DetachedWindow) {
+        } else if (!wasDocked) {
             if (children == null || children.length == 0) {
                 // There are no more children in this container, so get rid of
                 // it
                 // Turn on redraw again just in case it was off.
-                oldWindow.getShell().setRedraw(true);
-                oldWindow.close();
-                detachedWindowList.remove(oldWindow);
+                //oldShell.setRedraw(true);
+                DetachedWindow w = (DetachedWindow)oldShell.getData();
+                oldShell.close();
+                detachedWindowList.remove(w);
             } else {
                 // There are children. If none are visible hide detached
                 // window.
@@ -708,15 +711,16 @@ public class PerspectiveHelper {
                 if (allInvisible) {
                     DetachedPlaceHolder placeholder = new DetachedPlaceHolder(
                             "", //$NON-NLS-1$
-                            oldWindow.getShell().getBounds());
+                            oldShell.getBounds());
                     for (int i = 0, length = children.length; i < length; i++) {
                         oldContainer.remove(children[i]);
                         children[i].setContainer(placeholder);
                         placeholder.add(children[i]);
                     }
                     detachedPlaceHolderList.add(placeholder);
-                    oldWindow.close();
-                    detachedWindowList.remove(oldWindow);
+                    DetachedWindow w = (DetachedWindow)oldShell.getData();
+                    oldShell.close();
+                    detachedWindowList.remove(w);
                 }
             }
         }
@@ -1144,8 +1148,10 @@ public class PerspectiveHelper {
                 if (allInvisible && (container instanceof LayoutPart)) {
                     // what type of window are we in?
                     LayoutPart cPart = (LayoutPart) container;
-                    Window oldWindow = cPart.getWindow();
-                    if (oldWindow instanceof WorkbenchWindow) {
+                    //Window oldWindow = cPart.getWindow();
+                    boolean wasDocked = cPart.isDocked();
+                    Shell oldShell = cPart.getShell();
+                    if (wasDocked) {
                         
                         // PR 1GDFVBY: ViewStack not disposed when page
                         // closed.
@@ -1160,17 +1166,18 @@ public class PerspectiveHelper {
                         placeholder.setRealContainer(container);
                         parentContainer.replace(cPart, placeholder);
                         
-                    } else if (oldWindow instanceof DetachedWindow) {
+                    } else if (!wasDocked) {
                         DetachedPlaceHolder placeholder = new DetachedPlaceHolder(
-                                "", oldWindow.getShell().getBounds()); //$NON-NLS-1$
+                                "", oldShell.getBounds()); //$NON-NLS-1$
                         for (int i = 0, length = children.length; i < length; i++) {
                             children[i].getContainer().remove(children[i]);
                             children[i].setContainer(placeholder);
                             placeholder.add(children[i]);
                         }
                         detachedPlaceHolderList.add(placeholder);
-                        oldWindow.close();
-                        detachedWindowList.remove(oldWindow);
+                        DetachedWindow w = (DetachedWindow)oldShell.getData();
+                        oldShell.close();
+                        detachedWindowList.remove(w);
                     }
                 }
             }

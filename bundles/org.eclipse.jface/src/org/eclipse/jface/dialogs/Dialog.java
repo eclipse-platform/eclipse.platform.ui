@@ -20,6 +20,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -366,15 +368,24 @@ public abstract class Dialog extends Window {
      *            shell
      */
     protected Dialog(Shell parentShell) {
-        super(parentShell);
-        setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | getDefaultOrientation());
-        setBlockOnOpen(true);
+        this(new SameShellProvider(parentShell));
         if (parentShell == null && Policy.DEBUG_DIALOG_NO_PARENT)
             Policy.getLog().log(
                     new Status(IStatus.INFO, Policy.JFACE, IStatus.INFO, this
                             .getClass()
                             + " created with no shell",//$NON-NLS-1$
                             new Exception()));
+    }
+    
+    /**
+     * Creates a dialog with the given parent. 
+     * 
+     * @param parentShell object that returns the current parent shell
+     */
+    protected Dialog(IShellProvider parentShell) {
+        super(parentShell);
+        setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | getDefaultOrientation());
+        setBlockOnOpen(true);        
     }
 
     /**

@@ -153,7 +153,7 @@ final class KeyAssistDialog extends Dialog {
 	KeyAssistDialog(final IWorkbench workbench,
 			final WorkbenchKeyboard associatedKeyboard,
 			final KeyBindingState associatedState) {
-		super(null);
+		super((Shell)null);
 		setShellStyle(SWT.NO_TRIM);
 		setBlockOnOpen(false);
 

@@ -12,6 +12,11 @@ package org.eclipse.jface.window;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -28,12 +33,6 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A JFace window is an object that has no visual representation (no widgets)
@@ -83,7 +82,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * </ul>
  * </p>
  */
-public abstract class Window {
+public abstract class Window implements IShellProvider {
 
 	/**
 	 * Standard return code constant (value 0) indicating that the window was
@@ -152,10 +151,41 @@ public abstract class Window {
 	 */
 	private static int orientation = SWT.NONE;
 
+    /**
+     * Object used to locate the default parent for modal shells
+     */
+    private static IShellProvider defaultModalParent = new IShellProvider() {
+        public Shell getShell() {
+            Display d = Display.getCurrent();
+            
+            if (d == null) {
+                return null;
+            }
+
+            // Note: Just returning d.getActiveShell() may produce nicer results
+            Shell currentShell = d.getActiveShell();
+
+            int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
+
+            while (currentShell != null) {
+                Shell parent = (Shell)currentShell.getParent();
+                
+                int style = currentShell.getStyle();
+                if ((style & modal) != 0 || parent == null || !parent.isVisible()) {
+                    return currentShell;
+                }
+                
+                currentShell = parent;
+            }
+            
+            return currentShell;            
+        }
+    };
+    
 	/**
-	 * The parent shell.
+	 * Object that returns the parent shell.
 	 */
-	private Shell parentShell;
+	private IShellProvider parentShell;
 
 	/**
 	 * Shell style bits.
@@ -218,7 +248,7 @@ public abstract class Window {
 	private boolean resizeHasOccurred = false;
 
 	private Listener resizeListener;
-
+ 
 	/**
 	 * Creates a window instance, whose shell will be created under the given
 	 * parent shell. Note that the window will have no visual representation
@@ -226,15 +256,28 @@ public abstract class Window {
 	 * 
 	 * @param parentShell
 	 *            the parent shell, or <code>null</code> to create a top-level
-	 *            shell
+	 *            shell. Try passing "(Shell)null" to this method instead of "null"
+     *            if your compiler complains about an ambiguity error.
 	 * @see #setBlockOnOpen
 	 * @see #getDefaultOrientation()
 	 */
 	protected Window(Shell parentShell) {
-		this.parentShell = parentShell;
-		if(parentShell == null)//Inherit the style from the parent if there is one
-			setShellStyle(getShellStyle() | getDefaultOrientation());
+        this(new SameShellProvider(parentShell));
+        
+        if(parentShell == null)//Inherit the style from the parent if there is one
+            setShellStyle(getShellStyle() | getDefaultOrientation());
 	}
+    
+    /**
+     * Creates a new window which will create its shell as a child of whatever
+     * the given shellProvider returns.
+     * 
+     * @param shellProvider object that will return the current parent shell. Not null.
+     */
+    protected Window(IShellProvider shellProvider) {
+        Assert.isNotNull(shellProvider);
+        this.parentShell = shellProvider;   
+    }
 
 	/**
 	 * Determines if the window should handle the close event or do nothing.
@@ -539,7 +582,16 @@ public abstract class Window {
 	 *         shell
 	 */
 	protected Shell getParentShell() {
-		return parentShell;
+        Shell parent = parentShell.getShell();
+        
+        int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL | SWT.PRIMARY_MODAL;
+        
+        // If this is a modal shell with no parent, pick a shell using defaultModalParent.
+        if (parent == null && (getShellStyle() & modal) != 0 ) {
+            parent = defaultModalParent.getShell();
+        }
+        
+        return parent;
 	}
 
 	/**
@@ -679,8 +731,9 @@ public abstract class Window {
 	 * @see #create()
 	 */
 	public int open() {
-
-		if (shell == null) {
+        
+		if (shell == null || shell.isDisposed()) {
+            shell = null;
 			// create the window
 			create();
 		}
@@ -778,7 +831,7 @@ public abstract class Window {
      */
     protected void setParentShell(final Shell newParentShell) {
         Assert.isTrue((shell == null), "There must not be an existing shell."); //$NON-NLS-1$
-        parentShell = newParentShell;
+        parentShell = new SameShellProvider(newParentShell);
     }
 
 	/**
@@ -925,7 +978,19 @@ public abstract class Window {
 		if (exceptionHandler instanceof DefaultExceptionHandler)
 			exceptionHandler = handler;
 	}
-
+    
+    /**
+     * Sets the default parent for modal Windows. This will be used to locate
+     * the parent for any modal Window constructed with a null parent.
+     * 
+     * @param provider shell provider that will be used to locate the parent shell
+     * whenever a Window is created with a null parent
+     * @since 3.1
+     */
+    public static void setDefaultModalParent(IShellProvider provider) {
+        defaultModalParent = provider;
+    }
+    
 	/**
 	 * Gets the default orientation for windows. If it is not
 	 * set the default value will be unspecified (SWT#NONE).

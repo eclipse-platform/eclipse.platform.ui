@@ -12,6 +12,7 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -23,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
  * @see org.eclipse.ui.part.IPageSite
  * @since 2.0
  */
-public interface IWorkbenchSite extends IAdaptable {
+public interface IWorkbenchSite extends IAdaptable, IShellProvider {
 
     /**
      * Returns the page containing this workbench site.

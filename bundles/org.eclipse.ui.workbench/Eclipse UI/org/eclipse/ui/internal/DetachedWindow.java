@@ -19,6 +19,9 @@ import java.util.Vector;
 
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -32,7 +35,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 
-public class DetachedWindow extends Window {
+public class DetachedWindow {
 
     private PartStack folder;
 
@@ -43,17 +46,52 @@ public class DetachedWindow extends Window {
 
     private Rectangle bounds;
 
+    private Shell s;
+    
+    private boolean hideViewsOnClose = true;
+    
+    private ShellListener shellListener = new ShellAdapter() {
+        public void shellClosed(ShellEvent e) {
+            handleClose();
+        }
+    };
+    
+    private Listener resizeListener = new Listener() {
+        public void handleEvent(Event event) {
+            Shell shell = (Shell) event.widget;
+            folder.setBounds(shell.getClientArea());
+        }
+    };
+    
     /**
      * Create a new FloatingWindow.
      */
     public DetachedWindow(WorkbenchPage workbenchPage) {
-        super(workbenchPage.getWorkbenchWindow().getShell());
-        setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
-        SWT.RESIZE | getDefaultOrientation());
+        //super(workbenchPage.getWorkbenchWindow().getShell());
+        //setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
+        //SWT.RESIZE | getDefaultOrientation());
         this.page = workbenchPage;
         folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW);
     }
 
+    public Shell getShell() {
+        return s;
+    }
+    
+    public void create() {
+        s = ((WorkbenchWindow)page.getWorkbenchWindow()).getDetachedWindowPool().allocateShell(shellListener);
+        s.setData(this);        
+        if (bounds != null)
+            getShell().setBounds(bounds);
+
+        configureShell(s);
+        
+        createContents(s);
+        s.layout(true);
+        folder.setBounds(s.getClientArea());
+    }
+    
+    
     /**
      * Adds a visual part to this window.
      * Supports reparenting.
@@ -70,25 +108,46 @@ public class DetachedWindow extends Window {
         return (this.page == workbenchPage);
     }
 
+    public boolean close() {
+        hideViewsOnClose = false;
+        getShell().close();
+        return true;
+    }
+    
     /**
      * Closes this window and disposes its shell.
      */
-    public boolean close() {
-        Shell s = getShell();
-        if (s != null) {
-            title = s.getText();
-            bounds = s.getBounds();
+    private boolean handleClose() {
+        
+        if (hideViewsOnClose) {
+            List views = new ArrayList();
+            collectViewPanes(views, getChildren());
+            Iterator itr = views.iterator();
+            while (itr.hasNext()) {
+                ViewPane child = (ViewPane) itr.next();
+                page.hideView(child.getViewReference());
+            }
         }
 
         if (folder != null)
             folder.dispose();
+        
+//        Shell s = getShell();
+        if (s != null) {
+            s.removeListener(SWT.Resize, resizeListener);
+            title = s.getText();
+            bounds = s.getBounds();
 
-        // Unregister this detached view as a window (for key bindings).
-        final IWorkbenchContextSupport contextSupport = getWorkbenchPage()
-                .getWorkbenchWindow().getWorkbench().getContextSupport();
-        contextSupport.unregisterShell(s);
+            // Unregister this detached view as a window (for key bindings).
+            final IWorkbenchContextSupport contextSupport = getWorkbenchPage()
+                    .getWorkbenchWindow().getWorkbench().getContextSupport();
+            contextSupport.unregisterShell(s);
 
-        return super.close();
+            s.setData(null);
+            s = null;
+        }
+
+        return true;
     }
 
     /**
@@ -109,12 +168,7 @@ public class DetachedWindow extends Window {
     protected void configureShell(Shell shell) {
         if (title != null)
             shell.setText(title);
-        shell.addListener(SWT.Resize, new Listener() {
-            public void handleEvent(Event event) {
-                Shell shell = (Shell) event.widget;
-                folder.setBounds(shell.getClientArea());
-            }
-        });
+        shell.addListener(SWT.Resize, resizeListener);
 
         // Register this detached view as a window (for key bindings).
         final IWorkbenchContextSupport contextSupport = getWorkbenchPage()
@@ -152,27 +206,6 @@ public class DetachedWindow extends Window {
 
     public WorkbenchPage getWorkbenchPage() {
         return this.page;
-    }
-
-    /**
-     * Close has been pressed.  Close all views.
-     */
-    protected void handleShellCloseEvent() {
-        List views = new ArrayList();
-        collectViewPanes(views, getChildren());
-        Iterator itr = views.iterator();
-        while (itr.hasNext()) {
-            ViewPane child = (ViewPane) itr.next();
-            page.hideView(child.getViewReference());
-        }
-        close();
-    }
-
-    protected void initializeBounds() {
-        if (bounds != null)
-            getShell().setBounds(bounds);
-        else
-            super.initializeBounds();
     }
 
     /**
@@ -259,37 +292,22 @@ public class DetachedWindow extends Window {
         return false;
     }
 
-    /*  
-     * Fixes a problem with Linux GTK when KDE is used as window manager. 
-     * It repositions the detached window to center on top of the parent  
-     * application window. 
-     *  
-	 * @see org.eclipse.jface.window.Window#open() 
-	 */ 
+    /**
+     * Opens the detached window.
+     */
 	public int open() { 
 		 
 		if (getShell() == null) 
 			create(); 
 		 
 		Rectangle bounds = getShell().getBounds(); 
-		int ret = super.open(); 
+        getShell().open();
 		 
 		if (!bounds.equals(getShell().getBounds())) { 
 			getShell().setBounds(bounds); 
 		} 
 		 
-		return ret; 
+		return Window.OK; 
 	} 
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.window.Window#getConstrainedShellSize(org.eclipse.swt.graphics.Rectangle)
-     */
-    protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
-        // As long as the initial position is somewhere on the display, don't mess with it.
-        if (intersectsAnyMonitor(getShell().getDisplay(), preferredSize)) {
-            return preferredSize;
-        }
-
-        return super.getConstrainedShellBounds(preferredSize);
-    }
 }

@@ -175,6 +175,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     private WorkbenchWindowConfigurer windowConfigurer = null;
 
+    private ShellPool detachedWindowShells;
+    
     // constants for shortcut bar group ids 
     static final String GRP_PAGES = "pages"; //$NON-NLS-1$
 
@@ -732,6 +734,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
 
+        detachedWindowShells = new ShellPool(shell, SWT.RESIZE | getDefaultOrientation());
+        
         String title = getWindowConfigurer().basicGetTitle();
         if (title != null) {
             shell.setText(title);
@@ -744,6 +748,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
         trackShellActivation(shell);
         trackShellResize(shell);
+    }
+    
+    /* package */ ShellPool getDetachedWindowPool() {
+        return detachedWindowShells;
     }
 
     /* (non-Javadoc)

@@ -3173,7 +3173,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // actually cause any changes in size and is required to support 
         // intro state changes.  We may want to introduce the notion of a zoomed
         // (fullscreen) detached view at a later time.
-        if (pane.getWindow() instanceof DetachedWindow) {
+        if (!pane.isDocked()) {
             pane.setZoomed(newState == IStackPresentationSite.STATE_MAXIMIZED);
             return;
         }
@@ -3257,7 +3257,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (pane instanceof ViewPane) {
             ViewPane viewPane = (ViewPane) pane;
             Control[] tabList = viewPane.getTabList();
-            if (pane.getWindow() instanceof DetachedWindow) {
+            if (!pane.isDocked()) {
                 viewPane.getControl().getShell().setTabList(tabList);
             } else {
                 getClientComposite().setTabList(tabList);

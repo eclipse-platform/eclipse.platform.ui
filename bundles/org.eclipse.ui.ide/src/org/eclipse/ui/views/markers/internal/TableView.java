@@ -358,7 +358,7 @@ public abstract class TableView extends ViewPart {
 
     protected TableSortDialog getSortDialog() {
         if (getSorter() != null) {
-            return new TableSortDialog(getSite().getShell(), getSorter());
+            return new TableSortDialog(getSite(), getSorter());
         }
         return null;
     }

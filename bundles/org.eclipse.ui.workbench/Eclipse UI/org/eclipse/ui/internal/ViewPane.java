@@ -83,6 +83,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 
             toolBar.layout();
         }
+        
+        
     }
 
     /**
@@ -515,9 +517,15 @@ public class ViewPane extends PartPane implements IPropertyListener {
         if (isFastView() && (page.getActiveFastView() != getViewReference()))
             return;
 
-        Menu aMenu = isvMenuMgr.createContextMenu(getControl().getParent());
+        Menu aMenu = isvMenuMgr.createContextMenu(getControl());
         aMenu.setLocation(location.x, location.y);
         aMenu.setVisible(true);
+//        aMenu.addMenuListener(new MenuAdapter() {
+//           public void menuHidden(MenuEvent e) {
+//               isvMenuMgr.dispose();
+//               isvMenuMgr.markDirty();
+//           }
+//        });
     }
 
     public String toString() {

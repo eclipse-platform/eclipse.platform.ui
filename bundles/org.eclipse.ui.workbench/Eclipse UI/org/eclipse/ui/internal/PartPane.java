@@ -38,7 +38,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentations.PresentablePart;
@@ -258,7 +257,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
      * Zooms in on the part contained in this pane.
      */
     protected void doZoom() {
-        if (getWindow() instanceof IWorkbenchWindow)
+        if (isDocked())
             page.toggleZoom(partReference);
     }
 

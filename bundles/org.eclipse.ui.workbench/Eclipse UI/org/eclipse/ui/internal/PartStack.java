@@ -21,7 +21,6 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -39,6 +38,7 @@ import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.part.interfaces.IPersistable;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -729,10 +729,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
 
         // set the title of the detached window to reflect the active tab
-        Window window = getWindow();
-        if (window instanceof DetachedWindow) {
-            window.getShell().setText(newSelection.getTitle());
-        }
+//        Window window = getWindow();
+//        if (window instanceof DetachedWindow) {
+//            window.getShell().setText(newSelection.getTitle());
+//        }
     }
 
     /**
