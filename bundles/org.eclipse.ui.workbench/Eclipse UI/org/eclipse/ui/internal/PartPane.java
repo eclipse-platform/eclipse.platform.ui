@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.WorkbenchPart;
-import org.eclipse.ui.presentations.IPresentablePart;
 
 
 /**
