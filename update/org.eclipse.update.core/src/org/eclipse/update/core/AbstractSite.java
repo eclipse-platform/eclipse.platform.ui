@@ -16,16 +16,17 @@ import org.eclipse.update.internal.core.DefaultSiteParser;
 
 
 public abstract class AbstractSite implements ISite {
-
+
 	/**
 	 * default path under the site where plugins will be installed
 	 */
 	public static final String DEFAULT_PLUGIN_PATH = "plugins/";
-
+
 	/**
 	 * default path, under site, where features will be installed
 	 */
-	public static final String DEFAULT_FEATURE_PATH = "features/";
+	public static final String DEFAULT_FEATURE_PATH = "features/";
+
 	private static final String SITE_XML= "site.xml";
 	private boolean isManageable = true;
 	private DefaultSiteParser parser;
@@ -134,7 +135,7 @@ public abstract class AbstractSite implements ISite {
 			siteListeners[i].featureUninstalled(feature);
 		}
 	}	
-
+
 	/**
 	 * 
 	 */
@@ -155,31 +156,6 @@ public abstract class AbstractSite implements ISite {
 		return siteURL;
 	}
 
-	/**
-	* This method also closes both streams.
-	* Taken from FileSystemStore
-	*/
-	protected void transferStreams(InputStream source, OutputStream destination)
-		throws IOException {
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = source.read(buffer);
-				if (bytesRead == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			try {
-				source.close();
-			} catch (IOException e) {
-			}
-			try {
-				destination.close();
-			} catch (IOException e) {
-			}
-		}
-	}
 	/**
 	 * Gets the features
 	 * @return Returns a IFeature[]
@@ -207,7 +183,7 @@ public abstract class AbstractSite implements ISite {
 		}
 		this.features.add(feature);
 	}
-
+
 	/**
 	 * @see ISite#getArchives()
 	 */
@@ -244,7 +220,8 @@ public abstract class AbstractSite implements ISite {
 			}
 		}
 		return result;
-	}
+	}
+
 	/**
 	 * adds an archive
 	 * @param archive The archive to add
@@ -258,7 +235,7 @@ public abstract class AbstractSite implements ISite {
 		else
 			this.archives.add(archive);
 	}
-
+
 	/**
 	 * Sets the archives
 	 * @param archives The archives to set
@@ -270,7 +247,7 @@ public abstract class AbstractSite implements ISite {
 			}		
 		}
 	}
-
+
 
 	/**
 	 * @see ISite#getInfoURL()

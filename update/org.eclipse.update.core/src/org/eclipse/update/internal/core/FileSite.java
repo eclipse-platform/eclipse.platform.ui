@@ -27,7 +27,11 @@ public class FileSite extends URLSite {
 		super(siteReference);
 	}
 
+	/**
+	 * @deprecated
+	 */
 	private String getPath() {
+		org.eclipse.update.core.Assert.isTrue(false,"SHOULD NOT BE CALLED");
 		if (path == null) {
 			path = getURL().getPath();
 			if (path.startsWith(File.separator))
@@ -54,7 +58,7 @@ public class FileSite extends URLSite {
 
 			// TEST: what if SiteURL is not valid ? 
 
-			File pluginSite = new File(getPath() + DEFAULT_PLUGIN_PATH);
+			File pluginSite = new File(getURL().getPath() + DEFAULT_PLUGIN_PATH);
 			if (!pluginSite.exists()) {
 				if (!CREATE_PATH) {
 					//FIXME: Serviceability
@@ -66,34 +70,13 @@ public class FileSite extends URLSite {
 				}
 			}
 
-			// create plugin if doesn't exist
-			// FIXME: mkdir or mkdirs ?
 			String pluginPath =
-				getPath() + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
-			File pluginDirectory = new File(pluginPath);
-			if (!pluginDirectory.exists()) {
-				pluginDirectory.mkdir();
-			}
+				getURL().getPath() + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
+			
+			
 
-			// create directory if doesn't exist
-			int lastSeparator = contentKey.lastIndexOf('/');
-			if (lastSeparator != -1) {
-				String path = contentKey.substring(0, lastSeparator);
-				StringTokenizer tokenizer = new StringTokenizer(path, File.separator);
-				String currentPath = pluginPath + File.separator;
-				while (tokenizer.hasMoreTokens()) {
-					File currentDir = new File(currentPath + tokenizer.nextToken());
-					if (!currentDir.exists())
-						currentDir.mkdir();
-					currentPath = currentPath + currentDir + File.separator;
-				}
-			}
-			// create file if the entry is a file
-			if (!contentKey.endsWith("/")) {
-				FileOutputStream currentFile =
-					new FileOutputStream(pluginPath + File.separator + contentKey);
-				transferStreams(inStream, currentFile);
-			}
+			UpdateManagerUtils.resolveAsLocal(inStream, pluginPath + File.separator + contentKey);
+
 
 		} catch (IOException e) {
 			//FIXME: 
@@ -117,8 +100,7 @@ public class FileSite extends URLSite {
 		try {
 
 			// TEST: what if SiteURL is not valid ? 
-
-			File featureSite = new File(getPath() + INSTALL_FEATURE_PATH);
+			File featureSite = new File(getURL().getPath() + INSTALL_FEATURE_PATH);
 			if (!featureSite.exists()) {
 				if (!CREATE_PATH) {
 					//FIXME: Serviceability
@@ -130,35 +112,8 @@ public class FileSite extends URLSite {
 				}
 			}
 
-			// create feature if doesn't exist
-			// FIXME: mkdir or mkdirs ?
-			String featurePath =
-				getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
-			File featureDirectory = new File(featurePath);
-			if (!featureDirectory.exists()) {
-				featureDirectory.mkdir();
-			}
-
-			// create directory if doesn't exist
-			int lastSeparator = contentKey.lastIndexOf('/');
-			if (lastSeparator != -1) {
-				String path = contentKey.substring(0, lastSeparator);
-				StringTokenizer tokenizer = new StringTokenizer(path, File.separator);
-				String currentPath = featurePath + File.separator;
-				while (tokenizer.hasMoreTokens()) {
-					File currentDir = new File(currentPath + tokenizer.nextToken());
-					if (!currentDir.exists())
-						currentDir.mkdir();
-					currentPath = currentPath + currentDir + File.separator;
-				}
-			}
-
-			// create file if the entry is a file
-			if (!contentKey.endsWith("/")) {
-				FileOutputStream currentFile =
-					new FileOutputStream(featurePath + File.separator + contentKey);
-				transferStreams(inStream, currentFile);
-			}
+			String featurePath = getURL().getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
+			UpdateManagerUtils.resolveAsLocal(inStream, featurePath + File.separator + contentKey);
 
 		} catch (IOException e) {
 			//FIXME: 
