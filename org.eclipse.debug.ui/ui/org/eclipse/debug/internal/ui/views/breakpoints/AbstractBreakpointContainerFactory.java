@@ -10,22 +10,22 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
+ * Abstract implementation of a breakpoint container factory.
  * 
+ * Clients are intended to extend this class.
+ * 
+ * @since 3.1
  */
 public abstract class AbstractBreakpointContainerFactory implements IBreakpointContainerFactory {
 	
 	protected String fLabel;
 	protected String fIdentifier;
 	private ImageDescriptor fImage;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getContainers(org.eclipse.debug.core.model.IBreakpoint[], java.lang.String)
-	 */
-	public abstract IBreakpointContainer[] getContainers(IBreakpoint[] breakpoints, String parentId);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getLabel()
@@ -73,4 +73,20 @@ public abstract class AbstractBreakpointContainerFactory implements IBreakpointC
 	public void dispose() {
 	}
 
+    public final IBreakpointContainer[] getContainers(IBreakpointContainer parentContainer) {
+        IBreakpointContainer[] containers = createContainers(parentContainer);
+        if (parentContainer != null) {
+            parentContainer.setContainers(containers);
+        }
+        return containers;
+    }
+    
+    public IBreakpoint[] getBreakpoints(IBreakpointContainer container) {
+        if (container != null) {
+            return container.getBreakpoints();
+        }
+        return DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+    }
+    
+    public abstract IBreakpointContainer[] createContainers(IBreakpointContainer parentContainer);
 }

@@ -19,27 +19,36 @@ import org.eclipse.swt.graphics.Image;
 public class BreakpointContainer implements IBreakpointContainer {
 	
 	private IBreakpoint[] fBreakpoints;
-	private IBreakpointContainerFactory fParentFactory;
+	private IBreakpointContainerFactory fCreatingFactory;
 	private Image fImage;
 	private String fName;
-	private String fParentId;
+	private IBreakpointContainer fParentContainer;
+	private IBreakpointContainer[] fContainers= new IBreakpointContainer[0];
 	
 	private BreakpointContainer() {
 		// Do not call
 	}
-
-	/**
-	 * Creates a new breakpoint container with the given breakpoints. The
-	 * breakpoint container factory which creates this container must pass
-	 * itself in as the parentFactory.
-	 * @param breakpoints
-	 * @param parentFactory
-	 */
-	public BreakpointContainer(IBreakpoint[] breakpoints, IBreakpointContainerFactory parentFactory, String name, String parentId) {
-		fBreakpoints= breakpoints;
-		fParentFactory= parentFactory;
-		fName= name;
-		fParentId= parentId;
+	
+	public BreakpointContainer(IBreakpoint[] breakpoints,
+	        IBreakpointContainer parentContainer,
+	        IBreakpointContainerFactory creatingFactory,
+	        String name) {
+	    fBreakpoints= breakpoints;
+	    fParentContainer= parentContainer;
+	    fCreatingFactory= creatingFactory;
+	    fName= name;
+	}
+	
+	public IBreakpointContainer getParentContainer() {
+	    return fParentContainer;
+	}
+	
+	public IBreakpointContainer[] getContainers() {
+	    return fContainers;
+	}
+	
+	public void setContainers(IBreakpointContainer[] containers) {
+	    fContainers= containers;
 	}
 	
 	public void setImage(Image image) {
@@ -56,8 +65,8 @@ public class BreakpointContainer implements IBreakpointContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer#getParentFactory()
 	 */
-	public IBreakpointContainerFactory getParentFactory() {
-		return fParentFactory;
+	public IBreakpointContainerFactory getCreatingFactory() {
+		return fCreatingFactory;
 	}
 
 	/* (non-Javadoc)
@@ -74,14 +83,18 @@ public class BreakpointContainer implements IBreakpointContainer {
 		return fName;
 	}
 	
-	public String getParentId() {
-		return fParentId;
-	}
-	
+	/**
+	 * Breakpoint containers are equal if they have the same name and the
+	 * same parent.
+	 */
 	public boolean equals(Object object) {
 		if (object instanceof BreakpointContainer) {
 			BreakpointContainer container = ((BreakpointContainer) object);
-			return container.getName().equals(getName()) && container.getParentId().equals(getParentId());
+			if (container.getName().equals(getName())) {
+			    IBreakpointContainer parent = getParentContainer();
+			    IBreakpointContainer otherParent = container.getParentContainer();
+			    return parent == otherParent || (parent != null && parent.equals(otherParent));
+			}
 		}
 		return false;
 	}

@@ -13,20 +13,16 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -84,31 +80,9 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 						}
 						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
 						viewer.refresh();
-						MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, DebugUIViewsMessages.getString("BreakpointsViewEventHandler.4"), null); //$NON-NLS-1$
-						for (int i = 0; i < breakpoints.length; i++) {
-							IBreakpoint breakpoint = breakpoints[i];
-							// check if the breakpoint is still registered at this time
-							if (!DebugPlugin.getDefault().getBreakpointManager().isRegistered(breakpoint)) {
-								continue;
-							}
-							try {
-								boolean enabled= breakpoint.isEnabled();
-								if (viewer.getChecked(breakpoint) != enabled) {
-									viewer.setChecked(breakpoint, breakpoint.isEnabled());								
-								}
-								fView.updateParents(breakpoint, enabled);
-
-                                if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-                                	fView.updateViewerBackground();
-                                }
-							} catch (CoreException e) {
-								status.add(DebugUIPlugin.newErrorStatus(DebugUIViewsMessages.getString("BreakpointsViewEventHandler.5"),e)); //$NON-NLS-1$
-								DebugUIPlugin.log(e);
-							}	
-						}
-						if (!status.isOK()) {
-							DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.1"), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.2"), status); //$NON-NLS-1$ //$NON-NLS-2$
-						}
+						if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+                        	fView.updateViewerBackground();
+                        }
 						fView.updateObjects();
 					}
 				}
@@ -153,10 +127,6 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							fView.updateObjects();
 							// Fire a selection change to update contributed actions
 							viewer.setSelection(viewer.getSelection());
-							Iterator iter= groupChanged.iterator();
-							while (iter.hasNext()) {
-								viewer.expandToLevel(iter.next(), AbstractTreeViewer.ALL_LEVELS);
-							}
 							return;
 						}
 						

@@ -23,7 +23,8 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * 
+ * A breakpoint container factory that divides breakpoints based on their
+ * breakpoint type.
  */
 public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerFactory {
 	
@@ -34,9 +35,10 @@ public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerF
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getContainers(org.eclipse.debug.core.model.IBreakpoint[])
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#createContainers(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer)
 	 */
-	public IBreakpointContainer[] getContainers(IBreakpoint[] breakpoints, String parentId) {
+	public IBreakpointContainer[] createContainers(IBreakpointContainer parentContainer) {
+	    IBreakpoint[] breakpoints= getBreakpoints(parentContainer);
 		if (fContainerImage == null) {
 			fContainerImage= getImageDescriptor().createImage();
 		}
@@ -63,15 +65,18 @@ public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerF
 			List list= (List) map.get(typeName);
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
+					parentContainer,
 					this,
-					typeName,
-					parentId);
+					typeName);
 			container.setImage(fContainerImage);
 			containers.add(container);
 		}
 		return (IBreakpointContainer[]) containers.toArray(new IBreakpointContainer[containers.size()]);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#dispose()
+	 */
 	public void dispose() {
 		if (fContainerImage != null) {
 			fContainerImage.dispose();

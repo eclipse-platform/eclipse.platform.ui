@@ -22,7 +22,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 
 /**
- * 
+ * A breakpoint container factory that divides breakpoints based on their
+ * "custom group".
  */
 public class BreakpointGroupContainerFactory extends AbstractBreakpointContainerFactory {
 
@@ -30,9 +31,10 @@ public class BreakpointGroupContainerFactory extends AbstractBreakpointContainer
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getContainers(org.eclipse.debug.core.model.IBreakpoint[])
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#createContainers(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer)
 	 */
-	public IBreakpointContainer[] getContainers(IBreakpoint[] breakpoints, String parentId) {
+	public IBreakpointContainer[] createContainers(IBreakpointContainer parentContainer) {
+	    IBreakpoint[] breakpoints= getBreakpoints(parentContainer);
 		HashMap map= new HashMap();
 		List other= new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -63,17 +65,17 @@ public class BreakpointGroupContainerFactory extends AbstractBreakpointContainer
 			List list= (List) map.get(group);
 			BreakpointGroupContainer container= new BreakpointGroupContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
+					parentContainer,
 					this,
-					group,
-					parentId);
+					group);
 			containers.add(container);
 		}
 		if (other.size() > 0) {
 			BreakpointGroupContainer container= new BreakpointGroupContainer(
 					(IBreakpoint[]) other.toArray(new IBreakpoint[0]),
+					parentContainer,
 					this,
-					DebugUIViewsMessages.getString("BreakpointGroupContainerFactory.0"), //$NON-NLS-1$
-					parentId);
+					DebugUIViewsMessages.getString("BreakpointGroupContainerFactory.0")); //$NON-NLS-1$
 			containers.add(container);
 		}
 		return (IBreakpointContainer[]) containers.toArray(new IBreakpointContainer[containers.size()]);

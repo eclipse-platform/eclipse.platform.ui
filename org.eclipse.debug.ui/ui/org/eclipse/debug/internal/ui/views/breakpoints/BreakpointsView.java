@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -107,11 +106,11 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 						expanded.add(breakpoint);
 					}
 				}
-		    	provider.clearParentCache();
+		    	provider.recomputeContent();
                 super.refresh();
                 Iterator iter = expanded.iterator();
                 while (iter.hasNext()) {
-                	expandToLevel(iter.next(), ALL_LEVELS);
+                    expandToLevel(iter.next(), ALL_LEVELS);
                 }
                 initializeCheckedState(this, fContentProvider);
             }
@@ -204,13 +203,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	public void initializeCheckedState(CheckboxTreeViewer viewer, ITreeContentProvider provider) {
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
 		Object[] elements= provider.getElements(manager);
-		ArrayList elementsToCheck= new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
-			elementsToCheck.add(elements[i]);
-		}
-		ListIterator iterator= elementsToCheck.listIterator();
-		while (iterator.hasNext()) {
-			updateCheckedState(iterator.next(), viewer, provider);
+			updateCheckedState(elements[i], viewer, provider);
 		}
 	}
 	
@@ -663,7 +657,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	public void setBreakpointContainerFactories(List selectedContainers) {
 		fContentProvider.setBreakpointContainerFactories(selectedContainers);
 		getViewer().refresh();
-		getCheckboxViewer().expandAll();
+		//getCheckboxViewer().expandAll();
 	}
 	
 	public List getBreakpointContainerFactories() {

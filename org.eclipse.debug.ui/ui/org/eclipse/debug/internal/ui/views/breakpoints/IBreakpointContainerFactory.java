@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
-import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Factory which produces <code>IBreakpointContainer</code>s based on some
  * factory-specific criteria.
+ * 
+ * Clients are not intended to implement this interface. Instead, they should
+ * extend AbstractBreakpointContainerFactory.
  * 
  * @since 3.1
  */
@@ -25,10 +27,11 @@ public interface IBreakpointContainerFactory {
 	 * Returns containers for the given set of breakpoints. Each of the
 	 * given breakpoints will appear in exactly one of the returned containers.
 	 * 
-	 * @param breakpoints the breakpoints to put into containers
+	 * @param container the parent container for the containers that will be
+	 *  created or <code>null</code> if none.
 	 * @return containers for the given set of breakpoints
 	 */
-	public IBreakpointContainer[] getContainers(IBreakpoint[] breakpoints, String parentId);
+	public IBreakpointContainer[] getContainers(IBreakpointContainer parentContainer);
 	
 	/**
 	 * Returns a user-presentable label for this breakpoint container factory

@@ -27,7 +27,8 @@ import org.eclipse.ui.ide.IDE.SharedImages;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * 
+ * A breakpoint container factory that divides breakpoints based on their
+ * containing project.
  */
 public class BreakpointProjectContainerFactory extends AbstractBreakpointContainerFactory {
 	
@@ -39,9 +40,10 @@ public class BreakpointProjectContainerFactory extends AbstractBreakpointContain
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#getContainers(org.eclipse.debug.core.model.IBreakpoint[])
+	 * @see org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory#createContainers(org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainer)
 	 */
-	public IBreakpointContainer[] getContainers(IBreakpoint[] breakpoints, String parentId) {
+	public IBreakpointContainer[] createContainers(IBreakpointContainer parentContainer) {
+	    IBreakpoint[] breakpoints= getBreakpoints(parentContainer);
 		HashMap map= new HashMap();
 		List other= new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -70,18 +72,18 @@ public class BreakpointProjectContainerFactory extends AbstractBreakpointContain
 			List list= (List) map.get(project);
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) list.toArray(new IBreakpoint[0]),
+					parentContainer,
 					this,
-					project.getName(),
-					parentId);
+					project.getName());
 			container.setImage(fImageProvider.getImage(project));
 			containers.add(container);
 		}
 		if (other.size() > 0) {
 			BreakpointContainer container= new BreakpointContainer(
 					(IBreakpoint[]) other.toArray(new IBreakpoint[0]),
+					parentContainer,
 					this,
-					DebugUIViewsMessages.getString("BreakpointProjectContainerFactory.0"), //$NON-NLS-1$
-					parentId);
+					DebugUIViewsMessages.getString("BreakpointProjectContainerFactory.0")); //$NON-NLS-1$
 			fOtherImage= PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
 			container.setImage(fOtherImage);
 			containers.add(container);
