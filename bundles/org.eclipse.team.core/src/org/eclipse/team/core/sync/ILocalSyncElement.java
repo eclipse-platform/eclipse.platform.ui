@@ -151,34 +151,6 @@ public interface ILocalSyncElement {
 	public IRemoteResource getBase();
 	
 	/**
-	 * Answers if the remote resource state is checked-out. If the resource has never been checked in this
-	 * method will return <code>true</code>.
-	 * <p>
-	 * It is undefined whether this method tests for a resource being checked out to this workspace
-	 * or any workspace.</p>
-	 * 
-	 * @param resource the local resource to test.
-	 * @return <code>true</code> if the resource is checked-out and <code>false</code> if it is not.
-	 * @see checkout(IResource[], int, IProgressMonitor)
-	 * @see refreshState(IResource[], int, IProgressMonitor)
-	 */
-	public boolean isCheckedOut();
-	
-	/**
-	 * Answers whether the resource has a corresponding remote resource.
-	 * <p>
-	 * Before a resource is checked-in, the resource will occur locally but not remotely, and calls to this
-	 * method will return <code>false</code>.  Once a local resource is checked in (and assuming the local
-	 * local resource is not moved or the remote resource deleted) there will be a corresponding remote
-	 * resource and this method returns <code>true</code>.</p>
-	 * 
-	 * @param resource the local resource to test.
-	 * @return <code>true</code> if the local resource has a corresponding remote resource,
-	 * and <code>false</code> otherwise.
-	 */
-	public boolean hasRemote();
-	
-	/**
 	 * Answers and array of <code>ILocalSyncElement</code> elements that are immediate 
 	 * children of this sync element, in no particular order. The returned sync nodes are
 	 * a combination of the nodes represented by the sync element (e.g. local, base, remote).
