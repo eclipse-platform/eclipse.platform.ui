@@ -64,7 +64,7 @@ public class Infocenter {
 	 * Controls start up and shut down of infocenter from command line.
 	 * @param args array of String containing options
 	 *  Options are:
-	 * 	<code>-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs JavaVMarguments]</code>
+	 * 	<code>-command start | shutdown [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [-servertimeout timeout] [platform options] [-vmargs JavaVMarguments]</code>
 	 *  where
 	 *  <ul>
 	 * 	<li><code>eclipseInstallPath</code> specifies Eclipse installation directory;
@@ -76,6 +76,10 @@ public class Infocenter {
 	 * 	<li><code>helpServerPort</code> specifies port number
 	 * 	  that help server will use, it overrides port number specified
 	 *    the application server plugin preferences.</li>
+	 *  <li><code>timeout</code> number of seconds waiting
+	 *    to connect to the help server while executing commands,
+	 *    such as shutdown.  Default is 40s.  You may need to
+	 *    use this option when running from a slow media such as a CD-ROM.
 	 *   <li><code>platform options</code> are other options that are supported by Eclipse Executable.</li>
 	 *  <ul>
 	 */
