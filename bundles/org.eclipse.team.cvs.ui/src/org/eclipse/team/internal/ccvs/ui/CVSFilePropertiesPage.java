@@ -80,20 +80,9 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			if (tag == null) {
 				createLabel(composite, Policy.bind("CVSFilePropertiesPage.none")); //$NON-NLS-1$
 			} else {
-				switch (tag.getType()) {
-					case CVSTag.HEAD:
-						createLabel(composite, tag.getName());
-						break;
-					case CVSTag.VERSION:
-						createLabel(composite, Policy.bind("CVSFilePropertiesPage.version", tag.getName())); //$NON-NLS-1$
-						break;
-					case CVSTag.BRANCH:
-						createLabel(composite, Policy.bind("CVSFilePropertiesPage.branch", tag.getName())); //$NON-NLS-1$
-						break;
-					case CVSTag.DATE:
-						createLabel(composite, Policy.bind("CVSFilePropertiesPage.date", tag.getName())); //$NON-NLS-1$
-						break;
-				}
+				// In an entry file we can't differentiate branch and version tags. They both appear
+				// as T<tagName>. Instead just display the tag name to the user.
+				createLabel(composite, tag.getName());
 			}
 			
 			// Permissions
