@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -40,7 +39,7 @@ import org.eclipse.swt.widgets.Table;
  * Ant preference page.
  */
 public abstract class AntPage {
-	private SelectionAdapter selectionAdapter = new SelectionAdapter() {
+	protected SelectionAdapter selectionAdapter = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			buttonPressed(((Integer) e.widget.getData()).intValue());
 		}
@@ -129,6 +128,7 @@ public abstract class AntPage {
 		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.horizontalSpan= 1;
 		table.setLayoutData(data);
 		contentProvider = getContentProvider();
 		tableViewer = new TableViewer(table);
@@ -160,7 +160,7 @@ public abstract class AntPage {
 	 * Returns the currently listed objects in the table.  Returns null
 	 * if this widget has not yet been created or has been disposed.
 	 */
-	public List getContents() {
+	protected List getContents() {
 		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
 			return null;
 		}
@@ -192,19 +192,25 @@ public abstract class AntPage {
 	 * Returns the shell of the sub-page.
 	 */
 	protected final Shell getShell() {
-		if (tableViewer == null || tableViewer.getControl().isDisposed())
+		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
 			return null;
+		}
 		return tableViewer.getControl().getShell();
 	}
 	
 	/**
 	 * Handles the remove button pressed event
 	 */
-	protected void removeButtonPressed() {
-		IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
+	protected void remove() {
+		remove(tableViewer);
+	}
+	
+	protected void remove(TableViewer viewer) {
+		AntPageContentProvider antContentProvider= (AntPageContentProvider)viewer.getContentProvider();
+		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		Iterator enum = sel.iterator();
 		while (enum.hasNext()) {
-			contentProvider.remove(enum.next());
+			antContentProvider.remove(enum.next());
 		}
 	}
 	
@@ -212,7 +218,7 @@ public abstract class AntPage {
 	 * Sets the contents of the table on this page.  Has no effect
 	 * if this widget has not yet been created or has been disposed.
 	 */
-	public void setInput(List inputs) {
+	protected void setInput(List inputs) {
 		if (tableViewer == null || tableViewer.getControl().isDisposed()) {
 			return;
 		}
@@ -231,10 +237,9 @@ public abstract class AntPage {
 	}
 	
 	/**
-	 * Creates this page's controls
+	 * Creates the default contents of this page
 	 */
-	public Control createControl(Composite parent) {
-		Composite top = new Composite(parent, SWT.NONE);
+	protected Composite createContents(Composite top) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 2;
