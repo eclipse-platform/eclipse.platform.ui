@@ -91,6 +91,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private IDebugModelPresentation debugModelPresentation;
 	
 	private boolean userHasMadeChanges= false;
+	/**
+	 * Collection of configurations created while the page is open.
+	 * Stored here so they can be deleted if the page is cancelled.
+	 */
+	private List newConfigList= new ArrayList();
 	
 	private SelectionListener fButtonListener= new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -528,6 +533,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 				config.delete();
 			} else {
 				userHasMadeChanges= true;
+				newConfigList.add(config);
 				addConfig(config, true);
 			}
 		} catch (CoreException e) {
@@ -905,4 +911,19 @@ public final class BuilderPropertyPage extends PropertyPage {
 			item.setImage(builderImage);
 		}
 	}
+	/**
+	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
+	 */
+	public boolean performCancel() {
+		Iterator iter= newConfigList.iterator();
+		while (iter.hasNext()) {
+			try {
+				((ILaunchConfiguration) iter.next()).delete();
+			} catch (CoreException e) {
+				handleException(e);
+			}
+		}
+		return super.performCancel();
+	}
+
 }
