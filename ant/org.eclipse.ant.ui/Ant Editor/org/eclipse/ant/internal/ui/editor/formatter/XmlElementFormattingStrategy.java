@@ -62,7 +62,7 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
 
         try {
 
-            String formatted = formatElement(document, partition, lineIndent, prefs);
+            String formatted = formatElement(document, partition, lineIndent);
 
             String partitionText = document.get(partition.getOffset(), partition.getLength());
 
@@ -74,7 +74,7 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
         }
     }
 
-    private String formatElement(IDocument document, TypedPosition partition, String indentation, FormattingPreferences prefs) throws BadLocationException {
+    private String formatElement(IDocument document, TypedPosition partition, String indentation) throws BadLocationException {
 
         String partitionText = document.get(partition.getOffset(), partition.getLength());
 

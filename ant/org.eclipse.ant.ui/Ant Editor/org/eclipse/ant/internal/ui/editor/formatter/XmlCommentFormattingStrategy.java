@@ -63,16 +63,16 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
             }
         }
 
-        public boolean formatWith(Position partition)
+        public boolean formatWith(Position partitionToCompare)
                 throws BadLocationException {
 
             Assert.isNotNull(this.document);
             Assert.isNotNull(this.partition);
 
-            if (this.partition.offset < partition.offset) {
-                return formatTogether(this.partition, partition);
-            } else if (this.partition.offset > partition.offset) {
-                return formatTogether(partition, this.partition);
+            if (this.partition.offset < partitionToCompare.offset) {
+                return formatTogether(this.partition, partitionToCompare);
+            } else if (this.partition.offset > partitionToCompare.offset) {
+                return formatTogether(partitionToCompare, this.partition);
             } else {
                 // I wouldn't expect both partitions to
                 // start at the same spot.
@@ -122,8 +122,8 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
                     - (p1.offset + p1.length));
         }
 
-        private String textOf(Position partition) throws BadLocationException {
-            return this.document.get(partition.offset, partition.length);
+        private String textOf(Position textPartition) throws BadLocationException {
+            return this.document.get(textPartition.offset, textPartition.length);
         }
     }
 
@@ -195,8 +195,8 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
             char[] whitespace = new char[fCommentWidth - (text.length() + 7)];
             Arrays.fill(whitespace,' ');
 
-            return "<!-- " + actualText(comment) + String.valueOf(whitespace)
-                    + "-->";
+            return "<!-- " + actualText(comment) + String.valueOf(whitespace) //$NON-NLS-1$
+                    + "-->"; //$NON-NLS-1$
         }
     }
 
