@@ -46,6 +46,7 @@ public class FormContent extends Composite {
 	private int TITLE_VMARGIN = 5;
 	private int TITLE_GAP = 5;
 	private Image backgroundImage;
+	private boolean backgroundImageTiled;
 	private String text;
 	private Composite body;
 	private ToolBarManager toolBarManager;
@@ -261,15 +262,56 @@ public class FormContent extends Composite {
 	}
 	private void onPaint(GC gc) {
 		Rectangle carea = getClientArea();
+		Point textSize=null;
+
+		if (text != null) {
+			gc.setFont(getFont());
+			textSize = FormUtil.computeWrapSize(gc, text, carea.width-TITLE_HMARGIN-TITLE_HMARGIN);
+		}
 		if (backgroundImage != null) {
-			gc.drawImage(backgroundImage, 0, 0);
+			drawBackgroundImage(gc, carea.width, TITLE_VMARGIN+textSize.y+TITLE_VMARGIN);
 		}
 		if (text != null) {
 			gc.setBackground(getBackground());
 			gc.setForeground(getForeground());
-			gc.setFont(getFont());
 			Rectangle tbounds = new Rectangle(TITLE_VMARGIN, TITLE_HMARGIN,carea.width-TITLE_HMARGIN-TITLE_HMARGIN, carea.height-TITLE_VMARGIN-TITLE_VMARGIN);
 			FormUtil.paintWrapText(gc, text, tbounds);
 		}
+	}
+	private void drawBackgroundImage(GC gc, int width, int height) {
+		if (backgroundImageTiled) {
+			Rectangle ibounds = backgroundImage.getBounds();
+			int x=0;
+			int y=0;
+			// loop and tile image until the entire title area is covered
+			for (;;) {
+				gc.drawImage(backgroundImage, x, y);
+				x+=ibounds.width;
+				if (x>width) {
+					//wrap
+					x = 0;
+					y += ibounds.height;
+					if (y>height) break;
+				}
+			}
+		}
+		else {
+			gc.drawImage(backgroundImage, 0, 0);
+		}
+		
+	}
+	/**
+	 * @return Returns the backgroundImageTiled.
+	 */
+	public boolean isBackgroundImageTiled() {
+		return backgroundImageTiled;
+	}
+	/**
+	 * @param backgroundImageTiled The backgroundImageTiled to set.
+	 */
+	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
+		this.backgroundImageTiled = backgroundImageTiled;
+		if (isVisible())
+			redraw();
 	}
 }

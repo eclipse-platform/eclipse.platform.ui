@@ -541,6 +541,17 @@ public class FormToolkit {
 		}
 		control.addKeyListener(deleteListener);
 	}
+/**
+ * Sets the background color for the entire toolkit. The method
+ * delegates the call to the FormColors object and also updates
+ * the hyperlink group so that hyperlinks and other objects are
+ * in sync.
+ * @param bg the new background color
+ */
+	public void setBackground(Color bg) {
+		hyperlinkGroup.setBackground(bg);
+		colors.setBackground(bg);
+	}
 	/**
 	 * Refreshes the hyperlink colors by loading from JFace settings.
 	 */

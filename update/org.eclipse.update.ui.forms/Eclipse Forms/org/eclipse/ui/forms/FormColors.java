@@ -13,6 +13,7 @@ package org.eclipse.ui.forms;
 import java.util.*;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
@@ -81,6 +82,21 @@ public class FormColors {
 		createColor(TITLE, 102, 120, 153);
 	}
 
+	/**
+	 * Creates the color for the specified key using the provided RGB object.
+	 * The color object will be returned and also put into the registry. When
+	 * the class is disposed, the color will be disposed with it.
+	 * 
+	 * @param key
+	 *            the unique color key
+	 * @param rgb
+	 *            the RGB object
+	 * @return the allocated color object
+	 */
+	public Color createColor(String key, RGB rgb) {
+		return createColor(key, rgb.red, rgb.green, rgb.blue);
+	}
+	
 	/**
 	 * Creates the color for the specified key using the provided RGB values.
 	 * The color object will be returned and also put into the registry. When
