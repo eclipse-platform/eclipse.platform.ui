@@ -225,7 +225,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
-		if (isDirty())
+		Object old_value= event.getOldValue();
+		Object new_value= event.getNewValue();
+		if (old_value == null || new_value == null || !old_value.equals(new_value))
 			firePropertyChange(PROP_DIRTY);
 	}
 }
