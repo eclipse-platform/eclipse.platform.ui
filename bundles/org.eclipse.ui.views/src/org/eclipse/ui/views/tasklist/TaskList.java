@@ -281,10 +281,12 @@ void createColumns() {
 		tc.setResizable(columnLayouts[i].resizable);
 		tc.setText(columnHeaders[i]);
 
+		/*
 		if (i == 1)
 			tc.setImage(MarkerUtil.getImage("header_complete"));
 		else if (i == 2)
 			tc.setImage(MarkerUtil.getImage("header_priority"));
+		*/
 
 		tc.addSelectionListener(headerListener);
 	}
