@@ -58,11 +58,11 @@ public interface IJobChangeListener {
 	public void running(IJobChangeEvent event);
 	/**
 	 * Notification that a job has been added to the queue of scheduled jobs.  
-	 * Listeners are allowed to sleep, cancel, or change the priority of the given job 
-	 * before it has a chance to run.  The event details includes the scheduling delay
-	 * before the event should start running.
+	 * The event details includes the scheduling delay before the event should start 
+	 * running.
 	 * 
-	 * @param event the event details
+	 * @param event the event details, including the job instance and the scheduling
+	 * delay
 	 */
 	public void scheduled(IJobChangeEvent event);
 	/**
