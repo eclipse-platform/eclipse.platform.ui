@@ -76,7 +76,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	 */
 	public void replace(int offset, int length, String text) {
 		if (text == null)
-			text= new String();
+			text= "";
 
 		if (fReplaceList.size() == 0) {
 			fReplaceList.add(new Replace(offset, offset, length, text));

@@ -627,10 +627,10 @@ public class TextPresentation {
 			return createWindowRelativeRange(fResultWindow, range);
 			
 		} catch (NoSuchElementException x) {
-			return null;
 		} catch (IndexOutOfBoundsException x) {
-			return null;
 		}
+		
+		return null;
 	}
 	
 	/**
