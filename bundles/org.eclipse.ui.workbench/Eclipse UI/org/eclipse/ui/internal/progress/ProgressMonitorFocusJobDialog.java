@@ -20,16 +20,12 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * The ProgressMonitorFocusJobDialog is a dialog that shows progress for a
@@ -48,26 +44,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		super(parentShell == null ? ProgressManagerUtil.getDefaultParent() : parentShell);
 		setCancelable(true);
 	}
-	/**
-	 * Animate the closing of the dialog.
-	 * 
-	 * @param startPosition
-	 */
-	private void animateClose(Rectangle startPosition) {
-		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (currentWindow == null)
-			return;
-		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
-		Rectangle end = internalWindow.getProgressRegion().getControl()
-				.getBounds();
-		Point start = internalWindow.getShell().getLocation();
-		end.x += start.x;
-		end.y += start.y;
-		RectangleAnimation animation = new RectangleAnimation(internalWindow
-				.getShell(), startPosition, end, 250);
-		animation.schedule();
-	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -109,7 +86,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				Rectangle shellPosition = getShell().getBounds();
 				job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(false));
 				close();
-				animateClose(shellPosition);
+				ProgressManagerUtil.animateDown(shellPosition);
 			}
 		});
 		runInWorkspace.setCursor(arrowCursor);
@@ -343,6 +320,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	}
 	/**
 	 * Opens this dialog for the duration that the given job is running.
+	 * @param jobToWatch
 	 */
 	public void show(Job jobToWatch) {
 		job = jobToWatch;
@@ -374,7 +352,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 				//Do not bother if the parent is disposed
 				if(getParentShell() != null && getParentShell().isDisposed())
-					return Status.CANCEL_STATUS;;
+					return Status.CANCEL_STATUS;
 				
 				open();
 				// add a listener that will close the dialog when the job completes.

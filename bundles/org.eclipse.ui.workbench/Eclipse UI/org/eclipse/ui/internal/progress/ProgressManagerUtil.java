@@ -16,6 +16,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -24,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -33,6 +36,10 @@ import org.eclipse.ui.internal.util.BundleUtility;
  */
 public class ProgressManagerUtil {
 	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
+	/**
+	 * A constant used by the progress support to determine if an operation is
+	 * too short to show progress.
+	 */
 	public static long SHORT_OPERATION_TIME = 250;
 	private static String ellipsis = ProgressMessages
 			.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
@@ -52,10 +59,12 @@ public class ProgressManagerUtil {
 	 * @param exception
 	 */
 	static void logException(Throwable exception) {
-     BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
+		BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
 	}
 	/**
 	 * Sets the label provider for the viewer.
+	 * 
+	 * @param viewer
 	 */
 	static void initLabelProvider(ProgressTreeViewer viewer) {
 		viewer.setLabelProvider(new ProgressLabelProvider());
@@ -63,7 +72,7 @@ public class ProgressManagerUtil {
 	/**
 	 * Return a viewer sorter for looking at the jobs.
 	 * 
-	 * @return
+	 * @return ViewerSorter
 	 */
 	static ViewerSorter getProgressViewerSorter() {
 		return new ViewerSorter() {
@@ -93,7 +102,7 @@ public class ProgressManagerUtil {
 			logException(exception);
 		}
 	}
-	
+
 	/**
 	 * Return whether or not the progress view is missing.
 	 * 
@@ -109,8 +118,9 @@ public class ProgressManagerUtil {
 	 * the given width. The default implementation replaces characters in the
 	 * center of the original string with an ellipsis ("..."). Override if you
 	 * need a different strategy.
-	 * 
-	 * @param
+	 * @param textValue
+	 * @param control
+	 * @return String
 	 */
 	static String shortenText(String textValue, Control control) {
 		if (textValue == null)
@@ -183,8 +193,7 @@ public class ProgressManagerUtil {
 		if (gc.textExtent(textValue.substring(0, secondCharacter)).x > maxWidth) {
 			if (gc.textExtent(textValue.substring(0, firstCharacter)).x > maxWidth)
 				return 0;
-			else
-				return firstCharacter;
+			return firstCharacter;
 		}
 		return secondCharacter;
 	}
@@ -194,16 +203,16 @@ public class ProgressManagerUtil {
 	 * blocking it.
 	 * 
 	 * @param openJob
-	 * @return boolean. true if the job was rescheduled due to modal 
-	 * dialogs.
+	 * @return boolean. true if the job was rescheduled due to modal dialogs.
 	 */
 	public static boolean rescheduleIfModalShellOpen(Job openJob) {
 		Shell modal = getModalShell();
 		if (modal == null)
 			return false;
-		
+
 		//try again in a few seconds
-		openJob.schedule(PlatformUI.getWorkbench().getProgressService().getLongOperationTime());
+		openJob.schedule(PlatformUI.getWorkbench().getProgressService()
+				.getLongOperationTime());
 		return true;
 	}
 	/**
@@ -228,24 +237,71 @@ public class ProgressManagerUtil {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Utility method to get the best parenting possible for
-	 * a dialog. If there is a modal shell create it so as to 
-	 * avoid two modal dialogs.
-	 * If not then return the shell of the active workbench window.
-	 * If neither can be found return null.
+	 * Utility method to get the best parenting possible for a dialog. If there
+	 * is a modal shell create it so as to avoid two modal dialogs. If not then
+	 * return the shell of the active workbench window. If neither can be found
+	 * return null.
+	 * 
 	 * @return Shell or <code>null</code>
 	 */
-	public static Shell getDefaultParent(){
+	public static Shell getDefaultParent() {
 		Shell modal = getModalShell();
-		if(modal != null)
+		if (modal != null)
 			return modal;
-		
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window != null)
+
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window != null)
 			return window.getShell();
-		
+
 		return null;
+	}
+
+	/**
+	 * Animate the closing of a window given the start position down to the
+	 * progress region.
+	 * 
+	 * @param startPosition
+	 *            Rectangle. The position to start drawing from.
+	 */
+	public static void animateDown(Rectangle startPosition) {
+		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (currentWindow == null)
+			return;
+		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
+		Rectangle end = internalWindow.getProgressRegion().getControl()
+				.getBounds();
+		Point windowLocation = internalWindow.getShell().getLocation();
+		end.x += windowLocation.x;
+		end.y += windowLocation.y;
+		RectangleAnimation animation = new RectangleAnimation(internalWindow
+				.getShell(), startPosition, end, 250);
+		animation.schedule();
+	}
+
+	/**
+	 * Animate the opening of a window given the start position down to the
+	 * progress region.
+	 * 
+	 * @param endPosition
+	 *            Rectangle. The position to end drawing at.
+	 */
+	public static void animateUp(Rectangle endPosition) {
+		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (currentWindow == null)
+			return;
+		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
+		Point windowLocation = internalWindow.getShell().getLocation();
+		Rectangle region = internalWindow.getProgressRegion().getControl()
+				.getBounds();
+		region.x += windowLocation.x;
+		region.y += windowLocation.y;
+		RectangleAnimation animation = new RectangleAnimation(internalWindow
+				.getShell(), region, endPosition, 250);
+		animation.schedule();
 	}
 }
