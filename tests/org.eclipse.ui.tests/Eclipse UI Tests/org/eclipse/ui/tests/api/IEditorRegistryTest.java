@@ -220,8 +220,8 @@ public class IEditorRegistryTest extends TestCase {
 		callTrace.clear();
 		callTrace2.clear();
 		((EditorRegistry)fReg).setFileEditorMappings( maps );				
-		assertEquals( callTrace.contains( listener, METHOD ), true);
-		assertEquals( callTrace2.contains( listener2, METHOD ), true);
+		assertEquals( callTrace.contains( METHOD ), true);
+		assertEquals( callTrace2.contains( METHOD ), true);
 		
 		//add the same listener second time
 		fReg.addPropertyListener( listener );
@@ -252,7 +252,7 @@ public class IEditorRegistryTest extends TestCase {
 		//fire!!		
 		callTrace.clear();
 		((EditorRegistry)fReg).setFileEditorMappings( maps );				
-		assertEquals( callTrace.contains( listener, "propertyChanged" ), false );
+		assertEquals( callTrace.contains( "propertyChanged" ), false );
 		
 		//removing the listener that is not registered yet should have no effect
 		try{

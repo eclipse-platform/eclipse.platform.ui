@@ -7,6 +7,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	public static String ID = "org.eclipse.ui.tests.api.MockViewPart";
 	public static String ID2 = ID + "2";
 	public static String ID3 = ID + "3";
+	public static String NAME = "Mock View 1";
 
 	public MockViewPart()
 	{
@@ -25,7 +26,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	 */
 	public void init(IViewSite site) throws PartInitException {
 		setSite(site);
-		callTrace.add( this, "init" );		
+		callTrace.add("init" );		
 	}
 
 	/**
@@ -33,7 +34,7 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		setSite(site);
-		callTrace.add( this, "init" );
+		callTrace.add("init" );
 	}
 
 	/**

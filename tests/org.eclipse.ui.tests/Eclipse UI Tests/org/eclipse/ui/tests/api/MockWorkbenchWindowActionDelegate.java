@@ -23,14 +23,14 @@ public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		callHistory.add(this, "init");
+		callHistory.add("init");
 	}
 
 	/**
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		callHistory.add(this, "dispose");
+		callHistory.add("dispose");
 	}
 }
 

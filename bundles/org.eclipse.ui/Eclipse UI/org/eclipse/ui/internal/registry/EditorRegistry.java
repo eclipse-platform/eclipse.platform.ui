@@ -445,11 +445,12 @@ private boolean loadAssociations() {
 
 	//Get the editors and validate each one
 	Map editorTable = new HashMap();
-	InputStreamReader reader = null;
+	FileReader reader = null;
 
 	try {
-		FileInputStream stream = new FileInputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8");
+		reader =
+			new FileReader(
+				workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		EditorDescriptor editor;
 		IMemento[] edMementos = memento.getChildren(IWorkbenchConstants.TAG_DESCRIPTOR);
@@ -490,11 +491,11 @@ private boolean loadAssociations() {
 	//Get the resource types
 	reader = null;
 	try {
-		FileInputStream stream = new FileInputStream(
-			workbenchStatePath
-				.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
-				.toOSString());
-	 	reader = new InputStreamReader(stream, "utf-8");
+		reader =
+			new FileReader(
+				workbenchStatePath
+					.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME)
+					.toOSString());
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
 		IMemento[] extMementos = memento.getChildren(IWorkbenchConstants.TAG_INFO);
 		for (int i = 0; i < extMementos.length; i++) {
@@ -620,10 +621,9 @@ public void saveAssociations () {
 			idMemento.putString(IWorkbenchConstants.TAG_ID,editorArray[i].getId());
 		}
 	}
-	OutputStreamWriter writer = null;
+	FileWriter writer = null;
 	try {
-		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8");
+		writer = new FileWriter(workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
 		memento.save(writer);
 		writer.close();
 	} catch(IOException e) {
@@ -646,8 +646,7 @@ public void saveAssociations () {
 	}
 	writer = null;
 	try {
-		FileOutputStream stream = new FileOutputStream(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
-	 	writer = new OutputStreamWriter(stream, "utf-8");
+		writer = new FileWriter(workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
 		memento.save(writer);
 		writer.close();
 	} catch(IOException e) {
