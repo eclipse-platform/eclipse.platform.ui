@@ -889,6 +889,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * Erase both (run & debug) launch histories.
 	 */
 	protected void setEmptyLaunchHistories() {
+		fRecentLaunch = null;
 		fRunHistory = new Vector(MAX_HISTORY_SIZE);
 		fDebugHistory = new Vector(MAX_HISTORY_SIZE);
 		setRunFavorites(new Vector(MAX_HISTORY_SIZE));
