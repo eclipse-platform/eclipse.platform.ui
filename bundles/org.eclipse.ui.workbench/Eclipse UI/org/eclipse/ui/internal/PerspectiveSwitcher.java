@@ -85,13 +85,8 @@ public class PerspectiveSwitcher {
 	private static final int TOP_LEFT = 2;
 	private static final int LEFT = 3;
 	
+	private static final int DEFAULT_RIGHT_X = 160;
 	private int currentLocation = INITIAL;
-	
-	// temporary field to store the width of the coolbar
-	// so that we can save it on exit, it is possible
-	// that the CoolBar is disposed by the time we need 
-	// know it 
-	private Point coolBarSize = null;
 	
 	private static final int SEPARATOR_LENGTH = 20;
 
@@ -312,7 +307,7 @@ public class PerspectiveSwitcher {
 	    case TOP_RIGHT:
 			topBar.setBottom(null);
 			topBar.setRight(perspectiveCoolBarWrapper.getControl());
- 			topBar.setRightWidth(160);
+ 			topBar.setRightWidth(DEFAULT_RIGHT_X);
  			break;
  	    case LEFT:
 			topBar.setBottom(null);
@@ -390,9 +385,6 @@ public class PerspectiveSwitcher {
 	    if (propertyChangeListener != null) {
 	    	apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
 	    	propertyChangeListener = null;
-	    }
-	    if (perspectiveCoolBar != null && !perspectiveCoolBar.isDisposed()) {
-	    		coolBarSize = perspectiveCoolBar.getSize();
 	    }
 	    toolBarListener = null;
 	}
@@ -766,15 +758,11 @@ public class PerspectiveSwitcher {
 		IMemento childMem = persBarMem.createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
 
 		int x;
-		if (perspectiveCoolBar != null && !perspectiveCoolBar.isDisposed()) {
-			x = perspectiveCoolBar.getSize().x;
-		} else if (coolBarSize != null) {
-			x = coolBarSize.x;
-		} else {
-			// this case should not occur as we remember the coolbar size before disposing
-			// the perspectiveCoolBar in disposeChildren
-			x = 160;
-		}
+		if (currentLocation == TOP_RIGHT && topBar != null)
+			x = topBar.getRightWidth();
+		else
+			x = DEFAULT_RIGHT_X;
+		
 		childMem.putString(IWorkbenchConstants.TAG_X, Integer.toString(x));
 	}
 
@@ -789,14 +777,12 @@ public class PerspectiveSwitcher {
 		IMemento size = null;
 		if (attributes != null)
 			size = attributes.getChild(IWorkbenchConstants.TAG_ITEM_SIZE);
-		if (size != null) {
-			int width = size.getInteger(IWorkbenchConstants.TAG_X).intValue();
-			Point psize = perspectiveCoolBar.getSize();
-			psize.x = width;
-			// Get the CBanner and set the width of the right element
-			Composite banner = coolItem.getParent().getParent().getParent();
-			if (banner instanceof CBanner)
-				((CBanner)banner).setRightWidth(width);
+		if (size != null && currentLocation == TOP_RIGHT && topBar != null) {
+			Integer x = size.getInteger(IWorkbenchConstants.TAG_X);
+			if (x != null)
+				topBar.setRightWidth(x.intValue());
+			else
+				topBar.setRightWidth(DEFAULT_RIGHT_X);
 		}
 	}
 
