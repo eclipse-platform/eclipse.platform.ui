@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.examples.pessimistic.PessimisticFilesystemProviderPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -44,6 +45,8 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	// This static field will hold the singleton instance of the plugin class
 	private static FileSystemPlugin plugin;
 	
+	private PessimisticFilesystemProviderPlugin pessimisticPlugin;
+	
 	/**
 	 * Override the standard plugin constructor.
 	 * 
@@ -53,6 +56,7 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 		super(descriptor);
 		// record this instance as the singleton
 		plugin = this;
+		pessimisticPlugin = new PessimisticFilesystemProviderPlugin(descriptor);
 	}
 	
 	/**

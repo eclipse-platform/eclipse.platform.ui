@@ -311,6 +311,9 @@ public class FileSystemOperations {
 				InputStream in = null;
 				FileOutputStream out = null;
 				try {
+					if(! diskFile.getParentFile().exists()) {
+						diskFile.getParentFile().mkdirs();
+					}
 					in = localFile.getContents();
 					out = new FileOutputStream(diskFile);
 					//Copy the contents of the local file to the remote file:
