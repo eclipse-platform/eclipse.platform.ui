@@ -979,10 +979,12 @@ public class ResourceNavigator
 			if (expandedElements.length > 0) {
 				IMemento expandedMem = memento.createChild(TAG_EXPANDED);
 				for (int i = 0; i < expandedElements.length; i++) {
-					IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
-					elementMem.putString(
-						TAG_PATH,
-						((IResource) expandedElements[i]).getFullPath().toString());
+				    if (expandedElements[i] instanceof IResource) {
+						IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
+						elementMem.putString(
+							TAG_PATH,
+							((IResource) expandedElements[i]).getFullPath().toString());
+				    }
 				}
 			}
 			//save selection
@@ -990,10 +992,12 @@ public class ResourceNavigator
 			if (elements.length > 0) {
 				IMemento selectionMem = memento.createChild(TAG_SELECTION);
 				for (int i = 0; i < elements.length; i++) {
-					IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
-					elementMem.putString(
-						TAG_PATH,
-						((IResource) elements[i]).getFullPath().toString());
+				    if (elements[i] instanceof IResource) {
+						IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
+						elementMem.putString(
+							TAG_PATH,
+							((IResource) elements[i]).getFullPath().toString());
+				    }
 				}
 			}
 		}
