@@ -130,6 +130,7 @@ public Menu createContextMenu(Control parent) {
  *
  * @param parent the parent decorations
  * @return the menu control
+ * @since 2.1
  */
 public Menu createMenuBar(Decorations parent) {
 	if (!menuExist()) {
@@ -137,6 +138,19 @@ public Menu createMenuBar(Decorations parent) {
 		update(false);
 	}
 	return menu;
+}
+/**
+ * Creates and returns an SWT menu bar control for this menu, for use in the
+ * given <code>Shell</code>, and installs all registered contributions. Does not
+ * create a new control if one already exists. This implementation simply calls
+ * the <code>createMenuBar(Decorations)</code> method
+ *
+ * @param parent the parent decorations
+ * @return the menu control
+ * @deprecated use <code>createMenuBar(Decorations)</code> instead.
+ */
+public Menu createMenuBar(Shell parent) {
+	return createMenuBar((Decorations)parent);
 }
 /**
  * Disposes of this menu manager and frees all allocated SWT resources.
