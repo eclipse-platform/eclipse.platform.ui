@@ -69,21 +69,19 @@ public class XMLAnnotationHover implements IAnnotationHover {
 		Map messagesAtPosition= new HashMap();
 		while (e.hasNext()) {
 			Object o= e.next();
-			if (o instanceof IXMLAnnotation) {
-				IXMLAnnotation a= (IXMLAnnotation)o;
-				if (!a.hasOverlay()) {
-					Position position= model.getPosition((Annotation)a);
-					if (position == null)
-						continue;
+			if (o instanceof Annotation) {
+				Annotation a= (Annotation)o;
+				Position position= model.getPosition(a);
+				if (position == null)
+					continue;
 
-					if (isDuplicateXMLAnnotation(messagesAtPosition, position, a.getMessage()))
-						continue;
-	
-					switch (compareRulerLine(position, document, line)) {
-						case 1:
-							exact.add(a);
-							break;
-					}
+				if (isDuplicateXMLAnnotation(messagesAtPosition, position, a.getText()))
+					continue;
+
+				switch (compareRulerLine(position, document, line)) {
+					case 1:
+						exact.add(a);
+						break;
 				}
 			}
 		}
@@ -124,20 +122,19 @@ public class XMLAnnotationHover implements IAnnotationHover {
 			if (xmlAnnotations.size() == 1) {
 				
 				// optimization
-				IXMLAnnotation xmlAnnotation= (IXMLAnnotation)xmlAnnotations.get(0);
-				String message= xmlAnnotation.getMessage();
+				Annotation xmlAnnotation= (Annotation)xmlAnnotations.get(0);
+				String message= xmlAnnotation.getText();
 				if (message != null && message.trim().length() > 0) {
 					return formatSingleMessage(message);
 				}
 					
 			} else {
 					
-				List messages= new ArrayList();
-				
+				List messages= new ArrayList(xmlAnnotations.size());
 				Iterator e= xmlAnnotations.iterator();
 				while (e.hasNext()) {
-					IXMLAnnotation xmlAnnotation= (IXMLAnnotation)e.next();
-					String message= xmlAnnotation.getMessage();
+					Annotation xmlAnnotation= (Annotation)e.next();
+					String message= xmlAnnotation.getText();
 					if (message != null && message.trim().length() > 0) {
 						messages.add(message.trim());
 					}

@@ -52,9 +52,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		private List fCollectedProblems= new ArrayList();
 		
 		private ReverseMap fReverseMap= new ReverseMap();
-		private List fPreviouslyOverlaid= null; 
-		private List fCurrentlyOverlaid= new ArrayList();
-
 		public AntAnnotationModel(IFile file) {
 			super(file);
 		}
@@ -67,7 +64,7 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 			if (AntEditorMarkerUpdater.BUILDFILE_PROBLEM_MARKER.equals(markerType)) {
 				return null;
 			}
-			return new XMLMarkerAnnotation(EditorsUI.getAnnotationTypeLookup().getAnnotationType(marker), marker);
+			return new MarkerAnnotation(EditorsUI.getAnnotationTypeLookup().getAnnotationType(marker), marker);
 		}
 
 		protected Position createPositionFromProblem(IProblem problem) {
@@ -100,8 +97,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		 */
 		public void endReporting() {
 			boolean temporaryProblemsChanged= false;
-			fPreviouslyOverlaid= fCurrentlyOverlaid;
-			fCurrentlyOverlaid= new ArrayList();
 				
 			synchronized (getAnnotationMap()) {
 					
@@ -121,7 +116,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 						if (position != null) {
 								
 							XMLProblemAnnotation annotation= new XMLProblemAnnotation(problem);
-							overlayMarkers(position, annotation);								
 							fGeneratedAnnotations.add(annotation);
 							try {
 								addAnnotation(annotation, position, false);
@@ -135,52 +129,10 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 						
 					fCollectedProblems.clear();
 				}
-					
-				removeMarkerOverlays();
-				fPreviouslyOverlaid.clear();
-				fPreviouslyOverlaid= null;
 			}
 					
 			if (temporaryProblemsChanged)
 				fireModelChanged(new AnnotationModelEvent(this));
-		}
-
-		private void removeMarkerOverlays() {
-			Iterator e= fPreviouslyOverlaid.iterator();
-			while (e.hasNext()) {
-				XMLMarkerAnnotation annotation= (XMLMarkerAnnotation) e.next();
-				annotation.setOverlay(null);
-			}			
-		}
-			
-		/**
-		 * Overlays value with problem annotation.
-		 * @param problemAnnotation
-		 */
-		private void setOverlay(Object value, XMLProblemAnnotation problemAnnotation) {
-			if (value instanceof  XMLMarkerAnnotation) {
-				XMLMarkerAnnotation annotation= (XMLMarkerAnnotation) value;
-				if (annotation.isProblem()) {
-					annotation.setOverlay(problemAnnotation);
-					fPreviouslyOverlaid.remove(annotation);
-					fCurrentlyOverlaid.add(annotation);
-				}
-			}
-		}
-			
-		private void  overlayMarkers(Position position, XMLProblemAnnotation problemAnnotation) {
-			Object value= getAnnotations(position);
-			if (value instanceof List) {
-				List list= (List) value;
-				for (Iterator e = list.iterator(); e.hasNext();)
-					setOverlay(e.next(), problemAnnotation);
-			} else {
-				setOverlay(value, problemAnnotation);
-			}
-		}
-
-		private Object getAnnotations(Position position) {
-			return fReverseMap.get(position);
 		}
 						
 		/* (non-Javadoc)
