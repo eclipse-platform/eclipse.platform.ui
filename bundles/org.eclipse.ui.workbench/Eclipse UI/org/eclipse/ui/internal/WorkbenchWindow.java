@@ -711,15 +711,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
             	// direct way to tell the difference between these cases, however
             	// we take advantage of the fact that dragging the sash does not
             	// change the size of the shell, and only force another layout
-            	// if the shell size is unchanged. 
-            	Point newSize = shell.getSize();
+            	// if the shell size is unchanged.
+                Rectangle clientArea = shell.getClientArea();
             	
-            	if (lastShellSize.equals(newSize)) {
+            	if (lastShellSize.x == clientArea.width && lastShellSize.y == clientArea.height) {
             		LayoutUtil.resize(coolBar);
             	}
             	
-        		lastShellSize.x = newSize.x;
-        		lastShellSize.y = newSize.y;
+        		lastShellSize.x = clientArea.width;
+        		lastShellSize.y = clientArea.height;
             }
         });
 
