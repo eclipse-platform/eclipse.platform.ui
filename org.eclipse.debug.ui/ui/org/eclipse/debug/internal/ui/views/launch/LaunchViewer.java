@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Widget;
 public class LaunchViewer extends TreeViewer {
 		
 	/**
-	 * Overridden to fix bug 39709 - dupicate items in launch viewer. The
-	 * workaround is requried since debug creation events (which result in
+	 * Overridden to fix bug 39709 - duplicate items in launch viewer. The
+	 * workaround is required since debug creation events (which result in
 	 * additions to the tree) are processed asynchrnously with the expanding
 	 * of a launch/debug target in the tree. 
 	 * 
