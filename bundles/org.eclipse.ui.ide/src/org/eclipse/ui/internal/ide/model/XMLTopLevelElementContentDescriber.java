@@ -35,7 +35,11 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A content describer for detecting the name of the top-level element of the
- * DTD system identifier in an XML file.  This supports two 
+ * DTD system identifier in an XML file. This supports two parameters:
+ * <code>DTD_TO_FIND</code> and <code>ELEMENT_TO_FIND</code>. This is done
+ * using the <code>IExecutableExtension</code> mechanism. If the
+ * <code>":-"</code> method is used, then the value is treated as the
+ * <code>ELEMENT_TO_FIND</code>.
  * 
  * @since 3.0
  */
@@ -163,11 +167,6 @@ public final class XMLTopLevelElementContentDescriber extends DefaultHandler
             IContentDescription description, int optionsMask)
             throws IOException {
 	    
-	    // I don't know how to provide anything but custom properties.
-	    if ((optionsMask & IContentDescription.CUSTOM_PROPERTIES) == 0) {
-	        return INDETERMINATE;
-	    }
-	    
 	    // Parse the file into we have what we need (or an error occurs).
 		try {
 			final SAXParser parser = createParser();
@@ -245,7 +244,7 @@ public final class XMLTopLevelElementContentDescriber extends DefaultHandler
             final String propertyName, final Object data) {
         
         if (data instanceof String) {
-            dtdToFind = (String) data;
+            elementToFind = (String) data;
         } else if (data instanceof Hashtable) {
             Hashtable parameters = (Hashtable) data; 
             dtdToFind = (String) parameters.get(DTD_TO_FIND);
