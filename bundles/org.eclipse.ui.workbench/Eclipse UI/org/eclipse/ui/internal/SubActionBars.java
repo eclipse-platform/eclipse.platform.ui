@@ -117,6 +117,7 @@ public void dispose() {
 		statusLineMgr.removeAll();
 	if (toolBarMgr != null)
 		toolBarMgr.removeAll();
+	propertyChangeListeners.clear();
 }
 /**
  * Notifies any property change listeners that a property has changed.

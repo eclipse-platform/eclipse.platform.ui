@@ -529,13 +529,6 @@ public void partBroughtToTop(IWorkbenchPart part) {
 public void partClosed(IWorkbenchPart part) {
 	// Update the active part.
 	if (activeRec != null && activeRec.part == part) {
-		activeRec.subActionBars.dispose();
-		// remove our selection listener
-		ISelectionProvider provider = ((PageSite)mapPageToSite.get(activeRec.page)).getSelectionProvider();
-		if (provider != null) 
-			provider.removeSelectionChangedListener(selectionChangedListener);
-
-		activeRec = null;
 		showPageRec(defaultPageRec);
 	}
 	
@@ -583,6 +576,10 @@ private void refreshGlobalActionHandlers() {
 private void removePage(PageRec rec) {
 	mapPageToSite.remove(rec.page);
 	mapPartToRec.remove(rec.part);
+
+	if (rec.subActionBars != null) {
+		rec.subActionBars.dispose();
+	}
 
 	Control control = rec.page.getControl();
 	if (control != null && !control.isDisposed()) {
