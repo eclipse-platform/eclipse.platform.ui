@@ -7,6 +7,8 @@ package org.eclipse.team.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -150,6 +152,25 @@ public class SyncView extends ViewPart {
 		freeMode.setChecked(false);
 	}
 	
+	private boolean isEmpty(DiffNode node) {
+		if (node.getKind() != 0) return false;
+		IDiffElement[] children = node.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (!isEmpty(children[i])) return false;
+		}
+		return true;
+	}
+	private boolean isEmpty(IDiffElement element) {
+		if (element.getKind() != 0) return false;
+		if (element instanceof DiffNode) {
+			IDiffElement[] children = ((DiffNode)element).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				if (!isEmpty(children[i])) return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Runs an operation and handles progress and exceptions.  Returns true
 	 * if the operation was successful, and false if there were errors or
@@ -259,7 +280,7 @@ public class SyncView extends ViewPart {
 		bars.updateActionBars();
 		
 		// Check for empty comparison
-		if (input.getDiffRoot() == null) {
+		if (isEmpty(input.getDiffRoot())) {
 			MessageDialog.openInformation(getSite().getShell(), Policy.bind("nothingToSynchronize"), Policy.bind("SyncView.same"));
 			showDefaultContents();
 			top.layout();
