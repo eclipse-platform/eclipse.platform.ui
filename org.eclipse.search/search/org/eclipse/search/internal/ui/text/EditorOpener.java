@@ -15,10 +15,10 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -44,12 +44,12 @@ public class EditorOpener {
 	private IEditorPart showWithReuse(Match match, IWorkbenchPage wbPage) throws PartInitException {
 		IFile file= (IFile) match.getElement();
 		String editorID= getEditorID(file);
-		return showInEditor(wbPage, new FileEditorInput(file), editorID);
+		return showInEditor(wbPage, file, editorID);
 	}
 
 
-	private String getEditorID(IFile file) {
-		IEditorDescriptor desc= IDE.getDefaultEditor(file);
+	private String getEditorID(IFile file) throws PartInitException {
+		IEditorDescriptor desc= IDE.getEditorDescriptor(file);
 		if (desc == null)
 			return SearchPlugin.getDefault().getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID).getId();
 		else
@@ -71,7 +71,8 @@ public class EditorOpener {
 		return false;
 	}
 	
-	private IEditorPart showInEditor(IWorkbenchPage page, IEditorInput input, String editorId) throws PartInitException {
+	private IEditorPart showInEditor(IWorkbenchPage page, IFile file, String editorId) throws PartInitException {
+		IFileEditorInput input= new FileEditorInput(file);
 		IEditorPart editor= page.findEditor(input);
 		if (editor != null)
 			page.bringToTop(editor);
@@ -96,7 +97,7 @@ public class EditorOpener {
 				page.bringToTop(fEditor);
 				editor= fEditor;
 			} else {
-					editor= page.openEditor(input, editorId, false);
+					editor= IDE.openEditor(page, file, false);
 					if (editor instanceof IReusableEditor)
 						fEditor= editor;
 					else
