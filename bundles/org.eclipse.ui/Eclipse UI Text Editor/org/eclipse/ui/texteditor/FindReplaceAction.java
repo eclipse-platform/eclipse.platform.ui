@@ -63,8 +63,14 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			
 			if (fPreviousTarget != target) {
 				fPreviousTarget= target;
-				if (fDialog != null)
-					fDialog.updateTarget(target);
+				if (fDialog != null) {
+					boolean isEditable= false;
+					if (fPart instanceof ITextEditorExtension) {
+						ITextEditorExtension extension= (ITextEditorExtension) fPart;
+						isEditable= !extension.isEditorInputReadOnly();
+					}
+					fDialog.updateTarget(target, isEditable);
+				}
 			}
 		}
 		
@@ -108,7 +114,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
-	
+	/** Indicates whether the find/replace target is editable */ 
+	private boolean fIsTargetEditable= false;
+
 	/**
 	 * Creates a new find/replace action for the given text editor. 
 	 * The action configures its visual representation from the given 
@@ -166,7 +174,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				fgFindReplaceDialogStub= new FindReplaceDialogStub(fWorkbenchPart.getSite());
 				
 			FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
-			dialog.updateTarget(fTarget);
+			dialog.updateTarget(fTarget, fIsTargetEditable);
 			dialog.open();
 		}
 	}
@@ -181,11 +189,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			
 		if (fWorkbenchPart instanceof ITextEditorExtension) {
 			ITextEditorExtension extension= (ITextEditorExtension) fWorkbenchPart;
-			if (extension.isEditorInputReadOnly()) {
-				fTarget= null;
-				setEnabled(false);
-				return;
-			}
+			fIsTargetEditable= !extension.isEditorInputReadOnly();
 		}
 		
 		if (fWorkbenchPart != null)
@@ -194,5 +198,10 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			fTarget= null;
 			
 		setEnabled(fTarget != null && fTarget.canPerformFind());
+		
+		if (fgFindReplaceDialogStub != null) {
+			FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
+			dialog.updateTarget(fTarget, fIsTargetEditable);
+		}
 	}
 }

@@ -7,6 +7,7 @@ package org.eclipse.ui.editors.text;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.core.resources.IFile;
@@ -314,38 +315,47 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			
 			IFileEditorInput input= (IFileEditorInput) element;
-			InputStream stream= new ByteArrayInputStream(document.get().getBytes());
 			
+//			try {
+			
+			InputStream stream= new ByteArrayInputStream(document.get().getBytes());
+//			InputStream stream= new ByteArrayInputStream(document.get().getBytes(ResourcesPlugin.getEncoding()));
 			IFile file= input.getFile();
 									
-			if (file.exists()) {				
-				
-				FileInfo info= (FileInfo) getElementInfo(element);
-				
-				if (info != null && !overwrite)
-					checkSynchronizationState(info.fModificationStamp, file);
-				
-				file.setContents(stream, overwrite, true, monitor);
-				
-				if (info != null) {
-										
-					ResourceMarkerAnnotationModel model= (ResourceMarkerAnnotationModel) info.fModel;
-					model.updateMarkers(info.fDocument);
+				if (file.exists()) {
 					
-					info.fModificationStamp= computeModificationStamp(file);
+					FileInfo info= (FileInfo) getElementInfo(element);
+					
+					if (info != null && !overwrite)
+						checkSynchronizationState(info.fModificationStamp, file);
+					
+					file.setContents(stream, overwrite, true, monitor);
+					
+					if (info != null) {
+											
+						ResourceMarkerAnnotationModel model= (ResourceMarkerAnnotationModel) info.fModel;
+						model.updateMarkers(info.fDocument);
+						
+						info.fModificationStamp= computeModificationStamp(file);
+					}
+					
+				} else {
+					try {
+						monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
+						ContainerGenerator generator = new ContainerGenerator(file.getParent().getFullPath());
+						generator.generateContainer(new SubProgressMonitor(monitor, 1000));
+						file.create(stream, false, new SubProgressMonitor(monitor, 1000));
+					}
+					finally {
+						monitor.done();
+					}
 				}
 				
-			} else {
-				try {
-					monitor.beginTask(TextEditorMessages.getString("FileDocumentProvider.task.saving"), 2000); //$NON-NLS-1$
-					ContainerGenerator generator = new ContainerGenerator(file.getParent().getFullPath());
-					generator.generateContainer(new SubProgressMonitor(monitor, 1000));
-					file.create(stream, false, new SubProgressMonitor(monitor, 1000));
-				}
-				finally {
-					monitor.done();
-				}
-			}
+//			} catch (IOException x) {
+//				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
+//				throw new CoreException(s);
+//			}
+			
 		} else {
 			super.doSaveDocument(monitor, element, document, overwrite);
 		}

@@ -14,8 +14,8 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  */
 public class TextEditorActionContributor extends BasicTextEditorActionContributor {
 
-	/** Convert to DOS action. */
-	private RetargetTextEditorAction fConvertToDOS;
+	/** Convert to Windows action. */
+	private RetargetTextEditorAction fConvertToWindows;
 	/** Convert to UNIX action. */
 	private RetargetTextEditorAction fConvertToUNIX;
 	/** Convert to Mac action. */
@@ -24,7 +24,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 
 	public TextEditorActionContributor() {
 		super();
-		fConvertToDOS= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToDOS."); //$NON-NLS-1$ 
+		fConvertToWindows= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToWindows."); //$NON-NLS-1$ 
 		fConvertToUNIX= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToUNIX."); //$NON-NLS-1$ 
 		fConvertToMac= new RetargetTextEditorAction(TextEditorMessages.getResourceBundle(), "Editor.ConvertToMac."); //$NON-NLS-1$ 
 	}	
@@ -40,7 +40,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 
 		ITextEditor textEditor= (ITextEditor) part;
 
-		fConvertToDOS.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_DOS));
+		fConvertToWindows.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_WINDOWS));
 		fConvertToUNIX.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_UNIX));
 		fConvertToMac.setAction(getAction(textEditor, ITextEditorActionConstants.CONVERT_LINE_DELIMITERS_TO_MAC));
 	}
@@ -53,7 +53,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		if (editMenu != null) {
 			MenuManager subMenu= new MenuManager(TextEditorMessages.getString("Editor.ConvertLineDelimiters.label")); //$NON-NLS-1$
 
-			subMenu.add(fConvertToDOS);
+			subMenu.add(fConvertToWindows);
 			subMenu.add(fConvertToUNIX);
 			subMenu.add(fConvertToMac);
 	

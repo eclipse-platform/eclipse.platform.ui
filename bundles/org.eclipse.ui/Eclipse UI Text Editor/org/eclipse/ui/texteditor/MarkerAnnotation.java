@@ -35,6 +35,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class MarkerAnnotation extends Annotation {
 	
+	/** The layer in which markers representing problem are located. */
+	public final static int PROBLEM_LAYER= 5;
+	
 	private static Map fgImageRegistry;
 	
 	protected static Image getImage(Display display, ImageDescriptor descriptor) {
@@ -149,7 +152,7 @@ public class MarkerAnnotation extends Annotation {
 					name= ISharedImages.IMG_OBJS_WARN_TSK;
 					break;
 				case IMarker.SEVERITY_ERROR:
-					layer= 4;
+					layer= PROBLEM_LAYER;
 					name= ISharedImages.IMG_OBJS_ERROR_TSK;
 					break;
 			};
@@ -170,7 +173,7 @@ public class MarkerAnnotation extends Annotation {
 	public void paint(GC gc, Canvas canvas, Rectangle r) {
 		Image image= getImage(canvas.getDisplay());
 		if (image != null)
-			drawImage(image, gc, canvas, r, SWT.CENTER, SWT.TOP);
+			drawImage(image, gc, canvas, r, SWT.CENTER, SWT.CENTER);
 	}
 	
 	/**

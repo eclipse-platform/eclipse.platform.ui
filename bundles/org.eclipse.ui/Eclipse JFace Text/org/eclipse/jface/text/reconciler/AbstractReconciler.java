@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Listener;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -121,6 +123,16 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * first change from the queue and process it.
 		 */
 		public void run() {
+			
+			synchronized (fDirtyRegionQueue) {
+				try {
+					fDirtyRegionQueue.wait(fDelay);
+				} catch (InterruptedException x) {
+				}
+			}
+			
+			initialProcess();
+			
 			while (!fCanceled) {
 				
 				synchronized (fDirtyRegionQueue) {
@@ -150,7 +162,11 @@ abstract public class AbstractReconciler implements IReconciler {
 					
 				fIsActive= true;
 				
+				if (fProgressMonitor != null)
+					fProgressMonitor.setCanceled(false);
+					
 				process(r);
+				
 				synchronized (this) {
 					fIsDirty= false;
 				}
@@ -175,8 +191,13 @@ abstract public class AbstractReconciler implements IReconciler {
 		 * @see IDocumentListener#documentChanged
 		 */
 		public void documentChanged(DocumentEvent e) {
+			
+			if (fProgressMonitor != null && fThread.isActive())
+				fProgressMonitor.setCanceled(true);
+				
 			if (fIsIncrementalReconciler)
 				createDirtyRegion(e);
+				
 			fThread.reset();
 		}
 		
@@ -220,7 +241,10 @@ abstract public class AbstractReconciler implements IReconciler {
 				createDirtyRegion(e);
 			}
 			
-			fThread.reset();
+			if (oldInput == null && !fThread.isAlive())
+				fThread.start();
+			else
+				fThread.reset();
 		}
 	};
 	
@@ -234,6 +258,8 @@ abstract public class AbstractReconciler implements IReconciler {
 	private int fDelay= 500;
 	/** Are there incremental reconciling strategies? */
 	private boolean fIsIncrementalReconciler= true;
+	/** The progress monitor used by this reconciler */
+	private IProgressMonitor fProgressMonitor;
 
 	/** The text viewer's document */
 	private IDocument fDocument;
@@ -298,6 +324,15 @@ abstract public class AbstractReconciler implements IReconciler {
 	}
 	
 	/**
+	 * Sets the progress monitor of this reconciler.
+	 * 
+	 * @param monitor the monitor to be used
+	 */
+	public void setProgressMonitor(IProgressMonitor monitor) {
+		fProgressMonitor= monitor;
+	}
+	
+	/**
 	 * Returns whether any of the reconciling strategies is interested in
 	 * detailed dirty region information.
 	 * 
@@ -327,6 +362,15 @@ abstract public class AbstractReconciler implements IReconciler {
 		return fViewer;
 	}
 	
+	/**
+	 * Returns the progress monitor of this reconciler.
+	 * 
+	 * @return the progress monitor of this reconciler
+	 */
+	protected IProgressMonitor getProgressMonitor() {
+		return fProgressMonitor;
+	}
+	
 	/*
 	 * @see IReconciler#install
 	 */
@@ -341,7 +385,6 @@ abstract public class AbstractReconciler implements IReconciler {
 		
 		fDirtyRegionQueue= new DirtyRegionQueue();
 		fThread= new BackgroundThread(getClass().getName());
-		fThread.start();
 	}
 	
 	/*
@@ -349,14 +392,17 @@ abstract public class AbstractReconciler implements IReconciler {
 	 */
 	public void uninstall() {
 		if (fListener != null) {
+			
 			fViewer.removeTextInputListener(fListener);
+			if (fDocument != null) fDocument.removeDocumentListener(fListener);
 			fListener= null;
+			
 			fThread.cancel();
 			fThread= null;
 		}
 	}
 		
-	/*
+	/**
 	 * Creates a dirty region for a document event and adds it to the queue.
 	 *
 	 * @param e the document event for which to create a dirty region
@@ -376,5 +422,12 @@ abstract public class AbstractReconciler implements IReconciler {
 			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getLength(), DirtyRegion.REMOVE, null));
 			fDirtyRegionQueue.addDirtyRegion(new DirtyRegion(e.getOffset(), e.getText().length(), DirtyRegion.INSERT, e.getText()));
 		}
+	}
+	
+	/**
+	 * This method is called on startup of the background activity. It is called only
+	 * once during the life time of the reconciler. Clients may reimplement this method.
+	 */
+	protected void initialProcess() {
 	}
 }

@@ -138,8 +138,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				insertSelectedProposal();
-				hide();
+				selectProposal();
 			}
 		});
 
@@ -155,9 +154,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 			return null;
 		return fFilteredProposals[i];
 	}
-	
-	private void insertSelectedProposal() {
+		
+	private void selectProposal() {
 		ICompletionProposal p= getSelectedProposal();
+		hide();
 		if (p != null)
 			insertProposal(p, (char) 0, fViewer.getSelectedRange().x);
 	}
@@ -341,8 +341,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					
 				case 0x0D : // Enter
 					e.doit= false;
-					insertSelectedProposal();
-					hide();
+					selectProposal();
 					break;
 					
 				default:
@@ -352,8 +351,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 						char[] triggers= t.getTriggerCharacters();
 						if (contains(triggers, key)) {		
 							e.doit= false;
-							insertProposal(p, key, fViewer.getSelectedRange().x);
 							hide();
+							insertProposal(p, key, fViewer.getSelectedRange().x);
 						}
 					}
 			}

@@ -112,6 +112,7 @@ class FindReplaceDialog extends Dialog {
 	private IRegion fOldScope;
 
 	private IDialogSettings fDialogSettings;
+	private boolean fIsTargetEditable;
 
 	/**
 	 * Default constructor.
@@ -1111,7 +1112,8 @@ class FindReplaceDialog extends Dialog {
 	 * Returns whether the target is editable
 	 */
 	private boolean isEditable() {
-		return fTarget == null ? false : fTarget.isEditable();
+		boolean isEditable= (fTarget == null ? false : fTarget.isEditable());
+		return fIsTargetEditable && isEditable;
 	}
 	
 	/**
@@ -1119,7 +1121,10 @@ class FindReplaceDialog extends Dialog {
 	 *
 	 * @return target the new target
 	 */
-	public void updateTarget(IFindReplaceTarget target) {
+	public void updateTarget(IFindReplaceTarget target, boolean isTargetEditable) {
+		
+		fIsTargetEditable= isTargetEditable;
+		
 		if (target != fTarget) {
 			if (fTarget != null && fTarget instanceof IFindReplaceTargetExtension)
 				((IFindReplaceTargetExtension) fTarget).endSession();

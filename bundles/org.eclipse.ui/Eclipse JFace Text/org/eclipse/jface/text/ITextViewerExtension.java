@@ -7,6 +7,7 @@ package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.widgets.Control;
 
  
 /**
@@ -48,4 +49,11 @@ public interface ITextViewerExtension {
 	 * @param listener the listener to be removed
 	 */
 	void removeVerifyKeyListener(VerifyKeyListener listener);
+	
+	/**
+	 * Returns the control of this viewer.
+	 * 
+	 * @return the control of this viewer
+	 */ 
+	Control getControl();
 }

@@ -2772,19 +2772,19 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			
 			Iterator e= presentation.getAllStyleRangeIterator();
 			
-//			// use optimized StyledText
-//			StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];
-//			for (int i= 0; i < ranges.length; i++)
-//				ranges[i]= (StyleRange) e.next();
-//				
-//			IRegion region= presentation.getCoverage();
-//			fTextWidget.replaceStyleRanges(region.getOffset(), region.getLength(), ranges);
+			// use optimized StyledText
+			StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];
+			for (int i= 0; i < ranges.length; i++)
+				ranges[i]= (StyleRange) e.next();
+				
+			IRegion region= presentation.getCoverage();
+			fTextWidget.replaceStyleRanges(region.getOffset(), region.getLength(), ranges);
 			
-			// use unoptimized StyledText
-			while (e.hasNext()) {
-				StyleRange r= (StyleRange) e.next();
-				fTextWidget.setStyleRange(r);
-			}
+//			// use unoptimized StyledText
+//			while (e.hasNext()) {
+//				StyleRange r= (StyleRange) e.next();
+//				fTextWidget.setStyleRange(r);
+//			}
 			
 		}	
 	}

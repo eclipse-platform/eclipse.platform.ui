@@ -10,7 +10,11 @@ Contributors:
 **********************************************************************/
 package org.eclipse.jface.text.source;
 
-import org.eclipse.swt.widgets.Control;
+
+
+import org.eclipse.swt.events.MouseListener;
+
+
 
 /**
  * The ruler info provides interested clients with mapping and
@@ -21,11 +25,18 @@ import org.eclipse.swt.widgets.Control;
 public interface IVerticalRulerInfo {
 
 	/**
-	 * Returns the ruler's SWT control.
-	 *
-	 * @return the ruler's SWT control
+	 * Add the given mouse listener to this ruler info.
+	 * 
+	 * @param listener the listener to be added
 	 */
-	Control getControl();
+	void addMouseListener(MouseListener listener);
+	
+	/**
+	 * Remove the given mouse listener from this ruler info.
+	 * 
+	 * @param listener the listener to be removed
+	 */
+	void removeMouseListener(MouseListener listener);
 
 	/**
 	 * Returns the line number of the last mouse button activity.
@@ -50,5 +61,4 @@ public interface IVerticalRulerInfo {
 	 * @return the width of this ruler's control
 	 */
 	int getWidth();
-
 }

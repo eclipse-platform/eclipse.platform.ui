@@ -14,7 +14,47 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20020430
+<p><br>Eclipse SDK Build 20020508
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+The context menu of the vertical ruler can be opened with Ctrl+W when using
+the default key binding. Accelerator for the emac's key binding is still
+to be defined.</li>
+
+<li>
+Added support for composite vertical ruler. See CompositeVerticalRuler.&nbsp;
+A composite vertical ruler is configured with ruler columns. Two ruler
+columns are provided by default: AnnotationRulerColumn and LineNumberRulerColumn.</li>
+
+<li>
+Performance changes to the reconciling mechanism in JFace Text.</li>
+
+<li>
+Changes in handling read only files: All modifying text actions are disabled
+by default.</li>
+
+<li>
+Changes in applying text styles and colors to the editor's text widget.
+Leverage SWT support provided with this build.</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+#15071 convert line delimiters - one os missing
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<br>&nbsp;
+<p>Eclipse SDK Build 20020430
 <h2>
 Breaking API changes</h2>
 

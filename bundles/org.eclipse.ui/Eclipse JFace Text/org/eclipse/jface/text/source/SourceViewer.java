@@ -105,7 +105,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	
 	
 	/** The size of the gap between the vertical ruler and the text widget */
-	protected final static int GAP_SIZE= 0;
+	protected final static int GAP_SIZE= 2;
 	
 	/**
 	 * Constructs a new source viewer. The vertical ruler is initially visible.

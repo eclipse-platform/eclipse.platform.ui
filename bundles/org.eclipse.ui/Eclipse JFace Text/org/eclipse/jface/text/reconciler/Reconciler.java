@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -59,8 +61,13 @@ public class Reconciler extends AbstractReconciler {
 		
 		if (strategy == null)
 			fStrategies.remove(contentType);
-		else
+		else {
 			fStrategies.put(contentType, strategy);
+			if (strategy instanceof IReconcilingStrategyExtension && getProgressMonitor() == null) {
+				IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
+				extension.setProgressMonitor(getProgressMonitor());
+			}
+		}
 	}
 	
 	/*
@@ -113,7 +120,7 @@ public class Reconciler extends AbstractReconciler {
 		}
 	}
 	
-	/**
+	/*
 	 * @see AbstractReconciler#reconcilerDocumentChanged(IDocument)
 	 */
 	protected void reconcilerDocumentChanged(IDocument document) {
@@ -124,5 +131,47 @@ public class Reconciler extends AbstractReconciler {
 				strategy.setDocument(document);
 			}
 		}
-	}	
+	}
+	
+	/*
+	 * @see AbstractReconciler#setProgressMonitor(IProgressMonitor)
+	 */
+	public void setProgressMonitor(IProgressMonitor monitor) {
+		super.setProgressMonitor(monitor);
+		
+		if (fStrategies != null) {
+			Iterator e= fStrategies.values().iterator();
+			while (e.hasNext()) {
+				IReconcilingStrategy strategy= (IReconcilingStrategy) e.next();
+				if (strategy instanceof IReconcilingStrategyExtension) {
+					IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
+					extension.setProgressMonitor(monitor);
+				}
+			}
+		}
+	}
+	
+	/*
+	 * @see AbstractReconciler#initialProcess()
+	 */
+	protected void initialProcess() {
+		
+		IRegion region= new Region(0, getDocument().getLength());
+			
+		ITypedRegion[] regions= null;
+		try {
+			regions= getDocument().computePartitioning(region.getOffset(), region.getLength());
+		} catch (BadLocationException x) {
+			regions= new TypedRegion[0];
+		}
+		
+		for (int i= 0; i < regions.length; i++) {
+			ITypedRegion r= regions[i];
+			IReconcilingStrategy s= getReconcilingStrategy(r.getType());
+			if (s instanceof IReconcilingStrategyExtension) {
+				IReconcilingStrategyExtension e= (IReconcilingStrategyExtension) s;
+				e.initialReconcile();
+			}
+		}
+	}
 }

@@ -84,9 +84,9 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String FIND_INCREMENTAL= "FindIncremental"; //$NON-NLS-1$
 	/** 
-	 * Name of the action to convert line delimiters to DOS. 
+	 * Name of the action to convert line delimiters to Windows. 
 	 */
-	static final String CONVERT_LINE_DELIMITERS_TO_DOS= "ConvertLineDelimitersToDOS"; //$NON-NLS-1$
+	static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= "ConvertLineDelimitersToWindows"; //$NON-NLS-1$
 	/** 
 	 * Name of the action to convert line delimiters to UNIX. 
 	 */

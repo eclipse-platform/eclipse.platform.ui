@@ -36,11 +36,8 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
 			IVerticalRulerInfo rulerInfo= (IVerticalRulerInfo) fEditor.getAdapter(IVerticalRulerInfo.class);
-			if (rulerInfo != null) {
-				Control control= rulerInfo.getControl();
-				if (!control.isDisposed())
-					control.removeMouseListener(this);	
-			}
+			if (rulerInfo != null)
+				rulerInfo.removeMouseListener(this);
 		}
 
 		fEditor= targetEditor;		
@@ -52,10 +49,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 			if (rulerInfo != null) {
 				fAction= createAction((ITextEditor) fEditor, rulerInfo);
 				update();
-
-				Control control= rulerInfo.getControl();
-				if (!control.isDisposed())
-					control.addMouseListener(this);
+				rulerInfo.addMouseListener(this);
 			}
 		}
 	}

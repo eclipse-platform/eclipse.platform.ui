@@ -302,6 +302,9 @@
       <actionDefinition
             id="org.eclipse.ui.edit.text.toggleOverwrite">
       </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.edit.text.showRulerContextMenu">
+      </actionDefinition>
    </extension>
 
 
@@ -637,6 +640,10 @@
                key="INSERT"
                id="org.eclipse.ui.edit.text.toggleOverwrite">
          </accelerator>
+         <accelerator
+               key=""
+               id="org.eclipse.ui.edit.text.showRulerContextMenu">
+         </accelerator>
       </acceleratorSet>
       
       <acceleratorSet
@@ -937,6 +944,10 @@
          <accelerator
                key="INSERT"
                id="org.eclipse.ui.edit.text.toggleOverwrite">
+         </accelerator>
+         <accelerator
+               key="Ctrl+W"
+               id="org.eclipse.ui.edit.text.showRulerContextMenu">
          </accelerator>
       </acceleratorSet>
    </extension>

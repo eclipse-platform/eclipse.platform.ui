@@ -15,24 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import org.eclipse.core.internal.plugins.ConfigurationElement;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
@@ -44,7 +26,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -59,6 +40,20 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -67,13 +62,11 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -90,11 +83,11 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerExtension;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
-
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -107,18 +100,16 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
@@ -193,23 +184,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IElementStateListenerExtension#elementStateValidationChanged(Object, boolean)
 		 */
 		public void elementStateValidationChanged(Object element, boolean isStateValidated) {
-			if (isStateValidated && fValidator != null) {
-				ISourceViewer viewer= getSourceViewer();
-				if (viewer != null) {
-					StyledText textWidget= viewer.getTextWidget();
-					if (textWidget != null && !textWidget.isDisposed())
-						textWidget.removeVerifyListener(fValidator);
-					fValidator= null;
-				}
-			} else if (!isStateValidated && fValidator == null) {
-				ISourceViewer viewer= getSourceViewer();
-				if (viewer != null) {
-					StyledText textWidget= viewer.getTextWidget();
-					if (textWidget != null && !textWidget.isDisposed()) {
-						fValidator= new Validator();
-						textWidget.addVerifyListener(fValidator);
+
+			if (element != null && element.equals(getEditorInput())) {
+
+				if (isStateValidated && fValidator != null) {
+					ISourceViewer viewer= getSourceViewer();
+					if (viewer != null) {
+						StyledText textWidget= viewer.getTextWidget();
+						if (textWidget != null && !textWidget.isDisposed())
+							textWidget.removeVerifyListener(fValidator);
+						fValidator= null;
+					}
+				} else if (!isStateValidated && fValidator == null) {
+					ISourceViewer viewer= getSourceViewer();
+					if (viewer != null) {
+						StyledText textWidget= viewer.getTextWidget();
+						if (textWidget != null && !textWidget.isDisposed()) {
+							fValidator= new Validator();
+							textWidget.addVerifyListener(fValidator);
+						}
 					}
 				}
+				
 			}
 		}
 		
@@ -385,7 +381,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						if (action instanceof IUpdate)
 							((IUpdate) action).update();
 						
-						if (action.isEnabled()) {
+						if (!action.isEnabled() && action instanceof IReadOnlyDependent) {
+							IReadOnlyDependent dependent= (IReadOnlyDependent) action;
+							boolean writable= dependent.isEnabled(true);
+							if (writable) {
+								event.doit= false;
+								return;
+							}
+						} else if (action.isEnabled()) {
 							event.doit= false;
 							action.run();
 							return;
@@ -566,7 +569,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	/**
-	 * Internal action for scroll the editor's viewer by a specified number of lines.
+	 * Internal action to scroll the editor's viewer by a specified number of lines.
 	 */
 	class ScrollLinesAction extends Action {
 		
@@ -586,6 +589,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			viewer.setTopIndex(newTopIndex);
 		}
 	};
+
+	/**
+	 * Internal action to show the editor's ruler context menu (accessibility).
+	 */		
+	private class ShowRulerContextMenuAction extends Action {
+
+		/*
+		 * @see IAction#run()
+		 */
+		public void run() {
+				fRulerContextMenu.setVisible(true);
+		}		
+	}
 	
 	
 	
@@ -1184,7 +1200,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * source viewer. Subclasses may extend.
 	 */
 	public void createPartControl(Composite parent) {
-				
+		
 		fVerticalRuler= createVerticalRuler();
 		
 		int styles= SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
@@ -1235,14 +1251,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fEditorContextMenuId= DEFAULT_EDITOR_CONTEXT_MENU_ID;
 		
 		
-		Control ruler= fVerticalRuler.getControl();
 		id= fRulerContextMenuId != null ? fRulerContextMenuId : DEFAULT_RULER_CONTEXT_MENU_ID;
 		manager= new MenuManager(id, id);
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(getContextMenuListener());		
-		fRulerContextMenu= manager.createContextMenu(ruler);
-		ruler.setMenu(fRulerContextMenu);
-		ruler.addMouseListener(getRulerMouseListener());
+		
+		Control rulerControl= fVerticalRuler.getControl();
+		fRulerContextMenu= manager.createContextMenu(rulerControl);
+		rulerControl.setMenu(fRulerContextMenu);
+		
+		if (fVerticalRuler instanceof IVerticalRulerInfo) {
+			IVerticalRulerInfo info= (IVerticalRulerInfo) fVerticalRuler;
+			info.addMouseListener(getRulerMouseListener());
+		} else {
+			rulerControl.addMouseListener(getRulerMouseListener());
+		}
 		
 		if (fRulerContextMenuId != null)
 			getSite().registerContextMenu(fRulerContextMenuId, manager, getSelectionProvider());
@@ -1262,6 +1285,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		fActivationCodeTrigger.install();
 		createNavigationActions();
+		createAccessibilityActions();
 		createActions();
 		
 		initializeSourceViewer(getEditorInput());
@@ -1314,16 +1338,41 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int topIndex= sourceViewer.getTopIndex();
 			
 			StyledText styledText= sourceViewer.getTextWidget();
-			styledText.setRedraw(false);
+			Control parent= styledText;
+			if (sourceViewer instanceof ITextViewerExtension) {
+				ITextViewerExtension extension= (ITextViewerExtension) sourceViewer;
+				parent= extension.getControl();
+			}
+			
+			parent.setRedraw(false);
 			
 			styledText.setFont(font);
+			
+			if (fVerticalRuler instanceof IVerticalRulerExtension) {
+				IVerticalRulerExtension e= (IVerticalRulerExtension) fVerticalRuler;
+				e.setFont(font);
+			}
+			
 			sourceViewer.setSelectedRange(selection.x , selection.y);
 			sourceViewer.setTopIndex(topIndex);
 			
-			styledText.setRedraw(true);
+			if (parent instanceof Composite) {
+				Composite composite= (Composite) parent;
+				composite.layout(true);
+			}
+			
+			parent.setRedraw(true);
+			
+			
 		} else {
+			
 			StyledText styledText= sourceViewer.getTextWidget();
 			styledText.setFont(font);
+			
+			if (fVerticalRuler instanceof IVerticalRulerExtension) {
+				IVerticalRulerExtension e= (IVerticalRulerExtension) fVerticalRuler;
+				e.setFont(font);
+			}
 		}	
 	}
 	
@@ -1701,7 +1750,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		String msg;
 		Shell shell= getSite().getShell();
 		
-		if (getDocumentProvider().isDeleted(getEditorInput())) {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider == null) {
+			// fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=15066
+			close(false);
+			return;
+		}
+		
+		if (provider.isDeleted(getEditorInput())) {
 			
 			if (isSaveAsAllowed()) {
 			
@@ -1744,9 +1800,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
 					ErrorDialog.openError(shell, title, msg, x.getStatus());
 				}
-			} else {
-				markEditorAsDirty();
-			}
+			} 
+			
+//			// disabled because of http://bugs.eclipse.org/bugs/show_bug.cgi?id=15166
+//			else {
+//				markEditorAsDirty();
+//			}
+
 		}
 	}
 
@@ -2318,6 +2378,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN);
 		setAction(ITextEditorActionDefinitionIds.SCROLL_LINE_DOWN, action);
 	}
+
+	/**
+	 * Creates this editor's accessibility actions.
+	 */
+	private void createAccessibilityActions() {
+		IAction action= new ShowRulerContextMenuAction();
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_RULER_CONTEXT_MENU);
+		setAction(ITextEditorActionDefinitionIds.SHOW_RULER_CONTEXT_MENU, action);
+	}
 	
 	/**
 	 * Creates this editor's standard actions and connects them with the global
@@ -2365,12 +2434,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_ALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
+		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_RIGHT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_RIGHT);
 		setAction(ITextEditorActionConstants.SHIFT_RIGHT, action);
 		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
+		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHIFT_LEFT);
 		setAction(ITextEditorActionConstants.SHIFT_LEFT, action);
@@ -2448,6 +2517,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
+		markAsStateDependentAction(ITextEditorActionConstants.FIND, true);
 		
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
@@ -2568,8 +2638,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public Object getAdapter(Class required) {
 		
-		if (IVerticalRulerInfo.class.equals(required))
-			return fVerticalRuler;
+		if (IVerticalRulerInfo.class.equals(required)) {
+			if (fVerticalRuler  instanceof IVerticalRulerInfo)
+				return fVerticalRuler;
+		}
 		
 		if (IncrementalFindTarget.class.equals(required)) {
 			if (fIncrementalFindTarget == null) {

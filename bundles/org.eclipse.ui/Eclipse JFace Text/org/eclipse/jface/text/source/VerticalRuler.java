@@ -43,7 +43,7 @@ import org.eclipse.jface.text.TextEvent;
  *
  * @see ITextViewer
  */
-public final class VerticalRuler implements IVerticalRuler {
+public final class VerticalRuler implements IVerticalRuler, IVerticalRulerInfo {
 	
 	/**
 	 * Internal listener class.
@@ -51,7 +51,7 @@ public final class VerticalRuler implements IVerticalRuler {
 	class InternalListener implements IViewportListener, IAnnotationModelListener, ITextListener {
 		
 		/*
-		 * @see IViewportListener#viewportChanged
+		 * @see IViewportListener#viewportChanged(int)
 		 */
 		public void viewportChanged(int verticalPosition) {
 			if (verticalPosition != fScrollPos)
@@ -59,14 +59,14 @@ public final class VerticalRuler implements IVerticalRuler {
 		}
 		
 		/*
-		 * @see IAnnotationModelListener#modelChanged
+		 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
 			update();
 		}
 		
 		/*
-		 * @see ITextListener#textChanged
+		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent e) {
 			if (fTextViewer != null)
@@ -101,21 +101,14 @@ public final class VerticalRuler implements IVerticalRuler {
 	}
 	
 	/*
-	 * @see IVerticalRuler#getControl
+	 * @see IVerticalRuler#getControl()
 	 */
 	public Control getControl() {
 		return fCanvas;
 	}
 	
 	/*
-	 * @see IVerticalRuler#getWidth
-	 */
-	public int getWidth() {
-		return fWidth;
-	}
-	
-	/*
-	 * @see IVerticalRuler#createControl
+	 * @see IVerticalRuler#createControl(Composite, ITextViewer)
 	 */
 	public Control createControl(Composite parent, ITextViewer textViewer) {
 		
@@ -303,7 +296,7 @@ public final class VerticalRuler implements IVerticalRuler {
 	 * Can be called from any thread.
 	 */
 	/*
-	 * @see IVerticalRuler#update
+	 * @see IVerticalRuler#update()
 	 */
 	public void update() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
@@ -331,7 +324,7 @@ public final class VerticalRuler implements IVerticalRuler {
 	}
 	
 	/*
-	 * @see IVerticalRuler#setModel
+	 * @see IVerticalRuler#setModel(IAnnotationModel)
 	 */
 	public void setModel(IAnnotationModel model) {
 		if (model != fModel) {
@@ -349,21 +342,28 @@ public final class VerticalRuler implements IVerticalRuler {
 	}
 		
 	/*
-	 * @see IVerticalRuler#getModel
+	 * @see IVerticalRuler#getModel()
 	 */
 	public IAnnotationModel getModel() {
 		return fModel;
 	}
 	
 	/*
-	 * @see IVerticalRuler#getLineOfLastMouseButtonActivity()
+	 * @see IVerticalRulerInfo#getWidth()
+	 */
+	public int getWidth() {
+		return fWidth;
+	}
+	
+	/*
+	 * @see IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
 	 */
 	public int getLineOfLastMouseButtonActivity() {
 		return fLastMouseButtonActivityLine;
 	}
-		
+	
 	/*
-	 * @see IVerticalRuler#toDocumentLineNumber
+	 * @see IVerticalRulerInfo#toDocumentLineNumber(int)
 	 */
 	public int toDocumentLineNumber(int y_coordinate) {
 		
@@ -380,5 +380,19 @@ public final class VerticalRuler implements IVerticalRuler {
 		}
 		
 		return line;
+	}
+	
+	/*
+	 * @see IVerticalRulerInfo#addMouseListener
+	 */
+	public void addMouseListener(MouseListener listener) {
+		fCanvas.addMouseListener(listener);
+	}
+	
+	/*
+	 * @see IVerticalRulerInfo#addMouseListener
+	 */
+	public void removeMouseListener(MouseListener listener) {
+		fCanvas.removeMouseListener(listener);
 	}
 }

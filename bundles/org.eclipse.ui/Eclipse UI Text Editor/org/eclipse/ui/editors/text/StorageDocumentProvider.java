@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -69,6 +70,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		try {
 			
 			in= new InputStreamReader(new BufferedInputStream(contentStream));
+//			in= new InputStreamReader(new BufferedInputStream(contentStream), ResourcesPlugin.getEncoding());
 			StringBuffer buffer= new StringBuffer();
 			char[] readBuffer= new char[2048];
 			int n= in.read(readBuffer);

@@ -52,10 +52,11 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	public static final String DELETE_NEXT= "org.eclipse.ui.edit.text.deleteNext"; //$NON-NLS-1$
 	public static final String SHIFT_RIGHT= "org.eclipse.ui.edit.text.shiftRight"; //$NON-NLS-1$
 	public static final String SHIFT_LEFT= "org.eclipse.ui.edit.text.shiftLeft"; //$NON-NLS-1$
-	public static final String CONVERT_LINE_DELIMITERS_TO_DOS= "org.eclipse.ui.edit.text.convert.lineDelimiters.toDOS"; //$NON-NLS-1$
+	public static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= "org.eclipse.ui.edit.text.convert.lineDelimiters.toWindows"; //$NON-NLS-1$
 	public static final String CONVERT_LINE_DELIMITERS_TO_UNIX= "org.eclipse.ui.edit.text.convert.lineDelimiters.toUNIX"; //$NON-NLS-1$
 	public static final String CONVERT_LINE_DELIMITERS_TO_MAC= "org.eclipse.ui.edit.text.convert.lineDelimiters.toMac"; //$NON-NLS-1$
 	
 	// miscellaneous
 	public static final String TOGGLE_OVERWRITE= "org.eclipse.ui.edit.text.toggleOverwrite"; //$NON-NLS-1$
+	public static final String SHOW_RULER_CONTEXT_MENU= "org.eclipse.ui.edit.text.showRulerContextMenu"; //$NON-NLS-1$
 }

@@ -6,6 +6,8 @@ package org.eclipse.jface.text.reconciler;
  */
 
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.Assert;
@@ -69,4 +71,25 @@ public class MonoReconciler extends AbstractReconciler {
 	protected void reconcilerDocumentChanged(IDocument document) {
 		fStrategy.setDocument(document);
 	}	
+	
+	/*
+	 * @see AbstractReconciler#setProgressMonitor(IProgressMonitor)
+	 */
+	public void setProgressMonitor(IProgressMonitor monitor) {
+		super.setProgressMonitor(monitor);
+		if (fStrategy instanceof IReconcilingStrategyExtension) {
+			IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategy;
+			extension.setProgressMonitor(monitor);
+		}
+	}
+	
+	/*
+	 * @see AbstractReconciler#initialProcess()
+	 */
+	protected void initialProcess() {
+		if (fStrategy instanceof IReconcilingStrategyExtension) {
+			IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) fStrategy;
+			extension.initialReconcile();
+		}
+	}
 }
