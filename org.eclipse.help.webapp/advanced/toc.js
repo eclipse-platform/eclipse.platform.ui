@@ -104,20 +104,8 @@ function getNextUp(node)
 function getNextSibling(node) 
 {
 	var sib = node.nextSibling;
-	while (sib && sib.nodeType == 3) // text node
+	while (sib && (sib.nodeType == 3 || sib.tagName=="SCRIPT")) // text or script node
 		sib = sib.nextSibling;
-
-	if (isMozilla){
-		if (sib != null){
-			if (sib.tagName=="SCRIPT"){
-				 sib = sib.nextSibling;
-				 while (sib && sib.nodeType == 3) {// text node
-					sib = sib.nextSibling;
-				}
-			}
-		}
-	}
-
 	return sib;
 }
 
@@ -127,23 +115,10 @@ function getNextSibling(node)
 function getPrevSibling(node) 
 {
 	var sib = node.previousSibling;
-	while (sib && sib.nodeType == 3) // text node
+	while (sib && (sib.nodeType == 3 || sib.tagName=="SCRIPT")) // text or script node
 		sib = sib.previousSibling;
-	
-	if (isMozilla){
-		if(sib !=null){
-			if (sib.tagName=="SCRIPT"){
-				 sib = sib.previousSibling;
-				 while (sib && sib.nodeType == 3) {// text node
-					sib = sib.previousSibling;
-				}
-			}
-		}
-	}
-
 	return sib;
 }
-
 
 
 /**
