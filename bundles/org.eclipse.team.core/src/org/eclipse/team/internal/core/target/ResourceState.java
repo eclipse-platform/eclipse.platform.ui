@@ -468,13 +468,10 @@ public abstract class ResourceState {
 
 	final public void removeState() throws TeamException {
 		try {
-			// Check first to avoid an exception if there's no sync info and the resource doesn't exist
-			if (SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, localResource) != null) {
-				SynchronizedTargetProvider.getSynchronizer().flushSyncInfo(
-					stateKey,
-					localResource,
-					IResource.DEPTH_INFINITE);
-			}
+			SynchronizedTargetProvider.getSynchronizer().flushSyncInfo(
+				stateKey,
+				localResource,
+				IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		}
