@@ -7,7 +7,7 @@
    provider-name="%provider-name">
 
    <runtime>
-      <library name="forms.jar">
+      <library name=".">
          <export name="*"/>
       </library>
    </runtime>
