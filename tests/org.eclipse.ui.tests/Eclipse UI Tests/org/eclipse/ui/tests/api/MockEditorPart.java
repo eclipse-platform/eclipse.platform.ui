@@ -6,10 +6,12 @@ import org.eclipse.ui.*;
 
 public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 
-	public static final String ID1 = "org.eclipse.ui.tests.api.mockEditor1";
-	public static final String ID2 = "org.eclipse.ui.tests.api.mockEditor2";
+	public static final String ID1 = "org.eclipse.ui.tests.api.MockEditorPart";
+	public static final String ID2 = ID1 + "2";
 
 	private IEditorInput input;
+	private boolean dirty = false;
+	private boolean saveNeeded = false;
 	
 	public MockEditorPart() {
 		super();
@@ -19,6 +21,8 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	 * @see IEditorPart#doSave(IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
+		dirty = false;
+		callTrace.add( this, "doSave" );
 	}
 
 	/**
@@ -45,6 +49,7 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	 * @see IEditorPart#gotoMarker(IMarker)
 	 */
 	public void gotoMarker(IMarker marker) {
+		callTrace.add( this, "gotoMarker" );	
 	}
 
 	/**
@@ -61,7 +66,13 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	 * @see IEditorPart#isDirty()
 	 */
 	public boolean isDirty() {
-		return false;
+		callTrace.add( this, "isDirty" );
+		return dirty;
+	}
+
+	public void setDirty( boolean value )
+	{
+		dirty = value;	
 	}
 
 	/**
@@ -75,8 +86,13 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 	 * @see IEditorPart#isSaveOnCloseNeeded()
 	 */
 	public boolean isSaveOnCloseNeeded() {
-		return false;
+		callTrace.add( this, "isSaveOnCloseNeeded" );
+		return saveNeeded;
 	}
-
+	
+	public void setSaveNeeded( boolean value )
+	{
+		saveNeeded = value;
+	}
 }
 

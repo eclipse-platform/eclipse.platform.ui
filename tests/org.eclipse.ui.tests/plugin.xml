@@ -64,22 +64,23 @@
 	   name="Mock View 3"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.MockViewPart"/>
-	<view
+<view
        id="org.eclipse.ui.tests.api.SessionView"
 	   name="SessionView"
        icon="icons\view.gif"
 	   class="org.eclipse.ui.tests.api.SessionView"/>
+
 </extension>
 
 <extension
     point = "org.eclipse.ui.editors">
-    <editor id ="org.eclipse.ui.tests.api.MockEditor1"
+    <editor id ="org.eclipse.ui.tests.api.MockEditorPart"
       name="Mock Editor 1"
       extensions="mock1"
       icon="icons\view.gif"
       class="org.eclipse.ui.tests.api.MockEditorPart">
     </editor>
-    <editor id ="org.eclipse.ui.tests.api.MockEditor2"
+     <editor id ="org.eclipse.ui.tests.api.MockEditorPart2"
       name="Mock Editor 2"
       extensions="mock2"
       icon="icons\view.gif"
@@ -88,4 +89,22 @@
 </extension>
 
 
+
+<extension point = "org.eclipse.ui.actionSets"> 
+	<actionSet id="org.eclipse.ui.tests.api.MockActionSet"
+		label="Mock ActionSet"
+ 		visible="true">
+		<menu id="org.eclipse.ui.tests.api.MockActionSetMenu" 
+			label="Mock ActionSet Menu" 
+			path="additions"> 
+			<separator name="group"/> 
+	    </menu> 
+	    <action id="org.eclipse.ui.tests.api.MockAction" 
+                label="Mock Action" 
+                menubarPath="org.eclipse.ui.tests.api.MockActionSetMenu/group"
+				class = "org.eclipse.ui.tests.api.MockAction">
+            </action> 
+
+    </actionSet> 
+</extension> 
 </plugin>
