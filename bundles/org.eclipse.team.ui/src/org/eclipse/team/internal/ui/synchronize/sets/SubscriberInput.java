@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.sets;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -161,20 +162,13 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 		int kind = delta.getKind();
 		
 		if (resource.getType() == IResource.PROJECT) {
-			try {
-				// Handle a deleted project	
-				if (((kind & IResourceDelta.REMOVED) != 0)
-					|| !getSubscriber().isSupervised(resource)) {
-					eventHandler.remove(resource);
-					return;
-				}
-				// Only interested in projects mapped to the provider
-				if (!getSubscriber().isSupervised(resource)) {
-					return;
-				}
-			} catch (TeamException e) {
-				TeamUIPlugin.log(e);
-				// we return because the children of this project shouldn't be processed.				
+			// Handle a deleted project	
+			if (((kind & IResourceDelta.REMOVED) != 0)) {
+				eventHandler.remove(resource);
+				return;
+			}
+			// Only interested in projects mapped to the provider
+			if (!isVisibleProject((IProject)resource)) {
 				return;
 			}
 		}
@@ -204,6 +198,17 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 		for (int i = 0; i < affectedChildren.length; i++) {
 			processDelta(affectedChildren[i]);
 		}		
+	}
+
+	private boolean isVisibleProject(IProject project) {
+		IResource[] roots = getSubscriber().roots();
+		for (int i = 0; i < roots.length; i++) {
+			IResource resource = roots[i];
+			if (project.getFullPath().isPrefixOf(resource.getFullPath())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

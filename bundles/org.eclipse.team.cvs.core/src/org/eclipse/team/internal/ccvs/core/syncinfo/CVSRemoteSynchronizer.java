@@ -61,7 +61,7 @@ public abstract class CVSRemoteSynchronizer extends RemoteBytesSynchronizer {
 	 */
 	public boolean setSyncBytes(IResource resource, byte[] bytes) throws TeamException {
 		boolean changed = super.setSyncBytes(resource, bytes);
-		if (getSyncBytes(resource) != null && !parentHasSyncBytes(resource)) {
+		if (resource.getType() == IResource.FILE && getSyncBytes(resource) != null && !parentHasSyncBytes(resource)) {
 			// Log a warning if there is no sync bytes available for the resource's
 			// parent but there is valid sync bytes for the child
 			CVSProviderPlugin.log(new TeamException(Policy.bind("ResourceSynchronizer.missingParentBytesOnSet", getSyncName().toString(), resource.getFullPath().toString()))); //$NON-NLS-1$

@@ -110,7 +110,7 @@ public class MergeUpdateAction extends SafeUpdateAction {
 			for (int i = 0; i < nodes.length; i++) {
 				SyncInfo resource = nodes[i];
 				int kind = resource.getKind();
-				if ((kind & SyncInfo.ADDITION) != 0) {
+				if ((kind & SyncInfo.CHANGE_MASK) == SyncInfo.ADDITION) {
 					additions.add(resource);
 				} else {
 					changes.add(resource);
