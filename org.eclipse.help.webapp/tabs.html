@@ -54,12 +54,26 @@ IMG {
  
 // input parameters
 var args = parent.parseQueryString();
+var switchTabTimerSet;
+var switchTabArg;
 
 /* 
  * Switch tabs.
  */ 
 function switchTab(nav)
 {
+	// wait for parent.NavFrame.turnToFrame
+	if(!parent.NavFrame.turnToFrame)
+		if(!this.switchTabTimerSet)
+		{
+			this.switchTabArg=nav;
+			this.switchTabTimerSet=setInterval("switchTab(switchTabArg)", 10);
+			return;
+		}
+	if(this.switchTabTimer)
+		clearInterval(this.switchTabTimerSet);
+		
+	// show appropriate IFrame
  	parent.NavFrame.turnToFrame(nav);
  
  	// show the appropriate pressed tab
