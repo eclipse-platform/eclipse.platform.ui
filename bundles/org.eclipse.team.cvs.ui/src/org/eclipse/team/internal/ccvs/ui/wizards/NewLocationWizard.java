@@ -1,15 +1,20 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
 import java.util.Properties;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -35,6 +40,7 @@ public class NewLocationWizard extends Wizard {
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}
+		mainPage.setShowValidate(true);
 		mainPage.setDescription(Policy.bind("NewLocationWizard.description"));
 		mainPage.setDialogSettings(getDialogSettings());
 		addPage(mainPage);
@@ -44,12 +50,21 @@ public class NewLocationWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		mainPage.finish(new NullProgressMonitor());
+		Properties properties = mainPage.getProperties();
+		try {
+			ICVSRepositoryLocation root = CVSUIPlugin.getPlugin().getRepositoryManager().getRoot(properties);
+			if (mainPage.getValidate()) {
+				root.validateConnection(new NullProgressMonitor());
+			}
+		} catch (TeamException e) {
+			IStatus error = e.getStatus();
+			if (error.getSeverity() == IStatus.INFO) {
+				MessageDialog.openInformation(getContainer().getShell(), Policy.bind("information"), error.getMessage());
+			} else {
+				ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, error);
+			}
+			return false;
+		}
 		return true;	
-	}
-	public Properties getProperties() {
-		return mainPage.getProperties();
-	}
-	public void setProperties(Properties properties) {
-		this.properties = properties;
 	}
 }

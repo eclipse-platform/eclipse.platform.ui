@@ -1,21 +1,16 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
-import java.util.Properties;
-
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,12 +25,10 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
-import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -91,13 +84,6 @@ public class RepositoriesView extends ViewPart {
 	};
 
 	/**
-	 * Add a new repository based on the given properties to the viewer.
-	 */
-	private void addRepository(Properties properties) throws TeamException {
-		ICVSRepositoryLocation root = CVSUIPlugin.getPlugin().getRepositoryManager().getRoot(properties);
-		viewer.refresh();
-	}
-	/**
 	 * Contribute actions to the view
 	 */
 	private void contributeActions() {
@@ -116,21 +102,7 @@ public class RepositoriesView extends ViewPart {
 			public void run() {
 				NewLocationWizard wizard = new NewLocationWizard();
 				WizardDialog dialog = new WizardDialog(viewer.getTree().getShell(), wizard);
-				int result = dialog.open();
-				if (result == WizardDialog.OK) {
-					ConfigurationWizardMainPage page = (ConfigurationWizardMainPage)dialog.getCurrentPage();
-					Properties properties = page.getProperties();
-					try {
-						addRepository(properties);
-					} catch (TeamException e) {
-						IStatus error = e.getStatus();
-						if (error.getSeverity() == IStatus.INFO) {
-							MessageDialog.openInformation(getViewSite().getShell(), Policy.bind("information"), error.getMessage());
-						} else {
-							ErrorDialog.openError(getViewSite().getShell(), Policy.bind("exception"), null, error);
-						}
-					}
-				}
+				dialog.open();
 			}
 		};
 

@@ -29,6 +29,9 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  * Wizard page for entering information about a CVS repository location.
  */
 public class ConfigurationWizardMainPage extends CVSWizardPage {
+	private boolean showValidate;
+	private boolean validate;
+	
 	// Widgets
 	
 	// Connection Method
@@ -45,7 +48,9 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	private Combo hostCombo;
 	// Repository Path
 	private Combo repositoryPathCombo;
-
+	// Validation
+	private Button validateButton;
+	
 	private static final int COMBO_HISTORY_LENGTH = 5;
 	
 	private Properties properties = new Properties();
@@ -57,6 +62,8 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		"ConfigurationWizardMainPage.STORE_HOSTNAME_ID";//$NON-NLS-1$
 	private static final String STORE_PATH_ID =
 		"ConfigurationWizardMainPage.STORE_PATH_ID";//$NON-NLS-1$
+	private static final String STORE_VALIDATE_ID =
+		"ConfigurationWizardMainPage.STORE_VALIDATE_ID";//$NON-NLS-1$
 	
 	// In case the page was launched from a different wizard	
 	private IDialogSettings settings;
@@ -154,6 +161,19 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		repositoryPathCombo.addListener(SWT.Selection, listener);
 		repositoryPathCombo.addListener(SWT.Modify, listener);
 		
+		if (showValidate) {
+			validateButton = new Button(composite, SWT.CHECK);
+			GridData data = new GridData();
+			data.horizontalSpan = 2;
+			validateButton.setLayoutData(data);
+			validateButton.setText("Validate repository location on finish");
+			validateButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event e) {
+					validate = validateButton.getSelection();
+				}
+			});
+		}
+		
 		initializeValues();
 		updateWidgetEnablements();
 		if (userCombo != null) {
@@ -228,6 +248,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 					userCombo.add(userNames[i]);
 				}
 			}
+			if (showValidate) {
+				validate = settings.getBoolean(STORE_VALIDATE_ID);
+				validateButton.setSelection(validate);
+			}
 		}
 		
 		// Initialize other values and widget states
@@ -292,8 +316,16 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			paths = addToHistory(paths, repositoryPathCombo.getText());
 			settings.put(STORE_PATH_ID, paths);
 
+			if (showValidate) {
+				settings.put(STORE_VALIDATE_ID, validate);
+			}
 		}
 	}
+
+	public void setShowValidate(boolean showValidate) {
+		this.showValidate = showValidate;
+	}
+	
 	/**
 	 * Sets the properties for the repository connection
 	 * 
@@ -365,5 +397,9 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		}
 		setErrorMessage(null);
 		setPageComplete(true);
+	}
+	
+	public boolean getValidate() {
+		return validate;
 	}
 }
