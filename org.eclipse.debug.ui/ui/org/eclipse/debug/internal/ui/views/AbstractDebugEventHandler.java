@@ -59,22 +59,15 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		if (!isAvailable()) {
 			return;
 		}
-		DebugPlugin.getDefault().asyncExec(new Runnable() {
-			/**
-			 * @see java.lang.Runnable#run()
-			 */
+		Runnable r= new Runnable() {
 			public void run() {
-				Runnable r= new Runnable() {
-					public void run() {
-						if (isAvailable() && isViewVisible()) {
-							doHandleDebugEvents(events);
-						}
-						updateForDebugEvents(events);
-					}
-				};
-				getView().syncExec(r);
+				if (isAvailable() && isViewVisible()) {
+					doHandleDebugEvents(events);
+				}
+				updateForDebugEvents(events);
 			}
-		});
+		};
+		getView().asyncExec(r);
 	}
 	
 	/**
