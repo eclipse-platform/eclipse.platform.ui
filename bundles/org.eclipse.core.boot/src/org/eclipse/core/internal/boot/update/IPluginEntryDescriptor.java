@@ -41,7 +41,7 @@ public URL getInstallURL() ;
  * Returns the empty string if no label for this plug-in
  * is specified in its install manifest file.
  * <p> Note that any translation specified in the install manifest
- * file is automatically applied.  LINDA
+ * file is automatically applied.  
  * </p>
  *
  * @see #getResourceString 

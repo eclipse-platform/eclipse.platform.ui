@@ -128,20 +128,22 @@ public IManifestDescriptor[] getConflictingManifests(IManifestDescriptor manifes
 	int result = UpdateManagerConstants.OK_TO_INSTALL;
 	
 	if (manifestDescriptor instanceof IProductDescriptor) {
-		IProductDescriptor currentProd = getProductDescriptor(manifestDescriptor.getUniqueIdentifier());
-		result = ((IProductDescriptor)manifestDescriptor).isInstallable(currentProd);
+		IProductDescriptor installedProd = getProductDescriptor(manifestDescriptor.getUniqueIdentifier());
+		result = ((IProductDescriptor)manifestDescriptor).isInstallable(installedProd);
 		if ((result == UpdateManagerConstants.NOT_NEWER) || (result == UpdateManagerConstants.NOT_COMPATIBLE))
-			naySayers.addElement(currentProd);
+			naySayers.addElement(installedProd);
 		if (result == UpdateManagerConstants.NOT_UPDATABLE)
 			; // none for Products right now
 	
 	} else if (manifestDescriptor instanceof IComponentDescriptor) {
-		IComponentDescriptor currentComp = getComponentDescriptor(manifestDescriptor.getUniqueIdentifier());
-		result = ((IComponentDescriptor)manifestDescriptor).isInstallable(currentComp);
+		IComponentDescriptor installedComp = getComponentDescriptor(manifestDescriptor.getUniqueIdentifier());
+		result = ((IComponentDescriptor)manifestDescriptor).isInstallable(installedComp);
 		if ((result == UpdateManagerConstants.NOT_NEWER) || (result == UpdateManagerConstants.NOT_COMPATIBLE))
-			naySayers.addElement(currentComp);
-		if (result == UpdateManagerConstants.NOT_UPDATABLE)
-			; // LINDA - look up which product not allowing this
+			naySayers.addElement(installedComp);
+		if (result == UpdateManagerConstants.NOT_UPDATABLE) {
+			IProductDescriptor[] more = installedComp.getRestrainingProducts();
+			if (more.length > 0) naySayers.addAll(Arrays.asList(more));
+		}
 	}
 
 	IManifestDescriptor[] array = new IManifestDescriptor[naySayers.size()];

@@ -104,11 +104,16 @@ public IPluginEntryDescriptor[] getPluginEntries();
  */
 public String getProviderName();
 /**
+ * Returns the list of products that disallow this component to be updated 
+ *
+ * @return an array of products that do not allow this component to be updated
+ */
+public IProductDescriptor[] getRestrainingProducts();
+/**
  * Returns the Registry this component belongs to
  *
  * @return the Registry this component belongs to
  */
-
 public IUMRegistry getUMRegistry() ;
 /**
  * Returns whether the component described by this descriptor

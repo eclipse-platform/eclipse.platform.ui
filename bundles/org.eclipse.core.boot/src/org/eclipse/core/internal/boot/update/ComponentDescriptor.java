@@ -246,6 +246,27 @@ public String getProviderName() {
 		fNLHelper = new NLResourceHelper( DEFAULT_BUNDLE_NAME,getInstallURL());
 	return s==null ? "" : fNLHelper.getResourceString(s);
 }
+/**
+ * Returns the list of products that disallow this component to be updated 
+ *
+ * @return an array of products that do not allow this component to be updated
+ */
+public IProductDescriptor[] getRestrainingProducts() {
+	Vector products = new Vector();
+
+	String id = _getId();
+	Enumeration list = _enumerateContainingProductsRel();
+	while(list.hasMoreElements()) {
+		IProductDescriptor prod = (IProductDescriptor)list.nextElement();
+		IComponentEntryDescriptor comp =  prod.getComponentEntry(id);
+		if ((comp !=null) && !comp.isAllowedToUpgrade())
+			products.add(prod);
+	}
+
+	IProductDescriptor[] naySayers  = new IProductDescriptor[products.size()];
+	products.copyInto(naySayers);
+	return naySayers;
+}
 public IUMRegistry getUMRegistry() {
 	
 	return (IUMRegistry)_getUMRegistry();

@@ -45,9 +45,7 @@ public void _addToComponentEntryProxysRel(Object o) {
 	if (compEntry_proxys_list.containsKey(key)) { // a different version?  
 		UMProxy proxy = (UMProxy) compEntry_proxys_list.get(key);
 		Map versions = proxy._getVersionsRel();
-		if (versions.containsKey(version))	
-			; // LINDA - error condition - version collision
-		else {
+		if (!versions.containsKey(version))	{
 			proxy._addToVersionsRel(o, version);
 		}
 	} else {
