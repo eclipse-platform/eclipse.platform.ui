@@ -309,6 +309,19 @@ public final class InternalPlatform {
 		return (IBundleGroupProvider[]) groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
 	}
 
+	/**
+	 * Returns the bundle id of the bundle that contains the provided object, or
+	 * <code>null</code> if the bundle could not be determined.
+	 */
+	public String getBundleId(Object object) {
+		if (object == null)
+			return null;
+		Bundle source = packageAdmin.getBundle(object.getClass());
+		if (source != null && source.getSymbolicName() != null)
+			return source.getSymbolicName();
+		return null;
+	}
+
 	public Bundle[] getBundles(String symbolicName, String version) {
 		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version);
 		if (bundles == null)
@@ -674,11 +687,10 @@ public final class InternalPlatform {
 
 	private void handleException(ISafeRunnable code, Throwable e) {
 		if (!(e instanceof OperationCanceledException)) {
-			String pluginId = Platform.PI_RUNTIME;
 			// try to obtain the correct plug-in id for the bundle providing the safe runnable 
-			Bundle source = packageAdmin.getBundle(code.getClass());
-			if (source != null && source.getSymbolicName() != null)
-				pluginId = source.getSymbolicName();
+			String pluginId = getBundleId(code);
+			if (pluginId == null)
+				pluginId = Platform.PI_RUNTIME;
 			String message = NLS.bind(Messages.meta_pluginProblems, pluginId);
 			IStatus status;
 			if (e instanceof CoreException) {

@@ -98,9 +98,9 @@ class JobListeners {
 				if (listeners[i] != null)
 					doit.notify((IJobChangeListener)listeners[i], event);
 			} catch (Exception e) {
-				handleException(e);
+				handleException(listeners[i], e);
 			} catch (LinkageError e) {
-				handleException(e);
+				handleException(listeners[i], e);
 			}
 		}
 		//notify all local listeners
@@ -114,25 +114,28 @@ class JobListeners {
 				if (listeners[i] != null)
 					doit.notify((IJobChangeListener)listeners[i], event);
 			} catch (Exception e) {
-				handleException(e);
+				handleException(listeners[i], e);
 			} catch (LinkageError e) {
-				handleException(e);
+				handleException(listeners[i], e);
 			}
 		}
 	}
 
-	private void handleException(Throwable e) {
+	private void handleException(Object listener, Throwable e) {
 		//this code is roughly copied from InternalPlatform.run(ISafeRunnable), 
 		//but inlined here for performance reasons
 		if (e instanceof OperationCanceledException)
 			return;
-		String pluginId = Platform.PI_RUNTIME;
+		final InternalPlatform platform = InternalPlatform.getDefault();
+		String pluginId = platform.getBundleId(listener);
+		if (pluginId == null)
+			pluginId = Platform.PI_RUNTIME;
 		String message = NLS.bind(Messages.meta_pluginProblems, pluginId);
 		IStatus status = new Status(IStatus.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e);
 		//we have to be safe, so don't try to log if the platform is not running 
 		//since it will fail - last resort is to print the stack trace on stderr
-		if (InternalPlatform.getDefault().isRunning())
-			InternalPlatform.getDefault().log(status);
+		if (platform.isRunning())
+			platform.log(status);
 		else
 			e.printStackTrace();
 	}
