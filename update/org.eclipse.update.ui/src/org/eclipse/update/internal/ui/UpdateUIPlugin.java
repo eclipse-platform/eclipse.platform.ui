@@ -271,7 +271,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		String title = UpdateUIPlugin.getResourceString("RestartTitle");
 		String message = UpdateUIPlugin.getResourceString("RestartMessage");
 		boolean restart =
-			MessageDialog.openConfirm(
+			MessageDialog.openQuestion(
 				getActiveWorkbenchShell(),
 				title,
 				message);

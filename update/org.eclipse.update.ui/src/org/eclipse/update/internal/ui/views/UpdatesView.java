@@ -43,6 +43,7 @@ public class UpdatesView
 		"UpdatesView.Popup.newLocalSite";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
+	private static final String KEY_REFRESH_TOOLTIP = "UpdatesView.Popup.refresh.tooltip";
 	private static final String KEY_LINK_EXTENSION =
 		"UpdatesView.Popup.linkExtension";
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
@@ -390,7 +391,7 @@ public class UpdatesView
 			}
 		};
 		refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
-		refreshAction.setToolTipText(refreshAction.getText());
+		refreshAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_REFRESH_TOOLTIP));
 		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
 			UpdateUIPluginImages.DESC_REFRESH_NAV_D);

@@ -245,7 +245,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 				enableDelete = false;
 			}
 		}
-		
+
 		boolean enableShowErrors = enableDelete && selection.size()==1;
 		deleteButton.setEnabled(enableDelete);
 		errorsButton.setEnabled(enableShowErrors);
