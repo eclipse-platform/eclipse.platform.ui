@@ -379,13 +379,11 @@ public class TitleAreaDialog extends Dialog {
             updateMessage(message);
             messageImageLabel.setImage(messageImage);
             setImageLabelVisible(messageImage != null);
-            messageLabel.setToolTipText(message);
         } else {
             //Add in a space for layout purposes but do not
             //change the instance variable
             String displayedErrorMessage = " " + errorMessage; //$NON-NLS-1$
             updateMessage(displayedErrorMessage);
-            messageLabel.setToolTipText(errorMessage);
             if (!showingError) {
                 // we were not previously showing an error
                 showingError = true;
@@ -538,7 +536,6 @@ public class TitleAreaDialog extends Dialog {
             updateMessage(shownMessage);
             messageImageLabel.setImage(messageImage);
             setImageLabelVisible(messageImage != null);
-            messageLabel.setToolTipText(message);
             layoutForNewMessage();
         }
     }
