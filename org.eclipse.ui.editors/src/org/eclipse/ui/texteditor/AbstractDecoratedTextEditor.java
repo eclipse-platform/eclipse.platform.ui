@@ -1012,7 +1012,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action= new ChangeEncodingAction(TextEditorMessages.getResourceBundle(), "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.CHANGE_ENCODING);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CHANGE_ENCODING);
-		setAction(ITextEditorActionConstants.CHANGE_ENCODING, action);		
+		setAction(ITextEditorActionConstants.CHANGE_ENCODING, action);
+		markAsPropertyDependentAction(ITextEditorActionConstants.CHANGE_ENCODING, true);
 	}
 	
 	/*

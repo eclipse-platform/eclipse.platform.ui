@@ -164,7 +164,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		setEnabled(getResource() != null || getEncodingSupport() != null);
+		setEnabled((getResource() != null || getEncodingSupport() != null) && !getTextEditor().isDirty());
 	}
 	
 	/**
