@@ -390,10 +390,11 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		
 		// get diff model if it exists already
 		IAnnotationModel differ= model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		IPreferenceStore store= getPreferenceStore();
 		
 		// create diff model if it doesn't
-		if (differ == null) {
-			String defaultId= getPreferenceStore().getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
+		if (differ == null && store != null) {
+			String defaultId= store.getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
 			differ= new QuickDiff().createQuickDiffAnnotationModel(this, defaultId);
 			if (differ != null)
 				model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
@@ -487,7 +488,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected boolean isPrefQuickDiffAlwaysOn() {
 		IPreferenceStore store= getPreferenceStore();
-		return store.getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON);
+		return store == null ? store.getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON) : false;
 	}
 	
 	/**
@@ -658,7 +659,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected IVerticalRuler createVerticalRuler() {
 		CompositeRuler ruler= createCompositeRuler();
-		if (ruler != null) {
+		IPreferenceStore store= getPreferenceStore();
+		if (ruler != null && store != null) {
 			for (Iterator iter=  ruler.getDecoratorIterator(); iter.hasNext();) {
 				IVerticalRulerColumn column= (IVerticalRulerColumn)iter.next();
 				if (column instanceof AnnotationRulerColumn) {
@@ -668,7 +670,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 						String key= preference.getVerticalRulerPreferenceKey();
 						boolean showAnnotation= true;
 						if (key != null)
-							showAnnotation= getPreferenceStore().getBoolean(key);
+							showAnnotation= store.getBoolean(key);
 						if (showAnnotation)
 							fAnnotationRulerColumn.addAnnotationType(preference.getAnnotationType());
 					}
