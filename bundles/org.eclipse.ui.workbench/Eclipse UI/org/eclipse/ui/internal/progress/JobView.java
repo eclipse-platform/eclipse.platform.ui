@@ -165,8 +165,6 @@ public class JobView extends ViewPart implements IViewPart {
 
     /**
      * Create the cancel action for the receiver.
-     * 
-     * @return Action
      */
     private void createCancelAction() {
         cancelAction = new Action(ProgressMessages
@@ -185,8 +183,6 @@ public class JobView extends ViewPart implements IViewPart {
 
     /**
      * Create the clear all action for the receiver.
-     * 
-     * @return Action
      */
     private void createClearAllAction() {
         clearAllAction = new Action(ProgressMessages
