@@ -174,6 +174,7 @@ public class DefaultPreferences extends EclipsePreferences {
 			return;
 		}
 		IExtension[] extensions = point.getExtensions();
+		boolean foundInitializer = false;
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++)
@@ -182,10 +183,13 @@ public class DefaultPreferences extends EclipsePreferences {
 						if (InternalPlatform.DEBUG_PREFERENCES)
 							Policy.debug("Running default preference customization as defined by: " + elements[j].getDeclaringExtension().getDeclaringPluginDescriptor()); //$NON-NLS-1$
 						runInitializer(elements[j]);
-						return;
+						// don't return yet in case we have multiple initializers registered
+						foundInitializer = true;
 					}
 				}
 		}
+		if (foundInitializer)
+			return;
 
 		// No extension exists. Get the plug-in object and call #initializeDefaultPluginPreferences().
 		// We can only call this if the runtime compatibility layer is installed.
