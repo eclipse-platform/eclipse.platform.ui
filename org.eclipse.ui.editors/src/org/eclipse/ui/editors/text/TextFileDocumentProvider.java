@@ -13,16 +13,11 @@ package org.eclipse.ui.editors.text;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.IFileBuffer;
-import org.eclipse.core.filebuffers.IFileBufferListener;
-import org.eclipse.core.filebuffers.IFileBufferManager;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -34,6 +29,13 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.IFileBufferListener;
+import org.eclipse.core.filebuffers.IFileBufferManager;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -41,6 +43,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension;
@@ -49,8 +52,6 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * @since 3.0
@@ -308,7 +309,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		try {
 			manager.disconnect(info.fTextFileBuffer.getUnderlyingFile(), getProgressMonitor());
 		} catch (CoreException x) {
-			handleCoreException(x, "FileDocumentProvider.disposeElementInfo");
+			handleCoreException(x, "FileDocumentProvider.disposeElementInfo"); //$NON-NLS-1$
 		}
 	}
 	
@@ -620,11 +621,11 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	}
 	
 	protected Iterator getConnectedElementsIterator()  {
-		return fFileInfoMap.keySet().iterator();
+		return new HashSet(fFileInfoMap.keySet()).iterator();
 	}
 	
 	protected Iterator getFileInfosIterator()  {
-		return fFileInfoMap.values().iterator();
+		return new ArrayList(fFileInfoMap.values()).iterator();
 	}
 	
 	protected void fireElementStateChanging(Object element) {
