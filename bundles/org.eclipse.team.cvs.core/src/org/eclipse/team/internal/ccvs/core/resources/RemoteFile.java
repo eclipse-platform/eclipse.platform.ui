@@ -195,6 +195,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	/**
+	 * @see ICVSRemoteFolder#getRelativePath()
+	 */
+	public String getRelativePath() {
+		return getRemotePath();
+	}
+	
+	/**
 	 * @see ICVSResource#getRemoteLocation(ICVSFolder)
 	 */
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {

@@ -34,5 +34,10 @@ public interface ICVSRemoteResource extends IRemoteResource {
 	 * method may contact the server and be long running.
 	 */
 	public boolean exists();
+	
+	/**
+	 * Answers the repository relative path of this remote folder.
+	 */
+	public String getRelativePath();
 }
 
