@@ -8,7 +8,8 @@
 	<target name="init" depends="properties">
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
-		<property name="version.suffix" value="_3.0.0"/>
+		<property name="version.suffix" value="_3.1.0"/>
+		<property name="version.suffix.old" value="_3.0.0"/>
 	</target>
 
 	<target name="properties" if="eclipse.running">
@@ -27,9 +28,9 @@
 			includeAntRuntime="yes"
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
-					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}/runtime.jar;
+					${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix.old}/runtime.jar;
 					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/osgi.jar;
+					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix.old}/osgi.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>

@@ -4,8 +4,6 @@
 	<target name="build" description="Cleans, builds and refreshes" depends="clean, lib/remoteAntLib.jar"/>
 
 	<target name="init" depends="properties">
-		<property name="version.suffix" value="_3.0.0"/>
-		<property name="ant_version.suffix" value="_1.6.1"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 	</target>
