@@ -143,12 +143,12 @@ public final class IDE {
 		}
 		
 		// next check the OS for in-place editor (OLE on Win32)
-		if (editorDesc == null && editorReg.systemInPlaceEditorAvailable(input.getName())) {
+		if (editorDesc == null && editorReg.isSystemInPlaceEditorAvailable(input.getName())) {
 			editorDesc = editorReg.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
 		}
 		
 		// next check with the OS for an external editor
-		if (editorDesc == null && editorReg.systemExternalEditorAvailable(input.getName())) {
+		if (editorDesc == null && editorReg.isSystemExternalEditorAvailable(input.getName())) {
 			editorDesc = editorReg.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		}
 		

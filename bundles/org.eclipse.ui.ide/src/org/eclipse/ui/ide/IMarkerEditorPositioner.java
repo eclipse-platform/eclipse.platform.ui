@@ -16,6 +16,8 @@ import org.eclipse.ui.IEditorPart;
 /**
  * An adapter that converts the marker information to a postion
  * in the editor, and causes the editor to show that position.
+ * 
+ * @since 3.0
  */
 public interface IMarkerEditorPositioner {
 	/**
