@@ -46,8 +46,6 @@ import org.osgi.framework.Bundle;
  * code here: sel.getAdapter(IActionFilter.class)
  * As an interim solution, use reflection to access selections
  * implementing ITextSelection
- * 
- * Note: several public fields and methods - decide which should be API
  */
 public final class SelectionEnabler {
     private static final String ATT_NAME = "name";//$NON-NLS-1$
@@ -72,7 +70,7 @@ public final class SelectionEnabler {
 
     private int mode = UNKNOWN;
 
-    public static class SelectionClass {
+    /* package */ static class SelectionClass {
         public String className;
 
         public boolean recursive;
