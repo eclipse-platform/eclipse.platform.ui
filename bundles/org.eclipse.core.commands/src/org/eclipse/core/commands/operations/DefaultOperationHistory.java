@@ -154,14 +154,15 @@ public class DefaultOperationHistory implements IOperationHistory {
 			return;
 		}
 		
-		checkUndoLimit(operation);
-		undoList.add(operation);
-		notifyAdd(operation);
+		if (checkUndoLimit(operation)) {
+			undoList.add(operation);
+			notifyAdd(operation);
 		
-		// flush redo stack for related contexts
-		IUndoContext[] contexts = operation.getContexts();
-		for (int i = 0; i < contexts.length; i++) {
-			flushRedo(contexts[i]);
+			// flush redo stack for related contexts
+			IUndoContext[] contexts = operation.getContexts();
+			for (int i = 0; i < contexts.length; i++) {
+				flushRedo(contexts[i]);
+			}
 		}
 	}
 
@@ -211,24 +212,37 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * history, which has the same limit.  The redo history is cleared whenever a new
 	 * operation is added.  We check for completeness since implementations may change
 	 * over time.
+	 * 
+	 * Return a boolean indicating whether the redo should proceed.
 	 */
-	private void checkRedoLimit(IUndoableOperation operation) {
+	private boolean checkRedoLimit(IUndoableOperation operation) {
 		IUndoContext [] contexts = operation.getContexts();
 		for (int i=0; i<contexts.length; i++) {
 			int limit = getLimit(contexts[i]);
-			if (limit > 0) forceRedoLimit(contexts[i], limit - 1);
+			if (limit > 0) {
+				forceRedoLimit(contexts[i], limit - 1);
+			} else {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	/**
-	 * Check the undo limit before adding an operation.
+	 * Check the undo limit before adding an operation.  Return a boolean indicating
+	 * whether the undo should proceed.
 	 */
-	private void checkUndoLimit(IUndoableOperation operation) {
+	private boolean checkUndoLimit(IUndoableOperation operation) {
 		IUndoContext [] contexts = operation.getContexts();
 		for (int i=0; i<contexts.length; i++) {
 			int limit = getLimit(contexts[i]);
-			if (limit > 0) forceUndoLimit(contexts[i], limit - 1);
+			if (limit > 0) {
+				forceUndoLimit(contexts[i], limit - 1);
+			} else {
+				return false;
+			}
 		}
+		return true;
 	}
 
 	/*
@@ -304,8 +318,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 			// on the fly and cannot guarantee that a successful redo means a
 			// successful undo will be available. 
 			// See bug #84444
-			if (operation.canUndo()) {
-				checkUndoLimit(operation);
+			if (operation.canUndo() && checkUndoLimit(operation)) {
 				undoList.add(operation);
 			}
 			// notify listeners must happen after history is updated
@@ -364,8 +377,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 			// on the fly and cannot guarantee that a successful undo means a
 			// successful redo will be available. 
 			// See bug #84444
-			if (operation.canRedo()) {
-				checkRedoLimit(operation);
+			if (operation.canRedo() && checkRedoLimit(operation)) {
 				redoList.add(operation);
 			}
 			// notification occurs after the undo and redo histories are
@@ -1091,7 +1103,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#setLimit(org.eclipse.core.commands.operations.IUndoContext, int)
 	 */
 	public void setLimit(IUndoContext context, int limit) {
-		Assert.isTrue(limit > 0);
+		Assert.isTrue(limit >= 0);
 		/*
 		 * The limit checking methods interpret a null context as a global limit to be
 		 * enforced.  We do not wish to support a global limit in this implementation,

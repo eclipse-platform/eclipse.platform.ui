@@ -495,11 +495,11 @@ public interface IOperationHistory {
 	 * Set the limit on the undo and redo history for a particular context.
 	 * 
 	 * @param context -
-	 *            the context whose limit is being set
+	 *            the context whose limit is being set.  
 	 * 
 	 * @param limit -
 	 *            the maximum number of operations that should be kept in the
-	 *            undo or redo history for the specified context.
+	 *            undo or redo history for the specified context.  Must not be negative.
 	 */
 	void setLimit(IUndoContext context, int limit);
 

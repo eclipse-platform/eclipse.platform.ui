@@ -188,6 +188,7 @@ public class OperationsAPITest extends TestCase {
 		// op2 should have context c3 removed as part of forcing the limit
 		assertFalse(op2.hasContext(contextC));
 		assertTrue(history.getUndoHistory(contextB).length == 2);
+		
 		history.setLimit(contextB, 1);
 		assertTrue(history.getUndoHistory(contextB).length == 1);
 		history.undo(contextB, null, null);
@@ -195,6 +196,11 @@ public class OperationsAPITest extends TestCase {
 		history.add(op2);
 		assertSame(history.getUndoOperation(contextB), op2);
 		assertTrue(history.getUndoHistory(contextB).length == 1);
+		
+		history.setLimit(contextA, 0);
+		assertTrue(history.getUndoHistory(contextA).length == 0);
+		history.add(op1);
+		assertTrue(history.getUndoHistory(contextA).length == 0);		
 	}
 	
 	public void testOpenOperation() throws ExecutionException {
