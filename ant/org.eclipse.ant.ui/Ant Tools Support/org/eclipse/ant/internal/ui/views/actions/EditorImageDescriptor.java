@@ -33,8 +33,8 @@ public class EditorImageDescriptor extends ImageDescriptor {
 	public EditorImageDescriptor(Program program) {
 		this.program = program;
 	}
-	/**
-	 * @see Object#equals
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (!(o instanceof EditorImageDescriptor)) {
@@ -79,8 +79,9 @@ public class EditorImageDescriptor extends ImageDescriptor {
 
 		return data;
 	}
-	/**
-	 * @see Object#hashCode
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		String programName = program.getName();
