@@ -39,7 +39,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private static BundleContext context;
 	private EclipseBundleListener pluginBundleListener;
-	private ExtensionRegistry registry;
 	private ServiceReference environmentServiceReference;
 	private ServiceReference urlServiceReference;
 	private ServiceReference logServiceReference;
@@ -81,6 +80,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private void startRegistry(BundleContext runtimeContext) {
 		boolean fromCache = true;
+		ExtensionRegistry registry = null;		
 		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) { //$NON-NLS-1$
 			// Try to read the registry from the cache first. If that fails, create a new registry
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
@@ -96,7 +96,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			} catch (IOException e) {
 				//Ignore the exception. The registry will be rebuilt from the xml files.
 			}
-
 			if (cacheFile != null && cacheFile.isFile()) {
 				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
 				boolean flushable = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_FLUSHING)); //$NON-NLS-1$
@@ -119,11 +118,13 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			fromCache = false;
 			registry = new ExtensionRegistry();
 		}
+		// need to set the registry in InternalPlatform before calling any code that may rely on it
+		InternalPlatform.getDefault().setExtensionRegistry(registry);
 
 		// register a listener to catch new bundle installations/resolutions.
 		pluginBundleListener = new EclipseBundleListener(registry);
 		runtimeContext.addBundleListener(pluginBundleListener);
-
+		
 		// populate the registry with all the currently installed bundles.
 		// There is a small window here while processBundles is being
 		// called where the pluginBundleListener may receive a BundleEvent 
@@ -134,7 +135,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			pluginBundleListener.processBundles(runtimeContext.getBundles());
 
 		runtimeContext.registerService(IExtensionRegistry.class.getName(), registry, new Hashtable()); //$NON-NLS-1$
-		InternalPlatform.getDefault().setExtensionRegistry(registry);
 	}
 
 	private long computeRegistryStamp() {
@@ -174,14 +174,18 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private void stopRegistry(BundleContext runtimeContext) {
 		runtimeContext.removeBundleListener(this.pluginBundleListener);
-		if (registry != null && registry.isDirty()) {
+		ExtensionRegistry registry = (ExtensionRegistry) InternalPlatform.getDefault().getRegistry();
+		if (registry == null)
+			return;
+		try {
+			if (!registry.isDirty())
+				return;	
 			FileManager manager = InternalPlatform.getDefault().getRuntimeFileManager();
 			File cacheFile = null;
 			try {
 				manager.lookup(".registry", true); //$NON-NLS-1$
 				cacheFile = File.createTempFile("registry", ".new", manager.getBase()); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (IOException e) {
-				registry = null;
 				return; //Ignore the exception since we can recompute the cache
 			}
 			new RegistryCacheWriter(cacheFile).saveCache(registry, computeRegistryStamp());
@@ -190,7 +194,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			} catch (IOException e) {
 				//Ignore the exception since we can recompute the cache
 			}
-			registry = null;
+		} finally {
+			InternalPlatform.getDefault().setExtensionRegistry(null);
 		}
 	}
 
@@ -285,6 +290,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				}
 				if (applicationId == null)
 					throw new RuntimeException(Policy.bind("application.noIdFound")); //$NON-NLS-1$
+				IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
 				IExtension applicationExtension = registry.getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, applicationId);
 				if (applicationExtension == null)
 					throw new RuntimeException(Policy.bind("application.notFound", applicationId)); //$NON-NLS-1$
