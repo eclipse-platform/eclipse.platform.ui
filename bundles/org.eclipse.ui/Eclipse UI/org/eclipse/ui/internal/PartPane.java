@@ -87,7 +87,7 @@ public abstract class PartPane extends LayoutPart
 					doZoom();
 				}
 			});
-			item.setEnabled(!isZoomed && !isFastView && canZoom);
+			item.setEnabled(!isZoomed && canZoom);
 		
 			addPinEditorItem(menu);
 			
