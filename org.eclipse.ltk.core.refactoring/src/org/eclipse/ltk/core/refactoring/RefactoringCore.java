@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
 import org.eclipse.ltk.internal.core.refactoring.UndoManager;
 
@@ -25,7 +27,23 @@ import org.eclipse.ltk.internal.core.refactoring.UndoManager;
 public class RefactoringCore {
 
 	private static IUndoManager fgUndoManager= null;
+	private static IValidationCheckResultQueryFactory fQueryFactory= new DefaultQueryFactory();
 
+	private static class NullQuery implements IValidationCheckResultQuery {
+		public boolean proceed(RefactoringStatus status) {
+			return true;
+		}
+		public void stopped(RefactoringStatus status) {
+			// do nothing
+		}
+	}
+	
+	private static class DefaultQueryFactory implements IValidationCheckResultQueryFactory {
+		public IValidationCheckResultQuery create(IAdaptable context) {
+			return new NullQuery();
+		}
+	}
+	
 	private RefactoringCore() {
 		// no instance
 	}
@@ -52,6 +70,35 @@ public class RefactoringCore {
 	 */
 	public static int getConditionCheckingFailedSeverity() {
 		return RefactoringCorePreferences.getStopSeverity();
+	}
+	
+	/**
+	 * Returns the query factory.
+	 * 
+	 * @return the query factory
+	 * 
+	 * @since 3.1
+	 */
+	public static IValidationCheckResultQueryFactory getQueryFactory() {
+		return fQueryFactory;
+	}
+	
+	/**
+	 * An internal method to set the query factory.
+	 * <p>
+	 * This method is NOT offical API. It is a special method for the refactorung UI 
+	 * plug-in to set a dialog based query factory.
+	 * </p>
+	 * @param factory the factory to set or <code>null</code>
+	 * 
+	 * @since 3.1
+	 */
+	public static void internalSetQueryFactory(IValidationCheckResultQueryFactory factory) {
+		if (factory == null) {
+			fQueryFactory= new DefaultQueryFactory();
+		} else {
+			fQueryFactory= factory;
+		}
 	}
 	
 	/**

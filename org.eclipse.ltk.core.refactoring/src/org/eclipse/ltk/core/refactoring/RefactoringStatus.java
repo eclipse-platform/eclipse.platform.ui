@@ -197,6 +197,27 @@ public class RefactoringStatus {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the entry with the highest severity. If there is more than one
+	 * entry that matches the first one found in the list of entries is returned.
+	 * 
+	 * @return the entry with the highest severity or <code>null</code> if no
+	 *  entries are present
+	 *  
+	 *  @since 3.1
+	 */
+	public RefactoringStatusEntry getEntryWithHighestSeverity() {
+		if (fEntries == null || fEntries.size() == 0)
+			return null;
+		RefactoringStatusEntry result= (RefactoringStatusEntry)fEntries.get(0);
+		for (int i= 1; i < fEntries.size(); i++) {
+			RefactoringStatusEntry entry= (RefactoringStatusEntry)fEntries.get(i);
+			if (result.getSeverity() < entry.getSeverity())
+				result= entry;
+		}
+		return result;
+	}
 
 	/**
 	 * Returns the first message which severity is equal or greater than the

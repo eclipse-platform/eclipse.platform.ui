@@ -43,6 +43,9 @@ import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
  * allowed to instantiate the class or to reference it from an action 
  * set.
  * </p>
+ * 
+ * @deprecated This action is now longer needed. Undo is now performed via the
+ *  global undo/redo stack provided by <code>org.eclipse.core.commands</code>. 
  *  
  * @since 3.0
  */

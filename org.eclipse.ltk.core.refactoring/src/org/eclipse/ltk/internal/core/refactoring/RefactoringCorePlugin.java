@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.commands.operations.IUndoContext;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
@@ -22,6 +24,8 @@ import org.osgi.framework.BundleContext;
 public class RefactoringCorePlugin extends Plugin {
 	
 	private static RefactoringCorePlugin fgDefault;
+	
+	private static IUndoContext fRefactoringUndoContext= new RefactoringUndoContext();
 	
 	public RefactoringCorePlugin() {
 		fgDefault= this;
@@ -33,6 +37,10 @@ public class RefactoringCorePlugin extends Plugin {
 	
 	public static String getPluginId() {
 		return "org.eclipse.ltk.core.refactoring"; //$NON-NLS-1$
+	}
+	
+	public static IUndoContext getUndoContext() {
+		return fRefactoringUndoContext;
 	}
 	
 	public static void log(IStatus status) {

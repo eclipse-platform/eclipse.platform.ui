@@ -73,7 +73,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		protected abstract String getFullMessage(String errorMessage);
 	}
 
-	public UndoManagerAction() {
+	protected UndoManagerAction() {
 	}
 	
 	protected abstract IRunnableWithProgress createOperation(Shell parent);

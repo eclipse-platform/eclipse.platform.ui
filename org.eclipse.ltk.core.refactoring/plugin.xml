@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.core.filebuffers"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.core.commands"/>
    </requires>
 
    <extension-point id="renameParticipants" name="%renameParticipantsExtensionPoint" schema="schema/renameParticipants.exsd"/>
