@@ -16,8 +16,7 @@ This extension point is used to define a working set wizard page. Working sets
 contain a number of elements of type IAdaptable and can be used to group
 elements for presentation to the user or for operations on a set of elements. A
 working set wizard page is used to create and edit working sets that contain elements
-of a specific type.<p>The workbench provides menu items to select a working set
-for the current page and to clear the currently set working set from the page.
+of a specific type.<p>
 To select a working set the user is presented with a list of working sets that
 exist in the workbench. From that list a working set can be selected and edited
 using one of the wizard pages defined using this extension point. An existing
@@ -27,10 +26,10 @@ available.<p>A new working set can be defined by the user from the same working
 set selection dialog. When a new working set is defined, the plugin provided
 wizard page is preceded by a page listing all available working set types. This
 list is made up of the <code>name</code> attribute values of each working set
-extension.&nbsp;<p>The working set selection dialog may also be opened
-programmatically.<p> The resource
-navigator uses the active page working set to filter elements from the navigator
-view. Only parents and children of working set elements are shown in the view,
+extension.&nbsp;<p>Views provide a user interface to open the working set
+selection dialog and must store the selected working set.<p> The resource
+navigator uses a working set to filter elements from the navigator view. 
+Only parents and children of working set elements are shown in the view,
 in addition to the working set elements themselves.
 
 <p><b><i>Since:</i></b> Release 2.0
@@ -40,7 +39,8 @@ in addition to the working set elements themselves.
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
-
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageClass&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
@@ -48,9 +48,13 @@ CDATA #REQUIRED</tt>
 <b>id -</b> a unique name that can be used to identify this working set dialog.</li>
 
 <li>
-<b>name</b> - the name of the element type that the working set dialog displays and edits.
+<b>name</b> - the name of the element type that will be displayed and edited by the working set page.
 This should be a descriptive name like &quot;Resource&quot; or &quot;Java
 Element&quot;.</li>
+<li>
+<b>icon</b> - a relative name of the image that will be displayed on the working set type selection 
+page of the new working set wizard and in the working set selection dialog.
+</li>
 <li>
 <b>pageClass</b> - the fully qualified name of a Java class implementing
 org.eclipse.ui.dialogs.IWorkingSetPage.</li>
@@ -63,6 +67,7 @@ is defined to display and edit generic IResource elements.:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;org.eclipse.ui.resourceWorkingSetPage&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 name=&quot;Resource&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon=&quot;icons/resworkset.gif&quot;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage&quot;&gt;<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/workingSet&gt;<br>
 &nbsp;&nbsp;&nbsp; &lt;/extension&gt;</code><p><b><i>API Information</i>: </b>The value of the
