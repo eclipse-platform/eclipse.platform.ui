@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -31,9 +32,9 @@ public interface ISourceContainerBrowser {
 	 * the user has selected to add to the given launch configuration.
 	 * 
 	 * @param shell the shell to use to display any dialogs
-	 * @param configuration the launch configuration being edited
+	 * @param director TODO
 	 * @return the new source container or containers
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ILaunchConfiguration configuration);
+	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director);
 	
 }

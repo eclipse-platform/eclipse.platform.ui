@@ -30,7 +30,8 @@ public class RestoreDefaultAction extends SourceContainerAction {
 	public void run() {		
 		ISourceContainer[] containers = new ISourceContainer[1];
 		containers[0] = new DefaultSourceContainer();
-		getViewer().addEntries(containers);
+		getViewer().setEntries(containers);
+		setEnabled(false);
 	}
 	
 	/**
@@ -39,13 +40,11 @@ public class RestoreDefaultAction extends SourceContainerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		//disable if selection is empty, default already present, or non-root node selected
 		ISourceContainer[] containers = getViewer().getEntries();
-		if(containers != null){
-			for(int i=0; i< containers.length; i++)
-			{
-				if(containers[i] instanceof DefaultSourceContainer)
-					return false;
+		if(containers != null && containers.length == 1) {
+			if(containers[0] instanceof DefaultSourceContainer) {
+				return false;
 			}
 		}		
-		return selection.isEmpty()|| getViewer().getTree().getSelection()[0].getParentItem()==null;	
+		return true;	
 	}
 }

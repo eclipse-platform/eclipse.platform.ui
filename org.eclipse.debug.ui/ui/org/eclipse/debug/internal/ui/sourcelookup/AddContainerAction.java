@@ -9,9 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.actions.SelectionListenerAction;
 
 
 /**
@@ -33,11 +34,7 @@ public class AddContainerAction extends SourceContainerAction {
 	 * @see IAction#run()
 	 */	
 	public void run() {
-		ILaunchConfiguration configuration = null;
-		if (fDirector != null) {
-			configuration = fDirector.getLaunchConfiguration();
-		}
-		AddSourceContainerDialog dialog = new AddSourceContainerDialog(getShell(), getViewer(), configuration, fDirector);
+		AddSourceContainerDialog dialog = new AddSourceContainerDialog(getShell(), getViewer(), fDirector);
 		dialog.open();			
 	}
 	

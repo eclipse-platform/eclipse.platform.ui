@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser;
@@ -33,7 +33,7 @@ public class ExternalArchiveSourceContainerBrowser implements ISourceContainerBr
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.sourcelookup.ISourceContainerBrowser#createSourceContainers(org.eclipse.swt.widgets.Shell, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ISourceContainer[] createSourceContainers(Shell shell, ILaunchConfiguration configuration) {
+	public ISourceContainer[] createSourceContainers(Shell shell, ISourceLookupDirector director) {
 		FileDialog dialog = new FileDialog(shell, SWT.OPEN | SWT.MULTI);
 		String rootDir = DebugUIPlugin.getDefault().getDialogSettings().get(ROOT_DIR);
 		dialog.setText(SourceLookupUIMessages.getString("ExternalArchiveSourceContainerBrowser.2")); //$NON-NLS-1$

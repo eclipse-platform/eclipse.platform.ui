@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
@@ -53,17 +52,15 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	private TableViewer fViewer;
 	private SourceContainerViewer fSourceContainerViewer;
 	private boolean fDoubleClickSelects = true;
-	private ILaunchConfiguration fConfiguration;
 	private ISourceLookupDirector fDirector;
 	
 	/**
 	 * Constructor
 	 */
-	public AddSourceContainerDialog(Shell shell, SourceContainerViewer viewer, ILaunchConfiguration configuration, ISourceLookupDirector director) {		
+	public AddSourceContainerDialog(Shell shell, SourceContainerViewer viewer, ISourceLookupDirector director) {		
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fSourceContainerViewer=viewer;		
-		fConfiguration = configuration;
 		fDirector = director;
 	}
 	
@@ -151,7 +148,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		ISourceContainerBrowser browser = SourceLookupUIUtils.getSourceContainerBrowser(type.getId());
 		if(browser == null)
 			super.okPressed();
-		ISourceContainer[] results = browser.createSourceContainers(getShell(), fConfiguration);
+		ISourceContainer[] results = browser.createSourceContainers(getShell(), fDirector);
 		if(results != null)
 			fSourceContainerViewer.addEntries(results);
 		super.okPressed();
