@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.core.resources.IFile;
@@ -19,32 +20,10 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.ant
-	.launchConfigurations
-	.AntProcess;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.ant
-	.launchConfigurations
-	.AntStreamMonitor;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.ant
-	.launchConfigurations
-	.AntStreamsProxy;
+import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntProcess;
+import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamMonitor;
+import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
-import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 	
 /**
  */
@@ -62,13 +41,18 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 
 	public AntProcessBuildLogger() {
 		super();
+		fMessageOutputLevel = Project.MSG_INFO;
 	}
 	
 	/**
 	 * @see org.eclipse.ui.externaltools.internal.ant.logger.NullBuildLogger#logMessage(java.lang.String, int)
 	 */
-	protected void logMessage(String message, BuildEvent event) {
-		int priority = toConsolePriority(event.getPriority()); 
+	protected void logMessage(String message, BuildEvent event, int overridePriority) {
+		int priority= overridePriority;
+		if (priority == -1) {
+			priority= event.getPriority();
+		} 
+		
 		if (priority > getMessageOutputLevel()) {
 			return;
 		}
@@ -80,19 +64,19 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		AntStreamsProxy proxy = (AntStreamsProxy)fProcess.getStreamsProxy();
 		AntStreamMonitor monitor = null;
 		switch (priority) {
-			case LogConsoleDocument.MSG_INFO:
+			case Project.MSG_INFO:
 				monitor = (AntStreamMonitor)proxy.getOutputStreamMonitor();
 				break;
-			case LogConsoleDocument.MSG_ERR:
+			case Project.MSG_ERR:
 				monitor = (AntStreamMonitor)proxy.getErrorStreamMonitor();
 				break;
-			case LogConsoleDocument.MSG_DEBUG:
+			case Project.MSG_DEBUG:
 				monitor = (AntStreamMonitor)proxy.getDebugStreamMonitor();
 				break;
-			case LogConsoleDocument.MSG_WARN:
+			case Project.MSG_WARN:
 				monitor = (AntStreamMonitor)proxy.getWarningStreamMonitor();
 				break;
-			case LogConsoleDocument.MSG_VERBOSE:
+			case Project.MSG_VERBOSE:
 				monitor = (AntStreamMonitor)proxy.getVerboseStreamMonitor();
 				break;
 		}
@@ -174,7 +158,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 * @see BuildListener#messageLogged(BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		logMessage(event.getMessage(), event);
+		logMessage(event.getMessage(), event, -1);
 	}
 	
 	protected void handleException(BuildEvent event) {
@@ -185,11 +169,17 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			return;
 		}
 		fHandledException= exception;
-		logMessage(
-			ToolMessages.format(
-				"NullBuildLogger.buildException", //$NON-NLS-1$
-				new String[] { exception.toString()}),
-				event);	
+		logMessage(ToolMessages.format(
+					"NullBuildLogger.buildException", //$NON-NLS-1$
+					new String[] { exception.toString()}),
+					event, Project.MSG_ERR);	
 	}
 		
+	/**
+	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
+	 */
+	public void setMessageOutputLevel(int level) {
+		fMessageOutputLevel= level;
+	}
+
 }

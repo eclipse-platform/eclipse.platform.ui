@@ -19,7 +19,7 @@ import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
 
 public class NullBuildLogger implements BuildLogger {
 
-	private int fMessageOutputLevel = LogConsoleDocument.MSG_INFO;
+	protected int fMessageOutputLevel = LogConsoleDocument.MSG_INFO;
 	private PrintStream fErr= null;
 	private PrintStream fOut= null;
 	
