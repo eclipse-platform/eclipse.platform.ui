@@ -417,18 +417,18 @@ public class RegistryObjectManager implements IObjectManager {
 		return existingOrphanExtensions;
 	}
 
-	boolean removeOrphan(String extensionPoint, int extension) {
+	void removeOrphan(String extensionPoint, int extension) {
 		Map orphans = getOrphans();
 		int[] existingOrphanExtensions = (int[]) orphans.get(extensionPoint);
 
 		if (existingOrphanExtensions == null)
-			return false;
+			return;
 
 		markOrphansHasDirty(orphans);
 		int newSize = existingOrphanExtensions.length - 1;
 		if (newSize == 0) {
 			orphans.remove(extensionPoint);
-			return true;
+			return;
 		}
 
 		int[] newOrphanExtensions = new int[existingOrphanExtensions.length - 1];
@@ -437,7 +437,7 @@ public class RegistryObjectManager implements IObjectManager {
 				newOrphanExtensions[j++] = existingOrphanExtensions[i];
 
 		orphans.put(extensionPoint, newOrphanExtensions);
-		return true;
+		return;
 	}
 
 	//This method is only used by the writer to reach in

@@ -547,9 +547,8 @@ public class ExtensionRegistry implements IExtensionRegistry {
 		String xptName = extension.getExtensionPointIdentifier();
 		ExtensionPoint extPoint = registryObjects.getExtensionPointObject(xptName);
 		if (extPoint == null) {
-			boolean removed = registryObjects.removeOrphan(xptName, extensionId);
-			if (! removed)
-				return null;
+			registryObjects.removeOrphan(xptName, extensionId);
+			return null;
 		}
 		// otherwise, unlink the extension from the extension point
 		int[] existingExtensions = extPoint.getRawChildren();
