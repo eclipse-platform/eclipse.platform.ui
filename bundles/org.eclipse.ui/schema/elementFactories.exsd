@@ -96,7 +96,7 @@ new editor.
 &lt;samp&gt;org.eclipse.ui.IElementFactory&lt;/samp&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IElementFactory "/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IElementFactory"/>
                </appInfo>
             </annotation>
          </attribute>
