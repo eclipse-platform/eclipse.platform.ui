@@ -11,7 +11,6 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.internal.boot.LaunchInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -135,22 +134,6 @@ private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable inpu
 	return newWindow;
 }
 
-private void checkInstallErrors() {
-	if(!LaunchInfo.getCurrent().hasStatus())
-		return;
-		
-	LaunchInfo.Status installStatus[] = LaunchInfo.getCurrent().getStatus();
-	if(installStatus != null) {
-		MultiStatus ms = new MultiStatus(
-			PlatformUI.PLUGIN_ID,0,
-			WorkbenchMessages.getString("Workbench.instalationError"),//$NON-NLS-1$
-			null);
-		for (int i = 0; i < installStatus.length; i++){
-			ms.add(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,installStatus[i].getMessage(),installStatus[i].getException()));
-		}
-		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"), null, ms);//$NON-NLS-1$
-	}
-}
 
 /*
  * @see IWorkbench#clonePage(IWorkbenchPage)
@@ -809,7 +792,6 @@ public Object run(Object arg) {
 		Window.setExceptionHandler(handler);
 		boolean initOK = init(commandLineArgs);
 		Platform.endSplash();
-		checkInstallErrors();
 		if (initOK) {
 			runEventLoop();
 		}
