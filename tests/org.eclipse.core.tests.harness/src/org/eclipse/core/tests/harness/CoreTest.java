@@ -41,7 +41,7 @@ public class CoreTest extends TestCase {
 		super(name);
 	}
 
-	public static void runPerformanceTest(TestCase testCase, Runnable setup, Runnable operation, Runnable teardown, int inner, final int outer) {
+	public static void runPerformanceTest(TestCase testCase, Runnable setup, Runnable operation, Runnable teardown, int outer, int inner) {
 		Performance perf = Performance.getDefault();
 		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
 		if (setup == null)
@@ -66,8 +66,8 @@ public class CoreTest extends TestCase {
 		}
 	}
 
-	public static void runPerformanceTest(TestCase testCase, Runnable operation, int inner, final int outer) {
-		runPerformanceTest(testCase, NO_OP, operation, NO_OP, inner, outer);
+	public static void runPerformanceTest(TestCase testCase, Runnable operation, int outer, int inner) {
+		runPerformanceTest(testCase, NO_OP, operation, NO_OP, outer, inner);
 	}
 
 	public static void log(String pluginID, IStatus status) {
