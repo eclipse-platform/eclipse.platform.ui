@@ -349,7 +349,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 				.get(commandId);
 
 		if (handlerSubmissions2 == null) {
-			handlerSubmissions2 = new ArrayList();
+			handlerSubmissions2 = new ArrayList(1);
 			handlerSubmissionsByCommandId.put(commandId, handlerSubmissions2);
 		}
 
