@@ -173,7 +173,6 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		((ShowBreakpointsForModelAction)getAction("ShowBreakpointsForModel")).dispose(); //$NON-NLS-1$
 		super.dispose();
 		if (getEventHandler() != null) {
 			getEventHandler().dispose();
