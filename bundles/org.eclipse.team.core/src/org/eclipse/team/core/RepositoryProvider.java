@@ -67,6 +67,9 @@ public abstract class RepositoryProvider implements IProjectNature {
 	
 	private final static String TEAM_SETID = "org.eclipse.team.repository-provider";
 	
+	// the project instance that this nature is assigned to
+	private IProject project;	
+	
 	/**
 	 * Default constructor required for the resources plugin to instantiate this class from
 	 * the nature extension definition.
@@ -162,8 +165,10 @@ public abstract class RepositoryProvider implements IProjectNature {
 		List teamSet = new ArrayList();
 		for (int i = 0; i < desc.length; i++) {
 			String[] setIds = desc[i].getNatureSetIds();
-			if(setIds.equals(TEAM_SETID)) {
-				teamSet.add(desc[i].getNatureId());
+			for (int j = 0; j < setIds.length; j++) {
+				if(setIds[j].equals(TEAM_SETID)) {
+					teamSet.add(desc[i].getNatureId());
+				}
 			}
 		}
 		return (String[]) teamSet.toArray(new String[teamSet.size()]);
@@ -204,7 +209,8 @@ public abstract class RepositoryProvider implements IProjectNature {
 	
 	/**
 	 * Returns a provider of type with the given id if associated with the given project 
-	 * or <code>null</code> if the project is not associated with a provider of that type.
+	 * or <code>null</code> if the project is not associated with a provider of that type
+	 * or the nature id is that of a non-team repository provider nature.
 	 * 
 	 * @param project the project to query for a provider
 	 * @param id the repository provider id
@@ -213,7 +219,15 @@ public abstract class RepositoryProvider implements IProjectNature {
 	final public static RepositoryProvider getProvider(IProject project, String id) {
 		try {
 			if(project.isAccessible()) {
-				return (RepositoryProvider)project.getNature(id);
+				// if the nature id given is not in the team set then return
+				// null.
+				IProjectNatureDescriptor desc = ResourcesPlugin.getWorkspace().getNatureDescriptor(id);
+				String[] setIds = desc.getNatureSetIds();
+				for (int i = 0; i < setIds.length; i++) {
+					if(setIds[i].equals(TEAM_SETID)) {
+						return (RepositoryProvider)project.getNature(id);
+					}			
+				}
 			}
 		} catch(ClassCastException e) {
 			TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_assigned_to_the_project_must_be_a_subclass_of_RepositoryProvider___2") + id, e)); //$NON-NLS-1$
@@ -283,4 +297,18 @@ public abstract class RepositoryProvider implements IProjectNature {
 	public SimpleAccessOperations getSimpleAccess() {
  		return null;
  	}
+ 	
+	/*
+	 * @see IProjectNature#getProject()
+	 */
+	public IProject getProject() {
+		return project;
+	}
+
+	/*
+	 * @see IProjectNature#setProject(IProject)
+	 */
+	public void setProject(IProject project) {
+		this.project = project;
+	}
 }

@@ -2,6 +2,8 @@ package org.eclipse.team.tests.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class TeamTest extends EclipseWorkspaceTest {
@@ -25,5 +27,9 @@ public class TeamTest extends EclipseWorkspaceTest {
 	protected IProject getUniqueTestProject(String prefix) throws CoreException {
 		// manage and share with the default stream create by this class
 		return getNamedTestProject(prefix + "-" + Long.toString(System.currentTimeMillis()));
+	}
+	
+	protected IStatus getTeamTestStatus(int severity) {
+		return new Status(severity, "org.eclipse.team.tests.core", 0, "team status", null);
 	}
 }
