@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -22,6 +23,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.branding.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
@@ -195,10 +197,9 @@ public class ConfigurationView
 	class LocalSiteLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
 			if (obj instanceof ILocalSite) {
-				AboutInfo info = UpdateUI.getDefault().getAboutInfo();
-				String productName = info.getProductName();
-				if (productName != null)
-					return productName;
+				IProduct product = Platform.getProduct();
+				if (product != null)
+					return product.getName();
 				return UpdateUI.getString("ConfigurationView.current"); //$NON-NLS-1$
 			}
 
@@ -348,9 +349,24 @@ public class ConfigurationView
 
 	private void initializeImages() {
 		ImageDescriptor edesc = UpdateUIImages.DESC_APP_OBJ;
-		AboutInfo info = UpdateUI.getDefault().getAboutInfo();
-		if (info.getWindowImage() != null)
-			edesc = info.getWindowImage();
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			String windowImageURL = product.getProperty(IProductConstants.WINDOW_IMAGE);
+			if (windowImageURL == null) {
+				String windowImagesUrls = product.getProperty(IProductConstants.WINDOW_IMAGES);
+				if (windowImagesUrls != null ) {
+					StringTokenizer st = new StringTokenizer(windowImagesUrls, ",");
+					if (st.hasMoreTokens())
+						windowImageURL = st.nextToken();
+				}
+			}
+			if (windowImageURL != null)
+				try {
+					edesc = ImageDescriptor.createFromURL(new URL(windowImageURL));
+				} catch (MalformedURLException e) {
+					UpdateUI.logException(e, false);
+				}
+		}
 		eclipseImage = UpdateUI.getDefault().getLabelProvider().get(edesc);
 	}
 

@@ -201,8 +201,10 @@ public class IniFileReader {
 	public String getFeaturePluginLabel() {
 		if (bundle == null)
 			return null;
-		else
-			return (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
+		else {
+			String name = (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
+			return Platform.getResourceString(bundle, name);
+		}
 	}
 	
 	/**
@@ -213,8 +215,10 @@ public class IniFileReader {
 	public String getProviderName() {
 		if (bundle == null)
 			return null;
-		else
-			return (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
+		else {
+			String provider = (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
+			return Platform.getResourceString(bundle, provider);
+		}
 	}
 	
 	/*
@@ -249,7 +253,7 @@ public class IniFileReader {
 	 * @param runtimeMappings runtime mappings or <code>null</code>
 	 * @return the resource string
 	 */
-	private String getResourceString(String value, Hashtable runtimeMappings) {
+	 public String getResourceString(String value, Hashtable runtimeMappings) {
 		
 		if (value == null)
 			return null;

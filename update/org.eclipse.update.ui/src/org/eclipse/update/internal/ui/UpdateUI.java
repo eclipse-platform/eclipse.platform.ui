@@ -28,10 +28,8 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.parts.AboutInfo;
 import org.eclipse.update.internal.ui.security.*;
 import org.osgi.framework.*;
 
@@ -49,7 +47,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	private ResourceBundle resourceBundle;
 	private UpdateModel model;
 	private UpdateManagerAuthenticator authenticator;
-	private AboutInfo aboutInfo;
 	private String appServerHost;
 	private int appServerPort;
 	private UpdateLabelProvider labelProvider;
@@ -101,10 +98,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
-	public AboutInfo getAboutInfo() {
-		return aboutInfo;
-	}
-
 	public UpdateLabelProvider getLabelProvider() {
 		if (labelProvider == null)
 			labelProvider = new UpdateLabelProvider();
@@ -147,7 +140,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		model = new UpdateModel();
-		readInfo();
 		authenticator = new UpdateManagerAuthenticator();
 		Authenticator.setDefault(authenticator);
 		int historyPref =
@@ -320,38 +312,6 @@ public class UpdateUI extends AbstractUIPlugin {
 		return section;
 	}
 
-	private void readInfo() {
-		// determine the identifier of the "dominant" application 
-		IPlatformConfiguration conf =
-			ConfiguratorUtils.getCurrentPlatformConfiguration();
-		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
-
-		if (versionedFeatureId == null) {
-			aboutInfo = new AboutInfo(null, null); // Ok to pass null
-		} else {
-			int index = versionedFeatureId.lastIndexOf("_"); //$NON-NLS-1$
-			if (index == -1)
-				aboutInfo = new AboutInfo(versionedFeatureId, null);
-			else {
-				String mainPluginName = versionedFeatureId.substring(0, index);
-				PluginVersionIdentifier mainPluginVersion = null;
-				try {
-					mainPluginVersion =
-						new PluginVersionIdentifier(
-							versionedFeatureId.substring(index + 1));
-				} catch (Exception e) {
-					IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
-					log(iniStatus, true); //$NON-NLS-1$
-				}
-				aboutInfo = new AboutInfo(mainPluginName, mainPluginVersion);
-			}
-		}
-		try {
-			aboutInfo.readINIFile();
-		} catch (CoreException e) {
-			log(e.getStatus(), true); //$NON-NLS-1$
-		}
-	}
 	
 	/**
 	 * Prompts the user to restart
