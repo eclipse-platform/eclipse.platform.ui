@@ -88,6 +88,63 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		}
 	}
 	
+	public void testFindCaretInMiddleOfWord() {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		try {
+			
+			// Find forward when caret is inside word
+			IRegion r= findReplaceDocumentAdapter.find(12, "TestPackage", true, false, false, false); //$NON-NLS-1$
+			assertNull(r);
+			
+			// Find backward when caret is inside word
+			r= findReplaceDocumentAdapter.find(12, "TestPackage", false, false, false, false); //$NON-NLS-1$
+			assertNull(r);
+			
+		} catch (BadLocationException e) {
+			Assert.assertTrue(false);
+		}
+	}
+	
+	public void testFindCaretAtWordStart() {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		try {
+			
+			// Find forward when caret is just before a word
+			IRegion r= findReplaceDocumentAdapter.find(8, "TestPackage", true, false, false, false); //$NON-NLS-1$
+			assertEquals(new Region(8, 11), r);
+			
+		} catch (BadLocationException e) {
+			Assert.assertTrue(false);
+		}
+	}
+	
+	public void testFindCaretAtEndStart() {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		try {
+			
+			// Find forward when caret is just before a word
+			IRegion r= findReplaceDocumentAdapter.find(19, "TestPackage", false, false, false, false); //$NON-NLS-1$
+			assertEquals(new Region(8, 11), r);
+			
+		} catch (BadLocationException e) {
+			Assert.assertTrue(false);
+		}
+	}
+	
+	/**
+	 * Test case for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=74993
+	 */
+	public void testBug74993() {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		try {
+			IRegion r= findReplaceDocumentAdapter.find(12, "\\w+", false, false, false, true); //$NON-NLS-1$
+			assertEquals(new Region(6, 1), r);
+			
+		} catch (BadLocationException e) {
+			Assert.assertTrue(false);
+		}
+	}
+	
 	public void testUTF8Pattern() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {
