@@ -4,6 +4,7 @@ package org.eclipse.ui.internal.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -81,7 +82,8 @@ public boolean testAttribute(Object target, String name, String value) {
 		return (res.isReadOnly() == value.equals("true"));//$NON-NLS-1$
 	} else if (name.equals(PROJECT_NATURE)) {
 		try {
-			return res.getProject().hasNature(value);
+			IProject proj = res.getProject();
+			return proj.isAccessible() && proj.hasNature(value);
 		} catch (CoreException e) {
 			return false;		
 		}

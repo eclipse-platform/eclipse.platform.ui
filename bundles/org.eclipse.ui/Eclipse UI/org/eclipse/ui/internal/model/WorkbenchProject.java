@@ -82,7 +82,7 @@ public boolean testAttribute(Object target, String name, String value) {
 	IProject proj = (IProject) target;
 	if (name.equals(NATURE)) {
 		try {
-			return proj.hasNature(value);
+			return proj.isAccessible() && proj.hasNature(value);
 		} catch (CoreException e) {
 			return false;		
 		}
