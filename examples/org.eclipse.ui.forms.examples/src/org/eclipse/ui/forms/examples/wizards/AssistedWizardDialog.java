@@ -67,7 +67,7 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
      	//dialogContainer = new SashForm(parent, SWT.NULL);
     	toolkit = new FormToolkit(parent.getDisplay());
     	dialogContainer = toolkit.createComposite(parent);
-    	adaptControl(parent);
+    	//adaptControl(parent);
     	GridLayout layout = new GridLayout();
     	layout.numColumns = 2;
     	layout.marginWidth = layout.marginHeight = 0;
@@ -79,20 +79,23 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
     	GridData gd = new GridData(GridData.FILL_BOTH);
     	//gd.verticalSpan = 3;
     	wizardArea.setLayoutData(gd);
-     	adaptControl(wizardArea);
+     	//adaptControl(wizardArea);
     	//toolkit.adapt(dialogContainer);
     	layout = new GridLayout();
     	Composite helpContainer = toolkit.createComposite(dialogContainer);
+    	gd = new GridData(GridData.FILL_VERTICAL);
+    	gd.widthHint = 200;
+    	helpContainer.setLayoutData(gd);
     	helpContainer.setLayout(layout);
     	layout.marginWidth = layout.marginHeight = 0;
     	layout.verticalSpacing = 0;
     	Label sep = new Label(helpContainer, SWT.SEPARATOR|SWT.HORIZONTAL);
     	sep.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
     	FormToolkit helpToolkit = new FormToolkit(helpContainer.getDisplay());
-    	helpToolkit.setBackground(helpToolkit.getColors().createColor("bg", 230, 240, 255));
+    	//helpToolkit.setBackground(helpToolkit.getColors().createColor("bg", 230, 240, 255));
     	contextHelpPart.createControl(helpContainer, helpToolkit);
+    	contextHelpPart.init(contextHelpPart.getForm().getForm().getToolBarManager());
     	Control contextHelp = contextHelpPart.getControl();
-        contextHelp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
     	ManagedForm contextForm = contextHelpPart.getForm();
     	Action closeAction = new Action() {
     		public void run() {
@@ -128,6 +131,7 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
      }
     
 	private void adaptPage(IWizardPage page) {
+		/*
 		Control control = page.getControl();
 		if (control==null || !(control instanceof Composite)) return;
 		Object flag = control.getData("__adapted__");
@@ -135,9 +139,11 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
 			adaptControl(control);
 			control.setData("__adapted__", Boolean.TRUE);
 		}
+		*/
 	}
 	
 	private void adaptControl(Control c) {
+		/*
 		if (c instanceof Composite) {
 			Composite parent = (Composite)c;
 			Control [] children = parent.getChildren();
@@ -150,6 +156,7 @@ public class AssistedWizardDialog extends WizardDialog implements IFormToolkitPr
 		else {
 			toolkit.adapt(c, true, true);
 		}
+		*/
 	}    
     private void updateContextHelp() {
        	IWizardPage page = getCurrentPage();
