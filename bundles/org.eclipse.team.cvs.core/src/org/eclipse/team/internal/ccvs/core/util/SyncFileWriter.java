@@ -351,27 +351,15 @@ public class SyncFileWriter {
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
 		// write lines will throw an exception if the CVS directory does not exist
 
-		if (infos.length == 0) {
-			// if there are no notify entries, delete the notify file
-			try {
-				IFile file = cvsSubDir.getFile(BASEREV);
-				if(file.exists()) {
-					file.delete(IResource.NONE, null);
-				}
-			} catch (CoreException e) {
-				throw CVSException.wrapException(e);
-			}
-		} else {
-			// format file contents
-			String[] entries = new String[infos.length];
-			for (int i = 0; i < infos.length; i++) {
-				BaserevInfo info = infos[i];
-				entries[i] = info.getEntryLine();
-			}
-
-			// write Notify entries
-			writeLines(cvsSubDir.getFile(BASEREV), entries);
+		// format file contents
+		String[] entries = new String[infos.length];
+		for (int i = 0; i < infos.length; i++) {
+			BaserevInfo info = infos[i];
+			entries[i] = info.getEntryLine();
 		}
+
+		// write Notify entries
+		writeLines(cvsSubDir.getFile(BASEREV), entries);
 	}
 				
 	/**

@@ -115,6 +115,12 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		return parent != null;
 	}
 
+	public boolean isModified() throws CVSException {
+		// it is safe to always consider a remote file handle as modified. This will cause any
+		// CVS command to fetch new contents from the server.
+		return true;
+	}
+	
 	/*
 	 * @see ICVSResource#unmanage()
 	 */

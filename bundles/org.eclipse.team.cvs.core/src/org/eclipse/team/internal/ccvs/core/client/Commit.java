@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import java.util.Collection;
-import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,7 +17,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class Commit extends Command {
@@ -81,28 +79,22 @@ public class Commit extends Command {
 				if (!resource.isFolder()) {
 					ICVSFile cvsFile = (ICVSFile)resources[i];
 					if (cvsFile.exists() && cvsFile.isModified()) {
-						ResourceSyncInfo info = cvsFile.getSyncInfo();
-						if (info == null) {
-							// There should be sync info. Log the problem
-							status = mergeStatus(status, new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("Commit.syncInfoMissing", cvsFile.getIResource().getFullPath().toString()), null)); //$NON-NLS-1$
-						} else {
-							status = mergeStatus(status, new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, Policy.bind("Commit.timestampReset", cvsFile.getIResource().getFullPath().toString()), null)); //$NON-NLS-1$
-							Date timeStamp = info.getTimeStamp();
-							if (timeStamp == null) {
-								// If the entry line has no timestamp, put the file timestamp in the entry line
-								MutableResourceSyncInfo mutable = info.cloneMutable();
-								mutable.setTimeStamp(cvsFile.getTimeStamp());
-								cvsFile.setSyncInfo(mutable);
-							} else {
-								// reset the file timestamp to the one from the entry line
-								cvsFile.setTimeStamp(timeStamp);
-							}
-						}
+						status = mergeStatus(status, clearModifiedState(cvsFile));
 					}
 				}
 			}
 		}
 		return status;
+	}
+	
+	protected IStatus clearModifiedState(ICVSFile cvsFile) throws CVSException {
+		ResourceSyncInfo info = cvsFile.getSyncInfo();
+		if (info == null) {
+			// There should be sync info. Log the problem
+			return new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("Commit.syncInfoMissing", cvsFile.getIResource().getFullPath().toString()), null); //$NON-NLS-1$
+		}
+		cvsFile.checkedIn(null);
+		return new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, Policy.bind("Commit.timestampReset", cvsFile.getIResource().getFullPath().toString()), null); //$NON-NLS-1$;
 	}
 	
 	/**

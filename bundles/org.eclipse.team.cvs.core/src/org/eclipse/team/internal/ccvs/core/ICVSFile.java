@@ -16,7 +16,6 @@ import java.util.Date;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * The CVS analog of a file. CVS files have access to synchronization information
@@ -136,11 +135,10 @@ public interface ICVSFile extends ICVSResource {
 	public void unedit(IProgressMonitor monitor) throws CVSException;
 
 	/**
-	 * Update the file's sync info to the given value and reset the read-only
-	 * status of the file if a previous revision of the file was stored in the
-	 * CVS/BASE directory.
+	 * This method is invoked by the checked-in handler after the file
+	 * has been committed.
 	 */
-	public void committed(ResourceSyncInfo info) throws CVSException;
+	public void checkedIn(String entryLine) throws CVSException;
 		
 	/**
 	 * Answer any pending notification information associated with the receiver.

@@ -35,7 +35,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -174,7 +173,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	
 	private void handleAddedFolder(IFolder resource) {
 		try {
-			EclipseSynchronizer.getInstance().folderCreated(resource);			
+			CVSProviderPlugin.getPlugin().getFileModificationManager().folderCreated(resource);			
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(resource);
 			if (mFolder.isManaged()) {
 				ResourceSyncInfo info = mFolder.getSyncInfo();
@@ -254,7 +253,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	/*
 	 * @see IResourceStateChangeListener#resourceStateChanged(IResource[])
 	 */
-	public void resourceStateChanged(IResource[] changedResources) {
+	public void resourceSyncInfoChanged(IResource[] changedResources) {
 		createNecessaryMarkers(changedResources);
 	}
 			
@@ -459,5 +458,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		for (int i = 0; i < markers.length; i++) {
 			markers[i].delete();
 		}
+	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceModificationStateChanged(org.eclipse.core.resources.IResource[])
+	 */
+	public void resourceModified(IResource[] changedResources) {
+		// Nothing to do here
 	}
 }

@@ -32,6 +32,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFileModificationValidator;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -52,16 +53,18 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 	 * and the parent folder sync info needs to remain 
 	 */
 	private void makeFileOutgoingDeletion(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		// Delete or move the file
-		if (destination == null) {
-			tree.standardDeleteFile(source, updateFlags, monitor);
-		} else {
-			tree.standardMoveFile(source, destination, updateFlags, monitor);
-		}
-		// Indicate whether the parent folder sync info must remain for outgoing deletions
-		// and update the file sync info to be a deletion
-		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(source);
 		try {
+			// signal the cvs resource with a pre-deletion
+			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(source);
+			prepareToDelete(cvsFile);
+			// Delete or move the file
+			if (destination == null) {
+				tree.standardDeleteFile(source, updateFlags, monitor);
+			} else {
+				tree.standardMoveFile(source, destination, updateFlags, monitor);
+			}
+			// Indicate whether the parent folder sync info must remain for outgoing deletions
+			// and update the file sync info to be a deletion
 			ResourceSyncInfo info = cvsFile.getSyncInfo();
 			if (!withinCVSOperation && info != null && ! info.isAdded()) {
 				MutableResourceSyncInfo newInfo = info.cloneMutable();
@@ -136,9 +139,22 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		int updateFlags,
 		IProgressMonitor monitor) {
 		
-		// Return the opposite of the checkout request.
-		// If the file is deleted, the AddDeleteMoveListener will update the sync info of the file
-		return !checkOutFiles(tree, new IFile[] {file}, monitor);
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+		boolean proceed = true;
+		try {
+			if (cvsFile.isManaged()) {
+				// If the file is deleted, the AddDeleteMoveListener will update the sync info of the file
+				proceed = checkOutFiles(tree, new IFile[] {file}, monitor);
+			}
+			if (proceed && !cvsFile.isIgnored()) {
+				prepareToDelete(cvsFile);
+			}
+		} catch (CVSException e) {
+			tree.failed(e.getStatus());
+			proceed = false;
+		}
+		// We proceed by saying we didn't handle the move ourselves
+		return !proceed;
 	}
 	
 	/**
@@ -165,6 +181,8 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 					}
 				}, Policy.subMonitorFor(monitor, 70));
 				return true;
+			} else if (!cvsFolder.isIgnored()) {
+				prepareToDelete(cvsFolder);
 			}
 		} catch (CVSException e) {
 			tree.failed(e.getStatus());
@@ -183,7 +201,9 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		int updateFlags,
 		IProgressMonitor monitor) {
 			
-		// We need to flush any remembered folder deletions for the deleted project
+		// We need to flush any remembered folder deletions for the deleted project.
+		// All other sync info is stored in session and persistant properties, which
+		// are deleted when the associated resources are deleted
 		try {
 			EclipseSynchronizer.getInstance().prepareForDeletion(project);
 		} catch (CVSException e) {
@@ -204,11 +224,27 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 			IProgressMonitor monitor) {
 		
 		// See comment in deleteFile
-		if (destination.exists())
-			// Ensure that we can write to the destination
-		 	return !checkOutFiles(tree, new IFile[] {source, destination}, monitor);
-		else
-			return !checkOutFiles(tree, new IFile[] {source}, monitor);
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(source);
+		boolean proceed = true;
+		try {
+			if (cvsFile.isManaged()) {
+				if (destination.exists())
+					// Ensure that we can write to the destination
+					proceed = checkOutFiles(tree, new IFile[] {source, destination}, monitor);
+				else
+					proceed = checkOutFiles(tree, new IFile[] {source}, monitor);
+				// We proceed by saying we didn't handle the move ourselves
+			}
+			
+			if (proceed && !cvsFile.isIgnored()) {
+				prepareToDelete(cvsFile);
+			}
+		} catch (CVSException e) {
+			tree.failed(e.getStatus());
+			proceed = false;
+		}
+		// We proceed by saying we didn't handle the move ourselves
+		return !proceed;
 	}
 
 	/**
@@ -237,6 +273,9 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 					}
 				}, Policy.subMonitorFor(monitor, 60));
 				return true;
+			} else if (!cvsFolder.isIgnored()) {
+				// XXX Should be inside cvs runnable
+			   prepareToDelete(cvsFolder);
 			}
 		} catch (CVSException e) {
 			tree.failed(e.getStatus());
@@ -340,5 +379,13 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 	private CVSTeamProvider getProvider(IFile[] files) {
 		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(files[0].getProject(), CVSProviderPlugin.getTypeId());
 		return provider;
+	}
+	
+	/*
+	 * Signal that the unmanaged resource is about to be deleted so that the
+	 * dirty count of it's parent can be reduced if appropriate.
+	 */
+	private void prepareToDelete(ICVSResource resource) throws CVSException {
+		CVSProviderPlugin.getPlugin().getFileModificationManager().prepareToDelete(resource);
 	}
 }

@@ -10,7 +10,6 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -31,8 +30,7 @@ class CheckedInHandler extends ResponseHandler {
 		return "Checked-in"; //$NON-NLS-1$
 	}
 
-	public void handle(Session session, String localDir,
-		IProgressMonitor monitor) throws CVSException {
+	public void handle(Session session, String localDir, IProgressMonitor monitor) throws CVSException {
 		// read additional data for the response
 		String repositoryFile = session.readLine();
 		String entryLine = session.readLine();
@@ -45,19 +43,9 @@ class CheckedInHandler extends ResponseHandler {
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		
+		// Marked the local file as checked-in
 		monitor.subTask(Policy.bind("CheckInHandler.checkedIn", Util.toTruncatedPath(mFile, session.getLocalRoot(), 3))); //$NON-NLS-1$
-		ResourceSyncInfo newInfo = mFile.getSyncInfo();
-		
-		if (newInfo==null) {
-			// cvs add of a file
-			newInfo = new ResourceSyncInfo(entryLine, null, null);
-		} else {
-			// commit of a changed file
-			ResourceSyncInfo fileInfo = mFile.getSyncInfo();
-			newInfo = new ResourceSyncInfo(entryLine, fileInfo.getPermissions(), mFile.getTimeStamp());
-		}
-
-		mFile.committed(newInfo);
+		mFile.checkedIn(entryLine);
 	}
 }
 

@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
@@ -124,6 +125,11 @@ class UpdatedHandler extends ResponseHandler {
 		newInfoWithTimestamp.setTimeStamp(modTime);
 		if(handlerType==HANDLE_MERGED) {
 			newInfoWithTimestamp.setMerged();
+		} else if(handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED) {
+			// both these cases result in an unmodified file.
+			// reporting is handled by the FileModificationManager
+			newInfoWithTimestamp.reported();
+			CVSProviderPlugin.getPlugin().getFileModificationManager().updated(mFile);
 		}
 		mFile.setSyncInfo(newInfoWithTimestamp);
 	}

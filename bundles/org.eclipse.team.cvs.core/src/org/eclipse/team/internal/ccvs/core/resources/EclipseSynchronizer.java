@@ -55,6 +55,14 @@ public class EclipseSynchronizer {
 	private static final QualifiedName RESOURCE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "resource-sync"); //$NON-NLS-1$
 	private static final QualifiedName IGNORE_SYNC_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-ignore"); //$NON-NLS-1$
 	
+	protected static final QualifiedName IS_DIRTY = new QualifiedName(CVSProviderPlugin.ID, "is-dirty");
+	protected static final QualifiedName CLEAN_UPDATE = new QualifiedName(CVSProviderPlugin.ID, "clean-update");
+	protected static final QualifiedName DIRTY_COUNT = new QualifiedName(CVSProviderPlugin.ID, "dirty-count");
+	protected static final QualifiedName DELETED_CHILDREN = new QualifiedName(CVSProviderPlugin.ID, "deleted");
+	protected static final String IS_DIRTY_INDICATOR = "d";
+	protected static final String NOT_DIRTY_INDICATOR = "c";
+	protected static final String UPDATED_INDICATOR = "u";
+
 	private static final String[] NULL_IGNORES = new String[0];
 	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
@@ -277,7 +285,7 @@ public class EclipseSynchronizer {
 			// broadcast changes to unmanaged children - they are the only candidates for being ignored
 			List possibleIgnores = new ArrayList();
 			accumulateNonManagedChildren(folder, possibleIgnores);
-			CVSProviderPlugin.broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
+			CVSProviderPlugin.broadcastSyncInfoChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
 		} finally {
 			endOperation(null);
 		}
@@ -413,7 +421,9 @@ public class EclipseSynchronizer {
 				List changedPeers = new ArrayList();
 				changedPeers.add(root);
 				changedPeers.addAll(Arrays.asList(root.members()));
-				CVSProviderPlugin.broadcastResourceStateChanges((IResource[]) changedPeers.toArray(new IResource[changedPeers.size()]));
+				IResource[] resources = (IResource[]) changedPeers.toArray(new IResource[changedPeers.size()]);
+				CVSProviderPlugin.broadcastSyncInfoChanges(resources);
+				CVSProviderPlugin.getPlugin().getFileModificationManager().syncInfoChanged(resources);
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
@@ -558,7 +568,7 @@ public class EclipseSynchronizer {
 	 */
 	void broadcastResourceStateChanges(IResource[] resources) {
 		if (resources.length > 0) {
-			CVSProviderPlugin.broadcastResourceStateChanges(resources);
+			CVSProviderPlugin.broadcastSyncInfoChanges(resources);
 		}
 	}
 	
@@ -1114,5 +1124,302 @@ public class EclipseSynchronizer {
 	 */
 	public boolean isEdited(IFile resource) throws CVSException {
 		return SyncFileWriter.isEdited(resource);
+	}
+	
+	protected void setDirtyIndicator(IResource resource, String indicator) throws CVSException {
+		if (resource.getType() == IResource.FILE) {
+			internalSetDirtyIndicator((IFile)resource, indicator);
+		} else {
+			internalSetDirtyIndicator((IContainer)resource, indicator);
+		}
+	}
+	protected String getDirtyIndicator(IResource resource) throws CVSException {
+		if (resource.getType() == IResource.FILE) {
+			return internalGetDirtyIndicator((IFile)resource);
+		} else {
+			return internalGetDirtyIndicator((IContainer)resource);
+		}
+	}
+	private void internalSetDirtyIndicator(IFile file, String indicator) throws CVSException {
+		try {
+			file.setSessionProperty(IS_DIRTY, indicator);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	private String internalGetDirtyIndicator(IFile file) throws CVSException {
+		try {
+			return (String)file.getSessionProperty(IS_DIRTY);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	private void internalSetDirtyIndicator(IContainer container, String indicator) throws CVSException {
+		try {
+			container.setPersistentProperty(IS_DIRTY, indicator);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	private String internalGetDirtyIndicator(IContainer container) throws CVSException {
+		try {
+			return container.getPersistentProperty(IS_DIRTY);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	
+	/*
+	 * Return the dirty count for the given folder. For existing folders, the
+	 * dirty count may not have been calculated yet and this method will return
+	 * null in that case. For phantom folders, the dirty count is calculated if
+	 * it does not exist yet.
+	 */
+	protected Integer getDirtyCount(IContainer parent) throws CVSException {
+		if (!parent.exists()) return null;
+		try {
+			beginOperation(null);
+			return (Integer)parent.getSessionProperty(DIRTY_COUNT);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} finally {
+		  endOperation(null);
+	   }
+	}
+	protected void setDirtyCount(IContainer container, int count) throws CVSException {
+		if (!container.exists()) return;
+		try {
+			beginOperation(null);
+			container.setSessionProperty(DIRTY_COUNT, new Integer(count));
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} finally {
+		   endOperation(null);
+	   	}
+	}
+
+	/*
+	 * Mark the given existing file as either modified or clean using a session
+	 * property. Also notify the parent to adjust it's modified count. Do
+	 * nothing if the modified state is already what we want.
+	 */
+	protected boolean setModified(IFile file, boolean modified) throws CVSException {
+		String indicator = modified ? IS_DIRTY_INDICATOR : NOT_DIRTY_INDICATOR;
+		if (getDirtyIndicator(file) == indicator) return false;
+		setDirtyIndicator(file, indicator);
+		return true;
+	}
+	
+	/*
+	 * Mark the given existing folder as either modified or clean using a
+	 * persistant property. Do nothing if the modified state is already what we
+	 * want.
+	 */
+	protected void setModified(IContainer container, boolean modified) throws CVSException {
+		if (!container.exists()) return;
+		String indicator = modified ? IS_DIRTY_INDICATOR : NOT_DIRTY_INDICATOR;
+
+		// if it's already set, no need to set the property or adjust the parents count
+		if (indicator.equals(getDirtyIndicator(container))) return;
+
+		// set the dirty indicator and adjust the parent accordingly
+		setDirtyIndicator(container, indicator);
+		return;
+	}
+	
+	/*
+	 * Adjust the modified count for the given container and return true if the
+	 * parent should be adjusted
+	 */
+	protected boolean adjustModifiedCount(IContainer container, boolean dirty) throws CVSException {
+		if (container.getType() == IResource.ROOT) return false;
+		Integer property = getDirtyCount(container);
+		boolean updateParent = false;
+		if (property == null) {
+			// The number of dirty children has not been tallied for this parent.
+			// (i.e. no one has queried this folder yet)
+			if (dirty) {
+				// Make sure the parent and it's ansecestors
+				// are still marked as dirty (if they aren't already)
+				String indicator = getDirtyIndicator(container);
+				if (indicator == null) {
+					// The dirty state for the folder has never been cached
+					// or the cache was flushed due to an error of some sort.
+					// Let the next dirtyness query invoke the caching
+				} else if (indicator.equals(NOT_DIRTY_INDICATOR)) {
+					setModified(container, true);
+					updateParent = true;
+				}
+			} else {
+				// Let the initial query of dirtyness determine if the persistent
+				// property is still acurate.
+			}
+		} else {
+			int count = property.intValue();
+			if (dirty) {
+				count++;
+				if (count == 1) {
+					setModified(container, true);
+					updateParent = true;
+				}
+			} else {
+				Assert.isTrue(count > 0);
+				count--;
+				if (count == 0) {
+					setModified(container, false);
+					updateParent = true;
+				}
+			}
+			setDirtyCount(container, count);
+		}
+		return updateParent;
+	}
+	
+	/*
+	 * Add the deleted child and return true if it didn't exist before
+	 */
+	protected boolean addDeletedChild(IContainer container, IFile file) throws CVSException {
+		try {
+			beginOperation(null);
+			Set deletedFiles = getDeletedChildren(container);
+			if (deletedFiles == null)
+				deletedFiles = new HashSet();
+			String fileName = file.getName();
+			if (deletedFiles.contains(fileName))
+				return false;
+			deletedFiles.add(fileName);
+			setDeletedChildren(container, deletedFiles);
+			return true;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} finally {
+			endOperation(null);
+		}
+	}
+	
+	protected boolean removeDeletedChild(IContainer container, IFile file) throws CVSException {
+		try {
+			beginOperation(null);
+			Set deletedFiles = getDeletedChildren(container);
+			if (deletedFiles == null || deletedFiles.isEmpty())
+				return false;
+			String fileName = file.getName();
+			if (!deletedFiles.contains(fileName))
+				return false;
+			deletedFiles.remove(fileName);
+			if (deletedFiles.isEmpty()) deletedFiles = null;
+			setDeletedChildren(container, deletedFiles);
+			return true;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		} finally {
+			endOperation(null);
+		}
+	}
+
+	protected void setDeletedChildren(IContainer parent, Set deletedFiles) throws CVSException {
+		if (!parent.exists()) return;
+		try {
+			parent.setSessionProperty(DELETED_CHILDREN, deletedFiles);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+
+	private Set getDeletedChildren(IContainer parent) throws CoreException {
+		return (Set)parent.getSessionProperty(DELETED_CHILDREN);
+	}
+	/*
+	 * Flush all cached info for the container and it's ancestors
+	 */
+	protected void flushModificationCache(IContainer container) throws CVSException {
+		if (container.getType() == IResource.ROOT) return;
+		if (container.exists()) {
+			try {
+				beginOperation(null);
+				container.setSessionProperty(DIRTY_COUNT, null);
+				container.setSessionProperty(DELETED_CHILDREN, null);
+				container.setPersistentProperty(IS_DIRTY, null);
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			} finally {
+				endOperation(null);
+			}
+		}
+	}
+	
+	protected void flushModificationCache(IContainer container, int depth) throws CVSException {
+		if (container.getType() == IResource.ROOT) return;
+		final CVSException[] exception = new CVSException[] { null };
+		try {
+			container.accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+					try {
+						if (resource.getType() == IResource.FILE) {
+							flushModificationCache((IFile)resource);
+						} else {
+							flushModificationCache((IContainer)resource);
+						}
+					} catch (CVSException e) {
+						exception[0] = e;
+					}
+					return true;
+				}
+			}, depth, true);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+		if (exception[0] != null) {
+			throw exception[0];
+		}
+	}
+
+	/*
+	 * Flush all cached info for
+	 *  the file and it's ancestors
+	 */
+	protected void flushModificationCache(IFile file) throws CVSException {
+		if (file.exists()) {
+			try {
+				beginOperation(null);
+				file.setSessionProperty(IS_DIRTY, null);
+				file.setSessionProperty(CLEAN_UPDATE, null);
+			} catch (CoreException e) {
+				throw CVSException.wrapException(e);
+			} finally {
+				endOperation(null);
+			}
+		}
+	}
+	
+	/**
+	 * Method updated flags the objetc as having been modfied by the updated
+	 * handler. This flag is read during the resource delta to determine whether
+	 * the modification made the file dirty or not.
+	 *
+	 * @param mFile
+	 */
+	public void markFileAsUpdated(IFile file) throws CVSException {
+		try {
+			file.setSessionProperty(CLEAN_UPDATE, UPDATED_INDICATOR);
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	
+	protected boolean contentsChangedByUpdate(IFile file) throws CVSException {
+		try {
+			Object indicator = file.getSessionProperty(CLEAN_UPDATE);
+			boolean updated = false;
+			if (indicator == UPDATED_INDICATOR) {
+				// the file was changed due to a clean update (i.e. no local mods) so skip it
+				file.setSessionProperty(CLEAN_UPDATE, null);
+				file.setSessionProperty(IS_DIRTY, NOT_DIRTY_INDICATOR);
+				updated = true;
+			}
+			return updated;
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
 	}
 }

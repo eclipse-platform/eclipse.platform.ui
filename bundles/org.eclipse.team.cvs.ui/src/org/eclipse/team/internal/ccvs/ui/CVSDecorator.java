@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -26,8 +25,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -40,10 +37,8 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -152,7 +147,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
 		decoratorUpdateThread.start();
 		CVSProviderPlugin.addResourceStateChangeListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_AUTO_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
 	public String decorateText(String text, Object o) {
@@ -260,7 +255,6 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
-			final List changedResources = new ArrayList();
 			event.getDelta().accept(new IResourceDeltaVisitor() {
 				public boolean visit(IResourceDelta delta) throws CoreException {
 					IResource resource = delta.getResource();
@@ -283,21 +277,14 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 						}
 					}
 					
-					switch (delta.getKind()) {
-						case IResourceDelta.REMOVED:
-							// remove the cached decoration for any removed resource
-							cache.remove(resource);
-							break;
-						case IResourceDelta.CHANGED:
-							// for changed resources we have to update the decoration
-							changedResources.add(resource);	
+					if (delta.getKind() == IResourceDelta.REMOVED) {
+						// remove the cached decoration for any removed resource
+						cache.remove(resource);
 					}
 					
 					return true;
 				}
-			});
-			resourceStateChanged((IResource[])changedResources.toArray(new IResource[changedResources.size()]));
-			changedResources.clear();	
+			});	
 		} catch (CoreException e) {
 			CVSProviderPlugin.log(e.getStatus());
 		}
@@ -457,7 +444,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		deconfiguredProjects.add(project);
 	}
 	
-	public static boolean isDirty(final ICVSFile cvsFile) {
+	public static boolean isDirty(final ICVSResource cvsFile) {
 		try {
 			final boolean[] isDirty = new boolean[] {false};
 			cvsFile.getParent().run(new ICVSRunnable() {
@@ -476,48 +463,13 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 	}
 
-	public static boolean isDirty(IFile file) {
-		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
-	}
-
 	public static boolean isDirty(IResource resource) {
 		
 		// No need to decorate non-existant resources
 		if (!resource.exists()) return false;
 		
-		if(resource.getType() == IResource.FILE) {
-			return isDirty((IFile) resource);
-		}
-		
-		final CVSException DECORATOR_EXCEPTION = new CVSException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			cvsResource.accept(new ICVSResourceVisitor() {
-				public void visitFile(ICVSFile file) throws CVSException {
-					if(isDirty(file)) {
-						throw DECORATOR_EXCEPTION;
-					}
-				}
-				public void visitFolder(ICVSFolder folder) throws CVSException {
-					if(!folder.exists()) {
-						if (folder.isCVSFolder()) {
-							// The folder may contain outgoing file deletions
-							folder.acceptChildren(this);
-						}
-						return;
-					}
-					if (!folder.isCVSFolder() && !folder.isIgnored()) {
-						// new resource, show as dirty
-						throw DECORATOR_EXCEPTION;
-					}
-					folder.acceptChildren(this);
-				}
-			});
-		} catch (CVSException e) {
-			//if our exception was caught, we know there's a dirty child
-			return e == DECORATOR_EXCEPTION;
-		}
-		return false;
+		return isDirty(CVSWorkspaceRoot.getCVSResourceFor(resource));
+
 	}
 	/**
 	 * This method is used to indicate whether a particular resource is a member of
@@ -527,6 +479,19 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	/* package */ boolean isMemberDeconfiguredProject(IResource resource) {
 		if (deconfiguredProjects.isEmpty()) return false;
 		return deconfiguredProjects.contains(resource.getProject());
+	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
+	 */
+	public void resourceSyncInfoChanged(IResource[] changedResources) {
+		resourceStateChanged(changedResources);
+	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceModificationStateChanged(org.eclipse.core.resources.IResource[])
+	 */
+	public void resourceModified(IResource[] changedResources) {
+		resourceStateChanged(changedResources);
 	}
 
 }

@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class NewEntryHandler extends ResponseHandler {
@@ -39,7 +40,8 @@ public class NewEntryHandler extends ResponseHandler {
 		ICVSFile mFile = mParent.getFile(fileName);
 
 		ResourceSyncInfo fileInfo = mFile.getSyncInfo();
-		ResourceSyncInfo newInfo = new ResourceSyncInfo(entryLine, fileInfo.getPermissions(), null);
+		MutableResourceSyncInfo newInfo = fileInfo.cloneMutable();
+		newInfo.setEntryLine(entryLine);
 		mFile.setSyncInfo(newInfo);
 	}
 }

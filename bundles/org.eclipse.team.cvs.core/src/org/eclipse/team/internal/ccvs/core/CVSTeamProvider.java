@@ -1096,7 +1096,10 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	private static void makeDirty(IFile file) throws CVSException {
 		ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor(file);
-		mFile.setTimeStamp(null /*set the timestamp to current time*/);
+		ResourceSyncInfo origInfo = mFile.getSyncInfo();
+		MutableResourceSyncInfo info = origInfo.cloneMutable();
+		info.setTimeStamp(null);/*set the sync timestamp to null to trigger dirtyness*/
+		mFile.setSyncInfo(info);
 	}
 	
 	/*

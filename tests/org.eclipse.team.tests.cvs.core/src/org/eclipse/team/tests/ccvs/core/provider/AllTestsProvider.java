@@ -39,6 +39,7 @@ public class AllTestsProvider extends EclipseTest {
 		suite.addTest(ResourceDeltaTest.suite());
 		suite.addTest(WatchEditTest.suite());
 		suite.addTest(LinkResourcesTest.suite());
+		suite.addTest(IsModifiedTests.suite());
 		return new CVSTestSetup(suite);
 	}
 }

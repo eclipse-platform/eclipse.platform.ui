@@ -37,6 +37,12 @@ public interface ICVSFolder extends ICVSResource {
 		| UNMANAGED_MEMBERS 
 		| MANAGED_MEMBERS 
 		| EXISTING_MEMBERS;
+	public static final int ALL_UNIGNORED_MEMBERS = FILE_MEMBERS
+		| FOLDER_MEMBERS
+		| UNMANAGED_MEMBERS
+		| MANAGED_MEMBERS
+		| EXISTING_MEMBERS
+		| PHANTOM_MEMBERS;
 		
 	// flags used by run method
 	public static final int READ_ONLY = 1;
@@ -66,8 +72,7 @@ public interface ICVSFolder extends ICVSResource {
 	 *   c) EXISTING_MEMBERS and PHANTOM_MEMBERS will return existing 
 	 *     and phatom resource of the corresponding type
 	 * 
-	 * Note: Unmanaged resources are those tat are neither managed
-	 * or ignored.
+	 * Note: Unmanaged resources are those that are neither managed or ignored.
 	 * 
 	 * If all of the flags from either group a), group b) or group c)
 	 * are not present, the same rule for default types applies. 

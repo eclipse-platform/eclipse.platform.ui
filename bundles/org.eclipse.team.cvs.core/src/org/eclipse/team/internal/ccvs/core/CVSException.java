@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
 
 /**
@@ -99,5 +100,10 @@ public class CVSException extends TeamException {
 			return (CVSException)e;
 		else
 			return new CVSException(e.getStatus());
+	}
+	
+	public CoreException toCoreException() {
+		IStatus status = getStatus();
+		return new CoreException(new Status(status.getSeverity(), status.getPlugin(), 0, status.getMessage(), this));
 	}
 }

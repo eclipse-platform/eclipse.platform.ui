@@ -117,14 +117,28 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 * @see ICVSFile#isModified()
 	 */
 	public boolean isModified() throws CVSException {
+		if (!exists()) return true;
+		Object indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(getIFile());
+		if (indicator != null)
+			return indicator == EclipseSynchronizer.IS_DIRTY_INDICATOR;
+		// nothing cached, need to manually check (and record)
+		
 		ResourceSyncInfo info = getSyncInfo();
-		if (!exists() || !isManaged(info)) {
-			return true;
-		} else {
-			// consider a merged file as always modified.
-			if(info.isMerged()) return true;
-			return !getTimeStamp().equals(info.getTimeStamp());
-		}
+		if (info == null && isIgnored()) return false;
+		// unmanaged files are reported as modified
+		boolean dirty = isModified(info);
+		setModified(dirty);
+		return dirty;
+	}
+	
+	/*
+	 * Deteremine if the receiver is modified when compared with the given sync
+	 * info.
+	 */
+	private boolean isModified(ResourceSyncInfo info) throws CVSException {
+		if (info == null) return true;
+		if(info.isMerged() || !exists()) return true;
+		return !getTimeStamp().equals(info.getTimeStamp());
 	}
 	
 	/*
@@ -350,8 +364,11 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				newInfo.setRevision(baserevInfo.getRevision());
 				newInfo.setTimeStamp(getTimeStamp());
 				newInfo.setDeleted(false);
+				newInfo.reported(); // We report the change below
 				setSyncInfo(newInfo);
 			}
+			// an unedited file is no longer modified
+			setModified(false);
 		}
 		setBaserevInfo(null);
 		
@@ -374,10 +391,42 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	}
 	
 	/**
-	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#committed(org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo)
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#committed(String)
 	 */
-	public void committed(ResourceSyncInfo info) throws CVSException {
-		setSyncInfo(info);
+	public void checkedIn(String entryLine) throws CVSException {
+		ResourceSyncInfo oldInfo = getSyncInfo();
+		ResourceSyncInfo newInfo = null;
+		boolean modified = false;
+		if (entryLine == null) {
+			// The file contents matched the server contents so no entry line was sent
+			if (oldInfo == null) return;
+			Date timeStamp = oldInfo.getTimeStamp();
+			if (timeStamp == null) {
+				// If the entry line has no timestamp, put the file timestamp in the entry line
+				MutableResourceSyncInfo mutable = oldInfo.cloneMutable();
+				mutable.setTimeStamp(getTimeStamp());
+				// We report the modification change ourselves below
+				mutable.reported();
+				newInfo = mutable;
+			} else {
+				// reset the file timestamp to the one from the entry line
+				setTimeStamp(timeStamp);
+				// (newInfo = null) No need to set the newInfo as there is no sync info change
+			}
+			// (modified = false) the file will be no longer modified
+		} else if (oldInfo == null) {
+			// cvs add of a file
+			newInfo = new ResourceSyncInfo(entryLine, null, null);
+			// an added file should show up as modified
+			modified = true;
+		} else {
+			// commit of a changed file
+			newInfo = new ResourceSyncInfo(entryLine, oldInfo.getPermissions(), getTimeStamp());
+			// (modified = false) a committed file is no longer modified
+			
+		}
+		setModified(modified);
+		if (newInfo != null) setSyncInfo(newInfo);
 		clearCachedBase();
 	}
 	
@@ -395,6 +444,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	public void unmanage(IProgressMonitor monitor) throws CVSException {
 		super.unmanage(monitor);
 		clearCachedBase();
+		// Reset the modified state of any unmanaged file
+		setModified(false);
 	}
 	/**
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#isEdited()
@@ -403,4 +454,101 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		return EclipseSynchronizer.getInstance().isEdited(getIFile());
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSResource#setSyncInfo(org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo)
+	 */
+	public void setSyncInfo(ResourceSyncInfo info) throws CVSException {
+		super.setSyncInfo(info);
+		if (info.needsReporting()) {
+			setModified(isModified(info));
+			info.reported();
+		}
+	}
+
+	public void syncInfoChanged() throws CVSException {
+		if (isIgnored()) {
+			// check to see if the file was previously marked as dirty
+			String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(getIResource());
+			if (indicator == EclipseSynchronizer.IS_DIRTY_INDICATOR) {
+				((EclipseFolder)getParent()).adjustModifiedCount(false);
+			}
+			// make sure the file is no longer marked
+			flushModificationCache();
+			return;
+		}
+		setModified(isModified(getSyncInfo()));
+	}
+	
+	/**
+	 * Method updated flags the objetc as having been modfied by the updated
+	 * handler. This flag is read during the resource delta to determine whether
+	 * the modification made the file dirty or not.
+	 *
+	 * @param mFile
+	 */
+	public void updated() throws CVSException {
+		EclipseSynchronizer.getInstance().markFileAsUpdated(getIFile());
+	}
+	
+	public boolean handleModification(boolean forAddition) throws CVSException {
+		if (isIgnored()) return false;
+		if (EclipseSynchronizer.getInstance().contentsChangedByUpdate(getIFile()))
+			return false;
+		if (forAddition) {
+			// It is possible that the addition was a deletion that was recreated so
+			// make sure it is removed from the deletion list.
+			((EclipseFolder)getParent()).handleDeletion(getIFile(), false /* add to list */);
+		}
+		// set the modification state to what it really is and return true if the modification state changed
+		boolean isModified = isModified(getSyncInfo());
+		return setModified(isModified) && isModified;
+	}
+	
+	/**
+	 * Method setModified sets the modified status of the reciever. This method
+	 * returns true if there was a change in the modified status of the file.
+	 * @param iFile
+	 * @param b
+	 */
+	private boolean setModified(boolean modified) throws CVSException {
+		try {
+			if (exists()) {
+				// if the files exists, mark it appropriately
+				boolean adjustParent = EclipseSynchronizer.getInstance().setModified(getIFile(), modified);
+				if (adjustParent) {
+					((EclipseFolder)getParent()).adjustModifiedCount(modified);
+				}
+				return adjustParent;
+			} else {
+				// The modification must be a deletion. Handle it
+				// if modified is false (meaning that the deletion has been commited) 
+				// or if the file is managed and modified is true (meaning a new deletion)
+				if (!modified || isManaged()) {
+					((EclipseFolder)getParent()).handleDeletion(getIFile(), modified /* record */);
+					return true;
+				}
+				return false;
+			}
+		} catch (CVSException e) {
+			// flush any cached info for the file and it's parent's so they are recalculated.
+			try {
+				flushWithAncestors();
+			} catch (CVSException ex) {
+				// This is bad because now we have no clue as to whether the properties are up to date
+				// XXX Need a multi-status with original exception as well.
+				throw new CVSException("Big trouble!", ex);
+			}
+			throw e;
+		}
+	}
+	
+	/*
+	 * Flush all cached info for the file and it's ancestors
+	 */
+	protected void flushModificationCache() throws CVSException {
+		EclipseSynchronizer.getInstance().flushModificationCache(getIFile());
+
+	}
 }
+
+

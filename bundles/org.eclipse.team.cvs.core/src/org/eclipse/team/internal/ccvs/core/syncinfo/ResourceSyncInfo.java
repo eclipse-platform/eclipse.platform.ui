@@ -378,7 +378,7 @@ public class ResourceSyncInfo {
 	 * 
 	 * @throws CVSException if the entryLine is malformed
 	 */
-	private void setEntryLine(String entryLine) throws CVSException {
+	protected void setEntryLine(String entryLine) throws CVSException {
 
 		String[] strings = Util.parseIntoSubstrings(entryLine, SEPARATOR);
 		if(strings.length < 6) {
@@ -513,5 +513,13 @@ public class ResourceSyncInfo {
 			}
 		}
 		return result.toString();
+	}
+	
+	public boolean needsReporting() {
+		return false;
+	}
+	
+	public void reported() {
+		// do nothing
 	}
 }

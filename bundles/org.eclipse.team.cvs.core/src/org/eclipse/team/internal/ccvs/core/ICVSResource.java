@@ -161,4 +161,10 @@ public interface ICVSResource {
 	 * visited.
 	 */
 	public void accept(ICVSResourceVisitor visitor, boolean recurse) throws CVSException;
+	
+	/**
+	 * Method isModified.
+	 * @return boolean
+	 */
+	public boolean isModified() throws CVSException;
 }
