@@ -14,12 +14,7 @@ import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	protected WorkspaceDescription description;
@@ -429,7 +424,6 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.done();
 	}
 }
-
 protected void copyTree(IResource source, IPath destination, int depth, boolean phantom) throws CoreException {
 
 	// retrieve the resource at the destination if there is one (phantoms included).
@@ -626,7 +620,6 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 		monitor.done();
 	}
 }
-
 /**
  * @see IWorkspace
  */
@@ -1081,7 +1074,6 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.done();
 	}
 }
-
 /**
  * Moves this resource's subtree to the destination. This operation should only be
  * used by move methods. Destination must be a valid destination for this resource.
@@ -1203,7 +1195,7 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 	}
 
 	// create root location
-	localMetaArea.getLocationFor(getRoot()).toFile().mkdirs();
+	localMetaArea.locationFor(getRoot()).toFile().mkdirs();
 		
 	// turn off autobuilding while we open the workspace.  This is in
 	// case an operation is triggered.  We don't want to do an autobuild
@@ -1213,12 +1205,15 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 		description.setAutoBuilding(false);
 		IProgressMonitor nullMonitor = Policy.monitorFor(null);
 		startup(nullMonitor);
-		//saveManager.restore(nullMonitor);
 		//restart the notification manager so it is initialized with the right tree
 		notificationManager.startup(null);
 		openFlag = true;
 		if (crashed || refreshRequested())
 			getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
+		//add the project description change listener
+		addResourceChangeListener(
+			new ProjectDescriptionChangeListener(this), 
+			IResourceChangeEvent.PRE_AUTO_BUILD);
 		return null;
 	} finally {
 		description.setAutoBuilding(oldBuildFlag);
@@ -1341,7 +1336,7 @@ public void setDescription(IWorkspaceDescription value) throws CoreException {
 		buildOrder = null;
 	description = (WorkspaceDescription) ((WorkspaceDescription) value).clone();
 	Policy.setupAutoBuildProgress(description.isAutoBuilding());
-	localMetaArea.writeWorkspace(description);
+	localMetaArea.write(description);
 }
 public void setTreeLocked(boolean locked) {
 	treeLocked = locked;
@@ -1659,5 +1654,4 @@ protected void validateSave(final IFile file) throws CoreException {
 	if (!status[0].isOK())
 		throw new ResourceException(status[0]);
 }
-
 }

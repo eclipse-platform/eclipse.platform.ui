@@ -95,7 +95,7 @@ public ResourcesPlugin(IPluginDescriptor pluginDescriptor) {
  */
 private static void constructWorkspace() throws CoreException {
 	WorkspaceDescription description = Workspace.defaultWorkspaceDescription();
-	new LocalMetaArea().writeWorkspace(description);
+	new LocalMetaArea().write(description);
 }
 /**
  * Returns the Resources plug-in.

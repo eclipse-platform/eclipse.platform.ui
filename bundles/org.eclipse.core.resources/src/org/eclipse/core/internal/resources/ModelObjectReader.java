@@ -125,6 +125,8 @@ protected BuildCommand readBuildCommand(Node node) {
 	return command;
 }
 protected ICommand[] readBuildSpec(Node node) {
+	if (node == null)
+		return null;
 	List results = new ArrayList(5);
 	NodeList list = node.getChildNodes();
 	for (int i = 0; i < list.getLength(); i++)
@@ -160,7 +162,6 @@ protected ProjectDescription readProjectDescription(Node node) {
 	String location = getString(node, LOCATION);
 	ICommand[] buildSpec = readBuildSpec(searchNode(node, BUILD_SPEC));
 	String[] natures = getStrings(searchNode(node, NATURES));
-
 	// build instance
 	ProjectDescription description = new ProjectDescription();
 	description.setName(name);

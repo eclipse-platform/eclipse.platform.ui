@@ -441,7 +441,7 @@ protected void restore(IProgressMonitor monitor) throws CoreException {
 			restoreSnapshots(Policy.subMonitorFor(monitor, 10));
 			restoreMarkers(workspace.getRoot(), false, Policy.subMonitorFor(monitor, 10));
 			restoreSyncInfo(workspace.getRoot(), Policy.subMonitorFor(monitor, 10));
-			// restore meta info last because it might delete a project if its description is not found
+			// restore meta info last because it might close a project if its description is not readable
 			restoreMetaInfo(workspace, Policy.subMonitorFor(monitor, 10));
 			IProject[] roots = workspace.getRoot().getProjects();
 			for (int i = 0; i < roots.length; i++)
@@ -496,23 +496,25 @@ protected void restoreMasterTable() throws CoreException {
 	}
 }
 /**
- * Restores the contents of this project.  Throw
- * an exception if the project could not be restored.
+ * Restores the contents of this project.  Throw an exception if the 
+ * project description could not be restored.
  */
 protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
-	// load the description even if this project is not open.
-	ProjectDescription description = workspace.getMetaArea().read(project);
-	if (description == null && project.internalGetDescription() == null) {
-		// Somebody has probably deleted the .prj file from disk 
-		// delete the project from the workspace but leave its contents
-		project.basicDelete(new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, Policy.bind("resources.ignored"), null));
+	if (!project.isOpen())
 		return;
+	ProjectDescription description = null;
+	CoreException failure = null;
+	try {
+		description = workspace.getFileSystemManager().read(project, true);
+	} catch (CoreException e) {
+		failure = e;
+		//create a default description if one couldn't be read
+		description = new ProjectDescription();
+		description.setName(project.getName());
 	}
-	if (description != null) {
-		// FIXME: decide what it means to validate
-		// validate(desc);
-		project.internalSetDescription(description, false);
-	}
+	project.internalSetDescription(description, false);
+	if (failure != null)
+		throw failure;
 }
 /**
  * Restores the state of this workspace by opening the projects
@@ -521,8 +523,16 @@ protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws
 protected void restoreMetaInfo(Workspace workspace, IProgressMonitor monitor) throws CoreException {
 	// FIXME: read the meta info for the workspace?
 	IProject[] roots = workspace.getRoot().getProjects();
-	for (int i = 0; i < roots.length; i++)
-		restoreMetaInfo((Project) roots[i], monitor);
+	for (int i = 0; i < roots.length; i++) {
+		//fatal to throw exceptions during startup
+		try {
+			restoreMetaInfo((Project) roots[i], monitor);
+		} catch (CoreException e) {
+			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+			//close the project
+			((Project)roots[i]).internalClose();
+		}
+	}
 }
 /**
  * Restores the workspace tree from snapshot files in the event
@@ -681,12 +691,22 @@ protected void saveMasterTable(IPath location) throws CoreException {
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
-protected void saveMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
-	ProjectDescription description = (ProjectDescription) project.internalGetDescription();
-	if (description.isDirty()) {
-		workspace.getFileSystemManager().write(project, null);
-		description.clean();
+/**
+ * Ensures that the project meta-info is saved.  The project meta-info
+ * is usually saved as soon as it changes, so this is just a sanity check
+ * to make sure there is something on disk before we shutdown.
+ * 
+ * @return Status object containing non-critical warnings, or an OK status.
+ */
+protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
+	//if there is nothing on disk, write the description
+	if (!workspace.getFileSystemManager().hasSavedProject(project)) {
+		workspace.getFileSystemManager().writeSilently(project);
+		String msg = Policy.bind("resources.missingProjectMeta", project.getName());
+		//FIXME: Should just return an INFO status here.
+		return new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, project.getFullPath(), msg);
 	}
+	return ResourceStatus.OK_STATUS;
 }
 /**
  * Writes the metainfo (e.g. descriptions) of the given workspace and
@@ -695,7 +715,7 @@ protected void saveMetaInfo(Project project, IProgressMonitor monitor) throws Co
 protected void saveMetaInfo(Workspace workspace, IProgressMonitor monitor) throws CoreException {
 	WorkspaceDescription description = workspace.internalGetDescription();
 	if (description.isDirty())
-		workspace.getMetaArea().writeWorkspace(description);
+		workspace.getMetaArea().write(description);
 	IProject[] roots = workspace.getRoot().getProjects();
 	for (int i = 0; i < roots.length; i++)
 		saveMetaInfo((Project) roots[i], null);

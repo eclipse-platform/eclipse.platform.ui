@@ -15,12 +15,7 @@ import java.io.OutputStream;
 import java.util.*;
 //
 public class ModelObjectWriter implements IModelObjectConstants {
-	/* constants */
-	private static final String FORMAT_VERSION = "0.0 000";
 public ModelObjectWriter() {
-}
-protected String getFormatVersion() {
-	return FORMAT_VERSION;
 }
 protected String[] getReferencedProjects(ProjectDescription description) {
 	IProject[] projects = description.getReferencedProjects();
@@ -115,12 +110,9 @@ protected void write(ProjectDescription description, XMLWriter writer) throws IO
 	writer.startTag(PROJECT_DESCRIPTION, null);
 	if (description != null) {
 		writer.printSimpleTag(NAME, description.getName());
-		writer.printSimpleTag(VERSION, getFormatVersion());
-		writer.printSimpleTag(COMMENT, description.getComment());
+		String comment = description.getComment();
+		writer.printSimpleTag(COMMENT, comment == null ? "" : comment);
 		write(PROJECTS, PROJECT, getReferencedProjects(description), writer);
-		IPath location = description.getLocation();
-		if (location != null)
-			writer.printSimpleTag(LOCATION, location.toString());
 		write(BUILD_SPEC, Arrays.asList(description.getBuildSpec(false)), writer);
 		write(NATURES, NATURE, description.getNatureIds(false), writer);
 	}
@@ -130,7 +122,6 @@ protected void write(WorkspaceDescription description, XMLWriter writer) throws 
 	writer.startTag(WORKSPACE_DESCRIPTION, null);
 	if (description != null) {
 		writer.printSimpleTag(NAME, description.getName());
-		writer.printSimpleTag(VERSION, getFormatVersion());
 		writer.printSimpleTag(AUTOBUILD, description.isAutoBuilding() ? "1" : "0");
 		writer.printSimpleTag(SNAPSHOTS_ENABLED, description.isSnapshotEnabled() ? "1" : "0");
 		writer.printSimpleTag(OPERATIONS_PER_SNAPSHOT, new Integer(description.getOperationsPerSnapshot()));
