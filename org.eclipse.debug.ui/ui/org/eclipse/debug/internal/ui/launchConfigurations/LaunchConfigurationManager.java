@@ -634,11 +634,15 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		Iterator iter = all.iterator();
 		while (iter.hasNext()) {
 			Element historyElement = getHistoryEntryAsXMLElement(doc, (LaunchConfigurationHistoryElement)iter.next());
-			historyRootElement.appendChild(historyElement);
+			if (historyElement != null) {
+				historyRootElement.appendChild(historyElement);
+			}
 		}
 		if (!fLastLaunchList.isEmpty()) {
 			Element recent = getRecentLaunchAsXMLElement(doc, (LaunchConfigurationHistoryElement) fLastLaunchList.get(0));
-			historyRootElement.appendChild(recent);
+			if (recent != null) {
+				historyRootElement.appendChild(recent);
+			}
 		}
 
 		return DebugUIPlugin.serializeDocument(doc);
@@ -646,24 +650,29 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	
 	protected Element getHistoryEntryAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) throws CoreException {
 		Element entry = doc.createElement(HISTORY_LAUNCH_NODE); 
-		setAttributes(entry, element);
-		return entry;
+		return setAttributes(entry, element);
 	}
 	
 	protected Element getRecentLaunchAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) throws CoreException {
 		Element entry = doc.createElement(HISTORY_LAST_LAUNCH_NODE); 
-		setAttributes(entry, element);
-		return entry;
+		return setAttributes(entry, element);
 	}
 	
-	protected void setAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
+	protected Element setAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
+		if (element == null) {
+			return null;
+		}
 		ILaunchConfiguration config = element.getLaunchConfiguration();
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			config = ((ILaunchConfigurationWorkingCopy)config).getOriginal();
 		}
+		if (config == null) {
+			return null;
+		}		
 		String memento = config.getMemento();
 		entry.setAttribute(HISTORY_MEMENTO_ATT, memento); 
 		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());			 
+		return entry;
 	}
 				
 	protected IPath getHistoryFilePath() {
