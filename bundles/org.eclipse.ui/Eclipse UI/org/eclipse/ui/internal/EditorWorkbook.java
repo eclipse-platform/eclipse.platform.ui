@@ -165,7 +165,7 @@ public void createControl(Composite parent) {
 				Rectangle bounds = item.getBounds();
 				if(bounds.contains(e.x,e.y)) {
 					if (e.button == 3)
-						visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y),false);
+						visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y));
 					else if((e.button == 1) && overImage(item,e.x))
 						visibleEditor.showPaneMenu();
 				}
@@ -204,7 +204,7 @@ public void showPaneMenu() {
 	if (visibleEditor != null) {
 		CTabItem item = getTab(visibleEditor);
 		Rectangle bounds = item.getBounds();
-		visibleEditor.showPaneMenu(tabFolder,new Point(bounds.x,bounds.height),false);
+		visibleEditor.showPaneMenu(tabFolder,new Point(bounds.x,bounds.height));
 	}
 }
 /**

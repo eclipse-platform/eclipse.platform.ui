@@ -253,7 +253,7 @@ protected void createTitleBar() {
 	titleLabel.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
 			if (e.button == 3)
-				showPaneMenu(titleLabel,new Point(e.x, e.y),isFastView());
+				showPaneMenu(titleLabel,new Point(e.x, e.y));
 			else if ((e.button == 1) && overImage(e.x))
 				showPaneMenu();
 		}
@@ -457,7 +457,7 @@ public void showPaneMenu() {
 	if(isFastView() && (page.getActiveFastView() != getPart()))
 		return;
 	Rectangle bounds = titleLabel.getBounds();
-	showPaneMenu(titleLabel,new Point(0,bounds.height),isFastView());
+	showPaneMenu(titleLabel,new Point(0,bounds.height));
 }
 /**
  * Return true if this view is a fast view.

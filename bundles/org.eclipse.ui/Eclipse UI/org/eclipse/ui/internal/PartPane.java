@@ -1,9 +1,13 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+**********************************************************************/
+
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
@@ -24,6 +28,7 @@ public abstract class PartPane extends LayoutPart
 	implements Listener
 {
 	private boolean isZoomed = false;
+	private MenuManager paneMenuManager;
 	protected IWorkbenchPart part;
 	protected WorkbenchPage page;
 	protected ViewForm control;
@@ -33,7 +38,77 @@ public abstract class PartPane extends LayoutPart
 		public Sash right;
 		public Sash top;
 		public Sash bottom;
-	}	
+	}
+	class PaneContribution extends ContributionItem {
+		public boolean isDynamic() {
+			return true;
+		}
+		public void fill(Menu menu, int index) {
+			MenuItem item; 
+		
+			// Get various view states.
+			WorkbenchPage page = ((WorkbenchPage)getPart().getSite().getPage());
+			final boolean isFastView = (page.getActiveFastView() == getPart());
+			final boolean isZoomed = page.isZoomed();
+			boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
+		
+			// add restore item
+			item = new MenuItem(menu, SWT.NONE);
+			item.setText(WorkbenchMessages.getString("PartPane.restore")); //$NON-NLS-1$
+			item.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (isZoomed)
+						doZoom();
+					else
+						doPin();
+				}
+			});
+			item.setEnabled(isZoomed || isFastView);
+			
+			//Add move menu
+			item = new MenuItem(menu, SWT.CASCADE);
+			item.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
+			Menu moveMenu = new Menu(menu);
+			item.setMenu(moveMenu);
+			addMoveItems(moveMenu);
+			
+			//Add size menu
+			item = new MenuItem(menu, SWT.CASCADE);
+			item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
+			Menu sizeMenu = new Menu(menu);
+			item.setMenu(sizeMenu);
+			addSizeItems(sizeMenu);
+			
+			addFastViewMenuItem(menu,isFastView);
+		
+			// add maximize item
+			item = new MenuItem(menu, SWT.NONE);
+			item.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
+			item.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					doZoom();
+				}
+			});
+			item.setEnabled(!isZoomed && !isFastView && canZoom);
+		
+			addPinEditorItem(menu);
+			
+			new MenuItem(menu, SWT.SEPARATOR);
+			
+			// add close item
+			item = new MenuItem(menu, SWT.NONE);
+			item.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
+			item.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					doHide();
+				}
+			});			
+		}	
+		
+		
+		
+	}
+	
 /**
  * Construct a pane for a part.
  */
@@ -113,6 +188,10 @@ public void dispose() {
 		control.removeListener(SWT.Activate, this);
 		control.dispose();
 		control = null;
+	}
+	if ((paneMenuManager != null)) {
+		paneMenuManager.dispose();	
+		paneMenuManager = null;
 	}
 }
 /**
@@ -310,66 +389,12 @@ public abstract void showViewMenu();
 /**
  * Show a title label menu for this pane.
  */
-protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
-	Menu aMenu = new Menu(parent);
-	MenuItem item; 
-
-	// Get various view states.
-	final boolean isZoomed = ((WorkbenchPage)getPart().getSite().getPage()).isZoomed();
-	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
-
-	// add restore item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.restore")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			if (isZoomed)
-				doZoom();
-			else
-				doPin();
-		}
-	});
-	item.setEnabled(isZoomed || isFastView);
-	
-	//Add move menu
-	item = new MenuItem(aMenu, SWT.CASCADE);
-	item.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
-	Menu moveMenu = new Menu(aMenu);
-	item.setMenu(moveMenu);
-	addMoveItems(moveMenu);
-	
-	//Add size menu
-	item = new MenuItem(aMenu, SWT.CASCADE);
-	item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
-	Menu sizeMenu = new Menu(aMenu);
-	item.setMenu(sizeMenu);
-	addSizeItems(sizeMenu);
-	
-	addFastViewMenuItem(aMenu,isFastView);
-
-	// add maximize item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doZoom();
-		}
-	});
-	item.setEnabled(!isZoomed && !isFastView && canZoom);
-
-	addPinEditorItem(aMenu);
-	
-	new MenuItem(aMenu, SWT.SEPARATOR);
-	
-	// add close item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doHide();
-		}
-	});
-
+final protected void showPaneMenu(Control parent, Point point) {
+	if(paneMenuManager == null) {
+		paneMenuManager = new MenuManager();
+		paneMenuManager.add(new PaneContribution());			
+	}
+	Menu aMenu = paneMenuManager.createContextMenu(parent);
 	// open menu    
 	point = parent.toDisplay(point);
 	aMenu.setLocation(point.x, point.y);
