@@ -330,6 +330,14 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		job.cancel();
 		super.cancelPressed();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#open()
+	 */
+	public int open() {
+		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG,new Boolean(true));
+		return super.open();
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -394,5 +402,13 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		ProgressManager.getInstance().progressFor(job).addProgressListener(
 				getBlockingProgressMonitor());
 		open();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#close()
+	 */
+	public boolean close() {
+		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG,new Boolean(false));
+		return super.close();
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
@@ -59,6 +60,12 @@ import org.eclipse.ui.internal.util.BundleUtility;
 public class ProgressManager extends ProgressProvider
 		implements
 			IProgressService {
+	//The property for whether or not the job is running in the
+	//dialog.
+	private static final String IN_DIALOG = "inDialog";
+	public static final QualifiedName PROPERTY_IN_DIALOG =
+		new QualifiedName(JobView.PROPERTY_PREFIX,IN_DIALOG);
+
 	private static ProgressManager singleton;
 	final private Map jobs = Collections.synchronizedMap(new HashMap());
 	final private Map familyListeners = Collections
@@ -72,6 +79,7 @@ public class ProgressManager extends ProgressProvider
 	IJobChangeListener changeListener;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
+	
 	private static final String PROGRESS_20 = "progress20.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_40 = "progress40.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_60 = "progress60.gif"; //$NON-NLS-1$
