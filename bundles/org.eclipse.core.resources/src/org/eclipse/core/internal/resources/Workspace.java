@@ -81,15 +81,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public static boolean DEBUG = false;
 
 	/**
-	 * This field is used to control the access to the workspace tree inside
-	 * operations. It is useful when calling alien code. Since we usually are in
-	 * the same thread as the alien code we are calling, our concurrency model
-	 * would allow the alien code to run operations that could change the tree.
-	 * If this field is true, a beginOperation(true) fails, so the alien code
-	 * would fail and be logged in our SafeRunnable wrappers, not affecting the
-	 * normal workspace operation.
+	 * This field is used to control access to the workspace tree during
+	 * resource change notifications. It tracks which thread, if any, is
+	 * in the middle of a resource change notification.  This is used to cause
+	 * attempts to modify the workspace during notifications to fail.
 	 */
-	protected boolean treeLocked = false;
+	protected Thread treeLocked = null;
 
 	/** indicates if the workspace crashed in a previous session */
 	protected boolean crashed = false;
@@ -100,7 +97,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		tree = new ElementTree();
 		/* tree should only be modified during operations */
 		tree.immutable();
-		treeLocked = true;
+		treeLocked = Thread.currentThread();
 		tree.setTreeData(newElement(IResource.ROOT));
 	}
 	/**
@@ -1232,7 +1229,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
 	}
 	public boolean isTreeLocked() {
-		return treeLocked;
+		return treeLocked == Thread.currentThread();
 	}
 	/**
 	 * Link the given tree into the receiver's tree at the specified resource.
@@ -1630,7 +1627,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 	}
 	public void setTreeLocked(boolean locked) {
-		treeLocked = locked;
+		treeLocked = locked ? Thread.currentThread() : null;
 	}
 	/**
 	 * @deprecated
@@ -1704,7 +1701,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//must start after save manager, because (read) access to tree is needed
 		aliasManager = new AliasManager(this);
 		aliasManager.startup(null);
-		treeLocked = false; // unlock the tree.
+		treeLocked = null; // unlock the tree.
 	}
 	/** 
 	 * Returns a string representation of this working state's
