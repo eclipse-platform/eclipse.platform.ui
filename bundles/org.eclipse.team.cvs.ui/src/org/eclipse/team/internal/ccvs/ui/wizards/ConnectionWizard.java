@@ -39,6 +39,7 @@ public abstract class ConnectionWizard extends CVSWizard {
 		}
 		mainPage.setDescription(getMainPageDescription());
 		mainPage.setStyle(getStyle());
+		mainPage.setDialogSettings(getDialogSettings());
 		addPage(mainPage);
 	}
 	protected ConfigurationWizardMainPage getMainPage() {

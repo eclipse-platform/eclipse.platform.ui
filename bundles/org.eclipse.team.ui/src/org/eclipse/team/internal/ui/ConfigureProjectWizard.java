@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ui;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.model.AdaptableList;
 public class ConfigureProjectWizard extends Wizard implements IConfigurationWizard {
 	private IWorkbench workbench;
 	private IProject project;
+	private IConfigurationWizard wizard;
 	
 	private ConfigureProjectWizardMainPage mainPage;
 	private String pluginId = UIConstants.PLUGIN_ID;
@@ -46,8 +47,9 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 			// If there is only one wizard, skip the first page.
 			ConfigurationWizardElement element = (ConfigurationWizardElement)wizards.getChildren()[0];
 			try {
-				IConfigurationWizard wizard = (IConfigurationWizard)element.createExecutableExtension();
+				this.wizard = (IConfigurationWizard)element.createExecutableExtension();
 				wizard.init(workbench, project);
+				wizard.setContainer(getContainer());
 				wizard.addPages();
 				IWizardPage[] pages = wizard.getPages();
 				for (int i = 0; i < pages.length; i++) {
@@ -68,6 +70,9 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {
+		if (wizard != null) {
+			return wizard.performFinish();
+		}
 		return true;
 	}
 	/**
@@ -81,7 +86,6 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
-//			extensions = orderExtensions(extensions);
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 				for (int j = 0; j < elements.length; j++) {

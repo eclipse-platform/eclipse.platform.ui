@@ -92,7 +92,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		"ConfigurationWizardMainPage.STORE_MODULE_ID";//$NON-NLS-1$
 	private static final String STORE_TAG_ID =
 		"ConfigurationWizardMainPage.STORE_TAG_ID";//$NON-NLS-1$
-		
+	
+	// In case the page was launched from a different wizard	
+	private IDialogSettings settings;
+	
 	/**
 	 * ConfigurationWizardMainPage constructor.
 	 * 
@@ -118,6 +121,12 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		String[] r = new String[l.size()];
 		l.toArray(r);
 		return r;
+	}
+	protected IDialogSettings getDialogSettings() {
+		return settings;
+	}
+	protected void setDialogSettings(IDialogSettings settings) {
+		this.settings = settings;
 	}
 	/**
 	 * Adds an entry to a history, while taking care of duplicate history items
