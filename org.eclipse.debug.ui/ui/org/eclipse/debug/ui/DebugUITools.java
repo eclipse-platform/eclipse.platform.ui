@@ -12,7 +12,6 @@ package org.eclipse.debug.ui;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -576,7 +575,7 @@ public class DebugUITools {
 		if (!DebugUIPlugin.preLaunchSave()) {
 			return;
 		}
-		Job job= new Job(MessageFormat.format(DebugUIMessages.getString("DebugUITools.3"), new String[] { configuration.getName() })) { //$NON-NLS-1$
+		Job job= new Job(DebugUIMessages.getString("DebugUITools.3")) { //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				try {
 					buildAndLaunch(configuration, mode, monitor);

@@ -710,7 +710,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
 		boolean autobuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 		IProgressMonitor subMonitor = monitor;
-		String message = MessageFormat.format(DebugUIMessages.getString("DebugUIPlugin.Launching_{0}..._1"), new String[]{configuration.getName()}); //$NON-NLS-1$
+		String message = MessageFormat.format("{0}...", new String[]{configuration.getName()}); //$NON-NLS-1$
 		if (!autobuilding && buildBeforeLaunch) {
 			monitor.beginTask(message, 200);
 			subMonitor = new SubProgressMonitor(monitor, 100);
