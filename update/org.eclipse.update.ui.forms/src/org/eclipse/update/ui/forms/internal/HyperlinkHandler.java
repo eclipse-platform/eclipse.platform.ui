@@ -11,61 +11,21 @@ import org.eclipse.swt.graphics.*;
 import java.util.*;
 import org.eclipse.swt.*;
 
-public class HyperlinkHandler implements MouseListener, 
+public class HyperlinkHandler extends HyperlinkSettings
+								implements MouseListener, 
 										 MouseTrackListener, 
 										 SelectionListener,
 										 PaintListener {
-	public static final int UNDERLINE_NEVER = 1;
-	public static final int UNDERLINE_ROLLOVER = 2;
-	public static final int UNDERLINE_ALWAYS = 3;
-
-	private Cursor hyperlinkCursor;
-	private Cursor busyCursor;
-	private boolean hyperlinkCursorUsed=true;
-	private int hyperlinkUnderlineMode=UNDERLINE_ALWAYS;
-	private Color background;
-	private Color foreground;
-	private Color activeBackground;
-	private Color activeForeground;
 	private Hashtable hyperlinkListeners;
 	private Control lastActivated;
 	private Control lastEntered;
 
 public HyperlinkHandler() {
 	hyperlinkListeners = new Hashtable();
-	hyperlinkCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
-	busyCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_WAIT);
 }
-public void dispose() {
-	hyperlinkCursor.dispose();
-	busyCursor.dispose();
-}
-public Color getActiveBackground() {
-	return activeBackground;
-}
-public Color getActiveForeground() {
-	return activeForeground;
-}
-public Color getBackground() {
-	return background;
-}
-public Cursor getBusyCursor() {
-	return busyCursor;
-}
-public Color getForeground() {
-	return foreground;
-}
-public Cursor getHyperlinkCursor() {
-	return hyperlinkCursor;
-}
-public int getHyperlinkUnderlineMode() {
-	return hyperlinkUnderlineMode;
-}
+
 public Control getLastLink() {
 	return lastActivated;
-}
-public boolean isHyperlinkCursorUsed() {
-	return hyperlinkCursorUsed;
 }
 
 public void mouseDoubleClick(MouseEvent e) {
@@ -189,24 +149,6 @@ public void reset() {
 	hyperlinkListeners.clear();
 }
 
-public void setActiveBackground(Color newActiveBackground) {
-	activeBackground = newActiveBackground;
-}
-public void setActiveForeground(Color newActiveForeground) {
-	activeForeground = newActiveForeground;
-}
-public void setBackground(Color newBackground) {
-	background = newBackground;
-}
-public void setForeground(Color newForeground) {
-	foreground = newForeground;
-}
-public void setHyperlinkCursorUsed(boolean newHyperlinkCursorUsed) {
-	hyperlinkCursorUsed = newHyperlinkCursorUsed;
-}
-public void setHyperlinkUnderlineMode(int newHyperlinkUnderlineMode) {
-	hyperlinkUnderlineMode = newHyperlinkUnderlineMode;
-}
 public static void underline(Control control, boolean inside) {
 	if (control instanceof SelectableFormLabel) {
 		SelectableFormLabel l = (SelectableFormLabel)control;

@@ -123,6 +123,19 @@ public static void main (String [] args) {
      td.align = TableData.FILL;
      exp.getControl().setLayoutData(td);
      
+     new Label(c, SWT.NULL);
+     
+     HTMLFormLabel html = new HTMLFormLabel(c, SWT.WRAP);
+     html.setHyperlinkSettings(factory.getHyperlinkHandler());
+     html.setBackground(factory.getBackgroundColor());
+     html.setForeground(factory.getForegroundColor());
+     String htmlText = "Just a random text. A link: http://www.ibm.com .\nThis is a new paragraph.\nThis is too.";
+     html.setText(htmlText, false, true);
+     td = new TableData();
+     td.colspan = 1;
+     td.align = TableData.FILL;
+     html.setLayoutData(td);
+     
      factory.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ROLLOVER);
      
      SelectableFormLabel ft = new SelectableFormLabel(c, SWT.WRAP);
