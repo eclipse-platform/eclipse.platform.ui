@@ -19,6 +19,9 @@ import org.eclipse.ui.IWorkbenchWizard;
 
 /**
  * Base interface for all wizards defined via workbench extension points.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @since 3.1
  */

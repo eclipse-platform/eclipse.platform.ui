@@ -14,6 +14,9 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * A wizard category may contain other categories or wizard elements. 
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @since 3.1
  */

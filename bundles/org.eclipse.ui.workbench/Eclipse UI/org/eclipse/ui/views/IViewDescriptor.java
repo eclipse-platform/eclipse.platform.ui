@@ -23,6 +23,9 @@ import org.eclipse.ui.IWorkbenchPartDescriptor;
  * The view registry provides facilities to map from an extension
  * to a IViewDescriptor.
  * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see org.eclipse.ui.views.IViewRegistry
  * @since 3.1 

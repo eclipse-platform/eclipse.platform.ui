@@ -13,6 +13,9 @@ package org.eclipse.ui.views;
 /**
  * Supplemental view interface that describes various sticky characteristics
  * that a view may possess.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see org.eclipse.ui.views.IViewRegistry
  * @see org.eclipse.ui.views.IViewDescriptor

@@ -18,6 +18,9 @@ import org.eclipse.ui.internal.registry.Category;
  * <p>
  * The description of a given view is kept in a <code>IViewDescriptor</code>.
  * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see org.eclipse.ui.views.IViewDescriptor
  * @see org.eclipse.ui.views.IStickyViewDescriptor

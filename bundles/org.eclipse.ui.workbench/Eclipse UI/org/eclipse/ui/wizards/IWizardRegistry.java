@@ -12,7 +12,10 @@ package org.eclipse.ui.wizards;
 
 
 /**
- * A repository for wizards.
+ * A registry describing all wizard extensions known to the workbench.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @since 3.1
  */
