@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Blake Meike - patch for bug 31691 
  *******************************************************************************/
 
 package org.eclipse.ant.internal.core.ant;
@@ -975,36 +976,61 @@ public class InternalAntRunner {
 			return false;
 		}
 
-		if (commands != null && !commands.isEmpty()) {
-			if (!processTargets(commands)) {
-				//unrecognized argument
-				return false;
-			}
+		if ((commands != null) && (!commands.isEmpty())) {
+			processUnrecognizedCommands(commands);
+		}
+
+		if ((commands != null) && (!commands.isEmpty())) {
+			processTargets(commands);
 		}
 		
 		return true;
 	}
+	
+	/**
+	 * Checks for unrecognized arguments on the command line.
+	 * Since there is no syntactic way to distingush between
+	 * ant -foo target1 target2
+	 * ant -foo fooarg target
+	 * we remove everything up to the last argument that
+	 * begins with a '-'.  In the latter case, above, that
+	 * means that there will be an extra target, 'fooarg',
+	 * left lying around.
+	 */
+	private void processUnrecognizedCommands(List commands) {
+		int p = -1;
+
+		// find the last arg that begins with '-'
+		for (int i = commands.size() - 1; i >= 0; i--) {
+			if (((String) commands.get(0)).startsWith("-")) { //$NON-NLS-1$
+				p = i;
+				break;
+			}
+		}
+		if (p < 0) { return; }
+
+		// remove everything preceding that last '-arg'
+		String s = ""; //$NON-NLS-1$
+		for (int i = 0; i <= p; i++) {
+			s += " " + ((String) commands.get(0)); //$NON-NLS-1$
+			commands.remove(0);
+		}
+		
+		// warn of ignored commands
+		String message = MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{ s.substring(1) }); //$NON-NLS-1$
+		logMessage(currentProject, message, Project.MSG_WARN); 
+	}
+	
 
 	/**
-	 * Checks for targets specified at the command line.
-	 * Returns whether execution should continue; false if
-	 * an unrecognized argument is encountered.	 */
-	private boolean processTargets(List commands) {
+	 * Checks for targets specified at the command line.	 */
+	private void processTargets(List commands) {
 		if (targets == null) {
 			targets = new Vector(commands.size());
 		}
 		for (Iterator iter = commands.iterator(); iter.hasNext();) {
-			String arg = (String) iter.next();
-			if (!arg.startsWith("-")) { //$NON-NLS-1$
-				targets.add(arg);
-			} else {
-				//unrecognized args
-				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{arg}), Project.MSG_ERR); //$NON-NLS-1$
-				printUsage();
-				return false;
-			}
+			targets.add((String) iter.next());
 		}
-		return true;
 	}
 
 	/**
