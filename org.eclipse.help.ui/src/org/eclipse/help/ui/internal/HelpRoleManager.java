@@ -14,6 +14,7 @@ package org.eclipse.help.ui.internal;
 import java.util.*;
 
 import org.eclipse.help.internal.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.activities.*;
 import org.eclipse.ui.commands.*;
 
@@ -21,13 +22,13 @@ import org.eclipse.ui.commands.*;
  * Wrapper for eclipe ui role manager
  */
 public class HelpRoleManager implements IHelpRoleManager {
+	private IWorkbench workbench;
 	private IActivityManager activityManager;
 	private ICommandManager commandManager;
-	public HelpRoleManager(
-		IActivityManager activityManager,
-		ICommandManager commandManager) {
-		this.activityManager = activityManager;
-		this.commandManager = commandManager;
+	public HelpRoleManager(IWorkbench workbench) {
+		this.workbench = workbench;
+		activityManager = workbench.getActivityManager();
+		commandManager = workbench.getCommandManager();
 	}
 	/*
 	 * (non-Javadoc)
@@ -83,7 +84,7 @@ public class HelpRoleManager implements IHelpRoleManager {
 					enabledActivities.add(definedActivityId);
 
 			}
-			activityManager.setEnabledActivityIds(enabledActivities);
+			workbench.setEnabledActivityIds(enabledActivities);
 		}
 	}
 

@@ -101,10 +101,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) {
-			HelpPlugin.setRoleManager(
-				new HelpRoleManager(
-					workbench.getActivityManager(),
-					workbench.getCommandManager()));
+			HelpPlugin.setRoleManager(new HelpRoleManager(workbench));
 		}
 	}
 
