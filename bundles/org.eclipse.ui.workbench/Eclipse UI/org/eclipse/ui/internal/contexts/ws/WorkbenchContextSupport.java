@@ -384,57 +384,72 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         boolean submissionsProcessed = false;
         final Shell oldShell = activeShell;
 
-        /*
-         * If the previous active shell was recognized as a dialog by default,
-         * then remove its submissions.
-         */
-        List oldSubmissions = (List) registeredWindows.get(oldShell);
-        if (oldSubmissions == null) {
+        if (newShell != oldShell) {
             /*
-             * The old shell wasn't registered. So, we need to check if it was
-             * considered a dialog by default.
+             * If the previous active shell was recognized as a dialog by
+             * default, then remove its submissions.
              */
-            oldSubmissions = (List) registeredWindows.get(null);
-            if (oldSubmissions != null) {
-                removeEnabledSubmissions(oldSubmissions);
-                submissionsProcessed = true;
-            }
-        }
-
-        /*
-         * If the new active shell is recognized as a dialog by default, then
-         * create some submissions, remember them, and submit them for
-         * processing.
-         */
-        if ((newShell != null) && (!newShell.isDisposed())
-                && (newShell.getParent() != null)
-                && (registeredWindows.get(newShell) == null)) {
-            final List newSubmissions = new ArrayList();
-            newSubmissions.add(new EnabledSubmission(null, newShell, null,
-                    CONTEXT_ID_DIALOG_AND_WINDOW));
-            newSubmissions.add(new EnabledSubmission(null, newShell, null,
-                    CONTEXT_ID_DIALOG));
-            addEnabledSubmissions(newSubmissions);
-            registeredWindows.put(null, newSubmissions);
-            submissionsProcessed = true;
-
-            /*
-             * Make sure the submissions will be removed in event of disposal.
-             * This is really just a paranoid check. The "oldSubmissions" code
-             * above should take care of this.
-             */
-            newShell.addDisposeListener(new DisposeListener() {
-
+            List oldSubmissions = (List) registeredWindows.get(oldShell);
+            if (oldSubmissions == null) {
                 /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+                 * The old shell wasn't registered. So, we need to check if it
+                 * was considered a dialog by default.
                  */
-                public void widgetDisposed(DisposeEvent e) {
-                    registeredWindows.remove(null);
-                    removeEnabledSubmissions(newSubmissions);
+                oldSubmissions = (List) registeredWindows.get(null);
+                if (oldSubmissions != null) {
+                    removeEnabledSubmissions(oldSubmissions);
+                    submissionsProcessed = true;
                 }
-            });
+            }
+
+            /*
+             * If the new active shell is recognized as a dialog by default,
+             * then create some submissions, remember them, and submit them for
+             * processing.
+             */
+            if ((newShell != null) && (!newShell.isDisposed())) {
+                final List newSubmissions;
+
+                if ((newShell.getParent() != null)
+                        && (registeredWindows.get(newShell) == null)) {
+                    // This is a dialog by default.
+                    newSubmissions = new ArrayList();
+                    newSubmissions.add(new EnabledSubmission(null, newShell,
+                            null, CONTEXT_ID_DIALOG_AND_WINDOW));
+                    newSubmissions.add(new EnabledSubmission(null, newShell,
+                            null, CONTEXT_ID_DIALOG));
+                    registeredWindows.put(null, newSubmissions);
+
+                    /*
+                     * Make sure the submissions will be removed in event of
+                     * disposal. This is really just a paranoid check. The
+                     * "oldSubmissions" code above should take care of this.
+                     */
+                    newShell.addDisposeListener(new DisposeListener() {
+
+                        /*
+                         * (non-Javadoc)
+                         * 
+                         * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+                         */
+                        public void widgetDisposed(DisposeEvent e) {
+                            registeredWindows.remove(null);
+                            removeEnabledSubmissions(newSubmissions);
+                            newShell.removeDisposeListener(this);
+                        }
+                    });
+
+                } else {
+                    // Shells that are not dialogs by default must register.
+                    newSubmissions = (List) registeredWindows.get(newShell);
+                    
+                }
+
+                if (newSubmissions != null) {
+                    addEnabledSubmissions(newSubmissions);
+                    submissionsProcessed = true;
+                }
+            }
         }
 
         // If we still haven't reprocessed the submissions, then do it now.
