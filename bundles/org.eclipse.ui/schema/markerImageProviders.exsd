@@ -7,8 +7,6 @@
       </appInfo>
       <documentation>
          The markerImageProvider extension point is the point for specifying the images for marker types in the defining plug-in.
-
-&lt;b&gt;This is an internal extension point and it is not intended that plug-in developers make use of it.&lt;/b&gt;
       </documentation>
    </annotation>
 
