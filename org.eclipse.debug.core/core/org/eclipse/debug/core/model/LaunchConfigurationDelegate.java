@@ -65,6 +65,16 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 */
 	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.core", 202, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	
+	/**
+	 * Status code for which a prompter is registered to ask the user if the
+	 * want to continue launch despite existing compile errors in specific
+	 * projects. This enahnces the 'compileErrorPromptStatus' by specifying
+	 * which projects the errors exist in.
+	 * 
+	 * @since 3.1
+	 */
+	protected static final IStatus complileErrorProjectPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.core", 203, "", null); //$NON-NLS-1$ //$NON-NLS-2$	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
@@ -122,16 +132,20 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		boolean continueLaunch = true;
 			
 		monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.6")); //$NON-NLS-1$
+		List errors = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
 			monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.7") + projects[i].getName()); //$NON-NLS-1$
 			if (existsProblems(projects[i])) {
-				IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-				if (prompter != null) {
-					continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, configuration)).booleanValue();
-					break;
-				}
+				errors.add(projects[i]);
 			}	
 		}	
+		if (!errors.isEmpty()) {
+			errors.add(0, configuration);
+			IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+			if (prompter != null) {
+				continueLaunch = ((Boolean) prompter.handleStatus(complileErrorProjectPromptStatus, errors)).booleanValue();
+			}
+		}
 			
 		return continueLaunch;
 	}
