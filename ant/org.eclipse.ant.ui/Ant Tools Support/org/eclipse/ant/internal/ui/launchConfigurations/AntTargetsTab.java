@@ -714,9 +714,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-	    if (getErrorMessage() != null) {
-	        return false;
-	    }
 		if (fAllTargets == null || isDirty()) {
 			if (getErrorMessage() != null && !isDirty()) {
 				//error in parsing;
