@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -22,10 +21,55 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 
 public class CharsetTest extends ResourceTest {
-	private static final String SAMPLE_XML_DEFAULT_ENCODING = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
-	private static final String SAMPLE_XML_US_ASCII_ENCODING = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>";
-	private static final String SAMPLE_XML_ISO_8859_1_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
+
+	public class CharsetVerifier extends ResourceDeltaVerifier {
+		final static int IGNORE_BACKGROUND_THREAD = 0x02;
+		final static int IGNORE_CREATION_THREAD = 0x01;
+		private Thread creationThread = Thread.currentThread();
+		private int flags;
+
+		CharsetVerifier(int flags) {
+			this.flags = flags;
+		}
+
+		void internalVerifyDelta(IResourceDelta delta) {
+			// ignore any changes to project preferences
+			IPath path = delta.getFullPath();
+			if (path.segmentCount() == 2 && (path.segment(1).equals(".settings") || path.segment(1).equals(".project")))
+				return;
+			super.internalVerifyDelta(delta);
+		}
+
+		private boolean isSet(int mask) {
+			return (mask & flags) == mask;
+		}
+
+		public synchronized void resourceChanged(IResourceChangeEvent e) {
+			// to make testing easier, we allow events from the main or other thread to be ignored
+			if (isSet(IGNORE_BACKGROUND_THREAD) && Thread.currentThread() != creationThread)
+				return;
+			if (isSet(IGNORE_CREATION_THREAD) && Thread.currentThread() == creationThread)
+				return;
+			super.resourceChanged(e);
+			this.notify();
+		}
+
+		public synchronized boolean waitForEvent(long limit) {
+			if (hasBeenNotified())
+				return true;
+			try {
+				this.wait(limit);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+			return hasBeenNotified();
+		}
+	}
+
 	private static final String SAMPLE_SPECIFIC_XML = "<?xml version=\"1.0\"?><org.eclipse.core.tests.resources.anotherXML/>";
+	private static final String SAMPLE_XML_DEFAULT_ENCODING = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
+	private static final String SAMPLE_XML_ISO_8859_1_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
+	private static final String SAMPLE_XML_US_ASCII_ENCODING = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>";
 
 	public static Test suite() {
 		//		TestSuite suite = new TestSuite();
@@ -51,60 +95,31 @@ public class CharsetTest extends ResourceTest {
 		super(name);
 	}
 
-	public class CharsetVerifier extends ResourceDeltaVerifier {
-		final static int IGNORE_CREATION_THREAD = 0x01;
-		final static int IGNORE_BACKGROUND_THREAD = 0x02;
-		private Thread creationThread = Thread.currentThread();
-		private int flags;
-
-		CharsetVerifier(int flags) {
-			this.flags = flags;
-		}
-
-		public synchronized void resourceChanged(IResourceChangeEvent e) {
-			// to make testing easier, we allow events from the main or other thread to be ignored
-			if (isSet(IGNORE_BACKGROUND_THREAD) && Thread.currentThread() != creationThread)
-				return;
-			if (isSet(IGNORE_CREATION_THREAD) && Thread.currentThread() == creationThread)
-				return;
-			super.resourceChanged(e);
-			this.notify();
-		}
-
-		private boolean isSet(int mask) {
-			return (mask & flags) == mask;
-		}
-
-		void internalVerifyDelta(IResourceDelta delta) {
-			// ignore any changes to project preferences
-			IPath path = delta.getFullPath();
-			if (path.segmentCount() == 2 && (path.segment(1).equals(".settings") || path.segment(1).equals(".project")))
-				return;
-			super.internalVerifyDelta(delta);
-		}
-
-		public synchronized boolean waitForEvent(long limit) {
-			if (hasBeenNotified())
-				return true;
-			try {
-				this.wait(limit);
-			} catch (InterruptedException e) {
-				// ignore
-			}
-			return hasBeenNotified();
-		}
-	}
-
 	/**
-	 * Blocks the calling thread until the cache flush job completes.
+	 * See bug 67606.
+	 * 
+	 * TODO enable when bug is fixed
 	 */
-	protected void waitForCacheFlush() {
+	public void _testBug67606() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		final IProject project = workspace.getRoot().getProject("MyProject");
 		try {
-			Platform.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
-		} catch (OperationCanceledException e) {
-			//ignore
-		} catch (InterruptedException e) {
-			//ignore
+			final IFile file = project.getFile("file.txt");
+			ensureExistsInWorkspace(file, true);
+			project.setDefaultCharset("FOO", getMonitor());
+			workspace.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					assertEquals("0.9", "FOO", file.getCharset());
+					file.setCharset("BAR", getMonitor());
+					assertEquals("1.0", "BAR", file.getCharset());
+					file.move(project.getFullPath().append("file2.txt"), IResource.NONE, monitor);
+					IFile file2 = project.getFile("file2.txt");
+					assertExistsInWorkspace(file2, false);
+					assertEquals("2.0", "BAR", file.getCharset());
+				}
+			}, null);
+		} finally {
+			ensureDoesNotExistInWorkspace(project);
 		}
 	}
 
@@ -118,9 +133,188 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
+	private void clearAllEncodings(IResource root) throws CoreException {
+		if (root == null || !root.exists())
+			return;
+		IResourceVisitor visitor = new IResourceVisitor() {
+			public boolean visit(IResource resource) throws CoreException {
+				if (!resource.exists())
+					return false;
+				switch (resource.getType()) {
+					case IResource.FILE :
+						((IFile) resource).setCharset(null, getMonitor());
+						break;
+					case IResource.ROOT :
+						// do nothing
+						break;
+					default :
+						((IContainer) resource).setDefaultCharset(null, getMonitor());
+				}
+				return true;
+			}
+		};
+		root.accept(visitor);
+	}
+
 	private IFile getProjectEncodingSettings(IProject project) {
 		IPath projectScopeLocation = new ProjectScope(project).getLocation();
 		return project.getWorkspace().getRoot().getFileForLocation(projectScopeLocation.append(ResourcesPlugin.PI_RESOURCES + '.' + EclipsePreferences.PREFS_FILE_EXTENSION));
+	}
+
+	IFile getResourcesPreferenceFile(IProject project) {
+		return project.getFolder(".settings").getFile("org.eclipse.core.resources.prefs");
+	}
+
+	private Reader getTextContents(String text) {
+		return new StringReader(text);
+	}
+
+	public void testBug59899() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(getUniqueString());
+		try {
+			IFile file = project.getFile("file.txt");
+			IFolder folder = project.getFolder("folder");
+			ensureExistsInWorkspace(new IResource[] {file, folder}, true);
+			try {
+				file.setCharset("FOO", getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+			try {
+				folder.setDefaultCharset("BAR", getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+			try {
+				project.setDefaultCharset("PROJECT_CHARSET", getMonitor());
+			} catch (CoreException e) {
+				fail("3.0", e);
+			}
+			try {
+				getWorkspace().getRoot().setDefaultCharset("ROOT_CHARSET", getMonitor());
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+		} finally {
+			try {
+				clearAllEncodings(project);
+			} catch (CoreException e) {
+				fail("99.9", e);
+			}
+		}
+	}
+
+	public void testBug62732() throws UnsupportedEncodingException, CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType anotherXML = contentTypeManager.getContentType("org.eclipse.core.tests.resources.anotherXML");
+		assertNotNull("0.5", anotherXML);
+		ensureExistsInWorkspace(project, true);
+		IFile file = project.getFile("file.xml");
+		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_SPECIFIC_XML.getBytes("UTF-8")));
+		IContentDescription description = file.getContentDescription();
+		assertNotNull("1.0", description);
+		assertEquals("1.1", anotherXML, description.getContentType());
+		description = file.getContentDescription();
+		assertNotNull("2.0", description);
+		assertEquals("2.1", anotherXML, description.getContentType());
+	}
+
+	public void testBug64503() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
+		IFile file = project.getFile("file.txt");
+		ensureExistsInWorkspace(file, true);
+		IContentDescription description = file.getContentDescription();
+		assertNotNull("1.0", description);
+		assertEquals("1.1", text, description.getContentType());
+		ensureDoesNotExistInWorkspace(file);
+		try {
+			description = file.getContentDescription();
+			fail("1.2 - should have failed");
+		} catch (CoreException ce) {
+			// ok, the resource does not exist
+		}
+	}
+
+	public void testBug79151() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType xml = contentTypeManager.getContentType("org.eclipse.core.runtime.xml");
+		String newExtension = "xml_bug_79151";
+		IFile file1 = project.getFile("file.xml");
+		IFile file2 = project.getFile("file." + newExtension);
+		ensureExistsInWorkspace(file1, getContents(SAMPLE_XML_ISO_8859_1_ENCODING));
+		ensureExistsInWorkspace(file2, getContents(SAMPLE_XML_US_ASCII_ENCODING));
+		// ensure we start in a known state
+		((Workspace) workspace).getContentDescriptionManager().invalidateCache(true);
+		// wait for cache flush to finish
+		waitForCacheFlush();
+		// cache is new at this point
+		assertEquals("0.9", ContentDescriptionManager.EMPTY_CACHE, ((Workspace) workspace).getContentDescriptionManager().getCacheState());
+
+		IContentDescription description1a = null, description1b = null, description1c = null, description1d = null;
+		IContentDescription description2 = null;
+		try {
+			description1a = file1.getContentDescription();
+			description2 = file2.getContentDescription();
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		assertNotNull("1.1", description1a);
+		assertEquals("1.2", xml, description1a.getContentType());
+		assertNull("1.3", description2);
+		try {
+			description1b = file1.getContentDescription();
+			// ensure it comes from the cache (should be the very same object)
+			assertNotNull(" 2.0", description1b);
+			assertSame("2.1", description1a, description1b);
+		} catch (CoreException e) {
+			fail("2.2", e);
+		}
+		try {
+			// change the content type
+			xml.addFileSpec(newExtension, IContentType.FILE_EXTENSION_SPEC);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		try {
+			try {
+				description1c = file1.getContentDescription();
+				description2 = file2.getContentDescription();
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+			// ensure it does *not* come from the cache (should be a different object)
+			assertNotNull("4.1", description1c);
+			assertNotSame("4.2", description1a, description1c);
+			assertEquals("4.3", xml, description1c.getContentType());
+			assertNotNull("4.4", description2);
+			assertEquals("4.5", xml, description2.getContentType());
+		} finally {
+			try {
+				// dissociate the xml2 extension from the XML content type
+				xml.removeFileSpec(newExtension, IContentType.FILE_EXTENSION_SPEC);
+			} catch (CoreException e) {
+				fail("4.99", e);
+			}
+		}
+		try {
+			description1d = file1.getContentDescription();
+			description2 = file2.getContentDescription();
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+		// ensure it does *not* come from the cache (should be a different object)
+		assertNotNull("5.1", description1d);
+		assertNotSame("5.2", description1c, description1d);
+		assertEquals("5.3", xml, description1d.getContentType());
+		assertNull("5.4", description2);
 	}
 
 	public void testChangesDifferentProject() throws CoreException {
@@ -330,375 +524,139 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
-	public void testBug59899() {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject(getUniqueString());
+	// check we react to content type changes
+	public void testDeltaOnContentTypeChanges() {
+		final String USER_SETTING = "USER_CHARSET";
+		final String PROVIDER_SETTING = "PROVIDER_CHARSET";
+
+		// install a verifier		
+		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
+		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType myType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.myContent");
+		assertNotNull("0.1", myType);
+		assertEquals("0.2", PROVIDER_SETTING, myType.getDefaultCharset());
+		IProject project = getWorkspace().getRoot().getProject("project1");
 		try {
-			IFile file = project.getFile("file.txt");
-			IFolder folder = project.getFolder("folder");
-			ensureExistsInWorkspace(new IResource[] {file, folder}, true);
+			IFolder folder1 = project.getFolder("folder1");
+			IFile file1 = folder1.getFile("file1.txt");
+			IFile file2 = folder1.getFile("file2.resources-mc");
+			IFile file3 = project.getFile("file3.resources-mc");
+			IFile file4 = project.getFile("file4.resources-mc");
+			ensureExistsInWorkspace(new IResource[] {file1, file2, file3, file4}, true);
 			try {
-				file.setCharset("FOO", getMonitor());
+				project.setDefaultCharset("FOO", getMonitor());
 			} catch (CoreException e) {
 				fail("1.0", e);
 			}
+			// even files with a user-set charset will appear in the delta
 			try {
-				folder.setDefaultCharset("BAR", getMonitor());
+				file4.setCharset("BAR", getMonitor());
+			} catch (CoreException e) {
+				fail("1.1", e);
+			}
+			// configure verifier
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {file2, file3, file4}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			// change content type's default charset
+			try {
+				myType.setDefaultCharset(USER_SETTING);
 			} catch (CoreException e) {
 				fail("2.0", e);
 			}
+			// ensure the property events were generated
+			assertTrue("2.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
 			try {
-				project.setDefaultCharset("PROJECT_CHARSET", getMonitor());
+				assertEquals("3.0", USER_SETTING, file2.getCharset());
+				assertEquals("3.1", USER_SETTING, file3.getCharset());
+				assertEquals("3.2", "BAR", file4.getCharset());
+			} catch (CoreException e) {
+				fail("3.9", e);
+			}
+
+			// change back to the provider-provided default
+			// configure verifier
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {file2, file3, file4}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			// reset charset to default
+			try {
+				myType.setDefaultCharset(null);
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+			// ensure the property events were generated
+			assertTrue("4.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("4.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			try {
+				assertEquals("5.0", PROVIDER_SETTING, file2.getCharset());
+				assertEquals("5.1", PROVIDER_SETTING, file3.getCharset());
+				assertEquals("5.2", "BAR", file4.getCharset());
+			} catch (CoreException e) {
+				fail("5.9", e);
+			}
+		} finally {
+			getWorkspace().removeResourceChangeListener(backgroundVerifier);
+			try {
+				myType.setDefaultCharset(null);
+			} catch (CoreException e) {
+				fail("99.0", e);
+			}
+			try {
+				clearAllEncodings(project);
+			} catch (CoreException e) {
+				fail("99.9", e);
+			}
+		}
+	}
+
+	// check preference change events are reflected in the charset settings
+	// temporarily disabled
+	public void testDeltaOnPreferenceChanges() {
+
+		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
+		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
+		IProject project = getWorkspace().getRoot().getProject("project1");
+		try {
+			IFolder folder1 = project.getFolder("folder1");
+			IFile file1 = folder1.getFile("file1.txt");
+			IFile file2 = project.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
+
+			IFile resourcesPrefs = getResourcesPreferenceFile(project);
+			assertTrue("0.9", !resourcesPrefs.exists());
+
+			try {
+				file1.setCharset("CHARSET1", getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+			assertTrue("1.1", resourcesPrefs.exists());
+
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {project, folder1, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			// cause a resource change event without actually changing contents			
+			try {
+				resourcesPrefs.setContents(resourcesPrefs.getContents(), 0, getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+			assertTrue("2.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+
+			backgroundVerifier.reset();
+			backgroundVerifier.addExpectedChange(new IResource[] {project, folder1, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				// delete the preferences file
+				resourcesPrefs.delete(true, getMonitor());
 			} catch (CoreException e) {
 				fail("3.0", e);
 			}
-			try {
-				getWorkspace().getRoot().setDefaultCharset("ROOT_CHARSET", getMonitor());
-			} catch (CoreException e) {
-				fail("4.0", e);
-			}
+			assertTrue("3.1", backgroundVerifier.waitForEvent(10000));
+			assertTrue("3.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+
 		} finally {
-			try {
-				clearAllEncodings(project);
-			} catch (CoreException e) {
-				fail("99.9", e);
-			}
-		}
-	}
-
-	public void testFileCreation() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			IFolder folder = project.getFolder("folder");
-			IFile file1 = project.getFile("file1.txt");
-			IFile file2 = folder.getFile("file2.txt");
-			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			assertDoesNotExistInWorkspace("1.0", getProjectEncodingSettings(project));
-			project.setDefaultCharset("FOO", getMonitor());
-			assertExistsInWorkspace("2.0", getProjectEncodingSettings(project));
-			project.setDefaultCharset(null, getMonitor());
-			assertDoesNotExistInWorkspace("3.0", getProjectEncodingSettings(project));
-			file1.setCharset("FRED", getMonitor());
-			assertExistsInWorkspace("4.0", getProjectEncodingSettings(project));
-			folder.setDefaultCharset("BAR", getMonitor());
-			assertExistsInWorkspace("5.0", getProjectEncodingSettings(project));
-			file1.setCharset(null, getMonitor());
-			assertExistsInWorkspace("6.0", getProjectEncodingSettings(project));
-			folder.setDefaultCharset(null, getMonitor());
-			assertDoesNotExistInWorkspace("7.0", getProjectEncodingSettings(project));
-		} finally {
-			try {
-				clearAllEncodings(project);
-			} catch (CoreException e) {
-				fail("99.9", e);
-			}
-		}
-	}
-
-	/**
-	 * Moves a project and ensures the charsets are preserved.
-	 */
-	public void testMovingProject() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project1 = workspace.getRoot().getProject("Project1");
-		IProject project2 = null;
-		try {
-			IFolder folder = project1.getFolder("folder1");
-			IFile file1 = project1.getFile("file1.txt");
-			IFile file2 = folder.getFile("file2.txt");
-			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			project1.setDefaultCharset("FOO", getMonitor());
-			folder.setDefaultCharset("BAR", getMonitor());
-
-			assertEquals("1.0", "BAR", folder.getDefaultCharset());
-			assertEquals("1.1", "BAR", file2.getCharset());
-			assertEquals("1.2", "FOO", file1.getCharset());
-			assertEquals("1.3", "FOO", project1.getDefaultCharset());
-
-			// move project and ensures charsets settings are preserved
-			project1.move(new Path("Project2"), false, null);
-			project2 = workspace.getRoot().getProject("Project2");
-			folder = project2.getFolder("folder1");
-			file1 = project2.getFile("file1.txt");
-			file2 = folder.getFile("file2.txt");
-			assertEquals("2.0", "BAR", folder.getDefaultCharset());
-			assertEquals("2.1", "BAR", file2.getCharset());
-			assertEquals("2.2", "FOO", project2.getDefaultCharset());
-			assertEquals("2.3", "FOO", file1.getCharset());
-		} finally {
-			try {
-				clearAllEncodings(project1);
-				clearAllEncodings(project2);
-			} catch (CoreException e) {
-				fail("99.9", e);
-			}
-		}
-	}
-
-	/**
-	 * Two things to test here:
-	 * 	- non-existing resources default to the parent's default charset;
-	 * 	- cannot set the charset for a non-existing resource (exception is thrown). 
-	 */
-	public void testNonExistingResource() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			try {
-				project.setDefaultCharset("FOO", getMonitor());
-				fail("1.0");
-			} catch (CoreException e) {
-				// expected, project does not exist yet 
-				assertEquals("1.1", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
-			}
-			ensureExistsInWorkspace(project, true);
-			project.setDefaultCharset("FOO", getMonitor());
-			IFile file = project.getFile("file.xml");
-			assertDoesNotExistInWorkspace("2.0", file);
-			assertEquals("2.2", "FOO", file.getCharset());
-			try {
-				file.setCharset("BAR", getMonitor());
-				fail("2.4");
-			} catch (CoreException e) {
-				// expected, file does not exist yet
-				assertEquals("2.6", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
-			}
-			ensureExistsInWorkspace(file, true);
-			file.setCharset("BAR", getMonitor());
-			assertEquals("2.8", "BAR", file.getCharset());
-			file.delete(IResource.NONE, null);
-			assertDoesNotExistInWorkspace("2.10", file);
-			assertEquals("2.11", "FOO", file.getCharset());
-		} finally {
-			try {
-				clearAllEncodings(project);
-			} catch (CoreException e) {
-				fail("99.9", e);
-			}
-		}
-	}
-
-	public void testBug62732() throws UnsupportedEncodingException, CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType anotherXML = contentTypeManager.getContentType("org.eclipse.core.tests.resources.anotherXML");
-		assertNotNull("0.5", anotherXML);
-		ensureExistsInWorkspace(project, true);
-		IFile file = project.getFile("file.xml");
-		ensureExistsInWorkspace(file, new ByteArrayInputStream(SAMPLE_SPECIFIC_XML.getBytes("UTF-8")));
-		IContentDescription description = file.getContentDescription();
-		assertNotNull("1.0", description);
-		assertEquals("1.1", anotherXML, description.getContentType());
-		description = file.getContentDescription();
-		assertNotNull("2.0", description);
-		assertEquals("2.1", anotherXML, description.getContentType());
-	}
-
-	public void testBug64503() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
-		IFile file = project.getFile("file.txt");
-		ensureExistsInWorkspace(file, true);
-		IContentDescription description = file.getContentDescription();
-		assertNotNull("1.0", description);
-		assertEquals("1.1", text, description.getContentType());
-		ensureDoesNotExistInWorkspace(file);
-		try {
-			description = file.getContentDescription();
-			fail("1.2 - should have failed");
-		} catch (CoreException ce) {
-			// ok, the resource does not exist
-		}
-	}
-
-	public void testBug79151() {
-		IWorkspace workspace = getWorkspace();
-		IProject project = workspace.getRoot().getProject("MyProject");
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType xml = contentTypeManager.getContentType("org.eclipse.core.runtime.xml");
-		String newExtension = "xml_bug_79151";
-		IFile file1 = project.getFile("file.xml");
-		IFile file2 = project.getFile("file." + newExtension);
-		ensureExistsInWorkspace(file1, getContents(SAMPLE_XML_ISO_8859_1_ENCODING));
-		ensureExistsInWorkspace(file2, getContents(SAMPLE_XML_US_ASCII_ENCODING));
-		// ensure we start in a known state
-		((Workspace) workspace).getContentDescriptionManager().invalidateCache(true);
-		// wait for cache flush to finish
-		waitForCacheFlush();
-		// cache is new at this point
-		assertEquals("0.9", ContentDescriptionManager.EMPTY_CACHE, ((Workspace) workspace).getContentDescriptionManager().getCacheState());
-
-		IContentDescription description1a = null, description1b = null, description1c = null, description1d = null;
-		IContentDescription description2 = null;
-		try {
-			description1a = file1.getContentDescription();
-			description2 = file2.getContentDescription();
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-		assertNotNull("1.1", description1a);
-		assertEquals("1.2", xml, description1a.getContentType());
-		assertNull("1.3", description2);
-		try {
-			description1b = file1.getContentDescription();
-			// ensure it comes from the cache (should be the very same object)
-			assertNotNull(" 2.0", description1b);
-			assertSame("2.1", description1a, description1b);
-		} catch (CoreException e) {
-			fail("2.2", e);
-		}
-		try {
-			// change the content type
-			xml.addFileSpec(newExtension, IContentType.FILE_EXTENSION_SPEC);
-		} catch (CoreException e) {
-			fail("3.0", e);
-		}
-		try {
-			try {
-				description1c = file1.getContentDescription();
-				description2 = file2.getContentDescription();
-			} catch (CoreException e) {
-				fail("4.0", e);
-			}
-			// ensure it does *not* come from the cache (should be a different object)
-			assertNotNull("4.1", description1c);
-			assertNotSame("4.2", description1a, description1c);
-			assertEquals("4.3", xml, description1c.getContentType());
-			assertNotNull("4.4", description2);
-			assertEquals("4.5", xml, description2.getContentType());
-		} finally {
-			try {
-				// dissociate the xml2 extension from the XML content type
-				xml.removeFileSpec(newExtension, IContentType.FILE_EXTENSION_SPEC);
-			} catch (CoreException e) {
-				fail("4.99", e);
-			}
-		}
-		try {
-			description1d = file1.getContentDescription();
-			description2 = file2.getContentDescription();
-		} catch (CoreException e) {
-			fail("5.0", e);
-		}
-		// ensure it does *not* come from the cache (should be a different object)
-		assertNotNull("5.1", description1d);
-		assertNotSame("5.2", description1c, description1d);
-		assertEquals("5.3", xml, description1d.getContentType());
-		assertNull("5.4", description2);
-	}
-
-	/**
-	 * See bug 67606.
-	 * 
-	 * TODO enable when bug is fixed
-	 */
-	public void _testBug67606() throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		final IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			final IFile file = project.getFile("file.txt");
-			ensureExistsInWorkspace(file, true);
-			project.setDefaultCharset("FOO", getMonitor());
-			workspace.run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					assertEquals("0.9", "FOO", file.getCharset());
-					file.setCharset("BAR", getMonitor());
-					assertEquals("1.0", "BAR", file.getCharset());
-					file.move(project.getFullPath().append("file2.txt"), IResource.NONE, monitor);
-					IFile file2 = project.getFile("file2.txt");
-					assertExistsInWorkspace(file2, false);
-					assertEquals("2.0", "BAR", file.getCharset());
-				}
-			}, null);
-		} finally {
-			ensureDoesNotExistInWorkspace(project);
-		}
-	}
-
-	/**
-	 * Check that we are broadcasting the correct resource deltas when
-	 * making encoding changes.
-	 *
-	 */
-	public void testDeltasFile() {
-		IWorkspace workspace = getWorkspace();
-		CharsetVerifier verifier = new CharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
-		workspace.addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
-		final IProject project = workspace.getRoot().getProject("MyProject");
-		try {
-			// File:
-			// single file		
-			final IFile file1 = project.getFile("file1.txt");
-			ensureExistsInWorkspace(file1, getRandomContents());
-			// change from default		
-			verifier.reset();
-			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			try {
-				file1.setCharset("FOO", getMonitor());
-			} catch (CoreException e) {
-				fail("1.0.0", e);
-			}
-			assertTrue("1.0.1" + verifier.getMessage(), verifier.isDeltaValid());
-
-			// change to default (clear it)
-			verifier.reset();
-			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			try {
-				file1.setCharset(null, getMonitor());
-			} catch (CoreException e) {
-				fail("1.1.0", e);
-			}
-			assertTrue("1.1.1" + verifier.getMessage(), verifier.isDeltaValid());
-
-			// change to default (equal to it but it doesn't inherit)
-			verifier.reset();
-			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			try {
-				file1.setCharset(file1.getCharset(), getMonitor());
-			} catch (CoreException e) {
-				fail("1.2.0", e);
-			}
-			assertTrue("1.2.1" + verifier.getMessage(), verifier.isDeltaValid());
-
-			// change from non-default to another non-default
-			try {
-				// sets to a non-default value first
-				file1.setCharset("FOO", getMonitor());
-			} catch (CoreException e) {
-				fail("1.3.0", e);
-			}
-			verifier.reset();
-			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			try {
-				// sets to another non-defauilt value
-				file1.setCharset("BAR", getMonitor());
-			} catch (CoreException e) {
-				fail("1.3.1", e);
-			}
-			assertTrue("1.3.2" + verifier.getMessage(), verifier.isDeltaValid());
-
-			// multiple files (same operation)
-			verifier.reset();
-			final IFile file2 = project.getFile("file2.txt");
-			ensureExistsInWorkspace(file2, getRandomContents());
-			verifier.addExpectedChange(new IResource[] {file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			try {
-				workspace.run(new IWorkspaceRunnable() {
-					public void run(IProgressMonitor monitor) throws CoreException {
-						file1.setCharset("FOO", getMonitor());
-						file2.setCharset("FOO", getMonitor());
-					}
-				}, getMonitor());
-			} catch (CoreException e) {
-				fail("1.4.0", e);
-			}
-			assertTrue("1.4.1" + verifier.getMessage(), verifier.isDeltaValid());
-		} finally {
-			getWorkspace().removeResourceChangeListener(verifier);
+			getWorkspace().removeResourceChangeListener(backgroundVerifier);
 			try {
 				clearAllEncodings(project);
 			} catch (CoreException e) {
@@ -827,76 +785,86 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
-	private void clearAllEncodings(IResource root) throws CoreException {
-		if (root == null || !root.exists())
-			return;
-		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
-				if (!resource.exists())
-					return false;
-				switch (resource.getType()) {
-					case IResource.FILE :
-						((IFile) resource).setCharset(null, getMonitor());
-						break;
-					case IResource.ROOT :
-						// do nothing
-						break;
-					default :
-						((IContainer) resource).setDefaultCharset(null, getMonitor());
-				}
-				return true;
-			}
-		};
-		root.accept(visitor);
-	}
-
-	// check preference change events are reflected in the charset settings
-	// temporarily disabled
-	public void testDeltaOnPreferenceChanges() {
-
-		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
-		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
-		IProject project = getWorkspace().getRoot().getProject("project1");
+	/**
+	 * Check that we are broadcasting the correct resource deltas when
+	 * making encoding changes.
+	 *
+	 */
+	public void testDeltasFile() {
+		IWorkspace workspace = getWorkspace();
+		CharsetVerifier verifier = new CharsetVerifier(CharsetVerifier.IGNORE_BACKGROUND_THREAD);
+		workspace.addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
+		final IProject project = workspace.getRoot().getProject("MyProject");
 		try {
-			IFolder folder1 = project.getFolder("folder1");
-			IFile file1 = folder1.getFile("file1.txt");
-			IFile file2 = project.getFile("file2.txt");
-			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-
-			IFile resourcesPrefs = getResourcesPreferenceFile(project);
-			assertTrue("0.9", !resourcesPrefs.exists());
-
+			// File:
+			// single file		
+			final IFile file1 = project.getFile("file1.txt");
+			ensureExistsInWorkspace(file1, getRandomContents());
+			// change from default		
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
 			try {
-				file1.setCharset("CHARSET1", getMonitor());
+				file1.setCharset("FOO", getMonitor());
 			} catch (CoreException e) {
-				fail("1.0", e);
+				fail("1.0.0", e);
 			}
-			assertTrue("1.1", resourcesPrefs.exists());
+			assertTrue("1.0.1" + verifier.getMessage(), verifier.isDeltaValid());
 
-			backgroundVerifier.reset();
-			backgroundVerifier.addExpectedChange(new IResource[] {project, folder1, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			// cause a resource change event without actually changing contents			
+			// change to default (clear it)
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
 			try {
-				resourcesPrefs.setContents(resourcesPrefs.getContents(), 0, getMonitor());
+				file1.setCharset(null, getMonitor());
 			} catch (CoreException e) {
-				fail("2.0", e);
+				fail("1.1.0", e);
 			}
-			assertTrue("2.1", backgroundVerifier.waitForEvent(10000));
-			assertTrue("2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			assertTrue("1.1.1" + verifier.getMessage(), verifier.isDeltaValid());
 
-			backgroundVerifier.reset();
-			backgroundVerifier.addExpectedChange(new IResource[] {project, folder1, file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			// change to default (equal to it but it doesn't inherit)
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
 			try {
-				// delete the preferences file
-				resourcesPrefs.delete(true, getMonitor());
+				file1.setCharset(file1.getCharset(), getMonitor());
 			} catch (CoreException e) {
-				fail("3.0", e);
+				fail("1.2.0", e);
 			}
-			assertTrue("3.1", backgroundVerifier.waitForEvent(10000));
-			assertTrue("3.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
+			assertTrue("1.2.1" + verifier.getMessage(), verifier.isDeltaValid());
 
+			// change from non-default to another non-default
+			try {
+				// sets to a non-default value first
+				file1.setCharset("FOO", getMonitor());
+			} catch (CoreException e) {
+				fail("1.3.0", e);
+			}
+			verifier.reset();
+			verifier.addExpectedChange(file1, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				// sets to another non-defauilt value
+				file1.setCharset("BAR", getMonitor());
+			} catch (CoreException e) {
+				fail("1.3.1", e);
+			}
+			assertTrue("1.3.2" + verifier.getMessage(), verifier.isDeltaValid());
+
+			// multiple files (same operation)
+			verifier.reset();
+			final IFile file2 = project.getFile("file2.txt");
+			ensureExistsInWorkspace(file2, getRandomContents());
+			verifier.addExpectedChange(new IResource[] {file1, file2}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
+			try {
+				workspace.run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						file1.setCharset("FOO", getMonitor());
+						file2.setCharset("FOO", getMonitor());
+					}
+				}, getMonitor());
+			} catch (CoreException e) {
+				fail("1.4.0", e);
+			}
+			assertTrue("1.4.1" + verifier.getMessage(), verifier.isDeltaValid());
 		} finally {
-			getWorkspace().removeResourceChangeListener(backgroundVerifier);
+			getWorkspace().removeResourceChangeListener(verifier);
 			try {
 				clearAllEncodings(project);
 			} catch (CoreException e) {
@@ -905,84 +873,162 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
-	// check we react to content type changes
-	public void testDeltaOnContentTypeChanges() {
-		final String USER_SETTING = "USER_CHARSET";
-		final String PROVIDER_SETTING = "PROVIDER_CHARSET";
-
-		// install a verifier		
-		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
-		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType myType = contentTypeManager.getContentType("org.eclipse.core.tests.resources.myContent");
-		assertNotNull("0.1", myType);
-		assertEquals("0.2", PROVIDER_SETTING, myType.getDefaultCharset());
-		IProject project = getWorkspace().getRoot().getProject("project1");
+	public void testFileCreation() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
 		try {
-			IFolder folder1 = project.getFolder("folder1");
-			IFile file1 = folder1.getFile("file1.txt");
-			IFile file2 = folder1.getFile("file2.resources-mc");
-			IFile file3 = project.getFile("file3.resources-mc");
-			IFile file4 = project.getFile("file4.resources-mc");
-			ensureExistsInWorkspace(new IResource[] {file1, file2, file3, file4}, true);
+			IFolder folder = project.getFolder("folder");
+			IFile file1 = project.getFile("file1.txt");
+			IFile file2 = folder.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
+			assertDoesNotExistInWorkspace("1.0", getProjectEncodingSettings(project));
+			project.setDefaultCharset("FOO", getMonitor());
+			assertExistsInWorkspace("2.0", getProjectEncodingSettings(project));
+			project.setDefaultCharset(null, getMonitor());
+			assertDoesNotExistInWorkspace("3.0", getProjectEncodingSettings(project));
+			file1.setCharset("FRED", getMonitor());
+			assertExistsInWorkspace("4.0", getProjectEncodingSettings(project));
+			folder.setDefaultCharset("BAR", getMonitor());
+			assertExistsInWorkspace("5.0", getProjectEncodingSettings(project));
+			file1.setCharset(null, getMonitor());
+			assertExistsInWorkspace("6.0", getProjectEncodingSettings(project));
+			folder.setDefaultCharset(null, getMonitor());
+			assertDoesNotExistInWorkspace("7.0", getProjectEncodingSettings(project));
+		} finally {
+			try {
+				clearAllEncodings(project);
+			} catch (CoreException e) {
+				fail("99.9", e);
+			}
+		}
+	}
+
+	/**
+	 * See enhancement request 60636.
+	 */
+	public void testGetCharsetFor() throws CoreException {
+		IProject project = null;
+		try {
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			IContentType text = contentTypeManager.getContentType("org.eclipse.core.runtime.text");
+			IContentType xml = contentTypeManager.getContentType("org.eclipse.core.runtime.xml");
+
+			IWorkspace workspace = getWorkspace();
+			project = workspace.getRoot().getProject("MyProject");
+			IFile oldFile = project.getFile("oldfile.xml");
+			IFile newXMLFile = project.getFile("newfile.xml");
+			IFile newTXTFile = project.getFile("newfile.txt");
+			IFile newRandomFile = project.getFile("newFile." + (long) (Math.random() * (Long.MAX_VALUE)));
+			ensureExistsInWorkspace(oldFile, SAMPLE_XML_DEFAULT_ENCODING);
+			// sets project default charset
+			project.setDefaultCharset("BAR", getMonitor());
+			oldFile.setCharset("FOO", getMonitor());
+			// project and non-existing file share the same encoding 
+			assertCharsetIs("0.1", "BAR", new IResource[] {project, newXMLFile, newTXTFile, newRandomFile}, true);
+			// existing file has encoding determined by user
+			assertCharsetIs("0.2", "FOO", new IResource[] {oldFile}, true);
+
+			// for an existing file, user set charset will prevail (if any)
+			assertEquals("1.0", "FOO", oldFile.getCharsetFor(getTextContents("")));
+			assertEquals("1.1", "FOO", oldFile.getCharsetFor(getTextContents(SAMPLE_XML_DEFAULT_ENCODING)));
+
+			// for a non-existing file, or for a file that exists but does not have a user set charset,  the content type (if any) rules
+			assertEquals("2.0", xml.getDefaultCharset(), newXMLFile.getCharsetFor(getTextContents("")));
+			assertEquals("2.1", xml.getDefaultCharset(), newXMLFile.getCharsetFor(getTextContents(SAMPLE_XML_DEFAULT_ENCODING)));
+			assertEquals("2.2", "US-ASCII", newXMLFile.getCharsetFor(getTextContents(SAMPLE_XML_US_ASCII_ENCODING)));
+			oldFile.setCharset(null, getMonitor());
+			assertEquals("2.3", xml.getDefaultCharset(), oldFile.getCharsetFor(getTextContents("")));
+			assertEquals("2.4", xml.getDefaultCharset(), oldFile.getCharsetFor(getTextContents(SAMPLE_XML_DEFAULT_ENCODING)));
+			assertEquals("2.5", "US-ASCII", oldFile.getCharsetFor(getTextContents(SAMPLE_XML_US_ASCII_ENCODING)));
+
+			// if the content type has no default charset, or the file has no known content type, fallback to parent default charset
+			assertEquals("3.0", project.getDefaultCharset(), newTXTFile.getCharsetFor(getTextContents("")));
+			assertEquals("3.1", project.getDefaultCharset(), newRandomFile.getCharsetFor(getTextContents("")));
+		} finally {
+			try {
+				clearAllEncodings(project);
+			} catch (CoreException e) {
+				fail("99.9", e);
+			}
+		}
+
+	}
+
+	/**
+	 * Moves a project and ensures the charsets are preserved.
+	 */
+	public void testMovingProject() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project1 = workspace.getRoot().getProject("Project1");
+		IProject project2 = null;
+		try {
+			IFolder folder = project1.getFolder("folder1");
+			IFile file1 = project1.getFile("file1.txt");
+			IFile file2 = folder.getFile("file2.txt");
+			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
+			project1.setDefaultCharset("FOO", getMonitor());
+			folder.setDefaultCharset("BAR", getMonitor());
+
+			assertEquals("1.0", "BAR", folder.getDefaultCharset());
+			assertEquals("1.1", "BAR", file2.getCharset());
+			assertEquals("1.2", "FOO", file1.getCharset());
+			assertEquals("1.3", "FOO", project1.getDefaultCharset());
+
+			// move project and ensures charsets settings are preserved
+			project1.move(new Path("Project2"), false, null);
+			project2 = workspace.getRoot().getProject("Project2");
+			folder = project2.getFolder("folder1");
+			file1 = project2.getFile("file1.txt");
+			file2 = folder.getFile("file2.txt");
+			assertEquals("2.0", "BAR", folder.getDefaultCharset());
+			assertEquals("2.1", "BAR", file2.getCharset());
+			assertEquals("2.2", "FOO", project2.getDefaultCharset());
+			assertEquals("2.3", "FOO", file1.getCharset());
+		} finally {
+			try {
+				clearAllEncodings(project1);
+				clearAllEncodings(project2);
+			} catch (CoreException e) {
+				fail("99.9", e);
+			}
+		}
+	}
+
+	/**
+	 * Two things to test here:
+	 * 	- non-existing resources default to the parent's default charset;
+	 * 	- cannot set the charset for a non-existing resource (exception is thrown). 
+	 */
+	public void testNonExistingResource() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		try {
 			try {
 				project.setDefaultCharset("FOO", getMonitor());
+				fail("1.0");
 			} catch (CoreException e) {
-				fail("1.0", e);
+				// expected, project does not exist yet 
+				assertEquals("1.1", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 			}
-			// even files with a user-set charset will appear in the delta
+			ensureExistsInWorkspace(project, true);
+			project.setDefaultCharset("FOO", getMonitor());
+			IFile file = project.getFile("file.xml");
+			assertDoesNotExistInWorkspace("2.0", file);
+			assertEquals("2.2", "FOO", file.getCharset());
 			try {
-				file4.setCharset("BAR", getMonitor());
+				file.setCharset("BAR", getMonitor());
+				fail("2.4");
 			} catch (CoreException e) {
-				fail("1.1", e);
+				// expected, file does not exist yet
+				assertEquals("2.6", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 			}
-			// configure verifier
-			backgroundVerifier.reset();
-			backgroundVerifier.addExpectedChange(new IResource[] {file2, file3, file4}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			// change content type's default charset
-			try {
-				myType.setDefaultCharset(USER_SETTING);
-			} catch (CoreException e) {
-				fail("2.0", e);
-			}
-			// ensure the property events were generated
-			assertTrue("2.1", backgroundVerifier.waitForEvent(10000));
-			assertTrue("2.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
-			try {
-				assertEquals("3.0", USER_SETTING, file2.getCharset());
-				assertEquals("3.1", USER_SETTING, file3.getCharset());
-				assertEquals("3.2", "BAR", file4.getCharset());
-			} catch (CoreException e) {
-				fail("3.9", e);
-			}
-
-			// change back to the provider-provided default
-			// configure verifier
-			backgroundVerifier.reset();
-			backgroundVerifier.addExpectedChange(new IResource[] {file2, file3, file4}, IResourceDelta.CHANGED, IResourceDelta.ENCODING);
-			// reset charset to default
-			try {
-				myType.setDefaultCharset(null);
-			} catch (CoreException e) {
-				fail("4.0", e);
-			}
-			// ensure the property events were generated
-			assertTrue("4.1", backgroundVerifier.waitForEvent(10000));
-			assertTrue("4.2 " + backgroundVerifier.getMessage(), backgroundVerifier.isDeltaValid());
-			try {
-				assertEquals("5.0", PROVIDER_SETTING, file2.getCharset());
-				assertEquals("5.1", PROVIDER_SETTING, file3.getCharset());
-				assertEquals("5.2", "BAR", file4.getCharset());
-			} catch (CoreException e) {
-				fail("5.9", e);
-			}
+			ensureExistsInWorkspace(file, true);
+			file.setCharset("BAR", getMonitor());
+			assertEquals("2.8", "BAR", file.getCharset());
+			file.delete(IResource.NONE, null);
+			assertDoesNotExistInWorkspace("2.10", file);
+			assertEquals("2.11", "FOO", file.getCharset());
 		} finally {
-			getWorkspace().removeResourceChangeListener(backgroundVerifier);
-			try {
-				myType.setDefaultCharset(null);
-			} catch (CoreException e) {
-				fail("99.0", e);
-			}
 			try {
 				clearAllEncodings(project);
 			} catch (CoreException e) {
@@ -991,7 +1037,16 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
-	IFile getResourcesPreferenceFile(IProject project) {
-		return project.getFolder(".settings").getFile("org.eclipse.core.resources.prefs");
+	/**
+	 * Blocks the calling thread until the cache flush job completes.
+	 */
+	protected void waitForCacheFlush() {
+		try {
+			Platform.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
+		} catch (OperationCanceledException e) {
+			//ignore
+		} catch (InterruptedException e) {
+			//ignore
+		}
 	}
 }

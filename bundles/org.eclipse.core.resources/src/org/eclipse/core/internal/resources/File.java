@@ -17,6 +17,7 @@ import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 
@@ -215,6 +216,36 @@ public class File extends Resource implements IFile {
 			return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
 		checkLocal(flags, DEPTH_ZERO);
 		return internalGetCharset(checkImplicit, info);
+	}
+
+	/* (non-Javadoc)
+	 * @see IFile#getCharsetFor(Reader)
+	 */
+	public String getCharsetFor(Reader contents) throws CoreException {
+		String charset;
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		if (exists(flags, true))
+			// the file exists, look for user setting
+			if ((charset = workspace.getCharsetManager().getCharsetFor(getFullPath(), false)) != null)
+				// if there is a file-specific user setting, use it
+				return charset;
+		// tries to obtain a description from the contents provided
+		IContentDescription description;
+		try {
+			// TODO need to take project specific settings into account
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			description = contentTypeManager.getDescriptionFor(contents, getName(), new QualifiedName[] {IContentDescription.CHARSET});
+		} catch (IOException e) {
+			String message = NLS.bind(Messages.resources_errorContentDescription, getFullPath());
+			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
+		}
+		if (description != null)
+			if ((charset = description.getCharset()) != null)
+				// the description contained charset info, we are done 
+				return charset;
+		// could not find out the encoding based on the contents... default to parent's
+		return workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true);
 	}
 
 	private String internalGetCharset(boolean checkImplicit, ResourceInfo info) throws CoreException {

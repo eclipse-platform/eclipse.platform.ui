@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.resources;
 
 import java.io.InputStream;
+import java.io.Reader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -486,6 +487,36 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * @since 3.0
 	 */
 	public String getCharset(boolean checkImplicit) throws CoreException;
+	
+	/**
+	 * Returns the name of a charset to be used to encode the given contents 
+	 * when saving to this file. This file does not have to exist. The character stream is <em>not</em> automatically closed.   
+	 * <p>
+	 * This method uses the following algorithm to determine the charset to be returned:
+	 * <ol>
+	 * <li>if this file exists, the charset returned by IFile#getCharset(false), if one is defined, or</li>
+	 * <li>the charset automatically discovered based on the file name and the given contents,
+	 * if one can be determined, or</li>
+	 * <li>the default encoding for the parent resource (as defined by 
+	 * <code>IContainer#getDefaultCharset</code>).</li>
+	 * </ol>
+	 * </p><p>
+	 * <b>Note</b>:  this method does not check whether the result is a supported
+	 * charset name. Callers should be prepared to handle 
+	 * <code>UnsupportedEncodingException</code> where this charset is used. 
+	 * </p>
+	 * 
+	 * @param reader a character stream containing the contents to be saved into this file
+	 * @return the name of a charset
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>The given character stream could not be read.</li>
+	 * </ul>
+	 * @see #getCharset(boolean)
+	 * @see IContainer#getDefaultCharset()
+	 * @since 3.1
+	 */
+	public String getCharsetFor(Reader reader) throws CoreException;
 
 	/**
 	 * Returns a description for this file's current contents. Returns 
