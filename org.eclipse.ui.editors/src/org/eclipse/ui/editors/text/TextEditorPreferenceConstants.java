@@ -255,5 +255,7 @@ public class TextEditorPreferenceConstants {
 		
 		// set defaults from ExtendedTextEditor
 		ExtendedTextEditorPreferenceConstants.initializeDefaultValues(store);
+
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, true);
 	}
 }

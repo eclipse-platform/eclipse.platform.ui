@@ -236,7 +236,7 @@ public class ExtendedTextEditorPreferenceConstants {
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, false);
 		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, new RGB(0, 0, 0));
 		
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, true);
+		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, false);
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, true);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
