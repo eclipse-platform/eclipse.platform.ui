@@ -89,7 +89,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	/*
 	 * This view's id. The same value as in the plugin.xml.
 	 */
-	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer"; 
+	public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer"; 
 	
 	/*
 	 * The viewer thst is shown in the view. Currently this can be
@@ -130,6 +130,11 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	private Image refreshingImg;
 	private Image initialImg; 
 	private Image viewImage;
+
+	// the currently choosen viewer type (TREE_VIEW or TABLE_VIEW)
+	private int viewerType = TABLE_VIEW;
+	
+	private static final String VIEWER_TYPE_MEMENTO_KEY = "viewerType"; // $NON-NLS-1$
 	
 	/**
 	 * Subclass of TreeViewer which handles decorator events properly.
@@ -159,7 +164,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			super.handleLabelProviderChanged(event);
 		}
 	}
-			
+
 	public SyncViewer() {
 	}
 
@@ -175,7 +180,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		TeamProvider.addListener(this);
 		Platform.getJobManager().addJobChangeListener(this);
 		initializeActions();
-		createViewer(parent, TABLE_VIEW);
+		createViewer(parent, getViewerType());
 		contributeToActionBars();
 		this.composite = parent;
 		
@@ -195,6 +200,10 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		updateTitle();
 	}
 
+	public int getViewerType() {
+		return viewerType;
+	}
+	
 	public void switchViewerType(int viewerType) {
 		if (composite == null || composite.isDisposed()) return;
 		disposeChildren(composite);
@@ -203,6 +212,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	}
 	
 	private void createViewer(Composite parent, int viewerType) {
+		this.viewerType = viewerType;
 		switch(viewerType) {
 			case TREE_VIEW:
 				createTreeViewerPartControl(parent); 
@@ -521,6 +531,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		this.memento = memento;
+		if (memento != null) {
+			Integer i = memento.getInteger(VIEWER_TYPE_MEMENTO_KEY);
+			if (i != null) {
+				viewerType = i.intValue();
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -528,6 +544,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
+		memento.putInteger(VIEWER_TYPE_MEMENTO_KEY, getViewerType());
 		actions.save(memento);
 	}
 	

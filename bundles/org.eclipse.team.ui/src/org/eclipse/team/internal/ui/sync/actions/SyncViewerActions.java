@@ -175,7 +175,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		expandAll = new ExpandAllAction(this);
 		cancelSubscription = new CancelSubscription(this);
 		
-		toggleViewerType = new ToggleViewAction(SyncViewer.TABLE_VIEW);
+		toggleViewerType = new ToggleViewAction(getSyncView().getViewerType());
 		open = new OpenInCompareAction(syncView);
 		
 		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
