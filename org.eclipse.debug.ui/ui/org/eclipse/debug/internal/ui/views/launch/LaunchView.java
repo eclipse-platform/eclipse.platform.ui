@@ -33,6 +33,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
@@ -125,6 +128,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList {
 	
+
 	/**
 	 * A marker for the source selection and icon for an
 	 * instruction pointer.  This marker is transient.
@@ -523,6 +527,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		showViewsForCurrentSelection();
 	}
 	
+
+	
+
+	
+
+
 	/**
 	 * Lookup source element for current stack frame again.
 	 */
@@ -589,15 +599,18 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				String[] modelIds= context.getModelIdentifiers();
 				if (modelIds != null) {
 					for (int i = 0; i < modelIds.length; i++) {
-						contextIds.add(contextListener.getDebugModelContext(modelIds[i]));
+						List ids= contextListener.getDebugModelContexts(modelIds[i]);
+						if (ids != null) {
+							contextIds.addAll(ids);
+						}
 					}
 				}
 			}
 		}
 		if (contextIds.isEmpty() && selection instanceof IStackFrame) {
-			String contextId = contextListener.getDebugModelContext(((IStackFrame) selection).getModelIdentifier());
-			if (contextId != null) {
-				contextIds.add(contextId);
+			List ids = contextListener.getDebugModelContexts(((IStackFrame) selection).getModelIdentifier());
+			if (ids != null) {
+				contextIds.addAll(ids);
 			}
 		}
 		return contextIds;

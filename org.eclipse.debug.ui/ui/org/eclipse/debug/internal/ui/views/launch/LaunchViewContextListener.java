@@ -64,8 +64,11 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	 * The launch view that this context listener works for
 	 */
 	private LaunchView launchView;
-	
-	private Map modelsToContext= new HashMap();
+	/**
+	 * A mapping of debug models IDs (Strings) to a collection
+	 * of context IDs (List<String>).
+	 */
+	private Map modelsToContexts= new HashMap();
 	/**
 	 * A mapping of context IDs (Strings) to a collection
 	 * of context-view bindings (IConfigurationElements).
@@ -138,24 +141,29 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 			String modelIdentifier = element.getAttribute(ATTR_DEBUG_MODEL_ID);
 			String context = element.getAttribute(ATTR_CONTEXT_ID);
 			if (modelIdentifier != null && context != null) {
-				modelsToContext.put(modelIdentifier, context);
+				List contexts = (List) modelsToContexts.get(modelIdentifier);
+				if (contexts == null) {
+					contexts = new ArrayList();
+					modelsToContexts.put(modelIdentifier, contexts);
+				}
+				contexts.add(context);
 			}
 		}
 	}
 	
 	/**
-	 * Returns the context id associated with the given debug
+	 * Returns the context ids associated with the given debug
 	 * model identifier as specified via extension or <code>null</code>
-	 * if none.
+	 * if no contexts have been associated with the given debug model.
+	 * 
 	 * @param debugModelIdentifier the debug model identifier or <code>null</code>.
-	 * @return the context id associated with the given debug model
-	 * 	identifier or <code>null</code> if none.
+	 * @return the context ids associated with the given debug model or <code>null</code>.
 	 */
-	public String getDebugModelContext(String debugModelIdentifier) {
+	public List getDebugModelContexts(String debugModelIdentifier) {
 		if (debugModelIdentifier == null) {
 			return null;
 		}
-		return (String) modelsToContext.get(debugModelIdentifier);
+		return (List) modelsToContexts.get(debugModelIdentifier);
 	}
 	
 	/**
