@@ -277,7 +277,7 @@ public class SearchManager implements IResourceChangeListener {
 			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.deleteMarkers.title"), SearchMessages.getString("Search.Error.deleteMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
-			fRemoveAll= false;
+			fIsRemoveAll= false;
 		}
 	}
 
