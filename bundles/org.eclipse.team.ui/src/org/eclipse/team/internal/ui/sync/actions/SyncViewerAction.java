@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewPart;
 
 /**
- * This class acts as the superclass for all actions in the SyncViewer
+ * This class acts as the superclass for all actions in the SynchronizeView
  */
 public abstract class SyncViewerAction extends Action {
 

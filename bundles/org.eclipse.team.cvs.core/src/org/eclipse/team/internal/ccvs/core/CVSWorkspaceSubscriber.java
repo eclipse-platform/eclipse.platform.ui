@@ -36,7 +36,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	private OptimizedRemoteSynchronizer remoteSynchronizer;
 	
 	// qualified name for remote sync info
-	private static final String REMOTE_RESOURCE_KEY = "remote-resource-key";
+	private static final String REMOTE_RESOURCE_KEY = "remote-resource-key"; //$NON-NLS-1$
 
 	CVSWorkspaceSubscriber(QualifiedName id, String name, String description) {
 		super(id, name, description);
@@ -87,11 +87,11 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				// TODO outgoing deletions would require special handling
 				if (resource.getType() == IResource.FILE
 						&& (resource.exists() || resource.isPhantom())) {
-					remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+					remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
 				} else if (resource.getType() == IResource.FOLDER) {
 					// If the base has sync info for the folder, purge the remote bytes
 					if (getBaseSynchronizer().getSyncBytes(resource) != null) {
-						remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+						remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
 					}
 				}
 			} catch (CVSException e) {
@@ -127,7 +127,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 */
 	public void projectDeconfigured(IProject project) {
 		try {
-			remoteSynchronizer.removeSyncBytes(project, IResource.DEPTH_INFINITE);
+			remoteSynchronizer.removeSyncBytes(project, IResource.DEPTH_INFINITE, false /* not silent */);
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		}

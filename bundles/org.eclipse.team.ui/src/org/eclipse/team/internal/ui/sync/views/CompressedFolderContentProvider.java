@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.sync.sets.*;
 
 /**
  * The contents provider compressed in-sync folder paths
@@ -37,7 +38,7 @@ public class CompressedFolderContentProvider extends SyncSetTreeContentProvider 
 			IResource[] roots = event.getAddedRoots();
 			refreshProjects(tree, roots);
 		} else {
-			super.handleResourceRemovals(event);
+			super.handleResourceAdditions(event);
 		}
 	}
 

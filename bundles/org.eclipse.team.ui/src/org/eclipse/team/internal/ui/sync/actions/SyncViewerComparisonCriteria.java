@@ -18,8 +18,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ComparisonCriteria;
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 
 /**
  * This action group allows the user to choose one or more comparison critera
@@ -62,7 +62,7 @@ public class SyncViewerComparisonCriteria extends SyncViewerActionGroup {
 		}
 	}
 
-	public SyncViewerComparisonCriteria(SyncViewer syncView) {
+	public SyncViewerComparisonCriteria(SynchronizeView syncView) {
 		super(syncView);
 		setContext(null);
 	}
@@ -75,7 +75,7 @@ public class SyncViewerComparisonCriteria extends SyncViewerActionGroup {
 			ComparisonCriteriaAction action = actions[i];
 			action.setChecked(activatedAction == action);
 		}
-		final SyncViewer view = getSyncView();
+		final SynchronizeView view = getSyncView();
 		view.run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
@@ -83,7 +83,7 @@ public class SyncViewerComparisonCriteria extends SyncViewerActionGroup {
 					// the new input.
 					SubscriberInput input = getSubscriberContext();
 					input.getSubscriber().setCurrentComparisonCriteria(activatedAction.getComparisonCriteria().getId());
-					input.prepareInput(monitor);
+					//input.prepareInput(monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

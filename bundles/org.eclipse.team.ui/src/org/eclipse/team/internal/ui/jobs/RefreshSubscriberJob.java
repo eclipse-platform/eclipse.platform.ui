@@ -84,7 +84,7 @@ public class RefreshSubscriberJob extends Job {
 		this.subscriber = subscriber;
 		
 		setPriority(Job.DECORATE);
-		setRule(new BatchSimilarSchedulingRule("org.eclipse.team.core.refreshsubscribers"));
+		setRule(new BatchSimilarSchedulingRule("org.eclipse.team.core.refreshsubscribers")); //$NON-NLS-1$
 		
 		addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
@@ -116,16 +116,16 @@ public class RefreshSubscriberJob extends Job {
 	 * and it will continue to refresh the other subscribers.
 	 */
 	public IStatus run(IProgressMonitor monitor) {		
-		MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("Team.errorRefreshingSubscribers"), null);
+		MultiStatus status = new MultiStatus(TeamPlugin.ID, TeamException.UNABLE, Policy.bind("Team.errorRefreshingSubscribers"), null); //$NON-NLS-1$
 		TeamSubscriber subscriber = getSubscriber();
 		IResource[] roots = getResources();
 		
 		// if there are no resources to refresh, just return
-		if(subscriber == null || resources == null) {
+		if(subscriber == null || roots == null) {
 			return Status.OK_STATUS;
 		}
 				
-		monitor.beginTask(Policy.bind("RefreshSubscriber.runTitle", subscriber.getName()), 100);
+		monitor.beginTask(Policy.bind("RefreshSubscriber.runTitle", subscriber.getName()), 100); //$NON-NLS-1$
 		try {
 			lastTimeRun = System.currentTimeMillis();
 			TeamSubscriber[] subscribers = new TeamSubscriber[] {subscriber};
@@ -135,7 +135,7 @@ public class RefreshSubscriberJob extends Job {
 					return Status.CANCEL_STATUS;
 				}
 				try {					
-					monitor.setTaskName(Policy.bind("RefreshSubscriber.runTitleSubscriber", s.getName()));
+					monitor.setTaskName(s.getName());
 					s.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
 				} catch(TeamException e) {
 					status.merge(e.getStatus());

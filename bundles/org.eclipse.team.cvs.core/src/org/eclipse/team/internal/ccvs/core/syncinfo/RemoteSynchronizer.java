@@ -27,7 +27,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  */
 public class RemoteSynchronizer extends ResourceSynchronizer {
 	
-	public static final String SYNC_KEY_QUALIFIER = "org.eclipse.team.cvs";
+	public static final String SYNC_KEY_QUALIFIER = "org.eclipse.team.cvs"; //$NON-NLS-1$
 	protected QualifiedName syncName;
 	protected Set changedResources = new HashSet();
 	
@@ -70,15 +70,16 @@ public class RemoteSynchronizer extends ResourceSynchronizer {
 		changedResources.add(resource);
 	}
 
-	public void removeSyncBytes(IResource resource, int depth) throws CVSException {
+	public void removeSyncBytes(IResource resource, int depth, boolean silent) throws CVSException {
 		if (resource.exists() || resource.isPhantom()) {
 			try {
 				getSynchronizer().flushSyncInfo(getSyncName(), resource, depth);
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
 			}
-			changedResources.add(resource);
+			if(silent == false) {
+				changedResources.add(resource);
+			}
 		}
 	}
-
 }

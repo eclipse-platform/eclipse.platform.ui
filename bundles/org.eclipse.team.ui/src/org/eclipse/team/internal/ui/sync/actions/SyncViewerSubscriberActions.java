@@ -22,7 +22,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 
 /**
  * This class manages the actions contributed by the subscriber.
@@ -36,7 +36,7 @@ public class SyncViewerSubscriberActions extends SyncViewerActionGroup {
 	/**
 	 * @param syncView
 	 */
-	protected SyncViewerSubscriberActions(SyncViewer syncView) {
+	protected SyncViewerSubscriberActions(SynchronizeView syncView) {
 		super(syncView);
 		loadDefinitions();
 	}
@@ -105,8 +105,10 @@ public class SyncViewerSubscriberActions extends SyncViewerActionGroup {
 	 */
 	protected void initializeActions() {
 		super.initializeActions();
-		String className = getSubscriberContext().getSubscriber().getClass().getName();
-		actions = (ContributedSubscriberAction[])definitions.get(className);
+		if(getSubscriberContext() != null) {
+			String className = getSubscriberContext().getSubscriber().getClass().getName();
+			actions = (ContributedSubscriberAction[])definitions.get(className);
+		}
 	}
 
 }

@@ -13,11 +13,13 @@ package org.eclipse.team.internal.ui.sync.views;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.sync.sets.*;
 
 /**
  * This class provides the contents for a StructuredViewer using a SyncSet as the model
@@ -150,6 +152,12 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		for (int i = 0; i < added.length; i++) {
 			IResource resource = added[i];
 			((StructuredViewer) viewer).refresh(getModelObject(resource.getParent()));
+		}
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		if(selection.size() == 0) {
+			if(viewer instanceof INavigableControl) {
+				((INavigableControl)viewer).gotoDifference(INavigableControl.NEXT);
+			}
 		}
 	}
 

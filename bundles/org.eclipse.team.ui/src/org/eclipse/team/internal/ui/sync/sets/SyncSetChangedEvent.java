@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.sync.views;
+package org.eclipse.team.internal.ui.sync.sets;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,9 +36,6 @@ public class SyncSetChangedEvent {
 	
 	private boolean reset = false;
 	
-	/**
-	 * 
-	 */
 	public SyncSetChangedEvent(SyncSet set) {
 		super();
 		this.set = set;
@@ -56,9 +53,6 @@ public class SyncSetChangedEvent {
 		changedResources.add(info);
 	}
 	
-	/**
-	 * @param parent
-	 */
 	public void removedRoot(IResource root) {
 		if (addedRoots.contains(root)) {
 			// The root was added and removed which is a no-op
@@ -88,9 +82,6 @@ public class SyncSetChangedEvent {
 		return root.getFullPath().isPrefixOf(element.getFullPath());
 	}
 
-	/**
-	 * @param parent
-	 */
 	public void addedRoot(IResource parent) {
 		if (removedRoots.contains(parent)) {
 			// The root was re-added which is a no-op
@@ -101,51 +92,31 @@ public class SyncSetChangedEvent {
 		}
 		
 	}
-	/**
-	 * @return
-	 */
+
 	public SyncInfo[] getAddedResources() {
 		return (SyncInfo[]) addedResources.toArray(new SyncInfo[addedResources.size()]);
 	}
 
-	/**
-	 * @return
-	 */
 	public IResource[] getAddedRoots() {
 		return (IResource[]) addedRoots.toArray(new IResource[addedRoots.size()]);
 	}
 
-	/**
-	 * @return
-	 */
 	public SyncInfo[] getChangedResources() {
 		return (SyncInfo[]) changedResources.toArray(new SyncInfo[changedResources.size()]);
 	}
 
-	/**
-	 * @return
-	 */
 	public IResource[] getRemovedResources() {
 		return (IResource[]) removedResources.toArray(new IResource[removedResources.size()]);
 	}
 
-	/**
-	 * @return
-	 */
 	public IResource[] getRemovedRoots() {
 		return (IResource[]) removedRoots.toArray(new IResource[removedRoots.size()]);
 	}
 		
-	/**
-	 * @return
-	 */
 	public SyncSet getSet() {
 		return set;
 	}
 
-	/**
-	 * 
-	 */
 	public void reset() {
 		reset = true;
 	}
@@ -153,5 +124,4 @@ public class SyncSetChangedEvent {
 	public boolean isReset() {
 		return reset;
 	}
-
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.sync.views;
+package org.eclipse.team.internal.ui.sync.sets;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,24 +27,23 @@ public abstract class SyncSetInput {
 	public SyncSet getSyncSet() {
 		return syncSet;
 	}
-
-	protected void log(TeamException e) {
-		// TODO: log or throw or communicate to the view that an error has occured
-	}
 	
+	/**
+	 * This method is invoked from reset to get all the sync information from
+	 * the input source.
+	 */
+	protected abstract void fetchInput(IProgressMonitor monitor) throws TeamException;
+
 	/**
 	 * The input is no longer being used. Disconnect it from its source.
 	 */
 	public abstract void disconnect();
-
+		
 	/**
 	 * Reset the input. This will clear the current contents of the sync set and
 	 * obtain the contents from the input source.
-	 * 
-	 * @param monitor
-	 * @throws TeamException
 	 */
-	protected void reset(IProgressMonitor monitor) throws TeamException {
+	public void reset(IProgressMonitor monitor) throws TeamException {
 		try {
 			syncSet.beginInput();
 			syncSet.reset();
@@ -55,17 +54,7 @@ public abstract class SyncSetInput {
 	}
 
 	/**
-	 * This method is invoked from reset to get all the sync information from
-	 * the input source.
-	 * 
-	 * @param monitor
-	 */
-	protected abstract void fetchInput(IProgressMonitor monitor) throws TeamException;
-	
-	/**
 	 * Collect the change in the provided sync info.
-	 * 
-	 * @param info
 	 */
 	protected void collect(SyncInfo info) {
 		boolean isOutOfSync = filter.select(info);
@@ -90,18 +79,11 @@ public abstract class SyncSetInput {
 		}
 	}
 	
-	/**
-	 * @return
-	 */
 	public SyncInfoFilter getFilter() {
 		return filter;
 	}
 
-	/**
-	 * @param filter
-	 */
-	public void setFilter(SyncInfoFilter filter, IProgressMonitor monitor) throws TeamException {
+	public void setFilter(SyncInfoFilter filter) {
 		this.filter = filter;
-		reset(monitor);
 	}
 }

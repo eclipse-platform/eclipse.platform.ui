@@ -51,8 +51,9 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.sync.ISyncViewer;
+import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkingSet;
 
 /**
  * This wizard helps the user to import a new project in their workspace
@@ -297,9 +298,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						throw new InvocationTargetException(e);
 					}
 				}
-				ISyncViewer view = TeamUI.showSyncViewInActivePage(null);
+				ISynchronizeView view = TeamUI.showSyncViewInActivePage(null);
 				if(view != null) {
-					view.setSelection(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), new IResource[] {project}, ISyncViewer.TREE_VIEW);
+					IWorkingSet ws = CVSUIPlugin.getWorkingSet(new IResource[] {project}, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$
+					view.setSelection(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), new IResource[] {project}, ISynchronizeView.TREE_VIEW);
 				}
 			}
 		} catch (InterruptedException e) {

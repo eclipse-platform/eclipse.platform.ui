@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.team.internal.ui.sync.sets.*;
 
 /**
  * This class provides the contents for a AbstractTreeViewer using a SyncSet as the model
@@ -79,9 +80,11 @@ public class SyncSetTreeContentProvider extends SyncSetContentProvider implement
 				if (resource.getType() == IResource.PROJECT) {
 					parent = getSyncSet();
 				} else {
-					parent = getModelParent(resource);
+					parent = getModelParent(resource);				
 				}
-				tree.add(parent, getModelObject(resource));
+				Object element = getModelObject(resource);				
+				tree.add(parent, element);
+				tree.expandToLevel(element, AbstractTreeViewer.ALL_LEVELS);				
 			}
 		} else {
 			super.handleResourceAdditions(event);

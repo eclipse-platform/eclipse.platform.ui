@@ -23,7 +23,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
- * Provides support for sorting the table viewer of the SyncViewer by column
+ * Provides support for sorting the table viewer of the SynchronizeView by column
  */
 public class SyncViewerTableSorter extends SyncViewerSorter {
 

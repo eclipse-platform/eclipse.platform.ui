@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 
 /**
  * This class provides a set of actions that support sync set filtering by 
@@ -47,7 +47,7 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 		}
 	}
 	
-	protected SyncViewerChangeFilters(SyncViewer viewer, SyncViewerActions actionGroup) {
+	protected SyncViewerChangeFilters(SynchronizeView viewer, SyncViewerActions actionGroup) {
 		super(viewer);
 		this.actionGroup = actionGroup;
 		createActions();

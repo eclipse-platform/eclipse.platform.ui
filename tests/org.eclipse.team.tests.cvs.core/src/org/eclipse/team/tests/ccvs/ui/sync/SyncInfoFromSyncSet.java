@@ -18,20 +18,23 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
-import org.eclipse.team.internal.ui.sync.views.SyncSet;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
+import org.eclipse.team.internal.ui.sync.sets.SyncSet;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 
 /**
- * SyncInfoSource that obtains SyncInfo from the SyncViewer's SyncSet.
+ * SyncInfoSource that obtains SyncInfo from the SynchronizeView's SyncSet.
  */
 public class SyncInfoFromSyncSet extends SyncInfoSource {
 
-	public SyncInfoFromSyncSet() {
+	public SyncInfoFromSyncSet() {		
 	}
 	
 	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
+		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.TESTING_SYNCVIEW, true);
 		SubscriberInput input = getInput(subscriber);
 		SyncSet set = input.getFilteredSyncSet();
 		SyncInfo info = set.getSyncInfo(resource);
@@ -46,13 +49,19 @@ public class SyncInfoFromSyncSet extends SyncInfoSource {
 	
 	private SubscriberInput getInput(TeamSubscriber subscriber) throws AssertionFailedError {
 		// show the sync view
-		SyncViewer syncView = (SyncViewer)SyncViewer.showInActivePage(null);
+		SynchronizeView syncView = (SynchronizeView)SynchronizeView.showInActivePage(null);
 		SubscriberInput input = syncView.getInput();
 		if (subscriber != input.getSubscriber()) {
 			// ensure that the CVS subscriber is active
 			syncView.activateSubscriber(subscriber);
-			while (Display.getCurrent().readAndDispatch()) {};
+			while (Display.getCurrent().readAndDispatch()) {};			
 			input = syncView.getInput();
+		} else {
+			try {
+				// sleep to let the events propagate
+				Thread.sleep(500);
+				} catch (InterruptedException e) {
+			}
 		}
 		if (subscriber != input.getSubscriber()) {
 			throw new AssertionFailedError();

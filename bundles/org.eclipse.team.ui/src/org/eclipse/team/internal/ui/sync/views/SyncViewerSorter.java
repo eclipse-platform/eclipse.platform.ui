@@ -16,7 +16,7 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
- * This class sorts the model elements that appear in the SyncViewer
+ * This class sorts the model elements that appear in the SynchronizeView
  */
 public class SyncViewerSorter extends ResourceSorter {
 			

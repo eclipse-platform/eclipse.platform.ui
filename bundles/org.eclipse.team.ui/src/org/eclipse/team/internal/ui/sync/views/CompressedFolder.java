@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.sync.sets.*;
 
 /**
  * A compressed folder appears under a project and contains out-of-sync resources
@@ -48,5 +49,4 @@ public class CompressedFolder extends SyncResource {
 		}
 		return (SyncInfo[]) result.toArray(new SyncInfo[result.size()]);
 	}
-
 }

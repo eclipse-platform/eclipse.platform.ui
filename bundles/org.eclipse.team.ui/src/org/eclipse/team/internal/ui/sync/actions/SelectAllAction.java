@@ -11,14 +11,14 @@
 package org.eclipse.team.internal.ui.sync.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.team.ui.sync.ISyncViewer;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
+import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IPropertyListener;
 
 class SelectAllAction extends Action implements IPropertyListener {
-	private final SyncViewer viewer;
+	private final SynchronizeView viewer;
 	
-	public SelectAllAction(SyncViewer viewer) {
+	public SelectAllAction(SynchronizeView viewer) {
 		this.viewer = viewer;
 		viewer.addPropertyListener(this);
 	}
@@ -28,8 +28,8 @@ class SelectAllAction extends Action implements IPropertyListener {
 	}
 	
 	public void propertyChanged(Object source, int propId) {
-		if(propId == SyncViewer.PROP_VIEWTYPE) {
-			setEnabled(viewer.getCurrentViewType() == ISyncViewer.TABLE_VIEW);
+		if(propId == SynchronizeView.PROP_VIEWTYPE) {
+			setEnabled(viewer.getCurrentViewType() == ISynchronizeView.TABLE_VIEW);
 			viewer.getViewSite().getActionBars().updateActionBars();	
 		}			
 	}

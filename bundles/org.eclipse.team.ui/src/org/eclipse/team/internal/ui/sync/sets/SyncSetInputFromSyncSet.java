@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.sync.views;
+package org.eclipse.team.internal.ui.sync.sets;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,39 +21,20 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 public class SyncSetInputFromSyncSet extends SyncSetInput implements ISyncSetChangedListener {
 
 	SyncSet inputSyncSet;
-	
-	/**
-	 * @param syncSet
-	 */
-	protected SyncSetInputFromSyncSet() {
-	}
 
-	/**
-	 * @return
-	 */
-	public SyncSet getInputSyncSet() {
-		return inputSyncSet;
-	}
-
-	private void connect(SyncSet set) {
-		if (this.inputSyncSet != null) return;
+	public SyncSetInputFromSyncSet(SyncSet set) {
 		this.inputSyncSet = set;
 		inputSyncSet.addSyncSetChangedListener(this);
+	}
+
+	public SyncSet getInputSyncSet() {
+		return inputSyncSet;
 	}
 	
 	public void disconnect() {
 		if (inputSyncSet == null) return;
 		inputSyncSet.removeSyncSetChangedListener(this);
 		inputSyncSet = null;
-	}
-	
-	/**
-	 * @param set
-	 */
-	public void setInputSyncSet(SyncSet set, IProgressMonitor monitor) throws TeamException {
-		if (inputSyncSet != null) disconnect();
-		connect(set);
-		reset(monitor);
 	}
 
 	/* (non-Javadoc)

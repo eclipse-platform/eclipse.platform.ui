@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.sync.views;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.sync.sets.*;
 
 /**
  * This is the UI model object representing a SyncInfo for a resource.

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.sync.views;
+package org.eclipse.team.internal.ui.sync.sets;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,39 +18,33 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.ui.IWorkingSet;
 
 /**
- * Thsi class filters the sync set input using a working set
+ * WorkingSet filter for a SyncSet.
  */
-public class SyncSetInputFromSubscriberWorkingSet extends SyncSetInputFromSubscriber {
+public class SyncInfoWorkingSetFilter extends SyncInfoFilter {
 
 	private IWorkingSet workingSet;
-
-	public SyncSetInputFromSubscriberWorkingSet(TeamSubscriber subscriber) {
-		setSubscriber(subscriber);
-	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.sync.views.SyncSetInputFromSubscriber#collect(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.ui.sync.SyncInfoFilter#select(org.eclipse.team.core.subscribers.SyncInfo)
 	 */
-	protected void collect(IResource resource, IProgressMonitor monitor) throws TeamException {
-		// Only collect the change for the resource if the resource is in the working set
-		if (isIncluded(resource)) {
-			super.collect(resource, monitor);
-		}
+	public boolean select(SyncInfo info) {
+		// if there's no set, the resource is included
+		if (workingSet == null) return true;
+		return isIncluded(info.getLocal());
 	}
 
 	/*
 	 * Answer true if the given resource is included in the working set
 	 */
 	private boolean isIncluded(IResource resource) {
-		// if there's no set, the resource is included
-		if (workingSet == null) return true;
 		// otherwise, if their is a parent of the resource in the set,
 		// it is included
 		Object[] elements = workingSet.getElements();
@@ -64,18 +58,35 @@ public class SyncSetInputFromSubscriberWorkingSet extends SyncSetInputFromSubscr
 		return false;
 	}
 
+	private IResource getResource(Object object) {
+		if (object instanceof IResource) {
+			return (IResource)object;
+		} else if (object instanceof IAdaptable) {
+			return (IResource)((IAdaptable)object).getAdapter(IResource.class);
+		}
+		return null;
+	}
+
+	private boolean isParent(IResource parent, IResource child) {
+		return (parent.getFullPath().isPrefixOf(child.getFullPath()));
+	}
+
+	public IWorkingSet getWorkingSet() {
+		return workingSet;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.sync.views.SyncSetInputFromSubscriber#getRoots()
 	 */
-	protected IResource[] getRoots() {
-		IResource[] roots = super.getRoots();
+	public IResource[] getRoots(TeamSubscriber subscriber) {
+		IResource[] roots = subscriber.roots();
 		if (workingSet == null) return roots;
 		
 		// filter the roots by the selected working set
 		Set result = new HashSet();
 		for (int i = 0; i < roots.length; i++) {
 			IResource resource = roots[i];
-			result.addAll(Arrays.asList(getIntersectionWithSet(resource)));
+			result.addAll(Arrays.asList(getIntersectionWithSet(subscriber, resource)));
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
@@ -84,7 +95,7 @@ public class SyncSetInputFromSubscriberWorkingSet extends SyncSetInputFromSubscr
 	 * Answer the intersection between the given resource and it's children
 	 * and the receiver's working set.
 	 */
-	private IResource[] getIntersectionWithSet(IResource resource) {
+	private IResource[] getIntersectionWithSet(TeamSubscriber subscriber, IResource resource) {
 		Object[] elements = workingSet.getElements();
 		List result = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
@@ -92,7 +103,7 @@ public class SyncSetInputFromSubscriberWorkingSet extends SyncSetInputFromSubscr
 			if (setResource != null) {
 				if (isParent(resource, setResource)) {
 					try {
-						if (getSubscriber().isSupervised(setResource)) {
+						if (subscriber.isSupervised(setResource)) {
 							result.add(setResource);
 						}
 					} catch (TeamException e) {
@@ -107,26 +118,11 @@ public class SyncSetInputFromSubscriberWorkingSet extends SyncSetInputFromSubscr
 		}
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
-
-	private boolean isParent(IResource parent, IResource child) {
-		return (parent.getFullPath().isPrefixOf(child.getFullPath()));
-	}
-
-	private IResource getResource(Object object) {
-		if (object instanceof IResource) {
-			return (IResource)object;
-		} else if (object instanceof IAdaptable) {
-			return (IResource)((IAdaptable)object).getAdapter(IResource.class);
-		}
-		return null;
-	}
-
-	public IWorkingSet getWorkingSet() {
-		return workingSet;
-	}
-
-	public void setWorkingSet(IWorkingSet set) {
-		this.workingSet = set;
+	/**
+	 * @param workingSet
+	 */
+	public void setWorkingSet(IWorkingSet workingSet) {
+		this.workingSet = workingSet;
 	}
 
 }

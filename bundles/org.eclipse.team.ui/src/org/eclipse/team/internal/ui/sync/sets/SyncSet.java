@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.sync.views;
+package org.eclipse.team.internal.ui.sync.sets;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,9 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
  * This class keeps track of a set of resources that are associated with 
@@ -43,16 +41,14 @@ public class SyncSet {
 	protected SyncSetChangedEvent changes;
 	protected Set listeners = new HashSet();
 	
-	//	{int sync kind -> int number of infos with that sync kind in this sync set}
-	protected Map stats = new HashMap();
-
+	protected SyncInfoStatistics statistics = new SyncInfoStatistics();
+	
 	public SyncSet() {
 		resetChanges();
 	}
 	
 	protected void resetChanges() {
 		changes = new SyncSetChangedEvent(this);
-		stats.clear();
 	}
 
 	protected void fireChanges() {
@@ -95,24 +91,19 @@ public class SyncSet {
 	private void internalAddSyncInfo(SyncInfo info) {
 		IResource local = info.getLocal();
 		IPath path = local.getFullPath();
-		resources.put(path, info);
-	}
-
-	public int getCount(int directionFlag) {
-		Integer count = (Integer)stats.get(new Integer(directionFlag));
-		if(count == null) {
-			return 0;
+		if(resources.put(path, info) == null) {
+			statistics.add(info);
 		}
-		return count.intValue();
 	}
 
 	protected void remove(IResource local) {
 		IPath path = local.getFullPath();
-		resources.remove(path);
+		SyncInfo info = (SyncInfo)resources.remove(path);
 		changes.removed(local);
+		statistics.remove(info);
 		removeFromParents(local, local);
 	}
-	
+
 	protected void changed(SyncInfo info) {
 		internalAddSyncInfo(info);
 		changes.changed(info);
@@ -123,9 +114,9 @@ public class SyncSet {
 	 */
 	public void reset() {
 		resources.clear();
-		stats.clear();
 		parents.clear();
 		changes.reset();
+		statistics.clear();
 	}
 	
 	protected boolean addToParents(IResource resource, IResource parent) {
@@ -271,14 +262,6 @@ public class SyncSet {
 		return (SyncInfo[]) resources.values().toArray(new SyncInfo[resources.size()]);
 	}
 
-	/**
-	 * @param e
-	 */
-	protected void log(TeamException e) {
-		// TODO: log or throw
-		TeamUIPlugin.log(e);
-	}
-	
 	protected void removeAllChildren(IResource resource) {
 		// The parent map contains a set of all out-of-sync children
 		Set allChildren = (Set)parents.get(resource.getFullPath());
@@ -315,5 +298,9 @@ public class SyncSet {
 
 	public int size() {
 		return resources.size();		
+	}
+	
+	public SyncInfoStatistics getStatistics() {
+		return statistics;
 	}
 }

@@ -51,6 +51,8 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
@@ -638,6 +640,17 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		TeamUI.addPropertyChangeListener(listener);
 		
 		Console.startup();
+	}
+	
+	public static IWorkingSet getWorkingSet(IResource[] resources, String name) {
+		IWorkingSet workingSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(name);
+		if (workingSet == null) {
+			workingSet = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet(name, resources);
+			PlatformUI.getWorkbench().getWorkingSetManager().addWorkingSet(workingSet);
+		} else {
+			workingSet.setElements(resources);
+		}
+		return workingSet;
 	}
 	
 	/**

@@ -143,12 +143,14 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 */
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
-		store.setDefault(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DELAY, 60 /* minutes */);
-		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT, SyncViewerTableSorter.COL_NAME);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED, false);
+		store.setDefault(IPreferenceIds.TESTING_SYNCVIEW, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, "org.eclipse.team.internal.ui.sync.views.TeamSynchronizingPerspective"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -190,6 +192,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName")); //$NON-NLS-1$		
 		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
+			refreshJob.setRestartOnCancel(true);
 			refreshJob.setReschedule(true);
 			// start once the platform has started and stabilized
 			refreshJob.schedule(20000 /* 20 seconds */);

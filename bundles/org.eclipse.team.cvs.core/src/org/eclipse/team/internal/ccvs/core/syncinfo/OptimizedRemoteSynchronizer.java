@@ -49,11 +49,10 @@ public class OptimizedRemoteSynchronizer extends RemoteTagSynchronizer {
 		byte[] baseBytes = baseSynchronizer.getSyncBytes(resource);
 		if (baseBytes != null && Util.equals(baseBytes, bytes)) {
 			// Remove the existing bytes so the base will be used (thus saving space)
-			removeSyncBytes(resource, IResource.DEPTH_ZERO);
+			removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
 		} else {
 			super.setSyncBytes(resource, bytes);
-		}
-		
+		}		
 	}
 
 	/**

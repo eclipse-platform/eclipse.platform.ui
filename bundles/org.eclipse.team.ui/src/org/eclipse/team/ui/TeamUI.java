@@ -12,8 +12,8 @@ package org.eclipse.team.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.team.ui.sync.ISyncViewer;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
+import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
@@ -27,8 +27,8 @@ public class TeamUI {
 	 * Makes the synchronize view visible in the active page and returns a handle
 	 * to the view.
 	 */
-	public static ISyncViewer showSyncViewInActivePage(IWorkbenchPage activePage) {
-		return SyncViewer.showInActivePage(activePage);		
+	public static ISynchronizeView showSyncViewInActivePage(IWorkbenchPage activePage) {
+		return SynchronizeView.showInActivePage(activePage);		
 	}
 		
 	/**

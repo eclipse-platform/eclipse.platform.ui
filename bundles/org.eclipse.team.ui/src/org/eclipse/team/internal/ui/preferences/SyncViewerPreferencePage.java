@@ -10,34 +10,68 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.preferences;
 
+import java.text.Collator;
 import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This area provides the widgets for providing the CVS commit comment
  */
-public class SyncViewerPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+public class SyncViewerPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IPreferenceIds {
 	
 	private BooleanFieldEditor bkgRefresh = null;
 	private BooleanFieldEditor bkgScheduledRefresh = null;
 	private IntegerFieldEditor2 scheduledDelay = null;
 	private BooleanFieldEditor compressFolders = null;
+	private BooleanFieldEditor useBothMode = null;
+
+	private Group refreshGroup;
+	
+	private static class PerspectiveDescriptorComparator implements Comparator {
+		/*
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Object o1, Object o2) {
+			if (o1 instanceof IPerspectiveDescriptor && o2 instanceof IPerspectiveDescriptor) {
+				String id1= ((IPerspectiveDescriptor)o1).getLabel();
+				String id2= ((IPerspectiveDescriptor)o2).getLabel();
+				return Collator.getInstance().compare(id1, id2);
+			}
+			return 0;
+		}
+	}
 	
 	class IntegerFieldEditor2 extends IntegerFieldEditor {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.preference.FieldEditor#createControl(org.eclipse.swt.widgets.Composite)
+			 */
+			protected void createControl(Composite parent) {
+				super.createControl(parent);
+			}
+
 			public IntegerFieldEditor2(String name, String labelText, Composite parent, int size) {
 				super(name, labelText, parent, size);
 			}
@@ -90,7 +124,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	public SyncViewerPreferencePage() {
 		super(GRID);
 		setTitle("Synchronize view preferences");
-		setDescription("Preferences for the Synchronize view");
 		setPreferenceStore(TeamUIPlugin.getPlugin().getPreferenceStore());
 	}
 
@@ -107,21 +140,84 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	 */
 	public void createFieldEditors() {
 		
-		bkgRefresh = new BooleanFieldEditor(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC, "Refresh with the remote resources in the background", SWT.NONE, getFieldEditorParent());
+		GridData data;
+		Group displayGroup = createGroup(getFieldEditorParent(), "Display"); 		
+
+		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, "Compress in-sync folder paths when using the tree view", SWT.NONE, displayGroup);
+		addField(compressFolders);
+		
+		useBothMode = new BooleanFieldEditor(SYNCVIEW_USEBOTHMODE, "Use incoming/outgoing mode when synchronizing", SWT.NONE, displayGroup);
+		addField(useBothMode);
+
+		refreshGroup = createGroup(getFieldEditorParent(), "Refreshing with Remote");
+		
+		bkgRefresh = new BooleanFieldEditor(SYNCVIEW_BACKGROUND_SYNC, "Refresh with the remote resources in the background", SWT.NONE, refreshGroup);
 		addField(bkgRefresh);
 		
-		bkgScheduledRefresh = new BooleanFieldEditor(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC, "Enable a background task to refresh with remote resources", SWT.NONE, getFieldEditorParent());
+		bkgScheduledRefresh = new BooleanFieldEditor(SYNCVIEW_SCHEDULED_SYNC, "Enable a background task to refresh with remote resources", SWT.NONE, refreshGroup);
 		addField(bkgScheduledRefresh);
 		
-		scheduledDelay = new IntegerFieldEditor2(IPreferenceIds.SYNCVIEW_DELAY, "How often should the background refresh run? (in minutes)", getFieldEditorParent(), 2);
+		scheduledDelay = new IntegerFieldEditor2(SYNCVIEW_DELAY, "How often should the background refresh run? (in minutes)", refreshGroup, 2);
 		addField(scheduledDelay);
+				
+		updateLastRunTime(createLabel(refreshGroup, null, 0));
+									
+		Group perspectiveGroup = createGroup(getFieldEditorParent(), "Perspective Switching");
 		
-		updateLastRunTime(new Label(getFieldEditorParent(), SWT.NONE));
+		createLabel(perspectiveGroup, Policy.bind("SynchronizationViewPreference.defaultPerspectiveDescription"), 1); //$NON-NLS-1$
 		
-		compressFolders = new BooleanFieldEditor(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, "Compress in-sync folder paths when using the tree view", SWT.NONE, getFieldEditorParent());
-		addField(compressFolders);
+		handleDeletedPerspectives();
+		String[][] perspectiveNamesAndIds = getPerspectiveNamesAndIds();
+		ComboFieldEditor comboEditor= new ComboFieldEditor(
+			SYNCVIEW_DEFAULT_PERSPECTIVE,
+			Policy.bind("SynchronizationViewPreference.defaultPerspectiveLabel"), //$NON-NLS-1$
+			perspectiveNamesAndIds,
+			perspectiveGroup);
+		addField(comboEditor);
+
+		updateLayout(displayGroup);
+		updateLayout(perspectiveGroup);
+		updateLayout(refreshGroup);
+		getFieldEditorParent().layout(true);	
 	}
 	
+	private Label createLabel(Composite parent, String title, int spacer) {
+		GridData data;
+		Label l = new Label(parent, SWT.WRAP);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		if(spacer != 0) {
+			data.verticalSpan = spacer;
+		}
+		data.horizontalAlignment = GridData.FILL;		
+		l.setLayoutData(data);
+		if(title != null) {
+			l.setText(title); //$NON-NLS-1$
+		}
+		return l;
+	}
+
+	private Group createGroup(Composite parent, String title) {
+		Group display = new Group(parent, SWT.NONE);
+		updateLayout(display);
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		data.horizontalAlignment = GridData.FILL;
+		display.setLayoutData(data);						
+		display.setText(title);
+		return display;
+	}
+	
+	private void updateLayout(Composite composite) {
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 5;
+		layout.marginHeight =5;
+		layout.horizontalSpacing = 5;
+		layout.verticalSpacing = 5;
+		composite.setLayout(layout);
+	}
+
 	private void updateLastRunTime(Label label) {
 		String text;
 		long mills = TeamUIPlugin.getPlugin().getRefreshJob().getLastTimeRun();
@@ -170,7 +266,35 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 
 	protected void updateEnablements() {
 		boolean enabled = bkgScheduledRefresh.getBooleanValue();
-		scheduledDelay.setEnabled(enabled, getFieldEditorParent());
+		scheduledDelay.setEnabled(enabled, refreshGroup);
 		scheduledDelay.refreshValidState();
+	}
+	
+	/**
+	 * Return a 2-dimensional array of perspective names and ids.
+	 */
+	private String[][] getPerspectiveNamesAndIds() {
+	
+		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
+		IPerspectiveDescriptor[] perspectiveDescriptors= registry.getPerspectives();
+	
+		Arrays.sort(perspectiveDescriptors, new PerspectiveDescriptorComparator());
+	
+		String[][] table = new String[perspectiveDescriptors.length + 1][2];
+		table[0][0] = Policy.bind("SynchronizationViewPreference.defaultPerspectiveNone"); //$NON-NLS-1$;
+		table[0][1] = SYNCVIEW_DEFAULT_PERSPECTIVE_NONE;
+		for (int i = 0; i < perspectiveDescriptors.length; i++) {
+			table[i + 1][0] = perspectiveDescriptors[i].getLabel();
+			table[i + 1][1] = perspectiveDescriptors[i].getId();
+		}
+		return table;
+	}
+
+	private static void handleDeletedPerspectives() {
+		IPreferenceStore store= TeamUIPlugin.getPlugin().getPreferenceStore();
+		String id= store.getString(SYNCVIEW_DEFAULT_PERSPECTIVE);
+		if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
+			store.putValue(SYNCVIEW_DEFAULT_PERSPECTIVE, SYNCVIEW_DEFAULT_PERSPECTIVE_NONE);
+		}
 	}	
 }

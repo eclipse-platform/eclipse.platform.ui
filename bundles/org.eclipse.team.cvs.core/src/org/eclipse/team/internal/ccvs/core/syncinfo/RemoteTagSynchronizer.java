@@ -236,7 +236,7 @@ public class RemoteTagSynchronizer extends RemoteSynchronizer {
 				IProgressMonitor sub = Policy.infiniteSubMonitorFor(monitor, 30);
 				try {
 					sub.beginTask(null, 512);
-					removeSyncBytes(resource, IResource.DEPTH_INFINITE);
+					//removeSyncBytes(resource, IResource.DEPTH_INFINITE);
 					collectChanges(resource, tree, depth, sub);
 				} finally {
 					sub.done();	 

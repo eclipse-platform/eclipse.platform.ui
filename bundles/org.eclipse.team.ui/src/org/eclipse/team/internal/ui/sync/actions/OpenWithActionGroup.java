@@ -16,7 +16,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
@@ -29,7 +29,7 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 
 	private OpenFileAction openFileAction;
 
-	public OpenWithActionGroup(SyncViewer viewer) {
+	public OpenWithActionGroup(SynchronizeView viewer) {
 		super(viewer);
 		makeActions();
 	}

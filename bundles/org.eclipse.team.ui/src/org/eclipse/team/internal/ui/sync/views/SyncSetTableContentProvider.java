@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.sync.views;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.sync.sets.*;
 
 /**
  * This class provides the contents for a TableViewer using a SyncSet as the model

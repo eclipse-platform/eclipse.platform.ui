@@ -28,7 +28,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.compare.SyncInfoCompareInput;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -40,9 +40,9 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public class OpenInCompareAction extends Action {
 	
-	private SyncViewer viewer;
+	private SynchronizeView viewer;
 	
-	public OpenInCompareAction(SyncViewer viewer) {
+	public OpenInCompareAction(SynchronizeView viewer) {
 		this.viewer = viewer;
 		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
@@ -64,7 +64,7 @@ public class OpenInCompareAction extends Action {
 				CompareUI.openCompareEditor(input);
 			}
 			// This could be a user preference.
-			//SyncViewer.showInActivePage(viewer.getSite().getPage());
+			//SynchronizeView.showInActivePage(viewer.getSite().getPage());
 		}		
 	}
 	
@@ -128,7 +128,7 @@ public class OpenInCompareAction extends Action {
 		return editor;
 	}
 	
-	public static void closeCompareEditorFor(final SyncViewer viewer, final IResource resource) {
+	public static void closeCompareEditorFor(final SynchronizeView viewer, final IResource resource) {
 		viewer.getSite().getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				IWorkbenchPage page = viewer.getSite().getPage();

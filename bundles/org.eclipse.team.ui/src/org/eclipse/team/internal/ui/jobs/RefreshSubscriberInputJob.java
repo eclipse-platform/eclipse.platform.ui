@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 
 /**
  * Job to refresh a subscriber with its remote state.
@@ -62,7 +62,7 @@ public class RefreshSubscriberInputJob extends RefreshSubscriberJob implements I
 		
 	protected IResource[] getResources() {
 		if(input != null) {
-			return input.roots();			
+			return input.workingSetRoots();			
 		}
 		return null;
 	}

@@ -13,6 +13,9 @@ package org.eclipse.team.internal.ui.sync.views;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -20,19 +23,54 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 /**
  * Subclass of TreeViewer which handles decorator events properly. We should not need to create 
  * a subclass just for this!
  */
 public class SyncTreeViewer extends TreeViewer implements INavigableControl {
+	
+	/**
+	 * Change the tree layout between using compressed folders and regular folders
+	 * when the user setting is changed.
+	 */
+	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
+				setTreeViewerContentProvider();
+			}
+		}
+	};
+		
 	public SyncTreeViewer(Composite parent, int style) {
 		super(parent, style);
+		getStore().addPropertyChangeListener(propertyListener);
+		setTreeViewerContentProvider();
 	}
+	
+	private void setTreeViewerContentProvider() {
+		if (getStore().getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
+			setContentProvider(new CompressedFolderContentProvider());
+		} else {
+			setContentProvider(new SyncSetTreeContentProvider());
+		}
+	}
+	
+	/**
+	 * Return the preference store for this plugin.
+	 * @return IPreferenceStore for this plugin
+	 */
+	private IPreferenceStore getStore() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore();
+	}
+
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		Object[] changed= event.getElements();
 		if (changed != null && getInput() != null) {
@@ -53,6 +91,14 @@ public class SyncTreeViewer extends TreeViewer implements INavigableControl {
 			event= new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
 		}
 		super.handleLabelProviderChanged(event);
+	}
+
+	/**
+	 * Cleanup listeners and call super for content provider and label provider disposal.
+	 */	
+	protected void handleDispose(DisposeEvent event) {
+		super.handleDispose(event);
+		getStore().removePropertyChangeListener(propertyListener);
 	}
 	
 	/**

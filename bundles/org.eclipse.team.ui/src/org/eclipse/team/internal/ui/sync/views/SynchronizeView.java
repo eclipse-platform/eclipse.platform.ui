@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -30,11 +29,8 @@ import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -57,11 +53,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
@@ -78,105 +74,97 @@ import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.internal.ui.sync.actions.OpenInCompareAction;
 import org.eclipse.team.internal.ui.sync.actions.RefreshAction;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
+import org.eclipse.team.internal.ui.sync.sets.ISyncSetChangedListener;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
+import org.eclipse.team.internal.ui.sync.sets.SyncSet;
+import org.eclipse.team.internal.ui.sync.sets.SyncSetChangedEvent;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.sync.ISyncViewer;
+import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
-public class SyncViewer extends ViewPart implements ITeamResourceChangeListener, ISyncSetChangedListener, ISyncViewer {
+/**
+ * The Team Synchronization view.
+ */
+public class SynchronizeView extends ViewPart implements ITeamResourceChangeListener, ISyncSetChangedListener, ISynchronizeView {
 	
-	/**
-	 * The property id for <code>getCurrentViewType</code>.
-	 */
-	public static int PROP_VIEWTYPE = 0x10;
-
-	/**
-	 * This view's id. The same value as in the plugin.xml.
-	 */
-	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer";  //$NON-NLS-1$
+	// The property id for <code>getCurrentViewType</code>.
+	public static final int PROP_VIEWTYPE = 1;
+	
+	 //This view's id. The same value as in the plugin.xml.
+	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SynchronizeView";  //$NON-NLS-1$
 				
-	/*
-	 * The viewer thst is shown in the view. Currently this can be
-	 * either a table or tree viewer.
-	 */
+	// The viewer that is shown in the view. Currently this can be either a table or tree viewer.
 	private StructuredViewer viewer;
 	
-	/*
-	 * Parent composite of this view. It is remembered so that we can
-	 * dispose of its children when the viewer type is switched.
-	 */
+	// Parent composite of this view. It is remembered so that we can dispose of its children when 
+	// the viewer type is switched.
 	private Composite composite = null;
 	private IMemento memento;
 
-	/*
-	 * viewer type constants
-	 */ 
+	// Viewer type constants
 	private int currentViewType;
 	
-	/*
-	 * Array of SubscriberInput objects. There is one of these for each subscriber
-	 * registered with the sync view. 
-	 */
+	// Cache for each subscriber registered with the view
 	private Map subscriberInputs = new HashMap(1);
+	
+	// Remembering the current input and the previous.
 	private SubscriberInput input = null;
 	private SubscriberInput lastInput = null;
 	
-	/*
-	 * A set of common actions. They are hooked to the active SubscriberInput and
-	 * must be reset when the input changes.
-	 */
+	// Stats about the current subscriber. This is used for status line and/or title updating
+	private ViewStatusInformation statusInformation;
+	
+	// A set of common actions. They are hooked to the active SubscriberInput and must 
+	// be reset when the input changes.
 	private SyncViewerActions actions;
 	
-	/*
-	 * View image
-	 */
+	// View images, registered with the plugin and disposed on shutdown.
 	private Image refreshingImg;
 	private Image initialImg; 
 	private Image viewImage;
-
-	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if (getCurrentViewType() == TREE_VIEW &&
-				event.getProperty().equals(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
-					setTreeViewerContentProvider();
-			}
-		}
-	};
 	
-	public SyncViewer() {
-		IPreferenceStore store = getStore();
-		store.addPropertyChangeListener(propertyListener);
-		currentViewType = store.getInt(IPreferenceIds.SYNCVIEW_VIEW_TYPE);
+	/**
+	 * Constructs a new SynchronizeView.
+	 */
+	public SynchronizeView() {
+		currentViewType = getStore().getInt(IPreferenceIds.SYNCVIEW_VIEW_TYPE);
 		if (currentViewType != TREE_VIEW) {
 			currentViewType = TABLE_VIEW;
 		}		
 	}
-
+	/*(non-Javadoc)
+	 * Overriden to return a title image to show that a background refresh is being run.
+	 * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
+	 */
 	public Image getTitleImage() {
 		return viewImage;
 	}
-
-	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		initializeActions();
 		createViewer(parent);
-		contributeToActionBars();
 		this.composite = parent;
+				
+		initializeActions();
+		contributeToActionBars();
 		
+		// Register for addition/removal of subscribers
 		TeamProvider.addListener(this);
 		TeamSubscriber[] subscribers = TeamProvider.getSubscribers();
 		for (int i = 0; i < subscribers.length; i++) {
@@ -193,6 +181,90 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		
 		updateTitle();
 		
+		initializeJobListener();
+		actions.setContext(null);	
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		this.memento = memento;
+		
+		RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
+		if(getStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC) && refreshJob.getState() == Job.NONE) {
+			refreshJob.setReschedule(true);
+			// start once the UI has started and stabilized
+			refreshJob.schedule(20000 /* 20 seconds */);
+		}
+	}
+	/*
+	 * This method is synchronized to ensure that all internal state is not corrupted
+	 */
+	public synchronized void initializeSubscriberInput(final SubscriberInput input) {
+		Assert.isNotNull(input);
+		this.lastInput = this.input;
+		this.input = input;
+	
+		// listen to sync set changes in order to update state relating to the
+		// size of the sync sets and update the title
+		if(lastInput != null) {
+			lastInput.getWorkingSetSyncSet().removeSyncSetChangedListener(this);
+			lastInput.getFilteredSyncSet().removeSyncSetChangedListener(this);
+			lastInput.getSubscriberSyncSet().removeSyncSetChangedListener(this);
+		}
+		input.getWorkingSetSyncSet().removeSyncSetChangedListener(this);
+		input.getFilteredSyncSet().addSyncSetChangedListener(this);
+		input.getSubscriberSyncSet().addSyncSetChangedListener(this);
+
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				// create the viewer is it doesn't exist yet.
+				if(viewer == null) {
+					switchViewerType(currentViewType);
+				}
+				ActionContext context = new ActionContext(null);
+				context.setInput(input);
+				actions.setContext(context);
+				viewer.setInput(input.getFilteredSyncSet());
+			
+				RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
+				refreshJob.setSubscriberInput(input);
+				gotoDifference(INavigableControl.NEXT);
+			}
+		});
+		updateTitle();
+	}
+	/**
+	 * Toggles between labe/tree/table viewers. 
+	 */
+	public void switchViewerType(int viewerType) {
+		if(viewer == null || viewerType != currentViewType) {
+			if (composite == null || composite.isDisposed()) return;
+			IStructuredSelection oldSelection = null;
+			if(viewer != null) {
+				oldSelection = (IStructuredSelection)viewer.getSelection();
+			}
+			currentViewType = viewerType;
+			getStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TYPE, currentViewType);
+			disposeChildren(composite);
+			createViewer(composite);
+			composite.layout();
+			if(oldSelection == null || oldSelection.size() == 0) {
+				gotoDifference(INavigableControl.NEXT);
+			} else {
+				viewer.setSelection(oldSelection, true);
+			}
+			fireSafePropertyChange(PROP_VIEWTYPE);
+		}
+	}
+	/**
+	 * Listen to background refresh jobs to update the title image. Although
+	 * the progres view is available, this gives the user direct feedback that the
+	 * refresh is underway.
+	 * Note: This may not be a good UI practice.
+	 */
+	protected void initializeJobListener() {
 		// add listeners
 		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
@@ -206,71 +278,87 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 					setViewImage(refreshingImg);
 				}
 			}
-		});		
+		});
 	}
-
-	private void setViewImage(Image image) {
+	/**
+	 * Adds the listeners to the viewer.
+	 */
+	protected void initializeListeners() {
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleSelectionChanged(event);
+			}
+		});
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(event);
+			}
+		});
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(OpenEvent event) {
+				handleOpen(event);
+			}
+		});
+	}	
+	protected void initializeActions() {
+		actions = new SyncViewerActions(this);
+		actions.restore(memento);
+	}
+	protected void hookContextMenu() {
+			if(viewer != null) {
+				MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
+				menuMgr.setRemoveAllWhenShown(true);
+				menuMgr.addMenuListener(new IMenuListener() {
+					public void menuAboutToShow(IMenuManager manager) {
+						actions.fillContextMenu(manager);
+					}
+				});
+				Menu menu = menuMgr.createContextMenu(viewer.getControl());
+				viewer.getControl().setMenu(menu);
+				getSite().registerContextMenu(menuMgr, viewer);
+			}
+		}	
+	protected void contributeToActionBars() {
+		IActionBars bars = getViewSite().getActionBars();
+		actions.fillActionBars(bars);
+	}
+	/**
+	 * Changes the image for the view. A change event is generated such that getTitleImage
+	 * will be called to get the new image and display it.
+	 * @param image the new image
+	 */
+	protected void setViewImage(Image image) {
 		viewImage = image;
 		fireSafePropertyChange(IWorkbenchPart.PROP_TITLE);
 	}
-
-	public void switchViewerType(int viewerType) {
-		if(viewerType != currentViewType) {
-			ISelection s = viewer.getSelection();
-			if (composite == null || composite.isDisposed()) return;
-			currentViewType = viewerType;
-			getStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TYPE, currentViewType);
-			disposeChildren(composite);
-			createViewer(composite);
-			composite.layout();
-			IStructuredSelection selection = (IStructuredSelection)s;
-			if(selection.size() == 0) {
-				gotoDifference(INavigableControl.NEXT);
-			} else {
-				viewer.setSelection(selection, true);
-			}
-			fireSafePropertyChange(PROP_VIEWTYPE);
-		}
-	}
 	
-	private void createViewer(Composite parent) {
-		switch(currentViewType) {
-			case TREE_VIEW:
-				createTreeViewerPartControl(parent); 
-				break;
-			case TABLE_VIEW:
-				createTableViewerPartControl(parent); 
-				break;
-		}
-		hookContextMenu();
-		initializeListeners();
-		
-		if(input != null) {
+	protected void createViewer(Composite parent) {		
+		if(input == null) {
+			Label label = new Label(parent, SWT.WRAP);
+			label.setText(Policy.bind("SynchronizeView.noSubscribersMessage")); //$NON-NLS-1$
+		} else {
+			switch(currentViewType) {
+				case TREE_VIEW:
+					createTreeViewerPartControl(parent); 
+					break;
+				case TABLE_VIEW:
+					createTableViewerPartControl(parent); 
+					break;
+			}
 			viewer.setInput(input.getFilteredSyncSet());
-		}
-		viewer.getControl().setFocus();
+			viewer.getControl().setFocus();
+			hookContextMenu();
+			initializeListeners();		
+		}		
 	}
 
-	private void createTreeViewerPartControl(Composite parent) {
+	protected void createTreeViewerPartControl(Composite parent) {
 		viewer = new SyncTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		setTreeViewerContentProvider();
 		viewer.setLabelProvider(SyncViewerLabelProvider.getDecoratingLabelProvider());
 		viewer.setSorter(new SyncViewerSorter(ResourceSorter.NAME));
 	}
-	
-	private void setTreeViewerContentProvider() {
-		if (getStore().getBoolean(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS)) {
-			viewer.setContentProvider(new CompressedFolderContentProvider());
-		} else {
-			viewer.setContentProvider(new SyncSetTreeContentProvider());
-		}
-	}
 
-	private IPreferenceStore getStore() {
-		return TeamUIPlugin.getPlugin().getPreferenceStore();
-	}
-
-	private void createTableViewerPartControl(Composite parent) {
+	protected void createTableViewerPartControl(Composite parent) {
 		// Create the table
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
@@ -299,7 +387,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	/**
 	 * Creates the columns for the sync viewer table.
 	 */
-	private void createColumns(Table table, TableLayout layout, TableViewer viewer) {
+	protected void createColumns(Table table, TableLayout layout, TableViewer viewer) {
 		SelectionListener headerListener = SyncViewerTableSorter.getColumnListener(viewer);
 		// revision
 		TableColumn col = new TableColumn(table, SWT.NONE);
@@ -316,88 +404,23 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		layout.addColumnData(new ColumnWeightData(50, true));
 	}
 	
-	private void disposeChildren(Composite parent) {
+	protected void disposeChildren(Composite parent) {
 		Control[] children = parent.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			Control control = children[i];
 			control.dispose();
 		}
 	}
-
-	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				actions.fillContextMenu(manager);
-			}
-		});
-		Menu menu = menuMgr.createContextMenu(viewer.getControl());
-		viewer.getControl().setMenu(menu);
-		getSite().registerContextMenu(menuMgr, viewer);
-	}
-
-	private void contributeToActionBars() {
-		IActionBars bars = getViewSite().getActionBars();
-		actions.fillActionBars(bars);
-	}
-
 	/**
-	 * Adds the listeners to the viewer.
-	 * 
-	 * @param viewer the viewer
-	 * @since 2.0
-	 */
-	protected void initializeListeners() {
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged(event);
-			}
-		});
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick(event);
-			}
-		});
-		viewer.addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) {
-				handleOpen(event);
-			}
-		});
-//		viewer.getControl().addKeyListener(new KeyListener() {
-//			public void keyPressed(KeyEvent event) {
-//				handleKeyPressed(event);
-//			}
-//			public void keyReleased(KeyEvent event) {
-//				handleKeyReleased(event);
-//			}
-//		});
-	}
-	
-	/**
-	 * Handles a selection changed event from the viewer.
-	 * Updates the status line and the action bars, and links to editor (if option enabled).
+	 * Handles a selection changed event from the viewer. Updates the status line and the action 
+	 * bars, and links to editor (if option enabled).
 	 * 
 	 * @param event the selection event
-	 * @since 2.0
 	 */
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
 		final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
 		updateActionBars(sel);
-// TODO: Need to decide if link to editor should be supported
-//		dragDetected = false;
-//		if (isLinkingEnabled()) {
-//			getShell().getDisplay().asyncExec(new Runnable() {
-//				public void run() {
-//					if (dragDetected == false) {
-//						// only synchronize with editor when the selection is not the result 
-//						// of a drag. Fixes bug 22274.
-//						linkToEditor(sel);
-//					}
-//				}
-//			});
-//		}
 	}
 
 	protected void handleOpen(OpenEvent event) {
@@ -424,10 +447,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 
 	}
 	
-	private void initializeActions() {
-		actions = new SyncViewerActions(this);
-		actions.restore(memento);
-	}
+
 	
 
 	public void activateSubscriber(TeamSubscriber subscriber) {
@@ -437,78 +457,36 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		};
 		initializeSubscriberInput(input);
 	}
-	
 	/*
-	 * This method is synchronized to ensure that all internal state is not corrupted
+	 * Synchronize - (showing N of M changes) - {Subscriber name}
 	 */
-	public synchronized void initializeSubscriberInput(final SubscriberInput input) {
-		Assert.isNotNull(input);
-		
-		this.lastInput = this.input;
-		this.input = input;
-		
-		if(lastInput != null) {
-			lastInput.getFilteredSyncSet().removeSyncSetChangedListener(this);
-			lastInput.getSubscriberSyncSet().removeSyncSetChangedListener(this);
-		}
-		
-		input.getFilteredSyncSet().addSyncSetChangedListener(this);
-		input.getSubscriberSyncSet().addSyncSetChangedListener(this);
-
-		final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					ActionContext context = new ActionContext(null);
-					context.setInput(input);					
-					input.prepareInput(monitor);
-					// important to set the context after the input has been initialized. There
-					// are some actions that depend on the sync set to be initialized.
-					actions.setContext(context);
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				if (!hasRunnableContext()) return;				
-				SyncViewer.this.run(runnable);
-				viewer.setInput(input.getFilteredSyncSet());
-				RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
-				refreshJob.setSubscriberInput(input);
-				IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-				if(s.size() == 0) {
-					gotoDifference(INavigableControl.NEXT);
-				}
-			}
-		});
-		updateTitle();
-	}
-	
-	/*
-	 * Live Synchronize - {showing N of M changes} {Subscriber name}
-	 */
-	public void updateTitle() {
+	protected void updateTitle() {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				SubscriberInput input = getInput();
 				if(input != null) {
-					TeamSubscriber subscriber = input.getSubscriber();
-					String changesText = Policy.bind("LiveSyncView.titleChangeNumbers",  //$NON-NLS-1$
-														new Integer(input.getFilteredSyncSet().size()).toString(), 
-														new Integer(input.getSubscriberSyncSet().size()).toString());
-				 	setTitle(
-				 		Policy.bind("LiveSyncView.titleWithSubscriber", new String[] { //$NON-NLS-1$
-				 				Policy.bind("LiveSyncView.title"),  //$NON-NLS-1$
-				 				changesText,
-				 				subscriber.getName()}));
-				 	IWorkingSet ws = input.getWorkingSet();
-				 	if(ws != null) {
-				 		setTitleToolTip(Policy.bind("LiveSyncView.titleTooltip", subscriber.getDescription(), ws.getName())); //$NON-NLS-1$
-				 	} else {
-					 	setTitleToolTip(subscriber.getDescription());
-				 	}
+					ViewStatusInformation newStatus = new ViewStatusInformation(input);
+					if(statusInformation == null || ! statusInformation.equals(newStatus)) {
+						statusInformation = newStatus;
+						
+						TeamSubscriber subscriber = input.getSubscriber();
+						String changesText;
+						if(input.getWorkingSet() != null) {
+							changesText = Policy.bind("LiveSyncView.titleChangeNumbers",  //$NON-NLS-1$
+															new Long(statusInformation.getNumShowing()).toString(),
+															new Long(statusInformation.getNumInWorkingSet()).toString(), 
+															new Long(statusInformation.getNumInWorkspace() - statusInformation.getNumInWorkingSet()).toString());
+						} else {
+							changesText = Policy.bind("LiveSyncView.titleChangeNumbersNoWorkingSet",  //$NON-NLS-1$
+																					new Long(statusInformation.getNumShowing()).toString(),
+																					new Long(statusInformation.getNumInWorkingSet()).toString());
+						}
+					 	String title = Policy.bind("LiveSyncView.titleWithSubscriber", new String[] {Policy.bind("LiveSyncView.title"), changesText, subscriber.getName()});  //$NON-NLS-1$ //$NON-NLS-2$
+					 	setTitle(title);
+					 	StringBuffer b = new StringBuffer(title + "\n"); //$NON-NLS-1$
+					 	b.append(input.getSubscriberSyncSet().getStatistics().toString());
+					 	setTitleToolTip(b.toString());					 	
+					}
 				} else {
 					setTitle(Policy.bind("LiveSyncView.title")); //$NON-NLS-1$
 					setTitleToolTip(""); //$NON-NLS-1$
@@ -516,7 +494,9 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			}
 		});
 	}
-
+	
+	
+	
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
@@ -541,7 +521,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		
 		// cancel and wait 
 		RefreshSubscriberInputJob job = TeamUIPlugin.getPlugin().getRefreshJob();
-		
 		job.setRestartOnCancel(false);
 		job.cancel();
 		try {
@@ -551,49 +530,21 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		}
 		job.setSubscriberInput(null);
 		
+		// Cleanup the subscriber inputs
 		TeamProvider.removeListener(this);
 		for (Iterator it = subscriberInputs.values().iterator(); it.hasNext();) {
 			SubscriberInput input = (SubscriberInput) it.next();
 			input.dispose();
 		}
-		
-		getStore().removePropertyChangeListener(propertyListener);
 	}
 
 	public void run(IRunnableWithProgress runnable) {
 		try {
-			getRunnableContext().run(true, true, runnable);
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnable);
 		} catch (InvocationTargetException e) {
 			handle(getSite().getShell(), e, null, null);
 		} catch (InterruptedException e) {
 			// Nothing to be done
-		}
-	}
-	
-	/**
-	 * Returns the runnableContext.
-	 * @return IRunnableContext
-	 */
-	private IRunnableContext getRunnableContext() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();									
-	}
-	
-	private boolean hasRunnableContext() {
-		return getRunnableContext() != null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
-	 */
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site, memento);
-		this.memento = memento;
-		
-		RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
-		if(getStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC) && refreshJob.getState() == Job.NONE) {
-			refreshJob.setReschedule(true);
-			// start once the UI has started and stabilized
-			refreshJob.schedule(20000 /* 20 seconds */);
 		}
 	}
 
@@ -744,13 +695,13 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		if (selection.size() == 1) {
 			IResource resource = getResource(selection.getFirstElement());
 			if (resource == null) {
-				return "One item selected";
+				return Policy.bind("SynchronizeView.12"); //$NON-NLS-1$
 			} else {
 				return resource.getFullPath().makeRelative().toString();
 			}
 		}
 		if (selection.size() > 1) {
-			return selection.size() + " items selected";
+			return selection.size() + Policy.bind("SynchronizeView.13"); //$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -766,15 +717,26 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	/**
 	 * Makes this view visible in the active page.
 	 */
-	public static SyncViewer showInActivePage(IWorkbenchPage activePage) {
+	public static SynchronizeView showInActivePage(IWorkbenchPage activePage) {
+		IWorkbench workbench= TeamUIPlugin.getPlugin().getWorkbench();
+		IWorkbenchWindow window= workbench.getActiveWorkbenchWindow();
+		
+		if(! TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE).equals(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE_NONE)) {			
+			try {
+				String pId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE);
+				activePage = workbench.showPerspective(pId, window);
+			} catch (WorkbenchException e) {
+					Utils.handleError(window.getShell(), e, Policy.bind("SynchronizeView.14"), e.getMessage()); //$NON-NLS-1$
+			}
+		}
 		try {
 			if (activePage == null) {
 				activePage = TeamUIPlugin.getActivePage();
 				if (activePage == null) return null;
 			}
-			return (SyncViewer)activePage.showView(VIEW_ID);
+			return (SynchronizeView)activePage.showView(VIEW_ID);
 		} catch (PartInitException pe) {
-			TeamUIPlugin.log(new TeamException("error showing view", pe));
+			Utils.handleError(window.getShell(), pe, Policy.bind("SynchronizeView.16"), pe.getMessage()); //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -784,6 +746,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 */
 	public void syncSetChanged(SyncSetChangedEvent event) {
 		updateTitle();
+		
 		// remove opened compare editors if file was removed from sync view and update if changed
 		IResource[] resources =event.getRemovedResources();
 		for (int i = 0; i < resources.length; i++) {
@@ -793,7 +756,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	}
 
 	private void fireSafePropertyChange(final int property) {
-		if(! viewer.getControl().isDisposed()) {
+		if(! composite.isDisposed()) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {		
 					firePropertyChange(property);
@@ -842,7 +805,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			if(! input.getSubscriber().getId().equals(id)) {
 				initializeSubscriberInput((SubscriberInput)subscriberInputs.get(id));
 			}
-			RefreshAction.run(this, input.roots(), subscriber);
+			RefreshAction.run(this, input.workingSetRoots(), subscriber);
 		}		
 	}
 	
@@ -851,7 +814,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 */	
 	public void refreshWithRemote() {
 		if(input != null) {
-			RefreshAction.run(this, input.roots(), input.getSubscriber());
+			RefreshAction.run(this, input.workingSetRoots(), input.getSubscriber());
 		}
 	}
 	
@@ -865,8 +828,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			table.getTable().selectAll();
 		} else {
 			// Select All in a tree doesn't really work well
-//			TreeViewer tree = (TreeViewer)getViewer();
-//			tree.getTree().selectAll();
 		}
 	}
 	
@@ -877,7 +838,20 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		return false;
 	}
 	
+	private IPreferenceStore getStore() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore();
+	}
+	
 	public SyncSetContentProvider getContentProvider() {
 		return (SyncSetContentProvider)getViewer().getContentProvider();
+	}
+
+	public void setWorkingSet(IWorkingSet workingSet) {
+		actions.setWorkingSet(workingSet);
+	}
+
+	public void workingSetChanged(IWorkingSet set) {
+		input.setWorkingSet(set);
+		updateTitle();
 	}
 }

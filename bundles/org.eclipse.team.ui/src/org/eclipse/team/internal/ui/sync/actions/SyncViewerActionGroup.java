@@ -10,28 +10,28 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.actions;
 
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
-import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
+import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 
 /**
- * This class acts as the superclass fo all action groups that appear in the SyncViewer
+ * This class acts as the superclass fo all action groups that appear in the SynchronizeView
  */
 public abstract class SyncViewerActionGroup extends ActionGroup {
 	
-	private SyncViewer syncView;
+	private SynchronizeView syncView;
 	
-	protected SyncViewerActionGroup(SyncViewer syncView) {
+	protected SyncViewerActionGroup(SynchronizeView syncView) {
 		this.syncView = syncView;
 	}
 
 	/**
-	 * Return the SyncViewer for this action group
+	 * Return the SynchronizeView for this action group
 	 * @return
 	 */
-	public SyncViewer getSyncView() {
+	public SynchronizeView getSyncView() {
 		return syncView;
 	}
 	
