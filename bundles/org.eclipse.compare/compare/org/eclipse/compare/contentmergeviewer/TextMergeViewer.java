@@ -797,18 +797,26 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		RGB bg= getBackground(display);
 		SELECTED_INCOMING= registry.getRGB(INCOMING_COLOR);
+		if (SELECTED_INCOMING == null)
+			SELECTED_INCOMING= new RGB(0, 0, 255);	// BLUE
 		INCOMING= interpolate(SELECTED_INCOMING, bg, 0.6);
 		INCOMING_FILL= interpolate(SELECTED_INCOMING, bg, 0.97);
 
-		SELECTED_CONFLICT= registry.getRGB(CONFLICTING_COLOR);
-		CONFLICT= interpolate(SELECTED_CONFLICT, bg, 0.6);
-		CONFLICT_FILL= interpolate(SELECTED_CONFLICT, bg, 0.97);
-	
 		SELECTED_OUTGOING= registry.getRGB(OUTGOING_COLOR);
+		if (SELECTED_OUTGOING == null)
+			SELECTED_OUTGOING= new RGB(0, 0, 0);	// BLACK
 		OUTGOING= interpolate(SELECTED_OUTGOING, bg, 0.6);
 		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, bg, 0.97);
 		
+		SELECTED_CONFLICT= registry.getRGB(CONFLICTING_COLOR);
+		if (SELECTED_CONFLICT == null)
+			SELECTED_CONFLICT= new RGB(255, 0, 0);	// RED
+		CONFLICT= interpolate(SELECTED_CONFLICT, bg, 0.6);
+		CONFLICT_FILL= interpolate(SELECTED_CONFLICT, bg, 0.97);
+	
 		RESOLVED= registry.getRGB(RESOLVED_COLOR);
+		if (RESOLVED == null)
+			RESOLVED= new RGB(0, 255, 0);	// GREEN
 				
 		refreshBirdsEyeView();
 		invalidateLines();
