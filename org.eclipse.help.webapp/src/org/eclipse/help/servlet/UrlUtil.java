@@ -130,9 +130,15 @@ public class UrlUtil {
 		String query = request.getQueryString();
 		if (query == null)
 			return null;
-		int start = query.indexOf(parameterName + "=") + parameterName.length() + 1;
-		if (start < 0)
+		int start = query.indexOf(parameterName + "=");
+		if (start < 0) {
 			return null;
+		} else {
+			start += parameterName.length() + 1;
+			if (start >= query.length()) {
+				return "";
+			}
+		}
 		int end = query.indexOf("&", start);
 		if (end <= 0)
 			end = query.length();
