@@ -134,7 +134,14 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	private static final String NATURE_ID = ID + ".cvsnature"; //$NON-NLS-1$
 
-	public CVSWorkspaceSubscriber getCVSWorkspaceSubscriber() {
+	public synchronized CVSWorkspaceSubscriber getCVSWorkspaceSubscriber() {
+		if (cvsWorkspaceSubscriber == null) {
+			cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
+					CVS_WORKSPACE_SUBSCRIBER_ID, 
+					Policy.bind("CVSProviderPlugin.20"),   //$NON-NLS-1$
+					Policy.bind("CVSProviderPlugin.21")); //$NON-NLS-1$
+			TeamSubscriber.getSubscriberManager().registerSubscriber(cvsWorkspaceSubscriber);
+		}
 		return cvsWorkspaceSubscriber;
 	}
 
@@ -329,11 +336,7 @@ public class CVSProviderPlugin extends Plugin {
 		
 		RemoteContentsCache.enableCaching(ID);
 		
-		cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
-				CVS_WORKSPACE_SUBSCRIBER_ID, 
-				Policy.bind("CVSProviderPlugin.20"),   //$NON-NLS-1$
-				Policy.bind("CVSProviderPlugin.21")); //$NON-NLS-1$
-		TeamSubscriber.getSubscriberManager().registerSubscriber(cvsWorkspaceSubscriber);
+		getCVSWorkspaceSubscriber();
 	}
 	
 	/**
