@@ -37,6 +37,7 @@
       <participant
             name="%CVSWorkspaceParticipant"
             type="static"
+            multipleInstances="false"
             icon="icons/full/cview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant"
             id="org.eclipse.team.cvs.ui.cvsworkspace-participant">
@@ -44,6 +45,7 @@
       <participant
             name="%CVSMergeParticipant"
             type="dynamic"
+            multipleInstances="true"
             icon="icons/full/clcl16/newstream_wiz.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant"
             id="org.eclipse.team.cvs.ui.cvsmerge-participant">
@@ -51,6 +53,8 @@
       <participant
             name="%CVSCompareParticipant"
             type="dynamic"
+            multipleInstances="true"
+            persistent="false"
             icon="icons/full/cview16/compare_view.gif"
             class="org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant"
             id="org.eclipse.team.cvs.ui.compare-participant">

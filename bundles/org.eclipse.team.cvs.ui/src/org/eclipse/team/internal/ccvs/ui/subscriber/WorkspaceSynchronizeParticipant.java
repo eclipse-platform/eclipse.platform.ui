@@ -25,8 +25,8 @@ public class WorkspaceSynchronizeParticipant extends SubscriberParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
-	public void init(IMemento memento) throws PartInitException {
-		super.init(memento);
+	public void init(String secondaryId, IMemento memento) throws PartInitException {
+		super.init(secondaryId, memento);
 		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(); 
 		setSubscriber(subscriber);
 	}

@@ -22,16 +22,12 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
 public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	
-	private final static String CTX_QUALIFIER = "qualifier"; //$NON-NLS-1$
-	private final static String CTX_LOCALNAME = "localname"; //$NON-NLS-1$
 	private final static String CTX_ROOT = "root"; //$NON-NLS-1$
 	private final static String CTX_ROOT_PATH = "root_resource"; //$NON-NLS-1$
 	private final static String CTX_START_TAG = "start_tag"; //$NON-NLS-1$
@@ -48,7 +44,6 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 		setSubscriber(subscriber);
 	}
 	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#createSynchronizeViewerAdvisor(org.eclipse.team.ui.synchronize.ISynchronizeView)
 	 */
@@ -59,25 +54,27 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberParticipant#setSubscriber(org.eclipse.team.core.subscribers.TeamSubscriber)
 	 */
-	protected void setSubscriber(Subscriber subscriber) {
+	public  void setSubscriber(Subscriber subscriber) {
 		super.setSubscriber(subscriber);
-		String id = CVSMergeSubscriber.ID;
 		try {
-			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(id); 
+			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSMergeSubscriber.ID); 
 			setInitializationData(descriptor);
+			CVSMergeSubscriber s = (CVSMergeSubscriber)getSubscriber();
+			setSecondaryId(s.getId().getLocalName());
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);
 		}
 	}
-		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
-	public void init(IMemento memento) throws PartInitException {
-		super.init(memento);
+	public void init(String secondayId, IMemento memento) throws PartInitException {
+		super.init(secondayId, memento);
 		if(memento != null) {
-			String qualifier = memento.getString(CTX_QUALIFIER);
-			String localname = memento.getString(CTX_LOCALNAME);
+			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSMergeSubscriber.ID); 
+			String qualifier = descriptor.getId();
+			String localname = secondayId;
 			if(qualifier == null || localname == null) {
 				throw new PartInitException(Policy.bind("MergeSynchronizeParticipant.8")); //$NON-NLS-1$
 			}
@@ -95,9 +92,6 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		CVSMergeSubscriber s = (CVSMergeSubscriber)getSubscriber();
-		QualifiedName sId = s.getId();
-		memento.putString(CTX_QUALIFIER, sId.getQualifier());
-		memento.putString(CTX_LOCALNAME, sId.getLocalName());
 		write(s, memento);
 	}
 		
@@ -106,7 +100,11 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 	 */
 	public void dispose() {
 		super.dispose();
-		((CVSMergeSubscriber)getSubscriber()).cancel();
+		if(TeamUI.getSynchronizeManager().get(getId(), getSecondaryId()) == null) {
+			// If the participant isn't managed by the synchronize manager then we
+			// must ensure that the state cached in the synchronizer is flushed.
+			flushStateCache();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -116,9 +114,6 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 		return ((CVSMergeSubscriber)getSubscriber()).getName();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.TeamSubscriber#saveState(org.eclipse.team.internal.core.SaveContext)
-	 */
 	private void write(CVSMergeSubscriber s, IMemento memento) {
 		// start and end tags
 		CVSTag start = s.getStartTag();
@@ -163,5 +158,9 @@ public class MergeSynchronizeParticipant extends SubscriberParticipant {
 		}
 		IResource[] roots = (IResource[]) resources.toArray(new IResource[resources.size()]);
 		return new CVSMergeSubscriber(id, roots, start, end);
+	}
+	
+	private void flushStateCache() {
+		((CVSMergeSubscriber)getSubscriber()).cancel();
 	}
 }

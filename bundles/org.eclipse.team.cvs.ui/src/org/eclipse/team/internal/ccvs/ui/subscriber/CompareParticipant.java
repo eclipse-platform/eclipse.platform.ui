@@ -75,6 +75,8 @@ public class CompareParticipant extends SubscriberParticipant {
 		try {
 			ISynchronizeParticipantDescriptor descriptor = TeamUI.getSynchronizeManager().getParticipantDescriptor(CVSCompareSubscriber.ID);
 			setInitializationData(descriptor);
+			CVSCompareSubscriber s = (CVSCompareSubscriber)getSubscriber();
+			setSecondaryId(s.getId().getLocalName());
 		} catch (CoreException e) {
 			CVSUIPlugin.log(e);
 		}

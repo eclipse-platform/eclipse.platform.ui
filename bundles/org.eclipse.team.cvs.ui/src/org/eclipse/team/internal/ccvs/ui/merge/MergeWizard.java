@@ -20,7 +20,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.subscribers.IRefreshSubscriberListener;
-import org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant;
 import org.eclipse.ui.*;
 
 public class MergeWizard extends Wizard {
@@ -59,10 +58,7 @@ public class MergeWizard extends Wizard {
 		CVSTag endTag = endPage.getTag();				
 		
 		CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
-		MergeSynchronizeParticipant participant = (MergeSynchronizeParticipant)SubscriberParticipant.find(s);
-		if(participant == null) {
-			participant = new MergeSynchronizeParticipant(s);
-		}	
+		MergeSynchronizeParticipant participant = new MergeSynchronizeParticipant(s);
 		IRefreshSubscriberListener listener = participant.getRefreshListeners().createModalDialogListener(CVSMergeSubscriber.ID_MODAL, participant, participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
 		participant.refresh(s.roots(), listener, Policy.bind("Participant.merging"), null); //$NON-NLS-1$
 		return true;

@@ -39,7 +39,8 @@ public class MergeSynchronizeAdvisor extends CVSSynchronizeViewerAdvisor {
 	protected void initializeActions(StructuredViewer treeViewer) {
 		super.initializeActions(treeViewer);
 		
-		removeAction = new RemoveSynchronizeParticipantAction(getParticipant());
+		SubscriberParticipant p = getParticipant();
+		removeAction = new RemoveSynchronizeParticipantAction(p);
 		modes = new DirectionFilterActionGroup(getParticipant(), SubscriberParticipant.INCOMING_MODE | SubscriberParticipant.CONFLICTING_MODE);
 		MergeUpdateAction action = new MergeUpdateAction();
 		action.setPromptBeforeUpdate(true);
