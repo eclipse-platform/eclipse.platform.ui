@@ -51,6 +51,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	 */
 	public ProgressMonitorJobsDialog(Shell parent) {
 		super(parent);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	/*
 	 * (non-Javadoc)

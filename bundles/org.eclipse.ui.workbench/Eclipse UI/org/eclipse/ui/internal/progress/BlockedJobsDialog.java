@@ -93,8 +93,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			if (blockedTaskName == null)
 				return ProgressMessages
 						.getString("BlockedJobsDialog.UserInterfaceTreeElement"); //$NON-NLS-1$
-			else
-				return blockedTaskName;
+			return blockedTaskName;
 		}
 		/*
 		 * (non-Javadoc)
@@ -167,6 +166,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 *            The monitor that is currently blocked
 	 * @param reason
 	 *            A status describing why the monitor is blocked
+	 * @return BlockedJobsDialog
 	 */
 	public static BlockedJobsDialog createBlockedDialog(Shell parentShell,
 			IProgressMonitor blockedMonitor, IStatus reason) {
@@ -218,7 +218,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		blockingMonitor = blocking;
 		if (blockingStatus instanceof IJobStatus)
 			blockingJob= ((IJobStatus)blockingStatus).getJob();
-		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
+		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL | SWT.RESIZE);
 		// no close button
 		setBlockOnOpen(false);
 		setMessage(blockingStatus.getMessage());
@@ -330,15 +330,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			control.setCursor(null);
 		}
 	}
-	/**
-	 * This method complements the Window's class' configureShell method by
-	 * adding a title, and setting the appropriate cursor.
-	 * 
-	 * @param shell
-	 *            The dialog's shell.
-	 * 
-	 * @see /org.eclipse.jface/src/org/eclipse/jface/window/Window.java
-	 *      (org.eclipse.jface.window;)
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -350,6 +344,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 	/**
 	 * This method sets the message in the message label.
+	 * @param messageString - the String for the message area
 	 */
 	private void setMessage(String messageString) {
 		//must not set null text in a label
@@ -376,6 +371,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
 	 * Requests that the blocked jobs dialog be closed. The supplied monitor
 	 * must be the same one that was passed to the createBlockedDialog method.
+	 * @param monitor
+	 * @return IProgressMonitor
 	 */
 	public boolean close(IProgressMonitor monitor) {
 		//ignore requests to close the dialog from all but the first monitor
