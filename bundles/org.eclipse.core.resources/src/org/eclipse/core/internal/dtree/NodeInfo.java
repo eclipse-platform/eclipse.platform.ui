@@ -55,21 +55,21 @@ public int getType () {
  * Returns true if the type of node carries data, false otherwise.
  */
 public boolean hasData() {
-	return (type == AbstractDataTreeNode.DataTreeNodeType ||
-		 	type == AbstractDataTreeNode.DataDeltaNodeType);
+	return (type == AbstractDataTreeNode.T_COMPLETE_NODE ||
+		 	type == AbstractDataTreeNode.T_DELTA_NODE);
 }
 /**
  * Returns true if the receiver represents a complete node.
  */
 public boolean isComplete () {
-	return this.getType() == AbstractDataTreeNode.DataTreeNodeType;
+	return this.getType() == AbstractDataTreeNode.T_COMPLETE_NODE;
 }
 /**
  * Returns true if the receiver represents a node that has been
  * deleted from the tree, false otherwise.
  */
 public boolean isDeleted () {
-	return this.getType() == AbstractDataTreeNode.DeletedNodeType;
+	return this.getType() == AbstractDataTreeNode.T_DELETED_NODE;
 }
 /**
  * Returns true if the node carries delta information, false otherwise.
@@ -77,8 +77,8 @@ public boolean isDeleted () {
 public boolean isDelta () {
 	int type = this.getType();
 	
-	return (type == AbstractDataTreeNode.DataDeltaNodeType ||
-		   type == AbstractDataTreeNode.NoDataDeltaNodeType);
+	return (type == AbstractDataTreeNode.T_DELTA_NODE ||
+		   type == AbstractDataTreeNode.T_NO_DATA_DELTA_NODE);
 }
 /**
  * Returns whether the node represents an empty delta.
@@ -86,7 +86,7 @@ public boolean isDelta () {
  */
 public boolean isEmptyDelta() {
 	return (
-		this.getType() == AbstractDataTreeNode.NoDataDeltaNodeType &&
+		this.getType() == AbstractDataTreeNode.T_NO_DATA_DELTA_NODE &&
 		this.getNamesOfChildren().length == 0 &&
 		this.getNamesOfDeletedChildren().length == 0);
 }
@@ -95,13 +95,13 @@ public boolean isEmptyDelta() {
  * be a complete node, delta node, deleted node or virtual node.
  */
 public boolean isPresent() {
-	return this.getType() != AbstractDataTreeNode.MissingNodeType;
+	return this.getType() != AbstractDataTreeNode.T_MISSING_NODE;
 }
 /**
  * Returns a node info object describing a missing or deleted node.
  */
 static NodeInfo missing() {
-	return new NodeInfo(AbstractDataTreeNode.MissingNodeType,
+	return new NodeInfo(AbstractDataTreeNode.T_MISSING_NODE,
 		null, 			//no data
 		new String[0],	//no children
 		new String[0]);	//no deleted children

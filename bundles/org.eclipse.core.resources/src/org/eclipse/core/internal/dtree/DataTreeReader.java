@@ -35,11 +35,11 @@ public DataTreeReader(IDataFlattener f) {
  */
 protected boolean hasData(int nodeType) {
 	switch (nodeType) {
-		case AbstractDataTreeNode.DataTreeNodeType:
-		case AbstractDataTreeNode.DataDeltaNodeType:
+		case AbstractDataTreeNode.T_COMPLETE_NODE:
+		case AbstractDataTreeNode.T_DELTA_NODE:
 			return true;
-		case AbstractDataTreeNode.DeletedNodeType:
-		case AbstractDataTreeNode.NoDataDeltaNodeType:
+		case AbstractDataTreeNode.T_DELETED_NODE:
+		case AbstractDataTreeNode.T_NO_DATA_DELTA_NODE:
 		default:
 			return false;
 	}
@@ -85,13 +85,13 @@ protected AbstractDataTreeNode readNode(IPath parentPath) throws IOException {
 
 	/* create the appropriate node */
 	switch (nodeType) {
-		case AbstractDataTreeNode.DataTreeNodeType:
+		case AbstractDataTreeNode.T_COMPLETE_NODE:
 			return new DataTreeNode(name, data, children);
-		case AbstractDataTreeNode.DataDeltaNodeType:
+		case AbstractDataTreeNode.T_DELTA_NODE:
 			return new DataDeltaNode(name, data, children);
-		case AbstractDataTreeNode.DeletedNodeType:
+		case AbstractDataTreeNode.T_DELETED_NODE:
 			return new DeletedNode(name);
-		case AbstractDataTreeNode.NoDataDeltaNodeType:
+		case AbstractDataTreeNode.T_NO_DATA_DELTA_NODE:
 			return new NoDataDeltaNode(name, children);
 		default:
 			Assert.isTrue(false, Policy.bind("dtree.switchError"));

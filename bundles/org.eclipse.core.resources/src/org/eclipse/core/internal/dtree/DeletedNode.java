@@ -114,6 +114,6 @@ public String toString () {
  * Returns a string describing the type of node.
  */
 int type() {
-	return DeletedNodeType;
+	return T_DELETED_NODE;
 }
 }

@@ -335,6 +335,6 @@ public String toString () {
  * Returns a constant describing the type of node.
  */
 int type() {
-	return DataTreeNodeType;
+	return T_COMPLETE_NODE;
 }
 }

@@ -22,12 +22,11 @@ public abstract class AbstractDataTreeNode {
 	protected String name;
 	
 	/* Node types for comparison */
-
-	public static final int DataTreeNodeType = 0;
-	public static final int DataDeltaNodeType = 1;
-	public static final int DeletedNodeType = 2;
-	public static final int NoDataDeltaNodeType = 3;
-	public static final int MissingNodeType = 4;
+	public static final int T_COMPLETE_NODE = 0;
+	public static final int T_DELTA_NODE = 1;
+	public static final int T_DELETED_NODE = 2;
+	public static final int T_NO_DATA_DELTA_NODE = 3;
+	public static final int T_MISSING_NODE = 4;
 
 
 /**

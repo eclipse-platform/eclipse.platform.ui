@@ -111,6 +111,6 @@ public String toString () {
  * Returns a constant describing the type of node.
  */
 int type() {
-	return DataDeltaNodeType;
+	return T_DELTA_NODE;
 }
 }

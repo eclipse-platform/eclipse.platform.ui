@@ -19,7 +19,7 @@ class ElementSubtree {
 	protected Object elementData;
 	protected ElementSubtree[] children;
 
-	static final ElementSubtree[] emptyArray = new ElementSubtree[0];
+	static final ElementSubtree[] EMPTY_ARRAY = new ElementSubtree[0];
 /**
  * Creates an <code>ElementChildSubtree</code> with the given element name and element,
  * and child elements (organized by type).
@@ -27,7 +27,7 @@ class ElementSubtree {
  */
 public ElementSubtree(String elementName, Object elementData, ElementSubtree[] children) {
 	if (children == null || children.length == 0) {
-		children = emptyArray;
+		children = EMPTY_ARRAY;
 	}
 	this.elementName = elementName;
 	this.elementData = elementData;
@@ -39,7 +39,7 @@ public ElementSubtree(String elementName, Object elementData, ElementSubtree[] c
 ElementSubtree(DataTreeNode childNode) {
 	AbstractDataTreeNode[] childNodes = childNode.getChildren();
 	if (childNodes.length == 0) {
-		children = emptyArray;
+		children = EMPTY_ARRAY;
 	} else {
 		ElementSubtree[] types = new ElementSubtree[childNodes.length];
 		for (int i = childNodes.length; --i >= 0;) {
