@@ -17,7 +17,6 @@ import java.util.*;
  * Common for all objects definable in toc.xml
  */
 abstract class TocNode implements ITocNode {
-	private final static List emptyList = new ArrayList(0);
 	protected List children;
 	protected List parents;
 	
@@ -61,7 +60,7 @@ abstract class TocNode implements ITocNode {
 	 */
 	public List getChildren() {
 		if (children == null)
-			return emptyList;
+			return Collections.EMPTY_LIST;
 		return children;
 	}
 	/**
@@ -70,7 +69,7 @@ abstract class TocNode implements ITocNode {
 	 */
 	protected List getParents() {
 		if (parents == null)
-			return emptyList;
+			return Collections.EMPTY_LIST;
 		return parents;
 	}
 	
@@ -79,7 +78,7 @@ abstract class TocNode implements ITocNode {
 	 */
 	public List getChildTopics() {
 		if (children == null)
-			return emptyList;
+			return Collections.EMPTY_LIST;
 		List childTopics = new ArrayList(children.size());
 		for (Iterator childrenIt = children.iterator(); childrenIt.hasNext();) {
 			TocNode c = (TocNode) childrenIt.next();
