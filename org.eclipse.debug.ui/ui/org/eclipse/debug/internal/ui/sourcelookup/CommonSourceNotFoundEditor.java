@@ -303,7 +303,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		if(input instanceof CommonSourceNotFoundEditorInput) {
 			fObject = ((CommonSourceNotFoundEditorInput)input).getObject();
 		}
-		setTitle(input.getName());
+		setPartName(input.getName());
 		if (fText != null) {			
 			fText.setText(input.getToolTipText()+"\n"); //$NON-NLS-1$
 		}

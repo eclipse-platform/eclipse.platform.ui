@@ -100,7 +100,7 @@ public class SourceNotFoundEditor extends EditorPart implements IReusableEditor 
 	 */
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
-		setTitle(input.getName());
+		setPartName(input.getName());
 		if (fText != null) {
 			fText.setText(input.getToolTipText());
 		}

@@ -362,9 +362,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		}
 		table.setBackground(color);
 		if (enabled) {
-			setTitle(DebugUIViewsMessages.getString("BreakpointsView.19")); //$NON-NLS-1$
+			setContentDescription(""); //$NON-NLS-1$
 		} else {
-			setTitle(DebugUIViewsMessages.getString("BreakpointsView.20")); //$NON-NLS-1$
+			setContentDescription(DebugUIViewsMessages.getString("BreakpointsView.19")); //$NON-NLS-1$
 		}
 	}
 	
