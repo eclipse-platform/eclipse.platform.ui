@@ -21,7 +21,6 @@ public class Messages extends NLS {
 	public static String stats_countHeader;
 	public static String stats_timeHeader;
 
-	public static String stats_toolTipText;
 	public static String stats_badStat;
 	public static String stats_badColumn;
 	public static String stats_pluginid;
@@ -47,7 +46,6 @@ public class Messages extends NLS {
 	public static String resource_flags;
 	public static String resource_open;
 	public static String resource_local_exists;
-	public static String resource_local_is_file;
 	public static String resource_phantom;
 	public static String resource_used;
 	public static String resource_derived;
@@ -66,9 +64,6 @@ public class Messages extends NLS {
 
 	public static String resource_sync_info;
 
-	// Plug-in Dependency Spy
-	public static String depend_clearContents;
-	public static String depend_badURL;
 	public static String depend_noInformation;
 	public static String depend_noParentPlugins;
 	public static String depend_requiredBy;
