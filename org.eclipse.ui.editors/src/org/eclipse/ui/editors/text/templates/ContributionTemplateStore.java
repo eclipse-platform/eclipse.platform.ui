@@ -21,8 +21,9 @@ import java.util.Iterator;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
@@ -119,13 +120,13 @@ public class ContributionTemplateStore extends TemplateStore {
 	private void readIncludedTemplates(Collection templates, IConfigurationElement element) throws IOException {
 		String file= element.getAttributeAsIs(FILE);
 		if (file != null) {
-			IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
-			URL url= descriptor.find(new Path(file));
+			Bundle plugin = Platform.getBundle(element.getDeclaringExtension().getNamespace());
+			URL url= Platform.find(plugin, new Path(file));
 			if (url != null) {
 				ResourceBundle bundle= null;
 				String translations= element.getAttributeAsIs(TRANSLATIONS);
 				if (translations != null) {
-					URL bundleURL= descriptor.find(new Path(translations));
+					URL bundleURL= Platform.find(plugin, new Path(translations));
 					if (url != null) {
 						bundle= new PropertyResourceBundle(bundleURL.openStream());
 					}
