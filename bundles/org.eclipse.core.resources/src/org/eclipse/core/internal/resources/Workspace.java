@@ -1195,7 +1195,7 @@ protected void initializeTeamHook() {
 		// can only have one defined at a time. log a warning
 		if (configs.length > 1) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneTeamHook"), null); //$NON-NLS-1$
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -1206,7 +1206,7 @@ protected void initializeTeamHook() {
 			teamHook = (TeamHook) config.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initTeamHook"), e); //$NON-NLS-1$
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 	} finally {
@@ -1781,13 +1781,13 @@ public IStatus validateLinkLocation(IResource resource, IPath location) {
 	IPath testLocation = getMetaArea().getLocation();
 	String message;
 	if (isOverlapping(location, testLocation)) {
-		message = Policy.bind("resources.linkInvalidLocation", location.toString(), testLocation.toString()); //$NON-NLS-1$
+		message = Policy.bind("links.invalidLocation", location.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 	//test if the given path overlaps the location of the given project
 	testLocation = resource.getProject().getLocation();
 	if (isOverlapping(location, testLocation)) {
-		message = Policy.bind("resources.linkOverlapProject", location.toString(), testLocation.toString()); //$NON-NLS-1$
+		message = Policy.bind("links.locationOverlapsProject", location.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 	// Iterate over each known project and ensure that the location does not
@@ -1803,7 +1803,7 @@ public IStatus validateLinkLocation(IResource resource, IPath location) {
 		if (testLocation == null)
 			continue;
 		if (isOverlapping(location, testLocation)) {
-			message = Policy.bind("resources.linkOverlapResource", location.toString(), testLocation.toString()); //$NON-NLS-1$
+			message = Policy.bind("links.overlappingResource", location.toString()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
 		}
 		//iterate over linked resources and check for overlap
@@ -1821,7 +1821,7 @@ public IStatus validateLinkLocation(IResource resource, IPath location) {
 			if (children[j].isLinked()) {
 				testLocation = children[j].getLocation();
 				if (isOverlapping(location, testLocation)) {
-					message = Policy.bind("resources.linkOverlapResource", location.toString(), testLocation.toString()); //$NON-NLS-1$
+					message = Policy.bind("links.overlappingResource", location.toString()); //$NON-NLS-1$
 					return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
 				}
 			}				

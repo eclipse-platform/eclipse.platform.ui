@@ -669,7 +669,7 @@ public IStatus reconcileLinks(ProjectDescription newDescription) {
 	} catch (CoreException e) {
 		return e.getStatus();
 	}
-	String msg = Policy.bind("resources.errorMountReconcile"); //$NON-NLS-1$
+	String msg = Policy.bind("links.errorLinkReconcile"); //$NON-NLS-1$
 	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 	//walk over old linked resources and remove those that are no longer defined
 	for (int i = 0; i < children.length; i++) {

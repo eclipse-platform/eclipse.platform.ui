@@ -83,19 +83,19 @@ protected void assertLinkRequirements(IPath localLocation, int updateFlags) thro
 	checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
 	Container parent = (Container) getParent();
 	if (parent == null || parent.getType() != IResource.PROJECT) {
-		String msg = Policy.bind("resources.linkNonProject", getFullPath().toString());//$NON-NLS-1$
+		String msg = Policy.bind("links.parentNotProject", getFullPath().toString());//$NON-NLS-1$
 		Assert.isLegal(false, msg);
 	}
 	parent.checkAccessible(getFlags(parent.getResourceInfo(false, false)));
 	java.io.File localFile = localLocation.toFile();
 	boolean localExists = localFile.exists();
 	if ((updateFlags & IResource.ALLOW_MISSING_LOCAL) == 0 && !localExists) {
-		String msg = Policy.bind("resources.linkDoesNotExist", getFullPath().toString());//$NON-NLS-1$
+		String msg = Policy.bind("links.localDoesNotExist", localFile.toString());//$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
 	}
 	//resource type and file system type must match
 	if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
-		String msg = Policy.bind("resources.linkWrongType", getFullPath().toString());//$NON-NLS-1$
+		String msg = Policy.bind("links.wrongLocalType", getFullPath().toString());//$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
 	}
 	//check nature veto
