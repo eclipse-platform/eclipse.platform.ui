@@ -329,6 +329,11 @@
             category="org.eclipse.ui.tests.tableViewerViews"
             name="Virtual Table View test"
             id="org.eclipse.ui.tests.view1"/>
+      <view
+            class="org.eclipse.jface.tests.viewers.interactive.LazyVirtualTableView"
+            category="org.eclipse.ui.tests.tableViewerViews"
+            name="Lazy Virtual Table View test"
+            id="org.eclipse.ui.tests.lazyView"/>
       <category
             name="Table Viewer Tests"
             id="org.eclipse.ui.tests.tableViewerViews"/>      

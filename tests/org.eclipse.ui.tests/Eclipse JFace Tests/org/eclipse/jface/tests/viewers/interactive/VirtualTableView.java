@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
@@ -39,7 +42,26 @@ public class VirtualTableView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		
 		viewer = new TableViewer(parent,SWT.VIRTUAL);
-		viewer.setContentProvider(new IStructuredContentProvider(){
+		viewer.setContentProvider(getContentProvider());
+		viewer.setInput(this);
+		viewer.setItemCount(10000);
+
+		Button blam = new Button(parent,SWT.PUSH);
+		blam.setText("Blam");
+		blam.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e){
+				viewer.setInput(this);
+			}
+		});
+
+	}
+
+	/**
+	 * Get the content provider for the receiver.
+	 * @return IContentProvider
+	 */
+	protected IContentProvider getContentProvider() {
+		return new IStructuredContentProvider(){
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
@@ -67,10 +89,7 @@ public class VirtualTableView extends ViewPart {
 				//Nothing to do here.
 
 			}
-		});
-		viewer.setInput(this);
-		
-
+		};
 	}
 
 	/* (non-Javadoc)

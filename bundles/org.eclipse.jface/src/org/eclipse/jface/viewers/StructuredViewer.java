@@ -1296,8 +1296,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(org.eclipse.jface.viewers.IContentProvider)
 	 */
 	public void setContentProvider(IContentProvider provider) {
-		Assert.isTrue(provider instanceof IStructuredContentProvider);
+		assertContentProviderType(provider);
 		super.setContentProvider(provider);
+	}
+
+	/**
+	 * Assert that the content provider is of one of the
+	 * supported types.
+	 * @param provider
+	 */
+	protected void assertContentProviderType(IContentProvider provider) {
+		Assert.isTrue(provider instanceof IStructuredContentProvider);
 	}
 
 	/*

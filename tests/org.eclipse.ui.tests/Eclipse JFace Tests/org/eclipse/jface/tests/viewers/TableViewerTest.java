@@ -54,7 +54,7 @@ public class TableViewerTest extends StructuredItemViewerTest {
      */
     protected StructuredViewer createViewer(Composite parent) {
         TableViewer viewer = createTableViewer(parent);
-        viewer.setContentProvider(new TestModelContentProvider());
+        viewer.setContentProvider(getContentProvider());
         viewer.setLabelProvider(new TableTestLabelProvider());
         viewer.getTable().setLinesVisible(true);
 
@@ -78,6 +78,14 @@ public class TableViewerTest extends StructuredItemViewerTest {
 
         return viewer;
     }
+
+	/**
+	 * Get the content provider for the viewer.
+	 * @return IContentProvider
+	 */
+	protected TestModelContentProvider getContentProvider() {
+		return new TestModelContentProvider();
+	}
 
     /**
      * Create the table viewer for the test

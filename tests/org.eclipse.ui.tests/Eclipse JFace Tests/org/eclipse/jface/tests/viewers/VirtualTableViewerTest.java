@@ -51,6 +51,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 			}
 		});
+		viewer.setItemCount(10);
 		return viewer;
 	}
 	
@@ -159,6 +160,15 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		//are created.
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSetInput()
+	 */
+	public void testSetInput() {
+		//This test us based on findItem assuming all items 
+		//are created so it is not valid.
+	}
+	
+	
 	  public void testRenameWithSorter() {
 		//This test is no use here as it is
 		//based on the assumption that all items 
@@ -200,5 +210,8 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		//based on the assumption that all items 
 		//are created.
 	}
+	
+	
+
 
 }

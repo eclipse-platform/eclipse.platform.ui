@@ -64,25 +64,16 @@ import org.eclipse.jface.util.Assert;
  * @see #internalRefresh(Object, boolean)
  */
 public class TableViewer extends StructuredViewer {
-	
-	/**
-	 * The NOT_DISPLAYED_TOKEN is a placeholder for 
-	 * items that are not displayed.
-	 */
-	private static final Object NOT_DISPLAYED_TOKEN = new Object();
-	
+		
 	private class VirtualManager{
-		
 		/**
-		 * The DISPLAYED_TOKEN is static object that 
-		 * is used to indicate that an item has been
-		 * displayed.
+		 * The currently invisible elements as provided 
+		 * by the content provider or by addition.
+		 * This will not be populated by an ILazyStructuredContentProvider
+		 * as an ILazyStructuredContentProvider is only queried
+		 * on the virtual callabck.
 		 */
-		final Object DISPLAYED_TOKEN = new Object();
-		
-		
-		private Object[] virtualElements = new Object[0];
-		
+		private Object[] cachedElements = new Object[0];
 		/**
 		 * Create a new instance of the receiver.
 		 *
@@ -90,23 +81,10 @@ public class TableViewer extends StructuredViewer {
 		public VirtualManager(){
 			addTableListener();
 		}
+
 		
 		/**
-		 * Return whether or not index is visible.
-		 * @param index the index to check
-		 * @return <code>true</code> if the item has already
-		 * been created.
-		 */
-		public boolean isVisible(int index) {
-			if(index >= virtualElements.length)
-				return false;
-			return virtualElements[index] == DISPLAYED_TOKEN;
-		}
-		
-		
-		/**
-		 * Add the listener for SetData on he table
-		 * @param virtualTable - the table to listen to
+		 * Add the listener for SetData on the table
 		 */
 		private void addTableListener() {
 			table.addListener(SWT.SetData,new Listener(){
@@ -115,23 +93,45 @@ public class TableViewer extends StructuredViewer {
 				 */
 				public void handleEvent(Event event) {
 					TableItem item = (TableItem) event.item;
-					int index = table.indexOf(item);					
-					Object element = virtualElements[index];
-					if(element == null)
-						throw new NullPointerException();
-					//If we get a call back for one we
-					//are already showing don't continue
-					if(element == DISPLAYED_TOKEN)
-						return;
+					final int index = table.indexOf(item);
+					Object element = resolveElement(index);
+					if(element == null){
+						//Didn't find it so make a request
+						//Keep looking if it is not in the cache.
+						IContentProvider contentProvider = getContentProvider();
+						//If we are building lazily then request lookup now
+						if(contentProvider instanceof ILazyContentProvider){
+							((ILazyContentProvider) contentProvider).
+								updateElements(index, index);
+							return;
+						}	
+					}
+						
+					
 					associate(element,item);
 					updateItem(item,element);
-					virtualElements[index] = DISPLAYED_TOKEN;
 				}
 
 			});
 
 		}
 		
+		/**
+		 * Get the element at index.Resolve it lazily if this
+		 * is available.
+		 * @param index
+		 * @return Object or <code>null</code> if it could
+		 * not be found
+		 */
+		protected Object resolveElement(int index) {
+			
+			Object element = null;
+			if(index < cachedElements.length)
+				element =  cachedElements[index];
+			
+			return element;
+		}
+
 		/**
 		 * A non visible item has been added.
 		 * @param element
@@ -140,15 +140,18 @@ public class TableViewer extends StructuredViewer {
 		public void notVisibleAdded(Object element, int index) {
 			
 			int requiredCount = index + 1;
+			
 			if(requiredCount > getTable().getItemCount()){
 				getTable().setItemCount(requiredCount);
+				Object[] newCache = new Object[requiredCount];
+				System.arraycopy(cachedElements, 0, newCache, 0, cachedElements.length);
+				cachedElements = newCache;
 			}
-			if(requiredCount > virtualElements.length){
-				Object[] newElements = new Object[requiredCount];
-				System.arraycopy(virtualElements, 0, newElements, 0, virtualElements.length);
-				virtualElements = newElements;
-			}
-			virtualElements[index] = element;
+			
+			
+			cachedElements[index] = element;
+			
+			
 		}
 		
 	}
@@ -315,10 +318,12 @@ public class TableViewer extends StructuredViewer {
 	 * @param index
 	 */
 	private void createItem(Object element, int index) {
-		if(virtualManager == null || virtualManager.isVisible(index))
+		if(virtualManager == null)
 			updateItem(new TableItem(getTable(), SWT.NONE, index), element);
-		else
+		else{
 			virtualManager.notVisibleAdded(element,index);
+			
+		}
 	}
 
 	/**
@@ -364,9 +369,6 @@ public class TableViewer extends StructuredViewer {
 	 */
 	protected Widget doFindItem(Object element) {
 		
-		if(virtualManager != null)
-			return virtualDoFindItem(element);
-		
 		TableItem[] children = table.getItems();
 		for (int i = 0; i < children.length; i++) {
 			TableItem item = children[i];
@@ -375,25 +377,6 @@ public class TableViewer extends StructuredViewer {
 				return item;
 		}
 
-		return null;
-	}
-
-	/**
-	 * Find the item matching element using the virtual table.
-	 * @param element
-	 * @return Widget or <code>null</code> if the Widget 
-	 * does not exist or has not been created yet.
-	 */
-	private Widget virtualDoFindItem(Object element) {
-		for (int i = 0; i < virtualManager.virtualElements.length; i++) {
-			if(virtualManager.isVisible(i)){
-				TableItem item = getTable().getItem(i);
-				Object data = item.getData();
-				if (data != null && equals(data, element))
-					return item;
-			}
-		}
-		//Not displayed yet or not there
 		return null;
 	}
 
@@ -725,83 +708,10 @@ public class TableViewer extends StructuredViewer {
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		tableViewerImpl.applyEditorValue();
 		if (element == null || equals(element, getRoot())) {
-			// the parent
-
-			// in the code below, it is important to do all disassociates
-			// before any associates, since a later disassociate can undo an
-			// earlier associate
-			// e.g. if (a, b) is replaced by (b, a), the disassociate of b to
-			// item 1 could undo
-			// the associate of b to item 0.
-
-			Object[] children = getSortedChildren(getRoot());
-			//If the receiver is SWT.VIRTUAL only update
-			//those items that have been created
-			Object[] items = getCreatedItems();
-			int min = Math.min(children.length, items.length);
-			for (int i = 0; i < min; ++i) {
-				
-				// Was it created? Virtual elements may not have been
-				if(items[i] == NOT_DISPLAYED_TOKEN)
-					continue;
-				
-				TableItem item = (TableItem) items[i];
-					
-				// if the element is unchanged, update its label if appropriate
-				if (equals(children[i], item.getData())) {
-					if (updateLabels) {
-						updateItem(item, children[i]);
-					} else {
-						// associate the new element, even if equal to the old
-						// one,
-						// to remove stale references (see bug 31314)
-						associate(children[i], item);
-					}
-				} else {
-					// updateItem does an associate(...), which can mess up
-					// the associations if the order of elements has changed.
-					// E.g. (a, b) -> (b, a) first replaces a->0 with b->0, then
-					// replaces b->1 with a->1, but this actually removes b->0.
-					// So, if the object associated with this item has changed,
-					// just disassociate it for now, and update it below.
-					item.setText(""); //$NON-NLS-1$
-					item.setImage(new Image[table.getItemCount()]);//Clear all images
-					disassociate(item);
-				}
-			}
-
-			// dispose of all items beyond the end of the current elements
-			if (min < items.length) {
-				for (int i = items.length; --i >= min;) {
-					// Was it created? Virtual elements may not have been
-					if(items[i] == NOT_DISPLAYED_TOKEN) 
-						continue;
-					
-					disassociate((TableItem) items[i]);
-				}
-				table.remove(min, items.length - 1);
-			}
-
-			// Workaround for 1GDGN4Q: ITPUI:WIN2000 - TableViewer icons get
-			// scrunched
-			if (table.getItemCount() == 0) {
-				table.removeAll();
-			}
-
-			// Update items which were removed above
-			for (int i = 0; i < min; ++i) {
-				//Was it created? Virtual elements may not have been
-				if(items[i] == NOT_DISPLAYED_TOKEN) 
-					continue;
-				
-				TableItem item = (TableItem) items[i];
-				if (item.getData() == null) 
-					updateItem(item, children[i]);
-			}
-
-			// add any remaining elements
-			for (int i = min; i < children.length; ++i) {
-				createItem(children[i],i);
+			if(virtualManager == null)
+				internalRefreshAll(updateLabels);
+			else{
+				internalVirtualRefreshAll();
 			}
 		} else {
 			Widget w = findItem(element);
@@ -812,31 +722,97 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Get the items that have been created in their index order.
-	 * If there is no item at an index yet have a NOT_DISPLAYED_TOKEN entry in the
-	 * array.
-	 * @return TableItem
+	 * Refresh all with virtual elements.
 	 */
-	private Object[] getCreatedItems() {
-		if(virtualManager == null)
-			return getTable().getItems();
-		Object[] returnValue = new Object[virtualManager.virtualElements.length];
-		Object[] virtualElements = virtualManager.virtualElements;
-		System.arraycopy(
-				virtualElements, 
-				0, returnValue, 
-				0, virtualElements.length);
-		for (int i = 0; i < virtualElements.length; i++) {
-			Object object = virtualElements[i];
-			if(object == virtualManager.DISPLAYED_TOKEN)
-				returnValue[i] = getTable().getItem(i);		
-			else 
-				returnValue[i] = NOT_DISPLAYED_TOKEN;
-		}
+	private void internalVirtualRefreshAll() {
 		
-		//Return a collection of table items and not displayed tokens
-		return returnValue;
+		Object root = getRoot();
+		IContentProvider contentProvider = getContentProvider();
+		
+		//Invalidate for lazy
+		if(contentProvider instanceof ILazyContentProvider)
+			((ILazyContentProvider)contentProvider).invalidateElements(0, getTable().getItemCount() - 1);
+		
+		else{ //Don't cache if the root is null but cache if it is not lazy.
+			if(root != null)
+				virtualManager.cachedElements = 
+					((IStructuredContentProvider) getContentProvider()).getElements(root);
+		}
+		getTable().clearAll();
+		
 	}
+
+	/**
+	 * Refresh all of the elements of the table. update the
+	 * labels if updatLabels is true;
+	 * @param updateLabels
+	 */
+	private void internalRefreshAll(boolean updateLabels) {
+		// the parent
+
+		// in the code below, it is important to do all disassociates
+		// before any associates, since a later disassociate can undo an
+		// earlier associate
+		// e.g. if (a, b) is replaced by (b, a), the disassociate of b to
+		// item 1 could undo
+		// the associate of b to item 0.
+
+		Object[] children = getSortedChildren(getRoot());
+		TableItem[] items = getTable().getItems();
+		int min = Math.min(children.length, items.length);
+		for (int i = 0; i < min; ++i) {
+			
+			
+			TableItem item = items[i];
+				
+			// if the element is unchanged, update its label if appropriate
+			if (equals(children[i], item.getData())) {
+				if (updateLabels) {
+					updateItem(item, children[i]);
+				} else {
+					// associate the new element, even if equal to the old
+					// one,
+					// to remove stale references (see bug 31314)
+					associate(children[i], item);
+				}
+			} else {
+				// updateItem does an associate(...), which can mess up
+				// the associations if the order of elements has changed.
+				// E.g. (a, b) -> (b, a) first replaces a->0 with b->0, then
+				// replaces b->1 with a->1, but this actually removes b->0.
+				// So, if the object associated with this item has changed,
+				// just disassociate it for now, and update it below.
+				item.setText(""); //$NON-NLS-1$
+				item.setImage(new Image[table.getItemCount()]);//Clear all images
+				disassociate(item);
+			}
+		}
+		// dispose of all items beyond the end of the current elements
+		if (min < items.length) {
+			for (int i = items.length; --i >= min;) {
+				
+				disassociate(items[i]);
+			}
+			table.remove(min, items.length - 1);
+		}
+		// Workaround for 1GDGN4Q: ITPUI:WIN2000 - TableViewer icons get
+		// scrunched
+		if (table.getItemCount() == 0) {
+			table.removeAll();
+		}
+		// Update items which were removed above
+		for (int i = 0; i < min; ++i) {
+							
+			TableItem item = items[i];
+			if (item.getData() == null) 
+				updateItem(item, children[i]);
+		}
+		// add any remaining elements
+		for (int i = min; i < children.length; ++i) {
+			createItem(children[i],i);
+		}
+	}
+
 
 	/**
 	 * Removes the given elements from this table viewer.
@@ -1015,5 +991,55 @@ public class TableViewer extends StructuredViewer {
 		if (reveal && firstItem != null) {
 			table.showItem(firstItem);
 		}
+			
 	}
+	/**
+	 * Set the item count of the receiver.
+	 * @param count the new table size.
+	 */
+	public void setItemCount(int count){
+		getTable().setItemCount(count);	
+	}
+	
+	/**
+	 * Replace the entries starting at index with elements.
+	 * This method assumes all of these values are correct
+	 * and will not call the content provider to verify.
+	 * <strong>Note that this method will create a TableItem
+	 * for all of the elements so it should not be called if 
+	 * the table is SWT.VIRTUAL and the elements may not exist.
+	 * If using an SWT.VIRTUAL table it is recommended that
+	 * an ILazyContentProvider is used to get updates.
+	 * @param elements
+	 * @param index
+	 * @see ILazyContentProvider
+	 */
+	public void replace(Object[] elements, int index){
+	
+		for (int i = 0; i < elements.length; i++) {
+			Object object = elements[i];
+			TableItem item = getTable().getItem(index);
+			refreshItem(item, object);
+		}
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#getRawChildren(java.lang.Object)
+	 */
+	protected Object[] getRawChildren(Object parent) {
+
+		Assert.isTrue(!(getContentProvider() instanceof ILazyContentProvider),"Cannot get raw children with an ILazyContentProvider");//$NON-NLS-1$
+		return super.getRawChildren(parent);
+	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#assertContentProviderType(org.eclipse.jface.viewers.IContentProvider)
+	 */
+	protected void assertContentProviderType(IContentProvider provider) {
+		Assert.isTrue(provider instanceof IStructuredContentProvider ||
+				provider instanceof ILazyContentProvider);
+	}
+	
 }
