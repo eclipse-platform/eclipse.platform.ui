@@ -71,7 +71,7 @@ public class IEditorRegistryTest extends TestCase {
 	public void testGetDefaultEditor_String()
 	{		
 		//editor not found
-		IEditorDescriptor editor = fReg.getDefaultEditor( Tool.pickUnknownFileName() );
+		IEditorDescriptor editor = fReg.getDefaultEditor( Tool.UnknownFileName[0] );
 		assertNull( editor );
 
 		//otherwise

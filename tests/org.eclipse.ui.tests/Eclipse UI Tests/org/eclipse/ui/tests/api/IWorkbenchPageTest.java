@@ -1,8 +1,6 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
 import org.eclipse.ui.tests.*;
@@ -98,23 +96,23 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assert(callTrace.contains(part, "setFocus"));
 		assert(listener.getCallHistory().contains(listener, "partActivated"));
 	}
-	
-	public void testBringToTop() throws Throwable
-	{
+
+	public void testBringToTop() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
-		IEditorPart part = fActivePage.openEditor( FileUtil.createFile("a.mock1", proj) );
-		IEditorPart part2 = fActivePage.openEditor( FileUtil.createFile("b.mock1", proj) );
+		IEditorPart part = fActivePage.openEditor(FileUtil.createFile("a.mock1", proj));
+		IEditorPart part2 =
+			fActivePage.openEditor(FileUtil.createFile("b.mock1", proj));
 
 		MockPartListener listener = new MockPartListener();
 		fActivePage.addPartListener(listener);
 		CallHistory callTrace = listener.getCallHistory();
 
 		//at this point, part2 is active
-		fActivePage.bringToTop(part);				
+		fActivePage.bringToTop(part);
 		assertEquals(callTrace.contains(listener, "partBroughtToTop"), true);
-		
+
 		callTrace.clear();
-		fActivePage.bringToTop(part2);		
+		fActivePage.bringToTop(part2);
 		assertEquals(callTrace.contains(listener, "partBroughtToTop"), true);
 	}
 
@@ -178,9 +176,10 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		proj = FileUtil.createProject("testOpenEditor");
 		final String id = MockEditorPart.ID1;
 
-		IEditorInput input = new FileEditorInput( FileUtil.createFile("test.mock1", proj) );
+		IEditorInput input =
+			new FileEditorInput(FileUtil.createFile("test.mock1", proj));
 		IEditorPart editor = fActivePage.openEditor(input, id);
-				
+
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
 		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
@@ -191,52 +190,164 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(editor, fActivePage.openEditor(input, id));
 		assertEquals(editor, fActivePage.getActiveEditor());
 	}
-	
+
 	/**
 	 * openEditor(IEditorInput input, String editorId, boolean activate) 
 	 */
-	public void testOpenEditor4() throws Throwable
-	{
+	public void testOpenEditor4() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		final String id = MockEditorPart.ID1;
-		IEditorInput input = new FileEditorInput( FileUtil.createFile("test.mock1", proj) );
+		IEditorInput input =
+			new FileEditorInput(FileUtil.createFile("test.mock1", proj));
 		MockPartListener listener = new MockPartListener();
-		fActivePage.addPartListener( listener );		
+		fActivePage.addPartListener(listener);
 		CallHistory callTrace = listener.getCallHistory();
-		
-		//open an editor activating it
+
+		//open an editor with activation
 		IEditorPart editor = fActivePage.openEditor(input, id, true);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
 		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
-		assertEquals(callTrace.contains( listener, "partActivated" ), true );
-		fActivePage.closeEditor( editor, false );
-		
-		//open an editor without activating it
-		callTrace.clear();
-		editor = fActivePage.openEditor(input, id, false );		
-		assertEquals(editor.getEditorInput(), input);		
-		assertEquals(editor.getSite().getId(), id);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);		
-		assertEquals(callTrace.contains( listener, "partActivated" ), false );
-		
-		//activate another editor so that the editor under test can receive events.
+		assertEquals(callTrace.contains(listener, "partActivated"), true);
+		fActivePage.closeEditor(editor, false);
+
+		//activate another editor so that activation/broughtToTop events occur
 		//otherwise, events will be ignored.
 		IEditorPart extra = fActivePage.openEditor(FileUtil.createFile("aaaaa", proj));
-		
-		//open the editor under test second time activating it 		
-		callTrace.clear();		
-		assertEquals( fActivePage.openEditor(input, id, true ), editor );
-		assertEquals(callTrace.contains( listener, "partActivated" ), true );
-				
+
+		//open an editor without activation
+		callTrace.clear();
+		editor = fActivePage.openEditor(input, id, false);
+		assertEquals(editor.getEditorInput(), input);
+		assertEquals(editor.getSite().getId(), id);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(callTrace.contains(listener, "partActivated"), false);
+		assertEquals(callTrace.contains(listener, "partBroughtToTop"), false);
+
+		fActivePage.activate(extra);
+
+		//open the editor under test second time with activation
+		callTrace.clear();
+		assertEquals(fActivePage.openEditor(input, id, true), editor);
+		assertEquals(callTrace.contains(listener, "partActivated"), true);
+
 		//activate the other editor
-		fActivePage.activate( extra );
-		
-		//open the editor under test second time without activating it 	
-		callTrace.clear();		
-		assertEquals( fActivePage.openEditor(input, id, false ), editor );
-		assertEquals(callTrace.contains( listener, "partBroughtToTop" ), true );
+		fActivePage.activate(extra);
+
+		//open the editor under test second time without activation
+		callTrace.clear();
+		assertEquals(fActivePage.openEditor(input, id, false), editor);
+		assertEquals(callTrace.contains(listener, "partBroughtToTop"), true);
+	}
+
+	public void testOpenEditor5() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		IMarker marker =
+			FileUtil.createFile("aa.mock2", proj).createMarker(IMarker.TASK);
+		CallHistory callTrace;
+
+		//open the registered editor for the marker resource 
+		IEditorPart editor = fActivePage.openEditor(marker);
+		callTrace = ((MockEditorPart) editor).getCallHistory();
+		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(callTrace.contains(editor, "gotoMarker"), true);
+		fActivePage.closeEditor(editor, false);
+
+		//open a specified editor				
+		marker.setAttribute(IWorkbenchPage.EDITOR_ID_ATTR, MockEditorPart.ID1);
+		editor = fActivePage.openEditor(marker);
+		callTrace = ((MockEditorPart) editor).getCallHistory();
+		assertEquals(editor.getSite().getId(), MockEditorPart.ID1);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(callTrace.contains(editor, "gotoMarker"), true);
+
+		//open the editor second time
+		callTrace.clear();
+		assertEquals(fActivePage.openEditor(marker), editor);
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(callTrace.contains(editor, "gotoMarker"), true);
+		fActivePage.closeEditor(editor, false);
+	}
+
+	public void testOpenEditor6() throws Throwable {
+		proj = FileUtil.createProject("testOpenEditor");
+		IMarker marker =
+			FileUtil.createFile("aa.mock2", proj).createMarker(IMarker.TASK);
+		MockPartListener listener = new MockPartListener();
+		fActivePage.addPartListener(listener);
+		CallHistory listenerCall = listener.getCallHistory();
+		CallHistory editorCall;
+
+		//we need another editor so that the editor under test can receive events.
+		//otherwise, events will be ignored.
+		IEditorPart extra = fActivePage.openEditor(FileUtil.createFile("aaaaa", proj));
+
+		//open the registered editor for the marker resource with activation
+		IEditorPart editor = fActivePage.openEditor(marker, true);
+		editorCall = ((MockEditorPart) editor).getCallHistory();
+		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
+		fActivePage.closeEditor(editor, false);
+
+		fActivePage.activate(extra);
+
+		//open the registered editor for the marker resource without activation
+		listenerCall.clear();
+		editor = fActivePage.openEditor(marker, false);
+		editorCall = ((MockEditorPart) editor).getCallHistory();
+		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(listenerCall.contains(listener, "partBroughtToTop"), false);
+		assertEquals(listenerCall.contains(listener, "partActivated"), false);
+		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
+		fActivePage.closeEditor(editor, false);
+
+		//specify the editor 		
+		String id = MockEditorPart.ID1;
+		marker.setAttribute(IWorkbenchPage.EDITOR_ID_ATTR, id);
+
+		//open it with activation
+		listenerCall.clear();
+		editor = fActivePage.openEditor(marker, true);
+		editorCall = ((MockEditorPart) editor).getCallHistory();
+		assertEquals(editor.getSite().getId(), id);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(fActivePage.getActiveEditor(), editor);
+		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
+		fActivePage.closeEditor(editor, false);
+
+		fActivePage.activate(extra);
+
+		//open it without activation
+		listenerCall.clear();
+		editor = fActivePage.openEditor(marker, false);
+		editorCall = ((MockEditorPart) editor).getCallHistory();
+		assertEquals(editor.getSite().getId(), id);
+		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
+		assertEquals(listenerCall.contains(listener, "partActivated"), false);
+		assertEquals(listenerCall.contains(listener, "partBroughtToTop"), false);
+
+		fActivePage.activate(extra);
+
+		//open the editor under test second time with activation 		
+		listenerCall.clear();
+		assertEquals(fActivePage.openEditor(marker, true), editor);
+		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
+		assertEquals(listenerCall.contains(listener, "partActivated"), true);
+
+		fActivePage.activate(extra);
+
+		//open the editor under test second time without activation
+		listenerCall.clear();
+		assertEquals(fActivePage.openEditor(marker, false), editor);
+		assertEquals(listenerCall.contains(listener, "partBroughtToTop"), true);
 	}
 
 	public void testFindView() throws Throwable {
@@ -408,68 +519,69 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 				callTraces[i].verifyOrder(editors[i], new String[] { "isDirty", "doSave" }),
 				true);
 	}
-	
-	public void testGetEditors() throws Throwable
-	{
+
+	public void testGetEditors() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		int totalBefore = fActivePage.getEditors().length;
 		int num = 3;
- 		IEditorPart[] editors = new IEditorPart[ num ];
-		
-		for( int i = 0; i < num; i ++ ){
-			editors[i] = fActivePage.openEditor(FileUtil.createFile(i+".mock2", proj));
+		IEditorPart[] editors = new IEditorPart[num];
+
+		for (int i = 0; i < num; i++) {
+			editors[i] = fActivePage.openEditor(FileUtil.createFile(i + ".mock2", proj));
 			assertEquals(Tool.arrayHas(fActivePage.getEditors(), editors[i]), true);
 		}
 		assertEquals(fActivePage.getEditors().length, totalBefore + num);
 
-		fActivePage.closeEditor( editors[0], false);
+		fActivePage.closeEditor(editors[0], false);
 		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editors[0]), false);
 		assertEquals(fActivePage.getEditors().length, totalBefore + num - 1);
 
-		fActivePage.closeAllEditors( false );
-		assertEquals(fActivePage.getEditors().length, totalBefore );
+		fActivePage.closeAllEditors(false);
+		assertEquals(fActivePage.getEditors().length, totalBefore);
 	}
-	
-	public void testShowActionSet()
-	{
+
+	public void testShowActionSet() {
 		String id = MockAction.SET_ID;
+		WorkbenchPage page = (WorkbenchPage) fActivePage;
 
 		//because all action sets are in the registry by default, hide it first
-		fActivePage.hideActionSet( id );		
-		fActivePage.showActionSet( id );
+		fActivePage.hideActionSet(id);
 
-		IActionSetDescriptor[] sets = ((WorkbenchPage)fActivePage).getActionSets();
+		int totalBefore = page.getActionSets().length;
+		fActivePage.showActionSet(id);
+
+		IActionSetDescriptor[] sets = ((WorkbenchPage) fActivePage).getActionSets();
 		boolean found = false;
-		for( int i = 0; i < sets.length; i ++ )
-			if( id.equals( sets[ i].getId() )  )
+		for (int i = 0; i < sets.length; i++)
+			if (id.equals(sets[i].getId()))
 				found = true;
-		assertEquals( found, true );
+		assertEquals(found, true);
 
 		//check that the method does not add an invalid action set to itself
 		id = Tool.FakeID;
-		fActivePage.showActionSet( id );
-		
-		sets = ((WorkbenchPage)fActivePage).getActionSets();
+		fActivePage.showActionSet(id);
+
+		sets = ((WorkbenchPage) fActivePage).getActionSets();
 		found = false;
-		for( int i = 0; i < sets.length; i ++ )
-			if( id.equals( sets[ i].getId() )  )
+		for (int i = 0; i < sets.length; i++)
+			if (id.equals(sets[i].getId()))
 				found = true;
-		assertEquals( found, false );
+		assertEquals(found, false);
+		assertEquals(page.getActionSets().length, totalBefore + 1);
 	}
-	
-	public void testHideShowActionSet()
-	{
-		WorkbenchPage page = ( WorkbenchPage )fActivePage;
+
+	public void testHideShowActionSet() {
+		WorkbenchPage page = (WorkbenchPage) fActivePage;
 		int totalBefore = page.getActionSets().length;
-		
-		fActivePage.hideActionSet( MockAction.SET_ID );
+
+		fActivePage.hideActionSet(MockAction.SET_ID);
 
 		IActionSetDescriptor[] sets = page.getActionSets();
 		boolean found = false;
-		for( int i = 0; i < sets.length; i ++ )
-			if( MockAction.SET_ID.equals( sets[ i].getId() )  )
+		for (int i = 0; i < sets.length; i++)
+			if (MockAction.SET_ID.equals(sets[i].getId()))
 				found = true;
-		assertEquals( found, false );
-		assertEquals( page.getActionSets().length, totalBefore - 1 );		
+		assertEquals(found, false);
+		assertEquals(page.getActionSets().length, totalBefore - 1);
 	}
 }
