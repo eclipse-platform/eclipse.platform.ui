@@ -22,6 +22,8 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -46,8 +48,6 @@ import org.eclipse.ui.internal.commands.CommandManagerWrapper;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.keys.KeyFormatterFactory;
-import org.eclipse.ui.keys.SWTKeySupport;
 
 /**
  * Provides command support in terms of the workbench.
@@ -289,8 +289,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         workbench = workbenchToSupport;
         commandManagerWrapper = CommandManagerFactory.getCommandManagerWrapper(
                 bindingManager, commandManager, contextManager);
-        KeyFormatterFactory.setDefault(SWTKeySupport
-                .getKeyFormatterForPlatform());
+        KeyFormatterFactory.setDefault(SWTKeySupport.getKeyFormatterForPlatform());
 
         // Attach a hook to latch on to the first workbench window to open.
         workbenchToSupport.getDisplay().addFilter(SWT.Activate,
