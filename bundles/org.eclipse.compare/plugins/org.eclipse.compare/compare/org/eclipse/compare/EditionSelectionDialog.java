@@ -537,9 +537,10 @@ public class EditionSelectionDialog extends ResizableDialog {
 	}
  	
 	/**
-	 * Returns the selected editions that have been specified with the most
+	 * Returns the editions that have been selected with the most
 	 * recent call to <code>selectEdition</code>.
 	 * 
+	 * @return the selected editions as an array.
 	 * @since 2.1
 	 */
 	public ITypedElement[] getSelection() {

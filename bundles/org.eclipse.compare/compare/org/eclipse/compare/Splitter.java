@@ -18,10 +18,9 @@ import org.eclipse.swt.custom.SashForm;
  * <P>
  * If Splitters are nested directly:
  * <UL>
- * <LI>changing the visibilty of a child will propagate upward to the topmost
- * Splitter</LI>
- * <LI>maximizing a child makes it as large as the topmost enclosing
- * Splitter</LI>
+ * <LI>changing the visibility of a child may propagate upward to the parent Splitter if the child
+ * is the last child to become invisible or the first to become visible.</LI>
+ * <LI>maximizing a child makes it as large as the topmost enclosing Splitter</LI>
  * </UL>
  * 
  * @since 2.1
@@ -52,10 +51,6 @@ public class Splitter extends SashForm {
 	 * @exception SWTException <ul>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
 	 * </ul>
-	 *
-	 * @see SWT#HORIZONTAL
-	 * @see SWT#VERTICAL
-	 * @see #getStyle
 	 */
 	public Splitter(Composite parent, int style) {
 		super(parent, style);
@@ -90,7 +85,7 @@ public class Splitter extends SashForm {
 		}
 	}
 
-	/*
+	/* (non-Javadoc)
 	 * Recursively calls setMaximizedControl for all direct parents that are
 	 * itself Splitters.
 	 */
@@ -100,7 +95,7 @@ public class Splitter extends SashForm {
 		else
 			super.setMaximizedControl(control);
 
-		// recursively walk up
+		// recursively walk upward
 		Composite parent= getParent();
 		if (parent instanceof Splitter)
 			((Splitter) parent).setMaximizedControl(this);
@@ -108,9 +103,8 @@ public class Splitter extends SashForm {
 			layout(true);
 	}
 
-	/*
-	 * Returns true if Splitter has no children or if all children are
-	 * invisible.
+	/* (non-Javadoc)
+	 * Returns true if Splitter has no children or if all children are invisible.
 	 */
 	private boolean isEmpty() {
 		Control[] controls= getChildren();
@@ -120,7 +114,7 @@ public class Splitter extends SashForm {
 		return true;
 	}
 	
-	/*
+	/* (non-Javadoc)
 	 * Returns the visibility state of the given child control. If the
 	 * control is a Sash, this method always returns false.
 	 */
