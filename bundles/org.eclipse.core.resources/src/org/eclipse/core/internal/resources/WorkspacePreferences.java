@@ -14,11 +14,17 @@ import java.util.*;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 
 /**
  * This class provides the same interface as <code>WorkspaceDescription</code>
  * but instead of changing/obtaining values from its internal state, it
  * changes/obtains properties in/from the workspace plug-in's preferences.
+ * 
+ * Obs.: for performance reasons, some frequently called acessor methods are
+ * reading a cached value from the super class instead of reading the
+ * corresponding property preference store. To keep the cache synchronized with
+ * the preference store, a property change listener is used.
  */
 
 public class WorkspacePreferences extends WorkspaceDescription {
@@ -26,6 +32,8 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	private Preferences preferences;
 	
 	public final static String PROJECT_SEPARATOR = ":"; //$NON-NLS-1$
+
+	private IWorkspaceDescription defaults;
 
 	public WorkspacePreferences() {
 		super("Workspace"); //$NON-NLS-1$
@@ -35,6 +43,13 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			super.setAutoBuilding(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
 		if (preferences.contains(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL))
 			super.setSnapshotInterval(preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
+		// This property listener ensures we are being updated properly when changes
+		// are done directly to the preference store.
+		preferences.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				synchronizeWithPreferences(event.getProperty(), event.getNewValue());
+			}
+		});
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getBuildOrder()
@@ -77,7 +92,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setAutoBuilding(boolean)
 	 */
 	public void setAutoBuilding(boolean value) {
-		super.setAutoBuilding(value);
 		preferences.setValue(ResourcesPlugin.PREF_AUTO_BUILDING, value);
 	}
 	/**
@@ -109,7 +123,6 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setSnapshotInterval(long)
 	 */
 	public void setSnapshotInterval(long delay) {
-		super.setSnapshotInterval(delay);
 		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, delay);
 	}
 	/**
@@ -157,6 +170,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		copyFromTo(this, target);
 	}
 	public void setDefaults(IWorkspaceDescription defaults) {
+		this.defaults = defaults;
 		preferences.setDefault(ResourcesPlugin.PREF_AUTO_BUILDING, defaults.isAutoBuilding());
 		preferences.setDefault(ResourcesPlugin.PREF_BUILD_ORDER, convertStringArraytoString(defaults.getBuildOrder()));
 		preferences.setDefault(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, defaults.getBuildOrder() == null);
@@ -170,5 +184,16 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		// WorkspacePreferences when using WorkspaceDescription was the real 
 		// intention (this class offers a different protocol for copying state).
 		throw new UnsupportedOperationException("clone() is not supported in " + getClass().getName()); //$NON-NLS-1$ 
+	}	
+	private void synchronizeWithPreferences(String property, Object newValue) {
+		if (property.equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
+			// auto build - if set to anything else than a boolean, goes to default
+			boolean value = (newValue instanceof Boolean) ? ((Boolean) newValue).booleanValue() : defaults.isAutoBuilding();
+			super.setAutoBuilding(value);
+		} else if (property.equals(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL)) {
+			// snapshot interval - if set to anything else than a number, goes to default
+			long value = (newValue instanceof Number) ? ((Number) newValue).longValue() : defaults.getSnapshotInterval();
+			super.setSnapshotInterval(value);
+		}
 	}
 }
