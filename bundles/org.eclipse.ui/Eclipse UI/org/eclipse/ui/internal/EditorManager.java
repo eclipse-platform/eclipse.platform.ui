@@ -289,8 +289,11 @@ public class EditorManager {
 	 */
 	private IEditorReference openEditorFromInput(IEditorReference ref,IEditorInput editorInput, boolean setVisible) throws PartInitException {
 		if (!(editorInput instanceof IFileEditorInput))
-			throw new PartInitException(WorkbenchMessages.getString("EditorManager.unableToEditor")); //$NON-NLS-1$
-
+			throw new PartInitException(
+				WorkbenchMessages.format(
+					"EditorManager.unableToOpenExternalEditor", //$NON-NLS-1$
+					new Object[] { editorInput }));
+					
 		IFileEditorInput input = (IFileEditorInput)editorInput;
 		IFile file = input.getFile();
 		// If there is a registered editor for the file use it.
