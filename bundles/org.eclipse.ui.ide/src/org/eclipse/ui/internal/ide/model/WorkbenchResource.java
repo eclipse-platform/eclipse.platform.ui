@@ -133,117 +133,73 @@ public boolean testAttribute(Object target, String name, String value) {
 	return false;
 }
 
+/**
+ * Tests whether the content type for <code>resource</code> matches the
+ * <code>contentTypeId</code>. It is possible that this method call could
+ * cause the resource to be read. It is also possible (through poor plug-in
+ * design) for this method to load plug-ins.
+ * 
+ * @param resource
+ *            The resource for which the content type should be determined; must
+ *            not be <code>null</code>.
+ * @param contentTypeId
+ *            The expected content type; must not be <code>null</code>.
+ * @return <code>true</code> iff the best matching content type has an
+ *         identifier that matches <code>contentTypeId</code>;
+ *         <code>false</code> otherwise.
+ */
 private final boolean testContentTypeProperty(final IResource resource,
-        final String value) {
-    final String expectedValue = value.trim();
+        final String contentTypeId) {
+    final String expectedValue = contentTypeId.trim();
 
-    try {
-        if (resource == null) { return false; }
+    if (resource == null) { return false; }
+    final IPath location = resource.getLocation();
+    String actualValue = null;
 
-        // Check to see if the persistent properties are stale
-        final long modifiedTime = resource.getModificationStamp();
-        final QualifiedName modKey = new QualifiedName(
-                IDEWorkbenchPlugin.IDE_WORKBENCH, XML_LAST_MOD);
-        final String lastPropMod = resource
-                .getPersistentProperty(modKey);
-        long realLastPropMod = 0L;
-        if (lastPropMod != null) {
-            try {
-                realLastPropMod = new Long(lastPropMod).longValue();
-            } catch (NumberFormatException nfe) {
-                // log it but continue working
-                IDEWorkbenchPlugin
-                        .log(
-                                "Problem converting last mod to long in testContentTypeProperty", //$NON-NLS-1$
-                                new Status(
-                                        IStatus.ERROR,
-                                        IDEWorkbenchPlugin.IDE_WORKBENCH,
-                                        IStatus.ERROR,
-                                        "Problem converting last mod to long in testContentTypeProperty", //$NON-NLS-1$
-                                        nfe));
-            }
-        }
-
-        final QualifiedName key = new QualifiedName(
-                IDEWorkbenchPlugin.IDE_WORKBENCH, CONTENT_TYPE_ID);
-        String actualVal = null;
-        if (modifiedTime != IResource.NULL_STAMP
-                && realLastPropMod == modifiedTime) {
-            // Make sure we don't pick up stale information
-            actualVal = resource.getPersistentProperty(key);
-
-        }
-
-        /*
-         * Either we have never parsed this file or we have parsed it but
-         * the file has changed since the last time it was parsed.
-         */
-        if (actualVal == null) {
-                final IContentTypeManager contentTypeManager = Platform
+    if (location != null) {
+        final File file = location.toFile();
+        InputStream inputStream = null;
+        try {
+            final IContentTypeManager contentTypeManager = Platform
                         .getContentTypeManager();
-                final IPath location = resource.getLocation();
-                if (location != null) {
-                    final File file = location.toFile();
-                    InputStream inputStream = null;
-                    try {
-                        inputStream = new BufferedInputStream(
-                                new FileInputStream(file));
-                        IContentType contentType = contentTypeManager
-                                .findContentTypeFor(inputStream, resource
-                                        .getName());
-                        actualVal = contentType.getId();
-                        if (actualVal == null) return false;
-                        
-                    } catch (final FileNotFoundException e) {
-                        IDEWorkbenchPlugin
-                                .log(
-                                        "File not found when trying to evaluate object contributions", //$NON-NLS-1$
-                                        new Status(
-                                                IStatus.ERROR,
-                                                IDEWorkbenchPlugin.IDE_WORKBENCH,
-                                                IStatus.ERROR,
-                                                "File not found when trying to evaluate object contributions", //$NON-NLS-1$
-                                                e));
-                    } catch (final IOException e) {
-                        IDEWorkbenchPlugin
-                                .log(
-                                        "File input error when trying to evaluate object contributions", //$NON-NLS-1$
-                                        new Status(
-                                                IStatus.ERROR,
-                                                IDEWorkbenchPlugin.IDE_WORKBENCH,
-                                                IStatus.ERROR,
-                                                "File input error when trying to evaluate object contributions", //$NON-NLS-1$
-                                                e));
-                    } finally {
-                        if (inputStream != null) {
-                            try {
-                                inputStream.close();
-                            } catch (final IOException e) {
-                                // At least I tried.
-                            }
-                        }
-                    }
+            inputStream = new BufferedInputStream(new FileInputStream(file));
+            IContentType contentType = contentTypeManager
+                    .findContentTypeFor(inputStream, resource.getName());
+            actualValue = contentType.getId();
+            if (actualValue == null) return false;
+
+        } catch (final FileNotFoundException e) {
+            IDEWorkbenchPlugin
+                    .log(
+                            "File not found when trying to evaluate object contributions", //$NON-NLS-1$
+                            new Status(
+                                    IStatus.ERROR,
+                                    IDEWorkbenchPlugin.IDE_WORKBENCH,
+                                    IStatus.ERROR,
+                                    "File not found when trying to evaluate object contributions", //$NON-NLS-1$
+                                    e));
+        } catch (final IOException e) {
+            IDEWorkbenchPlugin
+                    .log(
+                            "File input error when trying to evaluate object contributions", //$NON-NLS-1$
+                            new Status(
+                                    IStatus.ERROR,
+                                    IDEWorkbenchPlugin.IDE_WORKBENCH,
+                                    IStatus.ERROR,
+                                    "File input error when trying to evaluate object contributions", //$NON-NLS-1$
+                                    e));
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (final IOException e) {
+                    // At least I tried.
                 }
             }
-        
-        try {
-            resource.setPersistentProperty(key, actualVal);
-        } catch (final CoreException e) {
-            IDEWorkbenchPlugin.log(
-                    "Problem clearing stale content type properties", e //$NON-NLS-1$
-                            .getStatus());
         }
-        
-        
-        return expectedValue == null || expectedValue.equals(actualVal);
-
-    } catch (CoreException e) {
-        // Just output a message to the log file and continue
-        IDEWorkbenchPlugin.log("Problem testing content type property", e //$NON-NLS-1$
-                .getStatus());
     }
 
-    return false;
+    return expectedValue == null || expectedValue.equals(actualValue);
 
 }
 
@@ -251,13 +207,17 @@ private final boolean testContentTypeProperty(final IResource resource,
  * Tests whether a session or persistent property on the resource or its project
  * matches the given value.
  * 
- * @param resource the resource to check
- * @param persistentFlag <code>true</code> for a persistent property, 
- *    <code>false</code> for a session property
- * @param projectFlag <code>true</code> to check the resource's project,
- *    <code>false</code> to check the resource itself
- * @param value the attribute value, which has either the form "propertyName"
- *    or "propertyName=propertyValue"
+ * @param resource
+ *            the resource to check
+ * @param persistentFlag
+ *            <code>true</code> for a persistent property, <code>false</code>
+ *            for a session property
+ * @param projectFlag
+ *            <code>true</code> to check the resource's project,
+ *            <code>false</code> to check the resource itself
+ * @param value
+ *            the attribute value, which has either the form "propertyName" or
+ *            "propertyName=propertyValue"
  * @return whether there is a match
  */
 private boolean testProperty(IResource resource, boolean persistentFlag, boolean projectFlag, String value) {
