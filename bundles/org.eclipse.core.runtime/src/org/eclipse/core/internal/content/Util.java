@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Util {
 	public static String[] parseItems(String string) {

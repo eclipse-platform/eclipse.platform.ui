@@ -24,7 +24,7 @@ import org.eclipse.core.tests.runtime.RuntimeTest;
 public class XMLContentDescriberTest extends RuntimeTest {
 	private final static String ENCODED_TEXT = "\u1000\u20001\u3000\u4000\u5000\u6000\u7000\u8000\u9000\uA000";
 	private final static String ENCODING = "UTF16";
-	private final static String XML_WITH_ENCODED_DATA = "<?xml version=\"1.0\" encoding=\""+ ENCODING +"\"?><root attribute=\"" + ENCODED_TEXT + "\">";
+	private final static String XML_WITH_ENCODED_DATA = "<?xml version=\"1.0\" encoding=\"" + ENCODING + "\"?><root attribute=\"" + ENCODED_TEXT + "\">";
 
 	public XMLContentDescriberTest() {
 		super();
