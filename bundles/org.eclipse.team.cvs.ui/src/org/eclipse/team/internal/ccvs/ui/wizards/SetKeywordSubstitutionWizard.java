@@ -465,7 +465,7 @@ public class SetKeywordSubstitutionWizard extends Wizard {
 			URL installURL = CVSUIPlugin.getPlugin().getDescriptor().getInstallURL();
 			URL url = new URL(installURL, iconPath + "wizban/setksubst_wizban.gif");	//$NON-NLS-1$
 			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-			setDefaultPageImageDescriptor(desc);
+			//setDefaultPageImageDescriptor(desc);
 		} catch (MalformedURLException e) {
 			// Should not happen.  Ignore.
 		}
