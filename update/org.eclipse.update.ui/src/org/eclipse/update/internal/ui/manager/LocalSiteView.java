@@ -360,7 +360,7 @@ public class LocalSiteView
 		showUnconfFeaturesAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES_TOOLTIP));
 	}
 	
-	protected void isUpdatable(IActionBars bars) {
+	protected void fillActionBars(IActionBars bars) {
 		IToolBarManager tbm = bars.getToolBarManager();
 		tbm.add(showUnconfFeaturesAction);
 	}

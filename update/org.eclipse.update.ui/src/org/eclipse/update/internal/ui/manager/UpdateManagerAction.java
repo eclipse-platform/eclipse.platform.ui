@@ -36,17 +36,9 @@ public class UpdateManagerAction implements IWorkbenchWindowActionDelegate {
 
 		try {
 			IAdaptable input = UpdateUIPlugin.getWorkspace();
-			window.getWorkbench().openPage(UpdatePerspective.PERSPECTIVE_ID, input, 0);
+			window.getWorkbench().showPerspective(UpdatePerspective.PERSPECTIVE_ID, window);
 		} catch (WorkbenchException e) {
-		/*
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("QuickStartAction.openEditorException"), e); //$NON-NLS-1$
-			ErrorDialog.openError(
-				workbench.getActiveWorkbenchWindow().getShell(),
-				WorkbenchMessages.getString("QuickStartAction.errorDialogTitle"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("QuickStartAction.errorDialogMessage"),  //$NON-NLS-1$
-				status);
-		*/
-			System.out.println(e);
+			UpdateUIPlugin.logException(e, true);
 		}
 	}
 

@@ -290,7 +290,8 @@ public class SiteView
 		}
 		manager.add(new Separator());
 		super.fillContextMenu(manager);
-		manager.add(propertiesAction);
+		if (obj instanceof SiteBookmark)
+			manager.add(propertiesAction);
 	}
 
 	private void performNew() {
@@ -429,6 +430,7 @@ public class SiteView
 	public void objectChanged(Object object, String property) {
 		if (object instanceof SiteBookmark && property.equals(SiteBookmark.P_NAME))
 			viewer.update(object, null);
+			viewer.setSelection(viewer.getSelection());
 	}
 	
 	public void selectSiteBookmark(SiteBookmark bookmark) {

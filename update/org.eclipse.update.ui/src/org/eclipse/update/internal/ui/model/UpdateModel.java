@@ -34,6 +34,7 @@ public class UpdateModel {
 			try {
 				URL url = new URL(urlName);
 				SiteBookmark bookmark = new SiteBookmark(name, url);
+				bookmark.setModel(this);
 				bookmarks.add(bookmark);
 			}
 			catch (MalformedURLException e) {

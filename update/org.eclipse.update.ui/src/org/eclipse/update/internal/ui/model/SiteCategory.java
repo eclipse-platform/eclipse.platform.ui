@@ -8,8 +8,9 @@ import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import java.net.URL;
+import org.eclipse.core.runtime.PlatformObject;
 
-public class SiteCategory {
+public class SiteCategory extends PlatformObject {
 private static final String KEY_OTHER_LABEL= "SiteCategory.other.label";
 private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.description";
 

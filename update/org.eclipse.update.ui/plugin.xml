@@ -87,7 +87,7 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.update.ui.internal.model.SiteBookmark"
+            objectClass="org.eclipse.update.internal.ui.model.SiteBookmark"
             name="Site Properties"
             class="org.eclipse.update.internal.ui.manager.SiteBookmarkPropertyPage"
             id="org.eclipse.update.ui.sitePropertyPage">
@@ -99,7 +99,7 @@
             id="org.eclipse.update.ui.configPropertyPage">
       </page>
       <page
-            objectClass="org.eclipse.update.ui.internal.model.PreservedConfiguration"
+            objectClass="org.eclipse.update.internal.ui.model.PreservedConfiguration"
             name="Preserved Configuration Properties"
             class="org.eclipse.update.internal.ui.manager.ConfigurationPropertyPage"
             id="org.eclipse.update.ui.configPropertyPage">

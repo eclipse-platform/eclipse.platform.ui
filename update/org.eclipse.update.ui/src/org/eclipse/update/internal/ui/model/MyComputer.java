@@ -101,8 +101,8 @@ public class MyComputer extends ModelObject implements IWorkbenchAdapter {
 		for (int i=0; i<children.length; i++) {
 			File child = children[i];
 			if (monitor.isCanceled()) return;
-			monitor.subTask(child.getPath());
 			if (child.isDirectory()) {
+				monitor.subTask(child.getPath());				
 				SiteBookmark bookmark = MyComputerDirectory.createSite(child);
 				if (bookmark!=null) {
 					ISite site = bookmark.getSite(false);
