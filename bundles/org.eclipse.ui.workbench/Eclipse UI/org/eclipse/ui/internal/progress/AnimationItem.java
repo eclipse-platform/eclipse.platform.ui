@@ -185,8 +185,10 @@ public class AnimationItem {
 					//Clear the window if the parent is not visibile
 					if (window.getShell() == null 
 							|| !window.getShell().isVisible() 
-							|| getControl().isDisposed())
-						floatingWindow = null;
+							|| getControl().isDisposed()){
+						closeAndClearFloatingWindow();
+					}
+
 					
 					if (floatingWindow == null)
 						return Status.CANCEL_STATUS;
@@ -201,8 +203,7 @@ public class AnimationItem {
 				if (AnimationManager.getInstance().isAnimated())
 					return true;
 				synchronized(windowLock){
-					//If there is no window than do not run
-					floatingWindow = null;
+					closeAndClearFloatingWindow();
 					return false;
 				}
 			}
@@ -228,18 +229,26 @@ public class AnimationItem {
 	 */
 	void closeFloatingWindow() {
 		synchronized (windowLock) {
-			if (floatingWindow != null) {
-				floatingWindow.close();
-				floatingWindow = null;
-			}
+			closeAndClearFloatingWindow();
 		}
 	}
 	/**
 	 * Get the preferred width of the receiver.
 	 * 
-	 * @return
+	 * @return int
 	 */
 	public int getPreferredWidth() {
 		return AnimationManager.getInstance().getPreferredWidth() + 5;
+	}
+	
+	/**
+	 * Close the floating window if it exists and clear the
+	 * variable.
+	 */
+	private void closeAndClearFloatingWindow() {
+		//If there is no window than do not run
+		if(floatingWindow != null)
+			floatingWindow.close();
+		floatingWindow = null;
 	}
 }
