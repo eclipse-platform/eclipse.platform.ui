@@ -116,9 +116,6 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	 */
 	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite) throws CoreException {
 
-		if (configuredSite==null)
-			configuredSite = getSite().getCurrentConfiguredSite();
-		
 		// if perfect match is asked or if the feature is disabled
 		// we return the exact match 		
 		if (perfectMatch || getMatch() == IImport.RULE_PERFECT || isDisabled()) {
@@ -126,6 +123,8 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 		} else {
 			if (bestMatchFeature == null) {
 				// find best match
+				if (configuredSite==null)
+					configuredSite = getSite().getCurrentConfiguredSite();
 				IFeatureReference bestMatch = getBestMatch(configuredSite);
 				bestMatchFeature = getFeature(bestMatch);
 			}
@@ -166,18 +165,13 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 		// find the best feature based on match from enabled features
 		for (int ref = 0; ref < enabledFeatures.length; ref++) {
 			if (enabledFeatures[ref] != null) {
-				VersionedIdentifier id = null;
-				try {
-					id = enabledFeatures[ref].getVersionedIdentifier();
-				} catch (CoreException e) {
-					UpdateManagerPlugin.warn(null, e);
-				};
+				VersionedIdentifier id = enabledFeatures[ref].getVersionedIdentifier();
 				if (matches(getVersionedIdentifier(), id)) {
 					if (newRef == null || id.getVersion().isGreaterThan(newRef.getVersionedIdentifier().getVersion())) {
 						newRef = new IncludedFeatureReference(enabledFeatures[ref]);
 						newRef.setMatchingRule(getMatch());
 						newRef.isOptional(isOptional());
-						newRef.setName(getName());
+						newRef.setLabel(getLabel());
 					}
 				}
 			}

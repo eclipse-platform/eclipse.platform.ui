@@ -88,8 +88,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		try {
 			parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 		}
-		catch (SAXException e) {
-		}
+		catch (SAXException e) {}		
 		this.parser.setContentHandler(this);
 		this.parser.setErrorHandler(this); // 18350		
 	}
@@ -859,7 +858,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 			// arch
 			String arch = attributes.getValue("arch"); //$NON-NLS-1$
 			feature.setArch(arch);
-			feature.setArch(arch);
 
 			// primary
 			String primary = attributes.getValue("primary"); //$NON-NLS-1$
@@ -955,7 +953,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 		// name
 		String name = attributes.getValue("name");
-		includedFeature.setName(name);
+		includedFeature.setLabel(name);
 
 		// optional
 		String optional = attributes.getValue("optional");

@@ -69,11 +69,8 @@ public class FeatureHierarchyElement {
 
 	public boolean isFalseUpdate() {
 		if (oldFeatureRef != null && newFeatureRef != null) {
-			try {
-				return oldFeatureRef.getVersionedIdentifier().equals(
+			return oldFeatureRef.getVersionedIdentifier().equals(
 					newFeatureRef.getVersionedIdentifier());
-			} catch (CoreException e) {
-			}
 		}
 		return false;
 	}
@@ -143,29 +140,24 @@ public class FeatureHierarchyElement {
 	 */
 	public String getLabel() {
 		try {
-			IFeature feature = newFeatureRef.getFeature();
-			return getFeatureLabel(feature);
+			return getFeatureLabel(newFeatureRef);
 		} catch (CoreException e) {
 			if (newFeatureRef instanceof IIncludedFeatureReference) {
 				String iname = ((IIncludedFeatureReference)newFeatureRef).getName();
 				if (iname!=null) return iname;
 			}
-			try {
-				VersionedIdentifier vid =
+			VersionedIdentifier vid =
 					newFeatureRef.getVersionedIdentifier();
-				return vid.toString();
-			} catch (CoreException e2) {
-			}
+			return vid.toString();
 		}
-		return null;
 	}
 	/**
 	 * Computes label from the feature.
 	 */
-	private String getFeatureLabel(IFeature feature) {
-		return feature.getLabel()
+	private String getFeatureLabel(IFeatureReference featureRef) throws CoreException {
+		return featureRef.getName()
 			+ " "
-			+ feature.getVersionedIdentifier().getVersion().toString();
+			+ featureRef.getVersionedIdentifier().getVersion().toString();
 	}
 	/**
 	 * Computes children by linking matching features from the
@@ -233,7 +225,6 @@ public class FeatureHierarchyElement {
 		Object[] newChildren = getIncludedFeatures(newFeature);
 		boolean optionalChildren=false;
 
-		try {
 			if (oldFeature != null) {
 				oldChildren = getIncludedFeatures(oldFeature);
 			}
@@ -247,15 +238,12 @@ public class FeatureHierarchyElement {
 					for (int j = 0; j < oldChildren.length; j++) {
 						IFeatureReference cref =
 							(IFeatureReference) oldChildren[j];
-						try {
-							if (cref
-								.getVersionedIdentifier()
-								.getIdentifier()
-								.equals(newId)) {
-								oldRef = cref;
-								break;
-							}
-						} catch (CoreException ex) {
+						if (cref
+							.getVersionedIdentifier()
+							.getIdentifier()
+							.equals(newId)) {
+							oldRef = cref;
+							break;
 						}
 					}
 				}
@@ -296,8 +284,7 @@ public class FeatureHierarchyElement {
 				if (element.isOptional() || element.hasOptionalChildren())
 					optionalChildren=true;
 			}
-		} catch (CoreException e) {
-		}
+
 		return optionalChildren;
 	}
 	private static boolean hasOlderVersion(IFeatureReference newRef) {

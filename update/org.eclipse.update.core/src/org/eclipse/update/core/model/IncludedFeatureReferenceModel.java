@@ -21,7 +21,6 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 
 	// since 2.0.2
 	private boolean isOptional;
-	private String name;	
 	private int matchingRule;
 	private int searchLocation;
 	
@@ -54,7 +53,7 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	public IncludedFeatureReferenceModel(IncludedFeatureReferenceModel includedFeatureRef) {
 		super((FeatureReferenceModel)includedFeatureRef);
 		isOptional(includedFeatureRef.isOptional());
-		setName(includedFeatureRef.getName());
+		setLabel(includedFeatureRef.getLabel());
 		setMatchingRule(includedFeatureRef.getMatch());
 		setSearchLocation(includedFeatureRef.getSearchLocation());
 		setArch(includedFeatureRef.getOSArch());
@@ -70,7 +69,8 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 		super((FeatureReferenceModel)featureReference);
 		isOptional(false);
 		setMatchingRule(IImport.RULE_PERFECT);
-		setSearchLocation(IUpdateConstants.SEARCH_ROOT);		
+		setSearchLocation(IUpdateConstants.SEARCH_ROOT);
+		setLabel(getLabel());		
 	}
 
 		
@@ -91,18 +91,6 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	public int getMatch(){
 		return matchingRule;
 	}
-	
-
-	/**
-	 * Returns a string representation of the feature identifier.
-	 * 
-	 * @return string representation of feature identifier or <code>null</code>.
-	 * @since 2.0.1
-	 */
-	public String getName() {
-		return name;
-	}
-
 
 	/**
 	 * Returns the search location for this included feature.
@@ -149,14 +137,6 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	 */
 	public void setMatchingRule(int matchingRule) {
 		this.matchingRule = matchingRule;
-	}
-
-	/**
-	 * Sets the name.
-	 * @param name The name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	/**

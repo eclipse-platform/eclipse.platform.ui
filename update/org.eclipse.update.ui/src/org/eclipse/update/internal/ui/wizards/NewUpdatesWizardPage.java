@@ -74,7 +74,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 			if (col == 0) {
 				try {
 					IFeature feature = ((IFeatureAdapter) obj).getFeature();
-					boolean patch = UpdateUIPlugin.isPatch(feature);
+					boolean patch = feature.isPatch();
 					return UpdateUIPlugin.getDefault().getLabelProvider().get(
 						patch
 							? UpdateUIPluginImages.DESC_EFIX_OBJ

@@ -20,7 +20,7 @@ import org.eclipse.update.internal.model.*;
 
 /**
  * Manages ConfiguredSites
- * 
+ *
  */
 
 public class InstallConfiguration extends InstallConfigurationModel implements IInstallConfiguration, IWritable {
@@ -28,7 +28,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	private ListenersList listeners = new ListenersList();
 
 	/*
-	 * default constructor. 
+	 * default constructor.
 	 */
 	public InstallConfiguration() {
 	}
@@ -39,7 +39,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) throws MalformedURLException {
 		setLocationURLString(newLocation.toExternalForm());
 		setLabel(label);
-		
+
 		// do not copy list of listeners nor activities
 		// make a copy of the siteConfiguration object
 		if (config != null) {
@@ -49,11 +49,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 					ConfiguredSite configSite = new ConfiguredSite(csites[i]);
 					addConfigurationSiteModel(configSite);
 				}
-			}			
+			}
 		}
-		
+
 		// set dummy date and timeline as caller can call set date if the
-		// date on the URL string has to be the same 
+		// date on the URL string has to be the same
 		Date now = new Date();
 		setCreationDate(now);
 		setTimeline(now.getTime());
@@ -62,7 +62,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	/*
-	 * Returns the list of configured sites or an empty array 
+	 * Returns the list of configured sites or an empty array
 	 */
 	public IConfiguredSite[] getConfiguredSites() {
 		ConfiguredSiteModel[] result = getConfigurationSitesModel();
@@ -105,7 +105,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			// create new Site in configuration
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 
-			// change runtime					
+			// change runtime
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
 			runtimeConfiguration.configureSite(siteEntry);
 
@@ -151,7 +151,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			// create new Site in configuration
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 
-			// change runtime					
+			// change runtime
 			IPlatformConfiguration.ISiteEntry siteEntry = runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
 			runtimeConfiguration.configureSite(siteEntry);
 
@@ -164,7 +164,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	/*
-	 *Configure all features as Enable Check we only enable highest version 
+	 *Configure all features as Enable Check we only enable highest version
 	 */
 	private void configure(ConfiguredSite linkedSite) throws CoreException {
 		ISite site = linkedSite.getSite();
@@ -183,7 +183,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	public void addConfiguredSite(IConfiguredSite site) {
 		if (!isCurrent() && isReadOnly())
@@ -218,7 +218,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 
 	/*
-	 * 
+	 *
 	 */
 	public void removeConfiguredSite(IConfiguredSite site) {
 
@@ -361,7 +361,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			//$NON-NLS-1$
 			UpdateManagerPlugin.warn("",exc);
 		}
-		
+
 	}
 
 	/*
@@ -375,7 +375,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		ConfigurationPolicy configurationPolicy = cSite.getConfigurationPolicy();
 
 		// create a ISitePolicy (policy, pluginPath)
-		// for the site			
+		// for the site
 		String[] pluginPath = configurationPolicy.getPluginPath(cSite.getSite(), cSite.getPreviousPluginPath());
 		IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 
@@ -390,7 +390,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToCast"), e);
 			//$NON-NLS-1$
 		}
-		
+
 		// update runtime configuration [18520]
 		// Note: we must not blindly replace the site entries because they
 		//       contain additional runtime state that needs to be preserved.
@@ -414,7 +414,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (feature == null)
 			return;
 
-		// get the URL of the plugin that corresponds to the feature (pluginid = featureid)	
+		// get the URL of the plugin that corresponds to the feature (pluginid = featureid)
 		String id = feature.getVersionedIdentifier().getIdentifier();
 		IPluginEntry[] entries = feature.getPluginEntries();
 		URL url = null;
@@ -429,7 +429,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (featurePlugin != null)
 			pluginVersion = featurePlugin.getVersionedIdentifier().getVersion().toString();
 
-		// write the primary features				
+		// write the primary features
 		if (feature.isPrimary()) {
 			// get any fragments for the feature plugin
 			ArrayList list = new ArrayList();
@@ -440,11 +440,12 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				list.addAll(Arrays.asList(fragments));
 			}
 			URL[] roots = (URL[]) list.toArray(new URL[0]);
+			String pluginIdentifier = feature.getPrimaryPluginID();
 
 			// save information in runtime platform state
 			String version = feature.getVersionedIdentifier().getVersion().toString();
 			String application = feature.getApplication();
-			IPlatformConfiguration.IFeatureEntry featureEntry = runtimeConfiguration.createFeatureEntry(id, version, pluginVersion, true, application, roots);
+			IPlatformConfiguration.IFeatureEntry featureEntry = runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, true, application, roots);
 			runtimeConfiguration.configureFeatureEntry(featureEntry);
 		} else {
 			// write non-primary feature entries
@@ -466,7 +467,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 	/*
 	 * Log if we are about to create a site that didn't exist before
-	 * in platform.cfg [16696]. 
+	 * in platform.cfg [16696].
 	 */
 	private void checkSites(ConfiguredSiteModel[] configurationSites, IPlatformConfiguration runtimeConfiguration) throws CoreException {
 
@@ -496,7 +497,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	public void saveConfigurationFile(boolean isTransient) throws CoreException {
 		// save the configuration
@@ -505,7 +506,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			File file = new File(getURL().getFile());
 			if (!file.exists()) {
 				//log + 24642 [works for all activities]
-				UpdateManagerPlugin.log(this);	
+				UpdateManagerPlugin.log(this);
 			}
 			if (isTransient)
 				file.deleteOnExit();
@@ -524,12 +525,12 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
 
-		//CONFIGURATION	
+		//CONFIGURATION
 		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		long time = (getCreationDate() != null) ? getCreationDate().getTime() : 0L;
 		w.print("date=\"" + time + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		w.print("timeline=\"" + getTimeline() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$		
+		w.print("timeline=\"" + getTimeline() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
 
 		// site configurations
@@ -553,20 +554,20 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">");
 		//$NON-NLS-1$ //$NON-NLS-2$
-		w.println(""); //$NON-NLS-1$		
+		w.println(""); //$NON-NLS-1$
 	}
 
 	/*
 	 * reverts this configuration to the match the new one
 	 *
 	 * Compare the oldSites with the currentOne. the old state is the state we want to revert to.
-	 * 
+	 *
 	 * If a site was in old state, but not in the currentOne, keep it in the hash.
 	 * If a site is in the currentOne but was not in the old state, unconfigure all features and add it in the hash
 	 * If a site was in baoth state, calculate the 'delta' and re-set it in the hash map
-	 * 
+	 *
 	 * At the end, set the configured site from the new sites hash map
-	 * 
+	 *
 	 */
 	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException, InterruptedException {
 
@@ -575,17 +576,17 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		// create a hashtable of the *old* and *new* sites
 		Map oldSitesMap = new Hashtable(0);
-		Map newSitesMap = new Hashtable(0);		
+		Map newSitesMap = new Hashtable(0);
 		for (int i = 0; i < oldConfigSites.length; i++) {
 			IConfiguredSite element = oldConfigSites[i];
 			oldSitesMap.put(element.getSite().getURL().toExternalForm(), element);
-			newSitesMap.put(element.getSite().getURL().toExternalForm(), element);			
+			newSitesMap.put(element.getSite().getURL().toExternalForm(), element);
 		}
 		// create list of all the sites that map the *old* sites
 		// we want the intersection between the old sites and the current sites
 		if (nowConfigSites != null) {
 			String key = null;
-			
+
 			for (int i = 0; i < nowConfigSites.length; i++) {
 				key = nowConfigSites[i].getSite().getURL().toExternalForm();
 				IConfiguredSite oldSite = (IConfiguredSite) oldSitesMap.get(key);
@@ -608,9 +609,9 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 							nowConfigSites[i].unconfigure(featureToUnconfigure);
 					}
 				}
-				newSitesMap.put(key,nowConfigSites[i]);				
+				newSitesMap.put(key,nowConfigSites[i]);
 			}
-			
+
 			// the new configuration has the exact same sites as the old configuration
 			// the old configuration in the Map are either as-is because they don't exist
 			// in the current one, or they are the delta from the current one to the old one
@@ -633,7 +634,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	}
 
 	/*
-	 * returns the list of platform plugins of the feature or an empty list 
+	 * returns the list of platform plugins of the feature or an empty list
 	 * if the feature doesn't contain any platform plugins
 	 */
 	private IPluginEntry[] getPlatformPlugins(IFeature feature, IPlatformConfiguration runtimeConfiguration) {
@@ -678,7 +679,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			ISiteContentProvider siteContentProvider = cSite.getSite().getSiteContentProvider();
 			URL pluginEntryfullURL = siteContentProvider.getArchiveReference(pluginPathID);
 
-			// 
+			//
 			if (!rootString.startsWith("platform")) {
 				// DEBUG:
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
@@ -757,7 +758,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 	/**
 	 * Returns the path identifier for a plugin entry.
-	 * <code>plugins/&lt;pluginId>_&lt;pluginVersion>.jar</code> 
+	 * <code>plugins/&lt;pluginId>_&lt;pluginVersion>.jar</code>
 	 * @return the path identifier
 	 */
 	private String getPathID(IPluginEntry entry) {
@@ -768,7 +769,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * Try to recast URL as platform:/base/
 	 */
 	private URL asInstallRelativeURL(URL url) {
-		// get location of install 
+		// get location of install
 		URL install = BootLoader.getInstallURL();
 
 		// try to determine if supplied URL can be recast as install-relative

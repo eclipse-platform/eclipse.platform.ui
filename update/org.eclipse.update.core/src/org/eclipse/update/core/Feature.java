@@ -748,18 +748,13 @@ public class Feature extends FeatureModel implements IFeature {
 			if (refs != null) {
 				for (int ref = 0; ref < refs.length; ref++) {
 					if (refs[ref] != null) {
-						VersionedIdentifier id = null;
-						try {
-							id = refs[ref].getVersionedIdentifier();
-						} catch (CoreException e) {
-							UpdateManagerPlugin.warn(null, e);
-						};
-	
+						VersionedIdentifier id = refs[ref].getVersionedIdentifier();
 						if (identifier.equals(id)) {
 							// found a ISiteFeatureReference that matches our IIncludedFeatureReference
 							IncludedFeatureReference newRef = new IncludedFeatureReference(refs[ref]);
 							newRef.isOptional(include.isOptional());
-							newRef.setName(include.getName());
+							if (include instanceof FeatureReferenceModel)	
+								newRef.setLabel(((FeatureReferenceModel)include).getLabel());
 							newRef.setMatchingRule(include.getMatch());
 							newRef.setSearchLocation(include.getSearchLocation());
 							return newRef;

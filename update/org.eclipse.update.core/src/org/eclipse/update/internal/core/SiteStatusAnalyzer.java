@@ -201,9 +201,7 @@ public class SiteStatusAnalyzer {
 						UpdateManagerPlugin.warn("getFeatureStatus: Feature is null for:" + children[i]);
 						// Unable to find children feature, broken
 						Object featureAsPrintableObject = children[i].getURL();
-						try {
-							featureAsPrintableObject = children[i].getVersionedIdentifier();
-						} catch (CoreException e){}//may fail
+						featureAsPrintableObject = children[i].getVersionedIdentifier();
 						String msg1 = Policy.bind("SiteLocal.NestedFeatureUnavailable", new Object[] { featureAsPrintableObject });
 						multiTemp.add(createStatus(IStatus.ERROR, IFeature.STATUS_UNHAPPY, msg1, null));
 						if (IFeature.STATUS_UNHAPPY > code)

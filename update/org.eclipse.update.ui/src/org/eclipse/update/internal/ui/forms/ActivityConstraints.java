@@ -172,7 +172,7 @@ public class ActivityConstraints {
 		IFeature feature,
 		ArrayList status) {
 		try {
-			if (UpdateUIPlugin.isPatch(feature)) {
+			if (feature.isPatch()) {
 				IInstallConfiguration backup = UpdateUIPlugin.getBackupConfigurationFor(feature);
 				String msg;
 				if (backup!=null)
@@ -957,16 +957,7 @@ public class ActivityConstraints {
 		IIncludedFeatureReference[] refs = candidate.getIncludedFeatureReferences();
 		for (int i = 0; i < refs.length; i++) {
 			IIncludedFeatureReference child = refs[i];
-			VersionedIdentifier cvid;
-			try {
-				cvid = child.getVersionedIdentifier();
-			} catch (CoreException e) {
-				// Ignore missing optional children
-				if (child.isOptional())
-					continue;
-				else
-					throw e;
-			}
+			VersionedIdentifier cvid = child.getVersionedIdentifier();
 			if (feature.getVersionedIdentifier().equals(cvid)) {
 				// included; return true if optionality is not 
 				// important or it is and the inclusion is optional

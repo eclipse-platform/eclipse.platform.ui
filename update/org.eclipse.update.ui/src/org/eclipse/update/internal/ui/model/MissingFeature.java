@@ -78,10 +78,7 @@ public class MissingFeature implements IFeature {
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
 		if (reference != null) {
-			try {
-				return reference.getVersionedIdentifier();
-			} catch (CoreException e) {
-			}
+			return reference.getVersionedIdentifier();
 		}
 		return id;
 	}
@@ -424,6 +421,13 @@ public class MissingFeature implements IFeature {
 	 */
 	public IImport[] getRawImports() {
 		return null;
+	}
+
+	/**
+	 * @see org.eclipse.update.core.IFeature#isPatch()
+	 */
+	public boolean isPatch() {
+		return false;
 	}
 
 }

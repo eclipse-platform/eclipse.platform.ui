@@ -133,11 +133,11 @@ public class UpdatesView
 
 	class EnvironmentFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parent, Object child) {
-			if (child instanceof IFeatureAdapter) {
+			/*if (child instanceof IFeatureAdapter) {
 				child = getFeature((IFeatureAdapter) child);
-			}
-			if (child instanceof IFeature) {
-				return EnvironmentUtil.isValidEnvironment((IFeature) child);
+			}*/
+			if (child instanceof IPlatformEnvironment) {
+				return EnvironmentUtil.isValidEnvironment((IPlatformEnvironment) child);
 			}
 			return true;
 		}
@@ -149,7 +149,7 @@ public class UpdatesView
 		}
 	}
 
-	class UpdatesViewSorter extends FeatureSorter {
+	class UpdatesViewSorter extends ViewerSorter {
 		public int category(Object obj) {
 			// Level 0
 			if (obj instanceof DiscoveryFolder)
@@ -196,7 +196,7 @@ public class UpdatesView
 			}
 			if (parent instanceof SiteCategory) {
 				final SiteCategory category = (SiteCategory) parent;
-				BusyIndicator
+				/*BusyIndicator
 					.showWhile(getControl().getDisplay(), new Runnable() {
 					public void run() {
 						try {
@@ -205,7 +205,7 @@ public class UpdatesView
 							UpdateUIPlugin.logException(e);
 						}
 					}
-				});
+				});*/
 				return category.getChildren();
 			}
 			if (parent instanceof IFeatureAdapter) {
@@ -263,6 +263,16 @@ public class UpdatesView
 				IFeature feature = (IFeature) obj;
 				return feature.getLabel();
 			}
+			if (obj instanceof FeatureReferenceAdapter) {
+				IFeatureReference feature = ((FeatureReferenceAdapter) obj).getFeatureReference();
+				VersionedIdentifier versionedIdentifier =
+					(feature != null) ? feature.getVersionedIdentifier() : null;
+				String version = "";
+				if (versionedIdentifier != null)
+					version = versionedIdentifier.getVersion().toString();
+				String label = (feature != null) ? feature.getName() : "";
+				return label + " " + version;
+			}			
 			if (obj instanceof IFeatureAdapter) {
 				IFeature feature = getFeature((IFeatureAdapter) obj);
 				VersionedIdentifier versionedIdentifier =
@@ -334,7 +344,7 @@ public class UpdatesView
 				if (obj instanceof MissingFeature)
 					flags = UpdateLabelProvider.F_ERROR;
 				boolean efix = false;
-				if (flags==0) efix = UpdateUIPlugin.isPatch((IFeature) obj);
+				if (flags==0) efix = ((IFeature) obj).isPatch();
 				return provider.get(efix ? UpdateUIPluginImages.DESC_EFIX_OBJ : UpdateUIPluginImages.DESC_FEATURE_OBJ, flags);
 			}
 			return super.getImage(obj);

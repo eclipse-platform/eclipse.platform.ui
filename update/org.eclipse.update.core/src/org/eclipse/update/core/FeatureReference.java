@@ -22,7 +22,7 @@ import org.eclipse.update.internal.core.*;
  * @see org.eclipse.update.core.model.FeatureReferenceModel
  * @since 2.0
  */
-public class FeatureReference extends FeatureReferenceModel implements IFeatureReference {
+public class FeatureReference extends FeatureReferenceModel implements IFeatureReference, IPlatformEnvironment {
 
 	private List categories;
 	private VersionedIdentifier versionId;
@@ -167,5 +167,70 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 			return getVersionedIdentifier().toString();
 		}
 	}
+
+	/**
+	 * Get optional operating system specification as a comma-separated string.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @return the operating system specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getOS() {
+		if (super.getOS()==null) return exactFeature.getOS();
+		return super.getOS();
+	}
+
+
+
+	/**
+	 * Get optional windowing system specification as a comma-separated string.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @return the windowing system specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getWS() {
+		if (super.getWS()==null) return exactFeature.getWS();
+		return super.getWS();
+	}
+
+
+
+	/**
+	 * Get optional system architecture specification as a comma-separated string.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @return the system architecture specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getOSArch() {
+		if (super.getOSArch()==null) return exactFeature.getOSArch();
+		return super.getOSArch();
+	}
+
+
+
+	/**
+	 * Get optional locale specification as a comma-separated string.
+	 *
+	 * @return the locale specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getNL() {
+		if(super.getNL()==null) return exactFeature.getNL();
+		return super.getNL(); 
+	}
+
+	/**
+	 * Returns <code>true</code> if this feature is patching another feature,
+	 * <code>false</code> otherwise
+	 * @return boolean
+	 */
+	public boolean isPatch() {
+		if (super.getPatch()==null) return exactFeature.isPatch();
+		return "true".equalsIgnoreCase(super.getPatch());
+	}
+
+
 
 }

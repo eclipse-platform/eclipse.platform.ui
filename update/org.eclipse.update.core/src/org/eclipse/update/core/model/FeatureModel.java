@@ -895,4 +895,18 @@ public class FeatureModel extends ModelObject {
 		return primaryPluginID;
 	}
 
+	/**
+	 * Returns <code>true</code> if this feature is patching another feature,
+	 * <code>false</code> otherwise
+	 * @return boolean
+	 */
+	public boolean isPatch() {
+		ImportModel[] imports = getImportModels();
+
+		for (int i = 0; i < imports.length; i++) {
+			if (imports[i].isPatch())
+				return true;
+		}
+		return false;
+	}
 }

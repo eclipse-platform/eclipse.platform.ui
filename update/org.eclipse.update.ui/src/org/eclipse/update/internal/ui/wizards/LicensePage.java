@@ -136,7 +136,7 @@ public class LicensePage extends WizardPage {
 					IFeature feature = jobs[i].getFeature();
 					item = new TableItem(table, SWT.NONE);
 					item.setText(feature.getLabel());
-					boolean efix = UpdateUIPlugin.isPatch(feature);
+					boolean efix = feature.isPatch();
 					item.setImage(
 						UpdateUIPlugin.getDefault().getLabelProvider().get(
 							efix

@@ -79,7 +79,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 		}
 		catch (SAXException e) {
-		}
+		}		
 		this.parser.setContentHandler(this);
 		this.parser.setErrorHandler(this); // 18350
 
@@ -585,6 +585,26 @@ public class DefaultSiteParser extends DefaultHandler {
 		}
 		feature.setLabel(label);
 		
+		// OS
+		String os = attributes.getValue("os"); //$NON-NLS-1$
+		feature.setOS(os);
+
+		// WS
+		String ws = attributes.getValue("ws"); //$NON-NLS-1$
+		feature.setWS(ws);
+
+		// NL
+		String nl = attributes.getValue("nl"); //$NON-NLS-1$
+		feature.setNL(nl);
+
+		// arch
+		String arch = attributes.getValue("arch"); //$NON-NLS-1$
+		feature.setArch(arch);
+		
+		//patch
+		String patch = attributes.getValue("patch");
+		feature.setPatch(patch);		
+				
 		SiteModel site = (SiteModel) objectStack.peek();
 		site.addFeatureReferenceModel(feature);
 		feature.setSiteModel(site);

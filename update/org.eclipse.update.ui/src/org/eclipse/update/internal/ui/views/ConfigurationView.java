@@ -478,7 +478,7 @@ public class ConfigurationView
 					IStatus status = localSite.getFeatureStatus(feature);
 					code = getStatusCode(feature, status);
 				}
-				boolean efix = UpdateUIPlugin.isPatch(feature);
+				boolean efix = feature.isPatch();
 				baseDesc =
 					efix
 						? UpdateUIPluginImages.DESC_EFIX_OBJ

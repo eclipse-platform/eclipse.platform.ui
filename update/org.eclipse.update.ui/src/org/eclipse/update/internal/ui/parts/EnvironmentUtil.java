@@ -4,9 +4,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IPlatformEnvironment;
 
 public class EnvironmentUtil {
-	public static boolean isValidEnvironment(IFeature candidate) {
+	public static boolean isValidEnvironment(IPlatformEnvironment candidate) {
 		String os = candidate.getOS();
 		String ws = candidate.getWS();
 		String nl = candidate.getNL();

@@ -52,12 +52,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 			this.ref = ref;
 		}
 		public VersionedIdentifier getVersionedIdentifier() {
-			try {
-				return ref.getVersionedIdentifier();
-			}
-			catch (CoreException e) {
-				return new VersionedIdentifier("unknown", "0.0.0");
-			}
+			return ref.getVersionedIdentifier();
 		}
 		public IFeature getFeature() {
 			try {
@@ -141,11 +136,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 		public String getText(Object obj) {
 			if (obj instanceof Candidate) {
 				Candidate c = (Candidate)obj;
-				try {
-					return c.ref.getVersionedIdentifier().toString();
-				}
-				catch (CoreException e) {
-				}
+				return c.ref.getVersionedIdentifier().toString();
 			}
 			return obj.toString();
 		}
@@ -196,13 +187,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 		public boolean compare(Object left, Object right) {
 			Hit hit1 = (Hit) left;
 			Hit hit2 = (Hit) right;
-			try {
-				VersionedIdentifier hv1 = hit1.ref.getVersionedIdentifier();
-				VersionedIdentifier hv2 = hit2.ref.getVersionedIdentifier();
-				return isNewerVersion(hv2, hv1);
-			} catch (CoreException e) {
-				return false;
-			}
+			VersionedIdentifier hv1 = hit1.ref.getVersionedIdentifier();
+			VersionedIdentifier hv2 = hit2.ref.getVersionedIdentifier();
+			return isNewerVersion(hv2, hv1);
 		}
 	}
 
@@ -272,19 +259,16 @@ public class UpdatesSearchCategory extends SearchCategory {
 			monitor.beginTask("", refs.length + 1);
 			for (int i = 0; i < refs.length; i++) {
 				IFeatureReference ref = refs[i];
-				try {
-					if (isNewerVersion(candidate.getVersionedIdentifier(),
-						ref.getVersionedIdentifier(), match)) {
+				if (isNewerVersion(candidate.getVersionedIdentifier(),
+					ref.getVersionedIdentifier(), match)) {
+					hits.add(new Hit(candidate, ref));
+				} else {
+					// accept the same feature if the installed
+					// feature is broken
+					if ((broken || missingOptionalChildren)
+						&& candidate.getVersionedIdentifier().equals(
+							ref.getVersionedIdentifier()))
 						hits.add(new Hit(candidate, ref));
-					} else {
-						// accept the same feature if the installed
-						// feature is broken
-						if ((broken || missingOptionalChildren)
-							&& candidate.getVersionedIdentifier().equals(
-								ref.getVersionedIdentifier()))
-							hits.add(new Hit(candidate, ref));
-					}
-				} catch (CoreException e) {
 				}
 				monitor.worked(1);
 				if (monitor.isCanceled())

@@ -1019,7 +1019,7 @@ public class DetailsForm extends PropertyWebForm {
 			return;
 		}
 		if (job.getJobType() == PendingChange.UNCONFIGURE
-			&& UpdateUIPlugin.isPatch(job.getFeature())) {
+			&& job.getFeature().isPatch()){
 			unconfigurePatch(shell, job.getFeature());
 			return;
 		}

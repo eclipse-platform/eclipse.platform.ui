@@ -36,6 +36,11 @@ public class FeatureReferenceModel extends ModelObject {
 	private URL bundleURL;
 	private URL base;
 	private boolean resolved = false;
+	private String os;
+	private String ws;
+	private String nl;
+	private String arch;
+	private String patch;	
 
 	/**
 	 * Creates an uninitialized feature reference model object.
@@ -55,6 +60,11 @@ public class FeatureReferenceModel extends ModelObject {
 		setFeatureVersion(ref.getFeatureVersion());
 		setType(ref.getType());
 		setSiteModel(ref.getSiteModel());
+		setLabel(ref.getLabel());
+		setWS(ref.getWS());
+		setOS(ref.getOS());
+		setArch(ref.getOSArch());
+		setNL(getNL());
 	}
 
 	/**
@@ -288,6 +298,121 @@ public class FeatureReferenceModel extends ModelObject {
 	 */
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	/**
+	 * Get optional operating system specification as a comma-separated string.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @return the operating system specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getOS() {
+		return os;
+	}
+
+
+	/**
+	 * Get optional windowing system specification as a comma-separated string.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @return the windowing system specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getWS() {
+		return ws;
+	}
+
+
+	/**
+	 * Get optional system architecture specification as a comma-separated string.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @return the system architecture specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getOSArch() {
+		return arch;
+	}
+
+
+	/**
+	 * Get optional locale specification as a comma-separated string.
+	 *
+	 * @return the locale specification string, or <code>null</code>.
+	 * @since 2.1
+	 */
+	public String getNL() {
+		return nl;
+	}
+
+	/**
+	 * Sets the operating system specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @param os operating system specification as a comma-separated list
+	 * @since 2.1
+	 */
+	public void setOS(String os) {
+		assertIsWriteable();
+		this.os = os;
+	}
+
+
+	/**
+	 * Sets the windowing system specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @param ws windowing system specification as a comma-separated list
+	 * @since 2.1
+	 */
+	public void setWS(String ws) {
+		assertIsWriteable();
+		this.ws = ws;
+	}
+
+
+	/**
+	 * Sets the locale specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 *
+	 * @param nl locale specification as a comma-separated list
+	 * @since 2.1
+	 */
+	public void setNL(String nl) {
+		assertIsWriteable();
+		this.nl = nl;
+	}
+
+
+	/**
+	 * Sets the system architecture specification.
+	 * Throws a runtime exception if this object is marked read-only.
+	 *
+	 * @see org.eclipse.core.boot.BootLoader
+	 * @param arch system architecture specification as a comma-separated list
+	 * @since 2.1
+	 */
+	public void setArch(String arch) {
+		assertIsWriteable();
+		this.arch = arch;
+	}
+
+	/**
+	 * Returns the patch mode.
+	 */
+	public String getPatch() {
+		return patch;
+	}
+
+
+	/**
+	 * Sets the patch mode.
+	 */
+	public void setPatch(String patch) {
+		this.patch = patch;
 	}
 
 }

@@ -147,7 +147,7 @@ public class InstallWizard extends Wizard {
 		throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		if (job!=null && job.getJobType()==PendingChange.INSTALL) {
-			if (UpdateUIPlugin.isPatch(job.getFeature())) {
+			if (job.getFeature().isPatch()) {
 				// Installing a patch - preserve the current configuration
 				IInstallConfiguration cconfig = localSite.getCurrentConfiguration();
 				IInstallConfiguration savedConfig = localSite.addToPreservedConfigurations(cconfig);
@@ -451,13 +451,9 @@ public class InstallWizard extends Wizard {
 						preserve = true;
 				}
 				if (preserve) {
-					try {
 						String id =
 							iref.getVersionedIdentifier().getIdentifier();
 						UpdateUIPlugin.setOriginatingURL(id, url);
-					} catch (CoreException e) {
-						// Silently ignore
-					}
 				} else {
 					try {
 						IFeature ifeature = iref.getFeature();

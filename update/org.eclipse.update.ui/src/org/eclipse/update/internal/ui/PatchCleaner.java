@@ -36,7 +36,7 @@ public class PatchCleaner {
 		csite.removeConfiguredSiteChangedListener(listener);
 	}
 	private void cleanSavedConfigs(IFeature feature) {
-		if (UpdateUIPlugin.isPatch(feature)) {
+		if (feature.isPatch()) {
 			IInstallConfiguration backupConfig = UpdateUIPlugin.getBackupConfigurationFor(feature);
 			if (backupConfig!=null) {
 				// clean it

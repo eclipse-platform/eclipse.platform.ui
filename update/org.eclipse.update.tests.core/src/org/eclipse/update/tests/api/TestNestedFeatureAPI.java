@@ -24,13 +24,8 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	 * the feature to test
 	 */
 	private IFeature getRootFeature() throws MalformedURLException, CoreException {
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest/site.xml"));
-		URL url =
-			UpdateManagerUtils.getURL(
-				site.getURL(),
-					Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ "rootfeature.jar",
-				null);
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml"));
+		URL url = UpdateManagerUtils.getURL(site.getURL(), Site.DEFAULT_INSTALLED_FEATURE_PATH + "rootfeature.jar", null);
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
@@ -42,16 +37,10 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private IFeature getChildFeature()
-		throws MalformedURLException, CoreException {
+	private IFeature getChildFeature() throws MalformedURLException, CoreException {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest/"));
-		URL url =
-			UpdateManagerUtils.getURL(
-				site.getURL(),
-					 Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ "org.eclipse.update.core.tests.childrenfeature_2.0.0.jar",
-				null);
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/"));
+		URL url = UpdateManagerUtils.getURL(site.getURL(), Site.DEFAULT_INSTALLED_FEATURE_PATH + "org.eclipse.update.core.tests.childrenfeature_2.0.0.jar", null);
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
@@ -68,25 +57,15 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		IFeature rootFeature = getRootFeature();
 		IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
 		IFeature childFeature = getChildFeature();
-		assertEquals(
-			"Children feature are not equal",
-			childFeature,
-			ref[0].getFeature());
+		assertEquals("Children feature are not equal", childFeature, ref[0].getFeature());
 	}
-
-
 
 	/**
 	 * the feature to test
 	 */
 	private IFeature getRootFeature2() throws MalformedURLException, CoreException {
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest2/site.xml"));
-		URL url =
-			UpdateManagerUtils.getURL(
-				site.getURL(),
-					Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ "rootfeature.jar",
-				null);
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest2/site.xml"));
+		URL url = UpdateManagerUtils.getURL(site.getURL(), Site.DEFAULT_INSTALLED_FEATURE_PATH + "rootfeature.jar", null);
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
@@ -98,16 +77,10 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private IFeature getChildFeature2()
-		throws MalformedURLException, CoreException {
+	private IFeature getChildFeature2() throws MalformedURLException, CoreException {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest2/site.xml"));
-		URL url =
-			UpdateManagerUtils.getURL(
-				site.getURL(),
-					 Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ "childrenfeature.jar",
-				null);
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest2/site.xml"));
+		URL url = UpdateManagerUtils.getURL(site.getURL(), Site.DEFAULT_INSTALLED_FEATURE_PATH + "childrenfeature.jar", null);
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
@@ -115,7 +88,6 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		IFeature feature = ref.getFeature();
 		return feature;
 	}
-
 
 	/*
 	 * 
@@ -125,24 +97,15 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		IFeature rootFeature = getRootFeature2();
 		IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
 		IFeature childFeature = getChildFeature2();
-		assertEquals(
-			"Children feature are not equal",
-			childFeature,
-			ref[0].getFeature());
+		assertEquals("Children feature are not equal", childFeature, ref[0].getFeature());
 	}
-
 
 	/**
 	 * the feature to test
 	 */
 	private IFeature getRootFeature3() throws MalformedURLException, CoreException {
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/site.xml"));
-		URL url =
-			UpdateManagerUtils.getURL(
-				site.getURL(),
-					Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ "rootfeature.jar",
-				null);
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest3/site.xml"));
+		URL url = UpdateManagerUtils.getURL(site.getURL(), Site.DEFAULT_INSTALLED_FEATURE_PATH + "rootfeature.jar", null);
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
@@ -154,16 +117,10 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private IFeature getChildFeature3()
-		throws MalformedURLException, CoreException {
+	private IFeature getChildFeature3() throws MalformedURLException, CoreException {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"nestedFeatureSiteTest3/site.xml"));
-		URL url =
-			UpdateManagerUtils.getURL(
-				site.getURL(),
-					 Site.DEFAULT_INSTALLED_FEATURE_PATH
-					+ "childrenfeature.jar",
-				null);
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest3/site.xml"));
+		URL url = UpdateManagerUtils.getURL(site.getURL(), Site.DEFAULT_INSTALLED_FEATURE_PATH + "childrenfeature.jar", null);
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
@@ -172,20 +129,19 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 		return feature;
 	}
 
-
 	/*
 	 * 
 	 */
-/*	public void testNested3() throws Exception {
-
-		IFeature rootFeature = getRootFeature3();
-		IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
-		IFeature childFeature = getChildFeature3();
-		assertEquals(
-			"Children feature are not equal",
-			childFeature,
-			ref[0].getFeature());
-	}
-*/
+	/*	public void testNested3() throws Exception {
+	
+			IFeature rootFeature = getRootFeature3();
+			IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
+			IFeature childFeature = getChildFeature3();
+			assertEquals(
+				"Children feature are not equal",
+				childFeature,
+				ref[0].getFeature());
+		}
+	*/
 
 }

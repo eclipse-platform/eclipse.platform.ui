@@ -59,14 +59,6 @@ public interface IIncludedFeatureReference extends IFeatureReference, IPlatformE
 	public boolean isOptional();
 
 	/**
-	 * Returns the name of the feature reference.
-	 * 
-	 * @return feature reference name
-	 * @since 2.0.1
-	 */
-	public String getName();
-	
-	/**
 	 * Returns the matching rule for this included feature.
 	 * The rule will determine the ability of the included feature to move version 
 	 * without causing the overall feature to appear broken.

@@ -60,10 +60,9 @@ public interface IFeatureReference extends IAdaptable {
 	 * Returns the feature identifier.
 	 * 
 	 * @return the feature identifier.
-	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	public VersionedIdentifier getVersionedIdentifier() throws CoreException;
+	public VersionedIdentifier getVersionedIdentifier();
 
 	/**
 	 * Sets the feature reference URL.
@@ -84,5 +83,14 @@ public interface IFeatureReference extends IAdaptable {
 	 * @since 2.0 
 	 */
 	public void setSite(ISite site);
+	
+	/**
+	 * Returns <code>true</code> if this feature is patching another feature,
+	 * <code>false</code> otherwise
+	 * @return boolean
+	 * @since 2.1
+	 */
+	public boolean isPatch();
+	
 	
 }

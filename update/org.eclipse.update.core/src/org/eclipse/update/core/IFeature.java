@@ -448,4 +448,13 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 */
 	public void setFeatureContentProvider(IFeatureContentProvider featureContentProvider);
 
+	/**
+	 * Returns <code>true</code> if this feature is patching another feature,
+	 * <code>false</code> otherwise
+	 * @return boolean
+	 * @since 2.1
+	 */
+	public boolean isPatch();
+
+
 }
