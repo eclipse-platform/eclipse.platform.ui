@@ -87,9 +87,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		syncWithEditorAction.setToolTipText(ResourceNavigatorMessages.getString("SyncWithEditorAction.toolTip")); //$NON-NLS-1$
 		//TODO uncomment when image is supplied
 		//syncWithEditorAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/synced.gif")); //$NON-NLS-1$
-		syncWithEditorAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif")); //$NON-NLS-1$
-		//TODO uncomment when image is supplied
-		//syncWithEditorAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif")); //$NON-NLS-1$
+		syncWithEditorAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif")); //$NON-NLS-1$
 		
 		navigator.getSite().getWorkbenchWindow().getPartService().addPartListener(syncWithEditorAction);
 	}
