@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -497,8 +498,13 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected void populateDetailPaneFromSelection(IStructuredSelection selection) {
 		try {
 			if (!selection.isEmpty()) {
-				IVariable var = (IVariable)selection.getFirstElement();
-				IValue val = var.getValue();
+				IValue val = null;
+				Object obj = selection.getFirstElement();
+				if (obj instanceof IVariable) {
+					val = ((IVariable)obj).getValue();
+				} else if (obj instanceof IExpression) {
+					val = ((IExpression)obj).getValue();
+				}
 				getModelPresentation().computeDetail(val, this);
 			} else {
 				getDetailDocument().set(""); //$NON-NLS-1$

@@ -25,6 +25,7 @@ import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
@@ -211,6 +212,8 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		boolean displayVariableTypes= showVariableTypeNames();
 		if (item instanceof InspectItem) {
 			return getInspectItemText((InspectItem)item);
+		} else if (item instanceof IExpression) {
+			return getExpressionText((IExpression)item);
 		} else if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) { 
 			IDebugModelPresentation lp= getConfiguredPresentation(item);
 			if (lp != null) {
@@ -316,6 +319,31 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		}
 		return buffer.toString();
 	}
+	
+	/**
+	 * Expresion have their left halves rendered here, and their
+	 * right halves rendered by the registered model presentation.
+	 */
+	protected String getExpressionText(IExpression expression) {
+		StringBuffer buffer= new StringBuffer(expression.getExpressionText());
+		String valueString= null;
+		IDebugModelPresentation lp= getConfiguredPresentation(expression);
+		IValue value= expression.getValue();
+		if (lp != null) {
+			valueString= lp.getText(value);
+		} 
+		if ((valueString == null) || (valueString.length() < 1)) {
+			try {
+				valueString= value.getValueString();
+			} catch (DebugException de) {
+			}
+		}
+		if (valueString != null && valueString.length() > 0) {
+			buffer.append("= "); //$NON-NLS-1$
+			buffer.append(valueString);		
+		}
+		return buffer.toString();
+	}	
 
 	/**
 	 * Delegate to all extensions.
