@@ -1260,16 +1260,16 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 
 	Item[] items = getChildren(widget);
 	
-	// save the expanded elements
-	HashSet expanded = new HashSet(); // assume num expanded is small
-	for (int i = 0; i < items.length; ++i) {
-		if (getExpanded(items[i])) {
-			Object element = items[i].getData();
-			if (element != null) {
-				expanded.add(element);
-			}
-		}
-	}
+	// save the expanded elements - see bug 3840
+//	HashSet expanded = new HashSet(); // assume num expanded is small
+//	for (int i = 0; i < items.length; ++i) {
+//		if (getExpanded(items[i])) {
+//			Object element = items[i].getData();
+//			if (element != null) {
+//				expanded.add(element);
+//			}
+//		}
+//	}
 	
 	int min = Math.min(elementChildren.length, items.length);
 
@@ -1318,7 +1318,7 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 			// Restore expanded state for items that changed position.
 			// Make sure setExpanded is called after updatePlus, since
 			// setExpanded(false) fails if item has no children.
-			setExpanded(item, expanded.contains(newElement));
+//			setExpanded(item, expanded.contains(newElement));
 		}
 	}
 	
