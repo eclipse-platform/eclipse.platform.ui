@@ -1,0 +1,122 @@
+package org.eclipse.update.internal.ui;
+
+import java.net.*;
+import java.io.*;
+import java.security.*;
+import java.util.*;
+/**
+ * Class to manage the different KeyStores we should
+ * check for certificates of Signed JAR
+ */
+public class KeyStores {
+
+
+	/**
+	 * true if check default and user keystore at each startup
+	 */ 
+	public static boolean ALWAYS_INITIALIZE = true;
+
+	/**
+	 * java.policy files properties of the java.security file
+	 */
+	public static final String JAVA_POLICY = "policy.url";
+	 
+	/**
+	 * List of URL pointing of valid KeyStores
+	 * the URL is not tested yet...
+	 */
+	private List listOfKeyStores;
+
+	/**
+	 * Iterator
+	 */
+	 private Iterator iterator;
+/**
+ * KeyStores constructor comment.
+ */
+public KeyStores() {
+	super();
+	// If the user always wnat to initialize.
+	// this may take some time if some keystore
+	// are remote or if the connection to the keystore
+	// is down. 
+	if (ALWAYS_INITIALIZE){
+		initializeDefaultKeyStores();
+	} else {
+		readKeystoresFromPersistent();
+	}
+}
+/**
+ * 
+ */
+private Iterator getIterator() {
+	if (iterator==null)
+		iterator = listOfKeyStores.iterator();
+	return iterator;
+}
+/**
+ * returns trus if there is more Keystores in the list
+ */ 
+public boolean hasNext() {
+	return getIterator().hasNext();
+}
+/**
+ * populate the list of Keystores
+ * should be done with Dialog with Cancel/Skip button if
+ * the connection to the URL is down...
+ */
+private void initializeDefaultKeyStores() {
+
+	listOfKeyStores = new ArrayList(5);
+
+	// get JRE cacerts
+	try {
+		listOfKeyStores.add(
+		   new URL(
+				"file",
+				null,
+				0,
+				System.getProperty("java.home")
+					+ File.separator
+					+ "lib"
+					+ File.separator
+					+ "security"
+					+ File.separator
+					+ "cacerts"));
+	} catch (MalformedURLException e) {
+		// should not happen, hardcoded...
+	}
+
+	// get java.home .keystore
+	try {
+		listOfKeyStores.add(
+			new URL(
+				"file",
+				null,
+				0,
+				System.getProperty("user.home") 
+				+ File.separator + ".keystore"));
+	} catch (MalformedURLException e) {
+		// should not happen, hardcoded...
+	}
+
+	// get KeyStores from policy files...
+	//Security.getProperty(JAVA_POLICY);
+
+}
+/**
+ * returns the URL for the Next Keystore
+ * @return the URL of te next keystore
+ */ 
+public URL next() {
+	return (URL)getIterator().next();
+}
+/**
+ * populate the list of Keystores from the previously saved list
+ * if there is no list, initialize with default...
+ * [future]
+ */
+private void readKeystoresFromPersistent() {
+	// not implemented
+}
+}
