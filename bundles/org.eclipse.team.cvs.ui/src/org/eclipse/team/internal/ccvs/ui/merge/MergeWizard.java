@@ -33,7 +33,7 @@ public class MergeWizard extends Wizard {
 		startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), mergeImage);
 		startPage.setProject(project);
 		addPage(startPage);
-		endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), mergeImage);
+		endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), mergeImage, startPage);
 		endPage.setProject(project);
 		addPage(endPage);
 	}

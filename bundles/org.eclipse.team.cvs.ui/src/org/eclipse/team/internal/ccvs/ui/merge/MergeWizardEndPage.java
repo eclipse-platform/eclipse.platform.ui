@@ -5,6 +5,9 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  * All Rights Reserved.
  */
 
+import com.ibm.jvm.format.StartupSection;
+
+import org.eclipse.compare.internal.MergeSourceViewer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -32,6 +35,8 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	TreeViewer tree;
 	CVSTag result;
 	ICVSRemoteFolder remote;
+	// for accessing the start tag
+	MergeWizardStartPage startPage;
 	
 	/**
 	 * MergeWizardEndPage constructor.
@@ -40,9 +45,10 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	 * @param title  the title of the page
 	 * @param titleImage  the image for the page
 	 */
-	public MergeWizardEndPage(String pageName, String title, ImageDescriptor titleImage) {
+	public MergeWizardEndPage(String pageName, String title, ImageDescriptor titleImage, MergeWizardStartPage startPage) {
 		super(pageName, title, titleImage);
 		setDescription(Policy.bind("MergeWizardEndPage.description"));
+		this.startPage = startPage;
 	}
 	/*
 	 * @see IDialogPage#createControl(Composite)
@@ -69,8 +75,15 @@ public class MergeWizardEndPage extends CVSWizardPage {
 				Object selected = ((IStructuredSelection)tree.getSelection()).getFirstElement();
 				if (selected instanceof TagElement) {
 					result = ((TagElement)selected).getTag();
-					setPageComplete(true);
+					if(!result.equals(startPage.getTag())) {
+						setPageComplete(true);
+						setMessage(null);
+					} else {
+						setMessage(Policy.bind("MergeWizardEndPage.duplicateTagSelected", result.getName()), WARNING_MESSAGE);
+						setPageComplete(false);
+					}
 				} else {
+					setMessage(null);
 					result = null;
 					setPageComplete(false);
 				}
