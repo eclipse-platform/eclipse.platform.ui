@@ -50,7 +50,7 @@ public final class CommandManager implements ICommandManager {
 
 	public final static String SEPARATOR = "_"; //$NON-NLS-1$
 	
-	private static boolean isKeyConfigurationDefinitionChildOf(String ancestor, String id, Map keyConfigurationDefinitionsById) {
+	static boolean isKeyConfigurationDefinitionChildOf(String ancestor, String id, Map keyConfigurationDefinitionsById) {
 		Collection visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
@@ -64,7 +64,7 @@ public final class CommandManager implements ICommandManager {
 		return false;
 	}
 
-	private static void validateActivityBindingDefinitions(Collection activityBindingDefinitions) {		
+	static void validateActivityBindingDefinitions(Collection activityBindingDefinitions) {		
 		Iterator iterator = activityBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
@@ -75,7 +75,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}		
 	
-	private static void validateImageBindingDefinitions(Collection imageBindingDefinitions) {		
+	static void validateImageBindingDefinitions(Collection imageBindingDefinitions) {		
 		Iterator iterator = imageBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
@@ -86,7 +86,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}		
 	
-	private static void validateKeySequenceBindingDefinitions(Collection keySequenceBindingDefinitions) {
+	static void validateKeySequenceBindingDefinitions(Collection keySequenceBindingDefinitions) {
 		Iterator iterator = keySequenceBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
@@ -98,7 +98,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}	
 
-	private static boolean validateKeySequence(KeySequence keySequence) {
+	static boolean validateKeySequence(KeySequence keySequence) {
 		if (keySequence == null)
 			return false;
 		
@@ -901,12 +901,12 @@ public final class CommandManager implements ICommandManager {
 	}	 
 
 	// TODO necessary?
-	ICommandRegistry getCommandRegistry() {
+	public ICommandRegistry getCommandRegistry() {
 		return commandRegistry;
 	}
 
 	// TODO necessary?
-	IMutableCommandRegistry getMutableCommandRegistry() {
+	public IMutableCommandRegistry getMutableCommandRegistry() {
 		return mutableCommandRegistry;
 	}
 	 

@@ -295,7 +295,7 @@ final class Persistence {
 
 		// TODO deprecated start
 		if (activityId == null)
-			activityId = memento.getString("context"); //$NON-NLS-1$
+			activityId = memento.getString("contextId"); //$NON-NLS-1$
 		
 		if (activityId == null)
 			activityId = memento.getString("scope"); //$NON-NLS-1$

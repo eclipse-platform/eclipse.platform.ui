@@ -35,11 +35,12 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 			throw new IllegalArgumentException();		
 
 		this.keySequence = keySequence;
+		this.match = match;
 	}
 
 	public int compareTo(Object object) {
 		KeySequenceBinding castedObject = (KeySequenceBinding) object;
-		int compareTo = match - castedObject.match;		
+		int compareTo = Util.compare(match, castedObject.match);		
 
 		if (compareTo == 0)
 			compareTo = Util.compare(keySequence, castedObject.keySequence);	
@@ -54,7 +55,7 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 		KeySequenceBinding castedObject = (KeySequenceBinding) object;	
 		boolean equals = true;
 		equals &= Util.equals(keySequence, castedObject.keySequence);
-		equals &= match == castedObject.match;
+		equals &= Util.equals(match, castedObject.match);
 		return equals;
 	}
 
@@ -70,7 +71,7 @@ final class KeySequenceBinding implements IKeySequenceBinding {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
-			hashCode = hashCode * HASH_FACTOR + match;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(match);
 			hashCodeComputed = true;
 		}
 			

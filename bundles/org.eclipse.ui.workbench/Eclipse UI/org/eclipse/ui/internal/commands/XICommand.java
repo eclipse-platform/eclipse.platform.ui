@@ -12,8 +12,7 @@
 package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.internal.commands.api.older.NotActiveException;
-import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
+import org.eclipse.ui.internal.commands.api.NotDefinedException;
 
 /**
  * <p>
@@ -34,7 +33,7 @@ public interface XICommand {
 	 * @throws NotHandledException
 	 */	
 	void execute()
-		throws NotDefinedException, NotActiveException;
+		throws NotDefinedException/*, NotActiveException*/;
 
 	/**
 	 * TODO temporary method
@@ -44,7 +43,7 @@ public interface XICommand {
 	 * @throws NotHandledException
 	 */	
 	void execute(Event event)
-		throws NotDefinedException, NotActiveException;
+		throws NotDefinedException/*, NotActiveException*/;
 
 	/**
 	 * JAVADOC
@@ -55,7 +54,7 @@ public interface XICommand {
 	 * @throws NotHandledException
 	 */	
 	Object getProperty(String propertyName)
-		throws NotDefinedException, NotActiveException;
+		throws NotDefinedException/*, NotActiveException*/;
 
 	/**
 	 * JAVADOC
@@ -65,7 +64,7 @@ public interface XICommand {
 	 * @throws NotHandledException
 	 */	
 	String[] getPropertyNames()
-		throws NotDefinedException, NotActiveException;
+		throws NotDefinedException/*, NotActiveException*/;
 
 	/**
 	 * TODO temporary method
@@ -74,7 +73,7 @@ public interface XICommand {
 	 * @throws NotHandledException
 	 */	
 	boolean isEnabled()
-		throws NotDefinedException, NotActiveException;
+		throws NotDefinedException/*, NotActiveException*/;
 	
 	/**
 	 * JAVADOC

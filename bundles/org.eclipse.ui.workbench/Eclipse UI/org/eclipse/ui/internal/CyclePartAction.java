@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal;
 
 import java.util.Iterator;
-import java.util.SortedSet;
+import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -39,11 +39,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.commands.api.older.ICommand;
-import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
-import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.older.CommandManager;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.api.ICommand;
+import org.eclipse.ui.internal.commands.api.IKeySequenceBinding;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.keys.KeySequence;
 
@@ -308,25 +307,23 @@ public class CyclePartAction extends PageEventAction {
 				
 				boolean acceleratorForward = false;
 				boolean acceleratorBackward = false;
-				CommandManager commandManager = CommandManager.getInstance();
+				// TODO blind casts
+				CommandManager commandManager = (CommandManager) ((Workbench) WorkbenchPlugin.getDefault().getWorkbench()).getCommandManager();
 
 				if (commandForward != null) {
 					ICommand command = commandManager.getCommand(commandForward);
 					
 					if (command.isDefined()) {
-						try {
-							SortedSet keySequenceBindings = command.getKeySequenceBindings();
-							Iterator iterator = keySequenceBindings.iterator();
+						List keySequenceBindings = command.getKeySequenceBindings();
+						Iterator iterator = keySequenceBindings.iterator();
+						
+						while (iterator.hasNext()) {
+							IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
 							
-							while (iterator.hasNext()) {
-								IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
-								
-								if (keySequenceBinding.getKeySequence().equals(keySequence)) {
-									acceleratorForward = true;
-									break;
-								}
+							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+								acceleratorForward = true;
+								break;
 							}
-						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}
@@ -335,19 +332,16 @@ public class CyclePartAction extends PageEventAction {
 					ICommand command = commandManager.getCommand(commandBackward);
 					
 					if (command.isDefined()) {
-						try {
-							SortedSet keySequenceBindings = command.getKeySequenceBindings();
-							Iterator iterator = keySequenceBindings.iterator();
+						List keySequenceBindings = command.getKeySequenceBindings();
+						Iterator iterator = keySequenceBindings.iterator();
 								
-							while (iterator.hasNext()) {
-								IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
+						while (iterator.hasNext()) {
+							IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) iterator.next();
 									
-								if (keySequenceBinding.getKeySequence().equals(keySequence)) {
-									acceleratorBackward = true;
-									break;
-								}
+							if (keySequenceBinding.getKeySequence().equals(keySequence)) {
+								acceleratorBackward = true;
+								break;
 							}
-						} catch (NotDefinedException eNotDefined) {							
 						}
 					}
 				}

@@ -39,14 +39,15 @@ import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
 import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.commands.api.IActionService;
 import org.eclipse.ui.internal.commands.api.IActionServiceEvent;
 import org.eclipse.ui.internal.commands.api.IActionServiceListener;
-import org.eclipse.ui.internal.commands.api.older.ICommand;
-import org.eclipse.ui.internal.commands.api.older.ICommandManagerEvent;
-import org.eclipse.ui.internal.commands.api.older.ICommandManagerListener;
-import org.eclipse.ui.internal.commands.api.older.NotDefinedException;
-import org.eclipse.ui.internal.commands.older.Match;
+import org.eclipse.ui.internal.commands.api.ICommand;
+import org.eclipse.ui.internal.commands.api.ICommandManagerEvent;
+import org.eclipse.ui.internal.commands.api.ICommandManagerListener;
+import org.eclipse.ui.internal.commands.api.NotDefinedException;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
@@ -276,11 +277,11 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 	final Listener modeCleaner = new Listener() {
 		public void handleEvent(Event event) {
-			workbench.commandManagerOlder.setMode(KeySequence.getInstance()); // clear
+			((CommandManager) workbench.getCommandManager()).setMode(KeySequence.getInstance()); // clear
 			// the
 			// mode
 			// TODO Remove this when mode listener updating becomes available.
-			updateModeLines(workbench.commandManagerOlder.getMode());
+			updateModeLines(((CommandManager) workbench.getCommandManager()).getMode());
 		}
 	};
 	/**
@@ -442,7 +443,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		String name = null;
 
 		if (commandId != null) {
-			final ICommand command = workbench.commandManagerOlder.getCommand(commandId);
+			final ICommand command = workbench.commandManager.getCommand(commandId);
 
 			if (command != null)
 				try {
@@ -476,13 +477,13 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		// Check every potential key stroke until one matches.
 		Iterator keyStrokeItr = potentialKeyStrokes.iterator();
 		while (keyStrokeItr.hasNext()) {
-			KeySequence modeBeforeKeyStroke = workbench.commandManagerOlder.getMode();
+			KeySequence modeBeforeKeyStroke = ((CommandManager) workbench.getCommandManager()).getMode();
 			List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
 			keyStrokes.add(keyStrokeItr.next());
 			KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
-			Map matchesByKeySequenceForModeBeforeKeyStroke = workbench.commandManagerOlder.getMatchesByKeySequenceForMode();
-			workbench.commandManagerOlder.setMode(modeAfterKeyStroke);
-			Map matchesByKeySequenceForModeAfterKeyStroke = workbench.commandManagerOlder.getMatchesByKeySequenceForMode();
+			Map matchesByKeySequenceForModeBeforeKeyStroke =((CommandManager) workbench.getCommandManager()).getMatchesByKeySequenceForMode();
+			((CommandManager) workbench.getCommandManager()).setMode(modeAfterKeyStroke);
+			Map matchesByKeySequenceForModeAfterKeyStroke = ((CommandManager) workbench.getCommandManager()).getMatchesByKeySequenceForMode();
 			boolean consumeKeyStroke = false;
 			boolean matchingSequence = false;
 
@@ -500,7 +501,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 				if (match != null) {
 					// a completion was found.
 					String commandId = match.getCommandId();
-					Map actionsById = workbench.commandManagerOlder.getActionsById();
+					Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
 					org.eclipse.ui.internal.commands.api.IAction action = (org.eclipse.ui.internal.commands.api.IAction) actionsById.get(commandId);
 
 					if (action != null) {
@@ -530,7 +531,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 					consumeKeyStroke = true;
 
 				// clear mode
-				workbench.commandManagerOlder.setMode(KeySequence.getInstance());
+				((CommandManager) workbench.getCommandManager()).setMode(KeySequence.getInstance());
 				updateModeLines(KeySequence.getInstance());
 			}
 
@@ -549,7 +550,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 					break;
 				} else {
 					// Restore the mode, so we can try again.
-					workbench.commandManagerOlder.setMode(modeBeforeKeyStroke);
+					((CommandManager) workbench.getCommandManager()).setMode(modeBeforeKeyStroke);
 				}
 			}
 		}
@@ -588,8 +589,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	}
 
 	public void updateActiveActivityIds() {
-		// TODO eliminate set to list
-		workbench.commandManagerOlder.setActiveContextIds(new ArrayList(workbench.getActivityManager().getActiveActivityIds()));
+		((CommandManager) workbench.getCommandManager()).setActiveActivityIds(workbench.getActivityManager().getActiveActivityIds());
 	}
 
 	void updateActiveCommandIdsAndActiveActivityIds() {
@@ -686,7 +686,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		if (this.activeWorkbenchPartActionService != null)
 			actionsById.putAll(this.activeWorkbenchPartActionService.getActionsById());
 
-		workbench.commandManagerOlder.setActionsById(actionsById);
+		((CommandManager) workbench.getCommandManager()).setActionsById(actionsById);
 
 		/*
 		 * if (activeWorkbenchWindowContextActivationService !=

@@ -82,9 +82,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
-import org.eclipse.ui.internal.commands.api.older.IKeySequenceBinding;
-import org.eclipse.ui.internal.commands.older.CommandManager;
-import org.eclipse.ui.internal.commands.older.Match;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.Match;
+import org.eclipse.ui.internal.commands.api.IKeySequenceBinding;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
@@ -821,7 +821,7 @@ public class WorkbenchWindow
 		// TODO time to take back the menu, and not allow any contribution item to set an accelerator unless it cooperates with the command manager.
 		result.setOverrides(new IContributionManagerOverrides() {
 
-			private CommandManager commandManager = CommandManager.getInstance();
+			private CommandManager commandManager = (CommandManager) workbench.getCommandManager();
 
 			public Integer getAccelerator(IContributionItem contributionItem) {
 				if (!(contributionItem instanceof ActionContributionItem))
