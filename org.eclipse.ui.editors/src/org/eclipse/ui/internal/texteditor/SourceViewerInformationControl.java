@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -20,7 +22,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -212,15 +213,9 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 *         be scrolled at least <code>fHorizontalScrollPixel</code>
 	 */
 	private String getSpacesForHorizontalScrolling() {
-		StyledText widget= fViewer.getTextWidget();
-		GC gc= new GC(widget);
-		StringBuffer spaces= new StringBuffer();
-		Point spaceSize= gc.stringExtent(" "); //$NON-NLS-1$
-		gc.dispose();
-		int n= fHorizontalScrollPixel / spaceSize.x + 1; 
-		for (int i= 0; i < n; i++)
-			spaces.append(' ');
-		return spaces.toString();
+		char[] spaces= new char[300];
+		Arrays.fill(spaces, ' ');
+		return new String(spaces);
 	}
 
 	/*
