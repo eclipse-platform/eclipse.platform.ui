@@ -300,6 +300,14 @@ public final class Platform {
 	public static final String ARCH_AMD64 = "amd64";//$NON-NLS-1$
 
 	/**
+	 * Constant string (value "ia64") indicating the platform is running on an
+	 * IA64-based architecture.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String ARCH_IA64 = "ia64"; //$NON-NLS-1$
+
+	/**
 	 * Constant string (value "win32") indicating the platform is running on a
 	 * machine using the Windows windowing system.
 	 * <p>
@@ -1182,23 +1190,23 @@ public final class Platform {
 	}
 
 	/**
-     * Gets the Bundles with the specified symbolic name.  If no bundles are 
-     * resolved that have the specified symbolic name then null is returned.  
-     * If the version argument is not null then only the Bundles that have 
-     * the specified symbolic name and a version greater than or equal to the 
-     * specified version are returned. The returned bundles are ordered in 
-     * descending bundle version order.
-     * 
-     * @param symbolicName the symbolic name of the bundles that are to be returned.
-     * @param version the version that the return bundle versions must match, 
-     * or <tt>null</tt> if no version matching is to be done. 
-     * @return the array of Bundles with the specified name that match the 
-     * specified version and match rule, or <tt>null</tt> if no bundles are found.
-     */
+	 * Gets the Bundles with the specified symbolic name.  If no bundles are 
+	 * resolved that have the specified symbolic name then null is returned.  
+	 * If the version argument is not null then only the Bundles that have 
+	 * the specified symbolic name and a version greater than or equal to the 
+	 * specified version are returned. The returned bundles are ordered in 
+	 * descending bundle version order.
+	 * 
+	 * @param symbolicName the symbolic name of the bundles that are to be returned.
+	 * @param version the version that the return bundle versions must match, 
+	 * or <tt>null</tt> if no version matching is to be done. 
+	 * @return the array of Bundles with the specified name that match the 
+	 * specified version and match rule, or <tt>null</tt> if no bundles are found.
+	 */
 	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);
 	}
-	
+
 	/**
 	 * Returns an array of host bundles that the specified fragment bundle is 
 	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
@@ -1223,6 +1231,7 @@ public final class Platform {
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
 	}
+
 	/**
 	 * Returns a list of known system architectures.
 	 * <p>
