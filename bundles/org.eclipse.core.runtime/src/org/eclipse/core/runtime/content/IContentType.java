@@ -102,6 +102,7 @@ public interface IContentType {
 	 * @param options an array of keys for all properties that should be described
 	 * @return a content description if one could be obtained, or 
 	 * <code>null</code>
+	 * @throws IOException if an error occurs while reading the contents
 	 * @see IContentDescription  
 	 */
 	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException;
@@ -120,6 +121,7 @@ public interface IContentType {
 	 * @throws UnsupportedOperationException if this content type
 	 * has a describer that does not implement 
 	 * <code>ITextContentDescriber</code>
+	 * @throws IOException if an error occurs while reading the contents 
 	 * @see IContentDescription
 	 */
 	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException;

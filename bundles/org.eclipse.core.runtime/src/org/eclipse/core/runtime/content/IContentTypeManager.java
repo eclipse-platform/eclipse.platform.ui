@@ -59,6 +59,7 @@ public interface IContentTypeManager {
 	 * @param contents an input stream
 	 * @param fileName the file name associated to the contents, or <code>null</code> 
 	 * @return the preferred content type associated to the given file name, or <code>null</code>
+	 * @throws IOException if an error occurs while reading the contents 
 	 */
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException;
 
@@ -83,13 +84,14 @@ public interface IContentTypeManager {
 	 * to provide a file name if available.
 	 * </p>
 	 * <p>
-	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.
+	 * Any IOExceptions (other than CharConversionException) that may occur 
+	 * while reading the given input stream will flow to the caller.
 	 * </p> 
 	 * 
 	 * @param contents an input stream
 	 * @param fileName the file name associated to the contents, or <code>null</code> 
 	 * @return all content types associated to the given contents and file name
+	 * @throws IOException if an error occurs while reading the contents
 	 */
 	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException;
 
@@ -140,6 +142,7 @@ public interface IContentTypeManager {
 	 * @param options an array of keys for all properties that should be 
 	 * described, or <code>IContentDescription.ALL</code>,  for all of them 
 	 * @return a content description if one could be obtained, or <code>null</code>
+	 * @throws IOException if an error occurs while reading the contents
 	 * @see IContentDescription 
 	 */
 	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException;
@@ -161,6 +164,7 @@ public interface IContentTypeManager {
 	 * @param options an array of keys for all properties that should be 
 	 * described, or <code>IContentDescription.ALL</code>,  for all of them 
 	 * @return a content description if one could be obtained, or <code>null</code>
+	 * @throws IOException if an error occurs while reading the contents
 	 * @see IContentDescription 
 	 */
 	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException;
