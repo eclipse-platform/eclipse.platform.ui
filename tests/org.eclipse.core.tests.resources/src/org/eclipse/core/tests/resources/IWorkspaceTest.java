@@ -541,20 +541,11 @@ public void testGetPluginStateLocation() throws CoreException {
 public void testMove() throws CoreException {
 	/* create folders and files */
 	IProject project = getWorkspace().getRoot().getProject("project");
-	project.create(null);
-	project.open(null);
 	IFolder folder = project.getFolder("folder");
-	ensureExistsInWorkspace(folder, true);
-	ensureExistsInFileSystem(folder);
 	IFile file = project.getFile("file.txt");
-	ensureExistsInWorkspace(file, true);
-	ensureExistsInFileSystem(file);
 	IFile anotherFile = project.getFile("anotherFile.txt");
-	ensureExistsInWorkspace(anotherFile, true);
-	ensureExistsInFileSystem(anotherFile);
 	IFile oneMoreFile = project.getFile("oneMoreFile.txt");
-	ensureExistsInWorkspace(oneMoreFile, true);
-	ensureExistsInFileSystem(oneMoreFile);
+	ensureExistsInWorkspace(new IResource[] {project, folder, file, anotherFile, oneMoreFile}, true);
 
 	/* normal case */
 	IResource[] resources = {file, anotherFile, oneMoreFile};
