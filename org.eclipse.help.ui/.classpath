@@ -3,11 +3,12 @@
     <classpathentry kind="src" path="Eclipse Help UI"/>
     <classpathentry kind="src" path="Eclipse Help UI Motif"/>
     <classpathentry kind="src" path="Eclipse Help UI Win32"/>
-    <classpathentry kind="src" path="\org.eclipse.help"/>
-    <classpathentry kind="lib" path="C:\eclipse\jre\lib\rt.jar"/>
-    <classpathentry kind="lib" path="C:\eclipse\plugins\org.eclipse.core.runtime\runtime.jar"/>
-    <classpathentry kind="lib" path="C:\eclipse\plugins\org.eclipse.ui\workbench.jar"/>
-    <classpathentry kind="lib" path="C:\eclipse\plugins\org.apache.xerces\xerces.jar"/>
-    <classpathentry kind="lib" path="C:\eclipse\plugins\org.eclipse.core.resources\resources.jar"/>
+    <classpathentry kind="src" path="/org.eclipse.help"/>
+    <classpathentry kind="lib" path="C:/eclipse/jre/lib/rt.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.runtime/runtime.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ui/workbench.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/plugins/org.apache.xerces/xerces.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.resources/resources.jar"/>
+    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.swt/swt0108.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
