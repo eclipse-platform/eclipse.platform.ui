@@ -86,8 +86,7 @@ public class DeferredTreeContentManager {
      * Provides an optimized lookup for determining if an element has children.
      * This is required because elements that are populated lazilly can't
      * answer <code>getChildren</code> just to determine the potential for
-     * children. Throw an AssertionFailedException if element is not an
-     * instance of IDeferredWorkbenchAdapter.
+     * children. Throw an AssertionFailedException if element is null.
      * 
      * @param element The Object being tested. This should not be
      * <code>null</code>.
@@ -95,10 +94,10 @@ public class DeferredTreeContentManager {
      * @throws RuntimeException if the element is null.
      */
     public boolean mayHaveChildren(Object element) {
-        IDeferredWorkbenchAdapter adapter = getAdapter(element);
-        Assert.isNotNull(element, ProgressMessages
+    	Assert.isNotNull(element, ProgressMessages
                 .getString("DeferredTreeContentManager.NotDeferred")); //$NON-NLS-1$
-        return adapter.isContainer();
+        IDeferredWorkbenchAdapter adapter = getAdapter(element);
+        return adapter != null && adapter.isContainer();
     }
 
     /**
