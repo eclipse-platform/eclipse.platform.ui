@@ -60,7 +60,7 @@ public class ClosePerspectiveAction extends Action implements
         if (page != null) {
             Perspective persp = ((WorkbenchPage) page).getActivePerspective();
             if (persp != null) {
-                ((WorkbenchPage) page).closePerspective(persp, true, true);
+                closePerspective((WorkbenchPage) page, persp);
             }
         }
     }
@@ -76,4 +76,13 @@ public class ClosePerspectiveAction extends Action implements
         workbenchWindow = null;
     }
 
+    /**
+     * Close the argument perspective in the argument page.  Do nothing if the page or
+     * perspective are null.
+	 * @since 3.1
+     */
+    public static void closePerspective(WorkbenchPage page, Perspective persp) {
+        if (page != null && persp != null)
+            page.closePerspective(persp, true, true);
+    }
 }

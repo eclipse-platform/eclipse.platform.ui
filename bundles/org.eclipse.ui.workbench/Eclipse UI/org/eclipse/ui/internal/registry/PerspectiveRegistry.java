@@ -41,13 +41,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -611,11 +616,36 @@ public class PerspectiveRegistry extends RegistryManager implements
         return retArray;
     }
 
-    public void postChangeProcessing() {
-    }
-
     public void dispose() {
         Platform.getExtensionRegistry().removeRegistryChangeListener(this);
     }
 
+    /**
+     * Subclasses can override this to be given an opportunity to cleanup after
+     * a registry removal. E.g., the PerspectiveRegistry has chosen to remove
+     * all open perspectives contributed by the removed bundle. The object will
+     * have been removed from the registry by the time this method is called.
+	 * @since 3.1
+     */
+    protected void handleBundleRemoved(String bundleId, Object registryObject) {
+        PerspectiveDescriptor desc = (PerspectiveDescriptor) registryObject;
+
+        // close the perspective in all windows
+        IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+                .getWorkbenchWindows();
+        for (int w = 0; w < windows.length; ++w) {
+            IWorkbenchWindow window = windows[w];
+            IWorkbenchPage[] pages = window.getPages();
+            for (int p = 0; p < pages.length; ++p) {
+                WorkbenchPage page = (WorkbenchPage) pages[p];
+                ClosePerspectiveAction.closePerspective(page, page
+                        .findPerspective(desc));
+            }
+        }
+
+        // remove the custom definition too (may be persisted in the preference
+        // service
+        if (desc.hasCustomDefinition())
+            desc.deleteCustomDefinition();
+    }
 }

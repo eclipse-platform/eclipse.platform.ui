@@ -59,7 +59,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 
     private ImageDescriptor image;
 
-    private IConfigurationElement configElement;
+    private InstanceTracker configElementHandle;
 
     private static final String ATT_ID = "id";//$NON-NLS-1$
 
@@ -86,6 +86,28 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
         if (originalDescriptor != null) {
             this.originalId = originalDescriptor.getOriginalId();
             this.image = originalDescriptor.image;
+
+            // This perspective is based on a perspective in some bundle -- if that
+            // bundle goes away then I think it makes sense to treat this perspective
+            // the same as any other -- so store it with the original descriptor's
+            // bundle's list.
+            //
+            // It might also make sense the other way...removing the following line
+            // will allow the perspective to stay around when the originating bundle
+            // is unloaded.
+            //
+            // This might also have an impact on upgrade cases -- should we really be
+            // destroying all user customized perspectives when the older version is
+            // removed?
+            //
+            // I'm leaving this here for now since its a good example, but wouldn't be
+            // surprised if we ultimately decide on the opposite.
+            //
+            // The reason this line is important is that this is the value used to
+            // put the object into the UI level registry.  When that bundle goes away,
+            // the registry will remove the entire list of objects.  So if this desc
+            // has been put into that list -- it will go away.
+            this.pluginId = originalDescriptor.getPluginId();
         }
     }
 
@@ -95,7 +117,12 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
     public PerspectiveDescriptor(IConfigurationElement configElement,
             String desc) throws CoreException {
         super();
-        this.configElement = configElement;
+
+        // This instance tracker is just to ensure the config element is not
+        // used after the originating bundle is removed -- there's no need for
+        // an instance dispose handler in this case.
+        this.configElementHandle = new InstanceTracker(configElement, null);
+
         id = configElement.getAttribute(ATT_ID);
         pluginId = configElement.getDeclaringExtension().getNamespace();
         label = configElement.getAttribute(ATT_NAME);
@@ -127,25 +154,34 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
     }
 
     /**
-     * Creates a factory for a predefined perspective.  If the perspective
-     * is not predefined return null.
-     *
+     * Creates a factory for a predefined perspective. If the perspective is not
+     * predefined return null.
+     * 
      * @throws a CoreException if the object could not be instantiated.
      */
     public IPerspectiveFactory createFactory() throws CoreException {
-        IConfigurationElement element = configElement;
+        // if there is an originalId, then use that descriptor instead
         if (originalId != null) {
-            IPerspectiveDescriptor desc = ((PerspectiveRegistry) WorkbenchPlugin
+            // Get the original descriptor to create the factory. If the
+            // original is gone then nothing can be done.
+            IPerspectiveDescriptor target = ((PerspectiveRegistry) WorkbenchPlugin
                     .getDefault().getPerspectiveRegistry())
                     .findPerspectiveWithId(originalId);
-            if (desc != null)
-                element = ((PerspectiveDescriptor) desc).configElement;
-            if (element == null)
-                return null;
-        } else if (className == null || element == null)
-            return null;
-        Object obj = WorkbenchPlugin.createExtension(element, ATT_CLASS);
-        return (IPerspectiveFactory) obj;
+
+            return target == null ? null : ((PerspectiveDescriptor) target)
+                    .createFactory();
+        }
+
+        // otherwise try to create the executable extension
+        if (configElementHandle != null)
+            try {
+                return (IPerspectiveFactory) configElementHandle
+                            .getExecutableExtension(ATT_CLASS);
+            } catch (CoreException e) {
+                // do nothing
+            }
+
+        return null;
     }
 
     /**
@@ -215,12 +251,14 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
      * Returns true if this perspective wants to be default.
      */
     public boolean hasDefaultFlag() {
-        if (configElement == null)
+        if (configElementHandle == null)
             return false;
-        String str = configElement.getAttribute(ATT_DEFAULT);
-        if (str == null)
+        IConfigurationElement element = configElementHandle
+                .getConfigurationElement();
+        if (element == null)
             return false;
-        return str.equals("true");//$NON-NLS-1$
+        String str = element.getAttribute(ATT_DEFAULT);
+        return str == null ? false : str.equals("true"); //$NON-NLS-1$
     }
 
     /**
@@ -288,11 +326,13 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
     }
 
     /**
-     * @return the configuration element used to create this perspective, if one was used.
+     * @return the configuration element used to create this perspective, if one
+     *         was used.
      * @since 3.0
      */
     public IConfigurationElement getConfigElement() {
-        return configElement;
+        return configElementHandle == null ? null : configElementHandle
+                .getConfigurationElement();
     }
 
     /* (non-Javadoc)

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -28,8 +27,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * The central manager for view descriptors.
  */
-public class ViewRegistry extends RegistryManager implements IViewRegistry,
-        IRegistryChangeListener {
+public class ViewRegistry extends RegistryManager implements IViewRegistry {
     private List views;
 
     private boolean dirtyViews;
@@ -429,6 +427,7 @@ public class ViewRegistry extends RegistryManager implements IViewRegistry,
     }
 
     public void postChangeProcessing() {
+        super.postChangeProcessing();
         mapViewsToCategories();
     }
 

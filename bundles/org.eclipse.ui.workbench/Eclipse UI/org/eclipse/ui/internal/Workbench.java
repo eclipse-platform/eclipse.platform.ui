@@ -215,7 +215,15 @@ public final class Workbench implements IWorkbench {
         this.advisor = advisor;
         this.display = display;
         Workbench.instance = this;
-        // for dynamic UI
+
+        // for dynamic UI  [This seems to be for everything that isn't handled by some
+        // subclass of RegistryManager.  I think that when an extension is moved to the
+        // RegistryManager implementation, then it should be removed from the list in
+        // ExtensionEventHandler#appear.
+        // I've found that the new wizard extension in particular is a poor choice to
+        // use as an example, since the result of reading the registry is not cached
+        // -- so it is re-read each time.  The only real contribution of this dialog is
+        // to show the user a nice dialog describing the addition.]
         extensionEventHandler = new ExtensionEventHandler(this);
         Platform.getExtensionRegistry().addRegistryChangeListener(
                 extensionEventHandler);

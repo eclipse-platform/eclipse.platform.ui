@@ -128,10 +128,20 @@ public abstract class RegistryManager implements IRegistryChangeListener {
             // org.eclipse.ui.perspectives
             IExtensionDelta delta[] = event.getExtensionDeltas(elementId,
                     extPtId);
-            numDeltas = delta.length;
-            for (int i = 0; i < numDeltas; i++) {
-                doAdd(display, delta[i]);
-            }
+            int len = delta.length;
+            for (int i = 0; i < len; i++)
+                switch (delta[i].getKind()) {
+                case IExtensionDelta.ADDED:
+                    doAdd(display, delta[i]);
+                	++numDeltas;
+                	break;
+                case IExtensionDelta.REMOVED:
+                    doRemove(display, delta[i]);
+                	++numDeltas;
+                	break;
+                default:
+                	break;
+                }
         } finally {
             if (numDeltas > 0) {
                 // Only do the post-change processing if something was
@@ -155,20 +165,12 @@ public abstract class RegistryManager implements IRegistryChangeListener {
     }
 
     public void add(IExtensionDelta delta) {
-        IWorkbenchWindow[] win = PlatformUI.getWorkbench()
-                .getWorkbenchWindows();
-        if (win.length == 0)
-            return;
-        Display display = win[0].getShell().getDisplay();
-        if (display == null)
-            return;
         IExtensionPoint extPt = delta.getExtensionPoint();
         IExtension ext = delta.getExtension();
         // Get the name of the plugin that is adding this extension.  The
         // name of the plugin that adds the extension point is us.
         String pluginId = ext.getNamespace();
         add(buildNewCacheObject(delta), pluginId);
-        resetCurrentPerspective(display);
     }
 
     public void add(Object element, String pluginId) {
@@ -196,13 +198,9 @@ public abstract class RegistryManager implements IRegistryChangeListener {
     }
 
     public void add(Object[] elements, String pluginId) {
-        if (elements == null || elements.length == 0)
-            // Nothing to add, so just return.
-            return;
-        for (int i = 0; i < elements.length; i++) {
-            Object element = elements[i];
-            add(element, pluginId);
-        }
+        if (elements != null)
+	        for (int i = 0; i < elements.length; i++)
+	            add(elements[i], pluginId);
     }
 
     /**
@@ -214,16 +212,52 @@ public abstract class RegistryManager implements IRegistryChangeListener {
      */
     abstract public Object[] buildNewCacheObject(IExtensionDelta delta);
 
+	/**
+	 * @since 3.1
+	 */
+    private void doRemove(Display display, final IExtensionDelta delta) {
+        Runnable run = new Runnable() {
+            public void run() {
+                if (!PlatformUI.isWorkbenchRunning())
+                    return;
+                remove(delta);
+            }
+        };
+        display.syncExec(run);
+    }
+
+    public void remove(IExtensionDelta delta) {
+        IExtensionPoint extPt = delta.getExtensionPoint();
+        IExtension ext = delta.getExtension();
+        // Get the name of the plugin that is adding this extension.  The
+        // name of the plugin that adds the extension point is us.
+        String pluginId = ext.getNamespace();
+        removeBundle(pluginId);
+    }
+
+    /**
+     * Subclasses can override this to be given an opportunity to cleanup after a
+     * registry removal.  E.g., the PerspectiveRegistry has chosen to remove all
+     * open perspectives contributed by the removed bundle.  The object will have
+     * been removed from the registry by the time this method is called.
+	 * @since 3.1
+     */
+    protected void handleBundleRemoved(String bundleId, Object registryObject) {
+        // subclasses to override
+    }
+
     /**
      * This is a generic method that is expected to be implemented by the
      * parent class.  It should do any processing necessary once deltas
      * have been processed and the registry modified.  Note that in some
      * cases there may be no extra processing required.
      */
-    abstract public void postChangeProcessing();
+    public void postChangeProcessing() {
+        resetCurrentPerspective(PlatformUI.getWorkbench().getDisplay());
+    }
 
     private void resetCurrentPerspective(Display display) {
-        if (changeList.isEmpty())
+        if (display == null || changeList.isEmpty())
             return;
 
         final StringBuffer message = new StringBuffer(
@@ -256,10 +290,12 @@ public abstract class RegistryManager implements IRegistryChangeListener {
                                 ExtensionEventHandlerMessages
                                         .getString("ExtensionEventHandler.reset_perspective"), message.toString())) { //$NON-NLS-1$
                     IWorkbenchPage page = window.getActivePage();
-                    if (page == null)
-                        return;
-                    page.resetPerspective();
+                    if (page != null)
+                        page.resetPerspective();
                 }
+
+                // the message was displayed so reset the change list
+                changeList.clear();
             }
         });
 
@@ -275,15 +311,34 @@ public abstract class RegistryManager implements IRegistryChangeListener {
      * to one of these plug-ins will be flagged for removal.
      */
     public void remove(String[] plugins) {
-        for (int i = 0; i < plugins.length; i++) {
+        for (int i = 0; i < plugins.length; i++)
             remove(plugins[i]);
-        }
     }
 
     public void remove(String pluginId) {
         RegistryElement element = (RegistryElement) cache.get(pluginId);
         if (element != null)
             element.changeState(REGISTRY_CACHE_STATE_DELETED);
+    }
+
+	/**
+	 * @since 3.1
+	 */
+    public void removeBundle(String pluginId) {
+        if (pluginId == null)
+            pluginId = INTERNAL_REGISTRY_ADDITION;
+
+        RegistryElement regElement = (RegistryElement) cache.get(pluginId);
+        if (regElement == null)
+            return;
+
+        // remove the elements before invoking the callback
+        cache.remove(pluginId);
+
+        // let the subclasses take action as needed
+        Iterator i = regElement.getRealObjects().iterator();
+        while (i.hasNext())
+            handleBundleRemoved(pluginId, i.next());
     }
 
     public void remove(String pluginId, Object object) {

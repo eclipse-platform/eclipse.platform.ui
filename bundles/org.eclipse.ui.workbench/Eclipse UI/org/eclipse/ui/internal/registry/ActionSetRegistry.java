@@ -211,12 +211,6 @@ public class ActionSetRegistry extends RegistryManager implements
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.registry.RegistryManager#postChangeProcessing()
-     */
-    public void postChangeProcessing() {
-    }
-
     /**
      * Reads the registry.
      */
