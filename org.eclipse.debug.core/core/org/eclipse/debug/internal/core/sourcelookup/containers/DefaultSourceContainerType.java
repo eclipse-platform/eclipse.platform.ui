@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.core.sourcelookup.containers;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
@@ -41,7 +42,14 @@ public class DefaultSourceContainerType extends AbstractSourceContainerTypeDeleg
 		DefaultSourceContainer def = (DefaultSourceContainer) container;
 		Document document = SourceLookupUtils.newDocument();
 		Element element = document.createElement("default"); //$NON-NLS-1$
-		element.setAttribute("launchConfiguration", def.getLaunchConfiguration().getMemento()); //$NON-NLS-1$
+		//working copies produce null mementos
+		//this isn't a good solution though...causes problems sometimes since it might be working off the right copy
+		//may be avoidable if we stop writing to the config too often
+		if(def.getLaunchConfiguration().isWorkingCopy()) {
+			element.setAttribute("launchConfiguration", ((ILaunchConfigurationWorkingCopy)def.getLaunchConfiguration()).getOriginal().getMemento()); //$NON-NLS-1$
+		} else {
+			element.setAttribute("launchConfiguration", def.getLaunchConfiguration().getMemento()); //$NON-NLS-1$
+		}
 		document.appendChild(element);
 		return SourceLookupUtils.serializeDocument(document);
 	}

@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core.sourcelookup.containers;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType;
@@ -89,16 +90,12 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 	 * if none
 	 */
 	private ISourcePathComputer getSourcePathComputer() {
-		String id;
-		try {
-			id = fConfiguration.getAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID, (String)null);
-		} catch (CoreException e) {
-			return null;
+		try{
+			return DebugPlugin.getDefault().getLaunchManager().newSourcePathComputer(fConfiguration);
+		}catch(CoreException e){
+			DebugPlugin.logMessage(SourceLookupMessages.getString("DefaultSourceContainer.1"),e);			
 		}
-		if (id == null) {
-			return null;
-		}
-		return SourceLookupUtils.getSourcePathComputer(id);
+		return null;
 	}
 
 	/* (non-Javadoc)

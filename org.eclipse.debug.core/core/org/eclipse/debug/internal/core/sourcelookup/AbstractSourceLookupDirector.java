@@ -145,7 +145,9 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 		Iterator iterator = fParticipants.iterator();
 		while (iterator.hasNext()) {
 			ISourceLookupParticipant participant = (ISourceLookupParticipant) iterator.next();
-			participant.dispose();
+			//director may also be a participant
+			if(participant != this)
+				participant.dispose();
 		}
 		fParticipants.clear();
 		if (fSourceContainers != null) {
@@ -301,14 +303,15 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 			pathNode.setAttribute(DUPLICATES_ATTR, "false"); //$NON-NLS-1$
 		}
 		rootNode.appendChild(pathNode);
-		
-		for(int i=0; i<fSourceContainers.length; i++){
-			Element node = doc.createElement(CONTAINER_NODE);
-			ISourceContainer container = fSourceContainers[i];
-			ISourceContainerType type = container.getType();
-			node.setAttribute(CONTAINER_TYPE_ATTR, type.getId());
-			node.setAttribute(CONTAINER_MEMENTO_ATTR, type.getMemento(container));
-			pathNode.appendChild(node);
+		if(fSourceContainers !=null){
+			for(int i=0; i<fSourceContainers.length; i++){
+				Element node = doc.createElement(CONTAINER_NODE);
+				ISourceContainer container = fSourceContainers[i];
+				ISourceContainerType type = container.getType();
+				node.setAttribute(CONTAINER_TYPE_ATTR, type.getId());
+				node.setAttribute(CONTAINER_MEMENTO_ATTR, type.getMemento(container));
+				pathNode.appendChild(node);
+			}
 		}
 		return SourceLookupUtils.serializeDocument(doc);
 	}
@@ -339,6 +342,12 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 		}
 	}
 	
+	/**
+	 * Sets the source containers used by this source lookup
+	 * director, and notifies participants of the change.
+	 * 
+	 * @param containers source containers to use
+	 */
 	public void setSourceContainers(ISourceContainer[] containers) {
 		fSourceContainers = containers;
 		Iterator participants = fParticipants.iterator();
@@ -372,8 +381,8 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	 * for a stack frame, and allows the source director to select a single
 	 * source element to associate with the stack frame.
 	 * <p>
-	 * Subclasses should override this method as appropriated. For example,
-	 * a to prompt the user to choose a source element.
+	 * Subclasses should override this method as appropriate. For example,
+	 * to prompt the user to choose a source element.
 	 * </p>
 	 * @param frame the frame for which source is being searched for
 	 * @param sources the source elements found for the given stack frame
@@ -440,7 +449,7 @@ public abstract class AbstractSourceLookupDirector implements IPersistableSource
 	 * is a persisted launch configration, this director will respond to changes
 	 * in the persisted launch configuration.
 	 * 
-	 * @param configuration launch configuration to associated with this
+	 * @param configuration launch configuration to associate with this
 	 *  source lookup director, or <code>null</code> if none
 	 */
 	protected void setLaunchConfiguration(ILaunchConfiguration configuration) {

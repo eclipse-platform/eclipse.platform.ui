@@ -77,6 +77,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.osgi.service.environment.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1628,8 +1629,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see org.eclipse.debug.core.ILaunchManager#newSourcePathComputer(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public ISourcePathComputer newSourcePathComputer(ILaunchConfiguration configuration) throws CoreException {
-		// TODO: to be implemented
-		return null;
+		String id = null;
+		id = configuration.getAttribute(ISourcePathComputer.ATTR_SOURCE_PATH_COMPUTER_ID, (String)null);
+		
+		if (id == null) {
+			//use default computer for configuration type, if any			
+			return configuration.getType().getSourcePathComputer();							
+		}
+		return SourceLookupUtils.getSourcePathComputer(id);
 	}
 
 }

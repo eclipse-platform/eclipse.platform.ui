@@ -42,6 +42,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
+import org.eclipse.debug.internal.core.sourcelookup.IPersistableSourceLocator2;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -182,7 +183,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				if (memento == null) {
 					locator.initializeDefaults(this);
 				} else {
-					locator.initializeFromMemento(memento);
+					if(locator instanceof IPersistableSourceLocator2)
+						((IPersistableSourceLocator2)locator).initializeFromMemento(memento, this);
+					else
+						locator.initializeFromMemento(memento);
 				}
 				launch.setSourceLocator(locator);
 			}
