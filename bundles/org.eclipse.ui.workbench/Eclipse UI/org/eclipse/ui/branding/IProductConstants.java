@@ -83,6 +83,7 @@ public interface IProductConstants {
      * If the <code>WINDOW_IMAGES</code> property is given, then it supercedes
      * this one.
      * </p>
+     * @deprecated use WINDOW_IMAGES instead (see recommendations there)
      */
     public static final String WINDOW_IMAGE = "windowImage"; //$NON-NLS-1$
 
@@ -97,6 +98,14 @@ public interface IProductConstants {
      * </p> 
      * <p>
      * If this property is given, then it supercedes <code>WINDOW_IMAGE</code>.
+     * </p>
+     * <p>
+     * It is recommended that products use <code>WINDOW_IMAGES</code> rather than
+     * <code>WINDOW_IMAGE</code>, and specify both a 16x16 image and a 32x32 image,
+     * to ensure that different sizes of the image are available for different uses
+     * in the OS.  For example, on Windows, the 16x16 image is used in the corner of
+     * the window and in the task tray, but the 32x32 image is used in the Alt+Tab
+     * application switcher.
      * </p>
      */
     public static final String WINDOW_IMAGES = "windowImages"; //$NON-NLS-1$
