@@ -113,11 +113,11 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 		super.validatePage();
 		if (isPageComplete() && localBookmark == null) {
 			try {
-				String decodedText = URLDecoder.decode(urlText.getText());
+				String decodedText = URLDecoder.decode(urlText.getText().trim());
 				url = new URL(decodedText);
 				super.validatePage();
 			} catch (MalformedURLException e) {
-				setErrorMessage(UpdateUI.getString(KEY_INVALID));
+				setDelayedErrorMessage(UpdateUI.getString(KEY_INVALID));
 				setPageComplete(false);
 			}
 		}

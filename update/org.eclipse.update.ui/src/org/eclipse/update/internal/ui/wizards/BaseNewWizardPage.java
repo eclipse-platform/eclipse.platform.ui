@@ -33,11 +33,13 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	private static final String KEY_CREATE_IN = "BaseNewWizardPage.createIn";
 	private static final String KEY_EXISTING = "BaseNewWizardPage.existing";
 	private static final String KEY_INVALID = "BaseNewWizardPage.invalid";
+	private static final String KEY_MISSING_NAME = "BaseNewWizardPage.missingName";
 	private BookmarkFolder folder;
 	private String name;
 	private TreeViewer tree;
 	private Text nameText;
 	private Text containerText;
+	private boolean showError=false;
 
 	class ContainerContentProvider
 		extends DefaultContentProvider
@@ -151,10 +153,17 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		setControl(container);
 	}
 	
+	protected void setDelayedErrorMessage(String text) {
+		if (showError)
+			setErrorMessage(text);
+	}
+	
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
-		if (visible)
+		if (visible) {
 			nameText.setFocus();
+			showError=true;
+		}
 	}
 
 	protected abstract void createClientControl(Composite parent, int span);
@@ -169,10 +178,12 @@ public abstract class BaseNewWizardPage extends WizardPage {
 			}
 		} else
 			folder = null;
-		if (nameText.getText().length() == 0) {
+		String name = nameText.getText().trim();
+		if (name.length() == 0) {
 			complete = false;
+			message = UpdateUI.getString(KEY_MISSING_NAME);
 		}
-		setErrorMessage(message);
+		setDelayedErrorMessage(message);
 		setPageComplete(message == null && complete);
 	}
 	private BookmarkFolder getFolderFromPath(String path) {
@@ -190,7 +201,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		return folder;
 	}
 	public String getName() {
-		return nameText.getText();
+		return nameText.getText().trim();
 	}
 	public abstract boolean finish();
 
