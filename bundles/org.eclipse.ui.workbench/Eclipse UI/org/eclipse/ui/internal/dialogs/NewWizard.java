@@ -66,6 +66,9 @@ private WizardCollectionElement getChildWithID(WizardCollectionElement parent, S
 /**
  * Returns the id of the category of wizards to show
  * or <code>null</code> to show all categories.
+ * If no entries can be found with this id then all 
+ * categories are shown.
+ * @return String or <code>null</code>.
  */
 public String getCategoryId() {
 	return categoryId;
@@ -73,6 +76,9 @@ public String getCategoryId() {
 /**
  * Sets the id of the category of wizards to show
  * or <code>null</code> to show all categories.
+ * If no entries can be found with this id then all
+ * categories are shown.
+ * @param id. String or <code>null</code>.
  */
 public void setCategoryId(String id) {
 	categoryId = id;
