@@ -112,9 +112,16 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	public ICommand[] getBuildSpec(boolean makeCopy) {
-		if (buildSpec == null)
+		//thread safety: copy reference in case of concurrent write
+		ICommand[] oldCommands = this.buildSpec;
+		if (oldCommands == null)
 			return EMPTY_COMMAND_ARRAY;
-		return makeCopy ? (ICommand[]) buildSpec.clone() : buildSpec;
+		if (!makeCopy)
+			return oldCommands;
+		ICommand[] result = new ICommand[oldCommands.length];
+		for (int i = 0; i < result.length; i++)
+			result[i] = (ICommand)((BuildCommand)oldCommands[i]).clone();
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -249,7 +256,11 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 */
 	public void setBuildSpec(ICommand[] value) {
 		Assert.isLegal(value != null);
-		buildSpec = (ICommand[]) value.clone();
+		//perform a deep copy in case clients perform further changes to the command
+		ICommand[] result = new ICommand[value.length];
+		for (int i = 0; i < result.length; i++)
+			result[i] = (ICommand)((BuildCommand)value[i]).clone();
+		buildSpec = result;
 	}
 
 	/* (non-Javadoc)

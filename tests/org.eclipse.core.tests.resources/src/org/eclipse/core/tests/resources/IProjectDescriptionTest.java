@@ -9,6 +9,8 @@
  **********************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
@@ -52,7 +54,7 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 		try {
 			//wait a bit to ensure that timestamp granularity does not
 			//spoil our test
-			Thread.sleep(200);
+			Thread.sleep(1000);
 		} catch (InterruptedException e1) {
 			fail("1.99", e1);
 		}
@@ -81,6 +83,44 @@ public class IProjectDescriptionTest extends EclipseWorkspaceTest {
 			fail("3.99", e);
 		}
 		assertEquals("2.1", timestamp, descriptionFile.getLocalTimeStamp());
+	}
+
+	/**
+	 * Tests that the description file is dirtied if the description has actually
+	 * changed. This is a regression test for bug 64128.
+	 */
+	public void testDirtyBuildSpec() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFile projectDescription = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		ensureExistsInWorkspace(project, true);
+		String key = "key";
+		String value1 = "value1";
+		String value2 = "value2";
+		try {
+			IProjectDescription description = project.getDescription();
+			ICommand newCommand = description.newCommand();
+			Map args = new HashMap();
+			args.put(key, value1);
+			newCommand.setArguments(args);
+			description.setBuildSpec(new ICommand[] {newCommand});
+			project.setDescription(description, IResource.NONE, null);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//changing a build command argument should dirty the description file
+		long modificationStamp = projectDescription.getModificationStamp();
+		try {
+			IProjectDescription description = project.getDescription();
+			ICommand command = description.getBuildSpec()[0];
+			Map args = command.getArguments();
+			args.put(key, value2);
+			command.setArguments(args);
+			description.setBuildSpec(new ICommand[] {command});
+			project.setDescription(description, IResource.NONE, null);
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertTrue("3.0", modificationStamp != projectDescription.getModificationStamp());
 	}
 
 	public void testDynamicProjectReferences() {
