@@ -15,7 +15,7 @@ public class TestCategories extends UpdateManagerTestCase {
 	}
 	
 	
-	public void testCategories() throws Exception {
+	public void testCategories() throws Exception { 
 	
 
 			URL remoteUrl = new URL(SOURCE_FILE_SITE+"xmls/site1/");
@@ -24,7 +24,7 @@ public class TestCategories extends UpdateManagerTestCase {
 			IFeature[] feature = remoteSite.getFeatures();
 			ICategory[] categories = remoteSite.getCategories();
 			
-			ICategory featureCategory = feature[0].getCategory();
+			ICategory featureCategory = feature[0].getCategories()[0];
 			
 			assertEquals("UML tools",featureCategory.getLabel());
 			

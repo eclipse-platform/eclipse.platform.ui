@@ -6,6 +6,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.update.core.*;
 import org.xml.sax.*;
@@ -29,6 +31,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	
 	private ResourceBundle bundle;
 				
+	private AbstractFeature feature;
 	
 
 	/**
@@ -94,6 +97,11 @@ public class DefaultSiteParser extends DefaultHandler {
 			processCategoryDef(attributes);
 			return;
 		}
+	
+		if (tag.equalsIgnoreCase(CATEGORY)){
+			processCategory(attributes);
+			return;
+		}
 
 	}
 	
@@ -130,18 +138,13 @@ public class DefaultSiteParser extends DefaultHandler {
 
 		// the type of the feature
 		String type = attributes.getValue("type");
-		IFeature feature = null;
 		if (type == null || type.equals("")) {
 			feature = new DefaultPackagedFeature(url, site);
 		} else {
 			Assert.isTrue(false,"Not implemented Yet... do not use 'type' in the feature tag of site.xml");
 			//FIXME: manages creation of feature...
 		}
-		
-		// category
-		String category = attributes.getValue("category");
-		((AbstractFeature) feature).setCategoryString(category);
-		
+				
 		// add the feature
 		site.addFeature(feature);
 		
@@ -169,6 +172,24 @@ public class DefaultSiteParser extends DefaultHandler {
 		}
 		
 	}	
+	
+	/** 
+	 * process the Category  info
+	 */
+	private void processCategory(Attributes attributes){
+		// category
+		String category = attributes.getValue("name");
+		feature.addCategoryString(category);
+	
+		
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getPlugin().debug("End processing Category: name:"+category);
+		}
+	}
+		
+	
+	
 	
 	/** 
 	 * process the Category Def info
@@ -199,6 +220,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void endElement (String uri, String localName, String qName)
 		throws SAXException {
+		
 		
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){

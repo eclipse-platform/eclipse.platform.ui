@@ -25,7 +25,7 @@ public interface IFeature extends IPluginContainer {
 	IInfo getDescription();
 	IInfo getCopyright();
 	IInfo getLicense();
-	ICategory getCategory();
+	ICategory[] getCategories();
 	String getOS();
 	String getWS();
 	String getNL();

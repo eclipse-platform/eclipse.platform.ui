@@ -85,12 +85,12 @@ public abstract class AbstractFeature implements IFeature {
 	/**
 	 * category String; From teh XML file
 	 */
-	private String categoryString;
+	private List categoryString;
 
 	/**
 	 * category : delegate to teh site
 	 */
-	private ICategory category;
+	private List categories;
 	/**
 	 * List of ID representing the *bundles/archives*
 	 *  coming with the feature
@@ -250,13 +250,6 @@ public abstract class AbstractFeature implements IFeature {
 	}
 
 	/**
-	 * @see IFeature#getCategory()
-	 */
-	public ICategory getCategory() {
-		if (category==null) category = ((AbstractSite)getSite()).getCategory(categoryString);
-		return category;
-	}
-	/**
 	 * @see IFeature#getImage()
 	 */
 	public URL getImage() {
@@ -293,7 +286,8 @@ public abstract class AbstractFeature implements IFeature {
 	 * Gets the categoryString
 	 * @return Returns a String
 	 */
-	public String getCategoryString() {
+	private List getCategoryString() {
+		if (categoryString == null && !isInitialized) init();
 		return categoryString;
 	}
 	
@@ -422,14 +416,7 @@ public abstract class AbstractFeature implements IFeature {
 	public void setWS(String ws) {
 		this.ws = ws;
 	}
-
-	/**
-	 * Sets the categoryString
-	 * @param categoryString The categoryString to set
-	 */
-	public void setCategoryString(String categoryString) {
-		this.categoryString = categoryString;
-	}
+
 	/**
 	 * @see IPluginContainer#getDownloadSize(IPluginEntry)
 	 */
@@ -623,7 +610,33 @@ public abstract class AbstractFeature implements IFeature {
 		}
 		return result;
 	}
-
+
+	/**
+	 * @see IFeature#getCategories()
+	 */
+	public ICategory[] getCategories() {
+		
+
+		
+		if (categories==null) {
+			categories = new ArrayList();
+			List categoriesAsString = getCategoryString();
+			if (categoriesAsString!=null && !categoriesAsString.isEmpty()){
+				Iterator iter = categoriesAsString.iterator();
+				while (iter.hasNext()){
+					categories.add(((AbstractSite)getSite()).getCategory((String)iter.next()));
+				}
+			}
+		}
+		
+		ICategory[] result = null;
+		
+		if (!(categories == null || categories.isEmpty())) {
+			result =new ICategory[categories.size()];
+			categories.toArray(result);
+		}
+		return result;
+	}
 	/**
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
@@ -643,7 +656,19 @@ public abstract class AbstractFeature implements IFeature {
 			}
 		}
 	}
-
+
+	/**
+	 * Sets the categoryString
+	 * @param categoryString The categoryString to set
+	 */
+	public void setCategoryString(String[] categoryString) {
+			if (categoryString != null) {
+			this.categoryString = new ArrayList();
+			for (int i = 0; i < categoryString.length; i++) {
+				this.categoryString.add(categoryString[i]);
+			}
+		}
+	}
 	/**
 	 * @see IPluginContainer#addPluginEntry(IPluginEntry)
 	 */
@@ -652,7 +677,16 @@ public abstract class AbstractFeature implements IFeature {
 			pluginEntries = new ArrayList(0);
 		pluginEntries.add(pluginEntry);
 	}
-
+
+	/**
+	 * Sets the categoryString
+	 * @param categoryString The categoryString to set
+	 */
+	public void addCategoryString(String categoryString) {
+		if (this.categoryString == null)
+			this.categoryString = new ArrayList(0);
+		this.categoryString.add(categoryString);
+	}
 	/**
 	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
 	 */

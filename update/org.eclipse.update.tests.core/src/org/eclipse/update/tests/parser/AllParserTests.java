@@ -14,6 +14,7 @@ public static Test suite() {
 	// the following will take all teh test methods in teh class that start with 'test'
 	suite.addTest(new TestSuite(TestFeatureParse.class));
 	suite.addTest(new TestSuite(TestSiteParse.class));	
+	suite.addTest(new TestSuite(TestCategories.class));		
 
 	
 	// or you can specify the method
