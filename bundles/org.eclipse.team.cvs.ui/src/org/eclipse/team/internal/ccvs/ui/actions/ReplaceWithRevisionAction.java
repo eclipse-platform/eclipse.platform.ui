@@ -45,7 +45,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 		 * Add the replace button to the dialog.
 		 */
 		protected void createButtonsForButtonBar(Composite parent) {
-			replaceButton = createButton(parent, REPLACE_ID, Policy.bind("ReplaceWithRevisionAction.0"), false); //$NON-NLS-1$
+			replaceButton = createButton(parent, REPLACE_ID, Policy.bind("ReplaceWithRevisionAction.0"), true); //$NON-NLS-1$
 			replaceButton.setEnabled(false);
 			((CVSCompareRevisionsInput)getCompareEditorInput()).getViewer().addSelectionChangedListener(
 				new ISelectionChangedListener() {
@@ -55,6 +55,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 					}
 				}
 			);
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false); //$NON-NLS-1$
 			// Don't call super because we don't want the OK button to appear
 		}
 		
