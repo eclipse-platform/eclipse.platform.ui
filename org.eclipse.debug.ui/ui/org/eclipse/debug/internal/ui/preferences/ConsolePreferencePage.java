@@ -100,7 +100,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		
 		fWidthEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_WIDTH, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_width"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fWidthEditor);
-		fWidthEditor.setValidRange(80, Integer.MAX_VALUE - 1);
+		fWidthEditor.setValidRange(80, 1000);
 		fWidthEditor.setErrorMessage(DebugPreferencesMessages.getString("ConsolePreferencePage.console_width")); //$NON-NLS-1$
 		
 		fWrapEditor.getChangeControl(getFieldEditorParent()).addSelectionListener(
@@ -116,7 +116,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		
 		fBufferSizeEditor = new ConsoleIntegerFieldEditor(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK, DebugPreferencesMessages.getString("ConsolePreferencePage.Console_buffer_size_(characters)__2"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fBufferSizeEditor);
-		fBufferSizeEditor.setValidRange(1000, Integer.MAX_VALUE);
+		fBufferSizeEditor.setValidRange(1000, 1000000);
 		fBufferSizeEditor.setErrorMessage(DebugPreferencesMessages.getString("ConsolePreferencePage.The_console_buffer_size_must_be_at_least_1000_characters._1")); //$NON-NLS-1$
 		
 		fUseBufferSize.getChangeControl(getFieldEditorParent()).addSelectionListener(
