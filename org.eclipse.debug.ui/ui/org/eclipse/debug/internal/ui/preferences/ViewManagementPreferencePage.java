@@ -49,6 +49,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private Button fTrackViewsButton;
 	private Button fResetViewsButton;
 	private boolean fResetPressed= false;
+	private PerspectiveLabelProvider fLabelProvider= null;
 	
 	public ViewManagementPreferencePage() {
 		super();
@@ -114,8 +115,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fPerspectiveViewer= new CheckboxTableViewer(table);
 		PerspectiveProvider provider= new PerspectiveProvider();
 		fPerspectiveViewer.setContentProvider(provider);
-		PerspectiveLabelProvider labelProvider= new PerspectiveLabelProvider();
-		fPerspectiveViewer.setLabelProvider(labelProvider);
+		fLabelProvider= new PerspectiveLabelProvider();
+		fPerspectiveViewer.setLabelProvider(fLabelProvider);
 		fPerspectiveViewer.setInput(this);
 		
 		checkPerspectives(getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES));
@@ -185,13 +186,27 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		public Object[] getElements(Object inputElement) {
 			return PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives();
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
+		
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IContentProvider#dispose()
          */
         public void dispose() {
         }
 		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (fLabelProvider != null) {
+			fLabelProvider.dispose();
+		}
 	}
 }
