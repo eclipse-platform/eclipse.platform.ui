@@ -336,7 +336,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
 	        // Only add the info if the base and remote differ
 	        IResourceVariant base = info.getBase();
 	        IResourceVariant remote = info.getRemote();
-	        if ((base == null && remote != null) || (remote == null && base != null) || !base.equals(remote)) {
+	        if ((base == null && remote != null) || (remote == null && base != null) || (remote != null && base != null && !base.equals(remote))) {
 	            synchronized(this) {
 			        ChangeSet set = getChangeSetFor(logEntry);
 			        if (set == null) {
