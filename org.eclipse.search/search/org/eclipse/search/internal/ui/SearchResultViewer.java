@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -33,6 +34,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 
+import org.eclipse.ui.IWorkbenchActionConstants;
+
+import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
@@ -73,7 +77,7 @@ class SearchResultViewer extends TableViewer {
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		setLabelProvider(new SearchResultLabelProvider());
+		setLabelProvider(SearchResultLabelProvider.getInstance());
 		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
 
 		fShowNextResultAction= new ShowNextResultAction(this);
@@ -125,11 +129,15 @@ class SearchResultViewer extends TableViewer {
 		menuMgr.addMenuListener(
 			new IMenuListener() {
 				public void menuAboutToShow(IMenuManager mgr) {
+					SearchPlugin.createStandardGroups(mgr);
 					fillContextMenu(mgr);
 				}
 			});
 		Menu menu= menuMgr.createContextMenu(getTable());
 		getTable().setMenu(menu);		
+		
+		// Register menu
+		fOuterPart.getSite().registerContextMenu(menuMgr, this);
 	}
 
 	void enableActions() {
@@ -186,23 +194,24 @@ class SearchResultViewer extends TableViewer {
 	}
 	
 	void fillContextMenu(IMenuManager menu) {
+		
 		if (fgContextMenuContributor != null)
 			fgContextMenuContributor.fill(menu, this);
-			
-		menu.add(new Separator());
+		
 		if (!getSelection().isEmpty()) {
-			menu.add(fGotoMarkerAction);
+			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerAction);
 			if (enableRemoveMatchMenuItem())
-				menu.add(fRemoveMatchAction);
-			menu.add(new RemoveResultAction(this));
-			menu.add(new Separator());
+				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, fRemoveMatchAction);
+			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveResultAction(this));
 		}
+		
 		// If we have elements
-		if (getItemCount() > 0) {
-			menu.add(new RemoveAllResultsAction());
-		}
-		menu.add(fSearchAgainAction);
-		menu.add(fSortDropDownAction);
+		if (getItemCount() > 0)
+			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveAllResultsAction());
+	
+		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSearchAgainAction);
+		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSortDropDownAction);
+
 	}
 
 	IAction getGotoMarkerAction() {
@@ -248,16 +257,26 @@ class SearchResultViewer extends TableViewer {
 	int getItemCount() {
 		return SearchManager.getDefault().getCurrentItemCount();
 	}
-	void internalSetLabelProvider(ILabelProvider provider) {
+
+	void internalSetLabelProvider(ILabelProvider provider) {
 		IBaseLabelProvider tableLabelProvider= getLabelProvider();
 		if (tableLabelProvider instanceof SearchResultLabelProvider)
 			((SearchResultLabelProvider)getLabelProvider()).setLabelProvider(provider);
 		else {
 			// should never happen - just to be safe
-			setLabelProvider(new SearchResultLabelProvider());
+			setLabelProvider(SearchResultLabelProvider.getInstance());
 			internalSetLabelProvider(provider);
 		}
 	}
+
+	ILabelProvider internalGetLabelProvider(){
+		IBaseLabelProvider tableLabelProvider= getLabelProvider();
+		if (tableLabelProvider instanceof SearchResultLabelProvider)
+			return ((SearchResultLabelProvider)tableLabelProvider).getLabelProvider();
+		else
+			return null;
+	}
+
 	/**
 	 * Makes the first marker of the current result entry
 	 * visible in an editor. If no result
@@ -277,6 +296,7 @@ class SearchResultViewer extends TableViewer {
 		entry.setSelectedMarkerIndex(0);
 		openCurrentSelection();
 	}
+
 	/**
 	 * Makes the next result (marker) visible in an editor. If no result
 	 * is visible, this method makes the first result visible.
@@ -307,6 +327,7 @@ class SearchResultViewer extends TableViewer {
 		entry.setSelectedMarkerIndex(fMarkerToShow);
 		openCurrentSelection();
 	}
+
 	/**
 	 * Makes the previous result (marker) visible. If there isn't any
 	 * visible result, this method makes the last result visible.
@@ -356,6 +377,7 @@ class SearchResultViewer extends TableViewer {
 		if (action != null)
 			action.run();
 	}
+
 	/**
 	 * Update the title and the title's tooltip
 	 */
@@ -378,6 +400,7 @@ class SearchResultViewer extends TableViewer {
 		if (toolTip == null || !toolTip.equals(fOuterPart.getTitleToolTip()))
 			fOuterPart.setTitleToolTip(toolTip);
 	}
+
 	/**
 	 * Sets the message text to be displayed on the status line.
 	 * The image on the status line is cleared.
@@ -401,6 +424,7 @@ class SearchResultViewer extends TableViewer {
 	protected void handleAddMatch(ISearchResultViewEntry entry) {
 		insert(entry, -1);
 	}
+
 	/**
 	 * Handle a single remove.
 	 */
@@ -416,12 +440,14 @@ class SearchResultViewer extends TableViewer {
 		else
 			updateItem(item, entry);
 	}
+
 	/**
 	 * Handle remove all.
 	 */
 	protected void handleRemoveAll() {
 		setInput(null);
 	}
+
 	/**
 	 * Handle an update of an entry.
 	 */
