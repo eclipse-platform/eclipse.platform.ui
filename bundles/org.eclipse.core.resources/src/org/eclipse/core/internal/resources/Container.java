@@ -10,8 +10,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.internal.localstore.HistoryStore;
 import org.eclipse.core.internal.utils.*;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public abstract class Container extends Resource implements IContainer {
 protected Container(IPath path, Workspace container) {
@@ -202,8 +206,31 @@ public IResource[] members(int memberFlags) throws CoreException {
  * @see IContainer#findDeletedMembersWithHistory
  */
 public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException {
-	// FIXME - missing implementation
-	return new File[0];
+	HistoryStore historyStore = getLocalManager().getHistoryStore();
+	IPath basePath = getFullPath();
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	Set deletedFiles = new HashSet();
+	
+	if (depth == IResource.DEPTH_ZERO) {
+		// this folder might have been a file in a past life
+		if (historyStore.getStates(basePath).length > 0) {
+			IFile file = root.getFile(basePath);
+			if (!file.exists()) {
+				deletedFiles.add(file);
+			}
+		}
+	} else {
+		Set allFilePaths = historyStore.allFiles(basePath, depth);
+		// convert IPaths to IFiles keeping only files that no longer exist
+		for (Iterator it= allFilePaths.iterator(); it.hasNext(); ) {
+			IPath filePath = (IPath) it.next();
+			IFile file = root.getFile(filePath);
+			if (!file.exists()) {
+				deletedFiles.add(file);
+			}
+		}
+	}
+	return (IFile[]) deletedFiles.toArray(new IFile[deletedFiles.size()]);
 }
 
 }

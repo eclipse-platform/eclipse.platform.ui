@@ -372,13 +372,17 @@ public IResource[] members(int memberFlags) throws CoreException;
  * this method returns all recently deleted member files with saved states.
  * </p>
  * <p>
+ * When applied to a folder resource (depth zero),
+ * this method returns an empty list unless there was a recently deleted file
+ * with saved states with at same path as the folder.
+ * </p>
+ * <p>
  * This method is long-running; progress and cancellation are provided
  * by the given progress monitor. 
  * </p>
  * 
- * @param depth valid values are <code>DEPTH_ONE</code> and 
- *    <code>DEPTH_INFINITE</code> (<code>DEPTH_ZERO</code> is not 
- *    useful and would always return the empty list)
+ * @param depth depth limit: one of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>
+ *    or <code>DEPTH_INFINITE</code>
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @return an array of recently deleted files

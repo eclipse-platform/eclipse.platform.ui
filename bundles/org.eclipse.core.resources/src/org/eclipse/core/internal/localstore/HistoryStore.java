@@ -312,4 +312,44 @@ protected void resetIndexedStore() {
 public File getFileFor(UniversalUniqueIdentifier uuid) {
 	return blobStore.fileFor(uuid);
 }
+
+/**
+ * Returns the paths of all files with entries in this history store at or below
+ * the given workspace resource path to the given depth.
+ * 
+ * @param key full workspace path to resource
+ * @param depth depth limit: one of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>
+ *    or <code>DEPTH_INFINITE</code>
+ * @return the set of paths for files that have at least one history entry
+ *   (element type: <code>IPath</code>)
+ */
+public Set allFiles(IPath path, final int depth) {
+	final Set allFiles = new HashSet();
+	final int pathLength = path.segmentCount();
+	class PathCollector implements IHistoryStoreVisitor {
+		public boolean visit(HistoryStoreEntry state) {
+			IPath memberPath = state.getPath();
+			boolean withinDepthRange = false;
+			switch (depth) {
+				case IResource.DEPTH_ZERO:
+					withinDepthRange = memberPath.segmentCount() == pathLength;
+					break;
+				case IResource.DEPTH_ONE:
+					withinDepthRange = memberPath.segmentCount() <= pathLength + 1;
+					break;
+				case IResource.DEPTH_INFINITE:
+					withinDepthRange = true;
+					break;
+			}
+			if (withinDepthRange) {
+				allFiles.add(memberPath);
+			}
+			// traverse children as long as we're still within depth range
+			return withinDepthRange;
+		}
+	}
+	accept(path, new PathCollector(), true);
+	return allFiles;
+}
+
 }
