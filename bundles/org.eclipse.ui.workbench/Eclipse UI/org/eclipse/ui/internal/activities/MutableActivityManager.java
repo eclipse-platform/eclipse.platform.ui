@@ -492,7 +492,7 @@ public final class MutableActivityManager
 			this.enabledActivityIds = enabledActivityIds;
 			activityManagerChanged = true;
 			activityEventsByActivityId =
-				updateActivities(this.definedActivityIds);
+				updateActivities(activitiesById.keySet());
 		}
 
 		Map identifierEventsByIdentifierId =
