@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.jobs.*;
 /**
  * Tests the API of the class IJobManager
  */
-public class IJobManagerTest extends TestCase {
+public class IJobManagerTest extends AbstractJobManagerTest {
 	class TestJobListener extends JobChangeAdapter  {
 		private Set scheduled = Collections.synchronizedSet(new HashSet());
 		public void cancelAllJobs() {
@@ -57,8 +57,8 @@ public class IJobManagerTest extends TestCase {
 
 	protected int completedJobs;
 	private IJobChangeListener[] jobListeners;
-	private JobManager manager;
-	private FussyProgressProvider progressProvider;
+
+
 	protected int scheduledJobs;
 	public IJobManagerTest(String name) {
 		super(name);
@@ -95,7 +95,6 @@ public class IJobManagerTest extends TestCase {
 	}
 	protected void setUp() throws Exception {
 		super.setUp();
-		manager = JobManager.getInstance();
 		completedJobs = 0;
 		scheduledJobs = 0;
 		jobListeners = new IJobChangeListener[] {/* new VerboseJobListener(),*/
@@ -103,8 +102,6 @@ public class IJobManagerTest extends TestCase {
 		for (int i = 0; i < jobListeners.length; i++) {
 			manager.addJobChangeListener(jobListeners[i]);
 		}
-		progressProvider = new FussyProgressProvider();
-		manager.setProgressProvider(progressProvider);
 	}
 	private void sleep(long duration) {
 		try {
@@ -113,16 +110,14 @@ public class IJobManagerTest extends TestCase {
 		}
 	}
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		for (int i = 0; i < jobListeners.length; i++)
 			if (jobListeners[i] instanceof TestJobListener)
 				 ((TestJobListener) jobListeners[i]).cancelAllJobs();
 		waitForCompletion();
-		progressProvider.sanityCheck();
-		manager.setProgressProvider(null);
 		for (int i = 0; i < jobListeners.length; i++) {
 			manager.removeJobChangeListener(jobListeners[i]);
 		}
+		super.tearDown();
 	}
 	public void testDelayedJob() {
 		//schedule a delayed job and ensure it doesn't start until instructed
