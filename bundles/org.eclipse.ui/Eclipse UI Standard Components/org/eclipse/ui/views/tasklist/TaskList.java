@@ -165,7 +165,7 @@ public class TaskList extends ViewPart {
 			TaskList.this.focusSelectionChanged(event);
 		}
 	};
-	private IResource focusResource;
+	private IResource[] focusResources;
 	private IWorkbenchPart focusPart;
 	private ISelectionProvider focusSelectionProvider;
 
@@ -569,12 +569,24 @@ static AbstractUIPlugin getPlugin() {
  */
 public IResource getResource() {
 	if (showSelections()) {
-		if (focusResource != null) {
-			return focusResource;
+		if (focusResources != null && focusResources.length >= 1 && focusResources[0] != null) {
+			return focusResources[0];
 		}
 	}
+
 	return getWorkspace().getRoot();
 }
+
+public IResource[] getResources() {
+	if (showSelections()) {
+		if (focusResources != null) {
+			return focusResources;
+		}
+	}
+
+	return new IResource[] { getWorkspace().getRoot() };
+}
+
 /**
  * Returns the resource depth which the task list is using to show tasks.
  *
@@ -655,16 +667,49 @@ boolean checkResource(IResource resource) {
 	if (!showSelections()) {
 		return true;
 	}
+
+	IResource[] resources = getResources();
+	IResource resource2;
+	
 	if (showOwnerProject()) {
-		IProject currentProj = getResource().getProject();
-		return currentProj == null ? true : currentProj.equals(resource.getProject());
+		IProject project;
+
+		for (int i = 0, l = resources.length; i < l; i++) {
+			resource2 = resources[i];
+			
+			if (resource2 == null) {
+				return true;
+			}
+			else {
+				project = resource2.getProject();
+				
+				if (project.equals(resource.getProject())) {
+					return true;
+				}
+			}
+		}
 	}
 	if (showChildrenHierarchy()) {
-		return getResource().getFullPath().isPrefixOf(resource.getFullPath());
+		for (int i = 0, l = resources.length; i < l; i++) {
+			resource2 = resources[i];
+
+			if (resource2 != null && 
+				resource2.getFullPath().isPrefixOf(resource.getFullPath())) {
+				return true;
+			}
+		}
 	}
 	else {
-		return resource.equals(getResource());
+		for (int i = 0, l = resources.length; i < l; i++) {
+			resource2 = resources[i];
+
+			if (resource.equals(resource2)) {
+				return true;
+			}
+		}		
 	}
+
+	return false;
 }
 
 /**
@@ -1080,43 +1125,87 @@ void toggleLockInput(boolean value) {
  * Updates the focus resource, and refreshes if we're showing only tasks for the focus resource.
  */
 void updateFocusResource(ISelection selection) {
-	IResource resource = null;
+	java.util.List list = new ArrayList();
+
 	if (selection instanceof IStructuredSelection) {
-		IStructuredSelection ssel = (IStructuredSelection) selection;
-		if (ssel.size() == 1) {
-			Object object = ssel.getFirstElement();
-			ITaskListResourceAdapter adapter =
-				getTaskListAdapter(object);
-			//Will only return an adapter if the object
-			//is adaptable
-			if(adapter != null)
-				resource = adapter.getAffectedResource((IAdaptable) object);			
-		}
-	}
-	if (resource == null) {
-		if (focusPart instanceof IEditorPart) {
-			IEditorInput input = ((IEditorPart) focusPart).getEditorInput();
-			if (input != null) {
-				if (input instanceof IFileEditorInput) {
-					resource = ((IFileEditorInput) input).getFile();
-				}
-				else {
-					resource = (IResource) input.getAdapter(IResource.class);
-					if (resource == null) {
-						resource = (IFile) input.getAdapter(IFile.class);
+		Iterator iterator = ((IStructuredSelection) selection).iterator();
+		Object object;
+		Object adapter;
+		ITaskListResourceAdapter taskListResourceAdapter;
+
+		if (iterator != null) {
+			while (iterator.hasNext()) {	
+				object = iterator.next();
+
+				if (object instanceof IAdaptable) {
+					adapter = ((IAdaptable) object).getAdapter(ITaskListResourceAdapter.class);
+
+					if (adapter != null) {
+						taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
 					}
+					else {
+						taskListResourceAdapter = DefaultTaskListResourceAdapter.getDefault();
+					}
+
+					list.add(taskListResourceAdapter.getAffectedResource((IAdaptable) object));
 				}
 			}
 		}
 	}
+
+	if (list.size() == 0 && focusPart instanceof IEditorPart) {		
+		IEditorInput input = ((IEditorPart) focusPart).getEditorInput();
+
+		if (input != null) {
+			if (input instanceof IFileEditorInput) {
+				list.add(((IFileEditorInput) input).getFile());
+			}
+			else {
+				IResource resource = (IResource) input.getAdapter(IResource.class);
+				
+				if (resource == null) {
+					resource = (IFile) input.getAdapter(IFile.class);
+				}
+				
+				list.add(resource);
+			}
+		}
+	}
+
+	IResource[] resources = (IResource[]) list.toArray(new IResource[list.size()]);
+
+	if (resources.length < 1) {
+		return; // required to achieve lazy update behavior.
+	}
 	
-	if (resource != null && !resource.equals(focusResource)) {
+	if (!java.util.Arrays.equals(resources, focusResources)) {
 		boolean updateNeeded = false;
-		if (showOwnerProject()) {
-			IProject oldProject = focusResource == null ? null : focusResource.getProject();
-			IProject newProject = resource.getProject();
-			boolean projectsEqual = (oldProject == null ? newProject == null : oldProject.equals(newProject));
-			updateNeeded = !projectsEqual;
+
+		if (resources == null || focusResources == null) {
+			updateNeeded = true;			
+		}
+		else if (showOwnerProject()) {
+			int l = resources.length;
+
+			if (l != focusResources.length) {
+				updateNeeded = true;
+			}
+			else {
+				IProject oldProject;
+				IProject newProject;
+				boolean projectsEqual;
+					
+				for (int i = 0; i < l; i++) {
+					oldProject = focusResources[0] == null ? null : focusResources[0].getProject();
+					newProject = resources[0] == null ? null : resources[0].getProject();
+					projectsEqual = (oldProject == null ? newProject == null : oldProject.equals(newProject));
+					
+					if (!projectsEqual) {
+						updateNeeded = true;
+						break;
+					} 
+				}
+			}
 		}
 		else if (showSelections()) {
 			updateNeeded = true;
@@ -1124,7 +1213,7 @@ void updateFocusResource(ISelection selection) {
 		
 		// remember the focus resource even if update is not needed,
 		// so that we know it if the filter settings change
-		focusResource = resource;
+		focusResources = resources;
 		
 		if (updateNeeded) {
 			viewer.getControl().setRedraw(false);
@@ -1200,22 +1289,6 @@ static void writeMarker(StringBuffer buf, IMarker marker) {
 	buf.append("\t"); //$NON-NLS-1$
 	buf.append(MarkerUtil.getLineAndLocation(marker));
 	buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
-}
 
-/**
- * Get the adapter that is to be used on object. Return the
- * default adapter if there is not one registered and the
- * object is adaptable, else return null.
- */
-private ITaskListResourceAdapter getTaskListAdapter(Object object){
-	if(object instanceof IAdaptable){
-		Object adapter =
-			((IAdaptable) object).getAdapter(ITaskListResourceAdapter.class);
-		if(adapter == null)
-			return DefaultTaskListResourceAdapter.getDefault();
-		else 
-			return (ITaskListResourceAdapter) adapter;
-	}
-	return null;
 }
 }

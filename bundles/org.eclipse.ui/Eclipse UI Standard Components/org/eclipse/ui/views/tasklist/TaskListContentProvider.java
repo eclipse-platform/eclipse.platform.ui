@@ -206,40 +206,69 @@ class TaskListContentProvider implements IStructuredContentProvider,
 	 * Returns the markers to show in the task list.
 	 */
 	private IMarker[] getMarkers() throws CoreException {			
-		IResource resource = taskList.getResource();
+		IResource[] resources = taskList.getResources();
+		int l = resources.length;
+		IResource resource;
+		boolean bExists = false;
 		
-		if (!resource.exists()) {
+		for (int i = 0; i < l; i++) {
+			resource = resources[i];
+			
+			if (resource != null && resource.exists()) {
+				bExists = true;
+				break;
+			}	
+		}
+		
+		
+		if (!bExists) {
 			return new IMarker[0];
 		}
 		
-		// added by cagatayk@acm.org
 		if (taskList.showOwnerProject()) {
-			IResource project = resource.getProject();
+			IResource[] projectResources = new IResource[l];	
+			IResource project;
 			
-			// leave it alone if it's workspace root
-			if (project != null) {
-				resource = project;
+			for (int i = 0; i < l; i++) {
+				resource = resources[i];
+			
+				if (resource != null) {
+					project = resource.getProject();
+
+					if (project != null) {
+						projectResources[i] = project;
+					}
+					else {
+						projectResources[i] = resource;
+					}			
+				}
 			}
+			
+			resources = projectResources;
 		}
 		
 		int depth = taskList.getResourceDepth();
-		IMarker[] markers = resource.findMarkers(null, true, depth);
-		
-		// Do our own filtering below rather than using a viewer filter
-		// because this simplifies maintaining the marker counts.
 		TasksFilter filter = taskList.getFilter();		
-		ArrayList list = new ArrayList(markers.length);
+		Set set = new HashSet();
 
-		for (int i = 0; i < markers.length; ++i) {
-			IMarker marker = markers[i];
+		for (int i = 0; i < l; i++) {
+			resource = resources[i];
+			
+			if (resource != null) {
+				IMarker[] markers = resource.findMarkers(null, true, depth);
+
+				for (int j = 0; j < markers.length; ++j) {
+					IMarker marker = markers[j];
 		
-			if (filter.select(marker)) {
-				list.add(marker);
+					if (filter.select(marker)) {
+						set.add(marker);
+					}
+				}
 			}
 		}
 	
-		IMarker[] result = new IMarker[list.size()];
-		list.toArray(result);	
+		IMarker[] result = new IMarker[set.size()];
+		set.toArray(result);	
 		return result;
 	}
 
