@@ -76,18 +76,14 @@ public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager popupMe
 	//IResource.
 	
 	Class resourceClass = getCommonResourceClass(elements);
-	
-	List contributors = getContributors(commonClass);
-	
-	if (contributors == null)
-		contributors = new ArrayList();
+	List contributors = new ArrayList();
 	
 	//If there is a resource class add it in
-	if(resourceClass != null){
-		List resourceContributors = getContributors(resourceClass);
-		if(resourceContributors != null)
-			contributors.addAll(resourceContributors);
-	}	
+	if(resourceClass == null)
+		contributors = getContributors(commonClass);
+	else
+		contributors = getContributors(commonClass,resourceClass);
+		
 
 	// Do the contributions.  Add menus first, then actions
 	boolean actualContributions = false;
