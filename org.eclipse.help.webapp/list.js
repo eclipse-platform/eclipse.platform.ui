@@ -8,6 +8,21 @@
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
+var oldActive;
+
+/**
+ * Returns the target node of an event
+ */
+function getTarget(e) {
+	var target;
+  	if (isMozilla)
+  		target = e.target;
+  	else if (isIE)
+   		target = window.event.srcElement;
+
+	return target;
+}
+
 
 /**
  * Returns the row of this click
@@ -37,50 +52,77 @@ function getAnchorNode(tr)
 		return a.item(0);
 }
 
-// NOTE: MOZILLA BUG WITH A:focus and A:active styles
-var oldActive;
-
-
 /**
- * display topic label in the status line on mouse over topic
+ * Returns the next sibling element
  */
-function mouseMoveHandler(e) {
-	try{
-	  var overNode;
-	  if (isMozilla)
-	  	overNode = e.target;
-	  else if (isIE)
-	   	overNode = window.event.srcElement;
-	  else 
-	  	return;
-	  	
-	  overNode = getTRNode(overNode);
-	  if (overNode == null)
-	   return;
-	 
-	  if (isMozilla)
-	     e.cancelBubble = false;
-	     
-	  window.status = getAnchorNode(overNode).innerHTML;
-	}catch(e){}
+function getNextSibling(node) 
+{
+	if (!node) return null;
+	var sib = node.nextSibling;
+	while (sib && sib.nodeType == 3) // text node
+		sib = sib.nextSibling;
+	return sib;
 }
 
 /**
- * handler for clicking on a node
+ * Returns the next sibling element
  */
-function mouseClickHandler(e) {
-  var clickedNode;
-  if (isMozilla)
-  	clickedNode = e.target;
-  else if (isIE)
-   	clickedNode = window.event.srcElement;
-  else 
-  	return;
-  	
-  highlightTopic(clickedNode);
+function getPrevSibling(node) 
+{
+	if (!node) return null;
+	var sib = node.previousSibling;
+	while (sib && sib.nodeType == 3) // text node
+		sib = sib.previousSibling;
+	return sib;
+}
 
-  if (isMozilla)
-  	e.cancelBubble = true;
+/**
+ * Returns the descendat node with specified tag (depth-first searches)
+ */
+function getDescendantNode(parent, childTag)
+{	
+	if (parent.tagName == childTag)
+		return parent;
+		
+	var list = parent.childNodes;
+	if (list == null) return null;
+	for (var i=0; i<list.length; i++) {
+		var child = list.item(i);
+		if(child.tagName == childTag)
+			return child;
+		
+		child = getDescendantNode(child, childTag);
+		if (child != null)
+			return child;
+	}
+	return null;
+}
+
+
+/**
+ * Return next item in the list
+ */
+function getNextDown(node)
+{
+	var tr = getTRNode(node);
+	tr = getNextSibling(tr);
+	if (tr == null) 
+		return null;
+	else
+		return getDescendantNode(tr, "A");
+}
+
+/**
+ * Return previous item in the list
+ */
+function getNextUp(node)
+{
+	var tr = getTRNode(node);
+	tr = getPrevSibling(tr);
+	if (tr == null) 
+		return null;
+	else
+		return getDescendantNode(tr, "A");
 }
 
 
@@ -172,10 +214,103 @@ function scrollIntoView(node)
 	window.scrollBy(0, scroll);
 }
 
+/**
+ * display topic label in the status line on mouse over topic
+ */
+function mouseMoveHandler(e) {
+	try{
+	  var overNode;
+	  if (isMozilla)
+	  	overNode = e.target;
+	  else if (isIE)
+	   	overNode = window.event.srcElement;
+	  else 
+	  	return;
+	  	
+	  overNode = getTRNode(overNode);
+	  if (overNode == null)
+	   return;
+	 
+	  if (isMozilla)
+	     e.cancelBubble = false;
+	     
+	  window.status = getAnchorNode(overNode).innerHTML;
+	}catch(e){}
+}
+
+/**
+ * handler for clicking on a node
+ */
+function mouseClickHandler(e) {
+  var clickedNode;
+  if (isMozilla)
+  	clickedNode = e.target;
+  else if (isIE)
+   	clickedNode = window.event.srcElement;
+  else 
+  	return;
+  	
+  highlightTopic(clickedNode);
+
+  if (isMozilla)
+  	e.cancelBubble = true;
+}
+
+
+
 function focusHandler(e)
 {
 	if (oldActive)
 		oldActive.focus();
+}
+
+/**
+ * Handler for key down (arrows)
+ */
+function keyDownHandler(e)
+{
+	var key;
+	var altKey;
+	var shiftKey;
+	var ctrlKey;
+	
+	if (isIE) {
+		key = window.event.keyCode;
+		altKey = window.event.altKey;
+		shiftKey = window.event.shiftKey;
+		ctrlKey = window.event.ctrlKey;
+	} else if (isMozilla) {
+		key = e.keyCode;
+		altKey = e.altKey;
+		shiftKey = e.shiftKey;
+		ctrlKey = e.ctrlKey;
+	}
+		
+	if (key == 9 || key == 13 || altKey || shiftKey || ctrlKey ) // tab, enter or modifiers
+		return true;
+	if (isMozilla)
+  		e.cancelBubble = true;
+  	else if (isIE)
+  		window.event.cancelBubble = true;
+  		
+  	if (key == 40 ) { // down arrow
+  		var clickedNode = getTarget(e);
+  		if (!clickedNode) return;
+
+		var next = getNextDown(clickedNode);
+		if (next)
+			next.focus();
+
+  	} else if (key == 38 ) { // up arrow
+  		var clickedNode = getTarget(e);
+  		if (!clickedNode) return;
+
+		var next = getNextUp(clickedNode);
+		if (next)
+			next.focus();
+  	}
+  				
+  	return false;
 }
 
 
@@ -183,10 +318,12 @@ function focusHandler(e)
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('mousemove', mouseMoveHandler, true);
+  document.addEventListener('keydown', keyDownHandler, true);
   //document.addEventListener("focus", focusHandler, true);
 }
 else if (isIE){
   document.onclick = mouseClickHandler;
   document.onmousemove = mouseMoveHandler;
+  document.onkeydown = keyDownHandler;
   window.onfocus = focusHandler;
 }

@@ -165,7 +165,7 @@ setTimeout('refresh()', 2000);
 				href += "&toc="+URLEncoder.encode(topic.getAttribute("toc"));			
 
 		} else
-			href = "javascript:void 0";
+			href = "about:blank";
 %>
 
 <tr class='list'>

@@ -121,18 +121,17 @@ A.active{
 		if("yes".equalsIgnoreCase(request.getParameter("synch"))){
 %>
 alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", null))%>');
+// when we don't find the specified toc, we just restore navigation
+parent.parent.restoreNavigation();
+<%
+		} else {
+%>
+// Show bookshelf
+window.location.replace("tocs.jsp");
+parent.parent.showBookshelfIcon(false);
 <%
 		}
 %>
-if (parent.parent.temp){
-	// Restore old navigation
-	document.body.innerHTML = parent.parent.temp;
-	if (parent.parent.tempActive)
-		oldActive = parent.parent.tempActive;
-}else {
-	// Show bookshelf
-	window.location.replace("tocs.jsp");
-}
 
 </script>
 </body>
@@ -150,7 +149,7 @@ if (parent.parent.temp){
 <body>
 	<ul class='expanded' id='root'>
 		<li>
-		<nobr><img id="book" src="images/container_obj.gif"><a class='book' href='<%=tocDescription%>'><%=tocElement.getAttribute("label")%></a></nobr>
+		<nobr><img id="book" src="images/toc_obj.gif"><a class='book' href='<%=tocDescription%>'><%=tocElement.getAttribute("label")%></a></nobr>
 		</li>
 <%
 	// JSP does not have good support for recursive calls using scriplets
@@ -199,7 +198,7 @@ if (parent.parent.temp){
 %>
 		<li>
 			<nobr>
-			<img src="images/plus_tree.gif" class="collapsed"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/container_obj.gif"><%=topic.getAttribute("label")%></a>
+			<img src="images/plus.gif" class="collapsed"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/container_obj.gif"><%=topic.getAttribute("label")%></a>
 			</nobr>
 			<ul class='collapsed'>
 <%
@@ -209,7 +208,7 @@ if (parent.parent.temp){
 %>
 		<li>
 			<nobr>
-			<img src="images/plus_tree.gif" style="visibility:hidden;"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/topic_obj.gif"><%=topic.getAttribute("label")%></a>
+			<img src="images/plus.gif" style="visibility:hidden;"><a href="<%=href%>" title="<%=topic.getAttribute("label")%>"><img src="images/topic.gif"><%=topic.getAttribute("label")%></a>
 			</nobr>
 		</li>
 <%
@@ -223,6 +222,7 @@ if (parent.parent.temp){
 	if("yes".equalsIgnoreCase(request.getParameter("synch"))){
 %>
 		parent.parent.switchTab("toc");
+		parent.parent.showBookshelfIcon(true);
 <%
 	}
 %>	

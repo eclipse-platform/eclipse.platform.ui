@@ -15,6 +15,7 @@ var lastTab = "";
 
 var temp;
 var tempActive;
+var tempTab = "";
 
 /**
  * Notification when frames are loaded
@@ -89,7 +90,7 @@ function setToolbarTitle(title)
  * Switch tabs.
  */ 
 function switchTab(nav, newTitle)
-{
+{ 	
 	if (nav == lastTab) 
 		return;
 		
@@ -122,12 +123,14 @@ function switchTab(nav, newTitle)
 			buttons[i].className = "tab";
  	 }
  	 
- 	 if (nav == "toc" && 
+	// enable/disable the bookshelf icon
+ 	if (nav == "toc" && 
  	 	 (NavFrame.toc.location.href == "about:blank" && NavFrame.document.getElementById("toc").src.indexOf("tocs.jsp") >= 0
  	 	  || NavFrame.toc.location.href.indexOf("tocs.jsp") >= 0 ))
  	 	showBookshelfIcon(false);
- 	 else
+ 	else
  	 	showBookshelfIcon(true);
+ 	
 }
  
  
@@ -136,6 +139,9 @@ function switchTab(nav, newTitle)
  */
 function displayTocFor(topic)
 {
+	tempTab = lastTab;
+	switchTab("toc");
+	
 	// remove the query, if any
 	var i = topic.indexOf('?');
 	if (i != -1)
@@ -145,9 +151,7 @@ function displayTocFor(topic)
 	if (NavFrame.toc.selectTopic)
 		selected = NavFrame.toc.selectTopic(topic);
 
-	if (selected) {
-		switchTab("toc");
-	} else	{
+	if (!selected) {
 		// save the current navigation, so we can retrieve it when synch does not work
 		saveNavigation();
 		NavFrame.toc.location = "toc.jsp?topic="+topic+"&synch=yes";		
@@ -162,6 +166,28 @@ function saveNavigation()
 			tempActive = NavFrame.toc.oldActive;
 	}else {
 		temp = null;
+	}
+}
+
+function restoreNavigation()
+{	
+	// turn to the right tab
+	var oldTab = tempTab;
+	
+	switchTab(tempTab);
+	
+	if (temp){
+		// Restore old navigation
+		NavFrame.toc.document.body.innerHTML = temp;
+		if (tempActive)
+			NavFrame.oldActive = tempActive;
+		if (oldTab == "toc")
+			showBookshelfIcon(true);
+	}else {
+		// Show bookshelf
+		NavFrame.toc.location.replace("tocs.jsp");
+		if (oldTab == "toc")
+			showBookshelfIcon(false);
 	}
 }
 

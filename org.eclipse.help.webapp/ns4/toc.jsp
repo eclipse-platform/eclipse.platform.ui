@@ -46,7 +46,7 @@ A.node {
 }
       
 A.leaf {
-	background-image: url("../images/topic_obj.gif");
+	background-image: url("../images/topic.gif");
 	background-position:center left;
 	background-repeat:no-repeat;
 }
@@ -197,7 +197,7 @@ if (parent.parent.temp){
 		else if (href != null && href.length() > 0 && href.charAt(0) == '/')
 			href = "content/help:" + href;
 	
-		String image = hasNodes ? "../images/container_obj.gif" : "../images/topic_obj.gif";
+		String image = hasNodes ? "../images/container_obj.gif" : "../images/topic.gif";
 		String li_className = hasNodes ? "collapsed" : "leaf";
 		// use <nobr> for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 %>

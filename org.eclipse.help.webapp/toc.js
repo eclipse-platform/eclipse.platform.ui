@@ -15,14 +15,14 @@ var oldActive;
 
 // Preload images
 minus = new Image();
-minus.src = "images/minus_tree.gif";
+minus.src = "images/minus.gif";
 plus = new Image();
-plus.src = "images/plus_tree.gif";
+plus.src = "images/plus.gif";
 
 folder_img = new Image();
 folder_img.src = "images/container_obj.gif";
 topic_img = new Image();
-topic_img.src = "images/topic_obj.gif";
+topic_img.src = "images/topic.gif";
 
 /**
  * Returns the target node of an event
@@ -442,12 +442,23 @@ function mouseDblClickHandler(e) {
 function keyDownHandler(e)
 {
 	var key;
-	if (isIE)
+	var altKey;
+	var shiftKey;
+	var ctrlKey;
+	
+	if (isIE) {
 		key = window.event.keyCode;
-	else if (isMozilla)
+		altKey = window.event.altKey;
+		shiftKey = window.event.shiftKey;
+		ctrlKey = window.event.ctrlKey;
+	} else if (isMozilla) {
 		key = e.keyCode;
+		altKey = e.altKey;
+		shiftKey = e.shiftKey;
+		ctrlKey = e.ctrlKey;
+	}
 		
-	if (key == 9 | key == 13) // tab or enter
+	if (key == 9 || key == 13 || altKey || shiftKey || ctrlKey ) // tab, enter or modifiers
 		return true;
 	
 	if (isMozilla)

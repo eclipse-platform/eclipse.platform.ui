@@ -127,7 +127,7 @@ if(request.getParameter("contextId")!=null)
 
 <tr class='list' nowrap align=left>
 	<td align='left' nowrap width="16">
-		<img src="../images/topic_obj.gif" border=0>
+		<img src="../images/topic.gif" border=0>
 	</td>
 	<td align='left' class='label' nowrap>
 		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=label%>"><%=label%></a>

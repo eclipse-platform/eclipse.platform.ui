@@ -127,12 +127,12 @@ if(request.getParameter("contextId")!=null)
 				href += "&toc="+URLEncoder.encode(topic.getAttribute("toc"));			
 
 		} else
-			href = "javascript:void 0";
+			href = "about:blank";
 %>
 
 <tr class='list'>
 	<td align='left' class='label' nowrap>
-		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=label%>"><img src="images/topic_obj.gif"><%=label%></a>
+		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=label%>"><img src="images/topic.gif"><%=label%></a>
 	</td>
 </tr>
 
