@@ -106,6 +106,10 @@ public final class ChildDocument extends AbstractDocument {
 	private DocumentEvent fEvent;
 	/** Indicates whether the child document initiated a parent document update or not */
 	private boolean fIsUpdating= false;
+	/** The expected document content after the parent document changed. */
+	private String fExpectedContent;
+	/** The length of this child document prior to the change of the parent document */
+	private int fRememberedLength;
 	
 	/**
 	 * Creates a child document for the given range of the given parent document.
@@ -199,8 +203,16 @@ public final class ChildDocument extends AbstractDocument {
 		fParentEvent= event;
 				
 		if (fRange.overlapsWith(event.fOffset, event.fLength)) {			
+			
 			fEvent= normalize(event);
+			
+			StringBuffer buffer= new StringBuffer(get());
+			fRememberedLength= buffer.length();
+			buffer.replace(fEvent.fOffset, fEvent.fOffset+ fEvent.fLength, fEvent.fText == null ? "" : fEvent.fText);  //$NON-NLS-1$
+			fExpectedContent= buffer.toString();
+			
 			delayedFireDocumentAboutToBeChanged();
+		
 		} else
 			fEvent= null;
 	}
@@ -214,8 +226,20 @@ public final class ChildDocument extends AbstractDocument {
 	public void parentDocumentChanged(DocumentEvent event) {
 		if ( !fIsUpdating && event == fParentEvent && fEvent != null) {
 			try {
+				
+				if (!fExpectedContent.equals(get())) {
+					// patch the event
+					fEvent.fOffset= 0;
+					fEvent.fLength= fRememberedLength;
+					fEvent.fText= get();
+				}
+				
+				fRememberedLength= 0;
+				fExpectedContent= null;
+				
 				getTracker().replace(fEvent.fOffset, fEvent.fLength, fEvent.fText);
 				fireDocumentChanged(fEvent);
+				
 			} catch (BadLocationException x) {
 				Assert.isLegal(false);
 			}
