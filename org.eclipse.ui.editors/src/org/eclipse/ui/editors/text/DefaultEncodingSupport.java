@@ -112,7 +112,6 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 						new Runnable() {
 							   public void run() {
 								   fTextEditor.doRevertToSaved();
-								   fTextEditor.updatePartControl(input);
 							   }
 						};
 					Display display= fTextEditor.getSite().getShell().getDisplay();
