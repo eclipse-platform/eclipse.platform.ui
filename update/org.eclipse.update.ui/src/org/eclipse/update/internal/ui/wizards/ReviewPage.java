@@ -152,23 +152,27 @@ public class ReviewPage
                     for (int i = 0; i < jobs.size(); i++) {
                         IInstallFeatureOperation op = (IInstallFeatureOperation) jobs
                                 .get(i);
+                        // we need a label for the site, so try to get it from the old
+                        // feature update url
+                        String label = null;
                         IFeature[] existingFeatures = UpdateUtils
                                 .getInstalledFeatures(op.getFeature(), true);
                         if (existingFeatures != null
                                 && existingFeatures.length > 0) {
                             IURLEntry entry = op.getFeature()
                                     .getUpdateSiteEntry();
-                            String label = entry.getAnnotation() == null ? entry
-                                    .getURL().toExternalForm()
-                                    : entry.getAnnotation();
-
-                            SiteBookmark bookmark = new SiteBookmark(label,
-                                    entry.getURL(), false);
-                            if (sitesList.contains(bookmark))
-                                continue;
-                            else
-                                sitesList.add(bookmark);
+                            label = entry.getAnnotation();
                         }
+                        if (label == null)
+                            label = op.getFeature().getSite().getURL().toExternalForm();
+                                    
+                        SiteBookmark bookmark = new SiteBookmark(label,
+                                op.getFeature().getSite().getURL(), false);
+                        if (sitesList.contains(bookmark))
+                            continue;
+                        else
+                            sitesList.add(bookmark);
+                        
                     }
                     if (!sitesList.isEmpty())
                         return (SiteBookmark[]) sitesList

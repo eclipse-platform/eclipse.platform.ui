@@ -326,7 +326,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 							collector.accept(patch);
 					}
 				}
-				else if (topHit == null) {
+				else  {
 					topHit = job.getFeature();
 					if (filter.accept(topHit))
 						collector.accept(topHit);
