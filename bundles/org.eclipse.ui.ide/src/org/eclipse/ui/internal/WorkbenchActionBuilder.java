@@ -42,8 +42,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Adds actions to a workbench window.
- * 
- * @issue move WorkbenchActionBuilder to package org.eclipse.ui.internal.ide
  */
 public final class WorkbenchActionBuilder {
 
@@ -395,8 +393,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
 		{
 			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
-			// @issue ref to internal generic workbench class - should be on contributionitemfactory
-			showInSubMenu.add(new ShowInMenu(getWindow()));
+			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getWindow()));
 			menu.add(showInSubMenu);
 		}
 		for (int i = 2; i < 5; ++i) {
