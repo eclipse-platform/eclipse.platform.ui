@@ -102,6 +102,10 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		// error recovery
 		if (featurePath.endsWith(Feature.FEATURE_XML)) {
 			oldPath=featurePath.replace(File.separatorChar,'/');
+			File localFile = new File(oldPath);
+			if (localFile.exists()){
+				throw Utilities.newCoreException(Policy.bind("UpdateManagerUtils.FileAlreadyExists",new Object[]{localFile}),null);
+			}			
 			featurePath =
 				ErrorRecoveryLog.getLocalRandomIdentifier(featurePath);
 			newPath = featurePath;
@@ -174,6 +178,16 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			}			
 		}
 		
+		// close plugin and non plugin content consumer
+		if (contentConsumers!=null){
+			Iterator iter = contentConsumers.iterator();
+			while (iter.hasNext()) {
+				ContentConsumer element = (ContentConsumer) iter.next();
+				element.close();
+			}
+		}
+		contentConsumers = null;		
+		
 		if (ref != null) {
 			// the feature MUST have renamed the plugins at that point
 			// (by closing the PluginContentConsumer)
@@ -204,20 +218,34 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			}
 		}
 		contentConsumers = null;		
+		boolean sucess = true;
 		
-		// remove the feature files;
-		Iterator iter = installedFiles.iterator();
-		File featureFile = null;
-		while (iter.hasNext()) {
-			String path = (String) iter.next();
-			featureFile = new File(path);
-			UpdateManagerUtils.removeFromFileSystem(featureFile);			
-		}
-		
-		// remove the feature,
-		String featurePath = getFeaturePath();
-		UpdateManagerUtils.removeEmptyDirectoriesFromFileSystem(new File(featurePath));
-				
+		//Remove feature.xml first if it exists
+		if (oldPath!=null){
+			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.DELETE_ENTRY, oldPath);
+			File fileToDelete = new File(oldPath);
+			if (fileToDelete.exists()){
+				sucess = fileToDelete.delete();
+			}	
+		}		
+
+		if(!sucess){
+			String msg = Policy.bind("Unable to delete",oldPath);
+			UpdateManagerPlugin.log(msg,null);
+		} else {
+			// remove the feature files;
+			Iterator iter = installedFiles.iterator();
+			File featureFile = null;
+			while (iter.hasNext()) {
+				String path = (String) iter.next();
+				featureFile = new File(path);
+				UpdateManagerUtils.removeFromFileSystem(featureFile);			
+			}
+			
+			// remove the feature directory if empty
+			String featurePath = getFeaturePath();
+			UpdateManagerUtils.removeEmptyDirectoriesFromFileSystem(new File(featurePath));
+		}		
 		closed= true;
 		return;
 	}

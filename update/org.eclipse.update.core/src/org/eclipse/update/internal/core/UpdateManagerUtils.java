@@ -163,11 +163,8 @@ public class UpdateManagerUtils {
 		// get the path from the File to resolve File.separator..
 		// do not use the String as it may contain URL like separator
 		File localFile = new File(localName);
-		if (localFile.exists()){
-			throw new IOException(Policy.bind("UpdateManagerUtils.FileAlreadyExists",new Object[]{localFile}));
-		}
 		int index = localFile.getPath().lastIndexOf(File.separator);
-		if (index != -1) {
+		if (index != -1) { 
 			File dir = new File(localFile.getPath().substring(0, index));
 			if (!dir.exists())
 				dir.mkdirs();

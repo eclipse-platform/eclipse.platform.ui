@@ -1082,27 +1082,27 @@ public class ConfiguredSite
 	private boolean containsMarker(String marker){
 		ISite site = getSite();
 		if (site==null) {
-			UpdateManagerPlugin.warn("The site is null",new Exception());			
+			UpdateManagerPlugin.warn("The site is null",null);			
 			 return false;
 		}
 		
 		URL url = site.getURL();
 		if (url == null) {
-			UpdateManagerPlugin.warn("Site URL is null",new Exception());	
+			UpdateManagerPlugin.warn("Site URL is null",null);	
 			return false;
 		}
 		if (!"file".equalsIgnoreCase(url.getProtocol())){
-			UpdateManagerPlugin.warn("Non file protocol",new Exception());
+			UpdateManagerPlugin.warn("Non file protocol",null);
 			return false;
 		}
 		File file = new File(url.getFile());
 		if (!file.exists()){
-			UpdateManagerPlugin.warn("The site doesn't exist:"+file,new Exception());
+			UpdateManagerPlugin.warn("The site doesn't exist:"+file,null);
 			return false;			
 		}
 		File extension = new File(file,marker);
 		if (!extension.exists()){
-			UpdateManagerPlugin.warn("The extensionfile does not exist:"+extension,new Exception());
+			UpdateManagerPlugin.warn("The extensionfile does not exist:"+extension,null);
 			return false;									
 		}
 		return true;			
@@ -1114,7 +1114,7 @@ public class ConfiguredSite
 	public boolean isNativelyLinked() throws CoreException {
 		String platformString = getPlatformURLString();
 		if (platformString==null){
-			UpdateManagerPlugin.warn("Unable to retrieve platformString",new Exception());
+			UpdateManagerPlugin.warn("Unable to retrieve platformString",null);
 			return false;									
 		}
 		

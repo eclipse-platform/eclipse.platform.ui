@@ -21,7 +21,6 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	private boolean closed= false;
 	private boolean aborted= false;	
 	private ISiteContentConsumer contentConsumer;
-	private List /* of ContentConsumer */ contentConsumers;
 	private IFeatureContentConsumer parent = null;
 	private List /* of IFeatureContentCOnsumer */ children;
 
@@ -32,7 +31,6 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 		throws CoreException {
 		ContentConsumer cons = new NonPluginEntryContentConsumer(
 			getContentConsumer().open(nonPluginEntry));
-		addContentConsumers(cons);
 		return cons;
 	}
 
@@ -41,7 +39,6 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	 */
 	public IContentConsumer open(IPluginEntry pluginEntry) throws CoreException {
 		ContentConsumer cons = new PluginEntryContentConsumer(getContentConsumer().open(pluginEntry));
-		addContentConsumers(cons);
 		return cons;		
 	}
 
@@ -81,25 +78,17 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 			ErrorRecoveryLog.getLog().append(ErrorRecoveryLog.ALL_INSTALLED);
 		}
 		
+		IFeatureReference ref= null;
+		if (contentConsumer != null)
+			ref = contentConsumer.close();
+		
 		// close nested feature
 		IFeatureContentConsumer[] children = getChildren();
 		for (int i = 0; i < children.length; i++) {
 			children[i].close();
 		}
-
-		// close plugin and non plugin content consumer
-		if (contentConsumers!=null){
-			Iterator iter = contentConsumers.iterator();
-			while (iter.hasNext()) {
-				ContentConsumer element = (ContentConsumer) iter.next();
-				element.close();
-			}
-		}
-		contentConsumers = null;
-		
-		if (contentConsumer != null)
-			return contentConsumer.close();
-		return null;
+					
+		return ref;
 	}
 
 	/*
@@ -131,15 +120,6 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 				throw new UnsupportedOperationException();
 			}
 		return contentConsumer;
-	}
-
-	/*
-	 * Adds a ContentConsumer to the list
-	 */
-	private void addContentConsumers(ContentConsumer cons){
-		if (contentConsumers == null)
-			contentConsumers = new ArrayList();
-		contentConsumers.add(cons);
 	}
 
 	/*
