@@ -434,16 +434,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// Set the default behaviour for showing the task list when there are compiles errors in the build
 		store.setDefault(IPreferenceConstants.SHOW_TASKS_ON_BUILD, true);
 
-		// Set the default configuration for the key binding service
-		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
-		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
 		//Set the default hyperlink line colour to dark blue
 		PreferenceConverter.setDefault(store,JFacePreferences.HYPERLINK_COLOR, new RGB(0, 0, 153));
 		//Set the default active hyperlink line colour to blue
 		PreferenceConverter.setDefault(store,JFacePreferences.ACTIVE_HYPERLINK_COLOR, new RGB(0, 0, 255));
-		
 		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$

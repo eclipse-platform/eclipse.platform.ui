@@ -1807,13 +1807,7 @@
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyConfiguration
-            name="%keyConfiguration.standard.name"
-            description="%keyConfiguration.standard.description"
-            id="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyConfiguration>
-      <keyConfiguration
             name="%keyConfiguration.emacs.name"
-            parentId="org.eclipse.ui.defaultAcceleratorConfiguration"
             description="%keyConfiguration.emacs.description"
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyConfiguration>
@@ -1821,15 +1815,9 @@
    <extension
          point="org.eclipse.ui.contexts">
       <context
-            name="%context.general.name"
-            description="%context.general.description"
-            id="org.eclipse.ui.globalScope">
-      </context>
-      <context
             name="%context.editingText.name"
             description="%context.editingText.description"
-            id="org.eclipse.ui.textEditorScope"
-            parentId="org.eclipse.ui.globalScope">
+            id="org.eclipse.ui.textEditorScope">
       </context>
       <context
             name="%context.editingJavaSource.name"

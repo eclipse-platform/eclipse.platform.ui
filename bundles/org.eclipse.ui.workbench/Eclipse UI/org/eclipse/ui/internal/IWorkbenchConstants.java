@@ -50,10 +50,19 @@ public interface IWorkbenchConstants {
 	 */
 	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
 		
-	// Key binding service defaults
-	// TODO: review the need for these constants
+	/**
+	 * @deprecated
+	 */
 	public static final String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
+
+	/**
+	 * @deprecated 
+	 */
 	public static final String DEFAULT_ACCELERATOR_CONFIGURATION_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
+
+	/**
+	 * @deprecated 
+	 */
 	public static final String DEFAULT_ACCELERATOR_SCOPE_ID = "org.eclipse.ui.globalScope"; //$NON-NLS-1$
 	
 	//mappings for type/extension to an editor - backward compatibility only.

@@ -437,9 +437,7 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 	}
 
 	public void updateActiveContextIds() {
-		final List activeContextIds = new ArrayList(contextManager.getActiveContextIds());
-		activeContextIds.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
-		commandManager.setActiveContextIds(activeContextIds);
+		commandManager.setActiveContextIds(contextManager.getActiveContextIds());
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {

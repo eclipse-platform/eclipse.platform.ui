@@ -1032,8 +1032,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			buildTableCommand();
 			setKeySequence(null);
 		
-			// TODO: add 'globalScope' element to commands extension point to remove this.
-			setScopeId("org.eclipse.ui.globalScope"); //$NON-NLS-1$
+			setScopeId(null); //$NON-NLS-1$
 			setKeyConfigurationId(getActiveKeyConfigurationId());				
 		
 			KeySequence keySequence = getKeySequence();
