@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.lang.reflect.*;
 import java.net.*;
-import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -25,15 +21,14 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
@@ -48,33 +43,34 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 
 		public Object[] getChildren(final Object parent) {
-			if (parent instanceof SiteBookmark) {
-				final SiteBookmark bookmark = (SiteBookmark) parent;
-				if (bookmark.isUnavailable())
-					return new Object[0];
-				final Object[] children =
-					getSiteCatalogWithIndicator(
-						bookmark,
-						!bookmark.isSiteConnected());
-				treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						if (children.length > 0)
-							handleSiteExpanded(bookmark, children);
-					}
-				});
-				return children;
-			}
+//			if (parent instanceof SiteBookmark) {
+//				final SiteBookmark bookmark = (SiteBookmark) parent;
+//				if (bookmark.isUnavailable())
+//					return new Object[0];
+//				final Object[] children =
+//					getSiteCatalogWithIndicator(
+//						bookmark,
+//						!bookmark.isSiteConnected());
+//				treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+//					public void run() {
+//						if (children.length > 0)
+//							handleSiteExpanded(bookmark, children);
+//					}
+//				});
+//				return children;
+//			}
 			return new Object[0];
 		}
 
 		public Object getParent(Object element) {
-			if (element instanceof SiteCategory)
-				return ((SiteCategory) element).getBookmark();
+//			if (element instanceof SiteCategory)
+//				return ((SiteCategory) element).getBookmark();
 			return null;
 		}
 
 		public boolean hasChildren(Object element) {
-			return (element instanceof SiteBookmark);
+            return false;
+//			return (element instanceof SiteBookmark);
 		}
 
 	}
@@ -106,7 +102,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 
 		public void objectsAdded(Object parent, Object[] children) {
-			treeViewer.refresh();
+            treeViewer.refresh();
 			checkItems();
 		}
 
@@ -303,7 +299,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 		Dialog.applyDialogFont(parent);
 
-		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.SitePage"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(client, "org.eclipse.update.ui.SitePage"); //$NON-NLS-1$
 
 		return client;
 	}
@@ -325,11 +321,11 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				Object element = e.getElement();
 				if (element instanceof SiteBookmark)
 					handleSiteChecked((SiteBookmark) element, e.getChecked());
-				else if (element instanceof SiteCategory) {
-					handleCategoryChecked(
-						(SiteCategory) element,
-						e.getChecked());
-				}
+//				else if (element instanceof SiteCategory) {
+//					handleCategoryChecked(
+//						(SiteCategory) element,
+//						e.getChecked());
+//				}
 			}
 		});
 
@@ -362,9 +358,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		for (int i = 0; i < items.length; i++) {
 			SiteBookmark bookmark = (SiteBookmark) items[i].getData();
 			treeViewer.setChecked(bookmark, bookmark.isSelected());
-			String[] ignoredCats = bookmark.getIgnoredCategories();
-			treeViewer.setGrayed(bookmark, ignoredCats.length > 0
-					&& bookmark.isSelected());
+//			String[] ignoredCats = bookmark.getIgnoredCategories();
+//			treeViewer.setGrayed(bookmark, ignoredCats.length > 0
+//					&& bookmark.isSelected());
 		}
 	}
 
@@ -380,6 +376,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		SiteBookmark siteBookmark = LocalSiteSelector.getLocaLSite(getShell());
 		if (siteBookmark != null) {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+            siteBookmark.setSelected(true);
 			model.addBookmark(siteBookmark);
 			model.saveBookmarks();
 			updateSearchRequest();
@@ -392,6 +389,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			LocalSiteSelector.getLocaLZippedSite(getShell());
 		if (siteBookmark != null) {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+            siteBookmark.setSelected(true);
 			model.addBookmark(siteBookmark);
 			model.saveBookmarks();
 			updateSearchRequest();
@@ -477,91 +475,91 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 		
 		bookmark.setSelected(checked);
-		if (checked)
-			bookmark.setIgnoredCategories(new String[0]);
-			
-		if (checked || bookmark.isSiteConnected())
-			treeViewer.setSubtreeChecked(bookmark, checked);
-		// at this point, we may realize the site is not available
-		if (bookmark.isUnavailable()) {
-			treeViewer.setChecked(bookmark, false);
-			return;
-		}
-			
-		treeViewer.setGrayed(bookmark, false);
+//		if (checked)
+//			bookmark.setIgnoredCategories(new String[0]);
+//			
+//		if (checked || bookmark.isSiteConnected())
+//			treeViewer.setSubtreeChecked(bookmark, checked);
+//		// at this point, we may realize the site is not available
+//		if (bookmark.isUnavailable()) {
+//			treeViewer.setChecked(bookmark, false);
+//			return;
+//		}
+//			
+//		treeViewer.setGrayed(bookmark, false);
 		updateSearchRequest();
 	}
 
-	private void handleSiteExpanded(SiteBookmark bookmark, Object[] cats) {
-		if (!bookmark.isSelected()) {
-			treeViewer.setSubtreeChecked(bookmark, false);
-			ArrayList result = new ArrayList();
-			for (int i = 0; i < cats.length; i++) {
-				if (cats[i] instanceof SiteCategory) {
-					result.add(((SiteCategory) cats[i]).getFullName());
-				}
-			}
-			bookmark.setIgnoredCategories(
-				(String[]) result.toArray(new String[result.size()]));
-		} else {
-			String[] ignored = bookmark.getIgnoredCategories();
-			HashSet imap = new HashSet();
-			for (int i = 0; i < ignored.length; i++) {
-				imap.add(ignored[i]);
-			}
+//	private void handleSiteExpanded(SiteBookmark bookmark, Object[] cats) {
+//		if (!bookmark.isSelected()) {
+//			treeViewer.setSubtreeChecked(bookmark, false);
+//			ArrayList result = new ArrayList();
+//			for (int i = 0; i < cats.length; i++) {
+//				if (cats[i] instanceof SiteCategory) {
+//					result.add(((SiteCategory) cats[i]).getFullName());
+//				}
+//			}
+//			bookmark.setIgnoredCategories(
+//				(String[]) result.toArray(new String[result.size()]));
+//		} else {
+//			String[] ignored = bookmark.getIgnoredCategories();
+//			HashSet imap = new HashSet();
+//			for (int i = 0; i < ignored.length; i++) {
+//				imap.add(ignored[i]);
+//			}
+//
+//			for (int i = 0; i < cats.length; i++) {
+//				if (cats[i] instanceof SiteCategory) {
+//					SiteCategory category = (SiteCategory) cats[i];
+//					treeViewer.setChecked(
+//						category,
+//						!imap.contains(category.getFullName()));
+//				}
+//			}
+//			treeViewer.setGrayed(
+//				bookmark,
+//				ignored.length > 0 && ignored.length < cats.length);
+//		}
+//		searchRunner.setNewSearchNeeded(true);
+//	}
 
-			for (int i = 0; i < cats.length; i++) {
-				if (cats[i] instanceof SiteCategory) {
-					SiteCategory category = (SiteCategory) cats[i];
-					treeViewer.setChecked(
-						category,
-						!imap.contains(category.getFullName()));
-				}
-			}
-			treeViewer.setGrayed(
-				bookmark,
-				ignored.length > 0 && ignored.length < cats.length);
-		}
-		searchRunner.setNewSearchNeeded(true);
-	}
-
-	private void handleCategoryChecked(
-		SiteCategory category,
-		boolean checked) {
-		SiteBookmark bookmark = category.getBookmark();
-		
-		ArrayList array = new ArrayList();
-
-		if (bookmark.isSelected()) {
-			String[] ignored = bookmark.getIgnoredCategories();
-			for (int i = 0; i < ignored.length; i++) 
-				array.add(ignored[i]);
-		} else {
-			Object[] categs =
-				getSiteCatalogWithIndicator(bookmark, !bookmark.isSiteConnected());
-			for (int i=0; i<categs.length; i++)
-				array.add(((SiteCategory)categs[i]).getFullName());
-		}
-		
-		if (checked) {
-			array.remove(category.getFullName());
-		} else {
-			array.add(category.getFullName());
-		}
-
-		bookmark.setIgnoredCategories(
-			(String[]) array.toArray(new String[array.size()]));
-		searchRunner.setNewSearchNeeded(true);
-
-		Object[] children = ((TreeContentProvider) treeViewer.getContentProvider())
-					.getChildren(category.getBookmark());
-		treeViewer.setChecked(bookmark, array.size() < children.length);
-		bookmark.setSelected(array.size() < children.length);
-		treeViewer.setGrayed(
-			bookmark,
-			array.size() > 0 && array.size() < children.length);
-		updateSearchRequest();
-	}
+//	private void handleCategoryChecked(
+//		SiteCategory category,
+//		boolean checked) {
+//		SiteBookmark bookmark = category.getBookmark();
+//		
+//		ArrayList array = new ArrayList();
+//
+//		if (bookmark.isSelected()) {
+//			String[] ignored = bookmark.getIgnoredCategories();
+//			for (int i = 0; i < ignored.length; i++) 
+//				array.add(ignored[i]);
+//		} else {
+//			Object[] categs =
+//				getSiteCatalogWithIndicator(bookmark, !bookmark.isSiteConnected());
+//			for (int i=0; i<categs.length; i++)
+//				array.add(((SiteCategory)categs[i]).getFullName());
+//		}
+//		
+//		if (checked) {
+//			array.remove(category.getFullName());
+//		} else {
+//			array.add(category.getFullName());
+//		}
+//
+//		bookmark.setIgnoredCategories(
+//			(String[]) array.toArray(new String[array.size()]));
+//		searchRunner.setNewSearchNeeded(true);
+//
+//		Object[] children = ((TreeContentProvider) treeViewer.getContentProvider())
+//					.getChildren(category.getBookmark());
+//		treeViewer.setChecked(bookmark, array.size() < children.length);
+//		bookmark.setSelected(array.size() < children.length);
+//		treeViewer.setGrayed(
+//			bookmark,
+//			array.size() > 0 && array.size() < children.length);
+//		updateSearchRequest();
+//	}
 
 
 	private void handleSelectionChanged(IStructuredSelection ssel) {
@@ -572,9 +570,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			enable = !((SiteBookmark) item).isReadOnly();
 			description = ((SiteBookmark)item).getDescription();
 		} else if (item instanceof SiteCategory) {
-			IURLEntry descEntry = ((SiteCategory)item).getCategory().getDescription();
-			if (descEntry != null)
-				description = descEntry.getAnnotation();
+//			IURLEntry descEntry = ((SiteCategory)item).getCategory().getDescription();
+//			if (descEntry != null)
+//				description = descEntry.getAnnotation();
 		}
 		editButton.setEnabled(enable);
 		removeButton.setEnabled(enable);
@@ -622,49 +620,49 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 	}
 
-	class CatalogBag {
-		Object[] catalog;
-	}
-
-	private Object[] getSiteCatalogWithIndicator(
-		final SiteBookmark bookmark,
-		final boolean connect) {
-		final CatalogBag bag = new CatalogBag();
-
-		if (bookmark.isUnavailable())
-			return new Object[0];
-		
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException {
-				try {
-					monitor.beginTask("", 3); //$NON-NLS-1$
-					monitor.worked(1);
-
-					if (connect)
-						bookmark.connect(new SubProgressMonitor(monitor, 1));
-					else
-						monitor.worked(1);
-					bag.catalog =
-						bookmark.getCatalog(
-							true,
-							new SubProgressMonitor(monitor, 1));
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-		try {
-			getContainer().run(true, true, op);
-		} catch (InvocationTargetException e) {
-			UpdateUI.logException(e);
-		} catch (InterruptedException e) {
-		}
-
-		return (bag.catalog == null) ? new Object[0] : bag.catalog;
-	}
+//	class CatalogBag {
+//		Object[] catalog;
+//	}
+//
+//	private Object[] getSiteCatalogWithIndicator(
+//		final SiteBookmark bookmark,
+//		final boolean connect) {
+//		final CatalogBag bag = new CatalogBag();
+//
+//		if (bookmark.isUnavailable())
+//			return new Object[0];
+//		
+//		IRunnableWithProgress op = new IRunnableWithProgress() {
+//			public void run(IProgressMonitor monitor)
+//				throws InvocationTargetException {
+//				try {
+//					monitor.beginTask("", 3); //$NON-NLS-1$
+//					monitor.worked(1);
+//
+//					if (connect)
+//						bookmark.connect(new SubProgressMonitor(monitor, 1));
+//					else
+//						monitor.worked(1);
+//					bag.catalog =
+//						bookmark.getCatalog(
+//							true,
+//							new SubProgressMonitor(monitor, 1));
+//				} catch (CoreException e) {
+//					throw new InvocationTargetException(e);
+//				} finally {
+//					monitor.done();
+//				}
+//			}
+//		};
+//		try {
+//			getContainer().run(true, true, op);
+//		} catch (InvocationTargetException e) {
+//			UpdateUI.logException(e);
+//		} catch (InterruptedException e) {
+//		}
+//
+//		return (bag.catalog == null) ? new Object[0] : bag.catalog;
+//	}
 	
 	private SiteBookmark[] getAllSiteBookmarks() {
 		UpdateModel model = UpdateUI.getDefault().getUpdateModel();

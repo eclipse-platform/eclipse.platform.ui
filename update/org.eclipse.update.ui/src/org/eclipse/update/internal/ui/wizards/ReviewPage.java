@@ -65,7 +65,7 @@ public class ReviewPage
 	private int VERSION_ORDER = 1;
 	private int PROVIDER_ORDER = 1;
     
-    private CheckboxTreeViewer treeViewer;
+    private ContainerCheckedTreeViewer treeViewer;
     
     class TreeContentProvider extends DefaultContentProvider implements
             ITreeContentProvider {
@@ -606,7 +606,7 @@ public class ReviewPage
         gd.heightHint =100;
         sform.setLayoutData(gd);
         
-        treeViewer = new CheckboxTreeViewer(sform, SWT.H_SCROLL | SWT.V_SCROLL
+        treeViewer = new ContainerCheckedTreeViewer(sform, SWT.H_SCROLL | SWT.V_SCROLL
                 | SWT.BORDER);
         treeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
         treeViewer.setContentProvider(new TreeContentProvider());
@@ -637,7 +637,7 @@ public class ReviewPage
         
         treeViewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event) {
-                handleCheckStateChange(event);
+                validateSelection();
             }
         });
 
@@ -663,40 +663,6 @@ public class ReviewPage
       descLabel.setLayoutData(gd);
       
       sform.setWeights(new int[] {10, 2});
-    }
-    
-    void handleCheckStateChange(final CheckStateChangedEvent event) {
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-            public void run() {
-                Object element = event.getElement();
-                boolean state = event.getChecked();
-                treeViewer.setGrayed(element, false);
-                if (isExpandable(element))
-                    setSubtreeChecked(element, state, state);
-                // only check subtree if state is set to true
-
-                updateParentState(element, state);
-            }
-        });
-        //pageChanged();
-        validateSelection();
-    }
-    
-
-    void setSubtreeChecked(Object parent, boolean state,
-            boolean checkExpandedState) {
-
-        Object[] children = ((ITreeContentProvider)treeViewer.getContentProvider()).getChildren(parent);
-        for (int i = children.length - 1; i >= 0; i--) {
-            Object element = children[i];
-            if (state) {
-                treeViewer.setChecked(element, true);
-                treeViewer.setGrayed(element, false);
-            } else
-                treeViewer.setGrayChecked(element, false);
-            if (isExpandable(element))
-                setSubtreeChecked(element, state, checkExpandedState);
-        }
     }
     
     void updateParentState(Object child, boolean baseChildState) {
