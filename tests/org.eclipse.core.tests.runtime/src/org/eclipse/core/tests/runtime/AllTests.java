@@ -1,6 +1,8 @@
 package org.eclipse.core.tests.runtime;
 
 import junit.framework.*;
+import org.eclipse.core.tests.runtime.model.ConfigurationElementModelTest;
+
 
 public class AllTests extends TestCase {
 /**
@@ -21,6 +23,8 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.addTest(PathTest.suite());
 	suite.addTest(PlatformTest.suite());
+	suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
+	suite.addTest(ConfigurationElementModelTest.suite());
 	return suite;
 }
 }
