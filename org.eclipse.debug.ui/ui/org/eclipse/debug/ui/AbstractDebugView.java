@@ -571,7 +571,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		if (page != null) {
 			view = page.findView(id);
 		}
-		return null;	
+		return view;	
 	}
 	
 }	
