@@ -31,6 +31,7 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.IDE;
@@ -60,14 +61,14 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	}
 
 	protected void configureTableViewer(TableViewer viewer) {
-		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), null));
+		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTableContentProvider(viewer));
 		setSortOrder(fCurrentSortAction);
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
 	protected void configureTreeViewer(TreeViewer viewer) {
-		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), null));
+		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
