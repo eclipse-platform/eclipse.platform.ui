@@ -147,7 +147,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				temp.add(breakpoint);
 			}
 		}
-		return (IBreakpoint[]) temp.toArray();
+		return (IBreakpoint[]) temp.toArray(new IBreakpoint[temp.size()]);
 	}
 
 	/**
@@ -410,9 +410,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Notifies listeners of the add/remove/change
 	 */
 	private void fireUpdate(IBreakpoint breakpoint, IMarkerDelta delta, int update) {
-		IBreakpointListener[] copiedListeners= (IBreakpointListener[]) fBreakpointListeners.getListeners();
+		Object[] copiedListeners= fBreakpointListeners.getListeners();
 		for (int i= 0; i < copiedListeners.length; i++) {
-			IBreakpointListener listener = copiedListeners[i];
+			IBreakpointListener listener = (IBreakpointListener)copiedListeners[i];
 			switch (update) {
 				case ADDED:
 					listener.breakpointAdded(breakpoint);
