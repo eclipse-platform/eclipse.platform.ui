@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.internal.widgets.FormUtil;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -65,6 +66,7 @@ public abstract class ViewItem {
 	protected CheatSheetView theview;
 	private Composite titleComposite;
 	protected Color white;
+	protected FormToolkit toolkit;
 	protected ScrolledForm form;
 
 	private boolean bold = false;
@@ -74,10 +76,11 @@ public abstract class ViewItem {
 	/**
 	 * Constructor for ViewItem.
 	 */
-	public ViewItem(ScrolledForm form, Composite parent, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
+	public ViewItem(FormToolkit toolkit, ScrolledForm form, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
 		super();
+		this.toolkit = toolkit;
 		this.form = form;
-		this.parent = parent;
+		this.parent = form.getBody();
 		this.contentItem = contentItem;
 		this.itemColor = itemColor;
 		this.theview = theview;
@@ -115,14 +118,13 @@ public abstract class ViewItem {
 		white = bg;
 
 		//		Set up the main composite for the item.******************************************
-		checkDoneLabel = new Label(parent, SWT.NULL);
-		checkDoneLabel.setText(" "); //$NON-NLS-1$
+		checkDoneLabel = toolkit.createLabel(parent, " "); //$NON-NLS-1$
 		checkDoneLabel.setBackground(white);
 //		TableWrapData checkdonelabeldata = new TableWrapData();
 //		checkdonelabeldata.widthHint = Math.max(completeImage.getBounds().width, skipImage.getBounds().width);
 
 
-		mainItemComposite = new ExpandableComposite(parent, SWT.NULL, ExpandableComposite.TREE_NODE);
+		mainItemComposite = toolkit.createExpandableComposite(parent, ExpandableComposite.TREE_NODE);
 		mainItemComposite.setBackground(itemColor);
 		mainItemComposite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String title = contentItem.getTitle();
@@ -138,73 +140,57 @@ public abstract class ViewItem {
 		});
 		
 
-		//check number of extensions for this item.  adjust layout accordingly.
-		int number = 1;
-		ArrayList al = contentItem.getItemExtensions();
-		if (al != null)
-			for (int g = 0; g < al.size(); g++) {
-				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) al.get(g);
-				number += eea.length;
-			}
-
 		//		Set up the title composite for the item.*****************************************
-		titleComposite = new Composite(mainItemComposite, SWT.NULL);
+		titleComposite = toolkit.createComposite(mainItemComposite);
 		titleComposite.setBackground(itemColor);
 
-		GridLayout mylayout = new GridLayout(number, false);
-		GridData mydata = new GridData(GridData.FILL_BOTH);
-
-		titleComposite.setLayout(mylayout);
-		titleComposite.setLayoutData(mydata);
-		mylayout.marginWidth = 0;
-		mylayout.marginHeight = 0;
-		mylayout.verticalSpacing = 0;
-
-		mainItemComposite.setTextClient(titleComposite);
-
-		// handle item extensions here.
+		// handle item extensions here
+		// check number of extensions for this item and adjust layout accordingly
+		int number = 0;
 		ArrayList itemExts = contentItem.getItemExtensions();
-		if (itemExts != null)
-			for (int x = 0; x < itemExts.size(); x++) {
-				AbstractItemExtensionElement[] xe = (AbstractItemExtensionElement[]) itemExts.get(x);
-				for (int g = 0; g < xe.length; g++) {
-					xe[g].createControl(titleComposite);
+		if (itemExts != null) {
+			for (int g = 0; g < itemExts.size(); g++) {
+				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
+				number += eea.length;
+				for (int x = 0; x < eea.length; x++) {
+					eea[x].createControl(titleComposite);
 				}
 			}
+		}
 
-		//don't add the help icon unless there is a help link.
+		// don't add the help icon unless there is a help link
 		if (contentItem.getHref() != null) {
-			ImageHyperlink helpButton = new ImageHyperlink(titleComposite, SWT.NULL);
-			helpButton.setImage(helpImage);
-			helpButton.setBackground(itemColor);
-
-			helpButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.HELP_BUTTON_TOOLTIP));
-//			helpButton.setFAccessibleName(helpButton.getToolTipText());
-//			helpButton.setFAccessibleDescription(helpButton.getToolTipText());
-
+			// adjust the layout count
+			number++;
+			ImageHyperlink helpButton = createButton(titleComposite, helpImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.HELP_BUTTON_TOOLTIP));
+			toolkit.adapt(helpButton, true, true);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
-					ImageHyperlink helpButton = (ImageHyperlink) e.widget;
 					openHelpTopic(contentItem.getHref());
 				}
 			});
 		}
 
+		if(number > 0) {
+			mainItemComposite.setTextClient(titleComposite);
+			GridLayout mylayout = new GridLayout(number, false);
+			GridData mydata = new GridData(GridData.FILL_BOTH);
+	
+			titleComposite.setLayout(mylayout);
+			titleComposite.setLayoutData(mydata);
+			mylayout.marginWidth = 0;
+			mylayout.marginHeight = 0;
+			mylayout.verticalSpacing = 0;
+		}
+
 		//Body wrapper here.   this composite will be hidden and shown as appropriate.
-		bodyWrapperComposite = new Composite(mainItemComposite, SWT.NULL);
+		bodyWrapperComposite = toolkit.createComposite(mainItemComposite);
 		mainItemComposite.setClient(bodyWrapperComposite);
 		TableWrapLayout wrapperLayout = new TableWrapLayout();
 		bodyWrapperComposite.setLayout(wrapperLayout);
 		bodyWrapperComposite.setBackground(itemColor);
 
-		bodyText = new Label(bodyWrapperComposite, SWT.WRAP);
-
-		String btext = contentItem.getText();
-		if (btext != null) {
-			bodyText.setText(btext);
-		} else {
-			bodyText.setText(" "); //$NON-NLS-1$
-		}
+		bodyText = toolkit.createLabel(bodyWrapperComposite, contentItem.getText(), SWT.WRAP);
 
 		//Set up the body text portion here.		
 		bodyText.setBackground(itemColor);
@@ -232,22 +218,17 @@ public abstract class ViewItem {
 		boldFont = new Font(mainItemComposite.getDisplay(), fontDatas);
 	}
 
-	/*package*/
-	void setBold(boolean value) {
-		if(value && !bold) {
-			mainItemComposite.setFont(boldFont);
-			mainItemComposite.layout();
-			parent.layout();
-		} else if(!value && bold) {
-			mainItemComposite.setFont(regularFont);
-			mainItemComposite.layout();
-			parent.layout();
-		}
-		bold = value;
-	}
-	
-	boolean isBold() {
-		return bold;
+	protected ImageHyperlink createButton(Composite parent, Image image, ViewItem item, Color color, String toolTipText) {
+		ImageHyperlink button = new ImageHyperlink(parent, SWT.NULL);
+		toolkit.adapt(button, true, true);
+		button.setImage(image);
+		button.setData(item);
+		button.setBackground(color);
+		button.setToolTipText(toolTipText);
+//		button.setFAccessibleDescription(bodyText.getText());
+//		button.setFAccessibleName(button.getToolTipText());
+
+		return button;
 	}
 
 	public void dispose() {
@@ -279,6 +260,16 @@ public abstract class ViewItem {
 			titleComposite.dispose();
 		if (boldFont != null)
 			boldFont.dispose();
+
+		ArrayList itemExts = contentItem.getItemExtensions();
+		if (itemExts != null) {
+			for (int g = 0; g < itemExts.size(); g++) {
+				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) itemExts.get(g);
+				for (int x = 0; x < eea.length; x++) {
+					eea[x].dispose();
+				}
+			}
+		}
 	}
 
 	/**
@@ -321,6 +312,11 @@ public abstract class ViewItem {
 
 	}
 
+	/*package*/
+	boolean isBold() {
+		return bold;
+	}
+
 	/**
 	 * Returns the completed.
 	 * @return boolean
@@ -349,7 +345,8 @@ public abstract class ViewItem {
 
 	/*package*/
 	byte runAction(CheatSheetManager csm) {
-		return runAction(((Item) contentItem).getActionPluginID(), ((Item) contentItem).getActionClass(), ((Item) contentItem).getActionParams(), csm);
+		Item item = (Item)contentItem;
+		return runAction(item.getActionPluginID(), item.getActionClass(), item.getActionParams(), csm);
 	}
 
 	/**
@@ -361,7 +358,7 @@ public abstract class ViewItem {
 		if (desc == null) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		Class actionClass;
@@ -371,7 +368,7 @@ public abstract class ViewItem {
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), null, status);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 		try {
@@ -379,7 +376,7 @@ public abstract class ViewItem {
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
 
 			//logActionLinkError(pluginId, className);
 			return VIEWITEM_DONOT_ADVANCE;
@@ -419,6 +416,20 @@ public abstract class ViewItem {
 		setBold(false);
 	}
 
+	/*package*/
+	void setBold(boolean value) {
+		if(value && !bold) {
+			mainItemComposite.setFont(boldFont);
+			mainItemComposite.layout();
+			parent.layout();
+		} else if(!value && bold) {
+			mainItemComposite.setFont(regularFont);
+			mainItemComposite.layout();
+			parent.layout();
+		}
+		bold = value;
+	}
+	
 	private void setBodyColor(Color color) {
 		mainItemComposite.setBackground(color);
 		bodyWrapperComposite.setBackground(color);
@@ -481,7 +492,7 @@ public abstract class ViewItem {
 			parent.layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
-			theview.scrollIfNeeded();
+			FormUtil.ensureVisible(getMainItemComposite());
 		}
 	}
 
@@ -499,7 +510,7 @@ public abstract class ViewItem {
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
 
-			theview.scrollIfNeeded();
+			FormUtil.ensureVisible(getMainItemComposite());
 		}
 	}
 
@@ -532,7 +543,7 @@ public abstract class ViewItem {
 			parent.getParent().layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
-			theview.scrollIfNeeded();
+			FormUtil.ensureVisible(getMainItemComposite());
 		}
 	}
 
