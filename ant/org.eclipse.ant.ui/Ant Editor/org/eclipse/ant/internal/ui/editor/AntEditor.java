@@ -23,7 +23,6 @@ import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
-import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
@@ -451,12 +450,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#affectsTextPresentation(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		String property= event.getProperty();
-		return property.equals(IAntEditorColorConstants.TEXT_COLOR) ||
-		property.equals(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR) ||
-		property.equals(IAntEditorColorConstants.STRING_COLOR) ||
-		property.equals(IAntEditorColorConstants.TAG_COLOR) ||
-		property.equals(IAntEditorColorConstants.XML_COMMENT_COLOR);
+		return ((AntEditorSourceViewerConfiguration)getSourceViewerConfiguration()).affectsTextPresentation(event);
 	}
 	
 	/* (non-Javadoc)
@@ -487,7 +481,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		
 		AntEditorSourceViewerConfiguration sourceViewerConfiguration= (AntEditorSourceViewerConfiguration)getSourceViewerConfiguration();
 		if (affectsTextPresentation(event)) {
-			sourceViewerConfiguration.updateScanners();
+			sourceViewerConfiguration.adaptToPreferenceChange(event);
 		}
 		
 		sourceViewerConfiguration.changeConfiguration(event);

@@ -14,26 +14,27 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.MultiLineRule;
-import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 
 /**
  * The scanner to tokenize for strings and tags
  */
-public class AntEditorTagScanner extends RuleBasedScanner {
+public class AntEditorTagScanner extends AbstractAntEditorScanner {
 
 	private Token fStringToken;
 	
     public AntEditorTagScanner() {
     	fStringToken= new Token(
-                			new TextAttribute(
-                				AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.STRING_COLOR)));
+    			createTextAttribute(IAntEditorColorConstants.STRING_COLOR, 
+    					IAntEditorColorConstants.STRING_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
+						IAntEditorColorConstants.STRING_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
                     
 		IRule[] rules= new IRule[3];
 
@@ -47,14 +48,30 @@ public class AntEditorTagScanner extends RuleBasedScanner {
         setRules(rules);
         
         setDefaultReturnToken(
-        		new Token(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TAG_COLOR))));
+        		new Token(createTextAttribute(IAntEditorColorConstants.TAG_COLOR, 
+    					IAntEditorColorConstants.TAG_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
+						IAntEditorColorConstants.TAG_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)));
     }
     
-    /**
-     * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
-     */
-    public void adaptToColorChange() {
-    	((Token)fDefaultReturnToken).setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TAG_COLOR)));
-    	fStringToken.setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.STRING_COLOR)));
+    public void adaptToPreferenceChange(PropertyChangeEvent event) {
+    	String property= event.getProperty();
+    	if (property.startsWith(IAntEditorColorConstants.TAG_COLOR) || property.startsWith(IAntEditorColorConstants.STRING_COLOR)) {
+    		if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+    			adaptToStyleChange(event, getTokenAffected(event), SWT.BOLD);
+    		} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+    			adaptToStyleChange(event, getTokenAffected(event), SWT.ITALIC);
+    		} else {
+    			adaptToColorChange(event, getTokenAffected(event));
+    		}
+    	}
+    }
+    
+    private Token getTokenAffected(PropertyChangeEvent event) {
+    	String property= event.getProperty();
+    	if (property.startsWith(IAntEditorColorConstants.STRING_COLOR)) {
+    		return fStringToken;
+    	}// else if (property.startsWith(IAntEditorColorConstants.TAG_COLOR)) {
+    		return (Token)fDefaultReturnToken;
+    	//}
     }
 }

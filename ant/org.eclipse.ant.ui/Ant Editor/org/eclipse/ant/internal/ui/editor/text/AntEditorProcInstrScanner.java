@@ -14,27 +14,27 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 
 /**
  * The scanner to tokenize for XML processing instructions and text
  */
-public class AntEditorProcInstrScanner extends RuleBasedScanner {
+public class AntEditorProcInstrScanner extends AbstractAntEditorScanner {
 
 	Token fProcInstructionToken= null;
 	
     public AntEditorProcInstrScanner() {
 		IRule[] rules =new IRule[2];
         fProcInstructionToken =
-            new Token(
-                new TextAttribute(
-                    AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
+            new Token(createTextAttribute(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR, 
+					IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
+					IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX));
 
         //Add rule for processing instructions
         rules[0]= new SingleLineRule("<?", "?>", fProcInstructionToken); //$NON-NLS-1$ //$NON-NLS-2$
@@ -44,15 +44,28 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
 
         setRules(rules);
         
-        setDefaultReturnToken(new Token(
-        						new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TEXT_COLOR))));
+        setDefaultReturnToken(new Token(createTextAttribute(IAntEditorColorConstants.TEXT_COLOR, 
+    							IAntEditorColorConstants.TEXT_COLOR + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
+								IAntEditorColorConstants.TEXT_COLOR + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)));
     }
 
-	/**
-	 * Update the text attributes associated with the tokens of this scanner as a color preference has been changed. 
-	 */
-	public void adaptToColorChange() {
-		((Token)fDefaultReturnToken).setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.TEXT_COLOR)));
-		fProcInstructionToken.setData(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)));
-	}
+	private Token getTokenAffected(PropertyChangeEvent event) {
+    	if (event.getProperty().startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)) {
+    		return fProcInstructionToken;
+    	}
+    	return (Token)fDefaultReturnToken;
+    }
+    
+    public void adaptToPreferenceChange(PropertyChangeEvent event) {
+    	String property= event.getProperty();
+    	if (property.startsWith(IAntEditorColorConstants.TEXT_COLOR) || property.startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)) {    		
+    		if (property.endsWith(AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+	    		adaptToStyleChange(event, getTokenAffected(event), SWT.BOLD);
+	    	} else if (property.endsWith(AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+	    		adaptToStyleChange(event, getTokenAffected(event), SWT.ITALIC);
+	    	} else {
+	    		adaptToColorChange(event, getTokenAffected(event));
+	    	}
+    	}
+    }
 }
