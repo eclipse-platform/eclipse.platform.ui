@@ -217,7 +217,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected Viewer createViewer(Composite parent) {
 		LaunchViewer lv = new LaunchViewer(parent);
-		lv.addSelectionChangedListener(this);
+		lv.addPostSelectionChangedListener(this);
 		lv.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
