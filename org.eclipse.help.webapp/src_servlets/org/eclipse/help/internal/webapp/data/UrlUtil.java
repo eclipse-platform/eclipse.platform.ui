@@ -168,11 +168,13 @@ public class UrlUtil {
 			return new Locale(
 				localeStr.substring(0, 2),
 				localeStr.substring(3, 5));
-		} else {
+		} else if (localeStr.length() >= 2) {
 			return new Locale(localeStr.substring(0, 2), "");
-
+		} else {
+			return Locale.getDefault();
 		}
 	}
+	
 	public static String getLocale(HttpServletRequest request) {
 		if (defaultLocale == null) {
 			initializeLocales();
