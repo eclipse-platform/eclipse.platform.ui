@@ -762,6 +762,9 @@ public class ConfiguredSite
 	 * 
 	 */
 	public IStatus getBrokenStatus(IFeature feature) {
+
+		IStatus featureStatus = createStatus(IStatus.OK,IFeature.STATUS_HAPPY,"",null);		
+
 		// check the Plugins of all the features
 		// every plugin of the feature must be on the site
 		ISite currentSite = getSite();
@@ -770,36 +773,28 @@ public class ConfiguredSite
 		IPluginEntry[] result =
 			UpdateManagerUtils.diff(featuresEntries, siteEntries);
 		if (result == null || (result.length != 0)) {
+			String msg = Policy.bind("SiteLocal.FeatureUnHappy");			
+			MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),IFeature.STATUS_UNHAPPY,msg,null);				
 			IPluginEntry[] missing =
 				UpdateManagerUtils.diff(featuresEntries, result);
-			String listOfMissingPlugins = ""; //$NON-NLS-1$
 			for (int k = 0; k < missing.length; k++) {
-				listOfMissingPlugins =
-					listOfMissingPlugins + " "
-						+ missing[k].getVersionedIdentifier().toString();
+				String[] values =
+					new String[] {
+						missing[k].getVersionedIdentifier().toString()};
+				String msg1 =
+						Policy.bind(
+							"ConfiguredSite.MissingPluginsBrokenFeature",
+							values);
 				//$NON-NLS-1$
+				UpdateManagerPlugin.warn(msg1);
+				IStatus status=createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg1,null);
+				multi.add(status);
 			}
-			String featureString =
-				(feature == null) ? null : feature.getURL().toExternalForm();
-			String siteString =
-				(currentSite == null)
-					? null
-					: currentSite.getURL().toExternalForm();
-			String[] values =
-				new String[] {
-					featureString,
-					siteString,
-					listOfMissingPlugins};
-			String msg =
-					Policy.bind(
-						"ConfiguredSite.MissingPluginsBrokenFeature",
-						values);
-			//$NON-NLS-1$
-			UpdateManagerPlugin.warn(msg);
-			return createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg,null);
+			return multi;
 		}
-		
-		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY,null,null);
+
+		String msg = Policy.bind("SiteLocal.FeatureHappy"); 
+		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY,msg,null);
 	}
 
 	/*

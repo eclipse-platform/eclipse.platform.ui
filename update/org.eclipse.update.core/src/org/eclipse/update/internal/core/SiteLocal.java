@@ -27,7 +27,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	private SiteReconciler reconciler;
 	private boolean isTransient = false;
 	private List /* of IPluginEntry */
-	allConfiguredPlugins;
+	allConfiguredFeatures;
 
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
@@ -852,8 +852,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		// not broken, get all plugins of feature
 		// and all plugins of configured features of all configured sites
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
-		IPluginEntry[] allPluginsEntries = getAllConfiguredPlugins();
-		return status(featuresEntries, allPluginsEntries);
+		IFeature[] allFeatures = getAllConfiguredFeatures();
+		return status(featuresEntries, allFeatures);
 	}
 
 	/*
@@ -870,11 +870,16 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		IFeature childFeature = null;		
 		IStatus childStatus;
 		
-		String msg = Policy.bind("SiteLocal.FeatureUnHappy");
+		String msg = Policy.bind("SiteLocal.FeatureHappy");
 		int code = IFeature.STATUS_HAPPY;
 		MultiStatus multiTemp = new MultiStatus(featureStatus.getPlugin(),code,msg,null);
-		if (featureStatus.getSeverity()==IStatus.ERROR)
-			multiTemp.add(featureStatus);
+		if (featureStatus.getSeverity()==IStatus.ERROR){
+			if (featureStatus.isMultiStatus()){
+				multiTemp.addAll(featureStatus);	
+			} else {
+				multiTemp.add(featureStatus);					
+			}
+		}
 		if (featureStatus.getCode()>code) code = featureStatus.getCode();
 		
 		for (int i = 0; i < children.length; i++) {
@@ -899,6 +904,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			}
 		}
 		
+		if (code==IFeature.STATUS_UNHAPPY)
+			msg = Policy.bind("SiteLocal.FeatureUnHappy");
+		if (code==IFeature.STATUS_AMBIGUOUS)
+			msg = Policy.bind("SiteLocal.FeatureAmbiguous");		
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),code,msg,null);
 		multi.addAll(multiTemp);
 		return multi; 
@@ -908,9 +917,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * return all the configured plugins. Not recalculated when a install/remove/configure/unconfigure occurs
 	 * as we expect the user to restart
 	 */
-	private IPluginEntry[] getAllConfiguredPlugins() {
-		if (allConfiguredPlugins == null) {
-			allConfiguredPlugins = new ArrayList();
+	private IFeature[] getAllConfiguredFeatures() {
+		if (allConfiguredFeatures == null) {
+			allConfiguredFeatures = new ArrayList();
 			IConfiguredSite[] configuredSites;
 			IFeatureReference[] configuredFeaturesRef;
 			IFeature feature;
@@ -918,52 +927,63 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			for (int i = 0; i < configuredSites.length; i++) {
 				configuredFeaturesRef = configuredSites[i].getConfiguredFeatures();
 				for (int j = 0; j < configuredFeaturesRef.length; j++) {
-					//try {
-						//feature = configuredFeaturesRef[j].getFeature();
-						//allConfiguredPlugins.addAll(Arrays.asList(feature.getPluginEntries()));
-						allConfiguredPlugins.addAll(Arrays.asList(configuredFeaturesRef[j].getSite().getPluginEntries()));
-					//} catch (CoreException e) {
-					//	UpdateManagerPlugin.warn(null, e);
-					//}
+					try {
+						feature = configuredFeaturesRef[j].getFeature();
+						allConfiguredFeatures.add(feature);
+					} catch (CoreException e) {
+						UpdateManagerPlugin.warn(null, e);
+					}
 				}
 			}
-
 		}
 
-		if (allConfiguredPlugins == null || allConfiguredPlugins.isEmpty()) {
-			return new IPluginEntry[0];
+		if (allConfiguredFeatures == null || allConfiguredFeatures.isEmpty()) {
+			return new IFeature[0];
 		}
 
-		IPluginEntry[] result = new IPluginEntry[allConfiguredPlugins.size()];
-		allConfiguredPlugins.toArray(result);
+		IFeature[] result = new IFeature[allConfiguredFeatures.size()];
+		allConfiguredFeatures.toArray(result);
 		return result;
 	}
 
 	/*
 	 * compute the status based on getStatus() rules 
 	 */
-	private IStatus status(IPluginEntry[] featurePlugins, IPluginEntry[] allPlugins) {
+	private IStatus status(IPluginEntry[] featurePlugins, IFeature[] feature) {
 		VersionedIdentifier featureID;
 		VersionedIdentifier compareID;
 
+		String happyMSG = Policy.bind("SiteLocal.FeatureHappy");
+		String ambiguousMSG = Policy.bind("SiteLocal.FeatureAmbiguous");		
+		IStatus featureStatus = createStatus(IStatus.OK,IFeature.STATUS_HAPPY,"",null);
+		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),IFeature.STATUS_AMBIGUOUS,ambiguousMSG,null);
+
+		
 		// is Ambigous if we find a plugin from the feature
 		// with a different version
 		for (int i = 0; i < featurePlugins.length; i++) {
 			featureID = featurePlugins[i].getVersionedIdentifier();
-			for (int j = 0; j < allPlugins.length; j++) {
-				compareID = allPlugins[j].getVersionedIdentifier();
-				if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
-					if (!featureID.getVersion().equals(compareID.getVersion())) {
-						// there is a plugin with a different version on the path
-						String msg = Policy.bind("SiteLocal.TwoVersionSamePlugin",featureID.toString(),compareID.toString());
-						UpdateManagerPlugin.warn("Found 2 versions of the same plugin on the path:" + featureID.toString() + " & " + compareID.toString());
-						return createStatus(IStatus.ERROR,IFeature.STATUS_AMBIGUOUS,msg,null);
+			for (int k = 0; k < feature.length; k++) {
+				IPluginEntry[] allPlugins = feature[k].getPluginEntries();
+				for (int j = 0; j < allPlugins.length; j++) {
+					compareID = allPlugins[j].getVersionedIdentifier();
+					if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
+						if (!featureID.getVersion().equals(compareID.getVersion())) {
+							// there is a plugin with a different version on the path
+							String msg = Policy.bind("SiteLocal.TwoVersionSamePlugin",new Object[]{feature[k].getVersionedIdentifier(),compareID});
+							UpdateManagerPlugin.warn("Found 2 versions of the same plugin on the path:" + featureID.toString() + " & " + compareID.toString());
+							multi.add(createStatus(IStatus.ERROR,IFeature.STATUS_AMBIGUOUS,msg,null));
+						}
 					}
 				}
 			}
 		}
+		
+		if (!multi.isOK())
+			return multi;
+		
 		// we return happy as we consider the isBroken verification has been done
-		return createStatus(IStatus.OK,IFeature.STATUS_HAPPY,null,null);
+		return createStatus(IStatus.OK,IFeature.STATUS_HAPPY,happyMSG,null);
 	}
 	/*
 	 * creates a Status
