@@ -32,7 +32,6 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	public static final int REGISTRY_CACHE_STATE_DELETED = 2;
 	public static final int REGISTRY_CACHE_STATE_MAX = 2;
 	public static final String INTERNAL_REGISTRY_ADDITION = "InternalRegistryAddition"; //$NON-NLS-1$
-	private int numObjects = 0;
 	private class RegistryElement {
 		private int state;
 		private ArrayList realObjects = null;
@@ -43,7 +42,6 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 				realObjects = new ArrayList();
 			}
 			realObjects.add(obj);
-			numObjects++;
 		}
 		
 		public void addNewObject (Object obj) {
@@ -51,7 +49,6 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 				realObjects = new ArrayList();
 			}
 			realObjects.add(obj);
-			numObjects++;
 		}
 		
 		public void changeState(int newState) {
@@ -62,10 +59,6 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 		
 		public ArrayList getRealObjects() {
 			return realObjects;
-		}
-		
-		public int howManyObjects() {
-			return numObjects;
 		}
 	}
 	
@@ -83,17 +76,18 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 		Object[] regElements = cache.values().toArray();
 		if (regElements.length == 0)
 			return null;
-		Object[] ret = new Object[numObjects];
-		int retIdx = 0;
+		ArrayList retList = new ArrayList();
 		for (int i = 0; i < regElements.length; i++) {
 			ArrayList listElement = ((RegistryElement)regElements[i]).getRealObjects();
 			if (listElement != null) {
 				ListIterator iter = listElement.listIterator();
 				while (iter.hasNext()) {
-					ret[retIdx++] = iter.next();
+					retList.add(iter.next());
 				}
 			}
 		}
+		retList.trimToSize();
+		Object[] ret = retList.toArray();
 		return ret;
 	}
 	
@@ -197,6 +191,7 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 		Set elements = cache.keySet();
 		Set keysToRemove = new HashSet();
 		Iterator iter = elements.iterator();
+		
 		while (iter.hasNext()) {
 			Object pluginId = iter.next();
 			RegistryElement elem = (RegistryElement)cache.get(pluginId);
@@ -205,7 +200,7 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 			}
 		}
 		
-		//Now remove the deleted ones
+		// Now remove the deleted ones
 		Iterator removeIterator = keysToRemove.iterator();
 		while(removeIterator.hasNext()){
 			cache.remove(removeIterator.next());
