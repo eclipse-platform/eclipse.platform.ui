@@ -556,7 +556,10 @@ public void setText(String text) {
 	if(text != null) {
 		String acceleratorText = extractAcceleratorText(text);
 		if (acceleratorText != null) {
-			this.accelerator = convertAccelerator(acceleratorText);
+			int newAccelerator = convertAccelerator(acceleratorText);
+			//Be sure to not wipe out the accelerator if nothing found
+			if(newAccelerator > 0)
+				setAccelerator(newAccelerator);
 		}
 	}
 	if (this.accelerator != oldAccel 
