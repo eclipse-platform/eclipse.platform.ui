@@ -1373,4 +1373,60 @@
 	     </specification>
 	</extension>
 
+	
+<!-- Context (String Substitution) Variables -->	
+   <extension
+         point="org.eclipse.debug.core.contextVariables">
+      <variable
+            name="workspace_loc"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.WorkspaceResolver"
+            description="%workspace_loc.description">
+      </variable>
+      <variable
+            name="project_loc"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver"
+            description="%project_loc.description">
+      </variable>
+      <variable
+            name="project_path"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver"
+            description="%project_path.description">
+      </variable>
+      <variable
+            name="project_name"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ProjectResolver"
+            description="%project_name.description">
+      </variable>
+      <variable
+            name="resource_loc"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver"
+            description="%resource_loc.description">
+      </variable>
+      <variable
+            name="resource_path"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver"
+            description="%resource_path.description">
+      </variable>
+      <variable
+            name="resource_name"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ResourceResolver"
+            description="%resource_name.description">
+      </variable>
+      <variable
+            name="container_loc"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver"
+            description="%container_loc.description">
+      </variable>
+      <variable
+            name="container_path"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver"
+            description="%container_path.description">
+      </variable>
+      <variable
+            name="container_name"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.ContainerResolver"
+            description="%container_name.description">
+      </variable>
+   </extension>	
+
 </plugin>

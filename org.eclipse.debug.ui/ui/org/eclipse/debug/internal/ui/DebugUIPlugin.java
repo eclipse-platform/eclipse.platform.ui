@@ -48,6 +48,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.launchVariables.ContextVariableComponentManager;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.internal.ui.views.variables.ObjectBrowserManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -334,6 +335,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				public void run() {
 					//initialize the variable context manager
 					LaunchVariableContextManager.getDefault();
+					SelectedResourceManager.getDefault();
 				}
 			});	
 	}
