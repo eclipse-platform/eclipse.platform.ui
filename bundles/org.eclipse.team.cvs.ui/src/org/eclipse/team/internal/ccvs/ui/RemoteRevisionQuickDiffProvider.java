@@ -319,8 +319,10 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	private IFile getFileFromEditor() {
 		if(fEditor != null) {
 			IEditorInput input= fEditor.getEditorInput();
-            IFile file = ResourceUtil.getFile(input);
-            return file;
+            if (input != null) {
+                IFile file = ResourceUtil.getFile(input);
+                return file;
+            }
 		}
 		return null;
 	}
