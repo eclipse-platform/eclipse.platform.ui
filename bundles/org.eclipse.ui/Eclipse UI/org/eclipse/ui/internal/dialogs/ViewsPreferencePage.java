@@ -95,7 +95,10 @@ protected Control createContents(Composite parent) {
 	openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 
 	Composite composite = new Composite(parent, SWT.NULL);
-	composite.setLayout(new GridLayout());
+	GridLayout layout = new GridLayout();
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
+	composite.setLayout(layout);
 	composite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
@@ -103,9 +106,11 @@ protected Control createContents(Composite parent) {
 	createViewTabButtonGroup(composite);
 
 	Composite messageComposite = new Composite(composite, SWT.NONE);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	messageComposite.setLayout(layout);
+	GridLayout messageLayout = new GridLayout();
+	messageLayout.numColumns = 2;
+	messageLayout.marginWidth = 0;
+	messageLayout.marginHeight = 0;
+	messageComposite.setLayout(messageLayout);
 	messageComposite.setLayoutData(
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
@@ -136,8 +141,6 @@ protected Control createContents(Composite parent) {
 	createOpenViewButtonGroup(composite);
 
 	JFaceResources.getFontRegistry().addListener(fontListener);
-	
-	createSpacer(composite);
 	
 	Group colorComposite = new Group(composite,SWT.NULL);
 	colorComposite.setLayout(new GridLayout());
