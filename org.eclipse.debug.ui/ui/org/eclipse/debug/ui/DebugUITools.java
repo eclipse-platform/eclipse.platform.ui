@@ -42,6 +42,7 @@ import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -662,4 +663,19 @@ public class DebugUITools {
 	public static void addInstructionPointer(ITextEditor editor, IStackFrame frame) {
 		InstructionPointerManager.getDefault().addAnnotation(editor, frame);
 	}
+	
+	/**
+	 * Returns whether the given launch configuraiton is private. Generally,
+	 * private launch configurations should not be displayed to the user. The
+	 * private status of a launch configuration is determined by the
+	 * <code>IDebugUIConstants.ATTR_PRIVATE</code> attribute.
+	 * 
+	 * @param configuration launch configuration
+	 * @return whether the given launch configuration is private
+	 * @since 3.0
+	 */
+	public static boolean isPrivate(ILaunchConfiguration configuration) {
+		return !LaunchConfigurationManager.isVisible(configuration);
+	}
+		
 }
