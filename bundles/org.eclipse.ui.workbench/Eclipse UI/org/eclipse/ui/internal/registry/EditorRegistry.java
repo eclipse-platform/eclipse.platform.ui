@@ -62,6 +62,7 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * Provides access to the collection of defined editors for resource types.
@@ -135,7 +136,7 @@ public class EditorRegistry implements IEditorRegistry, IConfigurationElementRem
     public void addEditorFromPlugin(EditorDescriptor editor, List extensions,
             List filenames, boolean bDefault) {
 
-    	Workbench.getInstance().getConfigurationElementTracker().registerObject(editor.getConfigurationElement(), editor);
+    	Workbench.getInstance().getConfigurationElementTracker().registerObject(editor.getConfigurationElement(), editor, IConfigurationElementTracker.REF_WEAK);
         // record it in our quick reference list
         sortedEditorsFromPlugins.add(editor);
 

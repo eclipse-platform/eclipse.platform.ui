@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry.experimental;
 
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,12 +35,56 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class ConfigurationElementTracker implements IConfigurationElementTracker, IRegistryChangeListener {
 
+	/**
+	 * Marker interface.
+	 * 
+	 * @since 3.1
+	 */
+	private interface ITaggedReference {
+	}
 	
+	private class TaggedWeakReference extends WeakReference implements ITaggedReference {
+
+		/**
+		 * @param referent
+		 */
+		public TaggedWeakReference(Object referent) {
+			super(referent);
+		}
+		
+		/**
+		 * @param referent
+		 * @param q
+		 */
+		public TaggedWeakReference(Object referent, ReferenceQueue q) {
+			super(referent, q);
+		}
+	}
+	
+	private class TaggedSoftReference extends SoftReference implements ITaggedReference {
+
+		/**
+		 * @param referent
+		 */
+		public TaggedSoftReference(Object referent) {
+			super(referent);
+		}
+		
+		/**
+		 * @param referent
+		 * @param q
+		 */
+		public TaggedSoftReference(Object referent, ReferenceQueue q) {
+			super(referent, q);
+		}
+	}	
 	private Map configElementToObjectSetMap = new HashMap();
 	
 	private Set removalHandlerSet = new HashSet();
 	
 	private Set additionHandlerSet = new HashSet();
+
+	private static final Object[] EMPTY_ARRAY = new Object [0];
 	
 	/**
 	 * 
@@ -61,7 +109,7 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 		removalHandlerSet.remove(handler);
 	}
 	
-	public void registerObject(IConfigurationElement element, Object object) {
+	public void registerObject(IConfigurationElement element, Object object, int referenceType) {
 		if (element == null ||  object == null)
 			return;
 		Set objectSet = (Set) configElementToObjectSetMap.get(element);
@@ -70,8 +118,15 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 			configElementToObjectSetMap.put(element, objectSet);
 		}
 		
-		//weakly refer to the object here so that when remove is called we dont need to search the config map
-		objectSet.add(new WeakReference(object));
+		switch (referenceType) {
+			case IConfigurationElementTracker.REF_SOFT:
+				object = new TaggedSoftReference(object);
+			break;
+			case IConfigurationElementTracker.REF_WEAK:
+				object = new TaggedWeakReference(object);
+		}
+		
+		objectSet.add(object);
 	}
 	
 	public void registryChanged(IRegistryChangeEvent event) {
@@ -123,8 +178,12 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 				continue; 
 			
 			for (Iterator j = objectSet.iterator(); j.hasNext();) {
-				WeakReference reference = (WeakReference) j.next();
-				final Object object = reference.get();
+				Object next = j.next();
+				if (next instanceof ITaggedReference) {				
+					Reference reference = (Reference) next;
+					next = reference.get();
+				}
+				final Object object = next;
 				if (object == null) {
 					j.remove(); //drop empty references					
 				}
@@ -173,5 +232,29 @@ public class ConfigurationElementTracker implements IConfigurationElementTracker
 				});						
 			}
 		}		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker#getObjects(org.eclipse.core.runtime.IConfigurationElement)
+	 */
+	public Object [] getObjects(IConfigurationElement element) {
+		Set objectSet = (Set) configElementToObjectSetMap.get(element);
+		if (objectSet == null)
+			return EMPTY_ARRAY;
+
+		//copy the set and decouple the object from any internal reference
+		ArrayList copy = new ArrayList(objectSet.size());
+		for (Iterator i = objectSet.iterator(); i.hasNext();) {
+			Object next = i.next();
+			if (next instanceof ITaggedReference) {
+				next = ((Reference)next).get();
+				if (next != null) 
+					copy.add(next);
+			}
+			else {
+				copy.add(next);
+			}
+		}
+		return copy.toArray();		
 	}
 }

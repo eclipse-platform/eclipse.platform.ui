@@ -82,7 +82,8 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
 					.registerObject(
 							(IConfigurationElement) desc
 									.getAdapter(IConfigurationElement.class),
-							desc);
+							desc,
+							IConfigurationElementTracker.REF_WEAK);
 		}
     }
 
@@ -95,7 +96,8 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
 			Workbench.getInstance().getConfigurationElementTracker()
 					.registerObject(
 							(IConfigurationElement) desc.getConfigurationElement(),
-							desc);
+							desc,
+							IConfigurationElementTracker.REF_WEAK);
     	}
     }
 
@@ -108,7 +110,8 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
 	        Workbench.getInstance().getConfigurationElementTracker()
 			.registerObject(
 					(IConfigurationElement) desc.getConfigurationElement(),
-					desc);
+					desc, 
+					IConfigurationElementTracker.REF_WEAK);
     	}
     }
 

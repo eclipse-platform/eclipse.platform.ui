@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * This class is a default implementation of <code>IObjectContributorManager</code>.
@@ -280,7 +281,7 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
 			ContributorRecord contributorRecord = new ContributorRecord(contributor, targetType);
 			contributorRecordSet.add(contributorRecord);
 			Workbench.getInstance().getConfigurationElementTracker()
-					.registerObject(element, contributorRecord);
+					.registerObject(element, contributorRecord, IConfigurationElementTracker.REF_WEAK);
         }
     }
 

@@ -39,6 +39,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * This class represents a refactoring of the functionality previously contained
@@ -433,7 +434,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 							.registerRemovalHandler(handler);
 					// register the new help UI for removal notification
 					Workbench.getInstance().getConfigurationElementTracker()
-							.registerObject(element, pluggableHelpUI);
+							.registerObject(element, pluggableHelpUI, IConfigurationElementTracker.REF_WEAK);
 					return true;
 				} catch (CoreException e) {
 					WorkbenchPlugin.log(

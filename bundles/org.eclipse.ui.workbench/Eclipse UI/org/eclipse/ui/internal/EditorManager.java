@@ -88,6 +88,7 @@ import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
@@ -923,7 +924,7 @@ public class EditorManager implements IConfigurationElementRemovalHandler {
         
         IConfigurationElement element = desc.getConfigurationElement();
         if (element != null) {
-        	page.getConfigurationElementTracker().registerObject(element, editor[0]);
+        	page.getConfigurationElementTracker().registerObject(element, editor[0], IConfigurationElementTracker.REF_WEAK);
         }
         return editor[0];
     }

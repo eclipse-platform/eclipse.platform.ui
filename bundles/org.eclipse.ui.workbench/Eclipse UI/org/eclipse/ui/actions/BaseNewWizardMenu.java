@@ -34,6 +34,7 @@ import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * A <code>BaseNewWizardMenu</code> is used to populate a menu manager with
@@ -169,7 +170,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
                 actions.put(id, action);
                 ((WorkbenchWindow) workbenchWindow).getConfigurationElementTracker()
                         .registerObject(element.getConfigurationElement(),
-                                action);
+                                action, IConfigurationElementTracker.REF_WEAK);
                 // XXX: When does the action get unregistered?
             }
         }

@@ -185,7 +185,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
 		perspectives.add(desc);
 		IConfigurationElement element = desc.getConfigElement();
 		if (element != null) {
-			Workbench.getInstance().getConfigurationElementTracker().registerObject(element, desc);
+			Workbench.getInstance().getConfigurationElementTracker().registerObject(element, desc, IConfigurationElementTracker.REF_WEAK);
 		}
 	}
 

@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -233,7 +234,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 		introPart = introDescriptor == null ? null
                 : introDescriptor.createIntro();
         if (introPart != null) {
-        	workbench.getConfigurationElementTracker().registerObject(introDescriptor.getConfigurationElement(), introPart);
+        	workbench.getConfigurationElementTracker().registerObject(introDescriptor.getConfigurationElement(), introPart, IConfigurationElementTracker.REF_WEAK);
         }
     	return introPart;
     }

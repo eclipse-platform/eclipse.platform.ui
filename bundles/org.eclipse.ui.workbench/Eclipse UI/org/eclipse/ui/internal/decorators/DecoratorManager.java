@@ -130,7 +130,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             else
                 lightweight.add(nextDefinition);
                         
-			configurationElementTracker.registerObject(nextDefinition.getConfigurationElement(), nextDefinition);
+			configurationElementTracker.registerObject(nextDefinition.getConfigurationElement(), nextDefinition, IConfigurationElementTracker.REF_WEAK);
         }
 
         fullDefinitions = new FullDecoratorDefinition[full.size()];
@@ -173,7 +173,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         }
         ((Workbench) PlatformUI.getWorkbench())
 				.getConfigurationElementTracker().registerObject(
-						definition.getConfigurationElement(), definition);
+						definition.getConfigurationElement(), definition, IConfigurationElementTracker.REF_WEAK);
     }
 
     /**

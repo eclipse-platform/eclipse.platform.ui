@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -326,7 +327,7 @@ import org.eclipse.ui.internal.util.Util;
                     try {
                         UIStats.start(UIStats.CREATE_PART, label);
                         view = desc.createView();
-                        page.getConfigurationElementTracker().registerObject(desc.getConfigurationElement(), view);
+                        page.getConfigurationElementTracker().registerObject(desc.getConfigurationElement(), view, IConfigurationElementTracker.REF_WEAK);
                     } finally {
                         UIStats.end(UIStats.CREATE_PART, label);
                     }
