@@ -11,9 +11,11 @@
 package org.eclipse.jface.dialogs;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
@@ -117,7 +119,7 @@ public abstract class StatusDialog extends Dialog {
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
-		fLastStatus = new Status(IStatus.OK,new String(),IStatus.OK,new String(),null);
+		fLastStatus = new Status(IStatus.OK,Platform.PI_RUNTIME,IStatus.OK,Util.ZERO_LENGTH_STRING,null);
 	}
 
 	/**
