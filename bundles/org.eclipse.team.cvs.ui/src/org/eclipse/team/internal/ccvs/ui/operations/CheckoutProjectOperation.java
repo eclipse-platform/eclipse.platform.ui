@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 /**
@@ -171,13 +172,23 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				}
 			}
 				
-			// Determine if the target project is the same name as the remote folder
-			// in which case we'll use -d to flatten the directory structure
-			IProject project;
-			if (targetProjects.length == 1 && (sendModuleName || targetProjects[0].getName().equals(resource.getName()))) {
-				project = targetProjects[0];
-			} else {
-				project = null;
+			// Determine if t
+			// in which case we'll use -d to flatten the directory structure.
+			// Only flatten the directory structure if the folder is not a root folder
+			IProject project = null;
+			if (targetProjects.length == 1) {
+				if (sendModuleName) {
+					project = targetProjects[0];
+				} else if (targetProjects[0].getName().equals(resource.getName())) {
+					// The target project has the same name as the remote folder.
+					// If the repository relative path has multiple segments
+					// we will want to flatten the directory structure
+					String path = resource.getRepositoryRelativePath();
+					if (!path.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)
+							&& new Path(path).segmentCount() > 1) {
+						project = targetProjects[0];
+					}
+				}
 			}
 				
 			// Build the local options
