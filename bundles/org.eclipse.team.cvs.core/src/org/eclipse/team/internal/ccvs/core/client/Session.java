@@ -10,12 +10,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -73,13 +73,14 @@ public class Session {
 	// VCM 1.0 comitted files using CR/LF as a delimiter
 	private static final int CARRIAGE_RETURN_BYTE = 0x0d;
 
-	private final CVSRepositoryLocation location;
-	private final ICVSFolder localRoot;
+	private CVSRepositoryLocation location;
+	private ICVSFolder localRoot;
 	private boolean outputToConsole;
 	private Connection connection = null;
 	private String validRequests = null;
 	private Date modTime = null;
 	private boolean noLocalChanges = false;
+	private List expansions;
 
 	// a shared buffer used for file transfers
 	private byte[] transferBuffer = null;
@@ -106,6 +107,25 @@ public class Session {
 		this.location = (CVSRepositoryLocation) location;
 		this.localRoot = localRoot;
 		this.outputToConsole = outputToConsole;
+	}
+	
+	/*
+	 * Add a module expansion receivered from the server.
+	 * This is only used by the ModuleExpansionsHandler
+	 */
+	protected void addModuleExpansion(String expansion) {
+		expansions.add(expansion);
+	}
+	
+	/*
+	 * Add a module expansion receivered from the server.
+	 * This is only used by the ExpandModules command
+	 */
+	protected void resetModuleExpansion() {
+		if (expansions == null) 
+			expansions = new ArrayList();
+		else
+			expansions.clear();
 	}
 	
 	/**
@@ -191,6 +211,14 @@ public class Session {
 		return localRoot;
 	}
 
+	/**
+	 * Return the list of module expansions communicated from the server
+	 */
+	public String[] getModuleExpansions() {
+		if (expansions == null) return new String[0];
+		return (String[]) expansions.toArray(new String[expansions.size()]);
+	}
+	
 	/**
 	 * Returns the repository root folder for this session.
 	 * <p>

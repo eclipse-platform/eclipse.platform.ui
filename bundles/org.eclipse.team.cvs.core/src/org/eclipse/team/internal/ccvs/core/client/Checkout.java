@@ -13,6 +13,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.Option;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ModuleDefinitionsListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
@@ -22,6 +23,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class Checkout extends Command {
 	/*** Local options: specific to checkout ***/
+	public static final LocalOption DO_NOT_SHORTEN = new LocalOption("-N"); //$NON-NLS-1$
 	public static final LocalOption FETCH_MODULE_ALIASES = new LocalOption("-c"); //$NON-NLS-1$
 	public static LocalOption makeDirectoryNameOption(String moduleName) {
 		return new LocalOption("-d", moduleName); //$NON-NLS-1$
@@ -40,8 +42,21 @@ public class Checkout extends Command {
 	
 	protected ICVSResource[] computeWorkResources(Session session, LocalOption[] localOptions,
 		String[] arguments) throws CVSException {
+			
+		// We shouldn't have any arguments if we're fetching the module definitions
 		if (arguments.length < 1 && ! FETCH_MODULE_ALIASES.isElementOf(localOptions)) throw new IllegalArgumentException();
-		return new ICVSResource[0];
+		
+		// We can determine the local directories using either the -d option or the module expansions
+		Option dOption = findOption(localOptions, "-d");  //$NON-NLS-1$
+		if (dOption != null) {
+			return new ICVSResource[] {session.getLocalRoot().getFolder(dOption.argument)};
+		}
+		String[] modules = session.getModuleExpansions();
+		ICVSResource[] resources = new ICVSResource[modules.length];
+		for (int i = 0; i < resources.length; i++) {
+			resources[i] = session.getLocalRoot().getFolder(modules[i]);
+		}
+		return resources;
 	}
 	
 	/**
@@ -63,7 +78,6 @@ public class Checkout extends Command {
 		session.sendConstructedRootDirectory();
 	}
 
-	
 	/**
 	 * On sucessful finish, prune empty directories if 
 	 * the -P option was specified (or is implied by -D or -r)
@@ -81,10 +95,6 @@ public class Checkout extends Command {
 		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
 			(findOption(localOptions, "-D") != null) || //$NON-NLS-1$
 			(findOption(localOptions, "-r") != null)) { //$NON-NLS-1$			
-			// Get the name of the resulting directory
-			Option dOption = findOption(localOptions, "-d");  //$NON-NLS-1$
-			if (dOption != null) resources = new ICVSResource[] {
-				session.getLocalRoot().getFolder(dOption.argument) };
 
 			// Prune empty directories
 			ICVSResourceVisitor visitor = new PruneFolderVisitor(session);
@@ -95,6 +105,32 @@ public class Checkout extends Command {
 	}
 	
 	/**
+	 * Override execute to perform a expand-modules before the checkout
+	 */
+	public IStatus execute(Session session, GlobalOption[] globalOptions,
+		LocalOption[] localOptions, String[] arguments, ICommandOutputListener listener,
+		IProgressMonitor monitor) throws CVSException {
+		
+		// Execute the expand-modules command. 
+		// This will put the expansions in the session for later retrieval
+		IStatus status = EXPAND_MODULES.execute(session, arguments, monitor);
+		if (status.getCode() == CVSStatus.SERVER_ERROR)
+			return status;
+		
+		// Do not shorten paths if there is more than one expansion
+		if (session.getModuleExpansions().length > 1) {
+			if ( ! DO_NOT_SHORTEN.isElementOf(localOptions)) {
+				LocalOption[] newLocalOptions = new LocalOption[localOptions.length + 1];
+				newLocalOptions[0] = DO_NOT_SHORTEN;
+				System.arraycopy(localOptions, 0, newLocalOptions, 1, localOptions.length);
+				localOptions = newLocalOptions;
+			}
+		}
+		
+		return super.execute(session, globalOptions, localOptions, arguments, listener, monitor);
+	}
+	
+	/**
 	 * Perform a checkout to get the module expansions defined in the CVSROOT/modules file
 	 */
 	public RemoteModule[] getRemoteModules(Session session, CVSTag tag, IProgressMonitor monitor)
@@ -102,7 +138,7 @@ public class Checkout extends Command {
 		
 		ModuleDefinitionsListener moduleDefinitionListener = new ModuleDefinitionsListener();
 		
-		IStatus status = execute(session, NO_GLOBAL_OPTIONS, new LocalOption[] {FETCH_MODULE_ALIASES}, NO_ARGUMENTS, 
+		IStatus status = super.execute(session, NO_GLOBAL_OPTIONS, new LocalOption[] {FETCH_MODULE_ALIASES}, NO_ARGUMENTS, 
 			moduleDefinitionListener, monitor);
 			
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {

@@ -48,6 +48,7 @@ public abstract class Command {
 	public final static Tag TAG = new Tag();
 	public final static RTag RTAG = new RTag();
 	public final static Update UPDATE = new Update();
+	public final static ExpandModules EXPAND_MODULES = new ExpandModules();
 	final static ValidRequests VALID_REQUESTS = new ValidRequests();
 	
 	// Empty argument array
@@ -100,7 +101,8 @@ public abstract class Command {
 		registerResponseHandler(new StickyHandler(false));
 		registerResponseHandler(new UpdatedHandler(true));
 		registerResponseHandler(new UpdatedHandler(false));
-		registerResponseHandler(new ValidRequestsHandler());		
+		registerResponseHandler(new ValidRequestsHandler());
+		registerResponseHandler(new ModuleExpansionHandler());		
 	}
 	public static void registerResponseHandler(ResponseHandler handler) {
 		responseHandlers.put(handler.getResponseID(), handler);
