@@ -229,6 +229,10 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		}
 	}
 	public void endOperation() {
+		//don't do intermediate notifications if the entire workspace is locked
+		Job current = Platform.getJobManager().currentJob();
+		if (current != null && current.getRule() == workspace.getRoot())
+			return;
 		//notifications must never take more than one tenth of operation time
 		long delay = Math.max(NOTIFICATION_DELAY, lastNotifyDuration * 10);
 		if (notifyJob.getState() == Job.NONE)
