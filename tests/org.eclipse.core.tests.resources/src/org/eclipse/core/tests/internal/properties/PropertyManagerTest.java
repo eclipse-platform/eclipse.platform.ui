@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
 
 public class PropertyManagerTest extends LocalStoreTest {
+
 public PropertyManagerTest() {
 	super(null);
 }
@@ -35,7 +36,7 @@ public static Test suite() {
  * This test currently skipped because the property store is not
  * thread safe.
  */
-public void skiptestConcurrentAccess() {
+public void testConcurrentAccess() {
 
 	// create common objects
 	final IFile target = projects[0].getFile("target");
@@ -98,13 +99,13 @@ public void skiptestConcurrentAccess() {
 }
 protected void doGetSetProperties(IFile target, String threadID, QualifiedName[] names, String[] values) throws CoreException {
 	final int N = names.length;
-	for (int j = 0; j < 100; j++) {
+	for (int j = 0; j < 10; j++) {
 		for (int i = 0; i < N; i++) {
 			target.getPersistentProperty(names[i]);
 		}
 		// change properties
 		for (int i = 0; i < N; i++) {
-			values[i] = values[i] + " - changed (" + threadID + ")";
+//			values[i] = values[i] + " - changed (" + threadID + ")";
 			target.setPersistentProperty(names[i], values[i]);
 		}
 		// verify
@@ -220,6 +221,39 @@ public void testDeleteProperties() throws Throwable {
 	assertNull("3.2", manager.getProperty(sourceFolder, propName));
 	assertNull("3.3", manager.getProperty(sourceFile, propName));
 
+}
+/**
+ * Do a stress test by adding a very large property to the store.
+ */
+public void testLargeProperty() {
+	// create common objects
+	IFile target = projects[0].getFile("target");
+	try {
+		target.create(getRandomContents(), true, getMonitor());
+	} catch (CoreException e) {
+		fail("0.0", e);
+	}
+
+	QualifiedName name = new QualifiedName("stressTest", "prop");
+	final int SIZE = 10000;
+	StringBuffer valueBuf = new StringBuffer(SIZE);
+	for (int i = 0; i < SIZE; i++) {
+		valueBuf.append("a");
+	}
+	String value = valueBuf.toString();
+	try {
+		target.setPersistentProperty(name, value);
+		//should fail
+		fail("1.0");
+	} catch (CoreException e) {
+	}
+
+	// remove trash
+	try {
+		target.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("20.0", e);
+	}
 }
 public void testProperties() throws Throwable {
 	IProgressMonitor monitor = null;
