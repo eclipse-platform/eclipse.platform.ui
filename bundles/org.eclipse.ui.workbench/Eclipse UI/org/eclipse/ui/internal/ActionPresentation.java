@@ -29,7 +29,8 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 public class ActionPresentation {
 	private WorkbenchWindow window;
 	private HashMap mapDescToRec = new HashMap(3);
-
+	private HashMap invisibleBars = new HashMap(3);
+	
 	private class SetRec {
 		public SetRec(IActionSetDescriptor desc, IActionSet set,
 			SubActionBars bars) {
@@ -78,6 +79,8 @@ public void removeActionSet(IActionSetDescriptor desc) {
 	SetRec rec = (SetRec)mapDescToRec.get(desc);
 	if (rec != null) {
 		mapDescToRec.remove(desc);
+		// Remove from the map that stores invisible bars
+		invisibleBars.remove(desc);
 		IActionSet set = rec.set;
 		SubActionBars bars = rec.bars;
 		if (bars != null) {
@@ -103,15 +106,14 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 		if (!newList.contains(desc)) {
 			SetRec rec = (SetRec)mapDescToRec.get(desc);
 			if (rec != null) {
+				mapDescToRec.remove(desc);
 				IActionSet set = rec.set;
 				SubActionBars bars = rec.bars;
 				if (bars != null) {
+					SetRec invisibleRec = new SetRec(desc, set, bars);
+					invisibleBars.put(desc,invisibleRec);
 					bars.deactivate();
 				}
-				if (set != null) {
-					set.dispose();
-				}
-				rec.set = null;
 			}
 		}
 	}
@@ -123,33 +125,27 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 		IActionSetDescriptor desc = (IActionSetDescriptor)iter.next();
 		if (!mapDescToRec.containsKey(desc)) {
 			try {
-				IActionSet set = desc.createActionSet();
-				SubActionBars bars = new ActionSetActionBars(window.getActionBars(),
-					desc.getId());
-				SetRec rec = new SetRec(desc, set, bars);
+				SetRec rec; 
+				// If the action bars and sets have already been created then
+				// reuse those action sets
+				if (invisibleBars.containsKey(desc)) {
+					rec = (SetRec)invisibleBars.get(desc);
+					if (rec.bars != null) {
+						rec.bars.activate();
+					}
+					invisibleBars.remove(desc);
+				}else {
+					IActionSet set = desc.createActionSet();
+					SubActionBars bars = new ActionSetActionBars(window.getActionBars(),
+							desc.getId());
+					rec = new SetRec(desc, set, bars);
+					set.init(window, bars);
+					sets.add(set);
+				}
 				mapDescToRec.put(desc, rec);
-				set.init(window, bars);
-				sets.add(set);
-				bars.activate();
 			} catch (CoreException e) {
 				WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
 			}
-		}else {
-			SetRec rec = (SetRec)mapDescToRec.get(desc);
-			IActionSet set = rec.set;
-			SubActionBars bars = rec.bars;
-			if (set == null) {
-				try {
-					bars.activate();
-					set = desc.createActionSet();
-					set.init(window,bars);
-					rec.set = set;
-				} catch (CoreException e) {
-					WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
-				}
-			}
-			
-			
 		}
 	}
 	// We process action sets in two passes for coolbar purposes.  First we process base contributions
