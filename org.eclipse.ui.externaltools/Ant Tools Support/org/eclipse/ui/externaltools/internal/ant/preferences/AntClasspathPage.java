@@ -422,8 +422,33 @@ public class AntClasspathPage extends AntPage {
 	}
 			
 	private void userTableSelectionChanged(IStructuredSelection newSelection) {
-		int size = newSelection.size();
-		removeUserButton.setEnabled(size > 0);
+		IStructuredSelection selection = (IStructuredSelection)userTableViewer.getSelection();
+		AntPageContentProvider contentProvider= (AntPageContentProvider)userTableViewer.getContentProvider();
+		Object[] elements = contentProvider.getElements(null);
+		List files= new ArrayList(elements.length);
+		for (int i = 0; i < elements.length; i++) {
+			files.add(elements[i]);
+		}
+
+		boolean notEmpty = !selection.isEmpty();
+		Iterator selected= selection.iterator();
+		boolean first= false;
+		boolean last= false;
+		int lastFile= files.size() - 1;
+		while (selected.hasNext()) {
+			Object element = (Object) selected.next();
+			if(!first && files.indexOf(element) == 0) {
+				first= true;
+			}
+			if (!last && files.indexOf(element) == lastFile) {
+				last= true;
+			}
+		}
+		
+		removeUserButton.setEnabled(notEmpty);
+		upUserButton.setEnabled(notEmpty && !first);
+		downUserButton.setEnabled(notEmpty && !last);
+		
 	}
 	
 
