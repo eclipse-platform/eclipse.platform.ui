@@ -537,7 +537,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (user.length() == 0) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.1"), null); //$NON-NLS-1$
 		}
-		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
+		if ((user.indexOf(':') != -1)) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
 					Policy.bind("ConfigurationWizardMainPage.invalidUserName"), null); //$NON-NLS-1$
 		}
@@ -547,7 +547,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (host.length() == 0) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.2"), null); //$NON-NLS-1$
 		}
-		if (host.indexOf(':') != -1) {
+		if ((host.indexOf(':') != -1) || (host.indexOf('@') != -1)) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
 					Policy.bind("ConfigurationWizardMainPage.invalidHostName"), null); //$NON-NLS-1$
 		}
