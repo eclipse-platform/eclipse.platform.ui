@@ -57,6 +57,7 @@ import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AntOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.EditLaunchConfigurationAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.RefreshBuildFilesAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunTargetAction;
@@ -126,10 +127,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	// Ant View Actions
 	private AddBuildFileAction addBuildFileAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
-	// ProjectViewer actions
+	private RefreshBuildFilesAction refreshBuildFilesAction;
 	private RunTargetAction runTargetAction;
 	private RemoveProjectAction removeProjectAction;
 	private RemoveAllAction removeAllAction;
+	// Context-menu-only actions
 	private AntOpenWithMenu openWithMenu;
 	private EditLaunchConfigurationAction editConfigAction;
 
@@ -196,6 +198,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			menu.add(new Separator());
 			menu.add(runTargetAction);
 			menu.add(editConfigAction);
+			menu.add(refreshBuildFilesAction);
 			addOpenWithMenu(menu);
 			menu.add(new Separator());
 			menu.add(removeProjectAction);
@@ -233,6 +236,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		updateProjectActions.add(runTargetAction);
 		
 		searchForBuildFilesAction = new SearchForBuildFilesAction(this);
+		
+		refreshBuildFilesAction = new RefreshBuildFilesAction(this);
+		updateProjectActions.add(refreshBuildFilesAction); 
 		
 		openWithMenu= new AntOpenWithMenu(this.getViewSite().getPage());
 		
@@ -294,6 +300,10 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			if (removeProjectAction.isEnabled()) {
 				removeProjectAction.run();
+			}
+		} else if (event.keyCode == SWT.F5 && event.stateMask == 0) {
+			if (refreshBuildFilesAction.isEnabled()) {
+				refreshBuildFilesAction.run();
 			}
 		}
 	}
@@ -615,6 +625,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
+		toolBarMgr.add(refreshBuildFilesAction);
 
 		toolBarMgr.add(runTargetAction);
 		toolBarMgr.add(removeProjectAction);
