@@ -184,7 +184,7 @@ public class ResourceSyncInfo {
 			result.append(keywordMode);
 			result.append(SEPERATOR);
 			if (tag != null) {
-				result.append(tag.toEntryLineFormat());
+				result.append(tag.toEntryLineFormat(true));
 			}
 		}
 

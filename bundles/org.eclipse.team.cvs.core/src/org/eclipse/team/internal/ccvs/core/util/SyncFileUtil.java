@@ -136,7 +136,7 @@ public class SyncFileUtil {
 
 		writeLine(parent, ROOT, info.getRoot());
 		if (info.getTag() != null) {
-			writeLine(parent, TAG, info.getTag().toEntryLineFormat());
+			writeLine(parent, TAG, info.getTag().toEntryLineFormat(false));
 		} else {
 			writeLine(parent, TAG, null);
 		}

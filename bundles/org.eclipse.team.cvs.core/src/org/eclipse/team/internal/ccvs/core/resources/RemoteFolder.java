@@ -626,4 +626,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			children = oldChildren;
 		}
 	}
+	/*
+	 * @see ICVSRemoteFolder#getRelativePath()
+	 */
+	public String getRelativePath() {
+		return getRemotePath();
+	}
 }

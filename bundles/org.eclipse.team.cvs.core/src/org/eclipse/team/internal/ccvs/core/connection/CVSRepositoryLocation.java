@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
@@ -586,5 +587,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// fromString(String, boolean) will always throw an exception).
 		return new CVSStatus(IStatus.OK, Policy.bind("ok"));
 	}
-}
 
+	/*
+	 * @see ICVSRepositoryLocation#getRemoteFolder(String, CVSTag)
+	 */
+	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag) {
+		return new RemoteFolder(null, this, new Path(remotePath), tag);		
+	}
+}

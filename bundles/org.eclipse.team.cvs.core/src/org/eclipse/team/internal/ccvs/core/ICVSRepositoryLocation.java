@@ -63,6 +63,12 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public ICVSRemoteResource[] members(CVSTag tag, IProgressMonitor progress)  throws CVSException;
 	
 	/**
+	 * Returns a handle to a remote folder at this repository location using the given tag as the
+	 * context. The corresponding remote folder may not exist.
+	 */
+	public ICVSRemoteFolder getRemoteFolder(String remotePath, CVSTag tag);
+	
+	/**
 	 * Return the conection timeout value in milliseconds.
 	 * A value of 0 means there is no timeout value.
 	 */

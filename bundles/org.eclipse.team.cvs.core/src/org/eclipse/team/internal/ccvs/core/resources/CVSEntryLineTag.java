@@ -38,8 +38,8 @@ public class CVSEntryLineTag extends CVSTag {
 		return type;
 	}
 	
-	public String toEntryLineFormat() {
-		if (type == BRANCH)
+	public String toEntryLineFormat(boolean useSamePrefixForBranchAndTag) {
+		if (type == BRANCH || (type == VERSION && useSamePrefixForBranchAndTag))
 			return "T" + name;
 		else if (type == VERSION)
 			return "N" + name;

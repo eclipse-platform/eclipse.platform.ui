@@ -29,4 +29,9 @@ public interface ICVSRemoteFolder extends ICVSRemoteResource {
 	 * version tag.
 	 */
 	public CVSTag getTag();
+	
+	/**
+	 * Answers the repository relative path of this remote folder.
+	 */
+	public String getRelativePath();
 }
