@@ -147,7 +147,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 			
 		} catch (IOException e) {
 			
-			ExternalToolsPlugin.getDefault().log("An exception occurred.", e);
+			ExternalToolsPlugin.getDefault().log(e);
 			return null;
 			
 		} finally {
