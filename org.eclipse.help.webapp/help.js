@@ -80,7 +80,9 @@ function parseQueryString (str)
  */
 function setToolbarTitle(title)
 {
-	ToolbarFrame.setTitle(title);
+	if(ToolbarFrame){
+		ToolbarFrame.setTitle(title);
+	}
 }
 
 /* 
