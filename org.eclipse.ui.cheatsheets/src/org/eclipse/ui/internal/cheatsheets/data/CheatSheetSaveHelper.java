@@ -96,14 +96,14 @@ public class CheatSheetSaveHelper {
 		}
 
 		//put expanded item list, completed list, button state
-		props.put(IParserTags.COMPLETED, mylist); //$NON-NLS-1$
-		props.put(IParserTags.EXPANDED, elist); //$NON-NLS-1$
-		props.put(IParserTags.EXPANDRESTORE, expandRestoreStates); //$NON-NLS-1$
-		props.put(IParserTags.BUTTON, Integer.toString(buttonState)); //$NON-NLS-1$
+		props.put(IParserTags.COMPLETED, mylist);
+		props.put(IParserTags.EXPANDED, elist);
+		props.put(IParserTags.EXPANDRESTORE, expandRestoreStates);
+		props.put(IParserTags.BUTTON, Integer.toString(buttonState));
 		if (subcompletedTable != null)
-			props.put(IParserTags.SUBITEMCOMPLETED, subcompletedTable); //$NON-NLS-1$
+			props.put(IParserTags.SUBITEMCOMPLETED, subcompletedTable);
 		if (subskippedTable != null)
-			props.put(IParserTags.SUBITEMSKIPPED, subskippedTable); //$NON-NLS-1$
+			props.put(IParserTags.SUBITEMSKIPPED, subskippedTable);
 
 		return props;
 	}
@@ -257,16 +257,16 @@ public class CheatSheetSaveHelper {
 			Document doc = documentBuilder.newDocument();
 
 			Properties myprop = saveProperties;
-			csID = (String) myprop.get(IParserTags.ID); //$NON-NLS-1$
-			String number = (String) myprop.get(IParserTags.CURRENT); //non nls //$NON-NLS-1$
+			csID = (String) myprop.get(IParserTags.ID);
+			String number = (String) myprop.get(IParserTags.CURRENT);
 
 			Path filePath = new Path(savePath.append(csID+".xml").toOSString()); //$NON-NLS-1$
 
-			ArrayList completedList = (ArrayList) myprop.get(IParserTags.COMPLETED); //$NON-NLS-1$
-			ArrayList expandedList = (ArrayList) myprop.get(IParserTags.EXPANDED); //$NON-NLS-1$
-			ArrayList expandRestoreList = (ArrayList) myprop.get(IParserTags.EXPANDRESTORE); //$NON-NLS-1$
-			Hashtable subcompletedTable = (Hashtable) myprop.get(IParserTags.SUBITEMCOMPLETED); //$NON-NLS-1$
-			Hashtable subskippedTable = (Hashtable) myprop.get(IParserTags.SUBITEMSKIPPED); //$NON-NLS-1$
+			ArrayList completedList = (ArrayList) myprop.get(IParserTags.COMPLETED);
+			ArrayList expandedList = (ArrayList) myprop.get(IParserTags.EXPANDED);
+			ArrayList expandRestoreList = (ArrayList) myprop.get(IParserTags.EXPANDRESTORE);
+			Hashtable subcompletedTable = (Hashtable) myprop.get(IParserTags.SUBITEMCOMPLETED);
+			Hashtable subskippedTable = (Hashtable) myprop.get(IParserTags.SUBITEMSKIPPED);
 
 			//Create the root element for the document now:
 			Element root = doc.createElement(IParserTags.CHEATSHEET);
@@ -320,7 +320,7 @@ public class CheatSheetSaveHelper {
 				}
 			}
 			Element bel = doc.createElement(IParserTags.BUTTON);
-			bel.setAttribute(IParserTags.BUTTONSTATE, (String) myprop.get(IParserTags.BUTTON)); //$NON-NLS-1$
+			bel.setAttribute(IParserTags.BUTTONSTATE, (String) myprop.get(IParserTags.BUTTON));
 			root.appendChild(bel);
 
 			//Store cheatsheet data here.
@@ -331,7 +331,7 @@ public class CheatSheetSaveHelper {
 					String key = (String) e.nextElement();
 					String data = (String) managerData.get(key);
 					Element csmDataTag = doc.createElement(IParserTags.MANAGERDATA);
-					csmDataTag.setAttribute(IParserTags.MANAGERDATAKEY, key); //$NON-NLS-1$
+					csmDataTag.setAttribute(IParserTags.MANAGERDATAKEY, key);
 					Text t = doc.createTextNode(data);
 					csmDataTag.appendChild(t);
 					root.appendChild(csmDataTag);

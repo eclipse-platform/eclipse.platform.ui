@@ -122,7 +122,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	 * Restores the state of the previously saved cheatsheet history
 	 */
 	private void restoreCheatSheetHistory() {
-		Platform.run(new SafeRunnable() { //$NON-NLS-1$
+		Platform.run(new SafeRunnable() {
 			public void run() {
 				InputStreamReader reader = null;
 
@@ -176,7 +176,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 				memento.putString(MEMENTO_TAG_VERSION, VERSION_STRING[1]);
 
 				// Save perspective history.
-				getCheatSheetHistory().saveState(memento.createChild(MEMENTO_TAG_CHEATSHEET_HISTORY)); //$NON-NLS-1$
+				getCheatSheetHistory().saveState(memento.createChild(MEMENTO_TAG_CHEATSHEET_HISTORY));
 
 				// Save the IMemento to a file.
 				File stateFile = getCheatSheetStateFile();

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.registry;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
@@ -133,7 +134,7 @@ public class CheatSheetCollectionElement extends AdaptableList {
 	 */
 	public IPath getPath() {
 		if (parent == null)
-			return new Path(""); //$NON-NLS-1$
+			return new Path(ICheatSheetResource.EMPTY_STRING);
 
 		return parent.getPath().append(name);
 	}

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 
 public class CheatSheetPage extends Page {
@@ -75,7 +76,7 @@ public class CheatSheetPage extends Page {
 		if(cheatSheet != null & cheatSheet.getTitle() != null)
 			return cheatSheet.getTitle();
 		else
-			return ""; //$NON-NLS-1$
+			return ICheatSheetResource.EMPTY_STRING;
 	}
 
 	public void dispose() {

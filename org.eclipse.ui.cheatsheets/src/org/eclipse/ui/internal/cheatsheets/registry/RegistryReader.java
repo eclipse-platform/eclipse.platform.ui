@@ -47,7 +47,7 @@ public abstract class RegistryReader {
 		if (children.length >= 1) {
 			return children[0].getValue();
 		}
-		return ""; //$NON-NLS-1$
+		return ICheatSheetResource.EMPTY_STRING;
 	}
 
 	/**

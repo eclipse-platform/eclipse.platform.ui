@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.cheatsheets;
 
 public interface ICheatSheetResource {
 
+	// Empty string used through out the plugin
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	//
 	// ID used through out the cheatsheets:

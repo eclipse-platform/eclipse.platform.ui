@@ -98,51 +98,51 @@ public class CheatSheetParser {
 					// We have a less than, grab the maximum tag length of characters
 					// or the remaining characters which follow and determine if it
 					// is the start of a tag to ignore.
-					String tmp = ""; //$NON-NLS-1$
+					String tmp = ICheatSheetResource.EMPTY_STRING;
 					if(i+MAXIMUM_TAG_LENGTH < length)
 						tmp = text.substring(i, i+MAXIMUM_TAG_LENGTH).toLowerCase();
 					else {
 						tmp = text.substring(i, length).toLowerCase();
 					}
-					if(tmp.startsWith("<b>") || tmp.startsWith("</b>") || tmp.startsWith("<br/>")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if(tmp.startsWith(IParserTags.BOLD_START_TAG) || tmp.startsWith(IParserTags.BOLD_END_TAG) || tmp.startsWith(IParserTags.BREAK_TAG)) {
 						// We have a tag to ignore so just emit the character
 						result.append(c);
 					} else {
 						// We have detemined that it is just a less than
 						// so emit the XML escaped counterpart
-						result.append("&lt;"); //$NON-NLS-1$
+						result.append(IParserTags.LESS_THAN);
 					}
 					break; }
 				case '>': {
 					// We have a greater than, grab the maximum tag length of characters
 					// or the starting characters which come before and determine if it
 					// is the end of a tag to ignore.
-					String tmp = ""; //$NON-NLS-1$
+					String tmp = ICheatSheetResource.EMPTY_STRING;
 					if(i>=MAXIMUM_TAG_LENGTH) {
 						tmp = text.substring(i-MAXIMUM_TAG_LENGTH, i+1).toLowerCase();
 					} else {
 						tmp = text.substring(0, i+1).toLowerCase();
 					}
-					if(tmp.endsWith("<b>") || tmp.endsWith("</b>") || tmp.endsWith("<br/>")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					if(tmp.endsWith(IParserTags.BOLD_START_TAG) || tmp.endsWith(IParserTags.BOLD_END_TAG) || tmp.endsWith(IParserTags.BREAK_TAG)) {
 						// We have a tag to ignore so just emit the character
 						result.append(c);
 					} else {
 						// We have detemined that it is just a greater than
 						// so emit the XML escaped counterpart
-						result.append("&gt;"); //$NON-NLS-1$
+						result.append(IParserTags.GREATER_THAN);
 					}
 					break; }
 				case '&':
 					// We have an ampersand so emit the XML escaped counterpart
-					result.append("&amp;"); //$NON-NLS-1$
+					result.append(IParserTags.AMPERSAND);
 					break;
 				case '\'':
 					// We have an apostrophe so emit the XML escaped counterpart
-					result.append("&apos;"); //$NON-NLS-1$
+					result.append(IParserTags.APOSTROPHE);
 					break;
 				case '"':
 					// We have a quote so emit the XML escaped counterpart
-					result.append("&quot;"); //$NON-NLS-1$
+					result.append(IParserTags.QUOTE);
 					break;
 				default:
 					// We have a character that does not require escaping

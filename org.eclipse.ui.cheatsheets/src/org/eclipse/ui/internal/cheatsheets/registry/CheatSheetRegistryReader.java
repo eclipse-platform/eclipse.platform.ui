@@ -29,11 +29,11 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		private String path;
 		public CategoryNode(Category cat) {
 			category = cat;
-			path = ""; //$NON-NLS-1$
+			path = ICheatSheetResource.EMPTY_STRING;
 			String[] categoryPath = category.getParentPath();
 			if (categoryPath != null) {
 				for (int nX = 0; nX < categoryPath.length; nX++) {
-					path += categoryPath[nX] + '/'; //$NON-NLS-1$
+					path += categoryPath[nX] + '/';
 				}
 			}
 			path += cat.getId();
@@ -146,7 +146,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 * initial elements, if needed.
 	 */
 	protected AdaptableList createEmptyCheatSheetCollection() {
-		return new CheatSheetCollectionElement("root", "root", null); //$NON-NLS-2$//$NON-NLS-1$
+		return new CheatSheetCollectionElement("root", "root", null); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**

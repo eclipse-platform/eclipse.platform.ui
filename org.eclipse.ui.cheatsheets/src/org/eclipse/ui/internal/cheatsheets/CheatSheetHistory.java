@@ -59,7 +59,7 @@ public class CheatSheetHistory {
 			if (element != null) 
 				history.add(element);
 		}
-		return new Status(IStatus.OK,ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID,0,"",null); //$NON-NLS-1$
+		return new Status(IStatus.OK,ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID,0,ICheatSheetResource.EMPTY_STRING,null);
 	}
 	
 	public IStatus saveState(IMemento memento) {
@@ -70,7 +70,7 @@ public class CheatSheetHistory {
 				memento.createChild("element", element.getID()); //$NON-NLS-1$
 			}
 		}
-		return new Status(IStatus.OK,ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID,0,"",null); //$NON-NLS-1$
+		return new Status(IStatus.OK,ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID,0,ICheatSheetResource.EMPTY_STRING,null);
 	}
 
 	public void add(String id) {

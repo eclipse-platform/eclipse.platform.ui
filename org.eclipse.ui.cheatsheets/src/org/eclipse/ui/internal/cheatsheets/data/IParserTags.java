@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.cheatsheets.data;
  * to identify the tags used in the cheatsheet file.
  */
 public interface IParserTags {
-	public static final String copyright = "Licensed Material - Property of IBM <<PART NUMBER - 5724-D15>> (C) Copyright IBM Corp. 2003 - All Rights Reserved. US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.".intern(); //$NON-NLS-1$
 
 	/*
 	 * <!ELEMENT cheatsheet (intro, item+)>
@@ -120,6 +119,12 @@ public interface IParserTags {
 	 */
 	public static final String PERFORMWHEN = "perform-when"; //$NON-NLS-1$
 
+	// Constants for re-escaping XML characters
+	public static final String LESS_THAN = "&lt;"; //$NON-NLS-1$
+	public static final String GREATER_THAN = "&gt;"; //$NON-NLS-1$
+	public static final String AMPERSAND = "&amp;"; //$NON-NLS-1$
+	public static final String APOSTROPHE = "&apos;"; //$NON-NLS-1$
+	public static final String QUOTE = "&quot;"; //$NON-NLS-1$
 	
 
 	// Cheat Sheet state data key

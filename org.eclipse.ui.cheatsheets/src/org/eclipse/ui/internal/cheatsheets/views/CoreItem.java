@@ -488,7 +488,7 @@ public class CoreItem extends ViewItem {
 					if(param != null && param.startsWith("${") && param.endsWith("}")) { //$NON-NLS-1$ //$NON-NLS-2$
 						param = param.substring(2,param.length()-1);
 						String value = csm.getData(param);
-						clonedParams[i] = value == null ? "" : value; //$NON-NLS-1$
+						clonedParams[i] = value == null ? ICheatSheetResource.EMPTY_STRING : value;
 					}
 				}
 			}			

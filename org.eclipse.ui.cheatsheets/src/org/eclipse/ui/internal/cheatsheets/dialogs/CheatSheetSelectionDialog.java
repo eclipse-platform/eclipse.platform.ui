@@ -143,7 +143,7 @@ public class CheatSheetSelectionDialog extends SelectionDialog {
 		listViewer.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
 				// Return the features's label.
-				return element == null ? "" : ((CheatSheetElement) element).getLabel(null); //$NON-NLS-1$
+				return element == null ? ICheatSheetResource.EMPTY_STRING : ((CheatSheetElement) element).getLabel(null);
 			}
 		});
 
