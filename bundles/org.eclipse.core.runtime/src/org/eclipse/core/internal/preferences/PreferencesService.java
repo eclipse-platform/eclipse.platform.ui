@@ -709,10 +709,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		} catch (FileNotFoundException e) {
 			// ignore...if the file does not exist then all is OK
 		} catch (CoreException e) {
-			message = "Exception validating preference bundle versions.";
+			message = Policy.bind("preferences.validationException"); //$NON-NLS-1$
 			result.add(createStatusError(message, e));
 		} catch (BackingStoreException e) {
-			message = "Exception validating preference bundle versions.";
+			message = Policy.bind("preferences.validationException"); //$NON-NLS-1$
 			result.add(createStatusError(message, e));
 		}
 		return result;
