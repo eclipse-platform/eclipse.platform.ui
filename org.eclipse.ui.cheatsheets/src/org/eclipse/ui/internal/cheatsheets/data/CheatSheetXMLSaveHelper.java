@@ -118,19 +118,21 @@ public class CheatSheetXMLSaveHelper {
 
 			//Parse out the saved steps and sub steps that are dynamic.
 			ArrayList dynamicItemDataList = null;
-			NodeList dynamicNL = doc.getElementsByTagName(IParserTags.DYNAMICDATA);
+			NodeList dynamicNL = null;//TODO = doc.getElementsByTagName(IParserTags.DYNAMICDATA);
 			if (dynamicNL != null) {
 				dynamicItemDataList = new ArrayList(30);
 				for (int i = 0; i < dynamicNL.getLength(); i++) {
 					String itemid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ITEM);
-					String buttonCodes = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ACTIONPHRASE);
+/* TODO: Remove this! */
+//					String buttonCodes = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ACTIONPHRASE);
 					String aclass = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.CLASS);
 					String actionpid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.PLUGINID);
 					ArrayList actionParams = getParamList(dynamicNL.item(i).getAttributes());
 
 					Properties p = new Properties();
 					p.put(IParserTags.ITEM, itemid);
-					p.put(IParserTags.ACTIONPHRASE, buttonCodes);
+/* TODO: Remove this! */
+//					p.put(IParserTags.ACTIONPHRASE, buttonCodes);
 					p.put(IParserTags.CLASS, aclass);
 					p.put(IParserTags.PLUGINID, actionpid);
 					p.put(IParserTags.ACTIONPARAM, actionParams.toArray(new String[actionParams.size()]));
@@ -140,13 +142,14 @@ public class CheatSheetXMLSaveHelper {
 
 			//Parse out the saved steps and sub steps that are dynamic.
 			ArrayList dynamicSubItemDataList = null;
-			dynamicNL = doc.getElementsByTagName(IParserTags.DYNAMICSUBITEMDATA);
+			dynamicNL = null; //TODO doc.getElementsByTagName(IParserTags.DYNAMICSUBITEMDATA);
 			if (dynamicNL != null) {
 				dynamicSubItemDataList = new ArrayList(30);
 				for (int i = 0; i < dynamicNL.getLength(); i++) {
 					String itemid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ITEM);
 					String subitemid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.SUBITEM);
-					String buttonCodes = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ACTIONPHRASE);
+/* TODO: Remove this! */
+//					String buttonCodes = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ACTIONPHRASE);
 					String aclass = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.CLASS);
 					String actionpid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.PLUGINID);
 					String subItemLabel = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.SUBITEMLABEL);
@@ -155,7 +158,8 @@ public class CheatSheetXMLSaveHelper {
 					Properties p = new Properties();
 					p.put(IParserTags.ITEM, itemid);
 					p.put(IParserTags.SUBITEM, subitemid);
-					p.put(IParserTags.ACTIONPHRASE, buttonCodes);
+/* TODO: Remove this! */
+//					p.put(IParserTags.ACTIONPHRASE, buttonCodes);
 					p.put(IParserTags.CLASS, aclass);
 					p.put(IParserTags.PLUGINID, actionpid);
 					p.put(IParserTags.SUBITEMLABEL, subItemLabel);
@@ -176,8 +180,9 @@ public class CheatSheetXMLSaveHelper {
 			returnProps.put(IParserTags.SUBITEMCOMPLETED, subcompleted);
 			returnProps.put(IParserTags.SUBITEMSKIPPED, subskipped);
 			returnProps.put(IParserTags.MANAGERDATA, ht);
-			returnProps.put(IParserTags.DYNAMICDATA, dynamicItemDataList);
-			returnProps.put(IParserTags.DYNAMICSUBITEMDATA, dynamicSubItemDataList);
+// TODO
+//			returnProps.put(IParserTags.DYNAMICDATA, dynamicItemDataList);
+//			returnProps.put(IParserTags.DYNAMICSUBITEMDATA, dynamicSubItemDataList);
 		}
 		return returnProps;
 	}
@@ -364,9 +369,10 @@ public class CheatSheetXMLSaveHelper {
 				if (c.isDynamic()) {
 					if (c instanceof Item) {
 						Item ci = (Item) c;
-						Element dynamicTag = doc.createElement(IParserTags.DYNAMICDATA);
+						Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICDATA);
 						dynamicTag.setAttribute(IParserTags.ITEM, ci.getID());
-						dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, ci.getButtonCodes());
+/* TODO: Remove this! */
+//						dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, ci.getButtonCodes());
 						dynamicTag.setAttribute(IParserTags.CLASS, ci.getActionClass());
 						dynamicTag.setAttribute(IParserTags.PLUGINID, ci.getActionPluginID());
 						String[] params = ci.getActionParams();
@@ -381,10 +387,11 @@ public class CheatSheetXMLSaveHelper {
 							for (int j = 0; j < subs.length; j++) {
 								SubItem s = subs[j];
 								String subitemid = s.getID();
-								Element dynamicTag = doc.createElement(IParserTags.DYNAMICSUBITEMDATA);
+								Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICSUBITEMDATA);
 								dynamicTag.setAttribute(IParserTags.ITEM, itemid);
 								dynamicTag.setAttribute(IParserTags.SUBITEM, subitemid);
-								dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, s.getButtonCodes());
+/* TODO: Remove this! */
+//								dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, s.getButtonCodes());
 								dynamicTag.setAttribute(IParserTags.CLASS, s.getActionClass());
 								dynamicTag.setAttribute(IParserTags.PLUGINID, s.getActionPluginID());
 								dynamicTag.setAttribute(IParserTags.SUBITEMLABEL, s.getLabel());

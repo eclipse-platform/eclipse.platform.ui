@@ -20,6 +20,10 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 
@@ -27,7 +31,7 @@ public class IntroItem extends ViewItem {
 	private Image startButtonImage;
 	private Image restartButtonImage;
 
-	private Button startButton;
+	private ImageHyperlink startButton;
 
 	/**
 	 * Constructor for IntroItem.
@@ -57,13 +61,13 @@ public class IntroItem extends ViewItem {
 	/*package*/ void setStartImage() {
 		startButton.setImage(startButtonImage);
 		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
-		startButton.setFAccessibleName(startButton.getToolTipText());
+//		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
 
 	/*package*/ void setRestartImage() {
 		startButton.setImage(restartButtonImage);
 		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_CHEATSHEET_TOOLTIP));
-		startButton.setFAccessibleName(startButton.getToolTipText());
+//		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
 
 	/**
@@ -76,8 +80,9 @@ public class IntroItem extends ViewItem {
 		buttonlayout.marginWidth = 2;
 		buttonlayout.verticalSpacing = 2;
 
-		GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
-		buttonData.grabExcessHorizontalSpace = true;
+//		GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
+//		buttonData.grabExcessHorizontalSpace = true;
+		TableWrapData buttonData = new TableWrapData(TableWrapData.FILL);
 
 		buttonComposite.setLayout(buttonlayout);
 		buttonComposite.setLayoutData(buttonData);
@@ -88,15 +93,16 @@ public class IntroItem extends ViewItem {
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
 
-		startButton = new Button(buttonComposite, SWT.NULL, startButtonImage);
+		startButton = new ImageHyperlink(buttonComposite, SWT.NULL);
+		startButton.setImage(startButtonImage);
 		startButton.setData(this);
 		startButton.setBackground(itemColor);
 		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
-		startButton.setFAccessibleName(startButton.getToolTipText());
-		startButton.setFAccessibleDescription(bodyText.getText());
+//		startButton.setFAccessibleName(startButton.getToolTipText());
+//		startButton.setFAccessibleDescription(bodyText.getText());
 		// addHandListener(startLabel);
-		startButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+		startButton.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
 				theview.advanceIntroItem();
 			}
 		});

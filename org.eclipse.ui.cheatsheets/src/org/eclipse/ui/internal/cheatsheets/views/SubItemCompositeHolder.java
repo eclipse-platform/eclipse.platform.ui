@@ -11,17 +11,18 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 
 public class SubItemCompositeHolder {
 	private Label iconLabel;
 	private boolean skipped;
 	private boolean completed;
-	protected Button startButton;
+	protected ImageHyperlink startButton;
 	
 	/**
 	 * 
 	 */
-	/*package*/ SubItemCompositeHolder(Label l, Button startb) {
+	/*package*/ SubItemCompositeHolder(Label l, ImageHyperlink startb) {
 		super();
 		iconLabel = l;
 		startButton = startb;
@@ -65,7 +66,7 @@ public class SubItemCompositeHolder {
 	/**
 	 * @return
 	 */
-	/*package*/ Button getStartButton() {
+	/*package*/ ImageHyperlink getStartButton() {
 		return startButton;
 	}
 

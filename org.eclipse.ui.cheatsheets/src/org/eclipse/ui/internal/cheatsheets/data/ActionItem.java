@@ -27,7 +27,10 @@ public abstract class ActionItem extends AbstractItem {
 	private String actionClass;
 	private String[] actionParams;
 	private String actionPluginID;
-	private String buttonCodes;
+//	private String buttonCodes;
+	private boolean complete;
+	private boolean perform;
+	private boolean skip;
 
 	public ActionItem() {
 		super();
@@ -68,8 +71,44 @@ public abstract class ActionItem extends AbstractItem {
 	 * the full attribute for the item would be this:  actionphrase="0,1,2".</p> 
 	 * @return a comma separated string of button possibilities
 	 */
-	public String getButtonCodes() {
-		return (buttonCodes!=null)?buttonCodes:null;
+//	public String getButtonCodes() {
+//		return (buttonCodes!=null)?buttonCodes:null;
+//	}
+
+	/**
+	 * <p>This method accepts a comma separated string of the valid button codes,
+	 * the code possibilities are : <li>0 : perform action</li>
+	 * 										   <li>1 : Skip this task</li>
+	 * 										   <li>2 : click when done</li>
+	 * An example string to pass would be "0,1,2".  When using this in the cheat sheet content file,
+	 * the full attribute for the item would be this:  actionphrase="0,1,2".</p> 
+	 * @param codes the comma separated string of codes
+	 */
+//	public void setButtonCodes(String codes) {
+//		this.buttonCodes = codes;
+//	}
+
+	/**
+	 * @return Returns the complete.
+	 * @todo Generated comment
+	 */
+	public boolean isComplete() {
+		return complete;
+	}
+
+	/**
+	 * @return Returns the perform.
+	 * @todo Generated comment
+	 */
+	public boolean isPerform() {
+		return perform;
+	}
+	/**
+	 * @return Returns the skip.
+	 * @todo Generated comment
+	 */
+	public boolean isSkip() {
+		return skip;
 	}
 
 	/**
@@ -99,16 +138,24 @@ public abstract class ActionItem extends AbstractItem {
 	}
 
 	/**
-	 * <p>This method accepts a comma separated string of the valid button codes,
-	 * the code possibilities are : <li>0 : perform action</li>
-	 * 										   <li>1 : Skip this task</li>
-	 * 										   <li>2 : click when done</li>
-	 * An example string to pass would be "0,1,2".  When using this in the cheat sheet content file,
-	 * the full attribute for the item would be this:  actionphrase="0,1,2".</p> 
-	 * @param codes the comma separated string of codes
+	 * @param complete The complete to set.
+	 * @todo Generated comment
 	 */
-	public void setButtonCodes(String codes) {
-		this.buttonCodes = codes;
+	public void setComplete(boolean complete) {
+		this.complete = complete;
 	}
-
+	/**
+	 * @param perform The perform to set.
+	 * @todo Generated comment
+	 */
+	public void setPerform(boolean perform) {
+		this.perform = perform;
+	}
+	/**
+	 * @param skip The skip to set.
+	 * @todo Generated comment
+	 */
+	public void setSkip(boolean skip) {
+		this.skip = skip;
+	}
 }

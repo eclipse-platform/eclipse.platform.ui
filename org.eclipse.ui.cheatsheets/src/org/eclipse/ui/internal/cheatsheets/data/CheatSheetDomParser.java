@@ -38,17 +38,21 @@ import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
  * 
  */
 public class CheatSheetDomParser {
+	private static final String TRUE_STRING = "true"; //$NON-NLS-1$
+	private static final String KIND_ACTION = "action"; //$NON-NLS-1$
+	private static final String KIND_MANUAL = "manual"; //$NON-NLS-1$
+	private static final String KIND_BOTH = "both"; //$NON-NLS-1$
+
 	private float csversion;
 	private DocumentBuilder documentBuilder;
 	private ArrayList idChecker;
 	private Item introItem;
+	private ArrayList itemExtensionContainerList;
 	private ArrayList items;
 	private Document myDocument;
 	private InputSource mysource;
-	private ArrayList subIDChecker;
 	private String title;
 	private URL url;
-	private ArrayList itemExtensionContainerList;
 
 	/**
 	 * ConvertJava constructor comment.
@@ -63,7 +67,6 @@ public class CheatSheetDomParser {
 		}
 
 		items = new ArrayList();
-		subIDChecker = new ArrayList();
 	}
 
 	private boolean checkThisID(String idToCheck) {
@@ -152,6 +155,26 @@ public class CheatSheetDomParser {
 	 */
 	public String getTitle() {
 		return title;
+	}
+
+	private AbstractItemExtensionElement[] handleUnknownItemAttribute(Node item) {
+		ArrayList al = new ArrayList();
+		if (itemExtensionContainerList == null)
+			return null;
+
+		for (int i = 0; i < itemExtensionContainerList.size(); i++) {
+			AbstractItemExtensionElement itemElement = (AbstractItemExtensionElement) itemExtensionContainerList.get(i);
+			String itemExtensionAtt = itemElement.getAttributeName();
+
+			if (itemExtensionAtt.equals(item.getNodeName())) {
+				// TODO (lorne) - please verify that item.getNodeValue() returns attribute string value sans extra quotes
+				// i.e., for attr="xxx" we want to pass "xxx" not "\"xxx\""
+				itemElement.handleAttribute(item.getNodeValue());
+				al.add(itemElement);
+			}
+		}
+
+		return (AbstractItemExtensionElement[])al.toArray(new AbstractItemExtensionElement[al.size()]);
 	}
 
 	public boolean parse() {
@@ -285,14 +308,15 @@ public class CheatSheetDomParser {
 			Node itemnode = itemList.item(i);
 			NodeList itemchildren = itemnode.getChildNodes();
 
-			String actionPhrase = null;
+			boolean perform = false;
+			boolean skip = false;
+			boolean complete = false;
 			String title = null;
 			String actionPid = null;
 			String actionClass = null;
 			String topicHref = null;
 			boolean dynamic = false;
 			String itemID = null;
-			boolean hasID = false;
 
 			StringBuffer bodyText = new StringBuffer();
 
@@ -326,30 +350,35 @@ public class CheatSheetDomParser {
 					} else if (attName.equals(IParserTags.ID)) {
 						itemID = item.getNodeValue();
 						if (itemID != null) {
-							hasID = true;
 							if (checkThisID(itemID))
 								return null;
 						} else {
 							return null;
 						}
-					} else if (attName.equals(IParserTags.DYNAMIC)) {
-						String dynamicString = item.getNodeValue();
-						if (dynamicString != null)
-							if (dynamicString.equals("true")) { //$NON-NLS-1$
-								dynamic = true;
-							} else if (dynamicString.equals("false")) { //$NON-NLS-1$
-								dynamic = false;
-							} else {
-								dynamic = false;
-							}
 					} else if (attName.equals(IParserTags.PLUGINID)) {
 						actionPid = item.getNodeValue();
 					} else if (attName.equals(IParserTags.CLASS)) {
 						actionClass = item.getNodeValue();
 					} else if (attName.equals(IParserTags.HREF)) {
 						topicHref = item.getNodeValue();
-					} else if (attName.equals(IParserTags.ACTIONPHRASE)) {
-						actionPhrase = item.getNodeValue();
+					} else if (attName.equals(IParserTags.KIND)) {
+						String value = item.getNodeValue();
+						if(value != null) {
+							if(value.equals(KIND_ACTION)) {
+								perform = true;
+							} else if(value.equals(KIND_MANUAL)) {
+								complete = true;
+							} else if(value.equals(KIND_BOTH)) {
+								perform = true;
+								complete = true;
+							} else {
+								return null;
+							}
+						} else {
+							return null;
+						}
+					} else if (attName.equals(IParserTags.SKIP)) {
+						skip = item.getNodeValue().equals(TRUE_STRING);
 					} else {
 						AbstractItemExtensionElement[] ie = handleUnknownItemAttribute(item);
 						if (ie != null)
@@ -381,7 +410,9 @@ public class CheatSheetDomParser {
 				itemtoadd.setHref(topicHref);
 				itemtoadd.setTitle(title);
 				itemtoadd.setActionParams((String[]) l.toArray(new String[l.size()]));
-				itemtoadd.setButtonCodes(actionPhrase);
+				itemtoadd.setPerform(perform);
+				itemtoadd.setSkip(skip);
+				itemtoadd.setComplete(complete);
 				itemtoadd.setText(bodyString);
 				itemtoadd.setIsDynamic(dynamic);
 				itemtoadd.setID(itemID);
@@ -414,26 +445,6 @@ public class CheatSheetDomParser {
 		return localList;
 	}
 
-	private AbstractItemExtensionElement[] handleUnknownItemAttribute(Node item) {
-		ArrayList al = new ArrayList();
-		if (itemExtensionContainerList == null)
-			return null;
-
-		for (int i = 0; i < itemExtensionContainerList.size(); i++) {
-			AbstractItemExtensionElement itemElement = (AbstractItemExtensionElement) itemExtensionContainerList.get(i);
-			String itemExtensionAtt = itemElement.getAttributeName();
-
-			if (itemExtensionAtt.equals(item.getNodeName())) {
-				// TODO (lorne) - please verify that item.getNodeValue() returns attribute string value sans extra quotes
-				// i.e., for attr="xxx" we want to pass "xxx" not "\"xxx\""
-				itemElement.handleAttribute(item.getNodeValue());
-				al.add(itemElement);
-			}
-		}
-
-		return (AbstractItemExtensionElement[])al.toArray(new AbstractItemExtensionElement[al.size()]);
-	}
-
 	//Returns an array list full of SubContentItems.
 	private ArrayList parseSubItems(ArrayList sil) {
 		//		System.out.println("Parsing sub items.");
@@ -444,7 +455,9 @@ public class CheatSheetDomParser {
 		String label = null;
 		String actionPid = null;
 		String actionClass = null;
-		String actionNums = null;
+		boolean perform = false;
+		boolean skip = false;
+		boolean complete = false;
 		ArrayList actionParamList = null;
 		String subItemID = null;
 
@@ -467,9 +480,28 @@ public class CheatSheetDomParser {
 				return null;
 			}
 			try {
-				actionNums = nnm.getNamedItem(IParserTags.ACTIONPHRASE).getNodeValue();
-				if (actionNums == null)
+				String value = nnm.getNamedItem(IParserTags.SKIP).getNodeValue();
+				if(value != null)
+					skip = value.equals(TRUE_STRING);
+			} catch (Exception e) {
+				skip = false;
+			}
+			try {
+				String value = nnm.getNamedItem(IParserTags.KIND).getNodeValue();
+				if(value != null) {
+					if(value.equals(KIND_ACTION)) {
+						perform = true;
+					} else if(value.equals(KIND_MANUAL)) {
+						complete = true;
+					} else if(value.equals(KIND_BOTH)) {
+						perform = true;
+						complete = true;
+					} else {
+						return null;
+					}
+				} else {
 					return null;
+				}
 			} catch (Exception e) {
 				return null;
 			}
@@ -494,7 +526,9 @@ public class CheatSheetDomParser {
 			//			sub.setSuperItem(superItem);
 			sub.setActionPluginID(actionPid);
 			sub.setActionClass(actionClass);
-			sub.setButtonCodes(actionNums);
+			sub.setPerform(perform);
+			sub.setSkip(skip);
+			sub.setComplete(complete);
 			sub.setActionParams((String[]) actionParamList.toArray(new String[actionParamList.size()]));
 			subItemList.add(sub);
 

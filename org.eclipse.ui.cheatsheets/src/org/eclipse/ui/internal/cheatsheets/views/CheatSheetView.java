@@ -16,17 +16,13 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.part.ViewPart;
 
 import org.eclipse.ui.internal.cheatsheets.*;
@@ -59,25 +55,9 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 
 public class CheatSheetView extends ViewPart {
 
-	private final static int HORZ_SCROLL_INCREMENT = 20;
-	private final static int VERT_SCROLL_INCREMENT = 20;
-	
 	//booleans
 	private boolean actionBarContributed = false;
 	private boolean allCollapsed = false;
-
-	//Colors
-	private Color backgroundColor;
-
-	private final RGB bottomRGB = new RGB(249, 247, 251);
-	private final RGB midRGB = new RGB(234, 234, 252);
-	private final RGB topRGB = new RGB(217, 217, 252);
-	private Color[] colorArray;
-
-	private final RGB darkGreyRGB = new RGB(160, 192, 208);
-	private final RGB HIGHLIGHT_RGB = new RGB(230, 230, 230);
-	private Color darkGrey;
-	private Color lightGrey;
 
 	//CS Elements
 	private CheatSheetElement contentElement;
@@ -109,12 +89,13 @@ public class CheatSheetView extends ViewPart {
 
 	//Composites
 	private Composite parent;
-	private Composite cheatSheetComposite;
-	private Composite infoArea; 
-	private ScrolledComposite scrolledComposite;
+//	private Composite infoArea; 
+//	private ScrolledComposite scrolledComposite;
 
 	private Cursor busyCursor;
-	private int cheatsheetMinimumWidth;
+	
+	private ErrorPage errorPage;
+	private CheatSheetPage cheatSheetPage;
 
 	/**
 	 * The constructor.
@@ -181,7 +162,7 @@ public class CheatSheetView extends ViewPart {
 
 	}
 
-	/*package*/ void advanceItem(Button mylabel, boolean markAsCompleted) {
+	/*package*/ void advanceItem(ImageHyperlink mylabel, boolean markAsCompleted) {
 		currentItem = (ViewItem) mylabel.getData();
 		int index = getIndexOfItem(currentItem);
 
@@ -227,12 +208,13 @@ public class CheatSheetView extends ViewPart {
 		}
 
 		saveCurrentSheet();
-		scrolledComposite.layout(true);
-		infoArea.layout(true);
-		layoutMyItems();
+// TODO: LP - Needed? 20040321 
+//		scrolledComposite.layout(true);
+//		infoArea.layout(true);
+//		layoutMyItems();
 	}
 
-	/*package*/ void advanceSubItem(Button mylabel, boolean markAsCompleted, int subItemIndex) {
+	/*package*/ void advanceSubItem(ImageHyperlink mylabel, boolean markAsCompleted, int subItemIndex) {
 		//		System.out.println("Advancing a sub item!! Item Number: " + subItemIndex);
 		String subItemID = null;
 		Label l = null;
@@ -284,9 +266,10 @@ public class CheatSheetView extends ViewPart {
 		updateScrolledComposite();
 		scrollIfNeeded();
 		saveCurrentSheet();
-		scrolledComposite.layout(true);
-		infoArea.layout(true);
-		layoutMyItems();
+// TODO: LP - Needed? 20040321 
+//		scrolledComposite.layout(true);
+//		infoArea.layout(true);
+//		layoutMyItems();
 	}
 
 	private void callDisposeOnViewElements() {
@@ -295,16 +278,17 @@ public class CheatSheetView extends ViewPart {
 		for (int i = 0; i < myitems.length; i++) {
 			myitems[i].dispose();
 		}
+		
+//		infoArea = null;
+//		scrolledComposite = null;
 
-		if (infoArea != null)
-			infoArea.dispose();
+		if(errorPage != null) {
+			errorPage.dispose();
+		}
 
-		if (scrolledComposite != null)
-			scrolledComposite.dispose();
-
-		if (cheatSheetComposite != null)
-			cheatSheetComposite.dispose();
-
+		if(cheatSheetPage != null) {
+			cheatSheetPage.dispose();
+		}
 	}
 
 	private boolean checkAllAttempted(ArrayList list) {
@@ -336,14 +320,15 @@ public class CheatSheetView extends ViewPart {
 
 		savedProps = props;
 
-		ArrayList dynamicItemDataList = (ArrayList) props.get(IParserTags.DYNAMICDATA);
-		ArrayList dynamicSubItemDataList = (ArrayList) props.get(IParserTags.DYNAMICSUBITEMDATA);
+		ArrayList dynamicItemDataList = null; //TODO (ArrayList) props.get(IParserTags.DYNAMICDATA);
+		ArrayList dynamicSubItemDataList = null; //TODO (ArrayList) props.get(IParserTags.DYNAMICSUBITEMDATA);
 
 		if (dynamicItemDataList != null)
 			for (int i = 0; i < dynamicItemDataList.size(); i++) {
 				Properties p = (Properties) dynamicItemDataList.get(i);
 				String itemid = (String) p.get(IParserTags.ITEM);
-				String buttonCodes = (String) p.get(IParserTags.ACTIONPHRASE);
+/* TODO: Remove this! */
+//				String buttonCodes = (String) p.get(IParserTags.ACTIONPHRASE);
 				String aclass = (String) p.get(IParserTags.CLASS);
 				String actionpid = (String) p.get(IParserTags.PLUGINID);
 				String[] actionParams = (String[]) p.get(IParserTags.ACTIONPARAM);
@@ -357,7 +342,8 @@ public class CheatSheetView extends ViewPart {
 							c.setActionClass(aclass);
 							c.setActionPluginID(actionpid);
 							c.setActionParams(actionParams);
-							c.setButtonCodes(buttonCodes);
+/* TODO: Remove this! */
+//							c.setButtonCodes(buttonCodes);
 						}
 					}
 				}
@@ -369,7 +355,8 @@ public class CheatSheetView extends ViewPart {
 				Properties p = (Properties) dynamicSubItemDataList.get(i);
 				String itemid = (String) p.get(IParserTags.ITEM);
 				String subitemid = (String) p.get(IParserTags.SUBITEM);
-				String buttonCodes = (String) p.get(IParserTags.ACTIONPHRASE);
+/* TODO: Remove this! */				
+//				String buttonCodes = (String) p.get(IParserTags.ACTIONPHRASE);
 				String aclass = (String) p.get(IParserTags.CLASS);
 				String actionpid = (String) p.get(IParserTags.PLUGINID);
 				String sublabel = (String) p.get(IParserTags.SUBITEMLABEL);
@@ -383,8 +370,9 @@ public class CheatSheetView extends ViewPart {
 						if (c.isDynamic()) {
 							ItemWithSubItems ciws = convertThisIItem(c);
 							replaceThisContentItem(c, ciws);
-							SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
-							ciws.addSubItem(subItem);
+/* TODO: Remove this! */
+//							SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
+//							ciws.addSubItem(subItem);
 						}
 					} else if (abItem instanceof ItemWithSubItems) {
 						boolean handled = false;
@@ -397,15 +385,17 @@ public class CheatSheetView extends ViewPart {
 									s.setActionClass(aclass);
 									s.setActionPluginID(actionpid);
 									s.setActionParams(actionParams);
-									s.setButtonCodes(buttonCodes);
+/* TODO: Remove this! */
+//									s.setButtonCodes(buttonCodes);
 									s.setLabel(sublabel);
 									handled = true;
 									break sublabel;
 								}
 							}
 							if (!handled) {
-								SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
-								c.addSubItem(subItem);
+/* TODO: Remove this! */
+//								SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
+//								c.addSubItem(subItem);
 								handled = true;
 							}
 						}
@@ -422,8 +412,10 @@ public class CheatSheetView extends ViewPart {
 		} else {
 			props = savedProps;
 		}
-		manager = new CheatSheetManager(currentID, this);
+//TODO: moved this down further
+//		manager = new CheatSheetManager(currentID, this);
 		if (props == null) {
+			manager = new CheatSheetManager(currentID, this);
 			getViewItemArray()[0].setAsCurrentActiveItem();
 			/* LP-item event */
 //			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, getViewItemArray()[0]);
@@ -454,6 +446,7 @@ public class CheatSheetView extends ViewPart {
 		if (cid != null)
 			currentID = cid;
 
+		manager = new CheatSheetManager(currentID, this);
 		manager.setData(csmData);
 
 		if (itemNum >= 0) {
@@ -622,259 +615,13 @@ public class CheatSheetView extends ViewPart {
 	private SubItem createASubItem(String subid, String actionCodes, String actionPID, String actionClass, String[] params, String label) {
 		SubItem subItem = new SubItem();
 		subItem.setActionClass(actionClass);
-		subItem.setButtonCodes(actionCodes);
+/* TODO: Remove this! */
+//		subItem.setButtonCodes(actionCodes);
 		subItem.setActionParams(params);
 		subItem.setLabel(label);
 		subItem.setActionPluginID(actionPID);
 		subItem.setID(subid);
 		return subItem;
-	}
-
-	private void createErrorPageInfoArea(Composite parent) {
-		Composite sampleComposite = null;
-		// Create the title area which will contain
-		// a title, message, and image.
-		scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		scrolledComposite.setLayoutData(gridData);
-
-		//This infoArea composite is the composite for the items.
-		//It is owned by the scrolled composite which in turn is owned
-		//by the cheatSheetComposite.
-		infoArea = new Composite(scrolledComposite, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginHeight = 9;
-		layout.marginWidth = 7;
-		layout.verticalSpacing = 3;
-		infoArea.setLayout(layout);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		infoArea.setLayoutData(gridData);
-		infoArea.setBackground(backgroundColor);
-
-		String errorString = CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PAGE_MESSAGE); 
-//"An error occurred loading the cheat sheet content file.  Contact the cheat sheet provider for assistance.";
-
-		StyledText st = new StyledText(infoArea, SWT.WRAP | SWT.READ_ONLY | SWT.NULL);
-		st.setText(errorString);
-		
-		GridData bgridData = new GridData();
-		bgridData.verticalAlignment = GridData.BEGINNING;
-		bgridData.horizontalAlignment = GridData.FILL;
-		bgridData.grabExcessHorizontalSpace = true;
-		st.setLayoutData(bgridData);
-		st.setEnabled(false);
-
-
-		// Adjust the scrollbar increments
-		if (sampleComposite == null) {
-			scrolledComposite.getHorizontalBar().setIncrement(HORZ_SCROLL_INCREMENT);
-			scrolledComposite.getVerticalBar().setIncrement(VERT_SCROLL_INCREMENT);
-		} else {
-			GC gc = new GC(sampleComposite);
-			int width = gc.getFontMetrics().getAverageCharWidth();
-			gc.dispose();
-			scrolledComposite.getHorizontalBar().setIncrement(width);
-			scrolledComposite.getVerticalBar().setIncrement(sampleComposite.getLocation().y);
-		}
-
-		//		Point newTitleSize = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		int workbenchWindowWidth = this.getSite().getWorkbenchWindow().getShell().getBounds().width;
-		cheatsheetMinimumWidth = (workbenchWindowWidth >> 2);
-
-		final int minWidth = cheatsheetMinimumWidth;
-		// from the computeSize(SWT.DEFAULT, SWT.DEFAULT) of all the 
-		// children in infoArea excluding the wrapped styled text 
-		// There is no easy way to do this.
-		final boolean[] inresize = new boolean[1];
-		// flag to stop unneccesary recursion
-		infoArea.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				if (inresize[0])
-					return;
-				inresize[0] = true;
-				// Refresh problems are fixed if the following is runs twice
-				for (int i = 0; i < 2; ++i) {
-					// required because of bugzilla report 4579
-					infoArea.layout(true);
-					// required because you want to change the height that the 
-					// scrollbar will scroll over when the width changes.
-					int width = infoArea.getClientArea().width;
-					Point p = infoArea.computeSize(width, SWT.DEFAULT);
-					scrolledComposite.setMinSize(minWidth, p.y);
-					inresize[0] = false;
-				}
-			}
-		});
-
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
-		Point p = infoArea.computeSize(minWidth, SWT.DEFAULT);
-		infoArea.setSize(p.x, p.y);
-
-		scrolledComposite.setMinWidth(minWidth);
-		scrolledComposite.setMinHeight(p.y);
-		//bug 20094	
-
-		scrolledComposite.setContent(infoArea);
-		hascontent = true;
-		
-	}
-
-		/**
-		 * Creates the cheatsheet's title areawhich will consists
-		 * of a title and image.
-		 *
-		 * @param parent the SWT parent for the title area composite
-		 */
-		private void createErrorPageTitleArea(Composite parent) {
-			String errorTitle = CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CHEATSHEET_CONTENT);
-			//String errorTitle = "Error loading cheat sheet content";
-
-			// Message label
-			final CLabel messageLabel = new CLabel(parent, SWT.NONE);
-			messageLabel.setBackground(colorArray, new int[] { 50, 100 });
-
-			messageLabel.setText(errorTitle);
-			messageLabel.setFont(JFaceResources.getHeaderFont());
-			GridData ldata = new GridData(GridData.FILL_HORIZONTAL);
-			ldata.grabExcessHorizontalSpace = true;
-			messageLabel.setLayoutData(ldata);
-
-			final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					if (JFaceResources.HEADER_FONT.equals(event.getProperty())) {
-						messageLabel.setFont(JFaceResources.getHeaderFont());
-					}
-				}
-			};
-
-			messageLabel.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent event) {
-					JFaceResources.getFontRegistry().removeListener(fontListener);
-				}
-			});
-
-			JFaceResources.getFontRegistry().addListener(fontListener);
-
-			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-			messageLabel.setLayoutData(gridData);
-		}
-
-	/**
-	 * Creates the main composite area of the view.
-	 *
-	 * @param parent the SWT parent for the title area composite
-	 * @return the created info area composite
-	 */
-	private void createInfoArea(Composite parent) {
-		Composite sampleComposite = null;
-		// Create the title area which will contain
-		// a title, message, and image.
-		scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		scrolledComposite.setLayoutData(gridData);
-
-		//This infoArea composite is the composite for the items.
-		//It is owned by the scrolled composite which in turn is owned
-		//by the cheatSheetComposite.
-		infoArea = new Composite(scrolledComposite, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginHeight = 9;
-		layout.marginWidth = 7;
-		layout.verticalSpacing = 3;
-		infoArea.setLayout(layout);
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		infoArea.setLayoutData(gridData);
-		infoArea.setBackground(backgroundColor);
-
-		IntroItem myintro = new IntroItem(infoArea, parser.getIntroItem(), darkGrey, this);
-		sampleComposite = myintro.getMainItemComposite();
-
-		myintro.setItemColor(myintro.lightGrey);
-		myintro.boldTitle();
-		viewItemList.add(myintro);
-
-		//Get the content info from the parser.  This makes up all items except the intro item.
-		ArrayList items = parser.getItems();
-		listOfContentItems = items;
-		int switcher = 0;
-
-		for (int i = 0; i < items.size(); i++) {
-			if (switcher == 0) {
-				if (items.get(i) instanceof ItemWithSubItems) {
-					CoreItem ciws = new CoreItem(infoArea, (ItemWithSubItems) items.get(i), backgroundColor, this);
-					viewItemList.add(ciws);
-				} else {
-					CoreItem mycore = new CoreItem(infoArea, (Item) items.get(i), backgroundColor, this);
-					viewItemList.add(mycore);
-				}
-				switcher = 1;
-			} else {
-				if (items.get(i) instanceof ItemWithSubItems) {
-					CoreItem ciws = new CoreItem(infoArea, (ItemWithSubItems) items.get(i), lightGrey, this);
-					viewItemList.add(ciws);
-				} else {
-					CoreItem mycore = new CoreItem(infoArea, (Item) items.get(i), lightGrey, this);
-					viewItemList.add(mycore);
-				}
-				switcher = 0;
-			}
-		}
-
-		// Adjust the scrollbar increments
-		if (sampleComposite == null) {
-			scrolledComposite.getHorizontalBar().setIncrement(HORZ_SCROLL_INCREMENT);
-			scrolledComposite.getVerticalBar().setIncrement(VERT_SCROLL_INCREMENT);
-		} else {
-			GC gc = new GC(sampleComposite);
-			int width = gc.getFontMetrics().getAverageCharWidth();
-			gc.dispose();
-			scrolledComposite.getHorizontalBar().setIncrement(width);
-			scrolledComposite.getVerticalBar().setIncrement(sampleComposite.getLocation().y);
-		}
-
-		//		Point newTitleSize = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		int workbenchWindowWidth = this.getSite().getWorkbenchWindow().getShell().getBounds().width;
-		cheatsheetMinimumWidth = (workbenchWindowWidth >> 2);
-
-		final int minWidth = cheatsheetMinimumWidth;
-		// from the computeSize(SWT.DEFAULT, SWT.DEFAULT) of all the 
-		// children in infoArea excluding the wrapped styled text 
-		// There is no easy way to do this.
-		final boolean[] inresize = new boolean[1];
-		// flag to stop unneccesary recursion
-		infoArea.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				if (inresize[0])
-					return;
-				inresize[0] = true;
-				// Refresh problems are fixed if the following is runs twice
-				for (int i = 0; i < 2; ++i) {
-					// required because of bugzilla report 4579
-					infoArea.layout(true);
-					// required because you want to change the height that the 
-					// scrollbar will scroll over when the width changes.
-					int width = infoArea.getClientArea().width;
-					Point p = infoArea.computeSize(width, SWT.DEFAULT);
-					scrolledComposite.setMinSize(minWidth, p.y);
-					inresize[0] = false;
-				}
-			}
-		});
-
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
-		Point p = infoArea.computeSize(minWidth, SWT.DEFAULT);
-		infoArea.setSize(p.x, p.y);
-
-		scrolledComposite.setMinWidth(minWidth);
-		scrolledComposite.setMinHeight(p.y);
-		//bug 20094	
-
-		scrolledComposite.setContent(infoArea);
-		hascontent = true;
 	}
 
 	/**
@@ -899,13 +646,9 @@ public class CheatSheetView extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		this.parent = parent;
-		busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
 		Display display = parent.getDisplay();
-		lightGrey = new Color(display, HIGHLIGHT_RGB);
-		darkGrey = new Color(display, darkGreyRGB);
-		colorArray = new Color[] { new Color(display, topRGB), new Color(display, midRGB), new Color(display, bottomRGB)};
-		// Get the background color for the cheatsheet controls				
-		backgroundColor = JFaceColors.getBannerBackground(display);
+
+		busyCursor = new Cursor(display, SWT.CURSOR_WAIT);
 
 //TODO: Port problem!
 //		FastViewHack.enableFollowingFastViewOnly(this);
@@ -921,57 +664,11 @@ public class CheatSheetView extends ViewPart {
 	}
 
 	/**
-	 * Creates the cheatsheet's title areawhich will consists
-	 * of a title and image.
-	 *
-	 * @param parent the SWT parent for the title area composite
-	 */
-	private void createTitleArea(Composite parent) {
-		// Message label
-		final CLabel messageLabel = new CLabel(parent, SWT.NONE);
-		messageLabel.setBackground(colorArray, new int[] { 50, 100 });
-
-		messageLabel.setText(getBannerTitle());
-		messageLabel.setFont(JFaceResources.getHeaderFont());
-		GridData ldata = new GridData(GridData.FILL_HORIZONTAL);
-		ldata.grabExcessHorizontalSpace = true;
-		messageLabel.setLayoutData(ldata);
-
-		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (JFaceResources.HEADER_FONT.equals(event.getProperty())) {
-					messageLabel.setFont(JFaceResources.getHeaderFont());
-				}
-			}
-		};
-
-		messageLabel.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
-				JFaceResources.getFontRegistry().removeListener(fontListener);
-			}
-		});
-
-		JFaceResources.getFontRegistry().addListener(fontListener);
-
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		messageLabel.setLayoutData(gridData);
-
-		//		Point titleSize = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		//		Point newTitleSize = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		//		if(newTitleSize == null){
-		//			
-		//		}else{
-		//			
-		//		}
-		//		cheatsheetMinimumWidth = titleSize.x;
-		//		cheatsheetMinimumWidth = newTitleSize.x;
-	}
-
-	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		manager.fireEvent(ICheatSheetEvent.CHEATSHEET_CLOSED);
+		if(manager != null)
+			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_CLOSED);
 
 		super.dispose();
 
@@ -985,16 +682,6 @@ public class CheatSheetView extends ViewPart {
 		if (parent != null)
 			parent.dispose();
 
-		if (lightGrey != null)
-			lightGrey.dispose();
-
-		if (darkGrey != null)
-			darkGrey.dispose();
-
-		for (int i = 0; i < colorArray.length; i++) {
-			if (colorArray[i] != null)
-				colorArray[i].dispose();
-		}
 	}
 
 	/* LP-item event */
@@ -1026,14 +713,15 @@ public class CheatSheetView extends ViewPart {
 //		getCheatsheetManager().fireEvent(new CheatSheetEvent(eventType, currentID, getCheatsheetManager()));
 //	}
 
-	/**
-	 * Returns the title obtained from the parser
-	 */
-	private String getBannerTitle() {
-		if (parser.getTitle() == null)
-			return ""; //$NON-NLS-1$
-		return parser.getTitle();
-	}
+// LP - Needed? 20040321
+//	/**
+//	 * Returns the title obtained from the parser
+//	 */
+//	private String getBannerTitle() {
+//		if (parser.getTitle() == null)
+//			return ""; //$NON-NLS-1$
+//		return parser.getTitle();
+//	}
 
 	private CheatSheetManager getCheatsheetManager() {
 		if (manager == null) {
@@ -1151,43 +839,26 @@ public class CheatSheetView extends ViewPart {
 		// read our contents;
 		// add checker here in case file could not be parsed.  No file parsed, no composite should
 		// be created.
-		  boolean parsedOK = readFile();
-		  if(!parsedOK){
-//			  Exception thrown during parsing.  
-//			  Something is wrong with the Cheat sheet content file at the xml level.
-			
-			//System.out.println("PARSER ERROR THROWN.");
-			cheatSheetComposite = new Composite(parent, SWT.NONE);
-			GridLayout layout = new GridLayout();
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			layout.verticalSpacing = 0;
-			layout.horizontalSpacing = 0;
-			layout.numColumns = 1;
-			cheatSheetComposite.setLayout(layout);
-			cheatSheetComposite.setBackground(backgroundColor);
-			createErrorPageTitleArea(cheatSheetComposite);
-			createErrorPageInfoArea(cheatSheetComposite);
+		boolean parsedOK = readFile();
+//		parsedOK = false;
+		if(!parsedOK){
+			// Exception thrown during parsing.
+			// Something is wrong with the Cheat sheet content file at the xml level.
+			errorPage = new ErrorPage();
+			errorPage.createPart(parent);
+//			infoArea = errorPage.getInfoArea();
+//			scrolledComposite = errorPage.getScrolledComposite();
+			hascontent = true;
 			parent.layout(true);
-			return;		
-		  }
+			return;
+		}
 		
-		cheatSheetComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
-		layout.horizontalSpacing = 0;
-		layout.numColumns = 1;
-		cheatSheetComposite.setLayout(layout);
-		cheatSheetComposite.setBackground(backgroundColor);
-
-		WorkbenchHelp.setHelp(cheatSheetComposite, IHelpContextIds.WELCOME_EDITOR);
-
-		checkDynamicModel();
-
-		createTitleArea(cheatSheetComposite);
-		createInfoArea(cheatSheetComposite);
+		cheatSheetPage = new CheatSheetPage(parser, viewItemList, this);
+		cheatSheetPage.createPart(parent);
+//	  	infoArea = cheatSheetPage.getInfoArea();
+//	  	scrolledComposite = cheatSheetPage.getScrolledComposite();
+		hascontent = true;
+		listOfContentItems = parser.getItems();
 
 		checkSavedState();
 
@@ -1195,13 +866,14 @@ public class CheatSheetView extends ViewPart {
 
 		parent.layout(true);
 
-		if (currentItem != null)
-			currentItem.getExpandToggle().setFocus();
+//		if (currentItem != null)
+//			currentItem.getExpandToggle().setFocus();
 
 		//		System.out.println("Firing open event!");
-		scrolledComposite.layout(true);
-		infoArea.layout(true);
-		layoutMyItems();
+//		scrolledComposite.layout(true);
+//		infoArea.layout(true);
+// TODO: LP - Needed? 20040321 
+//		layoutMyItems();
 	}
 	
 	private void killDynamicData(ViewItem[] myitems){
@@ -1219,14 +891,15 @@ public class CheatSheetView extends ViewPart {
 	}
 
 	/*package*/ void layout(){
-		infoArea.layout(true);	
+// TODO: LP - Needed? 20040321 
+//		infoArea.layout(true);
 	}
 	
 	private void layoutMyItems() {
 		ViewItem[] items = getViewItemArray();
-		for (int i = 0; i < items.length; i++) {
-			items[i].getCheckAndMainItemComposite().layout(true);
-		}
+//		for (int i = 0; i < items.length; i++) {
+//			items[i].getCheckAndMainItemComposite().layout(true);
+//		}
 	}
 
 	/**
@@ -1282,7 +955,7 @@ public class CheatSheetView extends ViewPart {
 		}
 	}
 
-	/*package*/ void runPerformAction(Button mylabel) {
+	/*package*/ void runPerformAction(ImageHyperlink mylabel) {
 		CoreItem mycore = null;
 		mylabel.setCursor(busyCursor);
 		currentItem = (ViewItem) mylabel.getData();
@@ -1309,7 +982,7 @@ public class CheatSheetView extends ViewPart {
 		}
 	}
 
-	/*package*/ void runSubItemPerformAction(Button mylabel, int subItemIndex) {
+	/*package*/ void runSubItemPerformAction(ImageHyperlink mylabel, int subItemIndex) {
 		currentItem = (ViewItem) mylabel.getData();
 
 		//		CoreItem c = null;
@@ -1369,6 +1042,7 @@ public class CheatSheetView extends ViewPart {
 	 * called each time currentEntry is changed.
 	 */
 	/*package*/ void scrollIfNeeded() {
+/*
 		//		System.out.println("Scrolling if needed!!!");
 		// First thing, decide on our target widget - for an InfoAreaEntry, this will 
 		// be its composite, for a closing item, it will be the StyledText.  Doesn't matter,
@@ -1469,9 +1143,10 @@ public class CheatSheetView extends ViewPart {
 		//		System.out.println("Total increment to incrememt = "+totalinc);
 		//Set the info area location last.
 		scrolledComposite.setVisible(true);
-		scrolledComposite.layout(true);
-		infoArea.layout(true);
-
+// TODO: LP - Needed? 20040321 
+//		scrolledComposite.layout(true);
+//		infoArea.layout(true);
+*/
 	}
 
 	public void setContent(CheatSheetElement element) {
@@ -1524,11 +1199,11 @@ public class CheatSheetView extends ViewPart {
 	 */
 	public void setFocus() {
 		//need this to have view refreshed and redrawn nicely.
-		if (infoArea != null && !infoArea.isDisposed())
-			infoArea.setFocus();
+//		if (infoArea != null && !infoArea.isDisposed())
+//			infoArea.setFocus();
 		//need this to have current item selected. (Assumes that when you reactivate the view you will work with current item.)
-		if (currentItem != null)
-			currentItem.getExpandToggle().setFocus();
+//		if (currentItem != null)
+//			currentItem.getExpandToggle().setFocus();
 	}
 
 
@@ -1548,10 +1223,10 @@ public class CheatSheetView extends ViewPart {
 	}
 
 	/*package*/ void updateScrolledComposite() {
-		ScrolledComposite sc = scrolledComposite;
-		Point newSize = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		infoArea.setSize(newSize);
-		sc.setMinSize(newSize);
+//		ScrolledComposite sc = scrolledComposite;
+//		if(infoArea == null) return;
+//		Point newSize = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+//		infoArea.setSize(newSize);
+//		scrolledComposite.setMinSize(newSize);
 	}
-
 }

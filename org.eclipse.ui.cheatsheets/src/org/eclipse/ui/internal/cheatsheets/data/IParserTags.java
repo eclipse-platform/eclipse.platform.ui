@@ -27,17 +27,19 @@ public interface IParserTags {
 	public static final String CHEATSHEETID = "cheatsheetID"; //$NON-NLS-1$
 	public static final String CHEATSHEET = "Cheatsheet"; //$NON-NLS-1$
 	public static final String CLASS = "class"; //$NON-NLS-1$
-	public static final String ACTIONPHRASE = "actionphrase"; //$NON-NLS-1$
+	public static final String KIND = "kind"; //$NON-NLS-1$
+	public static final String SKIP = "skip"; //$NON-NLS-1$
 	public static final String ACTIONPARAM = "actionparam"; //$NON-NLS-1$
 	public static final String ACTION = "action"; //$NON-NLS-1$
 	public static final String VERSION = "version";//$NON-NLS-1$
 	public static final String ID = "id";//$NON-NLS-1$
-	public static final String DYNAMIC = "dynamic";//$NON-NLS-1$
+
+//	public static final String DYNAMIC = "dynamic";//$NON-NLS-1$
 	public static final String CHEATSHEETMANAGER = "CheatsheetManager";//$NON-NLS-1$
 	public static final String MANAGERDATA = "CSMData";//$NON-NLS-1$
 	public static final String MANAGERDATAKEY = "key"; //$NON-NLS-1$
-	public static final String DYNAMICDATA = "dynamicData"; //$NON-NLS-1$
-	public static final String DYNAMICSUBITEMDATA = "dynamicSubItemData"; //$NON-NLS-1$
+//	public static final String DYNAMICDATA = "dynamicData"; //$NON-NLS-1$
+//	public static final String DYNAMICSUBITEMDATA = "dynamicSubItemData"; //$NON-NLS-1$
 	public static final String SUBITEMLABEL ="subitemlabel"; //$NON-NLS-1$
 	
 	public static final String COMPLETED ="completed"; //$NON-NLS-1$

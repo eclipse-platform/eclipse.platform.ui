@@ -22,6 +22,10 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
@@ -29,16 +33,16 @@ import org.eclipse.ui.internal.cheatsheets.data.Item;
 public class CoreItem extends ViewItem {
 	protected Composite bodyWrapperComposite;
 	protected boolean buttonsHandled = false;
-	protected boolean complete;
-	protected Button completeButton;
+//	protected boolean complete;
+	protected ImageHyperlink completeButton;
 	protected Image completeImage;
 	private ArrayList listOfSubItemCompositeHolders;
 	protected Image restartImage;
-	protected boolean skip;
-	protected Button skipButton;
+//	protected boolean skip;
+	protected ImageHyperlink skipButton;
 	protected Image skipImage;
-	protected boolean start;
-	protected Button startButton;
+//	protected boolean start;
+	protected ImageHyperlink startButton;
 	protected Image startImage;
 
 
@@ -67,23 +71,24 @@ public class CoreItem extends ViewItem {
 			restartImage.dispose();
 	}
 
-	private int[] getActionCodeArray(String actionPhrase) {
-		int[] actionCodes = { -1, -1, -1 };
-		StringTokenizer mytoken = new StringTokenizer(actionPhrase, ","); //$NON-NLS-1$
-
-		for (int j = 0; j < 3; j++) {
-			if (mytoken.hasMoreTokens()) {
-				String mytokenstring = mytoken.nextToken();
-				//System.out.println("Token"+mytokenstring);
-				try {
-					actionCodes[j] = Integer.parseInt(mytokenstring);
-				} catch (Exception e) {
-				}
-			}
-		}
-
-		return actionCodes;
-	}
+/* TODO: Remove this! */
+//	private int[] getActionCodeArray(String actionPhrase) {
+//		int[] actionCodes = { -1, -1, -1 };
+//		StringTokenizer mytoken = new StringTokenizer(actionPhrase, ","); //$NON-NLS-1$
+//
+//		for (int j = 0; j < 3; j++) {
+//			if (mytoken.hasMoreTokens()) {
+//				String mytokenstring = mytoken.nextToken();
+//				//System.out.println("Token"+mytokenstring);
+//				try {
+//					actionCodes[j] = Integer.parseInt(mytokenstring);
+//				} catch (Exception e) {
+//				}
+//			}
+//		}
+//
+//		return actionCodes;
+//	}
 
 	public ArrayList getListOfSubItemCompositeHolders() {
 		return listOfSubItemCompositeHolders;
@@ -95,7 +100,7 @@ public class CoreItem extends ViewItem {
 	/*package*/ void handleButtons(Composite bodyWrapperComposite) {
 		if (contentItem instanceof ItemWithSubItems) {
 			try{
-			handleSubButtons(bodyWrapperComposite);
+				handleSubButtons(bodyWrapperComposite);
 			}catch(Exception e){
 				//Need to log exception here. 
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.LESS_THAN_2_SUBITEMS), e);
@@ -114,8 +119,9 @@ public class CoreItem extends ViewItem {
 		buttonlayout.marginWidth = 2;
 		buttonlayout.verticalSpacing = 2;
 
-		GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
-		buttonData.grabExcessHorizontalSpace = true;
+//		GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
+//		buttonData.grabExcessHorizontalSpace = true;
+		TableWrapData buttonData = new TableWrapData(TableWrapData.FILL);
 
 		buttonComposite.setLayout(buttonlayout);
 		buttonComposite.setLayoutData(buttonData);
@@ -126,71 +132,74 @@ public class CoreItem extends ViewItem {
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
 
+/* TODO: Remove this! */
+//		start = false;
+//		complete = false;
+//		skip = false;
+//		int[] actionCodes = null;
+//
+//		//Get the action codes to display buttons for.
+//
+//		actionCodes = getActionCodeArray(((Item) contentItem).getButtonCodes());
+//
+//
+//		
+//
+//		//Add the icons in order.  Check each one when you add it.
+//		for (int i = 0; i < actionCodes.length; i++) {
+//			if (actionCodes[i] == 0) {
+//				//perform
+//				start = true;
+//			} else if (actionCodes[i] == 1) {
+//				//continue/skip
+//				skip = true;
+//			} else if (actionCodes[i] == 2) {
+//				//done	
+//				complete = true;
+//			}
+//		}
 
-		start = false;
-		complete = false;
-		skip = false;
-		int[] actionCodes = null;
-
-		//Get the action codes to display buttons for.
-
-		actionCodes = getActionCodeArray(((Item) contentItem).getButtonCodes());
-
-
-		
-
-		//Add the icons in order.  Check each one when you add it.
-		for (int i = 0; i < actionCodes.length; i++) {
-			if (actionCodes[i] == 0) {
-				//perform
-				start = true;
-			} else if (actionCodes[i] == 1) {
-				//continue/skip
-				skip = true;
-			} else if (actionCodes[i] == 2) {
-				//done	
-				complete = true;
-			}
-		}
-
-		if (start) {
-			startButton = new Button(buttonComposite, SWT.NULL, startImage);
+		if (((Item)contentItem).isPerform()) {
+			startButton = new ImageHyperlink(buttonComposite, SWT.NULL);
+			startButton.setImage(startImage);
 			startButton.setData(this);
 			startButton.setBackground(itemColor);
 			startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
-			startButton.setFAccessibleDescription(bodyText.getText());
-			startButton.setFAccessibleName(startButton.getToolTipText());
+//			startButton.setFAccessibleDescription(bodyText.getText());
+//			startButton.setFAccessibleName(startButton.getToolTipText());
 
-			startButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
+			startButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
 					theview.runPerformAction(startButton);
 				}
 			});
 		}
-		if (skip) {
-			skipButton = new Button(buttonComposite, SWT.NULL, skipImage);
+		if (((Item)contentItem).isSkip()) {
+			skipButton = new ImageHyperlink(buttonComposite, SWT.NULL);
+			skipButton.setImage(skipImage);
 			skipButton.setData(this);
 			skipButton.setBackground(itemColor);
 			skipButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
-			skipButton.setFAccessibleName(skipButton.getToolTipText());
-			skipButton.setFAccessibleDescription(bodyText.getText());
+//			skipButton.setFAccessibleName(skipButton.getToolTipText());
+//			skipButton.setFAccessibleDescription(bodyText.getText());
 
-			skipButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
+			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
 					theview.advanceItem(skipButton, false);
 				}
 			});
 		}
-		if (complete) {
-			completeButton = new Button(buttonComposite, SWT.NULL, completeImage);
+		if (((Item)contentItem).isComplete()) {
+			completeButton = new ImageHyperlink(buttonComposite, SWT.NULL);
+			completeButton.setImage(completeImage);
 			completeButton.setData(this);
 			completeButton.setBackground(itemColor);
 			completeButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
-			completeButton.setFAccessibleName(completeButton.getToolTipText());
-			completeButton.setFAccessibleDescription(bodyText.getText());
+//			completeButton.setFAccessibleName(completeButton.getToolTipText());
+//			completeButton.setFAccessibleDescription(bodyText.getText());
 
-			completeButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
+			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
 					theview.advanceItem(completeButton, true);
 				}
 			});
@@ -273,69 +282,73 @@ public class CoreItem extends ViewItem {
 			//			StyleRange r = new StyleRange(0, label.getText().length(), null, null, SWT.BOLD);
 			//			label.setStyleRange(r);
 
-			start = false;
-			complete = false;
-			skip = false;
-
-			//Get the action codes to display buttons for.
-			int[] actionCodes = getActionCodeArray(sub.getButtonCodes());
-
-			//Add the icons in order.  Check each one when you add it.
-			for (int j = 0; j < actionCodes.length; j++) {
-				if (actionCodes[j] == 0) {
-					//perform
-					start = true;
-				} else if (actionCodes[j] == 1) {
-					//continue/skip
-					skip = true;
-				} else if (actionCodes[j] == 2) {
-					//done	
-					complete = true;
-				}
-			}
+/* TODO: Remove this! */
+//			start = false;
+//			complete = false;
+//			skip = false;
+//
+//			//Get the action codes to display buttons for.
+//			int[] actionCodes = getActionCodeArray(sub.getButtonCodes());
+//
+//			//Add the icons in order.  Check each one when you add it.
+//			for (int j = 0; j < actionCodes.length; j++) {
+//				if (actionCodes[j] == 0) {
+//					//perform
+//					start = true;
+//				} else if (actionCodes[j] == 1) {
+//					//continue/skip
+//					skip = true;
+//				} else if (actionCodes[j] == 2) {
+//					//done	
+//					complete = true;
+//				}
+//			}
 			final int fi = i;
 
-			if (start) {
+			if (sub.isPerform()) {
 				added++;
-				startButton = new Button(b, SWT.NULL, startImage);
+				startButton = new ImageHyperlink(buttonComposite, SWT.NULL);
+				startButton.setImage(startImage);
 				startButton.setData(this);
 				startButton.setBackground(itemColor);
 				startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
-				startButton.setFAccessibleDescription(bodyText.getText());
-				startButton.setFAccessibleName(startButton.getToolTipText());
+//				startButton.setFAccessibleDescription(bodyText.getText());
+//				startButton.setFAccessibleName(startButton.getToolTipText());
 
-				startButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
+				startButton.addHyperlinkListener(new HyperlinkAdapter() {
+					public void linkActivated(HyperlinkEvent e) {
 						theview.runSubItemPerformAction(startButton, fi);
 					}
 				});
 			}
-			if (skip) {
+			if (sub.isSkip()) {
 				added++;
-				skipButton = new Button(b, SWT.NULL, skipImage);
+				skipButton = new ImageHyperlink(buttonComposite, SWT.NULL);
+				skipButton.setImage(skipImage);
 				skipButton.setData(this);
 				skipButton.setBackground(itemColor);
 				skipButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
-				skipButton.setFAccessibleName(skipButton.getToolTipText());
-				skipButton.setFAccessibleDescription(bodyText.getText());
+//				skipButton.setFAccessibleName(skipButton.getToolTipText());
+//				skipButton.setFAccessibleDescription(bodyText.getText());
 
-				skipButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
+				skipButton.addHyperlinkListener(new HyperlinkAdapter() {
+					public void linkActivated(HyperlinkEvent e) {
 						theview.advanceSubItem(skipButton, false, fi);
 					}
 				});
 			}
-			if (complete) {
+			if (sub.isComplete()) {
 				added++;
-				completeButton = new Button(b, SWT.NULL, completeImage);
+				completeButton = new ImageHyperlink(buttonComposite, SWT.NULL);
+				completeButton.setImage(completeImage);
 				completeButton.setData(this);
 				completeButton.setBackground(itemColor);
 				completeButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
-				completeButton.setFAccessibleName(completeButton.getToolTipText());
-				completeButton.setFAccessibleDescription(bodyText.getText());
+//				completeButton.setFAccessibleName(completeButton.getToolTipText());
+//				completeButton.setFAccessibleDescription(bodyText.getText());
 
-				completeButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
+				completeButton.addHyperlinkListener(new HyperlinkAdapter() {
+					public void linkActivated(HyperlinkEvent e) {
 						theview.advanceSubItem(completeButton, true, fi);
 					}
 				});
