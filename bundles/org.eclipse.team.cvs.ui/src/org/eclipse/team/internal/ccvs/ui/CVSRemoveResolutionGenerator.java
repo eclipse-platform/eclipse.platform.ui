@@ -48,30 +48,18 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 				final IContainer parent = (IContainer)marker.getResource();
 				final String childName = (String)marker.getAttribute(AddDeleteMoveListener.NAME_ATTRIBUTE);
 				ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor(parent.getFile(new Path(childName)));
-				if (mFile.isManaged()) {
-					ResourceSyncInfo info = mFile.getSyncInfo();
-					if (info.isAdded()) {
-						mFile.unmanage(null);
-					} else {
-						if ( ! info.isDeleted()) {
-							MutableResourceSyncInfo deletedInfo = info.cloneMutable();
-							deletedInfo.setDeleted(true);
-							mFile.setSyncInfo(deletedInfo);
-						}
-						final TeamException[] exception = new TeamException[] {null};
-						CVSRemoveResolutionGenerator.this.run(new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor)throws InvocationTargetException, InterruptedException {
-								try {
-									((CVSTeamProvider)RepositoryProvider.getProvider(parent.getProject())).checkin(new IResource[] {parent.getFile(new Path(childName))}, IResource.DEPTH_ZERO, monitor);
-								} catch (TeamException e) {
-									exception[0] = e;
-								}
-							}
-						});
-						if (exception[0] != null) {
-							throw exception[0];
+				final TeamException[] exception = new TeamException[] {null};
+				CVSRemoveResolutionGenerator.this.run(new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor)throws InvocationTargetException, InterruptedException {
+						try {
+							((CVSTeamProvider)RepositoryProvider.getProvider(parent.getProject())).checkin(new IResource[] {parent.getFile(new Path(childName))}, IResource.DEPTH_ZERO, monitor);
+						} catch (TeamException e) {
+							exception[0] = e;
 						}
 					}
+				});
+				if (exception[0] != null) {
+					throw exception[0];
 				}
 				marker.delete();
 			} catch (TeamException e) {
@@ -164,8 +152,7 @@ public class CVSRemoveResolutionGenerator extends CVSAbstractResolutionGenerator
 				});
 				if (exception[0] != null) {
 					throw exception[0];
-				}
-							
+				}			
 				marker.delete();
 			} catch (TeamException e) {
 				handle(e, null, null);

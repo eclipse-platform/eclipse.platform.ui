@@ -317,6 +317,12 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 
 		IPreferenceStore store = getPreferenceStore();
 		
+		// set the provider preferences first because the preference change
+		// listeners invoked from the preference store change may need these
+		// values
+		
+		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(showMarkers.getSelection());
+		
 		store.setValue(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, pruneEmptyDirectoriesField.getSelection());
 		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
 		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
@@ -329,7 +335,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		store.setValue(PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
 		
-		
+		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
+			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
 		CVSProviderPlugin.getPlugin().setTimeout(
@@ -345,20 +352,10 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(
 			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
-		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(
-			store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
-		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
-			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
-
-
-
-
+		
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators
 		if (! oldKSubst.equals(newKSubst)) CVSDecorator.refresh();
-
-
-
 		return true;
 	}
 

@@ -38,17 +38,19 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.AddMarkerAction;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
  */
-public class CVSUIPlugin extends AbstractUIPlugin {
+public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeListener {
 	/**
 	 * The id of the CVS plug-in
 	 */
@@ -95,6 +97,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public CVSUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
+		getPreferenceStore().addPropertyChangeListener(this);
 	}
 
 	/**
@@ -337,5 +340,24 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		}
 
 		Console.shutdown();
+	}
+	
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		try {
+			String property = event.getProperty();
+			if(property.equals(ICVSUIConstants.PREF_SHOW_MARKERS)) {
+				Boolean b = (Boolean)event.getNewValue();
+				if(b.booleanValue() == true) {
+					AddDeleteMoveListener.refreshAllMarkers();
+				} else {
+					AddDeleteMoveListener.clearAllCVSMarkers();
+				}
+			}
+		} catch(CoreException e) {
+			log(e.getStatus());
+		}
 	}
 }
