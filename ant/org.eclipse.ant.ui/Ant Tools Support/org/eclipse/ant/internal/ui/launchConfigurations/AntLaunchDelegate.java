@@ -143,8 +143,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
+		boolean captureOutput= ExternalToolsUtil.getCaptureOutput(configuration);
 		int port= -1;
-		if (vmTypeID != null) {
+		if (vmTypeID != null && captureOutput) {
 			if (userProperties == null) {
 				userProperties= new HashMap();
 			}
@@ -152,11 +153,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 			userProperties.put("eclipse.connect.port", Integer.toString(port)); //$NON-NLS-1$
 		}
-		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, vmTypeID != null);
+		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, vmTypeID != null, captureOutput);
 		
 		if (vmTypeID != null) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
-			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine);
+			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine, captureOutput);
 		} else {
 			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine);
 		}
@@ -279,7 +280,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		TaskLinkManager.registerAntBuild(process);
 	}
 
-	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM) {
+	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM, boolean captureOutput) {
 		StringBuffer commandLine= new StringBuffer();
 
 		if (!separateVM) {
@@ -348,7 +349,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		
 		if (separateVM) { 
-			if (commandLine.indexOf("-logger") == -1) { //$NON-NLS-1$
+			if (commandLine.indexOf("-logger") == -1 && captureOutput) { //$NON-NLS-1$
 				commandLine.append(" -logger "); //$NON-NLS-1$
 				commandLine.append(REMOTE_ANT_LOGGER_CLASS);
 			}
@@ -357,7 +358,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			commandLine.append(INPUT_HANDLER_CLASS);
 		
 			commandLine.append(" -logger "); //$NON-NLS-1$
-			commandLine.append(ANT_LOGGER_CLASS);
+			if (captureOutput) {
+				commandLine.append(ANT_LOGGER_CLASS);
+			} else {
+				commandLine.append(NULL_LOGGER_CLASS);
+			}
 		}
 		
 		if (separateVM) {
@@ -407,11 +412,12 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		commandLine.append('\"');
 	}
 	
-	private void runInSeparateVM(ILaunchConfiguration configuration, final ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine) throws CoreException {
-		RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
-		
-		if (port != -1) {
-			client.startListening(port);
+	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine, boolean captureOutput) throws CoreException {
+		if (captureOutput) {
+			RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
+			if (port != -1) {
+				client.startListening(port);
+			}
 		}
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
