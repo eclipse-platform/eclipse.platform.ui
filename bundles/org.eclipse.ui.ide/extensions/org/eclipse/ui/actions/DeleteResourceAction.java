@@ -17,7 +17,9 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +27,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -462,7 +466,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
         if (resourcesToDelete.length == 0)
             return;
         try {
-            WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+            WorkspaceModifyOperation op = new WorkspaceModifyOperation(getDeleteRule(resourcesToDelete)) {
                 protected void execute(IProgressMonitor monitor)
                         throws CoreException {
                     delete(resourcesToDelete, monitor);
@@ -520,6 +524,24 @@ public class DeleteResourceAction extends SelectionListenerAction {
         } catch (InterruptedException e) {
             // just return
         }
+    }
+
+    /*
+     * Return the scheduling rule that encompasses the deletion of the selected resources
+     */
+    private ISchedulingRule getDeleteRule(IResource[] resourcesToDelete) {
+        IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+        ISchedulingRule combinedRule = null;
+        for (int i = 0; i < resourcesToDelete.length; i++) {
+            IResource resource = resourcesToDelete[i];
+            ISchedulingRule deleteRule = ruleFactory.deleteRule(resource);
+            if (combinedRule == null) {
+                combinedRule = deleteRule;
+            } else {
+                combinedRule = MultiRule.combine(combinedRule, deleteRule);
+            }
+        }
+        return combinedRule;
     }
 
     /**
