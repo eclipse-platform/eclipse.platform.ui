@@ -40,13 +40,14 @@ public class ImageHyperlink extends Hyperlink {
 	private static final int HOVER = 1 << 1;
 	private static final int ACTIVE = 1 << 2;
 	private int verticalAlignment=SWT.CENTER;
+	private int horizontalAlignment=SWT.LEFT;
 	/**
 	 * Creates the image hyperlink instance.
 	 * 
 	 * @param parent
 	 *            the control parent
 	 * @param style
-	 *            the control style (SWT.WRAP, BOTTOM, TOP, MIDDLE)
+	 *            the control style (SWT.WRAP, BOTTOM, TOP, MIDDLE, LEFT, RIGHT)
 	 */
 	public ImageHyperlink(Composite parent, int style) {
 		super(parent, removeAlignment(style));
@@ -70,27 +71,42 @@ public class ImageHyperlink extends Hyperlink {
 			return;
 		Rectangle ibounds = image.getBounds();
 		Point maxsize = computeMaxImageSize();
-		int x = marginWidth + maxsize.x / 2 - ibounds.width / 2;
+		int textWidth = clientArea.width - maxsize.x - textSpacing
+		- marginWidth - marginWidth;
 		int y = marginHeight + maxsize.y / 2 - ibounds.height / 2;
-		gc.drawImage(image, x, y);
-		if (getText() != null) {
-			int textWidth = clientArea.width - maxsize.x - textSpacing
-					- marginWidth - marginWidth;
+		
+		if (horizontalAlignment == SWT.LEFT) {
+			int x = marginWidth + maxsize.x / 2 - ibounds.width / 2;
 			int textX = marginWidth + maxsize.x + textSpacing;
-			Point textSize = computeTextSize(textWidth, SWT.DEFAULT);
-			textWidth = textSize.x;
-			int slotHeight = clientArea.height - marginHeight - marginHeight;
-			int textY;
-			int textHeight = textSize.y;
-			if (verticalAlignment==SWT.BOTTOM) {
-				textY = marginHeight + slotHeight - textHeight;
-			} else if (verticalAlignment==SWT.CENTER) {
-				textY = marginHeight + slotHeight / 2 - textHeight / 2;
-			} else {
-				textY = marginHeight;
-			}
-			paintText(gc, new Rectangle(textX, textY, textWidth, textHeight));
+			gc.drawImage(image, x, y);
+			if (getText()!=null)
+				drawText(gc, clientArea, textX, textWidth);
 		}
+		else if (horizontalAlignment== SWT.RIGHT) {
+			int x = marginWidth;
+			if (getText()!=null) {
+				x += drawText(gc, clientArea, x, textWidth);
+			}
+			x += maxsize.x/2 - ibounds.width/2 + textSpacing;
+			gc.drawImage(image, x, y);
+		}
+	}
+	
+	private int drawText(GC gc, Rectangle clientArea, int textX, int textWidth) {
+		Point textSize = computeTextSize(textWidth, SWT.DEFAULT);
+		int slotHeight = clientArea.height - marginHeight - marginHeight;
+		int textY;
+		textWidth = textSize.x;
+		int textHeight = textSize.y;
+		if (verticalAlignment==SWT.BOTTOM) {
+			textY = marginHeight + slotHeight - textHeight;
+		} else if (verticalAlignment==SWT.CENTER) {
+			textY = marginHeight + slotHeight / 2 - textHeight / 2;
+		} else {
+			textY = marginHeight;
+		}
+		paintText(gc, new Rectangle(textX, textY, textWidth, textHeight));
+		return textWidth;
 	}
 	/**
 	 * Computes the control size by reserving space for images in addition to
@@ -209,16 +225,23 @@ public class ImageHyperlink extends Hyperlink {
 		return new Point(x, y);
 	}
 	private static int removeAlignment(int style) {
+		int resultStyle = style;
 		if ((style & SWT.CENTER)!=0) {
-			return style & (~SWT.CENTER);
+			resultStyle  &= (~SWT.CENTER);
 		}
 		if ((style & SWT.TOP)!=0) {
-			return style & (~SWT.TOP);
+			resultStyle &= (~SWT.TOP);
 		}
 		if ((style & SWT.BOTTOM)!=0) {
-			return style & (~SWT.BOTTOM);
+			resultStyle &= (~SWT.BOTTOM);
 		}
-		return style;
+		if ((style & SWT.LEFT)!=0) {
+			resultStyle &= (~SWT.LEFT);
+		}
+		if ((style & SWT.RIGHT)!=0) {
+			resultStyle &= (~SWT.RIGHT);
+		}
+		return resultStyle;
 	}
 	private void extractAlignment(int style) {
 		if ((style & SWT.CENTER)!=0) {
@@ -229,6 +252,12 @@ public class ImageHyperlink extends Hyperlink {
 		}
 		else if ((style & SWT.BOTTOM)!=0) {
 			verticalAlignment = SWT.BOTTOM;
+		}
+		if ((style & SWT.LEFT)!=0) {
+			horizontalAlignment = SWT.LEFT;
+		}
+		else if ((style & SWT.RIGHT)!=0) {
+			horizontalAlignment = SWT.RIGHT;
 		}
 	}
 }

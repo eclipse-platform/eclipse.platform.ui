@@ -109,6 +109,10 @@ public class FormTextModel {
 	private void processDocument(Document doc, boolean expandURLs) {
 		Node root = doc.getDocumentElement();
 		NodeList children = root.getChildNodes();
+		processSubnodes(paragraphs, children, expandURLs);
+	}
+
+	private void processSubnodes(Vector plist, NodeList children, boolean expandURLs) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.TEXT_NODE) {
@@ -118,18 +122,18 @@ public class FormTextModel {
 					Paragraph p = new Paragraph(true);
 					p.parseRegularText(text, expandURLs,
 							getHyperlinkSettings(), null);
-					paragraphs.add(p);
+					plist.add(p);
 				}
 			} else if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String tag = child.getNodeName().toLowerCase();
 				if (tag.equals("p")) {
 					Paragraph p = processParagraph(child, expandURLs);
 					if (p != null)
-						paragraphs.add(p);
+						plist.add(p);
 				} else if (tag.equals("li")) {
 					Paragraph p = processListItem(child, expandURLs);
 					if (p != null)
-						paragraphs.add(p);
+						plist.add(p);
 				}
 			}
 		}
