@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.runtime;
 
 import junit.framework.*;
-import org.eclipse.core.tests.runtime.compatibility.PluginCompatibilityTests;
 
 public class AllTests extends TestCase {
 
