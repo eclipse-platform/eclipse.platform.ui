@@ -528,7 +528,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		Object[] resource = containerDialog.getResult();
 		String text= null;
 		if (resource != null && resource.length > 0) {
-			text= ToolUtil.buildVariableTag(IExternalToolConstants.VAR_RESOURCE_LOC, ((IPath)resource[0]).toString());
+			text= ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
 		}
 		if (text != null) {
 			workDirectoryField.setText(text);
