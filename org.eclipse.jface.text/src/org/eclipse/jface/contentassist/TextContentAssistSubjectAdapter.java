@@ -75,7 +75,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	/** The text. */
 	private Text fText;
 	/** The modify listeners. */
-	private HashMap fModifyListeners;
+	private HashMap fModifyListeners= new HashMap();
 	
 	/**
 	 * Creates a content assist subject control adapter for the given text widget.
