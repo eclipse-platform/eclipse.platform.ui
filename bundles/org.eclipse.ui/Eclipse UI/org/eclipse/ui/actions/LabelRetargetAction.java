@@ -82,6 +82,9 @@ public void setToolTipText(String text) {
  * allowed to change the accelerator).
  */
 private String appendAccelerator(String newText) {
+	if (newText == null)
+		return null;
+		
 	// Remove any accelerator
 	String str = removeAcceleratorText(newText);
 	// Append our accelerator
@@ -98,6 +101,9 @@ private String appendAccelerator(String newText) {
  * @return the accelerator text including '@' or '\t', or <code>null</code>
  */
 private String extractAcceleratorText(String text) {
+	if (text == null)
+		return null;
+		
 	int index = text.lastIndexOf('\t');
 	if (index == -1)
 		index = text.lastIndexOf('@');
