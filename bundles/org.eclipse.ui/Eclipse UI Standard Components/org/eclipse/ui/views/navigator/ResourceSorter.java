@@ -29,7 +29,7 @@ import java.text.Collator;
  *
  * @see IResource
  */
-/* package */ class ResourceSorter extends ViewerSorter {
+public final class ResourceSorter extends ViewerSorter {
 	/**
 	 * Constructor argument value that indicates to sort items by name.
 	 */
