@@ -60,11 +60,14 @@ public class ConfigurationActivator implements BundleActivator {
 			System.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	
-		if (lastTimeStamp==configuration.getChangeStamp() && !(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null))
+		if (lastTimeStamp==configuration.getChangeStamp() && !(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null)) {
+			Utils.debug("Same last time stamp *****");
 			if (System.getProperty("eclipse.application") == null) {
+				Utils.debug("no eclipse.application, setting it and returning");
 				System.setProperty("eclipse.application", application);
 				return;
 			}
+		}
 		loadOptions();
 		if (DEBUG)
 			System.out.println("Starting update configurator...");
@@ -125,7 +128,6 @@ public class ConfigurationActivator implements BundleActivator {
 		
 		platform = null;
 		releasePlatform();
-		writePlatformConfigurationTimeStamp();
 		configurationFactorySR.unregister();
 	}
 
@@ -134,11 +136,10 @@ public class ConfigurationActivator implements BundleActivator {
 			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + "/last.config.stamp"));
 			stream.writeLong(configuration.getChangeStamp());
 		} catch (FileNotFoundException e) {
-			lastTimeStamp = configuration.getChangeStamp() - 1;
+			System.out.println(e.getLocalizedMessage());
 		} catch (IOException e) {
-			lastTimeStamp = configuration.getChangeStamp() - 1;
+			System.out.println(e.getLocalizedMessage());
 		}
-		
 	}
 
 	private void releasePlatform() {
@@ -158,6 +159,7 @@ public class ConfigurationActivator implements BundleActivator {
 	}
 
 	private void installBundles() {
+		Utils.debug("Installing bundles...");
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
 		StartLevel start = null;
 		if (reference != null)
@@ -170,6 +172,8 @@ public class ConfigurationActivator implements BundleActivator {
 			Bundle[] bundlesToUninstall = getBundlesToUninstall(cachedBundles, plugins);
 			for (int i=0; i<bundlesToUninstall.length; i++) {
 				try {
+					if (DEBUG)
+						Utils.debug("Uninstalling " + bundlesToUninstall[i].getLocation());
 					bundlesToUninstall[i].uninstall();
 				} catch (Exception e) {
 					System.err.println("Could not uninstall unused bundle " + bundlesToUninstall[i].getLocation());
@@ -181,6 +185,8 @@ public class ConfigurationActivator implements BundleActivator {
 				try {
 					location = "reference:" + location.substring(0, location.lastIndexOf('/'));
 					if (!isInstalled(location)) {
+						if (DEBUG)
+							Utils.debug("Installing " + location);
 						Bundle target = context.installBundle(location);
 						installed.add(target);
 						if (start != null)
@@ -206,6 +212,8 @@ public class ConfigurationActivator implements BundleActivator {
 			e.printStackTrace();
 		} finally {
 			releasePlatform();
+			// keep track of the last config processed
+			writePlatformConfigurationTimeStamp();
 		}
 	}
 
