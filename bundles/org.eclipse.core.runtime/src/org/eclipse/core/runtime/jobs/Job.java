@@ -244,6 +244,25 @@ public abstract class Job extends InternalJob {
 		return super.isSystem();
 	}
 	/**
+	 * Waits until this job is finished.  This method will block the calling thread until the 
+	 * job has finished executing.  If the job is not currently waiting, sleeping,
+	 * or running, this method returns immediately.
+	 * 
+	 * <p>
+	 * If the calling thread owns any locks, the locks may be released during the
+	 * wait if necessary to prevent deadlock.  On return from the join, the calling
+	 * thread will once again have exclusive control of any locks that were owned
+	 * upon entering the join.
+	 * </p>
+	 * 
+	 * @param job the job to wait for
+	 * @exception InterruptedException if this thread is interrupted while waiting
+	 * @see ILock
+	 */
+	public void join() throws InterruptedException  {
+		super.join();
+	}
+	/**
 	 * Removes a job listener from this job.
 	 * Has no effect if an identical listener is not already registered.
 	 * 

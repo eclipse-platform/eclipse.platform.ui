@@ -68,6 +68,37 @@ public interface IJobManager {
 	 */
 	public Job[] find(Object family);
 	/**
+	 * Waits until all jobs of the given family are finished.  This method will block the 
+	 * calling thread until all such jobs have finished executing.  Feedback on how 
+	 * the join is progressing is provided to a progress monitor.
+	 * 
+	 * <p>
+	 * If the calling thread owns any locks, the locks may be released during the
+	 * join if necessary to prevent deadlock.  On return from the join, the calling
+	 * thread will once again have exclusive control of any locks that were owned
+	 * upon entering the join.
+	 * </p>
+	 * <p>
+	 * Warning: this method can result in starvation of the current thread if
+	 * another thread continues to add jobs of the given family.
+	 * </p>
+	 * 
+	 * @param family the job family to wait for
+	 * @param monitor Progress monitor for reporting progress on how the
+	 * wait is progressing, or <code>null</code> if no progress monitoring is required.
+	 * @exception InterruptedException if this thread is interrupted while waiting
+	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
+	 * @see Job#belongsTo(Object)
+	 */
+	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException;
+	/**
+	 * Returns a new compound scheduling rule that groups together a set of 
+	 * rules. A compound rule conflicts with another rule if any of its rules conflict with 
+	 * that rule.  More formally, a compound rule represents the logical intersection of its 
+	 * nested rules with respect to the <code>isConflicting</code> equivalence relation.
+	 */
+	public ISchedulingRule newCompoundRule(ISchedulingRule[] nestedRules);
+	/**
 	 * Creates a new lock object.  All lock objects supplied by the job manager
 	 * know about each other and will always avoid circular deadlock amongst
 	 * themselves.
@@ -75,7 +106,6 @@ public interface IJobManager {
 	 * @return the new lock object
 	 */
 	public ILock newLock();
-
 	/**
 	 * Removes a job listener from the job manager.  
 	 * Has no effect if an identical listener is not already registered.
@@ -90,6 +120,7 @@ public interface IJobManager {
 	 * This method is for internal use by the platform-related plug-ins.  
 	 * Clients should not call this method.
 	 * </p>
+	 * @see ILockListener
 	 */
 	public void setLockListener(ILockListener listener);
 	/**
@@ -118,51 +149,9 @@ public interface IJobManager {
 	 */
 	public void sleep(Object family);
 	/**
-	 * Waits until a job is finished.  This method will block the calling thread until the 
-	 * job has finished executing.  If the job is not currently waiting, sleeping,
-	 * or running, this method returns immediately.
-	 * 
-	 * <p>
-	 * If the calling thread owns any locks, the locks may be released during the
-	 * wait if necessary to prevent deadlock.  On return from the wait, the calling
-	 * thread will once again have exclusive control of any locks that were owned
-	 * upon entering the wait.
-	 * </p>
-	 * 
-	 * @param job the job to wait for
-	 * @exception InterruptedException if this thread is interrupted while waiting
-	 * @see ILock
-	 */
-	public void wait(Job job) throws InterruptedException;
-	/**
-	 * Waits until all jobs of the given family are finished.  This method will block the 
-	 * calling thread until all such jobs have finished executing.  Feedback on how 
-	 * the wait is progressing is provided to a progress monitor.
-	 * 
-	 * <p>
-	 * If the calling thread owns any locks, the locks may be released during the
-	 * wait if necessary to prevent deadlock.  On return from the wait, the calling
-	 * thread will once again have exclusive control of any locks that were owned
-	 * upon entering the wait.
-	 * </p>
-	 * <p>
-	 * Warning: this method can result in starvation of the current thread if
-	 * another thread continues to add jobs of the given family.
-	 * </p>
-	 * 
-	 * @param family the job family to wait for
-	 * @param monitor Progress monitor for reporting progress on how the
-	 * wait is progressing, or <code>null</code> if no progress monitoring is required.
-	 * @exception InterruptedException if this thread is interrupted while waiting
-	 * @exception OperationCanceledException if the progress monitor is canceled while waiting
-	 * @see Job#belongsTo(Object)
-	 */
-	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException;
-	/**
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
 	 * has no effect on jobs in the family that are not currently sleeping.
 	 * @see Job#belongsTo(Object)
 	 */
 	public void wakeUp(Object family);
-
 }

@@ -43,7 +43,7 @@ public abstract class InternalJob implements Comparable {
 	 * this job is sleeping, this represents the time the job should wake up.
 	 */
 	private long startTime;
-	private int state = Job.NONE;
+	private volatile int state = Job.NONE;
 	
 	protected InternalJob(String name)  {
 		Assert.isNotNull(name);
@@ -102,7 +102,7 @@ public abstract class InternalJob implements Comparable {
 	final long getStartTime() {
 		return startTime;
 	}
-	protected synchronized int getState() {
+	protected int getState() {
 		return state;
 	}
 	void internalSetPriority(int newPriority) {
@@ -112,12 +112,20 @@ public abstract class InternalJob implements Comparable {
 	 * Returns true if this job conflicts with the given job, and false otherwise.
 	 */
 	boolean isConflicting(InternalJob otherJob) {
-		ISchedulingRule myRule = schedulingRule;
 		ISchedulingRule otherRule = otherJob.getRule();
-		return myRule != null && otherRule != null && myRule.isConflicting(otherRule);
+		if (schedulingRule == null || otherRule == null)
+			return false;
+		//if one of the rules is a compound rule, it must be asked the question.
+		if (schedulingRule.getClass() == CompoundRule.class)
+			return schedulingRule.isConflicting(otherRule);
+		else
+			return otherRule.isConflicting(schedulingRule);
 	}
 	protected boolean isSystem()  {
 		return system;
+	}
+	protected void join() throws InterruptedException  {
+		manager.join(this);
 	}
 	/**
 	 * Returns the next entry (ahead of this one) in the list, or null if there is no next entry
@@ -173,7 +181,7 @@ public abstract class InternalJob implements Comparable {
 	final void setStartTime(long time) {
 		startTime = time;
 	}
-	final synchronized void setState(int i) {
+	final void setState(int i) {
 		state = i;
 	}
 	protected void setSystem(boolean value) {

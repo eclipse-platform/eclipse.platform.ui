@@ -450,9 +450,9 @@ public class JobManager implements IJobManager {
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobManager#wait(org.eclipse.core.runtime.jobs.Job)
+	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
-	public void wait(Job job) throws InterruptedException {
+	protected void join(InternalJob job) throws InterruptedException {
 		IJobChangeListener listener = null;
 		final Semaphore barrier = new Semaphore(null);
 		synchronized (lock) {
@@ -461,7 +461,7 @@ public class JobManager implements IJobManager {
 			//the semaphore will be released when the job is done
 			barrier.acquire(Long.MAX_VALUE);
 			listener = new JobChangeAdapter() {
-				public void done(Job job, IStatus result) {
+				public void done(IJobChangeEvent event) {
 					synchronized (barrier) {
 						barrier.release();
 					}
@@ -479,9 +479,9 @@ public class JobManager implements IJobManager {
 		}
 	}
 	/* (non-Javadoc)
-	 * @see IJobManager#wait(String, IProgressMonitor)
+	 * @see IJobManager#join(String, IProgressMonitor)
 	 */
-	public void wait(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
+	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException {
 		IJobChangeListener listener = null;
 		final List jobs;
 		final int jobCount;
@@ -520,8 +520,14 @@ public class JobManager implements IJobManager {
 			removeJobChangeListener(listener);
 		}
 	}
-	/**
-	 * Implementation of wakeUp()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#newCompoundRule(org.eclipse.core.runtime.jobs.ISchedulingRule[])
+	 */
+	public ISchedulingRule newCompoundRule(ISchedulingRule[] nestedRules) {
+		return new CompoundRule(nestedRules);
+	}
+	/* (non-Javadoc)
+	 * @see Job#wakeUp(String)
 	 */
 	protected void wakeUp(InternalJob job) {
 		synchronized (lock) {
