@@ -60,6 +60,9 @@ public class ActivityConstraints {
 					createStatus(
 						feature,
 						UpdateUIPlugin.getResourceString(KEY_PRIMARY)));
+				// That's enough - there is no need to check the rest
+				// if we get to here.
+				return;
 			}
 			// test if unconfiguring will invalidate prereqs
 			ArrayList otherFeatures = computeOtherFeatures(feature);
@@ -188,7 +191,7 @@ public class ActivityConstraints {
 		// when the feature is disabled.
 		for (int i = 0; i < entries.length; i++) {
 			if (!plugins.contains(entries[i])) {
-				result.add(feature);
+				result.add(entries[i]);
 			}
 		}
 		IFeatureReference[] included = feature.getIncludedFeatureReferences();
