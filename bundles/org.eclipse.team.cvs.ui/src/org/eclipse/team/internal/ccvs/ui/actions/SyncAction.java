@@ -6,12 +6,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
  
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -19,6 +15,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
@@ -94,7 +91,7 @@ public class SyncAction implements IObjectActionDelegate {
 				IRemoteSyncElement[] input = new IRemoteSyncElement[resources.length];
 				for (int i = 0; i < input.length; i++) {
 					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resources[i].getProject());
-					input[i] = provider.getRemoteSyncTree(resources[i], "HEAD", new NullProgressMonitor());
+					input[i] = provider.getRemoteSyncTree(resources[i], new CVSTag(), new NullProgressMonitor());
 				}
 				view.showSync(input);
 			}

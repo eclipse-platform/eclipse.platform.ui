@@ -85,7 +85,7 @@ public class CVSDecorator implements ITeamDecorator {
 					ResourceSyncInfo fileInfo = file.getSyncInfo();
 					if(fileInfo!=null) {
 						CVSTag tag = fileInfo.getTag();
-						if (tag!=null && tag.getType() == CVSTag.HEAD) {
+						if (tag == null || (tag!=null && tag.getType() == CVSTag.HEAD)) {
 							return Policy.bind("CVSDecorator.fileDecorationNoTag", text, fileInfo.getRevision());
 						} else {
 							return Policy.bind("CVSDecorator.fileDecorationWithTag", new Object[] {text, tag.getName(), fileInfo.getRevision()});
