@@ -182,7 +182,8 @@ private void openDialog(WorkbenchPage page) {
 	table.pack();
 	Rectangle tableBounds = table.getBounds();
 	tableBounds.height = Math.min(tableBounds.height, table.getItemHeight()*MAX_ITEMS);
-	dialog.setBounds(tableBounds);
+	table.setBounds(tableBounds);
+	dialog.pack();
 
  	tc.setWidth(table.getClientArea().width);
  	if (tableItemCount > 1)
