@@ -42,8 +42,6 @@ public class DecorationScheduler {
 
 	private boolean shutdown = false;
 
-	private boolean scheduled = false;
-
 	Job decorationJob;
 	UIJob updateJob;
 
@@ -107,13 +105,10 @@ public class DecorationScheduler {
 			reference.setForceUpdate(forceUpdate);
 			awaitingDecorationValues.put(element, reference);
 			awaitingDecoration.add(element);
-			if (shutdown || scheduled)
+			if (shutdown)
 				return;
-			else {
-				scheduled = true;
+			if(decorationJob.getState() == Job.NONE)
 				decorationJob.schedule();
-			}
-
 		}
 
 	}
@@ -286,7 +281,6 @@ public class DecorationScheduler {
 					// Only notify listeners when we have exhausted the
 					// queue of decoration requests.
 					if (awaitingDecoration.isEmpty()) {
-						scheduled = false;
 						decorated();
 					}
 				}
