@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
@@ -25,6 +24,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.AntNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -69,7 +69,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	public void run(TargetNode target) {
 		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
 		if (file == null) {
-			Display.getDefault().beep();
+			ExternalToolsPlugin.getStandardDisplay().beep();
 			return;
 		}
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();
