@@ -20,6 +20,10 @@ import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
  * Window>Preferences>Java>Templates.
  */
 public abstract class BaseNewWizardPage extends WizardPage {
+	private static final String KEY_NAME = "BaseNewWizardPage.name";
+	private static final String KEY_CREATE_IN = "BaseNewWizardPage.createIn";
+	private static final String KEY_EXISTING = "BaseNewWizardPage.existing";
+	private static final String KEY_INVALID = "BaseNewWizardPage.invalid";
 	private BookmarkFolder folder;
 	private String name;
 	private TreeViewer tree;
@@ -81,7 +85,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		Label label = new Label(container, SWT.NULL);
-		label.setText("&Name:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_NAME));
 		nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
@@ -92,7 +96,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		});
 		createClientControl(container, 2);
 		label = new Label(container, SWT.NULL);
-		label.setText("&Create in:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_CREATE_IN));
 		containerText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		containerText.setLayoutData(gd);
@@ -104,7 +108,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 			}
 		});
 		label = new Label(container, SWT.NULL);
-		label.setText("&Existing folders:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_EXISTING));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -140,7 +144,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 		if (containerText.getText().length() > 0) {
 			folder = getFolderFromPath(containerText.getText());
 			if (folder == null) {
-				message = "Container path is invalid";
+				message = UpdateUIPlugin.getResourceString(KEY_INVALID);
 			}
 		} else
 			folder = null;

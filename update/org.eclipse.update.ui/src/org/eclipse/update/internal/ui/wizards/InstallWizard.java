@@ -19,6 +19,8 @@ import org.eclipse.update.internal.ui.model.UpdateModel;
 import org.eclipse.update.internal.ui.security.JarVerificationService;
 
 public class InstallWizard extends Wizard {
+	private static final String KEY_UNABLE = "InstallWizard.error.unable";
+	private static final String KEY_OLD = "InstallWizard.error.old";
 	private ReviewPage reviewPage;
 	private TargetPage targetPage;
 	private PendingChange job;
@@ -138,7 +140,7 @@ public class InstallWizard extends Wizard {
 				site.remove(feature, monitor);
 			} else {
 				// we should do something here
-				throwError("Unable to locate configuration site for the feature");
+				throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
 			}
 		} else if (job.getJobType() == PendingChange.INSTALL) {
 			IFeature oldFeature = job.getOldFeature();
@@ -149,7 +151,7 @@ public class InstallWizard extends Wizard {
 			if (success)
 				targetSite.install(feature, getVerificationListener(), monitor);
 			else {
-				throwError("Update failure: cannot disable old version");
+				throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
 			}
 		} else if (job.getJobType() == PendingChange.CONFIGURE) {
 			configure(job.getFeature());

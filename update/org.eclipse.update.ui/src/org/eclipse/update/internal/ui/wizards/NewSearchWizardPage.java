@@ -15,6 +15,9 @@ import org.eclipse.update.internal.ui.search.*;
  * Window>Preferences>Java>Templates.
  */
 public class NewSearchWizardPage extends BaseNewWizardPage {
+	private static final String KEY_TITLE = "NewSearchWizardPage.title";
+	private static final String KEY_DESC = "NewSearchWizardPage.desc";
+	private static final String KEY_CATEGORY = "NewSearchWizardPage.category";
 	private Combo categoryCombo;
 	private SearchCategoryDescriptor[] descriptors;
 	private SearchCategoryDescriptor descriptor;
@@ -24,8 +27,8 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	 */
 	public NewSearchWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle("New Feature Search");
-		setDescription("Create a new search for features. Use folders to organize your search objects.");
+		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 	}
 
 	/**
@@ -33,7 +36,7 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 	 */
 	protected void createClientControl(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText("&Category:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_CATEGORY));
 		categoryCombo = new Combo(parent, SWT.READ_ONLY);
 		descriptors =
 			SearchCategoryRegistryReader.getDefault().getCategoryDescriptors();

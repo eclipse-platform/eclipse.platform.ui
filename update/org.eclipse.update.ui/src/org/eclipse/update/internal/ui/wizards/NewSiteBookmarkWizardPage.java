@@ -16,6 +16,11 @@ import org.eclipse.update.internal.ui.model.*;
  * Window>Preferences>Java>Templates.
  */
 public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
+	private static final String KEY_TITLE = "NewSiteBookmarkWizardPage.title";
+	private static final String KEY_DESC = "NewSiteBookmarkWizardPage.desc";
+	private static final String KEY_URL = "NewSiteBookmarkWizardPage.url";
+	private static final String KEY_HTTP = "NewSiteBookmarkWizardPage.http";
+	private static final String KEY_INVALID = "NewSiteBookmarkWizardPage.invalid";
 	private Text urlText;
 	private URL url;
 	private SiteBookmark localBookmark;
@@ -25,8 +30,8 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	 */
 	public NewSiteBookmarkWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle("New Update Site Bookmark");
-		setDescription("Bookmark an update site. Use folders to organize your bookmarks.");
+		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 	}
 
 	public NewSiteBookmarkWizardPage(
@@ -41,7 +46,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 	 */
 	protected void createClientControl(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
-		label.setText("&URL:");
+		label.setText(UpdateUIPlugin.getResourceString(KEY_URL));
 		urlText = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		urlText.setLayoutData(gd);
@@ -50,7 +55,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 			urlText.setText(url.toString());
 			urlText.setEnabled(false);
 		} else
-			urlText.setText("http://");
+			urlText.setText(UpdateUIPlugin.getResourceString(KEY_HTTP));
 		urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				validatePage();
@@ -65,7 +70,7 @@ public class NewSiteBookmarkWizardPage extends BaseNewWizardPage {
 				url = new URL(urlText.getText());
 				super.validatePage();
 			} catch (MalformedURLException e) {
-				setErrorMessage("Invalid URL format");
+				setErrorMessage(UpdateUIPlugin.getResourceString(KEY_INVALID));
 				setPageComplete(false);
 			}
 		}

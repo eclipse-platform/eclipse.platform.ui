@@ -11,14 +11,17 @@ import org.eclipse.update.internal.ui.model.*;
  * Window>Preferences>Java>Templates.
  */
 public class NewFolderWizardPage extends BaseNewWizardPage {
+	private static final String KEY_TITLE = "NewFolderWizardPage.title";
+	private static final String KEY_DESC = "NewFolderWizardPage.desc";
+
 	/**
 	 * Constructor for NewFolderWizardPage.
 	 * @param folder
 	 */
 	public NewFolderWizardPage(BookmarkFolder folder) {
 		super(folder);
-		setTitle("Create New Folder");
-		setDescription("Create a new folder to organize your bookmarks. You can choose an existing folder as a container or create a new root folder.");
+		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
+		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 	}
 
 	/**
