@@ -15,7 +15,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
- * 
+ * This interface is still experimental.
  * 
  * @since 3.0
  */
