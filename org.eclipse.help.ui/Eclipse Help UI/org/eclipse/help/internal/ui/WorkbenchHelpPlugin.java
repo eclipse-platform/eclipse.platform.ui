@@ -4,15 +4,12 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.help.internal.contributions.*;
-import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.navigation.*;
-import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.ui.util.HelpPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
   * This class is a UI plugin. This may need to change to regular 
@@ -35,23 +32,6 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 */
 	public static WorkbenchHelpPlugin getDefault() {
 		return plugin;
-	}
-	/** 
-	 * Sets default preference values. These values will be used
-	 * until some preferences are actually set using Preference dialog.
-	 */
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		// These settings will show up when Preference dialog
-		// opens up for the first time.
-		//NOTE: this can perhaps be removed when the platform fixes
-		// the loadPreferenceStore method to properly read the ini file
-		// from the plugin directory.
-		store.setDefault(HelpPreferencePage.INSTALL_OPTION_KEY, HelpSystem.INSTALL_LOCAL);
-		store.setDefault(HelpPreferencePage.LOCAL_SERVER_ADDRESS_KEY, "");
-		store.setDefault(HelpPreferencePage.LOCAL_SERVER_PORT_KEY, "");
-		store.setDefault(HelpPreferencePage.SERVER_PATH_KEY, "");
-		store.setDefault(HelpPreferencePage.LOG_LEVEL_KEY, HelpSystem.LOG_ERROR);
-		store.setDefault(HelpPreferencePage.BROWSER_PATH_KEY, "/usr/bin/netscape");
 	}
 	public void initializeFromStore() {
 		IPreferenceStore ini = getPreferenceStore();
@@ -82,7 +62,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() {
-		if(getWorkbench()!=null)
+		if (getWorkbench() != null)
 			initializeFromStore();
 		HelpSystem.startup();
 	}
