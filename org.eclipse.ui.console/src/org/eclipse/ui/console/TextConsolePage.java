@@ -52,6 +52,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * A page for a text console.
@@ -258,16 +259,19 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		action= new TextViewerAction(fViewer, ITextOperationTarget.CUT);
 		action.configureAction(ConsoleMessages.getString("IOConsolePage.3"), ConsoleMessages.getString("IOConsolePage.4"), ConsoleMessages.getString("IOConsolePage.5"));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.COPY);
 		action.configureAction(ConsoleMessages.getString("IOConsolePage.6"), ConsoleMessages.getString("IOConsolePage.7"), ConsoleMessages.getString("IOConsolePage.8")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.PASTE);
 		action.configureAction(ConsoleMessages.getString("IOConsolePage.9"), ConsoleMessages.getString("IOConsolePage.10"), ConsoleMessages.getString("IOConsolePage.11")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
 		fClearOutputAction = new ClearOutputAction(fConsole);
