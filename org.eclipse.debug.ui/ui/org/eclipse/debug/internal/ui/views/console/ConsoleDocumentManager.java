@@ -81,22 +81,26 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchRemoved(final ILaunch launch) {
+	public void launchRemoved(ILaunch launch) {
+		removeLaunch(launch);
 		DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
 			public void run() {
-				IProcess currentProcess= getCurrentProcess();
-				IProcess[] processes= launch.getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					IProcess iProcess = processes[i];
-					IDocumentProvider provider = getDocumentProvider(iProcess);
-					provider.disconnect(iProcess);
-					if (iProcess.equals(currentProcess)) {
-						setCurrentProcess(null);
-					}
-				}
 				notifyConsoleViews();
 			}
 		});
+	}
+	
+	protected void removeLaunch(ILaunch launch) {
+		IProcess currentProcess= getCurrentProcess();
+		IProcess[] processes= launch.getProcesses();
+		for (int i= 0; i < processes.length; i++) {
+			IProcess iProcess = processes[i];
+			IDocumentProvider provider = getDocumentProvider(iProcess);
+			provider.disconnect(iProcess);
+			if (iProcess.equals(currentProcess)) {
+				setCurrentProcess(null);
+			}
+		}		
 	}
 
 	/**
@@ -207,7 +211,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		ILaunch[] launches = launchManager.getLaunches();
 		for (int i = 0; i < launches.length; i++) {
 			ILaunch launch = launches[i];
-			launchRemoved(launch);
+			removeLaunch(launch);
 		}
 		launchManager.removeLaunchListener(this);
 	}
