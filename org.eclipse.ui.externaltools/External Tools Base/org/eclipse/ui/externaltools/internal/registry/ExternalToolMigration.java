@@ -110,7 +110,7 @@ public final class ExternalToolMigration {
 	 */
 	private static final String TAG_TOOL_TYPE = "!{tool_type}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_NAME = "!{tool_name}"; //$NON-NLS-1$
-	//private static final String TAG_TOOL_LOCATION = "!{tool_loc}"; //$NON-NLS-1$
+	private static final String TAG_TOOL_LOCATION = "!{tool_loc}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_ARGUMENTS = "!{tool_args}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_DIRECTORY = "!{tool_dir}"; //$NON-NLS-1$
 	private static final String TAG_TOOL_REFRESH = "!{tool_refresh}"; //$NON-NLS-1$
@@ -227,6 +227,10 @@ public final class ExternalToolMigration {
 		if (config == null) {
 			return null;
 		}
+
+		// Update the location...
+		String location = (String) args.get(TAG_TOOL_LOCATION);
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 
 		// Update the refresh scope...
 		String refresh = (String) args.get(TAG_TOOL_REFRESH);
