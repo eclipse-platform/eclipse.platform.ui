@@ -175,7 +175,7 @@ public class PluginParser extends DefaultHandler {
 
 		public String[] getRequires() {
 			if (requires == null)
-				return new String[] { "org.eclipse.core.runtime" };
+				return new String[] { "org.eclipse.core.runtime.compatibility" };
 
 			if (schemaVersion == null) {
 				//Add elements on the requirement list of ui and help. 
@@ -191,7 +191,8 @@ public class PluginParser extends DefaultHandler {
 					}
 				}
 			}
-
+			requires.add("org.eclipse.core.runtime.compatibility");
+			
 			String[] requireBundles = new String[requires.size()];
 			requires.toArray(requireBundles);
 			return requireBundles;
