@@ -61,6 +61,9 @@ public class UpdatesView
 	private Action showCategoriesAction;
 	private Image siteImage;
 	private Image featureImage;
+	private Image categoryImage;
+	private Image discoveryImage;
+	private Image bookmarkFolderImage;
 	private Image computerImage;
 	private Image floppyImage;
 	private Image cdImage;
@@ -228,6 +231,9 @@ public class UpdatesView
 			if (obj instanceof MyComputer) {
 				return computerImage;
 			}
+			if (obj instanceof DiscoveryFolder) {
+				return discoveryImage;
+			}
 			if (obj instanceof MyComputerDirectory) {
 				IVolume volume = ((MyComputerDirectory) obj).getVolume();
 				if (volume != null) {
@@ -247,9 +253,11 @@ public class UpdatesView
 				}
 				return image;
 			}
-			if (obj instanceof SiteCategory || obj instanceof BookmarkFolder) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FOLDER);
+			if (obj instanceof SiteCategory) {
+				return categoryImage;
+			}
+			if (obj instanceof BookmarkFolder) {
+				return bookmarkFolderImage;
 			}
 			if (obj instanceof SearchObject) {
 				return getSearchObjectImage((SearchObject) obj);
@@ -679,6 +687,9 @@ public class UpdatesView
 	private void initializeImages() {
 		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+		discoveryImage = UpdateUIPluginImages.DESC_PLACES_OBJ.createImage();
+		bookmarkFolderImage = UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
+		categoryImage = UpdateUIPluginImages.DESC_CATEGORY_OBJ.createImage();
 		computerImage = UpdateUIPluginImages.DESC_COMPUTER_OBJ.createImage();
 		floppyImage = UpdateUIPluginImages.DESC_FLOPPY_OBJ.createImage();
 		cdImage = UpdateUIPluginImages.DESC_CD_OBJ.createImage();
@@ -690,6 +701,9 @@ public class UpdatesView
 	private void disposeImages() {
 		siteImage.dispose();
 		featureImage.dispose();
+		discoveryImage.dispose();
+		bookmarkFolderImage.dispose();
+		categoryImage.dispose();
 		computerImage.dispose();
 		floppyImage.dispose();
 		cdImage.dispose();

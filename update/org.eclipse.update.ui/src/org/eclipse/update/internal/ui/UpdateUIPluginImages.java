@@ -36,7 +36,7 @@ public class UpdateUIPluginImages {
 	 */
 	
 	private static final String PATH_OBJ= ICONS_PATH+"obj16/";
-	private static final String PATH_VIEW = ICONS_PATH+"view16/";
+	private static final String PATH_VIEW = ICONS_PATH+"cview16/";
 	private static final String PATH_LCL= ICONS_PATH+"elcl16/";
 	private static final String PATH_LCL_HOVER= ICONS_PATH+"clcl16/";
 	private static final String PATH_LCL_DISABLED= ICONS_PATH+"dlcl16/";

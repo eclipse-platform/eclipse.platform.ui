@@ -30,7 +30,7 @@ public abstract class BannerPage extends WizardPage {
 		layout.numColumns = 2;
 		layout.horizontalSpacing = 10;
 		client.setLayout(layout);
-		Composite bannerParent = new Composite(client, SWT.BORDER);
+		Composite bannerParent = new Composite(client, SWT.NULL/*SWT.BORDER */);
 		bannerParent.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;

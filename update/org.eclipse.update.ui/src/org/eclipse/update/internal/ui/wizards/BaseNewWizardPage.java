@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 
@@ -29,6 +29,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	private TreeViewer tree;
 	private Text nameText;
 	private Text containerText;
+	private Image folderImage;
 
 	class ContainerContentProvider
 		extends DefaultContentProvider
@@ -65,8 +66,7 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	class ContainerLabelProvider extends LabelProvider {
 		public Image getImage(Object obj) {
 			if (obj instanceof BookmarkFolder)
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FOLDER);
+				return folderImage;
 			return super.getImage(obj);
 		}
 	}
@@ -74,6 +74,12 @@ public abstract class BaseNewWizardPage extends WizardPage {
 	public BaseNewWizardPage(BookmarkFolder folder) {
 		super("");
 		this.folder = folder;
+		folderImage = UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
+	}
+	
+	public void dispose() {
+		folderImage.dispose();
+		super.dispose();
 	}
 
 	/**

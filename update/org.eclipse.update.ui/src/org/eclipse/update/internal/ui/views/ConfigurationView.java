@@ -43,6 +43,8 @@ public class ConfigurationView
 	private Image linkedSiteImage;
 	private Image configImage;
 	private Image currentConfigImage;
+	private Image historyImage;
+	private Image savedImage;
 	private boolean initialized;
 	private SavedFolder savedFolder;
 	private HistoryFolder historyFolder;
@@ -350,9 +352,17 @@ public class ConfigurationView
 				else
 					return linkedSiteImage;
 			}
+			if (obj instanceof SavedFolder) {
+				return savedImage;
+			}
+			if (obj instanceof HistoryFolder) {
+				return historyImage;
+			}
+			/*			
 			if (obj instanceof ViewFolder) {
 				return ((ViewFolder) obj).getImage();
 			}
+			*/
 			if (obj instanceof PreservedConfiguration) {
 				obj = ((PreservedConfiguration) obj).getConfiguration();
 			}
@@ -380,15 +390,17 @@ public class ConfigurationView
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 		unconfFeatureImage =
 			UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ.createImage();
-		ImageDescriptor siteDesc = UpdateUIPluginImages.DESC_SITE_OBJ;
+		ImageDescriptor siteDesc = UpdateUIPluginImages.DESC_LSITE_OBJ;
 		siteImage = siteDesc.createImage();
-		ImageDescriptor installSiteDesc =
+		ImageDescriptor installSiteDesc = UpdateUIPluginImages.DESC_LSITE_OBJ;
+		/*
 			new OverlayIcon(
 				siteDesc,
 				new ImageDescriptor[][] { {
 					UpdateUIPluginImages
 					.DESC_INSTALLABLE_CO }
 		});
+		*/
 		installSiteImage = installSiteDesc.createImage();
 		ImageDescriptor linkedSiteDesc =
 			new OverlayIcon(
@@ -407,6 +419,8 @@ public class ConfigurationView
 				UpdateUIPluginImages.DESC_CURRENT_CO }
 		});
 		currentConfigImage = cdesc.createImage();
+		savedImage = UpdateUIPluginImages.DESC_SAVED_OBJ.createImage();
+		historyImage= UpdateUIPluginImages.DESC_HISTORY_OBJ.createImage();
 		savedFolder = new SavedFolder();
 		historyFolder = new HistoryFolder();
 	}
@@ -467,8 +481,11 @@ public class ConfigurationView
 		eclipseImage.dispose();
 		featureImage.dispose();
 		unconfFeatureImage.dispose();
+		siteImage.dispose();
 		installSiteImage.dispose();
 		linkedSiteImage.dispose();
+		savedImage.dispose();
+		historyImage.dispose();
 		configImage.dispose();
 		currentConfigImage.dispose();
 		if (initialized) {

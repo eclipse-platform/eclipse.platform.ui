@@ -10,7 +10,7 @@ import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import java.net.URL;
 import org.eclipse.core.runtime.PlatformObject;
 
-public class SiteCategory extends PlatformObject {
+public class SiteCategory extends UIModelObject {
 private static final String KEY_OTHER_LABEL= "SiteCategory.other.label";
 private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.description";
 

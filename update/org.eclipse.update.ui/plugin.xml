@@ -31,6 +31,7 @@
             id="org.eclipse.update.ui.softwareUpdates">
          <action
                label="%actionSets.updateManager.label"
+               icon="icons/full/cview16/update_pers.gif"
                class="org.eclipse.update.internal.ui.UpdateManagerAction"
                menubarPath="help/helpEnd"
                id="org.eclipse.update.ui.updateManager">
@@ -45,28 +46,28 @@
       </category>
       <view
             name="%views.updates.label"
-            icon="icons/full/view16/updates.gif"
+            icon="icons/full/cview16/updates.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.UpdatesView"
             id="org.eclipse.update.ui.UpdatesView">
       </view>
       <view
             name="%views.configuration.label"
-            icon="icons/full/view16/configs.gif"
+            icon="icons/full/cview16/configs.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.ConfigurationView"
             id="org.eclipse.update.ui.ConfigurationView">
       </view>
       <view
             name="%views.preview.label"
-            icon="icons/full/view16/preview.gif"
+            icon="icons/full/cview16/preview.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.DetailsView"
             id="org.eclipse.update.ui.DetailsView">
       </view>
       <view
             name="%views.webBrowser.label"
-            icon="icons/full/view16/browser.gif"
+            icon="icons/full/cview16/browser.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.WebBrowserView"
             id="org.eclipse.update.ui.WebBrowser">
@@ -76,6 +77,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="%perspective.label"
+            icon="icons/full/cview16/update_pers.gif"
             class="org.eclipse.update.internal.ui.UpdatePerspective"
             id="org.eclipse.update.ui.UpdatePerspective">
       </perspective>
