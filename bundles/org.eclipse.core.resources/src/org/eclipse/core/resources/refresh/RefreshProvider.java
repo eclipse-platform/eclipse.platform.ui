@@ -39,8 +39,8 @@ public abstract class RefreshProvider {
 	 * @param resource the resource to monitor
 	 * @param result the result callback for notifying of failure or of resources that need
 	 * refreshing
-	 * @return IRefreshMonitor a monitor on the resource, or <code>null</code>
-	 * if the resource cannot be monitored.
+	 * @return a monitor on the resource, or <code>null</code>
+	 * if the resource cannot be monitored
 	 */
 	public abstract IRefreshMonitor installMonitor(IResource resource, IRefreshResult result);
 }

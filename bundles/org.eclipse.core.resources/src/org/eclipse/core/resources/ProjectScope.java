@@ -19,13 +19,12 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 /**
  * Object representing the project scope in the Eclipse preferences
  * hierarchy. Can be used as a context for searching for preference
- * values (in the IPreferencesService APIs) or for determining the 
- * correct preference node to set values in the store.
+ * values (in the <code>org.eclipse.core.runtime.IPreferencesService</code>
+ * APIs) or for determining the correct preference node to set values in the store.
  * <p>
  * Project preferences are stored on a per project basis in the
  * project's content area as specified by <code>IProject#getLocation</code>.
- * </p>
- * <p>
+ * </p><p>
  * The path for preferences defined in the project scope hierarchy
  * is as follows: <code>/project/&lt;projectName&gt;/&lt;qualifier&gt;</code>
  * </p>
@@ -43,7 +42,8 @@ public final class ProjectScope implements IScopeContext {
 	private IProject context;
 
 	/**
-	 * Create and return a new project scope for the given project.
+	 * Create and return a new project scope for the given project. The given
+	 * project must not be <code>null</code>.
 	 * 
 	 * @param context the project
 	 * @throws IllegalArgumentException if the project is <code>null</code>

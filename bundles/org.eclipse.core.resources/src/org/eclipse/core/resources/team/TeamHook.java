@@ -34,14 +34,14 @@ public abstract class TeamHook extends InternalTeamHook {
 	 * The default resource scheduling rule factory. This factory can be used for projects
 	 * that the team hook methods do not participate in.
 	 * 
-	 * @see #getRuleFactory
-	 * @see #setRuleFactory
+	 * @see #getRuleFactory(IProject)
+	 * @see #setRuleFactory(IProject, IResourceRuleFactory)
 	 * @since 3.0
 	 */
 	protected final IResourceRuleFactory defaultFactory = new ResourceRuleFactory();
 	/**
 	 * Creates a new team hook.  Default constructor for use by subclasses and the 
-	 * resources plugin only.
+	 * resources plug-in only.
 	 */
 	protected TeamHook() {
 		super();
@@ -60,9 +60,9 @@ public abstract class TeamHook extends InternalTeamHook {
 	 * This default implementation always returns the value of the <code>defaultFactory</code>
 	 * field. Subclasses may override.
 	 * 
-	 * @param project the project to return scheduling rules for.
-	 * @return The resource scheduling rules for a project.
-	 * @see #setRuleFactory
+	 * @param project the project to return scheduling rules for
+	 * @return the resource scheduling rules for a project
+	 * @see #setRuleFactory(IProject, IResourceRuleFactory)
 	 * @see IResourceRuleFactory
 	 * @since 3.0
 	 */
@@ -84,9 +84,9 @@ public abstract class TeamHook extends InternalTeamHook {
 	 * operation (in any thread). The best time to change rule factories is during resource
 	 * change notification when the workspace is locked for modification.
 	 * 
-	 * @param project the project to change the resource rule factory for.
-	 * @param factory the new resource rule factory.
-	 * @see #getRuleFactory
+	 * @param project the project to change the resource rule factory for
+	 * @param factory the new resource rule factory
+	 * @see #getRuleFactory(IProject)
 	 * @see IResourceRuleFactory
 	 * @since 3.0
 	 */
@@ -104,8 +104,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	 * do not update the resource tree; resource operations that modify 
 	 * resources and trigger deltas must not be called from within the dynamic
 	 * scope of the invocation of this method.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * This method should be overridden by subclasses that want to control what
 	 * links are created.  The default implementation of this method allows all links
 	 * to be created.
@@ -134,8 +133,7 @@ public abstract class TeamHook extends InternalTeamHook {
 	 * do not update the resource tree; resource operations that modify 
 	 * resources and trigger deltas must not be called from within the dynamic
 	 * scope of the invocation of this method.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * This method should be overridden by subclasses that want to control what
 	 * links are created.  The default implementation of this method allows all links
 	 * to be created.

@@ -424,13 +424,12 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  * <pre>
  *   getCharset(true);
  * </pre>
- * </p>
- * <p>
+ * </p><p>
  * <b>Note 1</b>:  this method does not check whether the result is a supported
  * charset name. Callers should be prepared to handle 
  * <code>UnsupportedEncodingException</code> where this charset is used. 
- * </p>
- * <p>
+ * </p><p>
+ * TODO: remove this note before 3.0 release
  * <b>Note 2</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -447,27 +446,24 @@ public String getCharset() throws CoreException;
  * file into characters. 
  * <p>
  * If checkImplicit is <code>false</code>, this method 
- * will return the charset defined by calling #setCharset, provided this file exists, or
+ * will return the charset defined by calling <code>setCharset</code>, provided this file exists, or
  * <code>null</code> otherwise.
- * </p>  
- * <p>
+ * </p><p>
  * If checkImplicit is <code>true</code>, this method uses the following 
  * algorithm to determine the charset to be returned:
  * <ol>
- * <li>the charset defined by calling #setCharset, if any, and this file exists, 
- * or</li>
+ * <li>the charset defined by calling #setCharset, if any, and this file exists, or</li>
  * <li>if <code>checkImplicit</code> and the charset automatically discovered based on this file's contents,
  * if one can be determined, or</li>
  * <li>the default encoding for this file's parent (as defined by 
- * IContainer#getDefaultCharset).</li>
+ * <code>IContainer#getDefaultCharset</code>).</li>
  * </ol>
- * </p> 
- * <p>
+ * </p><p>
  * <b>Note 1</b>:  this method does not check whether the result is a supported
  * charset name. Callers should be prepared to handle 
  * <code>UnsupportedEncodingException</code> where this charset is used. 
- * </p>
- * <p>
+ * </p><p>
+ * TODO: remove this note before 3.0 release
  * <b>Note 2</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -639,6 +635,7 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 /**
  * Sets the charset for this file.
  * <p>
+ * TODO: remove before 3.0 release
  * <b>Note</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p> 

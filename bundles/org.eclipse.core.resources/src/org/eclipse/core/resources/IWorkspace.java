@@ -606,6 +606,7 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @see IResourceRuleFactory
 	 * @return a resource rule factory
+	 * @since 3.0
 	 */
 	public IResourceRuleFactory getRuleFactory();
 	/**

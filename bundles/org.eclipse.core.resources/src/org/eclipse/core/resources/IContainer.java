@@ -91,14 +91,12 @@ public IResource findMember(String name);
  * If the <code>includePhantoms</code> argument is <code>false</code>, 
  * only a member resource with the given name that exists will be returned.
  * If the <code>includePhantoms</code> argument is <code>true</code>,
- * the method also returns a phantom member resource with 
- * the given name that the workspace is keeping track of.
- * </p>
- * <p>
+ * the method also returns a resource if the workspace is keeping track of a
+ * phantom with that name.
+ * </p><p>
  * Note that no attempt is made to exclude team-private member resources
  * as with <code>members</code>.
- * </p>
- * <p>
+ * </p><p>
  * N.B. Unlike the methods which traffic strictly in resource
  * handles, this method infers the resulting resource's type from the
  * existing resource (or phantom) in the workspace.
@@ -123,8 +121,8 @@ public IResource findMember(String name, boolean includePhantoms);
  * <p>
  * Note that no attempt is made to exclude team-private member resources
  * as with <code>members</code>.
- * </p>
- * <p> N.B. Unlike the methods which traffic strictly in resource
+ * </p><p> 
+ * N.B. Unlike the methods which traffic strictly in resource
  * handles, this method infers the resulting resource's type from the
  * resource existing at the calculated path in the workspace.
  * </p>
@@ -145,14 +143,12 @@ public IResource findMember(IPath path);
  * If the <code>includePhantoms</code> argument is <code>false</code>, 
  * only a resource that exists at the given path will be returned.
  * If the <code>includePhantoms</code> argument is <code>true</code>,
- * the method also returns a phantom member resource at the given path
- * that the workspace is keeping track of.
- * </p>
- * <p>
+ * the method also returns a resource if the workspace is keeping track of
+ * a phantom member resource at the given path.
+ * </p><p>
  * Note that no attempt is made to exclude team-private member resources
  * as with <code>members</code>.
- * </p>
- * <p>
+ * </p><p>
  * N.B. Unlike the methods which traffic strictly in resource
  * handles, this method infers the resulting resource's type from the
  * existing resource (or phantom) at the calculated path in the workspace.
@@ -175,13 +171,12 @@ public IResource findMember(IPath path, boolean includePhantoms);
  * <pre>
  *   getDefaultCharset(true);
  * </pre>
- * </p>
- * <p>
+ * </p><p>
  * <b>Note 1</b>:  this method does not check whether the result is a supported
  * charset name. Callers should be prepared to handle 
  * <code>UnsupportedEncodingException</code> where this charset is used. 
- * </p>
- * <p>
+ * </p><p>
+ * TODO: remove this note before 3.0 release
  * <b>Note 2</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -199,8 +194,7 @@ public String getDefaultCharset() throws CoreException;
  * If checkImplicit is <code>false</code>, this method 
  * will return the charset defined by calling #setDefaultCharset, provided this 
  * container exists, or <code>null</code> otherwise.
- * </p>  
- * <p>
+ * </p><p>
  * If checkImplicit is <code>true</code>, this method uses the following 
  * algorithm to determine the charset to be returned:
  * <ol>
@@ -211,13 +205,12 @@ public String getDefaultCharset() throws CoreException;
  * workspace root), or</li>
  * <li>the charset returned by ResourcesPlugin#getEncoding.</li> 
  * </ol>
- *  </p>
- * <p>
+ *  </p><p>
  * <b>Note 1</b>:  this method does not check whether the result is a supported
  * charset name. Callers should be prepared to handle 
  * <code>UnsupportedEncodingException</code> where this charset is used. 
- * </p>
- * <p>
+ * </p><p>
+ * TODO: remove this note before 3.0 release
  * <b>Note 2</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -279,8 +272,7 @@ public IFolder getFolder(IPath path);
  * <p>
  * This is a convenience method, fully equivalent to <code>members(IResource.NONE)</code>.
  * Team-private member resources are <b>not</b> included in the result.
- * </p>
- * <p>
+ * </p><p>
  * Note that the members of a project or folder are the files and folders
  * immediately contained within it.  The members of the workspace root
  * are the projects in the workspace.
@@ -308,10 +300,10 @@ public IResource[] members() throws CoreException;
  * Team-private member resources are <b>not</b> included in the result.
  * </p>
  *
- * @return an array of members of this resource
  * @param includePhantoms <code>true</code> if phantom resources are
  *   of interest; <code>false</code> if phantom resources are not of
- *   interest.
+ *   interest
+ * @return an array of members of this resource
  * @exception CoreException if this request fails. Reasons include:
  * <ul>
  * <li> This resource does not exist.</li>
@@ -335,8 +327,7 @@ public IResource[] members(boolean includePhantoms) throws CoreException;
  * If the <code>INCLUDE_PHANTOMS</code> flag is specified,
  * the result will also include any phantom member resources the
  * workspace is keeping track of.
- * </p>
- * <p>
+ * </p><p>
  * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified 
  * in the member flags, team private members will be included along with
  * the others. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag
@@ -372,21 +363,17 @@ public IResource[] members(int memberFlags) throws CoreException;
  * maintained with each individual project, and gets discarded when a project
  * is deleted from the workspace. If applied to a deleted project, this method
  * returns the empty list.
- * </p>
- * <p>
+ * </p><p>
  * When applied to the workspace root resource (depth infinity), this method
  * returns all recently deleted files with saved states in all existing projects.
- * </p>
- * <p>
+ * </p><p>
  * When applied to a folder (or project) resource (depth one),
  * this method returns all recently deleted member files with saved states.
- * </p>
- * <p>
+ * </p><p>
  * When applied to a folder resource (depth zero),
  * this method returns an empty list unless there was a recently deleted file
  * with saved states at the same path as the folder.
- * </p>
- * <p>
+ * </p><p>
  * This method is long-running; progress and cancellation are provided
  * by the given progress monitor. 
  * </p>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,21 +48,18 @@ public interface IMoveDeleteHook {
 	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well;
 	 * use <code>tree.addToLocalHistory</code> to capture the contents of the
 	 * file before deleting it from the local file system.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * An extending implementation should perform whatever pre-processing it 
 	 * needs to do and then call <code>tree.standardDeleteFile</code> to 
 	 * explicitly invoke the standard file deletion behavior, which deletes
 	 * both the file from the local file system and updates the workspace
 	 * resource tree. It should return <code>true</code> to indicate that the
 	 * operation was attempted.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Returning <code>false</code> is the easy way for the implementation to
 	 * say "pass". It is equivalent to calling
 	 * <code>tree.standardDeleteFile</code> and returning <code>true</code>.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The implementation of this method runs "below" the resources API and is
 	 * therefore very restricted in what resource API method it can call. The
 	 * list of useable methods includes most resource operations that read but
@@ -85,11 +82,7 @@ public interface IMoveDeleteHook {
 	 *   attempted to carry out the operation
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public boolean deleteFile(
-		IResourceTree tree,
-		IFile file,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public boolean deleteFile(IResourceTree tree, IFile file, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the
@@ -110,21 +103,18 @@ public interface IMoveDeleteHook {
 	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; 
 	 * use <code>tree.addToLocalHistory</code> to capture the contents of any
 	 * files being deleted.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * A partial re-implementation should perform whatever pre-processing it
 	 * needs to do and then call <code>tree.standardDeleteFolder</code> to
 	 * explicitly invoke the standard folder deletion behavior, which deletes
 	 * both the folder and its descendents from the local file system and 
 	 * updates the workspace resource tree. It should return <code>true</code>
 	 * to indicate that the operation was attempted.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Returning <code>false</code> is the easy way for the implementation to
 	 * say "pass". It is equivalent to calling
 	 * <code>tree.standardDeleteFolder</code> and returning <code>true</code>.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The implementation of this method runs "below" the resources API and is
 	 * therefore very restricted in what resource API method it can call. The
 	 * list of useable methods includes most resource operations that read but
@@ -147,11 +137,7 @@ public interface IMoveDeleteHook {
 	 *   method attempted to carry out the operation
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public boolean deleteFolder(
-		IResourceTree tree,
-		IFolder folder,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public boolean deleteFolder(IResourceTree tree, IFolder folder, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.delete(int,IProgressMonitor)</code> where the
@@ -174,19 +160,16 @@ public interface IMoveDeleteHook {
 	 * sync before attempting to delete it. 
 	 * Note that local history is not maintained when a project is deleted,
 	 * regardless of the setting of the <code>KEEP_HISTORY</code> update flag. 
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * A partial re-implementation should perform whatever pre-processing it needs
 	 * to do and then call <code>tree.standardDeleteProject</code> to explicitly
 	 * invoke the standard project deletion behavior. It should return <code>true</code>
 	 * to indicate that the operation was attempted.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Returning <code>false</code> is the easy way for the implementation to
 	 * say "pass". It is equivalent to calling
 	 * <code>tree.standardDeleteProject</code> and returning <code>true</code>.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The implementation of this method runs "below" the resources API and is
 	 * therefore very restricted in what resource API method it can call. The
 	 * list of useable methods includes most resource operations that read but
@@ -209,11 +192,7 @@ public interface IMoveDeleteHook {
 	 *   method attempted to carry out the operation
 	 * @see IResource#delete(int,IProgressMonitor)
 	 */
-	public boolean deleteProject(
-		IResourceTree tree,
-		IProject project,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public boolean deleteProject(IResourceTree tree, IProject project, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where
@@ -237,20 +216,17 @@ public interface IMoveDeleteHook {
 	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; use
 	 * <code>tree.addToLocalHistory</code> to capture the contents of the file
 	 * (naturally, this must be before moving the file from the local file system).
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * An extending implementation should perform whatever pre-processing it needs
 	 * to do and then call <code>tree.standardMoveFile</code> to explicitly
 	 * invoke the standard file moving behavior, which moves both the file in the
 	 * local file system and updates the workspace resource tree. It should return
 	 * <code>true</code> to indicate that the operation was attempted.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Returning <code>false</code> is the easy way for the implementation to
 	 * say "pass". It is equivalent to calling
 	 * <code>tree.standardMoveFile</code> and returning <code>true</code>.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The implementation of this method runs "below" the resources API and is
 	 * therefore very restricted in what resource API method it can call. The
 	 * list of useable methods includes most resource operations that read but
@@ -276,12 +252,7 @@ public interface IMoveDeleteHook {
 	 *   method attempted to carry out the operation
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
-	public boolean moveFile(
-		IResourceTree tree,
-		IFile source,
-		IFile destination,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public boolean moveFile(IResourceTree tree, IFile source, IFile destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> where
@@ -306,20 +277,17 @@ public interface IMoveDeleteHook {
 	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; use
 	 * <code>tree.addToLocalHistory</code> to capture the contents of any files being
 	 * moved.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * A partial re-implementation should perform whatever pre-processing it needs
 	 * to do and then call <code>tree.standardMoveFolder</code> to explicitly
 	 * invoke the standard folder move behavior, which move both the folder
 	 * and its descendents in the local file system and updates the workspace resource
 	 * tree. Return <code>true</code> to indicate that the operation was attempted.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Returning <code>false</code> is the easy way for the implementation to
 	 * say "pass". It is equivalent to calling 
 	 * <code>tree.standardDeleteFolder</code> and returning <code>true</code>.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The implementation of this method runs "below" the resources API and is
 	 * therefore very restricted in what resource API method it can call. The
 	 * list of useable methods includes most resource operations that read but
@@ -345,12 +313,7 @@ public interface IMoveDeleteHook {
 	 *   method attempted to carry out the operation
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
-	public boolean moveFolder(
-		IResourceTree tree,
-		IFolder source,
-		IFolder destination,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public boolean moveFolder(IResourceTree tree, IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Implements <code>IResource.move(IPath,int,IProgressMonitor)</code> and
@@ -366,13 +329,11 @@ public interface IMoveDeleteHook {
 	 * project is being relocated but not renamed. When the project is being
 	 * renamed, the destination project is guaranteed not to exist in the
 	 * workspace resource tree.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Returning <code>false</code> is the easy way for the implementation to
 	 * say "pass". It is equivalent to calling 
 	 * <code>tree.standardMoveProject</code> and returning <code>true</code>.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The implementation of this method runs "below" the resources API and is
 	 * therefore very restricted in what resource API method it can call. The
 	 * list of useable methods includes most resource operations that read but
@@ -405,10 +366,5 @@ public interface IMoveDeleteHook {
 	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 * @see IResource#move(IProjectDescription,int,IProgressMonitor)
 	 */
-	public boolean moveProject(
-		IResourceTree tree,
-		IProject source,
-		IProjectDescription description,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public boolean moveProject(IResourceTree tree, IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor);
 }

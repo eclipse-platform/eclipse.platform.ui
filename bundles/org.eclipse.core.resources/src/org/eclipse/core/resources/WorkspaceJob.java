@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -61,6 +61,7 @@ public abstract class WorkspaceJob extends InternalWorkspaceJob {
 	 * 
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancelation are not desired
+	 * @return the result of running the operation
 	 * @exception CoreException if this operation fails.
 	 */
 	public abstract IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException;

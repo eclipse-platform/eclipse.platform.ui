@@ -30,7 +30,7 @@ public interface IRefreshMonitor {
 	 * 
 	 * @param resource the resource that should no longer be monitored, or
 	 * <code>null</code> if this monitor should stop monitoring all resources
-	 * it is currently monitoring.
+	 * it is currently monitoring
 	 */
-	void unmonitor(IResource resource);
+	public void unmonitor(IResource resource);
 }

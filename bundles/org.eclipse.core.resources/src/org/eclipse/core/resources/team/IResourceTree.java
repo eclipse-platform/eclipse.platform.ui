@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * Provides internal access to the workspace resource tree for the purposes of
- * implementing move and delete operation. Implementations of 
+ * implementing the move and delete operations. Implementations of 
  * <code>IMoveDeleteHook</code> call these methods.
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -199,12 +199,10 @@ public interface IResourceTree {
 	 * <p>
 	 * The destination file must not already exist in the workspace resource
 	 * tree.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * This operation carries over the file timestamp unchanged. Use 
-	 * <code>setTimestamp</code> to update the timestamp of the file if its
-	 * timestamp changed as a direct consequence of the move.
-	 * (Note that <code>resynchronize</code> cannot be used for this purpose.)
+	 * <code>updateMovedFileTimestamp</code> to update the timestamp 
+	 * of the file if its timestamp changed as a direct consequence of the move.
 	 * </p>
 	 * 
 	 * @param source the handle of the source file that was moved
@@ -224,8 +222,7 @@ public interface IResourceTree {
 	 * This operation carries over file timestamps unchanged. Use 
 	 * <code>updateMovedFileTimestamp</code> to update the timestamp of files
 	 * whose timestamps changed as a direct consequence of the move.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * The destination folder must not already exist in the workspace resource
 	 * tree.
 	 * </p>
@@ -246,12 +243,10 @@ public interface IResourceTree {
 	 * This operation carries over file timestamps unchanged. Use 
 	 * <code>updateMovedFileTimestamp</code> to update the timestamp of files whose 
 	 * timestamps changed as a direct consequence of the move.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * If the project is being renamed, the destination project must not
 	 * already exist in the workspace resource tree.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Local history is not preserved if the project is renamed. It is preserved
 	 * when the project's content area is relocated without renaming the
 	 * project.
@@ -262,9 +257,7 @@ public interface IResourceTree {
 	 * @return <code>true</code> if the move succeeded, and <code>false</code>
 	 *    otherwise
 	 */
-	public boolean movedProjectSubtree(
-		IProject source,
-		IProjectDescription description);
+	public boolean movedProjectSubtree(IProject source, IProjectDescription description);
 
 	/**
 	 * Deletes the given file in the standard manner from both the local file 
@@ -273,8 +266,7 @@ public interface IResourceTree {
 	 * Implementations of <code>IMoveDeleteHook</code> must invoke this method
 	 * in lieu of  <code>file.delete(updateFlags, monitor)</code> because all
 	 * regular API operations that modify resources are off limits.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * If the operation fails, the reason for the failure is automatically
 	 * collected by an internal call to <code>failed</code>.
 	 * </p>
@@ -285,10 +277,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 */
-	public void standardDeleteFile(
-		IFile file,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public void standardDeleteFile(IFile file, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Deletes the given folder and its descendents in the standard manner from
@@ -297,8 +286,7 @@ public interface IResourceTree {
 	 * Implementations of <code>IMoveDeleteHook</code> must invoke this method
 	 * in lieu of  <code>folder.delete(updateFlags, monitor)</code> because all
 	 * regular API operations that modify resources are off limits.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * If the operation fails, the reason for the failure is automatically
 	 * collected by an internal call to <code>failed</code>.
 	 * </p>
@@ -309,10 +297,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 */
-	public void standardDeleteFolder(
-		IFolder folder,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Deletes the given project and its descendents in the standard manner from
@@ -321,8 +306,7 @@ public interface IResourceTree {
 	 * Implementations of <code>IMoveDeleteHook</code> must invoke this method
 	 * in lieu of  <code>project.delete(updateFlags, monitor)</code> because all
 	 * regular API operations that modify resources are off limits.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * If the operation fails, the reason for the failure is automatically 
 	 * collected by an internal call to <code>failed</code>.
 	 * </p>
@@ -333,10 +317,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.delete(int,IProgressMonitor)</code>
 	 */
-	public void standardDeleteProject(
-		IProject project,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public void standardDeleteProject(IProject project, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Moves the given file in the standard manner from both the local file 
@@ -346,8 +327,7 @@ public interface IResourceTree {
 	 * in lieu of <code>source.move(destination.getProjectRelativePath(),
 	 * updateFlags, monitor)</code> because all regular API  operations that
 	 * modify resources are off limits.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * If the operation fails, the reason for the failure is automatically 
 	 * collected by an internal call to <code>failed</code>.
 	 * </p>
@@ -359,11 +339,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 */
-	public void standardMoveFile(
-		IFile source,
-		IFile destination,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public void standardMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Moves the given folder and its descendents in the standard manner from
@@ -373,8 +349,7 @@ public interface IResourceTree {
 	 * in lieu of <code>source.move(destination.getProjectRelativePath(),
 	 * updateFlags, monitor)</code> because all regular API  operations that
 	 * modify resources are off limits.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * If the operation fails, the reason for the failure is automatically
 	 * collected by an internal call to <code>failed</code>.
 	 * </p>
@@ -386,11 +361,7 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 */
-	public void standardMoveFolder(
-		IFolder source,
-		IFolder destination,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public void standardMoveFolder(IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor);
 
 	/**
 	 * Renames and/or relocates the given project in the standard manner.
@@ -398,8 +369,7 @@ public interface IResourceTree {
 	 * Implementations of <code>IMoveDeleteHook</code> must invoke this method
 	 * in lieu of <code>source.move(description, updateFlags, monitor)</code>
 	 * because all regular API  operations that modify resources are off limits.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * If the operation fails, the reason for the failure is automatically
 	 * collected by an internal call to <code>failed</code>.
 	 * </p>
@@ -411,9 +381,5 @@ public interface IResourceTree {
 	 * @param monitor the progress monitor, or <code>null</code> as per 
 	 *    <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 */
-	public void standardMoveProject(
-		IProject source,
-		IProjectDescription description,
-		int updateFlags,
-		IProgressMonitor monitor);
+	public void standardMoveProject(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor);
 }

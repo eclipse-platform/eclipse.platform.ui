@@ -18,11 +18,10 @@ import org.eclipse.core.runtime.CoreException;
  * <p>The <code>IEncodedStorage</code> interface extends <code>IStorage</code>
  * in order to provide access to the charset to be used when decoding its 
  * contents. 
- * </p>
- * <p>
+ * </p><p>
  * Clients may implement this interface.
- * </p> 
- * <p>
+ * </p><p>
+ * TODO: remove this note before 3.0 release
  * <b>Note</b>: This interface is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -38,8 +37,8 @@ public interface IEncodedStorage extends IStorage {
 	 * <b>Note 1</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
-	 * </p>
-	 * <p>
+	 * </p><p>
+	 * TODO: remove this note before 3.0 release
 	 * <b>Note 2</b>: This method is part of early access API that may well 
 	 * change in incompatible ways until it reaches its finished form. 
 	 * </p>

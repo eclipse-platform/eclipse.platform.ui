@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@ package org.eclipse.core.resources;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 /**
- * The file modification validator is a VCM-related hook for pre-checking operations 
+ * The file modification validator is a Team-related hook for pre-checking operations 
  * that modify the contents of files.
  * <p>
  * This interface is used only in conjunction with the
  * "org.eclipse.core.resources.fileModificationValidator"
  * extension point. It is intended to be implemented only 
- * by the Eclipse Platform VCM plug-in.
+ * by the Eclipse Platform Team plug-in.
  * </p>
  *
  * @since 2.0

@@ -47,6 +47,7 @@ public String getComment();
  * Returns the default charset for the described project, or <code>null</code>
  * if none has been defined.
  * <p>
+ * TODO remove this note before the 3.0 release. should this method be removed?
  * <b>Note</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
@@ -71,6 +72,7 @@ public String getDefaultCharset();
  * references on this description.
  *
  * @see #getReferencedProjects()
+ * @see #setDynamicReferences(IProject[])
  * @return a list of projects
  * @since 3.0
  */
@@ -161,6 +163,7 @@ public void setComment(String comment);
 /**
  * Sets the default charset for the described project.
  * <p>
+ * TODO: remove this note before the 3.0 release. should this method be removed?
  * <b>Note</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>

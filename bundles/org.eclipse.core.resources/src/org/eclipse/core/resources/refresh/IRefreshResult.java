@@ -31,17 +31,17 @@ public interface IRefreshResult {
 	 * monitor was monitoring.
 	 * 
 	 * @param monitor a monitor which has encountered a failure that it 
-	 * cannot recover from.
+	 * cannot recover from
 	 * @param resource the resource that the monitor can no longer
 	 * monitor, or <code>null</code> to indicate that the monitor can no 
-	 * longer monitor any of the resources it was monitoring.
+	 * longer monitor any of the resources it was monitoring
 	 */
-	void monitorFailed(IRefreshMonitor monitor, IResource resource);
+	public void monitorFailed(IRefreshMonitor monitor, IResource resource);
 	/**
 	 * Requests that the provided resource be refreshed.  The refresh will
 	 * occur in the background during the next scheduled refresh.
 	 * 
 	 * @param resource the resource to refresh
 	 */
-	void refresh(IResource resource);
+	public void refresh(IResource resource);
 }

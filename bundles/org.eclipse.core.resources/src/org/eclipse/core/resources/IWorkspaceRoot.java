@@ -172,7 +172,7 @@ public IFile getFileForLocation(IPath location);
  * 
  * @param name the name of the project 
  * @return a project resource handle
- * @see #getProjects
+ * @see #getProjects()
  */
 public IProject getProject(String name);
 /**
@@ -180,7 +180,7 @@ public IProject getProject(String name);
  * The projects can be open or closed.
  * 
  * @return an array of projects
- * @see #getProject
+ * @see #getProject(String)
  */
 public IProject[] getProjects();
 }

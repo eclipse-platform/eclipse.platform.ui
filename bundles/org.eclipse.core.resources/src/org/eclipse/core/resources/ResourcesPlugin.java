@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,7 @@ public final class ResourcesPlugin extends Plugin {
 	
 	/**
 	 * Constant identifying the job family identifier for the background autobuild job.
+	 * 
 	 * @see IJobManager#join(Object, IProgressMonitor)
 	 * @since 3.0
 	 */
@@ -93,6 +94,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * Constant identifying the job family identifier for a background build job. All clients
 	 * that schedule background jobs for performing builds should include this job
 	 * family in their implementation of <code>belongsTo</code>.
+	 * 
 	 * @see IJobManager#join(Object, IProgressMonitor)
 	 * @see Job#belongsTo(Object)
 	 * @since 3.0
@@ -205,6 +207,7 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring how often the workspace performs 
 	 * auto-refresh.
+	 * TODO: remove this before 3.0 release
 	 * @deprecated - to be removed before 3.0 release
 	 * @since 3.0
 	 */
