@@ -194,7 +194,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	
 		try {
-			pm.beginTask(null, 100);
+			pm.beginTask(Policy.bind("SyncCompareInput.taskTitle"), 100);
 			
 			// Estimate 70% of the time is creating the sync elements
 			this.trees = createSyncElements(Policy.subMonitorFor(pm, 70));
