@@ -59,11 +59,18 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 
 	public final static String ICON_PATH;
 	static {
-		if (Display.getCurrent().getIconDepth() > 4) {
-			ICON_PATH = ICVSUIConstants.ICON_PATH_FULL;
-		} else {
-			ICON_PATH = ICVSUIConstants.ICON_PATH_BASIC;
-		}
+		final String iconPath[] = new String[1];
+		final Display display = Display.getDefault();
+		display.syncExec(new Runnable() {
+			public void run() {
+				if (display.getIconDepth() > 4) {
+					iconPath[0] = ICVSUIConstants.ICON_PATH_FULL;
+				} else {
+					iconPath[0] = ICVSUIConstants.ICON_PATH_BASIC;
+				}
+			}
+		});
+		ICON_PATH = iconPath[0];
 	}
 
 	// timeout in milliseconds before displaying a progress monitor dialog
