@@ -67,28 +67,49 @@ public class CallHistory {
 	 * This method does not 
 	 * @methodNames an array of the names of methods in the order in which the methods are expected to be invoked
 	 */
-	public boolean verifyOrder( String[] methodNames ) throws IllegalArgumentException
+	public boolean verifyOrder( Object o, String[] methodNames ) throws IllegalArgumentException
 	{
-		if( methodNames.length == methodList.size() ){		
+		if( methodNames.length == methodList.size() ){
+			Class c = o.getClass();
 			for( int i = 0; i < methodNames.length; i ++ )
-				if( methodNames[ i ].equals( methodList.get( i ) ) == false )
+				if( classHasMethod( c, methodNames[ i ] ) ){
+					if( methodNames[ i ].equals( methodList.get( i ) ) == false )
+						return false;
+				}
+				else
 					return false;
+			
 			return true;
 		}
 		else 
 			return false;
 	}
 	
-	public boolean contains( String methodName )
+	public boolean contains( Object o, String methodName )
 	{
-		return methodList.contains( methodName );
+		if( classHasMethod( o.getClass(), methodName ) )
+			return methodList.contains( methodName );
+		else
+			return false;
 	}
 	
-	public boolean contains( String[] methodNames )
-	{
-		for( int i = 0; i < methodNames.length; i ++ )
-			if( methodList.contains( methodNames[ i ] ) == false )
+	public boolean contains( Object o, String[] methodNames )
+	{	
+		Class c = o.getClass();	
+		for( int i = 0; i < methodNames.length; i ++ ){
+			if( classHasMethod( c, methodNames[ i ] ) ){
+				if( methodList.contains( methodNames[ i ] ) == false )
+					return false;
+			}
+			else
 				return false;
+		}
 		return true;
+	}
+	
+	public void dump()
+	{
+		for( int i = 0; i < methodList.size(); i ++ )
+			System.out.println( methodList.get( i ) );
 	}
 }
