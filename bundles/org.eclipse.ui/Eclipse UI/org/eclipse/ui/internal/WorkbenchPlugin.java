@@ -395,8 +395,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 
-		// Temporary option to enable wizard for project capability
-		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable working sets
 		store.setDefault("ENABLE_WORKING_SETS", false); //$NON-NLS-1$		
 		// Temporary option to enable new menu organization

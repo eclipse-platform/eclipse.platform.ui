@@ -14,9 +14,6 @@ Creation Wizards</h1></center>
 <p><b><i>Description: </i></b>This extension point is used to register
 resource creation wizard extensions. Creation wizards appear as choices
 within the "New Dialog", and are typically used to create folders and files.
-<p>Since release 2.0, there is only one wizard to create a project. Plug-ins
-can provide capabilities to the project through the <a href="org_eclipse_ui_capabilities.html">org.eclipse.ui.capabilities</a>
-extension point.
 <p>In the "New Dialog", wizards are organized into categories which usually
 reflect a particular problem domain.&nbsp; For instance, a Java oriented
 plugin may define a category called "Java" which is appropriate for "Class"
@@ -91,22 +88,12 @@ dialog box.</li>
 <li>
 <b>project</b> - an optional attribute indicating the wizard will create
 an IProject resource. Also cause the wizard to appear as a choice within
-the "New Project Dialog".<br>
-<b><i><font color="#FF0000">Deprecated:</font></i></b> This attribute is
-no longer applicable. Since release 2.0, there is one wizard to create
-an IProject resource. Plug-ins can provide capabilities to the project
-through the <a href="org_eclipse_ui_capabilities.html">org.eclipse.ui.capabilities</a>
-extension point.</li>
+the "New Project Dialog".</li>
 
 <li>
 <b>finalPerspective</b> - an optional attribute which identifies a perspective
 to activate when IProject resource creation is finished. For more information,
-see API Information below.<br>
-<b><i><font color="#FF0000">Deprecated:</font></i></b> This attribute is
-no longer applicable. Since release 2.0, there is one wizard to create
-an IProject resource. Plug-ins can provide capabilities to the project
-through the <a href="org_eclipse_ui_capabilities.html">org.eclipse.ui.capabilities</a>
-extension point.</li>
+see API Information below.</li>
 
 <li>
 <b>description</b> - an optional subelement whose body contains a short
@@ -162,16 +149,10 @@ as a separate dialog box.
 activate when IProject resource creation is finished within the wizard
 class. The activation of this perspective should be interpreted according
 to the workbench preference defined by IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE.
-This may mean "open in a new window", "open in the current window", "replace
-the current perspective", or "do nothing". This is only a hint, but developers
-are encouraged to read and activate the hint, or they can call the api
-BasicNewProjectResourceWizard#updatePerspective(IConfigurationElement)
-which will do the work for them.<br>
-<b><i><font color="#FF0000">Deprecated:</font></i></b> This attribute is
-no longer applicable. Since release 2.0, there is one wizard to create
-an IProject resource. Plug-ins can provide capabilities to the project
-through the <a href="org_eclipse_ui_capabilities.html">org.eclipse.ui.capabilities</a>
-extension point.
+This may mean "open in a new window", "replace the current perspective",
+or "do nothing". This is only a hint, but developers are encouraged to
+read and activate the hint, or they can call the api BasicNewProjectResourceWizard#updatePerspective(IConfigurationElement)
+which will do the work for them.
 <p><b><i>Supplied Implementation: </i></b>The workbench comes with wizards
 for creating empty resources of the following types: project, folder and
 file. These wizards are registered using the same mechanism as described

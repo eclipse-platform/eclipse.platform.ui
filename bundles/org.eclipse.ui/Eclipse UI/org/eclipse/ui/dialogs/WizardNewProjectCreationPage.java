@@ -46,10 +46,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * mainPage.setDescription("Create a new project resource.");
  * </pre>
  * </p>
- * @deprecated Multiple project type creation wizards are no longer recommended.
- * 		The workbench provides one wizard to the user to create a project resource.
- * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
- * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public class WizardNewProjectCreationPage extends WizardPage {
 
@@ -88,11 +84,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
  * Creates a new project creation wizard page.
  *
  * @param pageName the name of this page
- * 
- * @deprecated Multiple project type creation wizards are no longer recommended.
- * 		The workbench provides one wizard to the user to create a project resource.
- * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
- * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public WizardNewProjectCreationPage(String pageName) {
 	super(pageName);

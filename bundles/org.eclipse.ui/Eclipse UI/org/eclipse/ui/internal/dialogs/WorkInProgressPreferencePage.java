@@ -20,8 +20,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 
-	// Temporary option to enable wizard for project capability
-	private Button capabilityButton;
 	// Temporary option to enable working sets
 	private Button workingSetsButton;
 	// Temporary option to enable new menu structure
@@ -70,14 +68,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		// Call commented out on WorkbenchPreferencePage. 
 		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration")); //$NON-NLS-1$
 
-		// Temporary option to enable wizard for project capability work
-		capabilityButton = 
-			createTempOption(
-				composite,
-				"Enable new configurable project wizard (work in progress of project capabilities)", 
-				"ENABLE_CONFIGURABLE_PROJECT_WIZARD",
-				true);
-
 		// Temporary option to enable workbench working sets
 		workingSetsButton =
 			createTempOption(
@@ -105,7 +95,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformDefaults(store);
 
-		capabilityButton.setSelection(store.getDefaultBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$	
 		workingSetsButton.setSelection(store.getDefaultBoolean("ENABLE_WORKING_SETS")); //$NON-NLS-1$				
 		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
 	}
@@ -116,7 +105,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 
-		store.setValue("ENABLE_CONFIGURABLE_PROJECT_WIZARD", capabilityButton.getSelection()); //$NON-NLS-1$
 		store.setValue("ENABLE_WORKING_SETS", workingSetsButton.getSelection()); //$NON-NLS-1$
 		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
 		

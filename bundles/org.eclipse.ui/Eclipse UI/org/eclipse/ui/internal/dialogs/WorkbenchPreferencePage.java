@@ -43,7 +43,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	//Widgets for perspective switching when creating new projects
 	private Button openProjectInNewWindowButton;
-	private Button openProjectInNewPageButton;
 	private Button replaceProjectButton;
 	private Button switchOnNewProjectButton;
 	
@@ -58,7 +57,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private static final String NEW_PROJECT_PERSPECTIVE_TITLE = WorkbenchMessages.getString("WorkbenchPreference.projectOptionsTitle"); //$NON-NLS-1$
 
 	private static final String OPEN_NEW_WINDOW_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectNewWindow"); //$NON-NLS-1$
-	private static final String OPEN_NEW_PAGE_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.projectSameWindow"); //$NON-NLS-1$
 	private static final String OPEN_REPLACE_PROJECT_LABEL = WorkbenchMessages.getString("WorkbenchPreference.replacePerspective"); //$NON-NLS-1$
 	private static final String DO_NOT_SWITCH_PERSPECTIVES = WorkbenchMessages.getString("WorkbenchPreference.noSwitch"); //$NON-NLS-1$
 
@@ -246,16 +244,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
 
-		//Open New Page button
-		this.openProjectInNewPageButton = createRadioButton(buttonComposite, OPEN_NEW_PAGE_PROJECT_LABEL);
-		this.openProjectInNewPageButton.setSelection(this.newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
-
-		this.openProjectInNewPageButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
-			}
-		});
-
 		//Open New Window button
 		this.openProjectInNewWindowButton = createRadioButton(buttonComposite, OPEN_NEW_WINDOW_PROJECT_LABEL);
 		this.openProjectInNewWindowButton.setSelection(this.newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
@@ -397,7 +385,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		String projectPreference = store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 		this.newProjectPerspectiveSetting = projectPreference;
 		openProjectInNewWindowButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
-		openProjectInNewPageButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
 		replaceProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
 		switchOnNewProjectButton.setSelection(projectPreference.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
 

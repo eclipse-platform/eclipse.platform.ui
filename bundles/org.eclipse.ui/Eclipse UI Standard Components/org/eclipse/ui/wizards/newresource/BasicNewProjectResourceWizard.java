@@ -40,10 +40,6 @@ import java.net.*;
  * user. When the user hits Finish, a project resource with the user-specified
  * name is created, the dialog closes, and the call to <code>open</code> returns.
  * </p>
- * @deprecated Multiple project type creation wizards are no longer recommended.
- * 		The workbench provides one wizard to the user to create a project resource.
- * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
- * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	implements IExecutableExtension
@@ -63,11 +59,6 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	private static String WINDOW_PROBLEMS_TITLE = ResourceMessages.getString("NewProject.errorOpeningWindow"); //$NON-NLS-1$
 /**
  * Creates a wizard for creating a new project resource in the workspace.
- * 
- * @deprecated Multiple project type creation wizards are no longer recommended.
- * 		The workbench provides one wizard to the user to create a project resource.
- * 		Plug-ins should now use the org.eclipse.ui.capabilities extension point. See
- * 		also CreateProjectAction if the plug-in needs to launch the new project wizard.
  */
 public BasicNewProjectResourceWizard() {
 	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);

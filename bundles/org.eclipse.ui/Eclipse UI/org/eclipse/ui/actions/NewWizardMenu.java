@@ -21,7 +21,6 @@ import java.util.*;
 public class NewWizardMenu extends ShortcutMenu {
 	private Action showDlgAction = new NewWizardAction();
 	private Action newProjectAction;
-	private Action createProjectAction;
 	private Map actions = new HashMap(21);
 	private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
 	private boolean enabled = true;
@@ -43,7 +42,6 @@ public class NewWizardMenu extends ShortcutMenu {
  */
 public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean register) {
 	super(innerMgr, window, register);
-	createProjectAction = new CreateProjectAction(window);
 	newProjectAction = new NewProjectAction(window);
 	fillMenu(); // Must be done after constructor to ensure field initialization.
 }
@@ -56,11 +54,6 @@ protected void fillMenu() {
 	innerMgr.removeAll();
 
 	if (this.enabled) {
-		// Temporary option to enable wizard for project capability
-		org.eclipse.jface.preference.IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		if (store.getBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD") == true)
-			innerMgr.add(createProjectAction);
-		
 		// Add new project ..
 		innerMgr.add(newProjectAction);
 		innerMgr.add(new Separator());

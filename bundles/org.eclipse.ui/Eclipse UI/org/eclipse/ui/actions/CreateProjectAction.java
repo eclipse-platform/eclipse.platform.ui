@@ -38,6 +38,9 @@ import org.eclipse.ui.internal.registry.ICategory;
  * <p>
  * This class may be instantiated and subclassed by clients.
  * </p>
+ * @deprecated This new experimental API is being temporary
+ * 		deprecated for release 2.0  New project creation should
+ * 		continue to make use of NewProjectAction.
  */
 public class CreateProjectAction extends Action {
 	/**
