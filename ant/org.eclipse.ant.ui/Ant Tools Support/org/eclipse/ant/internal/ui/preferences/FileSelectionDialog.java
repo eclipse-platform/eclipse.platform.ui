@@ -11,18 +11,15 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -74,11 +71,8 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		Composite result= (Composite)super.createDialogArea(parent);
 		final Button button = new Button(result, SWT.CHECK);
 		button.setText(fFilterMessage);
-		
 		button.setFont(parent.getFont());
-		GridData data= new GridData();
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		button.setLayoutData(data);
+		
 		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
 		fShowAll= settings.getBoolean(DIALOG_SETTING);
 		fFilter.considerExtension(!fShowAll);
