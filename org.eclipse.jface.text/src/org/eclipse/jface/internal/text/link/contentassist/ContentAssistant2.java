@@ -1570,7 +1570,8 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * @param proposal
 	 */
 	public void fireProposalChosen(ICompletionProposal proposal) {
-		for (Iterator it= fProposalListeners.iterator(); it.hasNext();) {
+		List list= new ArrayList(fProposalListeners);
+		for (Iterator it= list.iterator(); it.hasNext();) {
 			IProposalListener listener= (IProposalListener) it.next();
 			listener.proposalChosen(proposal);
 		}
