@@ -181,12 +181,13 @@ public class RepositoriesView extends RemoteViewPart {
 		super.addWorkbenchActions(manager);
 		IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
 		if (selection.size() == 1 && selection.getFirstElement() instanceof RepositoryRoot) {
+			manager.add(removeRootAction);		
+			manager.add(new Separator());
 			manager.add(propertiesAction);
 		}
 		sub.add(newAction);
 		if (newAnonAction != null)
-			sub.add(newAnonAction);
-		manager.add(removeRootAction);
+			sub.add(newAnonAction);		
 	}
 	
 	/*
