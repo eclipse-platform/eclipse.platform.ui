@@ -70,32 +70,32 @@ public class AntView extends ViewPart {
 	/**
 	 * XML tag used to identify an ant project in storage
 	 */
-	private static final String TAG_PROJECT = "project";
+	private static final String TAG_PROJECT = "project"; //$NON-NLS-1$
 	/**
 	 * XML key used to store whether or not an ant project is an error node.
 	 * Persisting this data saved a huge amount of processing at startup.
 	 */
-	private String KEY_ERROR = "error";
+	private String KEY_ERROR = "error"; //$NON-NLS-1$
 	/**
 	 * XML key used to store an ant project's path
 	 */
-	private static final String KEY_PATH = "path";
+	private static final String KEY_PATH = "path"; //$NON-NLS-1$
 	/**
 	 * XML tag used to identify an ant target in storage
 	 */
-	private String TAG_TARGET = "target";
+	private String TAG_TARGET = "target"; //$NON-NLS-1$
 	/**
 	 * XML key used to store an ant node's name
 	 */
-	private String KEY_NAME = "name";
+	private String KEY_NAME = "name"; //$NON-NLS-1$
 	/**
 	 * XML value for a boolean attribute whose value is <code>true</code>
 	 */
-	private String VALUE_TRUE="true";
+	private String VALUE_TRUE="true"; //$NON-NLS-1$
 	/**
 	 * XML value for a boolean attribute whose value is <code>false</code>
 	 */
-	private String VALUE_FALSE="false";
+	private String VALUE_FALSE="false"; //$NON-NLS-1$
 
 	/**
 	 * The sash form containing the project viewer and target viewer
@@ -499,7 +499,7 @@ public class AntView extends ViewPart {
 			
 			ProjectNode node= null;
 			if (nameString == null) {
-				nameString= "";
+				nameString= ""; //$NON-NLS-1$
 			}
 			node= new ProjectNode(nameString, pathString);
 			if (errorString != null && errorString.equals(VALUE_TRUE)) {

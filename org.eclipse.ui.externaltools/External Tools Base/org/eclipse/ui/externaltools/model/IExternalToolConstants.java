@@ -26,7 +26,7 @@ public interface IExternalToolConstants {
 	 * Extension point to declare the launch configuration type that should be
 	 * created when duplicating an existing configuration as a project builder.
 	 */
-	public static final String EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS = "configurationDuplicationMaps"; // $NON-NLS-1$
+	public static final String EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS = "configurationDuplicationMaps"; //$NON-NLS-1$
 	/**
 	 * Extension point to declare argument variables
 	 * (value <code>argumentVariables</code>).

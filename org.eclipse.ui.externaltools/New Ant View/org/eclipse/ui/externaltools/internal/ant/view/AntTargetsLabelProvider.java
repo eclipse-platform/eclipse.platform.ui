@@ -24,7 +24,7 @@ public class AntTargetsLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if (element instanceof TargetNode) {
 			StringBuffer buffer= new StringBuffer(element.toString());
-			buffer.append(" [").append(((TargetNode) element).getParent().getName()).append("]");
+			buffer.append(" [").append(((TargetNode) element).getParent().getName()).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 			return buffer.toString();
 		}
 		return element.toString();

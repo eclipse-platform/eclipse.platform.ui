@@ -173,7 +173,7 @@ public final class AntUtil {
 		for (int i = 0; i < antStrings.length; i++) {
 			String string = antStrings[i];
 			try {
-				antURLs.add(new URL("file:" + string));
+				antURLs.add(new URL("file:" + string)); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 			}
 		}
@@ -182,7 +182,7 @@ public final class AntUtil {
 			for (int i = 0; i < userStrings.length; i++) {
 				String string = userStrings[i];
 				try {
-					userURLs.add(new URL("file:" + string));
+					userURLs.add(new URL("file:" + string)); //$NON-NLS-1$
 				} catch (MalformedURLException e) {
 				}
 			}

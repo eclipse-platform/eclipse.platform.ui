@@ -594,7 +594,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * <code>null</code> if the folder could not be created
 	 */
 	private IFolder getBuilderFolder() {
-		IFolder folder = getInputProject().getFolder(".externalToolBuilders");
+		IFolder folder = getInputProject().getFolder(".externalToolBuilders"); //$NON-NLS-1$
 		if (!folder.exists()) {
 			try {
 				folder.create(true, true, new NullProgressMonitor());

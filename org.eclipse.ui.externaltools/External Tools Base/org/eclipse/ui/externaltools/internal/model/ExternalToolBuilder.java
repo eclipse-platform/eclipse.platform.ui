@@ -54,7 +54,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			return null;
 		}
 		boolean runTool = false;
-		int[] buildKinds = buildTypesToArray((String)config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""));
+		int[] buildKinds = buildTypesToArray((String)config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
 		for (int i = 0; i < buildKinds.length; i++) {
 			if (kind == buildKinds[i]) {
 				runTool = true;

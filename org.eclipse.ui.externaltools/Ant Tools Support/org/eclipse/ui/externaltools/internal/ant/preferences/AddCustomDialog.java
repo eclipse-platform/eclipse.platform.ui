@@ -459,7 +459,7 @@ public class AddCustomDialog extends StatusDialog {
 		selectionGroup.setRoot(currentRoot);
 		
 		if (className != null) {
-			StringTokenizer tokenizer= new StringTokenizer(className, ".");
+			StringTokenizer tokenizer= new StringTokenizer(className, "."); //$NON-NLS-1$
 			if (selectClass(currentRoot, tokenizer)) {
 				//getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
@@ -470,7 +470,7 @@ public class AddCustomDialog extends StatusDialog {
 		List folders= currentParent.getFolders(currentProvider);
 		if (folders.size() == 1) {
 			MinimizedFileSystemElement element = (MinimizedFileSystemElement)folders.get(0);
-			if (element.getLabel(null).equals("/")) {
+			if (element.getLabel(null).equals("/")) { //$NON-NLS-1$
 				selectionGroup.selectAndRevealFolder(element);
 				return selectClass(element, tokenizer);
 			}
@@ -490,7 +490,7 @@ public class AddCustomDialog extends StatusDialog {
 			Iterator iter= files.iterator();
 			while (iter.hasNext()) {
 				MinimizedFileSystemElement file = (MinimizedFileSystemElement) iter.next();
-				if (file.getLabel(null).equals(currentName + ".class")) {
+				if (file.getLabel(null).equals(currentName + ".class")) { //$NON-NLS-1$
 					selectionGroup.selectAndRevealFile(file);
 					return true;
 				}

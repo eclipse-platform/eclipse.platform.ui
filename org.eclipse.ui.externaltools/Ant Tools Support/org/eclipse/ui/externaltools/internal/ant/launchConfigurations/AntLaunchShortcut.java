@@ -142,7 +142,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			//the user has not specified any names to look for
 			return null;
 		}
-		String[] names= AntUtil.parseString(buildFileNames, ",");
+		String[] names= AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
 		IResource file= null;
 		while (file == null || file.getType() != IFile.FILE) {		
 			for (int i = 0; i < names.length; i++) {
@@ -295,7 +295,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		} else {
 			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, throwable);
 		}
-		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), "Build Failed", status); //$NON-NLS-1$
+		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Build_Failed_2"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

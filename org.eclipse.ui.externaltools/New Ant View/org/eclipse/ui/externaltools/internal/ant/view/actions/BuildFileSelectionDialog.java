@@ -133,7 +133,7 @@ private ITreeContentProvider getResourceProvider(final int resourceType) {
 				for (int i = 0; i < members.length; i++) {
 					//And the test bits with the resource types to see if they are what we want
 					if ((members[i].getType() & resourceType) > 0) {
-						if (members[i].getType() == IResource.FILE && !"xml".equalsIgnoreCase(members[i].getFileExtension())) {
+						if (members[i].getType() == IResource.FILE && !"xml".equalsIgnoreCase(members[i].getFileExtension())) { //$NON-NLS-1$
 							continue;
 						}
 						results.add(members[i]);
