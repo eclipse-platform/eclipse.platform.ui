@@ -49,6 +49,9 @@ JAR is also added to the classpath.
                <documentation>
                   a path relative to the plug-in install location for the library.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="headless" type="string" use="optional">
