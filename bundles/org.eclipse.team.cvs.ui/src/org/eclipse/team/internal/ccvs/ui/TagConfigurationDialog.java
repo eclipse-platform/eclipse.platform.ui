@@ -594,18 +594,17 @@ public class TagConfigurationDialog extends Dialog {
 	 * the tags are fetched from the server. A client should refresh their widgets that show tags because they
 	 * may of changed. 
 	 */
-	private static Button createTagRefreshButton(final Shell shell, Composite composite, String title, final IProject project, final Runnable runnable) {
+	private static Button createTagRefreshButton(final Shell shell, Composite composite, String title, final ICVSFolder folder, final Runnable runnable) {
 		Button refreshButton = new Button(composite, SWT.PUSH);
 		refreshButton.setText (title);
-		updateToolTipHelpForRefreshButton(refreshButton, project);
+		updateToolTipHelpForRefreshButton(refreshButton, folder);
 		refreshButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					try {
 						CVSUIPlugin.runWithProgress(shell, true /*cancelable*/, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								try {
-									CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(
-										CVSWorkspaceRoot.getCVSFolderFor((project)), true, monitor);
+									CVSUIPlugin.getPlugin().getRepositoryManager().refreshDefinedTags(folder, true, monitor);
 									runnable.run();
 								} catch (TeamException e) {
 									throw new InvocationTargetException(e);
@@ -625,9 +624,9 @@ public class TagConfigurationDialog extends Dialog {
 		return refreshButton;		
 	 }
 	 
-	private static void updateToolTipHelpForRefreshButton(Button button, IProject project) {
+	private static void updateToolTipHelpForRefreshButton(Button button, ICVSFolder folder) {
 		StringBuffer tooltip = new StringBuffer(Policy.bind("TagConfigurationDialog.15")); //$NON-NLS-1$
-		String[] autoFiles = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(CVSWorkspaceRoot.getCVSFolderFor(project));
+		String[] autoFiles = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(folder);
 		tooltip.append(" - .project\n"); //$NON-NLS-1$
 		for (int i = 0; i < autoFiles.length; i++) {
 			tooltip.append("-  " + autoFiles[i] + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -636,7 +635,7 @@ public class TagConfigurationDialog extends Dialog {
 		button.setToolTipText(tooltip.toString());
 	 }
 	 
-	 public static void createTagDefinitionButtons(final Shell shell, Composite composite, final IProject[] projects, int hHint, int wHint, final Runnable afterRefresh, final Runnable afterConfigure) {
+	 public static void createTagDefinitionButtons(final Shell shell, Composite composite, final ICVSFolder[] folders, int hHint, int wHint, final Runnable afterRefresh, final Runnable afterConfigure) {
 	 	Composite buttonComp = new Composite(composite, SWT.NONE);
 		GridData data = new GridData ();
 		data.horizontalAlignment = GridData.END;		
@@ -647,7 +646,7 @@ public class TagConfigurationDialog extends Dialog {
 		layout.marginWidth = 0;
 		buttonComp.setLayout (layout);
 	 	
-	 	final Button refreshButton = TagConfigurationDialog.createTagRefreshButton(shell, buttonComp, Policy.bind("TagConfigurationDialog.20"), projects[0], afterRefresh); //$NON-NLS-1$
+	 	final Button refreshButton = TagConfigurationDialog.createTagRefreshButton(shell, buttonComp, Policy.bind("TagConfigurationDialog.20"), folders[0], afterRefresh); //$NON-NLS-1$
 		data = new GridData();
 		if(hHint!=0 && wHint!=0) {
 			data.heightHint = hHint;
@@ -671,13 +670,9 @@ public class TagConfigurationDialog extends Dialog {
 		addButton.setLayoutData (data);
 		addButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					ICVSFolder[] roots = new ICVSFolder[projects.length];
-					for (int i = 0; i < projects.length; i++) {
-						roots[i] = CVSWorkspaceRoot.getCVSFolderFor(projects[i]);
-					}
-					TagConfigurationDialog d = new TagConfigurationDialog(shell, roots);
+					TagConfigurationDialog d = new TagConfigurationDialog(shell, folders);
 					d.open();
-					TagConfigurationDialog.updateToolTipHelpForRefreshButton(refreshButton, projects[0]);
+					TagConfigurationDialog.updateToolTipHelpForRefreshButton(refreshButton, folders[0]);
 					afterConfigure.run();
 				}
 			});		

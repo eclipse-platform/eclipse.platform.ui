@@ -27,6 +27,8 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 public class RTag extends RemoteCommand {
 	/*** Local options: specific to tag ***/
 	public static final LocalOption CREATE_BRANCH = Tag.CREATE_BRANCH;
+	public static final LocalOption CLEAR_FROM_REMOVED = new LocalOption("-a", null); //$NON-NLS-1$	
+	public static final LocalOption FORCE_REASSIGNMENT = new LocalOption("-F", null); //$NON-NLS-1$	
 
 	/**
 	 * Makes a -r or -D option for a tag.

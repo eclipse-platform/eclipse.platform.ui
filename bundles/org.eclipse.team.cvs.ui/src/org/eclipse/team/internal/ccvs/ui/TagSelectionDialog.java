@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
@@ -34,8 +35,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * Dialog to prompt the user to choose a tag for a selected resource
  */
 public class TagSelectionDialog extends Dialog {
-	private IProject[] projects;
-
+	private ICVSFolder[] folders;
+	private boolean showHEAD;
 	private CVSTag result;
 	
 	// widgets;
@@ -45,6 +46,7 @@ public class TagSelectionDialog extends Dialog {
 	// dialog title, should indicate the action in which the tag selection
 	// dialog is being shown
 	private String title;
+	private String message;
 	
 	// constants
 	private static final int SIZING_DIALOG_WIDTH = 400;
@@ -55,9 +57,27 @@ public class TagSelectionDialog extends Dialog {
 	 * @param resource The resource to select a version for.
 	 */
 	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title) {
+		this(parentShell, getCVSFoldersFor(projects), title, Policy.bind("TagSelectionDialog.Select_a_Tag_1"), true);
+	}
+	
+	private static ICVSFolder[] getCVSFoldersFor(IProject[] projects) {
+		ICVSFolder[] folders = new ICVSFolder[projects.length];
+		for (int i = 0; i < projects.length; i++) {
+			folders[i] = CVSWorkspaceRoot.getCVSFolderFor(projects[i]);
+		}
+		return folders;
+	}
+	
+	/**
+	 * Creates a new TagSelectionDialog.
+	 * @param resource The resource to select a version for.
+	 */
+	public TagSelectionDialog(Shell parentShell, ICVSFolder[] folders, String title, String message, boolean showHEAD) {
 		super(parentShell);
-		this.projects = projects;
+		this.folders = folders;
 		this.title = title;
+		this.message = message;
+		this.showHEAD = showHEAD;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
@@ -123,10 +143,10 @@ public class TagSelectionDialog extends Dialog {
 		inner.setLayout(layout);
 		
 		Label l = new Label (inner, SWT.NONE);
-		l.setText(Policy.bind("TagSelectionDialog.Select_a_Tag_1")); //$NON-NLS-1$
+		l.setText(message); //$NON-NLS-1$
 		
 		tagTree = createTree(inner);
-		tagTree.setInput(new ProjectElement(CVSWorkspaceRoot.getCVSFolderFor(projects[0]), true /*show HEAD tag*/));
+		tagTree.setInput(new ProjectElement(folders[0], showHEAD /*show HEAD tag*/));
 		Runnable refresh = new Runnable() {
 			public void run() {
 				getShell().getDisplay().syncExec(new Runnable() {
@@ -136,7 +156,7 @@ public class TagSelectionDialog extends Dialog {
 				});
 			}
 		};
-		TagConfigurationDialog.createTagDefinitionButtons(getShell(), top, projects, 
+		TagConfigurationDialog.createTagDefinitionButtons(getShell(), top, folders, 
 														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
 														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
 														  refresh, refresh);

@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -112,8 +113,9 @@ public class UpdateWizardPage extends CVSWizardPage {
 				tree.refresh();
 			}
 		};
-		TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, new IProject[] {project},convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
-																							convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH), refresh, refresh);
+		TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, new ICVSFolder[] {CVSWorkspaceRoot.getCVSFolderFor(project)},
+			convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
+			convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH), refresh, refresh);
 		
 		Label seperator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		data = new GridData (GridData.FILL_BOTH);		

@@ -122,7 +122,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		};
 
 		setControl(composite);
-		TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, new IProject[] {project}, 
+		TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, new ICVSFolder[] {CVSWorkspaceRoot.getCVSFolderFor(project)}, 
 														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
 														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
 														  afterRefresh, afterConfigure);
