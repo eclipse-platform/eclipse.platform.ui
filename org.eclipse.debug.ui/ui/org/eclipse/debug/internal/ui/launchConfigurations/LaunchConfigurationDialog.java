@@ -154,6 +154,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Button fProgressMonitorCancelButton;
 	
 	/**
+	 * Flag indicating if the progress monitor part's Cancel button has been pressed.
+	 */
+	private boolean fCancelButtonPressed;
+	
+	/**
 	 * The text widget displaying the name of the
 	 * launch configuration under edit
 	 */
@@ -246,6 +251,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Id for 'Close' button.
 	 */
 	protected static final int ID_CLOSE_BUTTON = IDialogConstants.CLIENT_ID + 2;
+	
+	/**
+	 * Id for 'Cancel' button.
+	 */
+	protected static final int ID_CANCEL_BUTTON = IDialogConstants.CLIENT_ID + 3;
 	
 	/**
 	 * Constrant String used as key for setting and retrieving current Control with focus
@@ -950,8 +960,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		GridLayout pmLayout = new GridLayout();
 		pmLayout.numColumns = 3;
 		setProgressMonitorPart(new ProgressMonitorPart(composite, pmLayout, PROGRESS_INDICATOR_HEIGHT));
-		setProgressMonitorCancelButton(new Button(getProgressMonitorPart(), SWT.PUSH));
-		getProgressMonitorCancelButton().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"));  //$NON-NLS-1$
+		Button cancelButton = createButton(getProgressMonitorPart(), ID_CANCEL_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Cancel_3"), true);
+		setProgressMonitorCancelButton(cancelButton);
+		getProgressMonitorCancelButton().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				setCancelButtonPressed(true);
+			}
+		});
 		getProgressMonitorPart().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		getProgressMonitorPart().setVisible(false);
 
@@ -2006,7 +2021,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Autosave the working copy if necessary, then launch the underlying configuration.
+	 * Save the working copy if necessary, then launch the underlying configuration.
 	 * 
 	 * @return one of CANCEL or OK
 	 */
@@ -2016,26 +2031,27 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return CANCEL;
 		}
 		
-		// If the configuration is a working copy and is dirty or doesn't yet exist, autosave it
+		// If the configuration is a working copy and is dirty or doesn't yet exist, save it
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			ILaunchConfigurationWorkingCopy workingCopy = (ILaunchConfigurationWorkingCopy) config;
 			if (isWorkingCopyDirty() || !workingCopy.exists()) {
-				// save the config
 				fUnderlyingConfig = workingCopy.doSave();
 			} 
 		}
 		
-
+		// liftoff
 		ILaunch launch = launchWithProgress();
 		
-		// notify pages
-		if (launch != null) {
+		// If the launch was cancelled, get out.  Otherwise, notify the tabs of the successful launch.
+		if (cancelButtonPressed()) {
+			launch.terminate();
+			return CANCEL;
+		} else if (launch != null) {
 			ILaunchConfigurationTabGroup group = getTabGroup();
 			boolean disposeTabs = false;
 			if (group == null) {
-				// when doing a single click launch, tabs
-				// may not exist - create and then dispose
-				// so we can notify them of a launch
+				// when launching without realizing this dialog, the tabs
+				// may not exist - create and then dispose so we can notify them of a launch
 				disposeTabs = true;
 				group = createGroup(config.getType());
 			}
@@ -2087,8 +2103,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				}
 			}
 		}
-		
-		
+				
 		return launchResult[0];		
 	}
 	
@@ -2135,8 +2150,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (getShell() != null) {
 			// Save focus control
 			Control focusControl = getShell().getDisplay().getFocusControl();
-			if (focusControl != null && focusControl.getShell() != getShell())
+			if (focusControl != null && focusControl.getShell() != getShell()) {
 				focusControl = null;
+			}
 			
 			// Set the busy cursor to all shells.
 			Display d = getShell().getDisplay();
@@ -2149,14 +2165,16 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 			// Deactivate shell
 			savedState = saveUIState();
-			if (focusControl != null)
+			if (focusControl != null) {
 				savedState.put(FOCUS_CONTROL, focusControl);
+			}
 				
 			// Attach the progress monitor part to the cancel button
 			getProgressMonitorCancelButton().setEnabled(true);
+			setCancelButtonPressed(false);
 			getProgressMonitorPart().attachToCancelComponent(getProgressMonitorCancelButton());
 			getProgressMonitorPart().setVisible(true);
-			getProgressMonitorCancelButton().setFocus();
+			getProgressMonitorCancelButton().forceFocus();
 		}
 		return savedState;
 	}
@@ -2165,7 +2183,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * A long running operation triggered through the dialog
 	 * was stopped either by user input or by normal end.
 	 * Hides the progress monitor and restores the enable state
-	 * dialog's buttons and controls.
+	 * of the dialog's buttons and controls.
 	 *
 	 * @param savedState the saved UI state as returned by <code>aboutToStart</code>
 	 * @see #aboutToStart
@@ -2183,8 +2201,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			arrowCursor.dispose();
 			arrowCursor = null;
 			Control focusControl = (Control)state.get(FOCUS_CONTROL);
-			if (focusControl != null)
+			if (focusControl != null) {
 				focusControl.setFocus();
+			}
 		}
 	}
 
@@ -2267,30 +2286,27 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				w.setEnabled(b.booleanValue());
 		}
 	}
+	
+	protected void setCancelButtonPressed(boolean pressed) {
+		fCancelButtonPressed = pressed;
+	}
+	
+	protected boolean cancelButtonPressed() {
+		return fCancelButtonPressed;
+	}
 
 	/**
 	 * Sets the given cursor for all shells currently active
 	 * for this window's display.
 	 *
-	 * @param c the cursor
+	 * @param cursor the cursor
 	 */
-	private void setDisplayCursor(Cursor c) {
+	private void setDisplayCursor(Cursor cursor) {
 		Shell[] shells = getShell().getDisplay().getShells();
 		for (int i = 0; i < shells.length; i++)
-			shells[i].setCursor(c);
+			shells[i].setCursor(cursor);
 	}
 	
-	/**
-	 * @see Dialog#cancelPressed()
-	 */
-	protected void cancelPressed() {
-		if (fActiveRunningOperations <= 0) {
-			super.cancelPressed();
-		} else {
-			getButton(IDialogConstants.CANCEL_ID).setEnabled(false);
-		}
-	}
-
 	/**
 	 * Checks whether it is alright to close this dialog
 	 * and performed standard cancel processing. If there is a
