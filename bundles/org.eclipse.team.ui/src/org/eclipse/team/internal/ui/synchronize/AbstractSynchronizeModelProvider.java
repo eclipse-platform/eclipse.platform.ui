@@ -288,7 +288,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		if(root instanceof SynchronizeModelElement) {
 			((SynchronizeModelElement)root).fireChanges();
 		}
-		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+		Utils.asyncExec(new Runnable() {
 			public void run() {
 				StructuredViewer viewer = getViewer();
 				if (viewer != null && !viewer.getControl().isDisposed()) {
@@ -297,7 +297,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 					restoreViewerState();
 				}
 			}
-		});
+		}, getViewer());
 	}
 	
 	/**
@@ -363,6 +363,10 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		}
 	}
 
+	/**
+	 * Restore the expansion state and seleciton of the viewer.
+	 * This method must be invoked from within the UI thread.
+	 */
 	protected void restoreViewerState() {
 		// restore expansion state and selection state
 	    final StructuredViewer viewer = getViewer();
@@ -374,11 +378,15 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			if (savedExpansionState != null) {
 				for (Iterator it = savedExpansionState.iterator(); it.hasNext();) {
 					String path = (String) it.next();
-					IResource resource = container.findMember(path, true /* include phantoms */);
+					IResource resource = getResourceForPath(container, path);
 					ISynchronizeModelElement[] elements = getModelObjects(resource);
 					for (int i = 0; i < elements.length; i++) {
                         ISynchronizeModelElement element = elements[i];
-                        expandedElements.add(element);
+                        // Add all parents of the element to the expansion set
+                        while (element != null) {
+                            expandedElements.add(element);
+                            element = (ISynchronizeModelElement)element.getParent();
+                        }
                     }
 				}
 			}
@@ -386,7 +394,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 			if (savedSelectionState != null) {
 				for (Iterator it = savedSelectionState.iterator(); it.hasNext();) {
 					String path = (String) it.next();
-					IResource resource = container.findMember(path, true /* include phantoms */);
+					IResource resource = getResourceForPath(container, path);
 					ISynchronizeModelElement[] elements = getModelObjects(resource);
 					for (int i = 0; i < elements.length; i++) {
                         ISynchronizeModelElement element = elements[i];
@@ -394,16 +402,32 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 					}
 				}
 			}
-			Utils.asyncExec(new Runnable() {
-				public void run() {
-					((AbstractTreeViewer) viewer).setExpandedElements(expandedElements.toArray());
-					viewer.setSelection(new StructuredSelection(selectedElements));
-				}
-			}, viewer);
+			((AbstractTreeViewer) viewer).setExpandedElements(expandedElements.toArray());
+			viewer.setSelection(new StructuredSelection(selectedElements));
 		}
 	}
 
-	/**
+	/*
+     * Convert a path to a resource by first looking in the resource
+     * tree and, if that fails, by using the path format to create
+     * a handle.
+     */
+    private IResource getResourceForPath(IContainer container, String path) {
+        IResource resource = container.findMember(path, true /* include phantoms */);
+        if (resource == null) {
+            // The resource doesn't have an entry on the resources tree 
+            // but may still appear in the view so try to deduce the type
+            // from the path
+            if (path.endsWith(Character.toString(Path.SEPARATOR))) {
+                resource = container.getFolder(new Path(path));
+            } else {
+                resource = container.getFile(new Path(path));
+            }
+        }
+        return resource;
+    }
+
+    /**
 	 * Return all the model objects in this provider that represent the given resource
      * @param resource the resource
      * @return the model objects for the resource

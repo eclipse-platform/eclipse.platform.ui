@@ -368,6 +368,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 	
 	private class FetchLogEntriesJob extends Job {
 		private Set syncSets = new HashSet();
+		private boolean restoreExpansionState;
 		public FetchLogEntriesJob() {
 			super(Policy.bind("ChangeLogModelProvider.4"));  //$NON-NLS-1$
 			setUser(false);
@@ -387,7 +388,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 					for (int i = 0; i < updates.length; i++) {
 						calculateRoots(updates[i], monitor);
 					}
-					refreshViewer();
+					refreshViewer(restoreExpansionState);
 				}
 				return Status.OK_STATUS;
 		
@@ -401,6 +402,9 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		public boolean shouldRun() {
 			return !syncSets.isEmpty();
 		}
+        public void setRestoreExpansionState(boolean restoreExpansionState) {
+            this.restoreExpansionState = restoreExpansionState;
+        }
 	};
 	
 	/* *****************************************************************************
@@ -474,25 +478,29 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 			}
 
 			// Start building the model from scratch
-			startUpdateJob(getSyncInfoSet());
+			startUpdateJob(getSyncInfoSet(), true /* restore expansion state when done */);
 		}
 		return new IDiffElement[0];
 	}
 
-	private void startUpdateJob(SyncInfoSet set) {
+	private void startUpdateJob(SyncInfoSet set, boolean restoreExpansion) {
 		if(fetchLogEntriesJob == null) {
 			fetchLogEntriesJob = new FetchLogEntriesJob();
 		}
+		fetchLogEntriesJob.setRestoreExpansionState(true);
 		fetchLogEntriesJob.add(set);
 	}
 	
-	private void refreshViewer() {
+	private void refreshViewer(final boolean restoreExpansionState) {
 		UIJob updateUI = new UIJob("") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				BusyIndicator.showWhile(getDisplay(), new Runnable() {
 					public void run() {
 						StructuredViewer tree = getViewer();	
 						tree.refresh();
+						if (restoreExpansionState) {
+						    restoreViewerState();
+						}
 						ISynchronizeModelElement root = getModelRoot();
 						if(root instanceof SynchronizeModelElement)
 							((SynchronizeModelElement)root).fireChanges();
@@ -914,7 +922,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
             syncInfoSet = new SyncInfoSet((SyncInfo[]) queuedAdditions.toArray(new SyncInfo[queuedAdditions.size()]));
             queuedAdditions.clear();
         }
-        startUpdateJob(syncInfoSet);
+        startUpdateJob(syncInfoSet, false /* don't restore expansion state */);
     }
     
     /* (non-Javadoc)
@@ -982,7 +990,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
         				handleRemoval(resource);
                     }
         		}
-        		startUpdateJob(new SyncInfoSet((SyncInfo[]) infos.toArray(new SyncInfo[infos.size()])));
+        		startUpdateJob(new SyncInfoSet((SyncInfo[]) infos.toArray(new SyncInfo[infos.size()])), false /* don't restore expansion state */);
             }
         };
         if (performSyncExec) {
