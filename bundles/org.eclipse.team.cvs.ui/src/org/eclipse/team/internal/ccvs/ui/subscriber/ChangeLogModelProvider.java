@@ -12,12 +12,12 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.util.*;
 
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -25,7 +25,6 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.ui.synchronize.viewers.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -40,10 +39,9 @@ import org.eclipse.ui.progress.UIJob;
  * 
  * {date/time, comment, user} -> {*files}
  */
-public class ChangeLogModelProvider extends HierarchicalModelProvider {
+public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	
 	private Map commentRoots = new HashMap();
-	private PendingUpdateAdapter pendingItem;
 	private boolean shutdown = false;
 	private FetchLogEntriesJob fetchLogEntriesJob;
 	
@@ -85,54 +83,12 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 		}
 	}
 	
-	/**
-	 * The PendingUpdateAdapter is a convenience object that can be used
-	 * by a BaseWorkbenchContentProvider that wants to show a pending update.
-	 */
-	public static class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
-
-		/**
-		 * Create a new instance of the receiver.
-		 */
-		public PendingUpdateAdapter() {
-			//No initial behavior
+	public static class FullPathSyncInfoElement extends SyncInfoModelElement {
+		public FullPathSyncInfoElement(IDiffContainer parent, SyncInfo info) {
+			super(parent, info);
 		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-		 */
-		public Object getAdapter(Class adapter) {
-			if (adapter == IWorkbenchAdapter.class)
-				return this;
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-		 */
-		public Object[] getChildren(Object o) {
-			return new Object[0];
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-		 */
-		public ImageDescriptor getImageDescriptor(Object object) {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-		 */
-		public String getLabel(Object o) {
-			return "Fetching logs from server. Please wait...";
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-		 */
-		public Object getParent(Object o) {
-			return null;
+		public String getName() {
+			return getResource().getFullPath().toString();
 		}
 	}
 	
@@ -146,17 +102,11 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			if (set != null && !shutdown) {
-				final SyncInfoModelElement[] nodes = calculateRoots(getSyncInfoTree(), monitor);				
+				final SynchronizeModelElement[] nodes = calculateRoots(getSyncInfoSet(), monitor);				
 				UIJob updateUI = new UIJob("updating change log viewers") {
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						AbstractTreeViewer tree = getTreeViewer();	
-						if(pendingItem != null && tree != null && !tree.getControl().isDisposed()) {									
-							tree.remove(pendingItem);
-						}
-						for (int i = 0; i < nodes.length; i++) {
-							addToViewer(nodes[i]);
-							buildModelObjects(nodes[i]);				
-						}
+						StructuredViewer tree = getViewer();	
+						tree.refresh();
 						return Status.OK_STATUS;
 					}
 				};
@@ -167,7 +117,7 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 		}
 	};
 	
-	public ChangeLogModelProvider(SyncInfoTree set) {
+	public ChangeLogModelProvider(SyncInfoSet set) {
 		super(set);
 	}
 
@@ -176,25 +126,7 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.HierarchicalModelProvider#buildModelObjects(org.eclipse.compare.structuremergeviewer.DiffNode)
 	 */
 	protected IDiffElement[] buildModelObjects(SynchronizeModelElement node) {
-		/*if(node == this) {
-			UIJob job = new UIJob("") {
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					AbstractTreeViewer tree = getTreeViewer();			
-					if (tree != null && !tree.getControl().isDisposed()) {
-						if(pendingItem == null) {
-							pendingItem = new PendingUpdateAdapter();
-						}
-						IDiffElement[] elements = getChildren();
-						for (int i = 0; i < elements.length; i++) {
-							tree.remove(elements[i]);
-						}
-						tree.add(ChangeLogViewerInput.this, pendingItem);
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.schedule();
-			
+		if(node == getModelRoot()) {
 			if(fetchLogEntriesJob == null) {
 				fetchLogEntriesJob = new FetchLogEntriesJob();
 			}
@@ -205,17 +137,15 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 				} catch (InterruptedException e) {
 				}
 			}
-			fetchLogEntriesJob.setSyncInfoSet(getSyncInfoTree());
+			fetchLogEntriesJob.setSyncInfoSet(getSyncInfoSet());
 			fetchLogEntriesJob.schedule();						
-		} else {
-			return super.buildModelObjects(node);
-		}*/
+		}
 		return new IDiffElement[0];
 	}
 
-	private SyncInfoModelElement[] calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
+	private SynchronizeModelElement[] calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
 		commentRoots.clear();
-		/*SyncInfo[] infos = set.getSyncInfos();
+		SyncInfo[] infos = set.getSyncInfos();
 		monitor.beginTask("fetching from server", set.size() * 100);
 		for (int i = 0; i < infos.length; i++) {
 			if(monitor.isCanceled()) {
@@ -226,13 +156,15 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 				DateComment dateComment = new DateComment(logEntry.getDate(), logEntry.getComment(), logEntry.getAuthor());
 				ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) commentRoots.get(dateComment);
 				if (changeRoot == null) {
-					changeRoot = new ChangeLogDiffNode(this, logEntry);
+					changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
 					commentRoots.put(dateComment, changeRoot);
 				}
-				changeRoot.add(infos[i]);
+				SynchronizeModelElement element = new FullPathSyncInfoElement(changeRoot, infos[i]);
+				associateDiffNode(element);
+				changeRoot.add(element);
 			}
 			monitor.worked(100);
-		}*/		
+		}
 		return (ChangeLogDiffNode[]) commentRoots.values().toArray(new ChangeLogDiffNode[commentRoots.size()]);
 	}
 	
@@ -253,6 +185,7 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 			String baseRevision = getRevisionString(base);
 			String remoteRevision = getRevisionString(remote);
 			String localRevision = getRevisionString(local);
+			
 			// TODO: handle new files where there is no local or remote	
 			boolean useRemote = true;
 			if(local != null && remote != null) {
@@ -280,13 +213,6 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.views.HierarchicalModelProvider#syncSetChanged(org.eclipse.team.core.subscribers.ISyncInfoSetChangeEvent)
-	 */
-	protected void syncSetChanged(ISyncInfoSetChangeEvent event) {
-		reset();
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.views.HierarchicalModelProvider#dispose()
 	 */
 	public void dispose() {
@@ -295,5 +221,49 @@ public class ChangeLogModelProvider extends HierarchicalModelProvider {
 			fetchLogEntriesJob.cancel();
 		}
 		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#getViewerSorter()
+	 */
+	public ViewerSorter getViewerSorter() {
+		return new SynchronizeModelElementSorter();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doAdd(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement, org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
+	 */
+	protected void doAdd(SynchronizeModelElement parent, SynchronizeModelElement element) {
+		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
+		viewer.add(parent, element);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#doRemove(org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement)
+	 */
+	protected void doRemove(SynchronizeModelElement element) {
+		AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
+		viewer.remove(element);		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceAdditions(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
+	 */
+	protected void handleResourceAdditions(ISyncInfoTreeChangeEvent event) {
+		reset();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceChanges(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
+	 */
+	protected void handleResourceChanges(ISyncInfoTreeChangeEvent event) {
+		reset();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#handleResourceRemovals(org.eclipse.team.core.synchronize.ISyncInfoTreeChangeEvent)
+	 */
+	protected void handleResourceRemovals(ISyncInfoTreeChangeEvent event) {
+		reset();
 	}
 }

@@ -80,13 +80,13 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 	protected void initializeListeners(StructuredViewer viewer) {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
-			public void selectionChanged(SelectionChangedEvent event) {
+		public void selectionChanged(SelectionChangedEvent event) {
 				updateStatusLine((IStructuredSelection) event.getSelection());
 			}
 		});
 		viewer.addOpenListener(new IOpenListener() {
 
-			public void open(OpenEvent event) {
+		public void open(OpenEvent event) {
 				handleOpen();
 			}
 		});

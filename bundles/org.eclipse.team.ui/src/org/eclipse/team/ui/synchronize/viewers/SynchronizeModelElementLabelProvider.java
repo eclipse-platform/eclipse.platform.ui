@@ -25,6 +25,9 @@ import org.eclipse.ui.internal.WorkbenchColors;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
+ * A label provider that decorates viewers showing 
+ * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement}.
+ * 
  * @since 3.0
  */
 public class SynchronizeModelElementLabelProvider extends LabelProvider implements IColorProvider {

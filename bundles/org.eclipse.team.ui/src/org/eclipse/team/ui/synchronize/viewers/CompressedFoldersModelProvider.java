@@ -92,7 +92,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 	 */	
 	protected IDiffElement[] createModelObjects(SynchronizeModelElement container) {
 		IResource resource = null;
-		if (container == getRoot()) {
+		if (container == getModelRoot()) {
 			resource = ResourcesPlugin.getWorkspace().getRoot();
 		} else {
 			resource = container.getResource();
@@ -193,7 +193,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 				if (parentNode == null) {
 					SynchronizeModelElement projectNode = getModelObject(local.getProject());
 					if (projectNode == null) {
-						projectNode = createModelObject(getRoot(), local.getProject());
+						projectNode = createModelObject(getModelRoot(), local.getProject());
 					}
 					if (local.getParent().getType() == IResource.PROJECT) {
 						parentNode = projectNode;
@@ -205,7 +205,7 @@ public class CompressedFoldersModelProvider extends HierarchicalModelProvider {
 			} else {
 				SynchronizeModelElement projectNode = getModelObject(local.getProject());
 				if (projectNode == null) {
-					projectNode = createModelObject(getRoot(), local.getProject());
+					projectNode = createModelObject(getModelRoot(), local.getProject());
 				}
 				createModelObject(projectNode, local);
 			}

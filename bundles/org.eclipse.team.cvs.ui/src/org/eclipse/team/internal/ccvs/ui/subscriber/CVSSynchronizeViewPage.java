@@ -88,6 +88,7 @@ public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements
 		super.setActionBars(actionBars);
 		IMenuManager mgr = actionBars.getMenuManager();
 		mgr.add(new Separator());
+		//mgr.add(groupByComment);
 	}
 
 	/*
@@ -132,9 +133,7 @@ public class CVSSynchronizeViewPage extends SubscriberParticipantPage implements
 	private SyncInfoTree getSyncInfoSet() {
 		return getParticipant().getSubscriberSyncInfoCollector().getSyncInfoTree();
 	}
-	
-	
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.SubscriberParticipantPage#createSyncInfoSetCompareConfiguration()
 	 */

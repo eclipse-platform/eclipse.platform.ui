@@ -20,7 +20,8 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * A node that represents synchronization state between elements. 
+ * A model element that can be shown in viewers.  
+ *  
  * @since 3.0
  */
 public abstract class SynchronizeModelElement extends DiffNode implements IAdaptable {
@@ -102,6 +103,9 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 		}
 	}
 	
+	public void fireChanges() {
+		fireChange();
+	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
 		IResource resource = getResource();

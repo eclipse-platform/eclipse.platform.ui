@@ -21,7 +21,7 @@ import org.eclipse.ui.IViewPart;
  * <p> 
  * Clients should not add viewActions to this view because they will be global
  * to all participants. Instead, add participant specific actions as described
- * in {@link TreeViewerAdvisor}.
+ * in {@link StructuredViewerAdvisor}.
  * </p>
  * <p>
  * Clients are not intended to implement this interface.

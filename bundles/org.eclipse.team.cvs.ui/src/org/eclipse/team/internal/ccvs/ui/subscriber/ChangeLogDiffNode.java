@@ -13,20 +13,19 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import java.text.DateFormat;
 
 import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
+import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 
-public class ChangeLogDiffNode extends SyncInfoModelElement {
+public class ChangeLogDiffNode extends SynchronizeModelElement {
 
 	private ILogEntry logEntry;
 
 	public ChangeLogDiffNode(DiffNode parent, ILogEntry logEntry) {
-		//super(parent, new SyncInfoTree(), ResourcesPlugin.getWorkspace().getRoot());
-		super(null, null);
+		super(parent);
 		this.logEntry = logEntry;
 	}
 
@@ -54,15 +53,19 @@ public class ChangeLogDiffNode extends SyncInfoModelElement {
 		String date = DateFormat.getDateTimeInstance().format(logEntry.getDate());
 		return date + ": " + logEntry.getComment() + " (" + logEntry.getAuthor() +")";
 	}
-
-	public void add(SyncInfo info) {
-		//((SubscriberSyncInfoSet)getSyncInfoTree()).add(info);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.SyncInfoModelElement#toString()
 	 */
 	public String toString() {
 		return getLabel(null);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement#getResource()
+	 */
+	public IResource getResource() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
