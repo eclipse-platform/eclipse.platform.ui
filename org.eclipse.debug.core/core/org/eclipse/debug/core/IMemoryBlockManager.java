@@ -17,56 +17,82 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 
 /**
- * Manages all memory blocks in the workbench
+ * Manages registered memory blocks in the workspace. Clients
+ * interested in notification of the addition and removal of 
+ * memory blocks may register as a memory block listener with 
+ * the memory block manager.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
+ * @see org.eclipse.debug.core.model.IMemoryBlock
+ * @see org.eclipse.debug.core.IMemoryBlockListener
  * @since 3.1
  */
 public interface IMemoryBlockManager {
 
 	/**
-	 * Tell the manager that the listed memory blocks have been added.
-	 * @param mem
+	 * Adds the given memory blocks to the memory block manager.
+	 * Registered memory block listeners are notified of the additions.
+	 * Has no effect on memory blocks that are already registered.
+	 *   
+	 * @param memoryBlocks memory blocks to add
 	 */
-	void addMemoryBlocks(IMemoryBlock[] memoryBlocks);
-	
+	public void addMemoryBlocks(IMemoryBlock[] memoryBlocks);
 	
 	/**
-	 * Tell the manager that the listed memory blocks have been removed.
-	 * @param mem
+	 * Removes the given memory blocks from the memory block manager.
+	 * Registered memory block listeners are notified of the removals.
+	 * Has no effect on memory blocks that are not currently registered.
+	 * 
+	 * @param memoryBlocks memory blocks to remove
 	 */
-	void removeMemoryBlocks(IMemoryBlock[] memoryBlocks);
-	
+	public void removeMemoryBlocks(IMemoryBlock[] memoryBlocks);
 	
 	/**
-	 * Add a listener to the memory block manager.  
-	 * @param listener
+	 * Registers the given listener for memory block addition and
+	 * removal notification. Has no effect if an identical listener
+	 * is already registered.
+	 *    
+	 * @param listener the listener to add
 	 */
-	void addListener(IMemoryBlockListener listener);
-	
+	public void addListener(IMemoryBlockListener listener);
 	
 	/**
-	 * Remove a listener from the memory block manager.
-	 * @param listener
+	 * Deregisters the givem listener for memory block addition and
+	 * removal notficiation. Has no effect if an identical listener
+	 * is not already registered.
+	 * 
+	 * @param listener the listener to remove
 	 */
-	void removeListener(IMemoryBlockListener listener);
+	public void removeListener(IMemoryBlockListener listener);
 	
 	/**
-	 * @return all memory blocks in the workbench.
+	 * Returns all registered memory blocks.
+	 * 
+	 * @return all registered memory blocks
 	 */
-	public IMemoryBlock[] getAllMemoryBlocks();
+	public IMemoryBlock[] getMemoryBlocks();
 	
 	/**
-	 * Get all memory blocks associated with the given debug target
-	 * (i.e <memoryBlock>.getDebugTarget == debugTarget)
-	 * @param debugTarget
-	 * @return all memory blocks associated with the given debug target
+	 * Returns all registered memory blocks assocaited with the
+	 * given debug target. That is, all registered memory blocks
+	 * whose <code>getDebugTarget()</code> method returns the
+	 * specified debug target.
+	 * 
+	 * @param debugTarget target for which memory blocks have been requested
+	 * @return all registered memory blocks associated with the given debug
+	 *  target
 	 */
 	public IMemoryBlock[] getMemoryBlocks(IDebugTarget debugTarget);
 	
 	/**
-	 * Get all memory blocks associated with the given memory block retrieval.
-	 * @param retrieve
-	 * @return all memory blocks associated with the given memory block retrieval.
+	 * Returns all registered memory blocks that originated from the
+	 * given memory retrieval source.
+	 * 
+	 * @param source source for which memory blocks have been requested
+	 * @return all registered memory blocks that originated from the
+	 *  given memory retrieval source
 	 */
-	public IMemoryBlock[] getMemoryBlocks(IMemoryBlockRetrieval retrieve);
+	public IMemoryBlock[] getMemoryBlocks(IMemoryBlockRetrieval source);
 
 }

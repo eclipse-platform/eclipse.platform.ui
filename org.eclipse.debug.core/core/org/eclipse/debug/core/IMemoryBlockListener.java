@@ -14,22 +14,29 @@ package org.eclipse.debug.core;
 import org.eclipse.debug.core.model.IMemoryBlock;
 
 /**
- * Listener for add memory / remove memory events.
- * Implementer should add itself to IMemoryBlockManager to
- * be notified of these events.
+ * A memory block listener is notified of the addition and removal
+ * of memory blocks with the memory block manager. Listeners must
+ * register with the memory block manager for notification.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.1
  */
 public interface IMemoryBlockListener {
 	
 	/**
-	 * Called when memory blocks are added
-	 * @param memory
+	 * Notification the given memory blocks ahve been added to the
+	 * memory block manager.
+	 * 
+	 * @param memory blocks added to the memory block manager
 	 */
 	void memoryBlocksAdded(IMemoryBlock[] memory);
 
 	/**
-	 * Called when memory blocks are removed
-	 * @param memory
+	 * Notification the given memory blocks have been removed from
+	 * the memory block manager.
+	 * 
+	 * @param memory blocks removed from the memory block manager
 	 */
 	void memoryBlocksRemoved(IMemoryBlock[] memory);
 	

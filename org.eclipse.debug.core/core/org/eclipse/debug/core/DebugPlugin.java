@@ -67,6 +67,7 @@ import org.xml.sax.SAXException;
  * <li>access to the launch manager</li>
  * <li>access to the expression manager</li>
  * <li>access to the registered launcher extensions</li>
+ * <li>access to the memory block manager</li>
  * <li>debug event notification</li>
  * <li>status handlers</li>
  * </ul>
@@ -217,6 +218,7 @@ public class DebugPlugin extends Plugin {
 
 	/**
 	 * The singleton memory block manager.
+	 * @since 3.1
 	 */
 	private MemoryBlockManager fMemoryBlockManager;
 	

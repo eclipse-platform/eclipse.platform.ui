@@ -32,8 +32,14 @@ import org.eclipse.debug.internal.core.memory.MemoryRenderingManager;
  * Implementation of IMemoryBlockManager
  * The manager is responsible to manage all memory blocks in the workbench.
  * 
- * @since 3.0
+ * @since 3.1
  * 
+ */
+/**
+ * MemoryBlockManager
+ */
+/**
+ * MemoryBlockManager
  */
 public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetListener {
 	
@@ -203,9 +209,9 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IMemoryBlockManager#getAllMemoryBlocks()
+	 * @see org.eclipse.debug.core.IMemoryBlockManager#getMemoryBlocks()
 	 */
-	public IMemoryBlock[] getAllMemoryBlocks() {
+	public IMemoryBlock[] getMemoryBlocks() {
 		
 		IMemoryBlock[] blocks = (IMemoryBlock[])memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]);
 		
