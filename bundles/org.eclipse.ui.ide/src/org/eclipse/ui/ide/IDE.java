@@ -159,7 +159,10 @@ public final class IDE {
 			editorDesc = editorReg.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		}
 		
-		// @issue should we try for the default text editor?
+		// next lookup the default text editor
+		if (editorDesc == null) {
+			editorDesc = editorReg.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+		}
 		
 		// if no valid editor found, bail out
 		if (editorDesc == null) {
