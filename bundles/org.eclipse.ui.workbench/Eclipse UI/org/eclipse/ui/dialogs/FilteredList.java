@@ -534,6 +534,8 @@ public class FilteredList extends Composite {
 			int iterations = Math.min(10, fCount - currentIndex);
 			
 			for (int i  = 0; i < iterations; i++) {
+				if(monitor.isCanceled())
+					return Status.CANCEL_STATUS;
 				
 				final TableItem item =
 					(currentIndex < itemCount)
@@ -548,6 +550,9 @@ public class FilteredList extends Composite {
 
 				currentIndex ++;
 			}		
+			
+			if(monitor.isCanceled())
+				return Status.CANCEL_STATUS;
 			
 			if(currentIndex < fCount)
 				schedule(100);
