@@ -1225,7 +1225,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					"org.eclipse.ui.preferencePages.TextEditor",
 					"org.eclipse.jdt.ui.preferences.JavaEditorPreferencePage", // TODO move down and create extension mechanism for ruler providers to specify their preferences url.
 				};
-				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+				// TODO use the filtering capability as soon as released
+//				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0], preferencePages).open();
+				WorkbenchPreferenceDialog.createDialogOn(preferencePages[0]).open();
 			}
 		};
 		menu.appendToGroup("rulers", new GroupMarker("ruler_settings"));
