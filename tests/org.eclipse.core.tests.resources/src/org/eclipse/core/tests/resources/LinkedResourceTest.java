@@ -304,10 +304,13 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
 		Object[][] inputs = new Object[][] { destinationResources, deepCopy, monitors };
 		new TestPerformer("LinkedResourceTest.testCopyFile") {
-			protected static final String CANCELLED = "cancelled";
+			protected static final String CANCELED = "canceled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource destination = (IResource) args[0];
 				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
 				IResource parent = destination.getParent();
 				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
 					return true;
@@ -328,17 +331,18 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					source.createLink(localFile, IResource.NONE, null);
 					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
-					return CANCELLED;
+					return CANCELED;
 				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
 				IResource destination = (IResource) args[0];
 				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (result == CANCELED)
+					return monitor instanceof CancelingProgressMonitor;
 				if (!destination.exists())
 					return false;
 				//destination should only be linked for a shallow copy
@@ -378,10 +382,13 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IProgressMonitor[] monitors = new IProgressMonitor[] { new FussyProgressMonitor(), new CancelingProgressMonitor(), null };
 		Object[][] inputs = new Object[][] { destinationResources, deepCopy, monitors };
 		new TestPerformer("LinkedResourceTest.testCopyFolder") {
-			protected static final String CANCELLED = "cancelled";
+			protected static final String CANCELED = "canceled";
 			public boolean shouldFail(Object[] args, int count) {
 				IResource destination = (IResource) args[0];
 				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor)args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
 				IResource parent = destination.getParent();
 				if (destination.getType() == IResource.PROJECT)
 					return true;
@@ -404,17 +411,18 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					source.createLink(existingLocation, IResource.NONE, null);
 					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				} catch (OperationCanceledException e) {
-					return CANCELLED;
+					return CANCELED;
 				}
 				if (monitor instanceof FussyProgressMonitor)
 					 ((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
 			}
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				if (result == CANCELLED)
-					return true;
 				IResource destination = (IResource) args[0];
 				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (result == CANCELED)
+					return monitor instanceof CancelingProgressMonitor;
 				if (!destination.exists())
 					return false;
 				//destination should only be linked for a shallow copy
