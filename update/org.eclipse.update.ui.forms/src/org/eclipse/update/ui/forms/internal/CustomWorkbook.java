@@ -36,7 +36,7 @@ public void addPage(IFormPage page) {
 	if (page.isSource()) sourcePage = page;
 	
 	if (firstPageSelected && currentPage == null)
-		selectPage(page);
+		selectPage(page, true);
 }
 public void createControl(Composite parent) {
 	tabFolder = new CTabFolder(parent, SWT.BOTTOM);
@@ -45,7 +45,7 @@ public void createControl(Composite parent) {
 			CTabItem item = (CTabItem) e.item;
 			IFormPage page = (IFormPage) item.getData();
 			if (page != null)
-				selectPage(page);
+				selectPage(page, true);
 		}
 	});
 	// listener to resize visible components
@@ -56,10 +56,10 @@ public void createControl(Composite parent) {
 		}
 	});
 }
-private void fireSelectionChanged(IFormPage page) {
+private void fireSelectionChanged(IFormPage page, boolean setFocus) {
 	for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 		IFormSelectionListener listener = (IFormSelectionListener) iter.next();
-		listener.formSelected(page);
+		listener.formSelected(page, setFocus);
 	}
 }
 public Control getControl() {
@@ -82,18 +82,18 @@ public void removePage(IFormPage page) {
 private void reselectPage(final IFormPage page) {
 	tabFolder.getDisplay().asyncExec(new Runnable() {
 		public void run() {
-		selectPage(page);
+		selectPage(page, true);
 		}
 	});
 }
-public void selectPage(final IFormPage page) {
+public void selectPage(final IFormPage page, final boolean setFocus) {
 	final IFormPage oldPage = currentPage;
 	currentPage = page;
 
 	// It may take a while
 	BusyIndicator.showWhile(tabFolder.getDisplay(), new Runnable() {
 		public void run() {
-			switchPages(oldPage, page);
+			switchPages(oldPage, page, setFocus);
 		}
 	});
 }
@@ -116,7 +116,7 @@ private void setControlVisible(Control control) {
 public void setFirstPageSelected(boolean newFirstPageSelected) {
 	firstPageSelected = newFirstPageSelected;
 }
-private void switchPages(IFormPage oldPage, IFormPage newPage) {
+private void switchPages(IFormPage oldPage, IFormPage newPage, boolean setFocus) {
 	if (oldPage != null && oldPage!=newPage) {
 		boolean okToSwitch = oldPage.becomesInvisible(newPage);
 		if (!okToSwitch) {
@@ -135,6 +135,6 @@ private void switchPages(IFormPage oldPage, IFormPage newPage) {
 	Control newControl = newPage.getControl();
 	newPage.becomesVisible(oldPage);
 	setControlVisible(newControl);
-	fireSelectionChanged(newPage);
+	fireSelectionChanged(newPage, setFocus);
 }
 }

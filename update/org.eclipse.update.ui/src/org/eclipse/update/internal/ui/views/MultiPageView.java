@@ -52,7 +52,7 @@ import org.eclipse.update.ui.forms.internal.*;
 public void createPartControl(Composite parent) {
 	formWorkbook.createControl(parent);
 	formWorkbook.addFormSelectionListener(new IFormSelectionListener() {
-		public void formSelected(IFormPage page) {
+		public void formSelected(IFormPage page, boolean setFocus) {
 			//updateSynchronizedViews((IPDEEditorPage) page);
 			//getContributor().setActivePage((IPDEEditorPage) page);
 		}
@@ -111,7 +111,7 @@ public void showPage(String id, Object openToObject) {
 }
 
 public IUpdateFormPage showPage(final IUpdateFormPage page) {
-	formWorkbook.selectPage(page);
+	formWorkbook.selectPage(page, true);
 	return page;
 }
 

@@ -16,6 +16,6 @@ public interface IFormWorkbook {
 	boolean isFirstPageSelected();
 	void removeFormSelectionListener(IFormSelectionListener listener);
 	public void removePage(IFormPage page);
-	public void selectPage(final IFormPage page);
+	public void selectPage(final IFormPage page, boolean setFocus);
 	void setFirstPageSelected(boolean selected);
 }

@@ -27,17 +27,17 @@ public class NoTabsWorkbook implements IFormWorkbook {
 		pages.add(page);
 
 		if (firstPageSelected && currentPage == null)
-			selectPage(page);
+			selectPage(page, true);
 	}
 
 	public void createControl(Composite parent) {
 		pageBook = new PageBook(parent, SWT.NULL);
 	}
 
-	private void fireSelectionChanged(IFormPage page) {
+	private void fireSelectionChanged(IFormPage page, boolean setFocus) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			IFormSelectionListener listener = (IFormSelectionListener) iter.next();
-			listener.formSelected(page);
+			listener.formSelected(page, setFocus);
 		}
 	}
 
@@ -65,7 +65,7 @@ public class NoTabsWorkbook implements IFormWorkbook {
 		}
 	}
 
-	public void selectPage(final IFormPage page) {
+	public void selectPage(final IFormPage page, final boolean setFocus) {
 		final IFormPage oldPage = currentPage;
 		currentPage = page;
 
@@ -74,7 +74,7 @@ public class NoTabsWorkbook implements IFormWorkbook {
 			// It may take a while
 			BusyIndicator.showWhile(pageBook.getDisplay(), new Runnable() {
 				public void run() {
-					switchPages(oldPage, page);
+					switchPages(oldPage, page, setFocus);
 				}
 			});
 		}
@@ -84,7 +84,7 @@ public class NoTabsWorkbook implements IFormWorkbook {
 		firstPageSelected = newFirstPageSelected;
 	}
 
-	private void switchPages(IFormPage oldPage, IFormPage newPage) {
+	private void switchPages(IFormPage oldPage, IFormPage newPage, boolean setFocus) {
 		if (oldPage != null && oldPage != newPage) {
 			oldPage.becomesInvisible(newPage);
 		}
@@ -93,6 +93,6 @@ public class NoTabsWorkbook implements IFormWorkbook {
 		pageBook.showPage(newPage.getControl());
 
 		newPage.becomesVisible(oldPage);
-		fireSelectionChanged(newPage);
+		fireSelectionChanged(newPage, setFocus);
 	}
 }

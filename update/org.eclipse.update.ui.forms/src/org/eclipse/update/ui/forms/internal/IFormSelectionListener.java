@@ -5,5 +5,5 @@ package org.eclipse.update.ui.forms.internal;
  */
 
 public interface IFormSelectionListener {
-	public void formSelected(IFormPage page);
+	public void formSelected(IFormPage page, boolean setFocus);
 }
