@@ -66,4 +66,18 @@ public class IgnoreAction extends WorkspaceAction {
 		return Policy.bind("IgnoreAction.ignore"); //$NON-NLS-1$
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForManagedResources()
+	 */
+	protected boolean isEnabledForManagedResources() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
+	 */
+	protected boolean isEnabledForUnmanagedResources() {
+		return true;
+	}
+	
 }

@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,13 +30,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -50,8 +46,6 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -274,50 +268,6 @@ abstract public class CVSAction extends TeamAction {
 		return false;
 	}
 	
-	/**
-	 * Answers <code>true</code> if the current selection contains only 
-	 * managed resource that don't have overlapping paths and <code>false</code>
-	 * otherwise. 
-	 */
-	protected boolean isSelectionNonOverlapping() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		// allow operation for non-overlapping resource selections
-		if(resources.length>0) {
-			List validPaths = new ArrayList(2);
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				
-				// only allow cvs resources to be selected
-				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
-					return false;
-				}
-				
-				// check if this resource overlaps other selections		
-				IPath resourceFullPath = resource.getFullPath();
-				if(!validPaths.isEmpty()) {
-					for (Iterator it = validPaths.iterator(); it.hasNext();) {
-						IPath path = (IPath) it.next();
-						if(path.isPrefixOf(resourceFullPath) || 
-					       resourceFullPath.isPrefixOf(path)) {
-							return false;
-						}
-					}
-				}
-				validPaths.add(resourceFullPath);
-				
-				// ensure that resources are managed
-				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-				if(cvsResource.isFolder()) {
-					if( ! ((ICVSFolder)cvsResource).isCVSFolder()) return false;
-				} else {
-					if( ! cvsResource.isManaged()) return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
 	/**
 	 * Returns the selected CVS resources
 	 */

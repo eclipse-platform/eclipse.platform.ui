@@ -10,21 +10,29 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -199,4 +207,80 @@ public abstract class WorkspaceAction extends CVSAction {
 	protected boolean isEnabled() throws TeamException {
 		return isSelectionNonOverlapping();
 	}
+	
+	/**
+	 * Answers <code>true</code> if the current selection contains only 
+	 * managed resource that don't have overlapping paths and <code>false</code>
+	 * otherwise. 
+	 */
+	protected boolean isSelectionNonOverlapping() throws TeamException {
+		IResource[] resources = getSelectedResources();
+		// allow operation for non-overlapping resource selections
+		if(resources.length>0) {
+			List validPaths = new ArrayList(2);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				
+				// only allow cvs resources to be selected
+				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
+					return false;
+				}
+				
+				// check if this resource overlaps other selections		
+				IPath resourceFullPath = resource.getFullPath();
+				if(!validPaths.isEmpty()) {
+					for (Iterator it = validPaths.iterator(); it.hasNext();) {
+						IPath path = (IPath) it.next();
+						if(path.isPrefixOf(resourceFullPath) || 
+					       resourceFullPath.isPrefixOf(path)) {
+							return false;
+						}
+					}
+				}
+				validPaths.add(resourceFullPath);
+				
+				// ensure that resource management state matches what the action requires
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				boolean managed = false;
+				boolean ignored = false;
+				if (cvsResource.isIgnored()) {
+					ignored = true;
+				} else if (cvsResource.isFolder()) {
+					managed = ((ICVSFolder)cvsResource).isCVSFolder();
+				} else {
+					managed = cvsResource.isManaged();
+				}
+				if (managed && ! isEnabledForManagedResources()) return false;
+				if ( ! managed && ! isEnabledForUnmanagedResources()) return false;
+				if ( ignored && ! isEnabledForIgnoredResources()) return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Method isEnabledForIgnoredResources.
+	 * @return boolean
+	 */
+	protected boolean isEnabledForIgnoredResources() {
+		return false;
+	}
+	
+	/**
+	 * Method isEnabledForUnmanagedResources.
+	 * @return boolean
+	 */
+	protected boolean isEnabledForUnmanagedResources() {
+		return false;
+	}
+	
+	/**
+	 * Method isEnabledForManagedResources.
+	 * @return boolean
+	 */
+	protected boolean isEnabledForManagedResources() {
+		return true;
+	}
+
 }

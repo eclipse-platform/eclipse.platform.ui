@@ -183,4 +183,10 @@ public class CommitAction extends WorkspaceAction {
 		return Policy.bind("CommitAction.commitFailed"); //$NON-NLS-1$
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
+	 */
+	protected boolean isEnabledForUnmanagedResources() {
+		return true;
+	}
 }

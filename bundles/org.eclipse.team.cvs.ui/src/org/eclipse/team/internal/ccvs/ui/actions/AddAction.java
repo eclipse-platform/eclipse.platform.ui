@@ -64,30 +64,26 @@ public class AddAction extends WorkspaceAction {
 		}, true /* cancelable */, this.PROGRESS_DIALOG);
 
 	}
-	/*
-	 * @see TeamAction#isEnabled()
-	 */
-	protected boolean isEnabled() throws TeamException {
-		IResource[] resources = getSelectedResources();
-		if (resources.length == 0) return false;
-		for (int i = 0; i < resources.length; i++) {
-			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
-			if(provider == null) return false;
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
-			if(cvsResource.isFolder()) {
-				if(((ICVSFolder)cvsResource).isCVSFolder()) return false;
-			} else {
-				if (cvsResource.isManaged()) return false;
-			}
-		}
-		return super.isEnabled();
-	}
 
 	/*
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
 	protected String getErrorTitle() {
 		return Policy.bind("AddAction.addFailed"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForManagedResources()
+	 */
+	protected boolean isEnabledForManagedResources() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
+	 */
+	protected boolean isEnabledForUnmanagedResources() {
+		return true;
 	}
 
 }

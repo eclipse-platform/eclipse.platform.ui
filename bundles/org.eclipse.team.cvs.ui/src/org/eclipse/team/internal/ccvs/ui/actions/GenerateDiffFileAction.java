@@ -66,6 +66,6 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 			return false;
 		}
 		if (!resources[0].isAccessible() || !checkSharing(new IResource[] {resources[0]})) return false;
-		return super.isEnabled();
+		return true;
 	}
 }

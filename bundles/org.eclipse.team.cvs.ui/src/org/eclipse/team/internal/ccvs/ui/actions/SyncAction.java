@@ -56,6 +56,14 @@ public class SyncAction extends WorkspaceAction {
 		}
 		return super.isEnabled();
 	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
+	 */
+	protected boolean isEnabledForUnmanagedResources() {
+		return true;
+	}
+	
 	protected SyncCompareInput getCompareInput(IResource[] resources) {
 		return new CVSSyncCompareInput(resources);
 	}

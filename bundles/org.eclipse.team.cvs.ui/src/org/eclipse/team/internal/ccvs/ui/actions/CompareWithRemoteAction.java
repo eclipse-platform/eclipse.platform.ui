@@ -107,6 +107,14 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 		}
 		return false;
 	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForUnmanagedResources()
+	 */
+	protected boolean isEnabledForUnmanagedResources() {
+		return true;
+	}
+	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */
