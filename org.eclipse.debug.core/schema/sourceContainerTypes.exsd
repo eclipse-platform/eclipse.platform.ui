@@ -10,7 +10,14 @@
          source lookup facilities.
       </documentation>
    </annotation>
-
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
    <element name="extension">
       <complexType>
          <sequence>

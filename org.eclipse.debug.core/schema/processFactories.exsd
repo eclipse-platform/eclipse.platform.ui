@@ -11,7 +11,14 @@
       used to create the &lt;b&gt;IProcess&lt;/b&gt;
    </documentation>
 </annotation>
-
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
    <element name="extension">
       <complexType>
          <sequence>

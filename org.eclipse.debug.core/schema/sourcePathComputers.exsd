@@ -12,7 +12,14 @@
          specific launch configuration via the launch configuration attribute ATTR_SOURCE_PATH_COMPUTER_ID.
       </documentation>
    </annotation>
-
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
    <element name="extension">
       <complexType>
          <sequence>

@@ -9,7 +9,14 @@
          This extension provides a mechanism for providing delegates to evaluate watch expressions on a per debug model basis. Watch expression delegates perform evaluations for watch expressions and report the results asynchronously.
       </documentation>
    </annotation>
-
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
    <element name="extension">
       <complexType>
          <sequence>

@@ -29,6 +29,13 @@ import org.eclipse.debug.core.DebugPlugin;
  * &lt;/extension&gt;
  * </pre>
  * </p> 
+ * <p>
+ * A source path computer can be associated with a launch configuration type
+ * via the <code>sourcePathComputerId</code> attribute of a launch configuration
+ * type extension. As well, a launch configuration can specify its own
+ * source path computer to use via the <code>ATTR_SOURCE_PATH_COMPUTER_ID</code>
+ * attribute.
+ * </p>
  * @since 3.0
  */
 public interface ISourcePathComputer extends ISourcePathComputerDelegate {

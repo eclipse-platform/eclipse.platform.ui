@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.debug.core" id="launchDelegates" name="Launch Delegates"/>
       </appInfo>
       <documentation>
-         This extension point provides a mechanism for contributing a launch delegate to an existing launch configuration type for one or more launch mode. Since launch modes are extensisble, it may be neccessary to contribute additional launch delegates to an existing launch configuration type. Each launch delegate is contributed for a specific launch configuration type. A launch delegate supports one or more launch modes, and specifies a delegate responsible for the implementation of launching.
+         This extension point provides a mechanism for contributing a launch delegate to an existing launch configuration type for one or more launch modes. Since launch modes are extensisble, it may be neccessary to contribute additional launch delegates to an existing launch configuration type. Each launch delegate is contributed for a specific launch configuration type. A launch delegate supports one or more launch modes, and specifies a delegate responsible for the implementation of launching.
       </documentation>
    </annotation>
 
@@ -82,6 +82,15 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
