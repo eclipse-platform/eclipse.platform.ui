@@ -538,6 +538,12 @@
 			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
 			enablesFor="2+">
 		</action>
+		<action
+			id="org.eclipse.debug.ui.actions.SelectAllAction"
+			label="%SelectAll.label"
+			menubarPath="breakpointGroup"
+			class="org.eclipse.debug.internal.ui.actions.SelectAllAction">
+		</action>
 	</viewerContribution>
 <!-- Contributions to Variables View Popup Menu -->	
 	<viewerContribution

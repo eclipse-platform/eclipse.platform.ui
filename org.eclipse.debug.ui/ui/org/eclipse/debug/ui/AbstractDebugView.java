@@ -115,6 +115,16 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	public static final String REMOVE_ACTION = "Remove_ActionId"; //$NON-NLS-1$
 	
 	/**
+	 * Action id for a view's select all action. Any view
+	 * with a select all action that should be invoked when
+	 * ctrl+a is pressed should store their
+	 * select all action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String SELECT_ALL_ACTION = "Select_All_ActionId"; //$NON-NLS-1$
+	
+	/**
 	 * Action id for a view's double-click action. Any view
 	 * with an action that should be invoked when
 	 * the mouse is double-clicked should store their
@@ -464,13 +474,21 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 			
 	/**
-	 * Handles key events in viewer. Invokes the 
-	 * <code>REMOVE_ACTION</code> when the delete
-	 * key is pressed.
+	 * Handles key events in viewer. Invokes
+	 * <ol> 
+	 * <li><code>REMOVE_ACTION</code> when the delete
+	 * key is pressed</li>
+	 * <li><code>SELECT_ALL_ACTION</code> when ctrl+a
+	 * key is pressed</li>
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			IAction action = getAction(REMOVE_ACTION);
+			if (action != null && action.isEnabled()) {
+				action.run();
+			}
+		} else if (event.character == 'a' && event.stateMask == SWT.ALT) {
+			IAction action = getAction(SELECT_ALL_ACTION);
 			if (action != null && action.isEnabled()) {
 				action.run();
 			}
