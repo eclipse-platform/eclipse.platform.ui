@@ -147,6 +147,22 @@ public class LocalSystemInfo {
 	}
 	
 	/**
+	 * Lists the file system mount points.
+	 * @return array of absolute file paths representing mount
+	 * points, or <code>null</code> if none found
+	 * @since 2.0
+	 */
+	public static String[] listMountPoints() {
+		if (hasNatives) {
+			try {
+				return nativeListMountPoints();
+			} catch (UnsatisfiedLinkError e) {
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Add local system change listener.
 	 * Allows a listener to be added for monitoring changes
 	 * in the local system information. The listener is notified
@@ -190,4 +206,5 @@ public class LocalSystemInfo {
 	private static native long nativeGetFreeSpace(File path);
 	private static native String nativeGetLabel(File path);
 	private static native int nativeGetType(File path);
+	private static native String[] nativeListMountPoints();
 }
