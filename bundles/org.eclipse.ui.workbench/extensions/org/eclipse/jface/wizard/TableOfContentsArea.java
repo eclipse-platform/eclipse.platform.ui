@@ -33,15 +33,27 @@ class TableOfContentsArea {
 	private void addNodesForWizard(IWizard wizard) {
 
 		ITableOfContentsNode[] newNodes;
+		boolean addUnknown = false;
 
 		if (wizard instanceof ITableOfContentsWizard) {
 			newNodes = ((ITableOfContentsWizard) wizard).getInitialNodes();
 		} else {
 			IWizardPage[] pages = wizard.getPages();
-			newNodes = new TableOfContentsNode[1];
-			newNodes[0] = new TableOfContentsNode(pages[0]);
+			int nodesLength = pages.length;
+			if(pages[nodesLength -1] instanceof IDecisionPage){
+				nodesLength++;//Leave room for an unknown page
+				addUnknown = true;
+			}
+				
+			newNodes = new TableOfContentsNode[nodesLength];
+			for(int i = 0; i <pages.length; i++){
+				newNodes[i] = new TableOfContentsNode(pages[i]);
+			}
 		}
 
+		if(addUnknown)
+			newNodes[newNodes.length - 1] = new TableOfContentsNode(null);
+			
 		addNodes(newNodes);
 
 	}
@@ -51,7 +63,7 @@ class TableOfContentsArea {
 
 	private void addNodes(ITableOfContentsNode[] newNodes) {
 
-		int oldSize = nodes.length;
+		int oldSize = getOldNodesLength();
 		ITableOfContentsNode[] mergeNodes =
 			new ITableOfContentsNode[oldSize + newNodes.length];
 		System.arraycopy(nodes, 0, mergeNodes, 0, oldSize);
@@ -60,6 +72,18 @@ class TableOfContentsArea {
 		nodes = mergeNodes;
 		if (canvas != null)
 			canvas.redraw();
+	}
+
+	/**
+	 * Return the highest index of the existing nodes that 
+	 * has a non-null page;
+	 */
+	private int getOldNodesLength() {
+		for (int i = 0; i < nodes.length; i++) {
+			if (nodes[i].getPage() == null)
+				return i;
+		}
+		return nodes.length;
 	}
 
 	/**
@@ -74,7 +98,7 @@ class TableOfContentsArea {
 			if (currentNode != null) {
 				int currentIndex = indexOfPage(currentNode.getPage());
 
-				if (nodes.length > currentIndex) {
+				if (nodes.length > currentIndex + 1) {
 					ITableOfContentsNode nextNode = nodes[currentIndex];
 
 					//Replace the next pages if required
@@ -107,9 +131,16 @@ class TableOfContentsArea {
 		//We may not have created anything yet
 		int index = indexOfPage(page);
 		if (index == -1) {
-
-			ITableOfContentsNode[] newNodes = new ITableOfContentsNode[1];
 			ITableOfContentsNode newNode = new TableOfContentsNode(page);
+			ITableOfContentsNode[] newNodes;
+			if (page instanceof IDecisionPage && page.getNextPage() == null) {
+				//Unknown next page
+				newNodes = new ITableOfContentsNode[2];
+				newNodes[1] = new TableOfContentsNode(null);
+			} else {
+				newNodes = new ITableOfContentsNode[1];
+			}
+
 			newNodes[0] = newNode;
 			currentNode = newNode;
 			addNodes(newNodes);
@@ -164,7 +195,7 @@ class TableOfContentsArea {
 				if (index < nodes.length) {
 					ITableOfContentsNode selectedNode = nodes[index];
 					IWizardPage page = selectedNode.getPage();
-					page.getWizard().getContainer().showPage(page		);
+					page.getWizard().getContainer().showPage(page);
 				}
 			}
 			/**
@@ -195,9 +226,19 @@ class TableOfContentsArea {
 	private void drawNodes(GC gc) {
 		Point size = canvas.getSize();
 		gc.drawLine(0, size.y / 2, size.x, size.y / 2);
+		boolean past = true;
 
 		for (int i = 0; i < nodes.length; i++) {
-			Image image = nodes[i].getImage();
+			int positionConstant = ITableOfContentsNode.FUTURE_NODE;
+			if (past) {
+				if (nodes[i] == currentNode) {
+					positionConstant = ITableOfContentsNode.CURRENT_NODE;
+					past = false;
+				} else
+					positionConstant = ITableOfContentsNode.PAST_NODE;
+			}
+
+			Image image = nodes[i].getImage(positionConstant);
 			Rectangle imageSize = image.getBounds();
 			int xOffset = (NODE_SIZE - imageSize.width) / 2;
 			int yOffset = (NODE_SIZE - imageSize.height) / 2;

@@ -8,8 +8,14 @@ import org.eclipse.swt.graphics.Image;
  */
 interface ITableOfContentsNode {
 	
+	
+	//Constants to indicate where in the table of content this is.
+	public static final int PAST_NODE = 0;
+	public static final int CURRENT_NODE = 1;
+	public static final int FUTURE_NODE = 2;
+	
 	/**
-	 * Returns the page.
+	 * Returns the page. May be null.
 	 * @return IWizardPage
 	 */
 	public IWizardPage getPage();
@@ -26,9 +32,10 @@ interface ITableOfContentsNode {
 	public void dispose();
 	
 	/**
-	 * Get the image for the recevier
+	 * Get the image for the receiver based on the positionConstant.
+	 * @param positionConstant - one of PAST_NODE, CURRENT_NODE or FUTURTE_NODE
 	 */
-	public Image getImage();
+	public Image getImage(int positionConstant);
 
 
 

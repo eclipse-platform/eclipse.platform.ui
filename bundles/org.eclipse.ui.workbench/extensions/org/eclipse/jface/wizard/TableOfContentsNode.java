@@ -17,19 +17,39 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 class TableOfContentsNode implements ITableOfContentsNode {
 
 	/**
-	 * Image registry key for decision image (value <code>"toc_decision_image"</code>).
+	 * Keys for support images.
 	 */
-	private static final String TOC_IMG_DECISION = "toc_decision_image"; //$NON-NLS-1$
+	private static final String BREAK_ENABLED = "break_enabled";
+	private static final String BREAK_DISABLED = "break_disabled";
+	private static final String FINISH_NOT_PRESSED = "finish_not_pressed";
+	private static final String FINISH_PRESSED = "finish_pressed";
+	private static final String FINISH_DISABLED = "finish_disabled";
+	private static final String START = "start";
+	private static final String UNKNOWN = "unknown";
 
 	/**
-	 * Image registry key for last page image (value <code>"toc_disabled_image"</code>).
+	 * Keys for disabled images.
 	 */
-	private static final String TOC_IMG_DISABLED = "toc_disabled_image"; //$NON-NLS-1$
+	private static final String BRANCH_DISABLED = "branch_disabled";
+	private static final String KNOWN_DISABLED = "known_disabled";
 
 	/**
-	 * Image registry key for next image (value <code>"toc_next_image"</code>).
+	 * Keys for past images
 	 */
-	private static final String TOC_IMG_NEXT = "toc_next_image"; //$NON-NLS-1$
+	private static final String BRANCH_PAST = "branch_past";
+	private static final String KNOWN_PAST = "known_past";
+
+	/**
+	 * Keys for current images
+	 */
+	private static final String BRANCH_CURRENT = "branch_current";
+	private static final String KNOWN_CURRENT = "known_current";
+
+	/**
+	 * Keys for future images
+	 */
+	private static final String BRANCH_FUTURE = "branch_future";
+	private static final String KNOWN_FUTURE = "known_future";
 
 	private boolean enabled = true;
 
@@ -37,10 +57,29 @@ class TableOfContentsNode implements ITableOfContentsNode {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		URL installURL =
 			WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+
 		try {
-			reg.put(TOC_IMG_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "icons/full/dtoc/pageknown_toc.gif"))); //$NON-NLS-1$
-			reg.put(TOC_IMG_NEXT, ImageDescriptor.createFromURL(new URL(installURL, "icons/full/ftoc/pageknown_toc.gif"))); //$NON-NLS-1$
-			reg.put(TOC_IMG_DECISION, ImageDescriptor.createFromURL(new URL(installURL, "icons/full/ftoc/pagebranch_toc.gif"))); //$NON-NLS-1$
+			installURL = new URL(installURL, "icons/full/");
+
+			reg.put(BREAK_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/break_toc.gif"))); //$NON-NLS-1$
+			reg.put(FINISH_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/break_toc.gif"))); //$NON-NLS-1$
+			reg.put(BRANCH_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/pagebranch_toc.gif"))); //$NON-NLS-1$
+			reg.put(KNOWN_DISABLED, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/pageknown_toc.gif"))); //$NON-NLS-1$
+			reg.put(UNKNOWN, ImageDescriptor.createFromURL(new URL(installURL, "dtoc/pageunknown_toc.gif"))); //$NON-NLS-1$
+
+			reg.put(BREAK_ENABLED, ImageDescriptor.createFromURL(new URL(installURL, "etoc/break_toc.gif"))); //$NON-NLS-1$
+			reg.put(FINISH_NOT_PRESSED, ImageDescriptor.createFromURL(new URL(installURL, "etoc/finish_toc.gif"))); //$NON-NLS-1$
+			reg.put(BRANCH_FUTURE, ImageDescriptor.createFromURL(new URL(installURL, "etoc/pagebranch_toc.gif"))); //$NON-NLS-1$
+			reg.put(KNOWN_FUTURE, ImageDescriptor.createFromURL(new URL(installURL, "etoc/pageknown_toc.gif"))); //$NON-NLS-1$
+
+			reg.put(KNOWN_PAST, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/pageknown_toc.gif"))); //$NON-NLS-1$
+			reg.put(FINISH_PRESSED, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/finish_toc.gif"))); //$NON-NLS-1$
+			reg.put(BRANCH_PAST, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/pagebranch_toc.gif"))); //$NON-NLS-1$
+			reg.put(START, ImageDescriptor.createFromURL(new URL(installURL, "ftoc/start_toc.gif"))); //$NON-NLS-1$
+
+			reg.put(BRANCH_CURRENT, ImageDescriptor.createFromURL(new URL(installURL, "stoc/pagebranch_toc.gif"))); //$NON-NLS-1$
+			reg.put(KNOWN_CURRENT, ImageDescriptor.createFromURL(new URL(installURL, "stoc/pageknown_toc.gif"))); //$NON-NLS-1$
+
 		} catch (MalformedURLException exception) {
 			IStatus errorStatus =
 				new Status(
@@ -50,8 +89,9 @@ class TableOfContentsNode implements ITableOfContentsNode {
 						.getDescriptor()
 						.getUniqueIdentifier(),
 					0,
-					JFaceResources.getString("Problem_Occurred"),//$NON-NLS-1$
-					exception);
+					JFaceResources.getString("Problem_Occurred"),
+				//$NON-NLS-1$
+	exception);
 			WorkbenchPlugin.getDefault().getLog().log(errorStatus);
 		}
 
@@ -62,10 +102,13 @@ class TableOfContentsNode implements ITableOfContentsNode {
 	/**
 	 * Create a new instance of the receiver with newPage as the page
 	 * that is activated on selection.
-	 * @param newPage
+	 * @param newPage IWizardPage or null
 	 */
 	public TableOfContentsNode(IWizardPage newPage) {
 		this.page = newPage;
+		//Is this an unknown node?
+		if (newPage == null)
+			setEnabled(false);
 	}
 
 	/*
@@ -96,27 +139,40 @@ class TableOfContentsNode implements ITableOfContentsNode {
 		this.enabled = enabledValue;
 	}
 
-	/**
-	 * Get the image for the receiver.
-	 * @param enabled The boolean state used to determine the image to use.
-	 * @return Image
+	/*
+	 * @see org.eclipse.jface.wizard.ITableOfContentsNode#getImage(int)
 	 */
-	private Image getImage(boolean enabled) {
-		if (getPage() instanceof IDecisionPage)
-			return JFaceResources.getImage(TOC_IMG_DECISION);
-		else {
-			if (enabled)
-				return JFaceResources.getImage(TOC_IMG_NEXT);
-			else
-				return JFaceResources.getImage(TOC_IMG_DISABLED);
+	public Image getImage(int positionConstant) {
+		return JFaceResources.getImage(getImageConstant(positionConstant));
+
+	}
+
+	/**
+	 * Get the String constant for positionConstant.
+	 */
+	private String getImageConstant(int positionConstant) {
+		IWizardPage page = this.getPage();
+
+		if (page == null)
+			return UNKNOWN;
+		if (page instanceof IDecisionPage) {
+			if (enabled) {
+				if (positionConstant == PAST_NODE)
+					return BRANCH_PAST;
+				if (positionConstant == FUTURE_NODE)
+					return BRANCH_FUTURE;
+				return BRANCH_CURRENT;
+			} else
+				return BRANCH_DISABLED;
 		}
-	}
 
-	/**
-	 * @see org.eclipse.jface.wizard.ITableOfContentsNode#getImage()
-	 */
-	public Image getImage() {
-		return getImage(enabled);
+		if (enabled) {
+			if (positionConstant == PAST_NODE)
+				return KNOWN_PAST;
+			if (positionConstant == FUTURE_NODE)
+				return KNOWN_FUTURE;
+			return KNOWN_CURRENT;
+		} else
+			return KNOWN_DISABLED;
 	}
-
 }
