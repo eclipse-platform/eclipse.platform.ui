@@ -49,23 +49,29 @@ A participant is a generic component that provides access to creating a page and
                <documentation>
                   An icon that will be used when showing this participant in lists and menus.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   A unique name that will be used to identify this type of participant.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   A fully qualified name of the class the extends &lt;samp&gt;org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant&lt;/samp&gt;.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.team.ui.synchronize.ISynchronizeParticipant"/>
+               </appInfo>
             </annotation>
          </attribute>
-         <attribute name="name" type="string">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   The name of the participant. This will be shown in the UI.
@@ -75,20 +81,12 @@ A participant is a generic component that provides access to creating a page and
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="persistent">
+         <attribute name="persistent" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
                   By default participants will be persisted between sessions. Set this attribute to false if this participant should not be persisted between sessions.
                </documentation>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="true">
-                  </enumeration>
-                  <enumeration value="false">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>
