@@ -15,35 +15,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.presentations.SystemMenuClose;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
-import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
-import org.eclipse.ui.internal.presentations.SystemMenuMinimize;
-import org.eclipse.ui.internal.presentations.SystemMenuMoveView;
-import org.eclipse.ui.internal.presentations.SystemMenuRestore;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
+import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -63,6 +54,7 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
     private boolean active = false;
+    private boolean allowStateChanges;
 
     private List children = new ArrayList(3);
 
@@ -75,7 +67,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     private LayoutPart inactiveCurrent;
 
     private WorkbenchPage page;
-
+    
+    private SystemMenuSize sizeItem = new SystemMenuSize(null);
+    
     private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 
         public void close(IPresentablePart part) {
@@ -98,22 +92,15 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
 
         public boolean isCloseable(IPresentablePart part) {
-            Perspective perspective = page.getActivePerspective();
-
-            if (perspective == null) {
-	            // Shouldn't happen -- can't have a PartTabFolder without a
-	            // perspective
-	            return false; 
-            }
-
             ViewPane pane = (ViewPane) getPaneFor(part);
 
             if (pane == null) {
-            // Shouldn't happen -- this should only be called for ViewPanes
-            // that are already in the tab folder
-            return false; }
-
-            return !perspective.isFixedView(pane.getViewReference());
+	            // Shouldn't happen -- this should only be called for ViewPanes
+	            // that are already in the tab folder
+	            return false; 
+            }
+            
+            return !isFixedView(pane);
         }
 
         public boolean isMoveable(IPresentablePart part) {
@@ -128,83 +115,48 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
             presentationSelectionChanged(toSelect);
         }
 
-        public void setPresentation(StackPresentation newPresentation) {
-            super.setPresentation(newPresentation);
-
-            updateSystemMenu();
+        public boolean supportsState(int state) {
+        	return allowStateChanges;
         }
-
+        
         public void setState(int newState) {
-        	if (newState == STATE_MINIMIZED) {
-        		if ((flags & SWT.MIN) == 0) {
-        			return;
-        		}
-        	}
-        	if (newState == STATE_MAXIMIZED) {
-        		if ((flags & SWT.MAX) == 0) {
-        			return;
-        		}
+        	if (!allowStateChanges) {
+        		return;
         	}
             PartTabFolder.this.setState(newState);
         }
+
+		public IPresentablePart getSelectedPart() {
+			if (current == null) {
+				return null;
+			}
+			
+			return current.getPresentablePart();
+		}
+		
+		public void addSystemActions(IMenuManager menuManager) {
+			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction));
+			sizeItem = new SystemMenuSize((PartPane)current);
+			appendToGroupIfPossible(menuManager, "size", sizeItem);
+		}
+		
     };
-
-    private class SystemMenuContribution extends ContributionItem {
-        
-        private SystemMenuClose systemMenuClose;
-        private SystemMenuFastView systemMenuFastView;
-        private SystemMenuMaximize systemMenuMaximize;
-        private SystemMenuMinimize systemMenuMinimize;
-        private SystemMenuMoveView systemMenuMoveView;
-        private SystemMenuRestore systemMenuRestore;
-        private SystemMenuSize systemMenuSize;
-        
-        SystemMenuContribution(IStackPresentationSite stackPresentationSite, ViewPane viewPane) {
-            systemMenuClose = new SystemMenuClose(viewPane.getPresentablePart(), stackPresentationSite);
-            systemMenuFastView = new SystemMenuFastView(viewPane);
-            systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
-            systemMenuMinimize = new SystemMenuMinimize(stackPresentationSite);
-            systemMenuMoveView = new SystemMenuMoveView(viewPane.getPresentablePart(), stackPresentationSite);
-            systemMenuRestore = new SystemMenuRestore(stackPresentationSite);
-            systemMenuSize = new SystemMenuSize(viewPane);            
-        }
-        
-        public void fill(Menu menu, int index) {
-            systemMenuFastView.fill(menu, index);
-            systemMenuRestore.fill(menu, index);
-            systemMenuMoveView.fill(menu, index);
-            systemMenuSize.fill(menu, index);
-            systemMenuMinimize.fill(menu, index);
-            systemMenuMaximize.fill(menu, index);
-            new MenuItem(menu, SWT.SEPARATOR);
-            systemMenuClose.fill(menu, index);
-        }
-        
-        public void dispose() {
-            systemMenuClose.dispose();
-            systemMenuFastView.dispose();
-            systemMenuMaximize.dispose();
-            systemMenuMinimize.dispose();
-            systemMenuMoveView.dispose();
-            systemMenuRestore.dispose();
-            systemMenuSize.dispose();
-        }
-        
-        public boolean isDynamic() {
-        	return true;
-        }
+    
+    private static void appendToGroupIfPossible(IMenuManager m, String groupId, ContributionItem item) {
+    	try {
+    		m.appendToGroup(groupId, item);
+    	} catch (IllegalArgumentException e) {
+    		m.add(item);
+    	}
     }
     
-    private IContributionItem systemMenuContribution;
-    
-    /**
-     * PartTabFolder constructor comment.
-     */
+    private SystemMenuFastView fastViewAction = new SystemMenuFastView(presentationSite);
+
     public PartTabFolder(WorkbenchPage page) {
-        this(page, SWT.MIN | SWT.MAX);
+    	this(page, true);
     }
-
-    public PartTabFolder(WorkbenchPage page, int flags) {
+    
+    public PartTabFolder(WorkbenchPage page, boolean allowsStateChanges) {
         super("PartTabFolder"); //$NON-NLS-1$
 
         setID(this.toString());
@@ -215,7 +167,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         //I think so since a PartTabFolder is
         //not used on more than one page.
         this.page = page;
-        this.flags = flags;
+        this.allowStateChanges = allowsStateChanges;
     }
 
     /**
@@ -319,7 +271,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
                 .getPresentationFactory();
         presentationSite.setPresentation(factory.createPresentation(parent,
                 presentationSite, AbstractPresentationFactory.ROLE_DOCKED_VIEW,
-                flags, page.getPerspective().getId(), getID()));
+                page.getPerspective().getId(), getID()));
 
         active = true;
 
@@ -422,8 +374,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
 
         active = false;
-
-        updateSystemMenu();
     }
 
     public void findSashes(LayoutPart part, ViewPane.Sashes sashes) {
@@ -464,7 +414,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     public Control getControl() {
         StackPresentation presentation = getPresentation();
 
-        if (presentation == null) { return null; }
+        if (presentation == null) { 
+        	return null; 
+        }
 
         return presentation.getControl();
     }
@@ -831,7 +783,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
         current = part;
 
-        updateSystemMenu();
+        fastViewAction.setPane((ViewPane) part);
+        
+        sizeItem.setPane((ViewPane) part);
 
         if (part != null) {
             IPresentablePart presentablePart = part.getPresentablePart();
@@ -969,33 +923,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
     }
 
-    private void updateSystemMenu() {
-        StackPresentation presentation = getPresentation();
-
-        if (presentation == null) {
-            if (systemMenuContribution != null) {
-                // TODO spec says not to call this directly
-                systemMenuContribution.dispose();
-                systemMenuContribution = null;
-            }
-        } else {	
-	        IMenuManager systemMenuManager = presentation.getSystemMenuManager();
-	                
-	        if (systemMenuContribution != null) {
-	            systemMenuManager.remove(systemMenuContribution);
-                // TODO spec says not to call this directly
-	            systemMenuContribution.dispose();
-	            systemMenuContribution = null;
-	        }
-	
-	        if (current != null && current instanceof ViewPane) {
-	            systemMenuContribution = new SystemMenuContribution(
-	                    presentationSite, (ViewPane) current);
-	            systemMenuManager.add(systemMenuContribution);
-	        }
-        }
-    }
-
 	/**
 	 * 
 	 */
@@ -1056,5 +983,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 	            }
 	    	}
 		}    	
+	}
+	
+	public boolean isFixedView(ViewPane pane) {
+        Perspective perspective = page.getActivePerspective();
+
+        if (perspective == null) {
+            // Shouldn't happen -- can't have a PartTabFolder without a
+            // perspective
+            return true; 
+        }
+
+        return perspective.isFixedView(pane.getViewReference());
 	}
 }
