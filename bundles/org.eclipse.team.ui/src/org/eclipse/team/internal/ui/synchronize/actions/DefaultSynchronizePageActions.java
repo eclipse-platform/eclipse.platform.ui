@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchSite;
 
 /**
  * General synchronize page actions
@@ -56,5 +61,14 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 		if (refactorActions != null && group != null) {
 			refactorActions.fillContextMenu(manager, group.getId());
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#dispose()
+	 */
+	public void dispose() {
+		if (refactorActions != null) refactorActions.dispose();
+		if (openWithActions != null) openWithActions.dispose();
+		super.dispose();
 	}
 }

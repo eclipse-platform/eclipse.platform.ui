@@ -108,6 +108,19 @@ public class RefactorActionGroup extends ActionGroup {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
+	 */
+	public void dispose() {
+		if (deleteAction != null) {
+			IKeyBindingService keyBindingService = site.getKeyBindingService();
+			if (keyBindingService != null) {
+				keyBindingService.unregisterAction(deleteAction);
+			}
+		}
+		super.dispose();
+	}
+	
 	public void updateActionBars() {
 		IStructuredSelection selection = getSelection();
 		deleteAction.selectionChanged(selection);

@@ -144,6 +144,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		private SynchronizeParticipantDescriptor descriptor;
 		private String secondaryId;
 		private String displayName;
+		private boolean dead;
 		
 		public ParticipantInstance(SynchronizeParticipantDescriptor descriptor, String secondaryId, String displayName, IMemento savedState) {
 			this.counter = new ReferenceCounter();
@@ -154,6 +155,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 		}
 		
 		public void save(IMemento memento) {
+			if (dead) return;
 			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
 			ISynchronizeParticipant ref = (ISynchronizeParticipant) counter.get(key);
 			if(ref != null) {
@@ -202,16 +204,14 @@ public class SynchronizeManager implements ISynchronizeManager {
 		 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference#createParticipant()
 		 */
 		public ISynchronizeParticipant getParticipant() throws TeamException {
+			if (dead) return null;
 			String key = Utils.getKey(descriptor.getId(), getSecondaryId());
 			try {
 				ISynchronizeParticipant participant = (ISynchronizeParticipant) counter.get(key);
-				int refCount = 1;
 				if (participant == null) {
 					participant = instantiate();
 					if(participant != null)
 						counter.put(key, participant);
-				} else {
-					refCount = counter.addRef(key);
 				}
 				return participant;
 			} catch (TeamException e) {
@@ -248,6 +248,21 @@ public class SynchronizeManager implements ISynchronizeManager {
 					throw new TeamException(Policy.bind("SynchronizeManager.11", descriptor.getName()), e);  //$NON-NLS-1$
 				}
 			}
+
+		/**
+		 * Dispose of the reference
+		 */
+		public void dispose() {
+			try {
+				ISynchronizeParticipant participant = getParticipant();
+				if (participant != null)
+					participant.dispose();
+			} catch (TeamException e) {
+				// Ignore since we are disposing anyway;
+			} finally {
+				dead = true;
+			}
+		}
 	}
 
 	public SynchronizeManager() {
@@ -371,11 +386,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 			if(participantReferences.containsKey(key)) {
 				ParticipantInstance ref = (ParticipantInstance)participantReferences.remove(key);
 				if(ref.isInstantiated()) {
-					try {
-						ref.getParticipant().dispose();
-					} catch (TeamException e) {
-						continue;
-					}
+					ref.dispose();
 				}
 				removed.add(participant);
 			}
