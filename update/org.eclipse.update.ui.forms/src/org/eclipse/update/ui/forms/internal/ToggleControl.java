@@ -18,8 +18,8 @@ public class ToggleControl extends SelectableControl {
 	private static final int marginHeight = 2;
 	private static final int WIDTH = 9;
 	private static final int HEIGHT = 9;
-	private static final int [] upPoints = { 0,5, 5,0, 9,5 };
-	private static final int [] downPoints = { 1,1, 5,5, 9,1 };	
+	private static final int [] offPoints = { 0,2, 8,2, 4,6 };
+	private static final int [] onPoints = { 2, -1, 2,8, 6,4 };	
 
 	public ToggleControl(Composite parent, int style) {
 		super(parent, style);
@@ -90,12 +90,12 @@ public class ToggleControl extends SelectableControl {
 		int [] data;
 		Point size = getSize();
 		int x = (size.x - 9)/2;
-		int y = (size.y - 5)/2;
+		int y = (size.y - 9)/2;
 		if (selection)
-			data = translate(downPoints, x, y);
+			data = translate(onPoints, x, y);
 		
 		else 
-			data = translate(upPoints, x, y);
+			data = translate(offPoints, x, y);
 		gc.fillPolygon(data);
 		gc.setBackground(getBackground());
 	}
