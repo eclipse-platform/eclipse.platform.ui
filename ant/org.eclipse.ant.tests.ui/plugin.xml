@@ -15,6 +15,7 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.update.core"/>
+       <import plugin="org.eclipse.ui.externaltools"/>
    </requires>
 
 <runtime>
