@@ -599,7 +599,14 @@
                tooltip="%CVSWorkspaceSubscriber.merge.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction"
                helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_merge_action"
-               id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.merge">
+               id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.merge">
+         </action>
+         <action
+               label="%CVSWorkspaceSubscriber.confirmMerged.label"
+               tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
+               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
+               id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.confirmMerged">
          </action>
       </subscriberContribution>
    </extension>

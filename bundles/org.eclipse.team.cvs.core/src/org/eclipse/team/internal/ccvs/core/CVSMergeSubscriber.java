@@ -63,6 +63,8 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	private RemoteTagSynchronizer remoteSynchronizer;
 	private RemoteSynchronizer mergedSynchronizer;
 	private RemoteTagSynchronizer baseSynchronizer;
+
+	private static final byte[] NO_REMOTE = new byte[0];
 	
 
 	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
@@ -123,7 +125,12 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	public void merged(IResource[] resources) throws CVSException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			mergedSynchronizer.setSyncBytes(resource, remoteSynchronizer.getSyncBytes(resource));
+			byte[] remoteBytes = remoteSynchronizer.getSyncBytes(resource);
+			if (remoteBytes == null) {
+				// If there is no remote, use a place holder to indicate the resouce was merged
+				remoteBytes = NO_REMOTE;
+			}
+			mergedSynchronizer.setSyncBytes(resource, remoteBytes);
 		}
 		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, resources));
 	}
@@ -136,7 +143,8 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);		
 		TeamProvider.deregisterSubscriber(this);		
 		remoteSynchronizer.dispose();
-		baseSynchronizer.dispose();				
+		baseSynchronizer.dispose();
+		mergedSynchronizer.dispose();		
 	}
 
 	/* (non-Javadoc)

@@ -39,4 +39,13 @@ public class CVSMergeSyncInfo extends CVSSyncInfo {
 	public CVSMergeSyncInfo(IResource local, IRemoteResource base, IRemoteResource remote, TeamSubscriber subscriber, IProgressMonitor monitor) throws TeamException {
 		super(local, base, remote, subscriber, monitor);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncInfo#makeOutgoing(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void makeOutgoing(IProgressMonitor monitor) throws TeamException {
+		// Make the resource outgoing by marking it as merged with the subscriber
+		CVSMergeSubscriber subscriber = (CVSMergeSubscriber)getSubscriber();
+		subscriber.merged(new IResource[] {getLocal() });
+	}
 }
