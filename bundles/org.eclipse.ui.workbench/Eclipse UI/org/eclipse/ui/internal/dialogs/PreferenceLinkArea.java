@@ -14,11 +14,13 @@ import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
@@ -26,7 +28,9 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  * The PreferenceLinkArea is the link area used to open a specific preference
  * page.
  */
-public class PreferenceLinkArea extends LinkArea {
+public class PreferenceLinkArea extends Object {
+	
+	private Link pageLink;
 
 	/**
 	 * Create a new instance of the receiver
@@ -44,44 +48,26 @@ public class PreferenceLinkArea extends LinkArea {
 	 * @param pageData -
 	 *            The data to apply to the page.
 	 */
-	public PreferenceLinkArea(Composite parent, int style, String pageId,
-			String message, IWorkbenchPreferenceContainer pageContainer,
-			Object pageData) {
-		super(parent, style);
-		setRunnable(getRunnable(pageContainer,pageId,pageData));
+	public PreferenceLinkArea(Composite parent, int style, final String pageId,
+			String message, final IWorkbenchPreferenceContainer pageContainer,
+			final Object pageData) {
+		pageLink = new Link(parent,style);
+		pageLink.addSelectionListener(new SelectionAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				pageContainer.openPage(pageId, pageData);
+			}
+		});
 		IPreferenceNode node = getPreferenceNode(pageId);
 		if (node == null) {
 			throw new InvalidParameterException("Node not found");//$NON-NLS-1$
 		}
 		String result = MessageFormat.format(message, new String[] { node
 				.getLabelText() });
-		setText(result);
+		pageLink.setText(result);
 		
-	}
-
-	/**
-	 * Get the runnable to open the node in the container.
-	 * 
-	 * @param container
-	 * @param pageId
-	 * @param data
-	 * @return IRunnableContext
-	 */
-	private IRunnableContext getRunnable(
-			final IWorkbenchPreferenceContainer container, final String pageId,
-			final Object data) {
-		return new IRunnableContext() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean,
-			 *      boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-			 */
-			public void run(boolean fork, boolean cancelable,
-					IRunnableWithProgress runnable) throws InterruptedException {
-				container.openPage(pageId, data);
-			}
-		};
 	}
 
 	/**
@@ -99,5 +85,9 @@ public class PreferenceLinkArea extends LinkArea {
 				return next;
 		}
 		return null;
+	}
+	
+	public Control getControl(){
+		return pageLink;
 	}
 }

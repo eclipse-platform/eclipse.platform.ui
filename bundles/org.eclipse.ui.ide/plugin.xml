@@ -316,25 +316,8 @@
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
-            name="%PreferencePages.LinkedResources"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.ide.dialogs.LinkedResourcesPreferencePage"
-            id="org.eclipse.ui.preferencePages.LinkedResources">
-      </page>
-      <page
-            name="%PreferencePages.FileStates"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.ide.dialogs.FileStatesPage"
-            id="org.eclipse.ui.preferencePages.FileStates">
-      </page>
-      <page
-            name="%PreferencePages.BuildOrder"
-            class="org.eclipse.ui.internal.ide.dialogs.BuildOrderPreferencePage"
-            id="org.eclipse.ui.preferencePages.BuildOrder">
-      </page>
-      <page
             name="%PreferencePages.FileEditors"
-            category="org.eclipse.ui.preferencePages.Workbench"
+            category="org.eclipse.ui.preferencePages.Editors"
             class="org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage"
             id="org.eclipse.ui.preferencePages.FileEditors">
          <keywordReference id="org.eclipse.ui.ide.editing"/>
@@ -348,18 +331,45 @@
       </page>
       <page
             name="%PreferencePages.ColorsAndFonts"
-            category="org.eclipse.ui.preferencePages.Workbench"
+            category="org.eclipse.ui.preferencePages.Views"
             class="org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage"
             id="org.eclipse.ui.preferencePages.ColorsAndFonts">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
       <page
             name="%PreferencePages.Decorators"
-            category="org.eclipse.ui.preferencePages.Workbench"
+            category="org.eclipse.ui.preferencePages.Views"
             class="org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Decorators">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
       </page>
+      <page
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.ide.dialogs.IDEWorkspacePreferencePage"
+            id="org.eclipse.ui.preferencePages.Workspace"
+            name="%PreferencePages.Workspace">         
+      </page>
+      <page
+      		category="org.eclipse.ui.preferencePages.Workspace"
+            name="%PreferencePages.BuildOrder"
+            class="org.eclipse.ui.internal.ide.dialogs.BuildOrderPreferencePage"
+            id="org.eclipse.ui.preferencePages.BuildOrder">
+      </page>
+      
+       <page
+            name="%PreferencePages.FileStates"
+            category="org.eclipse.ui.preferencePages.Workspace"
+            class="org.eclipse.ui.internal.ide.dialogs.FileStatesPage"
+            id="org.eclipse.ui.preferencePages.FileStates">
+      </page>
+      
+      <page
+            name="%PreferencePages.LinkedResources"
+            category="org.eclipse.ui.preferencePages.Workspace"
+            class="org.eclipse.ui.internal.ide.dialogs.LinkedResourcesPreferencePage"
+            id="org.eclipse.ui.preferencePages.LinkedResources">
+      </page>
+      
       <page
             name="%PreferencePages.Startup"
             category="org.eclipse.ui.preferencePages.Workbench"

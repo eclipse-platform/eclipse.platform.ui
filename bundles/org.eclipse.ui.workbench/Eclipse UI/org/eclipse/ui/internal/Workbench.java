@@ -472,26 +472,7 @@ public final class Workbench implements IWorkbench {
 		}
 
 		IPreferenceStore store = getPreferenceStore();
-		boolean closeEditors = store
-				.getBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
-		if (closeEditors) {
-			Platform.run(new SafeRunnable() {
-				public void run() {
-					IWorkbenchWindow windows[] = getWorkbenchWindows();
-					for (int i = 0; i < windows.length; i++) {
-						IWorkbenchPage pages[] = windows[i].getPages();
-						for (int j = 0; j < pages.length; j++) {
-							isClosing = isClosing
-									&& pages[j].closeAllEditors(false);
-						}
-					}
-				}
-			});
-			if (!force && !isClosing) {
-				return false;
-			}
-		}
-
+		
 		if (getWorkbenchConfigurer().getSaveAndRestore()) {
 			Platform.run(new SafeRunnable() {
 				public void run() {

@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
@@ -48,20 +49,27 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
         
-		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.BORDER,
-				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_relatedLink,//$NON-NLS-1$
+		PreferenceLinkArea fileEditorsArea = new PreferenceLinkArea(composite, SWT.NONE,
+				"org.eclipse.ui.preferencePages.FileEditors", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink,//$NON-NLS-1$
 				(IWorkbenchPreferenceContainer) getContainer(),null);
 
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		data.heightHint = 25;
-		data.widthHint = 100;
-		area.setLayoutData(data);
+		fileEditorsArea.getControl().setLayoutData(data);
 
+		PreferenceLinkArea appearanceArea = new PreferenceLinkArea(composite, SWT.NONE,
+				"org.eclipse.ui.preferencePages.Views", IDEWorkbenchMessages.IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink,//$NON-NLS-1$
+				(IWorkbenchPreferenceContainer) getContainer(),null);
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		appearanceArea.getControl().setLayoutData(gd);
+		
+		Label space = new Label(composite,SWT.NONE);
+		space.setLayoutData(new GridData());
+		
 		createEditorHistoryGroup(composite);
 
 		createSpace(composite);
 		createShowMultipleEditorTabsPref(composite);
-		createCloseEditorsOnExitPref(composite);
 		createEditorReuseGroup(composite);
 
 		createSpace(composite);

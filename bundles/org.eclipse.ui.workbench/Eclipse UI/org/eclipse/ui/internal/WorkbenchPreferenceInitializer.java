@@ -41,7 +41,6 @@ public class WorkbenchPreferenceInitializer extends
 		IEclipsePreferences node = new DefaultScope().getNode(WorkbenchPlugin
 				.getDefault().getBundle().getSymbolicName());
 
-		node.putBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
 		node
 				.putBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
 						true);

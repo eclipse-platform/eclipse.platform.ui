@@ -403,9 +403,9 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		titleLayout.marginWidth = 0;
 		titleLayout.verticalSpacing = 0;
 		titleArea.setLayout(titleLayout);
-               GridData titleData =new GridData(SWT.FILL, SWT.FILL, true, false);
-               titleArea.setLayoutData(titleData);
-               title.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        GridData titleData =new GridData(SWT.FILL, SWT.FILL, true, false);
+        titleArea.setLayoutData(titleData);
+        title.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		title.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 		
 		Composite toolbarArea=new Composite(top, SWT.NULL);

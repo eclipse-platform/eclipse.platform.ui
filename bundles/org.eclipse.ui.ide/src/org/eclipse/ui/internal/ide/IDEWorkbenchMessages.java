@@ -488,18 +488,19 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String Preference_note;
 
 	// --- Workbench ---
-	public static String WorkbenchPreference_autobuild;
-	public static String WorkbenchPreference_autobuildToolTip;
-	public static String WorkbenchPreference_savePriorToBuilding;
-	public static String WorkbenchPreference_savePriorToBuildingToolTip;
-	public static String WorkbenchPreference_RefreshButtonText;
-	public static String WorkbenchPreference_RefreshButtonToolTip;
 	public static String WorkbenchPreference_encoding;
 	public static String WorkbenchPreference_defaultEncoding;
 	public static String WorkbenchPreference_otherEncoding;
 	public static String WorkbenchPreference_unsupportedEncoding;
-
 	public static String WorkbenchPreference_encoding_encodingMessage;
+	
+	// ---workspace ---
+	public static String IDEWorkspacePreference_autobuild;
+	public static String IDEWorkspacePreference_autobuildToolTip;
+	public static String IDEWorkspacePreference_savePriorToBuilding;
+	public static String IDEWorkspacePreference_savePriorToBuildingToolTip;
+	public static String IDEWorkspacePreference_RefreshButtonText;
+	public static String IDEWorkspacePreference_RefreshButtonToolTip;
 
 	// --- Linked Resources ---
 	public static String LinkedResourcesPreference_explanation;
@@ -833,8 +834,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CleanDialog_buildNowButton;
 	public static String CleanDialog_taskName;
 	public static String IDEEncoding_EncodingJob;
-	public static String IDEEditorsPreferencePage_WorkbenchPreference_relatedLink;
-
+	public static String IDEEditorsPreferencePage_WorkbenchPreference_viewsRelatedLink;
+	public static String IDEEditorsPreferencePage_WorkbenchPreference_FileEditorsRelatedLink;
+	public static String IDEWorkspacePreferencePage_WorkbenchPreference_relatedLink;
 	public static String WorkbenchEncoding_invalidCharset;
 	public static String SelectionDialog_selectLabel;
 	public static String SelectionDialog_deselectLabel;

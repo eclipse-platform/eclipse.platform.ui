@@ -250,6 +250,10 @@ public interface IWorkbenchHelpContextIds {
     public static final String WORKBENCH_EDITOR_PREFERENCE_PAGE = PREFIX
             + "workbench_editor_preference_page_context"; //$NON-NLS-1$
 
+	// TODO update with workspace preference page when ready.
+	public static final String WORKBENCH_WORKSPACE_PREFERENCE_PAGE = PREFIX
+    		+ "workbench_preference_page_context"; //$NON-NLS-1$
+
     public static final String WORKBENCH_PREFERENCE_PAGE = PREFIX
             + "workbench_preference_page_context"; //$NON-NLS-1$
 

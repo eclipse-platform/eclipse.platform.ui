@@ -58,9 +58,9 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         createRefreshWorkspaceOnStartupPref(composite);
         createExitPromptPref(composite);
 
-        Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-        separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+        Label space = new Label(composite,SWT.NONE);
+		space.setLayoutData(new GridData());
+        
         createEarlyStartupSelection(composite);
 
         return composite;

@@ -51,8 +51,6 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     private Button showMultipleEditorTabs;
 
-    private Button closeEditorsOnExit;
-
     private Composite editorReuseIndentGroup;
 
     private Composite editorReuseThresholdGroup;
@@ -81,7 +79,6 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         createSpace(composite);
         createShowMultipleEditorTabsPref(composite);
-        createCloseEditorsOnExitPref(composite);
         createEditorReuseGroup(composite);
 
         updateValidState();
@@ -106,15 +103,6 @@ public class EditorsPreferencePage extends PreferencePage implements
         setButtonLayoutData(showMultipleEditorTabs);
     }
 
-    protected void createCloseEditorsOnExitPref(Composite composite) {
-        closeEditorsOnExit = new Button(composite, SWT.CHECK);
-        closeEditorsOnExit.setText(WorkbenchMessages.WorkbenchPreference_closeEditorsButton); 
-        closeEditorsOnExit.setFont(composite.getFont());
-        closeEditorsOnExit.setSelection(getPreferenceStore().getBoolean(
-                IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
-        setButtonLayoutData(closeEditorsOnExit);
-    }
-
     protected Composite createComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
@@ -136,8 +124,6 @@ public class EditorsPreferencePage extends PreferencePage implements
         showMultipleEditorTabs
                 .setSelection(store
                         .getDefaultBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
-        closeEditorsOnExit.setSelection(store
-                .getDefaultBoolean(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
         reuseEditors.setSelection(store
                 .getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
         dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
@@ -159,9 +145,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         IPreferenceStore store = getPreferenceStore();
         store.setValue(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
                 showMultipleEditorTabs.getSelection());
-        store.setValue(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT,
-                closeEditorsOnExit.getSelection());
-
+        
         // store the reuse editors setting
         store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, reuseEditors
                 .getSelection());
