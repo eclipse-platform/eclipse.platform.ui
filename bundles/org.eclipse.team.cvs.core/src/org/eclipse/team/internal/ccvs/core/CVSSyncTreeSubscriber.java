@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -120,8 +121,9 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 			try {
 				members = ((IContainer)resource).members(true /* include phantoms */);
 			} catch (CoreException e) {
-				if (!isSupervised(resource)) {
-					// The resource is no longer supervised so ignore the exception and return that there are no members
+				if (!isSupervised(resource) || e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+					// The resource is no longer supervised or doesn't exist in any form
+					// so ignore the exception and return that there are no members
 					return new IResource[0];
 				}
 				throw e;
