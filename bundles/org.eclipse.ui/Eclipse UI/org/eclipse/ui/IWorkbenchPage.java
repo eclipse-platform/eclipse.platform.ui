@@ -521,6 +521,13 @@ public void showActionSet(String actionSetID);
  */
 public IViewPart showView(String viewId) throws PartInitException;
 /**
+ * Returns true if the editor is pinned and should not be
+ * reused.
+ * 
+ * @return boolean
+ */
+public boolean isEditorPinned(IEditorPart editor);
+/**
  * Returns the number of open editors before reusing editors.
  *
  * @return a int

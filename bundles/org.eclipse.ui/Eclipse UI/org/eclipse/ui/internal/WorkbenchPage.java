@@ -209,7 +209,7 @@ public void bringToTop(IWorkbenchPart part) {
 		broughtToTop = persp.bringToTop((IViewPart)part);
 	}
 	if (broughtToTop) {
-		activationList.setActive(part);
+//		activationList.setActive(part);
 		firePartBroughtToTop(part);
 	}
 }
@@ -1317,6 +1317,12 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 //	getClientComposite().setRedraw(true);
 
 	return editor;
+}
+/**
+ * See IWorkbenchPage.
+ */
+public boolean isEditorPinned(IEditorPart editor) {
+	return !((EditorSite)editor.getEditorSite()).getReuseEditor();
 }
 /**
  * See IWorkbenchPage.

@@ -48,6 +48,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor";
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";
 	
+	//pin editor group in the toolbar
+	private static final String pinEditorGroup = "pinEditorGroup";
+	
 	// target
 	private WorkbenchWindow window;
 
@@ -73,7 +76,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private EditActionSetsAction editActionSetAction;
 	private ClosePerspectiveAction closePerpsAction;
 	private CloseAllPerspectivesAction closeAllPerspsAction;
-//	private PinEditorAction pinEditorAction;
+	private PinEditorAction pinEditorAction;
 	private ShowViewMenuAction showViewMenuAction;
 	private ShowPartPaneMenuAction showPartPaneMenuAction;
 	private CyclePartAction nextPartAction;
@@ -406,7 +409,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		}
 		toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 		toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-//		toolbar.add(pinEditorAction);
+		toolbar.add(new GroupMarker(pinEditorGroup));
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+			pinEditorAction.setVisible(true);
+			toolbar.add(pinEditorAction);
+		}
 	}
 	/**
 	 * Remove the property change listener
@@ -586,11 +594,11 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		closeAllAction.setActionDefinitionId(closeAllActionDefId);
 		keyBindingService.registerGlobalAction(closeAllAction);
 
-//		pinEditorAction = new PinEditorAction(window);
-//		partService.addPartListener(pinEditorAction);
-//		pinEditorAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
-//		pinEditorAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
-//		pinEditorAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
+		pinEditorAction = new PinEditorAction(window);
+		partService.addPartListener(pinEditorAction);
+		pinEditorAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
+		pinEditorAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
+		pinEditorAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
 
 		aboutAction = new AboutAction(window);
 		aboutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
@@ -665,8 +673,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 				removeManualIncrementalBuildAction();
 			else
 				addManualIncrementalBuildAction();
-//		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS) {
-//			pinEditorAction.updateState();
+		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS_BOOLEAN) {
+			if(((Boolean)event.getNewValue()).booleanValue())
+				addPinEditorAction();
+			else
+				removePinEditorAction();
+		} else if (event.getProperty() == IPreferenceConstants.REUSE_EDITORS) {
+			pinEditorAction.updateState();
 		} else if (event.getProperty() == IPreferenceConstants.RECENT_FILES) {
 			Workbench wb = (Workbench) (Workbench) window.getWorkbench();
 			// work around the fact that the property change event values come as 
@@ -679,6 +692,32 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			}
 		}
 	}
+	/*
+	 * Adds the pin action to the toolbar.
+	 */
+	private void addPinEditorAction() {
+		ToolBarManager toolbar = window.getToolBarManager();
+		try {
+			pinEditorAction.setVisible(true);
+			toolbar.insertAfter(pinEditorGroup,pinEditorAction);
+			toolbar.update(true);
+		} catch (IllegalArgumentException e) {
+			// action was not in toolbar
+		}		
+	}
+	/*
+	 * Removes the pin action from the toolbar.
+	 */	
+	private void removePinEditorAction() {
+		ToolBarManager toolbar = window.getToolBarManager();
+		try {
+			pinEditorAction.setVisible(false);
+			toolbar.remove(pinEditorAction.getId());
+			toolbar.update(true);
+		} catch (IllegalArgumentException e) {
+			// action was not in toolbar
+		}
+	}		
 	/**
 	 * Remove the manual incremental build action
 	 * from both the menu bar and the tool bar.

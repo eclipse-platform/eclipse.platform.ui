@@ -5,6 +5,7 @@ import org.eclipse.ui.*;
 public class PinEditorAction extends ActiveEditorAction {
 
 	private IWorkbenchWindow window;
+	private boolean visible = false;
 
 /**
  * Creates a PinEditorAction.
@@ -16,7 +17,18 @@ protected PinEditorAction(IWorkbenchWindow window) {
 	this.window = window;
 //	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
 }
-
+/**
+ * Returns true if the action should be visible in the toolbar or menu.
+ */
+public boolean getVisible() {
+	return visible;
+}
+/**
+ * Sets if the action should be visible or not.
+ */
+public void setVisible(boolean visible) {
+	this.visible = visible;
+}
 /**
  * @see Action#run()
  */

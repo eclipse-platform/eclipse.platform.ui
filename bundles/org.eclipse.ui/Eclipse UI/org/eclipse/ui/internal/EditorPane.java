@@ -176,6 +176,9 @@ protected void setPinEditorAction(PinEditorAction action) {
  */
 protected void addPinEditorItem(Menu parent) {
 		// add fast view item
+	if(pinEditorAction == null || !pinEditorAction.getVisible())
+		return;
+			
 	final MenuItem item = new MenuItem(parent, SWT.CHECK);
 	item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
@@ -186,12 +189,8 @@ protected void addPinEditorItem(Menu parent) {
 			}
 		}
 	});
-	if(pinEditorAction == null) {
-		item.setEnabled(false);
-	} else {
-		item.setEnabled(pinEditorAction.isEnabled());
-		item.setSelection(pinEditorAction.isChecked());
-	}
+	item.setEnabled(pinEditorAction.isEnabled());
+	item.setSelection(pinEditorAction.isChecked());
 }
 
 /**
