@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -418,8 +417,8 @@ public class ContentFormatter3 implements IContentFormatter, IContentFormatterEx
 					int offset= region.getOffset();
 					int length= region.getLength();
 
-					final ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length);
-					final ITypedRegion start= TextUtilities.getPartition(fDocument, fPartitioning, regions[0].getOffset());
+					final ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length, false);
+					final ITypedRegion start= TextUtilities.getPartition(fDocument, fPartitioning, regions[0].getOffset(), false);
 		
 					final String type= start.getType();
 					if (regions.length > 1) {
@@ -667,7 +666,7 @@ public class ContentFormatter3 implements IContentFormatter, IContentFormatterEx
 	 */
 	private TypedPosition[] getPartitioning(int offset, int length) throws BadLocationException {
 		
-		ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length);
+		ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length, false);
 		TypedPosition[] positions= new TypedPosition[regions.length];
 
 		for (int i= 0; i < regions.length; i++)
