@@ -78,6 +78,11 @@ H4 .div-label {
 	margin-bottom : 5px;
 }
 
+/* Needed in IE to get shift+tab to show the active image properly */
+a:active {
+	border : solid 0px;
+}
+
 a img {
 	border-width : 0;
 	background-repeat : no-repeat;

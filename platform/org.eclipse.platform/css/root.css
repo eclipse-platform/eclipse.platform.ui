@@ -116,8 +116,7 @@ body {
 }
 
 #page-links a:hover,
-#page-links a:focus,
-#page-links a:active  { border : 0px; }
+#page-links a:focus { border : 0px; }
 
 #page-links a:hover p,
 #page-links a:focus p,
