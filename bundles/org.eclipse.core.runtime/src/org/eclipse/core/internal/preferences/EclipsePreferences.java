@@ -181,7 +181,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					key = childPath.lastSegment();
 					IPath child = childPath.removeLastSegments(1);
 					//use internal methods to avoid notifying listeners
-					((EclipsePreferences) internalNode(child, false)).internalPut(key, value);
+					EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false);
+					childNode.internalPut(key, value);
+					childNode.makeDirty();
 				} else {
 					if (InternalPlatform.DEBUG_PREFERENCES)
 						Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -530,7 +532,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					if (fullPath.isPrefixOf(childPath)) {
 						child = child.removeFirstSegments(fullPath.segmentCount());
 						//use internal methods to avoid notifying listeners
-						((EclipsePreferences) internalNode(child, false)).internalPut(key, value);
+						EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false);
+						childNode.internalPut(key, value);
+						childNode.makeDirty();
 					} else {
 						if (InternalPlatform.DEBUG_PREFERENCES)
 							Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + fullPath); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
