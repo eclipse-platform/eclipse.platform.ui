@@ -487,7 +487,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			switchContext.setPageCreated(true);
 		}
 		
-	
 		if (debugPart == null) {
 			try {
 				debugPart= (LaunchesView) switchContext.getPage().showView(viewId);							
@@ -513,19 +512,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
 		IWorkbenchWindow activeWindow= getActiveWorkbenchWindow();
 		
-		//check the active page of the active window for
+		//check the pages of the active window for
 		//debug view
-		LaunchesView part= findDebugPart(activeWindow, mode);
+		LaunchesView part= findDebugPart(activeWindow, mode, true);
 		if (part != null) {
 			switchContext.setWindow(activeWindow);
 			switchContext.setPage(part.getSite().getPage());
 			return;
 		}
-		//check active pages of all windows for debug view
+		//check the pages of all windows for debug view
 		int i;
 		for (i= 0; i < windows.length; i++) {
 			IWorkbenchWindow window= windows[i];
-			LaunchesView lPart= findDebugPart(window, mode);
+			LaunchesView lPart= findDebugPart(window, mode, true);
 			if (lPart != null) {
 				switchContext.setWindow(window);
 				switchContext.setPage(lPart.getSite().getPage());
@@ -576,21 +575,34 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * Returns a launches view if the specified window contains the debugger part for the
 	 * specified debug mode.
 	 */
-	protected LaunchesView findDebugPart(IWorkbenchWindow window, String mode) {
+	protected LaunchesView findDebugPart(IWorkbenchWindow window, String mode, boolean checkAllPages) {
 		if (window == null) {
 			return null;
 		}
+		
 		IWorkbenchPage activePage= window.getActivePage();
 		if (activePage == null) {
 			return null;
 		}
-		IViewPart debugPart= null;
-		if (mode == ILaunchManager.DEBUG_MODE) {
-			debugPart= activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW);							
-		} else {
-			debugPart= activePage.findView(IDebugUIConstants.ID_PROCESS_VIEW);
+		String viewId= 
+			mode.equals(ILaunchManager.DEBUG_MODE) ? IDebugUIConstants.ID_DEBUG_VIEW: IDebugUIConstants.ID_PROCESS_VIEW;
+
+		LaunchesView debugPart= (LaunchesView)activePage.findView(viewId);							
+		if (debugPart == null && checkAllPages) {
+			//look through the rest of the pages
+			IWorkbenchPage[] pages= window.getPages();
+			for (int i=0; i < pages.length; i++) {
+				IWorkbenchPage page= pages[i];
+				if (page.equals(activePage)) {
+					continue;
+				}
+				debugPart= (LaunchesView)page.findView(viewId);							
+				if (debugPart != null) {
+					break;
+				}
+			}
 		}
-		return (LaunchesView)debugPart;
+		return debugPart;
 	}
 	
 	/**

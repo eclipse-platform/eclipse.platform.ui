@@ -150,7 +150,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	protected LaunchesView getLaunchesView(String mode) {
 		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 		return
-			DebugUIPlugin.getDefault().findDebugPart(window, mode);
+			DebugUIPlugin.getDefault().findDebugPart(window, mode, false);
 	}
 	
 	protected String getMode() {
