@@ -67,8 +67,6 @@ public class AntLaunchWizardPage extends WizardPage {
 	 * Method declared on IWizardPage.
 	 */
 	public void createControl(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.ANT_LAUNCH_WIZARD_PAGE);		
-		
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -122,6 +120,8 @@ public class AntLaunchWizardPage extends WizardPage {
 		argumentsField.setFocus();
 		
 		setControl(composite);
+
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.ANT_LAUNCH_WIZARD_PAGE);
 	}
 	
 	/**

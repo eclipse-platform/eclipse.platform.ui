@@ -48,7 +48,7 @@ public class AntPreferencePage
 	public void init(IWorkbench workbench) {
 	}
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.ANT_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.ANT_PREFERENCE_PAGE);
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new GridLayout());
