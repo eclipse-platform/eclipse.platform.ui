@@ -20,6 +20,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -61,8 +62,7 @@ public class CheckoutOperationTests extends EclipseTest {
 				null /* shell */, 
 				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject) },
 				null /*target location*/);
-			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
-			op.run();
+			run(op);
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
@@ -79,8 +79,7 @@ public class CheckoutOperationTests extends EclipseTest {
 				null /* shell */, 
 				new ICVSRemoteFolder[] { (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project.getFolder("folder1")) },
 				null /*target location*/);
-			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
-			op.run();
+			run(op);
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
@@ -116,8 +115,7 @@ public class CheckoutOperationTests extends EclipseTest {
 					(ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(movedProject2)
 				},
 				null /*target location*/);
-			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
-			op.run();
+			run(op);
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
@@ -135,12 +133,16 @@ public class CheckoutOperationTests extends EclipseTest {
 				copy,
 				null /*target location*/,
 				false);
-			op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
-			op.run();
+			run(op);
 		} catch (InterruptedException e) {
 			fail("Operation should not have been interrupted");
 		}
 		
 		assertEquals(project, copy);
+	}
+
+	private void run(CVSOperation op) throws CVSException, InterruptedException {
+		op.setCVSRunnableContext(new HeadlessCVSRunnableContext());
+		op.run();
 	}
 }
