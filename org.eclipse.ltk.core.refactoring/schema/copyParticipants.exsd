@@ -6,12 +6,21 @@
          <meta.schema plugin="org.eclipse.ltk.core.refactoring" id="copyParticipants" name="Copy Participants"/>
       </appInfo>
       <documentation>
-         This extension point is used to define refactoring copy participants.
+         This extension point is used to define refactoring copy participants. The reader of the expression provides the following predefined variables which can be referenced via the &amp;lt;with variable=&quot;...&quot;&amp;gt; expression element:
+
+&lt;ul&gt;
+  &lt;li&gt;List&amp;lt;String&amp;gt; affectedNatures: a list containing the natures of the projects affected 
+      by the refactoring&lt;/li&gt;
+  &lt;li&gt;Object element: the element to be copied&lt;/li&gt;
+  &lt;li&gt;String processorId: the id of the refactoring processor that will own the participant.
+&lt;/ul&gt;
+
+The default variable used during expression evaluation is bound to the element variable.
       </documentation>
    </annotation>
 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
-   
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -78,7 +87,25 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         The example below defines a copy participant. The participant is enabled if one of the project affected by the refactoring has a Java nature and when the element to be copied is a file.
+
+&lt;pre&gt;
+&lt;copyParticipant
+    id=&quot;org.myCompany.copyParticipant&quot;
+    name=&quot;%CopyParticipant.name&quot; 
+    class=&quot;org.myCompany.CopyParticipant&quot;&gt;
+    &lt;enablement&gt;
+      &lt;with variable=&quot;affectedNatures&quot;&gt;
+        &lt;iterate operator=&quot;or&quot;&gt;
+          &lt;equals value=&quot;org.eclipse.jdt.core.javanature&quot;/&gt;
+        &lt;/iterate&gt;
+      &lt;/with&gt;
+      &lt;with variable=&quot;element&quot;&gt;
+        &lt;instanceof value=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+      &lt;/with&gt;
+    &lt;/enablement&gt;
+&lt;/copyParticipant&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
