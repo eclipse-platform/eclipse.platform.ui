@@ -47,24 +47,7 @@ public interface IHelp {
 	 */
 	public void displayHelp(String contextId, int x, int y);
 	
-	/**
-	 * Displays context-sensitive help for contexts with the given context ids.
-	 * <p>
-	 * (x,y) coordinates specify the location where the context sensitive
-	 * help UI will be presented. These coordinates are screen-relative 
-	 * (ie: (0,0) is the top left-most screen corner).
-	 * The platform is responsible for calling this method and supplying the 
-	 * appropriate location.
-	 * </p> 
-	 * 
-	 * @param contextIds a list of help context ids
-	 * @param x horizontal position
-	 * @param y verifical position
-	 * @see #findContext
-	 * @deprecated
-	 */
-	public void displayHelp(String[] contextIds, int x, int y);
-	/**
+		/**
 	 * Displays context-sensitive help for the given context.
 	 * <p>
 	 * (x,y) coordinates specify the location where the context sensitive 
@@ -81,23 +64,6 @@ public interface IHelp {
 	 * @since 2.0
 	 */
 	public void displayHelp(IContext context, int x, int y);
-	/**
-	 * Displays context-sensitive help for the given contexts.
-	 * <p>
-	 * (x,y) coordinates specify the location where the context sensitive 
-	 * help UI will be presented. These coordinates are screen-relative 
-	 * (ie: (0,0) is the top left-most screen corner).
-	 * The platform is responsible for calling this method and supplying the 
-	 * appropriate location.
-	 * </p>
-	 * 
-	 * 
-	 * @param contexts a list of help contexts
-	 * @param x horizontal position
-	 * @param y verifical position
-	 * @deprecated
-	 */
-	public void displayHelp(IContext[] contexts, int x, int y);
 	/**
 	 * Displays help content for the toc with the given URL.
 	 * <p>
@@ -136,6 +102,36 @@ public interface IHelp {
 	 * @see #displayHelp(java.lang.String)
 	 */
 	public void displayHelp(String toc, String selectedTopic);
+		/**
+	 * Displays the search results with the given query.
+	 * <p>
+	 * This method is called by the platform to launch the help system UI, displaying
+	 * the search results identified by the <code>query</code> parameter.
+	 * </p> 
+	 *
+	 * @param query the search query
+	 */
+	public void displaySearch(String query);
+	/**
+	 * This method is an extension to the 
+	 * <a href="#displaySearch(java.lang.String)">displaySearch(String query)</a>
+	 * method, providing the ability to open the specified hit.
+	 * <p>
+	 * <code>selectedResult</code> should be a valid help topic url  and have the following format: 
+	 * <em>/pluginID/path_to_document</em>
+	 * <br>where
+	 * <dl>
+	 * <dt> <em>pluginID</em> is the unique identifier of the plugin containing the help topic, 
+	 * </dt>
+	 * <dt> <em>path_to_document</em> is the help topic path, relative to the plugin directory
+	 * </dt>
+	 * </dl>
+	 * </p>
+	 * @param query the search query
+	 * @param selectedTopic the search result href.
+	 * @see #displayHelp(java.lang.String)
+	 */
+	public void displaySearch(String query, String selectedResult);
 	/**
 	 * Computes and returns context information for the given context id.
 	 * 
