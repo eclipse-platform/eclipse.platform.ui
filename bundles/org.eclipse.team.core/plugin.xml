@@ -39,6 +39,9 @@
   <fileTypes extension="ppt" type="binary"/>
   <fileTypes extension="zip" type="binary"/>
   <fileTypes extension="exe" type="binary"/>
+  <fileTypes extension="dll" type="binary"/>
+  <fileTypes extension="so" type="binary"/>
+  <fileTypes extension="project" type="text"/>
 </extension>
 
 <extension point="org.eclipse.core.resources.fileModificationValidator" id="FileValidator">
