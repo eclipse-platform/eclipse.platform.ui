@@ -39,7 +39,9 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		private Object[] listenerInfos;
 
 		public ExtensionEventDispatcherJob(Object[] listenerInfos, Map deltas) {
-			super("RegistryChangeEventDispatcherJob"); //$NON-NLS-1$
+			// name not NL'd since it is a system job
+			super("Registry event dispatcher"); //$NON-NLS-1$
+			setSystem(true);
 			this.listenerInfos = listenerInfos;
 			this.deltas = deltas;
 			// all extension event dispatching jobs use this rule
