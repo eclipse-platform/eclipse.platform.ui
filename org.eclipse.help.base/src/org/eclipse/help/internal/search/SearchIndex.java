@@ -129,7 +129,10 @@ public class SearchIndex {
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError(
-				HelpBaseResources.getString("ES16", name, indexDir.getAbsolutePath()),
+				HelpBaseResources.getString(
+					"ES16",
+					name,
+					indexDir.getAbsolutePath()),
 				e);
 			return false;
 		}
@@ -152,7 +155,9 @@ public class SearchIndex {
 					return false; // unable to setup index directory
 			}
 			indexedDocs =
-				new HelpProperties(indexedDocsFile, HelpBasePlugin.getDefault());
+				new HelpProperties(
+					indexedDocsFile,
+					HelpBasePlugin.getDefault());
 			indexedDocs.restore();
 			setInconsistent(true);
 			iw =
@@ -178,7 +183,9 @@ public class SearchIndex {
 				ir.close();
 			}
 			indexedDocs =
-				new HelpProperties(indexedDocsFile, HelpBasePlugin.getDefault());
+				new HelpProperties(
+					indexedDocsFile,
+					HelpBasePlugin.getDefault());
 			indexedDocs.restore();
 			setInconsistent(true);
 			ir = IndexReader.open(indexDir);
@@ -203,7 +210,10 @@ public class SearchIndex {
 			indexedDocs.remove(name);
 		} catch (IOException e) {
 			HelpBasePlugin.logError(
-				HelpBaseResources.getString("ES22", name, indexDir.getAbsolutePath()),
+				HelpBaseResources.getString(
+					"ES22",
+					name,
+					indexDir.getAbsolutePath()),
 				e);
 			return false;
 		}
@@ -275,9 +285,8 @@ public class SearchIndex {
 	 * @return - an array of document ids. 
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
 	 */
-	public void search(
-		ISearchQuery searchQuery,
-		ISearchHitCollector collector) {
+	public void search(ISearchQuery searchQuery, ISearchHitCollector collector)
+		throws QueryTooComplexException {
 		try {
 			QueryBuilder queryBuilder =
 				new QueryBuilder(
@@ -295,9 +304,13 @@ public class SearchIndex {
 				Hits hits = searcher.search(luceneQuery);
 				collector.addHits(hits, highlightTerms);
 			}
+		} catch (QueryTooComplexException qe) {
+			throw qe;
 		} catch (Exception e) {
 			HelpBasePlugin.logError(
-				HelpBaseResources.getString("ES21", searchQuery.getSearchWord()),
+				HelpBaseResources.getString(
+					"ES21",
+					searchQuery.getSearchWord()),
 				e);
 		}
 	}

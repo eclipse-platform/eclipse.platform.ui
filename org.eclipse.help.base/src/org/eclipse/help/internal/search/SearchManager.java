@@ -81,7 +81,8 @@ public class SearchManager {
 	public void search(
 		ISearchQuery searchQuery,
 		ISearchHitCollector collector,
-		IProgressMonitor pm) {
+		IProgressMonitor pm)
+		throws QueryTooComplexException {
 		SearchIndex index = getIndex(searchQuery.getLocale());
 		try {
 			updateIndex(pm, index);
