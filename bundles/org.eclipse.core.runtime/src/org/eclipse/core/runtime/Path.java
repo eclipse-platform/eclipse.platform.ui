@@ -249,6 +249,16 @@ private void collapseParentReferences() {
  *
  */
 private void collapseSlashes() {
+	int length = path.length();
+	// if the path is only 0, 1 or 2 chars long then it could not possibly have illegal
+	// duplicate slashes.
+	if (length < 3)
+		return;
+	// check for an occurence of // in the path.  Start at index 1 to ensure we skip leading UNC //
+	// If there are no // then there is nothing to collapse so just return.
+	if (path.indexOf("//", 1) == -1)
+		return;
+	// We found an occurence of // in the path so do the slow collapse.
 	char[] result = new char[path.length()];
 	int count = 0;
 	boolean hasPrevious = false;
@@ -289,6 +299,7 @@ public boolean equals(Object obj) {
 	IPath target = (IPath) obj;
 	return removeTrailingSeparator().toString().equals(target.removeTrailingSeparator().toString());
 }
+
 /* (Intentionally not included in javadoc)
  * @see IPath#getDevice
  */
@@ -326,6 +337,7 @@ private String getPathPart() {
 public int hashCode() {
 	return removeTrailingSeparator().toString().hashCode();
 }
+
 /* (Intentionally not included in javadoc)
  * @see IPath#hasTrailingSeparator
  */
