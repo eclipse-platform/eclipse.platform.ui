@@ -184,7 +184,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			fEvaluatingForSuspend= false;
 		}
 		if (element instanceof IThread) {
-			doHandleSuspendThreadEvent((IThread)element);
+			doHandleSuspendThreadEvent((IThread)element, event);
 			return;
 		}
 		refresh(element);
@@ -197,7 +197,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * refresh on the thread, then refresh each of the children, which eliminates
 	 * flicker when do quick stepping (e.g., holding down the F6 key) within a method.
 	 */
-	protected void doHandleSuspendThreadEvent(IThread thread) {
+	protected void doHandleSuspendThreadEvent(IThread thread, DebugEvent event) {
 		// if the thread has already resumed, do nothing
 		if (!thread.isSuspended()) {
 			fEvaluatingForSuspend= true;
@@ -231,8 +231,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		
 		// Auto-expand the thread.  If we are also refreshing the thread,
 		// then we don't need to worry about any children, since refreshing
-		// the parent handles this
-		getLaunchView().autoExpand(thread, refreshNeeded, refreshNeeded);
+		// the parent handles this.  Only select the thread if this wasn't the end
+		// of an evaluation
+		boolean evaluationEvent = event.isEvaluation();
+		getLaunchView().autoExpand(thread, refreshNeeded, !evaluationEvent);
 		if (refreshNeeded) {
 			// Update the stack frame count for the thread
 			oldStackFrameCountObject = new Integer(currentStackFrameCount);
@@ -248,8 +250,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			for (int i = currentStackFrameCount - 1; i > 0; i--) {
 				getLaunchView().autoExpand(stackFrames[i], true, false);				
 			}
-			// Treat the first stack frame differently, since we want to select it
-			getLaunchView().autoExpand(stackFrames[0], true, true);				
+			
+			// If an evaluation just finished, don't auto-expand since this 
+			// forces the top stack frame to get re-selected, which may not have been the
+			// stack frame that was previously selected
+			if (!evaluationEvent) {
+				// Treat the first stack frame differently, since we want to select it
+				getLaunchView().autoExpand(stackFrames[0], true, true);				
+			}
 		}
 	}
 	
