@@ -6,14 +6,12 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -34,7 +32,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
-import sun.security.action.GetLongAction;
 
 /**
  * Tab for favorite and recent history lists
@@ -78,11 +75,10 @@ public abstract class LaunchHistoryPreferenceTab {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		topComp.setLayout(layout);
-		GridData gd;
 	
 		Label favoritesLabel = new Label(topComp, SWT.LEFT);
 		favoritesLabel.setText(getFavoritesLabel());
-		gd = new GridData();
+		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		favoritesLabel.setLayoutData(gd);
 	
@@ -240,13 +236,25 @@ public abstract class LaunchHistoryPreferenceTab {
 		IStructuredSelection selection = (IStructuredSelection)getFavoritesTable().getSelection();
 		List favs = getFavorites();
 		boolean notEmpty = !selection.isEmpty();
-		boolean single = selection.size() == 1;
-		boolean first = single && (favs.indexOf(selection.getFirstElement()) == 0);
-		boolean last = single && (favs.indexOf(selection.getFirstElement()) == (favs.size() - 1));
+		Iterator elements= selection.iterator();
+		boolean first= false;
+		boolean last= false;
+		int lastFav= favs.size() - 1;
+		while (elements.hasNext()) {
+			Object element = (Object) elements.next();
+			if(!first && favs.indexOf(element) == 0) {
+				first= true;
+			} else if (!last && favs.indexOf(element) == lastFav) {
+				last= true;
+			}
+			if (first && last) {
+				break;
+			}
+		}
 		
 		fRemoveFavoritesButton.setEnabled(notEmpty);
-		fMoveUpButton.setEnabled(single && !first);
-		fMoveDownButton.setEnabled(single && !last);
+		fMoveUpButton.setEnabled(notEmpty && !first);
+		fMoveDownButton.setEnabled(notEmpty && !last);
 	}
 	
 	/**
@@ -315,27 +323,39 @@ public abstract class LaunchHistoryPreferenceTab {
 	 * The 'move up' button has been pressed
 	 */
 	protected void handleMoveUpButtonSelected() {
-		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
-		Object config = sel.getFirstElement();
-		int index = getFavorites().indexOf(config);
-		getFavorites().remove(config);
-		getFavorites().add(index - 1,config);
-		getFavoritesTable().refresh();	
-		handleFavoriteSelectionChanged();	
+		handleMove(-1);
 	}	
 	
 	/**
-	 * The 'move up' button has been pressed
+	 * The 'move down' button has been pressed
 	 */
 	protected void handleMoveDownButtonSelected() {
-		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
-		Object config = sel.getFirstElement();
-		int index = getFavorites().indexOf(config);
-		getFavorites().remove(config);
-		getFavorites().add(index + 1,config);
-		getFavoritesTable().refresh();			
-		handleFavoriteSelectionChanged();
+		handleMove(1);
 	}	
+	
+	protected void handleMove(int direction) {
+		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
+		List selList= sel.toList();
+		Object[] movedFavs= new Object[getFavorites().size()];
+		int i;
+		for (Iterator favs = selList.iterator(); favs.hasNext();) {
+			Object config = favs.next();
+			i= getFavorites().indexOf(config);
+			movedFavs[i + direction]= config;
+		}
+		
+		getFavorites().removeAll(selList);
+			
+		for (int j = 0; j < movedFavs.length; j++) {
+			Object config = movedFavs[j];
+			if (config != null) {
+				getFavorites().add(j, config);		
+			}
+		}
+		
+		getFavoritesTable().refresh();	
+		handleFavoriteSelectionChanged();	
+	}
 	
 	/**
 	 * The 'remove recent' button has been pressed
