@@ -89,14 +89,16 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private class AntOutlineSorter extends ViewerSorter {
 		
-			/**
+		/**
 		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (!(e1 instanceof XmlElement && e2 instanceof XmlElement)) {
 				return super.compare(viewer, e1, e2);
 			}
-			return ((XmlElement) e1).getDisplayName().compareToIgnoreCase(((XmlElement) e2).getDisplayName());
+			String name1= ((XmlElement) e1).getDisplayName();
+			String name2= ((XmlElement) e2).getDisplayName();
+			return getCollator().compare(name1, name2);
 		}
 
 }
