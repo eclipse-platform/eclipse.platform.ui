@@ -63,20 +63,20 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	/**
 	 * Removes the given target from the list of selected targets.
 	 * 
-	 * @param target the target to remove
+	 * @param index the index of the the target to remove
 	 */
-	public void removeTarget(TargetNode target) {
-		targets.remove(target);
+	public void removeTarget(int index) {
+		targets.remove(index);
 	}
 	
 	/**
 	 * Moves the given target up in the list of active targets. Has no effect if
 	 * the given target is already the first target in the list.
 	 * 
-	 * @param target the target to move up
+	 * @param index the index of the target to move up
 	 */
-	public void moveUpTarget(TargetNode target) {
-		int index = targets.indexOf(target);
+	public void moveUpTarget(int index) {
+		Object target= targets.get(index);
 		if (index == 0) {
 			return;
 		}
@@ -88,10 +88,10 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 * Moves the given target down in the list of active targets. Has no effect
 	 * if the given target is already the last target in the list.
 	 *
-	 * @param target the target to move down
+	 * @param index the index of the target to move down
 	 */
-	public void moveDownTarget(TargetNode target) {
-		int index = targets.indexOf(target);
+	public void moveDownTarget(int index) {
+		Object target= targets.get(index);
 		if (index == targets.size() - 1) {
 			return;
 		}

@@ -18,11 +18,7 @@ public class DeactivateTargetAction extends Action implements IUpdate {
 	}
 	
 	public void run() {
-		TargetNode target= getSelectedTarget();
-		if (target == null) {
-			return;
-		}
-		view.deactivateTarget(target);
+		view.deactivateSelectedTargets();
 	}
 	
 	/**

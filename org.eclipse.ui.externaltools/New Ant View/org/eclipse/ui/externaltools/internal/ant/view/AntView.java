@@ -353,9 +353,14 @@ public class AntView extends ViewPart {
 	 *
 	 * @param target the target to deactivate
 	 */
-	public void deactivateTarget(TargetNode target) {
-		targetContentProvider.removeTarget(target);
+	public void deactivateSelectedTargets() {
+		int startIndex= targetViewer.getTable().getSelectionIndex();
+		int indices[]= targetViewer.getTable().getSelectionIndices();
+		for (int i = 0; i < indices.length; i++) {
+			targetContentProvider.removeTarget(indices[i]);
+		}
 		targetViewer.refresh();
+		targetViewer.getTable().select(startIndex - 1);
 	}
 
 	/**
@@ -536,15 +541,25 @@ public class AntView extends ViewPart {
 	 * Moves the given target up in the list of active targets
 	 */
 	public void moveUpTarget(TargetNode target) {
-		targetContentProvider.moveUpTarget(target);
+		int index= targetViewer.getTable().getSelectionIndex();
+		if (index < 0) {
+			return;
+		}
+		targetContentProvider.moveUpTarget(index);
 		targetViewer.refresh();
+		targetViewer.getTable().select(index - 1);
 	}
 	/**
 	 * Moves the given target down in the list of active targets
 	 */
 	public void moveDownTarget(TargetNode target) {
-		targetContentProvider.moveDownTarget(target);
+		int index= targetViewer.getTable().getSelectionIndex();
+				if (index < 0) {
+					return;
+				}
+		targetContentProvider.moveDownTarget(index);
 		targetViewer.refresh();
+		targetViewer.getTable().select(index + 1);
 	}
 
 }
