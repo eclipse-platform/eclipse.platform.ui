@@ -73,52 +73,31 @@ public class CVSPropertiesPage extends PropertyPage {
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		
-		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"));
+		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1);
 		methodType = createCombo(composite);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		methodType.setLayoutData(data);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"));
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"), 1);
 		userText = createTextField(composite);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		userText.setLayoutData(data);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"));
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"), 1);
 		passwordText = createTextField(composite);
 		passwordText.setEchoChar('*');
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		passwordText.setLayoutData(data);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"));
-		hostLabel = createLabel(composite, "");
-		data = new GridData();
-		data.horizontalSpan = 2;
-		hostLabel.setLayoutData(data);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1);
+		hostLabel = createLabel(composite, "", 2);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.port"));
-		portLabel = createLabel(composite, "");
-		data = new GridData();
-		data.horizontalSpan = 2;
-		portLabel.setLayoutData(data);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.port"), 1);
+		portLabel = createLabel(composite, "", 2);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"));
-		pathLabel = createLabel(composite, "");
-		data = new GridData();
-		data.horizontalSpan = 2;
-		pathLabel.setLayoutData(data);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1);
+		pathLabel = createLabel(composite, "", 2);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.module"));
-		moduleLabel = createLabel(composite, "");
-		data = new GridData();
-		data.horizontalSpan = 2;
-		moduleLabel.setLayoutData(data);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.module"), 1);
+		moduleLabel = createLabel(composite, "", 2);
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.tag"));
-		tagLabel = createLabel(composite, "");
-		data = new GridData(GridData.FILL_HORIZONTAL);
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.tag"), 1);
+		tagLabel = createLabel(composite, "", 1);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		tagLabel.setLayoutData(data);
 		
 		Button changeTag = new Button(composite, SWT.PUSH);
@@ -164,6 +143,7 @@ public class CVSPropertiesPage extends PropertyPage {
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.horizontalSpan = 2;
 		combo.setLayoutData(data);
 		return combo;
 	}
@@ -175,11 +155,11 @@ public class CVSPropertiesPage extends PropertyPage {
 	 * @param text  the text for the new label
 	 * @return the new label
 	 */
-	protected Label createLabel(Composite parent, String text) {
+	protected Label createLabel(Composite parent, String text, int span) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
 		GridData data = new GridData();
-		data.horizontalSpan = 1;
+		data.horizontalSpan = span;
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData(data);
 		return label;
@@ -196,6 +176,7 @@ public class CVSPropertiesPage extends PropertyPage {
 		data.verticalAlignment = GridData.CENTER;
 		data.grabExcessVerticalSpace = false;
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.horizontalSpan = 2;
 		text.setLayoutData(data);
 		return text;
 	}
