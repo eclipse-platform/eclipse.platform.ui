@@ -86,24 +86,30 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 			// Do a check on disk and in the workspace in case something is out of sync.
 			assertExistsInWorkspace("2.1.1", project);
 			assertExistsInFileSystem("2.1.2", project);
-
+			
 			assertExistsInWorkspace("2.2.1", file1);
 			assertExistsInFileSystem("2.2.2", file1);
-
+			assertTrue("2.2.3", file1.isSynchronized(IResource.DEPTH_INFINITE));
+			
 			assertDoesNotExistInWorkspace("2.3.1", file2);
 			assertDoesNotExistInFileSystem("2.3.2", file2);
+			assertTrue("2.3.3", file2.isSynchronized(IResource.DEPTH_INFINITE));
 			
 			assertDoesNotExistInWorkspace("2.4.1", file3);
 			assertDoesNotExistInFileSystem("2.4.2", file3);
+			assertTrue("2.4.3", file3.isSynchronized(IResource.DEPTH_INFINITE));
 			
 			assertExistsInWorkspace("2.5.1", folder);
 			assertExistsInFileSystem("2.5.2", folder);
+			assertTrue("2.5.3", folder.isSynchronized(IResource.DEPTH_INFINITE));
 			
 			assertDoesNotExistInWorkspace("2.6.1", projectFile);
 			assertDoesNotExistInFileSystem("2.6.2", projectFile);
+			assertTrue("2.6.3", projectFile.isSynchronized(IResource.DEPTH_INFINITE));
 			
-			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
-
+			assertTrue("2.7.0", project.isSynchronized(IResource.DEPTH_ZERO));
+			assertTrue("2.7.1", project.isSynchronized(IResource.DEPTH_INFINITE));
+			
 			try {
 				input.close();
 			} catch (IOException e) {
