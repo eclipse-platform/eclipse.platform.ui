@@ -223,6 +223,10 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		 */
 		public void memoryBlocksAdded(IMemoryBlock[] memory) {
 
+			// if the content provider is disposed, do not handle event
+			if (fDisposed)
+				return;
+			
 			IMemoryBlock memoryBlocks[] = memory;
 
 			for (int i=0; i<memoryBlocks.length; i++)
@@ -246,6 +250,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
 		 */
 		public void memoryBlocksRemoved(final IMemoryBlock[] memory) {
+			
 			DebugUIPlugin.getDefault().getWorkbench().getDisplay().syncExec(new Runnable() {
 
 				public void run() {
@@ -256,11 +261,15 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 						fMemoryBlocks.remove(memory[i]);
 					}
 					
-					fTreeViewer.refresh();
-					IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fDebugTarget);
-					if (memoryBlocks != null && memoryBlocks.length > 0)
+					// if the content provider is disposed, do not update viewer
+					if (!fDisposed)
 					{
-						fTreeViewer.setSelection(new StructuredSelection(memoryBlocks[0]));
+						fTreeViewer.refresh();
+						IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fDebugTarget);
+						if (memoryBlocks != null && memoryBlocks.length > 0)
+						{
+							fTreeViewer.setSelection(new StructuredSelection(memoryBlocks[0]));
+						}
 					}
 					updateActionsEnablement();
 				}});
@@ -270,6 +279,11 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, IMemoryView
 		 * @see org.eclipse.debug.internal.ui.views.memory.BasicDebugViewContentProvider#doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
 		 */
 		protected void doHandleDebugEvent(DebugEvent event) {
+			
+			// if the view is disposed, do not handle event
+			if (fDisposed)
+				return;
+			
 			if (event.getKind() == DebugEvent.TERMINATE)
 			{
 				if (event.getSource() == fDebugTarget)

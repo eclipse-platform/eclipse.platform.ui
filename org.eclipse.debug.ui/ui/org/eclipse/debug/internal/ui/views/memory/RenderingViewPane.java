@@ -1104,7 +1104,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IRender
 			return;
 		
 		memoryBlockRenderingRemoved(rendering);
-		fRenderingMgr.removeMemoryBlockRendering(rendering);
+		
+		if (fRenderingMgr != null)
+			fRenderingMgr.removeMemoryBlockRendering(rendering);
 		
 	}
 	

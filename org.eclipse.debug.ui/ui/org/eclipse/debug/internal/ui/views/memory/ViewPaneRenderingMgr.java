@@ -240,6 +240,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 
 	public void dispose()
 	{
+		// remove all renderings
+		fRenderings.clear();
+		
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 	}
 	
