@@ -15,6 +15,10 @@ package org.eclipse.ui.editors.text;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,23 +26,36 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
 
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.text.source.AnnotationRulerColumn;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IOverviewRuler;
+import org.eclipse.jface.text.source.ISharedTextColors;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
+import org.eclipse.jface.text.source.LineNumberRulerColumn;
+import org.eclipse.jface.text.source.OverviewRuler;
+import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.internal.editors.text.*;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AddTaskAction;
 import org.eclipse.ui.texteditor.ConvertLineDelimitersAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
@@ -47,6 +64,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.StatusTextEditor;
 
 
@@ -87,12 +105,7 @@ public class TextEditor extends StatusTextEditor {
 		setEditorContextMenuId("#TextEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
-		
-		Plugin plugin= Platform.getPlugin("org.eclipse.ui.workbench"); //$NON-NLS-1$
-		if (plugin instanceof AbstractUIPlugin) {
-			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;		
-			setPreferenceStore(uiPlugin.getPreferenceStore());
-		}
+		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 	}
 	
 	/*
@@ -104,6 +117,12 @@ public class TextEditor extends StatusTextEditor {
 				fEncodingSupport.dispose();
 				fEncodingSupport= null;
 		}
+
+		if (fSourceViewerDecorationSupport != null) {
+			fSourceViewerDecorationSupport.dispose();
+			fSourceViewerDecorationSupport= null;
+		}
+		
 		super.dispose();
 	}
 
@@ -177,7 +196,7 @@ public class TextEditor extends StatusTextEditor {
 		}
 		
 		if (provider.isDeleted(input) && original != null) {
-			String message= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.delete"), new Object[] { original.getName() });
+			String message= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.delete"), new Object[] { original.getName() }); //$NON-NLS-1$
 			dialog.setErrorMessage(null);
 			dialog.setMessage(message, IMessageProvider.WARNING);
 		}
@@ -370,4 +389,258 @@ public class TextEditor extends StatusTextEditor {
 		if (fEncodingSupport != null)
 			fEncodingSupport.reset();
 	}
+
+	/** Preference key for showing the line number ruler */
+	private final static String LINE_NUMBER_RULER= TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
+	/** Preference key for the foreground color of the line numbers */
+	private final static String LINE_NUMBER_COLOR= TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
+	/** Preference key for showing the overview ruler */
+	private final static String OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
+	/** Preference key for error indication in overview ruler */
+	private final static String ERROR_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for warning indication in overview ruler */
+	private final static String WARNING_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for info indication in overview ruler */
+	private final static String INFO_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for task indication in overview ruler */
+	private final static String TASK_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for bookmark indication in overview ruler */
+	private final static String BOOKMARK_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for search result indication in overview ruler */
+	private final static String SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER;
+	/** Preference key for unknown annotation indication in overview ruler */
+	private final static String UNKNOWN_INDICATION_IN_OVERVIEW_RULER= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER;
+
+	/** Preference key for error indication */
+	private final static String ERROR_INDICATION= TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION;
+	/** Preference key for error color */
+	private final static String ERROR_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR;
+	/** Preference key for warning indication */
+	private final static String WARNING_INDICATION= TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION;
+	/** Preference key for warning color */
+	private final static String WARNING_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR;
+	/** Preference key for info indication */
+	private final static String INFO_INDICATION= TextEditorPreferenceConstants.EDITOR_INFO_INDICATION;
+	/** Preference key for info color */
+	private final static String INFO_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR;
+	/** Preference key for task indication */
+	private final static String TASK_INDICATION= TextEditorPreferenceConstants.EDITOR_TASK_INDICATION;
+	/** Preference key for task color */
+	private final static String TASK_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR;
+	/** Preference key for bookmark indication */
+	private final static String BOOKMARK_INDICATION= TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION;
+	/** Preference key for bookmark color */
+	private final static String BOOKMARK_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR;
+	/** Preference key for search result indication */
+	private final static String SEARCH_RESULT_INDICATION= TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION;
+	/** Preference key for search result color */
+	private final static String SEARCH_RESULT_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR;
+	/** Preference key for unknown annotation indication */
+	private final static String UNKNOWN_INDICATION= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION;
+	/** Preference key for unknown annotation color */
+	private final static String UNKNOWN_INDICATION_COLOR= TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR;
+
+	/** Preference key for highlighting current line */
+	private final static String CURRENT_LINE= TextEditorPreferenceConstants.EDITOR_CURRENT_LINE;
+	/** Preference key for highlight color of current line */
+	private final static String CURRENT_LINE_COLOR= TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
+	/** Preference key for showing print marging ruler */
+	private final static String PRINT_MARGIN= TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
+	/** Preference key for print margin ruler color */
+	private final static String PRINT_MARGIN_COLOR= TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
+	/** Preference key for print margin ruler column */
+	private final static String PRINT_MARGIN_COLUMN= TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
+
+	private IOverviewRuler fOverviewRuler;
+	private IAnnotationAccess fAnnotationAccess= new AnnotationAccess();
+	private SourceViewerDecorationSupport fSourceViewerDecorationSupport;
+	private LineNumberRulerColumn fLineNumberRulerColumn;
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
+	 */
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
+		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
+		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
+		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
+		configureSourceViewerDecorationSupport();
+		return sourceViewer;
+	}
+
+	private void configureSourceViewerDecorationSupport() {
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.UNKNOWN, UNKNOWN_INDICATION_COLOR, UNKNOWN_INDICATION, UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, BOOKMARK_INDICATION_COLOR, BOOKMARK_INDICATION, BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, TASK_INDICATION_COLOR, TASK_INDICATION, TASK_INDICATION_IN_OVERVIEW_RULER, 2);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, SEARCH_RESULT_INDICATION_COLOR, SEARCH_RESULT_INDICATION, SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, INFO_INDICATION_COLOR, INFO_INDICATION, INFO_INDICATION_IN_OVERVIEW_RULER, 4);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, WARNING_INDICATION_COLOR, WARNING_INDICATION, WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, ERROR_INDICATION_COLOR, ERROR_INDICATION, ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
+		
+		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
+		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
+		
+		String symbolicFontName= getConfigurationElement().getAttribute("symbolicFontName"); //$NON-NLS-1$
+		fSourceViewerDecorationSupport.setSymbolicFontName(symbolicFontName == null ? JFaceResources.TEXT_FONT : symbolicFontName);
+	}
+
+	private void showOverviewRuler() {
+		if (fOverviewRuler != null) {
+			if (getSourceViewer() instanceof ISourceViewerExtension) {
+				((ISourceViewerExtension) getSourceViewer()).showAnnotationsOverview(true);
+				fSourceViewerDecorationSupport.updateOverviewDecorations();
+			}
+		}
+	}
+
+	private void hideOverviewRuler() {
+		if (getSourceViewer() instanceof ISourceViewerExtension) {
+			fSourceViewerDecorationSupport.hideAnnotationOverview();
+			((ISourceViewerExtension) getSourceViewer()).showAnnotationsOverview(false);
+		}
+	}
+
+	private boolean isOverviewRulerVisible() {
+		IPreferenceStore store= getPreferenceStore();
+		return store.getBoolean(OVERVIEW_RULER);
+	}
+
+	/**
+	 * Shows the line number ruler column.
+	 */
+	private void showLineNumberRuler() {
+		IVerticalRuler v= getVerticalRuler();
+		if (v instanceof CompositeRuler) {
+			CompositeRuler c= (CompositeRuler) v;
+			c.addDecorator(1, createLineNumberRulerColumn());
+		}
+	}
+	
+	/**
+	 * Hides the line number ruler column.
+	 */
+	private void hideLineNumberRuler() {
+		IVerticalRuler v= getVerticalRuler();
+		if (v instanceof CompositeRuler) {
+			CompositeRuler c= (CompositeRuler) v;
+			c.removeDecorator(1);
+		}
+	}
+	
+	/**
+	 * Return whether the line number ruler column should be 
+	 * visible according to the preference store settings.
+	 * @return <code>true</code> if the line numbers should be visible
+	 */
+	private boolean isLineNumberRulerVisible() {
+		IPreferenceStore store= getPreferenceStore();
+		return store.getBoolean(LINE_NUMBER_RULER);
+	}
+
+	/**
+	 * Initializes the given line number ruler column from the preference store.
+	 * @param rulerColumn the ruler column to be initialized
+	 */
+	protected void initializeLineNumberRulerColumn(LineNumberRulerColumn rulerColumn) {
+		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
+		IPreferenceStore store= getPreferenceStore();
+		if (store != null) {
+		
+			RGB rgb=  null;
+			// foreground color
+			if (store.contains(LINE_NUMBER_COLOR)) {
+				if (store.isDefault(LINE_NUMBER_COLOR))
+					rgb= PreferenceConverter.getDefaultColor(store, LINE_NUMBER_COLOR);
+				else
+					rgb= PreferenceConverter.getColor(store, LINE_NUMBER_COLOR);
+			}
+			rulerColumn.setForeground(sharedColors.getColor(rgb));
+			
+			
+			rgb= null;
+			// background color
+			if (!store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+				if (store.contains(PREFERENCE_COLOR_BACKGROUND)) {
+					if (store.isDefault(PREFERENCE_COLOR_BACKGROUND))
+						rgb= PreferenceConverter.getDefaultColor(store, PREFERENCE_COLOR_BACKGROUND);
+					else
+						rgb= PreferenceConverter.getColor(store, PREFERENCE_COLOR_BACKGROUND);
+				}
+			}
+			rulerColumn.setBackground(sharedColors.getColor(rgb));
+			
+			rulerColumn.redraw();
+		}
+	}
+	
+	/**
+	 * Creates a new line number ruler column that is appropriately initialized.
+	 */
+	protected IVerticalRulerColumn createLineNumberRulerColumn() {
+		fLineNumberRulerColumn= new LineNumberRulerColumn();
+		initializeLineNumberRulerColumn(fLineNumberRulerColumn);
+		return fLineNumberRulerColumn;
+	}
+	
+	/*
+	 * @see AbstractTextEditor#createVerticalRuler()
+	 */
+	protected IVerticalRuler createVerticalRuler() {
+		CompositeRuler ruler= new CompositeRuler();
+		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH));
+		if (isLineNumberRulerVisible())
+			ruler.addDecorator(1, createLineNumberRulerColumn());
+		return ruler;
+	}
+	
+	/*
+	 * @see AbstractTextEditor#handlePreferenceStoreChanged(PropertyChangeEvent)
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		
+		try {			
+
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer == null)
+				return;
+				
+			String property= event.getProperty();	
+			
+			if (OVERVIEW_RULER.equals(property))  {
+				if (isOverviewRulerVisible())
+					showOverviewRuler();
+				else
+					hideOverviewRuler();
+				return;
+			}
+			
+			if (LINE_NUMBER_RULER.equals(property)) {
+				if (isLineNumberRulerVisible())
+					showLineNumberRuler();
+				else
+					hideLineNumberRuler();
+				return;
+			}
+			
+			if (fLineNumberRulerColumn != null &&
+						(LINE_NUMBER_COLOR.equals(property) || 
+						PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property)  ||
+						PREFERENCE_COLOR_BACKGROUND.equals(property))) {
+					
+					initializeLineNumberRulerColumn(fLineNumberRulerColumn);
+			}
+				
+		} finally {
+			super.handlePreferenceStoreChanged(event);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		fSourceViewerDecorationSupport.install(getPreferenceStore());
+	}
+
 }
