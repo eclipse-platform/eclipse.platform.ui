@@ -819,12 +819,11 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * @param depth one of 0 or -1
 	 */
 	void copyFromTo(Preferences source, Preferences destination, String[] keys, int depth) throws BackingStoreException {
-		if (keys == null)
-			keys = source.keys();
-		for (int i = 0; i < keys.length; i++) {
-			String value = source.get(keys[i], null);
+		String[] keysToCopy = keys == null ? source.keys() : keys;
+		for (int i = 0; i < keysToCopy.length; i++) {
+			String value = source.get(keysToCopy[i], null);
 			if (value != null)
-				destination.put(keys[i], value);
+				destination.put(keysToCopy[i], value);
 		}
 		if (depth == 0)
 			return;
