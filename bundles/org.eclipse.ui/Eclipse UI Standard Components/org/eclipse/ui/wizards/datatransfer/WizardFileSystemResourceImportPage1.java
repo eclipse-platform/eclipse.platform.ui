@@ -787,6 +787,10 @@ protected boolean validateSourceGroup() {
  */
 protected boolean sourceConflictsWithDestination(IPath sourcePath){
 	
-	return getSpecifiedContainer().getLocation().isPrefixOf(sourcePath);
+	IContainer container = getSpecifiedContainer();
+	if(container == null)
+		return false;
+	else
+		return getSpecifiedContainer().getLocation().isPrefixOf(sourcePath);
 }
 }
