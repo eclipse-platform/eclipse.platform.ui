@@ -20,7 +20,6 @@ import org.eclipse.ui.*;
  * @see IWorkbenchWindowActionDelegate
  */
 public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegate {
-	private static final String KEY_TITLE = "NewUpdates.noUpdates.title";
 
 	IWorkbenchWindow window;
 	/**

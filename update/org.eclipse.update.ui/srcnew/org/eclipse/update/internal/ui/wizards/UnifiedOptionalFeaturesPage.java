@@ -86,8 +86,7 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 					+ feature.getVersionedIdentifier().getVersion().toString();
 			}
 			if (obj instanceof FeatureHierarchyElement2) {
-				FeatureHierarchyElement2 fe = (FeatureHierarchyElement2) obj;
-				String name = fe.getLabel();
+				String name = ((FeatureHierarchyElement2) obj).getLabel();
 				if (name != null)
 					return name;
 			}
@@ -132,19 +131,19 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 		layout.numColumns = 2;
 		layout.marginWidth = layout.marginHeight = 0;
 		client.setLayout(layout);
+
 		createCheckboxTreeViewer(client);
+
 		Button selectAllButton = new Button(client, SWT.PUSH);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAll(true);
 			}
 		});
-		selectAllButton.setText(
-			UpdateUI.getString(KEY_SELECT_ALL));
+		selectAllButton.setText(UpdateUI.getString(KEY_SELECT_ALL));
 		GridData gd =
 			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_BEGINNING);
+				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
 		selectAllButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(selectAllButton);
 
@@ -154,12 +153,10 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 				selectAll(false);
 			}
 		});
-		deselectAllButton.setText(
-			UpdateUI.getString(KEY_DESELECT_ALL));
+		deselectAllButton.setText(UpdateUI.getString(KEY_DESELECT_ALL));
 		gd =
 			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_BEGINNING);
+				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
 		deselectAllButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(deselectAllButton);
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiOptionalFeaturesPage2");
@@ -173,13 +170,10 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 		treeViewer =
-			new CheckboxTreeViewer(
-				parent,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new CheckboxTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.verticalSpan = 2;
-		Tree tree = treeViewer.getTree();
-		tree.setLayoutData(gd);
+		treeViewer.getTree().setLayoutData(gd);
 		treeViewer.setContentProvider(new TreeContentProvider());
 		treeViewer.setLabelProvider(new TreeLabelProvider());
 		treeViewer.addCheckStateListener(new ICheckStateListener() {
@@ -207,12 +201,10 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 		ArrayList grayed = new ArrayList();
 
 		for (int i = 0; i < jobRoots.length; i++) {
-			JobRoot jobRoot = jobRoots[i];
-			PendingOperation job = jobRoot.getJob();
-			checked.add(jobRoot);
-			grayed.add(jobRoot);
-			boolean update = job.getOldFeature() != null;
-			initializeStates(update, jobRoot.getElements(), checked, grayed);
+			checked.add(jobRoots[i]);
+			grayed.add(jobRoots[i]);
+			boolean update = jobRoots[i].getJob().getOldFeature() != null;
+			initializeStates(update, jobRoots[i].getElements(), checked, grayed);
 		}
 		treeViewer.setCheckedElements(checked.toArray());
 		treeViewer.setGrayedElements(grayed.toArray());
@@ -231,27 +223,19 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 				checked.add(element);
 			if (!element.isEditable())
 				grayed.add(element);
-			Object[] children = element.getChildren();
-			initializeStates(update, children, checked, grayed);
+			initializeStates(update, element.getChildren(), checked, grayed);
 		}
 	}
 
 	private void selectAll(boolean value) {
 		ArrayList selected = new ArrayList();
-
 		for (int i = 0; i < jobRoots.length; i++) {
-			JobRoot jobRoot = jobRoots[i];
-			PendingOperation job = jobRoot.getJob();
+			PendingOperation job = jobRoots[i].getJob();
 			selected.add(job);
-			Object[] elements = jobRoot.getElements();
+			Object[] elements = jobRoots[i].getElements();
 			for (int j = 0; j < elements.length; j++) {
-				FeatureHierarchyElement2 element =
-					(FeatureHierarchyElement2) elements[j];
-				selectAll(
-					job.getOldFeature() != null,
-					element,
-					selected,
-					value);
+				FeatureHierarchyElement2 element = (FeatureHierarchyElement2) elements[j];
+				selectAll(job.getOldFeature() != null, element, selected, value);
 			}
 		}
 		treeViewer.setCheckedElements(selected.toArray());
@@ -263,22 +247,20 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 		ArrayList selected,
 		boolean value) {
 
-		if (ref.isOptional() == false)
+		if (!ref.isOptional()) {
 			selected.add(ref);
-		else {
+		} else {
 			if (ref.isEditable()) {
 				ref.setChecked(value);
 				if (value)
 					selected.add(ref);
-			} else {
-				if (ref.isChecked())
-					selected.add(ref);
+			} else if (ref.isChecked()) {
+				selected.add(ref);
 			}
 		}
 		Object[] included = ref.getChildren();
 		for (int i = 0; i < included.length; i++) {
-			FeatureHierarchyElement2 fe = (FeatureHierarchyElement2) included[i];
-			selectAll(update, fe, selected, value);
+			selectAll(update, (FeatureHierarchyElement2) included[i], selected, value);
 		}
 	}
 
@@ -299,10 +281,8 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 	
 	public FeatureHierarchyElement2[] getOptionalElements(PendingOperation job) {
 		for (int i = 0; i < jobRoots.length; i++) {
-			JobRoot root = jobRoots[i];
-			PendingOperation curr = root.getJob();
-			if (job.equals(curr)) {
-				return root.getElements();
+			if (job.equals(jobRoots[i].getJob())) {
+				return jobRoots[i].getElements();
 			}
 		}
 		return null;
@@ -313,10 +293,8 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 		JobRoot jobRoot = null;
 
 		for (int i = 0; i < jobRoots.length; i++) {
-			JobRoot root = jobRoots[i];
-			PendingOperation job = root.getJob();
-			if (currentJob.equals(job)) {
-				jobRoot = root;
+			if (currentJob.equals(jobRoots[i].getJob())) {
+				jobRoot = jobRoots[i];
 				break;
 			}
 		}
@@ -330,7 +308,6 @@ public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamic
 		for (int i = 0; i < elements.length; i++) {
 			elements[i].addCheckedOptionalFeatures(update, patch, config, set);
 		}
-		return (IFeatureReference[]) set.toArray(
-			new IFeatureReference[set.size()]);
+		return (IFeatureReference[]) set.toArray(new IFeatureReference[set.size()]);
 	}
 }

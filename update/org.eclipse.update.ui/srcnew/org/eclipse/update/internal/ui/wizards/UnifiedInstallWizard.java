@@ -29,7 +29,7 @@ public class UnifiedInstallWizard extends Wizard {
 	private UnifiedModeSelectionPage modePage;
 	private UnifiedSitePage sitePage;
 	private UnifiedReviewPage reviewPage;
-	private LicensePage2 licensePage;
+	private UnifiedLicensePage licensePage;
 	private UnifiedOptionalFeaturesPage optionalFeaturesPage;
 	private UnifiedTargetPage targetPage;
 	private IInstallConfiguration config;
@@ -142,7 +142,7 @@ public class UnifiedInstallWizard extends Wizard {
 			UpdateUI.logException(e);
 		}
 
-		licensePage = new LicensePage2(true);
+		licensePage = new UnifiedLicensePage(true);
 		addPage(licensePage);
 		optionalFeaturesPage = new UnifiedOptionalFeaturesPage(config);
 		addPage(optionalFeaturesPage);

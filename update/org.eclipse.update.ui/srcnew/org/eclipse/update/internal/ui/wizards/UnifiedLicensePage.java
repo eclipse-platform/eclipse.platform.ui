@@ -18,13 +18,11 @@ import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
 
-public class LicensePage2 extends WizardPage implements IDynamicPage2 {
+public class UnifiedLicensePage extends WizardPage implements IDynamicPage2 {
 	private static final String KEY_TITLE = "InstallWizard.LicensePage.title"; //$NON-NLS-1$
 	private static final String KEY_DESC = "InstallWizard.LicensePage.desc"; //$NON-NLS-1$
 	private static final String KEY_DESC2 = "InstallWizard.LicensePage.desc2"; //$NON-NLS-1$
-	private static final String KEY_HEADER = "InstallWizard.LicensePage.header"; //$NON-NLS-1$
 	private static final String KEY_ACCEPT = "InstallWizard.LicensePage.accept"; //$NON-NLS-1$
 	private static final String KEY_DECLINE = "InstallWizard.LicensePage.decline"; //$NON-NLS-1$
 	private static final String KEY_ACCEPT2 = "InstallWizard.LicensePage.accept2"; //$NON-NLS-1$
@@ -37,7 +35,7 @@ public class LicensePage2 extends WizardPage implements IDynamicPage2 {
 	/**
 	 * Constructor for LicensePage2
 	 */
-	public LicensePage2(boolean multiLicenseMode) {
+	public UnifiedLicensePage(boolean multiLicenseMode) {
 		super("License"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString(KEY_TITLE));
 		setPageComplete(false);
@@ -52,7 +50,7 @@ public class LicensePage2 extends WizardPage implements IDynamicPage2 {
 		super.dispose();
 	}
 
-	public LicensePage2(PendingOperation job) {
+	public UnifiedLicensePage(PendingOperation job) {
 		this(false);
 		setJobs(new PendingOperation[] { job });
 	}
@@ -60,9 +58,6 @@ public class LicensePage2 extends WizardPage implements IDynamicPage2 {
 	public void setJobs(PendingOperation[] jobs) {
 		this.jobs = jobs;
 	}
-
-public void setJobs(PendingChange[] jobs) {
-}
 
 	/**
 	 * @see DialogPage#createControl(Composite)
@@ -85,45 +80,33 @@ public void setJobs(PendingChange[] jobs) {
 				public void widgetSelected(SelectionEvent e) {
 					if (e.item != null) {
 						Object data = e.item.getData();
-						if (data == null) {
-							text.setText("");
-						} else {
-							text.setText((String) data);
-						}
+						text.setText((data == null) ? "" : (String) data);
 					}
 				}
 			});
-			GridData td = new GridData(GridData.FILL_BOTH);
-			table.setLayoutData(td);
+			table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		}
 		text =
 			new Text(
 				client,
-				SWT.MULTI
-					| SWT.BORDER
-					| SWT.V_SCROLL
-					| SWT.H_SCROLL
-					| SWT.READ_ONLY);
+				SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.READ_ONLY);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		if (multiLicenseMode)
 			gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
-		text.setBackground(
-			text.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		Composite buttonContainer = new Composite(client, SWT.NULL);
-		GridLayout buttonLayout = new GridLayout();
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		if (multiLicenseMode)
 			gd.horizontalSpan = 3;
-		buttonContainer.setLayout(buttonLayout);
+		buttonContainer.setLayout(new GridLayout());
 		buttonContainer.setLayoutData(gd);
 
 		final Button acceptButton = new Button(buttonContainer, SWT.RADIO);
 		acceptButton.setText(
-			UpdateUI.getString(
-				multiLicenseMode ? KEY_ACCEPT2 : KEY_ACCEPT));
+			UpdateUI.getString(multiLicenseMode ? KEY_ACCEPT2 : KEY_ACCEPT));
 		acceptButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(acceptButton.getSelection());
@@ -131,8 +114,7 @@ public void setJobs(PendingChange[] jobs) {
 		});
 		Button declineButton = new Button(buttonContainer, SWT.RADIO);
 		declineButton.setText(
-			UpdateUI.getString(
-				multiLicenseMode ? KEY_DECLINE2 : KEY_DECLINE));
+			UpdateUI.getString(multiLicenseMode ? KEY_DECLINE2 : KEY_DECLINE));
 		declineButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete(acceptButton.getSelection());
@@ -151,15 +133,11 @@ public void setJobs(PendingChange[] jobs) {
 					String label =
 						feature.getLabel()
 							+ " "
-							+ feature
-								.getVersionedIdentifier()
-								.getVersion()
-								.toString();
+							+ feature.getVersionedIdentifier().getVersion().toString();
 					item.setText(label);
-					boolean efix = feature.isPatch();
 					item.setImage(
 						UpdateUI.getDefault().getLabelProvider().get(
-							efix
+							feature.isPatch()
 								? UpdateUIImages.DESC_EFIX_OBJ
 								: UpdateUIImages.DESC_FEATURE_OBJ));
 					String license = feature.getLicense().getAnnotation();
@@ -183,8 +161,7 @@ public void setJobs(PendingChange[] jobs) {
 
 	private void showLicenseText() {
 		if (!multiLicenseMode) {
-			String license = jobs[0].getFeature().getLicense().getAnnotation();
-			text.setText(license);
+			text.setText(jobs[0].getFeature().getLicense().getAnnotation());
 			return;
 		}
 		TableItem[] selectedItems = table.getSelection();
@@ -192,11 +169,7 @@ public void setJobs(PendingChange[] jobs) {
 			text.setText("");
 		} else {
 			Object data = selectedItems[0].getData();
-			if (data == null) {
-				text.setText("");
-			} else {
-				text.setText((String) data);
-			}
+			text.setText((data == null) ? "" : (String) data);
 		}
 	}
 }

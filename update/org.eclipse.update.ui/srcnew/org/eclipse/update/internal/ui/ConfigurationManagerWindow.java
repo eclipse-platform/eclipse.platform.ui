@@ -62,7 +62,6 @@ public class ConfigurationManagerWindow
 	}
 
 	class GlobalAction extends Action implements IPropertyChangeListener {
-		private String id;
 		private IAction handler;
 
 		public GlobalAction() {

@@ -28,7 +28,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 
 public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
@@ -46,8 +45,6 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 		"MultiInstallWizard.TargetPage.requiredSpace";
 	private static final String KEY_AVAILABLE_FREE_SPACE =
 		"MultiInstallWizard.TargetPage.availableSpace";
-	private static final String KEY_LOCATION =
-		"MultiInstallWizard.TargetPage.location";
 	private static final String KEY_LOCATION_MESSAGE =
 		"MultiInstallWizard.TargetPage.location.message";
 	private static final String KEY_LOCATION_EMPTY =
@@ -69,8 +66,8 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	private ConfigListener configListener;
 	private Label requiredSpaceLabel;
 	private Label availableSpaceLabel;
-	private PendingOperationAdapter[] jobs;
-	private Hashtable targetSites;  // keys are PendingOperationAdapter
+	private PendingOperation[] jobs;
+	private Hashtable targetSites;  // keys are PendingOperation
 	private Button addButton;
 	private Button deleteButton;
 	private HashSet added;
@@ -98,19 +95,15 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	class TableLabelProvider
 		extends LabelProvider
 		implements ITableLabelProvider {
-		/**
-		* @see ITableLabelProvider#getColumnImage(Object, int)
-		*/
+			
 		public Image getColumnImage(Object obj, int col) {
-			UpdateLabelProvider provider =
-				UpdateUI.getDefault().getLabelProvider();
+			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
 			if (obj instanceof IConfiguredSite)
 				return provider.getLocalSiteImage((IConfiguredSite) obj);
-			if (obj instanceof PendingOperationAdapter) {
-				PendingOperationAdapter job = (PendingOperationAdapter) obj;
-				boolean patch = job.getFeature().isPatch();
+			if (obj instanceof PendingOperation) {
+				PendingOperation job = (PendingOperation) obj;
 				ImageDescriptor base =
-					patch
+					job.getFeature().isPatch()
 						? UpdateUIImages.DESC_EFIX_OBJ
 						: UpdateUIImages.DESC_FEATURE_OBJ;
 				int flags = 0;
@@ -122,22 +115,16 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 			return null;
 		}
 
-		/**
-		 * @see ITableLabelProvider#getColumnText(Object, int)
-		 */
 		public String getColumnText(Object obj, int col) {
-			if (obj instanceof PendingOperationAdapter && col == 0) {
-				PendingOperationAdapter job = (PendingOperationAdapter) obj;
-				IFeature feature = job.getFeature();
+			if (obj instanceof PendingOperation && col == 0) {
+				IFeature feature = ((PendingOperation) obj).getFeature();
 				return feature.getLabel()
 					+ " "
 					+ feature.getVersionedIdentifier().getVersion().toString();
 			}
 			if (obj instanceof IConfiguredSite && col == 0) {
-				IConfiguredSite csite = (IConfiguredSite) obj;
-				ISite site = csite.getSite();
-				URL url = site.getURL();
-				return url.getFile();
+				ISite site = ((IConfiguredSite) obj).getSite();
+				return site.getURL().getFile();
 
 			}
 			return null;
@@ -147,7 +134,8 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	class ConfigListener implements IInstallConfigurationChangedListener {
 		public void installSiteAdded(IConfiguredSite csite) {
 			siteViewer.add(csite);
-			if (added==null) added = new HashSet();
+			if (added == null)
+				added = new HashSet();
 			added.add(csite);
 			siteViewer.setSelection(new StructuredSelection(csite));
 			siteViewer.getControl().setFocus();
@@ -155,12 +143,13 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 
 		public void installSiteRemoved(IConfiguredSite csite) {
 			siteViewer.remove(csite);
-			if (added!=null) added.remove(csite);
-			PendingOperationAdapter job = (PendingOperationAdapter)siteViewer.getInput();
-			if (job!=null) {
+			if (added != null)
+				added.remove(csite);
+			PendingOperation job = (PendingOperation) siteViewer.getInput();
+			if (job != null) {
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 				IConfiguredSite defaultSite = computeTargetSite(jobSite);
-				if (defaultSite!=null)
+				if (defaultSite != null)
 					siteViewer.setSelection(new StructuredSelection(defaultSite));
 			}
 			siteViewer.getControl().setFocus();
@@ -181,9 +170,7 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	}
 
 	public void setJobs(PendingOperation[] jobs) {
-		this.jobs = new PendingOperationAdapter[jobs.length];
-		for (int i=0; i<jobs.length; i++)
-			this.jobs[i] = new PendingOperationAdapter(jobs[i]);
+		this.jobs = jobs;
 	}
 
 	public void dispose() {
@@ -192,9 +179,6 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 		super.dispose();
 	}
 
-	/**
-	 * @see DialogPage#createControl(Composite)
-	 */
 	public Control createContents(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -224,8 +208,8 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 		GridLayout blayout = new GridLayout();
 		blayout.marginWidth = blayout.marginHeight = 0;
 		buttonContainer.setLayout(blayout);
-		gd = new GridData(GridData.FILL_VERTICAL);
-		buttonContainer.setLayoutData(gd);
+		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		
 		addButton = new Button(buttonContainer, SWT.PUSH);
 		addButton.setText(UpdateUI.getString(KEY_NEW));
 		addButton.addSelectionListener(new SelectionAdapter() {
@@ -234,8 +218,7 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 			}
 		});
 		addButton.setEnabled(false);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-		addButton.setLayoutData(gd);
+		addButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		SWTUtil.setButtonDimensionHint(addButton);
 		
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
@@ -251,12 +234,10 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 			}
 		});
 		deleteButton.setEnabled(false);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-		deleteButton.setLayoutData(gd);
+		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		SWTUtil.setButtonDimensionHint(deleteButton);		
 		
-		
-		
+				
 		Composite status = new Composite(client, SWT.NULL);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 3;
@@ -267,24 +248,19 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 		label = new Label(status, SWT.NULL);
 		label.setText(UpdateUI.getString(KEY_REQUIRED_FREE_SPACE));
 		requiredSpaceLabel = new Label(status, SWT.NULL);
-		requiredSpaceLabel.setLayoutData(
-			new GridData(GridData.FILL_HORIZONTAL));
+		requiredSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
 		label.setText(UpdateUI.getString(KEY_AVAILABLE_FREE_SPACE));
 		availableSpaceLabel = new Label(status, SWT.NULL);
-		availableSpaceLabel.setLayoutData(
-			new GridData(GridData.FILL_HORIZONTAL));
+		availableSpaceLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.MultiTargetPage2");
 		return client;
 	}
 
 	private void createJobViewer(Composite parent) {
-		jobViewer =
-			new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		Table table = jobViewer.getTable();
-		table.setLayoutData(gd);
+		jobViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		jobViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		jobViewer.setContentProvider(new JobsContentProvider());
 		jobViewer.setLabelProvider(new TableLabelProvider());
 
@@ -296,62 +272,54 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	}
 
 	private void handleJobsSelected(IStructuredSelection selection) {
-		PendingOperationAdapter job = (PendingOperationAdapter) selection.getFirstElement();
+		PendingOperation job = (PendingOperation) selection.getFirstElement();
 		siteViewer.setInput(job);
 		JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 		addButton.setEnabled(jobSite.affinitySite == null);
 		if (jobSite.targetSite != null) {
-			siteViewer.setSelection(
-				new StructuredSelection(jobSite.targetSite));
+			siteViewer.setSelection(new StructuredSelection(jobSite.targetSite));
 		}
 	}
 
 	private void computeDefaultTargetSites() {
 		targetSites.clear();
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperation job = jobs[i].getJob();
 			JobTargetSite jobSite = new JobTargetSite();
-			jobSite.job = job;
-			jobSite.defaultSite = UpdateManager.getDefaultTargetSite(config, job, false);
-			jobSite.affinitySite = UpdateManager.getAffinitySite(config, job.getFeature());
+			jobSite.job = jobs[i];
+			jobSite.defaultSite =
+				UpdateManager.getDefaultTargetSite(config, jobs[i], false);
+			jobSite.affinitySite =
+				UpdateManager.getAffinitySite(config, jobs[i].getFeature());
 			if (jobSite.affinitySite == null)
-				jobSite.affinitySite = job.getDefaultTargetSite();
+				jobSite.affinitySite = jobs[i].getDefaultTargetSite();
 			jobSite.targetSite = computeTargetSite(jobSite);
 			targetSites.put(jobs[i], jobSite);
 		}
 	}
-	
-	IConfiguredSite computeTargetSite(JobTargetSite jobSite) {
-		IConfiguredSite csite = jobSite.affinitySite != null
-			? jobSite.affinitySite
-			: jobSite.defaultSite;
-		if (csite == null)
-			csite = getFirstTarget(jobSite);
-		return csite;
+
+	private IConfiguredSite computeTargetSite(JobTargetSite jobSite) {
+		IConfiguredSite csite =
+			jobSite.affinitySite != null ? jobSite.affinitySite : jobSite.defaultSite;
+		return (csite == null) ? getFirstTarget(jobSite) : csite;
 	}
 
 	private void createSiteViewer(Composite parent) {
-		siteViewer =
-			new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		Table table = siteViewer.getTable();
-		table.setLayoutData(gd);
+		siteViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		siteViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		siteViewer.setContentProvider(new TableContentProvider());
 		siteViewer.setLabelProvider(new TableLabelProvider());
 		siteViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
-				IConfiguredSite site = (IConfiguredSite) obj;
-				PendingOperationAdapter job = (PendingOperationAdapter) siteViewer.getInput();
+				PendingOperation job = (PendingOperation) siteViewer.getInput();
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-				return getSiteVisibility(site, jobSite);
+				return getSiteVisibility((IConfiguredSite) obj, jobSite);
 			}
 		});
-		siteViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
+		siteViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection = event.getSelection();
-				selectTargetSite((IStructuredSelection) selection);
-				updateDeleteButton((IStructuredSelection) selection);
+				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
+				selectTargetSite(ssel);
+				updateDeleteButton(ssel);
 			}
 		});
 
@@ -360,13 +328,10 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	}
 	
 	private void updateDeleteButton(IStructuredSelection selection) {
-		boolean hasUserSites = added!=null && !added.isEmpty();
-		boolean enable = !selection.isEmpty() && hasUserSites;
-
-		if (hasUserSites) {
+		boolean enable = added != null && !added.isEmpty();
+		if (enable) {
 			for (Iterator iter = selection.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
-				if (added.contains(obj) == false) {
+				if (!added.contains(iter.next())) {
 					enable = false;
 					break;
 				}
@@ -383,14 +348,12 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 		super.setVisible(visible);
 		if (visible) {
 			jobViewer.getTable().setFocus();
-			if (jobs.length>0)
+			if (jobs.length > 0)
 				jobViewer.setSelection(new StructuredSelection(jobs[0]));
 		}
 	}
 
-	private boolean getSiteVisibility(
-		IConfiguredSite site,
-		JobTargetSite jobSite) {
+	private boolean getSiteVisibility(IConfiguredSite site, JobTargetSite jobSite) {
 		// If affinity site is known, only it should be shown
 		if (jobSite.affinitySite != null) {
 			// Must compare referenced sites because
@@ -402,12 +365,15 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 		// If this is the default target site, let it show
 		if (site.equals(jobSite.defaultSite))
 			return true;
+			
 		// Not the default. If update, show only private sites.
 		// If install, allow product site + private sites.
 		if (site.isPrivateSite() && site.isUpdatable())
 			return true;
+			
 		if (jobSite.job.getOldFeature() == null && site.isProductSite())
 			return true;
+			
 		return false;
 	}
 
@@ -436,7 +402,7 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 
 	private void selectTargetSite(IStructuredSelection selection) {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
-		PendingOperationAdapter job = (PendingOperationAdapter) siteViewer.getInput();
+		PendingOperation job = (PendingOperation) siteViewer.getInput();
 		if (job != null) {
 			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 			jobSite.targetSite = site;
@@ -450,18 +416,14 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 		dd.setMessage(UpdateUI.getString(KEY_LOCATION_MESSAGE));
 		String path = dd.open();
 		if (path != null) {
-			File file = new File(path);
-			addConfiguredSite(getContainer().getShell(), config, file, false);
+			addConfiguredSite(getContainer().getShell(), config, new File(path), false);
 		}
 	}
 	
 	private void removeSelection() throws CoreException {
-		IStructuredSelection selection =
-			(IStructuredSelection) siteViewer.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) siteViewer.getSelection();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
-			Object obj = iter.next();
-			IConfiguredSite csite = (IConfiguredSite)obj;
-			config.removeConfiguredSite(csite);
+			config.removeConfiguredSite((IConfiguredSite) iter.next());
 		}
 	}
 
@@ -478,9 +440,8 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 			} else {
 				if (!ensureUnique(file, config)) {
 					String title = UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
-					String message = UpdateUI.getFormattedMessage(
-								KEY_LOCATION_EXISTS,
-								file.getPath());
+					String message =
+						UpdateUI.getFormattedMessage(KEY_LOCATION_EXISTS, file.getPath());
 					MessageDialog.openError(shell, title, message);
 					return null;
 				}
@@ -489,8 +450,7 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 				if (status.isOK())
 					config.addConfiguredSite(csite);
 				else {
-					String title =
-						UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
+					String title = UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
 					String message =
 						UpdateUI.getFormattedMessage(
 							KEY_LOCATION_ERROR_MESSAGE,
@@ -499,7 +459,7 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 						UpdateUI.getFormattedMessage(
 							KEY_ERROR_REASON,
 							status.getMessage());
-					message = message + "\r\n" + message2;
+					message += System.getProperty("line.separator") + message2;
 					ErrorDialog.openError(shell, title, message, status);
 					return null;
 				}
@@ -518,21 +478,17 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 			return;
 		}
 		IConfiguredSite site = (IConfiguredSite) element;
-		URL url = site.getSite().getURL();
-		String fileName = url.getFile();
-		File file = new File(fileName);
+		File file = new File(site.getSite().getURL().getFile());
 		long available = LocalSystemInfo.getFreeSpace(file);
 		long required = computeRequiredSizeFor(site);
 		if (required == -1)
-			requiredSpaceLabel.setText(
-				UpdateUI.getString(KEY_SIZE_UNKNOWN));
+			requiredSpaceLabel.setText(UpdateUI.getString(KEY_SIZE_UNKNOWN));
 		else
 			requiredSpaceLabel.setText(
 				UpdateUI.getFormattedMessage(KEY_SIZE, "" + required));
 
 		if (available == LocalSystemInfo.SIZE_UNKNOWN)
-			availableSpaceLabel.setText(
-				UpdateUI.getString(KEY_SIZE_UNKNOWN));
+			availableSpaceLabel.setText(UpdateUI.getString(KEY_SIZE_UNKNOWN));
 		else
 			availableSpaceLabel.setText(
 				UpdateUI.getFormattedMessage(KEY_SIZE, "" + available));
@@ -541,11 +497,9 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	private long computeRequiredSizeFor(IConfiguredSite site) {
 		long totalSize = 0;
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperationAdapter job = jobs[i];
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
+			JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobs[i]);
 			if (site.equals(jobSite.targetSite)) {
-				long jobSize =
-					site.getSite().getInstallSizeFor(job.getFeature());
+				long jobSize = site.getSite().getInstallSizeFor(jobs[i].getFeature());
 				if (jobSize == -1)
 					return -1;
 				totalSize += jobSize;
@@ -556,9 +510,7 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 
 	private void pageChanged() {
 		boolean empty = false;
-		for (Enumeration enum = targetSites.elements();
-			enum.hasMoreElements();
-			) {
+		for (Enumeration enum = targetSites.elements(); enum.hasMoreElements();) {
 			JobTargetSite jobSite = (JobTargetSite) enum.nextElement();
 			if (jobSite.targetSite == null) {
 				empty = true;
@@ -572,8 +524,7 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 				if (patchedSite != null
 					&& jobSite.targetSite != null
 					&& patchedSite.targetSite != null
-					&& jobSite.targetSite.equals(patchedSite.targetSite)
-						== false) {
+					&& jobSite.targetSite.equals(patchedSite.targetSite) == false) {
 					setErrorMessage(
 						"Patch '"
 							+ feature.getLabel()
@@ -583,23 +534,17 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 					setPageComplete(false);
 					return;
 				}
-			} 
+			}
 		}
 		verifyNotEmpty(empty);
 	}
 
 	private JobTargetSite findPatchedFeature(IFeature patch) {
-
-		for (Enumeration enum = targetSites.elements();
-			enum.hasMoreElements();
-			) {
+		for (Enumeration enum = targetSites.elements(); enum.hasMoreElements();) {
 			JobTargetSite jobSite = (JobTargetSite) enum.nextElement();
 			IFeature target = jobSite.job.getFeature();
-			if (target.equals(patch))
-				continue;
-			if (UpdateUI.isPatch(target, patch))
+			if (!target.equals(patch) && UpdateUI.isPatch(target, patch))
 				return jobSite;
-
 		}
 		return null;
 	}
@@ -607,41 +552,37 @@ public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
 	public JobTargetSite[] getTargetSites() {
 		JobTargetSite[] sites = new JobTargetSite[jobs.length];
 		for (int i = 0; i < jobs.length; i++) {
-			PendingOperationAdapter job = jobs[i];
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
+			JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobs[i]);
 			sites[i] = jobSite;
 		}
 		return sites;
 	}
 
 	public IConfiguredSite getTargetSite(PendingOperation job) {
-		// Find the adapter for this job
-		PendingOperationAdapter jobAdapter = null;
-		for (int i=0; jobs != null && i<jobs.length; i++)
-			if (job == jobs[i].getJob()) {
-				jobAdapter = jobs[i];
+		PendingOperation target = null;
+		for (int i = 0; jobs != null && i < jobs.length; i++)
+			if (job == jobs[i]) {
+				target = jobs[i];
 				break;
 			}
-		if (jobAdapter == null) 
-			return null;	
-		JobTargetSite jobSite = (JobTargetSite) targetSites.get(jobAdapter);
-		if (jobSite != null)
-			return jobSite.targetSite;
+		if (target != null) {
+			JobTargetSite jobSite = (JobTargetSite) targetSites.get(target);
+			if (jobSite != null)
+				return jobSite.targetSite;
+		}
 		return null;
 	}
 
 	private static boolean ensureUnique(File file, IInstallConfiguration config) {
-		IConfiguredSite [] sites = config.getConfiguredSites();
+		IConfiguredSite[] sites = config.getConfiguredSites();
 		URL fileURL;
 		try {
-			fileURL = new URL("file:"+file.getPath());
-		}
-		catch (MalformedURLException e) {
+			fileURL = new URL("file:" + file.getPath());
+		} catch (MalformedURLException e) {
 			return true;
 		}
-		for (int i=0; i<sites.length; i++) {
-			IConfiguredSite csite = sites[i];
-			URL url = csite.getSite().getURL();
+		for (int i = 0; i < sites.length; i++) {
+			URL url = sites[i].getSite().getURL();
 			if (UpdateManagerUtils.sameURL(fileURL, url))
 				return false;
 		}
