@@ -12,106 +12,61 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.jobs.Job;
+
 /**
  * JobInfo is the class that keeps track of the tree structure 
  * for objects that display job status in a tree.
  */
-class JobInfo {
-	String name;
+class JobInfo extends JobTreeElement{
 	ArrayList children = new ArrayList();
-	JobInfo parent;
-	JobInfo currentChild;
-
-	/**
-	 * Create a new instance of the receiver with the supplied 
-	 * task name as a child of parentObject,
-	 * @param taskName
-	 * @param parentObject
-	 */
-	JobInfo(String taskName, JobInfo parentObject) {
-		this(taskName);
-		parent = parentObject;
-		parent.addChild(this);
-	}
+	Job job;
+	TaskInfo taskInfo;
 
 	/**
 	 * Create a top level JobInfo.
 	 * @param taskName
 	 */
-	JobInfo(String taskName) {
-		name = taskName;
+	JobInfo(Job enclosingJob) {
+		this.job = enclosingJob;
 	}
 
-	/**
-	 * Return the name of the receiver.
-	 * @return String
-	 */
-	String getName() {
-		return name;
-	}
-
-	/**
-	 * Return the displayString for the receiver.
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 	 */
 	String getDisplayString() {
-		return getName();
-	}
-	
-	/**
-	 * Return whether or not there is a parent for the receiver.
-	 * @return boolean
-	 */
-	boolean hasParent() {
-		return parent != null;
+		return job.getName();
 	}
 
-	/**
-	 * Return whether or not the receiver has children.
-	 * @return boolean
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
+	 */
+	Object[] getChildren() {
+		return children.toArray();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
 	 */
 	boolean hasChildren() {
 		return children.size() > 0;
 	}
 
 	/**
-	 * Return the children of the receiver.
-	 * @return Object[]
+	 * Begin the task called taskName with the supplied work.
+	 * @param taskName
+	 * @param work
 	 */
-	Object[] getChildren() {
-		return children.toArray();
+	void beginTask(String taskName, int work) {
+		taskInfo = new TaskInfo(job, taskName, work);
 	}
 
 	/**
-	 * Return the parent of the receiver.
-	 * @return JobInfo or <code>null</code>.
+	 * Add the subtask to the receiver.
+	 * @param subTaskName
 	 */
-	JobInfo getParent() {
-		return parent;
-	}
-
-	/**
-	 * Add the supplied child to the receiver.
-	 * @param child
-	 */
-	void addChild(JobInfo child) {
-		children.add(child);
-		currentChild = child;
-	}
-
-	/**
-	 * Add the new job info to the lowest level child you
-	 * currently have. If there is a currentChild add it to them,
-	 * if not add it to the receiver.
-	 * @param JobInfo
-	 * @return JobInfo the job info this gets added to
-	 */
-	JobInfo addToLeafChild(JobInfo child) {
-		if (currentChild == null) {
-			addChild(child);
-			return this;
-		} else
-			return currentChild.addToLeafChild(child);
+	void addSubTask(String subTaskName) {
+		children.add(subTaskName);
 	}
 
 	/**
@@ -119,15 +74,22 @@ class JobInfo {
 	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
-		//No work on a simple label- pass it down
-		if (currentChild != null)
-			currentChild.addWork(workIncrement);
+		if (taskInfo != null)
+			taskInfo.addWork(workIncrement);
 	}
 	/**
-	 * Clear the collection of children.
+	 * Clear the collection of subtasks an the task info.
 	 */
-	void clearChildren(){
+	void clear() {
 		children.clear();
+		this.taskInfo = null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
+	 */
+	Object getParent() {
+		return null;
 	}
 
 }

@@ -159,7 +159,7 @@ public class DecorationScheduler {
 
 			UIJob job = new UIJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")) { //$NON-NLS-1$
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-
+			
 					if (pendingUpdate.isEmpty())
 						return Status.OK_STATUS;
 					synchronized (resultLock) {
@@ -168,15 +168,19 @@ public class DecorationScheduler {
 						Object[] elements =
 							pendingUpdate.toArray(
 								new Object[pendingUpdate.size()]);
+						monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.UpdatingTask"),elements.length + 20); //$NON-NLS-1$
 						pendingUpdate.clear();
+						monitor.worked(20);
 						decoratorManager.fireListeners(
 							new LabelProviderChangedEvent(
 								decoratorManager,
 								elements));
+						monitor.worked(elements.length);
 						//Other decoration requests may have occured due to
 						//updates. Only clear the results if there are none pending.
 						if (awaitingDecoration.isEmpty())
 							resultCache.clear();
+						monitor.done();
 					}
 					return Status.OK_STATUS;
 				}
@@ -221,12 +225,15 @@ public class DecorationScheduler {
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus run(IProgressMonitor monitor) {
+				monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.CalculatingTask"),100); //$NON-NLS-1$
 					//will block if there are no resources to be decorated
 				DecorationReference reference;
+				monitor.worked(20);
 				while ((reference = nextElement()) != null) {
 
 					DecorationBuilder cacheResult = new DecorationBuilder();
 
+					monitor.subTask(WorkbenchMessages.getString("DecorationScheduler.DecoratingSubtask") + reference.toString()); //$NON-NLS-1$
 					//Don't decorate if there is already a pending result
 					Object element = reference.getElement();
 					Object adapted = reference.getAdaptedElement();
@@ -309,7 +316,8 @@ public class DecorationScheduler {
 						scheduled = false;
 						decorated();
 					}
-				}				
+				}	
+				monitor.worked(80);			
 				return Status.OK_STATUS;
 			};
 		};

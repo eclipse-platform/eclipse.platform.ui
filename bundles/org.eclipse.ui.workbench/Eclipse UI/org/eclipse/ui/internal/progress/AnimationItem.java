@@ -19,13 +19,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
-import org.eclipse.swt.accessibility.AccessibleControlListener;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class AnimationItem {
 
@@ -180,9 +180,9 @@ public class AnimationItem {
 			 */
 			public void getValue(AccessibleControlEvent arg0) {
 				if(animated)
-					arg0.result =  "In progress";
+					arg0.result =  ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
 				else
-					arg0.result =  "Nothing running";
+					arg0.result =  ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
 			}
 		});
 

@@ -32,7 +32,7 @@ public class ProgressLabelProvider extends LabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object element) {
-		return ((JobInfo) element).getDisplayString();
+		return ((JobTreeElement) element).getDisplayString();
 	}
 
 

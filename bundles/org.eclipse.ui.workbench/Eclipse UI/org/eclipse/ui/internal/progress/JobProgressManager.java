@@ -105,7 +105,7 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
 		public void subTask(String name) {
-			Iterator iterator = providers.iterator();
+				Iterator iterator = providers.iterator();
 			while (iterator.hasNext()) {
 				ProgressContentProvider provider =
 					(ProgressContentProvider) iterator.next();

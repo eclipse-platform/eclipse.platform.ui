@@ -10,24 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
- * The JobInfoWithProgress is a JobInfo that also keeps track of progress.
+ * The TaskInfo is the info on a task with a job. It is 
+ * assumed that there is only one task running at a time -
+ * any previous tasks in a Job will be deleted.
  */
-public class JobInfoWithProgress extends JobInfo {
+public class TaskInfo extends SubTaskInfo{
 	double preWork = 0;
 	int totalWork = 0;
-	ProgressBar indicator;
+
+	
 
 	/**
 	 * Create a new instance of the receiver with the supplied total
-	 * work.
+	 * work and task name.
+	 * @param parentJob
 	 * @param taskName
 	 * @param total
 	 */
-	JobInfoWithProgress(String taskName, int total) {
-		super(taskName);
+	TaskInfo(Job parentJob, String taskName, int total) {	
+		super(parentJob,taskName);
 		totalWork = total;
 	}
 
@@ -40,14 +44,15 @@ public class JobInfoWithProgress extends JobInfo {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.JobInfo#getDisplayString()
+	/**
+	 * Get the display string for the task.
 	 */
 	String getDisplayString() {
 		int done = (int) (preWork * 100 / totalWork);
-		String[] messageValues = new String[2];
-		messageValues[0] = super.getDisplayString();
-		messageValues[1] = String.valueOf(done);
+		String[] messageValues = new String[3];
+		messageValues[0] = job.getName();
+		messageValues[1] = taskName;
+		messageValues[2] = String.valueOf(done);
 		return ProgressMessages.format("JobInfo.DoneMessage",messageValues); //$NON-NLS-1$
 		
 	}

@@ -30,6 +30,16 @@ public class ProgressContentProvider implements ITreeContentProvider {
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
 		listener = new JobChangeAdapter() {
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+			 */
+			public void scheduled(IJobChangeEvent event) {
+				jobs.put(event.getJob(),new JobInfo(event.getJob()));
+				refreshViewer(null);
+			}
+			
+			
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
@@ -47,21 +57,21 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
-		return ((JobInfo) parentElement).getChildren();
+		return ((JobTreeElement) parentElement).getChildren();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		return ((JobInfo) element).getParent();
+		return ((JobTreeElement) element).getParent();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		return ((JobInfo) element).hasChildren();
+		return ((JobTreeElement) element).hasChildren();
 	}
 
 	/* (non-Javadoc)
@@ -86,21 +96,68 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IProgressListener#beginTask(org.eclipse.core.runtime.jobs.Job, java.lang.String, int)
+	/**
+	 * A task has begun on job so create a new JobInfo for it.
+	 * @param job
+	 * @param taskName
+	 * @param totalWork
 	 */
-	public void beginTask(Job job, String name, int totalWork) {
-		if (job == null || job instanceof AnimateJob)
+	public void beginTask(Job job, String taskName, int totalWork) {
+		if (isNonDisplayableJob(job))
 			return;
-		if (totalWork == IProgressMonitor.UNKNOWN)
-			jobs.put(job, new JobInfo(name));
-		else
-			jobs.put(job, new JobInfoWithProgress(name, totalWork));
+		JobInfo info = getJobInfo(job);
+		info.beginTask(taskName, totalWork);
+
 		refreshViewer(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IProgressListener#subTask(org.eclipse.core.runtime.jobs.Job, java.lang.String)
+	/**
+	 * Get the JobInfo for the job. If it does not exist
+	 * create it.
+	 * @param job
+	 * @return
+	 */
+	private JobInfo getJobInfo(Job job) {
+		JobInfo info = (JobInfo) jobs.get(job);
+		if (info == null) {
+			info = new JobInfo(job);
+			jobs.put(job, info);
+		}
+		return info;
+	}
+	/**
+	 * Return whether or not this job is displayable.
+	 * @param job
+	 * @return
+	 */
+	private boolean isNonDisplayableJob(Job job) {
+		return job == null || job instanceof AnimateJob;
+	}
+	/**
+	 * Reset the name of the task to task name.
+	 * @param job
+	 * @param taskName
+	 * @param totalWork
+	 */
+	public void setTaskName(Job job, String taskName, int totalWork) {
+		if (isNonDisplayableJob(job))
+			return;
+
+		JobInfo info = getJobInfo(job);
+		if (info.taskInfo == null) {
+			beginTask(job, taskName, totalWork);
+			return;
+		} else
+			info.taskInfo.setTaskName(taskName);
+
+		info.clear();
+		refreshViewer(info);
+	}
+
+	/**
+	 * Create a new subtask on jg
+	 * @param job
+	 * @param name
 	 */
 	public void subTask(Job job, String name) {
 		if (job == null)
@@ -110,24 +167,12 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			return;
 		if (name.length() == 0)
 			return;
-		JobInfo info = getInfo(job);
+		JobInfo info = getJobInfo(job);
 
-		if (info == null)
-			return;
-
-		info.clearChildren();
-		info.addChild(new JobInfo(name));
+		info.clear();
+		info.addSubTask(name);
 		refreshViewer(info);
 
-	}
-
-	/**
-	 * Get the JobInfo currently being collected for job.
-	 * @param job
-	 * @return
-	 */
-	private JobInfo getInfo(Job job) {
-		return ((JobInfo) jobs.get(job));
 	}
 
 	/* (non-Javadoc)
@@ -139,9 +184,11 @@ public class ProgressContentProvider implements ITreeContentProvider {
 
 		if (job instanceof AnimateJob)
 			return;
-		JobInfo info = getInfo(job);
-		info.addWork(work);
-		refreshViewer(info);
+		JobInfo info = getJobInfo(job);
+		if (info.taskInfo != null) {
+			info.addWork(work);
+			refreshViewer(info);
+		}
 	}
 
 	/**
