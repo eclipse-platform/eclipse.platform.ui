@@ -180,7 +180,7 @@ public class ImageRegistry {
      * @param hookDisplay the Display
      */
     private void hookDisplayDispose(Display hookDisplay) {
-        display.disposeExec(new Runnable() {
+    	hookDisplay.disposeExec(new Runnable() {
             public void run() {
                 handleDisplayDispose();
             }
