@@ -17,6 +17,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -28,7 +29,7 @@ import org.eclipse.update.internal.ui.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class UnifiedSitePage extends BannerPage implements ISearchProvider {
+public class UnifiedSitePage extends BannerPage2 implements ISearchProvider2 {
 	static class SiteCandidate {
 		private SiteBookmark bookmark;
 		private boolean readOnly;
@@ -139,7 +140,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		}
 	}
 
-	class ModelListener implements IUpdateModelChangedListener {
+	class ModelListener implements org.eclipse.update.internal.operations.IUpdateModelChangedListener {
 		/* (non-Javadoc)
 		* @see org.eclipse.update.internal.ui.model.IUpdateModelChangedListener#objectChanged(java.lang.Object, java.lang.String)
 		*/
@@ -172,7 +173,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 	private Button addSiteButton;
 	private Button addLocalButton;
 	private Button removeButton;
-	private SearchRunner searchRunner;
+	private SearchRunner2 searchRunner;
 	private UnifiedSearchCategory category;
 	private UnifiedSearchObject search;
 	private ModelListener modelListener;
@@ -180,7 +181,7 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 	/**
 	 * @param name
 	 */
-	public UnifiedSitePage(SearchRunner searchRunner) {
+	public UnifiedSitePage(SearchRunner2 searchRunner) {
 		super("SitePage");
 		setTitle("Update sites to visit");
 		setDescription("Select update sites to visit while looking for new features.");
@@ -191,15 +192,13 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 		search = new UnifiedSearchObject();
 		search.setModel(UpdateUI.getDefault().getUpdateModel());
 		modelListener = new ModelListener();
-		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(
+		UpdateManager.getOperationsManager().addUpdateModelChangedListener(
 			modelListener);
 	}
 
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
-		UpdateUI
-			.getDefault()
-			.getUpdateModel()
+		UpdateManager.getOperationsManager()
 			.removeUpdateModelChangedListener(
 			modelListener);
 		super.dispose();
@@ -318,9 +317,9 @@ public class UnifiedSitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void handleAddSite() {
-		NewSiteBookmarkWizardPage page = new NewSiteBookmarkWizardPage(null);
-		NewWizard wizard =
-			new NewWizard(page, UpdateUIImages.DESC_NEW_BOOKMARK);
+		NewSiteBookmarkWizardPage2 page = new NewSiteBookmarkWizardPage2(null);
+		NewWizard2 wizard =
+			new NewWizard2(page, UpdateUIImages.DESC_NEW_BOOKMARK);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText("New Site");
