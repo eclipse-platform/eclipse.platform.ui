@@ -64,6 +64,9 @@ public class InstallWizard
 		this.jobs = jobs;
 	}
 
+	public int getInstallCount() {
+		return installCount;
+	}
 	public boolean isRestartNeeded() {
 		return installCount > 0 && needsRestart; // or == selectedJobs.length
 	}
@@ -156,7 +159,7 @@ public class InstallWizard
 				} catch (InvocationTargetException e) {
 					Throwable targetException = e.getTargetException();
 					if (targetException instanceof InstallAbortedException) {
-						return true;
+						return false;
 					}else if(targetException instanceof FeatureDownloadException){
 							FeatureDownloadException fde=(FeatureDownloadException)targetException;
 							retry =

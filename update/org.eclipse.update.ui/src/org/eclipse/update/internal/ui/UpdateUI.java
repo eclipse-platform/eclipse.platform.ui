@@ -60,7 +60,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	 * The constructor.
 	 */
 	public UpdateUI() {
-//		super(descriptor);
+
 		plugin = this;
 		try {
 			resourceBundle =
@@ -147,6 +147,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		model = new UpdateModel();
 		readInfo();
 		authenticator = new UpdateManagerAuthenticator();
 		Authenticator.setDefault(authenticator);
@@ -185,8 +186,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	}
 
 	public UpdateModel getUpdateModel() {
-		if (model == null)
-			model = new UpdateModel();
 		return model;
 	}
 

@@ -93,13 +93,16 @@ public class BatchInstallOperation
 			success = true;
 			return SiteManager.getLocalSite().save();
 		} catch (InstallAbortedException e) {
+			// saves the current configuration
+			if (installCount > 0)
+				SiteManager.getLocalSite().save();
 			throw new InvocationTargetException(e);
 		} catch (CoreException e) {
+			// saves the current configuration
+			if (installCount > 0)
+				SiteManager.getLocalSite().save();
 			throw new InvocationTargetException(e);
 		} finally {
-			// saves the current configuration
-			if (!success)
-				SiteManager.getLocalSite().save();
 			OperationsManager.setInProgress(false);
 			monitor.done();
 		}
