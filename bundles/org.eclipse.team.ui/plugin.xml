@@ -216,6 +216,12 @@
             description="%Command.syncAll.description"
             id="org.eclipse.team.ui.synchronizeAll">
       </command>
+      <command
+            name="%Command.syncLast.name"
+            category="org.eclipse.team.ui.category.team"
+            description="%Command.syncLast.description"
+            id="org.eclipse.team.ui.synchronizeLast">
+      </command>
       <keyBinding
             string=""
             scope="org.eclipse.ui.globalScope"
@@ -264,7 +270,6 @@
                tooltip="%Command.syncAll.name"
                class="org.eclipse.team.internal.ui.synchronize.actions.GlobalRefreshAction"
                icon="icons/full/elcl16/synch_participants.gif"
-               definitionId="org.eclipse.team.ui.synchronizeAll"
                style="pulldown"
                id="org.eclipse.team.ui.synchronizeAll">
          </action>

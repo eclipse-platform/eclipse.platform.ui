@@ -394,6 +394,10 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		RefreshSubscriberJob job = new RefreshSubscriberJob(this, jobName, taskName, resources, listener);
 		job.setUser(true);
 		Utils.schedule(job, site);
+		
+		// Remember the last participant synchronized
+		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, getId());
+		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID, getSecondaryId());
 	}
 	
 	/**

@@ -23,8 +23,8 @@ import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
+import org.eclipse.ui.*;
+import org.eclipse.ui.commands.*;
 
 /**
  * A global refresh action that allows the user to select the participant to refresh 
@@ -69,6 +69,18 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			}
 		};
 		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
+		
+		// hook up actions to the commands
+		IHandler handler = new ActionHandler(synchronizeAction);
+        HandlerSubmission handlerSubmission = new HandlerSubmission(null,
+                null, null, "org.eclipse.team.ui.synchronizeAll", handler, Priority.MEDIUM);	 //$NON-NLS-1$
+		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
+				
+		handler = new ActionHandler(this);
+        handlerSubmission = new HandlerSubmission(null,
+                null, null, "org.eclipse.team.ui.synchronizeLast", handler, Priority.MEDIUM);	 //$NON-NLS-1$
+		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
+		
 		setMenuCreator(this);
 		TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);
 	}
@@ -129,22 +141,24 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		this.window = window;
 	}
 
+	public void run() {
+		String id = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT);
+		String secondaryId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID);
+		IWizard wizard = new GlobalSynchronizeWizard();
+		ISynchronizeParticipantReference participant = TeamUI.getSynchronizeManager().get(id, secondaryId);
+		if (participant != null) {
+			run(participant);
+		} else {
+			synchronizeAction.run();
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		String id = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT);
-		String secondaryId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID);
-		IWizard wizard = new GlobalSynchronizeWizard();
-		if (! id.equals(NO_DEFAULT_PARTICPANT)) {
-			ISynchronizeParticipantReference participant = TeamUI.getSynchronizeManager().get(id, secondaryId);
-			if (participant != null) {
-				run(participant);
-			}
-		} else {
-			synchronizeAction.run();
-		}
+		run();
 		actionProxy = action;
 		updateTooltipText();
 	}
