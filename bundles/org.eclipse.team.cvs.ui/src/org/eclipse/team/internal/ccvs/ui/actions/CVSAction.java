@@ -367,9 +367,10 @@ abstract public class CVSAction extends TeamAction {
 	private boolean saveAllEditors() {
 		final int option = CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS);
 		final boolean[] okToContinue = new boolean[] {true};
-		if(option != ICVSUIConstants.OPTION_NEVER) {		
+		if (option != ICVSUIConstants.OPTION_NEVER) {		
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
+					IWorkbenchPage oldPage = CVSUIPlugin.getActivePage();
 					boolean confirm = option == ICVSUIConstants.OPTION_PROMPT;
 					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 					for (int i = 0; i < windows.length; i++) {
@@ -377,6 +378,9 @@ abstract public class CVSAction extends TeamAction {
 						for (int j = 0; j < pages.length; j++) {	
 							okToContinue[0] = pages[j].saveAllEditors(confirm);
 						}
+					}
+					if (oldPage != null) {
+						oldPage.getWorkbenchWindow().getShell().setFocus();
 					}
 				}
 			});
