@@ -167,7 +167,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			return getDefaultControl();
 		}
 
-		/*
+		/**
 		 * @see IPage#setFocus()
 		 */
 		public void setFocus() {
@@ -385,7 +385,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		// is created
 		Runnable r = new Runnable() {
 			public void run() {
-				if (getViewer().getControl().isDisposed()) {
+				if (!isAvailable()) {
 					return;
 				}
 				IContributionItem[] items = tbm.getItems();
@@ -405,7 +405,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 				setMemento(null);
 			}
 		};
-		if (getViewer().getControl().isDisposed()) {
+		if (!isAvailable()) {
 			return;
 		}
 		asyncExec(r);
@@ -503,11 +503,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see Display.asyncExec(Runnable)
 	 */
 	public void asyncExec(Runnable r) {
-		if (getViewer() != null) {
-			Control ctrl= getViewer().getControl();
-			if (ctrl != null && !ctrl.isDisposed()) {
-				ctrl.getDisplay().asyncExec(r);
-			}
+		if (isAvailable()) {
+			getViewer().getControl().getDisplay().asyncExec(r);
 		}
 	}
 	
@@ -518,11 +515,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see Display.syncExec(Runnable)
 	 */
 	public void syncExec(Runnable r) {
-		if (getViewer() != null) {
-			Control ctrl= getViewer().getControl();
-			if (ctrl != null && !ctrl.isDisposed()) {
-				ctrl.getDisplay().syncExec(r);
-			}
+		if (isAvailable()) {
+			getViewer().getControl().getDisplay().syncExec(r);
 		}
 	}	
 	
@@ -655,7 +649,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 
 	/**
-	 * Returns the default control for this view. By defuault,
+	 * Returns the default control for this view. By default,
 	 * this view's viewer's control is returned. Subclasses
 	 * should override if required - for example, if this
 	 * view has its viewer nested inside other controls.
