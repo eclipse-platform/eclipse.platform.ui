@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.events.*;
@@ -42,7 +42,8 @@ public void basicDelete(MultiStatus status) throws CoreException {
  * some description fields to change value after project creation. (e.g. project location)
  */
 protected MultiStatus basicSetDescription(ProjectDescription description, boolean creation) {
-	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 13, "Problems encountered while setting project description", null);
+	String message = Policy.bind("resources.projectDesc");
+	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 13, message, null);
 	ProjectDescription current = (ProjectDescription) internalGetDescription();
 	current.setComment(description.getComment());
 	if (creation)
@@ -122,8 +123,10 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
  */
 public void checkAccessible(int flags) throws CoreException {
 	super.checkAccessible(flags);
-	if (!isOpen(flags))
-		throw new ResourceException(IResourceStatus.PROJECT_NOT_OPEN, getFullPath(), Policy.bind("mustBeOpen", new String[] { getFullPath().toString()}), null);
+	if (!isOpen(flags)) {
+		String message = Policy.bind("resources.mustBeOpen", getFullPath().toString());
+		throw new ResourceException(IResourceStatus.PROJECT_NOT_OPEN, getFullPath(), message, null);
+	}
 }
 /**
  * Checks validity of the given project description.
@@ -131,7 +134,8 @@ public void checkAccessible(int flags) throws CoreException {
 protected void checkDescription(IProject project, IProjectDescription desc) throws CoreException {
 	if (desc.getLocation() == null)
 		return;
-	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, "Invalid project description.", null);
+	String message = Policy.bind("resources.invalidProjDesc");
+	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 	status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
 	status.merge(workspace.validateProjectLocation(project, desc.getLocation()));
 	if (!status.isOK())
@@ -149,7 +153,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String msg = Policy.bind("closing.2", new String[] { getFullPath().toString()});
+		String msg = Policy.bind("resources.closing.1", getFullPath().toString());
 		monitor.beginTask(msg, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -214,7 +218,7 @@ protected void configureNature(final String natureID, final MultiStatus status) 
 			if (exception instanceof CoreException)
 				status.add(((CoreException) exception).getStatus());
 			else
-				status.add(new ResourceStatus(13, getFullPath(), "Error configuring nature: " + natureID, exception));
+				status.add(new ResourceStatus(13, getFullPath(), Policy.bind("resources.errorNature", natureID), exception));
 		}
 	};
 	Platform.run(code);
@@ -254,7 +258,7 @@ protected void copyMetaArea(IProject source, IProject destination, IProgressMoni
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("create", Policy.totalWork);
+		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork);
 		checkValidPath(path, PROJECT);
 		try {
 			workspace.prepareOperation();
@@ -311,12 +315,12 @@ public void create(IProgressMonitor monitor) throws CoreException {
 protected IProjectNature createNature(String natureID) throws CoreException {
 	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES, natureID);
 	if (extension == null) {
-		String message = Policy.bind("natureExtension", new String[] {natureID});
+		String message = Policy.bind("resources.natureExtension", natureID);
 		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, null);
 	}
 	IConfigurationElement[] configs = extension.getConfigurationElements();
 	if (configs.length < 1) {
-		String message = Policy.bind("natureClass", new String[] {natureID});
+		String message = Policy.bind("resources.natureClass", natureID);
 		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, null);
 	}
 	IConfigurationElement config = configs[0];
@@ -325,7 +329,7 @@ protected IProjectNature createNature(String natureID) throws CoreException {
 		nature.setProject(this);
 		return nature;
 	} catch (ClassCastException e) {
-		String message = Policy.bind("natureImplement", new String[] {natureID});
+		String message = Policy.bind("resources.natureImplement", natureID);
 		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, e);
 	}
 }
@@ -350,7 +354,7 @@ protected void deconfigureNature(final String natureID, final MultiStatus status
 			if (exception instanceof CoreException)
 				status.add(((CoreException) exception).getStatus());
 			else
-				status.add(new ResourceStatus(13, getFullPath(), "Error deconfiguring nature: " + natureID, exception));
+				status.add(new ResourceStatus(13, getFullPath(), Policy.bind("resources.natureDeconfig", natureID), exception));
 		}
 	};
 	Platform.run(code);
@@ -367,7 +371,8 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("deleting", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.deleting", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			/* if there is no such resource (including type check) then there is nothing
@@ -375,7 +380,8 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 			ResourceInfo info = getResourceInfo(false, false);
 			if (!exists(getFlags(info), true))
 				return;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem"), null);
+			message = Policy.bind("resources.deleteProblem");
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, null);
 			/* Signal that this resource is about to be deleted. 
 			   Do this before the begin to prevent lifecycle participants to change the tree. */
 			workspace.deleting(this);
@@ -534,7 +540,8 @@ private void incrementContentId() {
 protected void internalCopy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("copying", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.copying", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			String destName = destDesc.getName();
@@ -585,7 +592,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			workspace.getBuildManager().fixBuildersFor(destProject);
 
 			// refresh local
-			monitor.subTask(Policy.bind("syncTree"));
+			monitor.subTask(Policy.bind("resources.syncTree"));
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -610,7 +617,8 @@ protected void internalCopyProjectOnly(IResource destination, IProgressMonitor m
 protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("renaming", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.renaming", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IProject.move API
@@ -631,7 +639,7 @@ protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMoni
 			for (int i = 0; i < children.length; i++)
 				children[i].copy(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
-			monitor.subTask(Policy.bind("syncTree"));
+			monitor.subTask(Policy.bind("resources.syncTree"));
 			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
@@ -660,7 +668,8 @@ public ProjectDescription internalGetDescription() {
 protected void internalMove(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("renaming", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.renaming", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			String destName = destDesc.getName();
@@ -721,11 +730,10 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			// tell the marker manager that we moved so the marker deltas are ok
-			monitor.subTask("Creating marker deltas.");
 			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
 			monitor.worked(Policy.opWork * 10 / 100);
 
-			monitor.subTask(Policy.bind("syncTree"));
+			monitor.subTask(Policy.bind("resources.syncTree"));
 			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
@@ -742,7 +750,7 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 protected void internalMoveContent(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("Moving project content.", Policy.totalWork);
+		monitor.beginTask(Policy.bind("resources.movingContent"), Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			IPath source = getLocation();
@@ -784,7 +792,8 @@ protected void internalMoveContent(IProjectDescription destDesc, boolean force, 
 protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("renaming", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.renaming", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IProject.move API
@@ -809,11 +818,10 @@ protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMoni
 			delete(true, force, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			// tell the marker manager that we moved so the marker deltas are ok
-			monitor.subTask("Creating marker deltas.");
 			getMarkerManager().moved(this, destFolder, IResource.DEPTH_ZERO);
 			monitor.worked(Policy.opWork * 10 / 100);
 
-			monitor.subTask(Policy.bind("syncTree"));
+			monitor.subTask(Policy.bind("resources.syncTree"));
 			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
@@ -940,7 +948,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
 public void open(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String msg = Policy.bind("opening.2", new String[] { getFullPath().toString()});
+		String msg = Policy.bind("resources.opening.1", getFullPath().toString());
 		monitor.beginTask(msg, Policy.totalWork);
 		monitor.subTask(msg);
 		try {
@@ -996,7 +1004,7 @@ private void pseudoOpen() throws CoreException {
 public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("Setting description", Policy.totalWork);
+		monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			ResourceInfo info = getResourceInfo(false, false);
@@ -1033,7 +1041,8 @@ protected void startup() throws CoreException {
 public void touch(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("Touching", Policy.totalWork);
+		String message = Policy.bind("resource.touch", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			workspace.changing(this);

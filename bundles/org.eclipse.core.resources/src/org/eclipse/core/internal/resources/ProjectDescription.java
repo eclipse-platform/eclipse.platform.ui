@@ -1,18 +1,16 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.Assert;
 import java.util.*;
-/**
- *
- */
+
 public class ProjectDescription extends ModelObject implements IProjectDescription {
 	// fields
 	protected IPath location;

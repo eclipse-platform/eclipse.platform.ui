@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.utils.Assert;
@@ -22,7 +22,8 @@ protected File(IPath path, Workspace container) {
 public void appendContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("settingContents", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.settingContents", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		Assert.isNotNull(content, "Content cannot be null.");
 		try {
 			workspace.prepareOperation();
@@ -65,7 +66,8 @@ public IFolder changeToFolder() throws CoreException {
 public void create(InputStream content, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("creating", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.creating", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FILE);
 		try {
 			workspace.prepareOperation();
@@ -157,7 +159,8 @@ protected void internalSetContents(InputStream content, boolean force, boolean k
 public void setContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("settingContents", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.settingContents", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			ResourceInfo info = getResourceInfo(false, false);

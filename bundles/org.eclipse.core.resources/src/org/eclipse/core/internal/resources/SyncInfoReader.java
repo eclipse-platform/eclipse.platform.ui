@@ -1,12 +1,13 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.utils.Policy;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
@@ -33,7 +34,7 @@ protected SyncInfoReader getReader(int formatVersion) throws IOException {
 		case 3 :
 			return new SyncInfoReader_3(workspace, synchronizer);
 		default :
-			throw new IOException("Unknown format");
+			throw new IOException(Policy.bind("resources.format"));
 	}
 }
 public void readPartners(DataInputStream input) throws CoreException {
@@ -47,7 +48,8 @@ public void readPartners(DataInputStream input) throws CoreException {
 		}
 		synchronizer.setRegistry(registry);
 	} catch (IOException e) {
-		throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, "Errors reading sync info file: " + e.toString()));
+		String message = Policy.bind("resources.readSync", e.toString());
+		throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, message));
 	}
 }
 public void readSyncInfo(DataInputStream input) throws IOException {

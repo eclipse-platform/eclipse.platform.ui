@@ -1,9 +1,10 @@
 package org.eclipse.core.internal.resources;
+
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * This class is temporary only. It is only a hack because some old files do not have the
  * version number in it. It should be removed when we guarantee that all users of the platform

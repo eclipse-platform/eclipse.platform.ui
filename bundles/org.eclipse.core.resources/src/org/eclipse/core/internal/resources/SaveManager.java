@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.internal.events.*;
@@ -75,7 +75,8 @@ public ISavedState addParticipant(Plugin plugin, ISaveParticipant participant) t
 protected void broadcastLifecycle(final int lifecycle, Map contexts, final MultiStatus warnings, IProgressMonitor monitor) {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", contexts.size());
+		String taskname = Policy.bind("resources.broadcasting");
+		monitor.beginTask(taskname, contexts.size());
 		for (final Iterator it = contexts.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Map.Entry) it.next();
 			Plugin plugin = (Plugin) entry.getKey();
@@ -87,7 +88,7 @@ protected void broadcastLifecycle(final int lifecycle, Map contexts, final Multi
 					executeLifecycle(lifecycle, participant, context);
 				}
 				public void handleException(Throwable e) {
-					String message = "Problems occurred during save";
+					String message = Policy.bind("resources.saveProblem");
 					IStatus status = new Status(Status.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e);
 					warnings.add(status);
 
@@ -290,7 +291,7 @@ protected void initSnap(IProgressMonitor monitor) throws CoreException {
 	if (file.exists())
 		file.delete();
 	if (file.exists()) {
-		String message = "Could not initialize snapshot file";
+		String message = Policy.bind("resources.snapInit");
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, null, message, null);
 	}
 }
@@ -405,7 +406,7 @@ protected DataInputStream resetStream(DataInputStream input, IPath location, IPa
 protected void restore(Project project, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", 40);
+		monitor.beginTask(Policy.bind("resources.restoring"), 40);
 		if (project.isOpen()) {
 			restoreTree(project, Policy.subMonitorFor(monitor, 10));
 		} else {
@@ -426,7 +427,7 @@ protected void restore(Project project, IProgressMonitor monitor) throws CoreExc
 protected void restore(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", 50);
+		monitor.beginTask(Policy.bind("resources.restoring"), 50);
 		// need to open the tree to restore, but since we're not 
 		// inside an operation, be sure to close it afterwards
 		workspace.newWorkingTree();
@@ -487,7 +488,7 @@ protected void restoreMasterTable() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		String message = "Could not read master table.";
+		String message = Policy.bind("resources.exMasterTable");
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
@@ -501,7 +502,7 @@ protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws
 	if (description == null && project.internalGetDescription() == null) {
 		// Somebody has probably deleted the .prj file from disk 
 		// delete the project from the workspace but leave its contents
-		project.basicDelete(new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, "ignored", null));
+		project.basicDelete(new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, Policy.bind("resources.ignored"), null));
 		return;
 	}
 	if (description != null) {
@@ -529,8 +530,10 @@ protected void restoreMetaInfo(Workspace workspace, IProgressMonitor monitor) th
  */
 protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
+	String message;
 	try {
-		monitor.beginTask("", Policy.totalWork);
+		message = Policy.bind("resources.restoring");
+		monitor.beginTask(message, Policy.totalWork);
 		IPath snapLocation = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
 		java.io.File localFile = snapLocation.toFile();
 
@@ -560,7 +563,7 @@ protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
 			}
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
-			String message = "Could not read snapshot file";
+			message = Policy.bind("resources.snapRead");
 			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, e));
 		}
 	} finally {
@@ -597,7 +600,8 @@ protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) thr
 protected void restoreTree(Project project, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", Policy.totalWork);
+		String message = Policy.bind("resources.restoring");
+		monitor.beginTask(message, Policy.totalWork);
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, false);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists())
@@ -617,8 +621,8 @@ protected void restoreTree(Project project, IProgressMonitor monitor) throws Cor
 			input.close();
 		}
 	} catch (IOException e) {
-		String msg = Policy.bind("readMeta", new String[] { project.getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);
+		message = Policy.bind("resources.readMeta", project.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), message, e);
 	} finally {
 		monitor.done();
 	}
@@ -652,7 +656,7 @@ protected void restoreTree(Workspace workspace, IProgressMonitor monitor) throws
 			input.close();
 		}
 	} catch (IOException e) {
-		String msg = Policy.bind("readMeta", new String[] { treeLocation.toOSString()});
+		String msg = Policy.bind("resources.readMeta", treeLocation.toOSString());
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);
 	}
 }
@@ -671,7 +675,7 @@ protected void saveMasterTable(IPath location) throws CoreException {
 			output.close();
 		}
 	} catch (IOException e) {
-		String message = "Could not save master table.";
+		String message = Policy.bind("resources.exSaveMaster");
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
@@ -712,7 +716,7 @@ protected void saveTree(Map contexts, IProgressMonitor monitor) throws CoreExcep
 			output.close();
 		}
 	} catch (Exception e) {
-		String msg = Policy.bind("writeMeta", new String[] { Path.ROOT.toString()});
+		String msg = Policy.bind("resources.writeMeta", Path.ROOT.toString());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, msg, e);
 	}
 }
@@ -764,8 +768,10 @@ public void snapshotIfNeeded() throws CoreException {
  */
 protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
+	String message;
 	try {
-		monitor.beginTask("", Policy.totalWork);
+		message = Policy.bind("resources.snapshoting");
+		monitor.beginTask(message, Policy.totalWork);
 		// don't need to snapshot if there are no changes 
 		if (tree == lastSnap)
 			return;
@@ -786,7 +792,7 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 				out.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("writeWorkspaceMeta", new String[] { localFile.getAbsolutePath()});
+			message = Policy.bind("resources.writeWorkspaceMeta", localFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, message, e);
 		}
 		lastSnap = tree;
@@ -855,7 +861,8 @@ public void startup(IProgressMonitor monitor) throws CoreException {
 protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", Policy.totalWork);
+		String message = Policy.bind("resources.writing");
+		monitor.beginTask(message, Policy.totalWork);
 		boolean wasImmutable = false;
 		try {
 			// Create an array of trees to save. Ensure that the current one is in the list
@@ -923,7 +930,7 @@ protected void writeTree(Project project, int depth) throws CoreException {
 			safe.close();
 		}
 	} catch (IOException e) {
-		String msg = Policy.bind("writeMeta", new String[] { project.getFullPath().toString()});
+		String msg = Policy.bind("resources.writeMeta", project.getFullPath().toString());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, treeLocation, msg, e);
 	}
 }
@@ -936,7 +943,8 @@ protected void writeTree(Project project, int depth) throws CoreException {
 protected void writeTree(Project project, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", 10);
+		String message = Policy.bind("resources.writing");
+		monitor.beginTask(message, 10);
 		boolean wasImmutable = false;
 		try {
 			/**
@@ -1018,20 +1026,25 @@ public void writeElement(IPath path, Object element, DataOutput output) throws I
  */
 protected void resetSnapshots(IResource resource) throws CoreException {
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+	String message;
 
 	// delete the snapshot file, if any
 	java.io.File file = workspace.getMetaArea().getMarkersSnapshotLocationFor(resource).toFile();
 	if (file.exists())
 		file.delete();
-	if (file.exists())
-		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), "Could not reset markers snapshot file.", null);
+	if (file.exists()) {
+		message = Policy.bind("resources.resetMarkers");
+		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
+	}
 
 	// delete the snapshot file, if any
 	file = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(resource).toFile();
 	if (file.exists())
 		file.delete();
-	if (file.exists())
-		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), "Could not reset syncinfo snapshot file.", null);
+	if (file.exists()) {
+		message = Policy.bind("resources.resetSync");
+		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
+	}
 		
 	// if we have the workspace root then recursive over the projects.
 	// only do open projects since closed ones are saved elsewhere
@@ -1044,9 +1057,10 @@ protected void resetSnapshots(IResource resource) throws CoreException {
 public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String taskName = Policy.bind("saving.1");
-		monitor.beginTask(taskName, 6);
-		MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.WARNING, "Save operation warnings", null);
+		String message = Policy.bind("resources.saving.0");
+		monitor.beginTask(message, 6);
+		message = Policy.bind("resources.saveWarnings");
+		MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.WARNING, message, null);
 		try {
 			workspace.prepareOperation();
 			workspace.beginOperation(false);
@@ -1145,6 +1159,7 @@ public void visitAndSave(IResource root) throws CoreException {
 	final List writtenPartners = new ArrayList(synchronizer.registry.size());
 	DataOutputStream o1 = null;
 	DataOutputStream o2 = null;
+	String message;
 
 	// Create the output streams
 	try {
@@ -1159,8 +1174,8 @@ public void visitAndSave(IResource root) throws CoreException {
 				o1.close();
 			} catch (IOException e2) {
 			}
-		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	}
 
 	final DataOutputStream markersOutput = o1;
@@ -1177,7 +1192,8 @@ public void visitAndSave(IResource root) throws CoreException {
 				if (syncInfoOutput != null)
 					synchronizer.saveSyncInfo(resource, syncInfoOutput, writtenPartners);
 			} catch (IOException e) {
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), "Failed to write meta info for resource.", e);
+				message = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
+				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), message, e);
 			}
 			return true;
 		}
@@ -1193,11 +1209,11 @@ public void visitAndSave(IResource root) throws CoreException {
 		if (syncInfoOutput != null)
 			removeGarbage(syncInfoOutput, syncInfoLocation, syncInfoTempLocation);
 	} catch (IOException e) {
-		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} catch (CoreException e) {
-		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} finally {
 		if (markersOutput != null)
 			try {
@@ -1240,6 +1256,7 @@ public void visitAndSnap(IResource root) throws CoreException {
 	SafeChunkyOutputStream safeSyncInfoStream = null;
 	DataOutputStream o1 = null;
 	DataOutputStream o2 = null;
+	String message;
 
 	// Create the output streams
 	try {
@@ -1257,8 +1274,8 @@ public void visitAndSnap(IResource root) throws CoreException {
 				o1.close();
 			} catch (IOException e2) {
 			}
-		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	}
 
 	final DataOutputStream markersOutput = o1;
@@ -1277,7 +1294,8 @@ public void visitAndSnap(IResource root) throws CoreException {
 				if (syncInfoOutput != null)
 					synchronizer.snapSyncInfo(resource, syncInfoOutput);
 			} catch (IOException e) {
-				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), "Failed to write meta info for resource.", e);
+				message = Policy.bind("resources.writeMeta", resource.getFullPath().toString());
+				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, resource.getFullPath(), message, e);
 			}
 			return true;
 		}
@@ -1292,11 +1310,11 @@ public void visitAndSnap(IResource root) throws CoreException {
 		if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size())
 			safeSyncInfoStream.succeed();
 	} catch (IOException e) {
-		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} catch (CoreException e) {
-		String msg = Policy.bind("writeMeta", new String[] { root.getFullPath().toString()});
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), msg, e);
+		message = Policy.bind("resources.writeMeta", root.getFullPath().toString());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 	} finally {
 		if (markersOutput != null)
 			try {

@@ -1,11 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-//
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.localstore.*;
@@ -141,7 +140,7 @@ protected void restoreFromSave(IResource resource) throws CoreException {
 	} catch (FileNotFoundException e) {
 		// ignore if no sync info saved
 	} catch (IOException e) {
-		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 	}
 }
@@ -162,7 +161,7 @@ protected void restoreFromSnap(IResource resource) {
 		// ignore if no sync info saved.
 	} catch (Exception e) {
 		// only log the exception, we should not fail restoring the snapshot
-		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
 		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 	}
 }
@@ -220,7 +219,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 		resourceInfo.set(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 		flags = target.getFlags(resourceInfo);
 		if (target.isPhantom(flags) && resourceInfo.getSyncInfo(false) == null) {
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.OK, "OK", null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.OK, Policy.bind("ok"), null);
 			((Resource) resource).deleteResource(false, status);
 			if (!status.isOK())
 				throw new ResourceException(status);

@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.IResourceStatus;
@@ -22,8 +22,10 @@ public WorkspaceTreeReader(Workspace workspace) {
 }
 public void readTree(DataInputStream input, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
+	String message;
 	try {
-		monitor.beginTask("", Policy.totalWork);
+		message = Policy.bind("resources.reading");
+		monitor.beginTask(message, Policy.totalWork);
 		readWorkspaceFields(input, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
 		HashMap savedStates = new HashMap(20);
@@ -39,7 +41,7 @@ public void readTree(DataInputStream input, IProgressMonitor monitor) throws Cor
 		linkBuildersToTrees(buildersToBeLinked, trees, pluginsToBeLinked.size(), Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 	} catch (IOException e) {
-		String msg = "Problem reading workspace tree";
+		message = Policy.bind("resources.readWorkspaceTree");
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
 	} finally {
 		monitor.done();
@@ -94,7 +96,8 @@ protected void readBuildersPersistentInfo(DataInputStream input, List builders, 
 protected ElementTree[] readTrees(IPath root, DataInputStream input, IProgressMonitor monitor) throws IOException, CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", 4);
+		String message = Policy.bind("resources.reading");
+		monitor.beginTask(message, 4);
 		ElementTreeReader treeReader = new ElementTreeReader(workspace.getSaveManager());
 		ElementTree[] trees = treeReader.readDeltaChain(input);
 		monitor.worked(3);
@@ -147,8 +150,10 @@ protected void linkBuildersToTrees(List buildersToBeLinked, ElementTree[] trees,
 }
 public ElementTree readSnapshotTree(DataInputStream input, ElementTree complete, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
+	String message;
 	try {
-		monitor.beginTask("", Policy.totalWork);
+		message = Policy.bind("resources.readingSnap");
+		monitor.beginTask(message, Policy.totalWork);
 		ElementTreeReader reader = new ElementTreeReader(workspace.getSaveManager());
 		while (input.available() > 0) {
 			readWorkspaceFields(input, Policy.subMonitorFor(monitor, Policy.totalWork / 2));
@@ -164,7 +169,7 @@ public ElementTree readSnapshotTree(DataInputStream input, ElementTree complete,
 		}
 		return complete;
 	} catch (IOException e) {
-		String msg = "Problem reading workspace tree snapshot";
+		message = Policy.bind("resources.readWorkspaceSnap");
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
 	} finally {
 		monitor.done();
@@ -187,8 +192,10 @@ protected int getVersion() {
 }
 public void readTree(IProject project, DataInputStream input, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
+	String message;
 	try {
-		monitor.beginTask("", 10);
+		message = Policy.bind("resources.reading");
+		monitor.beginTask(message, 10);
 		/* read the number of builders */
 		int numBuilders = input.readInt();
 
@@ -218,7 +225,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 		monitor.worked(1);
 
 	} catch (IOException e) {
-		String msg = "Problem reading project tree";
+		message = Policy.bind("readProjectTree");
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
 	} finally {
 		monitor.done();

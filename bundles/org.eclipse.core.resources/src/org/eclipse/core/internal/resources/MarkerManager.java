@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.utils.*;
@@ -60,8 +60,10 @@ private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo[] newMar
 		MarkerInfo newMarker = newMarkers[i];
 		MarkerInfo original = null;
 		// should always be a new marker.
-		if (newMarker.getId() != MarkerInfo.UNDEFINED_ID)
-			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), "Trying to CHANGE marker in ADD method."));
+		if (newMarker.getId() != MarkerInfo.UNDEFINED_ID) {
+			String message = Policy.bind("resources.changeInAdd");
+			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), message));
+		}
 		newMarker.setId(workspace.nextMarkerId());
 		changes[i] = new MarkerDelta(IResourceDelta.ADDED, resource, newMarker);
 		markers.add(newMarker);
@@ -337,7 +339,7 @@ protected void restoreFromSave(IResource resource, boolean generateDeltas) throw
 	} catch (FileNotFoundException e) {
 		// Ignore if no markers saved.
 	} catch (IOException e) {
-		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 	}
 }
@@ -358,7 +360,7 @@ protected void restoreFromSnap(IResource resource) {
 		// ignore if no markers saved
 	} catch (Exception e) {
 		// only log the exception, we should not fail restoring the snapshot
-		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
+		String msg = Policy.bind("resources.readMeta", sourceLocation.toString());
 		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 	}
 }

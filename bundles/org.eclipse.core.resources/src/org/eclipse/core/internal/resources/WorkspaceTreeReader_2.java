@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.internal.utils.Policy;
@@ -46,8 +46,10 @@ protected void readBuildersPersistentInfo(DataInputStream input, List builders, 
 }
 public void readTree(IProject project, DataInputStream input, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
+	String message;
 	try {
-		monitor.beginTask("", 10);
+		message = Policy.bind("resources.reading");
+		monitor.beginTask(message, 10);
 
 		/* read in the list of builder names */
 		List infos = new ArrayList(5);
@@ -66,7 +68,7 @@ public void readTree(IProject project, DataInputStream input, IProgressMonitor m
 		linkBuildersToTrees(infos, trees, 0, Policy.subMonitorFor(monitor, 1));
 
 	} catch (IOException e) {
-		String msg = "Problem reading project tree";
+		message = Policy.bind("resources.readProjectTree");
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, e);
 	} finally {
 		monitor.done();

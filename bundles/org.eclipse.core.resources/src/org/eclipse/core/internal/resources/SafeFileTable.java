@@ -1,13 +1,14 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.utils.Policy;
 import java.io.*;
 import java.util.*;
 /**
@@ -55,7 +56,7 @@ public void restore() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		String message = "Could not read safe table.";
+		String message = Policy.bind("resources.exSafeRead");
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }
@@ -69,7 +70,7 @@ public void save() throws CoreException {
 			output.close();
 		}
 	} catch (IOException e) {
-		String message = "Could not save safe table.";
+		String message = Policy.bind("resources.exSafeSave");
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
 }

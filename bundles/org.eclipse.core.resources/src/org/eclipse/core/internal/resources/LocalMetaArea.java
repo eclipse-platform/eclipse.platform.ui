@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.localstore.*;
@@ -50,7 +50,7 @@ private Properties buildPathProperties(Hashtable paths) {
 public void delete(IProject target) throws CoreException {
 	IPath path = getLocationFor(target);
 	if (!Workspace.clear(path.toFile()) && path.toFile().exists()) {
-		String message = Policy.bind("deleteMeta", new String[] {target.getFullPath().toString()});
+		String message = Policy.bind("resources.deleteMeta", target.getFullPath().toString());
 		throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, target.getFullPath(), message, null);
 	}
 }
@@ -187,7 +187,7 @@ public void write(IProject target) throws CoreException {
 		IProjectDescription description = ((Project) target).internalGetDescription();
 		new ModelObjectWriter().write(description, path, tempPath);
 	} catch (IOException e) {
-		String message = Policy.bind("writeMeta", new String[] { target.getFullPath().toString()});
+		String message = Policy.bind("resourceswriteMeta", target.getFullPath().toString());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), message, null);
 	}
 }
@@ -198,7 +198,7 @@ public void writeWorkspace(WorkspaceDescription description) throws CoreExceptio
 	try {
 		new ModelObjectWriter().write(description, path, tempPath);
 	} catch (IOException e) {
-		String message = Policy.bind("writeWorkspaceMeta", new String[] { path.toString()});
+		String message = Policy.bind("resources.writeWorkspaceMeta", path.toString());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 	}
 	description.clean();

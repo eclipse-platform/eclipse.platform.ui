@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.utils.Assert;
@@ -33,7 +33,7 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String title = Policy.bind("deleting", new String[] { getFullPath().toString()});
+		String title = Policy.bind("resources.deleting", getFullPath().toString());
 		monitor.beginTask(title, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
@@ -106,7 +106,8 @@ public IProject getProject() {
  */
 public IProject getProject(String name) {
 	Path path = new Path(name);
-	Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, Policy.bind("projectPath"));
+	String message = Policy.bind("resources.projectPath");
+	Assert.isLegal(path.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 	return new Project(Path.ROOT.append(name), workspace);
 }
 /**

@@ -1,10 +1,11 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
+import org.eclipse.core.internal.utils.Policy;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -28,7 +29,7 @@ protected MarkerReader getReader(int formatVersion) throws IOException {
 		case 2 :
 			return new MarkerReader_2(workspace);
 		default :
-			throw new IOException("Unknown format");
+			throw new IOException(Policy.bind("resources.format"));
 	}
 }
 public void read(DataInputStream input, boolean generateDeltas) throws IOException {

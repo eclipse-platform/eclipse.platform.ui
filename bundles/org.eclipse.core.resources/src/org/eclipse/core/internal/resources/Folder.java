@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.utils.Policy;
@@ -36,7 +36,8 @@ public IFile changeToFile() throws CoreException {
 public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("creating", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.creating", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FOLDER);
 		try {
 			workspace.prepareOperation();
@@ -81,7 +82,7 @@ public void ensureExists(IProgressMonitor monitor) throws CoreException {
 	if (exists(flags, true))
 		return;
 	if (exists(flags, false)) {
-		String message = Policy.bind("folderOverFile", new String[] { getFullPath().toString()});
+		String message = Policy.bind("resources.folderOverFile", getFullPath().toString());
 		throw new ResourceException(IResourceStatus.RESOURCE_WRONG_TYPE, getFullPath(), message, null);
 	}
 	Container parent = (Container) getParent();
@@ -101,7 +102,8 @@ public int getType() {
 public void internalCreate(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("Creating file.", Policy.totalWork);
+		String message = Policy.bind("resources.creating", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		workspace.createResource(this, false);
 		if (local) {
 			try {

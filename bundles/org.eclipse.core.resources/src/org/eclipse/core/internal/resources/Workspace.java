@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.events.*;
@@ -88,7 +88,7 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 	if (getWorkManager().getNestedOperationDepth() != getWorkManager().getPreparedOperationDepth())
 		Assert.isTrue(false, "Operation was not prepared.");
 	if (treeLocked && createNewTree) {
-		String message = Policy.bind("cannotModify");
+		String message = Policy.bind("resources.cannotModify");
 		throw new ResourceException(IResourceStatus.ERROR, null, message, null);
 	}
 	if (getWorkManager().getPreparedOperationDepth() > 1)
@@ -97,13 +97,14 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 		newWorkingTree();
 }
 private IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree tree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
-	monitor.subTask("Updating...");
+	monitor.subTask(Policy.bind("resources.updating"));
 	return notificationManager.broadcastChanges(delta, tree, type, lockTree, updateState);
 }
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", Policy.opWork);
+		String message = Policy.bind("events.building.0");
+		monitor.beginTask(message, Policy.opWork);
 		try {
 			prepareOperation();
 			beginOperation(true);
@@ -203,12 +204,13 @@ public static boolean clear(java.io.File root) {
 public void close(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String msg = Policy.bind("closing.1");
+		String msg = Policy.bind("resources.closing.0");
 		int rootCount = tree.getChildCount(Path.ROOT);
 		monitor.beginTask(msg, rootCount + 2);
 		monitor.subTask(msg);
 		//this operation will never end because the world is going away
-		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("workspaceClose"), null);
+		String message = Policy.bind("resources.workspaceClose");
+		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		try {
 			prepareOperation();
 			if (isOpen()) {
@@ -317,14 +319,16 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 	try {
 		int opWork = Math.max(resources.length, 1);
 		int totalWork = Policy.totalWork * opWork / Policy.opWork;
-		monitor.beginTask(Policy.bind("copying", new String[] { "" }), totalWork);
+		String message = Policy.bind("resources.copying.0");
+		monitor.beginTask(message, totalWork);
 		Assert.isLegal(resources != null);
 		if (resources.length == 0)
 			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
 		// to avoid concurrent changes to this array
 		resources = (IResource[]) resources.clone();
 		IPath parentPath = null;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("copyProblem"), null);
+		message = Policy.bind("resources.copyProblem");
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		try {
 			prepareOperation();
 			beginOperation(true);
@@ -358,7 +362,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 					}
 				} else {
 					monitor.worked(1);
-					String message = Policy.bind("notChild", new String[] { resources[i].getFullPath().toString(), parentPath.toString()});
+					message = Policy.bind("resources.notChild", resources[i].getFullPath().toString(), parentPath.toString());
 					status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resources[i].getFullPath(), message));
 				}
 			}
@@ -459,7 +463,7 @@ public ResourceInfo createResource(IResource resource, ResourceInfo info, boolea
 			info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 			tree.setElementData(resource.getFullPath(), info);
 		} else {
-			String message = Policy.bind("mustNotExist", new String[] { resource.getFullPath().toString()});
+			String message = Policy.bind("resources.mustNotExist", resource.getFullPath().toString());
 			throw new ResourceException(IResourceStatus.RESOURCE_EXISTS, resource.getFullPath(), message, null);
 		}
 	return info;
@@ -484,8 +488,10 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 	try {
 		int opWork = Math.max(resources.length, 1);
 		int totalWork = Policy.totalWork * opWork / Policy.opWork;
-		monitor.beginTask(Policy.bind("deleting", new String[] { "" }), totalWork);
-		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("deleteProblem"), null);
+		String message = Policy.bind("resources.deleting.0");
+		monitor.beginTask(message, totalWork);
+		message = Policy.bind("resources.deleteProblem");
+		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		if (resources.length == 0)
 			return result;
 		resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
@@ -511,7 +517,7 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 					// Don't really care about the exception unless the resource is still around.
 					ResourceInfo info = resource.getResourceInfo(false, false);
 					if (resource.exists(resource.getFlags(info), false)) {
-						String message = Policy.bind("couldnotDelete", new String[] { resource.getFullPath().toString()});
+						message = Policy.bind("resources.couldnotDelete", resource.getFullPath().toString());
 						result.merge(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), message));
 						result.merge(e.getStatus());
 					}
@@ -791,7 +797,7 @@ public ISynchronizer getSynchronizer() {
  */
 public WorkManager getWorkManager() throws CoreException {
 	if (workManager == null) {
-		String message = "Workspace was not properly initialized or has already shutdown";
+		String message = Policy.bind("resources.shutdown");
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message));
 	}
 	return workManager;
@@ -843,13 +849,15 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 	try {
 		int opWork = Math.max(resources.length, 1);
 		int totalWork = Policy.totalWork * opWork / Policy.opWork;
-		monitor.beginTask(Policy.bind("moving", new String[] { "" }), totalWork);
+		String message = Policy.bind("resources.moving.0");
+		monitor.beginTask(message, totalWork);
 		Assert.isLegal(resources != null);
 		if (resources.length == 0)
 			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
 		resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 		IPath parentPath = null;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("moveProblem"), null);
+		message = Policy.bind("resources.moveProblem");
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		try {
 			prepareOperation();
 			beginOperation(true);
@@ -889,7 +897,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 					}
 				} else {
 					monitor.worked(1);
-					String message = Policy.bind("notChild", new String[] { resource.getFullPath().toString(), parentPath.toString()});
+					message = Policy.bind("resources.notChild", resource.getFullPath().toString(), parentPath.toString());
 					status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resource.getFullPath(), message));
 				}
 			}
@@ -948,12 +956,15 @@ public IProjectDescription newProjectDescription(String projectName) {
 	return result;
 }
 public Resource newResource(IPath path, int type) {
+	String message;
 	switch (type) {
 		case IResource.FOLDER :
-			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH , Policy.bind("resourcePath"));
+			message = Policy.bind("resources.resourcePath");
+			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH , message);
 			return new Folder(path.makeAbsolute(), this);
 		case IResource.FILE :
-			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH, Policy.bind("resourcePath"));
+			message = Policy.bind("resources.resourcePath");
+			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH, message);
 			return new File(path.makeAbsolute(), this);
 		case IResource.PROJECT :
 			return (Resource) getRoot().getProject(path.lastSegment());
@@ -1013,10 +1024,13 @@ public long nextNodeId() {
 public IStatus open(IProgressMonitor monitor) throws CoreException {
 	// This method is not inside an operation because it is the one responsible for
 	// creating the WorkManager object (who takes care of operations).
-	Assert.isTrue(!isOpen(), Policy.bind("workspaceOpen"));
+	String message = Policy.bind("resources.workspaceOpen");
+	Assert.isTrue(!isOpen(), message);
 	description = getMetaArea().readWorkspace();
-	if (description == null)
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), Policy.bind("readWorkspaceMeta"), null);
+	if (description == null) {
+		message = Policy.bind("resources.readWorkspaceMeta");
+		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), message, null);
+	}
 
 	// create root location
 	localMetaArea.getLocationFor(getRoot()).toFile().mkdirs();
@@ -1056,7 +1070,7 @@ protected void opening(IProject project) throws CoreException {
 public void prepareOperation() throws CoreException {
 	getWorkManager().checkIn();
 	if (!isOpen()) {
-		String message = "Workspace is closed.";
+		String message = Policy.bind("resources.workspaceClosed");
 		throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 	}
 }
@@ -1100,7 +1114,7 @@ public void removeSaveParticipant(Plugin plugin) {
 public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("", Policy.totalWork);
+		monitor.beginTask(Policy.bind("resources.running"), Policy.totalWork);
 		try {
 			prepareOperation();
 			beginOperation(true);
@@ -1119,12 +1133,15 @@ public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreExc
  * @see IWorkspace
  */
 public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException {
+	String message;
 	if (getWorkManager().getPreparedOperationDepth() > 0) {
-		if (full)
-			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, "Save cannot be called from inside an operation", null);
-		else {
+		if (full) {
+			message = Policy.bind("resources.saveOp");
+			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
+		} else {
 			saveManager.requestSnapshot();
-			return new ResourceStatus(IResourceStatus.OK, "Snapshot requested");
+			message = Policy.bind("resources.snapRequest");
+			return new ResourceStatus(IResourceStatus.OK, message);
 		}
 	}
 	return saveManager.save(full ? ISaveContext.FULL_SAVE : ISaveContext.SNAPSHOT, null, monitor);
@@ -1156,8 +1173,10 @@ protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		IManager[] managers = { buildManager, notificationManager, propertyManager, fileSystemManager, markerManager, saveManager, workManager };
-		monitor.beginTask("", managers.length);
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Problem on shutdown", null);
+		String message = Policy.bind("resources.shuttingDown");
+		monitor.beginTask(message, managers.length);
+		message = Policy.bind("resources.shutdownProblems");
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 		// best effort to shutdown every object and free resources
 		for (int i = 0; i < managers.length; i++) {
 			IManager manager = managers[i];
@@ -1167,7 +1186,8 @@ protected void shutdown(IProgressMonitor monitor) throws CoreException {
 				try {
 					manager.shutdown(Policy.subMonitorFor(monitor, 1));
 				} catch (Exception e) {
-					status.add(new Status(Status.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Problem on shutdown", e));
+					message = Policy.bind("resources.shutdownProblems");
+					status.add(new Status(Status.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 				}
 			}
 		}
@@ -1227,27 +1247,38 @@ public void updateModificationStamp(ResourceInfo info) {
  * @see IWorkspace#validateName
  */
 public IStatus validateName(String segment, int type) {
+	String message;
 
 	/* segment must not be null */
-	if (segment == null)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, "Names must not be null");
+	if (segment == null) {
+		message = Policy.bind("resources.nameNull");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	// cannot be an empty string
-	if (segment.length() == 0)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, "Names cannot be empty.");
+	if (segment.length() == 0) {
+		message = Policy.bind("resources.nameEmpty");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	/* segment must not begin or end with a whitespace */
-	if (Character.isWhitespace(segment.charAt(0)) || Character.isWhitespace(segment.charAt(segment.length() - 1)))
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidWhitespace"));
+	if (Character.isWhitespace(segment.charAt(0)) || Character.isWhitespace(segment.charAt(segment.length() - 1))) {
+		message = Policy.bind("resources.invalidWhitespace");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	/* segment must not end with a dot */
-	if (segment.endsWith("."))
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidDot", new String[] { segment }));
+	if (segment.endsWith(".")) {
+		message = Policy.bind("resources.invalidDot", segment);
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	/* test invalid characters */
 	for (int i = 0; i < invalidResourceNameChars.length; i++)
-		if (segment.indexOf(invalidResourceNameChars[i]) != -1)
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidChar", new String[] { String.valueOf(invalidResourceNameChars[i])}));
+		if (segment.indexOf(invalidResourceNameChars[i]) != -1) {
+			message = Policy.bind("resources.invalidChar", String.valueOf(invalidResourceNameChars[i]));
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		}
 
 	return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
 }
@@ -1255,23 +1286,32 @@ public IStatus validateName(String segment, int type) {
  * @see IWorkspace#validatePath
  */
 public IStatus validatePath(String path, int type) {
+	String message;
 
 	/* path must not be null */
-	if (path == null)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, "Paths must not be null");
+	if (path == null) {
+		message = Policy.bind("resources.pathNull");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	/* path must not have a device separator */
-	if (path.indexOf(IPath.DEVICE_SEPARATOR) != -1)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidChar", new String[] { String.valueOf(IPath.DEVICE_SEPARATOR)}));
+	if (path.indexOf(IPath.DEVICE_SEPARATOR) != -1) {
+		message = Policy.bind("resources.invalidChar", String.valueOf(IPath.DEVICE_SEPARATOR));
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	/* path must not be the root path */
 	IPath testPath = new Path(path);
-	if (testPath.isRoot())
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidRoot"));
+	if (testPath.isRoot()) {
+		message = Policy.bind("resources.invalidRoot");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	/* path must be absolute */
-	if (!testPath.isAbsolute())
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("mustBeAbsolute"));
+	if (!testPath.isAbsolute()) {
+		message = Policy.bind("resources.mustBeAbsolute");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
 
 	/* validate segments */
 	int numberOfSegments = testPath.segmentCount();
@@ -1281,8 +1321,10 @@ public IStatus validatePath(String path, int type) {
 			if (status.isOK())
 				return status;
 		} else
-			if (type == IResource.PROJECT)
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("projectPath"));
+			if (type == IResource.PROJECT) {
+				message = Policy.bind("resources.projectPath");
+				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+			}
 	}
 	if ((type & (IResource.FILE | IResource.FOLDER)) != 0)
 		if (numberOfSegments >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
@@ -1299,21 +1341,27 @@ public IStatus validatePath(String path, int type) {
 					return status;
 			}
 			return new ResourceStatus(IResourceStatus.OK, Policy.bind("ok"));
-		} else
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("resourcePath"));
-	return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, Policy.bind("invalidPath", new String[] { path }));
+		} else {
+			message = Policy.bind("resources.resourcePath");
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		}
+	message = Policy.bind("resources.invalidPath", path);
+	return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 }
 /**
  * @see IWorkspace#validateProjectLocation
  */
 public IStatus validateProjectLocation(IProject context, IPath location) {
+	String message;
 	// the default default is ok for all projects
-	if (location == null)
-		return new ResourceStatus(IResourceStatus.OK, "Valid project location.");
+	if (location == null) {
+		message = Policy.bind("resources.validLocation");
+		return new ResourceStatus(IResourceStatus.OK, message);
+	}
 	// test if the given location overlaps the default default location
 	IPath defaultDefaultLocation = Platform.getLocation();
 	if (defaultDefaultLocation.isPrefixOf(location) || location.isPrefixOf(defaultDefaultLocation)) {
-		String message = Policy.bind("overlapLocal", new String[] { location.toString(), defaultDefaultLocation.toString()});
+		message = Policy.bind("resources.overlapLocal", location.toString(), defaultDefaultLocation.toString());
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 	// Iterate over each known project and ensure that the location does not
@@ -1333,10 +1381,11 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 			continue;
 		if (definedLocalLocation != null && location != null)
 			if (location.isPrefixOf(definedLocalLocation) || definedLocalLocation.isPrefixOf(location)) {
-				String message = Policy.bind("overlapLocal", new String[] { location.toString(), definedLocalLocation.toString()});
+				message = Policy.bind("resources.overlapLocal", location.toString(), definedLocalLocation.toString());
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 	}
-	return new ResourceStatus(IResourceStatus.OK, "Valid project location.");
+	message = Policy.bind("resources.validLocation");
+	return new ResourceStatus(IResourceStatus.OK, message);
 }
 }
