@@ -108,19 +108,21 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			// sort
 			ViewerSorter vs= getSorter();
 			if (vs != null) {
+				HashMap map= new HashMap();	// temp remember items for sorting
 				JobTreeElement[] elements= new JobTreeElement[cs.length];
-				for (int i= 0; i < cs.length; i++)
-					elements[i]= ((JobItem)cs[i]).jobTreeElement;
+				for (int i= 0; i < cs.length; i++) {
+					JobItem ji= (JobItem)cs[i];
+					elements[i]= ji.jobTreeElement;
+					map.put(elements[i], ji);
+				}
 				vs.sort(NewProgressViewer.this, elements);
 				for (int i= 0; i < cs.length; i++)
-					cs[i]= findJobItem(elements[i], false);
+					cs[i]= (JobItem) map.get(elements[i]);
 			}
 			// sort
 			boolean dark= (cs.length % 2) == 1;
 			for (int i= 0; i < cs.length; i++) {
 				Control c= cs[i];
-				if (c == null)
-				    continue;
 				Point s= c.computeSize(e.x, SWT.DEFAULT, flushCache);
 				c.setBounds(x, y, s.x, s.y);
 				y+= s.y+VERTICAL_SPACING;
@@ -927,7 +929,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	
 	private JobTreeItem findJobItem(Object element, boolean create) {
 		JobTreeItem ji= (JobTreeItem) map.get(element);
-				
 		if (ji == null && create) {
 			JobTreeElement jte= (JobTreeElement) element;
 			Object parent= jte.getParent();
