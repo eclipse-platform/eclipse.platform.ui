@@ -16,7 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 
 public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	protected File temp;
@@ -44,7 +44,7 @@ protected byte[] merge(byte[] b1, byte[] b2) {
 }
 protected void setUp() throws Exception {
 	super.setUp();
-	Path location = new Path(System.getProperty("user.dir"));
+	IPath location = getRandomLocation();
 	temp = location.append("temp").toFile();
 	temp.mkdirs();
 	assertTrue("could not create temp directory", temp.isDirectory());
@@ -53,7 +53,7 @@ public static Test suite() {
 	return new TestSuite(SafeChunkyInputOutputStreamTest.class);
 }
 protected void tearDown() throws Exception {
-	ensureDoesNotExistInFileSystem(temp);
+	ensureDoesNotExistInFileSystem(temp.getParentFile());
 	super.tearDown();
 }
 public void testBufferLimit() {

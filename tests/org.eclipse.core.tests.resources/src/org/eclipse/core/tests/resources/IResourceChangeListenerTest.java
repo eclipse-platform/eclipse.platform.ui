@@ -12,6 +12,7 @@ package org.eclipse.core.tests.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -585,6 +586,7 @@ public void testMoveProject1() {
  * Note that the DESCRIPTION flag should be set in the delta.
  */
 public void testMoveProject2() {
+	final IPath path = getRandomLocation();
 	try {
 		verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
 		verifier.addExpectedChange(project1.getFile(".project"), IResourceDelta.CHANGED, IResourceDelta.CONTENT);
@@ -594,7 +596,6 @@ public void testMoveProject2() {
 				m.beginTask("Creating and moving", 100);
 				try {
 					IProjectDescription desc = project1.getDescription();
-					IPath path = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
 					desc.setLocation(path);
 					project1.move(desc, IResource.NONE, new SubProgressMonitor(m, 50));
 				} finally {
@@ -606,6 +607,8 @@ public void testMoveProject2() {
 		assertDelta();
 	} catch (CoreException e) {
 		handleCoreException(e);
+	} finally {
+		Workspace.clear(path.toFile());
 	}
 }
 public void testModifyMoveFile() {

@@ -48,7 +48,7 @@ public InputStream getContents(java.io.File target, String errorCode) {
 }
 protected void setUp() throws Exception {
 	super.setUp();
-	Path location = new Path(System.getProperty("user.dir"));
+	IPath location = getRandomLocation();
 	temp = location.append("temp").toFile();
 	temp.mkdirs();
 	assertTrue("could not create temp directory", temp.isDirectory());
@@ -57,7 +57,7 @@ public static Test suite() {
 	return new TestSuite(SafeFileInputOutputStreamTest.class);
 }
 protected void tearDown() throws Exception {
-	Workspace.clear(temp);
+	Workspace.clear(temp.getParentFile());
 	super.tearDown();
 }
 public void testSafeFileInputStream() {

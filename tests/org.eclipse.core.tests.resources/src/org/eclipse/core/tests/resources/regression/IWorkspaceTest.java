@@ -211,19 +211,21 @@ public void testMultiDelete_1GDGRIZ() {
 }
 public void test_8974() {
 	IProject one = getWorkspace().getRoot().getProject("One");
-	IPath oneLocation = new Path(System.getProperty("user.dir")).append(one.getName() + Long.toString(System.currentTimeMillis()));
+	IPath oneLocation = getRandomLocation().append(one.getName());
+	oneLocation.toFile().mkdirs();
 	IProjectDescription oneDescription = getWorkspace().newProjectDescription(one.getName());
 	oneDescription.setLocation(oneLocation);
 
 	try {
 		one.create(oneDescription, getMonitor());
 	} catch (CoreException e) {
+		Workspace.clear(oneLocation.removeLastSegments(1).toFile());
 		fail("0.0", e);
 	}
 
 	try {
 		IProject two = getWorkspace().getRoot().getProject("Two");
-		IPath twoLocation = new Path(System.getProperty("user.dir")).append(oneLocation.lastSegment().toLowerCase());
+		IPath twoLocation = oneLocation.removeLastSegments(1).append(oneLocation.lastSegment().toLowerCase());
 		
 		IStatus result = getWorkspace().validateProjectLocation(two, twoLocation);
 		if (CoreFileSystemLibrary.isCaseSensitive()) {
@@ -235,7 +237,7 @@ public void test_8974() {
 		ensureDoesNotExistInWorkspace(one);
 	} finally {
 		// ensure that the project directory is cleaned up.
-		Workspace.clear(oneLocation.toFile());
+		Workspace.clear(oneLocation.removeLastSegments(1).toFile());
 	}
 }
 }

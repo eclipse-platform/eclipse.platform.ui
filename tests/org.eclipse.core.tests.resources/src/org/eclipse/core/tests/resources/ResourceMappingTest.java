@@ -34,6 +34,7 @@ public static Test suite() {
  * Tests the location of mapped resources.
  */
 public void testResourceLocation() {
+	assertTrue("not yet implemented", false);
 	//create some common resources
 	IProject project = getWorkspace().getRoot().getProject("Project1");
 	IFolder mappedFolder = project.getFolder("Folder1");
