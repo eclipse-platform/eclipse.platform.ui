@@ -9,7 +9,8 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
- 
+import org.eclipse.ui.help.WorkbenchHelp;
+
 /**
  * Generic "Back" action which goes back one frame,
  */
@@ -26,6 +27,7 @@ public class BackAction extends FrameAction {
 		setHoverImageDescriptor(getImageDescriptor("clcl16/backward_nav.gif")); //$NON-NLS-1$
 		setImageDescriptor(getImageDescriptor("elcl16/backward_nav.gif")); //$NON-NLS-1$
 		setDisabledImageDescriptor(getImageDescriptor("dlcl16/backward_nav.gif")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.BACK_ACTION);
 		update();
 	}
 	

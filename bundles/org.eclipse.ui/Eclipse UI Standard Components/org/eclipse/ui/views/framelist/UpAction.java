@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Generic "Up" action which goes to the parent frame for the current frame.
@@ -26,6 +27,7 @@ public class UpAction extends FrameAction {
 		setHoverImageDescriptor(getImageDescriptor("clcl16/up_nav.gif")); //$NON-NLS-1$
 		setImageDescriptor(getImageDescriptor("elcl16/up_nav.gif")); //$NON-NLS-1$
 		setDisabledImageDescriptor(getImageDescriptor("dlcl16/up_nav.gif")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.UP_ACTION);
 		update();
 	}
 	

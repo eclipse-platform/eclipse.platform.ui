@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Generic "Go Into" action which goes to the frame for the current selection. 
@@ -24,6 +25,7 @@ public class GoIntoAction extends FrameAction {
 		super(frameList);
 		setText(FrameListMessages.getString("GoInto.text")); //$NON-NLS-1$
 		setToolTipText(FrameListMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.GO_INTO_ACTION);
 		update();
 	}
 	
