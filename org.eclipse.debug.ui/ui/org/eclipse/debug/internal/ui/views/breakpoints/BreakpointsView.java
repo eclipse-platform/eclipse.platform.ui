@@ -696,7 +696,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	public void setBreakpointContainerFactories(List selectedContainers) {
 		fContentProvider.setBreakpointContainerFactories(selectedContainers);
-		getViewer().refresh();
+		Viewer viewer = getViewer();
+		viewer.refresh();
+		viewer.setSelection(viewer.getSelection());
 	}
 	
 	public List getBreakpointContainerFactories() {
