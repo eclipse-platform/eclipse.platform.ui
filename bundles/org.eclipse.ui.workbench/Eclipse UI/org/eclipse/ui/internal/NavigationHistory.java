@@ -346,9 +346,10 @@ protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
 			oldHistory = true;
 			break;
 		}
-		// Do not restore "blank" entries.  Fix for 27317.
+		// Clear out history if "blank" entries.  Fix for 27317.
 		if (entryText.equals("")) {
-			continue;
+			oldHistory = true;
+			break;
 		}
 		NavigationHistoryEntry entry = new NavigationHistoryEntry(page);
 		history.add(entry);
