@@ -20,4 +20,4 @@ Export-Package:
  org.eclipse.core.runtime,
  org.eclipse.core.runtime.dynamichelpers
 Require-Bundle: 
- org.eclipse.osgi; visibility:="reexport"
+ org.eclipse.osgi; visibility:=reexport
