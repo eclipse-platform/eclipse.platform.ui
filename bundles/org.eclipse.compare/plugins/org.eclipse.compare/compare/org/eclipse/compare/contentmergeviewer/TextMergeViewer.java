@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -50,7 +49,6 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.MergeSourceViewer;
 import org.eclipse.compare.internal.BufferedCanvas;
@@ -248,7 +246,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private boolean fSubDoc= true;
 	private IPositionUpdater fPositionUpdater;
 	private boolean fIsMotif;	
-	private Image fSummaryIcon;
 		
 
 	// SWT widgets
@@ -258,14 +255,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private Canvas fScrollCanvas;
 	private ScrollBar fVScrollBar;
 	private Canvas fBirdsEyeCanvas;
-	private Label fSummaryCanvas;
+	private Canvas fSummaryHeader;
+	private HeaderPainter fHeaderPainter;
 	
 	// SWT resources to be disposed
 	private Map fColors;
 	private Cursor fBirdsEyeCursor;
-	private Image fOKImage;
-	private Image fNOTOKImage;
-	private Image fNOTOKConflictImage;
 				
 	// points for center curves
 	private double[] fBasicCenterCurve;
@@ -273,6 +268,51 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private Button fCenterButton;
 	private Diff fButtonDiff;
 					
+	class HeaderPainter implements PaintListener {
+		
+		private static final int INSET= 2;
+		private static final int ANNOTATION_HEIGHT= 4;
+
+		private Color fIndicatorColor;
+		private Color fSeparatorColor;
+		
+		public HeaderPainter() {
+			fSeparatorColor= getColor(fSummaryHeader.getDisplay(), ViewForm.borderInsideRGB);
+		}
+		
+		public void setColor(Color color) {
+			fIndicatorColor= color;
+		}
+		
+		private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topLeft, Color bottomRight) {
+			gc.setForeground(topLeft);
+			gc.drawLine(x, y, x + w -1, y);
+			gc.drawLine(x, y, x, y + h -1);
+		
+			gc.setForeground(bottomRight);
+			gc.drawLine(x + w, y, x + w, y + h);
+			gc.drawLine(x, y + h, x + w, y + h);
+		}
+		
+		public void paintControl(PaintEvent e) {
+			
+			Point s= fSummaryHeader.getSize();
+			
+			if (fIndicatorColor != null) {
+				e.gc.setBackground(fIndicatorColor);
+				Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+				e.gc.fillRectangle(r);
+				Display d= fSummaryHeader.getDisplay();
+				if (d != null)
+					drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+			}
+			
+			e.gc.setForeground(fSeparatorColor);
+			e.gc.setLineWidth(1);
+			e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
+		}
+	};
+
 	/**
 	 * The position updater used to adapt the positions representing
 	 * the child document ranges to changes of the parent document.
@@ -858,7 +898,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fRightCanvas= null;
 		fVScrollBar= null;
 		fBirdsEyeCanvas= null;
-		fSummaryCanvas= null;
+		fSummaryHeader= null;
 
 		unsetDocument(fAncestor);
 		unsetDocument(fLeft);
@@ -877,19 +917,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fBirdsEyeCursor != null) {
 			fBirdsEyeCursor.dispose();
 			fBirdsEyeCursor= null;
-		}
-		
-		if (fOKImage != null) {
-			fOKImage.dispose();
-			fOKImage= null;
-		}
-		if (fNOTOKImage != null) {
-			fNOTOKImage.dispose();
-			fNOTOKImage= null;
-		}
-		if (fNOTOKConflictImage != null) {
-			fNOTOKConflictImage.dispose();
-			fNOTOKConflictImage= null;
 		}
 		
 		super.handleDispose(event);
@@ -926,7 +953,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fAncestor= createPart(composite);
 		fAncestor.setEditable(false);
 		
-		fSummaryCanvas= new Label(composite, SWT.NONE);
+		fSummaryHeader= new Canvas(composite, SWT.NONE);
+		fHeaderPainter= new HeaderPainter();
+		fSummaryHeader.addPaintListener(fHeaderPainter);
 		updateResolveStatus();
 				
 		// 2nd row
@@ -2019,8 +2048,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
   		if (fBirdsEyeCanvas != null) {
-  			if (fSummaryCanvas != null)
-				fSummaryCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
+  			if (fSummaryHeader != null)
+				fSummaryHeader.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
   			y+= scrollbarHeight;
   			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(3*scrollbarHeight));
    		}
@@ -2595,7 +2624,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private void updateResolveStatus() {
 			
-		Image icon= null;
+		Color color= null;
 		
 		if (showResolveUI()) {
 			// we only show red or green if there is at least one incoming or conflicting change
@@ -2622,37 +2651,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		
 			if (incomingOrConflicting > 0) {
-				Display display= fSummaryCanvas.getDisplay();
-				if (unresolvedConflicting > 0) {
-					if (fNOTOKConflictImage == null) {
-						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/unresolved_conflicts.gif");	//$NON-NLS-1$
-						if (id != null)
-							fNOTOKConflictImage= id.createImage(display);
-					}
-					icon= fNOTOKConflictImage;
-				} else if (unresolvedIncoming > 0) {
-					if (fNOTOKImage == null) {
-						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/unresolved_incoming.gif");	//$NON-NLS-1$
-						if (id != null)
-							fNOTOKImage= id.createImage(display);
-					}
-					icon= fNOTOKImage;
-				} else {
-					if (fOKImage == null) {
-						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/resolved.gif");	//$NON-NLS-1$
-						if (id != null)
-							fOKImage= id.createImage(display);
-					}
-					icon= fOKImage;
-				}
+				Display display= fSummaryHeader.getDisplay();
+				if (unresolvedConflicting > 0)
+					color= display.getSystemColor(SWT.COLOR_RED);
+				else if (unresolvedIncoming > 0)
+					color= display.getSystemColor(SWT.COLOR_BLUE);
+				else
+					color= display.getSystemColor(SWT.COLOR_GREEN);
 			}
 		}
 		
-		if (fSummaryIcon != icon) {
-			fSummaryCanvas.setImage(icon);
-			fSummaryCanvas.redraw();
-			fSummaryIcon= icon;
-		}
+		fHeaderPainter.setColor(color);
+		fSummaryHeader.redraw();
 	}
 
 	private void updateStatus(Diff diff) {
