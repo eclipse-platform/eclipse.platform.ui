@@ -7,6 +7,7 @@ package org.eclipse.debug.ui.actions;
 
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.actions.ExecutionAction;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * Action to launch the last launch configuration that was succuessfully
@@ -18,13 +19,11 @@ import org.eclipse.debug.internal.ui.actions.ExecutionAction;
  * be instantiated.
  * </p>
  * @since 2.0
- * @deprecated - use <code>AbstractLaunchHistoryAction</code> and
- * <code>AbstractLaunchToolbarAction</code>
  */
 public final class RunAction extends ExecutionAction /*implements IViewActionDelegate*/ {
 	
 	public RunAction() {
-		//only used as a delegate
+		super(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 	}
 
 	/**
