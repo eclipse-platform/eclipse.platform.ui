@@ -55,7 +55,7 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
     
     private ViewRegistryReader reader = new ViewRegistryReader();
 
-	private boolean dirtyViewCategoryMappings;
+	private boolean dirtyViewCategoryMappings = true;
 
     /**
      * Create a new ViewRegistry.
@@ -75,6 +75,7 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
     public void add(Category desc) {
         /* fix for 1877 */
 		if (findCategory(desc.getId()) == null) {
+			dirtyViewCategoryMappings = true;
 			// Mark categories list as dirty
 			categories.add(desc);
 			Workbench.getInstance().getConfigurationElementTracker()
@@ -90,6 +91,7 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
      */
     public void add(IViewDescriptor desc) {
     	if (views.add(desc)) {
+    		dirtyViewCategoryMappings = true;
 			Workbench.getInstance().getConfigurationElementTracker()
 					.registerObject(
 							(IConfigurationElement) desc.getConfigurationElement(),
@@ -284,10 +286,8 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
 
 		if (element.getName().equals(ViewRegistryReader.TAG_VIEW)) {
 			reader.readView(element);
-			dirtyViewCategoryMappings = true;
 		} else if (element.getName().equals(ViewRegistryReader.TAG_CATEGORY)) {
 			reader.readCategory(element);
-			dirtyViewCategoryMappings = true;
 		} else if (element.getName().equals(ViewRegistryReader.TAG_STICKYVIEW)) {
 			reader.readSticky(element);
 		}			
