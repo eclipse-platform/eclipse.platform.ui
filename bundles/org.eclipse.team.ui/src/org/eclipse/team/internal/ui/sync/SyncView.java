@@ -7,11 +7,15 @@ package org.eclipse.team.internal.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.IPropertyChangeNotifier;
 import org.eclipse.compare.NavigationAction;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
@@ -21,12 +25,15 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
@@ -35,11 +42,13 @@ import org.eclipse.team.internal.ui.UIConstants;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -55,7 +64,7 @@ import org.eclipse.ui.part.ViewPart;
  * This class provides a view for performing synchronizations
  * between the local workspace and a repository.
  */
-public class SyncView extends ViewPart {
+public class SyncView extends ViewPart implements ISaveablePart, IPropertyChangeListener {
 	public static final String VIEW_ID = "org.eclipse.team.ui.sync.SyncView"; //$NON-NLS-1$
 	private SyncCompareInput input;
 	private Composite top;
@@ -74,6 +83,8 @@ public class SyncView extends ViewPart {
 	private final String FREE_TITLE = Policy.bind("SyncView.freeModeTitle"); //$NON-NLS-1$
 	
 	private int currentSyncMode = SYNC_NONE;
+	
+	private String viewTitle = "";
 	
 	/**
 	 * Action for toggling the sync mode.
@@ -154,6 +165,9 @@ public class SyncView extends ViewPart {
 			getViewSite().getWorkbenchWindow().getPartService().removePartListener(partListener);
 			partListener = null;
 		}
+		
+		if (input instanceof IPropertyChangeNotifier)
+			((IPropertyChangeNotifier)input).removePropertyChangeListener(this);
 		super.dispose();
 	}
 	
@@ -286,19 +300,19 @@ public class SyncView extends ViewPart {
 				incomingMode.setChecked(true);
 				outgoingMode.setChecked(false);
 				freeMode.setChecked(false);
-				setTitle(CATCHUP_TITLE);
+				setTitleWithDirtyIndicator(CATCHUP_TITLE);
 				break;
 			case SYNC_OUTGOING:
 				outgoingMode.setChecked(true);
 				incomingMode.setChecked(false);
 				freeMode.setChecked(false);
-				setTitle(RELEASE_TITLE);
+				setTitleWithDirtyIndicator(RELEASE_TITLE);
 				break;
 			case SYNC_BOTH:
 				freeMode.setChecked(true);
 				outgoingMode.setChecked(false);
 				incomingMode.setChecked(false);
-				setTitle(FREE_TITLE);
+				setTitleWithDirtyIndicator(FREE_TITLE);
 				break;
 		}
 		// Only update actions if there is valid input
@@ -341,6 +355,11 @@ public class SyncView extends ViewPart {
 		input.setViewSite(getViewSite());
 		this.input = input;
 		currentSyncMode = SYNC_NONE;
+		
+		// listen to property notifications from our input, this
+		// is to support global save enablement.
+		if (input instanceof IPropertyChangeNotifier)
+					((IPropertyChangeNotifier)input).addPropertyChangeListener(this);
 		
 		// Remove old viewer
 		Control[] oldChildren = top.getChildren();
@@ -451,4 +470,81 @@ public class SyncView extends ViewPart {
 		return super.getAdapter(key);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		
+		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor pm) throws CoreException {
+				if (input instanceof CompareEditorInput)
+					((CompareEditorInput)input).saveChanges(pm);
+			}
+		};
+
+		Shell shell= getSite().getShell();
+
+		try {
+	
+			operation.run(monitor);
+							
+			firePropertyChange(PROP_DIRTY);
+	
+		} catch (InterruptedException x) {
+		} catch (OperationCanceledException x) {
+		} catch (InvocationTargetException x) {
+			String reason= x.getTargetException().getMessage();
+			ErrorDialog.openError(getSite().getShell(), Policy.bind("SyncView.cantSaveError", reason), null, null); //$NON-NLS-1$
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		if (input instanceof CompareEditorInput)
+			return ((CompareEditorInput)input).isSaveNeeded();
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 */
+	public boolean isSaveOnCloseNeeded() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (isDirty()) {
+			firePropertyChange(PROP_DIRTY);
+		}
+		setTitleWithDirtyIndicator(null);
+	}
+	
+	private void setTitleWithDirtyIndicator(String title) {
+		if(title != null) {
+			viewTitle = title;
+		}
+		if(isDirty()) {
+			setTitle(Policy.bind("SyncView.dirtyIndicatorInTitle", viewTitle));
+		} else {
+			setTitle(viewTitle);
+		}
+	}
 }
