@@ -46,7 +46,7 @@ import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.presentations.*;
+import org.eclipse.ui.presentations.IPartMenu;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.PresentationUtil;
