@@ -784,7 +784,7 @@ public class Preferences {
 		double result = defaultValue;
 		if (rawPropertyValue != null) {
 			try {
-				result = new Double(rawPropertyValue).doubleValue();
+				result = Double.parseDouble(rawPropertyValue);
 			} catch (NumberFormatException e) {
 				// raw value cannot be treated as one of these
 			}
@@ -902,7 +902,7 @@ public class Preferences {
 		float result = defaultValue;
 		if (rawPropertyValue != null) {
 			try {
-				result = new Float(rawPropertyValue).floatValue();
+				result = Float.parseFloat(rawPropertyValue);
 			} catch (NumberFormatException e) {
 				// raw value cannot be treated as one of these
 			}
