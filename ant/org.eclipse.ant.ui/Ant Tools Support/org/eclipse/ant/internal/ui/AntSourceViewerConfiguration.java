@@ -65,22 +65,21 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	    PresentationReconciler reconciler = new PresentationReconciler();
 	    reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 	    
-		MultilineDamagerRepairer dr = new MultilineDamagerRepairer(getDefaultScanner(), null);
+		MultilineDamagerRepairer dr = new MultilineDamagerRepairer(getDefaultScanner());
 	    reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 	    reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 	
-	    dr = new MultilineDamagerRepairer(getTagScanner(), null);
+	    dr = new MultilineDamagerRepairer(getTagScanner());
 	    reconciler.setDamager(dr, AntEditorPartitionScanner.XML_TAG);
 	    reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
 	
-	    IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
-	    int style= getStyle(store, IAntEditorColorConstants.XML_COMMENT_COLOR);
+	    int style= getStyle(IAntEditorColorConstants.XML_COMMENT_COLOR);
 	    xmlCommentAttribute=  new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_COMMENT_COLOR), null, style);
 		damageRepairer= new MultilineDamagerRepairer(null, xmlCommentAttribute);
 	    reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 	    reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 	    
-	    style= getStyle(store, IAntEditorColorConstants.XML_DTD_COLOR);
+	    style= getStyle(IAntEditorColorConstants.XML_DTD_COLOR);
 	    xmlDtdAttribute=  new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.XML_DTD_COLOR), null, style);
 		dtdDamageRepairer= new MultilineDamagerRepairer(null, xmlDtdAttribute);
 	    reconciler.setDamager(dtdDamageRepairer, AntEditorPartitionScanner.XML_DTD);
@@ -89,12 +88,12 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	    return reconciler;
 	}
 
-	private int getStyle(IPreferenceStore store, String pref) {
+	private int getStyle(String pref) {
 		int style= SWT.NORMAL;
-	    if (store.getBoolean(pref + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
+	    if (fPreferenceStore.getBoolean(pref + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX)) {
 	    	style |= SWT.BOLD;
 	    }
-	    if (store.getBoolean(pref + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
+	    if (fPreferenceStore.getBoolean(pref + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX)) {
 	    	style |= SWT.ITALIC;
 	    }
 		return style;
@@ -181,7 +180,7 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public int getTabWidth(ISourceViewer sourceViewer) {
-		return AntUIPlugin.getDefault().getPreferenceStore().getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
+		return fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
 	}
 	
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
