@@ -504,7 +504,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 					}
 				} 
 				
-				AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString.toString());
+				AntView.this.getViewSite().getActionBars().getStatusLineManager().setMessage(messageString);
 			}
 		});
 		createContextMenu(projectViewer);
