@@ -127,7 +127,7 @@ public HistoryView() {
 	siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
 	configImage = UpdateUIPluginImages.DESC_CONFIG_OBJ.createImage();
 	ImageDescriptor cdesc = new OverlayIcon(UpdateUIPluginImages.DESC_CONFIG_OBJ,
-					new ImageDescriptor [][] {{UpdateUIPluginImages.DESC_CURRENT_CO}});
+					new ImageDescriptor [][] {{}, {UpdateUIPluginImages.DESC_CURRENT_CO}});
 	currentConfigImage = cdesc.createImage();
 }
 

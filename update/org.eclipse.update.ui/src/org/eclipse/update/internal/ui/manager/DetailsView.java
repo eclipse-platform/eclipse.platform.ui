@@ -25,6 +25,7 @@ import java.io.*;
 public class DetailsView extends MultiPageView {
 public static final String HOME_PAGE = "Home";
 public static final String SITE_PAGE = "Site";
+public static final String CATEGORY_PAGE = "Category";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
 public static final String CONFIG_PAGE = "Config";
@@ -63,6 +64,7 @@ public void createPages() {
 	SitePage sitePage = 
 		new SitePage(this, "Site");
 	addPage(SITE_PAGE, sitePage);
+	addPage(CATEGORY_PAGE, new CategoryPage(this, "Category"));
 	addPage(CONFIG_PAGE, new LocalSitePage(this, "Configuration"));
 	addPage(SNAPSHOT_PAGE, new SnapshotPage(this, "Snapshot"));
 	addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
@@ -156,6 +158,10 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 			}
 			if (el instanceof SiteBookmark) {
 				showPageWithInput(SITE_PAGE, el);
+				return;
+			}
+			if (el instanceof SiteCategory) {
+				showPageWithInput(CATEGORY_PAGE, el);
 				return;
 			}
 			if (el instanceof ILocalSite) {

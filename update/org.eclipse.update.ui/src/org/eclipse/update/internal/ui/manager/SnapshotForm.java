@@ -58,8 +58,8 @@ protected void createContents(Composite parent) {
 	activitySection = new ActivitySection((UpdateFormPage)getPage());
 	Control control = activitySection.createControl(parent, factory);
 	TableData td = new TableData();
-	td.align = TableData.FILL;
-	td.grabHorizontal = true;
+	//td.align = TableData.FILL;
+	//td.grabHorizontal = true;
 	td.valign = TableData.TOP;
 	//td.colspan = 2;
 	control.setLayoutData(td);
@@ -98,9 +98,10 @@ private void inputChanged(IInstallConfiguration configuration) {
 	activitySection.configurationChanged(configuration);
 	revertSection.configurationChanged(configuration);
 	// reflow
-	dateLabel.getParent().layout();
-	((Composite)getControl()).layout();
+	dateLabel.getParent().layout(true);
+	((Composite)getControl()).layout(true);
 	getControl().redraw();
+	updateSize();
 	currentConfiguration = configuration;
 }
 

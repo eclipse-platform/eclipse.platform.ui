@@ -29,6 +29,7 @@ import org.eclipse.update.core.ISiteChangedListener;
 import org.eclipse.update.core.VersionedIdentifier;
 import java.util.*;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Insert the type's description here.
@@ -41,6 +42,8 @@ private Image eclipseImage;
 private Image updatesImage;
 private Image featureImage;
 private Image siteImage;
+private Image installSiteImage;
+private Image linkedSiteImage;
 private boolean initialized;
 private UpdateModelChangedListener modelListener;
 
@@ -179,8 +182,13 @@ class LocalSiteLabelProvider extends LabelProvider {
 		   return updatesImage;
 		if (obj instanceof IFeature)
 		   return featureImage;
-		if (obj instanceof IConfigurationSite)
-		   return siteImage;
+		if (obj instanceof IConfigurationSite) {
+			IConfigurationSite csite = (IConfigurationSite)obj;
+			if (csite.isInstallSite())
+				return installSiteImage;
+			else
+				return linkedSiteImage;
+		}
 		if (obj instanceof UpdateSearchSite)
 		   return siteImage;
 		return null;
@@ -191,7 +199,14 @@ public LocalSiteView() {
 	eclipseImage = UpdateUIPluginImages.DESC_ECLIPSE_OBJ.createImage();
 	updatesImage = UpdateUIPluginImages.DESC_UPDATES_OBJ.createImage();
 	featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
-	siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
+	ImageDescriptor siteDesc = UpdateUIPluginImages.DESC_SITE_OBJ;
+	siteImage = siteDesc.createImage();
+	ImageDescriptor installSiteDesc = new OverlayIcon(siteDesc, new ImageDescriptor [][]
+				{{ UpdateUIPluginImages.DESC_INSTALLABLE_CO }});
+	installSiteImage = installSiteDesc.createImage();
+	ImageDescriptor linkedSiteDesc = new OverlayIcon(siteDesc, new ImageDescriptor [][]
+				{{ UpdateUIPluginImages.DESC_LINKED_CO }});
+	linkedSiteImage = linkedSiteDesc.createImage();
 	modelListener = new UpdateModelChangedListener();
 }
 
@@ -237,6 +252,8 @@ public void dispose() {
 	eclipseImage.dispose();
 	featureImage.dispose();
 	siteImage.dispose();
+	installSiteImage.dispose();
+	linkedSiteImage.dispose();
 	updatesImage.dispose();
 	
 	if (initialized) {

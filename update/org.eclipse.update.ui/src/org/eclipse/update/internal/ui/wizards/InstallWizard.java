@@ -43,8 +43,8 @@ public class InstallWizard extends Wizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		IRunnableWithProgress operation = new IRunnableWithProgress() {
 		final IConfigurationSite targetSite = targetPage.getTargetSite();
+		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
 					successfulInstall=false;

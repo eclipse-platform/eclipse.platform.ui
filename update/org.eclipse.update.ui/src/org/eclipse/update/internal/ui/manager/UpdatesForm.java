@@ -22,6 +22,7 @@ import org.eclipse.ui.part.*;
 import org.eclipse.jface.wizard.*;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.action.IStatusLineManager;
+import java.util.Date;
 
 public class UpdatesForm extends UpdateWebForm {
 	private Label descLabel;
@@ -44,6 +45,9 @@ class SearchMonitor extends ProgressMonitorPart {
 	public void done() {
 		super.done();
 		updateButtonText();
+		Date date = new Date();
+		infoLabel.setText("Last search: "+date.toString());
+		infoLabel.getParent().layout(true);
 		enableOptions(true);
 	}
 }
@@ -135,6 +139,7 @@ protected void createContents(Composite parent) {
 		}
 	});
 	td = new TableData(TableData.LEFT, TableData.MIDDLE);
+	td.indent = 10;
 	searchButton.setLayoutData(td);
 	
 	monitor = new SearchMonitor(parent);

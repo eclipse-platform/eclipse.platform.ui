@@ -37,7 +37,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		super(descriptor);
 		plugin = this;
 		try {
-			resourceBundle= ResourceBundle.getBundle("org.eclipse.update.ui.UpdateUIPluginResources");
+			resourceBundle= ResourceBundle.getBundle("org.eclipse.update.internal.ui.UpdateUIPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}

@@ -18,7 +18,7 @@ public class ActivitySection extends UpdateSection {
 		super(page);
 		setAddSeparator(false);
 		setHeaderText("Activities");
-		setDescription("The following list shows activities that caused the creation of this configuration");
+		setDescription("The following list shows activities that caused the creation of this configuration:");
 	}
 
 	public Composite createClient(Composite parent, FormWidgetFactory factory) {
@@ -79,8 +79,8 @@ public class ActivitySection extends UpdateSection {
 		separator.setLayoutData(gd);
 		separator.setBackground(factory.getBorderColor());
 		factory.createLabel(container, null);
-		container.layout();
-		container.getParent().layout();
+		container.layout(true);
+		container.getParent().layout(true);
 	}
 	
 	private Label createHeader(Composite parent, FormWidgetFactory factory, String text) {
@@ -93,7 +93,7 @@ public class ActivitySection extends UpdateSection {
 		int action = activity.getAction();
 		switch (action) {
 			case IActivity.ACTION_CONFIGURE:
-				return "Configure";
+				return "Configured";
 			case IActivity.ACTION_FEATURE_INSTALL:
 				return "Feature Installed";
 			case IActivity.ACTION_FEATURE_REMOVE:
@@ -103,7 +103,7 @@ public class ActivitySection extends UpdateSection {
 			case IActivity.ACTION_SITE_REMOVE:
 				return "Site Removed";
 			case IActivity.ACTION_UNCONFIGURE:
-				return "Unconfigure";
+				return "Unconfigured";
 			default:
 				return "Unknown";
 		}
