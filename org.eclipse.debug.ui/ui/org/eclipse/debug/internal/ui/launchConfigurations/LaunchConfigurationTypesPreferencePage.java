@@ -408,7 +408,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 	public void init(IWorkbench aWorkbench){
 		readDefaultLaunchConfigs();
 		noDefaultAndApplyButton();
-		setDescription(LaunchConfigurationsMessages.getString("LaunchConfigurationTypesPreferencePage.description"));
+		setDescription(LaunchConfigurationsMessages.getString("LaunchConfigurationTypesPreferencePage.description")); //$NON-NLS-1$
 	}
 
 	/**

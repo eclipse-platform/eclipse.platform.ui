@@ -93,12 +93,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Constant for the name of the drop-down choice 'None' for perspectives.
 	 */
-	private static final String PERSPECTIVE_NONE_NAME = "None";	
+	private static final String PERSPECTIVE_NONE_NAME = "None";	 //$NON-NLS-1$
 	
 	/**
 	 * Constant for the name of the drop-down choice 'Default' for perspectives.
 	 */
-	private static final String PERSPECTIVE_DEFAULT_NAME = "Default";	
+	private static final String PERSPECTIVE_DEFAULT_NAME = "Default";	 //$NON-NLS-1$
 	
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)

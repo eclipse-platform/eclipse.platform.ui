@@ -466,7 +466,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					
 				}
-			}, "Thread timer"); // $NON-NLS-1$
+			}, "Thread timer"); //$NON-NLS-1$
 			fThread.start();
 			DebugPlugin.getDefault().addDebugEventListener(this);
 		}

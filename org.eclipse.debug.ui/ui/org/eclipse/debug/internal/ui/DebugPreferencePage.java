@@ -29,7 +29,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 
 	private RadioGroupFieldEditor fSaveRadioFieldEditor;
 	
-	private static final String PERSPECTIVE_NONE_NAME = "None";
+	private static final String PERSPECTIVE_NONE_NAME = "None"; //$NON-NLS-1$
 	
 	public DebugPreferencePage() {
 		super(GRID);
@@ -61,11 +61,11 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		
 		String[][] perspectiveNamesAndIds = getPerspectiveNamesAndIds();
 		addField(new ComboFieldEditor(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT,
-									   "Default perspective for Debug",
+									   DebugUIMessages.getString("DebugPreferencePage.Default_perspective_for_Debug_2"), //$NON-NLS-1$
 									   perspectiveNamesAndIds,
 									   getFieldEditorParent()));
 		addField(new ComboFieldEditor(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT,
-									   "Default perspective for Run",
+									   DebugUIMessages.getString("DebugPreferencePage.Default_perspective_for_Run_3"), //$NON-NLS-1$
 									   perspectiveNamesAndIds,
 									   getFieldEditorParent()));
 		

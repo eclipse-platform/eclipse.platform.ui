@@ -86,7 +86,7 @@ public class LaunchHistoryPreferencePage
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-		setDescription(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.description"));
+		setDescription(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.description")); //$NON-NLS-1$
 	}
 
 	/**
