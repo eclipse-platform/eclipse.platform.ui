@@ -90,7 +90,7 @@ public class BranchAction extends CVSAction {
 					Hashtable table = getProviderMapping(resources);
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					MultiStatus status = new MultiStatus(CVSUIPlugin.ID, IStatus.INFO, Policy.bind("BranchWizard.errorTagging"), null); //$NON-NLS-1$
+					MultiStatus status = new MultiStatus(CVSUIPlugin.ID, IStatus.INFO, Policy.bind("BranchWizard.errorBranching"), null); //$NON-NLS-1$
 					Iterator iterator = keySet.iterator();
 					while (iterator.hasNext()) {
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);

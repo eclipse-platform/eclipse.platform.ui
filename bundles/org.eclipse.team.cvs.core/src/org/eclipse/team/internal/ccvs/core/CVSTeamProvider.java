@@ -560,7 +560,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				
 				IStatus status;
 				if (versionTag != null) {
-					// Version using tag and braqnch using rtag
+					// Version using tag and branch using rtag
 					status = tagCommand.execute(s,
 						Command.NO_GLOBAL_OPTIONS,
 						Command.NO_LOCAL_OPTIONS,
@@ -568,7 +568,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 						arguments,
 						null,
 						Policy.subMonitorFor(monitor, 40));
-					if (status.getCode() != CVSStatus.SERVER_ERROR) {
+					if (status.isOK()) {
 						// XXX Could use RTAG here when it works
 						status = tagCommand.execute(s,
 							Command.NO_GLOBAL_OPTIONS,
@@ -589,7 +589,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 						Policy.subMonitorFor(monitor, 40));
 	
 				}
-				if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				if ( ! status.isOK()) {
 					throw new CVSServerException(status);
 				}
 			} finally {
