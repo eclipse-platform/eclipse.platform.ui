@@ -12,93 +12,34 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IContributionManagerOverrides;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.SubMenuManager;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IElementFactory;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.commands.IHandlerService;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.ActionHandler;
-import org.eclipse.ui.internal.commands.ContextAndHandlerManager;
-import org.eclipse.ui.internal.commands.Manager;
-import org.eclipse.ui.internal.commands.SequenceMachine;
-import org.eclipse.ui.internal.commands.SimpleContextService;
-import org.eclipse.ui.internal.commands.SimpleHandlerService;
+import org.eclipse.ui.internal.commands.*;
 import org.eclipse.ui.internal.commands.util.Sequence;
 import org.eclipse.ui.internal.commands.util.Stroke;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.progress.ProgressControl;
-import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.IActionSet;
-import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.progress.AnimationItem;
+import org.eclipse.ui.internal.registry.*;
 
 /**
  * A window within the workbench.
@@ -136,7 +77,7 @@ public class WorkbenchWindow
 	private Menu perspectiveBarMenu;
 	private Menu fastViewBarMenu;
 	private MenuItem restoreItem;
-	private ProgressControl progressControl;
+	private AnimationItem animationItem;
 
 	private CoolBarManager coolBarManager = new CoolBarManager();
 	private Label noOpenPerspective;
@@ -220,11 +161,11 @@ public class WorkbenchWindow
 			int toolBarWidth = clientArea.width;
 			//Layout the progress indicator
 			if (showProgressIndicator()) {
-				if (progressControl != null) {
+				if (animationItem != null) {
 					Control progressWidget =
-						progressControl.getCanvas().getControl();
+						animationItem.getControl();
 					Rectangle bounds =
-					progressControl.getCanvas().getImageBounds();
+					animationItem.getImageBounds();
 					toolBarWidth -= (bounds.width + CLIENT_INSET);
 					progressWidget.setBounds(
 						clientArea.x + toolBarWidth,
@@ -2169,8 +2110,8 @@ public class WorkbenchWindow
 	 */
 	private void createProgressIndicator(Shell shell) {
 		if (showProgressIndicator()) {
-			progressControl = new ProgressControl();
-			progressControl.createCanvas(shell);
+			animationItem = new AnimationItem(this);
+			animationItem.createControl(shell);
 		}
 
 	}
