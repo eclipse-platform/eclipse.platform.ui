@@ -31,7 +31,7 @@ BODY {
 A {
 	text-decoration:none; 
 	color:WindowText; 
-	height:18;
+	height:100%;
 	padding:0px;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
@@ -39,6 +39,7 @@ A {
 
 DIV {
 	padding-left:20px;
+	padding-top:5px;
 }
 
 DIV {
@@ -72,9 +73,13 @@ DIV.active {
   
 <script language="JavaScript">
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+var isIE50 = navigator.userAgent.toLowerCase().indexOf('msie 5.0') != -1;
+
 var extraStyle = "";
 if (isMozilla)
 	extraStyle = "<style type='text/css'>DIV { padding-top:2px; padding-bottom:2px; }</style>";	
+else if (isIE50)
+ 	 extraStyle = "<style type='text/css'>A{ height:10px;} </style>";
 document.write(extraStyle);
 </script>
 
