@@ -19,6 +19,8 @@ import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -58,6 +60,10 @@ public final class BindingService implements IBindingService {
 					"Cannot create a binding service with a null manager"); //$NON-NLS-1$
 		}
 		this.bindingManager = bindingManager;
+		
+		// Initialize the key formatter.
+		KeyFormatterFactory.setDefault(SWTKeySupport
+				.getKeyFormatterForPlatform());
 	}
 
 	public final TriggerSequence[] getActiveBindingsFor(

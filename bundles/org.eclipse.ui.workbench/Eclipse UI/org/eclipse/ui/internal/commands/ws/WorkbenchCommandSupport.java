@@ -22,8 +22,6 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
-import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -295,8 +293,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 		workbench = workbenchToSupport;
 		commandManagerWrapper = CommandManagerFactory.getCommandManagerWrapper(
 				bindingManager, commandManager, contextManager);
-		KeyFormatterFactory.setDefault(SWTKeySupport
-				.getKeyFormatterForPlatform());
 		org.eclipse.ui.keys.KeyFormatterFactory
 				.setDefault(org.eclipse.ui.keys.SWTKeySupport
 						.getKeyFormatterForPlatform());
