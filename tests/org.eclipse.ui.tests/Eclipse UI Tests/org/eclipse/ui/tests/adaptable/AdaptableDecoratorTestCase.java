@@ -19,6 +19,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.TestDecoratorContributor;
+import org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -28,7 +29,8 @@ public class AdaptableDecoratorTestCase
 	extends UITestCase
 	implements ILabelProviderListener {
 
-	private DecoratorDefinition definition;
+	private DecoratorDefinition fullDefinition;
+	private DecoratorDefinition lightDefinition;
 	private AdaptedResourceNavigator adaptedNavigator;
 	private boolean updated = false;
 	public String ADAPTED_NAVIGATOR_ID =
@@ -55,10 +57,19 @@ public class AdaptableDecoratorTestCase
 		WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
 
 		DecoratorDefinition[] definitions =
-			WorkbenchPlugin.getDefault().getDecoratorManager().getAllDecoratorDefinitions();
+			WorkbenchPlugin
+				.getDefault()
+				.getDecoratorManager()
+				.getAllDecoratorDefinitions();
 		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].getId().equals("org.eclipse.ui.tests.adaptable.decorator"))
-				definition = definitions[i];
+			if (definitions[i]
+				.getId()
+				.equals("org.eclipse.ui.tests.adaptable.decorator"))
+				fullDefinition = definitions[i];
+			if (definitions[i]
+				.getId()
+				.equals("org.eclipse.ui.tests.navigator.lightweightdecorator"))
+				lightDefinition = definitions[i];
 		}
 	}
 
@@ -98,8 +109,9 @@ public class AdaptableDecoratorTestCase
 	/**
 	 * Test enabling the contributor
 	 */
-	public void testEnableDecorator() throws CoreException{
-		definition.setEnabled(true);
+	public void testEnableDecorator() throws CoreException {
+		fullDefinition.setEnabled(true);
+		lightDefinition.setEnabled(true);
 		getDecoratorManager().reset();
 
 	}
@@ -107,20 +119,37 @@ public class AdaptableDecoratorTestCase
 	/**
 	 * Test disabling the contributor
 	 */
-	public void testDisableDecorator() throws CoreException{
-		definition.setEnabled(false);
+	public void testDisableDecorator() throws CoreException {
+		fullDefinition.setEnabled(false);
+		lightDefinition.setEnabled(false);
 		getDecoratorManager().reset();
 	}
 
 	/**
-	 * Refresh the test decorator.
+	 * Refresh the full decorator.
 	 */
-	public void testRefreshContributor() throws CoreException{
+	public void testRefreshFullContributor() throws CoreException {
 
 		updated = false;
-		definition.setEnabled(true);
+		fullDefinition.setEnabled(true);
+		lightDefinition.setEnabled(false);
 		getDecoratorManager().reset();
 		TestDecoratorContributor.contributor.refreshListeners(testFile);
+		assertTrue("Got an update", updated);
+		updated = false;
+
+	}
+
+	/**
+		 * Refresh the full decorator.
+		 */
+	public void testRefreshLightContributor() throws CoreException {
+
+		updated = false;
+		lightDefinition.setEnabled(true);
+		fullDefinition.setEnabled(false);
+		getDecoratorManager().reset();
+		TestLightweightDecoratorContributor.contributor.refreshListeners(testFile);
 		assertTrue("Got an update", updated);
 		updated = false;
 
