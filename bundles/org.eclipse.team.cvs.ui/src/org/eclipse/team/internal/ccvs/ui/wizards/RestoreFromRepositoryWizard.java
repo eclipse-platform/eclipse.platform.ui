@@ -33,6 +33,7 @@ public class RestoreFromRepositoryWizard extends Wizard {
 	public RestoreFromRepositoryWizard(IContainer parent, ICVSFile[] files) {
 		this.parent = parent;
 		this.files = files;
+		setWindowTitle(Policy.bind("RestoreFromRepositoryWizard.fileSelectionPageTitle")); //$NON-NLS-1$
 	}
 
 	/**
