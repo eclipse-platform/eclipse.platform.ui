@@ -151,6 +151,7 @@ public class ColorSchemeService {
         control.setSelectionBackground(c, percent, vertical);
         CTabItem [] items = control.getItems();
         Font tabFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
+        control.setFont(tabFont);
         for (int i = 0; i < items.length; i++) {
 			items[i].setFont(tabFont);
 		}
