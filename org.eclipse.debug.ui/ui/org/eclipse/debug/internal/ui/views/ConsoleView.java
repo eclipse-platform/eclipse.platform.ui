@@ -137,7 +137,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	protected void updateTitle() {
 		// update view title
 		String title = null;
-		if (getProcess() == null) {
+		if (getProcess() == null) { 
 			title = DebugUIViewsMessages.getString("ConsoleView.Console_1"); //$NON-NLS-1$
 		} else {
 			// use debug target title if applicable
@@ -358,10 +358,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {
-		IViewPart view = findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (view == null) {
-			setViewerInput(DebugUITools.getCurrentProcess());
-		}
+		setViewerInput(DebugUITools.getCurrentProcess());
 	}
 
 	/**
