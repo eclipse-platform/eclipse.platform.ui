@@ -230,16 +230,22 @@ public class JobManager implements IJobManager {
 		return (Job[]) members.toArray(new Job[members.size()]);
 	}
 	/**
-	 * Returns a running job whose scheduling rule conflicts with the scheduling rule
-	 * of the given waiting job.  Returns null if there are no conflicting jobs.
+	 * Returns a running or blocked job whose scheduling rule conflicts with the 
+	 * scheduling rule of the given waiting job.  Returns null if there are no 
+	 * conflicting jobs.  A job can only run if there are no running jobs and no blocked
+	 * jobs whose scheduling rule conflicts with its rule.
 	 */
 	private InternalJob findBlockingJob(InternalJob waiting) {
 		if (waiting.getRule() == null)
 			return null;
 		for (Iterator it = running.iterator(); it.hasNext();) {
-			Job job = (Job) it.next();
-			if (waiting.isConflicting(job))
-				return job;
+			InternalJob job = (InternalJob) it.next();
+			//check the running job and all blocked jobs
+			while (job != null) {
+				if (waiting.isConflicting(job))
+					return job;
+				job = job.previous();
+			}
 		}
 		return null;
 	}
