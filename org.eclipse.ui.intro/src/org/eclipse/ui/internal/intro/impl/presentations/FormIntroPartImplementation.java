@@ -23,6 +23,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
+import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.swt.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.config.*;
@@ -31,7 +32,8 @@ import org.eclipse.ui.intro.config.*;
  * This is a UI Forms based implementation of an Intro Part Presentation.
  */
 public class FormIntroPartImplementation extends
-        AbstractIntroPartImplementation implements IPropertyListener {
+        AbstractIntroPartImplementation implements IIntroContentProviderSite,
+        IPropertyListener {
 
     private FormToolkit toolkit;
     private ScrolledPageBook mainPageBook;
@@ -51,7 +53,7 @@ public class FormIntroPartImplementation extends
         // registry.
         ImageUtil.registerImage(ImageUtil.DEFAULT_ROOT_LINK, "overview_48.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_SMALL_ROOT_LINK,
-                "overview_32.gif"); //$NON-NLS-1$
+            "overview_32.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_FORM_BG, "form_banner.gif"); //$NON-NLS-1$
         ImageUtil.registerImage(ImageUtil.DEFAULT_LINK, "welcome_item.gif"); //$NON-NLS-1$
     }
@@ -95,7 +97,7 @@ public class FormIntroPartImplementation extends
             toolkit.setBackground(bg);
         }
         toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-                HyperlinkGroup.UNDERLINE_HOVER);
+            HyperlinkGroup.UNDERLINE_HOVER);
 
         // Define presentation title color and image.
         Form mainForm = toolkit.createForm(container);
@@ -106,7 +108,7 @@ public class FormIntroPartImplementation extends
         if (bgImage != null) {
             mainForm.setBackgroundImage(bgImage);
             String repeat = sharedStyleManager
-                    .getProperty("title.image.repeat"); //$NON-NLS-1$
+                .getProperty("title.image.repeat"); //$NON-NLS-1$
             if (repeat != null && repeat.equalsIgnoreCase("true")) //$NON-NLS-1$
 
                 mainForm.setBackgroundImageTiled(true);
@@ -148,9 +150,11 @@ public class FormIntroPartImplementation extends
 
         // Create the two Page forms .
         pageForm = new PageForm(toolkit, model, form);
+        pageForm.setContentProviderSite(this);
         pageForm.createPartControl(pageBook, sharedStyleManager);
 
         pageFormWithNav = new PageFormWithNavigation(toolkit, model, form);
+        pageFormWithNav.setContentProviderSite(this);
         pageFormWithNav.createPartControl(pageBook, sharedStyleManager);
 
         // now determine which page to show. Show it and add it to history.
@@ -164,7 +168,7 @@ public class FormIntroPartImplementation extends
         AbstractIntroPage pageToShow = getModel().getCurrentPage();
         // load style manager here to test for navigation.
         PageStyleManager styleManager = new PageStyleManager(pageToShow,
-                sharedStyleManager.getProperties());
+            sharedStyleManager.getProperties());
         boolean pageHasNavigation = styleManager.showHomePageNavigation();
         if (pageToShow != null) {
             if (pageBook.hasPage(pageToShow.getId()))
@@ -178,7 +182,7 @@ public class FormIntroPartImplementation extends
                     pageFormWithNav.showPage(pageToShow, sharedStyleManager);
                     // then show the page
                     pageBook
-                            .showPage(PageFormWithNavigation.PAGE_FORM_WITH_NAVIGATION_ID);
+                        .showPage(PageFormWithNavigation.PAGE_FORM_WITH_NAVIGATION_ID);
                 } else {
                     // page or Home Page with a regular page layout, set the
                     // page id to the static PageForm id. first create the
@@ -205,7 +209,7 @@ public class FormIntroPartImplementation extends
      * is executed.
      * 
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
-     *      int)
+     *           int)
      */
     public void propertyChanged(Object source, int propId) {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
@@ -223,9 +227,9 @@ public class FormIntroPartImplementation extends
         IActionBars actionBars = getIntroPart().getIntroSite().getActionBars();
         IToolBarManager toolBarManager = actionBars.getToolBarManager();
         actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
-                forwardAction);
+            forwardAction);
         actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
-                backAction);
+            backAction);
         toolBarManager.add(homeAction);
         toolBarManager.add(backAction);
         toolBarManager.add(forwardAction);
@@ -277,13 +281,13 @@ public class FormIntroPartImplementation extends
     }
 
     private boolean showPage(AbstractIntroPage pageToShow) {
-        boolean pageisCached = showExistingPage(pageToShow);
+        boolean pageisCached = showCachedPage(pageToShow);
 
         if (!pageisCached) {
             // page has not been shown before.
             // load style manager here to test for navigation.
             PageStyleManager styleManager = new PageStyleManager(pageToShow,
-                    sharedStyleManager.getProperties());
+                sharedStyleManager.getProperties());
             boolean pageHasNavigation = styleManager.showHomePageNavigation();
             if (pageHasNavigation) {
                 // page or Home Page with a regular page layout, set the
@@ -292,7 +296,7 @@ public class FormIntroPartImplementation extends
                 pageFormWithNav.showPage(pageToShow, sharedStyleManager);
                 // then show the page
                 mainPageBook
-                        .showPage(PageFormWithNavigation.PAGE_FORM_WITH_NAVIGATION_ID);
+                    .showPage(PageFormWithNavigation.PAGE_FORM_WITH_NAVIGATION_ID);
             } else {
                 // page or Home Page with a regular page layout, set the
                 // page id to the static PageFormWithNavigation id. first
@@ -306,7 +310,7 @@ public class FormIntroPartImplementation extends
         return true;
     }
 
-    private boolean showExistingPage(AbstractIntroPage page) {
+    private boolean showCachedPage(AbstractIntroPage page) {
         String formPageId = null;
         if (pageForm.hasPage(page.getId())) {
             pageForm.showPage(page, sharedStyleManager);
@@ -321,6 +325,36 @@ public class FormIntroPartImplementation extends
 
         mainPageBook.showPage(formPageId);
         return true;
+    }
+
+    private void removeCachedPage(AbstractIntroPage page) {
+        if (pageForm.hasPage(page.getId()))
+            pageForm.removePage(page.getId());
+        else if (pageFormWithNav.hasPage(page.getId()))
+            pageFormWithNav.removePage(page.getId());
+        else if (mainPageBook.hasPage(page.getId()))
+            mainPageBook.removePage(page.getId());
+        else
+            return;
+    }
+
+
+    /**
+     * Clear page cache for the page that contains this provider. Remove the
+     * form from the correct pagebook that refers to the page we need to
+     * refresh. This will force a call to createContents on all content
+     * providers the next time this page needs to be displayed.
+     * 
+     * @see org.eclipse.ui.intro.config.IIntroContentProviderSite#reflow(org.eclipse.ui.intro.config.IIntroContentProvider,
+     *           boolean)
+     */
+    public void reflow(IIntroContentProvider provider, boolean incremental) {
+        String pageId = ContentProviderManager.getInst()
+            .getContentProviderPageId(provider);
+        AbstractIntroPage page = (AbstractIntroPage) model.findChild(pageId,
+            AbstractIntroElement.ABSTRACT_PAGE);
+        removeCachedPage(page);
+        showPage(model.getCurrentPage());
     }
 
 
@@ -348,7 +382,7 @@ public class FormIntroPartImplementation extends
                 else {
                     // Set current page, and this will triger regen.
                     CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                            .getIntro();
+                        .getIntro();
                     currentIntroPart.getControl().setRedraw(false);
                     success = getModel().setCurrentPageId(getCurrentLocation());
                     currentIntroPart.getControl().setRedraw(true);
@@ -378,7 +412,7 @@ public class FormIntroPartImplementation extends
                 else {
                     // Set current page, and this will triger regen.
                     CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                            .getIntro();
+                        .getIntro();
                     currentIntroPart.getControl().setRedraw(false);
                     success = getModel().setCurrentPageId(getCurrentLocation());
                     currentIntroPart.getControl().setRedraw(true);
@@ -393,7 +427,7 @@ public class FormIntroPartImplementation extends
         IntroHomePage rootPage = getModel().getHomePage();
         if (getModel().isDynamic()) {
             CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                    .getIntro();
+                .getIntro();
             currentIntroPart.getControl().setRedraw(false);
             boolean success = false;
             success = getModel().setCurrentPageId(rootPage.getId());
@@ -428,7 +462,7 @@ public class FormIntroPartImplementation extends
     private void staticCreatePartControl(Composite parent) {
         toolkit = new FormToolkit(parent.getDisplay());
         toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
-                HyperlinkGroup.UNDERLINE_HOVER);
+            HyperlinkGroup.UNDERLINE_HOVER);
 
         // create a page that has only one link. The URL and tooltip will be set
         // by the standby listener.

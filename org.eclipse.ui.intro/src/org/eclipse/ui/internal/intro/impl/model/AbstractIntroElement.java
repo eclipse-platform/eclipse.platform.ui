@@ -122,16 +122,16 @@ public abstract class AbstractIntroElement implements Cloneable {
      * Type constant which identifies the IntroContentProvider element.
      */
     public static final int CONTENT_PROVIDER = 1 << 14;
-    
+
     /**
      * Type constant which identifies the LaunchBarElement.
      */
-    public static final int LAUNCH_BAR = 1 << 15;    
-    
+    public static final int LAUNCH_BAR = 1 << 15;
+
     /**
      * Type constant which identifies the launch bar shortcut.
      */
-    public static final int LAUNCH_BAR_SHORTCUT = 1 << 16;    
+    public static final int LAUNCH_BAR_SHORTCUT = 1 << 16;
 
     /**
      * Type constant which identifies the AbstractText element.
@@ -250,7 +250,7 @@ public abstract class AbstractIntroElement implements Cloneable {
      * </ul>
      * 
      * @return returns the parent of this intro element. Null only for model
-     *         root.
+     *               root.
      */
     public AbstractIntroElement getParent() {
         return parent;
@@ -258,9 +258,9 @@ public abstract class AbstractIntroElement implements Cloneable {
 
     /**
      * @param parent
-     *            The parent to set.
+     *                   The parent to set.
      */
-    protected void setParent(AbstractIntroElement parent) {
+    public void setParent(AbstractIntroElement parent) {
         this.parent = parent;
     }
 
@@ -306,10 +306,10 @@ public abstract class AbstractIntroElement implements Cloneable {
      * </code>
      * 
      * @param elementMask
-     *            element mask formed by bitwise OR of element type constants
-     *            defined in this class.
+     *                   element mask formed by bitwise OR of element type constants
+     *                   defined in this class.
      * @return <code>true</code> if this element has a matching type, and
-     *         <code>false</code> otherwise.
+     *               <code>false</code> otherwise.
      */
     public boolean isOfType(int elementMask) {
         return (getType() & elementMask) != 0;
@@ -325,8 +325,8 @@ public abstract class AbstractIntroElement implements Cloneable {
      * </code>
      * 
      * @return <code>true</code> if all elements are of the right type, and
-     *         <code>false</code> if the list is empty, or at least one
-     *         element is not of the specified types.
+     *               <code>false</code> if the list is empty, or at least one
+     *               element is not of the specified types.
      */
     public static final boolean allElementsAreOfType(
             AbstractIntroElement[] elements, int elementMask) {

@@ -21,8 +21,7 @@ import org.eclipse.ui.intro.config.*;
  * A Composite that represents the content of an Intro Page. It is swapped in
  * the categories page book in the PageForm class.
  */
-public class PageContentForm implements IIntroConstants,
-        IIntroContentProviderSite {
+public class PageContentForm implements IIntroConstants {
 
     private FormToolkit toolkit;
     private IntroModelRoot model;
@@ -33,9 +32,11 @@ public class PageContentForm implements IIntroConstants,
     // the page we are modeling here.
     private AbstractIntroPage page;
 
-    /**
-     *  
-     */
+    // site is cached to hand down to the PageWidgetFactory for creating the UI
+    // for content providers..
+    private IIntroContentProviderSite site;
+
+
     public PageContentForm(FormToolkit toolkit, IntroModelRoot modelRoot) {
         this.toolkit = toolkit;
         this.model = modelRoot;
@@ -62,7 +63,7 @@ public class PageContentForm implements IIntroConstants,
 
         // categoriesComposite has Table Layout with one col. Holds page
         // description and composite with all other children.
-        Composite contentComposite = contentPageBook.createPage(page.getId());
+        contentComposite = contentPageBook.createPage(page.getId());
         //Util.highlight(contentComposite, SWT.COLOR_GREEN);
         TableWrapLayout layout = new TableWrapLayout();
         layout.topMargin = 15;
@@ -74,7 +75,7 @@ public class PageContentForm implements IIntroConstants,
 
         if (styleManager.getPageDescription() != null) {
             Label label = toolkit.createLabel(contentComposite, styleManager
-                    .getPageDescription(), SWT.WRAP);
+                .getPageDescription(), SWT.WRAP);
             label.setFont(PageStyleManager.getBannerFont());
             TableWrapData td = new TableWrapData();
             td.align = TableWrapData.FILL;
@@ -94,7 +95,7 @@ public class PageContentForm implements IIntroConstants,
     private void createPageChildren(AbstractIntroPage page, Composite parent) {
         // setup page composite/layout
         PageWidgetFactory factory = new PageWidgetFactory(toolkit, styleManager);
-        factory.setContentProviderSite(this);
+        factory.setContentProviderSite(site);
         Composite pageComposite = createPageTableComposite(factory, parent);
         // now add all children
         AbstractIntroElement[] children = page.getChildren();
@@ -126,7 +127,7 @@ public class PageContentForm implements IIntroConstants,
 
         // parent has TableWrapLayout, and so update layout of this child.
         TableWrapData td = new TableWrapData(TableWrapData.FILL,
-                TableWrapData.FILL);
+            TableWrapData.FILL);
         //td.align = TableWrapData.FILL;
         td.grabHorizontal = true;
         client.setLayoutData(td);
@@ -134,14 +135,10 @@ public class PageContentForm implements IIntroConstants,
     }
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.config.IIntroContentProviderSite#reflow(org.eclipse.ui.intro.config.IIntroContentProvider,
-     *      boolean)
-     */
-    public void reflow(IIntroContentProvider provider, boolean incremental) {
-        contentComposite.layout(true);
+    public void setContentProviderSite(IIntroContentProviderSite site) {
+        this.site = site;
     }
+
+
 
 }

@@ -521,14 +521,6 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         return AbstractIntroElement.ABSTRACT_CONTAINER;
     }
 
-    /**
-     * Sets the loaded/resolved flags to false. This is needed to be able to
-     * clear the loaded falg, and force a reload of all children.
-     */
-    public void clearChildren() {
-        this.loaded = false;
-        this.resolved = false;
-    }
 
 
     /**

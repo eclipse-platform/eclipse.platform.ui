@@ -97,7 +97,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     public CustomizableIntroPart() {
         // register adapter to hide standbypart.
         Platform.getAdapterManager().registerAdapters(factory,
-                CustomizableIntroPart.class);
+            CustomizableIntroPart.class);
         // model can not be loaded here because the configElement of this part
         // is still not loaded here.
     }
@@ -106,7 +106,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * (non-Javadoc)
      * 
      * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite,
-     *      org.eclipse.ui.IMemento)
+     *           org.eclipse.ui.IMemento)
      */
     public void init(IIntroSite site, IMemento memento)
             throws PartInitException {
@@ -116,7 +116,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         // IntroPartId in the manager class.
         String introId = getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
         ExtensionPointManager extensionPointManager = IntroPlugin.getDefault()
-                .getExtensionPointManager();
+            .getExtensionPointManager();
         extensionPointManager.setIntroId(introId);
         model = extensionPointManager.getCurrentModel();
 
@@ -126,7 +126,7 @@ public final class CustomizableIntroPart extends IntroPart implements
             presentation = model.getPresentation();
             if (presentation != null)
                 presentation.init(this, getMemento(memento,
-                        MEMENTO_PRESENTATION_TAG));
+                    MEMENTO_PRESENTATION_TAG));
 
             // standby part is not created here for performance.
 
@@ -136,14 +136,14 @@ public final class CustomizableIntroPart extends IntroPart implements
 
             // add the registry listerner for dynamic awarness.
             Platform.getExtensionRegistry().addRegistryChangeListener(this,
-                    IIntroConstants.PLUGIN_ID);
+                IIntroConstants.PLUGIN_ID);
         }
 
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
-                    "CustomizableIntroPart.configNotFound", //$NON-NLS-1$
-                    new Object[] { ModelLoaderUtil.getLogString(
-                            getConfigurationElement(), null) }, null);
+                "CustomizableIntroPart.configNotFound", //$NON-NLS-1$
+                new Object[] { ModelLoaderUtil.getLogString(
+                    getConfigurationElement(), null) }, null);
 
     }
 
@@ -183,7 +183,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         if (restore == null)
             return false;
         String cachedStandbyPart = standbyMemento
-                .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
+            .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
         if (cachedStandbyPart != null
                 && cachedStandbyPart.equals(EMPTY_STANDBY_CONTENT_PART))
             return false;
@@ -309,7 +309,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         ContentProviderManager.getInst().clear();
         // clean platform adapter.
         Platform.getAdapterManager().unregisterAdapters(factory,
-                CustomizableIntroPart.class);
+            CustomizableIntroPart.class);
         if (model != null && model.hasValidConfig())
             Platform.getExtensionRegistry().removeRegistryChangeListener(this);
     }
@@ -325,8 +325,8 @@ public final class CustomizableIntroPart extends IntroPart implements
      * Returns the primary control associated with this Intro part.
      * 
      * @return the SWT control which displays this Intro part's content, or
-     *         <code>null</code> if this standby part's controls have not yet
-     *         been created.
+     *               <code>null</code> if this standby part's controls have not yet
+     *               been created.
      */
     public Control getControl() {
         return container;
@@ -346,9 +346,9 @@ public final class CustomizableIntroPart extends IntroPart implements
             restorePresentation = true;
 
         IMemento presentationMemento = memento
-                .createChild(MEMENTO_PRESENTATION_TAG);
+            .createChild(MEMENTO_PRESENTATION_TAG);
         IMemento standbyPartMemento = memento
-                .createChild(MEMENTO_STANDBY_PART_TAG);
+            .createChild(MEMENTO_STANDBY_PART_TAG);
         if (restorePresentation)
             presentationMemento.putString(MEMENTO_RESTORE_ATT, "true"); //$NON-NLS-1$
         else

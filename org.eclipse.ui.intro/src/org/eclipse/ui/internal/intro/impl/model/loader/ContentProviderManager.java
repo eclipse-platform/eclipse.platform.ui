@@ -31,12 +31,10 @@ public class ContentProviderManager {
 
 
     // Holds all created content providers, to prevent the need to recreate the
-    // class on each navigation. Key is the contentProvider id, value is the
-    // actual Intro content provider instance. We use id as key because in both
-    // the swt and XHTML modes a page is refreshed (reflowed) by clearing all
-    // children and recreating them. So we do not want to recreate the content
-    // provider class too.
+    // class on each navigation. Key is the contentProvider model class, value
+    // is the actual Intro content provider instance.
     private Hashtable contentProviders = new Hashtable();
+
 
     /*
      * Prevent creation.
@@ -60,18 +58,9 @@ public class ContentProviderManager {
      */
     public IIntroContentProvider getContentProvider(
             IntroContentProvider provider) {
-        if (provider.getId() == null) {
-            // no id defined. return null to create a new instance each time.
-            // bad, so log fact.
-            Log
-                .info("Intro content provider from class: " //$NON-NLS-1$
-                        + provider.getClassName()
-                        + " does not have an id defined. An id is required for a content provider."); //$NON-NLS-1$
-            return null;
-        }
         // safe to cast since we know the object class in table.
         IIntroContentProvider providerClass = (IIntroContentProvider) contentProviders
-            .get(provider.getId());
+            .get(provider);
         return providerClass;
     }
 
@@ -96,9 +85,10 @@ public class ContentProviderManager {
         if (aClass != null && aClass instanceof IIntroContentProvider) {
             providerClass = ((IIntroContentProvider) aClass);
             providerClass.init(site);
-            if (provider.getId() != null)
+            if (provider.getId() != null) {
                 // cache only when an id is defined.
-                contentProviders.put(provider.getId(), providerClass);
+                contentProviders.put(provider, providerClass);
+            }
         } else
             Log.warning("Failed to create Intro model content provider: " //$NON-NLS-1$
                     + provider.getClassName());
@@ -106,6 +96,19 @@ public class ContentProviderManager {
     }
 
 
+    public String getContentProviderPageId(IIntroContentProvider provider) {
+        Enumeration keys = contentProviders.keys();
+        while (keys.hasMoreElements()) {
+            IntroContentProvider key = (IntroContentProvider) keys
+                .nextElement();
+            boolean foundKey = contentProviders.get(key).equals(provider) ? true
+                    : false;
+            if (foundKey) {
+                return key.getParentPage().getId();
+            }
+        }
+        return null;
+    }
 
     public void clear() {
         for (Iterator it = contentProviders.values().iterator(); it.hasNext();) {

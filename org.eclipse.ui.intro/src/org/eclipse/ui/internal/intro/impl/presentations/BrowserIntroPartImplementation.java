@@ -34,6 +34,9 @@ public class BrowserIntroPartImplementation extends
     // the HTML generator used to generate dynamic content
     private IntroHTMLGenerator htmlGenerator = null;
 
+    //  cache model instance for reuse.
+    private IntroModelRoot model = getModel();
+
     private BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
         this);
 
@@ -142,20 +145,26 @@ public class BrowserIntroPartImplementation extends
 
     /**
      * Generate dynamic HTML for the provided page, and set it in the browser
-     * widget (Revisit this). This method also updates the navigation history.
+     * widget. A cache is used for performance and for having a correct dynamic
+     * content life cycle. This method also updates the navigation history.
      * 
      * @param page
      *                   the page to generate HTML for
      */
     private boolean generateDynamicContentForPage(AbstractIntroPage page) {
         String content = null;
-        if (page.isXHTMLPage())
-            content = generateXHTMLPage(page, this);
+        boolean cachedPageFound = HTMLCache.getInst().hasPage(page.getId());
+        if (cachedPageFound)
+            content = HTMLCache.getInst().getPage(page.getId());
         else {
-            HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
-                this);
-            if (html != null)
-                content = html.toString();
+            if (page.isXHTMLPage())
+                content = generateXHTMLPage(page, this);
+            else {
+                HTMLElement html = getHTMLGenerator().generateHTMLforPage(page,
+                    this);
+                if (html != null)
+                    content = html.toString();
+            }
         }
 
         if (content == null) {
@@ -163,7 +172,9 @@ public class BrowserIntroPartImplementation extends
             Log.error("Error generating HTML content for page", null); //$NON-NLS-1$
             return false;
         }
-        // set the browser's HTML.
+
+        // set the browser's HTML, but cache first.
+        HTMLCache.getInst().addPage(page.getId(), content);
         boolean success = false;
         if (browser != null) {
             success = browser.setText(content);
@@ -210,6 +221,7 @@ public class BrowserIntroPartImplementation extends
             Element contentProviderElement = (Element) nodes[i];
             IntroContentProvider provider = new IntroContentProvider(
                 contentProviderElement, page.getBundle());
+            provider.setParent(page);
             // If we've already loaded the content provider for this element,
             // retrieve it, otherwise load the class.
             IIntroXHTMLContentProvider providerClass = (IIntroXHTMLContentProvider) ContentProviderManager
@@ -326,14 +338,20 @@ public class BrowserIntroPartImplementation extends
         generateDynamicContentForPage(getModel().getCurrentPage());
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Clear page cache for the page that contains this provider. Remove the
+     * String cache from the HTML cache manager.This will force a call to
+     * createContents on all content providers the next time this page needs to
+     * be displayed.
      * 
      * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation#reflow()
      */
     public void reflow(IIntroContentProvider provider, boolean incremental) {
-        // clear loaded flags to force a reload of all children.
-        getModel().getCurrentPage().clearChildren();
+        String pageId = ContentProviderManager.getInst()
+            .getContentProviderPageId(provider);
+        AbstractIntroPage page = (AbstractIntroPage) model.findChild(pageId,
+            AbstractIntroElement.ABSTRACT_PAGE);
+        HTMLCache.getInst().clearPage((page.getId()));
         updateContent();
     }
 

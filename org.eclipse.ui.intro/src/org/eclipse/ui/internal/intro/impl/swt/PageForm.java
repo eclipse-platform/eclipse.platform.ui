@@ -18,6 +18,7 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
+import org.eclipse.ui.intro.config.*;
 
 /**
  * A Form that represents an Intro Page. It is swapped in the main page book in
@@ -37,6 +38,10 @@ public class PageForm implements IIntroConstants {
     // main page book.
     public static String PAGE_FORM_ID = "pageFormId"; //$NON-NLS-1$
 
+    // site is cached to hand down to the PageWidgetFactory for creating the UI
+    // for content providers..
+    private IIntroContentProviderSite site;
+
     protected HyperlinkAdapter hyperlinkAdapter = new HyperlinkAdapter() {
 
         public void linkActivated(HyperlinkEvent e) {
@@ -51,8 +56,8 @@ public class PageForm implements IIntroConstants {
                 return;
             }
             DialogUtil.displayInfoMessage(((Control) e.getSource()).getShell(),
-                    IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
-                            + " " + url); //$NON-NLS-1$
+                IntroPlugin.getString("HyperlinkAdapter.urlIs") //$NON-NLS-1$
+                        + " " + url); //$NON-NLS-1$
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -96,7 +101,7 @@ public class PageForm implements IIntroConstants {
         // Get form body. Form body is one column grid layout. Add page book
         // and navigation UI to it.
         categoryPageBook = toolkit.createPageBook(pageForm.getBody(),
-                SWT.H_SCROLL | SWT.V_SCROLL);
+            SWT.H_SCROLL | SWT.V_SCROLL);
         categoryPageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         //pageForm.setText(rootPageStyleManager.getPageSubTitle());
@@ -122,10 +127,11 @@ public class PageForm implements IIntroConstants {
         if (!categoryPageBook.hasPage(page.getId())) {
             // if we do not have a category form for this page create one.
             PageContentForm categoryForm = new PageContentForm(toolkit, model,
-                    page);
+                page);
+            categoryForm.setContentProviderSite(site);
             // load style manager only once, here.
             PageStyleManager styleManager = new PageStyleManager(page,
-                    sharedStyleManager.getProperties());
+                sharedStyleManager.getProperties());
             categoryForm.createPartControl(categoryPageBook, styleManager);
         }
         categoryPageBook.showPage(page.getId());
@@ -146,4 +152,14 @@ public class PageForm implements IIntroConstants {
     public boolean hasPage(String pageId) {
         return categoryPageBook.hasPage(pageId);
     }
+
+    public void removePage(String pageId) {
+        categoryPageBook.removePage(pageId);
+    }
+
+    public void setContentProviderSite(IIntroContentProviderSite site) {
+        this.site = site;
+    }
+
+
 }

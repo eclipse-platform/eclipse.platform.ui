@@ -624,7 +624,7 @@ Another difference between the tags is that the html tag is only supported for t
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  unique identifier of this content provider element. It is a required attribute because having a unique id is what prevents the intro framework from reinstantiating this content provider and recreating its content.
+                  unique identifier of this content provider element.
                </documentation>
             </annotation>
          </attribute>

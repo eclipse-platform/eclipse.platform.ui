@@ -59,7 +59,7 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
             return false;
         IntroModelRoot root = (IntroModelRoot) getParentPage().getParent();
         return root.getPresentation().getImplementationKind().equals(
-                filteredFrom) ? true : false;
+            filteredFrom) ? true : false;
     }
 
 
@@ -94,11 +94,6 @@ public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
     }
 
 
-
-    protected void setParent(AbstractIntroElement parent) {
-        super.setParent(parent);
-
-    }
 
 }
 
