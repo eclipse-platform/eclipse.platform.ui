@@ -121,7 +121,7 @@ private static FontData[] basicGetFontData(String value) {
  */
 private static Point basicGetPoint(String value) {
 	Point dp = new Point(POINT_DEFAULT_DEFAULT.x, POINT_DEFAULT_DEFAULT.y);
-	if (value == IPreferenceStore.STRING_DEFAULT_DEFAULT)
+	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
 		return dp;
 	return StringConverter.asPoint(value, dp);
 }
@@ -138,7 +138,7 @@ private static Rectangle basicGetRectangle(String value) {
 			RECTANGLE_DEFAULT_DEFAULT.width, 
 			RECTANGLE_DEFAULT_DEFAULT.height); 
 
-	if (value == IPreferenceStore.STRING_DEFAULT_DEFAULT)
+	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
 		return dr;
 	return StringConverter.asRectangle(value, dr);
 }
