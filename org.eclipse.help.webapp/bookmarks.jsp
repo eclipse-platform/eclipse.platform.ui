@@ -1,10 +1,25 @@
-<%@ page import="java.util.*,java.net.URLEncoder,org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.util.*,java.net.URLEncoder,org.eclipse.core.runtime.*,org.eclipse.help.internal.*,org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
 
+<%
+	String bookmarkURL = request.getParameter("add");
+	String removeUrl = request.getParameter("remove");
+	if (bookmarkURL != null && bookmarkURL.length() > 0)
+	{
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
+		bookmarks = bookmarks + "," + bookmarkURL;
+		prefs.setValue(HelpSystem.BOOKMARKS, bookmarks);
+		HelpPlugin.getDefault().savePluginPreferences();
+	}
+	else
+	{
+	}
+%>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!--
@@ -88,62 +103,6 @@ if (isMozilla)
 	extraStyle = "<style type='text/css'>.active, A.active:hover {background:WindowText;color:Window;} </style>";
  
 document.write(extraStyle);
-
-/**
- * Add a new bookmark
- */
-function addBookmark(url)
-{
-	// use the url from plugin id only
-	var i = url.indexOf("content/help:/");
-	if (i >=0 )
-		url = url.substring(i+13);
-	// remove any query string
-	i = url.indexOf("?");
-	if (i >= 0)
-		url = url.substring(0, i);
-
-	liveAction("org.eclipse.help", "org.eclipse.help.internal.webapp.AddBookmarkAction", url);
-	
-	var table = document.getElementById("list");
-	var msg = document.getElementById("msg");
-	if (msg != null)
-		table.removeNode(msg);
-		
-	createBookmark(url);
-}
-
-/**
- * Create a bookmark node using DOM API's
- */
-function createBookmark(url)
-{
-	var table = document.getElementById("list");
-	var numBookmarks = table.rows.length;
-	var tr = document.createElement("TR");
-	tr.setAttribute("class", "list");
-	tr.setAttribute("id", "r"+numBookmarks); //ids start from 0
-	
-	table.appendChild(tr);
-
-	var td = document.createElement("TD");
-	td.setAttribute("align", "left");
-	td.setAttribute("class",  "label");
-	td.nowrap = true;
-	
-	tr.appendChild(td);
-	
-	var a = document.createElement("A");
-	a.setAttribute("id", "a"+numBookmarks);
-	a.setAttribute("href", url);
-	//a.setAttribute(); 	
-	
-	td.appendChild(a);
-	
-	var text = document.createTextNode("bookmark");
-	
-	a.appendChild(text);
-}
 
 </script>
 

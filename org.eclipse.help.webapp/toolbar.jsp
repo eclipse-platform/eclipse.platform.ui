@@ -68,20 +68,30 @@ function goForward(button) {
 	if (isIE) button.blur();
 }
 
-/*
-function showBookshelf(button)
-{
-	parent.NavFrame.switchTab("toc");
-	parent.NavFrame.showBookshelf();
-	if (isIE) button.blur();
-}
-*/
 
 function bookmarkPage(button)
 {
-	parent.switchTab("bookmarks");
-	parent.NavFrame.bookmarks.addBookmark(parent.parent.MainFrame.location.href);
+	// Currently we pick up the url from the content page.
+	// If the page is from outside the help domain, a script
+	// exception is thrown. We need to catch it and ignore it.
+	try
+	{
+		parent.switchTab("bookmarks");
+		
+		// use the url from plugin id only
+		var url = parent.parent.MainFrame.location.href;
+		var i = url.indexOf("content/help:/");
+		if (i >=0 )
+			url = url.substring(i+13);
+		// remove any query string
+		i = url.indexOf("?");
+		if (i >= 0)
+			url = url.substring(0, i);
+			
+		parent.NavFrame.bookmarks.location = "bookmarks.jsp?add="+url;
+	}catch (e) {}
 	if (isIE) button.blur();
+
 }
 
 function toggleNav(button)
