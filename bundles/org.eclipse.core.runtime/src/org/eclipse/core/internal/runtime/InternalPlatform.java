@@ -61,6 +61,7 @@ public final class InternalPlatform {
 	public static String DEBUG_REGISTRY_DUMP = null;
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static boolean DEBUG_STARTUP = false;
+	public static boolean DEBUG_MESSAGE_BUNDLES = false;
 	private static Runnable endOfInitializationHandler = null;
 	private static final String FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
@@ -95,6 +96,7 @@ public final class InternalPlatform {
 	private static final String OPTION_DEBUG_REGISTRY_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_MESSAGE_BUNDLES = Platform.PI_RUNTIME + "/messagebundles"; //$NON-NLS-1$
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 	static PackageAdmin packageAdmin;
 	private static String password = ""; //$NON-NLS-1$
@@ -715,6 +717,7 @@ public final class InternalPlatform {
 			DEBUG_PREFERENCE_GENERAL = getBooleanOption(OPTION_DEBUG_PREFERENCE_GENERAL, false);
 			DEBUG_PREFERENCE_GET = getBooleanOption(OPTION_DEBUG_PREFERENCE_GET, false);
 			DEBUG_PREFERENCE_SET = getBooleanOption(OPTION_DEBUG_PREFERENCE_SET, false);
+			DEBUG_MESSAGE_BUNDLES = getBooleanOption(OPTION_DEBUG_MESSAGE_BUNDLES, false);
 		}
 	}
 

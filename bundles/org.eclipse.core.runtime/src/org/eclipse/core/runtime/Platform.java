@@ -11,7 +11,7 @@
 package org.eclipse.core.runtime;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
@@ -446,7 +446,7 @@ public final class Platform {
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		InternalPlatform.getDefault().addProtectionSpace(resourceUrl, realm);
 	}
-	
+
 	/**
 	 * Returns a URL which is the local equivalent of the
 	 * supplied URL. This method is expected to be used with the
@@ -709,7 +709,7 @@ public final class Platform {
 	public static void removeLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().removeLogListener(listener);
 	}
-	
+
 	/**
 	 * Returns a URL which is the resolved equivalent of the
 	 * supplied URL. This method is expected to be used with the
@@ -1302,5 +1302,64 @@ public final class Platform {
 	 */
 	public static boolean inDevelopmentMode() {
 		return System.getProperty("osgi.dev") != null; //$NON-NLS-1$
+	}
+
+	/**
+	 * Initialize the given class with the values from the specified message bundle.
+	 * <p>
+	 * Note this is interim API and may change before the 3.1 release.
+	 * </p>
+	 * 
+	 * @param bundleName fully qualified path of the class name
+	 * @param clazz the class where the constants will exist
+	 * @since 3.1
+	 */
+	public static void initializeMessages(String bundleName, Class clazz) {
+
+		// load the resource bundle
+		long start = System.currentTimeMillis();
+		Properties bundle = MessageResourceBundle.load(bundleName, clazz.getClassLoader());
+
+		// iterate over the fields in the class
+		Field[] fields = clazz.getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			int flags = field.getModifiers();
+			if (!(Modifier.isPublic(flags) && Modifier.isStatic(flags) && !Modifier.isFinal(flags)))
+				continue;
+			String key = field.getName();
+
+			// check to see if there is an entry in the bundle for this field
+			String value = bundle == null ? "Missing bundle: " + bundleName : bundle.getProperty(key); //$NON-NLS-1$
+
+			// TODO: remove this later
+			// for backwards compatibility old files might have uses a period as a namespace separator
+			if (value == null && key.indexOf('_') != -1)
+				value = bundle.getProperty(key.replace('_', '.'));
+
+			// The key was not found in the bundle. Shouldn't happen but if it does,
+			// then just set the message to be the same as the key.
+			if (value == null)
+				value = "Missing message: " + key + " in: " + bundleName; //$NON-NLS-1$ //$NON-NLS-2$
+
+			// Set the value into the field. We should never get an exception here because
+			// we know we have a public static non-final field. If we do get an exception, silently
+			// log it and continue. This means that the field will (most likely) be un-initialized and
+			// will fail later in the code and if so then we will see both the NPE and this error.
+			try {
+				field.set(null, value);
+			} catch (IllegalArgumentException e) {
+				// TODO externalize message
+				IStatus status = new Status(IStatus.ERROR, PI_RUNTIME, PLUGIN_ERROR, "Exception setting field value.", e);
+				InternalPlatform.getDefault().log(status);
+			} catch (IllegalAccessException e) {
+				// TODO externalize message
+				IStatus status = new Status(IStatus.ERROR, PI_RUNTIME, PLUGIN_ERROR, "Exception setting field value.", e);
+				InternalPlatform.getDefault().log(status);
+			}
+
+		}
+		if (InternalPlatform.DEBUG_MESSAGE_BUNDLES)
+			System.out.println("Time to load message bundle: " + bundleName + " was "+ (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }

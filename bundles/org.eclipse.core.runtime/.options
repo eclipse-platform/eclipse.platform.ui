@@ -27,6 +27,9 @@ org.eclipse.core.runtime/timing/shutdown=false
 # Turn on debugging for the compatibility layer
 org.eclipse.core.runtime/compatibility/debug=false
 
+# Debug NLS message loading
+org.eclipse.core.runtime/messagebundles=false
+
 # Turn on debugging for the registry.
 org.eclipse.core.runtime/registry/debug=false
 # Specify a filename for a user-readable form of the plugin registry to be written to.
