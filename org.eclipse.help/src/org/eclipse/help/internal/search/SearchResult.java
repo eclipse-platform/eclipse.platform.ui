@@ -17,9 +17,9 @@ import org.w3c.dom.*;
  * An XML based search result. This is needed in order to decouple
  * the search client from the search server. The server encodes
  * the search results as an XML Document and passes it to the client.
- * <pre>
- * 	<toc>
- * 		<topic label=".." score="..." toc=".." toclabel=".."/>
+ * &lt;pre&gt;
+ * 	&lt;toc&gt;
+ * 		&lt;topic label=".." score="..." toc=".." toclabel=".."/&gt;
  *  .....
  */
 public class SearchResult {
