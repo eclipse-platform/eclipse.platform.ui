@@ -59,6 +59,10 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
     private static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
     private static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$
+    // this implementation kind if not public api. Only used internally for
+    // debugging.
+    private static final String TEXT_IMPL_KIND = "text"; //$NON-NLS-1$
+
 
     private String title;
     private String implementationStyle;
@@ -329,15 +333,18 @@ public class IntroPartPresentation extends AbstractIntroElement {
         if (implementationType == null)
             return null;
         if (!implementationType.equals(BROWSER_IMPL_KIND)
-                && !implementationType.equals(FORMS_IMPL_KIND))
+                && !implementationType.equals(FORMS_IMPL_KIND)
+                && !implementationType.equals(TEXT_IMPL_KIND))
             return null;
 
         AbstractIntroPartImplementation implementation = null;
         try {
             if (implementationType.equals(BROWSER_IMPL_KIND))
                 implementation = new BrowserIntroPartImplementation();
-            else
+            else if (implementationType.equals(FORMS_IMPL_KIND))
                 implementation = new FormIntroPartImplementation();
+            else
+                implementation = new TextIntroPartImplementation();
         } catch (Exception e) {
             Util.handleException("Could not instantiate implementation " //$NON-NLS-1$
                     + implementationType, e);

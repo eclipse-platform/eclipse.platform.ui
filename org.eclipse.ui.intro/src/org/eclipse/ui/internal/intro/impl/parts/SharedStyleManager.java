@@ -29,7 +29,7 @@ public class SharedStyleManager {
      * StringBuffer to return when paths can not be created. Doing this for
      * memory
      */
-    protected static StringBuffer emptyBuffer = new StringBuffer("");
+    protected static StringBuffer emptyBuffer = new StringBuffer(""); //$NON-NLS-1$
 
     SharedStyleManager() {
     }
@@ -161,7 +161,7 @@ public class SharedStyleManager {
         if (link != null) {
             buff = createPathKey(link);
             if (buff == null)
-                    return "";
+                    return ""; //$NON-NLS-1$
         } else {
             buff = new StringBuffer();
             buff.append(page.getId());
@@ -188,7 +188,7 @@ public class SharedStyleManager {
                 && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
             if (parent.getId() == null)
                     return null;
-            buffer.insert(0, parent.getId() + ".");
+            buffer.insert(0, parent.getId() + "."); //$NON-NLS-1$
             parent = (AbstractBaseIntroElement) parent.getParent();
         }
         return buffer;

@@ -29,18 +29,27 @@ import org.w3c.dom.*;
  * <ol>
  * <li>if an attribute is not included in the markup, its value will be null in
  * the model.</li>
- * <li>Children of a given parent (ie: model root, page, or div) *must* have
+ * <li>Children of a given parent (ie: model root, page, or group) *must* have
  * distinctive IDs otherwise resolving includes and extensions may fail.</li>
  * <li>Containers have the concept of loading children and resolving children.
- * At the model root lovel, resolving children means resolving ALL extensions of
+ * At the model root level, resolving children means resolving ALL extensions of
  * model. At the container level, resolving children means resolving includes.
  * </li>
  * <li>Extensions are resolved before includes at the container level to avoid
- * race conditions. eg: if a page includes a shared div and an extension extends
- * this shared div, you want the include to get the extended div and not the
- * original div.</li>
+ * race conditions. eg: if a page includes a shared group and an extension
+ * extends this shared group, you want the include to get the extended group and
+ * not the original group.</li>
  * <li>Resolving extensions should not resolve includes. No need to load other
- * models when we dont have to.</li>
+ * models when we dont have to. Plus, extensions can only reference anchors, and
+ * so no need to resolve includes.</li>
+ * <li>Extensions can not target containers *after* they are resolved. For
+ * example, an extension can not target a shared group after it has been
+ * included in a page. It can target the initial shared group as a path, but not
+ * the group in the page as a path. Again this is because extensions extends
+ * anchors that already have a path, not a resolved path.</li>
+ * <li>Pages and shared groups that are contributed through extensions become
+ * children of the atrget configuration, and so any includes they may have will
+ * be resolved correctly.</li>
  * <li>unresolved includes are left as children of the parent container.</li>
  * <li>Unresolved extensions are left as children of the targetted model.</li>
  * </ol>
@@ -91,9 +100,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * loads the full model. The children of a model root are the presentation,
-     * followed by all pages, and all shared divs. Then if the model has
+     * followed by all pages, and all shared groups. Then if the model has
      * extension, its the unresolved container extensions, followed by all
-     * extension pages and divs. The presentation is loaded from the
+     * extension pages and groups. The presentation is loaded from the
      * IConfiguration element representing the config. All else is loaded from
      * xml content file.
      *  
@@ -119,7 +128,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
         introPartPresentation.setParent(this);
 
         // now load all children of the config. There should only be pages and
-        // divs here. And order is not important. These elements are loaded from
+        // groups here. And order is not important. These elements are loaded
+        // from
         // the content file DOM.
         Document document = loadDOM(getCfgElement());
         if (document == null) {
@@ -131,7 +141,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         }
 
         loadPages(document, getBundle());
-        loadSharedDivs(document, getBundle());
+        loadSharedGroups(document, getBundle());
 
         setModelState(true, true);
     }
@@ -186,15 +196,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * Loads all shared divs defined in this config, from the DOM.
+     * Loads all shared groups defined in this config, from the DOM.
      */
-    private void loadSharedDivs(Document dom, Bundle bundle) {
-        Element[] divs = ModelLoaderUtil.getElementsByTagName(dom,
+    private void loadSharedGroups(Document dom, Bundle bundle) {
+        Element[] groups = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroGroup.TAG_GROUP);
-        for (int i = 0; i < divs.length; i++) {
-            IntroGroup div = new IntroGroup(divs[i], bundle);
-            div.setParent(this);
-            children.add(div);
+        for (int i = 0; i < groups.length; i++) {
+            IntroGroup group = new IntroGroup(groups[i], bundle);
+            group.setParent(this);
+            children.add(group);
         }
     }
 
@@ -204,35 +214,36 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     private void resolveConfigExtensions() {
         for (int i = 0; i < configExtensionElements.length; i++) {
-            // get the pd from the extensions since they are defined in other
-            // plugins.
+            // get the bundle from the extensions since they are defined in
+            // other plugins.
             Bundle bundle = ModelLoaderUtil
                     .getBundleFromConfigurationElement(configExtensionElements[i]);
 
             Document dom = loadDOM(configExtensionElements[i]);
             if (dom == null)
-                    // we failed to parse the content file. Intro Parser would
-                    // have logged the fact. Parser would also have checked to
-                    // see if the content file has the correct root tag.
-                    continue;
+                // we failed to parse the content file. Intro Parser would
+                // have logged the fact. Parser would also have checked to
+                // see if the content file has the correct root tag.
+                continue;
 
             // Find the target of this container extension, and add all its
-            // children to target. Make sure to pass pd to propagate to all
+            // children to target. Make sure to pass bundle to propagate to all
             // children.
             Element extensionContentElement = loadExtensionContent(dom, bundle);
             if (extensionContentElement == null)
-                    // no extension content defined.
-                    continue;
+                // no extension content defined.
+                continue;
 
             if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
-                // we failed to resolve this configExtension, add the extension
-                // as a child of this model.
+                // we failed to resolve this configExtension, because target
+                // could nopt be found or is not an anchor, add the extension
+                // as a (unresolved) child of this model.
                 children.add(new IntroExtensionContent(extensionContentElement,
                         bundle));
                 continue;
             }
 
-            // Now load all pages and shared divs from this config extension
+            // Now load all pages and shared groups from this config extension
             // only if we resolved this extension. No point adding pages that
             // will never be referenced.
             Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
@@ -244,8 +255,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 children.add(page);
             }
 
-            // load all shared divs from all configExtensions to this model.
-            loadSharedDivs(dom, bundle);
+            // load all shared groups from all configExtensions to this model.
+            loadSharedGroups(dom, bundle);
         }
     }
 
@@ -253,7 +264,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * load the extension content of this configExtension into model classes,
      * and insert them at target. A config extension can have only ONE extension
      * content. This is because if the extension fails, we need to be able to
-     * not include the page and div contributions as part of the model.
+     * not include the page and group contributions as part of the model.
      * 
      * @param
      * @return
@@ -266,8 +277,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .validateSingleContribution(extensionContents,
                         IntroExtensionContent.ATT_PATH);
         if (extensionContentElement == null)
-                // no extensionContent defined.
-                return null;
+            // no extensionContent defined.
+            return null;
 
         // Create the model class.
         IntroExtensionContent extensionContent = new IntroExtensionContent(
@@ -275,56 +286,89 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // now resolve this extension.
         String path = extensionContent.getPath();
         AbstractIntroElement target = findTarget(this, path);
-        if (target == null)
+        if (target == null || !target.isOfType(AbstractIntroElement.ANCHOR))
             // target could not be found. Signal failure.
             extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        else if (target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER)) {
-            // extensions are only for container (ie: divs and pages)
-            AbstractIntroContainer targetContainer = (AbstractIntroContainer) target;
-            // make sure you load the children of the target container
-            // because we want the children vector to be initialized and
-            // loaded with children for ordering.
-            if (!targetContainer.isLoaded())
-                    targetContainer.loadChildren();
-            targetContainer.addChildren(extensionContent.getChildren(), bundle);
-            handleExtensionStyleInheritence(extensionContent, targetContainer);
+        else {
+            // extensions are only for anchors. Insert all children of this
+            // extension before this anchor. After all extensions have been
+            // resolved, all anchors are simply removed from the parent
+            // container.
+            IntroAnchor targetAnchor = (IntroAnchor) target;
+            insertAnchorChildren(targetAnchor, extensionContent, bundle);
+            handleExtensionStyleInheritence(targetAnchor, extensionContent);
         }
         return extensionContentElement;
     }
 
+
+    private void insertAnchorChildren(IntroAnchor anchor,
+            IntroExtensionContent extensionContent, Bundle bundle) {
+        AbstractIntroContainer anchorParent = (AbstractIntroContainer) anchor
+                .getParent();
+        // insert the elements of the extension before the anchor.
+        anchorParent.insertElementsBefore(extensionContent.getChildren(),
+                bundle, anchor);
+    }
+
+
     /**
      * Updates the inherited styles based on the merge-style attribute. If we
-     * are including a shared div, or if we are including an element from the
-     * same page, do nothing. For inherited alt-styles, we have to cache the pd
-     * from which we inherited the styles to be able to access resources in that
-     * plugin.
+     * are extending a shared group do nothing. For inherited alt-styles, we
+     * have to cache the bundle from which we inherited the styles to be able to
+     * access resources in that plugin.
      * 
      * @param include
      * @param target
      */
-    private void handleExtensionStyleInheritence(
-            IntroExtensionContent extension,
-            AbstractIntroElement targetContainer) {
+    private void handleExtensionStyleInheritence(IntroAnchor anchor,
+            IntroExtensionContent extension) {
 
+        AbstractIntroContainer targetContainer = (AbstractIntroContainer) anchor
+                .getParent();
         if (targetContainer.getType() == AbstractIntroElement.GROUP
                 && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
-                // if we are extending a shared div, defined under a config, we
-                // can not include styles.
-                return;
+            // if we are extending a shared group, defined under a config, we
+            // can not include styles.
+            return;
 
         // Update the parent page styles. skip style if it is null;
         String style = extension.getStyle();
         if (style != null)
-                targetContainer.getParentPage().addStyle(style);
+            targetContainer.getParentPage().addStyle(style);
 
-        // for alt-style cache pd for loading resources.
+        // for alt-style cache bundle for loading resources.
         style = extension.getAltStyle();
         if (style != null) {
             Bundle bundle = extension.getBundle();
             targetContainer.getParentPage().addAltStyle(style, bundle);
         }
     }
+
+
+    private void handleExtensionStyleInheritenceOLD(
+            IntroExtensionContent extension,
+            AbstractIntroElement targetContainer) {
+
+        if (targetContainer.getType() == AbstractIntroElement.GROUP
+                && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
+            // if we are extending a shared group, defined under a config, we
+            // can not include styles.
+            return;
+
+        // Update the parent page styles. skip style if it is null;
+        String style = extension.getStyle();
+        if (style != null)
+            targetContainer.getParentPage().addStyle(style);
+
+        // for alt-style cache bundle for loading resources.
+        style = extension.getAltStyle();
+        if (style != null) {
+            Bundle bundle = extension.getBundle();
+            targetContainer.getParentPage().addAltStyle(style, bundle);
+        }
+    }
+
 
     /**
      * Sets the model state based on all the model classes.
@@ -431,20 +475,20 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public AbstractIntroPage getCurrentPage() {
         if (!homePage.isDynamic())
-                return null;
+            return null;
 
         AbstractIntroPage page = null;
         IntroPage[] pages = getPages();
         for (int i = 0; i < pages.length; i++) {
             if (pages[i].getId() != null
                     && pages[i].getId().equals(currentPageId))
-                    page = pages[i];
+                page = pages[i];
         }
         if (page != null)
-                return page;
+            return page;
         // not a page. Test for root page.
         if (homePage.getId().equals(currentPageId))
-                return homePage;
+            return homePage;
         // return null if page is not found.
         return null;
     }
@@ -492,8 +536,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected static String resolveURL(String url, String pluginId) {
         Bundle bundle = null;
         if (pluginId != null)
-                // if pluginId is not null, use it.
-                bundle = Platform.getBundle(pluginId);
+            // if pluginId is not null, use it.
+            bundle = Platform.getBundle(pluginId);
         return resolveURL(url, bundle);
     }
 
@@ -519,7 +563,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     protected static String resolveURL(String url, Bundle bundle) {
         // quick exit
         if (url == null)
-                return null;
+            return null;
         IntroURLParser parser = new IntroURLParser(url);
         if (parser.hasProtocol())
             return url;
@@ -549,7 +593,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         // quick exits.
         if (resource == null || !ModelLoaderUtil.bundleHasValidState(bundle))
-                return null;
+            return null;
 
         URL localLocation = null;
         try {

@@ -23,14 +23,15 @@
    <element name="page">
       <complexType>
          <choice>
-            <element ref="group"/>
-            <element ref="link"/>
-            <element ref="text"/>
-            <element ref="head"/>
-            <element ref="img"/>
-            <element ref="include"/>
-            <element ref="html"/>
-            <element ref="title"/>
+            <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="text" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="head" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="img" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="include" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="html" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="title" minOccurs="0" maxOccurs="1"/>
+            <element ref="anchor" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -109,12 +110,13 @@
    <element name="group">
       <complexType>
          <choice>
-            <element ref="text"/>
-            <element ref="img"/>
-            <element ref="include"/>
-            <element ref="html"/>
-            <element ref="link"/>
-            <element ref="group"/>
+            <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="text" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="img" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="include" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="html" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="anchor" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -383,7 +385,7 @@
    <element name="head">
       <annotation>
          <documentation>
-            direct HTML to include in a page&apos;s HEAD content area. This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation (aka swt). A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
+            direct HTML to include in a page&apos;s HEAD content area. This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
          </documentation>
       </annotation>
       <complexType>
@@ -482,6 +484,23 @@
             <annotation>
                <documentation>
                   the path that uniquely represents the element (e.g. page/div1/div2) within the target configuration to be extended. It can only be a page or a div, including shared divs at configuration level.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="anchor">
+      <annotation>
+         <documentation>
+            an anchor is the element used to declare extensibility. It is a location in the configurtaion that allows for external contributions. Only anchors are valid target values for the path attribute in an extensionContent
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  unique id to identify this anchor.
                </documentation>
             </annotation>
          </attribute>

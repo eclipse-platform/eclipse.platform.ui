@@ -155,12 +155,12 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         ImageHyperlink imageLink = toolkit.createImageHyperlink(body, SWT.NULL);
 
         // set link image.
-        Image image = rootPageStyleManager.getImage(link, "small-link-icon",
+        Image image = rootPageStyleManager.getImage(link, "small-link-icon", //$NON-NLS-1$
                 ImageUtil.DEFAULT_SMALL_ROOT_LINK);
         imageLink.setImage(image);
 
         // set link hover image.
-        image = rootPageStyleManager.getImage(link, "small-hover-icon", null);
+        image = rootPageStyleManager.getImage(link, "small-hover-icon", null); //$NON-NLS-1$
         imageLink.setHoverImage(image);
         imageLink.setToolTipText(link.getLabel());
         // each link is centered in cell.

@@ -53,10 +53,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     public AbstractIntroElement[] getChildren() {
         if (!loaded)
-                loadChildren();
+            loadChildren();
 
         if (!resolved)
-                resolveChildren();
+            resolveChildren();
 
         AbstractIntroElement[] childrenElements = (AbstractIntroElement[]) convertToModelArray(
                 children, AbstractIntroElement.ELEMENT);
@@ -76,17 +76,18 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * predefined constant in the IntroElement, and it does not correspond to an
      * abstract model class, then the object returned can be safely cast to an
      * array of the corresponding model class. For exmaple, the following code
-     * gets all divs in the given page, in the same order they appear in the
+     * gets all groups in the given page, in the same order they appear in the
      * plugin.xml markup:
      * <p>
      * <code>
-     * 		IntroDiv[] divs  = (IntroDiv[])page.getChildrenOfType(IntroElement.DIV);
+     * 		Introgroup[] groups  = (IntroGroup[])page.getChildrenOfType(IntroElement.GROUP);
      * </code>
      * 
-     * However, if the element mask is not homogenous (for example: LINKS | DIV)
-     * then the returned array must be cast to an array of IntroElements.For
-     * exmaple, the following code gets all images and links in the given page,
-     * in the same order they appear in the plugin.xml markup:
+     * However, if the element mask is not homogenous (for example: LINKS |
+     * GROUP) then the returned array must be cast to an array of
+     * IntroElements.For exmaple, the following code gets all images and links
+     * in the given page, in the same order they appear in the plugin.xml
+     * markup:
      * <p>
      * <code>
      * 		int elementMask = IntroElement.IMAGE | IntroElement.DEFAULT_LINK;
@@ -107,7 +108,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         for (int i = 0; i < childrenElements.length; i++) {
             AbstractIntroElement element = childrenElements[i];
             if (element.isOfType(elementMask))
-                    typedChildren.addElement(element);
+                typedChildren.addElement(element);
         }
         return convertToModelArray(typedChildren, elementMask);
     }
@@ -188,32 +189,51 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE)
-                    vector.add(node);
+                vector.add(node);
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
-
-        addChildren(filteredElements, getBundle());
+        // add the elements at the end children's vector.
+        insertElementsBefore(filteredElements, getBundle(), children.size());
         loaded = true;
     }
 
     /**
-     * Adds children of a container (div and page) to this container.
+     * Adds the given elements as children of this container, before the
+     * specified index.
      * 
      * @param childElements
      */
-    protected void addChildren(Element[] childElements, Bundle bundle) {
-        // loop through each child, in order as appearing in XML, and load the
-        // model classes.
+    protected void insertElementsBefore(Element[] childElements, Bundle bundle,
+            int index) {
         for (int i = 0; i < childElements.length; i++) {
             Element childElement = childElements[i];
             AbstractIntroElement child = getModelChild(childElement, bundle);
             if (child != null) {
                 child.setParent(this);
-                children.addElement(child);
+                children.add(index, child);
+                // index is only incremented if we actually added a child.
+                index++;
             }
         }
     }
+
+    /**
+     * Adds the given elements as children of this container, before the
+     * specified element. The element must be a direct child of this container.
+     * 
+     * @param childElements
+     */
+    protected void insertElementsBefore(Element[] childElements, Bundle bundle,
+            AbstractIntroElement child) {
+        int childLocation = children.indexOf(child);
+        if (childLocation == -1)
+            // bad reference child.
+            return;
+        insertElementsBefore(childElements, bundle, childLocation);
+    }
+
+
 
     /**
      * Adds a child to this container, depending on its type. Subclasses may
@@ -241,7 +261,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             child = new IntroHTML(childElement, bundle);
         else if (childElement.getNodeName().equalsIgnoreCase(
                 IntroInclude.TAG_INCLUDE))
-                child = new IntroInclude(childElement, bundle);
+            child = new IntroInclude(childElement, bundle);
+        else if (childElement.getNodeName().equalsIgnoreCase(
+                IntroAnchor.TAG_ANCHOR))
+            child = new IntroAnchor(childElement, bundle);
         return child;
     }
 
@@ -254,27 +277,28 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             AbstractIntroElement child = (AbstractIntroElement) children
                     .elementAt(i);
             if (child.getType() == AbstractIntroElement.INCLUDE)
-                    resolveInclude((IntroInclude) child);
+                resolveInclude((IntroInclude) child);
         }
         resolved = true;
     }
 
     /**
      * Resolves an include. Gets the intro element pointed to by the include,
-     * and adds it as a child of this current container. If target is not a div,
-     * or any element that can be included in a div, ignore this include.
+     * and adds it as a child of this current container. If target is not a
+     * group, or any element that can be included in a group, ignore this
+     * include.
      * 
      * @param include
      */
     private void resolveInclude(IntroInclude include) {
         AbstractIntroElement target = findIncludeTarget(include);
         if (target == null)
-                // target could not be found.
-                return;
+            // target could not be found.
+            return;
         if (target.isOfType(AbstractIntroElement.GROUP
                 | AbstractIntroElement.ABSTRACT_TEXT
                 | AbstractIntroElement.IMAGE | AbstractIntroElement.TEXT))
-                insertTarget(include, target);
+            insertTarget(include, target);
     }
 
     /**
@@ -292,11 +316,11 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
                 .getParent();
         String targetConfigID = include.getConfigId();
         if (targetConfigID != null)
-                targetModelRoot = ExtensionPointManager.getInst().getModel(
-                        targetConfigID);
+            targetModelRoot = ExtensionPointManager.getInst().getModel(
+                    targetConfigID);
         if (targetModelRoot == null)
-                // if the target config was not found, skip this include.
-                return null;
+            // if the target config was not found, skip this include.
+            return null;
         AbstractIntroElement target = findTarget(targetModelRoot, path);
         return target;
     }
@@ -312,24 +336,24 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         // extract path segments. Get first segment to start search.
         String[] pathSegments = path.split("/"); //$NON-NLS-1$
         if (model == null)
-                // if the target config was not found, return.
-                return null;
+            // if the target config was not found, return.
+            return null;
 
         AbstractIntroElement target = model.findChild(pathSegments[0]);
         if (target == null)
-                // there is no element with the specified path.
-                return null;
+            // there is no element with the specified path.
+            return null;
 
         // found parent segment. now find each child segment.
         for (int i = 1; i < pathSegments.length; i++) {
             if (!target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
-                    // parent is not a container, so no point going on.
-                    return null;
+                // parent is not a container, so no point going on.
+                return null;
             String pathSegment = pathSegments[i];
             target = ((AbstractIntroContainer) target).findChild(pathSegment);
             if (target == null)
-                    // tried to find next segment and failed.
-                    return null;
+                // tried to find next segment and failed.
+                return null;
         }
         return target;
     }
@@ -342,21 +366,21 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     public AbstractIntroElement findChild(String elementId) {
         if (!loaded)
-                loadChildren();
+            loadChildren();
 
         for (int i = 0; i < children.size(); i++) {
             AbstractIntroElement aChild = (AbstractIntroElement) children
                     .elementAt(i);
-            if (!aChild.isOfType(BASE_ELEMENT))
-                    // includes and heads do not have ids, and so can not be
-                    // referenced directly. This means that they can not be
-                    // targets for other includes. Skip, just in case someone
-                    // adds an id to it! Also, this applies to all elements in
-                    // the model that do not have ids.
-                    continue;
-            AbstractBaseIntroElement child = (AbstractBaseIntroElement) aChild;
+            if (!aChild.isOfType(ID_ELEMENT))
+                // includes and heads do not have ids, and so can not be
+                // referenced directly. This means that they can not be
+                // targets for other includes. Skip, just in case someone
+                // adds an id to it! Also, this applies to all elements in
+                // the model that do not have ids.
+                continue;
+            AbstractIntroIdElement child = (AbstractIntroIdElement) aChild;
             if (child.getId() != null && child.getId().equals(elementId))
-                    return child;
+                return child;
         }
         // no child found.
         return null;
@@ -365,8 +389,8 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     private void insertTarget(IntroInclude include, AbstractIntroElement target) {
         int includeLocation = children.indexOf(include);
         if (includeLocation == -1)
-                // should never be here.
-                return;
+            // should never be here.
+            return;
         children.remove(includeLocation);
         // handle merging target styles first, before changing target parent.
         handleIncludeStyleInheritence(include, target);
@@ -377,7 +401,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
     /**
      * Updates the inherited styles based on the merge-style attribute. If we
-     * are including a shared div, or if we are including an element from the
+     * are including a shared group, or if we are including an element from the
      * same page, do nothing. For inherited alt-styles, we have to cache the pd
      * from which we inherited the styles to be able to access resources in that
      * plugin.
@@ -389,20 +413,20 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
             AbstractIntroElement target) {
 
         if (include.getMergeStyle() == false)
-                // target styles are not needed. nothing to do.
-                return;
+            // target styles are not needed. nothing to do.
+            return;
 
         if (target.getParent().getType() == AbstractIntroElement.MODEL_ROOT
                 || target.getParentPage().equals(include.getParentPage()))
-                // If we are including from this same page ie: target is in the
-                // same page, OR if we are including a shared div, defined
-                // under a config, do not include styles.
-                return;
+            // If we are including from this same page ie: target is in the
+            // same page, OR if we are including a shared group, defined
+            // under a config, do not include styles.
+            return;
 
         // Update the parent page styles. skip style if it is null;
         String style = target.getParentPage().getStyle();
         if (style != null)
-                getParentPage().addStyle(style);
+            getParentPage().addStyle(style);
 
         // for alt-style cache bundle for loading resources.
         style = target.getParentPage().getAltStyle();

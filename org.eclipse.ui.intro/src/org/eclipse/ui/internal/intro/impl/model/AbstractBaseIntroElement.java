@@ -31,7 +31,7 @@ import org.w3c.dom.*;
 public abstract class AbstractBaseIntroElement extends AbstractIntroIdElement {
 
     private static final String ATT_STYLE_ID = "style-id"; //$NON-NLS-1$
-    private static final String ATT_FIlTERED_FROM = "filteredFrom";
+    private static final String ATT_FIlTERED_FROM = "filteredFrom"; //$NON-NLS-1$
 
     protected String style_id;
     protected String filteredFrom;

@@ -64,10 +64,10 @@ public class IntroModelLabelProvider extends LabelProvider {
         int elementType = introElement.getType();
         switch (elementType) {
         case AbstractIntroElement.GROUP:
-            label = "DIV: " + ((IntroGroup) introElement).getLabel(); //$NON-NLS-1$
+            label = "GROUP: " + ((IntroGroup) introElement).getLabel(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.LINK:
-            label = "DEFAULT_LINK: " + ((IntroLink) introElement).getLabel(); //$NON-NLS-1$
+            label = "LINK: " + ((IntroLink) introElement).getLabel(); //$NON-NLS-1$
             break;
         case AbstractIntroElement.TEXT:
             label = "TEXT: " + ((IntroText) introElement).getText(); //$NON-NLS-1$

@@ -14,6 +14,8 @@ todo - add other APIs here such as IStandbyPart
       </documentation>
    </annotation>
 
+   <include schemaLocation="IntroContent.exsd"/>
+
    <element name="extension">
       <complexType>
          <sequence>
@@ -142,23 +144,6 @@ The content file is parsed at run time by the intro framework. Based on the sett
             <annotation>
                <documentation>
                   ws string used when choosing the presentation&apos;s implementation based on current WS. eg: win32,gtk (todo - where are the valid WS strings used by Eclipse defined? Should we expand WS to windowing system?)
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="head">
-      <annotation>
-         <documentation>
-            direct HTML to include in a page&apos;s HEAD content area. This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="src" type="string" use="required">
-            <annotation>
-               <documentation>
-                  relative or absolute URL to a file containing HTML
                </documentation>
             </annotation>
          </attribute>

@@ -35,7 +35,7 @@ public class IntroText extends AbstractBaseIntroElement {
                 return;
         if (textNode.getNodeType() == Node.TEXT_NODE) {
             text = textNode.getNodeValue();
-            if (text.equals(" "))
+            if (text.equals(" ")) //$NON-NLS-1$
                     // we may have CDATA nodes, use first one.
                     text = ((Text) element.getChildNodes().item(1)).getData();
             isFormatted = checkIfFormatted();
@@ -63,7 +63,7 @@ public class IntroText extends AbstractBaseIntroElement {
      *         it formatted.
      */
     public boolean checkIfFormatted() {
-        int i = text.indexOf("<");
+        int i = text.indexOf("<"); //$NON-NLS-1$
         return i == -1 ? false : true;
     }
 

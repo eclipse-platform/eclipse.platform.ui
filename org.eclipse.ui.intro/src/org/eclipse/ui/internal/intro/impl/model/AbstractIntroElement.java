@@ -112,6 +112,11 @@ public abstract class AbstractIntroElement {
      */
     public static final int PAGE_TITLE = 1 << 12;
 
+    /**
+     * Type constant which identifies the IntroAnchor element.
+     */
+    public static final int ANCHOR = 1 << 13;
+
 
     /**
      * Type constant which identifies the AbstractCommonIntroElement element.
@@ -120,10 +125,18 @@ public abstract class AbstractIntroElement {
             | IMAGE | TEXT | PAGE_TITLE;
 
     /**
+     * Type constant which identifies any element in the Intro Model which can
+     * have an id. Note: eventhough IntroStandbyContentPart has an id, it does
+     * not appear as a child in the model, and so it does not have a type.
+     */
+    public static final int ID_ELEMENT = BASE_ELEMENT | ANCHOR;
+
+    /**
      * Type constant which identifies any element in the Intro Model.
      */
-    public static final int ELEMENT = BASE_ELEMENT | CONTAINER_EXTENSION | HEAD
+    public static final int ELEMENT = ID_ELEMENT | CONTAINER_EXTENSION | HEAD
             | INCLUDE | PRESENTATION;
+
 
 
     private AbstractIntroElement parent;
@@ -247,11 +260,11 @@ public abstract class AbstractIntroElement {
     public AbstractIntroPage getParentPage() {
         // return yourself if you are a page.
         if (isOfType(AbstractIntroElement.ABSTRACT_PAGE))
-                return (AbstractIntroPage) this;
+            return (AbstractIntroPage) this;
 
         AbstractIntroElement parent = getParent();
         if (parent == null)
-                return null;
+            return null;
 
         while (parent != null && parent.getParent() != null
                 && !parent.isOfType(AbstractIntroElement.ABSTRACT_PAGE))
@@ -299,12 +312,12 @@ public abstract class AbstractIntroElement {
             AbstractIntroElement[] elements, int elementMask) {
         // if we have an empty list, no point going on.
         if (elements.length == 0)
-                return false;
+            return false;
 
         for (int i = 0; i < elements.length; i++) {
             AbstractIntroElement element = elements[i];
             if (!element.isOfType(elementMask))
-                    return false;
+                return false;
         }
         return true;
     }

@@ -117,7 +117,7 @@ public class PageStyleManager extends SharedStyleManager {
         StringBuffer buff = createPathKey(group);
         if (buff == null)
                 return 1;
-        String key = buff.append(".layout.ncolumns").toString();
+        String key = buff.append(".layout.ncolumns").toString(); //$NON-NLS-1$
         return getIntProperty(key);
     }
 
@@ -125,7 +125,7 @@ public class PageStyleManager extends SharedStyleManager {
         StringBuffer buff = createPathKey(element);
         if (buff == null)
                 return 1;
-        String key = buff.append(".layout.colspan").toString();
+        String key = buff.append(".layout.colspan").toString(); //$NON-NLS-1$
         int colspan = getIntProperty(key);
         if (colspan != 0)
             return colspan;
@@ -174,7 +174,7 @@ public class PageStyleManager extends SharedStyleManager {
         StringBuffer buff = createPathKey(group);
         if (buff == null)
                 return null;
-        String key = buff.append(".description-id").toString();
+        String key = buff.append(".description-id").toString(); //$NON-NLS-1$
         return doGetDescription(group, key);
     }
 
@@ -195,7 +195,7 @@ public class PageStyleManager extends SharedStyleManager {
     public String getPageDescription() {
         if (page.getId() == null)
                 return null;
-        String key = page.getId() + ".description-id";
+        String key = page.getId() + ".description-id"; //$NON-NLS-1$
         return doGetDescription(page, key);
     }
 
@@ -210,7 +210,7 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
     private String getDescriptionStyleId() {
-        String key = "description-style-id";
+        String key = "description-style-id"; //$NON-NLS-1$
         return getProperty(key);
     }
 
@@ -226,7 +226,7 @@ public class PageStyleManager extends SharedStyleManager {
      * @return
      */
     public String getPageSubTitle() {
-        String key = page.getId() + ".subtitle-id";
+        String key = page.getId() + ".subtitle-id"; //$NON-NLS-1$
         String path = getProperty(key);
         String description = null;
         if (path != null)
@@ -237,7 +237,7 @@ public class PageStyleManager extends SharedStyleManager {
     }
 
     private String getPageSubTitleStyleId() {
-        String key = "subtitle-style-id";
+        String key = "subtitle-style-id"; //$NON-NLS-1$
         return getProperty(key);
     }
 
