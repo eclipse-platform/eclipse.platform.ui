@@ -106,15 +106,15 @@ class AdditionalInfoController2 extends AbstractInformationControlManager implem
 	 		if (fThread != null)
 	 			fThread.interrupt();
 			fThread= new Thread(this, JFaceTextMessages2.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
-		}
 		
-		fStartSignal= new Object();
-		synchronized (fStartSignal) {
-			fThread.start();
-			try {
-				// wait until thread is ready
-				fStartSignal.wait();
-			} catch (InterruptedException x) {
+			fStartSignal= new Object();
+			synchronized (fStartSignal) {
+				fThread.start();
+				try {
+					// wait until thread is ready
+					fStartSignal.wait();
+				} catch (InterruptedException x) {
+				}
 			}
 		}
 	}
