@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.ui.sync.ChangedTeamContainer;
+import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncCompareInput;
 import org.eclipse.team.ui.sync.TeamFile;
 
@@ -51,94 +52,48 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 	public Viewer createDiffViewer(Composite parent) {
 		CatchupReleaseViewer catchupReleaseViewer = new CVSCatchupReleaseViewer(parent, this);
 		setViewer(catchupReleaseViewer);
-		catchupReleaseViewer.getTree().addMouseTrackListener(new MouseTrackListener() {
+		catchupReleaseViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
 			/**
-			 * @see MouseTrackListener#mouseEnter(MouseEvent)
+			 * @see MouseMoveListener#mouseMove(MouseEvent)
 			 */
-			public void mouseEnter(MouseEvent e) {
-			}
-
-			/**
-			 * @see MouseTrackListener#mouseExit(MouseEvent)
-			 */
-			public void mouseExit(MouseEvent e) {
-			}
-
-			/**
-			 * @see MouseTrackListener#mouseHover(MouseEvent)
-			 */
-			public void mouseHover(MouseEvent e) {
+			public void mouseMove(MouseEvent e) {
 				Tree tree = (Tree)e.widget;
-				Point cursorLocation = tree.getDisplay().getCursorLocation();
-				cursorLocation = tree.toControl(cursorLocation);
-				TreeItem item = tree.getItem(cursorLocation);
+				TreeItem item = tree.getItem(new Point(e.x, e.y));
 				if (item != null) {
-					// Hack: this is the only way to get an item from the tree
+					// Hack: this is the only way to get an item from the tree viewer
 					Object o = item.getData();
 					if (o instanceof TeamFile) {
 						TeamFile file = (TeamFile)o;
-						IRemoteSyncElement element = file.getMergeResource().getSyncElement();
-						ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
-						ILogEntry logEntry = remoteFile.getLogEntry();
-						if (logEntry == null) {
-							// Hack: call getContents() so that the log entry is available.
-							try {
-								remoteFile.getContents(new NullProgressMonitor());
-							} catch (TeamException ex) {
-								tree.setToolTipText(null);
-								return;
+						if (file.getChangeDirection() != ITeamNode.OUTGOING) {
+							IRemoteSyncElement element = file.getMergeResource().getSyncElement();
+							ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
+							if (remoteFile != null) {
+								ILogEntry logEntry = remoteFile.getLogEntry();
+								if (logEntry == null) {
+									// Hack: call getContents() so that the log entry is available.
+									try {
+										remoteFile.getContents(new NullProgressMonitor());
+									} catch (TeamException ex) {
+										tree.setToolTipText(null);
+										return;
+									}
+									logEntry = remoteFile.getLogEntry();
+								}
+								if (logEntry != null) {
+									String newText = logEntry.getComment();
+									String oldText = tree.getToolTipText();
+									if (!newText.equals(oldText)) {
+										tree.setToolTipText(logEntry.getComment());
+									}
+									return;
+								}
 							}
-							logEntry = remoteFile.getLogEntry();
 						}
-						String newText = logEntry.getComment();
-						String oldText = tree.getToolTipText();
-						if (!newText.equals(oldText)) {
-							tree.setToolTipText(logEntry.getComment());
-						}
-						return;
 					}
 				}
 				tree.setToolTipText(null);
 			}
 		});
-/*		catchupReleaseViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
-			/**
-			 * @see MouseMoveListener#mouseMove(MouseEvent)
-			 */
-/*			public void mouseMove(MouseEvent e) {
-				Tree tree = (Tree)e.widget;
-				Point cursorLocation = tree.getDisplay().getCursorLocation();
-				cursorLocation = tree.toControl(cursorLocation);
-				TreeItem item = tree.getItem(cursorLocation);
-				if (item != null) {
-					// Hack: this is the only way to get an item from the tree
-					Object o = item.getData();
-					if (o instanceof TeamFile) {
-						TeamFile file = (TeamFile)o;
-						IRemoteSyncElement element = file.getMergeResource().getSyncElement();
-						ICVSRemoteFile remoteFile = (ICVSRemoteFile)element.getRemote();
-						ILogEntry logEntry = remoteFile.getLogEntry();
-						if (logEntry == null) {
-							// Hack: call getContents() so that the log entry is available.
-							try {
-								remoteFile.getContents(new NullProgressMonitor());
-							} catch (TeamException ex) {
-								tree.setToolTipText(null);
-								return;
-							}
-							logEntry = remoteFile.getLogEntry();
-						}
-						String newText = logEntry.getComment();
-						String oldText = tree.getToolTipText();
-						if (!newText.equals(oldText)) {
-							tree.setToolTipText(logEntry.getComment());
-						}
-						return;
-					}
-				}
-				tree.setToolTipText(null);
-			}
-		});*/
 		return catchupReleaseViewer;
 	}
 
