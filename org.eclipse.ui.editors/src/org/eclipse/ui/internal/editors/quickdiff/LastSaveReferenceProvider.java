@@ -99,7 +99,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		 * {@link LastSaveReferenceProvider#readDocument(IProgressMonitor, boolean)}
 		 * and returns {@link Status#OK_STATUS}.
 		 * 
-		 * {@inheritdoc}
+		 * {@inheritDoc}
 		 * 
 		 * @param monitor {@inheritDoc}
 		 * @return {@link Status#OK_STATUS}
@@ -215,10 +215,9 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 					return;
 
 			IJobManager jobMgr= Platform.getJobManager();
-			IStorage storage= null;
 			
 			try {
-				storage= input.getStorage();
+				IStorage storage= input.getStorage();
 				fProgressMonitor= monitor;
 
 				// this protects others from not being able to delete the file,
@@ -233,10 +232,6 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				try {
 					lockDocument(monitor, jobMgr, storage);
 					
-					InputStream stream= getFileContents(storage);
-					if (stream == null)
-						return;
-					
 					String encoding;
 					if (storage instanceof IEncodedStorage)
 						encoding= ((IEncodedStorage) storage).getCharset();
@@ -245,14 +240,12 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 					
 					boolean skipUTF8BOM= isUTF8BOM(encoding, storage);
 					
-					setDocumentContent(doc, stream, encoding, monitor, skipUTF8BOM);
+					setDocumentContent(doc, storage, encoding, monitor, skipUTF8BOM);
 				} finally {
 					unlockDocument(jobMgr, storage);
 					fProgressMonitor= null;
 				}
 				
-			} catch (IOException e) {
-				return;
 			} catch (CoreException e) {
 				return;
 			}
@@ -351,35 +344,19 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	}
 
 	/**
-	 * Gets the contents of <code>file</code> as an input stream.
-	 * 
-	 * @param storage the <code>IStorage</code> which we want the content for
-	 * @return an input stream for the file's content
-	 */
-	private static InputStream getFileContents(IStorage storage) {
-		InputStream stream= null;
-		try {
-			if (storage != null)
-				stream= storage.getContents();
-		} catch (CoreException e) {
-			// ignore
-		}
-		return stream;
-	}
-
-	/**
 	 * Initializes the given document with the given stream using the given
 	 * encoding.
 	 * 
 	 * @param document the document to be initialized
-	 * @param contentStream the stream which delivers the document content
+	 * @param storage the storage which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
 	 * @param monitor a progress monitor for cancellation, or <code>null</code>
 	 * @param skipUTF8BOM whether to skip three bytes before reading the stream
-	 * @exception IOException if the given stream can not be read
+	 * @exception CoreException if the given storage can not be accessed or read
 	 */
-	private static void setDocumentContent(IDocument document, InputStream contentStream, String encoding, IProgressMonitor monitor, boolean skipUTF8BOM) throws IOException {
+	private static void setDocumentContent(IDocument document, IStorage storage, String encoding, IProgressMonitor monitor, boolean skipUTF8BOM) throws CoreException {
 		Reader in= null;
+		InputStream contentStream= storage.getContents();
 		try {
 			
 			if (skipUTF8BOM) {
@@ -408,13 +385,16 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			
 			document.set(buffer.toString());
 			
+		} catch (IOException x) {
+			throw new CoreException(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, "Failed to access or read underlying storage", null)); //$NON-NLS-1$
 		} finally {
-			if (in != null) {
-				try {
+			try {
+				if (in != null)
 					in.close();
-				} catch (IOException x) {
-					// ignore
-				}
+				else
+					contentStream.close();
+			} catch (IOException x) {
+				// ignore
 			}
 		}
 	}

@@ -634,10 +634,17 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			File file= new File(path);
 			if (file.exists()) {
 				InputStream input= new BufferedInputStream(new FileInputStream(file));
-				TemplatePersistenceData[] datas= reader.read(input, null);
-				for (int i= 0; i < datas.length; i++) {
-					TemplatePersistenceData data= datas[i];
-					fTemplateStore.add(data);
+				try {
+					TemplatePersistenceData[] datas= reader.read(input, null);
+					for (int i= 0; i < datas.length; i++) {
+						TemplatePersistenceData data= datas[i];
+						fTemplateStore.add(data);
+					}
+				} finally {
+					try {
+						input.close();
+					} catch (IOException x) {
+					}
 				}
 			}
 			
