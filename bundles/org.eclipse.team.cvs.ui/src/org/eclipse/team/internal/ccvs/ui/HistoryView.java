@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui;
  */
  
 import java.io.InputStream;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -14,19 +15,23 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
@@ -55,8 +60,6 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.model.AdaptableList;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
@@ -64,8 +67,8 @@ import org.eclipse.ui.part.ViewPart;
  * The history view allows browsing of an array of resource revisions
  */
 public class HistoryView extends ViewPart implements ISelectionListener {
-	private ICVSRemoteFile remoteFile;
 	private IFile file;
+	private CVSTeamProvider provider;
 	
 	private TableViewer viewer;
 	private StyledText text;
@@ -93,7 +96,17 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			ILogEntry entry = (ILogEntry)element;
 			switch (columnIndex) {
 				case COL_REVISION:
-					return entry.getRevision();
+					String revision = entry.getRevision();
+					if (file == null) return revision;
+					try {
+						ICVSRemoteFile currentEdition = (ICVSRemoteFile)provider.getRemoteResource(file);
+						if (currentEdition != null && currentEdition.getRevision().equals(revision)) {
+							return "*" + revision;
+						}
+					} catch (TeamException e) {
+						CVSUIPlugin.log(e.getStatus());
+					}
+					return revision;
 				case COL_TAGS:
 					CVSTag[] tags = entry.getTags();
 					StringBuffer result = new StringBuffer();
@@ -124,6 +137,18 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	 * Adds the action contributions for this view.
 	 */
 	protected void contributeActions() {
+		// Refresh (toolbar)
+		final Action refreshAction = new Action(Policy.bind("HistoryView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) {
+			public void run() {
+				BusyIndicator.showWhile(text.getDisplay(), new Runnable() {
+					public void run() {
+						viewer.refresh();
+					}
+				});
+			}
+		};
+		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh"));
+		
 		// Double click open action
 		openAction = new OpenRemoteFileAction();
 		viewer.getTable().addListener(SWT.MouseDoubleClick, new Listener() {
@@ -187,7 +212,12 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager actionBarsMenu = actionBars.getMenuManager();
 		actionBarsMenu.add(toggleTextAction);
-		
+
+		// Create the local tool bar
+		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+		tbm.add(refreshAction);
+		tbm.update(false);
+	
 		// Create actions for the text editor
 		copyAction = new Action(Policy.bind("HistoryView.copy")) {
 			public void run() {
@@ -289,7 +319,34 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		createColumns(table, layout);
 	
 		TableViewer viewer = new TableViewer(table);
-		viewer.setContentProvider(new WorkbenchContentProvider());
+		viewer.setContentProvider(new IStructuredContentProvider() {
+			public Object[] getElements(Object inputElement) {
+				if (!(inputElement instanceof ICVSRemoteFile)) return null;
+				ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
+				try {
+					return remoteFile.getLogEntries(new NullProgressMonitor());
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e.getStatus());
+					// Set a default title
+					setTitle(Policy.bind("HistoryView.title"));
+				}
+				return null;
+				
+			}
+			public void dispose() {
+			}
+			/**
+			 * The input has changed. Change the title of the view if necessary.
+			 */
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				if (!(newInput instanceof ICVSRemoteFile)) {
+					setTitle(Policy.bind("HistoryView.title"));
+					return;
+				}
+				ICVSRemoteFile newFile = (ICVSRemoteFile)newInput;
+				setTitle(Policy.bind("HistoryView.titleWithArgument", newFile.getName()));
+			}
+		});
 		viewer.setLabelProvider(new HistoryLabelProvider());
 		
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -308,6 +365,11 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				text.setText(entry.getComment());
 			}
 		});
+		
+		// By default, reverse sort by revision.
+		HistorySorter sorter = new HistorySorter(COL_REVISION);
+		sorter.setReversed(true);
+		viewer.setSorter(sorter);
 		
 		return viewer;
 	}
@@ -442,12 +504,12 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		if (!(resource instanceof IFile)) return;
 		IFile file = (IFile)resource;
 		this.file = file;
-		ITeamProvider provider = TeamPlugin.getManager().getProvider(file.getProject());
-		if (provider == null) return;
-		if (!(provider instanceof CVSTeamProvider)) return;
-		CVSTeamProvider cvsProvider = (CVSTeamProvider)provider;
+		ITeamProvider teamProvider = TeamPlugin.getManager().getProvider(file.getProject());
+		if (teamProvider == null) return;
+		if (!(teamProvider instanceof CVSTeamProvider)) return;
+		this.provider = (CVSTeamProvider)teamProvider;
 		try {
-			init((ICVSRemoteFile)cvsProvider.getRemoteResource(file));
+			viewer.setInput(provider.getRemoteResource(file));
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
 		}
@@ -458,35 +520,6 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	 */
 	public void showHistory(ICVSRemoteFile file) {
 		this.file = null;
-		init(file);
-	}
-	private void init(ICVSRemoteFile file) {
-		this.remoteFile = file;
-		if (remoteFile == null) {
-			setTitle(Policy.bind("HistoryView.title"));
-			viewer.setInput(new AdaptableList());
-			return;
-		}
-		ILogEntry[] entries = null;
-		try {
-			entries = file.getLogEntries(new NullProgressMonitor());
-		} catch (TeamException e) {
-			CVSUIPlugin.log(e.getStatus());
-			setTitle(Policy.bind("HistoryView.title"));
-			viewer.setInput(new AdaptableList());
-			return;
-		}
-		if (entries.length > 0) {
-			setTitle(Policy.bind("HistoryView.titleWithArgument", file.getName()));
-		} else {
-			setTitle(Policy.bind("HistoryView.title"));
-		}
-		viewer.setInput(new AdaptableList(entries));
-		if (viewer.getSorter() == null) {
-			// By default, reverse sort by creation date.
-			HistorySorter sorter = new HistorySorter(COL_DATE);
-			sorter.setReversed(true);
-			viewer.setSorter(sorter);
-		}
+		viewer.setInput(file);
 	}
 }
