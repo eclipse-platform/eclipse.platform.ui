@@ -282,7 +282,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		IExtensionPoint shutdownHooksExtPt = registry.getExtensionPoint(IPlatform.PI_RUNTIME, IPlatform.PT_SHUTDOWN_HOOK);
 		IExtension[] shutdownHooks = shutdownHooksExtPt.getExtensions();
 		for (int i = 0; i < shutdownHooks.length; i++) {
-			if (!shutdownHooks[i].getNamespace().equals(IPlatform.PI_RUNTIME_COMPATIBILITY))
+			if (!IPlatform.PI_RUNTIME_COMPATIBILITY.equals(shutdownHooks[i].getNamespace()))
 				continue;
 			IConfigurationElement[] elements = shutdownHooks[i].getConfigurationElements();
 			try {
