@@ -298,28 +298,30 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		if (fPerspectiveManager != null) {
-			fPerspectiveManager.shutdown();
+		try {
+			if (fPerspectiveManager != null) {
+				fPerspectiveManager.shutdown();
+			}
+			if (fLaunchConfigurationManager != null) {
+				fLaunchConfigurationManager.shutdown();
+			}
+			if (fConsoleDocumentManager != null) {
+				fConsoleDocumentManager.shutdown();
+			}
+			if (fStepFilterManager != null) {
+				fStepFilterManager.shutdown();
+			}
+			
+			if (fgPresentation != null) {
+				fgPresentation.dispose();
+			}
+			
+			if (fMemBlkViewSynchronizer != null){
+				fMemBlkViewSynchronizer.shutdown();
+			}
+		} finally {
+			super.stop(context);
 		}
-		if (fLaunchConfigurationManager != null) {
-			fLaunchConfigurationManager.shutdown();
-		}
-		if (fConsoleDocumentManager != null) {
-			fConsoleDocumentManager.shutdown();
-		}
-		if (fStepFilterManager != null) {
-			fStepFilterManager.shutdown();
-		}
-		
-		if (fgPresentation != null) {
-			fgPresentation.dispose();
-		}
-		
-		if (fMemBlkViewSynchronizer != null){
-			fMemBlkViewSynchronizer.shutdown();
-		}
-		
-		super.stop(context);
 	}
 
 	/**

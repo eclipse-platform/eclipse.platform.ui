@@ -444,24 +444,28 @@ public class DebugPlugin extends Plugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		setShuttingDown(true);
-		super.stop(context);
-		if (fAsynchJob != null) {
-			fAsynchJob.cancel();
+		try {
+			setShuttingDown(true);
+		
+			if (fAsynchJob != null) {
+				fAsynchJob.cancel();
+			}
+			if (fLaunchManager != null) {
+				fLaunchManager.shutdown();
+			}
+			if (fBreakpointManager != null) {
+				fBreakpointManager.shutdown();
+			}
+			MemoryBlockManager.pluginShutdown();
+			if (fEventListeners != null) {
+				fEventListeners.removeAll();
+			}
+			SourceLookupUtils.shutdown();
+			setDefault(null);
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+		} finally {
+			super.stop(context);
 		}
-		if (fLaunchManager != null) {
-			fLaunchManager.shutdown();
-		}
-		if (fBreakpointManager != null) {
-			fBreakpointManager.shutdown();
-		}
-		MemoryBlockManager.pluginShutdown();
-		if (fEventListeners != null) {
-			fEventListeners.removeAll();
-		}
-		SourceLookupUtils.shutdown();
-		setDefault(null);
-		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 	}
 	
 	/**

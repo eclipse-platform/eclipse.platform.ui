@@ -166,7 +166,10 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		ExternalToolsImages.disposeImageDescriptorRegistry();
+		try {
+			ExternalToolsImages.disposeImageDescriptorRegistry();
+		} finally {
+			super.stop(context);
+		}
 	}
 }
