@@ -19,23 +19,23 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 
 /**
- * Base implementation of a feature content provider.
- * This class provides a set of helper methods useful for implementing
- * feature content providers. In particular, methods dealing with
- * downloading and caching of feature files. 
+ * Base implementation of a feature content provider. This class provides a set
+ * of helper methods useful for implementing feature content providers. In
+ * particular, methods dealing with downloading and caching of feature files.
  * <p>
  * This class must be subclassed by clients.
- * </p> 
+ * </p>
+ * 
  * @see org.eclipse.update.core.IFeatureContentProvider
  * @since 2.0
  */
-public abstract class FeatureContentProvider implements IFeatureContentProvider {
+public abstract class FeatureContentProvider
+	implements IFeatureContentProvider {
 
+	private static final boolean SWITCH_COPY_LOCAL = true;
 
-	private static final boolean SWITCH_COPY_LOCAL = true; 
-	
 	/**
-	 * 
+	 *  
 	 */
 	public class FileFilter {
 
@@ -64,7 +64,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 				return filterPath.equals(namePath);
 			}
 
-			// check same file extension  if extension exists (a.txt/*.txt)
+			// check same file extension if extension exists (a.txt/*.txt)
 			// or same file name (a.txt,a.*)
 			String extension = filterPath.getFileExtension();
 			if (!extension.equals("*")) {
@@ -97,15 +97,16 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 
 	// lock
 	private final static Object lock = new Object();
-	
+
 	// hashtable of locks
 	private static Hashtable locks = new Hashtable();
 
 	/**
 	 * Feature content provider constructor
 	 * 
-	 * @param base feature URL. The interpretation of this URL 
-	 * is specific to each content provider.
+	 * @param base
+	 *            feature URL. The interpretation of this URL is specific to
+	 *            each content provider.
 	 * @since 2.0
 	 */
 	public FeatureContentProvider(URL base) {
@@ -114,7 +115,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	}
 
 	/**
-	 * Returns the feature url. 
+	 * Returns the feature url.
+	 * 
 	 * @see IFeatureContentProvider#getURL()
 	 */
 	public URL getURL() {
@@ -123,6 +125,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 
 	/**
 	 * Returns the feature associated with this content provider.
+	 * 
 	 * @see IFeatureContentProvider#getFeature()
 	 */
 	public IFeature getFeature() {
@@ -131,6 +134,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 
 	/**
 	 * Sets the feature associated with this content provider.
+	 * 
 	 * @see IFeatureContentProvider#setFeature(IFeature)
 	 */
 	public void setFeature(IFeature feature) {
@@ -138,17 +142,22 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	}
 
 	/**
-	 * Returns the specified reference as a local file system reference.
-	 * If required, the file represented by the specified content
-	 * reference is first downloaded to the local system
+	 * Returns the specified reference as a local file system reference. If
+	 * required, the file represented by the specified content reference is
+	 * first downloaded to the local system
 	 * 
-	 * @param ref content reference
-	 * @param monitor progress monitor, can be <code>null</code>
+	 * @param ref
+	 *            content reference
+	 * @param monitor
+	 *            progress monitor, can be <code>null</code>
 	 * @exception IOException
 	 * @exception CoreException
 	 * @since 2.0
 	 */
-	public ContentReference asLocalReference(ContentReference ref, InstallMonitor monitor) throws  IOException, CoreException {
+	public ContentReference asLocalReference(
+		ContentReference ref,
+		InstallMonitor monitor)
+		throws IOException, CoreException {
 
 		// check to see if this is already a local reference
 		if (ref.isLocalReference())
@@ -166,13 +175,17 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 				locks.put(key, key);
 			keyLock = locks.get(key);
 		}
-		
-		synchronized(keyLock) {
+
+		synchronized (keyLock) {
 			localFile = Utilities.lookupLocalFile(key);
 			if (localFile != null) {
-				// check if the cached file is still valid (no newer version on server)
-				if (UpdateManagerUtils.isSameTimestamp(ref.asURL(), localFile.lastModified()))
-					return ref.createContentReference(ref.getIdentifier(), localFile);
+				// check if the cached file is still valid (no newer version on
+				// server)
+				if (UpdateManagerUtils
+					.isSameTimestamp(ref.asURL(), localFile.lastModified()))
+					return ref.createContentReference(
+						ref.getIdentifier(),
+						localFile);
 			}
 			// 
 			// download the referenced file into local temporary area
@@ -182,7 +195,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			boolean success = false;
 			if (monitor != null) {
 				monitor.saveState();
-				monitor.setTaskName(Policy.bind("FeatureContentProvider.Downloading"));
+				monitor.setTaskName(
+					Policy.bind("FeatureContentProvider.Downloading"));
 				//$NON-NLS-1$
 				monitor.subTask(ref.getIdentifier() + " "); //$NON-NLS-1$
 				monitor.setTotalCount(ref.getInputSize());
@@ -193,27 +207,45 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 				try {
 					is = ref.getInputStream();
 				} catch (IOException e) {
-					throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToRetrieve", new Object[] { ref }), e);
+					throw Utilities.newCoreException(
+						Policy.bind(
+							"FeatureContentProvider.UnableToRetrieve",
+							new Object[] { ref }),
+						e);
 				}
 
 				try {
-					os = new BufferedOutputStream(new FileOutputStream(localFile));
+					os =
+						new BufferedOutputStream(
+							new FileOutputStream(localFile));
 				} catch (FileNotFoundException e) {
-					throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate", new Object[] { localFile }), e);
+					throw Utilities.newCoreException(
+						Policy.bind(
+							"FeatureContentProvider.UnableToCreate",
+							new Object[] { localFile }),
+						e);
 				}
 
-				Date start = new Date();				
+				Date start = new Date();
 				Utilities.copy(is, os, monitor);
 				Date stop = new Date();
-				long timeInseconds = (stop.getTime()-start.getTime())/1000; // time in milliseconds /1000 = time in seconds
-				InternalSiteManager.downloaded(ref.getInputSize(),(timeInseconds),ref.asURL());
-				
+				long timeInseconds = (stop.getTime() - start.getTime()) / 1000;
+				// time in milliseconds /1000 = time in seconds
+				InternalSiteManager.downloaded(
+					ref.getInputSize(),
+					(timeInseconds),
+					ref.asURL());
+
 				success = true;
 
-				// file is downloaded succesfully, map it 
-				Utilities.mapLocalFile(key,localFile);
+				// file is downloaded succesfully, map it
+				Utilities.mapLocalFile(key, localFile);
 			} catch (ClassCastException e) {
-				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate", new Object[] { localFile }), e);
+				throw Utilities.newCoreException(
+					Policy.bind(
+						"FeatureContentProvider.UnableToCreate",
+						new Object[] { localFile }),
+					e);
 			} finally {
 				//Do not close IS if user cancel,
 				//closing IS will read the entire Stream until the end
@@ -227,32 +259,37 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 						os.close(); // should flush buffer stream
 					} catch (IOException e) {
 					}
-					
-				if (success){
-					// set the timestamp on the temp file to match the remote timestamp
+
+				if (success) {
+					// set the timestamp on the temp file to match the remote
+					// timestamp
 					localFile.setLastModified(ref.getLastModified());
-				}	
+				}
 				if (monitor != null)
 					monitor.restoreState();
 			}
 			locks.remove(key);
 		} // end lock
-		ContentReference reference = ref.createContentReference(ref.getIdentifier(), localFile);
+		ContentReference reference =
+			ref.createContentReference(ref.getIdentifier(), localFile);
 		return reference;
 	}
 
 	/**
-	 * Returns the specified reference as a local file.
-	 * If required, the file represented by the specified content
-	 * reference is first downloaded to the local system
+	 * Returns the specified reference as a local file. If required, the file
+	 * represented by the specified content reference is first downloaded to
+	 * the local system
 	 * 
-	 * @param ref content reference
-	 * @param monitor progress monitor, can be <code>null</code>
-	 * @exception IOException	
-	 * @exception CoreException  
+	 * @param ref
+	 *            content reference
+	 * @param monitor
+	 *            progress monitor, can be <code>null</code>
+	 * @exception IOException
+	 * @exception CoreException
 	 * @since 2.0
 	 */
-	public File asLocalFile(ContentReference ref, InstallMonitor monitor) throws IOException, CoreException {
+	public File asLocalFile(ContentReference ref, InstallMonitor monitor)
+		throws IOException, CoreException {
 		File file = ref.asFile();
 		if (file != null && !SWITCH_COPY_LOCAL)
 			return file;
@@ -275,15 +312,20 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	}
 
 	/**
-	 * Returns the total size of all archives required for the
-	 * specified plug-in and non-plug-in entries (the "packaging" view).
-	 * @see IFeatureContentProvider#getDownloadSizeFor(IPluginEntry[], INonPluginEntry[])
+	 * Returns the total size of all archives required for the specified
+	 * plug-in and non-plug-in entries (the "packaging" view).
+	 * 
+	 * @see IFeatureContentProvider#getDownloadSizeFor(IPluginEntry[],
+	 *      INonPluginEntry[])
 	 */
-	public long getDownloadSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries) {
+	public long getDownloadSizeFor(
+		IPluginEntry[] pluginEntries,
+		INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
 		// if both are null or empty, return UNKNOWN size
-		if ((pluginEntries == null || pluginEntries.length == 0) && (nonPluginEntries == null || nonPluginEntries.length == 0)) {
+		if ((pluginEntries == null || pluginEntries.length == 0)
+			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -301,7 +343,9 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		// loop on non plugin entries
 		if (nonPluginEntries != null)
 			for (int i = 0; i < nonPluginEntries.length; i++) {
-				size = ((NonPluginEntryModel) nonPluginEntries[i]).getDownloadSize();
+				size =
+					((NonPluginEntryModel) nonPluginEntries[i])
+						.getDownloadSize();
 				if (size == ContentEntryModel.UNKNOWN_SIZE) {
 					return ContentEntryModel.UNKNOWN_SIZE;
 				}
@@ -312,15 +356,20 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	}
 
 	/**
-	 * Returns the total size of all files required for the
-	 * specified plug-in and non-plug-in entries (the "logical" view).
-	 * @see IFeatureContentProvider#getInstallSizeFor(IPluginEntry[], INonPluginEntry[])
+	 * Returns the total size of all files required for the specified plug-in
+	 * and non-plug-in entries (the "logical" view).
+	 * 
+	 * @see IFeatureContentProvider#getInstallSizeFor(IPluginEntry[],
+	 *      INonPluginEntry[])
 	 */
-	public long getInstallSizeFor(IPluginEntry[] pluginEntries, INonPluginEntry[] nonPluginEntries) {
+	public long getInstallSizeFor(
+		IPluginEntry[] pluginEntries,
+		INonPluginEntry[] nonPluginEntries) {
 		long result = 0;
 
 		// if both are null or empty, return UNKNOWN size
-		if ((pluginEntries == null || pluginEntries.length == 0) && (nonPluginEntries == null || nonPluginEntries.length == 0)) {
+		if ((pluginEntries == null || pluginEntries.length == 0)
+			&& (nonPluginEntries == null || nonPluginEntries.length == 0)) {
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -338,7 +387,9 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		// loop on non plugin entries
 		if (nonPluginEntries != null)
 			for (int i = 0; i < nonPluginEntries.length; i++) {
-				size = ((NonPluginEntryModel) nonPluginEntries[i]).getInstallSize();
+				size =
+					((NonPluginEntryModel) nonPluginEntries[i])
+						.getInstallSize();
 				if (size == ContentEntryModel.UNKNOWN_SIZE) {
 					return ContentEntryModel.UNKNOWN_SIZE;
 				}
@@ -349,32 +400,37 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	}
 
 	/**
-	 * Returns the path identifier for a plugin entry.
-	 * <code>plugins/&lt;pluginId>_&lt;pluginVersion>.jar</code> 
+	 * Returns the path identifier for a plugin entry. <code>plugins/&lt;pluginId>_&lt;pluginVersion>.jar</code>
+	 * 
 	 * @return the path identifier
 	 */
 	protected String getPathID(IPluginEntry entry) {
-		return Site.DEFAULT_PLUGIN_PATH + entry.getVersionedIdentifier().toString() + JAR_EXTENSION;
+		return Site.DEFAULT_PLUGIN_PATH
+			+ entry.getVersionedIdentifier().toString()
+			+ JAR_EXTENSION;
 	}
 
 	/**
-	 * Returns the path identifer for a non plugin entry.
-	 * <code>features/&lt;featureId>_&lt;featureVersion>/&lt;dataId></code>
+	 * Returns the path identifer for a non plugin entry. <code>features/&lt;featureId>_&lt;featureVersion>/&lt;dataId></code>
+	 * 
 	 * @return the path identifier
-		 */
+	 */
 	protected String getPathID(INonPluginEntry entry) {
-		String nonPluginBaseID = Site.DEFAULT_FEATURE_PATH + feature.getVersionedIdentifier().toString() + "/";
+		String nonPluginBaseID =
+			Site.DEFAULT_FEATURE_PATH
+				+ feature.getVersionedIdentifier().toString()
+				+ "/";
 		//$NON-NLS-1$
 		return nonPluginBaseID + entry.getIdentifier();
 	}
 
 	/**
-	 * Sets the permission of all the ContentReferences
-	 * Check for the .permissions contentReference and use it
-	 * to set the permissions of other ContentReference 
+	 * Sets the permission of all the ContentReferences Check for the
+	 * .permissions contentReference and use it to set the permissions of other
+	 * ContentReference
 	 * 
 	 * @return void
-		 */
+	 */
 	protected void validatePermissions(ContentReference[] references) {
 
 		if (references == null || references.length == 0)
@@ -396,13 +452,15 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	}
 
 	/**
-	 * Returns the value of the matching rule or <code>null</code> if none found.
-	 * A rule is matched if the id is equals to a key, or if the id is resolved by a key.
-	 * if the id is <code>/path/file.txt</code> it is resolved by <code>/path/*</code>
-	 * or <code>/path/*.txt</code>
+	 * Returns the value of the matching rule or <code>null</code> if none
+	 * found. A rule is matched if the id is equals to a key, or if the id is
+	 * resolved by a key. if the id is <code>/path/file.txt</code> it is
+	 * resolved by <code>/path/*</code> or <code>/path/*.txt</code>
 	 * 
-	 * @param id the identifier
-	 * @param permissions list of rules
+	 * @param id
+	 *            the identifier
+	 * @param permissions
+	 *            list of rules
 	 * @return Object the value of the matcing rule or <code>null</code>
 	 */
 	private Object matchesOneRule(String id, Map permissions) {
@@ -420,7 +478,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	}
 
 	/*
-	 * returns the permission MAP 
+	 * returns the permission MAP
 	 */
 	private Map getPermissions(ContentReference[] references) {
 
@@ -450,7 +508,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			return result;
 
 		StringTokenizer tokenizer = new StringTokenizer(executables, ",");
-		Integer defaultExecutablePermission = new Integer(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
+		Integer defaultExecutablePermission =
+			new Integer(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
 		while (tokenizer.hasMoreTokens()) {
 			FileFilter filter = new FileFilter(tokenizer.nextToken());
 			result.put(filter, defaultExecutablePermission);
