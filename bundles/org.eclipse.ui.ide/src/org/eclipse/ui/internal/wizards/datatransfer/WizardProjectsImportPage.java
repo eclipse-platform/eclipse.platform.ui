@@ -164,6 +164,8 @@ public class WizardProjectsImportPage extends WizardPage {
 	 */
 	public void createControl(Composite parent) {
 
+		initializeDialogUnits(parent);
+
 		Composite workArea = new Composite(parent, SWT.NONE);
 		setControl(workArea);
 
@@ -285,7 +287,10 @@ public class WizardProjectsImportPage extends WizardPage {
 	 */
 	private void createSelectionButtons(Composite listComposite) {
 		Composite buttonsComposite = new Composite(listComposite, SWT.NONE);
-		buttonsComposite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		buttonsComposite.setLayout(layout);
 
 		buttonsComposite.setLayoutData(new GridData(
 				GridData.VERTICAL_ALIGN_BEGINNING));
