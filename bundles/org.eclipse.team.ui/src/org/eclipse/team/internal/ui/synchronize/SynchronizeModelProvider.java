@@ -53,20 +53,6 @@ public abstract class SynchronizeModelProvider extends AbstractSynchronizeModelP
         // associate the root resource with the provider's root element
 		resourceMap.put(ResourcesPlugin.getWorkspace().getRoot(), modelRoot);
     }
-
-    /**
-	 * The provider can try and return a mapping for the provided object. Providers often use mappings
-	 * to store the source of a logical element they have created. For example, when displaying resource
-	 * based logical elements, a provider will cache the resource -> element mapping for quick retrieval
-	 * of the element when resource based changes are made.
-	 * 
-	 * @param object the object to query for a mapping
-	 * @return an object created by this provider that would be shown in a viewer, or <code>null</code>
-	 * if the provided object is not mapped by this provider.
-	 */
-	public Object getMapping(Object object) {
-		return resourceMap.get(object);
-	}
 	
 	/**
 	 * Dispose of the builder

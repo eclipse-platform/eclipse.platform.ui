@@ -17,14 +17,11 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IActionBars;
 
 /**
@@ -173,21 +170,12 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 	}
 	
 	/**
-	 * Gets a new selection that contains the view model objects that
-	 * correspond to the given objects. The advisor will try and
-	 * convert the objects into the appropriate viewer objects. 
-	 * This is required because the model provider controls the actual 
-	 * model elements in the viewer and must be consulted in order to
-	 * understand what objects can be selected in the viewer.
-	 * <p>
-	 * This method does not affect the selection of the viewer itself.
-	 * It's main purpose is for testing and should not be used by other
-	 * clients.
-	 * </p>
-	 * @param object the objects to select
-	 * @return a selection corresponding to the given objects
+	 * Return the model root of the currently active model provider.
+	 * This method will wait until the model is done updating.
+	 * It is for use by test purposes only.
+	 * @return the model root
 	 */
-	public ISelection getSelection(Object[] objects) {
+	public ISynchronizeModelElement getModelRoot() {
 		if (modelProvider != null && modelProvider instanceof SynchronizeModelProvider) {
 		    ((SynchronizeModelProvider)modelProvider).waitUntilDone(new IProgressMonitor() {
 				public void beginTask(String name, int totalWork) {
@@ -209,13 +197,9 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 					while (Display.getCurrent().readAndDispatch()) {}
 				}
 			});
-	 		Object[] viewerObjects = new Object[objects.length];
-			for (int i = 0; i < objects.length; i++) {
-				viewerObjects[i] = ((SynchronizeModelProvider)modelProvider).getMapping(objects[i]);
-			}
-			return new StructuredSelection(viewerObjects);
+			return modelProvider.getModelRoot();
 		} else {
-			return StructuredSelection.EMPTY;
+			return null;
 		}
 	}
 	

@@ -12,37 +12,22 @@ package org.eclipse.team.tests.ccvs.ui;
 
 import junit.framework.AssertionFailedError;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
-import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.subscriber.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
-import org.eclipse.team.ui.synchronize.ISynchronizeView;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
-import org.eclipse.team.ui.synchronize.WorkspaceScope;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPage;
@@ -234,13 +219,9 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 			IPage page = ((SynchronizeView)view).getPage(participant);
 			if (page instanceof SubscriberParticipantPage) {
 				SubscriberParticipantPage subscriberPage = (SubscriberParticipantPage)page;
-				ISelection selection = subscriberPage.getViewerAdvisor().getModelManager().getSelection(new Object[] { resource });
-				if (!selection.isEmpty() && selection instanceof StructuredSelection) {
-					StructuredSelection ss = (StructuredSelection)selection;
-					Object o = ss.getFirstElement();
-					if (o instanceof SyncInfoModelElement) {
-						return ((SyncInfoModelElement)o).getSyncInfo();
-					}
+				ISynchronizeModelElement root = subscriberPage.getViewerAdvisor().getModelManager().getModelRoot();
+				if (root != null) {
+				    return findSyncInfo(root, resource);
 				}
 			}
 		} catch (PartInitException e) {
@@ -249,7 +230,29 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		return null;
 	}
 	
-	public static ISynchronizePage getSyncViewPage(ISynchronizeParticipant participant) throws PartInitException {
+	/**
+     * @param root
+     * @param resource
+     * @return
+     */
+    private SyncInfo findSyncInfo(ISynchronizeModelElement node, IResource resource) {
+        if (node instanceof SyncInfoModelElement) {
+            SyncInfoModelElement element = (SyncInfoModelElement)node;
+            if (element.getResource().equals(resource)) {
+                return element.getSyncInfo();
+            }
+        }
+        IDiffElement[] children = node.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            ISynchronizeModelElement child = (ISynchronizeModelElement)children[i];
+            SyncInfo info = findSyncInfo(child, resource);
+            if (info != null)
+                return info;
+        }
+        return null;
+    }
+
+    public static ISynchronizePage getSyncViewPage(ISynchronizeParticipant participant) throws PartInitException {
 		IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
 		ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
 		IPage page = ((SynchronizeView)view).getPage(participant);
