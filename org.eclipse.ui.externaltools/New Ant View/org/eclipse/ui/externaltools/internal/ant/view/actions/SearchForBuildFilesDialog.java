@@ -83,10 +83,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	static {
 		if (settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING) == null) {
-			settings.put(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "build.xml"); // $NON-NLS-1$
+			settings.put(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "build.xml"); //$NON-NLS-1$
 		}
 		if (settings.get(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE) == null) {
-			settings.put(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, "");
+			settings.put(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, ""); //$NON-NLS-1$
 		} 
 	}
 
@@ -94,7 +94,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Creates a new dialog to search for build files.
 	 */
 	public SearchForBuildFilesDialog() {
-		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):",
+		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "&Input a build file name (* = any string, ? = any character):",
 				settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
 			public String isValid(String newText) {
 				String trimmedText = newText.trim();
@@ -111,7 +111,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		getOkButton().setText("Search");
+		getOkButton().setText("&Search");
 
 		String workingSetName= settings.get(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE);
 		if (workingSetName.length() > 0) {
@@ -158,12 +158,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 
 		workspaceScopeButton= new Button(radioComposite, SWT.RADIO);
 		workspaceScopeButton.setFont(font);
-		workspaceScopeButton.setText("Workspace");
+		workspaceScopeButton.setText("&Workspace");
 		workspaceScopeButton.addSelectionListener(selectionListener);
 
 		workingSetScopeButton=new Button(radioComposite, SWT.RADIO);
 		workingSetScopeButton.setFont(font);
-		workingSetScopeButton.setText("Working Set:");
+		workingSetScopeButton.setText("Wor&king Set:");
 		workingSetScopeButton.addSelectionListener(selectionListener);
 		
 		selectRadioButton(workspaceScopeButton);
@@ -178,7 +178,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		data= new GridData(GridData.VERTICAL_ALIGN_END);
 		chooseButton.setLayoutData(data);
 		chooseButton.setFont(font);
-		chooseButton.setText("Choose...");
+		chooseButton.setText("&Choose...");
 		chooseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleChooseButtonPressed();
@@ -233,7 +233,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	private void createIncludeErrorResultButton(Composite composite, Font font) {
 		includeErrorResultButton= new Button(composite, SWT.CHECK);
 		includeErrorResultButton.setFont(font);
-		includeErrorResultButton.setText("Include build files that contain errors");
+		includeErrorResultButton.setText("Include &build files that contain errors");
 		includeErrorResultButton.setSelection(settings.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS));
 	}
 	
@@ -257,7 +257,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			}
 		}
 		getOkButton().setEnabled(true);
-		getErrorMessageLabel().setText("");
+		getErrorMessageLabel().setText(""); //$NON-NLS-1$
 		getErrorMessageLabel().getParent().update();
 	}
 
