@@ -531,6 +531,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				throw new CoreException(status);
 			}
 		}
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}		
 		// perform initial pre-launch sanity checks
 		if (delegate2 != null) {
 			if (!(delegate2.preLaunchCheck(this, mode, monitor))) {
@@ -540,9 +543,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 		}
 		// preform pre-launch build
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}
 		IProgressMonitor subMonitor = monitor;
 		if (build) {
 			subMonitor = new SubProgressMonitor(monitor, 100);
