@@ -31,6 +31,7 @@ public class DefaultPreferences extends EclipsePreferences {
 	private static boolean initialized = false;
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
+	private static final IPath NL_DIR = new Path("$nl$"); //$NON-NLS-1$
 
 	public static final String PRODUCT_KEY = "org.eclipse.core.runtime.preferences.customization"; //$NON-NLS-1$
 	private static final String LEGACY_PRODUCT_CUSTOMIZATION_FILENAME = "plugin_customization.ini"; //$NON-NLS-1$
@@ -82,7 +83,7 @@ public class DefaultPreferences extends EclipsePreferences {
 				Policy.debug("Preference default override file not found for bundle: " + bundle.getSymbolicName()); //$NON-NLS-1$
 			return;
 		}
-		URL transURL = Platform.find(bundle, new Path("$nl$").append(Plugin.PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME).addFileExtension(PROPERTIES_FILE_EXTENSION));
+		URL transURL = Platform.find(bundle, NL_DIR.append(Plugin.PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME).addFileExtension(PROPERTIES_FILE_EXTENSION));
 		if (transURL == null && InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Preference translation file not found for bundle: " + bundle.getSymbolicName()); //$NON-NLS-1$
 		applyDefaults(name(), loadProperties(url), loadProperties(transURL));
@@ -228,7 +229,7 @@ public class DefaultPreferences extends EclipsePreferences {
 				Policy.debug("Product preference customization file: " + filename + " not found in bundle: " + id); //$NON-NLS-1$//$NON-NLS-2$
 			return;
 		}
-		URL transURL = Platform.find(bundle, new Path("$nl$").append(filename).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
+		URL transURL = Platform.find(bundle, NL_DIR.append(filename).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
 		if (transURL == null && InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("No preference translations found for product/file: " + bundle.getSymbolicName() + '/' + filename); //$NON-NLS-1$
 		applyDefaults(null, loadProperties(url), loadProperties(transURL));
