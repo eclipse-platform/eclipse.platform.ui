@@ -70,8 +70,9 @@ public class RunToLineAdapter implements IRunToLineTarget {
 				if (file == null) {
 				    errorMessage= AntEditorActionMessages.getString("RunToLineAdapter.2"); //$NON-NLS-1$
 				} else {
-				    breakpoint= new AntLineBreakpoint(file, lineNumber, attributes);//JDIDebugModel.createLineBreakpoint(ResourcesPlugin.getWorkspace().getRoot(), typeName[0], lineNumber[0], -1, -1, 1, false, attributes);
+				    breakpoint= new AntLineBreakpoint(file, lineNumber, attributes);
                     breakpoint.setPersisted(false);
+                    breakpoint.setRegistered(false);
 				    errorMessage = AntEditorActionMessages.getString("RunToLineAdapter.3"); //$NON-NLS-1$
 				    if (target instanceof IAdaptable) {
 				        IDebugTarget debugTarget = (IDebugTarget) ((IAdaptable)target).getAdapter(IDebugTarget.class);
