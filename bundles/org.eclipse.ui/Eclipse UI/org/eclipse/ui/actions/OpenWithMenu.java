@@ -42,16 +42,6 @@ public class OpenWithMenu extends ContributionItem {
 	private IWorkbenchPage page;
 	private IAdaptable file;
 	private EditorRegistry registry = (EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry();
-	private Listener listener = new Listener() {
-		public void handleEvent(Event event) {
-			switch (event.type) {
-				case SWT.Selection:
-					IEditorDescriptor editorDesc = (IEditorDescriptor) event.item.getData();
-					openEditor(editorDesc);
-					break;
-			}
-		}
-	};
 
 	private static Hashtable imageCache = new Hashtable(11);
 	 
@@ -143,7 +133,7 @@ private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
  * @param descriptor the editor descriptor, or null for the system editor
  * @param isPreferredEditor whether the editor descriptor is the preferred one for the selected file
  */
-private void createMenuItem(Menu menu, IEditorDescriptor descriptor, boolean isPreferredEditor) {
+private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, boolean isPreferredEditor) {
 	// XXX: Would be better to use bold here, but SWT does not support it.
 	MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
 	menuItem.setSelection(isPreferredEditor);
@@ -152,7 +142,15 @@ private void createMenuItem(Menu menu, IEditorDescriptor descriptor, boolean isP
 	if (image != null) {
 		menuItem.setImage(image);
 	}
-	menuItem.setData(descriptor);
+	Listener listener = new Listener() {
+		public void handleEvent(Event event) {
+			switch (event.type) {
+				case SWT.Selection:
+					openEditor(descriptor);
+					break;
+			}
+		}
+	};
 	menuItem.addListener(SWT.Selection, listener);
 }
 /* (non-Javadoc)
