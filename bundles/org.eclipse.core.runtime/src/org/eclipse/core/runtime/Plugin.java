@@ -179,7 +179,7 @@ public abstract class Plugin  {
 	 * 
 	 * @since 2.0
 	 */
-	private static final String PREFERENCES_FILE_NAME = "pref_store.ini";//$NON-NLS-1$
+	public static final String PREFERENCES_FILE_NAME = "pref_store.ini";//$NON-NLS-1$
 
 	/**
 	 * The name of the file (value <code>"preferences.ini"</code>) in a
@@ -306,7 +306,7 @@ public final ILog getLog() {
  * @return a local file system path
  */
 public final IPath getStateLocation() {
-	return InternalPlatform.getPluginStateLocation(this, true);
+	return InternalPlatform.getPluginStateLocation(descriptor, true);
 }
 
 /**
@@ -379,7 +379,7 @@ public final Preferences getPluginPreferences() {
 private void loadPluginPreferences() {
 	// the preferences file is located in the plug-in's state area at a well-known name
 	// don't need to create the directory if there are no preferences to load
-	File prefFile = InternalPlatform.getPluginStateLocation(this, false).append(PREFERENCES_FILE_NAME).toFile();
+	File prefFile = InternalPlatform.getPluginStateLocation(descriptor, false).append(PREFERENCES_FILE_NAME).toFile();
 	if (!prefFile.exists()) {
 		// no preference file - that's fine
 		if (InternalPlatform.DEBUG_PREFERENCES) {

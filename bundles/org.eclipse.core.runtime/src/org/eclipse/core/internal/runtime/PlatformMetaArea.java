@@ -91,10 +91,8 @@ public IPath getOptionsLocation() {
  * Returns the read/write location in which the given plugin can manage
  * private state.  
  */
-public IPath getPluginStateLocation(Plugin plugin) {
-	IPath result = getLocation().append(F_PLUGIN_DATA);
-	String id = plugin.getDescriptor().getUniqueIdentifier();
-	return result.append(id);
+public IPath getPluginStateLocation(IPluginDescriptor descriptor) {
+	return getLocation().append(F_PLUGIN_DATA).append(descriptor.getUniqueIdentifier());
 }
 /**
  * 

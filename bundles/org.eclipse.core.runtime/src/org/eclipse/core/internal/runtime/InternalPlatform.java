@@ -379,9 +379,9 @@ public static IPluginRegistry getPluginRegistry() {
 /**
  * @see Platform#getPluginStateLocation
  */
-public static IPath getPluginStateLocation(Plugin plugin, boolean create) {
+public static IPath getPluginStateLocation(IPluginDescriptor descriptor, boolean create) {
 	assertInitialized();
-	IPath result = metaArea.getPluginStateLocation(plugin);
+	IPath result = metaArea.getPluginStateLocation(descriptor);
 	if (create)
 		result.toFile().mkdirs();
 	return result;

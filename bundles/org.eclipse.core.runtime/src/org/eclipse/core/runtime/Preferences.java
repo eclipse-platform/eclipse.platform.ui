@@ -11,9 +11,9 @@
 package org.eclipse.core.runtime;
 
 import java.io.*;
-import java.util.EventListener;
-import java.util.EventObject;
-import java.util.Properties;
+import java.util.*;
+
+import org.eclipse.core.internal.runtime.PreferenceExporter;
 
 /**
  * A table of preference settings, mapping named properties to values. Property
@@ -430,6 +430,58 @@ public class Preferences {
 	private boolean dirty = false;
 
 	/**
+	 * Exports all non-default-valued preferences for all installed plugins to the 
+	 * provided file. if a file already exists at the given location, it will be deleted.
+	 * If there are no preferences to export, no file will be written.
+	 * <p>
+	 * The file that is written can be read later using the importPreferences method.
+	 * </p>
+	 * @param file The absolute filesystem path of the file to export preferences to.
+	 * @exception CoreException if there are problems writing the file.
+	 * @see #importPreferences
+	 * @see #validatePreferenceVersions
+	 */
+	public static void exportPreferences(IPath file) throws CoreException {
+		PreferenceExporter.exportPreferences(file);
+	}
+	/**
+	 * Loads the plugin preferences from the given file, and replaces all 
+	 * non-default-valued preferences for all plugins with the values from this file.
+	 * <p>
+	 * If the file contains preferences for plug-ins that don't exist in the current
+	 * install, they are ignored.
+	 * </p>
+	 * <p>
+	 * The file must have been written by the exportPreferences method.
+	 * </p>
+	 * @param file The absolute filesystem path of the file to import preferences from.
+	 * @exception CoreException if there are problems reading the file.
+	 * @see #exportPreferences
+	 * @see #validatePreferenceVersions
+	 */
+	public static void importPreferences(IPath file) throws CoreException {
+		PreferenceExporter.importPreferences(file);
+	}
+	/**
+	 * Validates that the preference versions in the given file match the versions
+	 * of the currently installed plugins.  Returns an OK status if all preferences match 
+	 * the currently installed plugins, otherwise a MultiStatus describing what 
+	 * plugins have preferences that don't match.
+	 * <p>
+	 * If the file contains preferences for plug-ins that don't exist in the current
+	 * install, they are ignored.
+	 * </p>
+	 * <p>
+	 * The file must have been written by the exportPreferences method.
+	 * </p>
+	 * @param file The absolute filesystem path of the preference file to validate.
+	 * @see #exportPreferences
+	 * @see #importPreferences
+	 */
+	public static IStatus validatePreferenceVersions(IPath file) {
+		return PreferenceExporter.validatePreferenceVersions(file);
+	}
+	/**
 	 * Creates an empty preference table.
 	 * <p>
 	 * Use the methods <code>load(InputStream)</code> and
@@ -700,7 +752,7 @@ public class Preferences {
 	/**
 	 * Converts the given raw property value string to a double.
 	 * 
-	 * @param rawRropertyValue the raw property value, or <code>null</code>
+	 * @param rawPropertyValue the raw property value, or <code>null</code>
 	 *   if none
 	 * @param defaultValue the default value
 	 * @return the raw value converted to a double, or the given 
@@ -818,7 +870,7 @@ public class Preferences {
 	/**
 	 * Converts the given raw property value string to a float.
 	 * 
-	 * @param rawRropertyValue the raw property value, or <code>null</code>
+	 * @param rawPropertyValue the raw property value, or <code>null</code>
 	 *   if none
 	 * @param defaultValue the default value
 	 * @return the raw value converted to a float, or the given 
@@ -926,7 +978,7 @@ public class Preferences {
 	/**
 	 * Converts the given raw property value string to an int.
 	 * 
-	 * @param rawRropertyValue the raw property value, or <code>null</code>
+	 * @param rawPropertyValue the raw property value, or <code>null</code>
 	 *   if none
 	 * @param defaultValue the default value
 	 * @return the raw value converted to an int, or the given 
@@ -1034,7 +1086,7 @@ public class Preferences {
 	/**
 	 * Converts the given raw property value string to a long.
 	 * 
-	 * @param rawRropertyValue the raw property value, or <code>null</code>
+	 * @param rawPropertyValue the raw property value, or <code>null</code>
 	 *   if none
 	 * @param defaultValue the default value
 	 * @return the raw value converted to a long, or the given 
