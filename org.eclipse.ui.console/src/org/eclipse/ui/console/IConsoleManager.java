@@ -58,4 +58,12 @@ public interface IConsoleManager {
 	 * @return a collection of consoles registered with the console manager
 	 */
 	public IConsole[] getConsoles();
+	
+	/**
+	 * Opens the console view and displays the console. If the view is already open, 
+	 * it is brought to the front.
+	 * 
+	 * @param console Attempts to display this IConsole
+	 */
+	public void showConsoleView(final IConsole console);
 }

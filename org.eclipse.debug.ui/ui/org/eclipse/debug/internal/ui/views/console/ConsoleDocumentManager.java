@@ -221,53 +221,9 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * Opens the console view. If the view is already open, it is brought to the front.
 	 */
 	protected void showConsole(final IProcess process) {
-		final IConsole console = getConsole(process);
-		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-				if (window != null) {
-					IWorkbenchPage page= window.getActivePage();
-					if (page != null) {
-						IViewPart consoleView= page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-						if (consoleView == null) {
-							IWorkbenchPart activePart= page.getActivePart();
-							try {
-								consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
-							} catch (PartInitException pie) {
-								DebugUIPlugin.log(pie);
-							}
-							//restore focus stolen by the creation of the console
-							page.activate(activePart);
-						} else {
-							boolean bringToTop = shouldBringToTop(process, consoleView);
-							if (bringToTop) {
-								page.bringToTop(consoleView);
-							}
-						}
-						if (consoleView instanceof IConsoleView) {
-							((IConsoleView)consoleView).display(console);
-						}
-					}
-				}
-			}
-		});
+		ConsolePlugin.getDefault().getConsoleManager().showConsoleView(getConsole(process));
 	}
 	
-	private boolean shouldBringToTop(IProcess process, IViewPart consoleView) {
-		boolean bringToTop= true;
-		if (consoleView instanceof IConsoleView) {
-			IConsoleView cView= (IConsoleView)consoleView;
-			if (cView.isPinned()) {
-				IConsole pinnedConsole= cView.getConsole();
-				if (pinnedConsole instanceof ProcessConsole) {
-					ProcessConsole pConsole= (ProcessConsole) pinnedConsole;
-					bringToTop= process.equals(pConsole.getProcess());
-				}
-			}
-		}
-		return bringToTop;
-	}
-				
 	/**
 	 * Returns a new console document color provider extension for the given
 	 * process type, or <code>null</code> if none.

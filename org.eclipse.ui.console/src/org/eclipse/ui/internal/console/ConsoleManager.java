@@ -18,11 +18,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IConsoleView;
 
 /**
  * The singleton console manager.
@@ -165,5 +171,52 @@ public class ConsoleManager implements IConsoleManager {
 	 */
 	private void fireUpdate(IConsole[] consoles, int type) {
 		new ConsoleNotifier().notify(consoles, type);
+	}
+	
+	/**
+	 * Opens the console view. If the view is already open, it is brought to the front.
+	 */
+	public void showConsoleView(final IConsole console) {
+		ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IWorkbenchWindow window= ConsolePlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+				if (window != null) {
+					IWorkbenchPage page= window.getActivePage();
+					if (page != null) {
+						IViewPart consoleView= page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+						if (consoleView == null) {
+							IWorkbenchPart activePart= page.getActivePart();
+							try {
+								consoleView = page.showView(IConsoleConstants.ID_CONSOLE_VIEW);
+							} catch (PartInitException pie) {
+								ConsolePlugin.log(pie);
+							}
+							//restore focus stolen by the creation of the console
+							page.activate(activePart);
+						} else {
+							boolean bringToTop = shouldBringToTop(console, consoleView);
+							if (bringToTop) {
+								page.bringToTop(consoleView);
+							}
+						}
+						if (consoleView instanceof IConsoleView) {
+							((IConsoleView)consoleView).display(console);
+						}
+					}
+				}
+			}
+		});
+	}	
+	
+	private boolean shouldBringToTop(IConsole console, IViewPart consoleView) {
+		boolean bringToTop= true;
+		if (consoleView instanceof IConsoleView) {
+			IConsoleView cView= (IConsoleView)consoleView;
+			if (cView.isPinned()) {
+				IConsole pinnedConsole= cView.getConsole();
+				bringToTop = console.equals(pinnedConsole);
+			}
+		}
+		return bringToTop;
 	}
 }
