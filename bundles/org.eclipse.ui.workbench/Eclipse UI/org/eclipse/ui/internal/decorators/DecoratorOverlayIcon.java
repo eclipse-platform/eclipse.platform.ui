@@ -59,6 +59,9 @@ class DecoratorOverlayIcon extends CompositeImageDescriptor {
 			if (overlay == null)
 				continue;
 			ImageData overlayData = overlay.getImageData();
+			//Use the missing descriptor if it is not there.
+			if(overlayData == null)
+				overlayData = ImageDescriptor.getMissingImageDescriptor().getImageData(); 
 			switch (i) {
 				case TOP_LEFT :
 					drawImage(overlayData, 0, 0);
