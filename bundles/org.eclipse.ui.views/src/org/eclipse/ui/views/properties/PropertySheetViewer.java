@@ -7,20 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gunnar Wagenknecht - fix for bug 21756 [PropertiesView] property view sorting
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -106,6 +104,9 @@ class PropertySheetViewer extends Viewer {
 
     // Cell editor activation listeners
     private ListenerList activationListeners = new ListenerList(3);
+    
+    // the property sheet sorter
+    private PropertySheetSorter sorter = new PropertySheetSorter();
 
     /**
      * Creates a property sheet viewer on a newly-created tree control
@@ -480,7 +481,7 @@ class PropertySheetViewer extends Viewer {
     }
 
     /**
-     * Returns the children of the given category or entry
+     * Returns the sorted children of the given category or entry
      *
      * @param node a category or entry
      * @return the children of the given category or entry
@@ -525,8 +526,8 @@ class PropertySheetViewer extends Viewer {
                 return Arrays.asList(categories);
         }
 
-        // return the filtered child entries
-        return getFilteredEntries(entry.getChildEntries());
+        // return the sorted & filtered child entries
+        return getSortedEntries(getFilteredEntries(entry.getChildEntries()));
     }
 
     /**
@@ -538,7 +539,7 @@ class PropertySheetViewer extends Viewer {
      *         <code>IPropertySheetEntry</code>)
      */
     private List getChildren(PropertySheetCategory category) {
-        return getFilteredEntries(category.getChildEntries());
+        return getSortedEntries(getFilteredEntries(category.getChildEntries()));
     }
 
     /*
@@ -581,13 +582,28 @@ class PropertySheetViewer extends Viewer {
         }
         return filteredEntries;
     }
+    
+    /**
+	 * Returns a sorted list of <code>IPropertySheetEntry</code> entries.
+	 * 
+	 * @param unsortedEntries
+	 *            unsorted list of <code>IPropertySheetEntry</code>
+	 * @return a sorted list of the specified entries
+	 */
+	private List getSortedEntries(List unsortedEntries) {
+		IPropertySheetEntry[] propertySheetEntries = (IPropertySheetEntry[]) unsortedEntries
+				.toArray(new IPropertySheetEntry[unsortedEntries.size()]);
+		sorter.sort(propertySheetEntries);
+		return Arrays.asList(propertySheetEntries);
+	}
+    
 
     /**
-     * The <code>PropertySheetViewer</code> implementation of this method
-     * declared on <code>IInputProvider</code> returns the objects for which
-     * the viewer is currently showing properties. It returns an
-     * <code>Object[]</code> or <code>null</code>.
-     */
+	 * The <code>PropertySheetViewer</code> implementation of this method
+	 * declared on <code>IInputProvider</code> returns the objects for which
+	 * the viewer is currently showing properties. It returns an
+	 * <code>Object[]</code> or <code>null</code>.
+	 */
     public Object getInput() {
         return input;
     }
@@ -902,6 +918,22 @@ class PropertySheetViewer extends Viewer {
     }
 
     /**
+	 * Sets the sorter for this viewer.
+	 * <p>
+	 * The default sorter sorts categories and entries alphabetically. 
+	 * A viewer update needs to be triggered after the sorter has changed.
+	 * </p>
+	 * @param sorter the sorter to set (<code>null</code> will reset to the
+	 * default sorter)
+     * @since 3.1
+	 */
+	public void setSorter(PropertySheetSorter sorter) {
+		if (null == sorter)
+			sorter = new PropertySheetSorter();
+		this.sorter = sorter;
+	}
+
+    /**
      * Sets the status line manager this view will use to show messages.
      * 
      * @param manager
@@ -989,25 +1021,11 @@ class PropertySheetViewer extends Viewer {
             categoryCache.put(MISCELLANEOUS_CATEGORY_NAME, misc);
 
         // Sort the categories
-        List list = new ArrayList(categoryCache.values());
-        for (int i = 0; i < categoriesToRemove.size(); i++)
-            list.remove(categoriesToRemove.get(i));
-        Collections.sort(list, new Comparator() {
-            Collator coll = Collator.getInstance(Locale.getDefault());
-
-            public int compare(Object a, Object b) {
-                PropertySheetCategory c1, c2;
-                String dname1, dname2;
-                c1 = (PropertySheetCategory) a;
-                dname1 = c1.getCategoryName();
-                c2 = (PropertySheetCategory) b;
-                dname2 = c2.getCategoryName();
-                return coll.compare(dname1, dname2);
-            }
-        });
-
-        categories = (PropertySheetCategory[]) list
-                .toArray(new PropertySheetCategory[list.size()]);
+        Collection categoryCacheValues = categoryCache.values();
+        PropertySheetCategory[] toSort = (PropertySheetCategory[]) categoryCacheValues
+        	.toArray(new PropertySheetCategory[categoryCacheValues.size()]);
+        sorter.sort(toSort);
+        categories = toSort;
     }
 
     /**

@@ -7,19 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Gunnar Wagenknecht - fix for bug 21756 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=21756)
+ *     Gunnar Wagenknecht - fix for bug 21756 [PropertiesView] property view sorting
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -151,7 +147,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
     }
 
     /**
-     * Return the sorted intersection of all the <code>IPropertyDescriptor</code>s 
+     * Return the unsorted intersection of all the <code>IPropertyDescriptor</code>s 
      * for the objects.
      * @return List
      */
@@ -189,23 +185,8 @@ public class PropertySheetEntry implements IPropertySheetEntry {
             }
         }
 
-        // Sort the descriptors	
-        List descriptors = new ArrayList(intersection.values());
-        Collections.sort(descriptors, new Comparator() {
-            Collator coll = Collator.getInstance(Locale.getDefault());
-
-            public int compare(Object a, Object b) {
-                IPropertyDescriptor d1, d2;
-                String dname1, dname2;
-                d1 = (IPropertyDescriptor) a;
-                dname1 = d1.getDisplayName();
-                d2 = (IPropertyDescriptor) b;
-                dname2 = d2.getDisplayName();
-                return coll.compare(dname1, dname2);
-            }
-        });
-
-        return descriptors;
+        // sorting is handled in the PropertySheetViewer, return unsorted
+        return new ArrayList(intersection.values());
     }
 
     /**

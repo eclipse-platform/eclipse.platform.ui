@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Gunnar Wagenknecht - fix for bug 21756 [PropertiesView] property view sorting
  *******************************************************************************/
 
 package org.eclipse.ui.views.properties;
@@ -82,6 +83,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
     public static final String HELP_CONTEXT_PROPERTY_SHEET_PAGE = "org.eclipse.ui.property_sheet_page_help_context"; //$NON-NLS-1$
 
     private PropertySheetViewer viewer;
+    
+    private PropertySheetSorter sorter;
 
     private IPropertySheetEntry rootEntry;
 
@@ -114,7 +117,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
     public void createControl(Composite parent) {
         // create a new viewer
         viewer = new PropertySheetViewer(parent);
-
+        viewer.setSorter(sorter);
+        
         // set the model for the viewer
         if (rootEntry == null) {
             // create a new root
@@ -440,4 +444,26 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
             // the following will trigger an update
             viewer.setRootEntry(rootEntry);
     }
+
+    /**
+	 * Sets the sorter used for sorting categories and entries in the viewer
+	 * of this page.
+	 * <p>
+	 * The default sorter sorts categories and entries alphabetically. 
+	 * </p>
+	 * @param sorter the sorter to set (<code>null</code> will reset to the
+	 * default sorter)
+     * @since 3.1
+	 */
+	public void setSorter(PropertySheetSorter sorter) {
+		this.sorter = sorter;
+        if (viewer != null) {
+        	viewer.setSorter(sorter);
+        	
+        	// the following will trigger an update
+        	if(null != viewer.getRootEntry())
+        		viewer.setRootEntry(rootEntry);
+        }
+	}
+
 }
