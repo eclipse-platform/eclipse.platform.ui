@@ -35,6 +35,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -146,7 +147,10 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()).run(
+					// Pass the scheduling rule to the synchronizer so that sync change events
+					// and cache commits to disk are batched
+					EclipseSynchronizer.getInstance().run(
+						getSchedulingRule(syncSet),
 						new ICVSRunnable() {
 							public void run(IProgressMonitor monitor) throws CVSException {
 								try {
