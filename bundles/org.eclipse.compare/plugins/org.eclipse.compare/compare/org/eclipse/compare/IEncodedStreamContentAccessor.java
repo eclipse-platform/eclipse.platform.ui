@@ -24,8 +24,14 @@ import org.eclipse.core.runtime.CoreException;
 public interface IEncodedStreamContentAccessor extends IStreamContentAccessor {
 	
 	/**
-	 * @return The character encoding of the stream returned by <code>getContents()</code>.
-	 * @exception CoreException if the contents of this object could not be accessed
+	 * Returns the name of a charset encoding to be used when decoding this 
+	 * stream accessor's contents into characters. Returns <code>null</code> if a proper 
+	 * encoding cannot be determined.
+	 *
+	 * @return the name of a charset, or <code>null</code>
+	 * @exception CoreException if an error happens while determining 
+	 * the charset. See any refinements for more information.
+	 * @see IStreamContentAccessor#getContents
 	 * @since 3.0
 	 */
 	String getCharset() throws CoreException;
