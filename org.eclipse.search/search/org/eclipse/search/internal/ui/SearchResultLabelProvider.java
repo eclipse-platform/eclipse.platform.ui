@@ -6,6 +6,7 @@ package org.eclipse.search.internal.ui;
 
 import org.eclipse.swt.graphics.Image;
 
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 
@@ -17,26 +18,24 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 	
 	private static class FileLabelProvider extends LabelProvider {
 
-		private Image fImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJ_TSEARCH_DPDN);
+		private WorkbenchLabelProvider fWorkbenchLabelProvider= new WorkbenchLabelProvider();
 		
 		public String getText(Object element) {
 			if (!(element instanceof ISearchResultViewEntry))
 				return ""; //$NON-NLS-1$
-			
 			IResource resource= ((ISearchResultViewEntry) element).getResource();
-
 			// PR 1G47GDO
 			if (resource == null)
 				return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
-		
-			return ((IResource)resource).getLocation().lastSegment();
+			return fWorkbenchLabelProvider.getText(resource);
 		}
 
 		public Image getImage(Object element) {
-			return fImage;
+			if (!(element instanceof ISearchResultViewEntry))
+				return null; //$NON-NLS-1$
+			return fWorkbenchLabelProvider.getImage(((ISearchResultViewEntry) element).getResource());
 		}
 	}
-
 
 	private static final FileLabelProvider DEFAULT_LABEL_PROVIDER= new FileLabelProvider();
 	private static final String MATCHES_POSTFIX= " " + SearchMessages.getString("SearchResultView.matches") + ")"; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$

@@ -298,9 +298,21 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 					text= ""; //$NON-NLS-1$
 				}
 			} else if (item instanceof IAdaptable) {
-				IWorkbenchAdapter element= (IWorkbenchAdapter)((IAdaptable)item).getAdapter(IWorkbenchAdapter.class);
-				if (element != null)
-					text= element.getLabel(item);
+				Object adapter= ((IAdaptable)item).getAdapter(IWorkbenchAdapter.class);
+				if (adapter instanceof IWorkbenchAdapter)
+					text= ((IWorkbenchAdapter)adapter).getLabel(item);
+
+				adapter= ((IAdaptable)item).getAdapter(IResource.class);
+				if (adapter instanceof IResource) {
+					IResource resource= (IResource)adapter;
+					if (text == null)	// keep text, if provided by workbench adapter
+						text= resource.getName();
+					extension= resource.getFileExtension();
+					if (extension == null)
+						extension= resource.getName();
+					else
+						extension= "*." + extension;
+				}
 			}
 		}		
 		fPattern.setText(insertEscapeChars(text));

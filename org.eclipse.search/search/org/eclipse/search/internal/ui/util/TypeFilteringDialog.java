@@ -159,12 +159,12 @@ public class TypeFilteringDialog extends SelectionDialog {
 		StringBuffer entries= new StringBuffer();
 		boolean first= true;
 		while (initialIterator.hasNext()) {
-			if (!first) {
-				entries.append(FileTypeEditor.TYPE_DELIMITER);
-				entries.append(" "); //$NON-NLS-1$
-			}
 			String nextExtension= (String)initialIterator.next();
 			if (!selectedMappings.contains(nextExtension)) {
+				if (!first) {
+					entries.append(FileTypeEditor.TYPE_DELIMITER);
+					entries.append(" "); //$NON-NLS-1$
+				}
 				first= false;
 				entries.append(nextExtension);
 			}
