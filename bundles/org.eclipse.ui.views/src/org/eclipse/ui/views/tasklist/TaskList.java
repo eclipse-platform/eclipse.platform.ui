@@ -229,9 +229,7 @@ public class TaskList extends ViewPart {
 		}
 
 		public void run() {
-			int direction = sorter.getTopPriorityDirection();
 			sorter.setTopPriority(column);
-			sorter.setTopPriorityDirection(direction);
 			updateSortingState();
 			viewer.refresh();
 			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
