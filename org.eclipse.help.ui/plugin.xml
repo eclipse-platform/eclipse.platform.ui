@@ -109,11 +109,11 @@
    <extension
          point="org.eclipse.search.searchPages">
       <page
+            searchViewHelpContextId="org.eclipse.help.ui.searchResultView"
             label="%help_search_page"
             icon="icons/search_menu.gif"
             class="org.eclipse.help.ui.internal.search.HelpSearchPage"
-            id="org.eclipse.help.ui.searchPage"
-            searchViewHelpContextId="org.eclipse.help.ui.searchResultView">
+            id="org.eclipse.help.ui.searchPage">
       </page>
    </extension>
 <!-- Markers -->

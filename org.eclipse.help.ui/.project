@@ -9,7 +9,6 @@
 		<project>org.eclipse.help</project>
 		<project>org.eclipse.help.appserver</project>
 		<project>org.eclipse.search</project>
-		<project>org.eclipse.tomcat</project>
 		<project>org.eclipse.ui</project>
 	</projects>
 	<buildSpec>
