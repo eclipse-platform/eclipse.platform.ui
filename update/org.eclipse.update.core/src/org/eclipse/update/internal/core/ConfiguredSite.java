@@ -404,16 +404,13 @@ public class ConfiguredSite
 			// notify listeners
 			Object[] siteListeners = listeners.getListeners();
 			for (int i = 0; i < siteListeners.length; i++) {
-				(
-					(
-						IConfiguredSiteChangedListener) siteListeners[i])
-							.featureUnconfigured(
-					feature);
+				IConfiguredSiteChangedListener listener = 
+				((IConfiguredSiteChangedListener) siteListeners[i]);
+				listener.featureUnconfigured(feature);
 			}
-System.err.println("yyy sucess");			
+			
 			return true;
 		} else {
-System.err.println("yyy !sucess");			
 			return false;
 		}
 	}
