@@ -11,13 +11,16 @@ Contributors:
   Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
 **********************************************************************/
 
-import org.eclipse.ui.IMemento;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import java.util.Arrays;
 import java.util.HashSet;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
+import org.eclipse.ui.IMemento;
 
 /* package */ class TasksFilter extends ViewerFilter implements Cloneable {
 
@@ -61,9 +64,8 @@ import java.util.HashSet;
 public TasksFilter() {
 	reset();
 }
-boolean checkDescription(IMarker marker) {
-	String msg = MarkerUtil.getMessage(marker);
-	boolean contains = containsSubstring(msg, descriptionFilter);
+boolean checkDescription(String desc) {
+	boolean contains = containsSubstring(desc, descriptionFilter);
 	return descriptionFilterKind == FILTER_CONTAINS ? contains : !contains;
 }
 public Object clone() {
@@ -152,15 +154,43 @@ public void saveState(IMemento memento) {
 public boolean select(Viewer viewer, Object parentElement, Object element) {
 	return select((IMarker) element);
 }
-	
-public boolean select(IMarker marker) {
 
-	// types and resource settings are handled by the content provider
+public boolean select(IMarker marker) {
+	// resource settings are handled by the content provider
+	return selectByType(marker) && selectByAttributes(marker);
+}
+
+public boolean select(IMarkerDelta markerDelta) {
+	// resource settings are handled by the content provider
+	return selectByType(markerDelta) && selectByAttributes(markerDelta);
+}
+	
+private boolean selectByType(IMarker marker) {
+	for (int i = 0; i < types.length; ++i) {
+		if (MarkerUtil.isMarkerType(marker, types[i]))
+			return true;
+	}
+	return false;
+}
+
+private boolean selectByType(IMarkerDelta markerDelta) {
+	for (int i = 0; i < types.length; ++i) {
+		if (markerDelta.isSubtypeOf(types[i]))
+			return true;
+	}
+	return false;
+}
+
+/* 
+ * WARNING: selectByAttributes(IMarker) and selectByAttributes(IMarkerDelta) must correspond.
+ */
+
+private boolean selectByAttributes(IMarker marker) {
 
 	// severity filter applies only to problems
 	if (filterOnSeverity && MarkerUtil.isMarkerType(marker, IMarker.PROBLEM)) {
-		int bit = 1 << MarkerUtil.getSeverity(marker);
-		if ((severityFilter & bit) == 0)
+		int sev = MarkerUtil.getSeverity(marker);
+		if ((severityFilter & (1 << sev)) == 0)
 			return false;
 	}
 
@@ -168,30 +198,66 @@ public boolean select(IMarker marker) {
 	// avoid doing type check more than once
 	if ((filterOnPriority || filterOnCompletion) && MarkerUtil.isMarkerType(marker, IMarker.TASK)) {
 		if (filterOnPriority) {
-			int bit = 1 << MarkerUtil.getPriority(marker);
-			if ((priorityFilter & bit) == 0)
+			int pri = MarkerUtil.getPriority(marker);
+			if ((priorityFilter & (1 << pri)) == 0)
 				return false;
 		}
 		if (filterOnCompletion) {
-			int bit = MarkerUtil.isComplete(marker) ? 2 : 1;
-			if ((completionFilter & bit) == 0)
+			boolean complete = MarkerUtil.isComplete(marker);
+			if ((completionFilter & (complete ? 2 : 1)) == 0)
 				return false;
 		}
 	}
 
 	// description applies to all markers
 	if (filterOnDescription) {
-		if (!checkDescription(marker))
+		String desc = MarkerUtil.getMessage(marker);
+		if (!checkDescription(desc))
 			return false;
 	}
 	return true;
 }
+
+private boolean selectByAttributes(IMarkerDelta markerDelta) {
+
+	// severity filter applies only to problems
+	if (filterOnSeverity && markerDelta.isSubtypeOf(IMarker.PROBLEM)) {
+		int sev = markerDelta.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+		if ((severityFilter & (1 << sev)) == 0)
+			return false;
+	}
+
+	// priority and completion filters apply only to tasks
+	// avoid doing type check more than once
+	if ((filterOnPriority || filterOnCompletion) && markerDelta.isSubtypeOf(IMarker.TASK)) {
+		if (filterOnPriority) {
+			int pri = markerDelta.getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
+			if ((priorityFilter & (1 << pri)) == 0)
+				return false;
+		}
+		if (filterOnCompletion) {
+			boolean complete = markerDelta.getAttribute(IMarker.DONE, false);
+			if ((completionFilter & (complete ? 2 : 1)) == 0)
+				return false;
+		}
+	}
+
+	// description applies to all markers
+	if (filterOnDescription) {
+		String desc = markerDelta.getAttribute(IMarker.MESSAGE, "");
+		if (!checkDescription(desc))
+			return false;
+	}
+	return true;
+}
+
+
 /**
  * Returns whether the filter is including all markers.
  *
  * @return <code>true</code> if the filter includes all markers, <code>false</code> if not
  */
-public boolean showAll() {
+public boolean isShowingAll() {
 	if (filterOnDescription || filterOnSeverity || filterOnPriority || filterOnCompletion) {
 		return false;
 	}

@@ -11,33 +11,28 @@ Contributors:
   Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
 **********************************************************************/
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.MarkerTransfer;
-import org.eclipse.ui.part.CellEditorActionHandler;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.List; // otherwise ambiguous with org.eclipse.swt.widgets.List
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.*;
+
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Main class for the Task List view for displaying tasks and problem annotations
@@ -59,6 +54,7 @@ public class TaskList extends ViewPart {
 	
 	private CellEditor descriptionEditor;
 	private TableViewer viewer;
+	private TasksFilter filter = new TasksFilter();
 	private IMemento memento;
 
 	private CellEditorActionHandler editorActionHandler;
@@ -97,7 +93,6 @@ public class TaskList extends ViewPart {
 	private static final String TAG_MARKER = "marker"; //$NON-NLS-1$
 	private static final String TAG_RESOURCE = "resource"; //$NON-NLS-1$
 	private static final String TAG_TOP_INDEX = "topIndex"; //$NON-NLS-1$
-
 
 	static class TaskListLabelProvider
 		extends LabelProvider
@@ -315,7 +310,6 @@ public void createPartControl(Composite parent) {
 	viewer.setContentProvider(new TaskListContentProvider(this));
 	viewer.setLabelProvider(new TaskListLabelProvider());
 	viewer.setSorter(new TaskSorter(this, 5));
-	viewer.addFilter(new TasksFilter());
 	if(memento != null) {
 		//restore filter
 		IMemento filterMem = memento.getChild(TAG_FILTER);
@@ -515,27 +509,9 @@ void focusSelectionChanged(SelectionChangedEvent event) {
  * Returns the filter for the viewer.
  */
 TasksFilter getFilter() {
-	return (TasksFilter) getTableViewer().getFilters()[0];
+	return filter;
 }
-/**
- * Returns the marker types to show.
- * The task list will include only markers of the returned types, and their subtypes.
- *
- * @return the marker types to show
- */
-String[] getMarkerTypes() {
-	return getFilter().types;
-}
-/**
- * When created, new task instance is cached in
- * order to keep it at the top of the list until
- * first edited. This method returns it, or
- * null if there is no task instance pending
- * for first editing.
- */
-IMarker getNewlyCreatedTaskInstance() {
-	return null;
-}
+
 /**
  * Returns the UI plugin for the task list.
  */
@@ -584,19 +560,9 @@ String getStatusMessage(IStructuredSelection selection) {
 	}
 	TaskListContentProvider provider = (TaskListContentProvider) viewer.getContentProvider();
 	if (selection.size() > 1) {
-		try {
-			String fmt = TaskListMessages.getString("TaskList.selectedFmt"); //$NON-NLS-1$
-			Object[] args = new Object[] {
-				new Integer(selection.size()),
-				provider.getSummary(selection.toList())
-			};
-			return MessageFormat.format(fmt, args);
-		}
-		catch (CoreException e) {
-			// ignore
-		}
+		return provider.getStatusSummary(selection);
 	}
-	return provider.getSummary();
+	return provider.getStatusSummary();
 }
 /**
  * When created, new task instance is cached in
@@ -634,12 +600,39 @@ public void init(IViewSite site,IMemento memento) throws PartInitException {
  * Returns whether we are interested in the given marker delta.
  */
 boolean isAffectedBy(IMarkerDelta markerDelta) {
-	return checkType(markerDelta) && checkResource(markerDelta.getResource());
+	return checkResource(markerDelta.getResource()) && getFilter().select(markerDelta);
 }
+
+/**
+ * Returns whether the given marker is a subtype of one of the root types.
+ */
+boolean isRootType(IMarker marker) {
+	String[] types = TasksFilter.ROOT_TYPES;
+	for (int i = 0; i < types.length; ++i) {
+		if (MarkerUtil.isMarkerType(marker, types[i])) {
+			return true;
+		}
+	}
+	return false;
+}	
+
+/**
+ * Returns whether the given marker delta is a subtype of one of the root types.
+ */
+boolean isRootType(IMarkerDelta markerDelta) {
+	String[] types = TasksFilter.ROOT_TYPES;
+	for (int i = 0; i < types.length; ++i) {
+		if (markerDelta.isSubtypeOf(types[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 /**
  * Returns whether we are interested in markers on the given resource.
  */
-private boolean checkResource(IResource resource) {
+boolean checkResource(IResource resource) {
 	if (!showSelections()) {
 		return true;
 	}
@@ -656,37 +649,11 @@ private boolean checkResource(IResource resource) {
 }
 
 /**
- * Returns whether we are interested in the type of the given marker.
- */
-private boolean checkType(IMarkerDelta markerDelta) {
-	String[] types = getMarkerTypes();
-	for (int i = 0; i < types.length; ++i) {
-		if (markerDelta.isSubtypeOf(types[i])) {
-			return true;
-		}
-	}
-	return false;
-}
-
-/**
- * Returns whether we are interested in the type of the given marker.
- */
-private boolean checkType(IMarker marker) {
-	String[] types = getMarkerTypes();
-	for (int i = 0; i < types.length; ++i) {
-		if (MarkerUtil.isMarkerType(marker, types[i])) {
-			return true;
-		}
-	}
-	return false;
-}
-
-/**
  * Returns whether the given marker should be shown,
  * given the current filter settings.
  */
 boolean shouldShow(IMarker marker) {
-	return checkType(marker) && checkResource(marker.getResource()) && getFilter().select(marker);
+	return checkResource(marker.getResource()) && getFilter().select(marker);
 }
 
 /**
@@ -772,7 +739,11 @@ void makeActions() {
  * The markers have changed.  Update the status line and title bar.
  */
 void markersChanged() {
-	updateStatusMessage();
+	// Only update the status if active, since this may be expensive.
+	if (getSite().getPage().getActivePart() == this) {
+		updateStatusMessage();
+	}
+	// Always update the title, since it can be seen even if not active
 	updateTitle();
 }
 void partActivated(IWorkbenchPart part) {
@@ -970,21 +941,14 @@ void selectionChanged(SelectionChangedEvent event) {
 		}
 	}
 }
+
 /* (non-Javadoc)
  * Method declared on IWorkbenchPart.
  */
 public void setFocus() {
 	viewer.getControl().setFocus();
 }
-/**
- * Sets the reference to the new task. This reference
- * will keep it at the top of the task list regardless
- * of filtering and sorting parameters until it
- * has been edited for the first time.
- */
-void setNewlyCreatedTaskInstance(IMarker newInstance) {
-	//newTask = newInstance;
-}
+
 /**
  * Sets the property on a marker to the given value.
  *
@@ -1002,8 +966,6 @@ void setProperty(IMarker marker, String property, Object value) {
 			marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH - ((Integer) value).intValue());
 		} else if (property == tableColumnProperties[3]) { // Description
 			marker.setAttribute(IMarker.MESSAGE, value);
-			if (getNewlyCreatedTaskInstance() == marker)
-				setNewlyCreatedTaskInstance(null);
 			// Let's not refilter too lightly - see if it is needed
 //			TaskSorter sorter = (TaskSorter) viewer.getSorter();
 //			if (sorter != null && sorter.getColumnNumber() == 3) {
@@ -1191,10 +1153,16 @@ void updateStatusMessage(IStructuredSelection selection) {
  * Updates the title of the view.  Should be called when filters change.
  */
 void updateTitle() {
-	String name = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
+	String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
 	TaskListContentProvider provider = (TaskListContentProvider) getTableViewer().getContentProvider();
-	String title = name + " " + provider.getTitleSummary(); //$NON-NLS-1$
-	setTitle(title);
+	String summary = provider.getFilterSummary();
+	if ("".equals(summary)) {
+		setTitle(viewName);
+	}
+	else {
+		String title = TaskListMessages.format("TaskList.titleFmt", new Object[] { viewName, summary });
+		setTitle(title);
+	}
 }
 /**
  * Writes a string representation of the given marker to the buffer.
