@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;

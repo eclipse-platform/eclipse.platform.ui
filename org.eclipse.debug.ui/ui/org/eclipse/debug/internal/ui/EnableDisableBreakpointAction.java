@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.SelectionProviderAction;
@@ -49,12 +50,10 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			return;
 		}
 
-		IBreakpointManager manager= getBreakpointManager();
 		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(STATUS), null);
 		while (enum.hasNext()) {
-			IMarker marker= (IMarker) enum.next();
+			IBreakpoint breakpoint = (IBreakpoint) enum.next();
 			try {
-				IBreakpoint breakpoint= getBreakpoint(marker);
 				breakpoint.setEnabled(!breakpoint.isEnabled());
 			} catch (CoreException e) {
 				ms.merge(e.getStatus());
@@ -75,11 +74,11 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 			setEnabled(false);
 			return;
 		}
-		IMarker marker= (IMarker)enum.next();
+		IBreakpoint bp= (IBreakpoint)enum.next();
 		if (!enum.hasNext()) {
 			//single selection
 			try {
-				if (getBreakpoint(marker).isEnabled()) {
+				if (bp.isEnabled()) {
 					setText(DebugUIUtils.getResourceString(DISABLE));
 				} else {
 					setText(DebugUIUtils.getResourceString(ENABLE));
@@ -131,11 +130,5 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 		return DebugPlugin.getDefault().getBreakpointManager();
 	}
 	
-	/**
-	 * Returns the breakpoint associated with marker
-	 */
-	private IBreakpoint getBreakpoint(IMarker marker) {
-		return getBreakpointManager().getBreakpoint(marker);
-	}	
 }
 

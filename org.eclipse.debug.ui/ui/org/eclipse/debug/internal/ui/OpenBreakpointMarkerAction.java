@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
@@ -42,9 +43,9 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();
 		//Get the selected marker
 		Iterator enum= selection.iterator();
-		IMarker marker= (IMarker)enum.next();
-		IEditorInput input= fgPresentation.getEditorInput(marker);
-		String editorId= fgPresentation.getEditorId(input, marker);
+		IBreakpoint breakpoint= (IBreakpoint)enum.next();
+		IEditorInput input= fgPresentation.getEditorInput(breakpoint);
+		String editorId= fgPresentation.getEditorId(input, breakpoint);
 		if (input != null) {
 			try {
 				part= page.openEditor(input, editorId);
@@ -57,7 +58,7 @@ public class OpenBreakpointMarkerAction extends OpenMarkerAction {
 			part.setFocus();
 
 			// Goto the bookmark.
-			part.gotoMarker(marker);
+			part.gotoMarker(breakpoint.getMarker());
 		}
 	}
 }

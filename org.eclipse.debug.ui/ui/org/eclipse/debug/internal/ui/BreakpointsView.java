@@ -5,10 +5,11 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import java.util.*;
+import java.util.Vector;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.*;
@@ -21,7 +22,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager

@@ -5,9 +5,11 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.DebugPlugin;
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * Utility methods for the debug core plugin.
@@ -53,5 +55,21 @@ public class DebugCoreUtils {
 			e.printStackTrace();
 			System.out.println();
 		}
+	}
+
+	/**
+	 * Plug in the single argument to the resource String for the key to get a formatted resource String
+	 */
+	public static String getFormattedString(String key, String arg) {
+		String string= getResourceString(key);
+		return MessageFormat.format(string, new String[] { arg });
+	}
+	
+	/**
+	 * Plug in the arguments to the resource String for the key to get a formatted resource String
+	 */
+	public static String getFormattedString(String key, String[] args) {
+		String string= getResourceString(key);
+		return MessageFormat.format(string, args);
 	}
 }

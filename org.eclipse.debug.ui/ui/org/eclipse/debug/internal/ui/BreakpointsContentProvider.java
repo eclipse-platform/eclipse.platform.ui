@@ -5,9 +5,9 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.TableViewer;
 
 /**
@@ -26,7 +26,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 	 * Returns all the breakpoint markers in the current open workspace
 	 */
 	public Object[] getElements(Object parent) {
-		return ((IBreakpointManager) parent).getMarkers();
+		return ((IBreakpointManager) parent).getBreakpoints();
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 			asyncExec(new Runnable() {
 				public void run() {
 					if (!isDisposed()) {
-						((TableViewer)fViewer).add(breakpoint.getMarker());
+						((TableViewer)fViewer).add(breakpoint);
 					}
 				}
 			});
@@ -59,7 +59,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 		asyncExec(new Runnable() {
 			public void run() {
 				if (!isDisposed()) {
-					((TableViewer)fViewer).remove(breakpoint.getMarker());
+					((TableViewer)fViewer).remove(breakpoint);
 				}
 			}
 		});
@@ -73,7 +73,7 @@ public class BreakpointsContentProvider extends BasicContentProvider implements 
 			asyncExec(new Runnable() {
 				public void run() {
 					if (!isDisposed()) {
-						refresh(breakpoint.getMarker());
+						refresh(breakpoint);
 					}
 				}
 			});

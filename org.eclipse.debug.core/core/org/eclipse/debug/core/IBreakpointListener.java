@@ -6,8 +6,8 @@ package org.eclipse.debug.core;
  */
 
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * A breakpoint listener is notified of breakpoint additions,

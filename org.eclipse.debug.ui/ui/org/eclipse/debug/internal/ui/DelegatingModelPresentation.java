@@ -5,22 +5,22 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
-import java.util.HashMap;
-import java.util.Iterator;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A model presentation that delegates to the appropriate extension. This
@@ -102,7 +102,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * Can return <code>null</code>
 	 */
 	public Image getImage(Object item) {
-		if (item instanceof IDebugElement || item instanceof IMarker) {
+		if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) {
 			IDebugModelPresentation lp= getConfiguredPresentation(item);
 			if (lp != null) {
 				Image image= lp.getImage(item);
@@ -251,7 +251,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		boolean displayQualifiedNames= showQualifiedNames();
 		if (item instanceof InspectItem) {
 			return getInspectItemText((InspectItem)item);
-		} else if (item instanceof IDebugElement || item instanceof IMarker) { 
+		} else if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) { 
 			IDebugModelPresentation lp= getConfiguredPresentation(item);
 			if (lp != null) {
 				String label= lp.getText(item);
@@ -392,17 +392,15 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		} else if (element instanceof InspectItem) {
 			IValue value= ((InspectItem)element).getValue();
 			id= value.getModelIdentifier();
-		} else
-			if (element instanceof IMarker) {
-				IMarker m= (IMarker) element;
-				try {
-					if (m.exists()) {
-						id= (String) m.getAttribute(IDebugConstants.MODEL_IDENTIFIER);
-					}
-				} catch (CoreException e) {
-					DebugUIUtils.logError(e);
-				}
+		} else if (element instanceof IMarker) {
+			IMarker m= (IMarker) element;
+			IBreakpoint bp = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(m);
+			if (bp != null) {
+				id= bp.getModelIdentifier();
 			}
+		} else if (element instanceof IBreakpoint) {
+			id = ((IBreakpoint)element).getModelIdentifier();
+		}
 		if (id != null) {
 			return getPresentation(id);
 		}

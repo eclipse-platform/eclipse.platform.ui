@@ -10,7 +10,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.*;
 
 /**
  * The breakpoint manager manages all registered breakpoints
@@ -18,7 +18,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
  *
  * @see IBreakpointManager
  */
-public class BreakpointManager implements IBreakpointManager, IResourceChangeListener, ILaunchListener {
+public class BreakpointManager implements IBreakpointManager, IResourceChangeListener {
 
 	private final static String PREFIX= "breakpoint_manager.";
 	private final static String ERROR= PREFIX + "error.";
@@ -28,6 +28,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private final static String EXTENSION= ERROR + "extension";
 	private final static String ASSOCIATED_RESOURCE= ERROR + "associated_resource";
 	private final static String REQUIRED_ATTRIBUTES= ERROR + "required_attributes";
+	private final static String MISSING_BREAKPOINT_DEFINITION= ERROR + "missing_breakpoint_definition";
 	private final static String LINE_NUMBER= ERROR + "line_number";
 	private final static String CREATION_FAILED= ERROR + "creation_failed";
 	private final static String UNSUPPORTED_EXTENSION= ERROR + "unsupported_extension";
@@ -81,8 +82,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	/**
-	 * Registers this manager as a resource change listener and launch
-	 * listener. Loads the list of breakpoints from the breakpoint markers in the
+	 * Registers this manager as a resource change listener.
+	 * Loads the list of breakpoints from the breakpoint markers in the
 	 * workspace.  This method should only be called on initial startup of 
 	 * the debug plugin.
 	 *
@@ -91,7 +92,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public void startup() throws CoreException {
 		initBreakpointExtensions();
 		getWorkspace().addResourceChangeListener(this);
-		getLaunchManager().addLaunchListener(this);
 		
 		IMarker[] breakpoints= null;
 		IWorkspaceRoot root= getWorkspace().getRoot();
@@ -112,14 +112,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	public void shutdown() {
 		getWorkspace().removeResourceChangeListener(this);
-		getLaunchManager().removeLaunchListener(this);
 	}
 
 	protected void initBreakpointExtensions() {
 		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(IDebugConstants.EXTENSION_POINT_BREAKPOINTS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
-			fBreakpointExtensions.put(elements[i].getAttribute("markerType"), elements[i]);
+			fBreakpointExtensions.put(elements[i].getAttribute(IDebugConstants.MARKER_TYPE), elements[i]);
 		}
 		
 	}
@@ -177,55 +176,18 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * @see IBreakpointManager
 	 */
-	public IMarker[] getMarkers() {
-		IMarker[] temp= (IMarker[]) fMarkers.keySet().toArray(new IMarker[0]);
-		return temp;
-	}	
-	
-	/**
-	 * @see IBreakpointManager
-	 */
-	public IMarker[] getMarkers(String modelIdentifier) {
-		Vector temp= new Vector(fBreakpoints.size());
-		if (!fBreakpoints.isEmpty()) {
-			Iterator breakpoints= fBreakpoints.iterator();
-			while (breakpoints.hasNext()) {
-				IBreakpoint breakpoint= (IBreakpoint) breakpoints.next();
-				String id= breakpoint.getModelIdentifier();
-				if (id != null && id.equals(modelIdentifier)) {
-					temp.add(breakpoint.getMarker());
-				}
-			}
-		}
-		IMarker[] m= new IMarker[temp.size()];
-		temp.copyInto(m);
-		return m;
-	}
-
-	/**
-	 * @see IBreakpointManager
-	 */
 	public boolean isRegistered(IBreakpoint breakpoint) {
 		return fBreakpoints.contains(breakpoint);
 	}
 
-	/**
-	 * @see IBreakpointManager
-	 */
-	public void removeMarker(IMarker marker, boolean delete) throws CoreException {
-		IBreakpoint breakpoint= (IBreakpoint)fMarkers.get(marker);
-		if (breakpoint != null) {
-			removeBreakpoint(breakpoint, delete);
-		} 
-	}
 	
 	/**
 	 * Remove the given breakpoint
 	 */
 	public void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException {
 		if (fBreakpoints.remove(breakpoint)) {
-			fireUpdate(breakpoint, null, REMOVED);
 			fMarkers.remove(breakpoint.getMarker());
+			fireUpdate(breakpoint, null, REMOVED);
 			if (delete) {
 				breakpoint.delete();
 			}
@@ -243,8 +205,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		try {
 			IConfigurationElement config = (IConfigurationElement)fBreakpointExtensions.get(marker.getType());
 			if (config == null) {
-				// error
-				return null;
+				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+					IDebugStatusConstants.CONFIGURATION_INVALID, DebugCoreUtils.getFormattedString(MISSING_BREAKPOINT_DEFINITION, marker.getType()), null));
 			}
 			IBreakpoint bp = (IBreakpoint)config.createExecutableExtension("class");
 			bp.setMarker(marker);
@@ -418,9 +380,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		protected void handleRemoveBreakpoint(IMarker marker, IMarkerDelta delta) {
 			IBreakpoint breakpoint= getBreakpoint(marker);
-			if (isRegistered(breakpoint)) {
-				fBreakpoints.remove(breakpoint);
-				fireUpdate(breakpoint, delta, REMOVED);
+			if (breakpoint != null) {
+				try {
+					removeBreakpoint(breakpoint, false);
+				} catch (CoreException e) {
+					logError(e);
+				}
 			}
 		}
 
@@ -470,29 +435,5 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 	}
 
-	/**
-	 * Adds any debug targets as listeners
-	 *
-	 * @see ILaunchListener
-	 */
-	public void launchRegistered(ILaunch launch) {
-		IDebugTarget dt= launch.getDebugTarget();
-		if (dt != null) {
-			addBreakpointListener(dt);
-		}
-	}
-
-	/**
-	 * Removes the debug target associated with
-	 * this launch as a breakpoint listener.
-	 *
-	 * @see ILaunchListener
-	 */
-	public void launchDeregistered(ILaunch launch) {
-		IDebugTarget dt= launch.getDebugTarget();
-		if (dt != null) {
-			removeBreakpointListener(dt);
-		}
-	}
 }
 

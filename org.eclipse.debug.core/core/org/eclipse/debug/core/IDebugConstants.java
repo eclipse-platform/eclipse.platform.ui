@@ -36,41 +36,19 @@ public interface IDebugConstants {
 	 * (value <code>"breakpoints"</code>).
 	 */
 	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	
-	
-	/**
-	 * Root breakpoint marker type
-	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
-	 */
-	public static final String BREAKPOINT = "breakpointMarker";
-	
-	/**
-	 * Line breakpoint type.
-	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
-	 */
-	public static final String LINE_BREAKPOINT = "lineBreakpointMarker";	
-	
+		
 	/**
 	 * Root breakpoint marker type	
 	 * (value <code>"org.eclipse.debug.core.breakpoint"</code>).
 	 */
-	public static final String BREAKPOINT_MARKER = PLUGIN_ID + "." + BREAKPOINT;
+	public static final String BREAKPOINT_MARKER = PLUGIN_ID + ".breakpointMarker";
 	
 	/**
 	 * Line breakpoint marker type.
 	 * (value <code>"org.eclipse.debug.core.lineBreakpoint"</code>).
 	 */
-	public static final String LINE_BREAKPOINT_MARKER = PLUGIN_ID + "." + LINE_BREAKPOINT;
-	
-	/**
-	 * Debug model identifier breakpoint marker attribute
-	 * (value <code>"modelIdentifier"</code>).
-	 * This attribute is a <code>String<code> corresponding to the identifier
-	 * of a debug model plugin a breakpoint is associated with.
-	 *
-	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, String)
-	 */
-	public static final String MODEL_IDENTIFIER = "modelIdentifier";
-		
+	public static final String LINE_BREAKPOINT_MARKER = PLUGIN_ID + ".lineBreakpointMarker";
+			
 	/**
 	 * Enabled breakpoint marker attribute (value <code>"enabled"</code>).
 	 * The attribute is a <code>boolean</code> corresponding to the
@@ -86,5 +64,11 @@ public interface IDebugConstants {
 	 * id of a breakpoint type
 	 */
 	public final static String ID= "id";
+	
+	/**
+	 * Attribute name for the <code>"markerType"</code> attribute of
+	 * a breakpoint extension.
+	 */
+	public final static String MARKER_TYPE= "markerType";
 	
 }

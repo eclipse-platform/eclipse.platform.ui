@@ -10,6 +10,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -49,10 +50,10 @@ public class RemoveBreakpointAction extends SelectionProviderAction {
  
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
-				IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 				while (itr.hasNext()) {
 					try {
-						IBreakpoint breakpoint= breakpointManager.getBreakpoint((IMarker)itr.next());
+						IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+						IBreakpoint breakpoint= (IBreakpoint)itr.next();
 						breakpointManager.removeBreakpoint(breakpoint, true);
 					} catch (CoreException ce) {
 						ms.merge(ce.getStatus());
