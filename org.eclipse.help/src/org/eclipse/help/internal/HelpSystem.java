@@ -222,7 +222,7 @@ public final class HelpSystem {
 			try {
 				WebappManager.start("help", webappPlugin, Path.EMPTY);
 			} catch (CoreException e) {
-				HelpPlugin.logError("E042", e);
+				HelpPlugin.logError(Resources.getString("E042"), e);
 				return false;
 			}
 			getInstance().webappRunning = true;
