@@ -43,7 +43,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     private IDocument document;
 
     private List regions;
-    private Pattern pattern = Pattern.compile("$", Pattern.MULTILINE); //$NON-NLS-1$
+    private Pattern pattern = Pattern.compile("^.*$", Pattern.MULTILINE); //$NON-NLS-1$
     
     public ConsoleDocumentAdapter(int width) {
         textChangeListeners = new ArrayList();
@@ -67,35 +67,37 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
             
             int numLinesInDoc = document.getNumberOfLines();
             String line = null;
+            int offset = 0;
             for (int i = docLine; i<numLinesInDoc; i++) {
-                int offset = document.getLineOffset(i);
+                offset = document.getLineOffset(i);
                 int length = document.getLineLength(i);
                 
                 if (length == 0) {
                     regions.add(new Region(offset, 0));
                 } else {
                     while (length > 0) {
+                        int trimmedLength = length;
                         String lineDelimiter = document.getLineDelimiter(i);
                         int lineDelimiterLength = 0;
                         if (lineDelimiter != null) {
                             lineDelimiterLength = lineDelimiter.length(); 
-                            length -= lineDelimiterLength;
+                            trimmedLength -= lineDelimiterLength;
                         }
 
-                        if (consoleWidth > 0 && consoleWidth < length) {
+                        if (consoleWidth > 0 && consoleWidth < trimmedLength) {
                             regions.add(new Region(offset, consoleWidth));
                             offset += consoleWidth;
                             length -= consoleWidth;
                         } else {
-                            regions.add(new Region(offset, length+lineDelimiterLength));
-                            offset += length+lineDelimiterLength;
-                            length -= length+lineDelimiterLength;
+                            regions.add(new Region(offset, length));
+                            offset += length;
+                            length -= length;
                         }
                     }
                 }
             }
             if (line != null && lineEndsWithDelimeter(line)) {
-                regions.add(new Region(document.getLength(), 0));
+                regions.add(new Region(offset, 0));
             }
             
         } catch (BadLocationException e) {
@@ -188,6 +190,10 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
             return 0;
         }
         
+        if (offset == document.getLength()) {
+            return regions.size()-1;
+        }
+        
 		int left= 0;
 		int right= regions.size() -1;
 		int midIndex = 0;
@@ -208,30 +214,6 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		
 		return midIndex;
     }
-    
-        
-        
-        
-        
-
-//        //offset can be greater than length when user is deleting.
-//        if (offset >= document.getLength()) {
-//            int size = lines.size();
-//            return size > 0 ? size-1 : 0;
-//        }
-//        
-//        int len = 0;
-//        int line = 0;
-//        for (Iterator i = lines.iterator(); i.hasNext(); ) {
-//            String s = (String)i.next();
-//            len += s.length();
-//            if (len > offset) {
-//                return line;
-//            }
-//            line++;
-//        }
-//        return lines.size() - 1;
-//    }
 
     /* (non-Javadoc)
      * @see org.eclipse.swt.custom.StyledTextContent#getLineCount()
@@ -304,7 +286,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         int last = getLineAtOffset(event.fOffset + event.fLength);
         changeEvent.replaceLineCount= last - first;
         
-        changeEvent.newLineCount = countLines(event.fText) -1;
+        changeEvent.newLineCount = countLines(event.fText) ;
         
         for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
             TextChangeListener element = (TextChangeListener) iter.next();
@@ -320,14 +302,18 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     private int countLines(String string) {
         Matcher matcher = pattern.matcher(string);
         int count = 0;
-        while(matcher.find()) {
+        while (matcher.find()) {
+            count++;
             if (consoleWidth > 0) {
                 String line = matcher.group();
-                count += (line.length() / consoleWidth) + 1;
-            } else {
-                count++;
-            }
+                count += (line.length() / consoleWidth);
+            } 
         }
+        
+        if (lineEndsWithDelimeter(string)) {
+            count++;
+        }
+        
         return count;
     }
 
