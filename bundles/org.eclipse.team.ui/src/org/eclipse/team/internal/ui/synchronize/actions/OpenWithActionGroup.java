@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
@@ -47,7 +48,10 @@ public class OpenWithActionGroup extends ActionGroup {
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		fillOpenWithMenu(menu, (IStructuredSelection)view.getSite().getPage().getSelection());
+		ISelection selection = view.getSite().getPage().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			fillOpenWithMenu(menu, (IStructuredSelection)selection);
+		}
 	}
 
 	/**
