@@ -277,9 +277,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	
 	/**
 	 * Sets this working copy's state to dirty.
+	 * Notifies listeners that this working copy has
+	 * changed.
 	 */
 	private void setDirty() {
 		fDirty = true;
+		getLaunchManager().notifyChanged(this);
 	}
 		
 	/**
@@ -295,8 +298,10 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @param name the new name for this configuration
 	 */
 	private void setNewName(String name) {
-		fName = name;
-		setDirty();
+		if (!getName().equals(name)) {
+			fName = name;
+			setDirty();
+		}
 	}
 	
 	/**

@@ -224,6 +224,27 @@ public interface ILaunchManager {
 	 * id, or <code>null</code> if it does not exist
 	 */
 	public ILaunchConfigurationType getLaunchConfigurationType(String id);
+	
+	/**
+	 * Adds the given launch configuration listener to the list
+	 * of listeners notified when a launch configuration is
+	 * added, removed, or changed. Has no effect if the given listener
+	 * is already registered.
+	 * 
+	 * @param listener launch configuration listener
+	 */
+	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener);
+	
+	/**
+	 * Removes the given launch configuration listener from the list
+	 * of listeners notified when a launch configuration is
+	 * added, removed, or changed. Has no effect if the given listener
+	 * is not already registered.
+	 * 
+	 * @param listener launch configuration listener
+	 */
+	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);	
+	
 }
 
 

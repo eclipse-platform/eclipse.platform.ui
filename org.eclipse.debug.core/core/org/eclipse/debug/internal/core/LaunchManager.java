@@ -49,6 +49,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -115,6 +116,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * to update launch configuration index.
 	 */
 	private IResourceDeltaVisitor fgVisitor;
+	
+	/**
+	 * Launch configuration listeners
+	 */
+	private ListenerList fLaunchConfigurationListeners = new ListenerList(5);
 		
 	/**
 	 * @see ILaunchManager#addLaunchListener(ILaunchListener)
@@ -534,7 +540,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Notifies the launch manager that a launch configuration
 	 * has been deleted. The configuration is removed from the
 	 * cache of info's and from the index of configurations by
-	 * project.
+	 * project, and listeners are notified.
 	 * 
 	 * @param config the launch configuration that was deleted
 	 */
@@ -544,13 +550,20 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		List list = (List)fLaunchConfigurationIndex.get(project);
 		if (list != null) {
 			list.remove(config);
+			if (fLaunchConfigurationListeners.size() > 0) {
+				Object[] listeners = fLaunchConfigurationListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
+					listener.launchConfigurationRemoved(config);
+				}
+			}						
 		}
 	}
 	
 	/**
 	 * Notifies the launch manager that a launch configuration
 	 * has been added. The configuration is added to the index of
-	 * configurations by project.
+	 * configurations by project, and listeners are notified.
 	 * 
 	 * @param config the launch configuration that was added
 	 */
@@ -563,6 +576,13 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		if (!list.contains(config)) {
 			list.add(config);
+			if (fLaunchConfigurationListeners.size() > 0) {
+				Object[] listeners = fLaunchConfigurationListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
+					listener.launchConfigurationAdded(config);
+				}
+			}			
 		}
 	}
 	
@@ -570,12 +590,31 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Notifies the launch manager that a launch configuration
 	 * has been changed. The configuration is removed from the
 	 * cache of info objects such that the new attributes will
-	 * be updated on the next access..
+	 * be updated on the next access. Listeners are notified of
+	 * the change.
 	 * 
 	 * @param config the launch configuration that was changed
 	 */
 	protected void launchConfigurationChanged(ILaunchConfiguration config) {
 		removeInfo(config);
+		notifyChanged(config);
+					
+	}
+	
+	/**
+	 * Notifies listeners that the given launch configuration
+	 * has changed.
+	 * 
+	 * @param configuration the changed launch configuration
+	 */
+	protected void notifyChanged(ILaunchConfiguration configuration) {
+		if (fLaunchConfigurationListeners.size() > 0) {
+			Object[] listeners = fLaunchConfigurationListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				ILaunchConfigurationListener listener = (ILaunchConfigurationListener)listeners[i];
+				listener.launchConfigurationChanged(configuration);
+			}
+		}		
 	}
 	
 	/**
@@ -856,4 +895,19 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}		
 
 	}
+	
+	/**
+	 * @see ILaunchManager#addLaunchConfigurationListener(ILaunchConfigurationListener)
+	 */
+	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener) {
+		fLaunchConfigurationListeners.add(listener);
+	}
+
+	/**
+	 * @see ILaunchManager#removeLaunchConfigurationListener(ILaunchConfigurationListener)
+	 */
+	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener) {
+		fLaunchConfigurationListeners.remove(listener);
+	}
+
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
@@ -55,7 +56,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * The dialog used to edit and launch launch configurations.
  */
-public class LaunchConfigurationDialog extends Dialog implements ISelectionChangedListener {
+public class LaunchConfigurationDialog extends Dialog implements ISelectionChangedListener, ILaunchConfigurationListener {
 	
 	/**
 	 * Context in which to display/select
@@ -140,6 +141,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	private ILaunchConfigurationWorkingCopy fWorkingCopy;
 	
 	/**
+	 * The current tab extensions being displayed
+	 */
+	private ILaunchConfigurationTab[] fTabs;
+	
+	/**
 	 * Id for 'Save & Launch' button.
 	 */
 	protected static final int ID_SAVE_AND_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
@@ -180,15 +186,23 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	}	
 
 	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#createContenst(Composite)
+	 * @see Dialog#createContenst(Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		initializeSettings();
+		getLaunchManager().addLaunchConfigurationListener(this);
 		return contents;
 	}
 	
-
+	/**
+	 * @see Window#close()
+	 */
+	public boolean close() {
+		getLaunchManager().removeLaunchConfigurationListener(this);
+		return super.close();
+	}
+	
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
@@ -420,7 +434,15 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		Text nameText = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
-		setNameTextWidget(nameText);	
+		setNameTextWidget(nameText);
+		
+		nameText.addModifyListener(
+			new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					getWorkingCopy().rename(getNameTextWidget().getText());
+				}
+			}
+		);		
 		
 		TabFolder tabFolder = new TabFolder(c, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -732,11 +754,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  			System.out.println("dirty");
  		}
  			
- 		// dispose old tabs
- 		TabItem[] tabs = getTabFolder().getItems();
- 		for (int i = 0; i < tabs.length; i++) {
- 			tabs[i].dispose();
- 		}
  		
  		// enable buttons
  		boolean singleSelection = selection.size() == 1;
@@ -749,8 +766,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		getDeleteButton().setEnabled(selection.size() >= 1);
  		
  		getSaveButton().setEnabled(false);
+ 		
  		if (singleSelection && selection.getFirstElement() instanceof ILaunchConfiguration) {
- 			setLaunchConfiguration((ILaunchConfiguration)selection.getFirstElement());
+ 			ILaunchConfiguration newConfig = (ILaunchConfiguration)selection.getFirstElement();
+ 			setLaunchConfiguration(newConfig);
  		} 
 
  	}
@@ -854,21 +873,51 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  	 */
  	protected void setLaunchConfiguration(ILaunchConfiguration config) {
  		try {
+ 			ILaunchConfigurationType newType = config.getType();
+			ILaunchConfigurationType prevType = null;
+			if (fWorkingCopy != null) {
+				prevType = fWorkingCopy.getType();
+			}
+			
+			if (!newType.equals(prevType)) {
+				// dipose the current tabs and replace with new ones 
+				TabItem[] oldTabs = getTabFolder().getItems();
+				ILaunchConfigurationTab[] tabs = getTabs();
+				for (int i = 0; i < oldTabs.length; i++) {
+					oldTabs[i].dispose();
+					tabs[i].dispose();
+				}
+				// build the new tabs
+		 		LaunchConfigurationTabExtension[] exts = LaunchConfigurationPresentationManager.getDefault().getTabs(newType);
+		 		tabs = new ILaunchConfigurationTab[exts.length];
+		 		for (int i = 0; i < exts.length; i++) {
+		 			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
+		 			String name = exts[i].getName();
+		 			if (name == null) {
+		 				name = "unspecified";
+		 			}
+		 			tab.setText(name);
+		 			tabs[i] = (ILaunchConfigurationTab)exts[i].getConfigurationElement().createExecutableExtension("class");
+		 			Control control = tabs[i].createTabControl(tab);
+		 			if (control != null) {
+			 			tab.setControl(control);
+		 			}
+		 		}
+		 		setTabs(tabs);		
+			}
+			
 	 		fWorkingCopy = config.getWorkingCopy();
+	 		// update the name field
 	 		getNameTextWidget().setText(config.getName());
-	 		LaunchConfigurationTabExtension[] tabs = LaunchConfigurationPresentationManager.getDefault().getTabs(config.getType());
-	 		
+	 		// update the tabs with the new working copy
+	 		ILaunchConfigurationTab[] tabs = getTabs();
 	 		for (int i = 0; i < tabs.length; i++) {
-	 			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
-	 			String name = tabs[i].getName();
-	 			if (name == null) {
-	 				name = "unspecified";
-	 			}
-	 			tab.setText(name);
+				tabs[i].setLaunchConfiguration(fWorkingCopy);
 	 		}
+
 	 		
  		} catch (CoreException e) {
- 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating working copy of lanuch configuration.",e.getStatus());
+ 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating tabs.",e.getStatus());
  			return;
  		}
  		
@@ -941,5 +990,61 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  	protected TabFolder getTabFolder() {
  		return fTabFolder;
  	}	 	
+ 	
+ 	/**
+ 	 * Sets the current tab extensions being displayed
+ 	 * 
+ 	 * @param tabs the current tab extensions being displayed
+ 	 */
+ 	private void setTabs(ILaunchConfigurationTab[] tabs) {
+ 		fTabs = tabs;
+ 	}
+ 	
+ 	/**
+ 	 * Returns the current tab extensions being displayed
+ 	 * 
+ 	 * @return the current tab extensions being displayed
+ 	 */
+ 	protected ILaunchConfigurationTab[] getTabs() {
+ 		return fTabs;
+ 	} 	
+ 	
+	/*
+	 * @see ILaunchConfigurationListener#launchConfigurationAdded(ILaunchConfiguration)
+	 */
+	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
+		getTreeViewer().refresh();
+	}
+
+	/**
+	 * @see ILaunchConfigurationListener#launchConfigurationChanged(ILaunchConfiguration)
+	 */
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
+		if (configuration.isWorkingCopy()) {
+			if (getWorkingCopy().equals(configuration)) {
+				workingCopyChanged();
+			}
+		}
+	}
+
+	/*
+	 * @see ILaunchConfigurationListener#launchConfigurationRemoved(ILaunchConfiguration)
+	 */
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		getTreeViewer().refresh();
+	}
+
+	/**
+	 * Notification that the current working copy being
+	 * displayed/edited has changed in some way. Update
+	 * buttons.
+	 */
+	protected void workingCopyChanged() {
+		ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
+		
+		getSaveButton().setEnabled(wc.isDirty());
+		getSaveAndLaunchButton().setEnabled(wc.isDirty());
+	}
+	
 }
 
