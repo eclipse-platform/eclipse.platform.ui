@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -128,18 +129,26 @@ public class FolderSyncInfo {
 	private String getRootDirectory() throws CVSException {
 		try {
 			String root = getRoot();
-			int index = root.indexOf('@');
+			int index = root.indexOf(CVSRepositoryLocation.HOST_SEPARATOR);
 			if (index == -1) {
-				// If the username is mising, we have to find the third ':'.
-				index = root.indexOf(':');
+				// If the username is missing, we have to find the third ':'.
+				index = root.indexOf(CVSRepositoryLocation.COLON);
 				if (index == 0) {
-					// The method is optional so if it's not there, there is only one ':'
-					index = root.indexOf(':', index + 1);
-					index = root.indexOf(':', index + 1);
+				    // This indicates that the conection method is present.
+				    // It is surrounded by two colons so skip them.
+					index = root.indexOf(CVSRepositoryLocation.COLON, index + 1);
+					index = root.indexOf(CVSRepositoryLocation.COLON, index + 1);
+				}
+				if (index == -1) {
+				    // The host colon is missing.
+				    // Look for a slash to find the path
+				    index = root.indexOf(ResourceSyncInfo.SEPARATOR);
+				    // Decrement the index since the slash is part of the path
+				    if (index != -1) index--;
 				}
 			} else {
 				// If the username was there, we find the first ':' past the '@'
-				index = root.indexOf(':', index + 1);
+				index = root.indexOf(CVSRepositoryLocation.COLON, index + 1);
 			}
 			index++;
 			// strip off a leading port if there is one

@@ -16,6 +16,8 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -180,4 +182,23 @@ public class ResourceSyncInfoTest extends EclipseTest {
 		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo4.getBytes(), syncInfo5.getBytes()));
 		assertTrue( ! ResourceSyncInfo.isLaterRevisionOnSameBranch(syncInfo5.getBytes(), syncInfo5.getBytes()));
 	}
+	
+	public void testRepositoryLocationFormats() throws CVSException {
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:user@host:/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:user:password@host:/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:host:/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:user@host:1234/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:user:password@host:1234/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:host:1234/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:user@host/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:user:password@host/home/path"), "/home/path");
+	    assertPathCorrect(CVSRepositoryLocation.fromString(":pserver:host/home/path"), "/home/path");
+	}
+
+    private void assertPathCorrect(CVSRepositoryLocation location, String string) throws CVSException {
+        assertEquals(location.getRootDirectory(), string);
+        FolderSyncInfo info = new FolderSyncInfo("childPath", location.getLocation(), null, false);
+        assertEquals(info.getRemoteLocation(), string + '/' + "childPath");
+        
+    }
 }
