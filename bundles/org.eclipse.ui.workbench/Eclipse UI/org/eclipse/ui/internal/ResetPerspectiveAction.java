@@ -18,7 +18,7 @@ public class ResetPerspectiveAction extends Action {
  * This default constructor allows the the action to be called from the welcome page.
  */
 public ResetPerspectiveAction() {
-	this(((Workbench)PlatformUI.getWorkbench()).getActiveWorkbenchWindow());
+	this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 }
 /**
  *	Create an instance of this class

@@ -872,7 +872,7 @@ public class WorkbenchActionBuilder {
 		// See if a tips and tricks page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getTipsAndTricksHref() != null) {
-				tipsAndTricksAction = new TipsAndTricksAction(workbench);
+				tipsAndTricksAction = new TipsAndTricksAction(window);
 				break;
 			}
 		}
