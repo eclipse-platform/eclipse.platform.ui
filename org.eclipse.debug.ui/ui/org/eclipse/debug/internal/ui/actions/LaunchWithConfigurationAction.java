@@ -48,7 +48,7 @@ public class LaunchWithConfigurationAction extends Action implements IMenuCreato
 	public LaunchWithConfigurationAction(String mode) {
 		super();
 		setMode(mode);
-		String text= mode.equals(ILaunchManager.DEBUG_MODE) ? "Debug With Configuration" : "Run With Configuration"; //$NON-NLS-2$ //$NON-NLS-1$
+		String text= mode.equals(ILaunchManager.DEBUG_MODE) ? "New Debug Configuration" : "New Run Configuration"; //$NON-NLS-2$ //$NON-NLS-1$
 		setText(text);
 		setMenuCreator(this);
 	}

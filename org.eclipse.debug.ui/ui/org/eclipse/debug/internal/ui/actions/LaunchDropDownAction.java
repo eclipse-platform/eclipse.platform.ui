@@ -76,7 +76,21 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		return createMenu(menu);
 	}
 
-	protected Menu createMenu(Menu menu) {
+	/**
+	 * Create the drop-down menu based on whether the config style pref is set
+	 */
+	protected Menu createMenu(Menu menu) {		
+		if (DebugUIPlugin.getDefault().usingConfigurationStyleLaunching()) {	
+			return createConfigStyleMenu(menu);
+		} else {
+			return createLauncherStyleMenu(menu);
+		}				
+	}
+	
+	/**
+	 * Create a configuration-style drop-down menu.
+	 */
+	protected Menu createConfigStyleMenu(Menu menu) {
 		
 		// Add any favorites at the top of the menu
 		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();
@@ -109,16 +123,49 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 				new MenuItem(menu, SWT.SEPARATOR);
 			}
 		
-			// Old-style launcher support
-			createMenuForAction(menu, new LaunchWithAction(getMode()), -1);
+			// Cascading menu for config type 'shortcuts'
+			createMenuForAction(menu, new LaunchWithConfigurationAction(getMode()), -1);
 			
-			// Launch configuration support
-			if (DebugUIPlugin.getDefault().usingConfigurationStyleLaunching()) {				
-				createMenuForAction(menu, new LaunchWithConfigurationAction(getMode()), -1);
-			}			
+			// Add non-shortcutted access to the launch configuration dialog
+			OpenLaunchConfigurationsAction action = null;
+			if (getMode() == ILaunchManager.DEBUG_MODE) {
+				action = new OpenDebugConfigurations();
+			} else {
+				action = new OpenRunConfigurations();
+			}
+			createMenuForAction(menu, action, -1);
 		}
 
-		return menu;
+		return menu;		
+	}
+	
+	/**
+	 * Create a launcher-style drop-down menu.  This support will be removed in the future.
+	 */
+	protected Menu createLauncherStyleMenu(Menu menu) {
+		
+		// Add history launches next
+		int total = 0;
+		LaunchConfigurationHistoryElement[] historyList= getHistory();
+		for (int i = 0; i < historyList.length; i++) {
+			LaunchConfigurationHistoryElement launch= historyList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			createMenuForAction(menu, newAction, total+1);
+			total++;
+		}
+		
+		// Add the actions to bring up the dialog 
+		if (getLaunchAction() != null) {
+			//used in the tool bar drop down for the cascade launch with menu
+			if (historyList.length > 0 || (historyList.length == 0 && (total > 0))) {
+				new MenuItem(menu, SWT.SEPARATOR);
+			}
+		
+			// Old-style launcher support
+			createMenuForAction(menu, new LaunchWithAction(getMode()), -1);			
+		}
+
+		return menu;		
 	}
 	
 	/**

@@ -13,6 +13,10 @@ import org.eclipse.debug.core.ILaunchManager;
  */
 public class OpenRunConfigurations extends OpenLaunchConfigurationsAction {
 
+	public OpenRunConfigurations() {
+		super();
+	}
+
 	public OpenRunConfigurations(ILaunchConfigurationType configType) {
 		super(configType);
 	}

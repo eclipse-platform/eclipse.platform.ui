@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * Abstract action for opening the launch configuration
  * dialog in run or debug mode.
  */
-public abstract class OpenLaunchConfigurationsAction extends Action {
+public abstract class OpenLaunchConfigurationsAction extends Action implements IWorkbenchWindowActionDelegate {
 	
 	/**
 	 * The launch configuration type this action will cause to be created in the launch 
@@ -40,11 +40,45 @@ public abstract class OpenLaunchConfigurationsAction extends Action {
 	 */
 	private IAction fAction;
 
-	/**
-	 * @see Action#Action()
-	 */
 	public OpenLaunchConfigurationsAction() {
 		super();
+		setConfigType(null);
+		String label = null;
+		ImageDescriptor imageDescriptor = null;
+		if (getMode() == ILaunchManager.DEBUG_MODE) {
+			label = "Debug Configurations...";
+			imageDescriptor = DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
+		} else {
+			label = "Run Configurations...";
+			imageDescriptor = DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);			
+		}	
+		setText(label);
+		setImageDescriptor(imageDescriptor);	
+	}
+	
+	/**
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+	}
+	
+	/**
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+	}
+	
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+	}
+	
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
+		run();
 	}
 
 	/**
