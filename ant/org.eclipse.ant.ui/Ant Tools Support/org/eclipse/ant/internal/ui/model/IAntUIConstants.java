@@ -73,6 +73,7 @@ public interface IAntUIConstants {
 	public static final String IMG_RUN= PLUGIN_ID + ".run"; //$NON-NLS-1$
 	public static final String IMG_SEARCH= PLUGIN_ID + ".search"; //$NON-NLS-1$
 	public static final String IMG_TOGGLE= PLUGIN_ID + ".toggle"; //$NON-NLS-1$
+	public static final String IMG_FILTER_SUBTARGETS= PLUGIN_ID + ".filterSubtargets"; //$NON-NLS-1$
 	 
 	//	Overlays
 	 public static final String IMG_OVR_ERROR = PLUGIN_ID + ".ovrError";  //$NON-NLS-1$

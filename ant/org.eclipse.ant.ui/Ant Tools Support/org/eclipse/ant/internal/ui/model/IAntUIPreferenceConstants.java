@@ -34,4 +34,10 @@ public interface IAntUIPreferenceConstants {
 	public static final String ANT_ERROR_DIALOG= "errorDialog"; //$NON-NLS-1$
 	
 	public static final String ANT_VM_INFORMATION= "antVMInfo";	 //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference identifier constant which specifies whether the Ant editor should
+	 * show subtargets in the Outline.
+	 */
+	public static final String ANTEDITOR_FILTER_SUBTARGETS= "anteditor.filterSubtargets"; //$NON-NLS-1$
 }
