@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -27,13 +28,20 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	Collection groupedIds;
 
 	WorkbenchPreferenceGroup currentInput;
+	
+	boolean groupedMode;
 
 	/**
-	 * 
+	 * Create a new instance of the receiver indicating
+	 * whether or not it is grouped.
+	 * @param grouped If <code>true</code> then the 
+	 * input wil be a WorkbenchPreferenceGroup, if not a
+	 * PreferenceManger.
 	 */
-	public GroupedPreferenceContentProvider() {
+	public GroupedPreferenceContentProvider(boolean grouped) {
 		super();
-
+		groupedMode = grouped;
+		
 		groupedIds = new HashSet();
 		WorkbenchPreferenceManager manager = (WorkbenchPreferenceManager) WorkbenchPlugin
 				.getDefault().getPreferenceManager();
@@ -50,27 +58,31 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	 */
 	public Object[] getElements(Object inputElement) {
 
-		if (inputElement instanceof WorkbenchPreferenceGroup)
+		if(groupedMode)
 			return ((WorkbenchPreferenceGroup) inputElement).getGroupsAndNodes();
-		return new Object[0];
+		return super.getElements(inputElement);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput == null || !(newInput instanceof WorkbenchPreferenceGroup))
-			return;
+		groupedMode = newInput != null && (newInput instanceof WorkbenchPreferenceGroup);
 		
-		currentInput = (WorkbenchPreferenceGroup) newInput;			
-		viewer.refresh();
+		if (groupedMode){
+			currentInput = (WorkbenchPreferenceGroup) newInput;	
+		}
+		else
+			super.inputChanged(viewer, oldInput, newInput);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		return currentInput.findParent(element);
+		if(groupedMode)
+			return currentInput.findParent(element);
+		return super.getParent(element);
 
 	}
 
@@ -80,11 +92,14 @@ public class GroupedPreferenceContentProvider extends FilteredPreferenceContentP
 	public Object[] getChildren(Object parentElement) {
 
 		Object[] children;
-		if (parentElement instanceof WorkbenchPreferenceNode)
+		if (parentElement instanceof IPreferenceNode)
 			children = super.getChildren(parentElement);
 		else
 			children = getElements(parentElement);
 
+		if(!groupedMode)//No check if we are not grouping
+			return children;
+		
 		ArrayList returnValue = new ArrayList();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof WorkbenchPreferenceNode) {

@@ -71,140 +71,149 @@ public abstract class PreferencePage extends DialogPage implements
 	 */
 	private class MessageRegion{
 
-	    private Text messageText;
+		private Text messageText;
 
-	    private Label messageImageLabel;
+		private Label messageImageLabel;
 
-	    private Composite messageComposite;
+		private Composite messageComposite;
 
-	    private String lastMessageText = "";//$NON-NLS-1$
+		private String lastMessageText = "";//$NON-NLS-1$
 
-	    private int lastMessageType;
+		private int lastMessageType;
 
+		/**
+		 * Create a new instance of the receiver.
+		 */
+		public MessageRegion() {
+			//No initial behaviour
+		}
 
-	    /**
-	     * Create a new instance of the receiver.
-	     */
-	    public MessageRegion() {
-	        //No initial behaviour
-	    }
+		/**
+		 * Create the contents for the receiver.
+		 * 
+		 * @param parent
+		 *            the Composite that the children will be created in
+		 */
+		public void createContents(Composite parent) {
+			messageComposite = new Composite(parent, SWT.NONE);
+			GridLayout messageLayout = new GridLayout();
+			messageLayout.numColumns = 2;
+			messageLayout.marginWidth = 0;
+			messageLayout.marginHeight = 0;
+			messageLayout.makeColumnsEqualWidth = false;
+			messageComposite.setLayout(messageLayout);
+			messageImageLabel = new Label(messageComposite, SWT.NONE);
 
-	    /**
-	     * Create the contents for the receiver.
-	     * 
-	     * @param parent
-	     *            the Composite that the children will be created in
-	     */
-	    public void createContents(Composite parent) {
-	        messageComposite = new Composite(parent, SWT.NONE);
-	        GridLayout messageLayout = new GridLayout();
-	        messageLayout.numColumns = 2;
-	        messageLayout.marginWidth = 0;
-	        messageLayout.marginHeight = 0;
-	        messageLayout.makeColumnsEqualWidth = false;
-	        messageComposite.setLayout(messageLayout);
-	        messageImageLabel = new Label(messageComposite, SWT.NONE);
-	        		
-	        GridData imageData =
-	        	new GridData(
-	                GridData.VERTICAL_ALIGN_CENTER);
-	        Rectangle imageBounds = 
-	        	JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR)
+			GridData imageData = new GridData(GridData.VERTICAL_ALIGN_CENTER);
+			Rectangle imageBounds = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR)
 					.getBounds();
-	        imageData.heightHint = 
-	        	imageBounds.height + IDialogConstants.VERTICAL_SPACING;
-	        imageData.widthHint = 
-	        	imageBounds.width + IDialogConstants.HORIZONTAL_SPACING;
-	        messageImageLabel.setLayoutData(imageData);
+			imageData.heightHint = imageBounds.height + IDialogConstants.VERTICAL_SPACING;
+			imageData.widthHint = imageBounds.width + IDialogConstants.HORIZONTAL_SPACING;
+			messageImageLabel.setLayoutData(imageData);
 
-	        messageText = new Text(messageComposite, SWT.NONE);
-	        messageText.setEditable(false);
-	       
-	        GridData textData = new GridData(GridData.GRAB_HORIZONTAL
-	                | GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-	        messageText.setLayoutData(textData);
+			messageText = new Text(messageComposite, SWT.NONE);
+			messageText.setEditable(false);
 
-	    }
+			GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
+					| GridData.VERTICAL_ALIGN_CENTER);
+			messageText.setLayoutData(textData);
 
-	    /**
-	     * Set the layoutData for the messageArea. In most cases this will be a copy
-	     * of the layoutData used in setTitleLayoutData.
-	     * 
-	     * @param layoutData
-	     *            the layoutData for the message area composite.
-	     */
-	    public void setMessageLayoutData(Object layoutData) {
-	        messageComposite.setLayoutData(layoutData);
-	    }
+		}
 
-	    /**
-	     * Show the new message in the message text and update the image. Base the
-	     * background color on whether or not there are errors.
-	     * 
-	     * @param newMessage
-	     *            The new value for the message
-	     * @param newType
-	     *            One of the IMessageProvider constants. If newType is
-	     *            IMessageProvider.NONE show the title.
-	     * @see IMessageProvider
-	     */
-	    public void updateText(String newMessage, int newType) {
-	        Image newImage = null;
-	        boolean showingError = false;
-	        switch (newType) {
-	        case IMessageProvider.NONE:
-	            newImage = null;
-	            break;
-	        case IMessageProvider.INFORMATION:
-	            newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
-	            break;
-	        case IMessageProvider.WARNING:
-	            newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
-	            break;
-	        case IMessageProvider.ERROR:
-	            newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
-	            showingError = true;
-	            break;
-	        }
-	        // Any more updates required
-	        if (newMessage.equals(messageText.getText())
-	                && newImage == messageImageLabel.getImage())
-	            return;
-	        messageImageLabel.setImage(newImage);
-	        messageText.setText(newMessage);
-	        if (showingError)
-	            setMessageColors(JFaceColors.getErrorBackground(messageComposite
-	                    .getDisplay()));
-	        else {
-	            lastMessageText = newMessage;
-	            setMessageColors(JFaceColors.getBannerBackground(messageComposite
-	                    .getDisplay()));
-	        }
-	      
-	    }
+		/**
+		 * Set the layoutData for the messageArea. In most cases this will be a copy
+		 * of the layoutData used in setTitleLayoutData.
+		 * 
+		 * @param layoutData
+		 *            the layoutData for the message area composite.
+		 */
+		public void setMessageLayoutData(Object layoutData) {
+			messageComposite.setLayoutData(layoutData);
+		}
 
-	    /**
-	     * Set the colors of the message area.
-	     * 
-	     * @param color
-	     *            The color to be use in the message area.
-	     */
-	    private void setMessageColors(Color color) {
-	        messageText.setBackground(color);
-	        messageComposite.setBackground(color);
-	        messageImageLabel.setBackground(color);
-	    }
+		/**
+		 * Show the new message in the message text and update the image. Base the
+		 * background color on whether or not there are errors.
+		 * 
+		 * @param newMessage
+		 *            The new value for the message
+		 * @param newType
+		 *            One of the IMessageProvider constants. If newType is
+		 *            IMessageProvider.NONE show the title.
+		 * @see IMessageProvider
+		 */
+		public void updateText(String newMessage, int newType) {
+			Image newImage = null;
+			boolean showingError = false;
+			switch (newType) {
+			case IMessageProvider.NONE:
+				hideRegion();
+				return;
+			case IMessageProvider.INFORMATION:
+				newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
+				break;
+			case IMessageProvider.WARNING:
+				newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
+				break;
+			case IMessageProvider.ERROR:
+				newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
+				showingError = true;
+				break;
+			}
+			
+			if(newMessage == null){//No message so clear the area
+				hideRegion();
+				return;
+			}
+			messageComposite.setVisible(true);
+			// Any more updates required
+			if (newMessage.equals(messageText.getText())
+					&& newImage == messageImageLabel.getImage())
+				return;
+			messageImageLabel.setImage(newImage);
+			if (newMessage == null)
+				messageText.setText("");//$NON-NLS-1$
+			else
+				messageText.setText(newMessage);
+			if (showingError)
+				setMessageColors(JFaceColors.getErrorBackground(messageComposite.getDisplay()));
+			else {
+				lastMessageText = newMessage;
+				setMessageColors(JFaceColors.getBannerBackground(messageComposite.getDisplay()));
+			}
 
-	    /**
-	     * Clear the error message. Restore the previously displayed message if
-	     * there is one, if not restore the title label.
-	     *  
-	     */
-	    public void clearErrorMessage() {
-	       updateText(lastMessageText, lastMessageType);
-	    }
+		}
 
-		
+		/**
+		 * Hide the message region and clear out the caches.
+		 */
+		private void hideRegion() {
+			messageComposite.setVisible(false);
+			lastMessageText = null;
+			lastMessageType = IMessageProvider.NONE;
+		}
+
+		/**
+		 * Set the colors of the message area.
+		 * 
+		 * @param color
+		 *            The color to be use in the message area.
+		 */
+		private void setMessageColors(Color color) {
+			messageText.setBackground(color);
+			messageComposite.setBackground(color);
+			messageImageLabel.setBackground(color);
+		}
+
+		/**
+		 * Clear the error message. Restore the previously displayed message if
+		 * there is one, if not restore the title label.
+		 *  
+		 */
+		public void clearErrorMessage() {
+			updateText(lastMessageText, lastMessageType);
+		}
+
 	}
 
     /**
