@@ -34,8 +34,11 @@ package org.eclipse.ui;
  * will be added to the context menu for the object. 
  * </p>
  * <p>
- * The attribute names for <code>IResource, IMarker and IProject</code> are defined
+ * The attribute names for <code>IResource, IMarker, and IProject</code> are defined
  * in <code>IResourceActionFilter, IMarkerActionFilter, and IProjectActionFilter</code>.
+ * Clients that implement this filter mechanism are strongly encouraged to extend this
+ * interface to provide a list of attribute names and possible values that are
+ * considered public for other clients to reference.
  * </p>
  *
  * @see IAdaptable
