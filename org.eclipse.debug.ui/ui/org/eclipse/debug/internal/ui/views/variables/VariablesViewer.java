@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.variables;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -68,12 +69,18 @@ public class VariablesViewer extends TreeViewer {
 	public void refresh() {
 		super.refresh();
 		
-		if (getSelection().isEmpty() && getNewItem() != null) {
-			if (!getNewItem().isDisposed()) {
-				//ensure that new items are visible
-				showItem(getNewItem());
-			}
-			setNewItem(null);
+		ISelection selection = getSelection();
+        if (selection.isEmpty()) {
+		    if (getNewItem() != null) {
+				if (!getNewItem().isDisposed()) {
+					//ensure that new items are visible
+					showItem(getNewItem());
+				}
+				setNewItem(null);
+		    }
+		} else {
+		    // Force a selection change to update the details pane
+		    setSelection(selection);
 		}
 	}
 	
