@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <requires>
-   <import plugin="org.eclipse.core.runtime" version="1.9.0" match="equivalent"/>
+   <import plugin="org.eclipse.core.runtime" version="2.0.0" match="equivalent"/>
 </requires>
