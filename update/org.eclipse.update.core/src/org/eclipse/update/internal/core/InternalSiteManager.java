@@ -74,7 +74,7 @@ public class InternalSiteManager {
 	}
 	
 	private static boolean isValidCachedSite(URL siteURL) {
-		if (!sites.containsKey(siteURL))
+		if (!sites.containsKey(siteURL.toExternalForm()))
 			return false;
 			
 		Long timestamp = (Long)siteTimestamps.get(siteURL);
@@ -98,7 +98,7 @@ public class InternalSiteManager {
 		// use cache if set up globally (globalUseCache=true)
 		// and passed as parameter (useCache=true)
 		if ((useCache && globalUseCache) && isValidCachedSite(siteURL)) {
-			site = (ISite) sites.get(siteURL);
+			site = (ISite) sites.get(siteURL.toExternalForm());
 			return site;
 		}
 
@@ -146,7 +146,7 @@ public class InternalSiteManager {
 		}
 
 		if (site != null) {
-			sites.put(siteURL, site);
+			sites.put(siteURL.toExternalForm(), site);
 			try {
 				Response response = UpdateCore.getPlugin().get(URLEncoder.encode(siteURL));
 				siteTimestamps.put(siteURL, new Long(response.getLastModified()));
