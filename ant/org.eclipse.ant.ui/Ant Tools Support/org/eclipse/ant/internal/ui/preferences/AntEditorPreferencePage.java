@@ -236,6 +236,13 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.42"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR}, //$NON-NLS-1$
 	};
 	
+	private final String[] fProblemPreferenceKeys= new String[] {
+			AntEditorPreferenceConstants.PROBLEM_CLASSPATH,
+			AntEditorPreferenceConstants.PROBLEM_PROPERTIES,
+			AntEditorPreferenceConstants.PROBLEM_IMPORTS,
+			AntEditorPreferenceConstants.PROBLEM_TASKS
+		};
+	
 	private List fAppearanceColorList;
 	
 	private ColorEditor fAppearanceColorEditor;
@@ -804,7 +811,10 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		gd.horizontalSpan= nColumns;
 		description.setLayoutData(gd);
 				
-		String label= AntPreferencesMessages.getString("AntEditorPreferencePage.15"); //$NON-NLS-1$
+		String label= AntPreferencesMessages.getString("AntEditorPreferencePage.18"); //$NON-NLS-1$
+		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_TASKS, errorWarningIgnore, errorWarningIgnoreLabels, 0);
+		
+		label= AntPreferencesMessages.getString("AntEditorPreferencePage.15"); //$NON-NLS-1$
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_CLASSPATH, errorWarningIgnore, errorWarningIgnoreLabels, 0);	
 		
 		label= AntPreferencesMessages.getString("AntEditorPreferencePage.16"); //$NON-NLS-1$
@@ -816,21 +826,20 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		return othersComposite;
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeWorkingValues() {
-		fWorkingValues= new HashMap(3);
-		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_CLASSPATH, getPreferenceStore().getString(AntEditorPreferenceConstants.PROBLEM_CLASSPATH));
-		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_PROPERTIES, getPreferenceStore().getString(AntEditorPreferenceConstants.PROBLEM_PROPERTIES));
-		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_IMPORTS, getPreferenceStore().getString(AntEditorPreferenceConstants.PROBLEM_IMPORTS));
+		fWorkingValues= new HashMap(fProblemPreferenceKeys.length);
+		for (int i = 0; i < fProblemPreferenceKeys.length; i++) {
+			String key = fProblemPreferenceKeys[i];
+			fWorkingValues.put(key, getPreferenceStore().getString(key));
+		}
 	}
 	
 	private void restoreWorkingValuesToDefaults() {
-		fWorkingValues= new HashMap();
-		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_CLASSPATH, getPreferenceStore().getDefaultString(AntEditorPreferenceConstants.PROBLEM_CLASSPATH));
-		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_PROPERTIES, getPreferenceStore().getDefaultString(AntEditorPreferenceConstants.PROBLEM_PROPERTIES));
-		fWorkingValues.put(AntEditorPreferenceConstants.PROBLEM_IMPORTS, getPreferenceStore().getDefaultString(AntEditorPreferenceConstants.PROBLEM_IMPORTS));
+		fWorkingValues= new HashMap(fProblemPreferenceKeys.length);
+		for (int i = 0; i < fProblemPreferenceKeys.length; i++) {
+			String key = fProblemPreferenceKeys[i];
+			fWorkingValues.put(key, getPreferenceStore().getDefaultString(key));
+		}
 		updateControls();
 	}
 

@@ -16,6 +16,7 @@ import org.apache.tools.ant.Task;
 import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 
@@ -109,7 +110,7 @@ public class AntTaskNode extends AntElementNode {
 			configured= true;
 			return true;
 		} catch (BuildException be) {
-			getAntModel().handleBuildException(be, this);
+			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_TASKS);
 		}
 		return false;
 	}

@@ -166,6 +166,12 @@ public class AntEditorPreferenceConstants {
 	public static final String PROBLEM_IMPORTS= PROBLEM + "_imports";  //$NON-NLS-1$
 	
 	/**
+	 * String preference identifier constant which specifies the severity level for problems 
+	 * related to tasks in the Ant editor
+	 */
+	public static final String PROBLEM_TASKS= PROBLEM + "_tasks";  //$NON-NLS-1$
+	
+	/**
 	 * The constants allowable for the severity levels for problem preferences
 	 */
 	public static final String BUILDFILE_ERROR = "error"; //$NON-NLS-1$
@@ -195,5 +201,6 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(PROBLEM_CLASSPATH, BUILDFILE_WARNING);
 		store.setDefault(PROBLEM_PROPERTIES, BUILDFILE_IGNORE);
 		store.setDefault(PROBLEM_IMPORTS, BUILDFILE_WARNING);
+		store.setDefault(PROBLEM_TASKS, BUILDFILE_ERROR);
 	}
 }
