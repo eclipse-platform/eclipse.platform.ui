@@ -7,6 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
@@ -14,24 +15,32 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
 /**
- * Tracks the selected resource, such that it can be accessed from a non-ui
- * thread.
+ * Maintains the context used to expand variables. The context is based on
+ * the selected resource, unless a build is in progress - in which case
+ * the context is based on the project being built..
  */
-public class ResourceSelectionManager implements IWindowListener, ISelectionListener {
+public class VariableContextManager implements IWindowListener, ISelectionListener {
 
 	// singleton
-	private static ResourceSelectionManager fgDefault;
+	private static VariableContextManager fgDefault;
 	
 	private IResource fSelectedResource = null;
 	
-	private ResourceSelectionManager() {
+	private boolean fBuilding = false;
+	private IProject fProject = null;
+	private int fKind;
+	
+	private VariableContextManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		workbench.addWindowListener(this);
 		IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
@@ -43,10 +52,10 @@ public class ResourceSelectionManager implements IWindowListener, ISelectionList
 	/**
 	 * Returns the singleton resource selection manager
 	 * 
-	 * @return ResourceSelectionManager	 */
-	public static ResourceSelectionManager getDefault() {
+	 * @return VariableContextManager	 */
+	public static VariableContextManager getDefault() {
 		if (fgDefault == null) {
-			fgDefault = new ResourceSelectionManager(); 
+			fgDefault = new VariableContextManager(); 
 		}
 		return fgDefault;
 	}
@@ -55,7 +64,19 @@ public class ResourceSelectionManager implements IWindowListener, ISelectionList
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
-		window.getSelectionService().addSelectionListener(this);
+		fSelectedResource = null;
+		ISelectionService service = window.getSelectionService(); 
+		service.addSelectionListener(this);
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
+			IWorkbenchPart part = page.getActivePart();
+			if (part != null) {				
+				ISelection selection = service.getSelection();
+				if (selection != null) {
+					selectionChanged(part, selection);
+				}
+			}
+		}
 	}
 
 	/**
@@ -105,11 +126,35 @@ public class ResourceSelectionManager implements IWindowListener, ISelectionList
 	}
 	
 	/**
-	 * Returns the active resource.
+	 * Returns the active variable context. The build context is that of the
+	 * seleted resource, or a project being built.
 	 * 
-	 * @return IResource	 */
-	public IResource getActiveResource() {
-		return fSelectedResource;
+	 * @return variable context	 */
+	public ExpandVariableContext getVariableContext() {
+		if (fBuilding) {
+			return new ExpandVariableContext(fProject, fKind);
+		} else {
+			return new ExpandVariableContext(fSelectedResource);
+		}
+	}
+	
+	/**
+	 * Notification that the given project is being built.
+	 * 
+	 * @param project	 * @param kind
+	 * @see ExternalToolBuilder#build(int, Map, IProgressMonitor)	 */
+	public void buildStarted(IProject project, int kind) {
+		fBuilding = true;
+		fProject = project;
+		fKind = kind;
+	}
+	
+	/**
+	 * Notification the building the current project has completed.
+	 * @see ExternalToolBuilder#build(int, Map, IProgressMonitor)
+	 */
+	public void buildEnded() {
+		fBuilding = false;
 	}
 
 }

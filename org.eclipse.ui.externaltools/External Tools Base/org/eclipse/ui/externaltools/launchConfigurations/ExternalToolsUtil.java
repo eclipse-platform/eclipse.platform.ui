@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.ResourceSelectionManager;
+import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariable;
 import org
@@ -86,13 +86,14 @@ public class ExternalToolsUtil {
 	}		
 	
 	/**
-	 * Returns the resource associated with the selection or active editor in
-	 * the active workbench window, or <code>null</code> if none.
+	 * Returns active variable context. The active variable context is used to
+	 * expand variable expressions. If the workspace is currently being built,
+	 * the context is associated with the project being built. Otherwise, the
+	 * context is associated with the selected resource.
 	 * 
-	 * @return returns the resource associated with the selection or active editor in
-	 * the active workbench window, or <code>null</code> if none	 */
-	public static IResource getActiveResource() {
-		return ResourceSelectionManager.getDefault().getActiveResource();
+	 * @return active variable context	 */
+	public static ExpandVariableContext getVariableContext() {
+		return VariableContextManager.getDefault().getVariableContext();
 	}	
 
 	/**

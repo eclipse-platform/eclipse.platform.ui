@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ant.core.AntRunner;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -63,9 +62,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
-		// get resource context
-		IResource resource = ExternalToolsUtil.getActiveResource();
-		ExpandVariableContext resourceContext = new ExpandVariableContext(resource);
+		// get variable context
+		ExpandVariableContext resourceContext = ExternalToolsUtil.getVariableContext();
 
 		if (monitor.isCanceled()) {
 			return;

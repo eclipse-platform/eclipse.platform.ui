@@ -61,11 +61,13 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			
 		DefaultRunnerContext context = new DefaultRunnerContext(tool, getProject(), kind);
 		try {
+			VariableContextManager.getDefault().buildStarted(getProject(), kind);
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 			context.run(monitor, status);
 			if (!monitor.isCanceled() && !status.isOK())
 				throw new CoreException(status);
 		} finally {
+			VariableContextManager.getDefault().buildEnded();
 			forgetLastBuiltState();
 		}
 		

@@ -254,7 +254,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		ResourceSelectionManager.getDefault();
+		VariableContextManager.getDefault();
 	}
 
 	/**
