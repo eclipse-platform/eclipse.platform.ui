@@ -19,9 +19,19 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input March 29rd 2004 ==========<br>
+<H3>Breaking API Changes</H3>
+Subclasses of <code>AbstractTextSearchResultPage</code> now can decide if they want to support 
+flat list  and/or tree layout by passing the appropriate flags (<code>FLAG_LAYOUT_FLAT, FLAG_LAYOUT_TREE</code>) to
+the super constructor. Methods dealing with flat vs. tree layout have been changed to use the 
+flags instead of a boolean now, for example <code>setFlatLayout(boolean)</code> changed to <code>setLayout(int layout)</code>.
+<br>
+<br>
 ========== Eclipse Build Input March 23rd 2004 ==========<br>
 The new search API should be reasonably stable by now.  See source folder "new search" in the non-internal packages.
 Some (minor changes) should be expected as we move along, but clients are now welcome to go ahead and use the API.
+<br>
+<br>
 ========== Eclipse Build Input December 16th 2003 ==========<br>
 
 <!-- Add what's new below and end each line with br tag -->
