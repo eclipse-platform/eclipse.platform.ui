@@ -463,7 +463,6 @@ public class TextEditor extends StatusTextEditor {
 		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
 		fOverviewRuler.addHeaderAnnotationType(AnnotationType.WARNING);
 		fOverviewRuler.addHeaderAnnotationType(AnnotationType.ERROR);
-		fOverviewRuler.setHeaderColor(sharedColors.getColor(new RGB(251, 70, 102)));
 		
 		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
 		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
