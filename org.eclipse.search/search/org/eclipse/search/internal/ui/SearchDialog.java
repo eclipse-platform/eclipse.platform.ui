@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -395,6 +396,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		final TabItem item= (TabItem)event.item;
 		TabFolder folder= item.getParent();
 		Control oldControl= folder.getItem(fCurrentIndex).getControl();
+		Point oldSize= oldControl.getSize();
 		if (item.getControl() == null) {
 			final SearchPageDescriptor descriptor= (SearchPageDescriptor)item.getData();
 
@@ -418,7 +420,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			fCurrentPage.setVisible(true);
 		}
 		Control newControl= item.getControl();
-		resizeDialogIfNeeded(oldControl.getSize(), newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+		resizeDialogIfNeeded(oldSize, newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 	}
 	
 	private int getPreferredPageIndex() {
@@ -530,8 +532,10 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		layout.marginHeight= 0;
 		pageWrapper.setLayout(layout);
 		
+		Dialog.applyDialogFont(pageWrapper);
 		// The page itself
 		page.createControl(pageWrapper);
+		
 		
 		// Search scope
 		SearchPageDescriptor descriptor= getDescriptorAt(index);
@@ -560,9 +564,9 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			if (newSize.y > oldSize.y)
 				shellSize.y+= (newSize.y-oldSize.y);
 			shell.setSize(shellSize);
-			shell.layout(true);
-		}
-	}
+					shell.layout(true);
+					}
+				}
 	
 	private boolean mustResize(Point currentSize, Point newSize) {
 		return currentSize.x < newSize.x || currentSize.y < newSize.y;

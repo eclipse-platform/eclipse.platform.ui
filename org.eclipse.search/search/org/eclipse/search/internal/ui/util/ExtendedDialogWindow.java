@@ -120,6 +120,7 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 		result.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		fContents= createPageArea(result);
+		fContents.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		// Insert a progress monitor
 		GridLayout pmlayout= new GridLayout();
