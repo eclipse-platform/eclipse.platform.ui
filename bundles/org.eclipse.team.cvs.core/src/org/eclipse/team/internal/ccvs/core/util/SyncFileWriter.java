@@ -25,13 +25,15 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -157,7 +159,17 @@ public class SyncFileWriter {
 	public static FolderSyncInfo readFolderSync(IContainer folder) throws CVSException {
 		IFolder cvsSubDir = getCVSSubdirectory(folder);
 		if (! cvsSubDir.exists()) return null;
-		
+
+		// check to make sure the the cvs folder is hidden
+		if (!cvsSubDir.isTeamPrivateMember()) {
+			try {
+				cvsSubDir.setTeamPrivateMember(true);
+				CVSProviderPlugin.log(new CVSStatus(IStatus.WARNING, Policy.bind("SyncFileWriter.cvsFolderNotHidden", cvsSubDir.getFullPath().toString())));
+			} catch (CoreException e) {
+				CVSProviderPlugin.log(e.getStatus());
+			}
+		}
+				
 		// read CVS/Root
 		String root = readFirstLine(cvsSubDir.getFile(ROOT));
 		if (root == null) return null;
