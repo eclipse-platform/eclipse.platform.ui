@@ -240,7 +240,12 @@ protected PageBookView() {
  * <p>
  * Subclasses must implement this method.
  * </p>
- *
+ * <p> 
+ * Subclasses must call initPage with the new page (if it is an
+ * <code>IPageBookViewPage</code>) before calling createControl 
+ * on the page.
+ * </p>
+ * 
  * @param book the pagebook control
  * @return the default page
  */
@@ -351,7 +356,11 @@ public void dispose() {
  * <p>
  * Subclasses must implement this method.
  * </p>
- *
+ * <p> 
+ * Subclasses must call initPage with the new page (if it is an
+ * <code>IPageBookViewPage</code>) before calling createControl 
+ * on the page.
+ * </p>
  * @param part the input part
  * @return the record describing a new page for this view
  * @see #doDestroyPage
