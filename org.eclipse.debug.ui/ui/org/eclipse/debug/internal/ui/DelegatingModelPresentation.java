@@ -24,12 +24,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.DebugUITools;
@@ -133,31 +130,25 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 				} else {
 					return iRegistry.get(IDebugUIConstants.IMG_OBJS_OS_PROCESS);
 				}
-			} else
-				if (item instanceof ILauncher) {
-					return getLauncherImage((ILauncher)item);
-				} else
-					if (item instanceof ILaunch) {
-						ILaunch launch = (ILaunch) item;
-						String mode= launch.getLaunchMode();
-						if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-							return iRegistry.get(IDebugUIConstants.IMG_ACT_DEBUG);
-						} else {
-							return iRegistry.get(IDebugUIConstants.IMG_ACT_RUN);
-						}
-					} else
-						if (item instanceof InspectItem) {
-							return iRegistry.get(IDebugUIConstants.IMG_OBJS_EXPRESSION);
-						} else
-							if (item instanceof IAdaptable) {
-								IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) item).getAdapter(IWorkbenchAdapter.class);
-								if (de != null) {
-									ImageDescriptor descriptor= de.getImageDescriptor(item);
-									if( descriptor != null) {
-										return descriptor.createImage();
-									}
-								}
-							}
+			} else if (item instanceof ILauncher) {
+				return getLauncherImage((ILauncher)item);
+			} else if (item instanceof ILaunch) {
+				ILaunch launch = (ILaunch) item;
+				String mode= launch.getLaunchMode();
+				if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+					return iRegistry.get(IDebugUIConstants.IMG_ACT_DEBUG);
+				} else {
+					return iRegistry.get(IDebugUIConstants.IMG_ACT_RUN);
+				}
+			} else if (item instanceof IAdaptable) {
+				IWorkbenchAdapter de= (IWorkbenchAdapter) ((IAdaptable) item).getAdapter(IWorkbenchAdapter.class);
+				if (de != null) {
+					ImageDescriptor descriptor= de.getImageDescriptor(item);
+					if( descriptor != null) {
+						return descriptor.createImage();
+					}
+				}
+			}
 	
 			return null;
 
@@ -210,9 +201,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 */
 	public String getText(Object item) {
 		boolean displayVariableTypes= showVariableTypeNames();
-		if (item instanceof InspectItem) {
-			return getInspectItemText((InspectItem)item);
-		} else if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) { 
+		if (item instanceof IDebugElement || item instanceof IMarker || item instanceof IBreakpoint) { 
 			IDebugModelPresentation lp= getConfiguredPresentation(item);
 			if (lp != null) {
 				String label= lp.getText(item);
@@ -247,35 +236,17 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			String label= null;
 			if (item instanceof IProcess) {
 				label= ((IProcess) item).getLabel();
-			} else
-				if (item instanceof ILauncher) {
-					label = ((ILauncher)item).getLabel();
-				} else
-					if (item instanceof ILaunch) {
-						label= getLaunchText((ILaunch) item);
-					} else if (item instanceof InspectItem) {
-						try {
-							InspectItem var= (InspectItem) item;
-							StringBuffer buf= new StringBuffer();
-							buf.append(var.getLabel());
-							buf.append(" = "); //$NON-NLS-1$
-							IValue value = var.getValue();
-							if (displayVariableTypes) {
-								buf.append(value.getReferenceTypeName());
-								buf.append(' ');
-							}
-							buf.append(value.getValueString());
-							return buf.toString();
-						} catch (DebugException de) {
-							return getDefaultText(item);
-						}
-					} else if (item instanceof ILaunchConfiguration) {
-						return ((ILaunchConfiguration)item).getName();
-					} else if (item instanceof ILaunchConfigurationType) {
-						return ((ILaunchConfigurationType)item).getName();
-					} else {
-						label= getDesktopLabel(item);
-					}
+			} else if (item instanceof ILauncher) {
+				label = ((ILauncher)item).getLabel();
+			} else if (item instanceof ILaunch) {
+				label= getLaunchText((ILaunch) item);
+			} else if (item instanceof ILaunchConfiguration) {
+				return ((ILaunchConfiguration)item).getName();
+			} else if (item instanceof ILaunchConfigurationType) {
+				return ((ILaunchConfigurationType)item).getName();
+			} else {
+				label= getDesktopLabel(item);
+			}
 
 			if ((item instanceof ITerminate) && ((ITerminate) item).isTerminated()) {
 				label= DebugUIMessages.getString("DelegatingModelPresentation.<terminated>__7") + label; //$NON-NLS-1$
@@ -296,31 +267,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		}
 	}	
 
-	/**
-	 * InspectItems have their left halves rendered here, and their
-	 * right halves rendered by the registered model presentation.
-	 */
-	protected String getInspectItemText(InspectItem inspectItem) {
-		StringBuffer buffer= new StringBuffer(inspectItem.getLabel());
-		String valueString= null;
-		IDebugModelPresentation lp= getConfiguredPresentation(inspectItem);
-		IValue value= inspectItem.getValue();
-		if (lp != null) {
-			valueString= lp.getText(value);
-		} 
-		if ((valueString == null) || (valueString.length() < 1)) {
-			try {
-				valueString= value.getValueString();
-			} catch (DebugException de) {
-			}
-		}
-		if (valueString != null && valueString.length() > 0) {
-			buffer.append("= "); //$NON-NLS-1$
-			buffer.append(valueString);		
-		}
-		return buffer.toString();
-	}
-	
 	/**
 	 * Expresion have their left halves rendered here, and their
 	 * right halves rendered by the registered model presentation.
@@ -394,9 +340,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		if (element instanceof IDebugElement) {
 			IDebugElement de= (IDebugElement) element;
 			id= de.getModelIdentifier();
-		} else if (element instanceof InspectItem) {
-			IValue value= ((InspectItem)element).getValue();
-			id= value.getModelIdentifier();
 		} else if (element instanceof IMarker) {
 			IMarker m= (IMarker) element;
 			IBreakpoint bp = DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(m);
