@@ -12,6 +12,7 @@ import org.eclipse.core.internal.events.ResourceDeltaInfo;
 import org.eclipse.core.internal.resources.IMarkerSetElement;
 import org.eclipse.core.internal.resources.MarkerSet;
 import org.eclipse.core.internal.resources.ResourceInfo;
+import org.eclipse.core.internal.utils.Assert;
 import java.util.*;
 
 public class ResourceDelta extends PlatformObject implements IResourceDelta {
@@ -23,6 +24,8 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	protected ResourceInfo oldInfo;
 	protected ResourceInfo newInfo;
 	protected IResourceDelta[] children;
+	// don't agressively set this, but cache it if called once
+	protected IResource cachedResource;
 
 	//
 	protected static int KIND_MASK = 0xFF;
@@ -199,6 +202,10 @@ public IPath getProjectRelativePath() {
  * @see IResourceDelta#getResource
  */
 public IResource getResource() {
+	// return a cached copy if we have one
+	if (cachedResource != null)
+		return cachedResource;
+
 	// if this is a delta for the root then return null
 	if (path.segmentCount() == 0)
 		return deltaInfo.getWorkspace().getRoot();
@@ -209,9 +216,9 @@ public IResource getResource() {
 		info = oldInfo;
 	else
 		info = newInfo;
-	if (info == null)
-		return null;
-	return deltaInfo.getWorkspace().newResource(path, info.getType());
+	Assert.isNotNull(info, "Do not have resource info for resource in delta");
+	cachedResource = deltaInfo.getWorkspace().newResource(path, info.getType());
+	return cachedResource;
 }
 public boolean hasAffectedChildren() {
 	return children.length > 0;

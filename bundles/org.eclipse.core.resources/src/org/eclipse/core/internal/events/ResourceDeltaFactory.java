@@ -104,9 +104,10 @@ protected static ResourceDelta createDelta(Workspace workspace, DeltaDataTree de
 
 	// fill the result with information
 	NodeComparison compare = (NodeComparison) delta.getData(pathInDelta);
-	result.setStatus(compare.getUserComparison());
-	if (Path.ROOT.equals(pathInTree)) {
-		ResourceInfo info = workspace.getResourceInfo(Path.ROOT, false, false);
+	int comparison = compare.getUserComparison();
+	result.setStatus(comparison);
+	if (comparison == IResourceDelta.NO_CHANGE || Path.ROOT.equals(pathInTree)) {
+		ResourceInfo info = workspace.getResourceInfo(pathInTree, false, false);
 		result.setOldInfo(info);
 		result.setNewInfo(info);
 	} else {
