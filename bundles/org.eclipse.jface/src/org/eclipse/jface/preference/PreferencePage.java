@@ -854,4 +854,13 @@ public abstract class PreferencePage extends DialogPage implements
         getControl().notifyListeners(SWT.Help, new Event());
     }
 
+	/**
+	 * Apply the data to the receiver. By default do nothing.
+	 * @param data
+	 * @since 3.1
+	 */
+	public void applyData(Object data) {
+		
+	}
+
 }

@@ -1098,7 +1098,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			return false;
 		// Create the page if nessessary
 		if (node.getPage() == null)
-			node.createPage();
+			createPage(node);
 		if (node.getPage() == null)
 			return false;
 		IPreferencePage newPage = getPage(node);
@@ -1190,6 +1190,14 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		// update the dialog controls
 		update();
 		return true;
+	}
+
+	/**
+	 * Create the page for the node.
+	 * @param node
+	 */
+	protected void createPage(IPreferenceNode node) {
+		node.createPage();
 	}
 
 	/**
