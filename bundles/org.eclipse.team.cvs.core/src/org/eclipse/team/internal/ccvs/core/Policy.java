@@ -138,9 +138,11 @@ public class Policy {
 	}
 
     public static void printProtocol(String string, boolean newLine) {
-        System.out.print(string);
-        if (newLine) {
-            System.out.println();
+        if (DEBUG_CVS_PROTOCOL) {
+	        System.out.print(string);
+	        if (newLine) {
+	            System.out.println();
+	        }
         }
         if (recorder != null) {
             recorder.print(string);
