@@ -197,18 +197,13 @@ public class ResponseDispatcher {
 								PrintStream messageOutput) 
 								throws CVSException {
 
-		// Processing responses contributes 70% of total work.
-		// This depends on the caller to have picked the magic number of 100
-		// as the amount of work for the operation!!!
-		IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 70);
-		
 		// This number can be tweaked if the monitor is judged to move too
 		// quickly or too slowly. After some experimentation this is a good
 		// number for both large projects (it doesn't move so quickly as to
 		// give a false sense of speed) and smaller projects (it actually does
 		// move some rather than remaining still and then jumping to 100).
 		final int TOTAL_WORK = 300;
-		subMonitor.beginTask(Policy.bind("ResponseDispatcher.receiving"), TOTAL_WORK);
+		monitor.beginTask(Policy.bind("ResponseDispatcher.receiving"), TOTAL_WORK);
 		
 		int halfWay = TOTAL_WORK / 2;
 		int currentIncrement = 4;
@@ -223,7 +218,7 @@ public class ResponseDispatcher {
 				
 				// Update monitor work amount
 				if (--nextProgress <= 0) {
-					subMonitor.worked(1);
+					monitor.worked(1);
 					worked++;
 					if (worked >= halfWay) {
 						//we have passed the current halfway point, so double the
@@ -234,7 +229,7 @@ public class ResponseDispatcher {
 					//reset the progress counter to another full increment
 					nextProgress = currentIncrement;
 				}			
-				Policy.checkCanceled(subMonitor);
+				Policy.checkCanceled(monitor);
 				
 				// Distiguage between three different tokens:
 				//   OK    => break
@@ -249,7 +244,7 @@ public class ResponseDispatcher {
 				}
 			}
 		} finally {
-			subMonitor.done();
+			monitor.done();
 		}
 	}
 	
