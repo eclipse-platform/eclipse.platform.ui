@@ -329,6 +329,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	            }
 	        }
 	    }
+	    propertiesRepresentation.deleteCharAt(propertiesRepresentation.length() - 1);
 	    fProperties= currentProperties;
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}

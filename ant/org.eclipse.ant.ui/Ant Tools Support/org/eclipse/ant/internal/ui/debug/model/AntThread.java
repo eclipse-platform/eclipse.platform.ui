@@ -317,7 +317,12 @@ public class AntThread extends AntDebugElement implements IThread {
 	    				propertyName+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
 	    			}
 	    			propertyValueLength= Integer.parseInt(datum[++i]);
-	    			propertyValue= datum[++i];
+	    			if (propertyValueLength == 0 && i + 1 == datum.length) {
+	    				//bug 81299
+	    				propertyValue= ""; //$NON-NLS-1$
+	    			} else {
+	    				propertyValue= datum[++i];
+	    			}
 	    			while (propertyValue.length() != propertyValueLength) {
 	    				propertyValue+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
 	    			}
