@@ -22,7 +22,7 @@
   <extension-point name="%naturesName" id="natures" schema="schema/natures.mxsd"/>
   <extension-point name="%validatorName" id="fileModificationValidator" schema="schema/fileModificationValidator.mxsd"/>
   <extension-point name="%hookName" id="moveDeleteHook" schema="schema/moveDeleteHook.mxsd"/>
-  <extension-point name="%teamHookName" id="teamHook"/>
+  <extension-point name="%teamHookName" id="teamHook" schema="schema/teamHook.mxsd"/>
 
   <extension id="marker" point="org.eclipse.core.resources.markers" name="%markerName">
   	<attribute name="transient"/>
