@@ -110,7 +110,6 @@ private boolean compareSync(ResourceInfo oldElement, ResourceInfo newElement) {
  * Compares the type of the ResourceInfo.
  */
 private boolean compareType(ResourceInfo oldElement, ResourceInfo newElement) {
-	// for now we dont' support gender changes in the delta so just return null.
 	return oldElement.getType() == newElement.getType();
 }
 /**
