@@ -62,7 +62,7 @@ public class PreferenceStore implements IPreferenceStore {
  * preference store.
  * </p>
  * @see #load(java.io.InputStream)
- * @see #store(java.io.InputStream)
+ * @see #save(java.io.OutputStream)
  */
 public PreferenceStore() {
 	defaultProperties = new Properties();
