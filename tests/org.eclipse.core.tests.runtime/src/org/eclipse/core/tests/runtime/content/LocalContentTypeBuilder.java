@@ -35,6 +35,6 @@ public class LocalContentTypeBuilder extends ContentTypeBuilder {
 			if (namespace.equals(Platform.PI_RUNTIME) || namespace.equals(RuntimeTest.PI_RUNTIME_TESTS))
 				selected.add(allContentTypeCEs[i]);
 		}
-		return allContentTypeCEs;
+		return (IConfigurationElement[]) selected.toArray(new IConfigurationElement[selected.size()]);
 	}
 }

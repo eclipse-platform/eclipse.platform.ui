@@ -413,6 +413,18 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		for (int i = 0; i < MyContentDescriber.MY_OPTIONS.length; i++)
 			assertEquals("2." + i, MyContentDescriber.MY_OPTION_VALUES[i], description.getProperty(MyContentDescriber.MY_OPTIONS[i]));
 	}
+	
+	public void testOrderWithEmptyFiles() throws IOException {
+		IContentTypeManager manager = LocalContentTypeManager.getLocalContentTypeManager();
+		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
+		IContentType rootElement = manager.getContentType(PI_RUNTIME_TESTS + ".root-element");
+		IContentType dtdElement = manager.getContentType(PI_RUNTIME_TESTS + ".dtd");
+		// for an empty file, the most generic content type should be returned
+		IContentType selected = manager.findContentTypeFor(getInputStream(""), "foo.xml");
+		assertEquals("1.0", xml, selected);
+		// it should be equivalent to omitsting the contents
+		assertEquals("1.1", xml, manager.findContentTypeFor("foo.xml"));
+	}
 
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {
 		IContentType text = manager.getContentType(IContentTypeManager.CT_TEXT);

@@ -19,8 +19,8 @@ import org.osgi.service.prefs.Preferences;
 
 public class ContentTypeManager implements IContentTypeManager {
 
-	private final static class UncloseableArrayReader extends CharArrayReader {
-		public UncloseableArrayReader(char[] buf, int offset, int length) {
+	private static class UncloseableCharArrayReader extends CharArrayReader {
+		public UncloseableCharArrayReader(char[] buf, int offset, int length) {
 			super(buf, offset, length);
 		}
 
@@ -85,7 +85,7 @@ public class ContentTypeManager implements IContentTypeManager {
 				contents.mark(MARK_LIMIT);
 			byte[] buffer = new byte[MARK_LIMIT];
 			int read = contents.read(buffer);
-			return read == -1 ? null : new ByteArrayInputStream(buffer, 0, read);
+			return new ByteArrayInputStream(buffer, 0, read == -1 ? 0 : read);
 		} catch (IOException ioe) {
 			failed = true;
 			throw ioe;
@@ -102,7 +102,7 @@ public class ContentTypeManager implements IContentTypeManager {
 				contents.mark(MARK_LIMIT);
 			char[] buffer = new char[MARK_LIMIT];
 			int read = contents.read(buffer);
-			return read == -1 ? null : new UncloseableArrayReader(buffer, 0, read);
+			return new UncloseableCharArrayReader(buffer, 0, read == -1 ? 0 : read);
 		} catch (IOException ioe) {
 			failed = true;
 			throw ioe;
@@ -116,7 +116,6 @@ public class ContentTypeManager implements IContentTypeManager {
 	 * Constructs a new content type manager.
 	 */
 	protected ContentTypeManager() {
-		builder = createBuilder();
 	}
 
 	protected void addContentType(IContentType contentType) {
@@ -391,6 +390,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	}
 
 	protected void startup() {
+		builder = createBuilder();		
 		catalog = new HashMap();
 		builder.startup();
 		builder.buildContentTypes();

@@ -33,11 +33,6 @@ public class LocalContentTypeManager extends ContentTypeManager {
 		return new LocalContentTypeBuilder(this);
 	}
 
-	// to increase visibility
-	public void startup() {
-		super.startup();
-	}
-
 	public static IContentTypeManager getLocalContentTypeManager() {
 		LocalContentTypeManager contentTypeManager = new LocalContentTypeManager();
 		contentTypeManager.startup();
