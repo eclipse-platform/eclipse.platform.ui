@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
 
 public class SaveConfigurationAction extends Action {
 	private IInstallConfiguration target;

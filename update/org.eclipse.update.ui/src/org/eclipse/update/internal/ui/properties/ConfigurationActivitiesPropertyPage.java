@@ -1,18 +1,13 @@
 package org.eclipse.update.internal.ui.properties;
 
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.internal.ui.wizards.ActivitiesTableViewer;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.ui.wizards.*;
 
 /**
  * @see PropertyPage

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.ui.model.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 

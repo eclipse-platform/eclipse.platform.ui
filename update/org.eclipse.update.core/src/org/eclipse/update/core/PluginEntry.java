@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Convenience implementation of plug-in entry.

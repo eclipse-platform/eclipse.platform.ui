@@ -13,14 +13,12 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.model.*;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 
 /**
  * This class manages the configurations.

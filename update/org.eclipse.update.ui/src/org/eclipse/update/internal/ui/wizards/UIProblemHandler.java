@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.update.configuration.IProblemHandler;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.ui.*;
 
 /**
  *

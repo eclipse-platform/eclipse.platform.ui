@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.IArchiveReference;
-import org.eclipse.update.core.SiteContentProvider;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 /**
  * 

@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.core;
-import java.net.URL;
+import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.model.*;
 
 /**
  * Site represents a location containing some number of features (packaged

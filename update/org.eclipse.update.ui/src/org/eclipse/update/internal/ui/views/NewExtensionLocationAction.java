@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import java.io.File;
+import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.dialogs.*;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.internal.operations.UpdateUtils;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;

@@ -12,16 +12,16 @@ package org.eclipse.update.internal.ui.preferences;
 
 import java.net.*;
 
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.preference.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.update.internal.core.UpdateCore;
-import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.operations.*;
 
 /**
  * Insert the type's description here.

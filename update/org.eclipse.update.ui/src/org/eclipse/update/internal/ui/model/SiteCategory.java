@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.Vector;
+import java.lang.reflect.*;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.*;
 
 public class SiteCategory extends UIModelObject {
 	private static final String KEY_OTHER_LABEL = "SiteCategory.other.label";

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 
-import org.eclipse.core.internal.boot.InternalBootLoader;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 
 /**
  * Bundle of all images used by the PDE plugin.

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.update.search.IUpdateSiteAdapter;
+import org.eclipse.update.search.*;
 
 /**
  * @author dejan

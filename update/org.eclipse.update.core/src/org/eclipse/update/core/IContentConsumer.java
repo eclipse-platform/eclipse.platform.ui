@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * Generic content consumer.

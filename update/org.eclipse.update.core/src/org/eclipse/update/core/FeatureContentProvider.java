@@ -11,14 +11,12 @@
 package org.eclipse.update.core;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.InternalSiteManager;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Base implementation of a feature content provider.

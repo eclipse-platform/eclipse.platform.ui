@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
 /**
  * Install handler entry model object.

@@ -10,17 +10,17 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.ui.parts.*;
 
 public class InstallDeltaWizard
 	extends Wizard

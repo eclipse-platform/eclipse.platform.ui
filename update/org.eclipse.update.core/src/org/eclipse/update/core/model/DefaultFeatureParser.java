@@ -11,17 +11,15 @@
 package org.eclipse.update.core.model;
 
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.Stack;
+import java.io.*;
+import java.util.*;
 
-import org.apache.xerces.parsers.SAXParser;
+import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 
 /**
  * Default feature parser.

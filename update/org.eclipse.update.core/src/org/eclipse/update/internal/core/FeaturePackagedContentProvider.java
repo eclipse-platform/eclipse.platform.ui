@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.security.JarVerifier;
+import org.eclipse.update.internal.security.*;
 
 /**
  * Content Provider of a Feature Package

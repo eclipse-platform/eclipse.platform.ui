@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.operations.UpdateUtils;
-import org.eclipse.update.internal.search.UnifiedUpdatesSearchCategory;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.search.*;
 

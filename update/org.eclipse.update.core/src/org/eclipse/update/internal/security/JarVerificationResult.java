@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.security;
 
-import java.security.Principal;
+import java.security.*;
 import java.security.cert.*;
-import java.text.DateFormat;
+import java.security.cert.Certificate;
+import java.text.*;
 import java.util.*;
 
 import org.eclipse.update.core.*;

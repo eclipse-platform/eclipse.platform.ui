@@ -1,34 +1,15 @@
 package org.eclipse.update.internal.ui;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.update.internal.ui.model.BookmarkFolder;
-import org.eclipse.update.internal.ui.model.DiscoveryFolder;
-import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
-import org.eclipse.update.internal.ui.model.UpdateModel;
-import org.eclipse.update.internal.ui.wizards.EditSiteDialog;
-import org.eclipse.update.internal.ui.wizards.NewWebSiteDialog;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.wizards.*;
 
 /**
  * @author Wassim Melhem

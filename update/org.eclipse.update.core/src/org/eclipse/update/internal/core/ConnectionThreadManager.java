@@ -12,7 +12,6 @@ package org.eclipse.update.internal.core;
 
 import java.io.*;
 import java.net.*;
-import java.net.HttpURLConnection;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;

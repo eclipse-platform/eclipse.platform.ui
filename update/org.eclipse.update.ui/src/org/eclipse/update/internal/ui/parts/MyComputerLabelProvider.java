@@ -6,19 +6,12 @@
  */
 package org.eclipse.update.internal.ui.parts;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.update.configuration.IVolume;
-import org.eclipse.update.internal.ui.UpdateLabelProvider;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.UpdateUIImages;
-import org.eclipse.update.internal.ui.model.ExtensionRoot;
-import org.eclipse.update.internal.ui.model.MyComputer;
-import org.eclipse.update.internal.ui.model.MyComputerDirectory;
-import org.eclipse.update.internal.ui.model.MyComputerFile;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
-import org.eclipse.update.internal.ui.parts.VolumeLabelProvider;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @author Wassim Melhem

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.search.OptionalFeatureSearchCategory;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.search.*;
 

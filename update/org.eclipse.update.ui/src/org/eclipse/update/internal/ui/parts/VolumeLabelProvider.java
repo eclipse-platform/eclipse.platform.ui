@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.parts;
 
-import java.io.File;
+import java.io.*;
 
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 

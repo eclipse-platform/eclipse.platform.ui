@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.security;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.core.IVerificationResult;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
 
 /**
  * 

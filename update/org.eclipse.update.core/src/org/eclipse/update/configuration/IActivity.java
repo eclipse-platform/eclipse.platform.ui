@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
 
-import java.util.Date;
+import java.util.*;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 
 /**
  * Install activity.

@@ -10,14 +10,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.window.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.ui.views.ConfigurationView;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.views.*;
 
 /**
  * @author dejan

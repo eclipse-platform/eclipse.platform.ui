@@ -13,20 +13,12 @@ package org.eclipse.update.internal.ui.parts;
  * @version 	1.0
  * @author
  */
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DropTarget;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Caret;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Utility class to simplify access to some SWT resources. 

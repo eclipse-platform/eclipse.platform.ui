@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Convenience implementation of a feature reference.

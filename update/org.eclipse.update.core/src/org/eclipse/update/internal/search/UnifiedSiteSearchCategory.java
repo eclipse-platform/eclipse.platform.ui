@@ -13,9 +13,7 @@ package org.eclipse.update.internal.search;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.ISite;
 import org.eclipse.update.search.*;
 
 /**

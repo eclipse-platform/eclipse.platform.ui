@@ -9,13 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.core.model.*;
 
 /**
  *

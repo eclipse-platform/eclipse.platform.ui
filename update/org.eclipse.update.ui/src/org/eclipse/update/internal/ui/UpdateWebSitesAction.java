@@ -1,20 +1,11 @@
 package org.eclipse.update.internal.ui;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-import org.eclipse.update.internal.ui.model.DiscoveryFolder;
-import org.eclipse.update.internal.ui.model.IUpdateModelChangedListener;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @see IWorkbenchWindowActionDelegate

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
 
 public class DiscoveryFolder extends BookmarkFolder {
 	public DiscoveryFolder() {

@@ -11,13 +11,13 @@
 package org.eclipse.update.internal.ui.views;
 
 import java.io.*;
-import java.util.StringTokenizer;
+import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.update.internal.ui.*;
 
 public class InstallationHistoryAction extends Action {
 

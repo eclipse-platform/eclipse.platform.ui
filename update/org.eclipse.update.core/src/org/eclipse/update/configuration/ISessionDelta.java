@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
 
-import java.util.Date;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.*;
 
 /**
  * Installation Change.

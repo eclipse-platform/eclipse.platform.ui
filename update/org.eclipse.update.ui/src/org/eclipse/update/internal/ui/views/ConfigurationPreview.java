@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
 
 public class ConfigurationPreview {

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.PrintWriter;
+import java.io.*;
 
 /**
  * Called when we want the model to persist as XML

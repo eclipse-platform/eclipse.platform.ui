@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.internal.ui.parts.SharedLabelProvider;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.ui.parts.*;
 
 /**
  *  */

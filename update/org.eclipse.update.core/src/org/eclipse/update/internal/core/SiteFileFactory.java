@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 
 public class SiteFileFactory extends BaseSiteFactory {
 

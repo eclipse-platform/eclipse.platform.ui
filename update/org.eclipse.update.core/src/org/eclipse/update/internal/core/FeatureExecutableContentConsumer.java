@@ -13,8 +13,7 @@ package org.eclipse.update.internal.core;
  
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 
 /**

@@ -9,16 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.core.model.*;
 
 /**
  * Factory for Feature Packaged

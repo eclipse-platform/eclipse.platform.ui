@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
-import java.net.URL;
-import java.util.ArrayList;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;

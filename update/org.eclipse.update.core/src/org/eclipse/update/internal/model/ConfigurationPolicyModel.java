@@ -9,14 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.core.model.ModelObject;
-import org.eclipse.update.internal.core.UpdateCore;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * 

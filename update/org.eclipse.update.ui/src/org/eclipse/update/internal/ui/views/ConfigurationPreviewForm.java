@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;

@@ -6,13 +6,11 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
-import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @author Wassim Melhem

@@ -6,10 +6,8 @@
  */
 package org.eclipse.update.internal.ui.parts;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.update.internal.ui.model.MyComputer;
-import org.eclipse.update.internal.ui.model.MyComputerDirectory;
-import org.eclipse.update.internal.ui.model.MyComputerFile;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @author Wassim Melhem

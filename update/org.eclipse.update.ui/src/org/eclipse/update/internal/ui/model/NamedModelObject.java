@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import java.io.Serializable;
+import java.io.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.jface.resource.*;
+import org.eclipse.ui.model.*;
 
 public class NamedModelObject extends UIModelObject 
 							implements IWorkbenchAdapter, Serializable  {

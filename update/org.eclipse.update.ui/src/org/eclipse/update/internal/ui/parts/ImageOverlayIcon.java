@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.parts;
 
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
 
 /**

@@ -14,7 +14,6 @@ import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 public class HttpResponse extends Response {
 	private static final long POLLING_INTERVAL = 200;

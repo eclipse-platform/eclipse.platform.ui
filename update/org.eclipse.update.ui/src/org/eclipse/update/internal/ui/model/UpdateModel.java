@@ -13,7 +13,7 @@ package org.eclipse.update.internal.ui.model;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.*;
 
 public class UpdateModel implements IAdaptable {
 	private Vector bookmarks = new Vector();

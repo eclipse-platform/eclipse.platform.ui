@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.update.core.Utilities;
-import org.eclipse.update.internal.core.Policy;
-import org.xml.sax.SAXException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
+import org.xml.sax.*;
 
 /**
  * Default feature model factory.

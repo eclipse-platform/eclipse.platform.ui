@@ -11,10 +11,8 @@
 package org.eclipse.update.search;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.internal.operations.*;
 
 /**
  * This class can be added to the update search request

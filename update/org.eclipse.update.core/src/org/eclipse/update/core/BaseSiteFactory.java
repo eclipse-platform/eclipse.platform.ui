@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.core;
  
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 

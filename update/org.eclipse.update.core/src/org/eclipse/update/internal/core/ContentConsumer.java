@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.core;
 
 
-import org.eclipse.update.core.IContentConsumer;
+import org.eclipse.update.core.*;
 
 /**
  * A default implementation for IFeatureContentConsumer

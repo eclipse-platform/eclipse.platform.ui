@@ -13,12 +13,12 @@ package org.eclipse.update.internal.ui.parts;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWTException;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.update.internal.ui.UpdateUIImages;
+import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.update.internal.ui.*;
 
 /**
  * @version 	1.0

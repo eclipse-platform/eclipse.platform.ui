@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.update.core.Site;
-import org.eclipse.update.core.SiteFeatureReferenceModel;
-import org.eclipse.update.internal.model.ConfiguredSiteModel;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.model.*;
 
 /**
  * Site model object.

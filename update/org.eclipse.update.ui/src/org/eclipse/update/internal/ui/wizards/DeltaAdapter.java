@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.ISessionDelta;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  *

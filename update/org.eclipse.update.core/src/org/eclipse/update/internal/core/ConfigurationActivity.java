@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.PrintWriter;
-import org.eclipse.update.configuration.IActivity;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.internal.model.ConfigurationActivityModel;
-import org.eclipse.update.internal.model.InstallConfigurationParser;
+import java.io.*;
+
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.model.*;
 public class ConfigurationActivity
 	extends ConfigurationActivityModel
 	implements IActivity, IWritable {

@@ -12,16 +12,13 @@ package org.eclipse.update.internal.core;
 
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
-import java.util.Date;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.SiteManager;
 
 /**
  * Update manager reconciler application.

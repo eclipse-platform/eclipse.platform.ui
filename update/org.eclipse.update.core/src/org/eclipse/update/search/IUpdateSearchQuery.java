@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.ISite;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 /**
  * 

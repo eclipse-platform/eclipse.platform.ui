@@ -11,7 +11,6 @@
 package org.eclipse.update.search;
 
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeature;
 
 /**
  * Classes that implement this interface can be used to filter the

@@ -9,10 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.ContentReference;
-import org.eclipse.update.core.IContentConsumer;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 /**
  * ContentConsumer for a plugin entry of a feature

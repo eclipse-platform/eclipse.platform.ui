@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.model;
  
-import java.util.Date;
+import java.util.*;
 
-import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.core.model.*;
 
 public class ConfigurationActivityModel extends ModelObject{
 	

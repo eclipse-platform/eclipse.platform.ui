@@ -1,9 +1,9 @@
 package org.eclipse.update.internal.ui;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.update.internal.ui.model.SiteBookmark;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.update.internal.ui.model.*;
 
 
 public class GoToWebsiteAction extends Action {

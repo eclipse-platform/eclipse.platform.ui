@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.update.core.model.URLEntryModel;
-import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Convenience implementation of an annotated URL.

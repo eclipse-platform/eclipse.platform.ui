@@ -11,14 +11,12 @@
 package org.eclipse.update.core;
 
 import java.io.*;
-import java.text.DateFormat;
-//import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * This class is a collection of utility functions that can be 

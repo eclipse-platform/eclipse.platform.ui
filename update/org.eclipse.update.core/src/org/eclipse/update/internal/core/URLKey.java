@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
  
-import java.net.URL;
+import java.net.*;
 
 
 

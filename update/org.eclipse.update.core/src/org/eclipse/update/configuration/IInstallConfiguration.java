@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
 
-import java.io.File;
-import java.util.Date;
+import java.io.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 
 /**
  * Installation configuration.

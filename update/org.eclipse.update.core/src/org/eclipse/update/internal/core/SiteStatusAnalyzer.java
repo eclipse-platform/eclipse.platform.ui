@@ -9,13 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.PluginDescriptorModel;
-import org.eclipse.core.runtime.model.PluginFragmentModel;
-import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.core.runtime.model.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 /**

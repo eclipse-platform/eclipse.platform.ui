@@ -11,16 +11,14 @@
 package org.eclipse.update.core.model;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.Stack;
+import java.util.*;
 
-import org.apache.xerces.parsers.SAXParser;
+import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.SiteFeatureReferenceModel;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 
 /**
  * Default site parser.

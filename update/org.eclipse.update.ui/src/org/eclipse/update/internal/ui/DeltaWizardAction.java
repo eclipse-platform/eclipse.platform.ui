@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.*;
 
 /**
  * Insert the type's description here.

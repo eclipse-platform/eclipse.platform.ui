@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 
 /**
  * Non-plug-in entry defines an arbitrary non-plug-in data file packaged

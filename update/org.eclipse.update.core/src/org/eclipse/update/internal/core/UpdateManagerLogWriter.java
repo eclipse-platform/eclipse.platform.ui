@@ -11,13 +11,10 @@
 package org.eclipse.update.internal.core;
 
 import java.io.*;
-import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.text.*;
+import java.util.*;
 
-import org.eclipse.update.configuration.IActivity;
-import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.*;
 /**
  * A log writer that writes update manager log entries.  
  */

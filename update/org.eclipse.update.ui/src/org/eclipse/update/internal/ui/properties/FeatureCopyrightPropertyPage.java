@@ -1,20 +1,20 @@
 package org.eclipse.update.internal.ui.properties;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.IFeatureAdapter;
-import org.eclipse.update.internal.ui.parts.SWTUtil;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.parts.*;
 
 /**
  * @see PropertyPage

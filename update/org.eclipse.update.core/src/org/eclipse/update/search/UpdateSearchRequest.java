@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
-import java.net.URL;
-import java.util.ArrayList;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.search.UpdateMap;
+import org.eclipse.update.internal.search.*;
 
 /**
  * This class is central to update search. The search pattern

@@ -9,21 +9,18 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.CoreException;
+import org.apache.xerces.parsers.*;
+import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 
 /**
  * parse the default site.xml

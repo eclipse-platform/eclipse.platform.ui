@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.wizards.RevertConfigurationWizard;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.wizards.*;
 
 public class RevertConfigurationAction extends Action {
 	public RevertConfigurationAction(String text) {

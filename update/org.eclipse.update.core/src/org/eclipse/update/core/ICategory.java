@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 
 /**
  * Feature category definition.

@@ -11,13 +11,13 @@
 package org.eclipse.update.internal.core;
 
 
-import java.io.IOException;
-import java.util.jar.JarEntry;
+import java.io.*;
+import java.util.jar.*;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.JarContentReference.ContentSelector;
-import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.core.JarContentReference.*;
+import org.eclipse.update.core.model.*;
 
 /**
  * Default Implementation of InstallHandler

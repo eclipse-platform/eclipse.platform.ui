@@ -11,7 +11,7 @@
 package org.eclipse.update.configuration;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.*;
 
 /**
  * Local Site.

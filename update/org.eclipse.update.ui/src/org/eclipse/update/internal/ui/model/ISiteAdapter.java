@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.ISite;
-import java.net.URL;
+import java.net.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 public interface ISiteAdapter {
 	

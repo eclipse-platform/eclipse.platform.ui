@@ -11,14 +11,12 @@
 package org.eclipse.update.core;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.jar.*;
 
-import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Local .jar file content reference.

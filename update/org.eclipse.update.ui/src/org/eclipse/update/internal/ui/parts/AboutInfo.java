@@ -9,24 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.parts;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.PropertyResourceBundle;
-import java.util.zip.CRC32;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.util.zip.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.NewConfigurationInfo;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * The about info class;

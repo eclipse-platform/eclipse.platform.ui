@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
 
 public class ResizableWizardDialog extends WizardDialog {
 	/**

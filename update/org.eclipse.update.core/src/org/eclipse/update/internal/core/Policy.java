@@ -11,14 +11,10 @@
 package org.eclipse.update.internal.core;
 
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.text.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 public class Policy {
 	protected static ResourceBundle bundle = null;

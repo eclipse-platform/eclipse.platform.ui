@@ -11,17 +11,16 @@
 package org.eclipse.update.internal.core;
 
 
-import java.io.File;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.internal.model.InstallChangeParser;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.model.*;
 
 /**
  * 

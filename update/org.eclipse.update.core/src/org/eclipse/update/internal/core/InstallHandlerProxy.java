@@ -10,28 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.io.*;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.ContentReference;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureContentConsumer;
-import org.eclipse.update.core.IInstallHandler;
-import org.eclipse.update.core.IInstallHandlerEntry;
-import org.eclipse.update.core.INonPluginEntry;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.IVerificationListener;
-import org.eclipse.update.core.InstallMonitor;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
 public class InstallHandlerProxy implements IInstallHandler {
 

@@ -6,8 +6,8 @@
  */
 package org.eclipse.update.internal.ui;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.update.internal.ui.wizards.NewWebSiteDialog;
+import org.eclipse.jface.action.*;
+import org.eclipse.update.internal.ui.wizards.*;
 
 /**
  * @author wassimm

@@ -12,17 +12,16 @@ package org.eclipse.update.internal.security;
 
 import java.io.*;
 import java.security.*;
+import java.security.cert.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipException;
+import java.util.jar.*;
+import java.util.zip.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * The JarVerifier will check the integrity of the JAR.

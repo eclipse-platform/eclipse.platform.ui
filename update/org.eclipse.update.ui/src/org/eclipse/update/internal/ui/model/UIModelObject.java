@@ -11,8 +11,8 @@
 package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.*;
+import org.eclipse.ui.model.*;
 
 
 public class UIModelObject extends PlatformObject implements IWorkbenchAdapter {

@@ -9,12 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.IFeatureFactory;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.*;
 
 /**
  * Manages FeatureFactory extension point

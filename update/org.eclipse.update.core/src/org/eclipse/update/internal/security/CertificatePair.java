@@ -11,7 +11,7 @@
 
 package org.eclipse.update.internal.security;
  
- import java.security.cert.Certificate;
+ import java.security.cert.*;
  
 /**
  *

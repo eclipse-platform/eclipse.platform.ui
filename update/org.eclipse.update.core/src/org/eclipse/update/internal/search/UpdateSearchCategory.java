@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
-import org.eclipse.update.search.IUpdateSearchCategory;
+import org.eclipse.update.search.*;
 
 public abstract class UpdateSearchCategory implements IUpdateSearchCategory {
 	private String id;

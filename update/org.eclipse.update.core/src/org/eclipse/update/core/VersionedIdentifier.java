@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Versioned Identifier. This is a utility class combining an identification

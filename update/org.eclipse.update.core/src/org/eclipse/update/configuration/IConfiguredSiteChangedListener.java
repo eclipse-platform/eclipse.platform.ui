@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
 
-import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.*;
 
 /**
  * Configuration change listener. * 

@@ -11,14 +11,12 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.internal.core.InternalSiteManager;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Site Manager.

@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.core.model;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.update.core.Feature;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 
 /**

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.update.core.model.NonPluginEntryModel;
+import org.eclipse.update.core.model.*;
 
 /**
  * Convenience implementation of non-plug-in entry.

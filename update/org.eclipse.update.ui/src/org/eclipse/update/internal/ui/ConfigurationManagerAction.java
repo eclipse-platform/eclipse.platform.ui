@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**

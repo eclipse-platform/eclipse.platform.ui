@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
-import java.io.File;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.*;
 
 /**
  * FeatureFactory for Executable Features

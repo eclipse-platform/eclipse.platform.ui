@@ -10,18 +10,16 @@
  *******************************************************************************/
 package org.eclipse.update.internal.model;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
+import java.net.*;
+import java.util.*;
 
-import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.update.configuration.ISessionDelta;
+import org.apache.xerces.parsers.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 
 /**
  * parse the default site.xml

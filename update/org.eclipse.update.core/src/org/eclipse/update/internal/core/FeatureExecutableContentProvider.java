@@ -11,12 +11,9 @@
 package org.eclipse.update.internal.core;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;

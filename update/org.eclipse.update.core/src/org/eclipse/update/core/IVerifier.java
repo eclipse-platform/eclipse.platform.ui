@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 
 /**
  * Verifier. This interface abstracts the archive verification step

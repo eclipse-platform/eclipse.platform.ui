@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 
 /**
  * Plug-in entry defines a packaging reference from a feature to a plug-in.

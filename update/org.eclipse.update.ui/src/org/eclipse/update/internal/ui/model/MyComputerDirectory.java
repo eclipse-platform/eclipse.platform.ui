@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import java.io.File;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.*;
 
 public class MyComputerDirectory
 	extends UIModelObject

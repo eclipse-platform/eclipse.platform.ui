@@ -14,11 +14,11 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.apache.xerces.parsers.DOMParser;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.apache.xerces.parsers.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.ui.*;
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
+import org.xml.sax.*;
 
 public class BookmarkUtil {
 	public static void parse(String fileName, Vector bookmarks) {

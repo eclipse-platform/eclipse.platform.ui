@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.parts;
 
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.jface.resource.CompositeImageDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.graphics.*;
 
 /**
  * An OverlayIcon consists of a main icon and several adornments.

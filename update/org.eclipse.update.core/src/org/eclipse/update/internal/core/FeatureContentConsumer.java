@@ -11,8 +11,8 @@
 package org.eclipse.update.internal.core;
 
 
-import org.eclipse.update.core.IFeatureContentConsumer;
-import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 
 /**
  * A default implementation for IFeatureContentConsumer

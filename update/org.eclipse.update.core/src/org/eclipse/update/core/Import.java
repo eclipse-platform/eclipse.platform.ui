@@ -9,9 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.core;
-import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.internal.core.UpdateCore;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Convenience implementation of a plug-in dependency.

@@ -11,20 +11,19 @@
 package org.eclipse.update.internal.ui.preferences;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.update.internal.ui.*;
 
 /**
  * Insert the type's description here.

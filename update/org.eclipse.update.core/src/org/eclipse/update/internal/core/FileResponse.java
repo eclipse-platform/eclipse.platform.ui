@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.InputStream;
+import java.io.*;
 
 //import org.eclipse.update.internal.core.net.http.IContext;
 //import org.eclipse.update.internal.core.net.http.client.IStatusCodes;

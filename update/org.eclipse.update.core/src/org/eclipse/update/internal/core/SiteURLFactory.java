@@ -9,15 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.core.model.SiteModelFactory;
+import org.eclipse.update.core.model.*;
 
 public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExtension {
 	

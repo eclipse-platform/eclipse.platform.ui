@@ -10,24 +10,14 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.io.*;
+import java.net.*;
+import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.JarContentReference;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 
 
 /**

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import java.io.File;
+import java.io.*;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.jface.resource.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.model.*;
 
 public class ExtensionRoot extends UIModelObject implements IWorkbenchAdapter {
 	private UIModelObject parent;

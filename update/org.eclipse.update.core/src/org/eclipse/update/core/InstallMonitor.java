@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.util.Stack;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.internal.core.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Install progress monitor

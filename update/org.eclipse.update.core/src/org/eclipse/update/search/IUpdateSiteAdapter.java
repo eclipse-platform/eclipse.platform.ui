@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
-import java.net.URL;
+import java.net.*;
 
 /**
  * This interface wraps an update site URL and adds 

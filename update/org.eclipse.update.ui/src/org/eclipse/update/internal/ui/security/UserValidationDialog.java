@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.security;
 
-import java.net.URL;
+import java.net.*;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.internal.ui.*;
 
 
 /**

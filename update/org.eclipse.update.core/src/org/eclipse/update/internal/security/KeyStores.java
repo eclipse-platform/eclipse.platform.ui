@@ -11,12 +11,11 @@
 package org.eclipse.update.internal.security;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.Security;
+import java.net.*;
+import java.security.*;
 import java.util.*;
 
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.core.*;
 /**
  * Class to manage the different KeyStores we should
  * check for certificates of Signed JAR

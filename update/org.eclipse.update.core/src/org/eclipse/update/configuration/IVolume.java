@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.configuration;
 
-import java.io.File;
+import java.io.*;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 
 /**
  * Local Volume Info.

@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.ui.model.IFeatureAdapter;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @author dejan

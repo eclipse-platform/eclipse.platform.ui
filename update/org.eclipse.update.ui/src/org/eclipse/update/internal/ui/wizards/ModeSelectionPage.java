@@ -8,13 +8,13 @@ package org.eclipse.update.internal.ui.wizards;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.operations.UpdateUtils;
-import org.eclipse.update.internal.search.UnifiedUpdatesSearchCategory;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.search.*;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.search.*;
 
 /**

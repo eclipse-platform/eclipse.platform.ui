@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import java.net.URL;
-import java.util.Vector;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.*;
 
 public class SiteBookmark extends NamedModelObject 
 							implements ISiteAdapter {

@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.search;
 
-import java.net.URL;
-import org.eclipse.update.search.IQueryUpdateSiteAdapter;
+import java.net.*;
+
+import org.eclipse.update.search.*;
 
 public class QueryUpdateSiteAdapter extends UpdateSiteAdapter implements IQueryUpdateSiteAdapter {
 	private String mappingId;

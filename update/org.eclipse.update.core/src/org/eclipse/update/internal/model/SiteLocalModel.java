@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.update.core.model.*;
 
 /**
  * This class manages the configurations.

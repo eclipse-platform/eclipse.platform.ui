@@ -11,8 +11,8 @@
 package org.eclipse.update.core;
 
 import java.io.*;
-import java.net.URL;
-import java.util.jar.JarEntry;
+import java.net.*;
+import java.util.jar.*;
 
 /**
  * .jar file entry content reference.

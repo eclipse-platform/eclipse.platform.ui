@@ -9,21 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.net.*;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.security.JarVerificationService;
+import org.eclipse.update.internal.ui.security.*;
 import org.eclipse.update.operations.*;
-import org.eclipse.update.search.UpdateSearchRequest;
+import org.eclipse.update.search.*;
 
 public class InstallWizard
 	extends Wizard

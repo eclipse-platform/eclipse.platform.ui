@@ -13,10 +13,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.core.model.*;
 
 /**
  * 

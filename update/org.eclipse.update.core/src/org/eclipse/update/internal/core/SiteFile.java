@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 

@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
-import java.net.URL;
-import java.util.Vector;
+import java.net.*;
+import java.util.*;
 
-import org.eclipse.update.internal.search.UpdateSiteAdapter;
+import org.eclipse.update.internal.search.*;
 
 /**
  * This class encapsulates update scope of the update search.

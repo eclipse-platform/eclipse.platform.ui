@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.security;
 
-import java.net.URL;
+import java.net.*;
 
 
  

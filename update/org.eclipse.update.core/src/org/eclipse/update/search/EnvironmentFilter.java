@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.search;
 
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * This class can be added to the update search request

@@ -11,10 +11,6 @@
 package org.eclipse.update.internal.ui.model;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 

@@ -10,17 +10,15 @@
  *******************************************************************************/
 package org.eclipse.update.internal.model;
 import java.io.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.Utilities;
-import org.eclipse.update.core.model.ModelObject;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.URLEncoder;
+import org.xml.sax.*;
 
 /**
  * An InstallConfigurationModel is 

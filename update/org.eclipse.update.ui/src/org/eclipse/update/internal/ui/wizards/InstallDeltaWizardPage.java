@@ -12,17 +12,17 @@ package org.eclipse.update.internal.ui.wizards;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.configuration.ISessionDelta;
+import org.eclipse.ui.help.*;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
 

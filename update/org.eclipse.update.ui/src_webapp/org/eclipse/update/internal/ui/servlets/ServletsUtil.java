@@ -11,12 +11,12 @@
 package org.eclipse.update.internal.ui.servlets;
 
 import java.io.*;
-import java.util.Enumeration;
+import java.util.*;
 
 import javax.servlet.http.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.core.boot.*;
+import org.eclipse.update.internal.ui.*;
 
 /**
  * @author dejan

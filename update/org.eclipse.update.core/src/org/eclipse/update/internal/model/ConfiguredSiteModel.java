@@ -9,11 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.model;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.update.core.model.ModelObject;
-import org.eclipse.update.core.model.SiteModel;
-import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * 

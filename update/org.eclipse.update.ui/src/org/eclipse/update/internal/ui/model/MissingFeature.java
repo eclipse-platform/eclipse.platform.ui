@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
-import java.io.InputStream;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.ui.*;
 
 public class MissingFeature implements IFeature {
 

@@ -13,8 +13,8 @@ package org.eclipse.update.internal.ui.security;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.UpdateCore;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.ui.*;
 /**
  *
  */

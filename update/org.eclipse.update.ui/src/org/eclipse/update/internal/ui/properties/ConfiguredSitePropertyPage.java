@@ -1,12 +1,12 @@
 package org.eclipse.update.internal.ui.properties;
 
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.internal.ui.model.IConfiguredSiteAdapter;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.internal.ui.model.*;
 
 /**
  * @see PropertyPage

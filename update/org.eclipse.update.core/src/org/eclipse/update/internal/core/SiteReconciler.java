@@ -10,18 +10,15 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.model.ConfigurationActivityModel;
-import org.eclipse.update.internal.model.InstallChangeParser;
+import org.eclipse.update.internal.model.*;
 
 
 /**

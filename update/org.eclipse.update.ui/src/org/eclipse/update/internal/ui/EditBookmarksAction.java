@@ -6,7 +6,7 @@
  */
 package org.eclipse.update.internal.ui;
 
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.*;
 
 /**
  * @author Wassim Melhem

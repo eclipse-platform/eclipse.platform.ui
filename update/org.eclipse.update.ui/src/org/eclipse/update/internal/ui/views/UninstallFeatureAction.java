@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.*;
 
 public class UninstallFeatureAction extends Action {
 	

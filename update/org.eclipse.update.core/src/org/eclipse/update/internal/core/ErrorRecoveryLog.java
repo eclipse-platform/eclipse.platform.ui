@@ -11,17 +11,12 @@
 package org.eclipse.update.internal.core;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
-import java.util.Date;
-import java.util.List;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.update.core.Utilities;
+import org.eclipse.update.core.*;
 
 
 /**

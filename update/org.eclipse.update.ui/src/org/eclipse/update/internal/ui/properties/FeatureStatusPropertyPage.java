@@ -1,24 +1,16 @@
 package org.eclipse.update.internal.ui.properties;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.internal.operations.UpdateUtils;
-import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.model.ConfiguredFeatureAdapter;
-import org.eclipse.update.internal.ui.model.MissingFeature;
+import org.eclipse.swt.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.operations.*;
 
 /**

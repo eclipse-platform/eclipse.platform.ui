@@ -11,14 +11,12 @@
 package org.eclipse.update.internal.model;
 
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.update.core.PluginEntry;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.apache.xerces.parsers.*;
+import org.eclipse.update.core.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.*;
 
 /**
  * Parse default feature.xml

@@ -11,10 +11,10 @@
 
 package org.eclipse.update.core;
 
-import java.net.URL;
+import java.net.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.core.model.*;
 
 /**
  * Feature defines the packaging "container" for a group of related plug-ins,

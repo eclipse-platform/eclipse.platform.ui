@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.model;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @version 	1.0

@@ -16,8 +16,8 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.core.Utilities;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
 
 /**
  * A transient database that remembers information, such as usernames and

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.update.configuration.ISessionDelta;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.internal.ui.*;
 
 /**
  *
