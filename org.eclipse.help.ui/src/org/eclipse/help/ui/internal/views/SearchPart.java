@@ -50,7 +50,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 
 	private boolean searchWordTextExpanded = false;
 
-	private Combo searchWordCombo;
+	private ComboPart searchWordCombo;
 
 	private Section scopeSection;
 
@@ -105,7 +105,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		}
 
 		public void run() {
-			searchWordCombo.setEnabled(!searchInProgress);
+			searchWordCombo.getControl().setEnabled(!searchInProgress);
 			if (!searchInProgress)
 				goButton.setEnabled(true);
 			if (searchInProgress)
@@ -148,11 +148,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		td.colspan = 2;
 		searchWordText.setLayoutData(td);
 		// Pattern combo
-		searchWordCombo = new Combo(container, SWT.SINGLE | SWT.BORDER);
-		toolkit.adapt(searchWordCombo, true, true);
+		searchWordCombo = new ComboPart(container, toolkit, toolkit.getBorderStyle());
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
 		td.maxWidth = 100;
-		searchWordCombo.setLayoutData(td);
+		td.valign = TableWrapData.MIDDLE;
+		searchWordCombo.getControl().setLayoutData(td);
 		searchWordCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (searchWordCombo.getSelectionIndex() < 0)
@@ -207,6 +207,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 		filteringGroup.setLayout(flayout);
 
 		toolkit.paintBordersFor(filteringGroup);
+		toolkit.paintBordersFor(container);
 		loadEngines(filteringGroup, toolkit);
 		createAdvancedLink(filteringGroup, toolkit);
 		jobListener = new JobListener();
@@ -404,7 +405,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 	
 	private void handleButtonPressed() {
-		if (searchWordCombo.isEnabled())
+		if (searchWordCombo.getControl().isEnabled())
 			doSearch(searchWordCombo.getText());
 		else {
 			goButton.setEnabled(false);
@@ -536,12 +537,12 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#hasFocusControl(org.eclipse.swt.widgets.Control)
 	 */
 	public boolean hasFocusControl(Control control) {
-		return control == searchWordText || control == searchWordCombo
+		return control == searchWordText || control == searchWordCombo.getControl()
 				|| scopeSection.getClient() == control;
 	}
 
 	public void setFocus() {
-		searchWordCombo.setFocus();
+		searchWordCombo.getControl().setFocus();
 	}
 
 	public IAction getGlobalAction(String id) {
