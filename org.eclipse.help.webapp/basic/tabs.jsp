@@ -26,6 +26,11 @@
 <%
 	for (int i=0; i<views.length; i++) 
 	{
+		// do not show booksmarks view
+		if("bookmarks".equals(views[i].getName())){
+			continue;
+		}
+		
 		// search view is not called "advanced view"
 		String title = WebappResources.getString(views[i].getName(), request);
 		if("search".equals(views[i].getName())){
