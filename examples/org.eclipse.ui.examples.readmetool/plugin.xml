@@ -230,7 +230,7 @@
         </action>
   </extension>
   
-  <extension id="readmemarker" point="org.eclipse.core.resources.markers" name="%readmeMarker.name">
+  <extension id="readmemarker" point="org.eclipse.core.resources.markers" name="%ReadmeMarker.name">
 	<super type="org.eclipse.core.resources.taskmarker"/>
 	<super type="org.eclipse.core.resources.textmarker"/>
 	<persistent value="true"/>
