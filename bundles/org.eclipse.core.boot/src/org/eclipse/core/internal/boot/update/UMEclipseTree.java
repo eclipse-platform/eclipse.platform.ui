@@ -1,14 +1,22 @@
 package org.eclipse.core.internal.boot.update;
-
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2001
- *
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-import java.io.File;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.io.LineNumberReader;
-import java.net.HttpURLConnection;import java.net.MalformedURLException;import java.net.URL;import java.util.Arrays;import java.util.Vector;
-import org.eclipse.core.boot.*;public class UMEclipseTree  {
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Vector;
+import org.eclipse.core.boot.*;
+
+public class UMEclipseTree  {
 	private static URL fBaseInstallURL = BootLoader.getInstallURL();		// Base tree where Eclipse is running
 	
 	// Members of the Eclipse install URL directory

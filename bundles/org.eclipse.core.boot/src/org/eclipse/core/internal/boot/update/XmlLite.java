@@ -1,10 +1,9 @@
 package org.eclipse.core.internal.boot.update;
-
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * This class reads and writes logs to/from URL input/output streams.
  * If obtaining an output stream fails, an attempt is made to write

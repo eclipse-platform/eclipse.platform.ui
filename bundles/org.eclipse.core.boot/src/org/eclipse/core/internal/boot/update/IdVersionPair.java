@@ -1,4 +1,8 @@
 package org.eclipse.core.internal.boot.update;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 public class IdVersionPair extends IdVersionPairModel implements IIdVersionPair {
 /**

@@ -1,4 +1,8 @@
 package org.eclipse.core.internal.boot.update;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 // holds different versions of an entity (prod, comp or plug-in) that have the same id
 import java.util.*;
@@ -13,8 +17,6 @@ public UMProxy(String id)      {
 	_versions = null;
 }
 /**
- * Insert the method's description here.
- * Creation date: (5/2/01 1:58:01 PM)
  * @param o java.lang.Object
  * @param key java.lang.String
  */

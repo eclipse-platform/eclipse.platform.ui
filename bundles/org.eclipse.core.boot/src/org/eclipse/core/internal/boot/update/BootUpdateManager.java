@@ -1,6 +1,19 @@
 package org.eclipse.core.internal.boot.update;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
-import java.io.IOException;import java.io.InputStream;import java.net.URL;import java.util.PropertyResourceBundle;import java.util.StringTokenizer;import java.util.Vector;import org.eclipse.core.internal.boot.LaunchInfo;import org.eclipse.core.internal.boot.LaunchInfo.Status;import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.PropertyResourceBundle;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.eclipse.core.internal.boot.LaunchInfo;
+import org.eclipse.core.internal.boot.LaunchInfo.Status;
+import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
 
 public class BootUpdateManager {
 /**
