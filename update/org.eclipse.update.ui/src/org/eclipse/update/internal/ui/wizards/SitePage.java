@@ -291,16 +291,16 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			}
 		});
 
-		treeViewer.addFilter(new ViewerFilter() {
-			public boolean select(
-				Viewer viewer,
-				Object parentElement,
-				Object element) {
-				if (element instanceof SiteBookmark)
-					return !((SiteBookmark) element).isWebBookmark();
-				return true;
-			}
-		});
+//		treeViewer.addFilter(new ViewerFilter() {
+//			public boolean select(
+//				Viewer viewer,
+//				Object parentElement,
+//				Object element) {
+//				if (element instanceof SiteBookmark)
+//					return !((SiteBookmark) element).isWebBookmark();
+//				return true;
+//			}
+//		});
 	}
 
 	private void initializeItems() {
