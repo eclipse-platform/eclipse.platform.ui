@@ -2,9 +2,9 @@
 <plugin
   name="Eclipse Core Resource Management"
   id="org.eclipse.core.resources"
-  version="1.0"
-  class="org.eclipse.core.resources.ResourcesPlugin"
-  provider-name="IBM">
+  version="0.9"
+  provider-name="Object Technology International, Inc."
+  class="org.eclipse.core.resources.ResourcesPlugin">
 
   <requires>
     <import plugin="org.apache.xerces"/>
