@@ -655,6 +655,9 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	private String[] processCommandLine(String[] args) {
+		//TODO: need a real fix
+		// disables lazy registry cache loading 
+		System.setProperty(PROP_NO_LAZY_CACHE_LOADING, "true"); //$NON-NLS-1$
 		if (args == null)
 			return args;
 		allArgs = args;
