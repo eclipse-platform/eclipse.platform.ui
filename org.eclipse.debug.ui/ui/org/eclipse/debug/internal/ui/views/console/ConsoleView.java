@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.views.console;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,11 +18,11 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.actions.ClearOutputAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerGotoLineAction;
+import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -38,8 +40,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
@@ -261,6 +263,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * @see WorkbenchPart#getAdapter(Class)
 	 */
 	public Object getAdapter(Class required) {
+		if (!isAvailable()) {
+			return null;
+		}
 		if (IFindReplaceTarget.class.equals(required)) {
 			return getConsoleViewer().getFindReplaceTarget();
 		}
@@ -304,6 +309,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	}
 
 	protected void updateAction(String actionId) {
+		if (!isAvailable()) {
+			return;
+		}
 		IAction action= (IAction)fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
@@ -324,13 +332,13 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	/**
 	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
-	public void documentAboutToBeChanged(DocumentEvent arg0) {
+	public void documentAboutToBeChanged(DocumentEvent e) {
 	}
 
 	/**
 	 * @see IDocumentListener#documentChanged(DocumentEvent)
 	 */
-	public void documentChanged(DocumentEvent arg0) {
+	public void documentChanged(DocumentEvent e) {
 		updateAction(ITextEditorActionConstants.FIND);
 	}
 
@@ -363,5 +371,3 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setViewerInput(DebugUITools.getCurrentProcess());
 	}
 }
-
-
