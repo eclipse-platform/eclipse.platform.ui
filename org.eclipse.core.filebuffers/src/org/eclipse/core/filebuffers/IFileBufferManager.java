@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * file is connected.
  * <p>
  * Clients are not supposed to implement that interface.
+ * </p>
  * 
  * @since 3.0
  */

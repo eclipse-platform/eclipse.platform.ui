@@ -19,6 +19,10 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * file buffer is given in the form of a document and an associated annotation
  * model. Also, the text file buffer provides methods to manage the character
  * encoding used to read and write the buffer's underlying text file.
+ * <p>
+ * Clients are not supposed to implement that interface. Instances of this type
+ * are obtained from a {@link org.eclipse.core.filebuffers.ITextFileBufferManager}.
+ * </p>
  * 
  * @since 3.0
  */

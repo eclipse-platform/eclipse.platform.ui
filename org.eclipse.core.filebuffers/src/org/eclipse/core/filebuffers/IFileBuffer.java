@@ -29,9 +29,11 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * <p>
  * It is not specified whether simultaneous editing sessions can be owned by
  * different threads.
+ * </p>
  * <p>
  * Clients are not supposed to implement that interface. Instances of this type
  * are obtained from a {@link org.eclipse.core.filebuffers.IFileBufferManager}.
+ * </p>
  * 
  * @since 3.0
  */
