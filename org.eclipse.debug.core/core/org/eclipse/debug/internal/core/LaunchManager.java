@@ -47,7 +47,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.omg.CORBA.PERSIST_STORE;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
