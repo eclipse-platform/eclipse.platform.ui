@@ -166,7 +166,6 @@ public class AntCorePlugin extends Plugin {
 		if (preferences == null) {
 			return;
 		}
-		preferences.updatePluginPreferences();
 		savePluginPreferences();
 	}
 
