@@ -19,6 +19,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;

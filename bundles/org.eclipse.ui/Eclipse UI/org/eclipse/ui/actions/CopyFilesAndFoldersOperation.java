@@ -1,4 +1,4 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.actions;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
@@ -32,7 +32,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.misc.StatusUtil;
