@@ -82,30 +82,32 @@ public class BuilderUtils {
 		}
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfiguration configuration= null;
-		try {
-			// First, treat the configHandle as a memento. This is the format
-			// used in Eclipse 2.1.
-			configuration = manager.getLaunchConfiguration(configHandle);
-		} catch (CoreException e) {
-		}
-		if (configuration != null) {
-			version[0]= VERSION_2_1;
-		} else if (configHandle.startsWith(PROJECT_TAG)) {
+		if (configHandle.startsWith(PROJECT_TAG)) {
 			version[0]= VERSION_3_0_final;
 			IPath path= new Path(configHandle);
 			IFile file= project.getFile(path.removeFirstSegments(1));
 			if (file.exists()) {
 				configuration= manager.getLaunchConfiguration(file);
-			} 
+			}
 		} else {
-			// If the memento failed, try treating the handle as a file name.
-			// This is the format used in 3.0 RC1.
-			version[0]= VERSION_3_0_interim;
-			IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
-			IFile file= project.getFile(path);
-			if (file.exists()) {
+			try {
+				// Treat the configHandle as a memento. This is the format
+				// used in Eclipse 2.1.
+				configuration = manager.getLaunchConfiguration(configHandle);
+			} catch (CoreException e) {
+			}
+			if (configuration != null) {
+				version[0]= VERSION_2_1;
+			} else {
+				// If the memento failed, try treating the handle as a file name.
+				// This is the format used in 3.0 RC1.
 				version[0]= VERSION_3_0_interim;
-				configuration= manager.getLaunchConfiguration(file);
+				IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
+				IFile file= project.getFile(path);
+				if (file.exists()) {
+					version[0]= VERSION_3_0_interim;
+					configuration= manager.getLaunchConfiguration(file);
+				}
 			}
 		}
 		return configuration;
