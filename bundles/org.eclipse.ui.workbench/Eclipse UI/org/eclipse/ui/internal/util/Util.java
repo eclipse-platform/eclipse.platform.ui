@@ -28,6 +28,8 @@ import java.util.TreeSet;
 
 public class Util {
 
+	public final static SortedMap EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap());
+	public final static SortedSet EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet());
 	public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	public static int compare(Comparable left, Comparable right) {

@@ -22,10 +22,9 @@ import org.eclipse.ui.commands.ICommandHandler;
 import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceEvent;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
+import org.eclipse.ui.internal.util.Util;
 
 public final class CommandHandlerService implements ICommandHandlerService {
-
-	private final static SortedMap EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap());
 
 	private SortedMap commandHandlersById;
 	private ICommandHandlerServiceEvent commandHandlerServiceEvent;
@@ -62,7 +61,7 @@ public final class CommandHandlerService implements ICommandHandlerService {
 	}
 
 	public SortedMap getCommandHandlersById() {
-		return commandHandlersById != null ? Collections.unmodifiableSortedMap(commandHandlersById) : EMPTY_SORTED_MAP;
+		return commandHandlersById != null ? Collections.unmodifiableSortedMap(commandHandlersById) : Util.EMPTY_SORTED_MAP;
 	}
 
 	public void removeCommandHandler(String commandId)

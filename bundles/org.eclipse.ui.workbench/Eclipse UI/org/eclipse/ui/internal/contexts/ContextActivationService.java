@@ -21,10 +21,9 @@ import java.util.TreeSet;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
+import org.eclipse.ui.internal.util.Util;
 
 public final class ContextActivationService implements IContextActivationService {
-
-	private final static SortedSet EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet());
 
 	private SortedSet activeContextIds;
 	private IContextActivationServiceEvent contextActivationServiceEvent;
@@ -72,7 +71,7 @@ public final class ContextActivationService implements IContextActivationService
 	}
 
 	public SortedSet getActiveContextIds() {
-		return activeContextIds != null ? Collections.unmodifiableSortedSet(activeContextIds) : EMPTY_SORTED_SET;
+		return activeContextIds != null ? Collections.unmodifiableSortedSet(activeContextIds) : Util.EMPTY_SORTED_SET;
 	}
 	
 	public void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener)

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.commands;
 
+import java.util.SortedSet;
+
 /**
  * <p>
  * TODO javadoc
@@ -52,6 +54,20 @@ public interface ICommand {
 	 */	
 	ICommandHandler getCommandHandler()
 		throws NotHandledException;
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	SortedSet getContextBindings();
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	SortedSet getGestureBindings();
 		
 	/**
 	 * TODO javadoc
@@ -59,6 +75,20 @@ public interface ICommand {
 	 * @return
 	 */	
 	String getId();
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	SortedSet getImageBindings();
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @return
+	 */	
+	SortedSet getKeyBindings();
 	
 	/**
 	 * TODO javadoc

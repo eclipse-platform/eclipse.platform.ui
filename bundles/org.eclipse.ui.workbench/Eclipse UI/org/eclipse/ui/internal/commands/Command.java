@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.SortedSet;
 
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandEvent;
@@ -22,6 +23,7 @@ import org.eclipse.ui.commands.ICommandHandler;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {
 
@@ -69,8 +71,24 @@ final class Command implements ICommand {
 			throw new NotDefinedException();
 	}
 
+	public SortedSet getContextBindings() {
+		return Util.EMPTY_SORTED_SET;
+	}
+
+	public SortedSet getGestureBindings() {
+		return Util.EMPTY_SORTED_SET;
+	}
+		
 	public String getId() {
 		return id;
+	}
+
+	public SortedSet getImageBindings() {
+		return Util.EMPTY_SORTED_SET;		
+	}
+
+	public SortedSet getKeyBindings() {
+		return Util.EMPTY_SORTED_SET;		
 	}
 
 	public String getName() 
