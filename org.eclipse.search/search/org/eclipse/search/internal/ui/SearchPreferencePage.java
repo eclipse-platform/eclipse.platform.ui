@@ -169,6 +169,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		gd.widthHint= convertWidthInCharsToPixels(6);
 		fLimitTableValue.setLayoutData(gd);
 
+		applyDialogFont(parent);
+
 		fLimitTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLimitValueEnablement();
