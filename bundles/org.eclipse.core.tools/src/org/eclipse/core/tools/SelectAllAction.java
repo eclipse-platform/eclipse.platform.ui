@@ -19,7 +19,7 @@ public class SelectAllAction extends GlobalAction {
 	private ITextOperationTarget target;
 
 	public SelectAllAction(ITextOperationTarget target) {
-		super("Select all"); //$NON-NLS-1$
+		super("Select &All"); //$NON-NLS-1$
 		this.target = target;
 	}
 

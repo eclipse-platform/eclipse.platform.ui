@@ -31,7 +31,7 @@ public class ActivePluginsView extends TableWithTotalView {
 	private Action displayStackAction;
 
 	public static String VIEW_ID = ActivePluginsView.class.getName();
-	private static String columnHeaders[] = {"Plugin", "Classes", "Alloc", "Used", "Startup time", "Order", "Timestamp", "Class load time", "Startup method time", "RAM Alloc", "RAM Used", "ROM Alloc", "ROM Used"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$ //$NON-NLS-13$
+	private static String columnHeaders[] = {"Plug-in", "Classes", "Alloc", "Used", "Startup time", "Order", "Timestamp", "Class load time", "Startup method time", "RAM Alloc", "RAM Used", "ROM Alloc", "ROM Used"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$ //$NON-NLS-12$ //$NON-NLS-13$
 	private static int columnWidths[] = {500, 150, 200, 200, 150, 100, 0, 0, 0, 0, 0, 0, 0};
 
 	protected String[] getColumnHeaders() {
@@ -131,7 +131,7 @@ public class ActivePluginsView extends TableWithTotalView {
 	public void createPartControl(Composite parent) {
 		if (!StatsManager.MONITOR_ACTIVATION) {
 			Text text = new Text(parent, 0);
-			text.setText("Plugin monitoring is not enabled"); //$NON-NLS-1$
+			text.setText("Plug-in monitoring is not enabled"); //$NON-NLS-1$
 			return;
 		}
 		super.createPartControl(parent);
@@ -167,10 +167,10 @@ public class ActivePluginsView extends TableWithTotalView {
 				}
 			}
 		};
-		displayClassesInfoAction.setToolTipText("Display classes loaded by the selected plugin"); //$NON-NLS-1$
+		displayClassesInfoAction.setToolTipText("Display classes loaded by the selected plug-in"); //$NON-NLS-1$
 		displayClassesInfoAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("classes.gif")); //$NON-NLS-1$
 
-		displayStackAction = new Action("Stack trace") { //$NON-NLS-1$
+		displayStackAction = new Action("Stack &Trace") { //$NON-NLS-1$
 			public void run() {
 				try {
 					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);
@@ -184,7 +184,7 @@ public class ActivePluginsView extends TableWithTotalView {
 				}
 			}
 		};
-		displayStackAction.setToolTipText("Display the plugin activation stack trace"); //$NON-NLS-1$
+		displayStackAction.setToolTipText("Display the plug-in activation stack trace"); //$NON-NLS-1$
 		displayStackAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("trace.gif")); //$NON-NLS-1$
 	}
 

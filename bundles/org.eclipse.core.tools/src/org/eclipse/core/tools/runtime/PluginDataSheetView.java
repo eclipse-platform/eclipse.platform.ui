@@ -64,7 +64,7 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 
 	private void printExtensionLoadingStats(StringBuffer result, IExtension[] extensions) {
 		if (extensions.length == 0) {
-			result.append("No extensions contributed by this plugin\n"); //$NON-NLS-1$
+			result.append("No extensions contributed by this plug-in\n"); //$NON-NLS-1$
 			return;
 		}
 		result.append("Extension loading stats:\n"); //$NON-NLS-1$
@@ -82,7 +82,7 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 
 	private void printResourceBundleStats(StringBuffer result, ArrayList bundles, IPluginDescriptor descriptor) {
 		if (bundles == null || bundles.size() == 0) {
-			result.append("No resources loaded by this plugin\n"); //$NON-NLS-1$
+			result.append("No resources loaded by this plug-in\n"); //$NON-NLS-1$
 			return;
 		}
 		result.append("Resource bundles stats:\n"); //$NON-NLS-1$

@@ -32,7 +32,7 @@ public class ClearTextAction extends GlobalAction {
 	 * @param document the document to be cleared when this action is run.
 	 */
 	public ClearTextAction(IDocument document) {
-		super("Clear contents"); //$NON-NLS-1$
+		super("Cle&ar Contents"); //$NON-NLS-1$
 		this.setToolTipText("Clear contents"); //$NON-NLS-1$
 		this.document = document;
 		// the delete key is not captured by the workbench

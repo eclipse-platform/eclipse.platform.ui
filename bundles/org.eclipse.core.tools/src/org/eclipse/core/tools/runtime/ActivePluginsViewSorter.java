@@ -26,7 +26,7 @@ public class ActivePluginsViewSorter extends ViewerSorter implements ISorter {
 	private int columnNumber;
 	private Collator collator = Collator.getInstance();
 
-	// column headings: "Plugin", "Classes", "Alloc", "Used", "Startup time", "Order", "Timestamp", "Class load time", "Startup method time", "RAM Alloc", "RAM Used", "ROM Alloc", "ROM Used" };
+	// column headings: "Plug-in", "Classes", "Alloc", "Used", "Startup time", "Order", "Timestamp", "Class load time", "Startup method time", "RAM Alloc", "RAM Used", "ROM Alloc", "ROM Used" };
 	private int[][] SORT_ORDERS_BY_COLUMN = { //
 	{0}, /* Plugin */{1, 0}, /* Count */{2, 0}, /* Alloc */{3, 0}, /* Used */{4, 0}, /* Startup time */{5, 0}, /* Order */{6, 0}, /* timestamp */{7, 0}, /* Class load time */{8, 0}, /* Startup method time */{9, 0}, /* RAM Alloc */{10, 0}, /* RAM Used */{11, 0}, /*	ROM Alloc */{12, 0} /* ROM Used */
 	};

@@ -21,7 +21,7 @@ public class LoadedClassesViewSorter extends ViewerSorter implements ISorter {
 	private int columnNumber;
 	private Collator collator = Collator.getInstance();
 
-	//	columnHeaders = new String[]{ "Class", "Order", "Memory", "Plugin", "Timestamp", "RAM", "ROM" };
+	//	columnHeaders = new String[]{ "Class", "Order", "Memory", "Plug-in", "Timestamp", "RAM", "ROM" };
 	private int[][] SORT_ORDERS_BY_COLUMN = { //
 		{ 0, 3 }, /* Class */ {
 			1, 0, 3 }, /* Order */ {

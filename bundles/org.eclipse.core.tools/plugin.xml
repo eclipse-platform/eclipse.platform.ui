@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Plug-in Dependency Perspective"
+            name="Plug-in Dependency"
             icon="icons/req_plugins_obj.gif"
             class="org.eclipse.core.tools.runtime.PluginDependencyPerspective"
             id="org.eclipse.core.tools.runtime.PluginDependencyPerspective">
@@ -24,7 +24,7 @@
    <extension point="org.eclipse.ui.views">
       <category name="Runtime Tools" id="org.eclipse.core.tools.runtime"/>
       <view
-            name="Activated Plugins"
+            name="Activated Plug-ins"
             icon="icons/plugin.gif"
             category="org.eclipse.core.tools.runtime"
             class="org.eclipse.core.tools.runtime.ActivePluginsView"
@@ -36,13 +36,13 @@
             class="org.eclipse.core.tools.runtime.LoadedClassesView"
             id="org.eclipse.core.tools.runtime.LoadedClassesView"/>
       <view
-            name="Plugin Datasheet"
+            name="Plug-in Datasheet"
             icon="icons/datasheet.gif"
             category="org.eclipse.core.tools.runtime"
             class="org.eclipse.core.tools.runtime.PluginDataSheetView"
             id="org.eclipse.core.tools.runtime.PluginDataSheetView"/>
       <view
-            name="Stack Trace View"
+            name="Stack Trace"
             icon="icons/trace.gif"
             category="org.eclipse.core.tools.runtime"
             class="org.eclipse.core.tools.runtime.StackTraceView"

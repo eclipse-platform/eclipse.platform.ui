@@ -33,7 +33,7 @@ public abstract class AbstractCopySelectionAction extends GlobalAction {
 	 * @param selectionProvider the selection provider
 	 */
 	public AbstractCopySelectionAction(ISelectionProvider selectionProvider) {
-		super("Copy"); //$NON-NLS-1$
+		super("&Copy"); //$NON-NLS-1$
 		this.selectionProvider = selectionProvider;
 	}
 

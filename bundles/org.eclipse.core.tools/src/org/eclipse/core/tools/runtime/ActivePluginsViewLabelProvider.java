@@ -44,10 +44,10 @@ public class ActivePluginsViewLabelProvider extends LabelProvider implements ITa
 
 	public String getColumnText(Object element, int columnIndex) {
 		if (!(element instanceof IPluginDescriptor))
-			return "not a plugin"; //$NON-NLS-1$
+			return "not a plug-in"; //$NON-NLS-1$
 		BundleStats plugin = StatsManager.getDefault().getPlugin(((IPluginDescriptor) element).getUniqueIdentifier());
 		if (plugin == null)
-			return "no info for plugin"; //$NON-NLS-1$
+			return "no info for plug-in"; //$NON-NLS-1$
 		VMClassloaderInfo pluginInfo = VMClassloaderInfo.getClassloader(plugin.getPluginId());
 		switch (columnIndex) {
 			case 0 : /* plugin id */

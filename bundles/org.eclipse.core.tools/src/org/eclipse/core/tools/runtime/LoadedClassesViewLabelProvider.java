@@ -39,7 +39,7 @@ public class LoadedClassesViewLabelProvider extends LabelProvider implements ITa
 				return clazz.getLoadOrder() == -2 ? "<boot>" : "" + clazz.getLoadOrder(); //$NON-NLS-1$ //$NON-NLS-2$
 			case 2 : //		"Memory",
 				return classInfo == null ? "" : "" + (classInfo.getRAMSize() + classInfo.getROMSize()); //$NON-NLS-1$ //$NON-NLS-2$
-			case 3 : //		"Plugin Id", 
+			case 3 : //		"Plug-in Id", 
 				return clazz.getClassloader().getId();
 			case 4 : //		"Activation time",
 				return "" + clazz.getTimestamp(); //$NON-NLS-1$

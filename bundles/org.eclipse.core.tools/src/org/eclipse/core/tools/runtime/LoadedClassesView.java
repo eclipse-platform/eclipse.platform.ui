@@ -29,7 +29,7 @@ public class LoadedClassesView extends TableWithTotalView {
 	private Action displayStackAction;
 
 	public static String VIEW_ID = LoadedClassesView.class.getName();
-	private String[] columnHeaders = new String[] {"Class", "Order", "Memory", "Plugin", "Timestamp", "RAM", "ROM"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+	private String[] columnHeaders = new String[] {"Class", "Order", "Memory", "Plug-in", "Timestamp", "RAM", "ROM"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	private ColumnLayoutData[] columnLayout = new ColumnLayoutData[] {new ColumnWeightData(500), new ColumnWeightData(100), new ColumnWeightData(100), new ColumnWeightData(200), new ColumnPixelData(0), new ColumnPixelData(0), new ColumnPixelData(0)};
 
 	protected String[] getColumnHeaders() {
@@ -74,7 +74,7 @@ public class LoadedClassesView extends TableWithTotalView {
 	}
 
 	protected void createActions() {
-		displayStackAction = new Action("Stack trace") { //$NON-NLS-1$
+		displayStackAction = new Action("Stack &Trace") { //$NON-NLS-1$
 			public void run() {
 				try {
 					StackTraceView view = (StackTraceView) getSite().getPage().showView(StackTraceView.VIEW_ID);

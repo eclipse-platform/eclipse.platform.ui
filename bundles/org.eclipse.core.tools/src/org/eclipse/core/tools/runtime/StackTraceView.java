@@ -28,7 +28,7 @@ public class StackTraceView extends BaseTextView {
 
 	public void setInput(String stackFileName, long begin, long end) {
 		if (begin == -1 || end == -1) {
-			viewer.getDocument().set("No stack trace available.\nSee <eclipse install>/plugins/org.eclipse.core.boot/.options"); //$NON-NLS-1$
+			viewer.getDocument().set("No stack trace available.\nSee <eclipse install>/plugins/org.eclipse.osgi/.options"); //$NON-NLS-1$
 			viewer.refresh();
 			return;
 		}
