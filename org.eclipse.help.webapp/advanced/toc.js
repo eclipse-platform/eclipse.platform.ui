@@ -39,7 +39,7 @@ function getNextDown(node)
 	if (!a) return null;
 		
 	// Try visible child first
-	var li = a.parentNode.parentNode;
+	var li = a.parentNode;
 	var ul = getChildNode(li, "UL");
 	if (ul && ul.className == "expanded")
 		return getDescendantNode(ul, "A");
@@ -72,7 +72,7 @@ function getNextUp(node)
 	if (!a) return null;
 		
 	// Get previous sibling first
-	var li = a.parentNode.parentNode;
+	var li = a.parentNode;
 	var li_sib = getPrevSibling(li);
 	if (li_sib != null) {
 		// try to get the deepest node that preceeds this current node
@@ -162,8 +162,6 @@ function getAnchorNode(node) {
 	return node.parentNode;
   else if (node.tagName == "A") 
     return node;
-  else if (node.tagName == "NOBR")
-  	return node.lastChild;
   else if (node.tagName == "IMG")
   	return getChildNode(node.parentNode, "A");
   return null;
@@ -182,8 +180,6 @@ function getPlusMinus(node)
     	return getChildNode(node.parentNode.parentNode, "IMG");
   	else if (node.tagName == "A") 
     	return getChildNode(node.parentNode, "IMG");
-   	else if (node.tagName == "NOBR")
-  		return getChildNode(node, "IMG");
 
  	return null;
 }
@@ -204,7 +200,7 @@ function collapse(node) {
   node.className = "collapsed";
   node.src = plus.src;
   // set the UL as well
-  var ul = getChildNode(node.parentNode.parentNode, "UL");
+  var ul = getChildNode(node.parentNode, "UL");
   if (ul != null) ul.className = "collapsed";
 }
 
@@ -215,7 +211,7 @@ function expand(node) {
   	node.className = "expanded";
   	node.src = minus.src;
   	// set the UL as well
-  	var ul = getChildNode(node.parentNode.parentNode, "UL");
+  	var ul = getChildNode(node.parentNode, "UL");
   	if (ul != null) ul.className = "expanded";
 }
 
@@ -236,17 +232,13 @@ function expandPathTo(node)
 	if (isCollapsed(node))
 		expand(node);
 		
-	var nobr = node.parentNode;
-	if (nobr == null) return;
-	var li = nobr.parentNode;
-	if (nobr == null) return;
+	var li = node.parentNode;
+	if (li == null) return;
 	var ul = li.parentNode;
 	if (ul == null) return;
 	li = ul.parentNode;
 	if (li == null) return;
-	nobr = getChildNode(li, "NOBR");
-	if (nobr == null) return;
-	var img = getChildNode(nobr, "IMG");
+	var img = getChildNode(li, "IMG");
 	if (img == null) return;
 		
 	expandPathTo(img);
@@ -426,6 +418,7 @@ function mouseMoveHandler(e) {
  * handler for expanding / collapsing topic tree
  */
 function mouseClickHandler(e) {
+
   	var clickedNode = getTarget(e);
 
   	if (isPlusMinus(clickedNode) )

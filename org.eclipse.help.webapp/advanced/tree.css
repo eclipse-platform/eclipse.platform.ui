@@ -29,6 +29,7 @@ LI {
 	margin-top:3px; 
 	list-style-image:none;
 	list-style-type:none;
+		white-space: nowrap;
 }
 
 IMG {

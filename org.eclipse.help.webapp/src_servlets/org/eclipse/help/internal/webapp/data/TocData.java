@@ -171,7 +171,6 @@ public class TocData extends RequestData {
 
 		boolean hasNodes = topic.getSubtopics().length > 0;
 		if (hasNodes) {
-			out.write("<nobr>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/plus.gif' class='collapsed' >");
@@ -186,7 +185,6 @@ public class TocData extends RequestData {
 			out.write("/container_obj.gif'>");
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
-			out.write("</nobr>");
 
 			out.write("<ul class='collapsed'>");
 
@@ -197,7 +195,6 @@ public class TocData extends RequestData {
 
 			out.write("</ul>");
 		} else {
-			out.write("<nobr>");
 			out.write("<img src='");
 			out.write(imagesDirectory);
 			out.write("/plus.gif' style='visibility:hidden;' >");
@@ -212,7 +209,6 @@ public class TocData extends RequestData {
 			out.write("/topic.gif'>");
 			out.write(UrlUtil.htmlEncode(topic.getLabel()));
 			out.write("</a>");
-			out.write("</nobr>");
 		}
 
 		out.write("</li>");
