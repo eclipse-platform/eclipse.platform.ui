@@ -13,11 +13,13 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
+import org.eclipse.ui.internal.themes.ITheme;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -410,8 +412,8 @@ public interface IWorkbench {
 	
 	/**
 	 * Close the intro part, if one is open.
-	 * <p>
-	 * <em>EXPERIMENTAL</em>
+	 *
+	 *<p><em>EXPERIMENTAL</em></p>
 	 * 
 	 * @return whether the intro part was closed.
 	 * @since 3.0
@@ -420,8 +422,8 @@ public interface IWorkbench {
 	
 	/**
 	 * Return the <code>IIntroPart</code> for this <code>IWorkbench</code>, if any.
-	 * <p>
-	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p>
 	 *  
 	 * @return the <code>IIntroPart</code>, if any.
 	 * @since 3.0
@@ -431,8 +433,8 @@ public interface IWorkbench {
 	/**
 	 * Show the intro part in the preferred window.  If the intro part is currently being shown in 
 	 * another window, make it the active window.
-	 * <p>
-	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p>
 	 * 
 	 * @param preferredWindow the preferred <code>IWorkbenchWindow</code>.
 	 * @return the intro part, if one was available.
@@ -442,8 +444,8 @@ public interface IWorkbench {
 	
 	/**
 	 * Controls the intro site mode.
-	 * <p>
-	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p>
 	 * 
 	 * @param part the <code>IIntroPart</code> to set.
 	 * @param standby if <code>false</code>, the intro area will be fully visible. 
@@ -456,8 +458,8 @@ public interface IWorkbench {
 	/**
 	 * Returns <code>false</code> if the intro part is full screen, 
 	 * <code>true</code> if it is in stand-by mode.
-	 * <p>
-	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p>
 	 * 
 	 * @param part the <code>IIntroPart</code> to test.
 	 * @return the activity state of the area.
@@ -467,11 +469,74 @@ public interface IWorkbench {
 	
 	/**
 	 * Returns the introduction registry for the workbench.
-	 * <p>
-	 * <em>EXPERIMENTAL</em> 
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p> 
 	 * 
 	 * @return the workbench introduction registry
 	 * @since 3.0
 	 */
 	public IIntroRegistry getIntroRegistry();
+	
+	/**
+	 * Adds a property listener to the workbench.
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p>
+	 * @param listener the listener to add
+	 * @since 3.0
+	 */
+	void addPropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Removes a property listener from the workbench.
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p>
+	 * 
+	 * @param listener the listener to remove
+	 * @since 3.0
+	 */
+	void removePropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Get a theme.
+	 *  
+	 * <p><em>EXPERIMENTAL</em></p>
+	 * 
+	 * @param id the theme to find.
+	 * @return the <code>ITheme</code> or <code>null</code> if it cannot be found.
+	 * @since 3.0
+	 */
+	ITheme getTheme(String id);
+	
+	/**
+	 * Get the currently active theme. 
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p> 
+	 * 
+	 * @return the current theme.  This will never be <code>null</code>.
+	 * @since 3.0
+	 */
+	ITheme getCurrentTheme();
+	
+	/**
+	 * The default theme id.
+	 * 
+	 * <p><em>EXPERIMENTAL</em></p>
+	 * 
+	 * @since 3.0
+	 */
+	public static final String DEFAULT_THEME = null;
+	
+	/**
+	 * Indicates that the provided theme has changed in some way.
+	 * @since 3.0
+	 */
+	public static final String CHANGE_THEME = "CHANGE_THEME"; //$NON-NLS-1$
+	
+	/**
+	 * Indicates that the current theme has changed to a new theme.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String CHANGE_CURRENT_THEME = "CHANGE_CURRENT_THEME"; //$NON-NLS-1$
+
 }

@@ -13,12 +13,43 @@ package org.eclipse.ui.internal.themes;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.GradientRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
+ * 
+ * <p><em>EXPERIMENTAL</em></p>
+ * 
  * @since 3.0
  */
 public interface ITheme {
 
+    /**
+	 * Indicates that the provided theme has changed in some way.
+	 * @since 3.0
+	 */
+	public static final String CHANGE_THEME = "CHANGE_THEME"; //$NON-NLS-1$    
+    
+    /**
+	 * Adds a property listener to the theme.
+	 * 
+	 * @param listener the listener to add
+	 */
+	void addPropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Removes a property listener from the theme.
+	 * 
+	 * @param listener the listener to remove
+	 */
+	void removePropertyChangeListener(IPropertyChangeListener listener);    
+    
+	/**
+	 * Returns the id of this theme.
+	 * 
+	 * @return the id of this theme.
+	 */
+    String getId();
+    
     public ColorRegistry getColorRegistry();
     
     public FontRegistry getFontRegistry();
