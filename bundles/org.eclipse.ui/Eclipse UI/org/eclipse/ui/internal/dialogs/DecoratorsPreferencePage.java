@@ -5,12 +5,14 @@ package org.eclipse.ui.internal.dialogs;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.*;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.*;
@@ -19,7 +21,6 @@ import org.eclipse.ui.internal.*;
  * The DecoratorsPreferencePage is the preference page for enabling and disabling
  * the decorators in the image and for giving the user a description of the decorator.
  */
-
 public class DecoratorsPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -34,27 +35,36 @@ public class DecoratorsPreferencePage
 
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
+		layout.verticalSpacing = 10;
 		mainComposite.setLayout(layout);
 
 		Label topLabel = new Label(mainComposite, SWT.NONE);
 		topLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.explanation")); //$NON-NLS-1$
+		
+		createDecoratorsArea(mainComposite);
+		createDescriptionArea(mainComposite);
 
+		return mainComposite;
+	}
+
+	private void createDecoratorsArea(Composite mainComposite) {
 		Composite decoratorsComposite = new Composite(mainComposite, SWT.NONE);
 		decoratorsComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout decoratorsLayout = new GridLayout();
 		decoratorsLayout.marginWidth = 0;
 		decoratorsLayout.marginHeight = 0;
 		decoratorsComposite.setLayout(decoratorsLayout);
-
+		
 		Label decoratorsLabel = new Label(decoratorsComposite, SWT.NONE);
 		decoratorsLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.decoratorsLabel")); //$NON-NLS-1$
 		
-		// Checkbox tree viewer of capabilities in selected categories
+		// Checkbox table viewer of decorators
 		checkboxViewer =
 			CheckboxTableViewer.newCheckList(
 				decoratorsComposite,
@@ -65,7 +75,7 @@ public class DecoratorsPreferencePage
 				return ((DecoratorDefinition) element).getName();
 			}
 		});
-
+		
 		checkboxViewer.setContentProvider(new IStructuredContentProvider() {
 			public void dispose() {
 				//Nothing to do on dispose
@@ -76,9 +86,9 @@ public class DecoratorsPreferencePage
 				//Make an entry for each decorator definition
 				return (DecoratorDefinition[]) inputElement;
 			}
-
+		
 		});
-
+		
 		checkboxViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (event.getSelection() instanceof IStructuredSelection) {
@@ -92,7 +102,7 @@ public class DecoratorsPreferencePage
 				}
 			}
 		});
-
+		
 		checkboxViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				checkboxViewer.setSelection(
@@ -105,23 +115,23 @@ public class DecoratorsPreferencePage
 		for (int i = 0; i < definitions.length; i++) {
 			checkboxViewer.setChecked(definitions[i], definitions[i].isEnabled());
 		}
+	}
 
+	private void createDescriptionArea(Composite mainComposite) {
 		Composite textComposite = new Composite(mainComposite, SWT.NONE);
 		textComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout textLayout = new GridLayout();
 		textLayout.marginWidth = 0;
 		textLayout.marginHeight = 0;
 		textComposite.setLayout(textLayout);
-
+		
 		Label descriptionLabel = new Label(textComposite, SWT.NONE);
 		descriptionLabel.setText(
 			WorkbenchMessages.getString("DecoratorsPreferencePage.description")); //$NON-NLS-1$
-
-		descriptionText = new Text(textComposite, SWT.READ_ONLY | SWT.BORDER);
-		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		return mainComposite;
-	}
+		
+		descriptionText =
+			new Text(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+		descriptionText.setLayoutData(new GridData(GridData.FILL_BOTH));	}
 
 	/**
 	 * Show the selected description in the text.

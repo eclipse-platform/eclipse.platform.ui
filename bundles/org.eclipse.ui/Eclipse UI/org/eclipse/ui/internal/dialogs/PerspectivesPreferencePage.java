@@ -65,18 +65,21 @@ protected Control createContents(Composite parent) {
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
 
 	Composite pageComponent = new Composite(parent, SWT.NULL);
-	GridLayout layout = new GridLayout();
-	pageComponent.setLayout(layout);
 	GridData data = new GridData(GridData.FILL_BOTH);
 	pageComponent.setLayoutData(data);
+
+	GridLayout layout = new GridLayout();
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
+	layout.verticalSpacing = 10;
+	pageComponent.setLayout(layout);
 	
 	createOpenViewButtonGroup(pageComponent);
-	
+
 	createProjectPerspectiveGroup(pageComponent);
 
-	WorkbenchPreferencePage.createSpace(pageComponent);
 	createCustomizePerspective(pageComponent);	
-	// Return results.
+
 	return pageComponent;
 }
 /**
@@ -177,20 +180,23 @@ private void createProjectPerspectiveGroup(Composite composite) {
  * perspectives.
  */
 protected Composite createCustomizePerspective(Composite parent) {
-	
-	// Add the label
-	Label label = new Label(parent, SWT.LEFT);
-	label.setText(WorkbenchMessages.getString("PerspectivesPreference.available")); //$NON-NLS-1$
-	label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 	// define container & its gridding
 	Composite perspectivesComponent = new Composite(parent, SWT.NULL);
+	perspectivesComponent.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	layout.marginWidth = 0;
 	layout.marginHeight = 0;
 	perspectivesComponent.setLayout(layout);
-	perspectivesComponent.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
+	// Add the label
+	Label label = new Label(perspectivesComponent, SWT.LEFT);
+	label.setText(WorkbenchMessages.getString("PerspectivesPreference.available")); //$NON-NLS-1$
+	GridData data = new GridData();
+	data.horizontalSpan = 2;
+	label.setLayoutData(data);
 	
 	// Add perspective list.
 	list = new List(perspectivesComponent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -200,7 +206,7 @@ protected Composite createCustomizePerspective(Composite parent) {
 		}
 	});
 	
-	GridData data = new GridData(GridData.FILL_BOTH);
+	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = LIST_WIDTH;
 	data.heightHint = LIST_HEIGHT;
 	list.setLayoutData(data);

@@ -89,13 +89,16 @@ protected Control createContents(Composite parent) {
 	editorAlignment = store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	viewAlignment =	store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 
-	Composite composite = new Composite(parent, SWT.NULL);
+	Composite composite = new Composite(parent, SWT.NONE);
+	composite.setLayoutData(
+		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+
 	GridLayout layout = new GridLayout();
 	layout.marginWidth = 0;
 	layout.marginHeight = 0;
+	layout.verticalSpacing = 10;
+	
 	composite.setLayout(layout);
-	composite.setLayoutData(
-		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
 	createEditorTabButtonGroup(composite);
 	createViewTabButtonGroup(composite);
@@ -122,7 +125,7 @@ protected Control createContents(Composite parent) {
 			}
 		}
 	};
-	
+	JFaceResources.getFontRegistry().addListener(fontListener);
 	noteLabel.addDisposeListener(new DisposeListener() {
 		public void widgetDisposed(DisposeEvent event) {
 			JFaceResources.getFontRegistry().removeListener(fontListener);
@@ -131,11 +134,10 @@ protected Control createContents(Composite parent) {
 	
 	Label messageLabel = new Label(messageComposite,SWT.NONE);
 	messageLabel.setText(APPLY_MESSAGE);
+
+	Label spacer = new Label(composite, SWT.NONE);
 	
-	createSpacer(composite);
-	JFaceResources.getFontRegistry().addListener(fontListener);
-	
-	Group colorComposite = new Group(composite,SWT.NULL);
+	Group colorComposite = new Group(composite,SWT.NONE);
 	colorComposite.setLayout(new GridLayout());
 	colorComposite.setText(WorkbenchMessages.getString("ViewsPreference.ColorsTitle")); //$NON-NLS-1$
 				
@@ -144,7 +146,7 @@ protected Control createContents(Composite parent) {
 	colorComposite.setLayoutData(data);	
 	
 	//Add in an intermediate composite to allow for spacing
-	Composite spacingComposite = new Composite(colorComposite,SWT.NULL);
+	Composite spacingComposite = new Composite(colorComposite,SWT.NONE);
 	spacingComposite.setLayout(new GridLayout());
 	
 	errorColorEditor = new ColorFieldEditor(
@@ -210,18 +212,6 @@ private void createEditorTabButtonGroup(Composite composite) {
 
 }
 
-/**
- * Creates a horizontal spacer line that fills the width of its container.
- *
- * @param parent the parent control
- */
-private void createSpacer(Composite parent) {
-	Label spacer = new Label(parent, SWT.NONE);
-	GridData data = new GridData();
-	data.horizontalAlignment = GridData.FILL;
-	data.verticalAlignment = GridData.BEGINNING;
-	spacer.setLayoutData(data);
-}
 /**
  * Create a composite that contains buttons for selecting tab position for the view selection. 
  * @param composite Composite
