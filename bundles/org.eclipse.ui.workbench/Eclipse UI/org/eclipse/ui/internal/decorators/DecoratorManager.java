@@ -350,12 +350,20 @@ public class DecoratorManager
 	}
 
 	/**
-	 * Reset the cached values in the receiver and 
-	 * force an update on all listeners.
+	 * Clear the caches in the manager. This is required
+	 * to avoid updates that may occur due to changes in 
+	 * enablement.
 	 */
-	public void reset() {
+	public void clearCaches() {
 		cachedFullDecorators = new HashMap();
 		lightweightManager.reset();
+	}
+		
+	/**
+	 * Enablement had changed. Fire the listeners and write
+	 * the preference.
+	 */
+	public void updateForEnablementChange() {
 		fireListeners(new LabelProviderChangedEvent(this));
 		writeDecoratorsPreference();
 	}
