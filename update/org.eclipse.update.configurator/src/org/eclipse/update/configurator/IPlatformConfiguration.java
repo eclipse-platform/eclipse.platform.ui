@@ -182,6 +182,7 @@ public interface IPlatformConfiguration {
 		/**
 		 * When this site policy is used, only plug-ins specified by the configured features
 		 * are contributed to the runtime.
+		 * @since 3.1
 		 */
 		public static final int MANAGED_ONLY = 2;
 
