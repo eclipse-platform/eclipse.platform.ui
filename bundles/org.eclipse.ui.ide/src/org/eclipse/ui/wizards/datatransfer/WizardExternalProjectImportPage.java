@@ -162,6 +162,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
 		projectNameField.setFont(dialogFont);
+		projectNameField.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	}
 	/**
 	 * Creates the project location specification controls.
