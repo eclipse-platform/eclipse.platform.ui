@@ -1,5 +1,8 @@
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.ViewPart;
+
 public class ShowViewMenuAction extends ShowPartPaneMenuAction {
 
 /**
@@ -25,3 +28,18 @@ protected void showMenu(PartPane pane) {
 }
 }
 
+	/**
+	 * See IPartListener
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		super.partActivated(part);
+
+		//All of the conditions in the super class passed
+		//now check for the menu.
+		if (isEnabled()) {
+			PartPane pane = (((PartSite) part.getSite()).getPane());
+			if (pane instanceof ViewPane)
+				setEnabled(((ViewPane) pane).hasViewMenu());
+		}
+	}
+}
