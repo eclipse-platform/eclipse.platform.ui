@@ -16,10 +16,13 @@
 package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ResourceBundle;
+
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.outline.DocumentModelChangeEvent;
+import org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
@@ -297,6 +300,17 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
         }
     };
     
+    private IDocumentModelListener fDocumentModelListener= new IDocumentModelListener() {
+		/* (non-Javadoc)
+		 * @see org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener#documentModelChanged(org.eclipse.ant.internal.ui.editor.outline.DocumentModelChangeEvent)
+		 */
+		public void documentModelChanged(DocumentModelChangeEvent event) {
+			if (event.isPreferenceChange()) {
+				updateEditorImage();
+			}
+		}
+	};
+    
     /**
      * The page that shows the outline.
      */
@@ -318,6 +332,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
+		XMLCore.getDefault().addDocumentModelListener(fDocumentModelListener);
     }
 
 
@@ -658,6 +673,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
 			fEditorSelectionChangedListener= null;
 		}
+		XMLCore.getDefault().removeDocumentModelListener(fDocumentModelListener);
 	}
 	
 	/* (non-Javadoc)

@@ -145,7 +145,8 @@ public class AntModel {
 		}
 		fIsDirty= true;
 		reconcile(null);
-		updateMarkers();
+		fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this, true));
+		fMarkerUpdater.updateMarkers();
 	}
 
 	public void install() {
