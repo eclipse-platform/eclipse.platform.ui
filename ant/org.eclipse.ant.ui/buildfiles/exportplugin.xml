@@ -20,6 +20,8 @@
 		<jar jarfile="${dest}/antui.jar">
 			<fileset dir="bin">
 				<exclude name="org/eclipse/ant/ui/internal/antsupport/*"/>
+				<exclude name="org/eclipse/ant/ui/internal/antsupport/inputhandler/*"/>
+				<exclude name="org/eclipse/ant/ui/internal/antsupport/logger/*"/>
 			</fileset>
 		</jar>
 		<!-- Create the source zip -->
@@ -32,6 +34,7 @@
 		<copy file="plugin.properties" todir="${dest}"/>
 		<copy file=".classpath" todir="${dest}"/>
 		<copy file=".options" todir="${dest}"/>
+		<copy file="lib/antrunner.jar" todir="${dest}/lib"/>
 		<copy todir="${dest}/icons">
 			<fileset dir="icons" />
 		</copy>		
