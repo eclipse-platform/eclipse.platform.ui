@@ -169,11 +169,13 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				fModel.removeAnnotationModelListener(this);
 			fModel= model;
 			if (fModel != null) {
-				try {
-					fIsSettingModel= true;
-					fModel.addAnnotationModelListener(this);
-				} finally {
-					fIsSettingModel= false;
+				synchronized(this) {
+					try {
+						fIsSettingModel= true;
+						fModel.addAnnotationModelListener(this);
+					} finally {
+						fIsSettingModel= false;
+					}
 				}
 			}
 		}
@@ -284,7 +286,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	/*
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
-	public void modelChanged(final IAnnotationModel model) {
+	public synchronized void modelChanged(final IAnnotationModel model) {
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
 			if (fIsSettingModel) {
 				// inside the ui thread -> no need for posting
