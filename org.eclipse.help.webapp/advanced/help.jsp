@@ -54,7 +54,7 @@ function toggleFrame(title)
 </script>
 </head>
 
-<frameset id="helpFrameset" cols="25%,*"  framespacing="1" border="1"  frameborder="1" spacing="1"  scrolling="no">
+<frameset id="helpFrameset" cols="25%,*"  framespacing="4" border="4"  frameborder="1" spacing="1"  scrolling="no">
    <frame name="NavFrame" src='<%="nav.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
    <frame name="ContentFrame" src='<%="content.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 </frameset>

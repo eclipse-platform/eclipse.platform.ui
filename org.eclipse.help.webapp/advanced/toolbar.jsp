@@ -36,7 +36,7 @@ BODY {
 }
 
 #tdborder {
-	border:1px solid WindowText; 
+	border:1px solid ThreeDShadow; 
 	border-left-width:0;
 	border-right-width:0;
 }

@@ -31,7 +31,7 @@ HTML {
 BODY {
 	font: <%=prefs.getViewFont()%>;
 	background:<%=prefs.getToolbarBackground()%>;
-	border:1px solid WindowText;
+	border:1px solid ThreeDShadow;
 	padding:0px;
 	margin:0px;
 }
@@ -61,7 +61,7 @@ FORM {
 }
 
 #searchWord {
-	border:1px solid WindowText;
+	border:1px solid ThreeDShadow;
 	width:100%;
 	font:icon;
 }
@@ -81,7 +81,7 @@ FORM {
 
 .button {
 	font:icon;
-	border:1px solid #ffffff;
+	border:1px solid ThreeDShadow;
 	margin:0px;
 	padding:0px;
 }
@@ -90,7 +90,7 @@ FORM {
 if (data.isMozilla()) {
 %>
 input[type="checkbox"] {
-	border:2px solid WindowText; 
+	border:2px solid ThreeDShadow; 
 	margin:0xp; 
 	padding:0px;	
 	height:12px;
@@ -215,10 +215,10 @@ for (int i=0; i<tocData.getTocCount(); i++)
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="right">
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
-					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
+					<td style="border:1px solid ThreeDShadow; padding:0px; margin:0px;">
 						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=ServletResources.getString("Search", request)%>'  id="go" alt='<%=ServletResources.getString("Search", request)%>'>
 					</td>
-					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
+					<td style="border:1px solid ThreeDShadow; padding:0px; margin:0px;">
 					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>

@@ -61,14 +61,14 @@ INPUT {
 #searchWord {	
 	padding-left:4px;
 	padding-right:4px;
-	border:1px solid;
+	border:1px solid ThreeDShadow;
 }
 
 #go {
 	background:WindowText;
 	color:Window;
 	font-weight:bold;
-	border:1px solid WindowText;
+	border:1px solid ThreeDShadow;
 }
 
 

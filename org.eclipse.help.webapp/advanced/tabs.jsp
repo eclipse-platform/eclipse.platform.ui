@@ -30,7 +30,7 @@ BODY {
 	background:<%=prefs.getToolbarBackground()%>;
 	margin:0px;
 	padding:0px;
- 	border-top:1px solid WindowText;
+ 	border-top:1px solid ThreeDShadow;
 	cursor:default;
 	align:center;
 }

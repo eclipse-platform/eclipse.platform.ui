@@ -31,7 +31,7 @@ HTML {
 BODY {
 	margin:0px;
 	padding:0px;
-	border-right:1px solid WindowText;
+	border-right:1px solid ThreeDShadow;
 	/* Mozilla does not like width:100%, so we set height only */
 	height:100%;
 }
