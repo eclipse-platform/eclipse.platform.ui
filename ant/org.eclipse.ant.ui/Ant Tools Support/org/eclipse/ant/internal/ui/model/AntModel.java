@@ -557,6 +557,9 @@ public class AntModel implements IAntModel {
 			int nonWhitespaceOffset= 0; 
 			int length= 0;
 			if (location == Location.UNKNOWN_LOCATION && node != null) {
+                if (node.getImportNode() != null) {
+                    node= node.getImportNode();
+                }
 				nonWhitespaceOffset= node.getOffset();
 				length= node.getLength();
 			} else {
@@ -583,6 +586,9 @@ public class AntModel implements IAntModel {
 						}
 						length= getLastCharColumn(line) - (nonWhitespaceOffset - originalOffset);
 					} else {
+                        if (node.getImportNode() != null) {
+                            node= node.getImportNode();
+                        }
 						nonWhitespaceOffset= node.getOffset();
 						length= node.getLength();
 					}
@@ -1540,13 +1546,13 @@ public class AntModel implements IAntModel {
             if (nodeText.equals(newNodeText)) {
                 node.setNeedsToBeConfigured(false);
 				//update the datastructures for the new node as the offset may have changed.
-				List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(nodeIdentifier);
-				for (Iterator iter = tasks.iterator(); iter.hasNext(); ) {
-					String taskName = (String) iter.next();
-					fTaskNameToDefiningNode.put(taskName, node);
-				}
-            }
-        }
+                    List tasks= (List) fDefinerNodeIdentifierToDefinedTasks.get(nodeIdentifier);
+                        for (Iterator iter = tasks.iterator(); iter.hasNext(); ) {
+                            String taskName = (String) iter.next();
+                            fTaskNameToDefiningNode.put(taskName, node);
+                        }
+                    }
+                }
         if (newNodeText != null) {
             fDefinersToText.put(nodeIdentifier, newNodeText);
         }
