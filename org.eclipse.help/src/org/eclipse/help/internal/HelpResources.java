@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.help.internal.webapp;
+package org.eclipse.help.internal;
 
 import java.text.*;
 import java.util.*;
@@ -17,51 +17,36 @@ import org.eclipse.core.boot.*;
 
 /**
  * Uses a resource bundle to load images and strings from
- * a property file in a documentation plugin
+ * a property file.
  */
-public class WebappResources {
-
-	// resource bundles indexed by locale
-	private static HashMap resourceBundleTable = new HashMap();
-
-	/**
-	 * Returns a string from a property file.
-	 * It uses 'name' as a the key to retrieve from the webapp.properties file.
-	 * @param request HttpServletRequest or null; default locale will be used if null passed
-	 */
-	public static String getString(String name, Locale locale) {
-
-		// get bundle
-		ResourceBundle bundle = getBundle(locale);
-		if (bundle == null) {
-			return name;
-		}
-
-		// get value
-		try {
-			return bundle.getString(name);
-		} catch (MissingResourceException mre) {
-			return name;
-		}
+public class HelpResources {
+	private static ResourceBundle resBundle;
+	static {
+		resBundle = ResourceBundle.getBundle(HelpResources.class.getName());
 	}
-
+	/**
+	 * Resources constructor.
+	 */
+	public HelpResources() {
+		super();
+	}
 	/**
 	 * Returns a string from a property file
 	 */
-	public static String getString(
-		String name,
-		Locale locale,
-		String replace0) {
-
-		// get bundle
-		ResourceBundle bundle = getBundle(locale);
-		if (bundle == null) {
+	public static String getString(String name) {
+		try {
+			return resBundle.getString(name);
+		} catch (Exception e) {
 			return name;
 		}
 
-		// get value
+	}
+	/**
+	 * Returns a string from a property file
+	 */
+	public static String getString(String name, String replace0) {
 		try {
-			String stringFromPropertiesFile = bundle.getString(name);
+			String stringFromPropertiesFile = resBundle.getString(name);
 			stringFromPropertiesFile =
 				MessageFormat.format(
 					stringFromPropertiesFile,
@@ -71,32 +56,6 @@ public class WebappResources {
 			return name;
 		}
 
-	}
-	/**
-	 * Obtains resource bundle for specified locale.
-	 * Loads bundle if necessary
-	 * @param locale Locale or null to use default locale
-	 * @return ResourceBundle or null if not found
-	 */
-	private static ResourceBundle getBundle(Locale locale) {
-		if (locale == null)
-			locale = getDefaultLocale();
-
-		// check cache
-		ResourceBundle bundle =
-			(ResourceBundle) resourceBundleTable.get(locale);
-
-		// load bundle
-		if (bundle == null) {
-			bundle =
-				ResourceBundle.getBundle(
-					WebappResources.class.getName(),
-					locale);
-			if (bundle != null) {
-				resourceBundleTable.put(locale, bundle);
-			}
-		}
-		return bundle;
 	}
 	private static Locale getDefaultLocale() {
 		String nl = BootLoader.getNL();

@@ -12,7 +12,7 @@ package org.eclipse.help;
 /**
  * Live Help Extension.  Classes that implement this interface
  * can be used as live help extensions.
- * When user clicks live help link on the help document,
+ * When user clicks a live help link in a help document,
  * the class will be loaded and run.
  * @since 2.0
  */

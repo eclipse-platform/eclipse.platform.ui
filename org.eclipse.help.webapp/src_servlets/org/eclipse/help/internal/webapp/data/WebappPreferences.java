@@ -11,7 +11,7 @@
 package org.eclipse.help.internal.webapp.data;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Preferences for availiable to webapp
@@ -22,7 +22,7 @@ public class WebappPreferences {
 	 * Constructor.
 	 */
 	public WebappPreferences() {
-		prefs = HelpPlugin.getDefault().getPluginPreferences();
+		prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 	}
 	/**
 	 * @return String - URL of banner page or null
@@ -40,12 +40,12 @@ public class WebappPreferences {
 	}
 
 	public boolean isBookmarksView() {
-		return HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER
+		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
 			&& "true".equals(prefs.getString("bookmarksView"));
 	}
 
 	public boolean isLinksView() {
-		return HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER
+		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
 			&& "true".equals(prefs.getString("linksView"));
 	}
 

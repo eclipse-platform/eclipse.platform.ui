@@ -34,8 +34,8 @@ public class ContextsFileParser extends DefaultHandler {
 		this.builder = builder;
 	}
 	/**
-	 * Receive notification of character data.
-	 */
+	  * Receive notification of character data.
+	  */
 	public void characters(char ch[], int start, int length)
 		throws SAXException {
 		if (seenDescription)
@@ -47,8 +47,8 @@ public class ContextsFileParser extends DefaultHandler {
 		}
 	}
 	/**
-	 * Receive notification of the end of an element.
-	 */
+	  * Receive notification of the end of an element.
+	  */
 	public void endElement(String namespaceURI, String localName, String qName)
 		throws SAXException {
 		// make sure that no error has already occurred before adding to stack.
@@ -93,13 +93,13 @@ public class ContextsFileParser extends DefaultHandler {
 		String param3 = ex.getMessage();
 		String message =
 			MessageFormat.format(
-				Resources.getString(messageID),
+				HelpResources.getString(messageID),
 				new Object[] { param0, param1, param2, param3 });
 		return message;
 	}
 	/**
-	 * Receive notification of the beginning of an element.
-	 */
+	  * Receive notification of the beginning of an element.
+	  */
 	public void startElement(
 		String namespaceURI,
 		String localName,
@@ -115,7 +115,7 @@ public class ContextsFileParser extends DefaultHandler {
 			// the current StringBuffer of description.
 			// ie: there are many bold start tags in the stack, but we appended
 			// the tag only once to the description string.
-			// eg: (b) some text (b) more test (/b) more text (/b) will result
+			// eg: (b) some text (b) more test (/b) more text (/b) will result 
 			// in all of the sentence being bold.
 			if (!(stack.peek()).equals(ContextsNode.BOLD_TAG))
 				buffer.append(ContextsNode.BOLD_TAG);
@@ -158,15 +158,14 @@ public class ContextsFileParser extends DefaultHandler {
 			is.close();
 		} catch (ParserConfigurationException pce) {
 			HelpPlugin.logError(
-				Resources.getString("ContextsFileParser.PCE"),
+				HelpResources.getString("ContextsFileParser.PCE"),
 				pce);
 		} catch (SAXException se) {
 			HelpPlugin.logError("", se);
 		} catch (IOException ioe) {
-			String msg = Resources.getString("E009", file);
+			String msg = HelpResources.getString("E009", file);
 			HelpPlugin.logError(msg, ioe);
-			// now pass it to the RuntimeHelpStatus object explicitly because
-			// we
+			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
 			RuntimeHelpStatus.getInstance().addParseError(msg, file);
 		}

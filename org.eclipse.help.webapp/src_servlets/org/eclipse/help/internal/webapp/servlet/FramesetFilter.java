@@ -33,6 +33,10 @@ public class FramesetFilter implements IFilter {
 			return out;
 		}
 		
+		if("/nftopic".equals(req.getServletPath())){
+			return out;
+		}
+
 		String noframes = req.getParameter("noframes");
 		if ("true".equals(noframes)){
 			return out;

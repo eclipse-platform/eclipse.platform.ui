@@ -107,7 +107,6 @@ public class TocData extends RequestData {
 	//       and allow help classes in JSP's.
 
 	public int getTocCount() {
-		// get filtered tocs
 		return tocs.length;
 	}
 
@@ -171,11 +170,11 @@ public class TocData extends RequestData {
 	 * @return true if TOC should be visible
 	 */
 	public boolean isInRole(int toc) {
-		return HelpSystem.getTocManager().isTocInRole(toc, getLocale());
+		return HelpPlugin.getTocManager().isTocInRole(toc, getLocale());
 	}
 
 	private void loadTocs() {
-		tocs = HelpSystem.getTocManager().getTocs(getLocale());
+		tocs = HelpPlugin.getTocManager().getTocs(getLocale());
 		// Find the requested TOC
 		selectedToc = -1;
 		if (tocHref != null && tocHref.length() > 0) {
@@ -203,7 +202,7 @@ public class TocData extends RequestData {
 	 * Finds a TOC that contains specified topic
 	 * 
 	 * @param topic
-	 *           the topic href
+	 *            the topic href
 	 */
 	private int findTocContainingTopic(String topic) {
 		if (topic == null || topic.equals(""))
@@ -311,10 +310,10 @@ public class TocData extends RequestData {
 	 * @param topic
 	 * @param out
 	 * @param maxLevels
-	 *           relative number of topic levels to generate (pass
-	 *           <0 for inifinite), 1 generates this topic as last level topic
+	 *            relative number of topic levels to generate (pass
+	 *            <0 for inifinite), 1 generates this topic as last level topic
 	 * @param currentLevel
-	 *           current level of topic, 0 is first Level under TOC
+	 *            current level of topic, 0 is first Level under TOC
 	 * @throws IOException
 	 */
 	private void generateTopic(

@@ -16,8 +16,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.webapp.*;
 import org.eclipse.help.internal.webapp.servlet.*;
 import org.eclipse.help.internal.workingset.*;
@@ -245,14 +245,14 @@ public class SearchData extends RequestData {
 			if (pm.isDone()) {
 				this.indexCompletion = 100;
 				SearchResults results = createHitCollector();
-				HelpSystem.getSearchManager().search(
+				BaseHelpSystem.getSearchManager().search(
 					createSearchQuery(),
 					results,
 					pm);
 				hits = results.getSearchHits();
 				if (hits == null) {
 					HelpWebappPlugin.logError(
-						Resources.getString("index_is_busy"),
+						HelpBaseResources.getString("index_is_busy"),
 						null);
 				}
 				return;
@@ -340,7 +340,7 @@ public class SearchData extends RequestData {
 			return new WorkingSet[0];
 		}
 		if (scopes.length
-			== HelpSystem.getTocManager().getTocs(getLocale()).length) {
+			== HelpPlugin.getTocManager().getTocs(getLocale()).length) {
 			// do not filter if all books are selected
 			return null;
 		}

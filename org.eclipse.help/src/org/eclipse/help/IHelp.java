@@ -10,23 +10,15 @@
  *******************************************************************************/
 package org.eclipse.help;
 /**
- * Interface to the help system UI.
- * <p>
- * The Eclipse platform defines an extension point 
- * (<code>"org.eclipse.help.support"</code>) for plugging in a help system UI.
- * The help system UI is entirely optional.
- * Clients may provide a UI for presenting help to the user by implementing this
- * interface and including the name of their class in the 
- * <code>&lt;config&gt;</code> element in an extension to the platform's help 
- * support extension point (<code>"org.eclipse.help.support"</code>).
- * </p>
- * <p>
- * Note that an implementation of the help system UI is provided by the 
- * <code>"org.eclipse.help.ui"</code> plug-in (This plug-in is not 
- * mandatory, and can be removed). Since the platform can only make use of a 
- * single help system UI implementation, make sure that the platform is not 
- * configured with more than one plug-in trying to extend this extension point.
- * </p>
+ * Former interface to the help system UI.
+ * 
+ * @deprecated This interface became obsolete in 3.0, along with the extension
+ * point that it was associated with. The functionality provided by this
+ * interface is available elsewhere.
+ * Use {@link org.eclipse.help.HelpSystem#getTocs HelpSystem.getTocs()}
+ * and {@link org.eclipse.help.HelpSystem#getContext HelpSystem.getContext(String)}
+ * to obtain help resources. Use various display methods of 
+ * {@link org.eclipse.ui.help.WorkbenchHelp WorkbenchHelp} to display help resources.
  */
 public interface IHelp {
 	
@@ -36,6 +28,7 @@ public interface IHelp {
 	 * This method is called by the platform to launch the help system UI
 	 * </p> 
 	 * @since 2.0
+	 * @deprecated Use WorkbenchHelp.displayHelp() instead.
 	 */
 	public void displayHelp();
 	
@@ -54,6 +47,7 @@ public interface IHelp {
 	 * @param x horizontal position
 	 * @param y verifical position
 	 * @since 2.0
+	 * @deprecated Use WorkbenchHelp.displayContext(context,x,y) instead.
 	 */
 	public void displayContext(IContext context, int x, int y);
 	
@@ -75,6 +69,7 @@ public interface IHelp {
 	 * @param y verifical position
 	 * @see #getContext(String)
 	 * @since 2.0
+	 * @deprecated Use WorkbenchHelp.displayContext(HelpSystem.getContext(contextId),x,y) instead.
 	 */
 	public void displayContext(String contextId, int x, int y);
 	
@@ -92,6 +87,7 @@ public interface IHelp {
 	 * 	{@link  org.eclipse.help.IHelpResource#getHref() IHelpResource.getHref()}
 	 * </p>
 	 * @since 2.0
+	 * @deprecated Use WorkbenchHelp.displayHelpResource(href) instead.
 	 */
 	public void displayHelpResource(String href);
 	
@@ -106,9 +102,9 @@ public interface IHelp {
 	 * @see IHelp#displayHelpResource(String)
 	 * @param helpResource the help resource to display.
 	 * @since 2.0
+	 * @deprecated Use WorkbenchHelp.displayHelpResource(helpResource.getHref()) instead.
 	 */
 	public void displayHelpResource(IHelpResource helpResource);
-	
 	
 	/**
 	 * Displays help content for the toc with the given URL.
@@ -125,7 +121,7 @@ public interface IHelp {
 	 * @param toc the URL of the toc as specified in
 	 * the <code>"org.eclipse.help.toc"</code> extenstion
 	 * point
-	 * @deprecated use displayHelpResource(toc) instead
+	 * @deprecated Use WorkbenchHelp.displayHelpResource(toc) instead.
 	 */
 	public void displayHelp(String toc);
 	
@@ -148,11 +144,10 @@ public interface IHelp {
 	 * @param toc the URL of the toc
 	 * @param selectedTopic the help topic url.
 	 * @see #displayHelp(java.lang.String)
-	 * @deprecated use displayHelpResource(selectedTopic).
+	 * @deprecated Use WorkbenchHelp.displayHelpResource(selectedTopic) instead.
 	 */
 	public void displayHelp(String toc, String selectedTopic);
 
-	
 	/**
 	 * Displays context-sensitive help for context with the given context id.
 	 * <p>
@@ -167,7 +162,7 @@ public interface IHelp {
 	 * @param x horizontal position
 	 * @param y verifical position
 	 * @see #getContext(String)
-	 * @deprecated use displayContext(contextId, x, y)
+	 * @deprecated Use WorkbenchHelp.displayContext(HelpSystem.getContext(contextId),x,y) instead.
 	 */
 	public void displayHelp(String contextId, int x, int y);
 	
@@ -185,7 +180,7 @@ public interface IHelp {
 	 * @param context the context to display
 	 * @param x horizontal position
 	 * @param y verifical position
-	 * @deprecated use displayContext(context, x, y)
+	 * @deprecated Use WorkbenchHelp.displayContext(context,x,y) instead.
 	 */
 	public void displayHelp(IContext context, int x, int y);
 	
@@ -194,6 +189,7 @@ public interface IHelp {
 	 * 
 	 * @param contextId the context id
 	 * @return the context, or <code>null</code> if none
+	 * @deprecated Use HelpSystem.getContext(contextId) instead.
 	 */
 	public IContext getContext(String contextId);
 	
@@ -201,11 +197,15 @@ public interface IHelp {
 	 * Returns the list of all integrated tables of contents available.
 	 * @return an array of TOC's
 	 * @since 2.0
+	 * @deprecated Use HelpSystem.getTocs() instead.
 	 */
 	public IToc[] getTocs();
+	
 	/**
 	 * Returns <code>true</code> if the context-sensitive help
 	 * window is currently being displayed, <code>false</code> if not.
+	 * 
+	 * @deprecated Use WorkbenchHelp.isContextHelpDisplayed() instead.
 	 */
 	public boolean isContextHelpDisplayed();
 }

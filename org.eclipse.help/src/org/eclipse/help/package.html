@@ -7,36 +7,14 @@
    <title>Package-level Javadoc</title>
 </head>
 <body>
-Provides core support for the Eclipse platform online
-help system.
+Provides core help system for the platform.
 <h2>
 Package Specification</h2>
 There is a general mechanism (defined at the plug-in level) by which individual
 plug-ins contribute online help and context-sensitive help for their component.
-The help system UI is responsible for accessing this information and displaying
-it to the user.
-<p>The actual help system UI implementation is an optional piece that plugs
-in to the platform's standard <tt>org.eclipse.help.support</tt> extension
-point. At most one such help system UI should be contributed in any given
-configuration of the platform. In general terms, implementing a help system
-UI involves:
-<ul>
-<li>
-Implementing the <tt>IHelp</tt> interface to display help to the user.</li>
 
-<li>
-Declaring an extension of the <tt>org.eclipse.help.support</tt> extension
-point that mentions the name of that class.</li>
-
-<li>
-Ensuring that the platform is not configured with any other plug-ins which
-contribute to the <tt>org.eclipse.help.support</tt> extension point.</li>
-</ul>
-Note that the platform declares a plug-in (<tt>org.eclipse.help.workbench</tt>)
-which implements the help system UI. This plug-in would need to be omitted
-from the platform configuration when using a replacement.
-<br>&nbsp;
-<br>&nbsp;
-<br>&nbsp;
+This package defines interfaces for data objects managed by help systems, as well
+as <code>HelpSystem</code> class which static methods can be used to obtain objects
+managed by the help system.
 </body>
 </html>

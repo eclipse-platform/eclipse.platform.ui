@@ -56,7 +56,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 		if (root == null)
 			root =
 				new AdaptableTocsArray(
-					HelpSystem.getTocManager().getTocs(locale));
+					HelpPlugin.getTocManager().getTocs(locale));
 		return root;
 	}
 

@@ -44,7 +44,7 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				try {
-					WorkbenchHelp.getHelpSupport().displayHelp();
+					WorkbenchHelp.displayHelp();
 				} catch (Exception e) {
 				}
 			}

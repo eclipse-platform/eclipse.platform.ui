@@ -11,11 +11,10 @@
 package org.eclipse.help.internal.toc;
 import java.util.*;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.IToc;
+import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.Resources;
 
 /**
  * Manages the navigation model. It keeps track of all the tables of contents.
@@ -48,7 +47,7 @@ public class TocManager {
 	 */
 	public boolean isTocInRole(int toc, String locale) {
 		IToc[] tocs = getTocs(locale); // build them all
-		IHelpRoleManager roleManager = HelpSystem.getRoleManager();
+		IHelpRoleManager roleManager = HelpPlugin.getRoleManager();
 		if (roleManager == null) {
 			return true;
 		}
@@ -157,7 +156,7 @@ public class TocManager {
 		ArrayList orderedTocs = new ArrayList();
 		try {
 			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-			String preferredTocs = pref.getString(HelpSystem.BASE_TOCS_KEY);
+			String preferredTocs = pref.getString(HelpPlugin.BASE_TOCS_KEY);
 			if (preferredTocs != null) {
 				StringTokenizer suggestdOrderedInfosets =
 					new StringTokenizer(preferredTocs, " ;,");
@@ -167,7 +166,7 @@ public class TocManager {
 				}
 			}
 		} catch (Exception e) {
-			HelpPlugin.logError(Resources.getString("E039"), e);
+			HelpPlugin.logError(HelpResources.getString("E039"), e);
 		}
 		return orderedTocs;
 	}

@@ -12,7 +12,7 @@
 package org.eclipse.help.ui.internal;
 
 import org.eclipse.help.*;
-import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.accessibility.*;
@@ -63,7 +63,7 @@ public class ContextHelpDialog {
 		foregroundColour = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		linkColour = display.getSystemColor(SWT.COLOR_BLUE);
 		shell = new Shell(display.getActiveShell(), SWT.NONE);
-		if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println(
 				"ContextHelpDialog.ContextHelpDialog(): Shell is:"
 					+ shell.toString());
@@ -72,7 +72,7 @@ public class ContextHelpDialog {
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {
-				if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+				if (HelpUIPlugin.DEBUG_INFOPOP) {
 					System.out.println(
 						"ContextHelpDialog shell deactivate listener: SWT.Deactivate called. ");
 				}
@@ -83,7 +83,7 @@ public class ContextHelpDialog {
 		shell.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+					if (HelpUIPlugin.DEBUG_INFOPOP) {
 						System.out.println(
 							"ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. ");
 					}
@@ -94,7 +94,7 @@ public class ContextHelpDialog {
 
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
-				if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+				if (HelpUIPlugin.DEBUG_INFOPOP) {
 					System.out.println(
 						"ContextHelpDialog: shell control adapter called.");
 				}
@@ -108,7 +108,7 @@ public class ContextHelpDialog {
 				shell.update();
 			}
 		});
-		if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println(
 				"ContextHelpDialog.ContextHelpDialog(): Focus owner is: "
 					+ Display.getCurrent().getFocusControl().toString());
@@ -133,7 +133,7 @@ public class ContextHelpDialog {
 	}
 	public synchronized void close() {
 		try {
-			if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+			if (HelpUIPlugin.DEBUG_INFOPOP) {
 				System.out.println("ContextHelpDialog.close()");
 			}
 			if (shell != null) {
@@ -166,12 +166,12 @@ public class ContextHelpDialog {
 		// Create the text field.    
 		String styledText = context.getText();
 		if (styledText == null) // no description found in context objects.
-			styledText = WorkbenchResources.getString("WW002");
+			styledText = HelpUIResources.getString("WW002");
 		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
-					if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+					if (HelpUIPlugin.DEBUG_INFOPOP) {
 						System.out.println(
 							"ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE.");
 					}
@@ -256,33 +256,32 @@ public class ContextHelpDialog {
 	 */
 	private void launchLinks(IHelpResource selectedTopic) {
 		close();
-		if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println("ContextHelpDialog.launchLinks(): closed shell");
 		}
-		// launch help view
-		DefaultHelp.getInstance().displayHelp(context, selectedTopic);
+		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic);
 	}
 	public synchronized void open() {
 		try {
 			shell.open();
-			if (WorkbenchHelpPlugin.DEBUG_INFOPOP) {
+			if (HelpUIPlugin.DEBUG_INFOPOP) {
 				System.out.println(
 					"ContextHelpDialog.open(): Focus owner after open is: "
 						+ Display.getCurrent().getFocusControl().toString());
 			}
 		} catch (Throwable e) {
-			WorkbenchHelpPlugin.logError(
-				WorkbenchResources.getString("ContextHelpDialog.open"),
+			HelpUIPlugin.logError(
+				HelpUIResources.getString("ContextHelpDialog.open"),
 				e);
 		}
 	}
 	private Image getImage() {
 		if (imgRegistry == null) {
-			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
+			imgRegistry = HelpUIPlugin.getDefault().getImageRegistry();
 			imgRegistry.put(
 				IHelpUIConstants.IMAGE_KEY_F1TOPIC,
 				ImageDescriptor.createFromURL(
-					WorkbenchResources.getImagePath(
+					HelpUIResources.getImagePath(
 						IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
 		}
 		return imgRegistry.get(IHelpUIConstants.IMAGE_KEY_F1TOPIC);

@@ -13,7 +13,7 @@ package org.eclipse.help.internal.webapp.data;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 
 public class LayoutData extends RequestData {
 
@@ -135,10 +135,10 @@ public class LayoutData extends RequestData {
 		if (preferences.isWindowTitlePrefix()) {
 			return ServletResources.getString(
 				"browserTitle",
-				HelpSystem.getProductName(),
+				BaseHelpSystem.getProductName(),
 				request);
 		} else {
-			return HelpSystem.getProductName();
+			return BaseHelpSystem.getProductName();
 		}
 	}
 }

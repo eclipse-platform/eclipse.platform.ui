@@ -13,7 +13,6 @@ package org.eclipse.help.internal.toc;
 import java.util.*;
 
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
 
 public class TocBuilder {
 	// list of all toc files
@@ -69,7 +68,7 @@ public class TocBuilder {
 			TocFileParser parser = new TocFileParser(this);
 			parser.parse(tocFile);
 		} catch (Exception e) {
-			String msg = Resources.getString("E033", tocFile.getHref());
+			String msg = HelpResources.getString("E033", tocFile.getHref());
 			HelpPlugin.logError(msg, e);
 		}
 	}

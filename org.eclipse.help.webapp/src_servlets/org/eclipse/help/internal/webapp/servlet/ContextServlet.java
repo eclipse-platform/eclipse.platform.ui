@@ -12,11 +12,11 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.webapp.data.*;
 
 /**
@@ -43,7 +43,7 @@ public class ContextServlet extends HttpServlet {
 		if (contextId == null || contextId.length() < 2)
 			throw new ServletException();
 		contextId = contextId.substring(1);
-		IContext context = HelpSystem.getContextManager().getContext(contextId);
+		IContext context = HelpSystem.getContext(contextId);
 		if (context == null)
 			throw new ServletException();
 		
@@ -122,7 +122,7 @@ public class ContextServlet extends HttpServlet {
 		 * or within a scope if specified
 		 */
 		IToc findTocForTopic(String href) {
-			IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
+			IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 			for (int i = 0; i < tocs.length; i++) {
 				ITopic topic = tocs[i].getTopic(href);
 				if (topic != null)

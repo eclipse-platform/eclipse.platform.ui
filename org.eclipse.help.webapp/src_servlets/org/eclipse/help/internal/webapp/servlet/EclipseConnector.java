@@ -18,6 +18,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.webapp.data.*;
 
 /**
@@ -56,16 +57,16 @@ public class EclipseConnector {
 				if (i != -1)
 					url = url.substring(0, i);
 				// ensure the file is only accessed from a local installation
-				if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER
+				if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER
 					|| !UrlUtil.isLocalRequest(req)) {
 					return;
 				}
 			} else {
 				// enable the role
-				IHelpRoleManager roleManager = HelpSystem.getRoleManager();
+				IHelpRoleManager roleManager = HelpPlugin.getRoleManager();
 				if (roleManager != null)
 					roleManager.enabledActivities(url);
-				
+
 				url = "help:" + url;
 			}
 
@@ -74,10 +75,11 @@ public class EclipseConnector {
 
 			long maxAge = 0;
 			try {
-				// getExpiration() throws NullPointerException when URL is jar:file:...
+				// getExpiration() throws NullPointerException when URL is
+				// jar:file:...
 				long expiration = con.getExpiration();
 				maxAge = (expiration - System.currentTimeMillis()) / 1000;
-				if (maxAge < 0 )
+				if (maxAge < 0)
 					maxAge = 0;
 			} catch (Exception e) {
 			}
@@ -149,7 +151,7 @@ public class EclipseConnector {
 		//System.out.println("help content for: " + url);
 
 		URLConnection con = null;
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			// it is an infocentre, add client locale to url
 			String locale = UrlUtil.getLocale(request, response);
 			if (url.indexOf('?') >= 0) {

@@ -11,7 +11,8 @@
 package org.eclipse.help.internal.webapp.servlet;
 import java.io.*;
 
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.webapp.*;
 /**
  * Helper class to generate xml files.
@@ -51,7 +52,7 @@ public class XMLGenerator {
 			println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		} catch (IOException ioe) {
 			HelpWebappPlugin.logError(
-				Resources.getString("E014", outFile.getAbsolutePath()),
+				HelpBaseResources.getString("E014", outFile.getAbsolutePath()),
 				ioe);
 		}
 	}
@@ -69,7 +70,7 @@ public class XMLGenerator {
 		if (out.checkError())
 			if (outFile != null)
 				HelpWebappPlugin.logError(
-					Resources.getString("E015", outFile.getAbsolutePath()),
+					HelpBaseResources.getString("E015", outFile.getAbsolutePath()),
 					null);
 		out = null;
 	}

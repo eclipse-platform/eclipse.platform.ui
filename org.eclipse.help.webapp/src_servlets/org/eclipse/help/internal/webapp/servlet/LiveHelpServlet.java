@@ -17,7 +17,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.ILiveHelpAction;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 
 /**
  * Servlet to handle live help action requests
@@ -26,7 +26,7 @@ public class LiveHelpServlet extends HttpServlet {
 	/**
 	 */
 	public void init() throws ServletException {
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			throw new ServletException();
 		}
 	}
@@ -37,7 +37,7 @@ public class LiveHelpServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			return;
 		}
 		req.setCharacterEncoding("UTF-8");

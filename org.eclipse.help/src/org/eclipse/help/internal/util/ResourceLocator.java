@@ -82,7 +82,7 @@ public class ResourceLocator {
 					}
 				} catch (CoreException ce) {
 					HelpPlugin.logError(
-						Resources.getString(
+						HelpResources.getString(
 							"E044",
 							plugin.getUniqueIdentifier()),
 						ce);

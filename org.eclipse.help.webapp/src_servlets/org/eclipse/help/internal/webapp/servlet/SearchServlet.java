@@ -18,6 +18,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.webapp.*;
 import org.eclipse.help.internal.webapp.data.*;
@@ -75,7 +76,7 @@ public class SearchServlet extends HttpServlet {
 			NullProgressMonitor pm = new NullProgressMonitor();
 
 			SearchResults results = createHitCollector(request, response);
-			HelpSystem.getSearchManager().search(
+			BaseHelpSystem.getSearchManager().search(
 				createSearchQuery(request),
 				results,
 				pm);
@@ -170,7 +171,7 @@ public class SearchServlet extends HttpServlet {
 			return new WorkingSet[0];
 		}
 		if (scopes.length
-			== HelpSystem.getTocManager().getTocs(locale).length) {
+			== HelpPlugin.getTocManager().getTocs(locale).length) {
 			// do not filter if all books are selected
 			return null;
 		}

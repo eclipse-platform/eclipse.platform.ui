@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.IOException;
+import java.io.*;
 
-import javax.servlet.ServletException;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.help.IHelp;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.webapp.data.*;
 /**
  * Servlet to control Eclipse helpApplication from standalone application.
@@ -26,7 +25,7 @@ import org.eclipse.help.internal.webapp.data.*;
  */
 public class ControlServlet extends HttpServlet {
 
-	private IHelp helpSupport = null;
+	private HelpDisplay helpDisplay = null;
 	private boolean shuttingDown = false;
 
 	/**
@@ -35,8 +34,8 @@ public class ControlServlet extends HttpServlet {
 	 */
 	public void init() throws ServletException {
 		super.init();
-		if (HelpSystem.getMode() == HelpSystem.MODE_STANDALONE) {
-			helpSupport = HelpSystem.getHelpSupport();
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
+			helpDisplay = BaseHelpSystem.getHelpDisplay();
 		}
 	}
 
@@ -92,7 +91,7 @@ public class ControlServlet extends HttpServlet {
 		if ("shutdown".equalsIgnoreCase(command)) {
 			shutdown();
 		} else if ("displayHelp".equalsIgnoreCase(command)) {
-			if (HelpSystem.getMode() == HelpSystem.MODE_STANDALONE) {
+			if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
 				displayHelp(req);
 			}
 		} else {
@@ -115,9 +114,9 @@ public class ControlServlet extends HttpServlet {
 	private void displayHelp(HttpServletRequest req) {
 		String href = req.getParameter("href");
 		if (href != null) {
-			helpSupport.displayHelpResource(href);
+			helpDisplay.displayHelpResource(href);
 		} else {
-			helpSupport.displayHelp();
+			helpDisplay.displayHelp();
 		}
 	}
 }

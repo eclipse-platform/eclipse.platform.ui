@@ -16,8 +16,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.util.*;
 
 /**
  * This class manages bookmarks.
@@ -55,8 +55,8 @@ public class BookmarksData extends RequestData {
 			if(title==null){
 				return;
 			}
-			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
+			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
 
 			// separate the url and title by vertical bar
 
@@ -65,8 +65,8 @@ public class BookmarksData extends RequestData {
 				return;
 			bookmarks =
 				bookmarks + "," + encode(bookmarkURL) + "|" + encode(title);
-			prefs.setValue(HelpSystem.BOOKMARKS, bookmarks);
-			HelpPlugin.getDefault().savePluginPreferences();
+			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
+			HelpBasePlugin.getDefault().savePluginPreferences();
 		}
 	}
 
@@ -79,8 +79,8 @@ public class BookmarksData extends RequestData {
 			if(title==null){
 				return;
 			}
-			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
+			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
 			String removeString =
 				"," + encode(bookmarkURL) + "|" + encode(title);
 			int i = bookmarks.indexOf(removeString);
@@ -89,23 +89,23 @@ public class BookmarksData extends RequestData {
 			bookmarks =
 				bookmarks.substring(0, i)
 					+ bookmarks.substring(i + removeString.length());
-			prefs.setValue(HelpSystem.BOOKMARKS, bookmarks);
-			HelpPlugin.getDefault().savePluginPreferences();
+			prefs.setValue(BaseHelpSystem.BOOKMARKS, bookmarks);
+			HelpBasePlugin.getDefault().savePluginPreferences();
 		}
 	}
 	
 	public void removeAllBookmarks() {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		prefs.setValue(HelpSystem.BOOKMARKS, "");
-		HelpPlugin.getDefault().savePluginPreferences();
+		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+		prefs.setValue(BaseHelpSystem.BOOKMARKS, "");
+		HelpBasePlugin.getDefault().savePluginPreferences();
 	}
 
 	public Topic[] getBookmarks() {
 		// sanity test for infocenter, but this could not work anyway...
-		if (HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER) {
+		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
 			// this is workbench
-			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
+			Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+			String bookmarks = prefs.getString(BaseHelpSystem.BOOKMARKS);
 			StringTokenizer tokenizer = new StringTokenizer(bookmarks, ",");
 			Topic[] topics = new Topic[tokenizer.countTokens()];
 			for (int i = 0; tokenizer.hasMoreTokens(); i++) {

@@ -12,20 +12,21 @@
 package org.eclipse.help.internal;
 
 /**
- * 
  * @since 3.0
  */
 public interface IHelpRoleManager {
 
 	/**
 	 * Checks if href is valid in the actives roles
+	 * 
 	 * @param href
 	 * @return
 	 */
 	public boolean isEnabled(String href);
-	
+
 	/**
 	 * Enables all the roles whose activity binding pattersn match the href
+	 * 
 	 * @param href
 	 */
 	public void enabledActivities(String href);

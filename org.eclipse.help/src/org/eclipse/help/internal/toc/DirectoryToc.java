@@ -17,7 +17,6 @@ import java.util.zip.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
 /** 
  * Toc created from files in a extra directory in a plugin.
  */
@@ -90,7 +89,7 @@ public class DirectoryToc {
 			}
 		} catch (CoreException ce) {
 			HelpPlugin.logError(
-				Resources.getString("E034", "/" + pluginID + "/doc.zip"),
+				HelpResources.getString("E034", "/" + pluginID + "/doc.zip"),
 				ce);
 		}
 		if (url != null) {
@@ -112,7 +111,7 @@ public class DirectoryToc {
 			}
 		} catch (CoreException ce) {
 			HelpPlugin.logError(
-				Resources.getString("E035", "/" + pluginID + "/" + directory),
+				HelpResources.getString("E035", "/" + pluginID + "/" + directory),
 				ce);
 		}
 		if (url != null) {
@@ -137,7 +136,7 @@ public class DirectoryToc {
 			realZipURL = Platform.resolve(url);
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
-				Resources.getString("E036", url.toString()),
+				HelpResources.getString("E036", url.toString()),
 				ioe);
 			return new ArrayList(0);
 		}
@@ -148,7 +147,7 @@ public class DirectoryToc {
 			zipFile.close();
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
-				Resources.getString("E037", realZipURL.getFile()),
+				HelpResources.getString("E037", realZipURL.getFile()),
 				ioe);
 			return new ArrayList(0);
 		}
@@ -200,7 +199,7 @@ public class DirectoryToc {
 			realURL = Platform.resolve(url);
 		} catch (IOException ioe) {
 			HelpPlugin.logError(
-				Resources.getString("E038", url.toString()),
+				HelpResources.getString("E038", url.toString()),
 				ioe);
 			return col;
 		}

@@ -2,14 +2,17 @@
 <project name="org.eclipse.help.webapp" default="build.jars" basedir=".">
 
 	<property name="bootclasspath" value=""/>
-	<property name="ws" value="win32"/>
-	<property name="os" value="win32"/>
-	<property name="arch" value="x86"/>
+	<property name="basews" value="${ws}"/>
+	<property name="baseos" value="${os}"/>
+	<property name="basearch" value="${arch}"/>
+	<property name="basenl" value="${nl}"/>
+	<property name="javacFailOnError" value="false"/>
+	<property name="javacDebugInfo" value="on"/>
+	<property name="javacVerbose" value="true"/>
+	<property name="javacSource" value="1.3"/>
+	<property name="javacTarget" value="1.1"/>
 
 	<target name="init" depends="properties">
-		<property name="plugin" value="org.eclipse.help.webapp"/>
-		<property name="version.suffix" value="_3.0.0"/>
-		<property name="full.name" value="${plugin}${version.suffix}"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="plugin.destination" value="${basedir}"/>
 		<property name="build.result.folder" value="${basedir}"/>
@@ -19,52 +22,50 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
 
-	<target name="build.update.jar" depends="init">
+	<target name="build.update.jar" depends="init" description="Build the plug-in: org.eclipse.help.webapp for an update site.">
 		<delete dir="${temp.folder}"/>
 		<mkdir dir="${temp.folder}"/>
 		<antcall target="build.jars"/>
 		<antcall target="gather.bin.parts">
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
-		<zip zipfile="${plugin.destination}/${full.name}.jar" basedir="${temp.folder}/${full.name}" filesonly="false"/>
+		<zip zipfile="${plugin.destination}/org.eclipse.help.webapp_3.0.0.jar" basedir="${temp.folder}/org.eclipse.help.webapp_3.0.0" filesonly="false"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/${full.name}"/>
-		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${build.result.folder}/WEB-INF/lib/servlets.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${build.result.folder}/WEB-INF/lib/jsp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${build.result.folder}/webapp.jar" todir="${destination.temp.folder}/${full.name}"/>
-		<copy todir="${destination.temp.folder}/${full.name}">
-			<fileset dir="${basedir}" includes="advanced/,basic/,WEB-INF/,*.html,*.jsp,plugin.properties,plugin.xml,.options" excludes="WEB-INF/classes/"/>
+		<mkdir dir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0"/>
+		<copy todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0">
+			<fileset dir="${build.result.folder}" includes="advanced/,basic/,WEB-INF/,*.html,*.jar,*.jsp,plugin.properties,plugin.xml,.options" excludes="WEB-INF/classes/"			/>
+		</copy>
+		<copy todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0">
+			<fileset dir="${basedir}" includes="advanced/,basic/,WEB-INF/,*.html,*.jar,*.jsp,plugin.properties,plugin.xml,.options" excludes="WEB-INF/classes/"			/>
 		</copy>
 <!-- custom begin -->
 		<loadfile
 			property="web.xml.fragment"
 			srcFile="${temp.folder}/jsp.jar.src/web.xml.fragment"/>
 		<replace
-			file="${destination.temp.folder}/${full.name}/WEB-INF/web.xml"
+			file="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0/WEB-INF/web.xml"
 			token="&lt;!-- placeholder for JSPs web.xml --&gt;"
 			value="${web.xml.fragment}"
 			encoding="ISO-8859-1" />
 <!-- custom end -->
 	</target>
 
-	<target name="webapp.jar" depends="init" unless="webapp.jar">
-		<property name="destdir" value="${temp.folder}/webapp.jar.bin"/>
+	<target name="webapp.jar" depends="init" unless="webapp.jar" description="Create jar: webapp.jar.">
 		<delete dir="${temp.folder}/webapp.jar.bin"/>
 		<mkdir dir="${temp.folder}/webapp.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;../org.eclipse.help/help.jar;../org.eclipse.help/bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/boot.jar;../org.eclipse.tomcat/servlet.jar;../org.eclipse.tomcat/jasper-runtime.jar;../org.eclipse.core.boot/bin">
-			<src path="src/"/>
+		<javac destdir="${temp.folder}/webapp.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.eclipse.tomcat/servlet.jar;../org.eclipse.tomcat/jasper-runtime.jar;../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.apache.xerces/bin;../org.apache.xerces/xmlParserAPIs.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help.base/bin;../org.eclipse.help.base/helpbase.jar;../org.apache.lucene/bin;../org.apache.lucene/parser.jar;../org.apache.lucene/lucene-1.2.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.help.appserver/bin;../org.eclipse.help.appserver/appserver.jar" source="${javacSource}" target="${javacTarget}"		>
+			<src path="src/"			/>
 		</javac>
 		<!-- copy necessary resources -->
 		<copy todir="${temp.folder}/webapp.jar.bin">
-			<fileset dir="src/" excludes="**/*.java"/>
+			<fileset dir="src/" excludes="**/*.java"			/>
 		</copy>
 <!-- custom begin -->
-		<copy file="${temp.folder}/webapp.jar.bin/webapp.properties" tofile="${temp.folder}/webapp.jar.bin/webapp_en.properties" />
+		<copy file="${temp.folder}/webapp.jar.bin/org/eclipse/help/internal/webapp/WebappResources.properties" tofile="${temp.folder}/webapp.jar.bin/org/eclipse/help/internal/webapp/WebappResources_en.properties" />
 <!-- custom end -->
 		<mkdir dir="${build.result.folder}"/>
 		<jar jarfile="${build.result.folder}/webapp.jar" basedir="${temp.folder}/webapp.jar.bin"/>
@@ -74,21 +75,20 @@
 	<target name="webappsrc.zip" depends="init" unless="webappsrc.zip">
 		<mkdir dir="${build.result.folder}"/>
 		<zip zipfile="${build.result.folder}/webappsrc.zip" filesonly="false">
-			<fileset dir="src/" includes="**/*.java"/>
+			<fileset dir="src/" includes="**/*.java"			/>
 		</zip>
 	</target>
 
-	<target name="WEB-INF/lib/servlets.jar" depends="init" unless="WEB-INF/lib/servlets.jar">
-		<property name="destdir" value="${temp.folder}/WEB-INF/lib/servlets.jar.bin"/>
+	<target name="WEB-INF/lib/servlets.jar" depends="init" unless="WEB-INF/lib/servlets.jar" description="Create jar: WEB-INF/lib/servlets.jar.">
 		<delete dir="${temp.folder}/WEB-INF/lib/servlets.jar.bin"/>
 		<mkdir dir="${temp.folder}/WEB-INF/lib/servlets.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/WEB-INF/lib/servlets.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;../org.eclipse.help/help.jar;webapp.jar;../org.eclipse.help/bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/boot.jar;../org.eclipse.tomcat/servlet.jar;../org.eclipse.tomcat/jasper-runtime.jar;../org.eclipse.core.boot/bin">
-			<src path="src_servlets/"/>
+		<javac destdir="${temp.folder}/WEB-INF/lib/servlets.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;bin;webapp.jar;../org.eclipse.tomcat/servlet.jar;../org.eclipse.tomcat/jasper-runtime.jar;../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.apache.xerces/bin;../org.apache.xerces/xmlParserAPIs.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help.base/bin;../org.eclipse.help.base/helpbase.jar;../org.apache.lucene/bin;../org.apache.lucene/parser.jar;../org.apache.lucene/lucene-1.2.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.help.appserver/bin;../org.eclipse.help.appserver/appserver.jar" source="${javacSource}" target="${javacTarget}"		>
+			<src path="src_servlets/"			/>
 		</javac>
 		<!-- copy necessary resources -->
 		<copy todir="${temp.folder}/WEB-INF/lib/servlets.jar.bin">
-			<fileset dir="src_servlets/" excludes="**/*.java"/>
+			<fileset dir="src_servlets/" excludes="**/*.java"			/>
 		</copy>
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
 		<jar jarfile="${build.result.folder}/WEB-INF/lib/servlets.jar" basedir="${temp.folder}/WEB-INF/lib/servlets.jar.bin"/>
@@ -98,12 +98,11 @@
 	<target name="WEB-INF/lib/servletssrc.zip" depends="init" unless="WEB-INF/lib/servletssrc.zip">
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
 		<zip zipfile="${build.result.folder}/WEB-INF/lib/servletssrc.zip" filesonly="false">
-			<fileset dir="src_servlets/" includes="**/*.java"/>
+			<fileset dir="src_servlets/" includes="**/*.java"			/>
 		</zip>
 	</target>
 
-	<target name="WEB-INF/lib/jsp.jar" depends="init" unless="WEB-INF/lib/jsp.jar">
-		<property name="destdir" value="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
+	<target name="WEB-INF/lib/jsp.jar" depends="init" unless="WEB-INF/lib/jsp.jar" description="Create jar: WEB-INF/lib/jsp.jar.">
 		<delete dir="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
 		<mkdir dir="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
 <!-- custom begin -->
@@ -133,12 +132,12 @@
 		</java>
 <!-- custom end -->	
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/WEB-INF/lib/jsp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;../org.eclipse.help/help.jar;webapp.jar;../org.eclipse.help/bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/boot.jar;WEB-INF/lib/servlets.jar;../org.eclipse.tomcat/servlet.jar;../org.eclipse.tomcat/jasper-runtime.jar;../org.eclipse.core.boot/bin">
-			<src path="${temp.folder}/jsp.jar.src/"/>
+		<javac destdir="${temp.folder}/WEB-INF/lib/jsp.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;bin;webapp.jar;WEB-INF/lib/servlets.jar;../org.eclipse.tomcat/servlet.jar;../org.eclipse.tomcat/jasper-runtime.jar;../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.apache.xerces/bin;../org.apache.xerces/xmlParserAPIs.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help.base/bin;../org.eclipse.help.base/helpbase.jar;../org.apache.lucene/bin;../org.apache.lucene/parser.jar;../org.apache.lucene/lucene-1.2.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.help.appserver/bin;../org.eclipse.help.appserver/appserver.jar" source="${javacSource}" target="${javacTarget}"		>
+			<src path="${temp.folder}/jsp.jar.src/"			/>
 		</javac>
 		<!-- copy necessary resources -->
 		<copy todir="${temp.folder}/WEB-INF/lib/jsp.jar.bin">
-			<fileset dir="${temp.folder}/jsp.jar.src/" excludes="**/*.java"/>
+			<fileset dir="${temp.folder}/jsp.jar.src/" excludes="**/*.java"			/>
 		</copy>
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
 		<jar jarfile="${build.result.folder}/WEB-INF/lib/jsp.jar" basedir="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
@@ -148,11 +147,11 @@
 	<target name="WEB-INF/lib/jspsrc.zip" depends="init" unless="WEB-INF/lib/jspsrc.zip">
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
 		<zip zipfile="${build.result.folder}/WEB-INF/lib/jspsrc.zip" filesonly="false">
-			<fileset dir="${temp.folder}/jsp.jar.src/" includes="**/*.java"/>
+			<fileset dir="${temp.folder}/jsp.jar.src/" includes="**/*.java"			/>
 		</zip>
 	</target>
 
-	<target name="build.jars" depends="init">
+	<target name="build.jars" depends="init" description="Build all the jars for the plug-in: org.eclipse.help.webapp.">
 		<available property="webapp.jar" file="${build.result.folder}/webapp.jar"/>
 		<antcall target="webapp.jar"/>
 		<available property="WEB-INF/lib/servlets.jar" file="${build.result.folder}/WEB-INF/lib/servlets.jar"/>
@@ -174,49 +173,50 @@
 <!-- custom end -->
 	</target>
 
-		<target name="build.zips" depends="init">
-		</target>
+	<target name="build.zips" depends="init">
+	</target>
 
 	<target name="gather.sources" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${build.result.folder}/WEB-INF/lib/servletssrc.zip" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
+		<mkdir dir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0/WEB-INF/lib"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/servletssrc.zip" todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0/WEB-INF/lib"/>
 <!-- custom begin -->
 <!--
-		<copy file="${build.result.folder}/WEB-INF/lib/jspsrc.zip" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/jspsrc.zip" todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0/WEB-INF/lib"/>
 -->
 <!-- custom end -->
-		<mkdir dir="${destination.temp.folder}/${full.name}"/>
-		<copy file="${build.result.folder}/webappsrc.zip" todir="${destination.temp.folder}/${full.name}"/>
-		<copy todir="${destination.temp.folder}/${full.name}">
-			<fileset dir="${basedir}" includes="about.html"/>
+		<mkdir dir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0"/>
+		<copy file="${build.result.folder}/webappsrc.zip" todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0"/>
+		<copy todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0">
+			<fileset dir="${basedir}" includes="about.html"			/>
 		</copy>
 	</target>
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${temp.folder}/WEB-INF/lib/servlets.jar.bin.log" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${temp.folder}/WEB-INF/lib/jsp.jar.bin.log" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<mkdir dir="${destination.temp.folder}/${full.name}"/>
-		<copy file="${temp.folder}/webapp.jar.bin.log" todir="${destination.temp.folder}/${full.name}"/>
+		<mkdir dir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0/WEB-INF/lib"/>
+		<copy file="${temp.folder}/WEB-INF/lib/servlets.jar.bin.log" todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0/WEB-INF/lib"/>
+		<copy file="${temp.folder}/WEB-INF/lib/jsp.jar.bin.log" todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0/WEB-INF/lib"/>
+		<mkdir dir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0"/>
+		<copy file="${temp.folder}/webapp.jar.bin.log" todir="${destination.temp.folder}/org.eclipse.help.webapp_3.0.0"/>
 	</target>
 
-	<target name="clean" depends="init">
+	<target name="clean" depends="init" description="Clean the plug-in: org.eclipse.help.webapp of all the zips, jars and logs created.">
 		<delete file="${build.result.folder}/WEB-INF/lib/servlets.jar"/>
 		<delete file="${build.result.folder}/WEB-INF/lib/servletssrc.zip"/>
 		<delete file="${build.result.folder}/WEB-INF/lib/jsp.jar"/>
 		<delete file="${build.result.folder}/WEB-INF/lib/jspsrc.zip"/>
 		<delete file="${build.result.folder}/webapp.jar"/>
 		<delete file="${build.result.folder}/webappsrc.zip"/>
-		<delete file="${plugin.destination}/${full.name}.jar"/>
-		<delete file="${plugin.destination}/${full.name}.zip"/>
+		<delete file="${plugin.destination}/org.eclipse.help.webapp_3.0.0.jar"/>
+		<delete file="${plugin.destination}/org.eclipse.help.webapp_3.0.0.zip"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
-	<target name="refresh" depends="init" if="eclipse.running">
-		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
+	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
+		<eclipse.convertPath fileSystemPath="d:/workspaceUpdate/plugins/org.eclipse.help.webapp/" property="resourcePath"/>
+		<eclipse.refreshLocal resource="org.eclipse.help.webapp" depth="infinite"/>
 	</target>
 
-	<target name="zip.plugin" depends="init">
+	<target name="zip.plugin" depends="init" description="Create a zip containing all the elements for the plug-in: org.eclipse.help.webapp.">
 		<delete dir="${temp.folder}"/>
 		<mkdir dir="${temp.folder}"/>
 		<antcall target="build.jars"/>
@@ -228,9 +228,9 @@
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
 		<delete>
-			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
+			<fileset dir="${temp.folder}" includes="**/*.bin.log"			/>
 		</delete>
-		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="true"/>
+		<zip zipfile="${plugin.destination}/org.eclipse.help.webapp_3.0.0.zip" basedir="${temp.folder}" filesonly="true"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 

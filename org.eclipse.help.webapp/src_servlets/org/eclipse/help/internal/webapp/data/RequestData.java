@@ -13,15 +13,15 @@ package org.eclipse.help.internal.webapp.data;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 
 /**
  * Helper class for contents.jsp initialization
  */
 public class RequestData {
-	public final static int MODE_WORKBENCH = HelpSystem.MODE_WORKBENCH;
-	public final static int MODE_INFOCENTER = HelpSystem.MODE_INFOCENTER;
-	public final static int MODE_STANDALONE = HelpSystem.MODE_STANDALONE;
+	public final static int MODE_WORKBENCH = BaseHelpSystem.MODE_WORKBENCH;
+	public final static int MODE_INFOCENTER = BaseHelpSystem.MODE_INFOCENTER;
+	public final static int MODE_STANDALONE = BaseHelpSystem.MODE_STANDALONE;
 
 	protected ServletContext context;
 	protected HttpServletRequest request;
@@ -82,7 +82,7 @@ public class RequestData {
 	}
 
 	public int getMode() {
-		return HelpSystem.getMode();
+		return BaseHelpSystem.getMode();
 	}
 
 }

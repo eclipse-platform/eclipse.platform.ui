@@ -14,7 +14,7 @@ import java.io.*;
 
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -34,13 +34,13 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		String locale) {
-		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			wSetManager =
 				new InfocenterWorkingSetManager(request, response, locale);
 		} else {
-			wSetManager = HelpSystem.getWorkingSetManager(locale);
+			wSetManager = BaseHelpSystem.getWorkingSetManager(locale);
 			if (!workingSetsSynchronized
-				&& HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
+				&& BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {
 				// upon startup in workbench mode, make sure working sets are in synch with those from UI
 				workingSetsSynchronized = true;
 				((WorkingSetManager)wSetManager).synchronizeWorkingSets();

@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.*;
@@ -58,13 +57,13 @@ public class BrowsersPreferencePage
 
 		Label description = new Label(mainComposite, SWT.NULL);
 		description.setFont(font);
-		description.setText(WorkbenchResources.getString("select_browser"));
+		description.setText(HelpUIResources.getString("select_browser"));
 		createSpacer(mainComposite);
 
 		Label tableDescription = new Label(mainComposite, SWT.NULL);
 		tableDescription.setFont(font);
 		tableDescription.setText(
-			WorkbenchResources.getString("current_browser"));
+			HelpUIResources.getString("current_browser"));
 		//data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//description.setLayoutData(data);
 		browsersTable = new Table(mainComposite, SWT.CHECK | SWT.BORDER);
@@ -133,18 +132,18 @@ public class BrowsersPreferencePage
 		bPathComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		customBrowserPathLabel = new Label(bPathComposite, SWT.LEFT);
 		customBrowserPathLabel.setFont(font);
-		customBrowserPathLabel.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Program")); //$NON-NLS-1$
+		customBrowserPathLabel.setText(HelpUIResources.getString("CustomBrowserPreferencePage.Program")); //$NON-NLS-1$
 
 		customBrowserPath = new Text(bPathComposite, SWT.BORDER);
 		customBrowserPath.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		customBrowserPath.setFont(font);
 		customBrowserPath.setText(
-			HelpPlugin.getDefault().getPluginPreferences().getString(
+			HelpBasePlugin.getDefault().getPluginPreferences().getString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
 
 		customBrowserBrowse = new Button(bPathComposite, SWT.NONE);
 		customBrowserBrowse.setFont(font);
-		customBrowserBrowse.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Browse")); //$NON-NLS-1$
+		customBrowserBrowse.setText(HelpUIResources.getString("CustomBrowserPreferencePage.Browse")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint =
@@ -164,7 +163,7 @@ public class BrowsersPreferencePage
 			}
 			public void widgetSelected(SelectionEvent event) {
 				FileDialog d = new FileDialog(getShell());
-				d.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Details")); //$NON-NLS-1$
+				d.setText(HelpUIResources.getString("CustomBrowserPreferencePage.Details")); //$NON-NLS-1$
 				String file = d.open();
 				if (file != null) {
 					customBrowserPath.setText("\"" + file + "\" %1");
@@ -196,7 +195,7 @@ public class BrowsersPreferencePage
 			items[i].setChecked(browserID == defaultBrowserID);
 		}
 		customBrowserPath.setText(
-			HelpPlugin.getDefault().getPluginPreferences().getDefaultString(
+			HelpBasePlugin.getDefault().getPluginPreferences().getDefaultString(
 				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
 		setEnabledCustomBrowserPath();
 		super.performDefaults();
@@ -205,7 +204,7 @@ public class BrowsersPreferencePage
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
-		Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
 		TableItem[] items = browsersTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
@@ -224,7 +223,7 @@ public class BrowsersPreferencePage
 		pref.setValue(
 			CustomBrowser.CUSTOM_BROWSER_PATH_KEY,
 			customBrowserPath.getText());
-		HelpPlugin.getDefault().savePluginPreferences();
+		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	/**
@@ -244,7 +243,7 @@ public class BrowsersPreferencePage
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
 				boolean enabled =
-					(HelpPlugin.PLUGIN_ID + ".custombrowser").equals(
+					(HelpBasePlugin.PLUGIN_ID + ".custombrowser").equals(
 						BrowserManager
 							.getInstance()
 							.getBrowserDescriptors()[i]

@@ -16,8 +16,8 @@ import java.util.*;
 import javax.servlet.http.*;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.util.*;
 
 public class UrlUtil {
 	// XML escaped characters mapping
@@ -208,7 +208,7 @@ public class UrlUtil {
 		if (defaultLocale == null) {
 			initializeLocales();
 		}
-		if ((HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER)
+		if ((BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER)
 			|| request == null) {
 			return defaultLocale;
 		}
@@ -317,7 +317,7 @@ public class UrlUtil {
 		if (defaultLocale == null) {
 			defaultLocale = Locale.getDefault().toString();
 		}
-		if (HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER) {
+		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
 			return;
 		}
 
@@ -344,7 +344,7 @@ public class UrlUtil {
 		if (infocenterLocales == null) {
 			StringTokenizer tokenizer =
 				new StringTokenizer(
-					HelpPlugin.getDefault().getPluginPreferences().getString(
+					HelpBasePlugin.getDefault().getPluginPreferences().getString(
 						"locales"),
 					" ,\t");
 			while (tokenizer.hasMoreTokens()) {

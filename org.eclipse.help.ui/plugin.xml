@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.help.ui"
    name="%help_system_plugin_name"
    version="3.0.0"
    provider-name="%providerName"
-   class="org.eclipse.help.ui.internal.WorkbenchHelpPlugin">
+   class="org.eclipse.help.ui.internal.HelpUIPlugin">
 
    <runtime>
-      <library name="helpworkbench.jar">
+      <library name="helpui.jar">
          <export name="*"/>
          <packages prefixes="org.eclipse.help.ui"/>
       </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.help.appserver"/>
-      <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.ui"/>
    </requires>
 
 
 <!-- Default Help UI  -->
    <extension
-         point="org.eclipse.help.support">
+         point="org.eclipse.ui.helpSupport">
       <config
-            class="org.eclipse.help.ui.internal.DefaultHelp">
+            class="org.eclipse.help.ui.internal.DefaultHelpUI">
       </config>
    </extension>
 <!-- Preference pages -->
@@ -49,10 +48,6 @@
       <contexts
             file="contexts.xml">
       </contexts>
-      <contexts
-            file="contexts_search.xml"
-            plugin="org.eclipse.search">
-      </contexts>
    </extension>
 <!-- Action Sets -->
    <extension
@@ -70,94 +65,16 @@
                menubarPath="help/helpEnd"
                id="org.eclipse.help.internal.ui.HelpAction">
          </action>
-         <menu
-               label="%searchMenu.label"
-               path="navigate"
-               id="org.eclipse.search.menu">
-            <groupMarker
-                  name="internalDialogGroup">
-            </groupMarker>
-<!-- not to be used by clients  -->
-            <groupMarker
-                  name="dialogGroup">
-            </groupMarker>
-<!-- to be used by clients      -->
-            <separator
-                  name="contextMenuActionsGroup">
-            </separator>
-         </menu>
-         <action
-               label="%openHelpSearchPageAction.label"
-               icon="icons/search_menu.gif"
-               helpContextId="org.eclipse.help.ui.helpSearchMenu"
-               class="org.eclipse.help.ui.internal.OpenHelpSearchPageAction"
-               menubarPath="org.eclipse.search.menu/dialogGroup"
-               id="org.eclipse.help.ui.OpenHelpSearchPage">
-         </action>
       </actionSet>
    </extension>
 <!-- Web Browsers -->
    <extension
-         point="org.eclipse.help.browser">
+         point="org.eclipse.help.base.browser">
       <browser
             factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory"
             name="%system_browser"
             id="org.eclipse.help.ui.systembrowser">
       </browser>
-   </extension>
-<!-- Search Page -->
-   <extension
-         point="org.eclipse.search.searchPages">
-      <page
-            searchViewHelpContextId="org.eclipse.help.ui.searchResultView"
-            label="%help_search_page"
-            icon="icons/search_menu.gif"
-            class="org.eclipse.help.ui.internal.search.HelpSearchPage"
-            id="org.eclipse.help.ui.searchPage">
-      </page>
-   </extension>
-<!-- Markers -->
-   <extension
-         id="helpsearchhit"
-         name="%helpsearchhitname"
-         point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.search.searchmarker">
-      </super>
-      <attribute
-            name="href">
-      </attribute>
-      <attribute
-            name="label">
-      </attribute>
-      <attribute
-            name="resultfof">
-      </attribute>
-      <attribute
-            name="order">
-      </attribute>
-   </extension>
-<!-- Search Results Sorter -->
-   <extension
-         point="org.eclipse.search.searchResultSorters">
-      <sorter
-            pageId="org.eclipse.help.ui.searchPage"
-            label="%helpsearchhitsorter.label"
-            icon="icons/search_sortmatch.gif"
-            tooltip="%helpsearchhitsorter.tooltip"
-            class="org.eclipse.help.ui.internal.search.HelpSearchSorter"
-            id="org.eclipse.help.ui.helpsearchhitsorter">
-      </sorter>
-   </extension>
-<!-- Help Working Set Page -->
-   <extension
-         point="org.eclipse.ui.workingSets">
-      <workingSet
-            name="%HelpWorkingSet"
-            pageClass="org.eclipse.help.ui.internal.workingset.HelpWorkingSetPage"
-            icon="icons/workingset.gif"
-            id="org.eclipse.help.ui.HelpWorkingSetPage">
-      </workingSet>
    </extension>
 
 </plugin>

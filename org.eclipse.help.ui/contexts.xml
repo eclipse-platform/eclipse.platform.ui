@@ -18,18 +18,14 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
       <topic label="Online Help System" href="/org.eclipse.platform.doc.user/concepts/chelpsys.htm"/>
       <topic label="Help Menu - Help Contents" href="/org.eclipse.platform.doc.user/reference/ref-61.htm"/>
    </context>
-   
-<!-- Search Menu: Help -->   
-   <context  id="helpSearchMenu" >
-      <description>This action will open the Search dialog that allows documentation searching.</description>
-	  <topic label="Searching online help" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm" />
-   </context>
 
+<!-- Preference page for help browsers -->
    <context  id="prefPageBrowsers" >
       <description>Allows selecting a web browser.  The selected web browser will be the default browser used to display help contents.</description>
 	  <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
    </context>
 
+<!-- Path to custom browser on preference page for help browsers -->
    <context  id="prefPageCustomBrowserPath" >
       <description>When custom web browser is selected from the list, specify path to the browser program that launches the browser.  If the program is available on your system path, you may specify only the program name.
 
@@ -37,6 +33,7 @@ If the program does not accept URL as its last parameter, you may use %1 string 
       <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
    </context>
 
+<!-- Application server preference page -->
    <context  id="prefPageAppServer" >
       <description>These settings allow you to override the network interface address and port number that the internal <b>application server</b> will use.  Change the settings when the port it is trying to use is taken, or when your IP address has changed.
 
@@ -46,24 +43,6 @@ To use port dynamically assigned by the system, specify <b>0</b> in the port fie
 
 Under normal circumstances, use the <b>Default</b> settings.</description>
       <topic label="Preferences Dialog" href="/org.eclipse.platform.doc.user/reference/ref-72.htm"/>
-   </context>
-
-<!-- Search dialog Search Help -->
-   <context  id="searchPage" >
-      <description>Type a search term or terms in the search expression field, and then click <b>Search</b>. This will open Search view that contains all the search results.
-
-You can use OR and NOT qualifiers between terms. Also, if you put double-quotation marks around a query, search will return only results that contain specified phrase.
-
-Click <b>Choose</b> to see the working set selection dialog, allowing for additional filtering to be specified.</description>
-       <topic label="Searching online help" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm" />
-   </context>
-
-<!-- Search result view -->
-   <context  id="searchResultView" >
-      <description>This view lists the results of recent searches.  Currently displayed are results or last documentation search.  Double click one of the documents to open it.</description>
-      <topic label="Help search" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm"/>
-      <topic label="Search view" href="reference/ref-26.htm"/>
-      <topic label="File search" href="reference/ref-45.htm"/>
    </context>
 
 </contexts>

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.help.webapp"
-   name="%help_plugin_name"
+   name="%help_webapp_plugin_name"
    version="3.0.0"
    provider-name="%providerName"
    class="org.eclipse.help.internal.webapp.HelpWebappPlugin">
@@ -12,12 +13,12 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.help.base"/>
    </requires>
 
 
    <extension
-         point="org.eclipse.help.webapp">
+         point="org.eclipse.help.base.webapp">
       <webapp
             default="true">
       </webapp>

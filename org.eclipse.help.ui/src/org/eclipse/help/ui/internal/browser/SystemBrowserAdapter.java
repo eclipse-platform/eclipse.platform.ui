@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser;
 import org.eclipse.help.browser.*;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.swt.program.*;
 /**
@@ -34,7 +35,7 @@ public class SystemBrowserAdapter implements IBrowser {
 		if (System.getProperty("os.name").startsWith("Win")) {
 			if (!Program.launch(url)) {
 				ErrorUtil.displayErrorDialog(
-					WorkbenchResources.getString(
+					HelpUIResources.getString(
 						"SystemBrowser.noProgramForURL",
 						url));
 			}
@@ -42,7 +43,7 @@ public class SystemBrowserAdapter implements IBrowser {
 			Program b = Program.findProgram("html");
 			if (b == null || !b.execute(url)) {
 				ErrorUtil.displayErrorDialog(
-					WorkbenchResources.getString(
+					HelpUIResources.getString(
 						"SystemBrowser.noProgramForHTML",
 						url));
 			}

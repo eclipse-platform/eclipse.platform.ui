@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.appserver.*;
+//import org.eclipse.help.internal.appserver.*;
 import org.eclipse.help.internal.util.*;
 /**
  * URLConnection to help documents in plug-ins
@@ -83,12 +83,13 @@ public class HelpURLConnection extends URLConnection {
 		if (plugin == null) {
 			throw new IOException("Resource not found.");
 		}
-		if (plugin
-			.equals(
-				AppserverPlugin.getDefault().getContributingServerPlugin())) {
-			// Do not return documents from app server implementation plug-in
-			throw new IOException("Resource not found.");
-		}
+		// TODO fix so it compiles
+//		if (plugin
+//			.equals(
+//				AppserverPlugin.getDefault().getContributingServerPlugin())) {
+//			// Do not return documents from app server implementation plug-in
+//			throw new IOException("Resource not found.");
+//		}
 		if (getFile() == null || "".equals(getFile())) {
 			throw new IOException("Resource not found.");
 		}

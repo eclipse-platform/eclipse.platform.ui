@@ -12,8 +12,8 @@ package org.eclipse.help.ui.internal;
 import java.text.*;
 import java.util.*;
 
+import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.context.*;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 
