@@ -111,9 +111,9 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file1 = project1.getFile("file1.txt");
 			IFile file2 = folder.getFile("file2.txt");
 			ensureExistsInWorkspace(new IResource[] {file1, file2, project2}, true);
-			project1.setDefaultCharset("FOO");
-			project2.setDefaultCharset("ZOO");
-			folder.setDefaultCharset("BAR");
+			project1.setDefaultCharset("FOO", getMonitor());
+			project2.setDefaultCharset("ZOO", getMonitor());
+			folder.setDefaultCharset("BAR", getMonitor());
 			// move a folder to another project and ensure its encoding is
 			// preserved
 			folder.move(project2.getFullPath().append("folder"), false, false, null);
@@ -140,9 +140,9 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file1 = project.getFile("file1.txt");
 			IFile file2 = folder.getFile("file2.txt");
 			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			project.setDefaultCharset("FOO");
-			file1.setCharset("FRED");
-			folder.setDefaultCharset("BAR");
+			project.setDefaultCharset("FOO", getMonitor());
+			file1.setCharset("FRED", getMonitor());
+			folder.setDefaultCharset("BAR", getMonitor());
 			// move a folder inside the project and ensure its encoding is
 			// preserved
 			folder.move(project.getFullPath().append("folder2"), false, false, null);
@@ -174,9 +174,9 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file1 = project.getFile("file1.txt");
 			IFile file2 = folder.getFile("file2.txt");
 			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			project.setDefaultCharset("FOO");
-			file1.setCharset("FRED");
-			folder.setDefaultCharset("BAR");
+			project.setDefaultCharset("FOO", getMonitor());
+			file1.setCharset("FRED", getMonitor());
+			folder.setDefaultCharset("BAR", getMonitor());
 			project.close(null);
 			// now reopen the project and ensure the settings were not forgotten
 			IProject projectB = workspace.getRoot().getProject(project.getName());
@@ -199,7 +199,7 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		IProject project = workspace.getRoot().getProject("MyProject");
 		try {
 			ensureExistsInWorkspace(project, true);
-			project.setDefaultCharset("FOO");
+			project.setDefaultCharset("FOO", getMonitor());
 			IFile file = project.getFile("file.xml");
 			assertEquals("0.9", "FOO", project.getDefaultCharset());
 			// content-based encoding is BAR			
@@ -245,43 +245,43 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			assertCharsetIs("1.0", ResourcesPlugin.getEncoding(), new IResource[] {workspace.getRoot(), project, file1, folder1, file2, folder2, file3}, true);
 			assertCharsetIs("1.1", null, new IResource[] {project, file1, folder1, file2, folder2, file3}, false);
 			// sets workspace default charset
-			workspace.getRoot().setDefaultCharset("FOO");
+			workspace.getRoot().setDefaultCharset("FOO", getMonitor());
 			assertCharsetIs("2.0", "FOO", new IResource[] {workspace.getRoot(), project, file1, folder1, file2, folder2, file3}, true);
 			assertCharsetIs("2.1", null, new IResource[] {project, file1, folder1, file2, folder2, file3}, false);
 			// sets project default charset
-			project.setDefaultCharset("BAR");
+			project.setDefaultCharset("BAR", getMonitor());
 			assertCharsetIs("3.0", "BAR", new IResource[] {project, file1, folder1, file2, folder2, file3}, true);
 			assertCharsetIs("3.1", null, new IResource[] {file1, folder1, file2, folder2, file3}, false);
 			assertCharsetIs("3.2", "FOO", new IResource[] {workspace.getRoot()}, true);
 			// sets folder1 default charset
-			folder1.setDefaultCharset("FRED");
+			folder1.setDefaultCharset("FRED", getMonitor());
 			assertCharsetIs("4.0", "FRED", new IResource[] {folder1, file2, folder2, file3}, true);
 			assertCharsetIs("4.1", null, new IResource[] {file2, folder2, file3}, false);
 			assertCharsetIs("4.2", "BAR", new IResource[] {project, file1}, true);
 			// sets folder2 default charset
-			folder2.setDefaultCharset("ZOO");
+			folder2.setDefaultCharset("ZOO", getMonitor());
 			assertCharsetIs("5.0", "ZOO", new IResource[] {folder2, file3}, true);
 			assertCharsetIs("5.1", null, new IResource[] {file3}, false);
 			assertCharsetIs("5.2", "FRED", new IResource[] {folder1, file2}, true);
 			// sets file3 charset
-			file3.setCharset("ZIT");
+			file3.setCharset("ZIT", getMonitor());
 			assertCharsetIs("6.0", "ZIT", new IResource[] {file3}, false);
-			folder2.setDefaultCharset(null);
+			folder2.setDefaultCharset(null, getMonitor());
 			assertCharsetIs("7.0", folder2.getParent().getDefaultCharset(), new IResource[] {folder2}, true);
 			assertCharsetIs("7.1", null, new IResource[] {folder2}, false);
 			assertCharsetIs("7.2", "ZIT", new IResource[] {file3}, false);
-			folder1.setDefaultCharset(null);
+			folder1.setDefaultCharset(null, getMonitor());
 			assertCharsetIs("8.0", folder1.getParent().getDefaultCharset(), new IResource[] {folder1, file2, folder2}, true);
 			assertCharsetIs("8.1", null, new IResource[] {folder1, file2, folder2}, false);
 			assertCharsetIs("8.2", "ZIT", new IResource[] {file3}, false);
-			project.setDefaultCharset(null);
+			project.setDefaultCharset(null, getMonitor());
 			assertCharsetIs("9.0", project.getParent().getDefaultCharset(), new IResource[] {project, file1, folder1, file2, folder2}, true);
 			assertCharsetIs("9.1", null, new IResource[] {project, file1, folder1, file2, folder2}, false);
 			assertCharsetIs("9.2", "ZIT", new IResource[] {file3}, false);
-			workspace.getRoot().setDefaultCharset(null);
+			workspace.getRoot().setDefaultCharset(null, getMonitor());
 			assertCharsetIs("10.0", project.getParent().getDefaultCharset(), new IResource[] {project, file1, folder1, file2, folder2}, true);
 			assertCharsetIs("10.1", "ZIT", new IResource[] {file3}, false);
-			file3.setCharset(null);
+			file3.setCharset(null, getMonitor());
 			assertCharsetIs("11.0", ResourcesPlugin.getEncoding(), new IResource[] {workspace.getRoot(), project, file1, folder1, file2, folder2, file3}, true);
 		} finally {
 			ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, originalCharset);
@@ -327,17 +327,17 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file2 = folder.getFile("file2.txt");
 			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
 			assertDoesNotExistInWorkspace("1.0", getProjectEncodingSettings(project));
-			project.setDefaultCharset("FOO");
+			project.setDefaultCharset("FOO", getMonitor());
 			assertExistsInWorkspace("2.0", getProjectEncodingSettings(project));
-			project.setDefaultCharset(null);
+			project.setDefaultCharset(null, getMonitor());
 			assertDoesNotExistInWorkspace("3.0", getProjectEncodingSettings(project));
-			file1.setCharset("FRED");
+			file1.setCharset("FRED", getMonitor());
 			assertExistsInWorkspace("4.0", getProjectEncodingSettings(project));
-			folder.setDefaultCharset("BAR");
+			folder.setDefaultCharset("BAR", getMonitor());
 			assertExistsInWorkspace("5.0", getProjectEncodingSettings(project));
-			file1.setCharset(null);
+			file1.setCharset(null, getMonitor());
 			assertExistsInWorkspace("6.0", getProjectEncodingSettings(project));
-			folder.setDefaultCharset(null);
+			folder.setDefaultCharset(null, getMonitor());
 			assertDoesNotExistInWorkspace("7.0", getProjectEncodingSettings(project));
 		} finally {
 			ensureDoesNotExistInWorkspace(project);
@@ -356,8 +356,8 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file1 = project1.getFile("file1.txt");
 			IFile file2 = folder.getFile("file2.txt");
 			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
-			project1.setDefaultCharset("FOO");
-			folder.setDefaultCharset("BAR");
+			project1.setDefaultCharset("FOO", getMonitor());
+			folder.setDefaultCharset("BAR", getMonitor());
 
 			assertEquals("1.0", "BAR", folder.getDefaultCharset());
 			assertEquals("1.1", "BAR", file2.getCharset());
@@ -391,26 +391,26 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		IProject project = workspace.getRoot().getProject("MyProject");
 		try {
 			try {
-				project.setDefaultCharset("FOO");
+				project.setDefaultCharset("FOO", getMonitor());
 				fail("1.0");
 			} catch (CoreException e) {
 				// expected, project does not exist yet 
 				assertEquals("1.1", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 			}
 			ensureExistsInWorkspace(project, true);
-			project.setDefaultCharset("FOO");
+			project.setDefaultCharset("FOO", getMonitor());
 			IFile file = project.getFile("file.xml");
 			assertDoesNotExistInWorkspace("2.0", file);
 			assertEquals("2.2", "FOO", file.getCharset());
 			try {
-				file.setCharset("BAR");
+				file.setCharset("BAR", getMonitor());
 				fail("2.4");
 			} catch (CoreException e) {
 				// expected, file does not exist yet
 				assertEquals("2.6", IResourceStatus.RESOURCE_NOT_FOUND, e.getStatus().getCode());
 			}
 			ensureExistsInWorkspace(file, true);
-			file.setCharset("BAR");
+			file.setCharset("BAR", getMonitor());
 			assertEquals("2.8", "BAR", file.getCharset());
 			file.delete(IResource.NONE, null);
 			assertDoesNotExistInWorkspace("2.10", file);
@@ -631,7 +631,7 @@ public class CharsetTest extends EclipseWorkspaceTest {
 
 			// clear all the encoding info before we start working with the project
 			try {
-				clearAllEncodings();
+				clearAllEncodings(project);
 			} catch (CoreException e) {
 				fail("7.0", e);
 			}
@@ -646,7 +646,7 @@ public class CharsetTest extends EclipseWorkspaceTest {
 
 			// clear all the encoding info before we start working with the root
 			try {
-				clearAllEncodings();
+				clearAllEncodings(project);
 			} catch (CoreException e) {
 				fail("8.0", e);
 			}
@@ -663,8 +663,7 @@ public class CharsetTest extends EclipseWorkspaceTest {
 		}
 	}
 
-	private void clearAllEncodings() throws CoreException {
-		final IPath prefix = new Path(".settings");
+	private void clearAllEncodings(IResource root) throws CoreException {
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) throws CoreException {
 				if (!resource.exists())
@@ -682,12 +681,12 @@ public class CharsetTest extends EclipseWorkspaceTest {
 				return true;
 			}
 		};
-		getWorkspace().getRoot().accept(visitor);
+		root.accept(visitor);
 	}
 
 	// check preference change events are reflected in the charset settings
 	// temporarily disabled
-	public void _testDeltaOnPreferenceChanges() {
+	public void testDeltaOnPreferenceChanges() {
 
 		CharsetVerifier backgroundVerifier = new CharsetVerifier(CharsetVerifier.IGNORE_CREATION_THREAD);
 		getWorkspace().addResourceChangeListener(backgroundVerifier, IResourceChangeEvent.POST_CHANGE);
