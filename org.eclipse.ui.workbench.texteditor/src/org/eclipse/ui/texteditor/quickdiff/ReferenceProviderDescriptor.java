@@ -99,14 +99,11 @@ public class ReferenceProviderDescriptor {
 			return impl;
 		} catch (CoreException e) {
 			return null;
-		} catch (NoClassDefFoundError e) {
-			// XXX remove / adapt once https://bugs.eclipse.org/bugs/show_bug.cgi?id=59094 is fixed/closed
-			return null;
 		}
 	}
 
 	/**
-	 * States whether the plugin declaring this extensionhas been loaded already.
+	 * States whether the plugin declaring this extension has been loaded already.
 	 * 
 	 * @return <code>true</code> if the extension point's plugin has been loaded, <code>false</code> otherwise.
 	 */
