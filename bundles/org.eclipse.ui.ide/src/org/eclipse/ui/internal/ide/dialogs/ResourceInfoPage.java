@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -27,11 +24,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -436,24 +430,10 @@ private String getContentTypeString(IFile file) {
 
 private IContentDescription getContentDescription(IFile file) {
 	if (cachedContentDescription == null) {
-		// tries to obtain a description for the file contents
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		try {
-			InputStream contents = new BufferedInputStream(file.getContents());
-			try {
-				cachedContentDescription= contentTypeManager.getDescriptionFor(contents, file.getName(), new QualifiedName[] {IContentDescription.CHARSET});
-			} catch (IOException e) {
-				// ignore silently
-			} finally {
-				if (contents != null)
-					try {
-						contents.close();
-					} catch (IOException e) {
-						// ignore silently
-					}				
-			}
+			cachedContentDescription= file.getContentDescription();
 		} catch (CoreException e) {
-			// ignore silently			
+			// silently ignore
 		}
 	}
 	return cachedContentDescription;
