@@ -22,7 +22,6 @@ import org.eclipse.update.core.*;
 
 public class PatchCleaner2 {
 	private IConfiguredSite csite;
-	private IFeature root;
 	private SiteListener listener;
 	class SiteListener implements IConfiguredSiteChangedListener {
 		public void featureInstalled(IFeature feature) {

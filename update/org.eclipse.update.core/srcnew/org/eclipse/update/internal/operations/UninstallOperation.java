@@ -21,8 +21,6 @@ import org.eclipse.update.core.*;
 public class UninstallOperation extends PendingOperation {
 	private static final String KEY_OLD = "OperationsManager.error.old";
 
-	private IInstallConfiguration config;
-	private IConfiguredSite targetSite;
 	private IFeatureReference[] optionalFeatures;
 	private IVerificationListener verifier;
 

@@ -17,8 +17,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 public class OperationsManager implements IAdaptable {
-	private static final String KEY_UNABLE = "OperationsManager.error.unable";
-	private static final String KEY_OLD = "OperationsManager.error.old";
 
 	private Vector pendingChanges = new Vector();
 	private Vector listeners = new Vector();
