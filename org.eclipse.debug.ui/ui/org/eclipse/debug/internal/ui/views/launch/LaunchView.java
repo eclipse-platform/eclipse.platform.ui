@@ -687,7 +687,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			if (editor instanceof ITextEditor) {
 				InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
 			}
-			// deocorate the editor
+			// decorate the editor
 			decorateEditor(editor, stackFrame);
 			fLastCharStart= charStart;
 			fLastCharEnd= charEnd;
