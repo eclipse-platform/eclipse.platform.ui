@@ -133,6 +133,7 @@ public class AntModel {
 		fCurrentTargetNode= null;
 		fStillOpenElements= new Stack();
 		fTaskToNode= new HashMap();
+		fProjectNode= null;
 	}
 
 	public synchronized AntElementNode[] getRootElements() {
