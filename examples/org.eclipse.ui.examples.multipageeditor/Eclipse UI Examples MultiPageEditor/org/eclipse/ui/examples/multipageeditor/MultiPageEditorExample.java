@@ -10,25 +10,38 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.multipageeditor;
 
-
 import java.io.StringWriter;
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FontDialog;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.ide.IMarkerEditorPositioner;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.MultiPageEditorPart;
 
 /**
@@ -40,7 +53,7 @@ import org.eclipse.ui.part.MultiPageEditorPart;
  * <li>page 2 shows the words in page 0 in sorted order
  * </ul>
  */
-public class MultiPageEditorExample extends MultiPageEditorPart implements IMarkerEditorPositioner {
+public class MultiPageEditorExample extends MultiPageEditorPart implements IGotoMarker {
 
 	/** The text editor used in page 0. */
 	private TextEditor editor;
@@ -198,10 +211,10 @@ void sortWords() {
 	text.setText(displayText.toString());
 }
 /* (non-Javadoc)
- * @see org.eclipse.ui.ide.IMarkerEditorPositioner#gotoPosition(org.eclipse.core.resources.IMarker)
+ * @see org.eclipse.ui.ide.IGotoMarker
  */
-public void gotoPosition(IMarker marker) {
+public void gotoMarker(IMarker marker) {
 	setActivePage(editorIndex);
-	editor.gotoMarker(marker);
+	IDE.gotoMarker(editor, marker);
 }
 }
