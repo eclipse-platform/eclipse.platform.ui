@@ -40,7 +40,7 @@ public class XMLContextContributor
 					e = new HelpContext(atts);
 				else
 					if (name.equals(ContextContributor.RELATED_ELEM))
-						e = new HelpTopic(atts);
+						e = new HelpContextTopic(atts);
 					else
 						return null;
 

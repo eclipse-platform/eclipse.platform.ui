@@ -213,8 +213,15 @@ public class HelpNavigationManager {
 	 * read in memory
 	 */
 	public String getInfoSetLabel(String infosetId) {
-		return (String)infosetsMap.get(infosetId);
+		String label = (String)infosetsMap.get(infosetId);
+		if (label.indexOf('%') == 0) {
+			int lastPeriod = infosetId.lastIndexOf('.');
+			String pluginID = infosetId.substring(0, lastPeriod);
+			label =	DocResources.getPluginString(pluginID, label.substring(1));
+		}
+		return label;
 	}
+
 	
 	/**
 	 * Returns the navigation model for an infoset

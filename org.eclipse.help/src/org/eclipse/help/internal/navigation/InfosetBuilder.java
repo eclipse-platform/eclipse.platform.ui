@@ -66,7 +66,7 @@ public class InfosetBuilder {
 		public Inserter(Insert insertNode) {
 			this.from = insertNode.getSource();
 			this.to = insertNode.getTarget();
-			this.label = insertNode.getLabel();
+			this.label = insertNode.getRawLabel();
 			this.mode = insertNode.getMode();
 		}
 
@@ -98,7 +98,7 @@ public class InfosetBuilder {
 					return false;//topic already inserted
 					
 				if(label != null && (child instanceof HelpTopicRef))
-					((HelpTopicRef) child).setLabel(label);
+					((HelpTopicRef) child).setRawLabel(label);
 			
 				((HelpContribution) parent).insertChild(child, mode);
 
@@ -143,7 +143,7 @@ public class InfosetBuilder {
 					return false;//topic already inserted
 					
 				if(label != null && (newSib instanceof HelpTopicRef))
-					((HelpTopicRef) newSib).setLabel(label);
+					((HelpTopicRef) newSib).setRawLabel(label);
 		
 				((HelpContribution) parent).insertNeighbouringChild(refSib,	newSib,	mode);
 

@@ -37,4 +37,7 @@ public interface Contribution {
 	/**
 	 */
 	Contribution getParent();
+	/**
+	 */
+	String getRawLabel();
 }
