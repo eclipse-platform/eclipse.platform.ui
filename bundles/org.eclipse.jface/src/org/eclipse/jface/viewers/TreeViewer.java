@@ -11,7 +11,10 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeListener;
@@ -221,6 +224,12 @@ public void setLabelProvider(IBaseLabelProvider labelProvider) {
  * Method declared in AbstractTreeViewer.
  */
 protected void setSelection(List items) {
+	
+	Item[] current = getSelection(getTree());
+	
+	//Don't bother resetting the same selection
+	if(haveSameData(items,current))
+		return;
 	 
 	//Cache the current position first
 	Tree cachedTree = getTree();
@@ -232,10 +241,31 @@ protected void setSelection(List items) {
 		
 	//Restore the current position
 	if(topItem != null)
-		cachedTree.setTopItem(topItem);
-			
-			
+		cachedTree.setTopItem(topItem);		
+}
+
+private boolean haveSameData(List items, Item[] current){
+	//If they are not the same size then they are not equivalent
+	if(items.size() != current.length)
+		return false;
 	
+	Set values = new HashSet();
+	Iterator itemsIterator = items.iterator();
+	
+	//Set up a list of items
+	while(itemsIterator.hasNext()){
+		values.add(((Item) itemsIterator.next()).getData());
+	}
+	
+	//Go through the items of the current collection
+	//If there is a mismatch return false
+	for (int i = 0; i < current.length; i++) {
+		if(values.contains(current[i].getData()))
+			continue;
+		return false;
+	}
+	
+	return true;
 }
 /* (non-Javadoc)
  * Method declared in AbstractTreeViewer.
