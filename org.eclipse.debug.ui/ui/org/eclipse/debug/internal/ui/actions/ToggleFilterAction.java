@@ -20,6 +20,11 @@ public abstract class ToggleFilterAction extends Action {
 	 * The viewer that this action works for
 	 */
 	private StructuredViewer fViewer;
+	
+	/**
+	 * The filter this action applies to the viewer
+	 */
+	private ViewerFilter fViewerFilter;
 
 	/**
 	 * Returns the appropriate tool tip text depending on
@@ -71,9 +76,14 @@ public abstract class ToggleFilterAction extends Action {
 	 * will add/remove from the viewer, or <code>null</code>
 	 * if no filter is involved.
 	 */
-	protected abstract ViewerFilter getViewerFilter();
+	protected ViewerFilter getViewerFilter() {
+		return fViewerFilter;
+	}
 
-	
+	protected void setViewerFilter(ViewerFilter filter) {
+		fViewerFilter= filter;
+	}
+
 	protected abstract String getShowText();
 
 	protected abstract String getHideText();

@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,30 +18,35 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * An view filter action that filters showing breakpoints based on the model identifier
  * of the selected debug element in the launch view.
  * 
  */
-public class ShowBreakpointsForModelAction extends ToggleFilterAction implements IUpdate {
+public class ShowBreakpointsForModelAction extends ToggleFilterAction implements ISelectionChangedListener {
 
 	/**
-	 * The filter this action applies to the viewer
+	 * The view associated with this action
 	 */
-	private BreakpointFilter fBreakpointFilter;
-
+	private IViewPart fView;
+	
+	/**
+	 * The list of identifiers for the current state
+	 */
+	private List fIdentifiers= new ArrayList(2);
+	
 	/**
 	 * A viewer filter that selects breakpoints that have
 	 * the same model identifier as the selected debug element
@@ -51,45 +57,13 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-			List identifiers= new ArrayList(2);
-			if (window != null) {
-				IViewPart view= window.getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW);
-				if (view != null) {
-					IDebugViewAdapter adapter= (IDebugViewAdapter)view.getAdapter(IDebugViewAdapter.class);
-					if (adapter != null) {
-						Viewer lViewer= adapter.getViewer();
-						ISelection selection= lViewer.getSelection();
-						if (selection instanceof IStructuredSelection) {
-							IStructuredSelection ss= (IStructuredSelection)selection;
-							Iterator i= ss.iterator();
-							while (i.hasNext()) {
-								Object next= i.next();
-								if (next instanceof IDebugElement) {
-									identifiers.add(((IDebugElement)next).getModelIdentifier());
-								} else if (next instanceof ILaunch) {
-									IDebugTarget[] targets= ((ILaunch)next).getDebugTargets();
-									for (int j = 0; j < targets.length; j++) {
-										identifiers.add(targets[j].getModelIdentifier());
-									}
-								} else if (next instanceof IProcess) {
-									IDebugTarget target= (IDebugTarget)((IProcess)next).getAdapter(IDebugTarget.class);
-									if (target != null) {
-										identifiers.add(target.getModelIdentifier());
-									}
-								}	
-							}
-						}
-					}
-				}
-			}
 			IBreakpoint breakpoint= (IBreakpoint)element;
-			return identifiers.contains(breakpoint.getModelIdentifier());
+			return fIdentifiers.contains(breakpoint.getModelIdentifier());
 		}
 
 	}
 
-	public ShowBreakpointsForModelAction(StructuredViewer viewer) {
+	public ShowBreakpointsForModelAction(StructuredViewer viewer, IViewPart view) {
 		super();
 		setText(ActionMessages.getString("ShowBreakpointsForModelAction.Show_For_Selected")); //$NON-NLS-1$
 		setToolTipText(getHideText());
@@ -98,36 +72,16 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));
 		setChecked(false);
 		setId(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".ShowBreakpointsForModelAction"); //$NON-NLS-1$
+		
+		// listen to selection changes in the debug view
+		DebugSelectionManager.getDefault().addSelectionChangedListener(this, view.getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		setView(view);
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.SHOW_BREAKPOINTS_FOR_MODEL_ACTION });
-		IViewPart part= DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (part != null) {
-			IDebugViewAdapter adapter= (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
-			adapter.setAction(getClass().getName(), this);
-		}
+		
 	}
 
-	/** 
-	 * This action listens for selection changes in the <code>LaunchView</code>
-	 * 
-	 * @see AbstractDebugView#updateActions()
-	 */
-	public void update() {
-		//selection has changed in the debug view
-		//need to reapply the filter.
-		getViewer().refresh();
-	}
-	/**
-	 * @see ToggleFilterAction#getViewerFilter()
-	 */
-	protected ViewerFilter getViewerFilter() {
-		return fBreakpointFilter;
-	}
-
-	protected void setViewerFilter(BreakpointFilter filter) {
-		fBreakpointFilter= filter;
-	}
 	/**
 	 * @see ToggleFilterAction#getShowText()
 	 */
@@ -140,5 +94,97 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 	 */
 	protected String getHideText() {
 		return ActionMessages.getString("ShowBreakpointsForModelAction.Only_Show_Breakpoints_Applicable_to_Selected_Debug_Element_3"); //$NON-NLS-1$
+	}
+	
+	public void dispose() {
+		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getView().getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+	}
+	
+	/**
+	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		
+		ISelection selection= event.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss= (IStructuredSelection)selection;
+			List identifiers= getIdentifiers(ss);
+			if (!isChecked()) {
+				fIdentifiers= identifiers;
+				return;
+			}
+			if (identifiers.isEmpty()) {
+				 if(fIdentifiers.isEmpty()) {
+					return;
+				 } else {
+				 	reapplyFilters(identifiers);
+				 	return;
+				 }
+			}
+			if (fIdentifiers.isEmpty()) {
+				reapplyFilters(identifiers);
+				return;
+			}
+			
+			if (identifiers.size() == fIdentifiers.size()) {
+				List copy= new ArrayList(identifiers.size());
+				Iterator iter= fIdentifiers.iterator();
+				while (iter.hasNext()) {
+					String element = (String) iter.next();
+					Iterator newIdentifiers= identifiers.iterator();
+					while (newIdentifiers.hasNext()) {
+						String newId= (String)newIdentifiers.next();
+						copy.add(newId);
+						if (element.equals(newId)) {
+							newIdentifiers.remove();
+						}
+					}
+				}
+				//check for real change
+				if (identifiers.isEmpty()) {
+					return;
+				}
+				reapplyFilters(copy);
+			} 
+		}
+	}
+	
+	/**
+	 * Selection has changed in the debug view
+	 * need to reapply the filter.
+	 */
+	protected void reapplyFilters(List identifiers) {
+		fIdentifiers= identifiers;		
+		getViewer().refresh();
+	}
+	
+	protected IViewPart getView() {
+		return fView;
+	}
+
+	protected void setView(IViewPart view) {
+		fView = view;
+	}
+	
+	protected List getIdentifiers(IStructuredSelection ss) {
+		List identifiers= new ArrayList(2);
+		Iterator i= ss.iterator();
+		while (i.hasNext()) {
+			Object next= i.next();
+			if (next instanceof IDebugElement) {
+				identifiers.add(((IDebugElement)next).getModelIdentifier());
+			} else if (next instanceof ILaunch) {
+				IDebugTarget[] targets= ((ILaunch)next).getDebugTargets();
+				for (int j = 0; j < targets.length; j++) {
+					identifiers.add(targets[j].getModelIdentifier());
+				}
+			} else if (next instanceof IProcess) {
+				IDebugTarget target= (IDebugTarget)((IProcess)next).getAdapter(IDebugTarget.class);
+				if (target != null) {
+					identifiers.add(target.getModelIdentifier());
+				}
+			}	
+		}
+		return identifiers;
 	}
 }
