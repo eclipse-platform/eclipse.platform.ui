@@ -34,7 +34,8 @@ import org.eclipse.compare.structuremergeviewer.IStructureComparator;
  * @see EditionSelectionDialog
  */
 public class ResourceNode extends BufferedContent
-			implements IStructureComparator, ITypedElement, IEditableContent, IModificationDate {
+			implements IStreamContentAccessorExtension2, IStructureComparator, ITypedElement,
+							IEditableContent, IModificationDate {
 			
 	private IResource fResource;
 	private ArrayList fChildren;
