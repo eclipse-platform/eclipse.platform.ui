@@ -519,7 +519,7 @@ public void resetPropertyValue() {
 		}
 	}
 	if (change)
-		refreshValues();
+		refreshFromRoot();
 }
 /**
  * Set the descriptor.
