@@ -11,7 +11,7 @@ import java.io.PrintStream;
 
 import org.apache.tools.ant.*;
 import org.eclipse.ant.core.AntSecurityException;
-import org.eclipse.ant.tests.core.testplugin.AntLoggerChecker;
+import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 public class TestBuildLogger implements BuildLogger {
@@ -50,8 +50,9 @@ public class TestBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		AntLoggerChecker.reset();
-//		AntLoggerChecker.getDefault().buildStarted(event);
+		AntTestChecker.reset();
+		AntTestChecker.getDefault().buildStarted(event.getProject().getName());
+		AntTestChecker.getDefault().setUserProperties(event.getProject().getProperties());
 	}
 
 	/**
@@ -60,14 +61,14 @@ public class TestBuildLogger implements BuildLogger {
 	public void buildFinished(BuildEvent event) {
 		handleException(event);
 		fHandledException= null;
-//		AntLoggerChecker.getDefault().buildFinished(event);
+		AntTestChecker.getDefault().buildFinished(event.getProject().getName());
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
-//		AntLoggerChecker.getDefault().targetStarted(event);
+		AntTestChecker.getDefault().targetStarted(event.getTarget().getName());
 	}
 
 	/**
@@ -75,14 +76,14 @@ public class TestBuildLogger implements BuildLogger {
 	 */
 	public void targetFinished(BuildEvent event) {
 		handleException(event);
-//		AntLoggerChecker.getDefault().targetFinished(event);
+		AntTestChecker.getDefault().targetFinished(event.getTarget().getName());
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {
-//		AntLoggerChecker.getDefault().taskStarted(event);
+		AntTestChecker.getDefault().taskStarted(event.getTask().getTaskName());
 	}
 
 	/**
@@ -90,7 +91,7 @@ public class TestBuildLogger implements BuildLogger {
 	 */
 	public void taskFinished(BuildEvent event) {
 		handleException(event);
-//		AntLoggerChecker.getDefault().targetFinished(event);
+		AntTestChecker.getDefault().targetFinished(event.getTask().getTaskName());
 	}
 
 	/**
@@ -98,7 +99,7 @@ public class TestBuildLogger implements BuildLogger {
 	 */
 	public void messageLogged(BuildEvent event) {
 		logMessage(event.getMessage(), event.getPriority());
-		AntLoggerChecker.getDefault().messageLogged(event.getMessage());
+		AntTestChecker.getDefault().messageLogged(event.getMessage());
 	}
 
 	protected PrintStream getErrorPrintStream() {

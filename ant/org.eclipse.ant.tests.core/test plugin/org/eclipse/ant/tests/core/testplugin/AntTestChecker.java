@@ -7,14 +7,13 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.util.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tools.ant.BuildEvent;
-
-public class AntLoggerChecker {
+public class AntTestChecker {
 	
-	private static AntLoggerChecker deflt= null;
+	private static AntTestChecker deflt= null;
 	
 	private int taskStartedCount;
 	
@@ -30,15 +29,29 @@ public class AntLoggerChecker {
 	
 	private List messages= new ArrayList();
 	
-	private AntLoggerChecker()  {
+	private List targets= new ArrayList();
+	
+	private List tasks= new ArrayList();
+	
+	private List projects= new ArrayList();
+	
+	private String currentProject;
+	
+	private String currentTask;
+	
+	private String currentTarget;
+	
+	private Hashtable userProperties;
+	
+	private AntTestChecker()  {
 	}
 	
 	/**
 	 * Returns the singleton AntLoggerChecker
 	 */
-	public static AntLoggerChecker getDefault() {
+	public static AntTestChecker getDefault() {
 		if (deflt == null) {
-			deflt= new AntLoggerChecker();
+			deflt= new AntTestChecker();
 		}
 		return deflt;
 	}
@@ -54,13 +67,15 @@ public class AntLoggerChecker {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void buildFinished(BuildEvent event) {
+	public void buildFinished(String projectName) {
 		buildsFinishedCount++;
 	}
 
 	
-	public void buildStarted(BuildEvent event) {
+	public void buildStarted(String projectName) {
 		buildsStartedCount++;
+		projects.add(projectName);
+		currentProject= projectName;
 	}
 
 	
@@ -71,29 +86,31 @@ public class AntLoggerChecker {
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void targetFinished(BuildEvent event) {
+	public void targetFinished(String targetName) {
 		targetsFinishedCount++;
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	public void targetStarted(BuildEvent event) {
+	public void targetStarted(String targetName) {
 		targetsStartedCount++;
+		targets.add(targetName);
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
-	public void taskFinished(BuildEvent event) {
+	public void taskFinished(String taskName) {
 		taskFinishedCount++;
 	}
 
 	/**
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
-	public void taskStarted(BuildEvent event) {
+	public void taskStarted(String taskName) {
 		taskStartedCount++;
+		tasks.add(taskName);
 	}
 	
 	/**
@@ -160,7 +177,15 @@ public class AntLoggerChecker {
 		buildsStartedCount= 0;
 		buildsFinishedCount= 0;
 		messages= new ArrayList();
+		tasks= new ArrayList();
+		targets= new ArrayList();
+		projects= new ArrayList();
+		userProperties= null;
+		currentProject= null;
+		currentTarget= null;
+		currentTask= null;
 	}
+	
 	/**
 	 * Returns the lastMessageLogged.
 	 * @return String
@@ -170,5 +195,13 @@ public class AntLoggerChecker {
 			return null;
 		}
 		return (String) messages.get(messages.size() - 1);
+	}
+	
+	public void setUserProperties(Hashtable userProperties) {
+		this.userProperties= userProperties;
+	}
+
+	public String getUserProperty(String name) {
+		return (String)userProperties.get(name);
 	}
 }
