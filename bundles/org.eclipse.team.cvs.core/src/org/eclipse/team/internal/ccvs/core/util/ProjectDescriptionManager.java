@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -142,6 +142,13 @@ public class ProjectDescriptionManager implements IResourceChangeListener {
 				createVCMMetaMarker(descResource);
 				Util.logError(".vcm_meta file ignored for project " + project.getName(), null);
 				return;
+			} else {
+				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
+				if (! folder.isCVSFolder()) {
+					createVCMMetaMarker(descResource);
+					Util.logError(".vcm_meta file ignored for project " + project.getName(), null);
+					return;
+				}
 			}
 		
 			// update project description file (assuming it has changed)
