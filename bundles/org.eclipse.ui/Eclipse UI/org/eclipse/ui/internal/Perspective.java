@@ -393,8 +393,10 @@ public boolean hideView(IViewPart view) {
 	// Remove the view from the current presentation.
 	if (isFastView(view)) {
 		fastViews.remove(view);
+		pane.setFast(false);		//force an update of the toolbar
 		if (activeFastView == view)
 			setActiveFastView(null);
+		pane.getControl().setEnabled(true);
 	} else { 
 		presentation.removePart(pane);
 	}
@@ -997,6 +999,7 @@ public IViewPart showView(String viewID)
 		presentation.addPart(pane);
 	} else if (openViewMode == IPreferenceConstants.OVM_FAST) {
 		fastViews.add(part);
+		pane.setFast(true);
 		showFastView(part);
 	} else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
 		presentation.addDetachedPart(pane);

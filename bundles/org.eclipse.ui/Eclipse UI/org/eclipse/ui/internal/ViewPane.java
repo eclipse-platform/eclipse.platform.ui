@@ -116,7 +116,8 @@ public class ViewPane extends PartPane
 				pullDownButton = null;
 			}
 		
-			if (isFastView()) {
+			//check the current internal state
+			if (fast) {
 				ToolItem pinButton = new ToolItem(toolbar, SWT.PUSH, index++);
 				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
 				pinButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
