@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 
+import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -31,6 +32,7 @@ import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.projection.ProjectionDocument;
 import org.eclipse.jface.text.projection.ProjectionDocumentEvent;
 import org.eclipse.jface.text.projection.ProjectionDocumentManager;
@@ -97,6 +99,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private boolean fPendingAnnotationWorldChange= false;
 	/** Indication whether projection changes in the visible document should be considered. */
 	private boolean fHandleProjectionChanges= true;
+	/** The list of projection listeners. */
+	private List fProjectionListeners;
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -190,16 +194,71 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	protected boolean updateSlaveDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
 		if (slaveDocument instanceof ProjectionDocument) {
-			ProjectionDocument document= (ProjectionDocument) slaveDocument;
+			ProjectionDocument projection= (ProjectionDocument) slaveDocument;
+			
+			int offset= modelRangeOffset;
+			int length= modelRangeLength;
+			
+			if (!isProjectionMode()) {
+				// mimic original TextViewer behavior
+				IDocument master= projection.getMasterDocument();
+				int line= master.getLineOfOffset(modelRangeOffset);
+				offset= master.getLineOffset(line);
+				length= (modelRangeOffset - offset) + modelRangeLength;
+
+			}
+			
 			try {
 				fHandleProjectionChanges= false;
-				document.replaceMasterDocumentRanges(modelRangeOffset, modelRangeLength);
+				projection.replaceMasterDocumentRanges(offset, length);
 			} finally {
 				fHandleProjectionChanges= true;
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	public void addProjectionListener(IProjectionListener listener) {
+
+		Assert.isNotNull(listener);
+
+		if (fProjectionListeners == null)
+			fProjectionListeners= new ArrayList();
+	
+		if (!fProjectionListeners.contains(listener))
+			fProjectionListeners.add(listener);
+	}
+	
+	public void removeProjectionListener(IProjectionListener listener) {
+
+		Assert.isNotNull(listener);
+
+		if (fProjectionListeners != null) {
+			fProjectionListeners.remove(listener);
+			if (fProjectionListeners.size() == 0)
+				fProjectionListeners= null;
+		}
+	}
+	
+	protected void fireProjectionEnabled() {
+		if (fProjectionListeners != null) {
+			Iterator e= new ArrayList(fProjectionListeners).iterator();
+			while (e.hasNext()) {
+				IProjectionListener l= (IProjectionListener) e.next();
+				l.projectionEnabled();
+			}
+		}
+	}
+
+	protected void fireProjectionDisabled() {
+		if (fProjectionListeners != null) {
+			Iterator e= new ArrayList(fProjectionListeners).iterator();
+			while (e.hasNext()) {
+				IProjectionListener l= (IProjectionListener) e.next();
+				l.projectionDisabled();
+			}
+		}
 	}
 	
 	/**
@@ -219,6 +278,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (isProjectionMode()) {
 			removeProjectionAnnotationModel(getVisualAnnotationModel());
 			fProjectionAnnotationModel.removeAllAnnotations();
+			fireProjectionDisabled();
 		}
 	}
 	
@@ -226,8 +286,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * Enables the projection mode.
 	 */
 	private void enableProjection() {
-		if (!isProjectionMode()) 
+		if (!isProjectionMode()) {
 			addProjectionAnnotationModel(getVisualAnnotationModel());
+			fireProjectionEnabled();
+		}
 	}
 	
 	/**
@@ -281,7 +343,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public IRegion getVisibleRegion() {
 		disableProjection();
-		return super.getVisibleRegion();
+		return getModelCoverage();
 	}
 
 	/*
@@ -289,7 +351,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public boolean overlapsWithVisibleRegion(int offset, int length) {
 		disableProjection();
-		return super.overlapsWithVisibleRegion(offset, length);
+		return TextUtilities.overlaps(getModelCoverage(), new Region(offset, length));
 	}
 	
 	/**
@@ -628,12 +690,31 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		}
 	}
 
+	/**
+	 * Removes the give column from this viewer's vertical ruler.
+	 * 
+	 * @param column the column to be removed
+	 */
+	public void removeVerticalRulerColumn(IVerticalRulerColumn column) {
+		IVerticalRuler ruler= getVerticalRuler();
+		if (ruler instanceof CompositeRuler) {
+			CompositeRuler compositeRuler= (CompositeRuler) ruler;
+			compositeRuler.removeDecorator(column);
+		}
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension5#exposeModelRange(org.eclipse.jface.text.IRegion)
 	 */
 	public boolean exposeModelRange(IRegion modelRange) {
 		if (isProjectionMode())
 			return fProjectionAnnotationModel.expandAll(modelRange.getOffset(), modelRange.getLength());
+
+		if (!overlapsWithVisibleRegion(modelRange.getOffset(), modelRange.getLength())) {
+			resetVisibleRegion();
+			return true;
+		}
+		
 		return false;
 	}
 	

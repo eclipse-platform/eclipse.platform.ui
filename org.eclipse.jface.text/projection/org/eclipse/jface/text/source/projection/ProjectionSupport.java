@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -102,9 +103,38 @@ public class ProjectionSupport {
 	}
 	
 	private final static Object PROJECTION= new Object();
-	private List fSummarizableTypes;
 	
-	public ProjectionSupport() {
+	private class ProjectionListener implements IProjectionListener {
+
+		/*
+		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
+		 */
+		public void projectionEnabled() {
+			doEnableProjection();
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
+		 */
+		public void projectionDisabled() {
+			doDisableProjection();
+		}
+	}
+	
+	private ProjectionViewer fViewer;
+	private IAnnotationAccess fAnnotationAccess;
+	private ISharedTextColors fSharedTextColors;
+	private List fSummarizableTypes;
+	private IAnnotationHover fAnnotationHover;
+	private ProjectionListener fProjectionListener;
+	private ProjectionAnnotationsPainter fPainter;
+	private ProjectionRulerColumn fColumn;
+	
+	
+	public ProjectionSupport(ProjectionViewer viewer, IAnnotationAccess annotationAccess, ISharedTextColors sharedTextColors) {
+		fViewer= viewer;
+		fAnnotationAccess= annotationAccess;
+		fSharedTextColors= sharedTextColors;
 	}
 	
 	public void addSummarizableAnnotationType(String annotationType) {
@@ -121,43 +151,71 @@ public class ProjectionSupport {
 		if (fSummarizableTypes.size() == 0)
 			fSummarizableTypes= null;
 	}
+	
+	public void setProjectionAnnotationHover(IAnnotationHover hover) {
+		fAnnotationHover= hover;
+	}
 		
-	/**
-	 * Enable projection for the given viewer
-	 * 
-	 * @param viewer the viewer
-	 * @param annotationAccess the annotation access
-	 * @param sharedTextColors the shared text colors
-	 */
-	public void enableProjection(ISourceViewer viewer, IAnnotationAccess annotationAccess, ISharedTextColors sharedTextColors) {
+	public void install() {
+		fViewer.setProjectionSummary(createProjectionSummary());
 		
-		if (viewer instanceof ProjectionViewer) {
-			ProjectionViewer projectionViewer= (ProjectionViewer) viewer;
-			
-			projectionViewer.setProjectionSummary(createProjectionSummary(projectionViewer, annotationAccess));
-			
-			AnnotationPainter painter= new ProjectionAnnotationsPainter(projectionViewer, annotationAccess);
-			painter.addDrawingStrategy(PROJECTION, new ProjectionDrawingStrategy());
-			painter.addAnnotationType(ProjectionAnnotation.TYPE, PROJECTION);
-			painter.setAnnotationTypeColor(ProjectionAnnotation.TYPE, sharedTextColors.getColor(getColor()));
-			projectionViewer.addPainter(painter);
-			
-			ProjectionRulerColumn column= new ProjectionRulerColumn(projectionViewer.getProjectionAnnotationModel(), 9, annotationAccess);
-			column.addAnnotationType(ProjectionAnnotation.TYPE);
-			// TODO make hover configurable from outside
-			column.setHover(new ProjectionAnnotationHover());
-			projectionViewer.addVerticalRulerColumn(column);
+		doEnableProjection();
+		
+		fProjectionListener= new ProjectionListener();
+		fViewer.addProjectionListener(fProjectionListener);
+	}
+	
+	public void dispose() {
+		if (fProjectionListener != null) {
+			fViewer.removeProjectionListener(fProjectionListener);
+			fProjectionListener= null;
 		}
 	}
 	
-	private ProjectionSummary createProjectionSummary(ProjectionViewer projectionViewer, IAnnotationAccess annotationAccess) {
-		ProjectionSummary summary= new ProjectionSummary(projectionViewer, annotationAccess);
+	protected void doEnableProjection() {
+		if (fPainter == null) {
+			fPainter= new ProjectionAnnotationsPainter(fViewer, fAnnotationAccess);
+			fPainter.addDrawingStrategy(PROJECTION, new ProjectionDrawingStrategy());
+			fPainter.addAnnotationType(ProjectionAnnotation.TYPE, PROJECTION);
+			fPainter.setAnnotationTypeColor(ProjectionAnnotation.TYPE, fSharedTextColors.getColor(getColor()));
+		}
+		fViewer.addPainter(fPainter);
+		
+		if (fColumn == null) {
+			fColumn= new ProjectionRulerColumn(fViewer.getProjectionAnnotationModel(), 9, fAnnotationAccess);
+			fColumn.addAnnotationType(ProjectionAnnotation.TYPE);
+			fColumn.setHover(getProjectionAnnotationHover());
+		}
+		fViewer.addVerticalRulerColumn(fColumn);
+	}
+	
+	protected void doDisableProjection() {
+		if (fPainter != null) {
+			fViewer.removePainter(fPainter);
+			fPainter.dispose();
+			fPainter= null;
+		}
+		
+		if (fColumn != null) {
+			fViewer.removeVerticalRulerColumn(fColumn);
+			fColumn= null;
+		}
+	}
+	
+	private ProjectionSummary createProjectionSummary() {
+		ProjectionSummary summary= new ProjectionSummary(fViewer, fAnnotationAccess);
 		if (fSummarizableTypes != null) {
 			int size= fSummarizableTypes.size();
 			for (int i= 0; i < size; i++)
 				summary.addAnnotationType((String) fSummarizableTypes.get(i));
 		}
 		return summary;
+	}
+	
+	private IAnnotationHover getProjectionAnnotationHover() {
+		if (fAnnotationHover == null)
+			return new ProjectionAnnotationHover();
+		return fAnnotationHover;
 	}
 
 	/**
