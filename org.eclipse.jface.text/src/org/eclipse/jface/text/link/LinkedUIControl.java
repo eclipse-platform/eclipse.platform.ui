@@ -61,7 +61,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * position UI and acts upon them.
  * <p>
  * <code>LinkedUIControl</code> relies on all added
- * <code>LinkedUITarget</code> s to provide implementations of
+ * <code>LinkedUITarget</code>s to provide implementations of
  * <code>ITextViewer</code> that implement <code>ITextViewerExtension</code>,
  * and the documents being edited to implement <code>IDocumentExtension3</code>.
  * </p>
