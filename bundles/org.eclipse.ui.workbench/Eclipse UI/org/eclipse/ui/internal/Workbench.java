@@ -1632,12 +1632,7 @@ public final class Workbench implements IWorkbench {
 
 		// shutdown the rest of the workbench
 		WorkbenchColors.shutdown();		
-		if (getDecoratorManager() != null) {
-			((DecoratorManager) getDecoratorManager()).shutdown();
-		}
 		activityHelper.shutdown();
-		ProgressManager.getInstance().shutdown();
-
 		uninitializeImages();
 		if (WorkbenchPlugin.getDefault() != null) {
 			WorkbenchPlugin.getDefault().reset();

@@ -125,6 +125,15 @@ public class ProgressManager extends ProgressProvider
 			singleton = new ProgressManager();
 		return singleton;
 	}
+	
+	/**
+	 * Shutdown the singleton if there is one.
+	 */
+	public static void shutdownProgressManager(){
+		if(singleton == null)
+			return;
+		singleton.shutdown();
+	}
 
 	/**
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
@@ -834,7 +843,7 @@ public class ProgressManager extends ProgressProvider
 	/**
 	 * Shutdown the receiver.
 	 */
-	public void shutdown() {
+	private void shutdown() {
 		this.listeners.clear();
 		Platform.getJobManager().setProgressProvider(null);
 		Platform.getJobManager().removeJobChangeListener(this.changeListener);

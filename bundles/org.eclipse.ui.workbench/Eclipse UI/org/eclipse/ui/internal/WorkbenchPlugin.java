@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistryReader;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IViewRegistry;
@@ -145,6 +146,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
             decoratorManager.dispose();
             decoratorManager = null;
         }
+        
+        ProgressManager.shutdownProgressManager();
 
 		themeRegistry = null;
 		workingSetManager = null;
