@@ -95,6 +95,10 @@ public class UIStats {
         endStrings[SWITCH_PERSPECTIVE] = " ms to switch perspective: "; //$NON-NLS-1$
     }
 
+    public static boolean isDebugging(int operation) {
+        return debug[operation];
+    }
+    
     public static void start(int operation, String label) {
         if (debug[operation]) {
             String output = startStrings[operation] + label;

@@ -881,7 +881,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * Fires page activated
      */
     private void firePageActivated(IWorkbenchPage page) {
-        String label = "activated " + page.getLabel(); //$NON-NLS-1$
+        String label = ""; //$NON-NLS-1$
+        if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+            label = "activated " + page.getLabel(); //$NON-NLS-1$
+        }
         try {
 	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
 	        pageListeners.firePageActivated(page);
@@ -895,7 +898,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * Fires page closed
      */
     private void firePageClosed(IWorkbenchPage page) {
-        String label = "closed " + page.getLabel(); //$NON-NLS-1$
+        String label = ""; //$NON-NLS-1$
+        if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+            label = "closed " + page.getLabel(); //$NON-NLS-1$
+        }
         try {
 	        UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
 	        pageListeners.firePageClosed(page);
@@ -910,7 +916,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * Fires page opened
      */
     private void firePageOpened(IWorkbenchPage page) {
-        String label = "opened " + page.getLabel(); //$NON-NLS-1$
+        String label = ""; //$NON-NLS-1$
+        if (UIStats.isDebugging(UIStats.NOTIFY_PAGE_LISTENERS)) {
+            label = "opened " + page.getLabel(); //$NON-NLS-1$
+        }
         try {	        
             UIStats.start(UIStats.NOTIFY_PAGE_LISTENERS, label);
             pageListeners.firePageOpened(page);
@@ -925,7 +934,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     void firePerspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
-        String label = "activated page = " + page.getLabel() + ", perspective = " + perspective.getId(); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = ""; //$NON-NLS-1$
+        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+            label = "activated page = " + page.getLabel() + ", perspective = " + getPerspectiveId(perspective); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         try {	        
             UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
 
@@ -936,13 +948,25 @@ public class WorkbenchWindow extends ApplicationWindow implements
         }
     }
 
+    private String getPerspectiveId(IPerspectiveDescriptor perspective) {
+        if (perspective == null) {
+            return "null";
+        }
+        
+        return perspective.getId();
+    }
+    
     /**
      * Fires perspective changed
      */
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId) {
-        String label = "changed perspective = " + perspective.getId() + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
-    		+ ", changeId = " + changeId; //$NON-NLS-1$
+        String label = ""; //$NON-NLS-1$
+        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+            // Avoid the extra string concatenation operations if we're not using these debug strings.
+	        label = "changed perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
+	    		+ ", changeId = " + changeId; //$NON-NLS-1$
+        }
         try {	        
             UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
 
@@ -960,8 +984,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
     void firePerspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective,
             IWorkbenchPartReference partRef, String changeId) {
-        String label = "changed perspective = " + perspective.getId() + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
-        	+ ", changeId = " + changeId + ", partRef = " + partRef.getId(); //$NON-NLS-1$ //$NON-NLS-2$
+        String label = ""; //$NON-NLS-1$
+        if (UIStats.isDebugging(UIStats.NOTIFY_PERSPECTIVE_LISTENERS)) {
+	        label = "changed perspective = " + getPerspectiveId(perspective) + ", page = " + page.getLabel()   //$NON-NLS-1$ //$NON-NLS-2$
+	        	+ ", changeId = " + changeId + ", partRef = " + partRef.getId(); //$NON-NLS-1$ //$NON-NLS-2$
+        }
         try {	        
             UIStats.start(UIStats.NOTIFY_PERSPECTIVE_LISTENERS, label);
 
