@@ -6,6 +6,10 @@
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+ (c) Copyright IBM Corp. 2000, 2002.
+ All Rights Reserved.
+-->
 <html>
 <head>
 <title>Advanced Search</title>
