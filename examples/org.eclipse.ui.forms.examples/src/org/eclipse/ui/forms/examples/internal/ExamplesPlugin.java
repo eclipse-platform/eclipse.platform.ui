@@ -42,6 +42,9 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public static final String IMG_LINKTO_HELP = "linkto_help";
 	public static final String IMG_HELP_TOPIC = "help_topic";
 	public static final String IMG_CLOSE = "close";
+	public static final String IMG_HELP_CONTAINER = "container_obj";
+	public static final String IMG_HELP_TOC_OPEN = "toc_open";
+	public static final String IMG_HELP_TOC_CLOSED = "toc_closed";
 
 	/**
 	 * The constructor.
@@ -64,7 +67,10 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 		registerImage(registry, IMG_SAMPLE, "sample.gif");
 		registerImage(registry, IMG_WIZBAN, "newprj_wiz.gif");
 		registerImage(registry, IMG_LINKTO_HELP, "linkto_help.gif");
-		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif");
+		registerImage(registry, IMG_HELP_TOPIC, "topic.gif");
+		registerImage(registry, IMG_HELP_CONTAINER, "container_obj.gif");
+		registerImage(registry, IMG_HELP_TOC_CLOSED, "toc_closed.gif");
+		registerImage(registry, IMG_HELP_TOC_OPEN, "toc_open.gif");
 		registerImage(registry, IMG_CLOSE, "close_view.gif");
 	}
 

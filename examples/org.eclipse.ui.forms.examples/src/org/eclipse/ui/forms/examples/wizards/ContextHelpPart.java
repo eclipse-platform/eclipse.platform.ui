@@ -36,15 +36,13 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class ContextHelpPart {
 	private ScrolledForm form;
 
-	//private Label title;
-
 	private Text phraseText;
 
 	private FormText text;
 
 	private FormText searchResults;
 
-	private String defaultText;
+	private String defaultText="";
 
 	private IRunnableContext runnableContext;
 
@@ -76,7 +74,7 @@ public class ContextHelpPart {
 				openLink(e.getHref());
 			}
 		});
-		section.setClient(text);
+				section.setClient(text);
 		section.setLayoutData(new TableWrapData(TableWrapData.FILL,
 				TableWrapData.FILL));
 		text.setText(defaultText, false, false);
@@ -126,7 +124,7 @@ public class ContextHelpPart {
 		toolkit.paintBordersFor(form.getBody());
 
 		searchResults = toolkit.createFormText(form.getBody(), true);
-		//searchResults.setBackground(helpContainer.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		// searchResults.setBackground(helpContainer.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
 		searchResults.setImage(ExamplesPlugin.IMG_HELP_TOPIC, ExamplesPlugin
@@ -146,7 +144,7 @@ public class ContextHelpPart {
 	public Control getControl() {
 		return form;
 	}
-	
+
 	public ScrolledForm getForm() {
 		return form;
 	}
@@ -217,8 +215,7 @@ public class ContextHelpPart {
 			}
 			buff.append("</form>");
 			searchResults.setText(buff.toString(), true, false);
-		}
-		else
+		} else
 			searchResults.setText("", false, false);
 		form.reflow(true);
 	}
@@ -226,12 +223,12 @@ public class ContextHelpPart {
 	private void handlePageActivation(Control page) {
 		if (text.isDisposed())
 			return;
-		//title.setText("What is" + " \"" + part.getSite().getRegisteredName()
+		// title.setText("What is" + " \"" + part.getSite().getRegisteredName()
 		// + "\"?"); //$NON-NLS-1$ //$NON-NLS-2$
 		String helpText = createContextHelp(page);
-		text.setText(helpText != null ? helpText : "", helpText != null, //$NON-NLS-1$
-				false);
-		//form.getBody().layout();
+		text.setText(helpText != null ? helpText : defaultText, helpText != null, //$NON-NLS-1$
+						false);
+		// form.getBody().layout();
 		form.reflow(true);
 	}
 
@@ -333,5 +330,8 @@ public class ContextHelpPart {
 	public void update(Control control) {
 		if (form != null)
 			handlePageActivation(control);
+	}
+	public void setDefaultText(String text) {
+		this.defaultText = text;
 	}
 }

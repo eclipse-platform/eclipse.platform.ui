@@ -101,6 +101,17 @@
             class="org.eclipse.ui.forms.examples.views.FormView"
             id="org.eclipse.ui.forms.examples.views.FormView">
       </view>
+      <stickyView
+            closeable="true"
+            moveable="true"
+            location="RIGHT"
+            id="org.eclipse.ui.forms.examples.helpView"/>
+      <view
+            allowMultiple="false"
+            class="org.eclipse.ui.forms.examples.views.HelpView"
+            category="org.eclipse.ui.forms.examples"
+            name="Help"
+            id="org.eclipse.ui.forms.examples.helpView"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
