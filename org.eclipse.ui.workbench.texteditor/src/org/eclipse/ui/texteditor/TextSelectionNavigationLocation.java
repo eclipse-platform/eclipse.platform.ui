@@ -64,7 +64,6 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			if (installOnDocument(document, position)) {
 				fDocument= document;
 				fPosition= position;
-				
 				if (!part.isDirty())
 					fSavedPosition= new Position(fPosition.offset, fPosition.length);
 			}
@@ -211,14 +210,17 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			String deleted= memento.getString(IWorkbenchConstants.TAG_INFO);
 			
 			if (offset != null && length != null) {
-				fPosition= new Position(offset.intValue(), length.intValue());
+				Position p= new Position(offset.intValue(), length.intValue());
 				if (deleted != null)
-					fPosition.isDeleted= DELETED.equals(deleted) ? true : false;
+					p.isDeleted= DELETED.equals(deleted) ? true : false;
+				
+				// activate
+				if (installOnDocument(fDocument, p)) {
+					fPosition= p;
+					if (!part.isDirty())
+						fSavedPosition= new Position(fPosition.offset, fPosition.length);
+				}
 			}
-			
-			// activate
-			if (installOnDocument(fDocument, fPosition) && !part.isDirty())
-				fSavedPosition= new Position(fPosition.offset, fPosition.length);
 		}
 	}
 	

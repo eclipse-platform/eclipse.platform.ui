@@ -71,14 +71,14 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 */
 		public void textChanged(TextEvent event) {
 			
-			if (!event.getViewerRedrawState())
-				return;
-			
 			if (computeNumberOfDigits()) {
 				computeIndentations();
-				layout();
+				layout(event.getViewerRedrawState());
 				return;
 			}
+			
+			if (!event.getViewerRedrawState())
+				return;
 				
 			if (fSensitiveToTextChanges || event.getDocumentEvent() == null) {
 				if (fCanvas != null && !fCanvas.isDisposed()) {
@@ -295,6 +295,8 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private Color fBackground;
 	/** Cached number of displayed digits */
 	private int fCachedNumberOfDigits= -1;
+	/** Flag indicating whether a relayout is required */
+	private boolean fRelayoutRequired= false;
 	
 	
 	/**
@@ -355,7 +357,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * to the previous call of this method. If the method is called
 	 * for the first time, the return value is also <code>true</code>.
 	 * 
-	 * @return the number of digits to be displayed
+	 * @return whether the number of digits has been changed
 	 */
 	protected boolean computeNumberOfDigits() {
 		
@@ -379,7 +381,13 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * Layouts the enclosing viewer to adapt the layout to changes of the
 	 * size of the individual components.
 	 */
-	protected void layout() {
+	protected void layout(boolean redraw) {
+		if (!redraw) {
+			fRelayoutRequired= true;
+			return;
+		}
+		
+		fRelayoutRequired= false;
 		if (fCachedTextViewer instanceof ITextViewerExtension) {
 			ITextViewerExtension extension= (ITextViewerExtension) fCachedTextViewer;
 			Control control= extension.getControl();
@@ -655,6 +663,12 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @see IVerticalRulerColumn#redraw
 	 */
 	public void redraw() {
+		
+		if (fRelayoutRequired) {
+			layout(true);
+			return;
+		}
+		
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			GC gc= new GC(fCanvas);
 			doubleBufferPaint(gc);
