@@ -197,6 +197,42 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			manager.removeJobChangeListener(listener);
 		}
 	}
+	public void testReverseOrder() {
+		//ensure jobs are run in order from lowest to highest sleep time.
+		final List done = Collections.synchronizedList(new ArrayList());
+		IJobChangeListener listener = new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if (event.getJob() instanceof TestJob)
+					//add at start of list to get reverse order
+					done.add(0, event.getJob());
+			}
+		};
+		int[] sleepTimes = new int[] { 4000, 3000, 2000, 1000, 50 };
+		Job[] jobs = new Job[sleepTimes.length];
+		manager.addJobChangeListener(listener);
+		try {
+			for (int i = 0; i < sleepTimes.length; i++)
+				jobs[i] = new TestJob("testOrder(" + i + ")", 1, 1);
+			for (int i = 0; i < sleepTimes.length; i++)
+				jobs[i].schedule(sleepTimes[i]);
+			waitForCompletion();
+			//make sure listener has had a chance to process the finished job
+			while (done.size() != jobs.length) {
+				Thread.yield();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+			}
+			Job[] doneOrder = (Job[]) done.toArray(new Job[done.size()]);
+			assertEquals("1.0", jobs.length, doneOrder.length);
+			for (int i = 0; i < doneOrder.length; i++)
+				assertEquals("1.1." + i, jobs[i], doneOrder[i]);
+		} finally {
+			manager.removeJobChangeListener(listener);
+		}
+	}
+
 	public void testSimple() {
 		final int JOB_COUNT = 10;
 		for (int i = 0; i < JOB_COUNT; i++) {
