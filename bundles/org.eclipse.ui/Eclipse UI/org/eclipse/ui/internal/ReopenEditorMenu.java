@@ -135,7 +135,8 @@ public class ReopenEditorMenu extends ContributionItem {
 	 * menu items for all windows.
 	 */
 	public void fill(Menu menu, int index) {
-		if (fWindow.getActivePage() == null)
+		if (fWindow.getActivePage() == null
+			|| fWindow.getActivePage().getPerspective() == null)
 			return;
 
 		// Get items.
