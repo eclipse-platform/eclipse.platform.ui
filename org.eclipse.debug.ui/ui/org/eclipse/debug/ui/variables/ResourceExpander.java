@@ -56,8 +56,8 @@ public class ResourceExpander extends DefaultVariableExpander {
 		return getWorkspaceRoot().findMember(varValue);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IVariableLocationExpander.
+	/**
+	 * @see IVariableExpander#getPath(String, String, ExpandVariableContext)
 	 */
 	public IPath getPath(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource = expand(varValue, context);
@@ -83,8 +83,8 @@ public class ResourceExpander extends DefaultVariableExpander {
 				varTag.equals(IVariableConstants.VAR_RESOURCE_PATH);
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IVariableResourceExpander.
+	/**
+	 * @see IVariableExpander#getResources(String, String, ExpandVariableContext)
 	 */
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource = expand(varValue, context);
@@ -106,7 +106,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 	 * Returns a string representation of the path to a file or directory
 	 * for the given variable tag and value or <code>null</code>.
 	 * 
-	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)
+	 * @see IVariableExpander#getText(String, String, ExpandVariableContext)
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IPath path= getPath(varTag, varValue, context);

@@ -23,9 +23,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Expands a working set type variable into the desired
  * result format.
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
+ * @since 3.0
  */
 public class WorkingSetExpander extends DefaultVariableExpander {
 
@@ -36,8 +34,8 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IVariableResourceExpander.
+	/**
+	 * @see IVariableExpander#getResources(String, String, ExpandVariableContext)
 	 */
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		if (varValue == null || varValue.length() == 0) {

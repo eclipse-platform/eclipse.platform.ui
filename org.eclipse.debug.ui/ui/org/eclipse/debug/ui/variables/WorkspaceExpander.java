@@ -16,9 +16,6 @@ import org.eclipse.core.resources.IResource;
 /**
  * Expands a workspace variable into the desired
  * result format.
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
  */
 public class WorkspaceExpander extends ResourceExpander {
 
@@ -29,8 +26,8 @@ public class WorkspaceExpander extends ResourceExpander {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ResourceExpander.
+	/**
+	 * @see ResourceExpander#expandUsingContext(ExpandVariableContext)
 	 */
 	protected IResource expandUsingContext(ExpandVariableContext context) {
 		return getWorkspaceRoot();

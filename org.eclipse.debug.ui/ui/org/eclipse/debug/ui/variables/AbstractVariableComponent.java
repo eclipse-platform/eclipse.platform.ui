@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Group;
 public abstract class AbstractVariableComponent implements IVariableComponent {
 	
 	protected Group mainGroup;
-	protected IVariableComponentContainer dialogPage;
+	protected IVariableComponentContainer container;
 	private boolean isValid = true;
 
 	/**
@@ -36,17 +36,18 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	}
 	
 	/**
-	 * Returns the dialog page this component is part of
+	 * Returns this component's container, which can display messages
+	 * for this component.
 	 */
-	protected IVariableComponentContainer getPage() {
-		return dialogPage;
+	protected IVariableComponentContainer getContainer() {
+		return container;
 	}
 
 	/**
 	 * @see IVariableComponent#createContents(Composite, String, IVariableComponentContainer)
 	 */
-	public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
-		dialogPage= page;
+	public void createContents(Composite parent, String varTag, IVariableComponentContainer componentContainer) {
+		this.container= componentContainer;
 		
 		// main composite
 		mainGroup = new Group(parent, SWT.NONE);
@@ -74,7 +75,7 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	
 	/**
 	 * Sets whether the component's values are all valid.
-	 * Updates the components's page valid state. No action
+	 * Updates the valid state of this component's container. No action
 	 * taken if new valid state same as current one.
 	 * 
 	 * @param isValid <code>true</code> if all values valid,
@@ -83,7 +84,7 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	protected void setIsValid(boolean isValid) {
 		if (isValid() != isValid) {
 			this.isValid= isValid;
-			this.dialogPage.updateValidState();
+			this.container.updateValidState();
 		}
 	}
 
@@ -99,8 +100,8 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 	public void validate() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.variables.IVariableComponent#dispose()
+	/**
+	 * @see IVariableComponent#dispose()
 	 */
 	public void dispose() {
 		//by default do nothing

@@ -16,9 +16,6 @@ import org.eclipse.core.resources.IResource;
 /**
  * Expands a resource's project type variable into the desired
  * result format.
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
  */
 public class ProjectExpander extends ResourceExpander {
 
@@ -29,8 +26,8 @@ public class ProjectExpander extends ResourceExpander {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on ResourceExpander.
+	/**
+	 * @see ResourceExpander#expandUsingContext(ExpandVariableContext)
 	 */
 	protected IResource expandUsingContext(ExpandVariableContext context) {
 		IResource resource = context.getSelectedResource();
@@ -40,8 +37,8 @@ public class ProjectExpander extends ResourceExpander {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on ResourceExpander.
+	/**
+	 * @see ResourceExpander#expandToMember(String)
 	 */
 	protected IResource expandToMember(String varValue) {
 		IResource member = super.expandToMember(varValue);

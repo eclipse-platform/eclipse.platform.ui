@@ -77,6 +77,11 @@ public class VariableSelectionDialog extends SelectionDialog {
 		return composite;
 	}
 
+	/**
+	 * Returns this dialog's variable selection form, which allows
+	 * the user to choose and configure a variable.
+	 * @return this dialog's <code>LaunchConfigurationVariableForm</code>
+	 */
 	public LaunchConfigurationVariableForm getForm() {
 		return form;
 	}

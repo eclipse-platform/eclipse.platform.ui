@@ -74,7 +74,7 @@ public class SpecificFolderResourceComponent extends ResourceComponent {
 		IStructuredSelection sel = (IStructuredSelection) resourceList.getSelection();
 		IResource resource = (IResource) sel.getFirstElement();
 		if (resource == null || resource.getType() == IResource.FILE) {
-			getPage().setErrorMessage(LaunchConfigurationsMessages.getString("SpecificFolderResourceComponent.Use_&selected_resource_2")); //$NON-NLS-1$
+			getContainer().setErrorMessage(LaunchConfigurationsMessages.getString("SpecificFolderResourceComponent.Use_&selected_resource_2")); //$NON-NLS-1$
 			setIsValid(false);
 		}
 	}

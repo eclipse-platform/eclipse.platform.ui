@@ -107,11 +107,11 @@ public class VariableUtil {
 	}
 	
 	/**
-	 * Builds a variable tag that will be auto-expanded before
-	 * the tool is run.
+	 * Returns a variable tag from the given variable name and argument.
 	 * 
-	 * @param varName the name of a known variable (one of the VAR_* constants for instance)
+	 * @param varName the name of a variable (one of the VAR_* constants for instance)
 	 * @param varArgument an optional argument for the variable, <code>null</code> if none
+	 * @return a variable tag, built from the given variable name and argument.
 	 */
 	public static String buildVariableTag(String varName, String varArgument) {
 		StringBuffer buf = new StringBuffer();
@@ -120,10 +120,10 @@ public class VariableUtil {
 	}
 	
 	/**
-	 * Builds a variable tag that will be auto-expanded before
-	 * the tool is run.
+	 * Builds a variable tag in the given buffer from the given
+	 * variable name and argument.
 	 * 
-	 * @param varName the name of a known variable (one of the VAR_* constants for instance)
+	 * @param varName the name of a variable (one of the VAR_* constants for instance)
 	 * @param varArgument an optional argument for the variable, <code>null</code> if none
 	 * @param buffer the buffer to write the constructed variable tag
 	 */

@@ -27,8 +27,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Maintains the context used to expand variables. The context is based on
- * the selected resource, unless a build is in progress - in which case
- * the context is based on the project being built..
+ * the selected resource.
  */
 public class VariableContextManager implements IWindowListener, ISelectionListener {
 

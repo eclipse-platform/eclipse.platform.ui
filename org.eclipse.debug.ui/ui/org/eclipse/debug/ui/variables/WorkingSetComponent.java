@@ -167,12 +167,12 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 	public void validate() {
 		boolean isValid= getVariableValue() != null;
 		if (isValid) {
-			getPage().setErrorMessage(null);
+			getContainer().setErrorMessage(null);
 		} else {
-			getPage().setErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetComponent.A_specific_working_set_must_be_selected_from_the_list._1")); //$NON-NLS-1$
+			getContainer().setErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetComponent.A_specific_working_set_must_be_selected_from_the_list._1")); //$NON-NLS-1$
 		}
 		setIsValid(isValid);
-		getPage().updateValidState();
+		getContainer().updateValidState();
 	}
 	
 	/* (non-Javadoc)

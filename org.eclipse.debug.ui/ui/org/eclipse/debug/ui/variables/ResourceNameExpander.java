@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.variables;
 
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
@@ -21,7 +20,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMe
 public class ResourceNameExpander extends DefaultVariableExpander {
 
 	/**
-	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)
+	 * @see IVariableExpander#getText(String, String, ExpandVariableContext)
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource= context.getSelectedResource();

@@ -34,9 +34,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Visual component to edit the resource type variable
  * value.
- * <p>
- * This class is not intended to be extended by clients.
- * </p>
+ * @since 3.0
  */
 public class ResourceComponent extends AbstractVariableComponent {
 	protected Button selectedResourceButton;
@@ -52,11 +50,11 @@ public class ResourceComponent extends AbstractVariableComponent {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on IVariableComponent.
+	/**
+	 * @see IVariableComponent#createContents(Composite, String, IVariableComponentContainer)
 	 */
-	public void createContents(Composite parent, String varTag, IVariableComponentContainer page) {
-		super.createContents(parent, varTag, page); // Creates the main group and sets the page
+	public void createContents(Composite parent, String varTag, IVariableComponentContainer componentContainer) {
+		super.createContents(parent, varTag, componentContainer); // Creates the main group and sets the page
 		
 		createSelectedResourceOption();
 		createSpecificResourceOption();
@@ -115,7 +113,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 		specificResourceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateResourceListEnablement();
-				getPage().updateValidState();
+				getContainer().updateValidState();
 				selectedResourceVariable= !specificResourceButton.getSelection();
 			}
 		});
@@ -198,12 +196,12 @@ public class ResourceComponent extends AbstractVariableComponent {
 	 * Method declared on IVariableComponent.
 	 */
 	public void validate() {
-		getPage().setErrorMessage(null);
+		getContainer().setErrorMessage(null);
 		setIsValid(true);
 		if (specificResourceButton != null && specificResourceButton.getSelection()) {
 			validateResourceListSelection();
 		}
-		getPage().updateValidState();
+		getContainer().updateValidState();
 	}
 
 	/**
@@ -216,7 +214,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 			return;
 		}
 		if (resourceList.getSelection().isEmpty()) {
-			getPage().setErrorMessage(LaunchConfigurationsMessages.getString("ResourceComponent.A_specific_resource_must_be_selected_from_the_list._3")); //$NON-NLS-1$
+			getContainer().setErrorMessage(LaunchConfigurationsMessages.getString("ResourceComponent.A_specific_resource_must_be_selected_from_the_list._3")); //$NON-NLS-1$
 			setIsValid(false);
 		}
 	}
