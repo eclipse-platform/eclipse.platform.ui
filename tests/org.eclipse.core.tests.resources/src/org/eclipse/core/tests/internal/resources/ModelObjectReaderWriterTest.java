@@ -66,10 +66,12 @@ public void testProjectDescription() throws Throwable {
 	ProjectDescriptionReader reader = new ProjectDescriptionReader();
 	IPath root = getWorkspace().getRoot().getLocation();
 	IPath location = root.append("ModelObjectWriterTest2.pbs");
+	String defaultCharset = "ISO-1234-5";
 	/* test write */
 	ProjectDescription description = new ProjectDescription();
 	description.setLocation(location);
 	description.setName("MyProjectDescription");
+	description.setDefaultCharset(defaultCharset);
 	HashMap args = new HashMap(3);
 	args.put("ArgOne", "ARGH!");
 	args.put("ArgTwo", "2 x ARGH!");
@@ -93,6 +95,7 @@ public void testProjectDescription() throws Throwable {
 	InputSource in = new InputSource(input);
 	ProjectDescription description2 = reader.read(in);
 	assertTrue("1.1", description.getName().equals(description2.getName()));
+	assertEquals("1.2", description.getDefaultCharset(), description2.getDefaultCharset());
 	assertTrue("1.3", location.equals(description.getLocation()));
 
 	ICommand[] commands2 = description2.getBuildSpec();
@@ -147,6 +150,7 @@ public void testProjectDescription2() throws Throwable {
 	InputSource in = new InputSource(input);
 	ProjectDescription description2 = reader.read(in);
 	assertTrue("1.1", description.getName().equals(description2.getName()));
+	assertEquals("1.2", description.getDefaultCharset(), description2.getDefaultCharset());
 	assertTrue("1.3", location.equals(description.getLocation()));
 
 	ICommand[] commands2 = description2.getBuildSpec();
@@ -453,6 +457,7 @@ private String getLongDescription() {
 	"<projectDescription>" +
 		"<name>org.eclipse.help.ui</name>" +
 		"<comment></comment>" +
+		"<charset>UTF-8</charset>" +
 	"	<projects>" +
 		"	<project>org.eclipse.core.boot</project>" +
 		"	<project>org.eclipse.core.resources</project>" +
@@ -736,6 +741,9 @@ public void testMultiLineCharFields() throws Throwable {
 		"	<name>\n" +
 		"      abc\n" +
 		"   </name>\n" +
+		"	<charset>\n" + 
+		"		ISO-8859-1\n" +
+		"	</charset>\n" +
 		"	<comment>This is the comment.</comment>\n" +
 		"	<projects>\n" +
 		"	   <project>\n" +
@@ -777,6 +785,7 @@ public void testMultiLineCharFields() throws Throwable {
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 		"<projectDescription>\n" +
 		"	<name>abc</name>\n" +
+		"	<charset>ISO-8859-1</charset>\n" +		
 		"	<comment>This is the comment.</comment>\n" +
 		"	<projects>\n" +
 		"	   <project>org.eclipse.core.boot</project>\n" +
