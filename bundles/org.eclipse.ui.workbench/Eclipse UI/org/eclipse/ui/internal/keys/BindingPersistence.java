@@ -743,10 +743,9 @@ public final class BindingPersistence {
 						.getAttribute(ATTRIBUTE_CONFIGURATION);
 				if ((schemeId == null) || (schemeId.length() == 0)) {
 					// The scheme id should never be null. This is invalid.
-					WorkbenchPlugin
-							.log("Key bindings need a scheme.  This binding was defined by '" //$NON-NLS-1$
-									+ configurationElement.getNamespace()
-									+ '\'');
+					WorkbenchPlugin.log("Key bindings need a scheme: '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+							+ commandId + "'."); //$NON-NLS-1$
 					continue;
 				}
 			}
@@ -754,7 +753,9 @@ public final class BindingPersistence {
 			// Read out the context id.
 			String contextId = configurationElement
 					.getAttribute(ATTRIBUTE_CONTEXT_ID);
-			if ((contextId == null) || (contextId.length() == 0)) {
+			if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+				contextId = null;
+			} else if ((contextId == null) || (contextId.length() == 0)) {
 				contextId = configurationElement.getAttribute(ATTRIBUTE_SCOPE);
 				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 					contextId = null;
@@ -775,9 +776,9 @@ public final class BindingPersistence {
 						|| (keySequenceText.length() == 0)) {
 					// The key sequence should never be null. This is pointless
 					WorkbenchPlugin
-							.log("Defining a key binding with no key sequence has no effect.  This binding was defined by '" //$NON-NLS-1$
+							.log("Defining a key binding with no key sequence has no effect: '" //$NON-NLS-1$
 									+ configurationElement.getNamespace()
-									+ "'.  The command id was '" //$NON-NLS-1$
+									+ "', '" //$NON-NLS-1$
 									+ commandId + "'."); //$NON-NLS-1$
 					continue;
 				}
@@ -791,9 +792,8 @@ public final class BindingPersistence {
 					keySequence = KeySequence.getInstance(keySequenceText);
 				} catch (final ParseException e) {
 					WorkbenchPlugin.log("Could not parse '" + keySequenceText //$NON-NLS-1$
-							+ "'.  This binding was defined by '" //$NON-NLS-1$
-							+ configurationElement.getNamespace()
-							+ "'.  The command id was '" //$NON-NLS-1$
+							+ "': '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
 							+ commandId + "'."); //$NON-NLS-1$
 					continue;
 				}
@@ -801,10 +801,10 @@ public final class BindingPersistence {
 					WorkbenchPlugin
 							.log("Key bindings should not have an empty or incomplete key sequence: '" //$NON-NLS-1$
 									+ keySequence
-									+ "'.  This binding was defined by '" //$NON-NLS-1$
+									+ "': '" //$NON-NLS-1$
 									+ configurationElement.getNamespace()
-									+ "'.  The command id was '" //$NON-NLS-1$
-									+ contextId + "'."); //$NON-NLS-1$
+									+ "', '" //$NON-NLS-1$
+									+ commandId + "'."); //$NON-NLS-1$
 					continue;
 				}
 
@@ -840,10 +840,19 @@ public final class BindingPersistence {
 			final IMemento preferences, final BindingManager bindingManager) {
 		if (preferences != null) {
 			final IMemento[] preferenceMementos = preferences
-					.getChildren(ELEMENT_ACTIVE_KEY_CONFIGURATION);
+					.getChildren(ELEMENT_KEY_BINDING);
 			int preferenceMementoCount = preferenceMementos.length;
 			for (int i = preferenceMementoCount - 1; i >= 0; i--) {
 				final IMemento memento = preferenceMementos[i];
+
+				// Read out the command id.
+				String commandId = memento.getString(ATTRIBUTE_COMMAND_ID);
+				if ((commandId == null) || (commandId.length() == 0)) {
+					commandId = memento.getString(ATTRIBUTE_COMMAND);
+				}
+				if ((commandId != null) && (commandId.length() == 0)) {
+					commandId = null;
+				}
 
 				// Read out the scheme id.
 				String schemeId = memento
@@ -853,13 +862,16 @@ public final class BindingPersistence {
 					if ((schemeId == null) || (schemeId.length() == 0)) {
 						// The scheme id should never be null. This is invalid.
 						WorkbenchPlugin
-								.log("Key bindings need a scheme or key configuration.  This binding came from preferences."); //$NON-NLS-1$
+								.log("Key bindings need a scheme or key configuration: preferences, '" //$NON-NLS-1$
+										+ commandId + "'."); //$NON-NLS-1$
 					}
 				}
 
 				// Read out the context id.
 				String contextId = memento.getString(ATTRIBUTE_CONTEXT_ID);
-				if ((contextId == null) || (contextId.length() == 0)) {
+				if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
+					contextId = null;
+				} else if ((contextId == null) || (contextId.length() == 0)) {
 					contextId = memento.getString(ATTRIBUTE_SCOPE);
 					if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 						contextId = null;
@@ -883,7 +895,8 @@ public final class BindingPersistence {
 						 * pointless
 						 */
 						WorkbenchPlugin
-								.log("Key bindings need a key sequence or string.  This binding came from preferences."); //$NON-NLS-1$
+								.log("Key bindings need a key sequence or string: preferences, '" //$NON-NLS-1$
+										+ commandId + "'."); //$NON-NLS-1$
 						continue;
 					}
 
@@ -896,27 +909,18 @@ public final class BindingPersistence {
 						keySequence = KeySequence.getInstance(keySequenceText);
 					} catch (final ParseException e) {
 						WorkbenchPlugin.log("Could not parse: '" //$NON-NLS-1$
-								+ keySequenceText
-								+ "'.  This binding came from preferences."); //$NON-NLS-1$
+								+ keySequenceText + "': preferences, '" //$NON-NLS-1$
+								+ commandId + "'."); //$NON-NLS-1$
 						continue;
 					}
 					if (keySequence.isEmpty() || !keySequence.isComplete()) {
 						WorkbenchPlugin
 								.log("Key bindings cannot use an empty or incomplete key sequence: '" //$NON-NLS-1$
-										+ keySequence
-										+ "'.  This binding came from preferences."); //$NON-NLS-1$
+										+ keySequence + "': preferences, '" //$NON-NLS-1$
+										+ commandId + "'."); //$NON-NLS-1$
 						continue;
 					}
 
-				}
-
-				// Read out the command id.
-				String commandId = memento.getString(ATTRIBUTE_COMMAND_ID);
-				if ((commandId == null) || (commandId.length() == 0)) {
-					commandId = memento.getString(ATTRIBUTE_COMMAND);
-				}
-				if ((commandId != null) && (commandId.length() == 0)) {
-					commandId = null;
 				}
 
 				// Read out the locale and platform.
