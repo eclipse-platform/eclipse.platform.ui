@@ -51,52 +51,58 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 	}
 
-	class TableContentProvider
+	class SitesContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
 
-		/**
-		 * @see IStructuredContentProvider#getElements(Object)
-		 */
 		public Object[] getElements(Object parent) {
 			return config.getConfiguredSites();
 		}
 	}
 
-	class TableLabelProvider
+	class JobsLabelProvider
 		extends LabelProvider
 		implements ITableLabelProvider {
 			
 		public Image getColumnImage(Object obj, int col) {
 			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
-			if (obj instanceof IConfiguredSite)
-				return provider.getLocalSiteImage((IConfiguredSite) obj);
-			if (obj instanceof IInstallFeatureOperation) {
-				IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
-				ImageDescriptor base =
-					job.getFeature().isPatch()
-						? UpdateUIImages.DESC_EFIX_OBJ
-						: UpdateUIImages.DESC_FEATURE_OBJ;
-				int flags = 0;
-				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-				if (jobSite == null || jobSite.targetSite == null)
-					flags = UpdateLabelProvider.F_ERROR;
-				return provider.get(base, flags);
-			}
-			return null;
+
+			IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
+			ImageDescriptor base =
+				job.getFeature().isPatch()
+					? UpdateUIImages.DESC_EFIX_OBJ
+					: UpdateUIImages.DESC_FEATURE_OBJ;
+			int flags = 0;
+			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
+			if (jobSite == null || jobSite.targetSite == null)
+				flags = UpdateLabelProvider.F_ERROR;
+			return provider.get(base, flags);
 		}
 
 		public String getColumnText(Object obj, int col) {
-			if (obj instanceof IInstallFeatureOperation && col == 0) {
+			if (col == 0) {
 				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
 				return feature.getLabel()
 					+ " " //$NON-NLS-1$
 					+ feature.getVersionedIdentifier().getVersion().toString();
 			}
-			if (obj instanceof IConfiguredSite && col == 0) {
+			return null;
+		}
+	}
+	
+	class SitesLabelProvider
+	extends LabelProvider
+	implements ITableLabelProvider {
+		
+		public Image getColumnImage(Object obj, int col) {
+			UpdateLabelProvider provider = UpdateUI.getDefault().getLabelProvider();
+			return provider.getLocalSiteImage((IConfiguredSite) obj);
+		}
+	
+		public String getColumnText(Object obj, int col) {
+			if (col == 0) {
 				ISite site = ((IConfiguredSite) obj).getSite();
 				return site.getURL().getFile();
-
 			}
 			return null;
 		}
@@ -232,36 +238,31 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		gd.widthHint = 150;
 		jobViewer.getTable().setLayoutData(gd);
 		jobViewer.setContentProvider(new JobsContentProvider());
-		jobViewer.setLabelProvider(new TableLabelProvider());
+		jobViewer.setLabelProvider(new JobsLabelProvider());
 
 		jobViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleJobsSelected((IStructuredSelection) event.getSelection());
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				IInstallFeatureOperation job = (IInstallFeatureOperation) selection.getFirstElement();
+				if (job != null) {
+					siteViewer.setInput(job);
+					JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
+					addButton.setEnabled(jobSite.affinitySite == null);
+					if (jobSite.targetSite != null) {
+						siteViewer.setSelection(new StructuredSelection(jobSite.targetSite));
+					}
+				}
 			}
 		});
 	}
-
-	private void handleJobsSelected(IStructuredSelection selection) {
-		IInstallFeatureOperation job =
-			(IInstallFeatureOperation) selection.getFirstElement();
-		if (job != null) {
-			siteViewer.setInput(job);
-			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-			addButton.setEnabled(jobSite.affinitySite == null);
-			if (jobSite.targetSite != null) {
-				siteViewer.setSelection(new StructuredSelection(jobSite.targetSite));
-			}
-		}
-	}
-
 
 	private void createSiteViewer(Composite parent) {
 		siteViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 200;
 		siteViewer.getTable().setLayoutData(gd);
-		siteViewer.setContentProvider(new TableContentProvider());
-		siteViewer.setLabelProvider(new TableLabelProvider());
+		siteViewer.setContentProvider(new SitesContentProvider());
+		siteViewer.setLabelProvider(new SitesLabelProvider());
 		siteViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
 				IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
@@ -318,7 +319,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		IInstallFeatureOperation job = (IInstallFeatureOperation) siteViewer.getInput();
 		if (job != null) {
 			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
-			jobSite.targetSite = site;
+			if (site != null)
+				jobSite.targetSite = site;
 			pageChanged();
 		}
 		updateStatus(site);
