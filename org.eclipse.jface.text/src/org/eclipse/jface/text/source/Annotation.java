@@ -77,16 +77,19 @@ public abstract class Annotation {
 			
 			int y= 0;
 			switch (valign) {
-				case SWT.TOP:
+				case SWT.TOP: {
 					FontMetrics fontMetrics= gc.getFontMetrics();
 					y= (fontMetrics.getHeight() - bounds.height)/2;
 					break;
+				}
 				case SWT.CENTER:
 					y= (r.height - bounds.height) / 2;
 					break;
-				case SWT.BOTTOM:
-					y= r.height - bounds.height;
+				case SWT.BOTTOM: {
+					FontMetrics fontMetrics= gc.getFontMetrics();
+					y= r.height - (fontMetrics.getHeight() + bounds.height)/2;
 					break;
+				}
 			}
 			
 			gc.drawImage(image, r.x+x, r.y+y);
