@@ -67,7 +67,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			proj = null;
 		}
 	}
-
+	
 	/**
 	 *	tests both of the following:	
 	 *	setEditorAreaVisible()
@@ -1052,5 +1052,31 @@ public class IWorkbenchPageTest extends UITestCase {
 		catch(PartInitException e) {
 		    fail(e.getMessage());
 		}
+	}
+	
+	/**
+	 * Test the VIEW_CREATE parameter for showView.  Ensures that the created
+	 * view is not the active part.
+	 *
+	 */
+	public void testView_CREATE() {
+	    WorkbenchPage page = (WorkbenchPage) fActivePage;
+	    try {
+		    //create a part to be active
+		    IViewPart activePart = page.showView(MockViewPart.ID);
+		    
+		    IViewPart createdPart = page.showView(MockViewPart.ID2, null, IWorkbenchPage.VIEW_CREATE);
+		    
+		    IViewPart [] stack = page.getViewStack(activePart);
+		    assertEquals(2, stack.length);
+		    
+		    assertEquals(activePart, stack[0]);
+		    assertEquals(createdPart, stack[1]);
+		    
+		    assertEquals(activePart, page.getActivePart());
+	    }
+	    catch (PartInitException e) {
+	        fail(e.getMessage());
+	    }
 	}
 }
