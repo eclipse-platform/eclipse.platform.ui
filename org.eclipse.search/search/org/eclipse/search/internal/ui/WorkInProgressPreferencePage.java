@@ -41,8 +41,9 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage	impl
 		// do nothing
 	}
 	public static boolean useNewSearch() {
-		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(SEARCH_IN_BACKGROUND);
+		return true;
+		// IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		// return store.getBoolean(SEARCH_IN_BACKGROUND);
 	}
 
 	public static void initDefaults(IPreferenceStore store) {

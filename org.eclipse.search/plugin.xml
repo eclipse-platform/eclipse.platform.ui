@@ -206,11 +206,13 @@
 			class="org.eclipse.search.internal.ui.SearchPreferencePage"
 			category="org.eclipse.ui.preferencePages.Workbench">
 		</page>
+<!---
 		<page name="%WorkInProgressPreferencePage.label"
 			id="org.eclipse.search.preferences.WorkInProgressPreferencePage"
 			class="org.eclipse.search.internal.ui.WorkInProgressPreferencePage"
 			category="org.eclipse.search.preferences.SearchPreferencePage">
 		</page>
+-->
 	</extension>
 	
 	<extension
