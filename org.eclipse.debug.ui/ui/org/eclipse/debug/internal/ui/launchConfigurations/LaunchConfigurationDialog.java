@@ -1642,7 +1642,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			doSave();
 			result = doLaunch(getLaunchConfiguration());
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while launching configuration.", e.getStatus());
+			DebugUIPlugin.logError(e);
+			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while launching configuration. See log for more information.", e.getStatus());
 			return;
 		}
 		if (result == OK) {
