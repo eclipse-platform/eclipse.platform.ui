@@ -133,7 +133,6 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 	// This prevents us from things like NullPointerExceptions
 	// when we are assuming a field exists.
 	if (!requiredPluginModel(entry, location)) {
-		// An error message would be nice!!
 		entry = null;
 		return false;
 	}
