@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -99,7 +100,7 @@ public class ProjectPreferences extends EclipsePreferences {
 				try {
 					node.sync();
 				} catch (BackingStoreException e) {
-					String message = "Exception syncing preferences for node: " + node.absolutePath();
+					String message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
 					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
 					throw new CoreException(status);
 				}
@@ -119,7 +120,7 @@ public class ProjectPreferences extends EclipsePreferences {
 				try {
 					delta.accept(visitor);
 				} catch (CoreException e) {
-					String message = "Exception after processing file system change for possible preferences file.";
+					String message = Policy.bind("preferences.visitException"); //$NON-NLS-1$
 					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
