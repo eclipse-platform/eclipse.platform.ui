@@ -30,6 +30,7 @@
   <fileTypes extension="properties" type="text"/>
   <fileTypes extension="xml" type="text"/>
   <fileTypes extension="html" type="text"/>
+  <fileTypes extension="htm" type="text"/>
   <fileTypes extension="jpg" type="binary"/>
   <fileTypes extension="gif" type="binary"/>
   <fileTypes extension="ico" type="binary"/>
