@@ -68,14 +68,14 @@ BODY {
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr cols=5>
-   <td  bgcolor="<%=tocColor%>" title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' ><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="../images/contents_view.gif" border=0></a></td>
+   <td  bgcolor="<%=tocColor%>" title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' onmouseout="window.status=''" onmouseover="window.status='<%=ContentStr%>';return true;" ><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="../images/contents_view.gif" border=0></a></td>
    <td width=1><img src="../images/separator.gif" border=0 width=0 height=23></td>
-   <td  bgcolor="<%=searchColor%>"  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' ><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="../images/search_results_view.gif" border=0></a></td>
+   <td  bgcolor="<%=searchColor%>"  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' onmouseout="window.status=''" onmouseover="window.status='<%=SearchStr%>';return true;" ><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="../images/search_results_view.gif" border=0></a></td>
 <%
 if (linksView) {
 %>
    <td width=1 border=0><img src="../images/separator.gif" border=0 width=0 height=23></td>
-   <td  bgcolor="<%=linksColor%>" title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' ><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="../images/links_view.gif" border=0></a></td>
+   <td  bgcolor="<%=linksColor%>" title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' onmouseout="window.status=''" onmouseover="window.status='<%=LinksStr%>';return true;"><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="../images/links_view.gif" border=0></a></td>
 <%
 }
 %>

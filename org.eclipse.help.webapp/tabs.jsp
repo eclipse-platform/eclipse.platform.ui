@@ -123,15 +123,15 @@ IMG {
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr>
-	<td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' onclick='this.blur()'><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="images/contents_view.gif"></a></td>
+	<td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')" onmouseover="window.status='<%=ContentStr%>';return true;" onmouseout="window.status='';"><a  href='javascript:parent.switchTab("toc");' onclick='this.blur()' onmouseover="window.status='<%=ContentStr%>';return true;" onmouseout="window.status='';"><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="images/contents_view.gif"></a></td>
     <td width="1px" class="separator"></td>
 
-   <td  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' onclick="this.blur()"><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="images/search_results_view.gif"></a></td>
+   <td  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')" onmouseover="window.status='<%=SearchStr%>';return true;" onmouseout="window.status='';"><a  href='javascript:parent.switchTab("search")' onclick="this.blur()" onmouseover="window.status='<%=SearchStr%>';return true;" onmouseout="window.status='';"><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="images/search_results_view.gif"></a></td>
     <td width="1px" class="separator"></td>
 <%
 if (linksView) {
 %>
-   <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' onclick="this.blur()"><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="images/links_view.gif"></a></td>
+   <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')" onmouseover="window.status='<%=LinksStr%>';return true;" onmouseout="window.status='';"><a href='javascript:parent.switchTab("links")' onclick="this.blur()" onmouseover="window.status='<%=LinksStr%>';return true;" onmouseout="window.status='';"><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="images/links_view.gif"></a></td>
 <%
 }
 %>

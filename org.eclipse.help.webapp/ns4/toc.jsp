@@ -202,7 +202,7 @@ if (parent.parent.temp){
 		// use <nobr> for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 %>
 		<li>
-			<a href="<%=href%>" onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(topic.getAttribute("label"))%>"'><nobr> <img src="<%=image%>" border=0>&nbsp;<%=topic.getAttribute("label")%></nobr></a>
+			<a href="<%=href%>" onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(topic.getAttribute("label"))%>";return true;'><nobr> <img src="<%=image%>" border=0>&nbsp;<%=topic.getAttribute("label")%></nobr></a>
 <%
 		if (hasNodes) {
 			childrenStack.pushChildren(topic);

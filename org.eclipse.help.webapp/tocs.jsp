@@ -82,7 +82,7 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-		<div class='list'><a  href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(label)%>"'><nobr><img src="images/container_obj.gif" border=0> <%=label%> </nobr> </a></div>
+		<div class='list'><a  href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(label)%>";return true;' ><nobr><img src="images/container_obj.gif" border=0> <%=label%> </nobr> </a></div>
 <%		
 }
 %>

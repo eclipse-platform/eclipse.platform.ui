@@ -171,7 +171,7 @@ function fixHeights()
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td>
-					<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>'><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
+					<a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>' onmouseover="window.status='<%=WebappResources.getString("Advanced", request)%>'; return true;" onmouseout="window.status='';"><%=WebappResources.getString("Advanced", request)%></a>&nbsp;
 				</td>
 			</tr>
 
