@@ -33,7 +33,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	 */
 	public StyledLineWrapper(String text) {
 		if (text == null || text.length() == 0)
-			text = " "; // use one blank space
+			text = " "; // use one blank space //$NON-NLS-1$
 		setText(text);
 	}
 	/**
@@ -134,7 +134,7 @@ public class StyledLineWrapper implements StyledTextContent {
 	 */
 	public void setText(String text) {
 		if (text == null)
-			text = " ";
+			text = " "; //$NON-NLS-1$
 		processLineBreaks(text);
 		processStyles(text);
 	}
@@ -198,8 +198,8 @@ public class StyledLineWrapper implements StyledTextContent {
 	 * Returns the text without the style
 	 */
 	private static String getUnstyledText(String styledText) {
-		String s = TString.change(styledText, ContextsNode.BOLD_TAG, "");
-		s = TString.change(s, ContextsNode.BOLD_CLOSE_TAG, "");
+		String s = TString.change(styledText, ContextsNode.BOLD_TAG, ""); //$NON-NLS-1$
+		s = TString.change(s, ContextsNode.BOLD_CLOSE_TAG, ""); //$NON-NLS-1$
 		return s;
 	}
 	/**
@@ -223,8 +223,8 @@ public class StyledLineWrapper implements StyledTextContent {
 		// create a new array of styles
 		lineStyleRanges = new ArrayList();
 		// first, remove the line breaks
-		text = TString.change(text, "\r", "");
-		text = TString.change(text, "\n", "");
+		text = TString.change(text, "\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		text = TString.change(text, "\n", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		int offset = 0;
 		do {
 			// create a style

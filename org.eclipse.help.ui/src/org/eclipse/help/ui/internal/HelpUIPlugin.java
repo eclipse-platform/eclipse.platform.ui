@@ -21,7 +21,7 @@ import org.osgi.framework.*;
  * This class is Help UI plugin.
  */
 public class HelpUIPlugin extends AbstractUIPlugin {
-	public final static String PLUGIN_ID = "org.eclipse.help.ui";
+	public final static String PLUGIN_ID = "org.eclipse.help.ui"; //$NON-NLS-1$
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_INFOPOP = false;
@@ -35,7 +35,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
-			message = "";
+			message = ""; //$NON-NLS-1$
 		Status errorStatus =
 			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
 		HelpPlugin.getDefault().getLog().log(errorStatus);
@@ -48,7 +48,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public static synchronized void logWarning(String message) {
 		if (HelpPlugin.DEBUG) {
 			if (message == null)
-				message = "";
+				message = ""; //$NON-NLS-1$
 			Status warningStatus =
 				new Status(
 					IStatus.WARNING,
@@ -88,7 +88,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
-			DEBUG_INFOPOP = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/infopop")); //$NON-NLS-1$
+			DEBUG_INFOPOP = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/infopop")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH)

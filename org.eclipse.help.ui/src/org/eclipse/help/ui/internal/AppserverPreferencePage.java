@@ -48,7 +48,7 @@ public class AppserverPreferencePage
 
 		Label label = new Label(mainComposite, SWT.NONE);
 		label.setText(
-			HelpUIResources.getString("AppserverPreferencePage.description"));
+			HelpUIResources.getString("AppserverPreferencePage.description")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -65,7 +65,7 @@ public class AppserverPreferencePage
 		label.setFont(font);
 		label.setText(
 			HelpUIResources.getString(
-				"AppserverPreferencePage.hostDescription"));
+				"AppserverPreferencePage.hostDescription")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -97,7 +97,7 @@ public class AppserverPreferencePage
 		label.setFont(font);
 		label.setText(
 			HelpUIResources.getString(
-				"AppserverPreferencePage.portDescription"));
+				"AppserverPreferencePage.portDescription")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -139,7 +139,7 @@ public class AppserverPreferencePage
 				AppserverPreferencePage.this.setValid(false);
 				setErrorMessage(
 					HelpUIResources.getString(
-						"AppserverPreferencePage.invalidPort"));
+						"AppserverPreferencePage.invalidPort")); //$NON-NLS-1$
 			}
 		});
 
@@ -152,7 +152,7 @@ public class AppserverPreferencePage
 
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
-			HelpUIResources.getString("AppserverPreferencePage.Note"));
+			HelpUIResources.getString("AppserverPreferencePage.Note")); //$NON-NLS-1$
 		// Make this bold
 		FontData[] fontData = font.getFontData();
 		for (int i = 0; i < fontData.length; i++) {
@@ -173,7 +173,7 @@ public class AppserverPreferencePage
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
 			HelpUIResources.getString(
-				"AppserverPreferencePage.requireRestart"));
+				"AppserverPreferencePage.requireRestart")); //$NON-NLS-1$
 		data = new GridData();
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);

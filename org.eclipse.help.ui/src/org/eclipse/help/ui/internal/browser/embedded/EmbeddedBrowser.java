@@ -24,11 +24,11 @@ import org.eclipse.swt.widgets.*;
  * Help browser employing SWT Browser widget
  */
 public class EmbeddedBrowser {
-	private static final String BROWSER_X = "browser.x";
-	private static final String BROWSER_Y = "browser.y";
-	private static final String BROWSER_WIDTH = "browser.w";
-	private static final String BROWSER_HEIGTH = "browser.h";
-	private static final String BROWSER_MAXIMIZED = "browser.maximized";
+	private static final String BROWSER_X = "browser.x"; //$NON-NLS-1$
+	private static final String BROWSER_Y = "browser.y"; //$NON-NLS-1$
+	private static final String BROWSER_WIDTH = "browser.w"; //$NON-NLS-1$
+	private static final String BROWSER_HEIGTH = "browser.h"; //$NON-NLS-1$
+	private static final String BROWSER_MAXIMIZED = "browser.maximized"; //$NON-NLS-1$
 	private Preferences store;
 	private static String initialTitle = getWindowTitle();
 	private Shell shell;
@@ -98,7 +98,7 @@ public class EmbeddedBrowser {
 			public void changing(LocationEvent e) {
 				// hack to know when help webapp needs modal window
 				modalRequestTime=0;
-				if(e.location!=null && e.location.startsWith("javascript://needModal")){
+				if(e.location!=null && e.location.startsWith("javascript://needModal")){ //$NON-NLS-1$
 					modalRequestTime=System.currentTimeMillis();
 				}
 			}
@@ -129,7 +129,7 @@ public class EmbeddedBrowser {
 			public void changing(LocationEvent e) {
 				// hack to know when help webapp needs modal window
 				modalRequestTime=0;
-				if(e.location!=null && e.location.startsWith("javascript://needModal")){
+				if(e.location!=null && e.location.startsWith("javascript://needModal")){ //$NON-NLS-1$
 					modalRequestTime=System.currentTimeMillis();
 				}
 			}
@@ -203,9 +203,9 @@ public class EmbeddedBrowser {
 		return shell.isDisposed();
 	}
 	private static String getWindowTitle() {
-		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault()
-				.getPluginPreferences().getString("windowTitlePrefix"))) {
-			return HelpUIResources.getString("browserTitle", BaseHelpSystem
+		if ("true".equalsIgnoreCase(HelpBasePlugin.getDefault() //$NON-NLS-1$
+				.getPluginPreferences().getString("windowTitlePrefix"))) { //$NON-NLS-1$
+			return HelpUIResources.getString("browserTitle", BaseHelpSystem //$NON-NLS-1$
 					.getProductName());
 		} else {
 			return BaseHelpSystem.getProductName();
@@ -223,7 +223,7 @@ public class EmbeddedBrowser {
 					shellImgs[i] = ImageDescriptor.createFromURL(
 							new URL(productImageURLs[i])).createImage();
 				} catch (MalformedURLException mue) {
-					if (!"".equals(productImageURLs[i])) {
+					if (!"".equals(productImageURLs[i])) { //$NON-NLS-1$
 						System.out.println("Invalid URL of product image.");
 					}
 				}
@@ -240,11 +240,11 @@ public class EmbeddedBrowser {
 	private static String[] getProductImageURLs() {
 		IProduct product = Platform.getProduct();
 		if (product != null) {
-			String url = product.getProperty("windowImages");
+			String url = product.getProperty("windowImages"); //$NON-NLS-1$
 			if (url != null && url.length() > 0) {
-				return url.split(",\\s*");
+				return url.split(",\\s*"); //$NON-NLS-1$
 			}
-			url = product.getProperty("windowImage");
+			url = product.getProperty("windowImage"); //$NON-NLS-1$
 			if (url != null && url.length() > 0) {
 				return new String[]{url};
 			}

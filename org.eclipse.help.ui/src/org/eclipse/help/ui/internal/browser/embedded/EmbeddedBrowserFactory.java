@@ -67,7 +67,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 					available = false;
 				} else {
 					HelpUIPlugin.logError(HelpUIResources
-							.getString("EmbeddedBrowserFactory.error"), se);
+							.getString("EmbeddedBrowserFactory.error"), se); //$NON-NLS-1$
 				}
 			}
 			if (sh != null && !sh.isDisposed())

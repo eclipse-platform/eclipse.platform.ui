@@ -36,7 +36,7 @@ public class SystemBrowserAdapter implements IBrowser {
 			if (!Program.launch(url)) {
 				ErrorUtil.displayErrorDialog(
 					HelpUIResources.getString(
-						"SystemBrowser.noProgramForURL",
+						"SystemBrowser.noProgramForURL", //$NON-NLS-1$
 						url));
 			}
 		//		} else {

@@ -73,17 +73,17 @@ public class ContextHelpDialog {
 			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
 			if (HelpUIPlugin.DEBUG_INFOPOP) {
 				System.out
-						.println("ContextHelpDialog.ContextHelpDialog(): ParentShell: "
+						.println("ContextHelpDialog.ContextHelpDialog(): ParentShell: " //$NON-NLS-1$
 								+ shell.toString()
-								+ " is "
-								+ (isModal ? "modal" : "modeless"));
+								+ " is " //$NON-NLS-1$
+								+ (isModal ? "modal" : "modeless")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
 		shell = new Shell(parentShell, SWT.NONE);
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println(
-				"ContextHelpDialog.ContextHelpDialog(): Shell is:"
+				"ContextHelpDialog.ContextHelpDialog(): Shell is:" //$NON-NLS-1$
 					+ shell.toString());
 		}
 		WorkbenchHelp.setHelp(shell, IHelpUIConstants.F1_SHELL);
@@ -92,7 +92,7 @@ public class ContextHelpDialog {
 			public void handleEvent(Event e) {
 				if (HelpUIPlugin.DEBUG_INFOPOP) {
 					System.out.println(
-						"ContextHelpDialog shell deactivate listener: SWT.Deactivate called. ");
+						"ContextHelpDialog shell deactivate listener: SWT.Deactivate called. "); //$NON-NLS-1$
 				}
 				close();
 			}
@@ -103,7 +103,7 @@ public class ContextHelpDialog {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
 					if (HelpUIPlugin.DEBUG_INFOPOP) {
 						System.out.println(
-							"ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. ");
+							"ContextHelpDialog: shell traverse listener: SWT.TRAVERSE_ESCAPE called. "); //$NON-NLS-1$
 					}
 					e.doit = true;
 				}
@@ -114,7 +114,7 @@ public class ContextHelpDialog {
 			public void controlMoved(ControlEvent e) {
 				if (HelpUIPlugin.DEBUG_INFOPOP) {
 					System.out.println(
-						"ContextHelpDialog: shell control adapter called.");
+						"ContextHelpDialog: shell control adapter called."); //$NON-NLS-1$
 				}
 				Rectangle clientArea = shell.getClientArea();
 				shell.redraw(
@@ -128,7 +128,7 @@ public class ContextHelpDialog {
 		});
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println(
-				"ContextHelpDialog.ContextHelpDialog(): Focus owner is: "
+				"ContextHelpDialog.ContextHelpDialog(): Focus owner is: " //$NON-NLS-1$
 					+ Display.getCurrent().getFocusControl().toString());
 		}
 		linkManager.setHyperlinkUnderlineMode(
@@ -152,7 +152,7 @@ public class ContextHelpDialog {
 	public synchronized void close() {
 		try {
 			if (HelpUIPlugin.DEBUG_INFOPOP) {
-				System.out.println("ContextHelpDialog.close()");
+				System.out.println("ContextHelpDialog.close()"); //$NON-NLS-1$
 			}
 			if (shell != null) {
 				shell.close();
@@ -189,14 +189,14 @@ public class ContextHelpDialog {
 			styledText = context.getText();
 		}
 		if (styledText == null) // no description found in context objects.
-			styledText = HelpUIResources.getString("WW002");
+			styledText = HelpUIResources.getString("WW002"); //$NON-NLS-1$
 		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_ESCAPE) {
 					if (HelpUIPlugin.DEBUG_INFOPOP) {
 						System.out.println(
-							"ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE.");
+							"ContextHelpDialog text TraverseListener.handleEvent(): SWT.TRAVERSE_ESCAPE."); //$NON-NLS-1$
 					}
 					e.doit = true;
 				}
@@ -280,7 +280,7 @@ public class ContextHelpDialog {
 	protected void launchLinks(IHelpResource selectedTopic) {
 		close();
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
-			System.out.println("ContextHelpDialog.launchLinks(): closed shell");
+			System.out.println("ContextHelpDialog.launchLinks(): closed shell"); //$NON-NLS-1$
 		}
 		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic, isParentModal());
 	}
@@ -289,12 +289,12 @@ public class ContextHelpDialog {
 			shell.open();
 			if (HelpUIPlugin.DEBUG_INFOPOP) {
 				System.out.println(
-					"ContextHelpDialog.open(): Focus owner after open is: "
+					"ContextHelpDialog.open(): Focus owner after open is: " //$NON-NLS-1$
 						+ Display.getCurrent().getFocusControl().toString());
 			}
 		} catch (Throwable e) {
 			HelpUIPlugin.logError(
-				HelpUIResources.getString("ContextHelpDialog.open"),
+				HelpUIResources.getString("ContextHelpDialog.open"), //$NON-NLS-1$
 				e);
 		}
 	}

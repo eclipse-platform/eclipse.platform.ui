@@ -74,7 +74,7 @@ public class RuntimeErrorDialog extends MessageDialog {
 			data.widthHint = getMinimumMessageWidth();
 			// set the default height on linux. 
 			// Note: on Windows, the default height is fine.
-			if (System.getProperty("os.name").startsWith("Linux"))
+			if (System.getProperty("os.name").startsWith("Linux")) //$NON-NLS-1$ //$NON-NLS-2$
 				data.heightHint = convertVerticalDLUsToPixels(100);
 			text.setLayoutData(data);
 			text.setFont(parent.getFont());

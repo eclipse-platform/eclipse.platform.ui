@@ -59,17 +59,17 @@ public class LaunchURL
 		String propertyName,
 		Object data)
 		throws CoreException {
-		url = config.getAttribute("url");
+		url = config.getAttribute("url"); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		if (url == null || "".equals(url)) {
+		if (url == null || "".equals(url)) { //$NON-NLS-1$
 			return;
 		}
-		if (SWT.getPlatform().equals("win32")) {
+		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
 			Program.launch(url);
 		} else {
 			IBrowser browser = BrowserManager.getInstance().createBrowser(false);

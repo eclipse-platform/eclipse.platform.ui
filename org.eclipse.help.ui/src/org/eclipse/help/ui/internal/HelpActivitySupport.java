@@ -24,11 +24,11 @@ import org.eclipse.ui.activities.*;
  * Wrapper for eclipse ui activity support
  */
 public class HelpActivitySupport implements IHelpActivitySupport {
-	private static final String PREF_KEY_SHOW_DISABLED_ACTIVITIES = "showDisabledActivityTopics";
-	private static final String SHOW_DISABLED_ACTIVITIES_NEVER = "never";
-	private static final String SHOW_DISABLED_ACTIVITIES_OFF = "off";
-	private static final String SHOW_DISABLED_ACTIVITIES_ON = "on";
-	private static final String SHOW_DISABLED_ACTIVITIES_ALWAYS = "always";
+	private static final String PREF_KEY_SHOW_DISABLED_ACTIVITIES = "showDisabledActivityTopics"; //$NON-NLS-1$
+	private static final String SHOW_DISABLED_ACTIVITIES_NEVER = "never"; //$NON-NLS-1$
+	private static final String SHOW_DISABLED_ACTIVITIES_OFF = "off"; //$NON-NLS-1$
+	private static final String SHOW_DISABLED_ACTIVITIES_ON = "on"; //$NON-NLS-1$
+	private static final String SHOW_DISABLED_ACTIVITIES_ALWAYS = "always"; //$NON-NLS-1$
 	
 	private Preferences pref;
 	private IWorkbenchActivitySupport activitySupport;
@@ -75,7 +75,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		if(!isFilteringEnabled()){
 			return true;
 		}
-		if (href.startsWith("/")){
+		if (href.startsWith("/")){ //$NON-NLS-1$
 			href = href.substring(1);
 		}
         
@@ -98,7 +98,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		if(!isFilteringEnabled()){
 			return true;
 		}
-		int ix = href.indexOf("?resultof=");
+		int ix = href.indexOf("?resultof="); //$NON-NLS-1$
 		if (ix >= 0) {
 			href = href.substring(0, ix);
 		}
@@ -155,7 +155,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#enableActivities(java.lang.String)
 	 */
 	public void enableActivities(String href) {
-		if (href.startsWith("/")){
+		if (href.startsWith("/")){ //$NON-NLS-1$
 			href = href.substring(1);
 		}
      
