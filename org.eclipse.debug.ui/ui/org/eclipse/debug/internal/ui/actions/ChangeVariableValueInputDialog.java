@@ -153,7 +153,7 @@ protected Control createDialogArea(Composite parent) {
 				if (okButton.isEnabled()) {
 					return;
 				}
-				errorMessageLabel.setText( "");
+				errorMessageLabel.setText( ""); //$NON-NLS-1$
 				errorMessageLabel.getParent().update();
 				okButton.setEnabled(true);
 			}
@@ -228,7 +228,7 @@ protected void validateInput() {
 	}
 
 	// Bug 16256: important not to treat "" (blank error) the same as null (no error)
-	errorMessageLabel.setText(errorMessage == null ? "" : errorMessage);
+	errorMessageLabel.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
 	okButton.setEnabled(errorMessage == null);
 
 	errorMessageLabel.getParent().update();
