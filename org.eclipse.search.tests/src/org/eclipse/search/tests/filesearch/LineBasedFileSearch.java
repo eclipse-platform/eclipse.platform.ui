@@ -114,7 +114,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 	
 	
 	public LineBasedFileSearch(TextSearchScope scope, String options, String searchString) {
-		super(scope, options, searchString);
+		super(scope, options, searchString, false);
 		fScope= scope;
 	}
 

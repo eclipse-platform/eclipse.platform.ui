@@ -54,7 +54,7 @@ public class SearchResultPageTest extends TestCase {
 		super.setUp();
 		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 		scope.addExtension("*.java");
-		fQuery1= new FileSearchQuery(scope, "", "Test");
+		fQuery1= new FileSearchQuery(scope, "", "Test", false);
 	}
 
 	public void atestBasicDisplay() throws Exception {

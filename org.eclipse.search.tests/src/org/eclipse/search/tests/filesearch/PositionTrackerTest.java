@@ -55,7 +55,7 @@ public class PositionTrackerTest extends TestCase {
 		
 		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 		scope.addExtension("*.java");
-		fQuery1= new FileSearchQuery(scope,  "", "Test");
+		fQuery1= new FileSearchQuery(scope,  "", "Test", false);
 	}
 	
 	public void testInsertAt0() throws Exception {

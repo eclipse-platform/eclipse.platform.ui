@@ -69,8 +69,8 @@ public class AnnotationManagerTest extends TestCase {
 		
 		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 		scope.addExtension("*.java"); //$NON-NLS-1$
-		fQuery1= new FileSearchQuery(scope,  "", "Test");  //$NON-NLS-1$//$NON-NLS-2$
-		fQuery2= new FileSearchQuery(scope, "", "TestCase"); //$NON-NLS-1$//$NON-NLS-2$
+		fQuery1= new FileSearchQuery(scope,  "", "Test", false);  //$NON-NLS-1$//$NON-NLS-2$
+		fQuery2= new FileSearchQuery(scope, "", "TestCase", false); //$NON-NLS-1$//$NON-NLS-2$
 	} 
 	
 	protected void tearDown() throws Exception {

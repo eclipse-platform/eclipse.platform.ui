@@ -54,7 +54,7 @@ public class ResultUpdaterTest extends TestCase {
 		
 		TextSearchScope scope= new TextSearchScope("xx", new IResource[] { fProject });
 		scope.addExtension("*.java");
-		fQuery1= new FileSearchQuery(scope,  "", "Test");
+		fQuery1= new FileSearchQuery(scope,  "", "Test", false);
 	}
 	
 	/* (non-Javadoc)
