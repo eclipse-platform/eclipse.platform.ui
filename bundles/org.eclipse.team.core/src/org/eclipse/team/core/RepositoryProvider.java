@@ -38,7 +38,7 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
 /**
  * A concrete subclass of <code>RepositoryProvider</code> is created for each
  * project that is associated with a repository provider. The lifecycle of these
- * instances is managed by the platform's 'nature' mechanism.
+ * instances is is similar to that of the platform's 'nature' mechanism.
  * <p>
  * To create a repository provider and have it registered with the platform, a client
  * must minimally:
