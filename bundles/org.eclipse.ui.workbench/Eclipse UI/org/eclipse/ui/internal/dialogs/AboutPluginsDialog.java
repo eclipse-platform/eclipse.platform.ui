@@ -15,19 +15,35 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.net.URL;
 import java.text.Collator;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Displays information about the product plugins.
@@ -53,8 +69,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	private String message;
 	private String helpContextId;
 
-	private String columnTitles[] =
-		{ WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
+	private String columnTitles[] = {
+		WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
 		WorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
 		WorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
 		WorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
@@ -62,7 +78,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
 	private IPluginDescriptor[] info;
 
-	private AboutInfo aboutInfo;
+	private AboutInfo primaryInfo;
 	
 	private int lastColumnChosen = 0;	// initially sort by provider
 	private boolean reverseSort = false;	// initially sort ascending
@@ -71,9 +87,10 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	/**
 	 * Constructor for AboutPluginsDialog
 	 */
-	public AboutPluginsDialog(Shell parentShell) {
+	public AboutPluginsDialog(Shell parentShell, AboutInfo primaryInfo) {
 		this(
-			parentShell, 
+			parentShell,
+			primaryInfo,
 			Platform.getPluginRegistry().getPluginDescriptors(),
 			null,
 			null,
@@ -83,19 +100,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	/**
 	 * Constructor for AboutPluginsDialog
 	 */
-	public AboutPluginsDialog(Shell parentShell, IPluginDescriptor[] descriptors, String title, String msg) {
-		this(
-			parentShell, 
-			descriptors,
-			title,
-			msg,
-			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
-	}
-	
-	/**
-	 * Constructor for AboutPluginsDialog
-	 */
-	public AboutPluginsDialog(Shell parentShell, IPluginDescriptor[] descriptors, String title, String msg, String helpContextId) {
+	public AboutPluginsDialog(Shell parentShell, AboutInfo primaryInfo, IPluginDescriptor[] descriptors, String title, String msg, String helpContextId) {
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
 		info = descriptors;
@@ -103,7 +108,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		message = msg;
 		this.helpContextId = helpContextId;
 		sortByProvider();
-		aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getConfigurationInfo().getAboutInfo();
+		this.primaryInfo = primaryInfo;
 	}
 
 	/* (non-Javadoc)
@@ -125,7 +130,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (title == null) {
-			title = aboutInfo.getProductName();
+			title = primaryInfo.getProductName();
 			if (title != null) { 
 				title = WorkbenchMessages.format(
 						"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$

@@ -41,20 +41,20 @@ public class AboutDialog extends ProductInfoDialog {
 	private final static int INFO_ID = IDialogConstants.CLIENT_ID + 3;
 
 	private IWorkbenchWindow window;
-	private Workbench workbench;
+	private AboutInfo primaryInfo;
+	private AboutInfo[] featureInfos;
 	private Image image; //image to display on dialog
-	private AboutInfo aboutInfo;
 	private ArrayList images = new ArrayList();
 	private StyledText text;
 
 	/**
 	 * Create an instance of the AboutDialog
 	 */
-	public AboutDialog(IWorkbenchWindow window) {
+	public AboutDialog(IWorkbenchWindow window, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
 		super(window.getShell());
 		this.window = window;
-		this.workbench = (Workbench) window.getWorkbench();
-		aboutInfo = workbench.getConfigurationInfo().getAboutInfo();
+		this.primaryInfo = primaryInfo;
+		this.featureInfos = featureInfos;
 	}
 	
 	/* (non-Javadoc)
@@ -63,10 +63,10 @@ public class AboutDialog extends ProductInfoDialog {
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case FEATURES_ID :
-				new AboutFeaturesDialog(getShell()).open();
+				new AboutFeaturesDialog(getShell(), primaryInfo, featureInfos).open();
 				return;
 			case PLUGINS_ID :
-				new AboutPluginsDialog(getShell()).open();
+				new AboutPluginsDialog(getShell(), primaryInfo).open();
 				return;
 			case INFO_ID :
 				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
@@ -96,7 +96,7 @@ public class AboutDialog extends ProductInfoDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		String name = aboutInfo.getProductName();
+		String name = primaryInfo.getProductName();
 		if (name != null)
 			newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] { name })); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
@@ -145,12 +145,12 @@ public class AboutDialog extends ProductInfoDialog {
 			}
 		});
 
-		ImageDescriptor imageDescriptor = aboutInfo.getAboutImage(); // may be null
+		ImageDescriptor imageDescriptor = primaryInfo.getAboutImage(); // may be null
 		if (imageDescriptor != null)
 			image = imageDescriptor.createImage();
 		if (image == null || image.getBounds().width <= MAX_IMAGE_WIDTH_FOR_TEXT) {
 			// show text
-			String aboutText = aboutInfo.getAboutText();
+			String aboutText = primaryInfo.getAboutText();
 			if (aboutText != null) {
 				// get an about item
 				setItem(scan(aboutText));
@@ -234,7 +234,7 @@ public class AboutDialog extends ProductInfoDialog {
 				button.setToolTipText(name);
 				button.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent event) {
-						AboutFeaturesDialog d = new AboutFeaturesDialog(getShell());
+						AboutFeaturesDialog d = new AboutFeaturesDialog(getShell(), primaryInfo, featureInfos);
 						d.setInitialSelection((AboutInfo) event.widget.getData());
 						d.open();
 					}
@@ -256,12 +256,11 @@ public class AboutDialog extends ProductInfoDialog {
 	 * They are grouped by provider and image.
 	 */
 	private AboutInfo[] getFeaturesInfo() {
-		AboutInfo[] rawArray = workbench.getConfigurationInfo().getFeaturesInfo();
 		// quickly exclude any that do not have a provider name and image
 		ArrayList infoList = new ArrayList();
-		for (int i = 0; i < rawArray.length; i++) {
-			if (rawArray[i].getProviderName() != null && rawArray[i].getFeatureImageName() != null)
-				infoList.add(rawArray[i]);
+		for (int i = 0; i < featureInfos.length; i++) {
+			if (featureInfos[i].getProviderName() != null && featureInfos[i].getFeatureImageName() != null)
+				infoList.add(featureInfos[i]);
 		}
 		AboutInfo[] infoArray = (AboutInfo[]) infoList.toArray(new AboutInfo[infoList.size()]);
 
@@ -290,7 +289,7 @@ public class AboutDialog extends ProductInfoDialog {
 			if (add)
 				infoList.add(infoArray[i]);
 		}
-		infoList.remove(aboutInfo);
+		infoList.remove(primaryInfo);
 		return (AboutInfo[]) infoList.toArray(new AboutInfo[infoList.size()]);
 	}
 

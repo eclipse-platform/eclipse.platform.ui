@@ -11,8 +11,10 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
@@ -29,6 +31,9 @@ public class AboutAction
  * action has been <code>dispose</code>d.
  */
 private IWorkbenchWindow workbenchWindow;
+
+private AboutInfo primaryInfo;
+private AboutInfo[] featureInfos;
 	
 /**
  * Creates a new <code>AboutAction</code> with the given label
@@ -38,8 +43,20 @@ public AboutAction(IWorkbenchWindow window) {
 		throw new IllegalArgumentException();
 	}
 	this.workbenchWindow = window;
+	
+	try {
+		primaryInfo = Workbench.getInstance().getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
+		featureInfos = Workbench.getInstance().getWorkbenchConfigurer().getAllFeaturesAboutInfo();
+	} catch (WorkbenchException e) {
+		WorkbenchPlugin.log("Failed to get about infos.", e.getStatus()); //$NON-NLS-1$
+		throw new IllegalStateException();
+	}
+	
 	// use message with no fill-in
-	String productName = ""; //$NON-NLS-1$
+	String productName = primaryInfo.getProductName();
+	if (productName == null) {
+		productName = ""; //$NON-NLS-1$
+	}
 	setText(WorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
 	setId("about"); //$NON-NLS-1$
@@ -55,7 +72,7 @@ public void run() {
 		// action has been disposed
 		return;
 	}
-	new AboutDialog(workbenchWindow).open();
+	new AboutDialog(workbenchWindow, primaryInfo, featureInfos).open();
 }
 
 /* (non-Javadoc)

@@ -52,11 +52,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
@@ -99,8 +97,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		WorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
 	};
 
-	private AboutInfo[] featuresInfo;
-	private AboutInfo aboutInfo;
+	private AboutInfo[] featureInfos;
+	private AboutInfo primaryInfo;
 	
 	private int lastColumnChosen = 0;	// initially sort by provider
 	private boolean reverseSort = false;	// initially sort ascending
@@ -113,14 +111,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	/**
 	 * Constructor for AboutFeaturesDialog
 	 */
-	public AboutFeaturesDialog(Shell parentShell) {
+	public AboutFeaturesDialog(Shell parentShell, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
 		super(parentShell);
 		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
-		Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-		aboutInfo = workbench.getConfigurationInfo().getAboutInfo();
-		featuresInfo = workbench.getConfigurationInfo().getFeaturesInfo();
+		
+		this.primaryInfo = primaryInfo;
+		this.featureInfos = featureInfos;
+		
 		sortByProvider();
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
@@ -175,7 +175,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		String title = aboutInfo.getProductName();
+		String title = primaryInfo.getProductName();
 		if (title != null) { 
 		newShell.setText(
 			WorkbenchMessages.format(
@@ -509,13 +509,13 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
 		int initialSelectionIndex = 0;
 		/* fill each row of the table with feature info */
-		for (int i = 0; i < featuresInfo.length; i++) {
-			if (featuresInfo[i] == lastSelection)
+		for (int i = 0; i < featureInfos.length; i++) {
+			if (featureInfos[i] == lastSelection)
 				initialSelectionIndex = i;
-			String provider = featuresInfo[i].getProviderName();
-			String featureName = featuresInfo[i].getFeatureLabel();
-			String version = featuresInfo[i].getVersion();
-			String featureId = featuresInfo[i].getFeatureId();
+			String provider = featureInfos[i].getProviderName();
+			String featureName = featureInfos[i].getFeatureLabel();
+			String version = featureInfos[i].getVersion();
+			String featureId = featureInfos[i].getFeatureId();
 			if (provider == null)
 				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
@@ -527,11 +527,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			String[] row = { provider, featureName, version, featureId };
 			TableItem item = new TableItem(table, SWT.NULL);
 			item.setText(row);
-			item.setData(featuresInfo[i]);
+			item.setData(featureInfos[i]);
 		}
 		
 		// set initial selection
-		if (featuresInfo.length > 0) {
+		if (featureInfos.length > 0) {
 			table.setSelection(initialSelectionIndex);
 		}
 	}
@@ -557,7 +557,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		// Remember the last selection
 		int idx = table.getSelectionIndex();
 		if (idx != -1)
-			lastSelection = featuresInfo[idx];
+			lastSelection = featureInfos[idx];
 			
 		switch (column){
 			case 0:
@@ -588,10 +588,10 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		int idx = -1;	// the new index of the selection
 		// Create new order of table items
 		for(int i = 0; i < items.length; i++) {
-			String provider = featuresInfo[i].getProviderName();
-			String featureName = featuresInfo[i].getFeatureLabel();
-			String version = featuresInfo[i].getVersion();
-			String featureId = featuresInfo[i].getFeatureId();			
+			String provider = featureInfos[i].getProviderName();
+			String featureName = featureInfos[i].getFeatureLabel();
+			String version = featureInfos[i].getVersion();
+			String featureId = featureInfos[i].getFeatureId();			
 			if (provider == null)
 				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
@@ -602,12 +602,12 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 				featureId = ""; //$NON-NLS-1$
 			String[] row = { provider, featureName, version, featureId };
 			items[i].setText(row);
-			items[i].setData(featuresInfo[i]);
+			items[i].setData(featureInfos[i]);
 		}
 		// Maintain the original selection
 		if (lastSelection != null){
-			for (int k = 0; k < featuresInfo.length; k++){
-				if (lastSelection == featuresInfo[k])
+			for (int k = 0; k < featureInfos.length; k++){
+				if (lastSelection == featureInfos[k])
 					idx = k;
 			}	
 			table.setSelection(idx);
@@ -625,15 +625,15 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		 * key so the info array simply needs to be reversed.
 		 */
 		if (reverseSort){
-			java.util.List infoList = Arrays.asList(featuresInfo);
+			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featuresInfo.length; i++){
-				featuresInfo[i] = (AboutInfo)infoList.get(i);
+			for (int i=0; i< featureInfos.length; i++){
+				featureInfos[i] = (AboutInfo)infoList.get(i);
 			}
 		}
 		else {
 			// Sort ascending
-			Arrays.sort(featuresInfo, new Comparator() {
+			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
@@ -668,15 +668,15 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		 * key so the info array simply needs to be reversed.
 		 */
 		if (reverseSort){
-			java.util.List infoList = Arrays.asList(featuresInfo);
+			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featuresInfo.length; i++){
-				featuresInfo[i] = (AboutInfo)infoList.get(i);
+			for (int i=0; i< featureInfos.length; i++){
+				featureInfos[i] = (AboutInfo)infoList.get(i);
 			}
 		}
 		else {
 			// Sort ascending
-			Arrays.sort(featuresInfo, new Comparator() {
+			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
@@ -704,15 +704,15 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		 * key so the info array simply needs to be reversed.
 		 */		
 		if (reverseSort){
-			java.util.List infoList = Arrays.asList(featuresInfo);
+			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featuresInfo.length; i++){
-				featuresInfo[i] = (AboutInfo)infoList.get(i);
+			for (int i=0; i< featureInfos.length; i++){
+				featureInfos[i] = (AboutInfo)infoList.get(i);
 			}
 		}
 		else {
 			// Sort ascending
-			Arrays.sort(featuresInfo, new Comparator() {
+			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
@@ -748,15 +748,15 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		 * key so the info array simply needs to be reversed.
 		 */
 		if (reverseSort){
-			java.util.List infoList = Arrays.asList(featuresInfo);
+			java.util.List infoList = Arrays.asList(featureInfos);
 			Collections.reverse(infoList);
-			for (int i=0; i< featuresInfo.length; i++){
-				featuresInfo[i] = (AboutInfo)infoList.get(i);
+			for (int i=0; i< featureInfos.length; i++){
+				featureInfos[i] = (AboutInfo)infoList.get(i);
 			}
 		}
 		else {
 			// Sort ascending
-			Arrays.sort(featuresInfo, new Comparator() {
+			Arrays.sort(featureInfos, new Comparator() {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					AboutInfo i1, i2;
