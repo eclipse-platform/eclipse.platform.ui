@@ -74,4 +74,9 @@ public class TeamException extends Exception {
 		super(e.getMessage());
 		this.status = new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, e);
 	}
+	
+	public TeamException(String message) {
+		super(message);
+		this.status = new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, null);
+	}
 }

@@ -78,7 +78,7 @@ public class TargetManager {
 			ISynchronizer s = ResourcesPlugin.getWorkspace().getSynchronizer();
 			byte[] mappingBytes = s.getSyncInfo(TARGET_MAPPINGS, project);
 			if (mappingBytes != null) {
-				throw new TeamException("Problems mapping project. Project is already mapped.", null);
+				throw new TeamException("Problems mapping project. Project is already mapped.");
 			}
 			LocationMapping mapping = new LocationMapping(site, path);
 			s.setSyncInfo(
