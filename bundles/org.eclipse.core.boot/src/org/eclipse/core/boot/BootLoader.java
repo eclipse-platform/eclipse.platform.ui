@@ -148,6 +148,8 @@ public static IPlatformConfiguration getCurrentPlatformConfiguration() {
  * Returns the installation information for this invocation of the platform.
  *
  * @return the installation information.
+ * @deprecated will be removed before milestone 3. Functionally replaced by
+ * @see #getCurrentPlatformConfiguration
  */
 public static IInstallInfo getInstallationInfo() {
 	return InternalBootLoader.getInstallationInfo();

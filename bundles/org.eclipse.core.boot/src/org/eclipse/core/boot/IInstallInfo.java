@@ -21,6 +21,8 @@ import java.net.URL;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
+ * @deprecated Interface will be removed before milestone 3. 
+ * Being functionally replaced by @see IPlatformConfiguration
  */
 public interface IInstallInfo {
 /**
@@ -29,6 +31,8 @@ public interface IInstallInfo {
  * @return a configuration identifier, or <code>null</code> if no
  *      application is installed.
  * @see #getConfigurationInstallURLFor
+ * @deprecated Interface will be removed before milestone 3. 
+ * Being functionally replaced by @see IPlatformConfiguration
  */
 public String getApplicationConfigurationIdentifier();
 /**
@@ -39,6 +43,7 @@ public String getApplicationConfigurationIdentifier();
  *      in this interface.
  * @return the URL indicating where the component information is located.
  * @see #getInstalledComponentIdentifiers
+ * @deprecated
  */
 public URL getComponentInstallURLFor(String componentId);
 /**
@@ -49,6 +54,7 @@ public URL getComponentInstallURLFor(String componentId);
  *      methods in this interface.
  * @return the URL indicating where the configuration information is located.
  * @see #getInstalledConfigurationIdentifiers
+ * @deprecated 
  */
 public URL getConfigurationInstallURLFor(String configurationId);
 /**
@@ -57,6 +63,7 @@ public URL getConfigurationInstallURLFor(String configurationId);
  * @return an array of component identifiers, or an empty array
  *      if no components are installed.
  * @see #getComponentInstallURLFor
+ * @deprecated
  */
 public String[] getInstalledComponentIdentifiers();
 /**
@@ -65,6 +72,7 @@ public String[] getInstalledComponentIdentifiers();
  * @return an array of configuration identifiers, or an empty array
  *      if no configurations are installed.
  * @see #getConfigurationInstallURLFor
+ * @deprecated
  */
 public String[] getInstalledConfigurationIdentifiers();
 }
