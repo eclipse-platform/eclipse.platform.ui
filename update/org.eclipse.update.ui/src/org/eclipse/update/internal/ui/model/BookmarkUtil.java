@@ -13,24 +13,29 @@ package org.eclipse.update.internal.ui.model;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
 public class BookmarkUtil {
+	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+
 	public static void parse(String fileName, Vector bookmarks) {
 		File file = new File(fileName);
 		if (!file.exists())
 			return;
-		DOMParser parser = new DOMParser();
+
 		try {
-			parser.parse(fileName);
-			Document doc = parser.getDocument();
+			documentBuilderFactory.setNamespaceAware(true);
+			DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
+			Document doc = parser.parse(fileName);
 			Node root = doc.getDocumentElement();
 			processRoot(root, bookmarks);
+		} catch (ParserConfigurationException e) {
+			UpdateUI.logException(e);
 		} catch (SAXException e) {
 			UpdateUI.logException(e);
 		} catch (IOException e) {

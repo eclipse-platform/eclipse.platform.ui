@@ -12,8 +12,8 @@ package org.eclipse.update.internal.model;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
@@ -27,7 +27,8 @@ import org.xml.sax.helpers.*;
  */
 
 public class InstallConfigurationParser extends DefaultHandler {
-
+	private final static SAXParserFactory parserFactory =
+		SAXParserFactory.newInstance();
 	private SAXParser parser;
 	private InputStream siteStream;
 	private URL siteURL;
@@ -49,8 +50,14 @@ public class InstallConfigurationParser extends DefaultHandler {
 		InstallConfigurationModel config)
 		throws IOException, SAXException, CoreException {
 		super();
-		parser = new SAXParser();
-		parser.setContentHandler(this);
+		try {
+			parserFactory.setNamespaceAware(true);
+			this.parser = parserFactory.newSAXParser();
+		} catch (ParserConfigurationException e) {
+			UpdateCore.log(e);
+		} catch (SAXException e) {
+			UpdateCore.log(e);
+		}
 
 		this.siteStream = siteStream;
 		this.config = config;
@@ -60,7 +67,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 			UpdateCore.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
 		}
 
-		parser.parse(new InputSource(this.siteStream));
+		parser.parse(new InputSource(this.siteStream), this);
 	}
 
 	/**

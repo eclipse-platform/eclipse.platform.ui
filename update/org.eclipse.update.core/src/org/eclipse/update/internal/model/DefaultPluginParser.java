@@ -12,9 +12,10 @@ package org.eclipse.update.internal.model;
 
 
 import java.io.*;
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
@@ -23,7 +24,8 @@ import org.xml.sax.helpers.*;
  */
 
 public class DefaultPluginParser extends DefaultHandler {
-
+	private final static SAXParserFactory parserFactory =
+		SAXParserFactory.newInstance();
 	private SAXParser parser;
 	private String id = null;
 	private String version = null;
@@ -43,8 +45,14 @@ public class DefaultPluginParser extends DefaultHandler {
 	 */
 	public DefaultPluginParser() {
 		super();
-		this.parser = new SAXParser();
-		this.parser.setContentHandler(this);
+		try {
+			parserFactory.setNamespaceAware(true);
+			this.parser = parserFactory.newSAXParser();
+		} catch (ParserConfigurationException e) {
+			UpdateCore.log(e);
+		} catch (SAXException e) {
+			UpdateCore.log(e);
+		}
 	}
 
 	/**
@@ -53,12 +61,14 @@ public class DefaultPluginParser extends DefaultHandler {
 	public synchronized PluginEntry parse(InputStream in) throws SAXException, IOException {
 		try {
 			pluginEntry = new PluginEntry();
-			parser.parse(new InputSource(in));
+			parser.parse(new InputSource(in), this);
 		} catch (ParseCompleteException e) {
 			// expected, we stopped the parsing when we have the information we need
 			/// no need to pursue the parsing
 		}
 
+		if (id == null || id.trim().length() == 0)
+			id = "_no_id_";
 		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
 		return pluginEntry;
 	}

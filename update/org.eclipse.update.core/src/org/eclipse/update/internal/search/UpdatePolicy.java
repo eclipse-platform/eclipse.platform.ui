@@ -13,8 +13,9 @@ package org.eclipse.update.internal.search;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+	
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.DOMParser;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -35,6 +36,8 @@ public class UpdatePolicy {
 	private static final String TAG_URL_MAP = "url-map";
 	private static final String ATT_URL = "url";
 	private static final String ATT_PATTERN = "pattern";
+
+	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
 	private static class MapSite implements IUpdateSiteAdapter {
 		private URL url;
@@ -87,9 +90,11 @@ public class UpdatePolicy {
 			// the stream can be null if the user cancels the connection
 			if (policyStream == null)
 				return;
-			DOMParser parser = new DOMParser();
-			parser.parse(new InputSource(policyStream));
-			Document doc = parser.getDocument();
+			
+			documentBuilderFactory.setNamespaceAware(true);
+			DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
+			Document doc = parser.parse(new InputSource(policyStream));
+
 			processUpdatePolicy(doc);
 			loaded = true;
 		} catch (IOException e) {
@@ -105,6 +110,11 @@ public class UpdatePolicy {
 				0,
 				e);
 
+		} catch(ParserConfigurationException e) {
+			throw Utilities.newCoreException(
+				"Errors while parsing update policy",
+				0,
+				e);
 		} finally {
 			if (policyStream != null) {
 				try {

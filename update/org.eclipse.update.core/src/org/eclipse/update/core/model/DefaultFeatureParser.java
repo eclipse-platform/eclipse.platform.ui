@@ -13,8 +13,8 @@ package org.eclipse.update.core.model;
 
 import java.io.*;
 import java.util.*;
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -79,6 +79,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 	Stack objectStack = new Stack();
 
 	private int currentState;
+	
+	private final static SAXParserFactory parserFactory =
+		SAXParserFactory.newInstance();
 
 	/**
 	 * Constructs a feature parser.
@@ -88,13 +91,14 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public DefaultFeatureParser() {
 		super();
-		this.parser = new SAXParser();
 		try {
-			parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			parserFactory.setNamespaceAware(true);
+			this.parser = parserFactory.newSAXParser();
+		} catch (ParserConfigurationException e) {
+			UpdateCore.log(e);
 		} catch (SAXException e) {
+			UpdateCore.log(e);
 		}
-		this.parser.setContentHandler(this);
-		this.parser.setErrorHandler(this); // 18350		
 	}
 
 	public void init(FeatureModelFactory factory) {
@@ -120,7 +124,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	public FeatureModel parse(InputStream in) throws SAXException, IOException {
 		stateStack.push(new Integer(STATE_INITIAL));
 		currentState = ((Integer) stateStack.peek()).intValue();
-		parser.parse(new InputSource(in));
+		parser.parse(new InputSource(in), this);
 		if (objectStack.isEmpty())
 			throw new SAXException(Policy.bind("DefaultFeatureParser.NoFeatureTag"));
 		//$NON-NLS-1$
@@ -1233,5 +1237,4 @@ public class DefaultFeatureParser extends DefaultHandler {
 	public void ignorableWhitespace(char[] arg0, int arg1, int arg2) throws SAXException {
 		super.ignorableWhitespace(arg0, arg1, arg2);
 	}
-
 }

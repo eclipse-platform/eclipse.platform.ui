@@ -17,7 +17,6 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.update.ui.forms"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.help.appserver"/>
       <import plugin="org.eclipse.help"/>
    </requires>
@@ -56,14 +55,6 @@
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
                id="org.eclipse.update.ui.newUpdates">
          </action>
-         <!--action
-               label="%actionSets.webSites.label"
-               style="pulldown"
-               icon="icons/full/obj16/web_bkmrk_obj.gif"
-               class="org.eclipse.update.internal.ui.UpdateWebSitesAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
-               id="org.eclipse.update.ui.updateWebSites">
-         </action-->
       </actionSet>
    </extension>
    <extension

@@ -12,8 +12,8 @@ package org.eclipse.update.internal.model;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
@@ -43,7 +43,9 @@ public class SiteLocalParser extends DefaultHandler {
 		}
 		return bundle;
 	}
-
+	private final static SAXParserFactory parserFactory =
+		SAXParserFactory.newInstance();
+	
 	private SAXParser parser;
 	private InputStream siteStream;
 	private SiteLocalModel site;
@@ -60,8 +62,14 @@ public class SiteLocalParser extends DefaultHandler {
 	 */
 	public SiteLocalParser(InputStream siteStream, ILocalSite site) throws IOException, SAXException, CoreException {
 		super();
-		parser = new SAXParser();
-		parser.setContentHandler(this);
+		try {
+			parserFactory.setNamespaceAware(true);
+			this.parser = parserFactory.newSAXParser();
+		} catch (ParserConfigurationException e) {
+			UpdateCore.log(e);
+		} catch (SAXException e) {
+			UpdateCore.log(e);
+		}
 
 		this.siteStream = siteStream;
 		Assert.isTrue(site instanceof SiteLocalModel);
@@ -74,7 +82,7 @@ public class SiteLocalParser extends DefaultHandler {
 		
 		bundle = getResourceBundle();
 
-		parser.parse(new InputSource(this.siteStream));
+		parser.parse(new InputSource(this.siteStream),this);
 	}
 
 	/**

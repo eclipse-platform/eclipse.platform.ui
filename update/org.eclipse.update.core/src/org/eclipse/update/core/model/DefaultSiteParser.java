@@ -12,8 +12,8 @@ package org.eclipse.update.core.model;
 
 import java.io.*;
 import java.util.*;
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
@@ -33,7 +33,10 @@ import org.xml.sax.helpers.*;
  * @since 2.0
  */
 public class DefaultSiteParser extends DefaultHandler {
-
+	
+	private final static SAXParserFactory parserFactory =
+		SAXParserFactory.newInstance();
+	
 	private SAXParser parser;
 	private SiteModelFactory factory;
 
@@ -77,13 +80,14 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public DefaultSiteParser() {
 		super();
-		this.parser = new SAXParser();
 		try {
-			parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			parserFactory.setNamespaceAware(true);
+			this.parser = parserFactory.newSAXParser();
+		} catch (ParserConfigurationException e) {
+			UpdateCore.log(e);
 		} catch (SAXException e) {
+			UpdateCore.log(e);
 		}
-		this.parser.setContentHandler(this);
-		this.parser.setErrorHandler(this); // 18350
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
 			debug("Created"); //$NON-NLS-1$
@@ -111,7 +115,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	public SiteModel parse(InputStream in) throws SAXException, IOException {
 		stateStack.push(new Integer(STATE_INITIAL));
 		currentState = ((Integer) stateStack.peek()).intValue();
-		parser.parse(new InputSource(in));
+		parser.parse(new InputSource(in), this);
 		if (objectStack.isEmpty())
 			throw new SAXException(Policy.bind("DefaultSiteParser.NoSiteTag"));
 		//$NON-NLS-1$

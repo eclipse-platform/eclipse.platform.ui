@@ -12,8 +12,8 @@ package org.eclipse.update.internal.model;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.xml.parsers.*;
 
-import org.apache.xerces.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -26,7 +26,8 @@ import org.xml.sax.helpers.*;
  */
 
 public class InstallChangeParser extends DefaultHandler {
-
+	private final static SAXParserFactory parserFactory =
+		SAXParserFactory.newInstance();
 	private SAXParser parser;
 	private SessionDelta change;
 
@@ -40,8 +41,14 @@ public class InstallChangeParser extends DefaultHandler {
 	public InstallChangeParser(File file)
 		throws IOException, SAXException, CoreException {
 		super();
-		parser = new SAXParser();
-		parser.setContentHandler(this);
+		try {
+			parserFactory.setNamespaceAware(true);
+			this.parser = parserFactory.newSAXParser();
+		} catch (ParserConfigurationException e) {
+			UpdateCore.log(e);
+		} catch (SAXException e) {
+			UpdateCore.log(e);
+		}
 
 		InputStream changeStream = new FileInputStream(file);
 
@@ -54,7 +61,7 @@ public class InstallChangeParser extends DefaultHandler {
 		}
 
 		InputSource source = new InputSource(changeStream);
-		parser.parse(source);
+		parser.parse(source,this);
 		
 		// 16366
 		if (change!=null) change.setFile(file);
