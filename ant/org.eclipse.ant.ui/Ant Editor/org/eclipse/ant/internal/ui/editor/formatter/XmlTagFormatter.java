@@ -271,7 +271,7 @@ public class XmlTagFormatter {
             StringBuffer currentAttributeValue = null;
 
             char c = iter.first();
-            while (!mode.isFinished() && iter.getIndex() < iter.getEndIndex()) {
+            while (iter.getIndex() < iter.getEndIndex()) {
                 
                 switch (c) {                
                 
@@ -337,6 +337,8 @@ public class XmlTagFormatter {
                         currentAttributeValue.append(c);
                     } else if (mode.isAttributeNameSearching()) {
                         mode.setFinished();
+					} else if (mode.isFinished()){
+						; // consume the remaining characters
                     } else {
                         // we aren't ready to be done!
                         throw new ParseException("Unexpected '" + c //$NON-NLS-1$
@@ -349,6 +351,12 @@ public class XmlTagFormatter {
                     if (mode.isAttributeValueFound()) {
                         // attribute values are CDATA, add it all
                         currentAttributeValue.append(c);
+
+					} else if (mode.isFinished()) {
+						if (!Character.isWhitespace(c)) {
+								throw new ParseException("Unexpected '" + c //$NON-NLS-1$
+										+ "' when parsing:\n\t" + elementText); //$NON-NLS-1$
+						}
                     } else {
                         if (!Character.isWhitespace(c)) {
                             if (mode.isAttributeNameSearching()) {
@@ -366,6 +374,9 @@ public class XmlTagFormatter {
                 
                 c = iter.next();
             }
+			if (!mode.isFinished()) {
+				throw new ParseException("Element did not complete normally."); //$NON-NLS-1$
+			}
             return attributePairs;
         }
 

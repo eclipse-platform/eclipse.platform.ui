@@ -374,4 +374,18 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 
     }
 
+    public void testBug63558() throws Exception {
+		
+		// Ordinarily the double space after the element name would be repaired
+		// but if the formatter is working correctly these examples will be
+		// considered malformed and will be passed through untouched.
+		
+		String source1 = "<echo  file=\"foo\">\n&lt;html>&lt;body>&lt;pre>" //$NON-NLS-1$
+				+ "${compilelog}&lt;/pre>&lt;/body>&lt;/html>"; //$NON-NLS-1$
+		FormattingPreferences prefs = getPreferences(true, false, 60); //$NON-NLS-1$
+		simpleTest(source1, source1, prefs, "\t");
+	
+		String source2 = "<echo  file=\"foo\"/bar/baz></echo>"; //$NON-NLS-1$		
+		simpleTest(source2, source2, prefs, "\t");
+	}
 }
