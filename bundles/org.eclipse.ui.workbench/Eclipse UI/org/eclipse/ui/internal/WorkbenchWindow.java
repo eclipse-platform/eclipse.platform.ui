@@ -20,7 +20,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -1565,20 +1564,20 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// If there are no pages create a default.
 		if (pageList.isEmpty()) {
 			try {
-				// @issue root is app-specific
-				IContainer root =
-					WorkbenchPlugin.getPluginWorkspace().getRoot();
 				String defPerspID = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
 				WorkbenchPage newPage =
-					new WorkbenchPage(this, defPerspID, root);
+					new WorkbenchPage(this, defPerspID, getAdviser().getDefaultWindowInput());
 				pageList.add(newPage);
 				firePageOpened(newPage);
 			} catch (WorkbenchException e) {
 				WorkbenchPlugin.log("Unable to create default perspective - constructor failed."); //$NON-NLS-1$
 				result.add(e.getStatus());
-				// @issue Where should we get this product name from?
-				//String productName = getWorkbenchImpl().getConfigurationInfo().getAboutInfo().getProductName();
 				String productName = null;
+				try {
+					productName = getWorkbenchImpl().getWorkbenchConfigurer().getPrimaryFeatureAboutInfo().getProductName();
+				} catch (WorkbenchException e1) {
+					// do nothing
+				}
 				if (productName == null) {
 					productName = ""; //$NON-NLS-1$
 				}
@@ -1753,7 +1752,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				updateDisabled = false;
 
 				// Update action bars ( implicitly calls updateActionBars() )
-				updateTitle();
 				updateActionSets();
 				shortcutBar.update(false);
 				getMenuManager().update(IAction.TEXT);
@@ -2013,11 +2011,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/**
 	 * Updates the shorcut item
 	 */
-	/* package */
-	void updatePerspectiveShortcut(
-		IPerspectiveDescriptor oldDesc,
-		IPerspectiveDescriptor newDesc,
-		WorkbenchPage page) {
+	/* package */void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc, IPerspectiveDescriptor newDesc, WorkbenchPage page) {
 		if (updateDisabled)
 			return;
 
@@ -2027,51 +2021,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				(SetPagePerspectiveAction) ((ActionContributionItem) item)
 					.getAction();
 			action.update(newDesc);
-			if (page == getActiveWorkbenchPage())
-				updateTitle();
 		}
-	}
-
-	/**
-	 * Updates the window title.
-	 */
-	// @issue The adviser should be updating the title. IDE adviser will need to hookup listeners
-	public void updateTitle() {
-/*		if (updateDisabled)
-			return;
-		// 
-		// [pageInput -] [currentPerspective -] [editorInput -] [workspaceLocation -] productName
-		//
-		String title = getWorkbenchImpl().getConfigurationInfo().getAboutInfo().getProductName();
-		if (title == null) {
-			title = ""; //$NON-NLS-1$
-		}
-		
-		// @issue workspace location is likely IDE-specific
-		if (workspaceLocation != null)
-			title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { workspaceLocation, title }); //$NON-NLS-1$
-
-		WorkbenchPage currentPage = getActiveWorkbenchPage();
-		if (currentPage != null) {
-			IEditorPart editor = currentPage.getActiveEditor();
-			if (editor != null) {
-				String editorTitle = editor.getTitle();
-				title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { editorTitle, title }); //$NON-NLS-1$
-			}
-			IPerspectiveDescriptor persp = currentPage.getPerspective();
-			String label = ""; //$NON-NLS-1$
-			if (persp != null)
-				label = persp.getLabel();
-			IAdaptable input = currentPage.getInput();
-			// @issue input is app-specific
-			if ((input != null)
-				&& (!input.equals(ResourcesPlugin.getWorkspace().getRoot())))
-				label = currentPage.getLabel();
-			if (label != null && !label.equals("")) //$NON-NLS-1$	
-				title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { label, title }); //$NON-NLS-1$
-		}
-		getShell().setText(title);
-*/
 	}
 
 	/**

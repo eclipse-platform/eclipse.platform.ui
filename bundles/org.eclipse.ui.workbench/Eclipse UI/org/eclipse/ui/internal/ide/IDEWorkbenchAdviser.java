@@ -632,7 +632,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		return configurationInfo;
 	}
 */	
-	private IAdaptable getDefaultWindowInput() {
+	public IAdaptable getDefaultWindowInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 

@@ -1267,7 +1267,7 @@ public final class Workbench implements IWorkbench {
 
 		// If another window that has the workspace root as input and the requested
 		// perpective open and active, then the window is given focus.
-		IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
+		IAdaptable input = adviser.getDefaultWindowInput();
 		IWorkbenchWindow[] windows = getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			win = (WorkbenchWindow) windows[i];

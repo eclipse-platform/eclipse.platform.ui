@@ -490,7 +490,6 @@ public void bringToTop(IWorkbenchPart part) {
 			if (broughtToTop) {
 				lastActiveEditor = null;
 			}
-			window.updateTitle();
 		} else if (part instanceof IViewPart) {
 			IViewReference ref = (IViewReference)getReference(part);
 			broughtToTop = persp.bringToTop(ref);
@@ -726,8 +725,6 @@ public boolean closeAllEditors(boolean save) {
 	if (!window.isClosing() && deactivate)
 		activate(activationList.getActive());
 		
-	window.updateTitle();
-		
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 
@@ -819,7 +816,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	
 	//if it was the last part, close the perspective
 	lastPartClosePerspective();
-	window.updateTitle();
 	
 	// Return true on success.
 	return true;
@@ -2446,7 +2442,6 @@ private void setActivePart(IWorkbenchPart newPart) {
 		// Update actions now so old actions have heard part deactivated and 
 		// new actions can hear part activated.
 		actionSwitcher.updateActivePart(newPart);	
-		window.updateTitle();
 		if (newPart != null)
 			firePartActivated(newPart);
 	} finally {
@@ -2537,7 +2532,6 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Update the window
 	window.updateActionSets();
-	window.updateTitle();
 	window.getShortcutBar().update(true);
 	
 	updateVisibility(oldPersp, newPersp);

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.application;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWTError;
@@ -328,6 +329,19 @@ public abstract class WorkbenchAdviser {
 	 */
 	public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer, String menuId) {
 		return false;
+	}
+	
+	/**
+	 * Returns the default input for newly created pages, or <code>null</code>
+	 * if none needed.
+	 * <p>
+	 * The default implementation returns <code>null</code>. Subclasses may override.
+	 * </p>
+	 * 
+	 * @return the default input for a new workbench window page
+	 */
+	public IAdaptable getDefaultWindowInput() {
+		return null;
 	}
 }
 
