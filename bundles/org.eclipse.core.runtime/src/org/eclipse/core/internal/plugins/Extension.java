@@ -37,7 +37,12 @@ public String getExtensionPointUniqueIdentifier() {
 }
 public String getLabel() {
 	String s = getName();
-	return s == null ? "" : ((PluginDescriptor) getDeclaringPluginDescriptor()).getResourceString(s); //$NON-NLS-1$
+	if (s == null)
+		return ""; //$NON-NLS-1$
+	String localized =  ((PluginDescriptor) getDeclaringPluginDescriptor()).getResourceString(s);
+	if (localized != s)
+		setLocalizedName(localized);
+	return localized;
 }
 public String getSimpleIdentifier() {
 	return getId();

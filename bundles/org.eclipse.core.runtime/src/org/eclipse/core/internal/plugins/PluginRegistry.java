@@ -31,6 +31,9 @@ public class PluginRegistry extends PluginRegistryModel implements IPluginRegist
 	// the registry keeps a reference to the cache reader for lazily loading extensions
 	private RegistryCacheReader registryCacheReader;
 	final private File registryCacheFile;
+	
+	//indicates if the registry cache needs to be rewritten
+	private boolean cacheDirty = false;
 
 public PluginRegistry() {
 	this.registryCacheFile = InternalPlatform.getMetaArea().getRegistryPath().toFile();
@@ -201,23 +204,32 @@ void logError(IStatus status) {
 }
 public void saveRegistry() throws IOException {
 	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
-	if (path.toFile().exists()) {
+	if (!cacheDirty && path.toFile().exists()) {
 		// The registry cache file exists.  Assume it is fine and
 		// we don't need to re-write it.
 		return;
 	}
 	DataOutputStream output = null;
+	//write to a temp file first, because the old registry cache file may still 
+	//be in use for lazy loading of extensions
+	java.io.File tempFile = new java.io.File(path.toOSString().concat(".tmp"));
 	try {
-		output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(path.toFile())));
+		output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)));
 	} catch (IOException ioe) {
 		String message = Policy.bind("meta.unableToCreateCache"); //$NON-NLS-1$
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
 		logError(status);
+		return;
 	}
 	try {
 		long start = System.currentTimeMillis();
 		RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
 		cacheWriter.writePluginRegistry(this, output);
+		output.close();
+		//now move the temp file to the real location
+		java.io.File realFile = path.toFile();
+		realFile.delete();
+		tempFile.renameTo(realFile);
 		if (InternalPlatform.DEBUG)
 			System.out.println("Wrote registry: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	} finally {
@@ -329,6 +341,12 @@ final void loadConfigurationElements(Extension extension) {
 		} catch (IOException ioe) {
 		}
 	}
+}
+/**
+ * Indicates that the registry cache is dirty and should be rewritten on shutdown.
+ */
+public void setCacheDirty() {
+	cacheDirty = true;
 }
 void setCacheReader(RegistryCacheReader registryCacheReader) {
 	this.registryCacheReader = registryCacheReader;

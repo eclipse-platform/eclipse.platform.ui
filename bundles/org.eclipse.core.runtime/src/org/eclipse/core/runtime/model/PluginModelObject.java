@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
+import org.eclipse.core.internal.plugins.PluginRegistry;
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * An object which has the general characteristics of all elements
@@ -21,7 +23,7 @@ import org.eclipse.core.internal.runtime.Assert;
  */
 
 public abstract class PluginModelObject {
-
+	
 	// DTD properties (included in plug-in manifest)
 	private String name = null;
 
@@ -51,6 +53,15 @@ public String getName() {
 	return name;
 }
 /**
+ * Return the line number for the start tag for this plug-in object. This
+ * is the line number of the element declaration from the plug-in manifest file.
+ * 
+ * @return the line number of the start tag for this object
+ */
+public int getStartLine() {
+	return (flags & ~M_READ_ONLY) - 1;
+}
+/**
  * Returns whether or not this model object is read-only.
  * 
  * @return <code>true</code> if this model object is read-only,
@@ -69,6 +80,15 @@ public boolean isReadOnly() {
 public void markReadOnly() {
 	flags |= M_READ_ONLY;
 }
+
+/**
+ * Optimization to replace a non-localized key with its localized value.  Avoids having
+ * to access resource bundles for further lookups.
+ */
+public void setLocalizedName(String value) {
+	name = value;
+	((PluginRegistry)Platform.getPluginRegistry()).setCacheDirty();
+}
 /**
  * Sets the name of this element.
  * 
@@ -77,15 +97,6 @@ public void markReadOnly() {
 public void setName(String value) {
 	assertIsWriteable();
 	name = value;
-}
-/**
- * Return the line number for the start tag for this plug-in object. This
- * is the line number of the element declaration from the plug-in manifest file.
- * 
- * @return the line number of the start tag for this object
- */
-public int getStartLine() {
-	return (flags & ~M_READ_ONLY) - 1;
 }
 /**
  * Set the line number for the start tag for this plug-in object. This is the

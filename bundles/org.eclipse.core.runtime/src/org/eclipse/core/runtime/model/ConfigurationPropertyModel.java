@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
+import org.eclipse.core.internal.plugins.PluginRegistry;
+import org.eclipse.core.runtime.Platform;
+
 /**
  * An object which represents the user-defined properties in a configuration
  * element of a plug-in manifest.  Properties are <code>String</code>-based
@@ -22,6 +25,7 @@ public class ConfigurationPropertyModel extends PluginModelObject {
 
 	// DTD properties (included in plug-in manifest)
 	private String value = null;
+	
 /**
  * Creates a new configuration property model in which all fields
  * are <code>null</code>.
@@ -36,6 +40,14 @@ public ConfigurationPropertyModel() {
  */
 public String getValue() {
 	return value;
+}
+/**
+ * Optimization to replace a non-localized key with its localized value.  Avoids having
+ * to access resource bundles for further lookups.
+ */
+public void setLocalizedValue(String value) {
+	this.value = value;
+	((PluginRegistry)Platform.getPluginRegistry()).setCacheDirty();
 }
 /**
  * Sets the value of this property.

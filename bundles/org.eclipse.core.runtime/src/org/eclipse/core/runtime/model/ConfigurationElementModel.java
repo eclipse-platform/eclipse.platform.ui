@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
+import org.eclipse.core.internal.plugins.PluginRegistry;
+import org.eclipse.core.runtime.Platform;
+
 /**
  * An object which represents the user-defined contents of an extension
  * in a plug-in manifest.
@@ -19,7 +22,9 @@ package org.eclipse.core.runtime.model;
  */
 
 public class ConfigurationElementModel extends PluginModelObject {
+	
 
+	
 	// DTD properties (included in plug-in manifest)
 	private String value = null;
 	private ConfigurationPropertyModel[] properties = null;
@@ -107,6 +112,14 @@ public void markReadOnly() {
 	if (properties != null)
 		for (int i = 0; i < properties.length; i++)
 			properties[i].markReadOnly();
+}
+/**
+ * Optimization to replace a non-localized key with its localized value.  Avoids having
+ * to access resource bundles for further lookups.
+ */
+public void setLocalizedValue(String value) {
+	this.value = value;
+	((PluginRegistry)Platform.getPluginRegistry()).setCacheDirty();
 }
 /**
  * Sets the parent of this element.  The supplied parent is either

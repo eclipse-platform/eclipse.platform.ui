@@ -103,9 +103,24 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 	return ((PluginDescriptor) plugin).createExecutableExtension(pluginName, className, initData, this, attributeName);
 }
 public String getAttribute(String name) {
-
-	String s = getAttributeAsIs(name);	
-	return s==null ? null : getDeclaringExtension().getDeclaringPluginDescriptor().getResourceString(s);
+	ConfigurationPropertyModel[] list = (ConfigurationPropertyModel[]) getProperties();
+	if (list == null)
+		return null;
+		
+	ConfigurationPropertyModel found = null;	
+	for (int i = 0; i < list.length; i++)
+		if (name.equals(list[i].getName())) {
+			found = list[i];
+			break;
+		}
+	String s;
+	if (found == null || (s = found.getValue()) == null)
+		return null;
+	//replace the key with its localized value
+	String localized = getDeclaringExtension().getDeclaringPluginDescriptor().getResourceString(s);
+	if (localized != s)
+		found.setLocalizedValue(localized);
+	return localized;
 }
 public String getAttributeAsIs(String name) {
 	ConfigurationPropertyModel[] list = (ConfigurationPropertyModel[]) getProperties();
@@ -150,7 +165,12 @@ public IExtension getDeclaringExtension() {
 }
 public String getValue() {
 	String s = getValueAsIs();
-	return s == null ? null : getDeclaringExtension().getDeclaringPluginDescriptor().getResourceString(s);
+	if (s == null)
+		return null;
+	String localized = getDeclaringExtension().getDeclaringPluginDescriptor().getResourceString(s);
+	if (localized != s)
+		setLocalizedValue(localized);
+	return localized;
 }
 private void logError(IStatus status) {
 	InternalPlatform.getRuntimePlugin().getLog().log(status);

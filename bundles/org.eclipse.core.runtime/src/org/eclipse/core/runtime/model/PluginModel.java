@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
+import org.eclipse.core.internal.plugins.PluginRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 
 /**
@@ -186,6 +188,14 @@ public void setDeclaredExtensions(ExtensionModel[] value) {
 public void setId(String value) {
 	assertIsWriteable();
 	id = value;
+}
+/**
+ * Optimization to replace a non-localized key with its localized value.  Avoids having
+ * to access resource bundles for further lookups.
+ */
+public void setLocalizedProviderName(String value) {
+	providerName = value;
+	((PluginRegistry)Platform.getPluginRegistry()).setCacheDirty();
 }
 /**
  * Sets the location of the plug-in manifest file (e.g., <code>plugin.xml</code>)

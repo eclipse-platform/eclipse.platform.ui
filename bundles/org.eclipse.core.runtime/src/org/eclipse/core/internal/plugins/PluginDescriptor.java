@@ -291,7 +291,12 @@ public URL getInstallURLInternal() {
  */
 public String getLabel() {
 	String s = getName();
-	return s == null ? "" : getResourceString(s); //$NON-NLS-1$
+	if (s == null)
+		return ""; //$NON-NLS-1$
+	 String localized = getResourceString(s);
+	 if (localized != s)
+	 	setLocalizedName(localized);
+	 return localized;
 }
 /**
  * @see IPluginDescriptor
@@ -527,7 +532,12 @@ public PluginRegistry getPluginRegistry() {
  */
 public String getProviderName() {
 	String s = super.getProviderName();
-	return s == null ? "" : getResourceString(s); //$NON-NLS-1$
+	if (s == null)
+		return ""; //$NON-NLS-1$
+	 String localized = getResourceString(s);
+	 if (localized != s)
+		setLocalizedProviderName(localized);
+	 return localized;
 }
 /**
  * @see IPluginDescriptor
@@ -580,13 +590,10 @@ public String getResourceString(String value) {
  * @see IPluginDescriptor
  */
 public String getResourceString(String value, ResourceBundle b) {
-
 	String s = value.trim();
-	
 	if (!s.startsWith(KEY_PREFIX)) return s;
-
 	if (s.startsWith(KEY_DOUBLE_PREFIX)) return s.substring(1);
-
+	
 	int ix = s.indexOf(" "); //$NON-NLS-1$
 	String key = ix == -1 ? s : s.substring(0,ix);
 	String dflt = ix == -1 ? s : s.substring(ix+1);
@@ -604,7 +611,8 @@ public String getResourceString(String value, ResourceBundle b) {
 	try { 
 		return b.getString(key.substring(1));
 	} catch(MissingResourceException e) {
-		return dflt;
+		//this will avoid requiring a bundle access on the next lookup
+		return "%" + dflt;
 	}
 }
 /**
