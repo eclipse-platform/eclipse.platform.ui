@@ -448,9 +448,9 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	} else {
 		boolean isActive = (perspList.getActive() == persp);
 		window.removePerspectiveShortcut(persp, this);
-		disposePerspective(persp);
 		if (isActive)
 			setPerspective(perspList.getNextActive());
+		disposePerspective(persp);
 	}
 }
 /**

@@ -838,15 +838,12 @@ public Object run(Object arg) {
 				else
 					inputSame = input.equals(page.getInput());
 				if (inputSame) {
-					Iterator enum = page.getOpenedPerspectives();
-					while (enum.hasNext()) {
-						Perspective persp = (Perspective) enum.next();
-						if (perspectiveId.equals(persp.getDesc().getId())) {
-							win.getShell().open();
-							page.setPerspective(persp.getDesc());
-							return page;
-						}
-					}
+					IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+					if (desc == null)
+						throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+					win.getShell().open();
+					page.setPerspective(desc);
+					return page;
 				}
 			}
 		}
