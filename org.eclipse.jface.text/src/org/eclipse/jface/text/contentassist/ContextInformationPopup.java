@@ -12,6 +12,7 @@
 package org.eclipse.jface.text.contentassist;
 
 
+import java.util.Iterator;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -64,6 +65,18 @@ class ContextInformationPopup implements IContentAssistListener {
 		public IContextInformation fInformation;
 		public IContextInformationValidator fValidator;
 		public IContextInformationPresenter fPresenter;
+		
+		/*
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 * @since 3.0
+		 */
+		public boolean equals(Object obj) {
+			if (obj instanceof ContextFrame) {
+				ContextFrame frame= (ContextFrame) obj;
+				return fInformation.equals(frame.fInformation) && fBeginOffset == frame.fBeginOffset;
+			}
+			return super.equals(obj);
+		}
 	}
 
 	private ITextViewer fViewer;
@@ -100,6 +113,14 @@ class ContextInformationPopup implements IContentAssistListener {
 	 * @since 3.0
 	 */
 	private SelectionListener fTextWidgetSelectionListener;
+	
+	/**
+	 * The last removed context frame is remembered in order to not re-query the
+	 * user about which context should be used.
+	 * 
+	 * @since 3.0
+	 */
+	private ContextFrame fLastContext= null;
 	
 	/**
 	 * Creates a new context information popup.
@@ -143,10 +164,44 @@ class ContextInformationPopup implements IContentAssistListener {
 				int count = (contexts == null ? 0 : contexts.length);
 				if (count == 1) {
 					
-					// Show context information directly
-					internalShowContextInfo(contexts[0], position);
+					ContextFrame frame= createContextFrame(contexts[0], position);
+					if (isDuplicate(frame))
+						validateContextInformation();
+					else
+						// Show context information directly
+						internalShowContextInfo(frame);
 				
 				} else if (count > 0) {
+					
+					// if any of the proposed context matches the any of the contexts on the stack,
+					// assume that one (so, if context info is invoked repeatedly, the current
+					// info is kept)
+					for (int i= 0; i < contexts.length; i++) {
+						IContextInformation info= contexts[i];
+						ContextFrame frame= createContextFrame(info, position);
+						
+						// check top of stack and stored context
+						if (isDuplicate(frame)) {
+							validateContextInformation();
+							return;
+						}
+						
+						if (isLastFrame(frame)) {
+							internalShowContextInfo(frame);
+							return;
+						}
+						
+						// also check all other contexts
+						for (Iterator it= fContextFrameStack.iterator(); it.hasNext(); ) {
+							ContextFrame stackFrame= (ContextFrame) it.next();
+							if (stackFrame.equals(frame)) {
+								validateContextInformation();
+								return;
+							}
+						}
+					}
+					
+					// otherwise:
 					// Precise context must be selected
 					
 					if (fLineDelimiter == null)
@@ -177,7 +232,11 @@ class ContextInformationPopup implements IContentAssistListener {
 		Control control= fContentAssistSubjectAdapter.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
-				internalShowContextInfo(info, position);
+				ContextFrame frame= createContextFrame(info, position);
+				if (isDuplicate(frame))
+					validateContextInformation();
+				else
+					internalShowContextInfo(frame);
 				hideContextSelector();
 			}
 		});
@@ -186,13 +245,26 @@ class ContextInformationPopup implements IContentAssistListener {
 	/**
 	 * Displays the given context information for the given offset.
 	 * 
+	 * @param frame the context frame tod display, or <code>null</code>
+	 * @since 3.0
+	 */
+	private void internalShowContextInfo(ContextFrame frame) {
+		if (frame != null) {
+			fContextFrameStack.push(frame);
+			if (fContextFrameStack.size() == 1)
+				fLastContext= null;
+			internalShowContextFrame(frame, fContextFrameStack.size() == 1);
+		}
+	}
+	
+	/**
+	 * Creates a context frame for the given offset.
+	 * 
 	 * @param info the context information
 	 * @param position the offset
-	 * @since 2.0
+	 * @since 3.0
 	 */
-
-	private void internalShowContextInfo(IContextInformation information, int offset) {
-				
+	private ContextFrame createContextFrame(IContextInformation information, int offset) {
 		IContextInformationValidator validator= fContentAssistSubjectAdapter.getContextInformationValidator(fContentAssistant, offset);
 		
 		if (validator != null) {
@@ -204,11 +276,40 @@ class ContextInformationPopup implements IContentAssistListener {
 			current.fVisibleOffset= fContentAssistSubjectAdapter.getWidgetSelectionRange().x - (offset - current.fBeginOffset);
 			current.fValidator= validator;
 			current.fPresenter= fContentAssistSubjectAdapter.getContextInformationPresenter(fContentAssistant, offset);
-			
-			fContextFrameStack.push(current);
-			
-			internalShowContextFrame(current, fContextFrameStack.size() == 1);
+			return current;
 		}
+		
+		return null;
+	}
+
+	/**
+	 * Compares <code>frame</code> with the top of the stack, returns <code>true</code>
+	 * if the frames are the same.
+	 * 
+	 * @param frame the frame to check
+	 * @return <code>true</code> if <code>frame</code> matches the top of the stack
+	 * @since 3.0
+	 */
+	private boolean isDuplicate(ContextFrame frame) {
+		if (frame == null)
+			return false;
+		if (fContextFrameStack.isEmpty())
+				return false;
+		// stack not empty
+		ContextFrame top= (ContextFrame) fContextFrameStack.peek();
+		return frame.equals(top);
+	}
+	
+	/**
+	 * Compares <code>frame</code> with most recently removed context frame, returns <code>true</code>
+	 * if the frames are the same.
+	 * 
+	 * @param frame the frame to check
+	 * @return <code>true</code> if <code>frame</code> matches the most recently removed
+	 * @since 3.0
+	 */
+	private boolean isLastFrame(ContextFrame frame) {
+		return frame != null && frame.equals(fLastContext);
 	}
 	
 	/**
@@ -325,7 +426,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			
 			int size= fContextFrameStack.size();
 			if (size > 0) {
-				fContextFrameStack.pop();
+				fLastContext= (ContextFrame) fContextFrameStack.pop();
 				-- size;
 			}
 			
@@ -411,7 +512,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			return;
 		
 		int position= fContentAssistSubjectAdapter.getSelectedRange().x;
-		internalShowContextInfo(fContextSelectorInput[i], position);
+		internalShowContextInfo(createContextFrame(fContextSelectorInput[i], position));
 	}
 	
 	/**
@@ -659,13 +760,21 @@ class ContextInformationPopup implements IContentAssistListener {
 			private ContextFrame fFrame= (ContextFrame) fContextFrameStack.peek();
 			
 			public void run() {
-				if (Helper.okToUse(fContextInfoPopup) && fFrame == fContextFrameStack.peek()) {
+				// only do this if no other frames have been added in between
+				if (!fContextFrameStack.isEmpty() && fFrame == fContextFrameStack.peek()) {
 					int offset= fContentAssistSubjectAdapter.getSelectedRange().x;
-					if (fFrame.fValidator == null || !fFrame.fValidator.isContextInformationValid(offset)) {
-						hideContextInfoPopup();
-					} else if (fFrame.fPresenter != null && fFrame.fPresenter.updatePresentation(offset, fTextPresentation)) {
-						TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
-						resize();
+					
+					// iterate all contexts on the stack
+					while (Helper.okToUse(fContextInfoPopup) && !fContextFrameStack.isEmpty()) {
+						ContextFrame top= (ContextFrame) fContextFrameStack.peek();
+						if (top.fValidator == null || !top.fValidator.isContextInformationValid(offset)) {
+							hideContextInfoPopup(); // loop variant: reduces the number of contexts on the stack
+						} else if (top.fPresenter != null && top.fPresenter.updatePresentation(offset, fTextPresentation)) {
+							TextPresentation.applyTextPresentation(fTextPresentation, fContextInfoText);
+							resize();
+							break;
+						} else
+							break;
 					}
 				}
 			}

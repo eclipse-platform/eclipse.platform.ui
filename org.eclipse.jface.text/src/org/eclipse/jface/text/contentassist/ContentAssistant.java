@@ -1097,18 +1097,18 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		switch (type) {
 			case CONTEXT_SELECTOR:
 			case PROPOSAL_SELECTOR:
-				if (fContentAssistSubject instanceof IWidgetTokenOwner) {
-					IWidgetTokenOwner owner= (IWidgetTokenOwner)fContentAssistSubject;
-					return owner.requestWidgetToken(this);
-				} else if (fContentAssistSubject instanceof IWidgetTokenOwnerExtension)  {
+				if (fContentAssistSubject instanceof IWidgetTokenOwnerExtension)  {
 					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension)fContentAssistSubject;
 					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
-				} else if (fViewer instanceof IWidgetTokenOwner) {
-					IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+				} else if (fContentAssistSubject instanceof IWidgetTokenOwner) {
+					IWidgetTokenOwner owner= (IWidgetTokenOwner)fContentAssistSubject;
 					return owner.requestWidgetToken(this);
 				} else if (fViewer instanceof IWidgetTokenOwnerExtension)  {
 					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fViewer;
 					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
+				} else if (fViewer instanceof IWidgetTokenOwner) {
+					IWidgetTokenOwner owner= (IWidgetTokenOwner) fViewer;
+					return owner.requestWidgetToken(this);
 				}
 		}	
 		return true;
@@ -1141,13 +1141,27 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				fCloser.install();
 				fContentAssistSubjectAdapter.setEventConsumer(fInternalListener);
 				installKeyListener();
-			}
+			} else
+				promoteKeyListener();
 			return true;
 		}
 		
 		return false;
 	}
 	
+	/**
+	 * Repromotes the keylistener to the first position, using
+	 * prependVerifyKeyListener. This ensures no other instance is
+	 * filtering away the keystrokes underneath, if we've been up for a
+	 * while (e.g. when the context info is showing.
+	 * 
+	 * @since 3.0
+	 */
+	private void promoteKeyListener() {
+		uninstallVerifyKeyListener();
+		installKeyListener();
+	}
+
 	/**
 	 * Installs a key listener on the text viewer's widget.
 	 */
@@ -1240,6 +1254,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssist#showPossibleCompletions
 	 */
 	public String showPossibleCompletions() {
+		promoteKeyListener();
 		return fProposalPopup.showProposals(false);
 	}
 	
@@ -1254,6 +1269,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssist#showContextInformation
 	 */
 	public String showContextInformation() {
+		promoteKeyListener();
 		if (fContextInfoPopup != null)
 			return fContextInfoPopup.showContextProposals(false);
 		else
