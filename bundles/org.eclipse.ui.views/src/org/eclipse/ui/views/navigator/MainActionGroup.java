@@ -32,7 +32,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 
 	protected AddBookmarkAction addBookmarkAction;
 	protected AddTaskAction addTaskAction;	
-	protected NewWizardAction newWizardAction;
 	protected PropertyDialogAction propertyDialogAction;
 	protected ImportResourcesAction importAction;
 	protected ExportResourcesAction exportAction;
@@ -63,7 +62,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 
 		addBookmarkAction = new AddBookmarkAction(shell);
 		addTaskAction = new AddTaskAction(shell);		
-		newWizardAction = new NewWizardAction();
 		propertyDialogAction =
 			new PropertyDialogAction(shell, navigator.getViewer());
 		
