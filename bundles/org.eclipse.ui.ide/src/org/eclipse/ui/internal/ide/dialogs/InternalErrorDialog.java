@@ -17,8 +17,6 @@ import java.io.PrintStream;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -48,6 +46,18 @@ public class InternalErrorDialog extends MessageDialog {
      */
     private static final int TEXT_LINE_COUNT = 15;
 
+    /**
+     * Create a new dialog.
+     * 
+     * @param parentShell the parent shell
+     * @param dialogTitle the  title
+     * @param dialogTitleImage the title image
+     * @param dialogMessage the message
+     * @param detail the error to display
+     * @param dialogImageType the type of image
+     * @param dialogButtonLabels the button labels
+     * @param defaultIndex the default selected button index
+     */
     public InternalErrorDialog(Shell parentShell, String dialogTitle,
             Image dialogTitleImage, String dialogMessage, Throwable detail,
             int dialogImageType, String[] dialogButtonLabels, int defaultIndex) {
@@ -70,6 +80,7 @@ public class InternalErrorDialog extends MessageDialog {
 
     /**
      * Set the detail button;
+     * @param index the detail button index
      */
     public void setDetailButton(int index) {
         detailButtonID = index;
@@ -117,7 +128,6 @@ public class InternalErrorDialog extends MessageDialog {
      * Create this dialog's drop-down list component.
      *
      * @param parent the parent composite
-     * @return the drop-down list component
      */
     protected void createDropDownText(Composite parent) {
         // create the list
@@ -129,15 +139,6 @@ public class InternalErrorDialog extends MessageDialog {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PrintStream ps = new PrintStream(baos);
             detail.printStackTrace(ps);
-            if ((detail instanceof SWTError)
-                    && (((SWTError) detail).throwable != null)) {
-                ps.println("\n*** Stack trace of contained exception ***"); //$NON-NLS-1$
-                ((SWTError) detail).throwable.printStackTrace(ps);
-            } else if ((detail instanceof SWTException)
-                    && (((SWTException) detail).throwable != null)) {
-                ps.println("\n*** Stack trace of contained exception ***"); //$NON-NLS-1$
-                ((SWTException) detail).throwable.printStackTrace(ps);
-            }
             ps.flush();
             baos.flush();
             text.setText(baos.toString());
@@ -158,6 +159,8 @@ public class InternalErrorDialog extends MessageDialog {
      * @param parent the parent shell of the dialog, or <code>null</code> if none
      * @param title the dialog's title, or <code>null</code> if none
      * @param message the message
+     * @param detail the error 
+     * @param defaultIndex the default index of the button to select
      * @return <code>true</code> if the user presses the OK button,
      *    <code>false</code> otherwise
      */

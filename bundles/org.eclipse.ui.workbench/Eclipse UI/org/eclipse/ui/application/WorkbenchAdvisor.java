@@ -14,8 +14,6 @@ package org.eclipse.ui.application;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -295,24 +293,6 @@ public abstract class WorkbenchAdvisor {
                     new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg,
                             exception));
 
-            // Handle nested exception from SWT (see bug 6312)
-            Throwable nested = null;
-            if (exception instanceof SWTException) {
-                nested = ((SWTException) exception).throwable;
-            } else if (exception instanceof SWTError) {
-                nested = ((SWTError) exception).throwable;
-            }
-            if (nested != null) {
-                msg = nested.getMessage();
-                if (msg == null) {
-                    msg = nested.toString();
-                }
-                WorkbenchPlugin.log("*** SWT nested exception", //$NON-NLS-1$
-                        new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg,
-                                nested));
-            }
-
-            // Print it onto the console if debugging
             if (WorkbenchPlugin.DEBUG) {
                 exception.printStackTrace();
             }
