@@ -66,6 +66,8 @@ public abstract class ViewItem {
 	private Composite titleComposite;
 	protected Color white;
 	protected ScrolledForm form;
+	private Font boldFont;
+	private Font regularFont;
 
 	/**
 	 * Constructor for ViewItem.
@@ -219,13 +221,19 @@ public abstract class ViewItem {
 
 		setButtonsCollapsed();
 		setCollapsed();
+		
+		regularFont = mainItemComposite.getFont();	
+
+		FontData[] fontDatas = regularFont.getFontData();
+		for (int i = 0; i < fontDatas.length; i++) {
+			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
+		}
+		boldFont = new Font(mainItemComposite.getDisplay(), fontDatas);
 	}
 
 	/*package*/
 	void boldTitle() {
-//		StyleRange r = new StyleRange(0, titleText.getText().length(), null, null, SWT.BOLD);
-//		titleText.setStyleRange(r);
-
+		mainItemComposite.setFont(boldFont);
 	}
 
 	public void dispose() {
@@ -255,7 +263,8 @@ public abstract class ViewItem {
 			white.dispose();
 		if (titleComposite != null)
 			titleComposite.dispose();
-
+		if (boldFont != null)
+			boldFont.dispose();
 	}
 
 	/**
@@ -561,8 +570,7 @@ public abstract class ViewItem {
 
 	/*package*/
 	void unboldTitle() {
-//		StyleRange r = new StyleRange(0, titleText.getText().length(), null, null, SWT.NULL);
-//		titleText.setStyleRange(r);
+		mainItemComposite.setFont(regularFont);
 	}
 
 }
