@@ -60,7 +60,7 @@ public class ToolbarButton{
 	 * @return String
 	 */
 	public String getOnImage() {
-		return image;
+		return getImage();
 	}
 	
 	public String getAction() {

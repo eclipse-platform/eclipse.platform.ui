@@ -89,7 +89,7 @@ function resynch()
 <SCRIPT TYPE="text/javascript">
 <!--
 document.write("<table align=\"right\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td nowrap><b><a  href='javascript:parent.parent.TabsFrame.resynch();' >"); 
-document.write("<img alt=\"\" title=\"<%=ServletResources.getString("Synch", request)%>\" src=\"images/synch_toc_nav.gif\" border=0> ");
+document.write("<img alt=\"\" title=\"<%=ServletResources.getString("Synch", request)%>\" src=\"images/e_synch_toc_nav.gif\" border=0> ");
 document.write("<%=ServletResources.getString("shortSynch", request)%></a>&nbsp;</b></td></tr></table>");
 //-->
 </SCRIPT>

@@ -43,6 +43,6 @@ public class View {
 	 * @return String
 	 */
 	public String getOnImage() {
-		return imageURL;
+		return getImage();
 	}
 }
