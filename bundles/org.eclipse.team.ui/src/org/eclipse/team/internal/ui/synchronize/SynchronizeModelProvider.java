@@ -18,6 +18,7 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -180,7 +181,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		// Connect to the sync set which will register us as a listener and give us a reset event
 		// in a background thread
 		getSyncInfoSet().connect(this, monitor);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		return getModelRoot();
 	}
 	
@@ -462,7 +463,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				for (int i = 0; i < expandedElements[0].length; i++) {
 					if (expandedElements[0][i] instanceof ISynchronizeModelElement) {
 						IResource resource = ((ISynchronizeModelElement) expandedElements[0][i]).getResource();
-						savedExpansionState.add(resource.getFullPath().toString());
+						if(resource != null)
+							savedExpansionState.add(resource.getFullPath().toString());
 					}
 				}
 				config.setProperty(P_VIEWER_EXPANSION_STATE, savedExpansionState);
@@ -476,7 +478,8 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				for (int i = 0; i < selectedElements[0].length; i++) {
 					if (selectedElements[0][i] instanceof ISynchronizeModelElement) {
 						IResource resource = ((ISynchronizeModelElement) selectedElements[0][i]).getResource();
-						savedSelectedState.add(resource.getFullPath().toString());
+						if(resource != null)
+							savedSelectedState.add(resource.getFullPath().toString());
 					}
 				}
 				config.setProperty(P_VIEWER_SELECTION_STATE, savedSelectedState);
@@ -681,7 +684,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 			String[] markerTypes = getMarkerTypes();
 			boolean refreshNeeded = false;
 			Map changes = new HashMap();
-			long start = System.currentTimeMillis();
+			
 			// Accumulate all distinct resources that have had problem marker
 			// changes
 			for (int idx = 0; idx < markerTypes.length; idx++) {
@@ -699,29 +702,47 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 					}
 				}
 			
-			if (! changes.isEmpty()) {
-			synchronized (this) {
-				// Changes contains all resources with marker changes
-				for (Iterator it = changes.values().iterator(); it.hasNext();) {
-					ISynchronizeModelElement element = (ISynchronizeModelElement) it.next();
-					calculateProperties(element, false);
-				}
-			}
-			if (DEBUG) {
-				long time = System.currentTimeMillis() - start;
-				DateFormat TIME_FORMAT = new SimpleDateFormat("m:ss.SSS"); //$NON-NLS-1$
-				String took = TIME_FORMAT.format(new Date(time));
-				System.out.println(took + " for " + changes.size() + " files"); //$NON-NLS-1$//$NON-NLS-2$
-			}
-			// Fire label changed
-			asyncExec(new Runnable() {
-				public void run() {
-					firePendingLabelUpdates();
-				}
-			});
+			if (!changes.isEmpty()) {
+				processMarkerChanges(changes);
 		}
 	}
 	
+	/**
+	 * Calculate the properties for affected resources in our model and fire
+	 * label changes for changed elements.
+	 * 
+	 * @param changes the model elements that have changed.
+	 */
+	private void processMarkerChanges(final Map changes) {
+		Job job = new Job("Synchronize View: Processing marker changes") {
+			protected IStatus run(IProgressMonitor monitor) {
+				long start = System.currentTimeMillis();
+				synchronized (this) {
+					// Changes contains all resources with marker changes
+					for (Iterator it = changes.values().iterator(); it.hasNext();) {
+						ISynchronizeModelElement element = (ISynchronizeModelElement) it.next();
+						calculateProperties(element, false);
+					}
+				}
+				if (DEBUG) {
+					long time = System.currentTimeMillis() - start;
+					DateFormat TIME_FORMAT = new SimpleDateFormat("m:ss.SSS"); //$NON-NLS-1$
+					String took = TIME_FORMAT.format(new Date(time));
+					System.out.println(took + " for " + changes.size() + " files"); //$NON-NLS-1$//$NON-NLS-2$
+				}
+				// Fire label changed
+				asyncExec(new Runnable() {
+					public void run() {
+						firePendingLabelUpdates();
+					}
+				});
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
+	}
+
 	protected ISynchronizeModelElement getClosestExistingParent(IResource resource) {
 		ISynchronizeModelElement element = getModelObject(resource);
 		if(element == null) {
