@@ -311,7 +311,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 			locationText.setText("");
 		//$NON-NLS-1$
 		else
-			locationText.setText(BookmarkMessages.getString("LineIndicator.text") + ' ' + line); //$NON-NLS-1$
+			locationText.setText(BookmarkMessages.format("LineIndicator.text", new String[] {String.valueOf(line)})); //$NON-NLS-1$
 
 		descriptionText.selectAll();
 	}

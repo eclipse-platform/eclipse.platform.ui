@@ -61,7 +61,7 @@ class BookmarkLabelProvider
 					int line = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 					if (line == -1)
 						return ""; //$NON-NLS-1$
-					return BookmarkMessages.getString("LineIndicator.text") + ' ' + line; //$NON-NLS-1$
+					return BookmarkMessages.format("LineIndicator.text", new String[] {String.valueOf(line)});//$NON-NLS-1$
 				}
 		}
 		return ""; //$NON-NLS-1$ 
