@@ -72,12 +72,7 @@ protected IStatus doCopy(IProgressMonitor monitor, final IResource source, final
 			}
 		}
 		if (copy) {
-			IPath newName = destination;
-			if (source.getWorkspace().getRoot().exists(destination))
-				newName = CopyResourceAction.getNewNameFor(destination, source.getWorkspace());
-			if (newName != null) {
-				source.copy(newName, false, monitor);
-			}
+			source.copy(destination, false, monitor);
 		} else {
 			source.move(destination, false, monitor);
 		}
@@ -104,25 +99,26 @@ protected IStatus dragAndDropCopy(IProgressMonitor monitor,IContainer target, IR
 	IPath destination = target.getFullPath().append(source.getName());
 
 	IStatus result = doCopy(monitor,source, destination, false);
-	if (result.getCode() == IResourceStatus.PATH_OCCUPIED) {
-		if (alwaysOverwrite) {
-			return doCopy(monitor,source, destination, true);
-		}
-		String query = queryOverwrite(destination.toString());
-		if (query == YES) {
-		   return doCopy(monitor,source, destination, true);
-		}
-		if (query == CANCEL) {
-			isCanceled = true;
-			return ok();
-		}
-		if (query == ALL) {
-			alwaysOverwrite = true;
-			return doCopy(monitor,source, destination, true);
-		}
-		if (query == NO) {
-			return ok();
-		}
+	if (result.getCode() == IResourceStatus.PATH_OCCUPIED ||
+		result.getCode() == IResourceStatus.RESOURCE_EXISTS) {
+			if (alwaysOverwrite) {
+				return doCopy(monitor,source, destination, true);
+			}
+			String query = queryOverwrite(destination.toString());
+			if (query == YES) {
+			   return doCopy(monitor,source, destination, true);
+			}
+			if (query == CANCEL) {
+				isCanceled = true;
+				return ok();
+			}
+			if (query == ALL) {
+				alwaysOverwrite = true;
+				return doCopy(monitor,source, destination, true);
+			}
+			if (query == NO) {
+				return ok();
+			}
 	}
 	return result;
 }
