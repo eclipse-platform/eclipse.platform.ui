@@ -68,6 +68,7 @@ public abstract class JUnitTestCase extends TestCase {
 		commandPool.put("status", Command.STATUS);
 		commandPool.put("log", Command.LOG);
 		commandPool.put("tag", Command.TAG);
+		commandPool.put("rtag", Command.RTAG);
 		commandPool.put("admin", Command.ADMIN);
 		commandPool.put("diff", Command.DIFF);
 	}

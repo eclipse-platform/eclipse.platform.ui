@@ -54,7 +54,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testOutgoingChanges"));
+		//return new CVSTestSetup(new SyncElementTest("testDeletionConflicts"));
 	}
 	
 	/*
@@ -445,6 +445,7 @@ public class SyncElementTest extends EclipseTest {
 		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		file = copy.getFile("delete2.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		deleteResources(copy, new String[] {"delete3.txt", "delete4.txt", "delete5.txt"}, false);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);

@@ -33,7 +33,7 @@ public class BasicTest extends JUnitTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(BasicTest.class);
 		return new CompatibleTestSetup(suite);
-		//return new CompatibleTestSetup(new BasicTest("testBranchingWithLocalChanges"));
+		//return new CompatibleTestSetup(new BasicTest("testRTag"));
 	}
 	public void setUp() throws Exception {
 		env1.setUp();
@@ -270,7 +270,25 @@ public class BasicTest extends JUnitTestCase {
 		env1.execute("update", new String[]{"-r","tag2"}, new String[]{"proj2"});
 		env1.execute("update", new String[]{"-r","tag3"}, new String[]{"proj2"});
 		env1.execute("update", new String[]{"-A"}, new String[]{"proj2"});
-	}	
+	}
+	
+	public void testRTag() throws Exception {
+		
+		// Checkout and tag the project
+		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"});
+		env1.execute("tag",EMPTY_ARGS,new String[]{"tag1","proj2"});
+		env1.deleteFile("proj2");
+		
+		// Use rtag to tag the above tag as both a version and a branch
+		env1.execute("rtag",new String[]{"-r", "tag1"},new String[]{"rtag1","proj2"});
+		env1.execute("rtag",new String[]{"-b", "-r", "tag1"},new String[]{"btag1","proj2"});
+		
+		// Checkout the version and branch
+		env1.deleteFile("proj2");
+		env1.execute("co",new String[]{"-r","rtag1"},new String[]{"proj2"});
+		env1.deleteFile("proj2");
+		env1.execute("co",new String[]{"-r","btag1"},new String[]{"proj2"});
+	}
 	
 	public void testPrune() throws Exception {
 				
