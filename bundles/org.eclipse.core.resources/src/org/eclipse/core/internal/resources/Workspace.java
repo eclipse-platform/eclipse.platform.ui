@@ -606,7 +606,7 @@ protected void copyTree(IResource source, IPath destination, int depth, int upda
 		if ((updateFlags & IResource.SHALLOW) != 0) {
 			//for shallow move the destination is also a linked resource
 			newInfo.set(ICoreConstants.M_LINK);
-			linkDescription = new LinkDescription(destinationResource, source.getLocation());
+			linkDescription = new LinkDescription(destinationResource, source.getRawLocation());
 		} else {
 			//for deep move the destination is not a linked resource
 			newInfo.clear(ICoreConstants.M_LINK);
@@ -614,7 +614,7 @@ protected void copyTree(IResource source, IPath destination, int depth, int upda
 		}
 		Project project = (Project)destinationResource.getProject();
 		project.internalGetDescription().setLinkLocation(destinationResource.getName(), linkDescription);
-		project.writeDescription(IResource.NONE);
+		project.writeDescription(updateFlags);
 	}
 
 	// do the recursion. if we have a file then it has no members so return. otherwise
