@@ -32,7 +32,7 @@ public class TypeTests extends AbstractAntTest {
 		prefs.setCustomTypes(new Type[]{newType});
 	}
 
-	public void testRemoveTask() {
+	public void testRemoveType() {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTypes(new Type[0]);
 	}
