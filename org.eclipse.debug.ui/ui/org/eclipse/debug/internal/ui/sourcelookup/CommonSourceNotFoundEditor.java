@@ -33,6 +33,7 @@ import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.sourcelookup.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
@@ -197,8 +198,8 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		if (locator == null || !(locator instanceof AbstractSourceLookupDirector))
 			return; 
 		
-		final EditSourceLookupPathDialog dialog =
-			new EditSourceLookupPathDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);
+		final SourceLookupDialog dialog =
+			new SourceLookupDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);
 		
 		int result = dialog.open();		
 		if(result == Window.OK) {

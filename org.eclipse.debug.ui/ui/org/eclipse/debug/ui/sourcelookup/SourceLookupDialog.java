@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.sourcelookup;
+package org.eclipse.debug.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupPanel;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -26,25 +28,32 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * The standalone dialog for editing the source lookup path.
- * 
+ * A dialog for editing the source lookup path of a
+ * source lookup director.
+ * <p>
+ * This class may be instantiated; it is not intended to be
+ * subclassed.
+ * </p>
  * @since 3.0
  */
-public class EditSourceLookupPathDialog extends TitleAreaDialog {
+public class SourceLookupDialog extends TitleAreaDialog {
 	
 	private SourceContainerLookupPanel fPanel;
-	//The locator associated with the launch. Will be used to manage the containers.
-	private ISourceLookupDirector fLocator;
+	private ISourceLookupDirector fDirector;
 	
 	/**
-	 * The constructor for the dialog.
-	 * @param shell the shell
-	 * @param locator the locator associated with the launch
+	 * Constructs a dialog to edit the source lookup path managed by the
+	 * given source lookup director. Persists the resulting source lookup
+	 * path on the launch configuration associated with the given source
+	 * lookup director.
+	 * 
+	 * @param shell shell to parent the dialog
+	 * @param director source lookup director managing the source lookup
+	 *  path to be edited
 	 */
-	public EditSourceLookupPathDialog(Shell shell, ISourceLookupDirector locator)
-	{
+	public SourceLookupDialog(Shell shell, ISourceLookupDirector director) {
 		super(shell);					
-		fLocator = locator;
+		fDirector = director;
 	}
 	
 	/* (non-Javadoc)
@@ -71,7 +80,7 @@ public class EditSourceLookupPathDialog extends TitleAreaDialog {
 		composite.setFont(parent.getFont());
 		fPanel = new SourceContainerLookupPanel();
 		fPanel.createControl(composite);
-		fPanel.initializeFrom(fLocator);
+		fPanel.initializeFrom(fDirector);
 		
 		Dialog.applyDialogFont(composite);
 		WorkbenchHelp.setHelp(getShell(),  IDebugHelpContextIds.EDIT_SOURCELOOKUP_DIALOG);
@@ -90,8 +99,7 @@ public class EditSourceLookupPathDialog extends TitleAreaDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */	
-	protected void configureShell(Shell shell)
-	{
+	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(SourceLookupUIMessages.getString("manageSourceDialog.title")); //$NON-NLS-1$
 	}

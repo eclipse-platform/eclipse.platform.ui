@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.sourcelookup.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
@@ -68,7 +69,7 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 	 */
 	public void run() {
 		Shell shell = DebugUIPlugin.getShell();		
-		EditSourceLookupPathDialog dialog = new EditSourceLookupPathDialog(shell, director);
+		SourceLookupDialog dialog = new SourceLookupDialog(shell, director);
 		if (dialog.open() == Window.OK) {
 			fView.redoSourceLookup();
 		}

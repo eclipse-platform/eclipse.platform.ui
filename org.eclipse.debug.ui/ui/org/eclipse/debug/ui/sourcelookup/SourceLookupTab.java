@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.sourcelookup;
+package org.eclipse.debug.ui.sourcelookup;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceContainerLookupPanel;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -25,20 +27,22 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * A launch configuration tab that displays and edits source lookup
- * path launch configuration attributes.
- * 
+ * A launch configuration tab that displays and edits the source
+ * lookup path for a launch configuration. This tab works with the
+ * debug platform source lookup facilities - a source lookup director
+ * with associated participants and source containers.
+ * <p>
  * This tab may be instantiated. This class is not intended to be subclassed.
- * 
+ * </p>
  * @since 3.0	 
  */
 
-public class SourceContainerLookupTab extends AbstractLaunchConfigurationTab {
+public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	//the panel displaying the containers
-	protected SourceContainerLookupPanel fSourceLookupPanel;
+	private SourceContainerLookupPanel fSourceLookupPanel;
 		
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -61,35 +65,35 @@ public class SourceContainerLookupTab extends AbstractLaunchConfigurationTab {
 		WorkbenchHelp.setHelp(comp,IDebugHelpContextIds.SOURCELOOKUP_TAB);
 	}
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		
 	}
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fSourceLookupPanel.initializeFrom(configuration);
 	}
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fSourceLookupPanel.performApply(configuration);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return SourceLookupUIMessages.getString("sourceTab.tabTitle"); //$NON-NLS-1$
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
@@ -107,8 +111,8 @@ public class SourceContainerLookupTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	public void dispose() {
-		if(fSourceLookupPanel!= null && fSourceLookupPanel.fLocator!=null)
-			fSourceLookupPanel.fLocator.dispose();
+		if(fSourceLookupPanel!= null && fSourceLookupPanel.getDirector() !=null)
+			fSourceLookupPanel.getDirector().dispose();
 		fSourceLookupPanel = null;		
 		super.dispose();
 	}

@@ -455,4 +455,15 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		initializeFrom(workingCopy);
 	}
+	
+	/**
+	 * Returns the source lookup director associated with this
+	 * panel, or <code>null</code> if none.
+	 * 
+	 * @return the source lookup director associated with this
+	 * panel, or <code>null</code> if none
+	 */
+	public ISourceLookupDirector getDirector() {
+		return fLocator;
+	}
 }
