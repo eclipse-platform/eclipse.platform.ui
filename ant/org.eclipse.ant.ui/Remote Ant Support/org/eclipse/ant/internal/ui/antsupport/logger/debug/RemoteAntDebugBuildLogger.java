@@ -41,7 +41,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	private BufferedReader fRequestReader;
 	
-	protected boolean fStepOverSuspend= false;
 	protected boolean fStepIntoSuspend= false;
 	
 	protected boolean fClientSuspend= false;
@@ -51,6 +50,8 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	private Stack fTasks= new Stack();
 	private Task fCurrentTask;
 	private Task fStepOverTask;
+	private Task fStepOverTaskInterrupted;
+	private Task fStepIntoTask;
 	private Task fLastTaskFinished;
 	
 	private List fBreakpoints= null;
@@ -83,20 +84,26 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 						if (message.startsWith(DebugMessageIds.STEP_INTO)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
 							    fStepIntoSuspend= true;
+							    fStepIntoTask= fCurrentTask;
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
-							    fStepOverSuspend= true;
 								fStepOverTask= fCurrentTask;
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
 							synchronized(RemoteAntDebugBuildLogger.this) {
+								fStepIntoTask= null;
+								fStepOverTask= null;
+								fStepOverTaskInterrupted= null;
 								fClientSuspend= true;
 							}
 						} else if (message.startsWith(DebugMessageIds.RESUME)) {
 							synchronized(RemoteAntDebugBuildLogger.this) {
+								fStepIntoTask= null;
+								fStepOverTask= null;
+								fStepOverTaskInterrupted= null;
 								RemoteAntDebugBuildLogger.this.notifyAll();
 							}
 						} else if (message.startsWith(DebugMessageIds.TERMINATE)) {
@@ -221,17 +228,25 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	        RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(fCurrentTask.getLocation());
 	        if (breakpoint != null) {
 	            detail= breakpoint.toMarshallString();
+	            if (fStepOverTask != null) {
+	            	fStepOverTaskInterrupted= fStepOverTask;
+	            	fStepOverTask= null;
+	            }
 	        } else if (fStepIntoSuspend) {
 	            detail= DebugMessageIds.STEP;
 	            fStepIntoSuspend= false;
-	        } else if (fStepOverSuspend) {
-	            if (fLastTaskFinished == fStepOverTask) {
-	                detail= DebugMessageIds.STEP;
-	                fStepOverSuspend= false;
-	                fStepOverTask= null;
-	            } else {
-	                shouldSuspend= false;
-	            }
+	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepOverTask) {
+	        	//suspend as a step over has finished
+	        	detail= DebugMessageIds.STEP;
+	        	fStepOverTask= null;
+	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepIntoTask) {
+	        	//suspend as a task that was stepped into has finally completed
+	        	 detail= DebugMessageIds.STEP;
+	        	 fStepIntoTask= null;
+	        } else if (fLastTaskFinished != null && fLastTaskFinished == fStepOverTaskInterrupted) {
+	        	//suspend as a task that was stepped over but hit a breakpoint has finally completed
+	        	 detail= DebugMessageIds.STEP;
+	        	 fStepOverTaskInterrupted= null;
 	        } else if (fClientSuspend) {
 	            detail= DebugMessageIds.CLIENT_REQUEST;
 	            fClientSuspend= false;
