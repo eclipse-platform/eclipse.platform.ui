@@ -10,15 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
@@ -27,18 +18,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
 
 /**
- * A workbench adapter for standard elements displayed in the debug view.
- * <p>
- * The adapter works for the following type of elements:
- * <ul>
- * <li>ILaunchManager</li>
- * <li>ILaunch</li>
- * <li>IDebugTarget</li>
- * <li>IProcess</li>
- * <li>IDebugThread</li>
- * <li>IStackFrame</li>
- * </ul> 
- * </p>
+ * Common function for debug element workbench adapters.
  * <p>
  * Clients may subclass this class to provide custom adapters for elements in a debug
  * model. The debug platform provides <code>IWorkbenchAdapters</code> for the standard debug
@@ -48,30 +28,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  * </p>
  * @since 3.1
  */
-public class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
+public abstract class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-     */
-    public Object[] getChildren(Object parent) {
-		try {
-			if (parent instanceof IDebugTarget) {
-				return ((IDebugTarget)parent).getThreads();
-			}
-			if (parent instanceof IThread) {
-				return ((IThread)parent).getStackFrames();
-			}			
-		} catch (DebugException e) {
-		}
-		if (parent instanceof ILaunch) {
-			return ((ILaunch)parent).getChildren();
-		}
-		if (parent instanceof ILaunchManager) {
-			return ((ILaunchManager) parent).getLaunches();
-		}
-		return new Object[0];
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
@@ -84,28 +42,6 @@ public class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkben
      */
     public String getLabel(Object o) {
         return DebugElementHelper.getLabel(o);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-     */
-    public Object getParent(Object element) {
-		if (element instanceof IStackFrame) {
-			return ((IStackFrame)element).getThread();
-		}
-		if (element instanceof IThread) {
-			return ((IThread)element).getDebugTarget();
-		}
-		if (element instanceof IDebugTarget) {
-			return ((IDebugElement)element).getLaunch();
-		}
-		if (element instanceof IProcess) {
-			return ((IProcess)element).getLaunch();
-		}
-		if (element instanceof ILaunch) {
-			return DebugPlugin.getDefault().getLaunchManager();
-		}
-		return null;
     }
 
     /* (non-Javadoc)

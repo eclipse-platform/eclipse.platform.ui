@@ -8,15 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.launch;
+package org.eclipse.debug.internal.ui.elements.adapters;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DeferredDebugElementWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
-import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
@@ -24,17 +21,24 @@ import org.eclipse.ui.progress.IElementCollector;
  */
 public class DeferredThread extends DeferredDebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-        IThread thread = (IThread) object;
-        try {
-            IStackFrame[] stackFrames = thread.getStackFrames();
-            collector.add(stackFrames, monitor);
-        } catch (DebugException e) {
-        }
-        collector.done();
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object parent) {
+		try {
+			return ((IThread)parent).getStackFrames();
+		} catch (DebugException e) {
+		}
+		return EMPTY;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object element) {
+		return ((IThread)element).getDebugTarget();
+	}
+    
+    
 
 }

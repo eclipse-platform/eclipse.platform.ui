@@ -8,11 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.variables;
+package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
@@ -21,47 +19,40 @@ import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.DebugElementWorkbenchAdapter;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
+import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.ui.DeferredDebugElementWorkbenchAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
-import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
  * Default deferred content provider for a variable
  */
-public class DeferredVariable extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
+public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
+	
+	private static final IVariable[] EMPTY_VARS = new IVariable[0];
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-        IVariable variable = (IVariable) object;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object parent) {
         try {
+        	IVariable variable = (IVariable) parent;
             IValue value = variable.getValue();
             if (value != null) {
-                IVariable[] variables = getValueChildren(variable, value);
-                collector.add(variables, monitor);
+                return getValueChildren(variable, value);
             }
         } catch (DebugException e) {
-            // TODO: exception handler from variables view?
         }
-        collector.done();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-     */
-    public boolean isContainer() {
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
-     */
-    public ISchedulingRule getRule(Object object) {
-        return null;
-    }
+        return EMPTY;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object element) {
+		return null;
+	}
 
 	/**
 	 * Returns children for the given value, creating array paritions if required
@@ -73,7 +64,7 @@ public class DeferredVariable extends DebugElementWorkbenchAdapter implements ID
 	 */
 	protected IVariable[] getValueChildren(IDebugElement parent, IValue value) throws DebugException {
 		if (value == null) {
-			return null;
+			return EMPTY_VARS;
 		}
 		IValue logicalValue = getLogicalValue(value);
 		if (logicalValue instanceof IIndexedValue) {

@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
+import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
@@ -27,7 +29,12 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
  */
 public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
     
-    /* (non-Javadoc)
+	/**
+	 * An empty collection of children
+	 */
+    protected static final Object[] EMPTY = new Object[0];
+
+	/* (non-Javadoc)
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
      */
     public boolean isContainer() {
@@ -40,6 +47,20 @@ public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementW
     public ISchedulingRule getRule(Object object) {
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			return;
+		}
+	    Object[] children = getChildren(object);
+	    if (children.length > 0) {
+	        collector.add(children, monitor);
+	    }
+	    collector.done();
+	}
 
 
 }

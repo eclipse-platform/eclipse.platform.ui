@@ -8,32 +8,36 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.launch;
+package org.eclipse.debug.internal.ui.elements.adapters;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.DeferredDebugElementWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
-import org.eclipse.ui.progress.IElementCollector;
 
 
 /**
  * Default deferred content provider for a debug target 
  */
 public class DeferredTarget extends DeferredDebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object parent) {
+		try {
+			return ((IDebugTarget)parent).getThreads();
+		} catch (DebugException e) {
+		}
+		return EMPTY;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+	 */
+	public Object getParent(Object element) {
+		return ((IDebugTarget)element).getLaunch();
+	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
-     */
-    public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-        IDebugTarget target = (IDebugTarget) object;
-        try {
-            IThread[] threads = target.getThreads();
-            collector.add(threads, monitor);
-        } catch (DebugException e) {
-        }
-        collector.done();
-    }
+    
 }

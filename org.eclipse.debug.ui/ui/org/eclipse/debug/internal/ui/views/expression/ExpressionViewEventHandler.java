@@ -111,8 +111,8 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 						IExpression expression = expressions[i];
 						remove(expression);
 						IContentProvider provider= getTreeViewer().getContentProvider();
-						if (provider instanceof ExpressionViewContentProvider) {
-							ExpressionViewContentProvider expressionProvider= (ExpressionViewContentProvider) provider;
+						if (provider instanceof RemoteExpressionsContentProvider) {
+							RemoteExpressionsContentProvider expressionProvider= (RemoteExpressionsContentProvider) provider;
 							List decendants = expressionProvider.getCachedDecendants(expression);
 							decendants.add(expression);
 							// Remove the parent cache for the expression and its children

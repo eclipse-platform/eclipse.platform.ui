@@ -8,14 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.variables;
-
+package org.eclipse.debug.internal.ui.elements.adapters;
 
 
 /**
- * Default deferred content provider for a variable
+ * Workbench adapter for a variable when showing logical structures.
  */
-public class DeferredLogicalStructure extends DeferredVariable {
+public class DeferredVariableLogicalStructure extends DeferredVariable {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.DeferredVariable#isShowLogicalStructure()

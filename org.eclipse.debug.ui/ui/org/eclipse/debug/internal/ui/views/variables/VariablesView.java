@@ -315,7 +315,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected static final String DETAIL_COPY_ACTION = ActionFactory.COPY.getId() + ".Detail"; //$NON-NLS-1$
 	protected static final String VARIABLES_COPY_ACTION=  ActionFactory.COPY.getId() + ".Variables"; //$NON-NLS-1$
 
-	protected static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
+	public static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 	protected static final String SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + ".variablesView.SASH_WEIGHTS"; //$NON-NLS-1$
 	
 	private StatusLineContributionItem fStatusLineItem;

@@ -16,6 +16,7 @@ import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.RemoteVariablesContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.progress.DeferredTreeContentManager;
 
 public class RemoteExpressionsContentProvider extends RemoteVariablesContentProvider {
 
@@ -27,6 +28,10 @@ public class RemoteExpressionsContentProvider extends RemoteVariablesContentProv
     public RemoteExpressionsContentProvider(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
         super(viewer, site, view);
     }
+    
+    protected DeferredTreeContentManager createContentManager(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
+		return new RemoteExpressionContentManager(this, viewer, site, view);
+	}    
     
     public Object[] getChildren(Object parent) {
         if (parent instanceof IExpressionManager) {

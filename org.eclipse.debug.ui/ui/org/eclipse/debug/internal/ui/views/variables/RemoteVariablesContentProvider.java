@@ -60,8 +60,12 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 	 * Constructs a new provider
 	 */
 	public RemoteVariablesContentProvider(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
-	    fManager = new RemoteVariableContentManager(this, viewer, site, view);
+	    fManager = createContentManager(viewer, site, view); 
 		fParentCache = new HashMap(10);		
+	}
+	
+	protected DeferredTreeContentManager createContentManager(RemoteTreeViewer viewer, IWorkbenchPartSite site, VariablesView view) {
+		return new RemoteVariableContentManager(this, viewer, site, view);
 	}
 
 	/**
