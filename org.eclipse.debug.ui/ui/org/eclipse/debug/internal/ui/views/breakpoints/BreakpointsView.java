@@ -119,7 +119,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	/**
 	 * Sets the initial checked state of the items in the viewer.
 	 */
-	protected void initializeCheckedState() {
+	public void initializeCheckedState() {
 		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
 		final CheckboxTableViewer viewer= getCheckboxViewer();
 		Object[] elements= ((IStructuredContentProvider) viewer.getContentProvider()).getElements(manager);
@@ -139,7 +139,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		}
 		viewer.setCheckedElements(breakpoints.toArray());
 	}
-	
+		
 	/**
 	 * Returns this view's viewer as a checkbox table viewer.
 	 * 
