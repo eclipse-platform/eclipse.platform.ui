@@ -934,9 +934,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		// handle case where an earlier selection listener disposed the control.
 		Control control = getControl();
 		if (control != null && !control.isDisposed()) {
-			ISelection selection = getSelection();
-			updateSelection(selection);
-			fireDoubleClick(new DoubleClickEvent(this, selection));
+			if (event.item != null && event.item.getData() != null) {
+				ISelection selection = new StructuredSelection(event.item.getData());
+				fireDoubleClick(new DoubleClickEvent(this, selection));
+			}
 		}
 	}
 
