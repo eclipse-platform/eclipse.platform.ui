@@ -1,71 +1,71 @@
 package org.eclipse.update.core;
-
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
+
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import org.eclipse.core.internal.plugins.ConfigurationProperty;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.model.InvalidSiteTypeException;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.internal.core.InternalSiteManager;
 
+/**
+ * Site Manager.
+ * A helper class used for creating site instance. 
+ * Site manager is a singleton class. It cannot be instantiated; 
+ * all functionality is provided by static methods.
+ * 
+ * @see org.eclipse.update.core.ISite
+ * @see org.eclipse.update.configuration.ILocalSite
+ * @see org.eclipse.update.configuration.IConfiguredSite
+ * @since 2.0
+ */
 public class SiteManager {
-	
 
-	/**
-	 * @since 2.0 
-	 */
 	private SiteManager() {
-		//  Blocking instance creation
 	}
 
-	/**
-	 * Returns the LocalSite i.e the different sites
-	 * the user has access to (either read only or read write)
-	 * 
-	 * @return the local site
-	 * @since 2.0 
-	 */
-	
-	public static ILocalSite getLocalSite() throws CoreException{
-		return InternalSiteManager.getLocalSite();
-	}
-	
 	/** 
-	 * Returns an site based on the protocol of the URL
+	 * Returns a site object for the site specified by the argument URL.
+	 * Typically, the URL references a site manifest file on an update 
+	 * site. An update site acts as a source of features for installation
+	 * actions.
 	 * 
-	 * If the Site has a different Type/Site Handler not known up to now,
-	 * it will be discovered when parsing the <code>site.xml</code> file.
-	 * 
-	 * If there is no XML file, and the site is on the file system, we will attempt to 
-	 * discover any feature or archives.
-	 * 
-	 * If a site doesn't exists, and <code>forceCreation</code> is <code> true </code>
-	 * the site will be created in memory. Use <code>ISite.save()</code>
-	 * to persist the site.
-	 * 
-	 * @return the site which maps to this URL
+	 * @param siteURL site URL
+	 * @return site object for the url
+	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	
 	public static ISite getSite(URL siteURL) throws CoreException {
 		return InternalSiteManager.getSite(siteURL);
 	}
-		
+
 	/**
-	 * Creates a Configuration Site and an ISite on the file system
-	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 * Returns the "local site". A local site is a logical collection
+	 * of configuration information plus one or more file system 
+	 * installation directories, represented as intividual sites. 
+	 * These are potential targets for installation actions.
+	 * 
+	 * @return the local site
+	 * @exception CoreException
 	 * @since 2.0 
 	 */
+	public static ILocalSite getLocalSite() throws CoreException {
+		return InternalSiteManager.getLocalSite();
+	}
 
-	public static IConfiguredSite createConfiguredSite(File directory) throws CoreException{
+	/**
+	 * Creates a new site, based on a local file system directory,
+	 * as a potential target for installation actions.
+	 * 
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public static IConfiguredSite createConfiguredSite(File directory)
+		throws CoreException {
 		return InternalSiteManager.createConfiguredSite(directory);
 	}
-	
 }
