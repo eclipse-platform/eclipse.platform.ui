@@ -28,7 +28,7 @@ public class ContentDescription implements IContentDescription {
 	private void assertMutable() {
 		//TODO: NLS this
 		if (immutable)
-			throw new IllegalStateException("Content description is immutable");
+			throw new IllegalStateException("Content description is immutable"); //$NON-NLS-1$
 	}
 	/**
 	 * @see IContentDescription

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPlatform;
@@ -23,7 +25,8 @@ public class ContentType implements IContentType {
 	private String baseTypeId;
 	private IConfigurationElement configurationElement;
 	private String defaultCharset;
-	private boolean describerClass;
+	private boolean hasDescriberClass;
+	private boolean failedDescriberCreation;	
 	private String[] fileExtensions;
 	private String[] fileNames;
 	private ContentTypeManager manager;
@@ -54,13 +57,16 @@ public class ContentType implements IContentType {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public IContentDescriber getDescriber() {		
-		if (describerClass)
+	public IContentDescriber getDescriber() {
+		if (!failedDescriberCreation && hasDescriberClass)
 			try {
-				return (IContentDescriber) configurationElement.createExecutableExtension("describer-class");
+				return (IContentDescriber) configurationElement.createExecutableExtension("describer-class"); //$NON-NLS-1$
 			} catch (CoreException ce) {
-				//TODO log this FOR THE FIRST TIME ONLY!
-				ce.printStackTrace();			
+				// ensure this is logged once during a session
+				failedDescriberCreation = true;
+				String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
+				IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, ce); 
+				InternalPlatform.getDefault().log(status);			
 			}
 		ContentType baseType = (ContentType) getBaseType();
 		return baseType == null ? null : baseType.getDescriber();		
@@ -75,7 +81,6 @@ public class ContentType implements IContentType {
 		return namespace + '.' + simpleId; 
 	}
 	public String getMIMEType() {
-		// TODO Auto-generated method stub
 		return mimeType;
 	}
 	public String getName() {
@@ -103,7 +108,7 @@ public class ContentType implements IContentType {
 		return false;
 	}
 	public boolean isText() {
-		if (namespace.equals(IPlatform.PI_RUNTIME) && simpleId.equals("text"))
+		if (namespace.equals(IPlatform.PI_RUNTIME) && simpleId.equals("text")) //$NON-NLS-1$
 			return true;
 		if (baseTypeId == null)
 			return false;
@@ -128,8 +133,8 @@ public class ContentType implements IContentType {
 	public void setDefaultCharset(String defaultCharset) {
 		this.defaultCharset = defaultCharset;
 	}
-	public void setDescriberClass(boolean detectorClass) {
-		this.describerClass = detectorClass;
+	public void setDescriberClass(boolean hasDescriberClass) {
+		this.hasDescriberClass = hasDescriberClass;
 	}
 	void setFileExtensions(String[] fileExtensions) {
 		this.fileExtensions = fileExtensions;
@@ -150,6 +155,6 @@ public class ContentType implements IContentType {
 		this.validation = validation;
 	}
 	public String toString() {
-		return getId() + (isText() ? "(text)" : "(binary)");
+		return getId() + (isText() ? "(text)" : "(binary)"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

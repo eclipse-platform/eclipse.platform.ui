@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.content.IContentDescriber;
  * @see http://www.w3.org/TR/REC-xml *
  */
 public class XMLContentDescriber implements IContentDescriber {
-	private static final String XML_PREFIX = "<?xml ";
-	private static final String ENCODING = "encoding=\"";
+	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
+	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
 	public boolean describe(InputStream input, IContentDescription description, int flags) throws IOException {
 		//TODO: support BOM
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8")); //$NON-NLS-1$
 		String line = reader.readLine();
 		// end of stream
 		if (line == null)

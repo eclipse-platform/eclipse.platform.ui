@@ -40,6 +40,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	 * Constructs a new content type manager.
 	 */
 	protected ContentTypeManager() {
+		// to prevent external instatiation of this implementation
 	}
 	protected void addContentType(IContentType contentType) {
 		catalog.put(contentType.getId(), contentType);
@@ -119,15 +120,6 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 				appropriate.add(subset[i]);
 		}
 		return (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
-	}
-	private IContentType[] findContentTypesForFileExtension(String fileExtension) {
-		List result = new ArrayList();
-		for (Iterator iter = catalog.values().iterator(); iter.hasNext();) {
-			ContentType contentType = (ContentType) iter.next();
-			if (contentType.isValid() && indexOf(contentType.getFileExtensions(), fileExtension) >= 0)
-				result.add(contentType);
-		}
-		return (IContentType[]) result.toArray(new IContentType[result.size()]);
 	}
 	/**
 	 * @see IContentTypeManager
@@ -235,7 +227,7 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	private String[] parseItems(String string) {
 		if (string == null)
 			return new String[0];
-		StringTokenizer tokenizer = new StringTokenizer(string, ",");
+		StringTokenizer tokenizer = new StringTokenizer(string, ","); //$NON-NLS-1$
 		if (!tokenizer.hasMoreTokens())
 			return new String[0];
 		String first = tokenizer.nextToken();
@@ -251,14 +243,14 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 	protected void registerContentType(IConfigurationElement contentTypeCE) {
 		//TODO: need to ensure the config. element is valid
 		ContentType contentType = new ContentType(this, contentTypeCE);
-		contentType.setSimpleId(contentTypeCE.getAttributeAsIs("id"));
+		contentType.setSimpleId(contentTypeCE.getAttributeAsIs("id")); //$NON-NLS-1$
 		contentType.setNamespace(contentTypeCE.getDeclaringExtension().getNamespace());
-		contentType.setName(contentTypeCE.getAttribute("name"));
-		contentType.setFileExtensions(parseItems(contentTypeCE.getAttributeAsIs("file-extensions")));
-		contentType.setFileNames(parseItems(contentTypeCE.getAttributeAsIs("file-names")));
-		contentType.setBaseTypeId(contentTypeCE.getAttributeAsIs("base-type"));
-		contentType.setDefaultCharset(contentTypeCE.getAttributeAsIs("default-charset"));
-		contentType.setDescriberClass(contentTypeCE.getAttributeAsIs("describer-class") != null);
+		contentType.setName(contentTypeCE.getAttribute("name")); //$NON-NLS-1$
+		contentType.setFileExtensions(parseItems(contentTypeCE.getAttributeAsIs("file-extensions"))); //$NON-NLS-1$
+		contentType.setFileNames(parseItems(contentTypeCE.getAttributeAsIs("file-names"))); //$NON-NLS-1$
+		contentType.setBaseTypeId(contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
+		contentType.setDefaultCharset(contentTypeCE.getAttributeAsIs("default-charset")); //$NON-NLS-1$
+		contentType.setDescriberClass(contentTypeCE.getAttributeAsIs("describer-class") != null); //$NON-NLS-1$
 		catalog.put(contentType.getId(), contentType);
 	}
 	public void registryChanged(IRegistryChangeEvent event) {
