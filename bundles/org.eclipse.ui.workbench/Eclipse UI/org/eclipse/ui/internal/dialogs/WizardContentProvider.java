@@ -113,10 +113,16 @@ public class WizardContentProvider
 	 * @since 3.0
 	 */
 	private void handleChild(Object element, ArrayList list) {
-		if (getFiltering() && WorkbenchActivityHelper.filterItem(element)) {
-			return;
-		}
-		list.add(element);
+	    if (element instanceof WizardCollectionElement) {
+	        if (hasChildren(element))
+	            list.add(element);
+	    }
+	    else {
+			if (getFiltering() && WorkbenchActivityHelper.filterItem(element)) {
+				return;
+			}
+			list.add(element);
+	    }
 	}
 
 	/*
@@ -125,9 +131,11 @@ public class WizardContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		// do we need to check for unfiltered children?
-		return (element instanceof WizardCollectionElement)
-			&& !((WizardCollectionElement) element).isEmpty();
+	    if (element instanceof WizardCollectionElement) {
+	        if (getChildren(element).length > 0)
+	            return true;
+	    }
+	    return false;
 	}
 
 	/*
