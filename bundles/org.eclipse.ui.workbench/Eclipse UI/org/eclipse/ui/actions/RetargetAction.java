@@ -40,7 +40,7 @@ public class RetargetAction extends PartEventAction {
 	private IAction handler;
 	private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
-			RetargetAction.this.propogateChange(event);
+			RetargetAction.this.propagateChange(event);
 		}
 	};
 	
@@ -159,16 +159,6 @@ public class RetargetAction extends PartEventAction {
 		} else if (event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS)) {
 			setActionHandler(((IActionBars) event.getSource()).getGlobalActionHandler(getId()));
 		}
-	}
-
-	/**
-	 * Either the action handler itself has changed, or the configured action
-	 * handlers on the action bars have changed. Update self.
-	 * 
-	 * @deprecated Override propagateChange instead.
-	 */
-	protected void propogateChange(PropertyChangeEvent event) {
-		propagateChange(event);
 	}
 
 	/**
