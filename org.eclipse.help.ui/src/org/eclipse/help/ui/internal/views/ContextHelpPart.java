@@ -349,7 +349,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					sbuf.append(tcat);
 				}
 				sbuf.append("\">");	//$NON-NLS-1$	 		
-				sbuf.append(link.getLabel());
+				sbuf.append(parent.escapeSpecialChars(link.getLabel()));
 				sbuf.append("</a>"); //$NON-NLS-1$
 				sbuf.append("</li>"); //$NON-NLS-1$
 			}
