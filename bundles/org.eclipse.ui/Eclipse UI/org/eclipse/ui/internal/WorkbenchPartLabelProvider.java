@@ -24,7 +24,13 @@ public Image getColumnImage(Object element, int columnIndex) {
  */
 public String getColumnText(Object element, int columnIndex) {
 	if (element instanceof IWorkbenchPart) {
-		return ((IWorkbenchPart)element).getTitle();
+		IWorkbenchPart part = (IWorkbenchPart)element;
+		String path = part.getTitleToolTip();
+		if (path.length() == 0) {
+			return part.getTitle();
+		} else {
+			return part.getTitle() + "  [" + part.getTitleToolTip() + "]";
+		}
 	}
 	return null;
 }
