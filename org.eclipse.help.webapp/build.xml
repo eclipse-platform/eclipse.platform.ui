@@ -153,8 +153,12 @@
 		<antcall target="WEB-INF/lib/webappsrc.zip"/>
 		<available property="eclipseurlsrc.zip" file="${build.result.folder}/eclipseurlsrc.zip"/>
 		<antcall target="eclipseurlsrc.zip"/>
+<!-- custom begin -->
+<!--
 		<available property="WEB-INF/lib/jspsrc.zip" file="${build.result.folder}/WEB-INF/lib/jspsrc.zip"/>
 		<antcall target="WEB-INF/lib/jspsrc.zip"/>
+-->
+<!-- custom end -->
 	</target>
 
 	<target name="build.zips" depends="init">
