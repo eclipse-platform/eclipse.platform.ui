@@ -78,10 +78,10 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	 */
 	public void setWaterMarks(int low, int high) {
 		if (low >= high) {
-			throw new IllegalArgumentException("Low water mark must be less than high water mark.");
+			throw new IllegalArgumentException(ConsoleMessages.getString("MessageConsolePartitioner.2")); //$NON-NLS-1$
 		}
 		if (low < 1000) {
-			throw new IllegalArgumentException("Low water mark must be greater than or equal to 1000.");
+			throw new IllegalArgumentException(ConsoleMessages.getString("MessageConsolePartitioner.3")); //$NON-NLS-1$
 		}
 		lowWaterMark = low;
 		highWaterMark = high;
