@@ -42,8 +42,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	private AdaptableList wizards;
 	private IWorkbench workbench;
 	private IProject project;
-	private boolean creationMode = true;
-	private String instructionLabel="ConfigureProjectWizardMainPage.selectRepository";
+	private String description;
 	
 	private IConfigurationWizard selectedWizard;
 	
@@ -53,16 +52,25 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param pageName  the name of the page
 	 * @param title  the title of the page
 	 * @param titleImage  the image for the page title
-	 * @param wizard  the wizards to populate the table with
+	 * @param wizards  the wizards to populate the table with
 	 */
 	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards) {
+		this(pageName,title,titleImage,wizards,Policy.bind("ConfigureProjectWizardMainPage.selectRepository"));
+	}
+	
+	/**
+	 * Create a new ConfigureProjectWizardMainPage
+	 * 
+	 * @param pageName  the name of the page
+	 * @param title  the title of the page
+	 * @param titleImage  the image for the page title
+	 * @param wizards  the wizards to populate the table with
+	 * @param description The string to use as a description label
+	 */
+	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, String description) {
 		super(pageName, title, titleImage);
 		this.wizards = wizards;
-		this.creationMode = creationMode;
-	}
-	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, String instructionLabel) {
-		this(pageName,title,titleImage,wizards);
-		this.instructionLabel=instructionLabel;
+		this.description = description;
 	}
 	
 	public IConfigurationWizard getSelectedWizard() {
@@ -88,7 +96,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARE_PROJECT_PAGE);
 				
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(Policy.bind(instructionLabel)); //$NON-NLS-1$
+		label.setText(description);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData(data);

@@ -137,7 +137,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 					}
 				}
 			} else {
-				mainPage = new ConfigureProjectWizardMainPage("target-selection-page", getWizardLabel(), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards, "ConfigureProjectWizardMainPage.selectTarget"); //$NON-NLS-1$
+				mainPage = new ConfigureProjectWizardMainPage("target-selection-page", getWizardLabel(), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards, Policy.bind("ConfigureProjectWizardMainPage.selectTarget")); //$NON-NLS-1$
 				mainPage.setDescription(getWizardDescription());
 				mainPage.setProject(project);
 				mainPage.setWorkbench(workbench);
