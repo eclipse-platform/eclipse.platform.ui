@@ -147,9 +147,8 @@ public class SearchServlet extends HttpServlet {
 
 		/** XML representation of search results.
 		* &lt;pre&gt;
-		* 	&lt;toc&gt;
-		* 		&lt;topic label=".." score="..." toc=".." toclabel=".."/&gt;
-		*  .....
+		* 	&lt;			hits&gt; 		&lt;topic label=".." score="..."
+		* toc=".." toclabel=".."/&gt;  .....
 		*/
 		public void generate(SearchHit[] hits, HttpServletResponse resp) {
 
