@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.EventStats;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -47,7 +48,7 @@ import org.eclipse.ui.part.WorkbenchPart;
  * true.
  */
 
-public class EventsView extends TableWithTotalView implements EventStats.IEventListener {
+public class EventsView extends TableWithTotalView {
 	class EventsViewContentProvider implements ITreeContentProvider {
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
@@ -135,6 +136,38 @@ public class EventsView extends TableWithTotalView implements EventStats.IEventL
 			return null;
 		}
 	}
+	
+	class StatsListener extends EventStats.EventStatsListener {
+		private void asyncExec(Runnable runnable) {
+			final Control control = viewer.getControl();
+			if (control == null || control.isDisposed())
+				return;
+			final Display display = control.getDisplay();
+			if (display.isDisposed())
+				return;
+			display.asyncExec(runnable);
+		}
+		/**
+		 * @see EventStats.EventStatsListener#eventsOccurred(EventStats[])
+		 */
+		public void eventsOccurred(final EventStats[] event) {
+			asyncExec(new Runnable() {
+				public void run() {
+					if (!getViewer().getControl().isDisposed())
+						getViewer().refresh();
+				}
+			});
+		}
+		public void eventFailed(final EventStats event, final long duration) {
+			asyncExec(new Runnable() {
+				public void run() {
+					String msg = "Performance event failure: " + event.getEvent() + " blame: " + event.getBlame() + " context: " + event.getContext()+ " duration: " + duration; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					getViewSite().getActionBars().getStatusLineManager().setErrorMessage(msg);
+//					MessageDialog.openError(getSite().getShell(), "Performance failure", msg);
+				}
+			});
+		}
+	}
 
 	// Table of Column Indices
 	public final static int COLUMN_EVENT = 0;
@@ -161,6 +194,7 @@ public class EventsView extends TableWithTotalView implements EventStats.IEventL
 			new ColumnPixelData(65)}; // total time
 	private CopyStructuredSelectionAction copyAction;
 	private Action resetAction;
+	private final StatsListener statsListener = new StatsListener();
 
 	/**
 	 * @see org.eclipse.core.tools.TableWithTotalView#computeTotalLine(java.util.Iterator)
@@ -224,7 +258,7 @@ public class EventsView extends TableWithTotalView implements EventStats.IEventL
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
-		EventStats.addEventListener(this);
+		EventStats.addEventListener(statsListener);
 		viewer.setInput(""); //$NON-NLS-1$
 	}
 
@@ -241,7 +275,7 @@ public class EventsView extends TableWithTotalView implements EventStats.IEventL
 	 */
 	public void dispose() {
 		super.dispose();
-		EventStats.removeEventListener(this);
+		EventStats.removeEventListener(statsListener);
 	}
 
 	/**
@@ -290,23 +324,5 @@ public class EventsView extends TableWithTotalView implements EventStats.IEventL
 
 	protected TableTreeViewer getViewer() {
 		return viewer;
-	}
-
-	/**
-	 * @see EventStats.IEventListener#eventsOccurred(EventStats[])
-	 */
-	public void eventsOccurred(final EventStats[] event) {
-		final Control control = viewer.getControl();
-		if (control == null || control.isDisposed())
-			return;
-		final Display display = control.getDisplay();
-		if (display.isDisposed())
-			return;
-		display.asyncExec(new Runnable() {
-			public void run() {
-				if (!control.isDisposed())
-					getViewer().refresh();
-			}
-		});
 	}
 }

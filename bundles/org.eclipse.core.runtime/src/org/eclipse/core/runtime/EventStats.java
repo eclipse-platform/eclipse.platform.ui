@@ -25,16 +25,42 @@ import org.eclipse.core.internal.runtime.*;
  */
 public class EventStats {
 	/**
-	 * An event listener is notified after events occur
+	 * An event listener is notified after events occur or after events fail.
+	 * <p>
+	 * This class is intended to be subclassed.
+	 * 
+	 * @see EventStats#addEventListener(EventStatsListener)
 	 */
-	public interface IEventListener {
+	public static abstract class EventStatsListener {
+		/**
+		 * Creates a new listener.
+		 */
+		protected EventStatsListener() {
+			super();
+		}
 		/**
 		 * Notifies that an event occurred.  Notification might not occur
 		 * in the same thread or near the time of the actual event.
+		 * <p>
+		 * This default implementation does nothing. Subclasses may override.
 		 * 
 		 * @param event The event that occurred
 		 */
-		public void eventsOccurred(EventStats[] event);
+		public void eventsOccurred(EventStats[] event) {
+			//default implementation does nothing
+		}
+		
+		/**
+		 * Notifies than an event exceeded the maximum duration for that event type.
+		 * <p>
+		 * This default implementation does nothing. Subclasses may override.
+		 * 
+		 * @param event The event that failed
+		 * @param duration The duration of the failed event, in milliseconds
+		 */
+		public void eventFailed(EventStats event, long duration) {
+			//default implementation does nothing
+		}
 	}
 
 	/**
@@ -83,7 +109,7 @@ public class EventStats {
 	/**
 	 * Adds a listener that is notified when events occur.
 	 */
-	public static void addEventListener(IEventListener listener) {
+	public static void addEventListener(EventStatsListener listener) {
 		EventStatsProcessor.addEventListener(listener);
 	}
 
@@ -146,7 +172,7 @@ public class EventStats {
 	/**
 	 * Removes an event listener
 	 */
-	public static void removeEventListener(IEventListener listener) {
+	public static void removeEventListener(EventStatsListener listener) {
 		EventStatsProcessor.removeEventListener(listener);
 	}
 
@@ -180,8 +206,9 @@ public class EventStats {
 		runningTime += elapsed;
 		if (elapsed > getThreshold(event)) {
 			failureCount++;
+			EventStatsProcessor.failed(this, elapsed);
 			if (InternalPlatform.DEBUG_TRACE_LOG) {
-				String msg = NLS.bind(Messages.perf_failure, new Object[] {event, blame, context, new Long(elapsed)});
+				String msg = "Performance event failure: " + getEvent() + " blame: " + getBlame() + " context: " + getContext()+ " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				IStatus failure = new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, msg, new RuntimeException());
 				InternalPlatform.getDefault().log(failure);
 			}

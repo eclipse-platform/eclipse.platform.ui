@@ -11,8 +11,9 @@ package org.eclipse.core.internal.runtime;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.EventStats.IEventListener;
+import org.eclipse.core.runtime.EventStats.EventStatsListener;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -30,6 +31,12 @@ public class EventStatsProcessor extends Job {
 	private final ArrayList changes = new ArrayList();
 
 	/**
+	 * Event failures that have occurred but have not yet been broadcast.
+	 * Maps (EventStats -> Long).
+	 */
+	private final HashMap failures = new HashMap();
+
+	/**
 	 * Event listeners.
 	 */
 	private final ListenerList listeners = new ListenerList();
@@ -37,7 +44,7 @@ public class EventStatsProcessor extends Job {
 	/*
 	 * @see EventStats#addEventListener
 	 */
-	public static void addEventListener(IEventListener listener) {
+	public static void addEventListener(EventStatsListener listener) {
 		instance.listeners.add(listener);
 	}
 
@@ -47,8 +54,21 @@ public class EventStatsProcessor extends Job {
 	 * @param stats The event that occurred
 	 */
 	public static void changed(EventStats stats) {
-		synchronized (instance.changes) {
+		synchronized (instance) {
 			instance.changes.add(stats);
+		}
+		instance.schedule(SCHEDULE_DELAY);
+	}
+
+	/**
+	 * Records the fact that an event failed.
+	 * 
+	 * @param stats The event that occurred
+	 * @param elapsed The elapsed time for this failure
+	 */
+	public static void failed(EventStats stats, long elapsed) {
+		synchronized (instance) {
+			instance.failures.put(stats, new Long(elapsed));
 		}
 		instance.schedule(SCHEDULE_DELAY);
 	}
@@ -104,7 +124,7 @@ public class EventStatsProcessor extends Job {
 	/*
 	 * @see EventStats#removeEventListener
 	 */
-	public static void removeEventListener(IEventListener listener) {
+	public static void removeEventListener(EventStatsListener listener) {
 		instance.listeners.remove(listener);
 	}
 
@@ -119,13 +139,22 @@ public class EventStatsProcessor extends Job {
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
 		EventStats[] events;
-		synchronized (changes) {
+		EventStats[] failedEvents;
+		Long[] failedTimes;
+		synchronized (this) {
 			events = (EventStats[]) changes.toArray(new EventStats[changes.size()]);
 			changes.clear();
+			failedEvents = (EventStats[]) failures.keySet().toArray(new EventStats[failures.size()]);
+			failedTimes = (Long[]) failures.values().toArray(new Long[failures.size()]);
+			failures.clear();
 		}
 		Object[] toNotify = listeners.getListeners();
 		for (int i = 0; i < toNotify.length; i++) {
-			((EventStats.IEventListener) toNotify[i]).eventsOccurred(events);
+			final EventStats.EventStatsListener listener = ((EventStats.EventStatsListener) toNotify[i]);
+			if (events.length > 0)
+				listener.eventsOccurred(events);
+			for (int j = 0; j < failedEvents.length; j++)
+				listener.eventFailed(failedEvents[j], failedTimes[j].longValue());
 		}
 		schedule(SCHEDULE_DELAY);
 		return Status.OK_STATUS;
