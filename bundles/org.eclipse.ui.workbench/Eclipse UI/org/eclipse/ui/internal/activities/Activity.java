@@ -223,6 +223,11 @@ final class Activity implements IActivity {
 		return false;
 	}
 
+	/** @deprecated */
+	public boolean match(String string) {
+		return isMatch(string);
+	}
+		
 	public void removeActivityListener(IActivityListener activityListener) {
 		if (activityListener == null)
 			throw new NullPointerException();

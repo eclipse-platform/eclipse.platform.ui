@@ -186,6 +186,14 @@ public interface IActivity extends Comparable {
 	 * TODO javadoc
 	 */
 	boolean isMatch(String string);
+
+	/**
+	 * TODO javadoc
+	 * 
+	 * @deprecated use isMatch(string)
+	 */
+	boolean match(String string);
+	
 	
 	/**
 	 * Unregisters an instance of <code>IActivityListener</code> listening
