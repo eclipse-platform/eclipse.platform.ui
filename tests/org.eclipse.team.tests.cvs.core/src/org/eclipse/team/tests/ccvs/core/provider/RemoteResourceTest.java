@@ -184,7 +184,7 @@ public class RemoteResourceTest extends EclipseTest {
 		// Create a test project and version it
 		CVSTag v1Tag = new CVSTag("v1", CVSTag.VERSION);
 		IProject project = createProject("testVersionTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, v1Tag, DEFAULT_MONITOR);
+		tagProject(project, v1Tag);
 
 		// Make some changes, additions (including folders) and deletions and commit
 		IFile file = project.getFile("folder1/a.txt");

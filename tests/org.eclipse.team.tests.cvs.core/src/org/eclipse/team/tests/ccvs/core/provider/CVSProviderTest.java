@@ -132,7 +132,7 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Tag the original, checkout the tag and compare with original
 		CVSTag v1Tag = new CVSTag("v1", CVSTag.VERSION);
-		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, v1Tag, DEFAULT_MONITOR);
+		tagProject(project, v1Tag);
 		IProject v1 = checkoutCopy(project, v1Tag);
 		assertEquals(project, v1);
 		

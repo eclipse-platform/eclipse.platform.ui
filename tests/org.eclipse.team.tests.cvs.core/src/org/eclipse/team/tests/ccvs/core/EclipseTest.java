@@ -188,6 +188,16 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	}
 	
 	/**
+	 * Commit the resources from an existing container to the CVS repository
+	 */
+	public void tagProject(IProject project, CVSTag tag) throws TeamException {
+		IStatus status = getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, tag, DEFAULT_MONITOR);
+		if (status.getCode() != CVSStatus.OK) {
+			throw new CVSException(status);
+		}
+	}
+	
+	/**
 	 * Return a collection of resources defined by hierarchy. The resources
 	 * are added to the workspace and to the file system. If the manage flag is true, the
 	 * resources are auto-managed, if false, they are left un-managed.
