@@ -172,7 +172,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		ListView view = showListView();
 		MenuManager mgr = getActionMenuManager(view);
 		
-		// Clear selection and test actions.
+		// Open the menu and test actions.
 		selectAndUpdateMenu(view, red, mgr);
 		testAction(mgr, "pluginNotInstalledAction_v2", false);
 		testAction(mgr, "pluginInstalledAction_v2", true);
@@ -186,12 +186,14 @@ public abstract class ActionExpressionTest extends UITestCase {
 		ListView view = showListView();
 		MenuManager mgr = getActionMenuManager(view);
 	
-		// Clear the system property and test the action.
+		// Clear the system property, refresh the menu,
+		// and test the action.
 		System.setProperty("ActionExpressionVar", "");
 		selectAndUpdateMenu(view, red, mgr);
 		testAction(mgr, "systemPropertyAction_v2", false);
 		
-		// Set the system property and test the action.
+		// Set the system property, refresh the menu,
+		// and test the action.
 		System.setProperty("ActionExpressionVar", "bubba");
 		selectAndUpdateMenu(view, blue, mgr);
 		testAction(mgr, "systemPropertyAction_v2", true);
