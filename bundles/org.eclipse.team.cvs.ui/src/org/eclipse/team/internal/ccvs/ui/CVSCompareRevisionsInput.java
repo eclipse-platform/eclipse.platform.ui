@@ -21,8 +21,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -343,7 +341,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		loadAction = new Action(Policy.bind("CVSCompareRevisionsInput.addToWorkspace"), null) {
 			public void run() {
 				try {
-					new ProgressMonitorDialog(shell).run(true, true, new WorkspaceModifyOperation() {
+					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
 						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 							if (selection.size() != 1) return;
@@ -369,12 +367,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 					// Do nothing
 					return;
 				} catch (InvocationTargetException e) {
-					Throwable t = e.getTargetException();
-					if (t instanceof TeamException) {
-						handle((TeamException)t);
-					} else if (t instanceof CoreException) {
-						handle((CoreException)t);
-					}
+					handle(e);
 				}
 				// recompute the labels on the viewer
 				updateCurrentEdition();
@@ -420,6 +413,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t);
 		}
 		setMessage(error.getMessage());
+		ErrorDialog.openError(shell, null, null, error);
 		if (!(t instanceof TeamException)) {
 			CVSUIPlugin.log(error);
 		}

@@ -410,6 +410,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			 * The input has changed. Change the title of the view if necessary.
 			 */
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				if (oldInput == null && newInput == null) return;
 				if (!(newInput instanceof ICVSRemoteFile)) {
 					setTitle(Policy.bind("HistoryView.title"));
 					return;
