@@ -510,8 +510,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 		int[] wrapIndicies = getAdjustedWrapIndices(coolBar.getWrapIndices());
 		
 		int row = 0;
-		int lastRow = (wrapIndicies.length - 1);
-		int nextRow = row+1;
 		int coolItemIndex=0;
 		
 		// Traverse through all cool items in the coolbar add them to a new data structure
@@ -623,7 +621,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	public void update(boolean force) {
 		if (isDirty() || force) {
 			if (coolBarExist()) {
-				boolean useRedraw = false;
 				boolean relock = false;
 				boolean changed = false;
 				try {
@@ -674,7 +671,6 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 					
 					// 3: Remove widgets without contribution items
 					for (int coolItemIndex=0; coolItemIndex < coolItems.length; coolItemIndex++) {
-						CoolItem coolItem = coolItems[coolItemIndex];
 						IContributionItem foundItem = (IContributionItem)coolItems[coolItemIndex].getData();
 						
 						// Dispose of widget if not needed
