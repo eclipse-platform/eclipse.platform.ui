@@ -38,7 +38,7 @@
    <extension-point id="launchGroups" name="%LaunchGroupsExtensionName" schema="schema/launchGroups.exsd"/>
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
    <extension-point id="stringVariablePresentations" name="%StringVariablePresentationsName"/>
-   <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceLocationPresentation.exsd"/>
+   <extension-point id="sourceContainerPresentations" name="%SourceContainerPresentationsName" schema="schema/sourceContainerPresentations.exsd"/>
 	
 
 <!-- Extensions -->
