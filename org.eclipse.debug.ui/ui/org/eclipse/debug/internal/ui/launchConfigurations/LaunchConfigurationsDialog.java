@@ -17,10 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -1201,40 +1198,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
+	 * Launches the given config.
+	 * 
 	 * @return the resulting launch, or <code>null</code> if cancelled.
 	 * @exception CoreException if an exception occurrs launching
 	 */
-	private ILaunch launchWithProgress(final ILaunchConfiguration config) throws CoreException {
-		final ILaunch[] launchResult = new ILaunch[1];
-		// Do the launch
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					launchResult[0] = DebugUIPlugin.buildAndLaunch(config, getMode(), monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-		try {
-			run(true, true, runnable);
-		} catch (InterruptedException e) {
-			removeErrorLaunches();
-			return null;
-		} catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof CoreException) {
-				//error launch has been removed by the launch configuration
-				throw (CoreException)t;
-			} else {
-				//remove any "error" launches
-			  	removeErrorLaunches();
-				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, DebugException.INTERNAL_ERROR, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_50"), t); //$NON-NLS-1$
-				throw new CoreException(status);
-			}
-		}
-				
-		return launchResult[0];		
+	private ILaunch launchWithProgress(ILaunchConfiguration config) throws CoreException {
+		return DebugUIPlugin.buildAndLaunch(config, getMode(), null);		
 	}
 	
 	private void removeErrorLaunches() {

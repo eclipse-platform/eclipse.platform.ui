@@ -88,7 +88,9 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * resulting launch.
 	 * A new launch object is created and registered with the launch manager
 	 * before passing it to this configuration's delegate for contributions
-	 * (debug targets and processes).
+	 * (debug targets and processes). The delegate is then told to launch in
+	 * a platform org.eclipse.core.runtime.jobs.Job, which provides a
+	 * cancellable progress monitor.
 	 * If the delegate contributes a source locator to the launch, that
 	 * source locator is used. Otherwise an appropriate source locator is
 	 * contributed to the launch  based on the values of
@@ -101,7 +103,9 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
-	 * @param monitor progress monitor, or <code>null</code>
+	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
+	 *  parameter is ignored. A cancellable progress monitor is provided by the Job
+	 *  framework.
 	 * @return the resulting launch.
 	 * @exception CoreException if this method fails. Reasons include:<ul>
 	 * <li>unable to instantiate the underlying launch configuration delegate</li>

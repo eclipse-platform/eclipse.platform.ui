@@ -11,8 +11,6 @@
 package org.eclipse.debug.ui;
 
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -26,7 +24,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -43,13 +40,10 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPro
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -482,7 +476,7 @@ public class DebugUITools {
 	 */
 	public static boolean saveBeforeLaunch() {
 		return DebugUIPlugin.preLaunchSave();
-	}	
+	}
 	
 	/**
 	 * Saves and builds the workspace according to current preference settings, and
@@ -491,42 +485,14 @@ public class DebugUITools {
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
-	 * @since 2.1
+	 * @since 3.0
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
 		if (DebugUIPlugin.preLaunchSave()) {
-			ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						buildAndLaunch(configuration, mode, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}		
-			};
 			try {
-				dialog.run(true, true, runnable);
-			} catch (InvocationTargetException e) {
-				Throwable targetException = e.getTargetException();
-				Throwable t = e;
-				if (targetException instanceof CoreException) {
-					t = targetException;
-				}
-				if (t instanceof CoreException) {
-					CoreException ce = (CoreException)t;
-					IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
-					if (handler != null) {
-						LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
-						if (group != null) {
-							openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
-							return;
-						}
-					}
-				}
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), t); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (InterruptedException e) {
-				// cancelled
+				buildAndLaunch(configuration, mode, null);
+			} catch (CoreException e) {
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -544,7 +510,7 @@ public class DebugUITools {
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode the mode to launch in
-	 * @param monitor progress monitor
+	 * @param monitor progress monitor. Since 3.0, this parameter is ignored.
 	 * @return the resulting launch object
 	 * @throws CoreException if building or launching fails
 	 * @since 2.1

@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -729,29 +729,37 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	/**
 	 * Builds the workspace (according to preferences) and launches the given launch
-	 * configuration in the specified mode.
+	 * configuration in the specified mode using an org.eclipse.core.runtime.jobs.Job.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
-	 * @param monitor progress monitor
+	 * @param monitor progress monitor. Since 3.0, this parameter is ignored as the
+	 *  Job framework provides its own monitor.
 	 * @exception CoreException if an exception occurrs while building or launching
 	 * @return resulting launch
 	 */
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
 		boolean autobuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
-		IProgressMonitor subMonitor = monitor;
-		String message = MessageFormat.format(DebugUIMessages.getString("DebugUIPlugin.Launching_{0}..._1"), new String[]{configuration.getName()}); //$NON-NLS-1$
 		if (!autobuilding && buildBeforeLaunch) {
-			monitor.beginTask(message, 200);
-			subMonitor = new SubProgressMonitor(monitor, 100);
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);
-			subMonitor = new SubProgressMonitor(monitor, 100);
-		} else {
-			subMonitor = monitor;
-			subMonitor.beginTask(message, 100);
+			Job job= new Job(MessageFormat.format(DebugUIMessages.getString("DebugUIPlugin.13"), new String[] { configuration.getName() })) { //$NON-NLS-1$
+				public IStatus run(IProgressMonitor monitor) {
+					try {
+						ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			job.schedule();
+			try {
+				// Wait for the build to finish before launching.
+				job.join();
+			} catch (InterruptedException e) {
+			}
 		}
-		return configuration.launch(mode, subMonitor);
-	}	
+		return configuration.launch(mode, null);
+	}
 }
 
