@@ -30,7 +30,7 @@ public class ShowTypesAction extends Action {
 	public ShowTypesAction(StructuredViewer viewer) {
 		super(ActionMessages.getString("ShowTypesAction.Show_&Type_Names_1")); //$NON-NLS-1$
 		setViewer(viewer);
-		setToolTipText(ActionMessages.getString("ShowTypesAction.Show_&Type_Names_1")); //$NON-NLS-1$
+		setToolTipText(ActionMessages.getString("ShowTypesAction.Show_Type_Names")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
@@ -59,7 +59,6 @@ public class ShowTypesAction extends Action {
 				}
 			});
 		}
-		setToolTipText(on ? ActionMessages.getString("ShowTypesAction.Hide_Type_Names") : ActionMessages.getString("ShowTypesAction.Show_Type_Names")); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	/**

@@ -39,7 +39,6 @@ public class ShowDetailPaneAction extends Action {
 	 */
 	private void toggleDetailPane(final boolean on) {
 		getVariablesView().toggleDetailPane(on);
-		setToolTipText(on ? ActionMessages.getString("ShowDetailPaneAction.Hide_detail_pane_3") : ActionMessages.getString("ShowDetailPaneAction.Show_detail_pane_2")); //$NON-NLS-2$ //$NON-NLS-1$
 	}
 
 	/**
