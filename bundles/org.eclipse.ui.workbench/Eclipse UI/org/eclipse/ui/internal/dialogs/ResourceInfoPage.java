@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,8 +39,8 @@ public class ResourceInfoPage extends PropertyPage {
 	
 	private Button editableBox;
 	private Button derivedBox;
-	private boolean readOnlyValue;
-	private boolean derivedValue;
+	private boolean previousReadOnlyValue;
+	private boolean previousDerivedValue;
 	private static String READ_ONLY = WorkbenchMessages.getString("ResourceInfo.readOnly"); //$NON-NLS-1$
 	private static String DERIVED = WorkbenchMessages.getString("ResourceInfo.derived"); //$NON-NLS-1$
 	private static String NAME_TITLE = WorkbenchMessages.getString("ResourceInfo.name"); //$NON-NLS-1$
@@ -176,9 +174,9 @@ protected Control createContents(Composite parent) {
 
 	// layout the page
 	IResource resource = (IResource) getElement();
-	this.readOnlyValue = resource.isReadOnly();
+	this.previousReadOnlyValue = resource.isReadOnly();
 	if(resource.getType()!= IResource.PROJECT)
-		this.derivedValue = resource.isDerived();
+		this.previousDerivedValue = resource.isDerived();
 
 	// top level group
 	Composite composite = new Composite(parent, SWT.NONE);
@@ -207,12 +205,7 @@ private void createEditableButton(Composite composite) {
 	this.editableBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
 	this.editableBox.setAlignment(SWT.LEFT);
 	this.editableBox.setText(READ_ONLY);
-	this.editableBox.setSelection(this.readOnlyValue);
-	this.editableBox.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			readOnlyValue = editableBox.getSelection();
-		}
-	});
+	this.editableBox.setSelection(this.previousReadOnlyValue);
 	this.editableBox.setFont(composite.getFont());
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
@@ -229,13 +222,7 @@ private void createDerivedButton(Composite composite) {
 	this.derivedBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
 	this.derivedBox.setAlignment(SWT.LEFT);
 	this.derivedBox.setText(DERIVED);
-	this.derivedBox.setSelection(this.derivedValue);
-	this.derivedBox.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			derivedValue = editableBox.getSelection();
-		}
-	});
-	
+	this.derivedBox.setSelection(this.previousDerivedValue);
 	this.derivedBox.setFont(composite.getFont());
 	GridData data = new GridData();
 	data.horizontalSpan = 2;
@@ -411,26 +398,29 @@ private String getTypeString(IResource resource) {
  */
 protected void performDefaults() {
 
-	this.readOnlyValue = false;
-	this.editableBox.setSelection(this.readOnlyValue);
+	this.editableBox.setSelection(false);
 	
 	//Nothing to update if we never made the box
-	if(this.derivedBox != null){
-		this.derivedValue = false;
-		this.derivedBox.setSelection(this.derivedValue);
-	}
+	if(this.derivedBox != null)
+		this.derivedBox.setSelection(false);
 }
 /** 
  * Apply the read only state to the resource.
  */
 public boolean performOk() {
 	IResource resource = (IResource) getElement();
-	resource.setReadOnly(editableBox.getSelection());
+	boolean localReadOnlyValue = editableBox.getSelection();
+	if (previousReadOnlyValue != localReadOnlyValue) {
+		resource.setReadOnly(localReadOnlyValue);
+	}
 	
 	//Nothing to update if we never made the box
 	if(this.derivedBox != null){
 		try{
-			resource.setDerived(derivedBox.getSelection());
+			boolean localDerivedValue = derivedBox.getSelection();
+			if (previousDerivedValue != localDerivedValue) {
+				resource.setDerived(localDerivedValue);
+			}
 		}
 		catch (CoreException exception){
 			ErrorDialog.openError(
