@@ -232,7 +232,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void documentChanged(DocumentEvent e) {
 			
-			if (!fThread.isDirty())
+			if (!fThread.isDirty()&& fThread.isAlive())
 				aboutToBeReconciled();
 			
 			if (fProgressMonitor != null && fThread.isActive())
