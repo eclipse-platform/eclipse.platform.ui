@@ -29,8 +29,9 @@ public class DecoratorManager
 	//The definitions are definitions read from the registry
 	private DecoratorDefinition[] definitions;
 
-	private static final DecoratorDefinition[] EMPTY_DEF = new DecoratorDefinition[0];
-	
+	private static final DecoratorDefinition[] EMPTY_DEF =
+		new DecoratorDefinition[0];
+
 	private final String PREFERENCE_SEPARATOR = ",";
 	private final String VALUE_SEPARATOR = ":";
 	private final String P_TRUE = "true";
@@ -46,14 +47,14 @@ public class DecoratorManager
 		definitions = new DecoratorDefinition[values.size()];
 		values.toArray(definitions);
 	}
-	
+
 	/**
 	 * Restore the stored values from the preference
 	 * store and register the receiver as a listener
 	 * for all of the enabled decorators.
 	 */
-	
-	public void restoreListeners(){
+
+	public void restoreListeners() {
 		applyDecoratorsPreference();
 		for (int i = 0; i < definitions.length; i++) {
 			//Add a listener if it is an enabled option
@@ -92,19 +93,33 @@ public class DecoratorManager
 	 * Return null if there are none defined for this type.
 	 */
 	public String decorateText(String text, Object element) {
+		return decorateText(text, element, true);
+	}
+
+	/**
+	 * Decorate the text provided for the element type.
+	 * Check for an adapted resource if checkAdapted is true.
+	 * Return null if there are none defined for this type.
+	 */
+	private String decorateText(
+		String text,
+		Object element,
+		boolean checkAdapted) {
 
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		String result = text;
 		for (int i = 0; i < decorators.length; i++) {
 			String newResult = decorators[i].decorateText(result, element);
-			if(newResult != null)
+			if (newResult != null)
 				result = newResult;
 		}
 
-		//Get any adaptions to IResource
-		Object adapted = getResourceAdapter(element);
-		if (adapted != null) 
-			result = decorateText(result,adapted);
+		if (checkAdapted) {
+			//Get any adaptions to IResource
+			Object adapted = getResourceAdapter(element);
+			if (adapted != null)
+				result = decorateText(result, adapted, false);
+		}
 
 		return result;
 	}
@@ -114,19 +129,33 @@ public class DecoratorManager
 	 * Return null if there are none defined for this type.
 	 */
 	public Image decorateImage(Image image, Object element) {
+		return decorateImage(image, element, true);
+	}
+
+	/**
+	 * Decorate the image provided for the element type.
+	 * Check for an adapted resource if checkAdapted is true.
+	 * Return null if there are none defined for this type.
+	 */
+	private Image decorateImage(
+		Image image,
+		Object element,
+		boolean checkAdapted) {
 
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		Image result = image;
 		for (int i = 0; i < decorators.length; i++) {
 			Image newResult = decorators[i].decorateImage(result, element);
-			if(newResult != null)
+			if (newResult != null)
 				result = newResult;
 		}
 
-		//Get any adaptions to IResource
-		Object adapted = getResourceAdapter(element);
-		if (adapted != null) 
-			result = decorateImage(result,adapted);
+		if (checkAdapted) {
+			//Get any adaptions to IResource
+			Object adapted = getResourceAdapter(element);
+			if (adapted != null)
+				result = decorateImage(result, adapted, false);
+		}
 
 		return result;
 	}
@@ -140,16 +169,15 @@ public class DecoratorManager
 		//Get any adaptions to IResource
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-			//Avoid applying the same decorators twice
-			if(adaptable == element)
-				return null;
 			Object resourceAdapter =
 				adaptable.getAdapter(IContributorResourceAdapter.class);
 			if (resourceAdapter == null)
 				resourceAdapter = DefaultContributorResourceAdapter.getDefault();
 
-			return ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(
-				adaptable);
+			Object adapted =
+				((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
+			if (adapted != element)
+				return adapted; //Avoid applying decorator twice
 		}
 		return null;
 	}
@@ -165,10 +193,10 @@ public class DecoratorManager
 
 		if (element == null)
 			return EMPTY_DEF;
-		
+
 		Class elementClass = element.getClass();
 		String className = elementClass.getName();
-		DecoratorDefinition[] decoratorArray = 
+		DecoratorDefinition[] decoratorArray =
 			(DecoratorDefinition[]) cachedDecorators.get(className);
 		if (decoratorArray != null) {
 			return decoratorArray;
@@ -216,17 +244,31 @@ public class DecoratorManager
 	* has a label property called property name.
 	*/
 	public boolean isLabelProperty(Object element, String property) {
+		return isLabelProperty(element, property, true);
+	}
+
+	/**
+	* Return whether or not the decorator registered for element
+	* has a label property called property name.
+	* Check for an adapted resource if checkAdapted is true.
+	*/
+	public boolean isLabelProperty(
+		Object element,
+		String property,
+		boolean checkAdapted) {
 		DecoratorDefinition[] decorators = getDecoratorsFor(element);
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].isLabelProperty(element, property))
 				return true;
 		}
 
-		//Get any adaptions to IResource
-		Object adapted = getResourceAdapter(element);
-		if (adapted != null) {
-			if(isLabelProperty(adapted,property))
-				return true;
+		if (checkAdapted) {
+			//Get any adaptions to IResource
+			Object adapted = getResourceAdapter(element);
+			if (adapted != null && adapted != element) {
+				if (isLabelProperty(adapted, property, false))
+					return true;
+			}
 		}
 
 		return false;
