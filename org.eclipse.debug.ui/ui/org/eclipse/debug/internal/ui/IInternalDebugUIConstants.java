@@ -22,13 +22,6 @@ public interface IInternalDebugUIConstants {
 	public static final String ID_TOOLS_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ToolsFolderView"; //$NON-NLS-1$
 	public static final String ID_CONSOLE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.ConsoleFolderView"; //$NON-NLS-1$
 	public static final String ID_OUTLINE_FOLDER_VIEW= "org.eclipse.debug.internal.ui.OutlineFolderView"; //$NON-NLS-1$
-
-	//Current stack frame instruction pointer
-	public static final String INSTRUCTION_POINTER= "org.eclipse.debug.ui.instructionPointer"; //$NON-NLS-1$
-	
-	// marker types for instruction pointer annotations - top stack frame, and secondary
-	public static final String INSTRUCTION_POINTER_CURRENT = "org.eclipse.debug.ui.instructionPointer.current"; //$NON-NLS-1$
-	public static final String INSTRUCTION_POINTER_SECONDARY = "org.eclipse.debug.ui.instructionPointer.secondary"; //$NON-NLS-1$
 	
 	// annotation types for instruction pointers
 	public static final String ANN_INSTR_POINTER_CURRENT = "org.eclipse.debug.ui.currentIP"; //$NON-NLS-1$

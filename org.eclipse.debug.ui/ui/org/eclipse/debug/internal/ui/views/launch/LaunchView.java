@@ -12,20 +12,16 @@ package org.eclipse.debug.internal.ui.views.launch;
 
 
 import java.util.Iterator;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -111,20 +107,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
 
-	/**
-	 * A marker for the source selection and icon for an
-	 * instruction pointer.  This marker is transient.
-	 */
-	private IMarker fInstructionPointer;
 	private boolean fShowingEditor = false;
-	
-	// marker attributes
-	private final static String[] fgStartEnd = 
-		new String[] {IMarker.CHAR_START, IMarker.CHAR_END};
-		
-	private final static String[] fgLineStartEnd = 
-		new String[] {IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};	
-		
+			
 	/**
 	 * Cache of the stack frame that source was displayed
 	 * for.
@@ -639,44 +623,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
-	}
-		
-	/**
-	 * Returns the configured instruction pointer or <code>null</code> if an
-	 * exception occurs creating the marker. Selection is based on the line
-	 * number OR char start and char end.
-	 */
-	protected IMarker getInstructionPointer(final int lineNumber, final int charStart, final int charEnd) {
-		
-		if (fInstructionPointer == null) {
-			try {
-				fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-				return null;
-			}
-		}
-		
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
-				if (lineNumber == -1) {
-					fInstructionPointer.setAttributes(fgStartEnd, 
-						new Object[] {new Integer(charStart), new Integer(charEnd)});
-				} else {
-					fInstructionPointer.setAttributes(fgLineStartEnd, 
-						new Object[] {new Integer(lineNumber), new Integer(charStart), new Integer(charEnd)});
-				}
-			}
-		};
-		
-		try {
-			workspace.run(runnable, null, 0, null);
-		} catch (CoreException ce) {
-			DebugUIPlugin.log(ce);
-		}
-		
-		return fInstructionPointer;
 	}		
 	
 	/**
