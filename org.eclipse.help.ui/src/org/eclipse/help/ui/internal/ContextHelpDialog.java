@@ -20,7 +20,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * ContextHelpDialog
  */
 public class ContextHelpDialog {
-	private static final String IMAGE_TOPIC = "topic_icon";
 	private static ImageRegistry imgRegistry = null;
 	private Color backgroundColour = null;
 	private IContext context;
@@ -271,11 +270,11 @@ public class ContextHelpDialog {
 		if (imgRegistry == null) {
 			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
 			imgRegistry.put(
-				IMAGE_TOPIC,
+				IHelpUIConstants.IMAGE_KEY_F1TOPIC,
 				ImageDescriptor.createFromURL(
-					WorkbenchResources.getImagePath(IMAGE_TOPIC)));
+					WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_FILE_F1TOPIC)));
 		}
-		return imgRegistry.get(IMAGE_TOPIC);
+		return imgRegistry.get(IHelpUIConstants.IMAGE_KEY_F1TOPIC);
 	}
 	public boolean isShowing() {
 		return (shell != null && !shell.isDisposed() && shell.isVisible());
