@@ -513,9 +513,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		ILaunchConfigurationType configType = getInitialConfigType();
 		ILaunchConfiguration config = null;
 		if (configType != null) {
-			config = createConfigOfType(getInitialConfigType());			
+			config = createConfigOfType(configType);			
 		}		
-		setInitialSelection(new StructuredSelection(config));
+		if (config != null) {
+			setInitialSelection(new StructuredSelection(config));
+		}
 		return super.open();
 	}
 	
@@ -601,16 +603,18 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		ILaunchConfigurationTabGroup group= createGroup(configType);
 	 		group.setDefaults(workingCopy);
 	 		group.dispose();
+
+ 			// Assign a name to the config if it doesn't already have one
 	 		if (workingCopy.getName().trim().length() == 0) {
-	 			// assign a name if not done yet
 	 			IResource res = getResourceContext();
-	 			String name = ""; //$NON-NLS-1$
+	 			String name = "";       //$NON-NLS-1$
 	 			if (res != null) {
 	 				name = res.getName();
 	 			}
 	 			name = generateName(name);
 	 			workingCopy.rename(name);
 	 		}
+	 		
 	 		config = workingCopy.doSave();
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
@@ -1129,7 +1133,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			return;
  		}
  		
- 		// Get the selection		
+ 		// Get the new selection		
  		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
  		if (selection.isEmpty()) {
  			getEditArea().setVisible(false);
@@ -1139,14 +1143,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			return;
  		}
  		
+ 		// Get details of the new selection
  		Object firstSelectedElement = selection.getFirstElement();		
  		boolean singleSelection = selection.size() == 1;
 		boolean configSelected = firstSelectedElement instanceof ILaunchConfiguration;
 
  		// If selection is the same, don't bother
- 		Object obj = getSelectedTreeObject();
- 		if (singleSelection && obj != null && obj.equals(firstSelectedElement)) {
- 			getEditArea().setVisible(obj instanceof ILaunchConfiguration);
+ 		Object lastSelectedTreeObj = getSelectedTreeObject();
+ 		if (singleSelection && (lastSelectedTreeObj != null) && lastSelectedTreeObj.equals(firstSelectedElement)) {
+ 			getEditArea().setVisible(lastSelectedTreeObj instanceof ILaunchConfiguration);
  			return;
  		}
  		
@@ -1155,11 +1160,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		boolean canReplaceConfig = canDiscardCurrentConfig();
  		if (!canReplaceConfig) {
  			StructuredSelection prevSelection;
- 			Object selectedTreeObject = getSelectedTreeObject();
-			if (selectedTreeObject == null) {
+			if (lastSelectedTreeObj == null) {
 				prevSelection = StructuredSelection.EMPTY;
 			} else {
-				prevSelection = new StructuredSelection(selectedTreeObject);
+				prevSelection = new StructuredSelection(lastSelectedTreeObj);
 			}
  			setTreeViewerSelection(prevSelection);
  			return;
@@ -1539,7 +1543,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		try {
 			setWorkingCopy(configuration.getWorkingCopy());
 			fUnderlyingConfig = configuration;
-			setSelectedTreeObject(configuration);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
