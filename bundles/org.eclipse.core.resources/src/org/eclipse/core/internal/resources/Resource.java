@@ -439,7 +439,7 @@ public boolean equals(Object target) {
 	if (!(target instanceof Resource))
 		return false;
 	Resource resource = (Resource) target;
-	return getFullPath().equals(resource.getFullPath()) && workspace.equals(resource.getWorkspace()) && getType() == resource.getType();
+	return getType() == resource.getType() && path.equals(resource.path) && workspace.equals(resource.workspace);
 }
 /**
  * @see IResource#exists
