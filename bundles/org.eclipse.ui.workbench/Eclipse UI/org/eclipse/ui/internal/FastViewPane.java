@@ -130,9 +130,14 @@ public class FastViewPane {
 			Rectangle bounds = Geometry.toDisplay(clientComposite,
                     control.getBounds());
 			
-			Perspective persp = currentPane.getPage().getActivePerspective();
+			WorkbenchPage page = currentPane.getPage();
 			
-			persp.setActiveFastView(null, 0);
+			Perspective persp = page.getActivePerspective();
+			
+			page.hideFastView();
+            if (page.isZoomed()) {
+                page.zoomOut();
+            }
 			
             DragUtil.performDrag(pane, bounds,
                     initialPosition, !keyboard);

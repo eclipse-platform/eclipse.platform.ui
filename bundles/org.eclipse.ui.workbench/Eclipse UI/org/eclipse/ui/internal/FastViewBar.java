@@ -340,6 +340,15 @@ public class FastViewBar implements IWindowTrim {
 		
 		WorkbenchPage page = getPage();
 		
+		startDrag((ViewPane)((WorkbenchPartReference)ref).getPane(), dragRect, position, usingKeyboard);
+	}
+
+	private void startDrag(Object toDrag, Rectangle dragRect, Point position, boolean usingKeyboard) {
+		
+		Perspective persp = getPerspective();
+		
+		WorkbenchPage page = getPage();
+		
 		IViewReference oldFastView = null;
 		if (persp != null) {
 			oldFastView = persp.getActiveFastView();
@@ -349,14 +358,18 @@ public class FastViewBar implements IWindowTrim {
 			}
 		}
 		
-		boolean success = DragUtil.performDrag(pane, dragRect, position, !usingKeyboard);
+		if (page.isZoomed()) {
+            page.zoomOut();
+        }
+		
+		boolean success = DragUtil.performDrag(toDrag, dragRect, position, !usingKeyboard);
 		
 		// If the drag was cancelled, reopen the old fast view
 		if (!success && oldFastView != null && page != null) {
 			page.toggleFastView(oldFastView);
 		}
 	}
-
+	
 	/**
 	 * Begins dragging the fast view bar
 	 * 
@@ -366,7 +379,7 @@ public class FastViewBar implements IWindowTrim {
 	protected void startDraggingFastViewBar(Point position, boolean usingKeyboard) {
 		Rectangle dragRect = DragUtil.getDisplayBounds(control);
 		
-		DragUtil.performDrag(this, dragRect, position, !usingKeyboard);		
+		startDrag(this, dragRect, position, !usingKeyboard);		
 	}
 
 	/**
