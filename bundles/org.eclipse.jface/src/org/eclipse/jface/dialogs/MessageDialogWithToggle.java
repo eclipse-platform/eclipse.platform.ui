@@ -227,45 +227,6 @@ public class MessageDialogWithToggle extends MessageDialog {
     }
 
     /**
-     * Convenience method to open a simple OK/Cancel warning dialog.
-     * 
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     * @param toggleMessage
-     *            the message for the toggle control, or <code>null</code> for
-     *            the default message
-     * @param toggleState
-     *            the initial state for the toggle
-     * @param store
-     *            the IPreference store in which the user's preference should be
-     *            persisted; <code>null</code> if you don't want it persisted
-     *            automatically.
-     * @param key
-     *            the key to use when persisting the user's preference;
-     *            <code>null</code> if you don't want it persisted.
-     * @return the dialog, after being closed by the user, which the client can
-     *         only call <code>getReturnCode()</code> or
-     *         <code>getToggleState()</code>
-     */
-    public static MessageDialogWithToggle openOkCancelWarning(Shell parent,
-            String title, String message, String toggleMessage,
-            boolean toggleState, IPreferenceStore store, String key) {
-        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
-                title, null, // accept the default window icon
-                message, WARNING, new String[] { IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL},
-                1, // cancel is the default
-                toggleMessage, toggleState);
-        dialog.prefStore = store;
-        dialog.prefKey = key;
-        dialog.open();
-        return dialog;
-    }
-
-    /**
      * Convenience method to open a simple question Yes/No/Cancel dialog.
      * 
      * @param parent
