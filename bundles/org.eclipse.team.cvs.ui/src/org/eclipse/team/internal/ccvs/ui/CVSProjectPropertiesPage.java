@@ -285,6 +285,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
 		try {
 			oldLocation = cvsRoot.getRemoteLocation();
+			fetch = provider.getFetchAbsentDirectories();
 		} catch (TeamException e) {
 			handle(e);
 		}
@@ -317,7 +318,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 				label = Policy.bind("CVSPropertiesPage.virtualModule", label); //$NON-NLS-1$
 			}
 			moduleLabel.setText(label);
-			fetchButton.setSelection(provider.getFetchAbsentDirectories());
+			fetchButton.setSelection(fetch);
 		} catch (TeamException e) {
 			handle(e);
 		}
@@ -365,6 +366,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 					}
 				}
 			});
+			newLocation = null;
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
