@@ -49,6 +49,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final String P_PRODUCT_INFO = "productInfo"; //$NON-NLS-1$
 	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini"; //$NON-NLS-1$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
+	private static final int RESTORE_CODE_OK = 0;
+	private static final int RESTORE_CODE_OPEN_WINDOW = 1;
+	private static final int RESTORE_CODE_EXIT = 2;
 
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
@@ -506,7 +509,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			}
 		}
 
-		openWindows();
+		int restoreCode = openPreviousWorkbenchState();
+		if (restoreCode == RESTORE_CODE_EXIT)
+			return false;
+		if (restoreCode == RESTORE_CODE_OPEN_WINDOW)
+			openFirstTimeWindow();
+			
 		openWelcomeDialog();
 
 		isStarting = false;
@@ -614,20 +622,21 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/*
 	 * Create the workbench UI from a persistence file.
 	 */
-	private boolean openPreviousWorkbenchState() {
+	private int openPreviousWorkbenchState() {
 		// Read the workbench state file.
 		final File stateFile = getWorkbenchStateFile();
-		// If there is no state file return false.
+		// If there is no state file cause one to open.
 		if (!stateFile.exists())
-			return false;
+			return RESTORE_CODE_OPEN_WINDOW;
 
-		final boolean result[] = { true };
+		final int result[] = { RESTORE_CODE_OK };
 		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
 			public void run() throws Exception {
 				FileInputStream input = new FileInputStream(stateFile);
 				InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
-				// Restore the workbench state.
 				IMemento memento = XMLMemento.createReadRoot(reader);
+				
+				// Validate known version format
 				String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
 				boolean valid = false;
 				for (int i = 0; i < VERSION_STRING.length; i++) {
@@ -638,24 +647,47 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				}
 				if(!valid) {
 					reader.close();
-					MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
-					WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
+					MessageDialog.openError(
+						(Shell) null,
+						WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
+						WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
 					stateFile.delete();
-					result[0] = false;
+					result[0] = RESTORE_CODE_OPEN_WINDOW;
 					return;
 				}
+				
+				// Validate compatible version format
+				// We no longer support the release 1.0 format
+				if (VERSION_STRING[0].equals(version)) {
+					reader.close();
+					boolean ignoreSavedState = MessageDialog.openConfirm(
+						(Shell) null,
+						WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
+						WorkbenchMessages.getString("Workbench.uncompatibleSavedStateVersion")); //$NON-NLS-1$
+					if (ignoreSavedState) {
+						stateFile.delete();
+						result[0] = RESTORE_CODE_OPEN_WINDOW;
+					} else {
+						result[0] = RESTORE_CODE_EXIT;
+					}
+					return;
+				}
+				
+				// Restore the saved state
 				restoreState(memento);
 				reader.close();
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
-				result[0] = false;
+				result[0] = RESTORE_CODE_OPEN_WINDOW;
 				stateFile.delete();
 			}
 
 		});
 		// ensure at least one window was opened
-		return result[0] && (windowManager.getWindows().length > 0);
+		if (result[0] == RESTORE_CODE_OK && windowManager.getWindows().length == 0)
+			result[0] = RESTORE_CODE_OPEN_WINDOW;
+		return result[0];
 	}
 	/**
 	 * Open the Welcome dialog
@@ -676,14 +708,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 
 	}
-	/*
-	 * Open the workbench UI. 
-	 */
-	private void openWindows() {
-		if (!openPreviousWorkbenchState())
-			openFirstTimeWindow();
-	}
-	
 	/**
 	 * Opens a new page with the default perspective.
 	 * The "Open Perspective" and "Reuse Perspective" preferences are consulted and implemented.
@@ -775,9 +799,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return close(EXIT_RESTART); // this is the return code from run() to trigger a restart 
 	}
 	/**
-	 * @see IPersistable
+	 * Restores the state of the previously saved workbench
 	 */
-	public void restoreState(IMemento memento) {
+	private void restoreState(IMemento memento) {
 		// Read perspective history.
 		// This must be done before we recreate the windows, because it is
 		// consulted during the recreation.
@@ -847,9 +871,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		}
 	}
 	/**
-	 * @see IPersistable
+	 * Saves the current state of the workbench so it can be restored later on
 	 */
-	public void saveState(IMemento memento) {
+	private void saveState(IMemento memento) {
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
 
@@ -1058,125 +1082,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void shutdown() {
 		WorkbenchColors.shutdown();		
 		JFaceColors.disposeColors();
-	}
-	/*
-	 * Answer true if the state file is good.
-	 */
-	private boolean testStateFile() {
-		// If there is no state file return false.
-		File stateFile = getWorkbenchStateFile();
-		if (!stateFile.exists())
-			return false;
-
-		// There is a file.  Look for a version tag in the first few lines.
-		boolean bVersionTagFound = false;
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(stateFile));
-			for (int i = 0; i < 3; i++) {
-				String line = reader.readLine();
-				if (line != null) {
-					for (int j = 0; j < VERSION_STRING.length; j++) {
-						if(line.indexOf(VERSION_STRING[j]) > 0) {
-							reader.close();
-							return true;
-						}
-					}				
-				}
-			}
-			reader.close();
-		} catch (IOException e) {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e2) {
-				}
-			}
-			return false;
-		}
-
-		// If the version string was not found, show an error and return false.
-		stateFile.delete();
-		MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problem"), //$NON-NLS-1$
-		WorkbenchMessages.getString("ErrorReadingWorkbenchState")); //$NON-NLS-1$
-		return false;
-	}
-
-	/**
-	 * Saves the current state of the workbench to a file.
-	 */
-	public boolean saveSnapshot(File stateFile) {
-		XMLMemento memento = recordWorkbenchState();
-		try {
-			FileOutputStream stream = new FileOutputStream(stateFile);
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
-			memento.save(writer);
-			writer.close();
-		} catch (IOException e) {
-			stateFile.delete();
-			MessageDialog.openError((Shell) null, WorkbenchMessages.getString("SavingProblem"), //$NON-NLS-1$
-			WorkbenchMessages.getString("ProblemSavingState")); //$NON-NLS-1$
-			return false;
-		}
-
-		// Success !
-		return true;
-	}
-
-	/**
-	 * Restores the state of the workbench from a file.
-	 * All existing windows are closed.
-	 * <p>
-	 * This method creates an async runnable and returns before
-	 * the runnable executes.  This allows the caller to backtrack into
-	 * the event loop before any windows are closed.
-	 * </p>
-	 */
-	public boolean restoreSnapshot(final File stateFile) {
-		Display disp = Display.getCurrent();
-		disp.asyncExec(new Runnable() {
-			public void run() {
-				asyncRestoreSnapshot(stateFile);
-			}
-		});
-		return true;
-	}
-
-	/**
-	 * Restores the state of the workbench from a file.
-	 * All existing windows are closed.
-	 */
-	private boolean asyncRestoreSnapshot(final File stateFile) {
-		if (!stateFile.exists())
-			return false;
-
-		// Close the existing windows.
-		isClosing = true;
-		isClosing = windowManager.close();
-		if (!isClosing)
-			return false;
-		isClosing = false;
-
-		try {
-			FileInputStream input = new FileInputStream(stateFile);
-			InputStreamReader reader = new InputStreamReader(input, "utf-8"); //$NON-NLS-1$
-			// Restore the workbench state.
-			IMemento memento = XMLMemento.createReadRoot(reader);
-			String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
-			if ((version == null) || (!version.equals(VERSION_STRING))) {
-				reader.close();
-				MessageDialog.openError((Shell) null, WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
-				WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
-				stateFile.delete();
-				return false;
-			}
-			restoreState(memento);
-			reader.close();
-			return true;
-		} catch (Exception e) {
-			stateFile.delete();
-			return false;
-		}
 	}
 
 	/**
