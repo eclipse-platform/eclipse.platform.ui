@@ -4,6 +4,8 @@
  */
 package org.eclipse.help.internal.search;
 import java.util.*;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.*;
 /**
  * Represents a token in user search query words
  */
@@ -21,6 +23,16 @@ public class QueryWordsToken {
 	protected QueryWordsToken(int type, String value) {
 		this.type = type;
 		this.value = value;
+	}
+	/**
+	 * Creates a lucene query for a field
+	 */
+	public Query createLuceneQuery(String field, float boost)
+	{
+		Term t = new Term(field, value);
+		TermQuery q = new TermQuery(t);
+		q.setBoost(boost);
+		return q;
 	}
 	public static QueryWordsToken AND() {
 		return fAND;
