@@ -12,7 +12,7 @@
 	<!-- Set the timestamp and important properties -->
 	<target name="init">
 		<tstamp/>
-		<property name="buildNumber" value="0920"/>
+		<property name="buildNumber" value="0924"/>
 		<property name="bootclasspath" value=""/>
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 		<property name="destdir" value="../../plugin-export" />
@@ -51,7 +51,7 @@
 		<delete dir="${temp.folder}/lib/antbuilder.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antbuilder.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/lib/antbuilder.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/../org.apache.xerces/bin;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${basedir}/../org.eclipse.core.runtime/bin;${basedir}/../org.eclipse.core.boot/bin;${basedir}/../org.eclipse.swt.win32/ws/win32/swt.jar">
+		<javac destdir="${temp.folder}/lib/antbuilder.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${basedir}/../org.eclipse.swt.win32/ws/win32/swt.jar;${basedir}/../org.eclipse.ant.core/bin">
 			<src path="Ant Builder/"/>
 		</javac>
 		<!-- copy any necessary resources -->
