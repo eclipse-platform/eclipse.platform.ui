@@ -17,32 +17,38 @@ public DeleteTest(String name) {
 	super(name);
 }
 public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new DeleteTest("testDeleteResource"));
-	suite.addTest(new DeleteTest("testDeleteProject"));
-	return suite;
+	return new TestSuite(DeleteTest.class);
+
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new DeleteTest("testDeleteResource"));
+//	return suite;
 }
-public void testDeleteProject() throws Throwable {
-	/* =========================================================== */
-	/* (1) project is initially OPEN and deleteContents = FALSE    */
-	/* =========================================================== */
+public void testDeleteOpenProject() {
+	IProject project = projects[0];
+	IFolder folder = project.getFolder("folder");
+	IFile file = folder.getFile("file");
+
+	/* ===========================================================
+	 * project is OPEN, deleteContents=FALSE, force=TRUE
+	 * =========================================================== */
 
 	/* create some resources */
-	IFolder folder = projects[0].getFolder("folder");
-	ensureExistsInWorkspace(folder, true);
-	IFile file = folder.getFile("file");
-	ensureExistsInWorkspace(file, true);
+	ensureExistsInWorkspace(new IResource[] {project, folder, file}, true);
 	IPath folderPath = folder.getLocation();
 	IPath filePath = file.getLocation();
+	IPath projectLocation = project.getLocation();
 
 	/* delete */
-	IPath projectLocation = projects[0].getLocation();
-	projects[0].delete(false, true, null);
+	try {
+		project.delete(false, true, getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
 
-	/* assert project does not exist anymore */
-	assertTrue("1.1", !projects[0].exists());
-	assertTrue("1.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
-	assertNull("1.3", projects[0].getLocation());
+	/* assert project does not exist anymore in the workspace*/
+	assertTrue("1.1", !project.exists());
+	assertTrue("1.2", !((Workspace) getWorkspace()).getMetaArea().locationFor(project).toFile().exists());
+	assertNull("1.3", project.getLocation());
 
 	/* assert resources still exist */
 	assertTrue("1.4", folderPath.toFile().isDirectory());
@@ -51,205 +57,231 @@ public void testDeleteProject() throws Throwable {
 	/* remove trash */
 	Workspace.clear(projectLocation.toFile());
 
-	/* =========================================================== */
-	/* (2) project is initially CLOSED and deleteContents = FALSE  */
-	/* =========================================================== */
+	/* ===========================================================
+	 * project is OPEN, deleteContents=TRUE, force=TRUE
+	 * 	- uses default default mapping
+	 * ========================================================== */
 
 	/* initialize common objects */
-	ensureExistsInWorkspace(projects[0], true);
-	projects[0].open(null);
-
-	/* create some resources */
-	folder = projects[0].getFolder("folder");
-	ensureExistsInWorkspace(folder, true);
-	file = folder.getFile("file");
-	ensureExistsInWorkspace(file, true);
+	ensureExistsInWorkspace(new IResource[] {project, folder, file}, true);
 	folderPath = folder.getLocation();
 	filePath = file.getLocation();
-
-	/* close and delete */
-	projectLocation = projects[0].getLocation();
-	projects[0].close(null);
-	projects[0].delete(false, true, null);
-
-	/* assert project does not exist anymore */
-	assertTrue("2.1", !projects[0].exists());
-	assertTrue("2.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
-	assertNull("2.3", projects[0].getLocation());
-
-	/* assert resources still exist */
-	assertTrue("2.4", folderPath.toFile().isDirectory());
-	assertTrue("2.5", filePath.toFile().isFile());
-
-	/* remove trash */
-	Workspace.clear(projectLocation.toFile());
-
-	/* =========================================================== */
-	/* (3) project is initially OPEN and deleteContents = TRUE     */
-	/*     - uses default default mapping                          */
-	/* =========================================================== */
-
-	/* initialize common objects */
-	ensureExistsInWorkspace(projects[0], true);
-	projects[0].open(null);
-
-	/* create some resources */
-	folder = projects[0].getFolder("folder");
-	ensureExistsInWorkspace(folder, true);
-	file = folder.getFile("file");
-	ensureExistsInWorkspace(file, true);
-	folderPath = folder.getLocation();
-	filePath = file.getLocation();
+	projectLocation = project.getLocation();
 
 	/* delete */
-	projects[0].delete(true, true, null);
+	try {
+		project.delete(true, true, getMonitor());
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+
+	/* assert project does not exist anymore in the workspace */
+	assertTrue("2.1", !project.exists());
+	assertTrue("2.2", !((Workspace) getWorkspace()).getMetaArea().locationFor(project).toFile().exists());
+	assertNull("2.3", project.getLocation());
+
+	/* assert resources do not exist anymore */
+	assertTrue("2.4", !projectLocation.toFile().exists());
+	assertTrue("2.5", !folderPath.toFile().exists());
+	assertTrue("2.6", !filePath.toFile().exists());
+
+	/* ===========================================================
+	 * project is OPEN, deleteContents=TRUE, force=TRUE
+	 * 	- defines default mapping
+	 * 	- does not create resources on disk
+	 * =========================================================== */
+
+	/* initialize common objects */
+	ensureExistsInWorkspace(project, true);
+	ensureExistsInWorkspace(new IResource[] {folder, file}, false);
+	folderPath = folder.getLocation();
+	filePath = file.getLocation();
+	projectLocation = project.getLocation();
+
+	/* delete */
+	try {
+		project.delete(true, true, getMonitor());
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
 
 	/* assert project does not exist anymore */
-	assertTrue("3.1", !projects[0].exists());
-	assertTrue("3.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
-	assertNull("3.3", projects[0].getLocation());
+	assertTrue("3.1", !project.exists());
+	assertTrue("3.2", !((Workspace) getWorkspace()).getMetaArea().locationFor(project).toFile().exists());
+	assertNull("3.3", project.getLocation());
 
 	/* assert resources do not exist anymore */
 	assertTrue("3.4", !folderPath.toFile().isDirectory());
 	assertTrue("3.5", !filePath.toFile().isFile());
 
-	/* =========================================================== */
-	/* (4) project is initially CLOSED and deleteContents = TRUE   */
-	/*     - uses default default mapping                          */
-	/* =========================================================== */
+	/* ===========================================================
+	 * project is OPEN, deleteContents=TRUE, force=true
+	 * 	- create resources at default default area
+	 * 	- defines default mapping
+	 * =========================================================== */
 
 	/* initialize common objects */
-	ensureExistsInWorkspace(projects[0], true);
-	projects[0].open(null);
-
-	/* create some resources */
-	folder = projects[0].getFolder("folder");
-	ensureExistsInWorkspace(folder, true);
-	file = folder.getFile("file");
-	ensureExistsInWorkspace(file, true);
-	folderPath = folder.getLocation();
-	filePath = file.getLocation();
-
-	/* close and delete */
-	projects[0].close(null);
-	projects[0].delete(true, true, null);
-
-	/* assert project does not exist anymore */
-	ResourceInfo info = ((Project) projects[0]).getResourceInfo(true, false);
-	int flags = ((Project) projects[0]).getFlags(info);
-	assertTrue("4.1", !((Project) projects[0]).exists(flags, true));
-	assertTrue("4.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
-	assertNull("4.3", projects[0].getLocation());
-
-	/* assert resources do not exist anymore */
-	assertTrue("4.4", !folderPath.toFile().isDirectory());
-	assertTrue("4.5", !filePath.toFile().isFile());
-
-	/* =========================================================== */
-	/* (5) project is initially OPEN and deleteContents = TRUE     */
-	/*     - defines default mapping                               */
-	/*     - does not create resources at default default area     */
-	/* =========================================================== */
-
-	/* initialize common objects */
-	ensureExistsInWorkspace(projects[0], true);
-	projects[0].open(null);
-
-	/* create some resources */
-	folder = projects[0].getFolder("folder");
-	ensureExistsInWorkspace(folder, true);
-	file = folder.getFile("file");
-	ensureExistsInWorkspace(file, true);
+	ensureExistsInWorkspace(new IResource[] {project, folder, file}, true);
 	folderPath = folder.getLocation();
 	filePath = file.getLocation();
 
 	/* delete */
-	projects[0].delete(true, true, null);
-
-	/* assert project does not exist anymore */
-	assertTrue("5.1", !projects[0].exists());
-	assertTrue("5.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
-	assertNull("5.3", projects[0].getLocation());
-
-	/* assert resources do not exist anymore */
-	assertTrue("5.4", !folderPath.toFile().isDirectory());
-	assertTrue("5.5", !filePath.toFile().isFile());
-
-	///* =========================================================== */
-	///* (6) project is initially OPEN and deleteContents = TRUE     */
-	///*     - create resources at default default area              */
-	///*     - defines default mapping                               */
-	///* =========================================================== */
-
-	///* initialize common objects */
-	//ensureExistsInWorkspace(projects[0]);
-	//projects[0].open(null);
-
-	///* create some resources */
-	//folder = projects[0].getFolder("folder");
-	//ensureExistsInWorkspace(folder);
-	//ensureExistsInFileSystem(folder);
-	//file = folder.getFile("file");
-	//ensureExistsInWorkspace(file);
-	//ensureExistsInFileSystem(file);
-	//folderPath = folder.getLocation();
-	//filePath = file.getLocation();
-
-	///* delete */
-	//projects[0].delete(true, true, null);
-
-	///* assert project does not exist anymore */
-	//assert("6.1", !projects[0].exists());
-	//assert("6.2", !((Workspace) getWorkspace()).getMetaArea().getLocationFor((Project) projects[0]).toFile().exists());
-	//assertNull("6.3", projects[0].getLocation());
-
-	///* assert resources still exist at default default area */
-	//assert("6.4", folderPath.toFile().isDirectory());
-	//assert("6.5", filePath.toFile().isFile());
-
-	///* remove trash */
-	//Workspace.clear(folderPath.toFile());
-
-	/* =========================================================== */
-	/* (7) project is initially CLOSED and deleteContents = TRUE   */
-	/*     force = FALSE				                           */
-	/*     - uses default default mapping                          */
-	/*     - there is a file out of sync, so delete should fail */
-	/* =========================================================== */
-
-	/* initialize common objects */
-	ensureExistsInWorkspace(projects[0], true);
-	projects[0].open(null);
-
-	/* create some resources and a persistent property*/
-	folder = projects[0].getFolder("folder");
-	ensureExistsInWorkspace(folder, true);
-	file = folder.getFile("file");
-	ensureExistsInFileSystem(file);
-	folderPath = folder.getLocation();
-	filePath = file.getLocation();
-	QualifiedName name = new QualifiedName("foo", "bar");
-	projects[0].setPersistentProperty(name, "none");
-
-	/* close and delete */
-	projects[0].close(null);
 	try {
-		projects[0].delete(true, false, null);
-		fail("7.0");
+		project.delete(true, true, getMonitor());
 	} catch (CoreException e) {
+		fail("4.0", e);
 	}
 
-	/* assert project still exists */
-	assertTrue("7.1", projects[0].exists());
-	IPath metaAreaLocation = ((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]);
-	assertTrue("7.2", metaAreaLocation.toFile().exists());
-	assertTrue("7.3", metaAreaLocation.append(".properties").toFile().exists());
-	assertTrue("7.4", projects[0].getLocation().append(".project").toFile().exists());
-	assertTrue("7.5", projects[0].getLocation().toFile().exists());
+	/* assert project does not exist anymore */
+	assertTrue("6.1", !project.exists());
+	assertTrue("6.2", !((Workspace) getWorkspace()).getMetaArea().locationFor(project).toFile().exists());
+	assertNull("6.3", project.getLocation());
+
+	/* assert resources do not still exist at default default area */
+	assertTrue("6.4", !folderPath.toFile().exists());
+	assertTrue("6.5", !filePath.toFile().exists());
+
+	/* remove trash */
+	Workspace.clear(folderPath.toFile());
+
+	/* ===========================================================
+	 * project is OPEN, deleteContents=TRUE, force=TRUE
+	 * 	- defines default mapping
+	 * 	- creates resources only on disk
+	 * =========================================================== */
+
+	/* initialize common objects */
+	ensureExistsInWorkspace(project, true);
+	ensureExistsInFileSystem(new IResource[] {folder, file});
+	folderPath = folder.getLocation();
+	filePath = file.getLocation();
+	projectLocation = project.getLocation();
+
+	/* delete */
+	try {
+		project.delete(true, true, getMonitor());
+	} catch (CoreException e) {
+		fail("7.0", e);
+	}
+
+	/* assert project does not exist anymore */
+	assertTrue("7.1", !project.exists());
+	assertTrue("7.2", !((Workspace) getWorkspace()).getMetaArea().locationFor(project).toFile().exists());
+	assertNull("7.3", project.getLocation());
 
 	/* assert resources do not exist anymore */
-	assertTrue("7.6", folderPath.toFile().isDirectory());
-	assertTrue("7.7", filePath.toFile().isFile());
+	assertTrue("7.4", !folderPath.toFile().isDirectory());
+	assertTrue("7.5", !filePath.toFile().isFile());
+
+}
+public void testDeleteClosedProject() throws Throwable {
+
+	IProject project = projects[0];
+	IFolder folder = project.getFolder("folder");
+	IFile file = folder.getFile("file");
+
+	/* ===========================================================
+	 * project is CLOSED, deleteContents=FALSE, force=TRUE
+	 * 	- resources exist in workspace but not on disk
+	 * =========================================================== */
+
+	/* initialize common objects */
+	ensureExistsInWorkspace(new IResource[] {project, folder}, true);
+	ensureExistsInWorkspace(file, false);
+	IPath folderPath = folder.getLocation();
+	IPath filePath = file.getLocation();
+	IPath projectLocation = project.getLocation();
+
+	/* close and delete */
+	try {
+		project.close(getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+	try {
+		project.delete(false, true, getMonitor());
+	} catch (CoreException e) {
+		fail("1.1", e);
+	}
+
+	/* assert project does not exist anymore in the workspace */
+	assertTrue("1.2", !project.exists());
+	assertTrue("1.3", !((Workspace) getWorkspace()).getMetaArea().locationFor(project).toFile().exists());
+	assertNull("1.4", project.getLocation());
+
+	/* assert resources still exist (if appropriate) */
+	assertTrue("1.5", folderPath.toFile().exists());
+	assertTrue("1.6", !filePath.toFile().exists());
+
+	/* remove trash */
+	Workspace.clear(projectLocation.toFile());
+
+	/* ===========================================================
+	 * project is CLOSED, deleteContents=TRUE, force=TRUE
+	 * 	- uses default default mapping
+	 * =========================================================== */
+
+	/* initialize common objects */
+	ensureExistsInWorkspace(new IResource[] {project, folder, file}, true);
+	folderPath = folder.getLocation();
+	filePath = file.getLocation();
+
+	/* close and delete */
+	try {
+		project.close(getMonitor());
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+	try {
+		project.delete(true, true, getMonitor());
+	} catch (CoreException e) {
+		fail("2.1", e);
+	}
+
+	/* assert project does not exist anymore */
+	assertTrue("2.2", !project.exists());
+	assertTrue("2.3", !((Workspace) getWorkspace()).getMetaArea().locationFor(project).toFile().exists());
+	assertNull("2.4", project.getLocation());
+
+	/* assert resources do not exist anymore */
+	assertTrue("2.5", !folderPath.toFile().isDirectory());
+	assertTrue("2.6", !filePath.toFile().isFile());
+
+	/* ===========================================================
+	 * project is CLOSED, deleteContents=TRUE, force = FALSE
+	 * 	- uses default default mapping
+	 * =========================================================== */
+
+	/* initialize common objects */
+	ensureExistsInWorkspace(new IResource[] {project, folder}, true);
+	ensureExistsInWorkspace(file, false);
+	folderPath = folder.getLocation();
+	filePath = file.getLocation();
+	projectLocation = project.getLocation();
+
+	/* close and delete */
+	try {
+		projects[0].close(getMonitor());
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+	try {
+		projects[0].delete(true, false, getMonitor());
+	} catch (CoreException e) {
+		fail("3.1", e);
+	}
+
+	/* assert project was deleted */
+	assertTrue("3.2", !project.exists());
+	IPath metaAreaLocation = ((Workspace) getWorkspace()).getMetaArea().locationFor(project);
+	assertTrue("3.3", !metaAreaLocation.toFile().exists());
+	assertTrue("3.4", !metaAreaLocation.append(".properties").toFile().exists());
+	assertTrue("3.5", !projectLocation.append(".project").toFile().exists());
+	assertNull("3.6", project.getLocation());
+
+	/* assert resources do not exist anymore */
+	assertTrue("3.7", !folderPath.toFile().exists());
+	assertTrue("3.8", !filePath.toFile().exists());
 }
 public void testDeleteResource() throws Throwable {
 	/* test's hierarchy
@@ -368,7 +400,7 @@ public void testDeleteResource() throws Throwable {
 	assertTrue("2.1", folder.getLocation().toFile().exists());
 	assertTrue("2.2", !fileSync.getLocation().toFile().exists());
 	assertTrue("2.3", fileUnsync.getLocation().toFile().exists());
-	assertTrue("2.4", subfolderSync.getLocation().toFile().exists());
+	assertTrue("2.4", !subfolderSync.getLocation().toFile().exists());
 	assertTrue("2.5", subfolderUnsync.getLocation().toFile().exists());
 	assertTrue("2.6", !deletedfolderSync.getLocation().toFile().exists());
 	assertTrue("2.7", subsubfolderUnsync.getLocation().toFile().exists());

@@ -14,6 +14,10 @@ public IWorkspaceTest(String name) {
 public static Test suite() {
 	return new TestSuite(IWorkspaceTest.class);
 }
+protected void tearDown() throws Exception {
+	super.tearDown();
+	getWorkspace().getRoot().delete(true, null);
+}
 /**
  * 1GDKIHD: ITPCORE:WINNT - API - IWorkspace.move needs to keep history
  */

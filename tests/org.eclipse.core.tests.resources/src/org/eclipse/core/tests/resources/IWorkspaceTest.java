@@ -887,7 +887,7 @@ public void testValidatePath() {
 	/* test types / segments */
 	assertTrue("6.6", getWorkspace().validatePath("/asf", IResource.PROJECT).isOK());
 	assertTrue("6.7", !(getWorkspace().validatePath("/asf", IResource.FILE).isOK()));
-	// FIXME: Should this be valid?
+	// note this is value for a file OR project (note the logical OR)
 	assertTrue("6.8", getWorkspace().validatePath("/asf", IResource.PROJECT | IResource.FILE).isOK());
 	assertTrue("6.10", getWorkspace().validatePath("/project/.metadata", IResource.FILE).isOK());
 	// FIXME: Should this be valid?

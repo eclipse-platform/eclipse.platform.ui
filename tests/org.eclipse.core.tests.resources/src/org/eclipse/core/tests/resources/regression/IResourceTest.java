@@ -280,19 +280,25 @@ public void testDelete_Bug8754() {
 	
 	// setup
 	ensureExistsInWorkspace(new IResource[] {project, file}, true);
-	ensureDoesNotExistInFileSystem(file);
+	// delay to make sure out of sync files get new timestamps
+	try {
+		Thread.sleep(5000);
+	} catch (InterruptedException e) {
+	}
+	modifyInFileSystem(file);
 	
 	// doit
 	try {
 		file.delete(false, getMonitor());
+		fail("1.0");
 	} catch (CoreException e) {
 		IStatus status = e.getStatus();
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
-			assertEquals("1.0", 1, children.length);
+			assertEquals("1.1", 1, children.length);
 			status = children[0];
 		}
-		assertEquals("1.1", IResourceStatus.OUT_OF_SYNC_LOCAL, status.getCode());
+		assertEquals("1.2", IResourceStatus.OUT_OF_SYNC_LOCAL, status.getCode());
 	}
 	//cleanup
 	ensureDoesNotExistInWorkspace(new IResource[] {project, file});
