@@ -29,18 +29,27 @@ import org.eclipse.update.internal.ui.preferences.MainPreferencePage;
  * version was not found in the current configuration.
  */
 public class FeatureHierarchyElement {
+	private Object root;
 	private ArrayList children;
 	private IFeatureReference oldFeatureRef;
 	private IFeatureReference newFeatureRef;
 	private boolean checked;
 	private boolean optionalChildren;
-	private boolean nativeUpgrade=false;
+	private boolean nativeUpgrade = false;
 
 	public FeatureHierarchyElement(
 		IFeatureReference oldRef,
 		IFeatureReference newRef) {
 		oldFeatureRef = oldRef;
 		newFeatureRef = newRef;
+	}
+
+	void setRoot(Object root) {
+		this.root = root;
+	}
+
+	public Object getRoot() {
+		return root;
 	}
 
 	/*
@@ -81,8 +90,8 @@ public class FeatureHierarchyElement {
 	 * Returns true if feature is included as optional.
 	 */
 	public boolean isOptional() {
-		return newFeatureRef instanceof IIncludedFeatureReference &&
-			((IIncludedFeatureReference)newFeatureRef).isOptional();
+		return newFeatureRef instanceof IIncludedFeatureReference
+			&& ((IIncludedFeatureReference) newFeatureRef).isOptional();
 	}
 	/**
 	 * Returns true if this optional feature is selected
@@ -92,7 +101,7 @@ public class FeatureHierarchyElement {
 	public boolean isChecked() {
 		return checked;
 	}
-	
+
 	void setNativeUpgrade(boolean nativeUpgrade) {
 		this.nativeUpgrade = nativeUpgrade;
 	}
@@ -110,7 +119,8 @@ public class FeatureHierarchyElement {
 	 * its state.
 	 */
 	public boolean isEnabled(IInstallConfiguration config) {
-		if (nativeUpgrade) return true;
+		if (nativeUpgrade)
+			return true;
 		if (isOptional() && oldFeatureRef != null) {
 			try {
 				IFeature oldFeature = oldFeatureRef.getFeature();
@@ -146,8 +156,10 @@ public class FeatureHierarchyElement {
 			return getFeatureLabel(newFeatureRef);
 		} catch (CoreException e) {
 			if (newFeatureRef instanceof IIncludedFeatureReference) {
-				String iname = ((IIncludedFeatureReference)newFeatureRef).getName();
-				if (iname!=null) return iname;
+				String iname =
+					((IIncludedFeatureReference) newFeatureRef).getName();
+				if (iname != null)
+					return iname;
 			}
 			try {
 				VersionedIdentifier vid =
@@ -156,15 +168,17 @@ public class FeatureHierarchyElement {
 			} catch (CoreException e2) {
 			}
 		}
-		return null;		
+		return null;
 	}
 	/**
 	 * Computes label from the feature.
 	 */
-	private String getFeatureLabel(IFeatureReference featureRef) throws CoreException {
-		return featureRef.getName()
+	private String getFeatureLabel(IFeatureReference featureRef)
+		throws CoreException {
+		IFeature feature = featureRef.getFeature();
+		return feature.getLabel()
 			+ " "
-			+ featureRef.getVersionedIdentifier().getVersion().toString();
+			+ feature.getVersionedIdentifier().getVersion().toString();
 	}
 	/**
 	 * Computes children by linking matching features from the
@@ -187,7 +201,13 @@ public class FeatureHierarchyElement {
 				newFeature = newFeatureRef.getFeature();
 				if (oldFeatureRef != null)
 					oldFeature = oldFeatureRef.getFeature();
-				optionalChildren = computeElements(oldFeature, newFeature, update, children);
+				optionalChildren =
+					computeElements(oldFeature, newFeature, update, children);
+				for (int i = 0; i < children.size(); i++) {
+					FeatureHierarchyElement element =
+						(FeatureHierarchyElement) children.get(i);
+					element.setRoot(getRoot());
+				}
 			} catch (CoreException e) {
 			}
 		}
@@ -208,7 +228,7 @@ public class FeatureHierarchyElement {
 			// the node is not a 'true' update
 			// (old and new feature are the equal)
 			if (!update || !isFalseUpdate())
-			set.add(newFeatureRef);
+				set.add(newFeatureRef);
 		}
 		Object[] list = getChildren(update);
 		for (int i = 0; i < list.length; i++) {
@@ -230,7 +250,7 @@ public class FeatureHierarchyElement {
 		ArrayList list) {
 		Object[] oldChildren = null;
 		Object[] newChildren = getIncludedFeatures(newFeature);
-		boolean optionalChildren=false;
+		boolean optionalChildren = false;
 
 		try {
 			if (oldFeature != null) {
@@ -246,25 +266,25 @@ public class FeatureHierarchyElement {
 					for (int j = 0; j < oldChildren.length; j++) {
 						IFeatureReference cref =
 							(IFeatureReference) oldChildren[j];
-							try {
-								if (cref
-									.getVersionedIdentifier()
-									.getIdentifier()
-									.equals(newId)) {
-									oldRef = cref;
-									break;
-								}
-							} catch (CoreException ex) {
+						try {
+							if (cref
+								.getVersionedIdentifier()
+								.getIdentifier()
+								.equals(newId)) {
+								oldRef = cref;
+								break;
+							}
+						} catch (CoreException ex) {
 						}
 					}
 				}
 				// test if the old optional feature exists
-				if (oldRef!=null && oldRef instanceof IIncludedFeatureReference &&
-				((IIncludedFeatureReference)oldRef).isOptional()) {
+				if (oldRef != null
+					&& oldRef instanceof IIncludedFeatureReference
+					&& ((IIncludedFeatureReference) oldRef).isOptional()) {
 					try {
 						oldRef.getFeature();
-					}
-					catch (CoreException e) {
+					} catch (CoreException e) {
 						// missing
 						oldRef = null;
 					}
@@ -293,10 +313,10 @@ public class FeatureHierarchyElement {
 				list.add(element);
 				element.computeChildren(update);
 				if (element.isOptional() || element.hasOptionalChildren())
-					optionalChildren=true;
+					optionalChildren = true;
 			}
-			} catch (CoreException e) {
-			}
+		} catch (CoreException e) {
+		}
 		return optionalChildren;
 	}
 	private static boolean hasOlderVersion(IFeatureReference newRef) {

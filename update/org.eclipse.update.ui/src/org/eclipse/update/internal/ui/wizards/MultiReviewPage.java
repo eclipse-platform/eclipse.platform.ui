@@ -5,7 +5,7 @@ package org.eclipse.update.internal.ui.wizards;
  */
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -14,12 +14,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 
 public class MultiReviewPage extends BannerPage {
 	// NL keys
@@ -37,12 +36,16 @@ public class MultiReviewPage extends BannerPage {
 		"MultiInstallWizard.MultiReviewPage.c.provider";
 	private static final String KEY_COUNTER =
 		"MultiInstallWizard.MultiReviewPage.counter";
+	private static final String KEY_FILTER_CHECK =
+		"MultiInstallWizard.MultiReviewPage.filterCheck";
 
 	private PendingChange[] jobs;
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
 	private Button statusButton;
+	private Button filterCheck;
+	private ContainmentFilter filter = new ContainmentFilter();
 
 	class JobsContentProvider
 		extends DefaultContentProvider
@@ -90,6 +93,46 @@ public class MultiReviewPage extends BannerPage {
 			return null;
 		}
 	}
+
+	class ContainmentFilter extends ViewerFilter {
+		public boolean select(Viewer v, Object parent, Object child) {
+			return !isContained((PendingChange) child);
+		}
+		private boolean isContained(PendingChange job) {
+			if (job.getJobType() != PendingChange.INSTALL)
+				return false;
+			VersionedIdentifier vid = job.getFeature().getVersionedIdentifier();
+			Object[] selected = tableViewer.getCheckedElements();
+			for (int i = 0; i < selected.length; i++) {
+				PendingChange candidate = (PendingChange) selected[i];
+				if (candidate.equals(job))
+					continue;
+				IFeature feature = candidate.getFeature();
+				if (includes(feature, vid))
+					return true;
+			}
+			return false;
+		}
+		private boolean includes(IFeature feature, VersionedIdentifier vid) {
+			try {
+				IFeatureReference[] irefs =
+					feature.getIncludedFeatureReferences();
+				for (int i = 0; i < irefs.length; i++) {
+					IFeatureReference iref = irefs[i];
+					IFeature ifeature = iref.getFeature();
+					VersionedIdentifier ivid =
+						ifeature.getVersionedIdentifier();
+					if (ivid.equals(vid))
+						return true;
+					if (includes(ifeature, vid))
+						return true;
+				}
+			} catch (CoreException e) {
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * Constructor for ReviewPage
 	 */
@@ -100,7 +143,7 @@ public class MultiReviewPage extends BannerPage {
 		this.jobs = jobs;
 		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
 	}
-	
+
 	public void dispose() {
 		UpdateUIPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -160,7 +203,7 @@ public class MultiReviewPage extends BannerPage {
 				handleSelectAll(false);
 			}
 		});
-		
+
 		statusButton = new Button(buttonContainer, SWT.PUSH);
 		statusButton.setText("&Show Status...");
 		gd =
@@ -179,6 +222,23 @@ public class MultiReviewPage extends BannerPage {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		counterLabel.setLayoutData(gd);
+
+		filterCheck = new Button(client, SWT.CHECK);
+		filterCheck.setText(UpdateUIPlugin.getResourceString(KEY_FILTER_CHECK));
+		filterCheck.setSelection(true);
+		tableViewer.addFilter(filter);
+		filterCheck.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (filterCheck.getSelection())
+					tableViewer.addFilter(filter);
+				else
+					tableViewer.removeFilter(filter);
+				pageChanged();
+			}
+		});
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan = 2;
+		filterCheck.setLayoutData(gd);
 		pageChanged();
 
 		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.ReviewPage");
@@ -248,37 +308,37 @@ public class MultiReviewPage extends BannerPage {
 			UpdateUIPlugin.getFormattedMessage(
 				KEY_COUNTER,
 				new String[] { selected, total }));
-		if (checked.length>0) {
+		if (checked.length > 0) {
 			validateSelection();
 		} else {
 			setErrorMessage(null);
-			setPageComplete(false); 
+			setPageComplete(false);
 			validationStatus = null;
 		}
-		statusButton.setEnabled(validationStatus!=null);
+		statusButton.setEnabled(validationStatus != null);
 	}
 
 	private void handleSelectAll(boolean select) {
 		tableViewer.setAllChecked(select);
 		pageChanged();
 	}
-	
+
 	public PendingChange[] getSelectedJobs() {
 		Object[] selected = tableViewer.getCheckedElements();
 		PendingChange[] jobs = new PendingChange[selected.length];
 		System.arraycopy(selected, 0, jobs, 0, selected.length);
 		return jobs;
 	}
-	
+
 	public void validateSelection() {
-		PendingChange [] jobs = getSelectedJobs();
-		validationStatus =
-			ActivityConstraints.validatePendingChanges(jobs);
-		setPageComplete(validationStatus==null);
-		String errorMessage=null;
+		PendingChange[] jobs = getSelectedJobs();
+		validationStatus = ActivityConstraints.validatePendingChanges(jobs);
+		setPageComplete(validationStatus == null);
+		String errorMessage = null;
 
 		if (validationStatus != null) {
-			errorMessage = "Invalid combination - select \"Show Status...\" for details.";
+			errorMessage =
+				"Invalid combination - select \"Show Status...\" for details.";
 		}
 		setErrorMessage(errorMessage);
 	}
@@ -293,12 +353,72 @@ public class MultiReviewPage extends BannerPage {
 		}
 	}
 
+	public boolean hasSelectedJobsWithLicenses() {
+		Object[] selected = tableViewer.getCheckedElements();
+		for (int i = 0; i < selected.length; i++) {
+			PendingChange job = (PendingChange) selected[i];
+			if (job.getJobType() != PendingChange.INSTALL)
+				continue;
+			if (UpdateModel.hasLicense(job))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean hasSelectedJobsWithOptionalFeatures() {
+		Object[] selected = tableViewer.getCheckedElements();
+		for (int i = 0; i < selected.length; i++) {
+			PendingChange job = (PendingChange) selected[i];
+			if (job.getJobType() != PendingChange.INSTALL)
+				continue;
+			if (UpdateModel.hasOptionalFeatures(job.getFeature()))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean hasSelectedInstallJobs() {
+		Object[] selected = tableViewer.getCheckedElements();
+		for (int i = 0; i < selected.length; i++) {
+			PendingChange job = (PendingChange) selected[i];
+			if (job.getJobType() == PendingChange.INSTALL)
+				return true;
+		}
+		return false;
+	}
+
 	public PendingChange[] getSelectedJobsWithLicenses() {
 		Object[] selected = tableViewer.getCheckedElements();
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < selected.length; i++) {
 			PendingChange job = (PendingChange) selected[i];
+			if (job.getJobType() != PendingChange.INSTALL)
+				continue;
 			if (UpdateModel.hasLicense(job))
+				list.add(job);
+		}
+		return (PendingChange[]) list.toArray(new PendingChange[list.size()]);
+	}
+
+	public PendingChange[] getSelectedJobsWithOptionalFeatures() {
+		Object[] selected = tableViewer.getCheckedElements();
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < selected.length; i++) {
+			PendingChange job = (PendingChange) selected[i];
+			if (job.getJobType() != PendingChange.INSTALL)
+				continue;
+			if (UpdateModel.hasOptionalFeatures(job.getFeature()))
+				list.add(job);
+		}
+		return (PendingChange[]) list.toArray(new PendingChange[list.size()]);
+	}
+
+	public PendingChange[] getSelectedInstallJobs() {
+		Object[] selected = tableViewer.getCheckedElements();
+		ArrayList list = new ArrayList();
+		for (int i = 0; i < selected.length; i++) {
+			PendingChange job = (PendingChange) selected[i];
+			if (job.getJobType() == PendingChange.INSTALL)
 				list.add(job);
 		}
 		return (PendingChange[]) list.toArray(new PendingChange[list.size()]);

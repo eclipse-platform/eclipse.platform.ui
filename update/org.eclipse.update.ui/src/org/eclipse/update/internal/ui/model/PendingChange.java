@@ -16,7 +16,7 @@ public class PendingChange extends SimpleFeatureAdapter {
 	private int jobType;
 	private IFeature oldFeature;
 	private boolean optionalDelta;
-	private IConfiguredSite targetSite;
+	private IConfiguredSite defaultTargetSite;
 	private boolean processed;
 	
 	public PendingChange(IFeature feature, int jobType) {
@@ -26,7 +26,7 @@ public class PendingChange extends SimpleFeatureAdapter {
 	
 	public PendingChange(IFeature feature, IConfiguredSite targetSite) {
 		this(feature, INSTALL);
-		this.targetSite = targetSite;
+		this.defaultTargetSite = targetSite;
 	}
 	
 	public PendingChange(IFeature oldFeature, IFeature newFeature) {
@@ -54,8 +54,8 @@ public class PendingChange extends SimpleFeatureAdapter {
 		return optionalDelta;
 	}
 	
-	public IConfiguredSite getTargetSite() {
-		return targetSite;
+	public IConfiguredSite getDefaultTargetSite() {
+		return defaultTargetSite;
 	}
 	
 	public boolean isProcessed() {

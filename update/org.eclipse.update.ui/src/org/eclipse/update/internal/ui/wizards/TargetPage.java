@@ -118,7 +118,7 @@ public class TargetPage extends BannerPage {
 		defaultTargetSite = getDefaultTargetSite(config, pendingChange, false);
 		affinitySite = getAffinitySite(config, pendingChange.getFeature());
 		if (affinitySite==null)
-			affinitySite = pendingChange.getTargetSite();
+			affinitySite = pendingChange.getDefaultTargetSite();
 	}
 
 	public static IConfiguredSite getDefaultTargetSite(

@@ -141,6 +141,7 @@ public class DetailsForm extends PropertyWebForm {
 	private IFeature[] installedFeatures;
 	private boolean newerVersion;
 	private boolean addBlock;
+	private boolean inputBlock;
 
 	class ModelListener implements IUpdateModelChangedListener {
 		/**
@@ -410,7 +411,7 @@ public class DetailsForm extends PropertyWebForm {
 
 		Composite batch = factory.createComposite(container);
 		glayout = new GridLayout();
-		glayout.numColumns = 3;
+		glayout.numColumns = 2;
 		glayout.marginWidth = 0;
 		glayout.marginHeight = 0;
 		batch.setLayout(glayout);
@@ -419,6 +420,13 @@ public class DetailsForm extends PropertyWebForm {
 		td.align = TableData.FILL;
 		td.grabHorizontal = true;
 		batch.setLayoutData(td);
+		label =
+			createHeading(
+				batch,
+				UpdateUIPlugin.getResourceString("Group Updates"));
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
 		addButton =
 			factory.createButton(
 				batch,
@@ -431,13 +439,8 @@ public class DetailsForm extends PropertyWebForm {
 			}
 		});
 		addButton.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
-		label = new Label(batch, SWT.NULL);
-		label.setImage(
-			UpdateUIPlugin.getDefault().getLabelProvider().get(
-				UpdateUIPluginImages.DESC_SELECTED_UPDATES_VIEW));
-		label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_CENTER));
 		SelectableFormLabel itemsLink =
-			factory.createSelectableLabel(batch, "Open Selected Updates");
+			factory.createSelectableLabel(batch, "Selected Updates");
 		factory.turnIntoHyperlink(itemsLink, new HyperlinkAdapter() {
 			public void linkActivated(Control link) {
 				openUpdateItems();
@@ -465,7 +468,14 @@ public class DetailsForm extends PropertyWebForm {
 			public void run() {
 				try {
 					IWorkbenchPage page = UpdateUIPlugin.getActivePage();
-					page.showView(UpdatePerspective.ID_ITEMS);
+					IViewPart view = page.findView(UpdatePerspective.ID_ITEMS);
+					if (view != null)
+						page.bringToTop(view);
+					else {
+						inputBlock = true;
+						page.showView(UpdatePerspective.ID_ITEMS);
+						inputBlock = false;
+					}
 				} catch (PartInitException e) {
 					UpdateUIPlugin.logException(e);
 				}
@@ -474,6 +484,8 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	public void expandTo(final Object obj) {
+		if (inputBlock)
+			return;
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				if (obj instanceof IFeature) {

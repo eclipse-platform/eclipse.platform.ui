@@ -17,7 +17,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.PendingChange;
 import org.eclipse.update.internal.ui.parts.*;
 
-public class MultiOptionalFeaturesPage extends BannerPage {
+public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	// NL keys
 	private static final String KEY_TITLE =
 		"InstallWizard.OptionalFeaturesPage.title";
@@ -31,17 +31,61 @@ public class MultiOptionalFeaturesPage extends BannerPage {
 		"InstallWizard.OptionalFeaturesPage.deselectAll";
 	private CheckboxTreeViewer treeViewer;
 	private IInstallConfiguration config;
-	private PendingChange pendingChange;
-	private Object[] elements;
+	private JobRoot[] jobRoots;
+	private Hashtable elementTable;
+
+	class JobRoot {
+		private PendingChange job;
+		private Object[] elements;
+		public JobRoot(PendingChange job) {
+			this.job = job;
+		}
+
+		public PendingChange getJob() {
+			return job;
+		}
+
+		public Object[] getElements() {
+			if (elements == null)
+				computeElements();
+			return elements;
+		}
+
+		private void computeElements() {
+			IFeature oldFeature = job.getOldFeature();
+			IFeature newFeature = job.getFeature();
+			ArrayList list = new ArrayList();
+			FeatureHierarchyElement.computeElements(
+				oldFeature,
+				newFeature,
+				oldFeature != null,
+				list);
+			elements = list.toArray();
+			for (int i = 0; i < elements.length; i++) {
+				FeatureHierarchyElement element =
+					(FeatureHierarchyElement) elements[i];
+				element.setRoot(this);
+			}
+		}
+	}
 
 	class TreeContentProvider
 		extends DefaultContentProvider
 		implements ITreeContentProvider {
 
 		public Object[] getChildren(Object parent) {
+			if (parent instanceof JobRoot) {
+				return ((JobRoot) parent).getElements();
+			}
 			if (parent instanceof FeatureHierarchyElement) {
 				FeatureHierarchyElement fe = (FeatureHierarchyElement) parent;
-				return fe.getChildren(pendingChange.getOldFeature() != null);
+				Object root = fe.getRoot();
+				boolean oldFeature = false;
+				if (root instanceof JobRoot) {
+					oldFeature =
+						((JobRoot) root).getJob().getOldFeature() != null;
+					return fe.getChildren(oldFeature);
+				}
 			}
 			return new Object[0];
 		}
@@ -55,20 +99,27 @@ public class MultiOptionalFeaturesPage extends BannerPage {
 		}
 
 		public Object[] getElements(Object input) {
-			if (elements == null)
-				computeElements();
-			return elements;
+			if (jobRoots == null)
+				return new Object[0];
+			return jobRoots;
 		}
 	}
 
 	class TreeLabelProvider extends LabelProvider {
 		public String getText(Object obj) {
+			if (obj instanceof JobRoot) {
+				IFeature feature = ((JobRoot) obj).getJob().getFeature();
+				return feature.getLabel()
+					+ " "
+					+ feature.getVersionedIdentifier().getVersion().toString();
+			}
 			if (obj instanceof FeatureHierarchyElement) {
 				FeatureHierarchyElement fe = (FeatureHierarchyElement) obj;
 				String name = fe.getLabel();
 				if (name != null)
 					return name;
 			}
+
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
@@ -80,15 +131,19 @@ public class MultiOptionalFeaturesPage extends BannerPage {
 	/**
 	 * Constructor for ReviewPage
 	 */
-	public MultiOptionalFeaturesPage(
-		PendingChange pendingChange,
-		IInstallConfiguration config) {
+	public MultiOptionalFeaturesPage(IInstallConfiguration config) {
 		super("OptionalFeatures");
 		setTitle(UpdateUIPlugin.getResourceString(KEY_TITLE));
 		setDescription(UpdateUIPlugin.getResourceString(KEY_DESC));
 		this.config = config;
-		this.pendingChange = pendingChange;
 		UpdateUIPlugin.getDefault().getLabelProvider().connect(this);
+	}
+
+	public void setJobs(PendingChange[] jobs) {
+		jobRoots = new JobRoot[jobs.length];
+		for (int i = 0; i < jobs.length; i++) {
+			jobRoots[i] = new JobRoot(jobs[i]);
+		}
 	}
 
 	public void dispose() {
@@ -160,52 +215,42 @@ public class MultiOptionalFeaturesPage extends BannerPage {
 			}
 		});
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-		/*
-		treeViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer v, Object parent, Object element) {
-				IFeatureReference reference = (IFeatureReference)element;
-				if (reference.isOptional()) return true;
-				return InstallWizard.hasOptionalFeatures(reference);
-			}
-		});
-		*/
-		treeViewer.setInput(pendingChange);
-		initializeStates();
+		treeViewer.setInput(this);
 	}
 
 	public void setVisible(boolean visible) {
+		if (visible) {
+			treeViewer.setInput(jobRoots);
+			initializeStates();
+		}
 		super.setVisible(visible);
 		if (visible) {
 			treeViewer.getTree().setFocus();
-		}
-	}
-
-	private void computeElements() {
-		IFeature oldFeature = pendingChange.getOldFeature();
-		IFeature newFeature = pendingChange.getFeature();
-		ArrayList list = new ArrayList();
-		FeatureHierarchyElement.computeElements(
-			oldFeature,
-			newFeature,
-			oldFeature != null,
-			list);
-		elements = list.toArray();
+		}		
 	}
 
 	private void initializeStates() {
-		if (elements == null)
-			computeElements();
 		ArrayList checked = new ArrayList();
 		ArrayList grayed = new ArrayList();
-		initializeStates(elements, checked, grayed);
+
+		for (int i = 0; i < jobRoots.length; i++) {
+			JobRoot jobRoot = jobRoots[i];
+			PendingChange job = jobRoot.getJob();
+			checked.add(jobRoot);
+			grayed.add(jobRoot);
+			boolean update = job.getOldFeature() != null;
+			initializeStates(update, jobRoot.getElements(), checked, grayed);
+		}
 		treeViewer.setCheckedElements(checked.toArray());
 		treeViewer.setGrayedElements(grayed.toArray());
 	}
 
 	private void initializeStates(
+		boolean update,
 		Object[] elements,
 		ArrayList checked,
 		ArrayList grayed) {
+
 		for (int i = 0; i < elements.length; i++) {
 			FeatureHierarchyElement element =
 				(FeatureHierarchyElement) elements[i];
@@ -213,24 +258,34 @@ public class MultiOptionalFeaturesPage extends BannerPage {
 				checked.add(element);
 			if (!element.isEditable())
 				grayed.add(element);
-			Object[] children =
-				element.getChildren(pendingChange.getOldFeature() != null);
-			initializeStates(children, checked, grayed);
+			Object[] children = element.getChildren(update);
+			initializeStates(update, children, checked, grayed);
 		}
 	}
 
 	private void selectAll(boolean value) {
 		ArrayList selected = new ArrayList();
 
-		for (int i = 0; i < elements.length; i++) {
-			FeatureHierarchyElement element =
-				(FeatureHierarchyElement) elements[i];
-			selectAll(element, selected, value);
+		for (int i = 0; i < jobRoots.length; i++) {
+			JobRoot jobRoot = jobRoots[i];
+			PendingChange job = jobRoot.getJob();
+			selected.add(job);
+			Object[] elements = jobRoot.getElements();
+			for (int j = 0; j < elements.length; j++) {
+				FeatureHierarchyElement element =
+					(FeatureHierarchyElement) elements[j];
+				selectAll(
+					job.getOldFeature() != null,
+					element,
+					selected,
+					value);
+			}
 		}
 		treeViewer.setCheckedElements(selected.toArray());
 	}
 
 	private void selectAll(
+		boolean update,
 		FeatureHierarchyElement ref,
 		ArrayList selected,
 		boolean value) {
@@ -247,15 +302,18 @@ public class MultiOptionalFeaturesPage extends BannerPage {
 					selected.add(ref);
 			}
 		}
-		Object[] included =
-			ref.getChildren(pendingChange.getOldFeature() != null);
+		Object[] included = ref.getChildren(update);
 		for (int i = 0; i < included.length; i++) {
 			FeatureHierarchyElement fe = (FeatureHierarchyElement) included[i];
-			selectAll(fe, selected, value);
+			selectAll(update, fe, selected, value);
 		}
 	}
 
 	private void handleChecked(Object element, boolean checked) {
+		if (element instanceof JobRoot) {
+			treeViewer.setChecked(element, !checked);
+			return;
+		}
 		FeatureHierarchyElement fe = (FeatureHierarchyElement) element;
 
 		if (!fe.isEditable())
@@ -266,18 +324,27 @@ public class MultiOptionalFeaturesPage extends BannerPage {
 		}
 	}
 
-	public Object[] getOptionalElements() {
-		return elements;
-	}
-
-	public IFeatureReference[] getCheckedOptionalFeatures() {
+	public IFeatureReference[] getCheckedOptionalFeatures(PendingChange currentJob) {
 		HashSet set = new HashSet();
+		JobRoot jobRoot = null;
+
+		for (int i = 0; i < jobRoots.length; i++) {
+			JobRoot root = jobRoots[i];
+			PendingChange job = root.getJob();
+			if (currentJob.equals(job)) {
+				jobRoot = root;
+				break;
+			}
+		}
+		if (jobRoot == null)
+			return new IFeatureReference[0];
+
+		boolean update = jobRoot.getJob().getOldFeature() != null;
+		Object[] elements = jobRoot.getElements();
 		for (int i = 0; i < elements.length; i++) {
 			FeatureHierarchyElement element =
 				(FeatureHierarchyElement) elements[i];
-			element.addCheckedOptionalFeatures(
-				pendingChange.getOldFeature() != null,
-				set);
+			element.addCheckedOptionalFeatures(update, set);
 		}
 		return (IFeatureReference[]) set.toArray(
 			new IFeatureReference[set.size()]);

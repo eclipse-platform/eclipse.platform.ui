@@ -108,7 +108,10 @@ public class UpdatesView
 		public void update() {
 			boolean enabled = true;
 			IStructuredSelection sel =
-				(IStructuredSelection) UpdatesView.this.getViewer().getSelection();
+				(IStructuredSelection) UpdatesView
+					.this
+					.getViewer()
+					.getSelection();
 			for (Iterator iter = sel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof NamedModelObject) {
@@ -133,11 +136,12 @@ public class UpdatesView
 
 	class EnvironmentFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parent, Object child) {
-			/*if (child instanceof IFeatureAdapter) {
+			if (child instanceof IFeatureAdapter) {
 				child = getFeature((IFeatureAdapter) child);
-			}*/
+			}
 			if (child instanceof IPlatformEnvironment) {
-				return EnvironmentUtil.isValidEnvironment((IPlatformEnvironment) child);
+				return EnvironmentUtil.isValidEnvironment(
+					(IPlatformEnvironment) child);
 			}
 			return true;
 		}
@@ -264,22 +268,27 @@ public class UpdatesView
 				return feature.getLabel();
 			}
 			if (obj instanceof FeatureReferenceAdapter) {
-				IFeatureReference feature = ((FeatureReferenceAdapter) obj).getFeatureReference();
+				IFeatureReference feature =
+					((FeatureReferenceAdapter) obj).getFeatureReference();
 				VersionedIdentifier versionedIdentifier = null;
-					try {
-						versionedIdentifier = (feature != null) ? feature.getVersionedIdentifier() : null;
-					} catch (CoreException e) {
-					}
+				try {
+					versionedIdentifier =
+						(feature != null)
+							? feature.getVersionedIdentifier()
+							: null;
+				} catch (CoreException e) {
+				}
 				String version = "";
 				if (versionedIdentifier != null)
 					version = versionedIdentifier.getVersion().toString();
 				String label = (feature != null) ? feature.getName() : "";
 				return label + " " + version;
-			}			
+			}
 			if (obj instanceof IFeatureAdapter) {
 				IFeature feature = getFeature((IFeatureAdapter) obj);
 				VersionedIdentifier versionedIdentifier = null;
-					versionedIdentifier = (feature != null) ? feature.getVersionedIdentifier() : null;
+				versionedIdentifier =
+					(feature != null) ? feature.getVersionedIdentifier() : null;
 				String version = "";
 				if (versionedIdentifier != null)
 					version = versionedIdentifier.getVersion().toString();
@@ -295,15 +304,19 @@ public class UpdatesView
 					return dir.getLabel(dir);
 			}
 			if (obj instanceof SearchObject) {
-				return searchMonitorManager.getLabel((SearchObject)obj);
+				return searchMonitorManager.getLabel((SearchObject) obj);
 			}
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
-			UpdateLabelProvider provider = UpdateUIPlugin.getDefault().getLabelProvider();
+			UpdateLabelProvider provider =
+				UpdateUIPlugin.getDefault().getLabelProvider();
 			if (obj instanceof SiteBookmark) {
-				SiteBookmark bookmark = (SiteBookmark)obj;
-				return provider.get(bookmark.isWebBookmark()?UpdateUIPluginImages.DESC_WEB_SITE_OBJ:UpdateUIPluginImages.DESC_SITE_OBJ);
+				SiteBookmark bookmark = (SiteBookmark) obj;
+				return provider.get(
+					bookmark.isWebBookmark()
+						? UpdateUIPluginImages.DESC_WEB_SITE_OBJ
+						: UpdateUIPluginImages.DESC_SITE_OBJ);
 			}
 			if (obj instanceof MyComputer) {
 				return provider.get(UpdateUIPluginImages.DESC_COMPUTER_OBJ);
@@ -343,12 +356,17 @@ public class UpdatesView
 				obj = getFeature(adapter);
 			}
 			if (obj instanceof IFeature) {
-				int flags=0;
+				int flags = 0;
 				if (obj instanceof MissingFeature)
 					flags = UpdateLabelProvider.F_ERROR;
 				boolean efix = false;
-				if (flags==0) efix = ((IFeature) obj).isPatch();
-				return provider.get(efix ? UpdateUIPluginImages.DESC_EFIX_OBJ : UpdateUIPluginImages.DESC_FEATURE_OBJ, flags);
+				if (flags == 0)
+					efix = ((IFeature) obj).isPatch();
+				return provider.get(
+					efix
+						? UpdateUIPluginImages.DESC_EFIX_OBJ
+						: UpdateUIPluginImages.DESC_FEATURE_OBJ,
+					flags);
 			}
 			return super.getImage(obj);
 		}
@@ -358,8 +376,13 @@ public class UpdatesView
 				SearchCategoryRegistryReader.getDefault().getDescriptor(
 					categoryId);
 			if (desc != null) {
-				int flags = obj.isSearchInProgress()?UpdateLabelProvider.F_CURRENT:0;
-				return UpdateUIPlugin.getDefault().getLabelProvider().get(desc.getImageDescriptor(), flags);
+				int flags =
+					obj.isSearchInProgress()
+						? UpdateLabelProvider.F_CURRENT
+						: 0;
+				return UpdateUIPlugin.getDefault().getLabelProvider().get(
+					desc.getImageDescriptor(),
+					flags);
 			}
 			return null;
 		}
@@ -446,7 +469,7 @@ public class UpdatesView
 		getTreeViewer().addDragSupport(
 			ops,
 			transfers,
-			new UpdatesDragAdapter((ISelectionProvider)getViewer()));
+			new UpdatesDragAdapter((ISelectionProvider) getViewer()));
 		getTreeViewer().addDropSupport(
 			ops | DND.DROP_DEFAULT,
 			transfers,
@@ -629,13 +652,15 @@ public class UpdatesView
 		getTreeViewer().addSelectionChangedListener(selectionListener);
 		hookGlobalActions();
 	}
-	
+
 	private void hookGlobalActions() {
 		IViewSite site = getViewSite();
 		IActionBars bars = site.getActionBars();
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.CUT, cutAction);
 		bars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
-		bars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, pasteAction);
+		bars.setGlobalActionHandler(
+			IWorkbenchActionConstants.PASTE,
+			pasteAction);
 	}
 
 	private boolean getStoredEnvironmentValue() {
@@ -711,7 +736,8 @@ public class UpdatesView
 	}
 
 	private boolean canDelete() {
-		IStructuredSelection sel = (IStructuredSelection) getTreeViewer().getSelection();
+		IStructuredSelection sel =
+			(IStructuredSelection) getTreeViewer().getSelection();
 		if (sel.isEmpty())
 			return false;
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
@@ -739,7 +765,8 @@ public class UpdatesView
 	}
 
 	private Object getSelectedObject() {
-		IStructuredSelection sel = (IStructuredSelection) getViewer().getSelection();
+		IStructuredSelection sel =
+			(IStructuredSelection) getViewer().getSelection();
 		if (sel.isEmpty() || sel.size() > 1)
 			return null;
 		return sel.getFirstElement();
@@ -833,7 +860,7 @@ public class UpdatesView
 		if (selection instanceof IStructuredSelection) {
 			if (!confirmDeletion())
 				return;
-			doDelete((IStructuredSelection)selection);
+			doDelete((IStructuredSelection) selection);
 		}
 	}
 
@@ -859,11 +886,11 @@ public class UpdatesView
 			DetailsView.showURL(url.toString());
 		}
 	}
-	
+
 	protected void handleDoubleClick(DoubleClickEvent e) {
 		Object obj = getSelectedObject();
-		if (obj!=null && obj instanceof SiteBookmark) {
-			SiteBookmark bookmark = (SiteBookmark)obj;
+		if (obj != null && obj instanceof SiteBookmark) {
+			SiteBookmark bookmark = (SiteBookmark) obj;
 			if (bookmark.isWebBookmark()) {
 				performOpenWeb();
 				return;
@@ -879,13 +906,12 @@ public class UpdatesView
 			return;
 		doDelete((IStructuredSelection) getViewer().getSelection());
 	}
-	
+
 	private boolean canCopy() {
 		IStructuredSelection selection =
 			(IStructuredSelection) getViewer().getSelection();
 		return UpdatesDragAdapter.canCopy(selection);
 	}
-		
 
 	private boolean performCopy() {
 		IStructuredSelection selection =
@@ -914,7 +940,7 @@ public class UpdatesView
 			return false;
 		}
 	}
-	
+
 	private boolean canPaste() {
 		// try a data transfer
 		UpdateModelDataTransfer dataTransfer =
@@ -926,18 +952,16 @@ public class UpdatesView
 		// try a data transfer
 		UpdateModelDataTransfer dataTransfer =
 			UpdateModelDataTransfer.getInstance();
-		Object[] objects =
-			(Object[]) clipboard.getContents(dataTransfer);
+		Object[] objects = (Object[]) clipboard.getContents(dataTransfer);
 
 		if (objects != null) {
 			BookmarkFolder parentFolder =
 				(BookmarkFolder) UpdatesDropAdapter.getRealTarget(
 					getSelectedObject());
 			for (int i = 0; i < objects.length; i++) {
-				NamedModelObject object = (NamedModelObject)objects[i];
-				if (!UpdatesDropAdapter.addToModel(getControl().getShell(),
-					parentFolder,
-					object))
+				NamedModelObject object = (NamedModelObject) objects[i];
+				if (!UpdatesDropAdapter
+					.addToModel(getControl().getShell(), parentFolder, object))
 					return;
 			}
 			return;
@@ -967,12 +991,12 @@ public class UpdatesView
 	}
 
 	private void performRefresh() {
-		IStructuredSelection sel = (IStructuredSelection) getViewer().getSelection();
+		IStructuredSelection sel =
+			(IStructuredSelection) getViewer().getSelection();
 		final Object obj = sel.getFirstElement();
 
 		if (obj != null) {
-			BusyIndicator
-				.showWhile(getControl().getDisplay(), new Runnable() {
+			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
 					try {
 						// reinitialize the authenticator  
@@ -1026,7 +1050,9 @@ public class UpdatesView
 		return array;
 	}
 	public void selectUpdateObject() {
-		getViewer().setSelection(new StructuredSelection(updateSearchObject), true);
+		getViewer().setSelection(
+			new StructuredSelection(updateSearchObject),
+			true);
 	}
 
 	class CatalogBag {
@@ -1088,7 +1114,7 @@ public class UpdatesView
 		if (child instanceof NamedModelObject) {
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 			if (child instanceof SearchObject) {
-				searchMonitorManager.register((SearchObject)child);
+				searchMonitorManager.register((SearchObject) child);
 			}
 			if (parent == null)
 				parent = model;
@@ -1102,13 +1128,12 @@ public class UpdatesView
 	public void objectsRemoved(Object parent, Object[] children) {
 		if (children[0] instanceof PendingChange)
 			return;
-		if (children[0] instanceof NamedModelObject
-			) {
+		if (children[0] instanceof NamedModelObject) {
 			getTreeViewer().remove(children);
 			getTreeViewer().setSelection(new StructuredSelection());
-			for (int i=0; i<children.length; i++) {
-				if (children[i] instanceof SearchObject)	
-			   		searchMonitorManager.unregister((SearchObject)children[i]);
+			for (int i = 0; i < children.length; i++) {
+				if (children[i] instanceof SearchObject)
+					searchMonitorManager.unregister((SearchObject) children[i]);
 			}
 		}
 	}
@@ -1139,8 +1164,7 @@ public class UpdatesView
 		final IFeature[] result = new IFeature[1];
 		final CoreException[] exception = new CoreException[1];
 
-		BusyIndicator
-			.showWhile(getControl().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				try {
 					result[0] = adapter.getFeature();

@@ -20,6 +20,8 @@ public class MultiInstallWizard extends Wizard {
 	private static final String KEY_SAVED_CONFIG = "InstallWizard.savedConfig";
 	private MultiReviewPage reviewPage;
 	private LicensePage licensePage;
+	private MultiOptionalFeaturesPage optionalFeaturesPage;
+	private MultiTargetPage targetPage;
 	private PendingChange[] jobs;
 	private boolean successfulInstall = false;
 	private IInstallConfiguration config;
@@ -117,6 +119,7 @@ public class MultiInstallWizard extends Wizard {
 		config = createInstallConfiguration();
 		boolean addLicensePage = false;
 		boolean addOptionalFeaturesPage = false;
+		boolean addTargetPage = false;
 
 		for (int i = 0; i < jobs.length; i++) {
 			PendingChange job = jobs[i];
@@ -128,39 +131,91 @@ public class MultiInstallWizard extends Wizard {
 				if (UpdateModel.hasOptionalFeatures(job.getFeature())) {
 					addOptionalFeaturesPage = true;
 				}
-			}
-			if (addLicensePage) {
-				licensePage = new LicensePage(true);
-				addPage(licensePage);
+				addTargetPage = true;
 			}
 		}
+		if (addLicensePage) {
+			licensePage = new LicensePage(true);
+			addPage(licensePage);
+		}
+		if (addOptionalFeaturesPage) {
+			optionalFeaturesPage = new MultiOptionalFeaturesPage(config);
+			addPage(optionalFeaturesPage);
+		}
+		if (addTargetPage) {
+			targetPage = new MultiTargetPage(config);
+			addPage(targetPage);
+		}
+	}
+
+	private boolean isPageRequired(IWizardPage page) {
+		if (page.equals(licensePage)) {
+			return reviewPage.hasSelectedJobsWithLicenses();
+		}
+		if (page.equals(optionalFeaturesPage)) {
+			return reviewPage.hasSelectedJobsWithOptionalFeatures();
+		}
+		if (page.equals(targetPage)) {
+			return reviewPage.hasSelectedInstallJobs();
+		}
+		return true;
 	}
 
 	public IWizardPage getNextPage(IWizardPage page) {
+		IWizardPage[] pages = getPages();
+		boolean start = false;
+		IWizardPage nextPage = null;
+
 		if (page.equals(reviewPage)) {
-			PendingChange[] licenseJobs =
-				reviewPage.getSelectedJobsWithLicenses();
-			if (licenseJobs.length == 0)
-				return licensePage.getNextPage();
-			licensePage.setJobs(licenseJobs);
-			return licensePage;
+			updateDynamicPages();
 		}
-		return super.getNextPage(page);
+
+		for (int i = 0; i < pages.length; i++) {
+			if (pages[i].equals(page)) {
+				start = true;
+			} else if (start) {
+				if (isPageRequired(pages[i])) {
+					nextPage = pages[i];
+					break;
+				}
+			}
+		}
+		return nextPage;
 	}
 
-	public IWizardPage getPreviousPage(IWizardPage page) {
-		if (page instanceof LicensePage)
-			return reviewPage;
-		IWizardPage prevPage = super.getPreviousPage(page);
-		if (prevPage==null) return null;
-		if (prevPage.equals(licensePage)) {
+	private void updateDynamicPages() {
+		if (licensePage != null) {
 			PendingChange[] licenseJobs =
 				reviewPage.getSelectedJobsWithLicenses();
-			if (licenseJobs.length == 0)
-				return reviewPage;
+			licensePage.setJobs(licenseJobs);
 		}
-		return prevPage;
+		if (optionalFeaturesPage != null) {
+			PendingChange[] optionalJobs =
+				reviewPage.getSelectedJobsWithOptionalFeatures();
+			optionalFeaturesPage.setJobs(optionalJobs);
+		}
+		if (targetPage != null) {
+			PendingChange[] installJobs = reviewPage.getSelectedInstallJobs();
+			targetPage.setJobs(installJobs);
+		}
 	}
+
+	/*	
+		public IWizardPage getPreviousPage(IWizardPage page) {
+	
+			if (page instanceof LicensePage)
+				return reviewPage;
+			IWizardPage prevPage = super.getPreviousPage(page);
+			if (prevPage==null) return null;
+			if (prevPage.equals(licensePage)) {
+				PendingChange[] licenseJobs =
+					reviewPage.getSelectedJobsWithLicenses();
+				if (licenseJobs.length == 0)
+					return reviewPage;
+			}
+			return prevPage;
+		}
+	*/
 
 	public static IInstallConfiguration createInstallConfiguration() {
 		try {

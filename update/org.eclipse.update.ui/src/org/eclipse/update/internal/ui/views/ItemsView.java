@@ -154,13 +154,13 @@ public class ItemsView extends BaseTableView {
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {
+		processAction.setEnabled(canProcess());
 		manager.add(processAction);
 		manager.add(processAllAction);
 		manager.add(new Separator());
-		if (canDelete()) {
-			manager.add(deleteAction);
-			manager.add(new Separator());
-		}
+		deleteAction.setEnabled(canDelete());
+		manager.add(deleteAction);
+		manager.add(new Separator());
 		super.fillContextMenu(manager);
 	}
 

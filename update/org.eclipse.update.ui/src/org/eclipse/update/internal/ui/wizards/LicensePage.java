@@ -12,7 +12,7 @@ import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.PendingChange;
 
-public class LicensePage extends WizardPage {
+public class LicensePage extends WizardPage implements IDynamicPage {
 	private static final String KEY_TITLE = "InstallWizard.LicensePage.title"; //$NON-NLS-1$
 	private static final String KEY_DESC = "InstallWizard.LicensePage.desc"; //$NON-NLS-1$
 	private static final String KEY_DESC2 = "InstallWizard.LicensePage.desc2"; //$NON-NLS-1$
