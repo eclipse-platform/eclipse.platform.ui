@@ -23,6 +23,7 @@ public interface IHelpUIConstants {
 	public static final String LOGGING_OPTIONS = HELP_UI_ID + "loggingOptions";
 	public static final String LOCAL_SERVER_CONFIG =
 		HELP_UI_ID + "localServerConfig";
+	public static final String BROWSER_PATH = HELP_UI_ID + "browserPath";
 	public static final String BROWSER = HELP_UI_ID + "browser";
 	public static final String NAVIGATION_VIEWER = HELP_UI_ID + "navigationViewer";
 	public static final String TOPICS_VIEWER = HELP_UI_ID + "topicsViewer";

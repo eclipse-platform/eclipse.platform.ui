@@ -75,6 +75,22 @@ public class HelpPreferencePage
 	 */
 	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(parent, new String[] { IHelpUIConstants.PREF_PAGE });
+		/* Browser Path */
+		if (!System.getProperty("os.name").startsWith("Win")) {
+			Composite composite_textField2 = createComposite(parent, 2);
+			WorkbenchHelp.setHelp(
+				composite_textField2,
+				new String[] {
+					IHelpUIConstants.BROWSER_PATH,
+					IHelpUIConstants.PREF_PAGE});
+
+			Label label_textField =
+				createLabel(
+					composite_textField2,
+					WorkbenchResources.getString("Browser_path"),
+					1);
+			textBrowserPath = createTextField(composite_textField2);
+		}
 		/* Loggin Options */
 		//composite_tab2 << parent
 		Composite composite_tab2 = createComposite(parent, 1);
