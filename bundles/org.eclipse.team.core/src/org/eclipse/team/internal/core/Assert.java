@@ -12,7 +12,7 @@ public final class Assert {
 		public AssertionFailedException() {
 		}
 		public AssertionFailedException(String detail) {
-			super(detail);
+			super("Assertion failed: " + detail);
 		}
 	}
 /* This class is not intended to be instantiated. */
@@ -53,7 +53,8 @@ public static boolean isLegal(boolean expression, String message) {
  * @exception IllegalArgumentException if the object is <code>null</code>
  */
 public static void isNotNull(Object object) {
-	isNotNull(object, ""/*nonNLS*/); //$NON-NLS-1$
+	if (object == null)
+		throw new AssertionFailedException("null argument"); //$NON-NLS-1$
 }
 /** Asserts that the given object is not <code>null</code>. If this
  * is not the case, some kind of unchecked exception is thrown.
