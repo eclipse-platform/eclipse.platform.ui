@@ -1,0 +1,105 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Tasks View</title>
+</head>
+<body>
+
+<h3>
+Tasks View</h3>
+Purpose: To test the Tasks view in Eclipse.&nbsp; We will create a java
+project with java classes, introduce errors in those classes, add tasks
+to the files, and then verify them in the tasks list.&nbsp; We also test
+the persistance of task filtering between sessions.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.</li>
+
+<li>
+Create a Java Project named TaskProject.&nbsp; Then create a class named
+TaskClass with the following content.</li>
+
+<p><br><tt>public class TaskClass {</tt>
+<br><tt>&nbsp;private int y;</tt>
+<br><tt>&nbsp;public TaskClass() {</tt>
+<br><tt>&nbsp;}</tt>
+<br><tt>&nbsp;public void doThis() {</tt>
+<br><tt>&nbsp;}</tt>
+<br><tt>&nbsp;abstract public void doThat();</tt>
+<br><tt>&nbsp;public int getX() {</tt>
+<br><tt>&nbsp; return x;</tt>
+<br><tt>&nbsp;}</tt>
+<br><tt>}</tt>
+<br>&nbsp;
+<li>
+If you save this file 2 errors will appear in the source.&nbsp; On line
+7 there is an error because abstract methods can only be defined in an
+abstract class.&nbsp; On line 9 there is an error because x is unknown.</li>
+
+<li>
+Open the Tasks view by invoking Perspective > Show View > Tasks.&nbsp;
+Verify that the tasks views appears and that it shows the 2 errors in the
+TaskClass.</li>
+
+<li>
+Select the first line of TaskClass and invoke "Add Task" from the context
+menu.&nbsp; Override the label with "Test Label" and press OK.&nbsp; Verify
+that a new task icon appears on the left edge of the editor and in the
+tasks view.</li>
+
+<li>
+If a problem is resolved or a task removed it should disappear from the
+task view.&nbsp; Open the Task view filter dialog and reset all options
+with the Reset button.&nbsp; Press OK and go back to the editor for TaskClass.java.&nbsp;
+Delete the "doThat" method and save the file.&nbsp; Verify that one of
+the errors on TaskClass.java is deleted.</li>
+
+<li>
+Now select the Tasks view and select the task item labelled "Test Label".&nbsp;
+Invoke Edit > Delete to delete this task and then verify that it disappears
+from the tasks view and from the open editor.</li>
+
+<li>
+Within the Tasks view you can also create new tasks.&nbsp; To test this
+press the "New Task" button on the toolbar.&nbsp; A new task should appear.&nbsp;
+Type in the label for this task and press Return.&nbsp; Verify that a new
+task is created.&nbsp; Do this a couple of times to create more than one
+task.</li>
+
+<li>
+A task is very similar to a bookmark.&nbsp; If you select a task you can
+open an editor on the task source.&nbsp; To test this close all editors.&nbsp;
+Then select one of the java problems for TaskClass.java and invoke Go To
+File in the context menu.&nbsp; Verify that an editor opens on the problem
+and that the problem is indicated by selection in the editor.</li>
+
+<li>
+Now invoke the Filters toolbar action and change the "show entries of type"
+option to "Java Problem" and nothing else.&nbsp; Press OK and verify that
+only Java problems appear in the task list now.</li>
+
+<li>
+Reopen the Filters dialog and select "On Selected Resource Only".&nbsp;
+Press OK.&nbsp; Now select TaskClass.java in the navigator and verify that
+the java problems for this file are visible in the navigator.&nbsp; Select
+the TaskProject and verify that the java problems for TaskClass.java are
+not visible.</li>
+
+<li>
+Now the task list contains a number of errors and tasks.&nbsp; It also
+has a couple of filtering options (java problems only and selected resource
+only).&nbsp; This state is persisted between sessions.&nbsp; To test this
+note the state of the task view.&nbsp; Then close the workbench and restart
+it.&nbsp; Verify that the visible set of tasks and the filtering options
+are restored.</li>
+</ol>
+
+</body>
+</html>
