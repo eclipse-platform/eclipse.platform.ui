@@ -76,8 +76,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 	private void open(String title, String prompt, boolean[] result) {
 		Display display= Display.getDefault();
 		
-		fDialog = new Shell(display, SWT.DIALOG_TRIM
-				| SWT.APPLICATION_MODAL | SWT.RESIZE);
+		fDialog = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		initializeDialogUnits(fDialog);
 		fDialog.setLayout(new GridLayout());
 		
@@ -148,6 +147,7 @@ public class SWTInputHandler extends DefaultInputHandler {
     protected void createButtonsForButtonBar(Composite parent, final boolean[] result) {
     	fOkButton = new Button(parent, SWT.PUSH);
 		fOkButton.setText(RemoteAntMessages.getString("SWTInputHandler.4")); //$NON-NLS-1$
+		fOkButton.setEnabled(false);
 		setButtonLayoutData(fOkButton);
 		
 		Button cancel = new Button(parent, SWT.PUSH);
