@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.preferences;
 
+import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -42,17 +48,101 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferencesService service = Platform.getPreferencesService();
 
 		// create test node hierarchy
+		IEclipsePreferences root = service.getRootNode();
+		String qualifier = getRandomString() + '1';
+		IEclipsePreferences test = root.node(new Path(TestScope.SCOPE).append(qualifier));
+		String key = getRandomString() + 'k';
+		String value = getRandomString() + 'v';
+		String actual = test.get(key, null);
+		assertNull("1.0", actual);
+		test.put(key, value);
+		actual = test.get(key, null);
+		assertEquals("1.1", value, actual);
 
 		// export it
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		try {
+			service.exportPreferences(test, output, null);
+		} catch (CoreException e) {
+			fail("2.0", e);
+		} finally {
+			try {
+				output.close();
+			} catch (IOException e1) {
+				// ignore
+			}
+		}
+		byte[] bytes = output.toByteArray();
 
 		// add new values
+		String newKey = getRandomString() + '3';
+		String newValue = getRandomString() + '4';
+		actual = test.get(newKey, null);
+		assertNull("3.0", actual);
+		test.put(newKey, newValue);
+		actual = test.get(newKey, null);
+		assertEquals("3.1", newValue, actual);
+		String newOldValue = getRandomString() + '5';
+		test.put(key, newOldValue);
+		actual = test.get(key, null);
+		assertEquals("3.2", newOldValue, actual);
 
 		// import 
+		ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+		try {
+			service.importPreferences(input);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		} finally {
+			try {
+				input.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+
+		// verify
+		test = root.node(new Path(TestScope.SCOPE).append(qualifier));
+		actual = test.get(key, null);
+		assertEquals("5.0", value, actual);
+		actual = test.get(newKey, null);
+		assertNull("5.1", actual);
 
 		// clear all
+		try {
+			test.clear();
+		} catch (BackingStoreException e) {
+			fail("6.0", e);
+		}
+		actual = test.get(key, null);
+		assertNull("6.1", actual);
+		actual = test.get(newKey, null);
+		assertNull("6.2", actual);
 
 		// import
+		input = new ByteArrayInputStream(bytes);
+		try {
+			service.importPreferences(input);
+		} catch (CoreException e) {
+			fail("7.0", e);
+		} finally {
+			try {
+				input.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
 
+		// verify
+		test = root.node(new Path(TestScope.SCOPE).append(qualifier));
+		actual = test.get(key, null);
+		assertEquals("8.0", value, actual);
+		actual = test.get(newKey, null);
+		assertNull("8.1", actual);
+	}
+
+	public void testImportExportExcludes() {
+		// TODO
 	}
 
 	private void assertEquals(String message, String[] one, String[] two) {
