@@ -16,6 +16,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
@@ -146,12 +147,13 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		// check with all the registered patterns
 		boolean ignored = matcher.match(getName());
 		
-		// check the parent, if the parent is ignored then this resource
-		// is ignored also
+		// check the parent, if the parent is ignored or mapped to CVSROOT/Emptydir
+		// then this resource is ignored also
 		if(!ignored) {
 			ICVSFolder parent = getParent();
 			if(parent==null) return false;
-			return parent.isIgnored();
+			return parent.isIgnored()
+			  || parent.getFolderSyncInfo().getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY);
 		} else {
 			return ignored;
 		}
