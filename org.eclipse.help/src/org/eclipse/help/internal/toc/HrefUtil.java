@@ -6,7 +6,6 @@ package org.eclipse.help.internal.toc;
  */
  
 import java.io.*;
-import java.util.Locale;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.help.internal.HelpPlugin;

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
@@ -15,7 +15,7 @@ public class TocFile {
 	protected String plugin;
 	protected String href;
 	protected boolean primary;
-
+	protected String locale;
 
 	// used for fast access to anchors
 	protected Map anchors;
@@ -23,10 +23,11 @@ public class TocFile {
 	/**
 	 * Toc File Constructor
 	 */
-	protected TocFile(String plugin, String href, boolean primary) {
+	protected TocFile(String plugin, String href, boolean primary, String locale) {
 		this.plugin = plugin;
 		this.href = href;
 		this.primary = primary;
+		this.locale = locale;
 	}
 
 	/**
@@ -49,7 +50,7 @@ public class TocFile {
 		InputStream stream = null;
 		try {
 			if (plugin != null)
-				stream = ResourceLocator.openFromPlugin(plugin, href);
+				stream = ResourceLocator.openFromPlugin(plugin, href, locale);
 			else
 				stream = new FileInputStream(href);
 		} catch (IOException e) {
@@ -98,7 +99,6 @@ public class TocFile {
 	public void build(TocBuilder builder) {
 		builder.buildTocFile(this);
 	}
-
 
 	/**
 	 * Used by debugger

@@ -9,13 +9,15 @@ public class ContextsFile {
 	protected String href;
 	protected String definingPluginID;
 	protected String pluginID;
+	protected String locale;
 	/**
 	 * Contexts File Constructor
 	 */
-	protected ContextsFile(String definingPlugin, String href, String plugin) {
+	protected ContextsFile(String definingPlugin, String href, String plugin, String locale) {
 		this.href = href;
 		this.definingPluginID = definingPlugin;
 		this.pluginID = plugin;
+		this.locale=locale;
 	}
 	/**
 	 * Gets the href
@@ -28,7 +30,7 @@ public class ContextsFile {
 		InputStream stream = null;
 		try {
 			if (definingPluginID != null)
-				stream = ResourceLocator.openFromPlugin(definingPluginID, href);
+				stream = ResourceLocator.openFromPlugin(definingPluginID, href, locale);
 			else
 				stream = new FileInputStream(href);
 		} catch (IOException e) {

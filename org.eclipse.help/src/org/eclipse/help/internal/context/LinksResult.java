@@ -19,11 +19,11 @@ public class LinksResult {
 	/**
 	 * Constructor
 	 */
-	public LinksResult(String contextId) {
+	public LinksResult(String contextId, String locale) {
 		// instantiate the xml factory and create the root element
 		factory = new DocumentImpl();
 		factory.appendChild(factory.createElement(IToc.TOC));
-		IContext context = HelpSystem.getContextManager().getContext(contextId);
+		IContext context = HelpSystem.getContextManager().getContext(contextId, locale);
 		if (context == null)
 			return;
 		IHelpResource[] links = context.getRelatedTopics();

@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.protocols;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -46,7 +46,7 @@ public class TocURL extends HelpURL {
 	 * @return InputStream from XML representation of TOC
 	 */
 	private InputStream serializeToc(String tocID){
-		Toc toc = (Toc)HelpSystem.getTocManager().getToc(tocID);
+		Toc toc = (Toc)HelpSystem.getTocManager().getToc(tocID, getLocale().toString());
 		if(toc==null)
 			return null;
 		StringWriter stWriter=new StringWriter();
@@ -62,7 +62,7 @@ public class TocURL extends HelpURL {
 	 */
 	private InputStream serializeTocs(){
 		TocManager tocManager=HelpSystem.getTocManager();
-		IToc[] tocs = tocManager.getTocs();
+		IToc[] tocs = tocManager.getTocs(getLocale().toString());
 		StringWriter stWriter=new StringWriter();
 		XMLGenerator gen = new XMLGenerator(stWriter);
 		gen.println("<tocs>");

@@ -37,7 +37,7 @@ public class LinksURL extends HelpURL {
 	public InputStream openStream() {
 		try {
 			String contextId = (String) arguments.get("contextId");
-			LinksResult result = new LinksResult(contextId);
+			LinksResult result = new LinksResult(contextId, getLocale().toString());
 			InputStream is = new ByteArrayInputStream(result.toString().getBytes("UTF8"));
 			if (is != null) {
 				contentSize = is.available();

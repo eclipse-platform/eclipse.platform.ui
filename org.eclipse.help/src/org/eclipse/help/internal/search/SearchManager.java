@@ -17,7 +17,7 @@ import org.eclipse.help.internal.util.*;
 public class SearchManager {
 	// Search indexes, indexed (no pun!) by locale
 	private HashMap indexes = new HashMap();
-	// Caches analyzers for eache locale
+	// Caches analyzers for each locale
 	private HashMap analyzers = new HashMap();
 	private final Analyzer defaultAnalyzer = new StandardAnalyzer();
 	// Progress monitors, indexed by locale
@@ -118,7 +118,7 @@ public class SearchManager {
 		if (addedPlugins == null || addedPlugins.isEmpty())
 			return new ArrayList(0);
 		// get the list of all navigation urls. 
-		Set urls = getAllDocuments();
+		Set urls = getAllDocuments(index.getLocale());
 		ArrayList addedDocs = new ArrayList(urls.size());
 		for (Iterator docs = urls.iterator(); docs.hasNext();) {
 			String url = (String) docs.next();
@@ -260,9 +260,9 @@ public class SearchManager {
 	/**
 	 * Returns the collection of href's of all the help topics.
 	 */
-	private Set getAllDocuments() {
+	private Set getAllDocuments(String locale) {
 		HashSet hrefs = new HashSet();
-		IToc[] tocs = HelpSystem.getTocManager().getTocs();
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();
 			for (int j = 0; j < topics.length; j++)

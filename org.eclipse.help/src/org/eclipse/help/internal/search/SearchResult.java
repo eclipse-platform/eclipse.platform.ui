@@ -23,13 +23,15 @@ public class SearchResult {
 	private String urlEncodedQuery;
 	private List scope;
 	private int maxHits;
+	private String locale;
 	/**
 	 * Constructor
 	 * @param scope list of books to search
 	 */
-	public SearchResult(List scope, int maxHits) {
+	public SearchResult(List scope, int maxHits, String locale) {
 		this.scope = scope;
 		this.maxHits = maxHits;
+		this.locale = locale;
 		// instantiate the xml factory and create the root element
 		factory = new DocumentImpl();
 		factory.appendChild(factory.createElement(IToc.TOC));
@@ -40,7 +42,7 @@ public class SearchResult {
 	 */
 	public void addHits(Hits hits, String analyzedWords) {
 		float scoreScale = 1.0f;
-		String urlEncodedWords=URLCoder.encode(analyzedWords);
+		String urlEncodedWords = URLCoder.encode(analyzedWords);
 		for (int h = 0; h < hits.length() && h < maxHits; h++) {
 			org.apache.lucene.document.Document doc;
 			float score;
@@ -84,7 +86,7 @@ public class SearchResult {
 	 * or within a scope if specified
 	 */
 	protected ITopic findTopic(String href) {
-		IToc[] tocs = HelpSystem.getTocManager().getTocs();
+		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			if (scope != null)
 				if (!scope.contains(tocs[i].getHref()))

@@ -4,7 +4,6 @@ package org.eclipse.help.ui.internal.search;
  * All Rights Reserved.
  */
 import java.util.*;
-import java.util.List;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
@@ -29,7 +28,7 @@ public class SearchFilteringOptions extends Dialog {
 	public SearchFilteringOptions(Shell parentShell, SearchQueryData queryData) {
 		super(parentShell);
 		this.queryData = queryData;
-		IToc tocs[] = HelpSystem.getTocManager().getTocs();
+		IToc tocs[] = HelpSystem.getTocManager().getTocs(queryData.getLocale());
 		allBooks = new ArrayList(tocs.length);
 		for (int i = 0; i < tocs.length; i++)
 			allBooks.add(tocs[i]);
@@ -43,9 +42,7 @@ public class SearchFilteringOptions extends Dialog {
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
-		WorkbenchHelp.setHelp(
-			parent,
-			IHelpUIConstants.SEARCH_FILTERING_OPTIONS);
+		WorkbenchHelp.setHelp(parent, IHelpUIConstants.SEARCH_FILTERING_OPTIONS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;

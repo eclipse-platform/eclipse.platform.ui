@@ -78,9 +78,9 @@ public class PluginURL extends HelpURL {
 		InputStream inputStream = null;
 		// first try finding the file inside nl tree in doc.zip,
 		// and then, in the file system
-		inputStream = ResourceLocator.openFromZip(getPlugin(), "doc.zip", getFile());
+		inputStream = ResourceLocator.openFromZip(getPlugin(), "doc.zip", getFile(), getLocale().toString());
 		if (inputStream == null)
-			inputStream = ResourceLocator.openFromPlugin(getPlugin(), getFile());
+			inputStream = ResourceLocator.openFromPlugin(getPlugin(), getFile(), getLocale().toString());
 		return inputStream;
 	}
 }

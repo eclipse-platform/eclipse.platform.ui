@@ -101,7 +101,7 @@ public class SearchQuery {
 		Logger.logInfo(Resources.getString("Searching_for", getSearchWord()));
 		// Create the xml document for search results
 		SearchResult xmlResults =
-			new SearchResult(getScope(), getMaxHits());
+			new SearchResult(getScope(), getMaxHits(), index.getLocale());
 		index.search(getSearchWord(), getFieldNames(), isFieldSearch(), xmlResults);
 		return xmlResults;
 	}
