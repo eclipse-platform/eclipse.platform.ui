@@ -29,17 +29,17 @@ public class UpdateManagerUtils {
 		URL url = null;
 
 		// if no URL , provide Default
-		if (urlString == null || urlString.trim().equals("")) {
+		if (urlString == null || urlString.trim().equals("")) { //$NON-NLS-1$
 
 			// no URL, no default, return right now...
-			if (defaultURL == null || defaultURL.trim().equals(""))
+			if (defaultURL == null || defaultURL.trim().equals("")) //$NON-NLS-1$
 				return null;
 			else
 				urlString = defaultURL;
 		}
 
 		// URL can be relative or absolute	
-		if (urlString.startsWith("/") && urlString.length() > 1)
+		if (urlString.startsWith("/") && urlString.length() > 1) //$NON-NLS-1$
 			urlString = urlString.substring(1);
 		try {
 			url = new URL(urlString);
@@ -124,14 +124,14 @@ public class UpdateManagerUtils {
 	 * c	-> c953867549
 	 */
 	public static String getLocalRandomIdentifier(String remotePath, Date date) {
-		int dotIndex = remotePath.lastIndexOf(".");
+		int dotIndex = remotePath.lastIndexOf("."); //$NON-NLS-1$
 		int fileIndex = remotePath.lastIndexOf(File.separator);
 		
 		// if there is a separator after the dot
 		// do not consider it as an extension
 		// FIXME: LINUX ???
 		//String ext = (dotIndex != -1 && fileIndex < dotIndex) ? "." + remotePath.substring(dotIndex) : "";
-		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : "";
+		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : ""; //$NON-NLS-1$
 		
 		// the name is the string between the separator and the dot
 		// if there is no separator, it is the string up to the dot		
@@ -140,7 +140,7 @@ public class UpdateManagerUtils {
 		if (dotIndex==-1) dotIndex=remotePath.length();
 		// if I have a separator and no dot: /a/b/c -> c
 		// if my separator is the last /a/b/c/, fileIndex and dotIndex are the same, so it will return teh default temp name
-		String name = (fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_";
+		String name = (fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_"; //$NON-NLS-1$
 
 		String result = name + date.getTime() + ext;
 		
@@ -164,7 +164,7 @@ public class UpdateManagerUtils {
 		}
 		if (!file.delete()) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,"cannot remove: " + file.getPath()+" from the filesystem",new Exception());
+			IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath()),new Exception()); //$NON-NLS-1$ //$NON-NLS-2$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		}
 	}

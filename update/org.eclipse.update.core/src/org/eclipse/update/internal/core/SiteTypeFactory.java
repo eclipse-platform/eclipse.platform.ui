@@ -63,7 +63,7 @@ public final class SiteTypeFactory {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){
-			IStatus status = new Status(IStatus.ERROR,pluginID,IStatus.OK,"Cannot find site factory for id: " +type,null);
+			IStatus status = new Status(IStatus.ERROR,pluginID,IStatus.OK,Policy.bind("SiteTypeFactory.UnableToFindSiteFactory",type),null); //$NON-NLS-1$
 			throw new CoreException(status);
 		} else {
 			IConfigurationElement element = elements[0];

@@ -27,16 +27,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		this.feature = feature;
 	}
 
-	/**
-	 * @see IPluginContainer#store(IPluginEntry, String, InputStream)
-	 */
-	public void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException {
-
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Should not be called", null);
-			throw new CoreException(status);
-	}
-
+	
 	/**
  	 * return the path in whichh the Feature will be installed
  	 */
@@ -48,7 +39,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		URL newURL = new URL(getSite().getURL(),path);
 		featurePath = newURL.getFile();
 		} catch (MalformedURLException e){
-			throw newCoreException("Unable to create new URL :"+e.getMessage(),e);
+			throw newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURL")+e.getMessage(),e); //$NON-NLS-1$
 		}
 		return featurePath;
 	}
@@ -79,9 +70,7 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
 		} catch (IOException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file:" + featurePath, e);
-			throw new CoreException(status);
+			throw newCoreException(Policy.bind("GlobalConsumer.ErrorCreatingFile") + featurePath, e); //$NON-NLS-1$
 		} finally {
 			try {
 				// close stream
@@ -103,18 +92,22 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 			file = new File(getFeaturePath());
 			ref.setURL(file.toURL());
 		} catch (MalformedURLException e){
-			throw newCoreException("Cannot create URL on File:"+ file.getAbsolutePath(),e);
+			throw newCoreException(Policy.bind("SiteFileContentConsumer.UnableToCreateURLForFile")+ file.getAbsolutePath(),e); //$NON-NLS-1$
 		}
 		return ref;
 	}
 
 	/*
-	 * @see ISiteContentConsumer#abort()
+	 * 
 	 */
 	public void abort() {
 	}
 	
+	/**
+	 * 
+	 */
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.core",0,s,e));
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		return new CoreException(new Status(IStatus.ERROR,id,0,s,e));
 	}	
 }
