@@ -486,6 +486,8 @@ public void propertyChange(PropertyChangeEvent event) {
 			removeManualIncrementalBuildAction();
 		else
 			addManualIncrementalBuildAction();
+	} else if(event.getProperty() == IPreferenceConstants.REUSE_EDITORS) {
+		pinEditorAction.updateState();
 	}
 }
 /**

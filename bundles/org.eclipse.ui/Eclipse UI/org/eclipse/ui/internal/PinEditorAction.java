@@ -1,10 +1,10 @@
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.*;
 
 public class PinEditorAction extends ActiveEditorAction {
+
+	private IWorkbenchWindow window;
 
 /**
  * Constructor for ReuseEditorAction
@@ -13,6 +13,7 @@ protected PinEditorAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("PinEditorAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("PinEditorAction.toolTip")); //$NON-NLS-1$
 	setId("org.eclipse.ui.internal.PinEditorAction"); //$NON-NLS-1$
+	this.window = window;
 //	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
 }
 
@@ -21,13 +22,26 @@ protected PinEditorAction(IWorkbenchWindow window) {
  */
 public void run() {
 	IEditorPart editor = getActiveEditor();
-	if(editor instanceof IReusableEditor)
+	if(editor instanceof IReusableEditor) {
 		((EditorSite)editor.getEditorSite()).setReuseEditor(!isChecked());
+		//updateState();
+	}
 }
 /**
  * @see ActiveEdirorAction#updateState()
  */
 protected void updateState() {
+	if(window == null) {
+		setChecked(false);
+		setEnabled(false);
+		return;
+	}
+	IWorkbenchPage page = window.getActivePage();
+	if(page == null || (!page.getReuseEditors())) {
+		setChecked(false);
+		setEnabled(false);
+		return;
+	}
 	IEditorPart editor = getActiveEditor();
 	boolean enabled = (editor != null) && (editor instanceof IReusableEditor);
 	setEnabled(enabled);
