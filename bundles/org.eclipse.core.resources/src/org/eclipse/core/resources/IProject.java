@@ -481,7 +481,7 @@ public boolean isOpen();
  * <p>
  * If the name in the given description is the same as this project's name and
  * the location is different, then the project contents will be moved to the new
- * location and this project's description will be set to be the given description. 
+ * location. All other parts of the given description are ignored.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
