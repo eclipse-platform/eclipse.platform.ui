@@ -329,26 +329,44 @@ private void initializePluginPreferences(IPreferenceStore store) {
  * </p>
  */
 protected void loadDialogSettings() {
+	dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
 
-	String readWritePath = getStateLocation().append(FN_DIALOG_SETTINGS).toOSString();
-	String pathName = readWritePath;
+	// try r/w state area in the local file system
+	String readWritePath =
+		getStateLocation().append(FN_DIALOG_SETTINGS).toOSString();
 	File settingsFile = new File(readWritePath);
-	
-	if (!settingsFile.exists()) { 			// not found - use installed  defaults 
-		pathName = getDescriptor().getInstallURL().getFile() + FN_DIALOG_SETTINGS;
-		settingsFile = new File(pathName);
-		if (!settingsFile.exists()) {
-			dialogSettings = new DialogSettings("Workbench");  //force it to write to the r/w area//$NON-NLS-1$
+	if (settingsFile.exists()) {
+		try {
+			dialogSettings.load(readWritePath);
+		} catch (IOException e) {
+			// load failed so ensure we have an empty settings
+			dialogSettings = new DialogSettings("Workbench"); //$NON-NLS-1$
+		}
+	} else {
+		// not found - use installed  defaults if available
+		URL baseURL = getDescriptor().getInstallURL();
+
+		URL dsURL = null;
+		try {
+			dsURL = new URL(baseURL, FN_DIALOG_SETTINGS);
+		} catch (MalformedURLException e) {
 			return;
 		}
-	}
-	// pathName is either the r/w or the install area
-		
-	dialogSettings = new DialogSettings("Workbench");//$NON-NLS-1$
-	try {
-		dialogSettings.load(pathName);
-	} catch (IOException e) {
-		dialogSettings = new DialogSettings("Workbench");  // load failed so ensure we have an empty settings//$NON-NLS-1$
+		InputStream is = null;
+		try {
+			is = dsURL.openStream();
+			InputStreamReader reader = new InputStreamReader(is, "utf-8");
+			dialogSettings.load(reader);
+		} catch (IOException e) {
+			// load failed so ensure we have an empty settings
+			dialogSettings = new DialogSettings("Workbench");  //$NON-NLS-1$
+		} finally {
+			try {
+				if (is != null)
+					is.close();
+			} catch (IOException e) {
+			}
+		}
 	}
 }
 /**
