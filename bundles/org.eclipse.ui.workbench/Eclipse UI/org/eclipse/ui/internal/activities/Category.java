@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.activities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,10 +24,9 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Category implements ICategory {
-
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Category.class.getName().hashCode();
-	private MutableActivityManager activityManager;
+	private final static Set strongReferences = new HashSet();
 	private Set categoryActivityBindings;
 	private transient ICategoryActivityBinding[] categoryActivityBindingsAsArray;
 	private List categoryListeners;
@@ -38,11 +38,10 @@ final class Category implements ICategory {
 	private String name;
 	private transient String string;
 
-	Category(MutableActivityManager activityManager, String id) {
-		if (activityManager == null || id == null)
+	Category(String id) {
+		if (id == null)
 			throw new NullPointerException();
 
-		this.activityManager = activityManager;
 		this.id = id;
 	}
 
@@ -56,7 +55,7 @@ final class Category implements ICategory {
 		if (!categoryListeners.contains(categoryListener))
 			categoryListeners.add(categoryListener);
 
-		activityManager.getCategoriesWithListeners().add(this);
+		strongReferences.add(this);
 	}
 
 	public int compareTo(Object object) {
@@ -161,7 +160,7 @@ final class Category implements ICategory {
 			categoryListeners.remove(categoryListener);
 
 		if (categoryListeners.isEmpty())
-			activityManager.getCategoriesWithListeners().remove(this);
+			strongReferences.remove(this);
 	}
 
 	boolean setCategoryActivityBindings(Set categoryActivityBindings) {

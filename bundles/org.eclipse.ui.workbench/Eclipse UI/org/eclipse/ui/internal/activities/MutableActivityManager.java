@@ -32,7 +32,9 @@ import org.eclipse.ui.activities.IActivityActivityBinding;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IMutableActivityManager;
+import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableActivityManager
@@ -59,19 +61,18 @@ public final class MutableActivityManager
 	}
 
 	private Map activitiesById = new WeakHashMap();
-	private Set activitiesWithListeners = new HashSet();
 	private Map activityActivityBindingsByParentActivityId = new HashMap();
 	private Map activityDefinitionsById = new HashMap();
 	private Map activityPatternBindingsByActivityId = new HashMap();
 	private IActivityRegistry activityRegistry;
 	private Map categoriesById = new WeakHashMap();
-	private Set categoriesWithListeners = new HashSet();
 	private Map categoryActivityBindingsByCategoryId = new HashMap();
 	private Map categoryDefinitionsById = new HashMap();
 	private Set definedActivityIds = new HashSet();
 	private Set definedCategoryIds = new HashSet();
 	private Set enabledActivityIds = new HashSet();
 	private Set enabledCategoryIds = new HashSet();
+	private Map identifiersById = new WeakHashMap();
 
 	public MutableActivityManager() {
 		this(new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
@@ -94,10 +95,6 @@ public final class MutableActivityManager
 		readRegistry();
 	}
 
-	Set getActivitiesWithListeners() {
-		return activitiesWithListeners;
-	}
-
 	public IActivity getActivity(String activityId) {
 		if (activityId == null)
 			throw new NullPointerException();
@@ -105,16 +102,12 @@ public final class MutableActivityManager
 		Activity activity = (Activity) activitiesById.get(activityId);
 
 		if (activity == null) {
-			activity = new Activity(this, activityId);
+			activity = new Activity(activityId);
 			updateActivity(activity);
 			activitiesById.put(activityId, activity);
 		}
 
 		return activity;
-	}
-
-	Set getCategoriesWithListeners() {
-		return categoriesWithListeners;
 	}
 
 	public ICategory getCategory(String categoryId) {
@@ -124,7 +117,7 @@ public final class MutableActivityManager
 		Category category = (Category) categoriesById.get(categoryId);
 
 		if (category == null) {
-			category = new Category(this, categoryId);
+			category = new Category(categoryId);
 			updateCategory(category);
 			categoriesById.put(categoryId, category);
 		}
@@ -146,6 +139,21 @@ public final class MutableActivityManager
 
 	public Set getEnabledCategoryIds() {
 		return Collections.unmodifiableSet(enabledCategoryIds);
+	}
+
+	public IIdentifier getIdentifier(String identifierId) {
+		if (identifierId == null)
+			throw new NullPointerException();
+
+		Identifier identifier = (Identifier) identifiersById.get(identifierId);
+
+		if (identifier == null) {
+			identifier = new Identifier(identifierId);
+			updateIdentifier(identifier);
+			identifiersById.put(identifierId, identifier);
+		}
+
+		return identifier;
 	}
 
 	public Set getMatchingActivityIds(String string, Set activityIds) {
@@ -195,6 +203,12 @@ public final class MutableActivityManager
 		}
 	}
 
+	private boolean isEnabled(String identifierId) {
+		// TODO improve performance?
+		return isMatch(identifierId, enabledActivityIds)
+			|| !isMatch(identifierId, definedActivityIds);
+	}
+
 	public boolean isMatch(String string, Set activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);
 
@@ -240,6 +254,23 @@ public final class MutableActivityManager
 
 			if (category != null)
 				category.fireCategoryChanged(categoryEvent);
+		}
+	}
+
+	private void notifyIdentifiers(Map identifierEventsByIdentifierId) {
+		for (Iterator iterator =
+			identifierEventsByIdentifierId.entrySet().iterator();
+			iterator.hasNext();
+			) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String identifierId = (String) entry.getKey();
+			IdentifierEvent identifierEvent =
+				(IdentifierEvent) entry.getValue();
+			Identifier identifier =
+				(Identifier) categoriesById.get(identifierId);
+
+			if (identifier != null)
+				identifier.fireIdentifierChanged(identifierEvent);
 		}
 	}
 
@@ -480,6 +511,9 @@ public final class MutableActivityManager
 		Map categoryEventsByCategoryId =
 			updateCategories(categoriesById.keySet());
 
+		Map identifierEventsByIdentifierId =
+			updateIdentifiers(identifiersById.keySet());
+
 		if (definedActivityIdsChanged || definedCategoryIdsChanged)
 			fireActivityManagerChanged(
 				new ActivityManagerEvent(
@@ -494,6 +528,9 @@ public final class MutableActivityManager
 
 		if (categoryEventsByCategoryId != null)
 			notifyCategories(categoryEventsByCategoryId);
+
+		if (identifierEventsByIdentifierId != null)
+			notifyIdentifiers(identifierEventsByIdentifierId);
 	}
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
@@ -508,32 +545,18 @@ public final class MutableActivityManager
 				updateActivities(this.definedActivityIds);
 		}
 
+		Map identifierEventsByIdentifierId =
+			updateIdentifiers(identifiersById.keySet());
+
 		if (activityManagerChanged)
 			fireActivityManagerChanged(
 				new ActivityManagerEvent(this, false, false, true, false));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);
-	}
 
-	public void setEnabledCategoryIds(Set enabledCategoryIds) {
-		enabledCategoryIds = Util.safeCopy(enabledCategoryIds, String.class);
-		boolean activityManagerChanged = false;
-		Map categoryEventsByCategoryId = null;
-
-		if (!this.enabledCategoryIds.equals(enabledCategoryIds)) {
-			this.enabledCategoryIds = enabledCategoryIds;
-			activityManagerChanged = true;
-			categoryEventsByCategoryId =
-				updateCategories(this.definedCategoryIds);
-		}
-
-		if (activityManagerChanged)
-			fireActivityManagerChanged(
-				new ActivityManagerEvent(this, false, false, false, true));
-
-		if (categoryEventsByCategoryId != null)
-			notifyCategories(categoryEventsByCategoryId);
+		if (identifierEventsByIdentifierId != null)
+			notifyIdentifiers(identifierEventsByIdentifierId);
 	}
 
 	private Map updateActivities(Collection activityIds) {
@@ -665,5 +688,38 @@ public final class MutableActivityManager
 				nameChanged);
 		else
 			return null;
+	}
+
+	private IdentifierEvent updateIdentifier(Identifier identifier) {
+		boolean enabledChanged =
+			identifier.setEnabled(isEnabled(identifier.getId()));
+
+		if (enabledChanged)
+			return new IdentifierEvent(identifier, enabledChanged);
+		else
+			return null;
+	}
+
+	private Map updateIdentifiers(Collection identifierIds) {
+		Map identifierEventsByIdentifierId = new TreeMap();
+
+		for (Iterator iterator = identifierIds.iterator();
+			iterator.hasNext();
+			) {
+			String identifierId = (String) iterator.next();
+			Identifier identifier =
+				(Identifier) identifiersById.get(identifierId);
+
+			if (identifier != null) {
+				IdentifierEvent identifierEvent = updateIdentifier(identifier);
+
+				if (identifierEvent != null)
+					identifierEventsByIdentifierId.put(
+						identifierId,
+						identifierEvent);
+			}
+		}
+
+		return identifierEventsByIdentifierId;
 	}
 }

@@ -19,7 +19,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
-
 	final static String PACKAGE_BASE = "activities"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$
 	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;

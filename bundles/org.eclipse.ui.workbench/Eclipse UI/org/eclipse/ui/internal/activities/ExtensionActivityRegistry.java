@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.registry.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
-
 	private List activityActivityBindingDefinitions;
 	private List activityDefinitions;
 	private List activityPatternBindingDefinitions;

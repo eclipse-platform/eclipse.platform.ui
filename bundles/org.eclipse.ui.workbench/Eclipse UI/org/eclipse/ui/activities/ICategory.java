@@ -1,13 +1,13 @@
 /*******************************************************************************
-* Copyright (c) 2000, 2003 IBM Corporation and others.
-* All rights reserved. This program and the accompanying materials 
-* are made available under the terms of the Common Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/cpl-v10.html
-* 
-* Contributors:
-*     IBM Corporation - initial API and implementation
-******************************************************************************/
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 
 package org.eclipse.ui.activities;
 
@@ -22,7 +22,7 @@ import java.util.Set;
  * </p>
  * <p>
  * An instance of <code>ICategory</code> can be obtained from an instance of
- * <code>ICategoryManager</code> for any identifier, whether or not a
+ * <code>IActivityManager</code> for any identifier, whether or not a
  * category with that identifier is defined in the plugin registry.
  * </p>
  * <p>
@@ -39,8 +39,8 @@ import java.util.Set;
  * </p>
  * 
  * @since 3.0
- * @see IActivityBinding
  * @see IActivityManager
+ * @see ICategoryActivityBinding
  * @see ICategoryListener
  */
 public interface ICategory extends Comparable {

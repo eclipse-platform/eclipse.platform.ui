@@ -19,7 +19,6 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 
 public abstract class AbstractActivityManager implements IActivityManager {
-
 	private List activityManagerListeners;
 
 	protected AbstractActivityManager() {

@@ -18,9 +18,9 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.ICategory;
+import org.eclipse.ui.activities.IIdentifier;
 
 public final class ProxyActivityManager extends AbstractActivityManager {
-
 	private IActivityManager activityManager;
 
 	public ProxyActivityManager(IActivityManager activityManager) {
@@ -63,18 +63,14 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 		return activityManager.getEnabledActivityIds();
 	}
 
-	public Set getEnabledCategoryIds() {
-		return activityManager.getEnabledCategoryIds();
-	}	
+	public IIdentifier getIdentifier(String identifierId) {
+		return activityManager.getIdentifier(identifierId);
+	}
 	
 	public Set getMatchingActivityIds(String string, Set activityIds) {
 		return activityManager.getMatchingActivityIds(string, activityIds);
 	}
 
-	public Set getRequiredActivityIds(Set activityIds) {
-		return activityManager.getRequiredActivityIds(activityIds);
-	}	
-	
 	public boolean isMatch(String string, Set activityIds) {
 		return activityManager.isMatch(string, activityIds);
 	}

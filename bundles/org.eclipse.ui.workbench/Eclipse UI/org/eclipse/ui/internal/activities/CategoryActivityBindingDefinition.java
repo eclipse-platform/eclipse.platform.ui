@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.util.Util;
 
 final class CategoryActivityBindingDefinition
 	implements ICategoryActivityBindingDefinition {
-
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		CategoryActivityBindingDefinition.class.getName().hashCode();

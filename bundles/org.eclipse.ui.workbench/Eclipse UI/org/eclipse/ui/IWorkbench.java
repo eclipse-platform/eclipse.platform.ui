@@ -368,7 +368,6 @@ public IElementFactory getElementFactory(String factoryId);
  * 		created return false.
  * @return IObjectActivityManager or <code>null</code>.
  */
-	
 public IObjectActivityManager getObjectActivityManager(String id, boolean create);
 
 /**

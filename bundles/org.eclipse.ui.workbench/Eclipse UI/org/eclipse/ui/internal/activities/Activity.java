@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.activities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -25,13 +26,12 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
 
 final class Activity implements IActivity {
-
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
+	private final static Set strongReferences = new HashSet();
 	private Set activityActivityBindings;
 	private transient IActivityActivityBinding[] activityActivityBindingsAsArray;
 	private List activityListeners;
-	private MutableActivityManager activityManager;
 	private Set activityPatternBindings;
 	private transient IActivityPatternBinding[] activityPatternBindingsAsArray;
 	private boolean defined;
@@ -44,11 +44,10 @@ final class Activity implements IActivity {
 	private String parentId;
 	private transient String string;
 
-	Activity(MutableActivityManager activityManager, String id) {
-		if (activityManager == null || id == null)
+	Activity(String id) {
+		if (id == null)
 			throw new NullPointerException();
 
-		this.activityManager = activityManager;
 		this.id = id;
 	}
 
@@ -62,7 +61,7 @@ final class Activity implements IActivity {
 		if (!activityListeners.contains(activityListener))
 			activityListeners.add(activityListener);
 
-		activityManager.getActivitiesWithListeners().add(this);
+		strongReferences.add(this);
 	}
 
 	public int compareTo(Object object) {
@@ -236,7 +235,7 @@ final class Activity implements IActivity {
 			activityListeners.remove(activityListener);
 
 		if (activityListeners.isEmpty())
-			activityManager.getActivitiesWithListeners().remove(this);
+			strongReferences.remove(this);
 	}
 
 	boolean setActivityActivityBindings(Set activityActivityBindings) {

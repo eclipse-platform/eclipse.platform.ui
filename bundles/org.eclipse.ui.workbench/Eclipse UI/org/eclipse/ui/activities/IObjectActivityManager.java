@@ -11,7 +11,6 @@
 package org.eclipse.ui.activities;
 
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * <p>
@@ -79,9 +78,9 @@ public interface IObjectActivityManager {
 	 * @param activityId
 	 *            the activity ID to bind to.
 	 */
-	public void addActivityBinding(
-		IObjectContributionRecord record,
-		String activityId);
+	//public void addActivityBinding(
+	//	IObjectContributionRecord record,
+	//	String activityId);
 
 	/**
 	 * Add a given id-&gt;object mapping. A given object should be added to the
@@ -125,7 +124,7 @@ public interface IObjectActivityManager {
 	 *         the supplied object. Typically this collection will have either
 	 *         0 or 1 element in it.
 	 */
-	public Collection findObjectContributionRecords(Object objectOfInterest);
+	//public Collection findObjectContributionRecords(Object objectOfInterest);
 
 	/**
 	 * Return a <code>Set</code> of objects that are currently valid based on the enabled
@@ -141,7 +140,7 @@ public interface IObjectActivityManager {
 	 * 
 	 * @return the <code>Set</code> of keys.
 	 */
-	public Set getObjectIds();
+	//public Set getObjectIds();
 
 	/**
 	 * Removes from the collection the object matching the given contribution
@@ -150,7 +149,7 @@ public interface IObjectActivityManager {
 	 * @param record
 	 *            the <code>IObjectContributionRecord</code> of the object to remove.
 	 */
-	public void removeObject(IObjectContributionRecord record);
+	//public void removeObject(IObjectContributionRecord record);
 
 	/**
 	 * Set the enablement state for all activities bound to the given objects

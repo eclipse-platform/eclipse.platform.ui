@@ -236,6 +236,15 @@ public class ObjectActivityManager implements IObjectActivityManager {
 	 */
 	public void applyPatternBindings() {
 		applyPatternBindings(getObjectIds());
+		
+		int size = 0;
+		
+		for (Iterator iter = activityMap.values().iterator(); iter.hasNext();) {
+			Collection c = (Collection) iter.next();
+			size += c.size();
+		}
+				
+		System.out.println(getId() + size);		
 	}
 
 	/**

@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 final class ActivityDefinition implements Comparable, IActivityDefinition {
-
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		ActivityDefinition.class.getName().hashCode();
