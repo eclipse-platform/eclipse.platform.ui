@@ -158,13 +158,6 @@ public class ShowInAction extends Action {
 		if (o instanceof IShowInSource) {
 			return (IShowInSource) o;
 		}
-		if (sourcePart instanceof org.eclipse.ui.dialogs.IShowInSource) {
-			return wrap((org.eclipse.ui.dialogs.IShowInSource) sourcePart);
-		}
-		o = sourcePart.getAdapter(org.eclipse.ui.dialogs.IShowInSource.class);
-		if (o instanceof org.eclipse.ui.dialogs.IShowInSource) {
-			return wrap((org.eclipse.ui.dialogs.IShowInSource) o);
-		}
 		return null;
 	}
 	
@@ -182,13 +175,6 @@ public class ShowInAction extends Action {
 		Object o = targetPart.getAdapter(IShowInTarget.class);
 		if (o instanceof IShowInTarget) {
 			return (IShowInTarget) o;
-		}
-		if (targetPart instanceof org.eclipse.ui.dialogs.IShowInTarget) {
-			return wrap((org.eclipse.ui.dialogs.IShowInTarget) targetPart);
-		}
-		o = targetPart.getAdapter(org.eclipse.ui.dialogs.IShowInTarget.class);
-		if (o instanceof org.eclipse.ui.dialogs.IShowInTarget) {
-			return wrap((org.eclipse.ui.dialogs.IShowInTarget) o);
 		}
 		return null;
 	}
@@ -302,38 +288,5 @@ public class ShowInAction extends Action {
 				WorkbenchPlugin.log("Error showing view in ShowInAction.run", e.getStatus()); //$NON-NLS-1$
 			}
 		}
-	}
-
-	/**
-	 * Adapts from old to new API for IShowInSource.
-	 */
-	private IShowInSource wrap(
-		final org.eclipse.ui.dialogs.IShowInSource oldSource) {
-		return new IShowInSource() {
-			public ShowInContext getShowInContext() {
-				return oldSource.getShowInContext();
-			}
-
-		};
-	}
-
-	/**
-	 * Adapts from old to new API for IShowInTarget.
-	 */
-	private IShowInTarget wrap(
-		final org.eclipse.ui.dialogs.IShowInTarget oldTarget) {
-		return new IShowInTarget() {
-			public boolean show(ShowInContext context) {
-				if (context instanceof org.eclipse.ui.dialogs.ShowInContext) {
-					return oldTarget.show(
-						(org.eclipse.ui.dialogs.ShowInContext) context);
-				} else {
-					return oldTarget.show(
-						new org.eclipse.ui.dialogs.ShowInContext(
-							context.getInput(),
-							context.getSelection()));
-				}
-			}
-		};
 	}
 }
