@@ -612,11 +612,12 @@ public class Patcher {
 	 */
 	private int patch(Hunk hunk, List lines, int shift, List failedHunks) {
 		if (tryPatch(hunk, lines, shift)) {
-			shift+= doPatch(hunk, lines, shift);
+			if (hunk.isEnabled())
+				shift+= doPatch(hunk, lines, shift);
 		} else {
 			boolean found= false;
 			int oldShift= shift;
-			
+						
 			for (int i= 1; i <= fFuzz; i++) {
 				if (tryPatch(hunk, lines, shift-i)) {
 					if (fAdjustShift)
@@ -657,7 +658,6 @@ public class Patcher {
 	 */
 	private boolean tryPatch(Hunk hunk, List lines, int shift) {
 		int pos= hunk.fOldStart + shift;
-		//int contextMatches= 0;
 		int deleteMatches= 0;
 		for (int i= 0; i < hunk.fLines.length; i++) {
 			String s= hunk.fLines[i];
@@ -669,13 +669,10 @@ public class Patcher {
 					if (pos < 0 || pos >= lines.size())
 						return false;
 					if (linesMatch(line, (String) lines.get(pos))) {
-						//contextMatches++;
 						pos++;
 						break;
 					}
-					//if (contextMatches <= 0)
-						return false;
-					//pos++;
+					return false;
 				}
 			} else if (controlChar == '-') {
 				// deleted lines
@@ -695,7 +692,7 @@ public class Patcher {
 				// added lines
 				// we don't have to do anything for a 'try'
 			} else
-				Assert.isTrue(false, "tryPatch: unknown control charcter: " + controlChar); //$NON-NLS-1$
+				Assert.isTrue(false, "tryPatch: unknown control character: " + controlChar); //$NON-NLS-1$
 		}
 		return true;
 	}

@@ -22,7 +22,7 @@ import java.util.List;
 	int fNewStart, fNewLength;
 	String[] fLines;
 	boolean fMatches= false;
-	private boolean fIsEnabled2= true;
+	private boolean fIsEnabled= true;
 	
 	
 	/* package */ Hunk(Diff parent, int[] oldRange, int[] newRange, List lines) {
@@ -44,13 +44,13 @@ import java.util.List;
 		
 		fLines= (String[]) lines.toArray(new String[lines.size()]);
 	}
-	
+		
 	boolean isEnabled() {
-		return fIsEnabled2;
+		return fIsEnabled;
 	}
 	
-	void setEnabled(boolean b) {
-		fIsEnabled2= b;
+	void setEnabled(boolean enable) {
+		fIsEnabled= enable;
 	}
 	
 	void reverse() {
