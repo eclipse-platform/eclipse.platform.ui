@@ -65,7 +65,7 @@ import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
  * 
  * @since 3.0
  */
-public abstract class AbstractDecoratedTextEditor extends ExtendedTextEditor {
+public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/**
 	 * Preference key for showing the line number ruler.
 	 */
