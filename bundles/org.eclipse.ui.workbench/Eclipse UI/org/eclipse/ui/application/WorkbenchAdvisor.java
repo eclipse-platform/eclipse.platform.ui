@@ -382,8 +382,8 @@ public abstract class WorkbenchAdvisor {
 	 * the tool bar, and the status line are to be described.
 	 * The actions included in the proxy action bars can be the same instances
 	 * as in the actual window's action bars. Calling <code>ActionFactory</code>
-	 * to create new action instances it is not recommended, because these
-	 * actions interally register listeners with the window and there is no
+	 * to create new action instances is not recommended, because these
+	 * actions internally register listeners with the window and there is no
 	 * opportunity to dispose of these actions.
 	 * </p>
 	 * <p>

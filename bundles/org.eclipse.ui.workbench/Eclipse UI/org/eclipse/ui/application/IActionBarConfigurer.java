@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Interface providing special access for configuring the action bars
@@ -30,6 +31,20 @@ import org.eclipse.jface.action.ICoolBarManager;
  * @since 3.0
  */
 public interface IActionBarConfigurer {
+    
+    /**
+     * Returns the window to which this action bar configurer applies.
+     * <p>
+     * Note that in some cases, making changes to the action bars
+     * represented by this configurer may not actually affect the
+     * actions shown in the window.
+     * For more details, see {@link WorkbenchAdvisor#fillActionBars}.
+     * </p>
+     * 
+     * @return the window to which this action bar configurer applies
+     */
+    public IWorkbenchWindow getWindow();
+    
 	/**
 	 * Returns the menu manager for the main menu bar of a workbench window.
 	 * 
