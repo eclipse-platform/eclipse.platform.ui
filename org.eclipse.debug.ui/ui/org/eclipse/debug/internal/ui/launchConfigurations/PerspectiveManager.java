@@ -427,7 +427,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically
 	 */
 	private boolean shouldSwitchPerspective(IWorkbenchWindow window, String perspectiveId, String message, String preferenceKey) {
-		if (isCurrentPerspective(window, perspectiveId) || fPrompting) {
+		if (isCurrentPerspective(window, perspectiveId)) {
 			return false;
 		}
 		String perspectiveName= getPerspectiveLabel(perspectiveId);
@@ -442,7 +442,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		}
 		
 		Shell shell= window.getShell();
-		if (shell == null) {
+		if (shell == null || fPrompting) {
 			return false;
 		}
 		fPrompting= true;
@@ -451,6 +451,12 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		synchronized (this) {
 			fPrompting= false;
 			notifyAll();
+		}
+		if (isCurrentPerspective(window, perspectiveId)) {
+			// While prompting in response to one event (say, a launch),
+			// another event can occur which changes the perspective.
+			// Double-check that we're not in the right perspective.
+			answer= false;
 		}
 		return answer;
 	}
