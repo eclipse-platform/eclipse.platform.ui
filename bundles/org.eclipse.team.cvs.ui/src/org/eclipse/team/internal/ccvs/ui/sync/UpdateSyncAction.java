@@ -156,17 +156,18 @@ public class UpdateSyncAction extends MergeAction {
 					parentConflictElements.add(parent);
 				}
 			}
-			int kind = changed[i].getKind();
-			IResource resource = changed[i].getResource();
+			ITeamNode changedNode = changed[i];
+			int kind = changedNode.getKind();
+			IResource resource = changedNode.getResource();
 			switch (kind & Differencer.DIRECTION_MASK) {
 				case ITeamNode.INCOMING:
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
 						case Differencer.ADDITION:
-							updateIgnoreLocalShallow.add(resource);
+							updateIgnoreLocalShallow.add(changedNode);
 							break;
 						case Differencer.DELETION:
 						case Differencer.CHANGE:
-							updateDeep.add(resource);
+							updateDeep.add(changedNode);
 							break;
 					}
 					break;
@@ -174,14 +175,14 @@ public class UpdateSyncAction extends MergeAction {
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
 						case Differencer.ADDITION:
 							// Unmanage the file if necessary and delete it.
-							deletions.add(changed[i]);
+							deletions.add(changedNode);
 							break;
 						case Differencer.DELETION:
-							makeIncoming.add(changed[i]);
-							updateDeep.add(resource);
+							makeIncoming.add(changedNode);
+							updateDeep.add(changedNode);
 							break;
 						case Differencer.CHANGE:
-							updateIgnoreLocalShallow.add(resource);
+							updateIgnoreLocalShallow.add(changedNode);
 							break;
 					}
 					break;
@@ -189,18 +190,18 @@ public class UpdateSyncAction extends MergeAction {
 					switch (kind & Differencer.CHANGE_TYPE_MASK) {
 						case Differencer.ADDITION:
 							// To do: conflicting addition: must make incoming first
-							makeIncoming.add(changed[i]);
-							updateIgnoreLocalShallow.add(resource);
+							makeIncoming.add(changedNode);
+							updateIgnoreLocalShallow.add(changedNode);
 							break;
 						case Differencer.DELETION:
 							// Doesn't happen, these nodes don't appear in the tree.
 							break;
 						case Differencer.CHANGE:
 							// Depends on the flag.
-							if (onlyUpdateAutomergeable && (changed[i].getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
-								updateShallow.add(resource);
+							if (onlyUpdateAutomergeable && (changedNode.getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
+								updateShallow.add(changedNode);
 							} else {
-								updateIgnoreLocalShallow.add(resource);
+								updateIgnoreLocalShallow.add(changedNode);
 							}
 							break;
 					}
@@ -233,37 +234,25 @@ public class UpdateSyncAction extends MergeAction {
 			Iterator it = makeIncoming.iterator();
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
-				if (node instanceof TeamFile) {
-					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
-				} else if (node instanceof ChangedTeamContainer) {
-					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
-				}
+				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
 			}
 			// Outgoing additions must be unmanaged (if necessary) and locally deleted.
 			it = deletions.iterator();
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
-				if (node instanceof TeamFile) {
-					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
-					element.getLocal().delete(true, monitor);
-				} else if (node instanceof ChangedTeamContainer) {
-					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
-					element.getLocal().delete(true, monitor);
-				}
+				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(node);
+				element.makeIncoming(monitor);
+				element.getLocal().delete(true, monitor);
 			}
 			
 			if (updateShallow.size() > 0) {
-				manager.update((IResource[])updateShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Command.DO_NOT_RECURSE }), false, monitor);
+				runUpdateShallow((ITeamNode[])updateShallow.toArray(new ITeamNode[updateShallow.size()]), manager, monitor);
 			}
 			if (updateIgnoreLocalShallow.size() > 0) {
-				manager.update((IResource[])updateIgnoreLocalShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE }), false, monitor);
+				runUpdateIgnoreLocalShallow((ITeamNode[])updateIgnoreLocalShallow.toArray(new ITeamNode[updateIgnoreLocalShallow.size()]), manager, monitor);
 			}
 			if (updateDeep.size() > 0) {
-				manager.update((IResource[])updateDeep.toArray(new IResource[0]), getLocalOptions(Command.NO_LOCAL_OPTIONS), false, monitor);
+				runUpdateDeep((ITeamNode[])updateDeep.toArray(new ITeamNode[updateDeep.size()]), manager, monitor);
 			}
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
@@ -283,8 +272,17 @@ public class UpdateSyncAction extends MergeAction {
 		}
 		return syncSet;
 	}
-	protected Command.LocalOption[] getLocalOptions(Command.LocalOption[] baseOptions) {
-		return baseOptions;
+	
+	protected void runUpdateDeep(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+		manager.update(getIResourcesFrom(nodes), Command.NO_LOCAL_OPTIONS, false, monitor);
+	}
+	
+	protected void runUpdateIgnoreLocalShallow(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+		manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE }, false, monitor);
+	}
+	
+	protected void runUpdateShallow(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+		manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Command.DO_NOT_RECURSE }, false, monitor);
 	}
 	
 	protected void makeInSync(IDiffElement parentElement) throws TeamException {
@@ -309,6 +307,15 @@ public class UpdateSyncAction extends MergeAction {
 			}
 		}
 	}
+			
+	protected IResource[] getIResourcesFrom(ITeamNode[] nodes) {
+		List resources = new ArrayList(nodes.length);
+		for (int i = 0; i < nodes.length; i++) {
+			resources.add(nodes[i].getResource());
+		}
+		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+	}
+	
 	protected boolean isEnabled(ITeamNode node) {
 		return true;
 	}
