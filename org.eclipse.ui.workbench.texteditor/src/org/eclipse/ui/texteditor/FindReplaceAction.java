@@ -82,9 +82,9 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 				fPreviousTarget= target;
 				if (fDialog != null) {
 					boolean isEditable= false;
-					if (fPart instanceof ITextEditorExtension) {
-						ITextEditorExtension extension= (ITextEditorExtension) fPart;
-						isEditable= !extension.isEditorInputReadOnly();
+					if (fPart instanceof ITextEditorExtension2) {
+						ITextEditorExtension2 extension= (ITextEditorExtension2) fPart;
+						isEditable= extension.isEditorInputModifiable();
 					}
 					fDialog.updateTarget(target, isEditable);
 				}
@@ -148,11 +148,6 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
-	/** 
-	 * Indicates whether the find/replace target is editable
-	 * @since 2.0
-	 */ 
-	private boolean fIsTargetEditable= false;
 
 	/**
 	 * Creates a new find/replace action for the given text editor. 
@@ -198,9 +193,6 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	public void run() {
 		if (fTarget == null)
 			return;
-
-		if (fWorkbenchPart instanceof ITextEditorExtension2)
-			fIsTargetEditable= ((ITextEditorExtension2) fWorkbenchPart).validateEditorInputState();
 			
 		if (fgFindReplaceDialogStub != null) {
 			Shell shell= fWorkbenchPart.getSite().getShell();
@@ -213,9 +205,13 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		
 		if (fgFindReplaceDialogStub == null)
 			fgFindReplaceDialogStub= new FindReplaceDialogStub(fWorkbenchPart.getSite());
-			
+					
+		boolean isEditable= false;
+		if (fWorkbenchPart instanceof ITextEditorExtension2)
+			isEditable= ((ITextEditorExtension2) fWorkbenchPart).isEditorInputModifiable();
+
 		FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
-		dialog.updateTarget(fTarget, fIsTargetEditable);
+		dialog.updateTarget(fTarget, isEditable);
 		dialog.open();
 	}
 	
@@ -233,10 +229,5 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 			fTarget= null;
 			
 		setEnabled(fTarget != null && fTarget.canPerformFind());
-		
-//		if (fgFindReplaceDialogStub != null) {
-//			FindReplaceDialog dialog= fgFindReplaceDialogStub.getDialog();
-//			dialog.updateTarget(fTarget, fIsTargetEditable);
-//		}
 	}
 }

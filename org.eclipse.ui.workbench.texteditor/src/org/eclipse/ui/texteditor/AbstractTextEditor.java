@@ -1067,8 +1067,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	};
 	
-	
-	
 	/**
 	 * Key used to look up font preference
 	 * Value: <code>"org.eclipse.jface.textfont"</code>
@@ -1342,7 +1340,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private boolean fIsSanityCheckEnabled= true;
-	
+	/**
+	 * The find replace target.
+	 * @since 2.1
+	 */
+	private FindReplaceTarget fFindReplaceTarget;	
 	
 	
 	/**
@@ -3626,10 +3628,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		if (IFindReplaceTarget.class.equals(required)) {
-			IFindReplaceTarget target= (fSourceViewer == null ? null : fSourceViewer.getFindReplaceTarget());
-			if (target != null && target instanceof IFindReplaceTargetExtension)
-				((IFindReplaceTargetExtension) target).setScopeHighlightColor(fFindScopeHighlightColor);
-			return target;
+			if (fFindReplaceTarget == null) {
+				IFindReplaceTarget target= (fSourceViewer == null ? null : fSourceViewer.getFindReplaceTarget());
+				if (target != null) {
+					fFindReplaceTarget= new FindReplaceTarget(this, target);
+					fFindReplaceTarget.setScopeHighlightColor(fFindScopeHighlightColor);
+				}
+			}
+			return fFindReplaceTarget;
 		}
 		
 		if (ITextOperationTarget.class.equals(required))

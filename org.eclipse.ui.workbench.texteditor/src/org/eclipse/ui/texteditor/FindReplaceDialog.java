@@ -1063,12 +1063,33 @@ class FindReplaceDialog extends Dialog {
 
 		updateButtonState();
 	}
+	
+	/**
+	 * Validates the state of the find/replace target.
+	 * @return <code>true</code> if target can be changed, <code>false</code>
+	 *    otherwise
+	 */
+	private boolean validateTargetState() {
+		
+		if (fTarget instanceof IFindReplaceTargetExtension2) {
+			IFindReplaceTargetExtension2 extension= (IFindReplaceTargetExtension2) fTarget;
+			if (!extension.validateTargetState()) {
+				statusError("Replace can not be performed because of read only state.");
+				updateButtonState();
+				return false;
+			}
+		}
+		return isEditable();
+	}
 
 	/**
 	 * Replaces the current selection of the target with the user's
 	 * replace string.
 	 */
 	private void performReplaceSelection() {
+		
+		if (!validateTargetState()) 
+			return;
 
 		String replaceString= getReplaceString();
 		if (replaceString == null)
@@ -1127,6 +1148,9 @@ class FindReplaceDialog extends Dialog {
 			Point selection= fTarget.getSelection();
 			findReplacePosition= selection.x;
 		}
+		
+		if (!validateTargetState())
+			return replaceCount;
 		
 		if (fTarget instanceof IFindReplaceTargetExtension)
 			((IFindReplaceTargetExtension) fTarget).setReplaceAllMode(true);
