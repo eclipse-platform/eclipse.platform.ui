@@ -1,8 +1,14 @@
+/************************************************************************
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal;
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.util.*;
@@ -46,11 +52,7 @@ public class WorkingSetManager implements IWorkingSetManager {
 	 * @see org.eclipse.ui.IWorkingSetManager#addRecentWorkingSet(IWorkingSet)
 	 */
 	public void addRecentWorkingSet(IWorkingSet workingSet) {
-		recentWorkingSets.remove(workingSet);
-		recentWorkingSets.add(0, workingSet);
-		if (recentWorkingSets.size() > MRU_SIZE) {
-			recentWorkingSets.remove(MRU_SIZE);
-		}
+		internalAddRecentWorkingSet(workingSet);
 		saveState();
 	}
 	/**
@@ -211,6 +213,20 @@ public class WorkingSetManager implements IWorkingSetManager {
 		return path.toFile();
 	}
 	/**
+	 * Adds the specified working set to the list of recently used
+	 * working sets.
+	 * 
+	 * @param workingSet working set to added to the list of recently 
+	 * 	used working sets.
+	 */
+	private void internalAddRecentWorkingSet(IWorkingSet workingSet) {
+		recentWorkingSets.remove(workingSet);
+		recentWorkingSets.add(0, workingSet);
+		if (recentWorkingSets.size() > MRU_SIZE) {
+			recentWorkingSets.remove(MRU_SIZE);
+		}
+	}
+	/**
 	 * Implements IWorkingSetManager.
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetManager#removePropertyChangeListener(IPropertyChangeListener)
@@ -243,7 +259,7 @@ public class WorkingSetManager implements IWorkingSetManager {
 			if (workingSetName != null) {
 				IWorkingSet workingSet = getWorkingSet(workingSetName);		
 				if (workingSet != null) {
-					addRecentWorkingSet(workingSet);		
+					internalAddRecentWorkingSet(workingSet);		
 				}
 			}
 		}
@@ -320,7 +336,8 @@ public class WorkingSetManager implements IWorkingSetManager {
 		for (int i = 0; i < workingSets.length; i++) {
 			IWorkingSet workingSet = restoreWorkingSet(workingSets[i]);
 			if (workingSet != null) {
-				addWorkingSet(workingSet);
+				this.workingSets.add(workingSet);
+				firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
 			}
 		}
 	}

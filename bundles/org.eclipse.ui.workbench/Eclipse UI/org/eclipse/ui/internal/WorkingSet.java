@@ -1,11 +1,16 @@
-package org.eclipse.ui.internal;
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-import java.util.ArrayList;
-import java.util.Iterator;
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+package org.eclipse.ui.internal;
+
+import java.util.*;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.Assert;
@@ -26,6 +31,8 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	private ArrayList elements;
 	private String editPageId;
 
+	private IMemento workingSetMemento;
+	
 	/**
 	 * Creates a new working set
 	 * 
@@ -38,6 +45,19 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		this.name = name;
 		internalSetElements(elements);
+	}
+	/**
+	 * Creates a new working set
+	 * 
+	 * @param name the name of the new working set. Should not have 
+	 * 	leading or trailing whitespace.
+	 * @param memento persistence memento containing the elements of  
+	 * 	the working set.
+	 */
+	WorkingSet(String name, IMemento memento) {
+		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
+		this.name = name;
+		workingSetMemento = memento; 
 	}
 	/**
 	 * Tests the receiver and the object for equality
@@ -55,7 +75,7 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 			String objectPageId = workingSet.getEditPageId();
 			String pageId = getEditPageId();
 			boolean pageIdEqual = (objectPageId == null && pageId == null) || (objectPageId != null && objectPageId.equals(pageId));
-			return workingSet.getName().equals(getName()) && workingSet.elements.equals(elements) && pageIdEqual;
+			return workingSet.getName().equals(getName()) && workingSet.getElementsArray().equals(getElementsArray()) && pageIdEqual;
 		}
 		return false;
 	}
@@ -97,7 +117,25 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @see org.eclipse.ui.IWorkingSet#getElements()
 	 */
 	public IAdaptable[] getElements() {
+		ArrayList elements = getElementsArray();
+		
 		return (IAdaptable[]) elements.toArray(new IAdaptable[elements.size()]);
+	}
+	/**
+	 * Returns the elements array list. Lazily restores the elements from
+	 * persistence memento. 
+	 * 
+	 * @return the elements array list
+	 */
+	private ArrayList getElementsArray() {
+		if (elements == null) {
+			restoreWorkingSet();
+			if (elements == null) {
+				elements = new ArrayList();
+			}
+			workingSetMemento = null;
+		}
+		return elements;
 	}
 	/**
 	 * Implements IPersistableElement
@@ -113,12 +151,40 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @return the hash code.
 	 */
 	public int hashCode() {
-		int hashCode = name.hashCode() & elements.hashCode();
+		int hashCode = name.hashCode() & getElementsArray().hashCode();
 		
 		if (editPageId != null) {
 			hashCode &= editPageId.hashCode();
 		}
 		return hashCode;
+	}
+	/**
+	 * Recreates the working set elements from the persistence memento.
+	 */
+	private void restoreWorkingSet() {
+		IMemento[] itemMementos = workingSetMemento.getChildren(IWorkbenchConstants.TAG_ITEM);
+		Set items = new HashSet();
+		for (int i = 0; i < itemMementos.length; i++) {
+			IMemento itemMemento = itemMementos[i];
+			String factoryID = itemMemento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+
+			if (factoryID == null) {
+				WorkbenchPlugin.log("Unable to restore working set item - no factory ID."); //$NON-NLS-1$
+				continue;
+			}
+			IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+			if (factory == null) {
+				WorkbenchPlugin.log("Unable to restore working set item - cannot instantiate factory: " + factoryID); //$NON-NLS-1$
+				continue;
+			}
+			IAdaptable item = factory.createElement(itemMemento);
+			if (item == null) {
+				WorkbenchPlugin.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
+				continue;
+			}
+			items.add(item);
+		}
+		internalSetElements((IAdaptable[]) items.toArray(new IAdaptable[items.size()]));
 	}
 	/**
 	 * Implements IPersistableElement.
@@ -129,18 +195,25 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @see org.eclipse.ui.IPersistableElement#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {
-		memento.putString(IWorkbenchConstants.TAG_NAME, name);
-		memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
-		Iterator iterator = elements.iterator();
-		while (iterator.hasNext()) {
-			IAdaptable adaptable = (IAdaptable) iterator.next();
-			IPersistableElement persistable = (IPersistableElement) adaptable.getAdapter(IPersistableElement.class);
-			if (persistable != null) {
-				IMemento itemMemento = memento.createChild(IWorkbenchConstants.TAG_ITEM);
-				
-				itemMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-				persistable.saveState(itemMemento);
-			}	
+		if (workingSetMemento != null) {
+			// just re-save the previous memento if the working set has 
+			// not been restored
+			memento.putMemento(workingSetMemento);
+		}
+		else {
+			memento.putString(IWorkbenchConstants.TAG_NAME, name);
+			memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
+			Iterator iterator = elements.iterator();
+			while (iterator.hasNext()) {
+				IAdaptable adaptable = (IAdaptable) iterator.next();
+				IPersistableElement persistable = (IPersistableElement) adaptable.getAdapter(IPersistableElement.class);
+				if (persistable != null) {
+					IMemento itemMemento = memento.createChild(IWorkbenchConstants.TAG_ITEM);
+					
+					itemMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+					persistable.saveState(itemMemento);
+				}	
+			}
 		}
 	}
 	/** 
@@ -149,7 +222,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @see org.eclipse.ui.IWorkingSet#setElements(IAdaptable[])
 	 */
 	public void setElements(IAdaptable[] newElements) {
-		
 		internalSetElements(newElements);
 		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
 		workingSetManager.workingSetChanged(this, IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE);

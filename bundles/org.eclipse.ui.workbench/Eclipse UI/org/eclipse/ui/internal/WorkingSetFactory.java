@@ -1,10 +1,14 @@
+/************************************************************************
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal;
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IElementFactory;
@@ -30,29 +34,7 @@ public class WorkingSetFactory implements IElementFactory {
 		if (workingSetName == null)
 			return null;
 
-		IMemento[] itemMementos = memento.getChildren(IWorkbenchConstants.TAG_ITEM);
-		Set items = new HashSet();
-		for (int i = 0; i < itemMementos.length; i++) {
-			IMemento itemMemento = itemMementos[i];
-			String factoryID = itemMemento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-
-			if (factoryID == null) {
-				WorkbenchPlugin.log("Unable to restore working set item - no factory ID."); //$NON-NLS-1$
-				continue;
-			}
-			IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
-			if (factory == null) {
-				WorkbenchPlugin.log("Unable to restore working set item - cannot instantiate factory: " + factoryID); //$NON-NLS-1$
-				continue;
-			}
-			IAdaptable item = factory.createElement(itemMemento);
-			if (item == null) {
-				WorkbenchPlugin.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
-				continue;
-			}
-			items.add(item);
-		}
-		WorkingSet workingSet = new WorkingSet(workingSetName, (IAdaptable[]) items.toArray(new IAdaptable[items.size()]));
+		WorkingSet workingSet = new WorkingSet(workingSetName, memento);
 		if (workingSetEditPageId != null) {
 			workingSet.setEditPageId(workingSetEditPageId);
 		}
