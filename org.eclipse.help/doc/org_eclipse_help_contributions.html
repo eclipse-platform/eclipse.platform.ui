@@ -219,7 +219,7 @@ insertion points are ignored.
 <br>&nbsp;
 <p><b><i>Examples:</i></b>
 <p>The following is an example of using the <tt>contributions</tt> extension
-point. Assume the following is for a plug-in with id&nbsp; named <tt>"com.example.isvguide"</tt>.
+point. Assume the following is for a plug-in with id&nbsp; named <tt>"org.eclipse.help.examples.ex1"</tt>.
 (The example is intended as a general sample, and it should be noted that
 the same documentation hierarchy, resulting from all the following contribution
 files, could also be created with various combination of topics and actions
@@ -235,23 +235,27 @@ view, and another to define the&nbsp;&nbsp; --></tt>
 <br><tt>&nbsp;&nbsp; &lt;!-- Topics and their associated actions.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 --></tt>
 <br><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.help.contributions"></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;infoset name="infoset.xml"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;infoset&nbsp; name="infoset.xml"/></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.help.contributions"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;topics&nbsp; name="infosetTopics.xml"/></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;actions name="infosetActions.xml"/></tt>
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>&lt;topics
-name="infosetTopics.xml"/></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;topics name="concepts.xml"/></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;topics name="tasks.xml"/></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;topics name="reference.xml"/></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;topics name="samples.xml"/></tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp; &lt;topics name="pdfdocuments.xml"/></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<p><tt>&nbsp;&nbsp; &lt;!-- Configure the help contribution for this plugin
+--></tt>
+<br><tt>&nbsp;&nbsp; &lt;!-- This part should be in a documentation plugin
+--></tt>
+<br><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.help.contributions"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;topics name="topics.xml"/></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;actions name="topicsActions.xml"
+/></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+<br>&nbsp;
 <br>&nbsp;
 <p>(in file <tt>infoset.xml</tt>)
 <blockquote><tt>&lt;!-- Define the Infoset, and any views it has. --></tt>
-<br><tt>&lt;infoset id="someinfosetid" label="Plug-In Development" href="isv_home.html"></tt>
-<br><tt>&nbsp; &lt;infoview id="topicsView" label="Topics"/></tt>
+<br><tt>&lt;infoset id="ex1InfosetId" label="%help_system_example"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;infoview id="topicsView" label="%topics"/></tt>
 <br><tt>&lt;/infoset></tt></blockquote>
 
 <p><br>(in file <tt>infosetTopics.xml</tt>)
@@ -262,63 +266,54 @@ the view in the&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --></tt>
 <br><tt>&lt;!-- Infoset.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 --></tt>
 <br><tt>&lt;topics id="topLevelTopics"></tt>
-<br><tt>&nbsp; &lt;topic id="concepts" label="Basic Concepts"/></tt>
-<br><tt>&nbsp; &lt;topic id="tasks" label="Tasks"/></tt>
-<br><tt>&nbsp; &lt;topic id="reference" label="Reference Information"/></tt>
-<br><tt>&nbsp; &lt;topic id="samples" label="Samples"/></tt>
-<br><tt>&nbsp; &lt;topic id="pdfdocs" label="PDF Documents"/></tt>
+<br><tt>&nbsp; &lt;topic id="concepts" label="%concepts"/></tt>
+<br><tt>&nbsp; &lt;topic id="tasks" label="%tasks"/></tt>
+<br><tt>&nbsp; &lt;topic id="references" label="%references"/></tt>
+<br><tt>&nbsp; &lt;topic id="samples" label="%samples"/></tt>
 <br><tt>&lt;/topics></tt></blockquote>
 
 <p><br>Define topics contained in the above general topics:
-<p>(in file <tt>concepts.xml</tt>)
-<blockquote><tt>&lt;topics id="Concepts_topics"></tt>
-<br><tt>&nbsp; &lt;topic id="aConceptId" label="Introduction" href="concepts/intro.html"/></tt>
-<br><tt>&lt;/topics></tt></blockquote>
-
-<p><br>(in file <tt>tasks.xml</tt>)
-<blockquote><tt>&lt;topics id="Tasks_topics"></tt>
-<br><tt>&nbsp; &lt;topic id="aTaskId" label="Creating a Project" href="tasks/createProject.html"/></tt>
-<br><tt>&lt;/topics></tt></blockquote>
-
-<p><br>(in file <tt>reference.xml</tt>)
-<blockquote><tt>&lt;topics id="Reference_topics"></tt>
-<br><tt>&nbsp; &lt;topic id="aReferenceId" label="Interfaces" href="ref/index.html"/></tt>
-<br><tt>&lt;/topics></tt></blockquote>
-
-<p><br>(in file <tt>samples.xml</tt>)
-<blockquote><tt>&lt;topics id="Samples_topics"></tt>
-<br><tt>&nbsp; &lt;topic id="aSampleId" label="Help System Sample" href="samples/helpSample1.html"/></tt>
-<br><tt>&lt;/topics></tt></blockquote>
-
-<p><br>(in file <tt>pdfdocuments.xml</tt>)
-<blockquote><tt>&lt;topics id="PDFDocument_topics"></tt>
-<br><tt>&nbsp; &lt;topic id="aPDFDocumentId" label="Plug-in development"
-href="pdf/isvdoc.pdf"/></tt>
+<p>(in file <tt>topics.xml</tt>)
+<blockquote><tt>&lt;topics id="topics"></tt>
+<br><tt>&nbsp;&lt;topic id="aConceptId" label="%introduction" href="concepts/concept.html"/></tt>
+<br><tt>&nbsp;&lt;topic id="aTaskId" label="%creating_a_project" href="tasks/task1.html"></tt>
+<br><tt>&nbsp; &lt;topic id="aSubTaskId1" label="%creating_a_web_project"
+href="tasks/task2.html"/></tt>
+<br><tt>&nbsp; &lt;topic id="aSubTaskId2" label="%creating_a_java_project"
+href="tasks/task3.html"/></tt>
+<br><tt>&nbsp;&lt;/topic></tt>
+<br><tt>&nbsp;&lt;topic id="aReferenceId" label="%interfaces" href="ref/ref1.html"/></tt>
+<br><tt>&nbsp;&lt;topic id="aSampleId" label="%help_system_sample" href="MissingFile.html"/></tt>
 <br><tt>&lt;/topics></tt></blockquote>
 
 <p><br>Now define the insert actions necessary to create the documentation
 hierarchy :
 <p>(in file <tt>infosetActions.xml</tt>)
-<blockquote><tt>&lt;actions infoview="com.example.isvguide.topicsView"></tt>
-<p><tt>&nbsp; &lt;insert from="com.example.isvguide.topLevelTopics"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-to="com.example.isvguide.topicsView" as="child"/></tt>
-<p><tt>&nbsp; &lt;insert from="com.example.isvguide.Concepts_topics"</tt>
-<br><tt>to="com.example.isvguide.concepts" as="child"/></tt>
-<p><tt>&nbsp; &lt;insert from="com.example.isvguide.Tasks_topics"</tt>
-<br><tt>to="com.example.isvguide.tasks" as="child"/></tt>
-<p><tt>&nbsp; &lt;insert from="com.example.isvguide.Reference_topics"</tt>
-<br><tt>to="com.example.isvguide.reference" as="child"/></tt>
-<p><tt>&nbsp; &lt;insert from="com.example.isvguide.Samples_topics"</tt>
-<br><tt>to="com.example.isvguide.samples" as="child"/></tt>
-<p><tt>&nbsp; &lt;insert from="com.example.isvguide.PDFDocument_topics"</tt>
-<br><tt>to="com.example.isvguide.pdfdocs" as="child"/></tt>
+<blockquote><tt>&lt;actions infoview="org.eclipse.help.examples.ex1.topicsView"></tt>
+<br><tt>&nbsp;&lt;insert from="org.eclipse.help.examples.ex1.topLevelTopics"</tt>
+<br><tt>&nbsp;&nbsp; to="org.eclipse.help.examples.ex1.topicsView" as="child"/></tt>
 <br><tt>&lt;/actions></tt></blockquote>
-
-<p><br>Here is the resulting documentation hierarchy in the Eclipse Workbench
+(in file <tt>topicsActions.xml</tt>)
+<blockquote><tt>&lt;actions infoview="org.eclipse.help.examples.ex1.topicsView"></tt>
+<br><tt>&nbsp;&lt;insert from="org.eclipse.help.examples.ex1.aConceptId"</tt>
+<br><tt>&nbsp;&nbsp; to="org.eclipse.help.examples.ex1.concepts" as="child"/></tt>
+<p><tt>&nbsp;&lt;insert from="org.eclipse.help.examples.ex1.aTaskId"</tt>
+<br><tt>&nbsp;&nbsp; to="org.eclipse.help.examples.ex1.tasks" as="child"/></tt>
+<p><tt>&nbsp;&lt;insert from="org.eclipse.help.examples.ex1.aReferenceId"</tt>
+<br><tt>&nbsp;&nbsp; to="org.eclipse.help.examples.ex1.references" as="child"/></tt>
+<p><tt>&nbsp;&lt;insert from="org.eclipse.help.examples.ex1.aSampleId"</tt>
+<br><tt>&nbsp;&nbsp; to="org.eclipse.help.examples.ex1.samples" as="child"/></tt>
+<br><tt>&lt;/actions></tt>
+<br><tt></tt>&nbsp;
+<br><tt></tt>&nbsp;</blockquote>
+Here is the resulting documentation hierarchy in the Eclipse Workbench
 :
-<p><img SRC="HelpSample.JPG" height=497 width=674>
-<blockquote>&nbsp;</blockquote>
-
+<br>&nbsp;
+<p><img SRC="HelpSample.JPG" height=431 width=803>
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
 <blockquote>&nbsp;</blockquote>
 
 <h4>
