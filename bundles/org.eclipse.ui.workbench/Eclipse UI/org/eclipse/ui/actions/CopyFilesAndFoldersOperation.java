@@ -841,6 +841,11 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
+		String destinationMessage = validateDestinationLocation(destination);
+		if (destinationMessage != null) {
+			return destinationMessage;
+		}
+		
 		IPath destinationLocation = destination.getLocation();
 		for (int i = 0; i < sourceResources.length; i++) {
 			IResource sourceResource = sourceResources[i];
@@ -848,8 +853,20 @@ public class CopyFilesAndFoldersOperation {
 
 			if (sourceResource.exists() == false) {
 				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
+					"CopyFilesAndFoldersOperation.resourceDeleted",			//$NON-NLS-1$
 					new Object[] {sourceResource.getName()});				
+			}
+			if (sourceLocation == null) {
+				if (sourceResource.isLinked()) {
+					return WorkbenchMessages.format(
+						"CopyFilesAndFoldersOperation.missingPathVariable",		//$NON-NLS-1$
+						new Object[] {sourceResource.getName()});				
+				}
+				else {
+					return WorkbenchMessages.format(
+						"CopyFilesAndFoldersOperation.resourceDeleted",		//$NON-NLS-1$
+						new Object[] {sourceResource.getName()});				
+				}
 			}
 			if (sourceLocation.equals(destinationLocation)) {
 				return WorkbenchMessages.format(
@@ -866,6 +883,32 @@ public class CopyFilesAndFoldersOperation {
 			}
 		}
 		return null;
+	}
+	/**
+	 * Validates whether the destination location exists.
+	 * Linked resources created on undefined path variables have
+	 * an undefined location. 
+	 * 
+	 * @param destination destination container
+	 * @return error message or null if destination location is 
+	 * 	valid (non-<code>null</code>)
+	 */
+	private String validateDestinationLocation(IContainer destination) {
+		IPath destinationLocation = destination.getLocation();
+		
+		if (destinationLocation == null) {
+			if (destination.isLinked()) {
+				return WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.missingPathVariable",		//$NON-NLS-1$
+					new Object[] {destination.getName()});				
+			}
+			else {
+				return WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.resourceDeleted",			//$NON-NLS-1$
+					new Object[] {destination.getName()});				
+			}
+		}
+		return null;		
 	}
 	/**
 	 * Validates that the given source resources can be copied to the 
@@ -909,9 +952,13 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
+		String destinationMessage = validateDestinationLocation(destination);
+		if (destinationMessage != null) {
+			return destinationMessage;
+		}
 		// work around bug 16202. revert when fixed.
-		File destinationFile = destination.getLocation().toFile();
 		IPath destinationPath = destination.getLocation();
+		File destinationFile = destinationPath.toFile();		
 		for (int i = 0; i < sourceNames.length; i++) {
 			IPath sourcePath = new Path(sourceNames[i]);
 			File sourceFile = sourcePath.toFile();
