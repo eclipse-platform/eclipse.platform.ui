@@ -14,13 +14,11 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
-
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
  * An action to delete a whole line, the fraction of the line that is left from the cursor
@@ -38,6 +36,8 @@ public class DeleteLineAction extends TextEditorAction {
 
 	/** The type of deletion */
 	private final int fType;
+	/** The deletion target */
+	private DeleteLineTarget fTarget;
 
 	/**
 	 * Creates a line delimiter conversion action.
@@ -49,13 +49,14 @@ public class DeleteLineAction extends TextEditorAction {
 	public DeleteLineAction(ResourceBundle bundle, String prefix, ITextEditor editor, int type) {
 		super(bundle, prefix, editor);
 		fType= type;		
+		update();
 	}
-
 	
 	/**
 	 * Returns the editor's document.
+	 * 
 	 * @param editor the editor
-	 * @return teh editor's document
+	 * @return the editor's document
 	 */
 	private static IDocument getDocument(ITextEditor editor) {
 
@@ -70,9 +71,9 @@ public class DeleteLineAction extends TextEditorAction {
 		return document;
 	}
 	
-	
 	/**
 	 * Returns the editor's selection.
+	 * 
 	 * @param editor the editor
 	 * @return the editor's selection
 	 */
@@ -94,6 +95,9 @@ public class DeleteLineAction extends TextEditorAction {
 	 */
 	public void run() {
 
+		if (fTarget == null)
+			return;
+
 		ITextEditor editor= getTextEditor();
 		if (editor == null)
 			return;
@@ -105,59 +109,12 @@ public class DeleteLineAction extends TextEditorAction {
 		ITextSelection selection= getSelection(editor);
 		if (selection == null)
 			return;
-		
+	
 		try {
-			deleteLine(document, selection.getOffset(), fType);
+			fTarget.deleteLine(document, selection.getOffset(), fType);
 		} catch (BadLocationException e) {
 			// should not happen			
 		}
-	}
-	
-	/**
-	 * Deletes the specified fraction of the line of the given offset.
-	 * @param document the document
-	 * @param position the offset
-	 * @param type the specification of what to delete
-	 * @throws BadLocationException if position is not valid in the given document
-	 */
-	private static void deleteLine(IDocument document, int position, int type) throws BadLocationException {
-
-		int line= document.getLineOfOffset(position);
-		int offset= 0;
-		int length= 0;
-
-		switch  (type) {
-		case WHOLE:
-			offset= document.getLineOffset(line);
-			length= document.getLineLength(line);
-			break;
-
-		case TO_BEGINNING:
-			offset= document.getLineOffset(line);
-			length= position - offset;
-			break;
-
-		case TO_END:		
-			offset= position;
-
-			IRegion lineRegion= document.getLineInformation(line);
-			int end= lineRegion.getOffset() + lineRegion.getLength();
-
-			if (position == end) {
-				String lineDelimiter= document.getLineDelimiter(line);
-				length= lineDelimiter == null ? 0 : lineDelimiter.length();
-
-			} else {
-				length= end - offset;
-			}
-			break;
-						
-		default:
-			return;
-		}
-		
-		if (length != 0)
-			document.replace(offset, length, ""); //$NON-NLS-1$
 	}
 
 	/*
@@ -165,6 +122,10 @@ public class DeleteLineAction extends TextEditorAction {
 	 */
 	public void update() {
 		
+		super.update();
+		if (!isEnabled())
+			return;
+
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof ITextEditorExtension) {
 			ITextEditorExtension extension= (ITextEditorExtension) editor;
@@ -174,6 +135,11 @@ public class DeleteLineAction extends TextEditorAction {
 			}
 		}
 		
-		super.update();
+		if (editor != null)
+			fTarget= (DeleteLineTarget) editor.getAdapter(DeleteLineTarget.class);
+		else
+			fTarget= null;
+			
+		setEnabled(fTarget != null);
 	}
 }
