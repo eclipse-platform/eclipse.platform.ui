@@ -30,7 +30,6 @@ public abstract class CheckoutOperation extends RemoteOperation {
 	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
 		String taskName = getTaskName();
 		monitor.beginTask(taskName, 100);
-		monitor.setTaskName(taskName);
 		checkout(getRemoteFolders(), Policy.subMonitorFor(monitor, 100));
 	}
 
