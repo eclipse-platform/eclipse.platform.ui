@@ -7,12 +7,12 @@ package org.eclipse.team.internal.ccvs.core.resources;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;

@@ -5,7 +5,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 
 public class CVSEntryLineTag extends CVSTag {
 	

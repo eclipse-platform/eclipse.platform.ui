@@ -6,11 +6,11 @@ package org.eclipse.team.internal.ccvs.ui.model;
  */
  
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.team.ccvs.core.ICVSFile;
-import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 

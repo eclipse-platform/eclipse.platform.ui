@@ -263,7 +263,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder"
+            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder"
             id="org.eclipse.team.ccvs.ui.RemoteFolderContributions">
          <action
                label="%TagInRepositoryAction.label"
@@ -291,7 +291,7 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"/>        
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFile"
+            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteFile"
             id="org.eclipse.team.ccvs.ui.RemoteFileContributions">
          <action
                label="%OpenRemoteFileAction.label"
@@ -307,7 +307,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.team.ccvs.core.ILogEntry"
+            objectClass="org.eclipse.team.internal.ccvs.core.ILogEntry"
             id="org.eclipse.team.ccvs.ui.LogEntryContributions">
          <action
                label="%OpenLogEntryAction.label"
@@ -344,7 +344,7 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>        
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.team.ccvs.core.ICVSRepositoryLocation"
+            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation"
             id="org.eclipse.team.ccvs.ui.RemoteRootContributions">
          <action
                label="%CopyRepositoryNameAction.label"
@@ -400,7 +400,7 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.team.ccvs.core.ICVSRemoteResource"
+            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteResource"
             id="org.eclipse.team.ccvs.ui.RemoteResourceContributions">
          <action
                label="%CompareRemoteResourcesAction.label"

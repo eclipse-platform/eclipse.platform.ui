@@ -8,8 +8,8 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class ProjectElement implements IAdaptable, IWorkbenchAdapter {

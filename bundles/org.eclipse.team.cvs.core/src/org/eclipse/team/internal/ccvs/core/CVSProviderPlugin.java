@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.ccvs.core;
+package org.eclipse.team.internal.ccvs.core;
  
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,9 +29,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;

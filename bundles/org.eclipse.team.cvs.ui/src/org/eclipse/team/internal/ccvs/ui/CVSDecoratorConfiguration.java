@@ -8,7 +8,7 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 
 public class CVSDecoratorConfiguration {
 

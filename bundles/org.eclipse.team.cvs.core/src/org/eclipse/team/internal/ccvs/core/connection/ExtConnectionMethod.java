@@ -5,9 +5,9 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
  
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IConnectionMethod;
-import org.eclipse.team.ccvs.core.IServerConnection;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
+import org.eclipse.team.internal.ccvs.core.IServerConnection;
 
 public class ExtConnectionMethod implements IConnectionMethod {
 	/**

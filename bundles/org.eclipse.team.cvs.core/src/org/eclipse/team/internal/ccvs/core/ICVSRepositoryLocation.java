@@ -1,4 +1,4 @@
-package org.eclipse.team.ccvs.core;
+package org.eclipse.team.internal.ccvs.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
@@ -8,7 +8,6 @@ package org.eclipse.team.ccvs.core;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
  * This interface provides access to the specific portions of

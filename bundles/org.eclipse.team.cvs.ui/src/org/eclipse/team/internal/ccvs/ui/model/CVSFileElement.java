@@ -6,9 +6,9 @@ package org.eclipse.team.internal.ccvs.ui.model;
  */
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ccvs.core.ICVSFile;
-import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.ui.PlatformUI;
 

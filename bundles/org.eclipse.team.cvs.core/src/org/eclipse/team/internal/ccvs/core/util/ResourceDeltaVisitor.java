@@ -20,8 +20,8 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {

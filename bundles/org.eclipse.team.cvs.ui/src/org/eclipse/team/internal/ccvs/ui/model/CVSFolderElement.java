@@ -11,10 +11,10 @@ import java.util.List;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.ccvs.core.ICVSFile;
-import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 

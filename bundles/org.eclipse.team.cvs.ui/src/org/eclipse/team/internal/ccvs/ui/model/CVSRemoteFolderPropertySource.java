@@ -5,8 +5,8 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;

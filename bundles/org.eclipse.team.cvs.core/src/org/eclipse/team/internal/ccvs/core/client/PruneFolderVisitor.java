@@ -5,10 +5,10 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.ccvs.core.ICVSFile;
-import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 
 /**
  * Goes recursivly through the folders checks if they are empyty

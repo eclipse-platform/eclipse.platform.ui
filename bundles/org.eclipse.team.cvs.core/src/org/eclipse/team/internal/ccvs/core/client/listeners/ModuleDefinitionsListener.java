@@ -10,9 +10,8 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.*;
-import org.eclipse.team.ccvs.core.CVSStatus;
-import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 
 /*
  * This class pares the output of the "cvs checkout -c" command which returns the list of modules 

@@ -3,7 +3,7 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.Date;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.team.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 
 public class HistoryFilter extends ViewerFilter {
 	private HistoryView view;

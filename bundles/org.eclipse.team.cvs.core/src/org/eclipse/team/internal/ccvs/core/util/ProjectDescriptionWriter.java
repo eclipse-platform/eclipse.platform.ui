@@ -7,7 +7,7 @@ package org.eclipse.team.internal.ccvs.core.util;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 
 import java.io.*;
 

@@ -12,10 +12,10 @@ import java.io.PrintStream;
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class CVSTestSetup extends TestSetup {

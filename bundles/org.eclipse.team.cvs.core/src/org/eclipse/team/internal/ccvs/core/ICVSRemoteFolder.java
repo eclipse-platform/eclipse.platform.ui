@@ -1,4 +1,4 @@
-package org.eclipse.team.ccvs.core;
+package org.eclipse.team.internal.ccvs.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -7,7 +7,6 @@ package org.eclipse.team.ccvs.core;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
  /**

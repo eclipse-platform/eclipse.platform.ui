@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import java.util.Date;
 
-import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 

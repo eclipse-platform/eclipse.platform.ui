@@ -3,7 +3,7 @@
 	name="%pluginName"
 	id="org.eclipse.team.cvs.core"
 	version="2.0.0"
-	class="org.eclipse.team.ccvs.core.CVSProviderPlugin"
+	class="org.eclipse.team.internal.ccvs.core.CVSProviderPlugin"
 	provider-name="Object Technology International, Inc.">
 
 	<requires>
@@ -42,7 +42,7 @@
 	<!-- *************** Project Nature **************** -->
 	<extension point="org.eclipse.core.resources.natures" id="cvsnature" name="%cvsNature">
 		<runtime>
-			<run class="org.eclipse.team.ccvs.core.CVSTeamProvider"/>
+			<run class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"/>
 		</runtime>
 		<one-of-nature id="org.eclipse.team.repository-provider"/>
 	</extension>

@@ -4,8 +4,8 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  * All Rights Reserved.
  */
 import junit.framework.Test;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 

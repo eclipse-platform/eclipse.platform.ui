@@ -16,8 +16,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.GapTextStore;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 
 public class ConsoleDocument extends AbstractDocument {

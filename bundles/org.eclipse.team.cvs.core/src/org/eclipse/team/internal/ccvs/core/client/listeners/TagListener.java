@@ -7,8 +7,8 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.CVSStatus;
-import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 
 public class TagListener implements ICommandOutputListener {
 

@@ -7,8 +7,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;

@@ -1,4 +1,4 @@
-package org.eclipse.team.ccvs.core;
+package org.eclipse.team.internal.ccvs.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -10,7 +10,6 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
  * The CVS analog of a file. CVS files have access to synchronization information

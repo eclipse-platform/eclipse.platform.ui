@@ -5,8 +5,8 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 public interface IRepositoryListener {

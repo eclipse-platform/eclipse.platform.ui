@@ -14,8 +14,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IServerConnection;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.streams.*;
 

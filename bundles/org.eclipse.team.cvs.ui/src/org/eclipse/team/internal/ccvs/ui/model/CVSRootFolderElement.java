@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ccvs.core.ICVSFolder;
-import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 public class CVSRootFolderElement extends CVSResourceElement {
 

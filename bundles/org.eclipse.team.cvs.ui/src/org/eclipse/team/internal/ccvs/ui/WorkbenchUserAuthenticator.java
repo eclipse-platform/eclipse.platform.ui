@@ -15,10 +15,10 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IUserAuthenticator;
-import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
+import org.eclipse.team.internal.ccvs.core.IUserInfo;
 
 /**
  * An authenticator that prompts the user for authentication info,

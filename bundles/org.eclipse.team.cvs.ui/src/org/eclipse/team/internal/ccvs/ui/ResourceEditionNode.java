@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 
 /**
  * A class for comparing ICVSRemoteResource objects

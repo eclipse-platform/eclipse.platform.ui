@@ -8,9 +8,9 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
 import java.util.Date;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogEntry extends PlatformObject implements ILogEntry {

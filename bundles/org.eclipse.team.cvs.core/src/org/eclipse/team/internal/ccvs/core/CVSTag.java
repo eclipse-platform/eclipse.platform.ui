@@ -1,4 +1,4 @@
-package org.eclipse.team.ccvs.core;
+package org.eclipse.team.internal.ccvs.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
@@ -6,7 +6,6 @@ package org.eclipse.team.ccvs.core;
  */
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * A tag in CVS gives a label  to a collection of revisions. The labels can represent a version, a branch, 

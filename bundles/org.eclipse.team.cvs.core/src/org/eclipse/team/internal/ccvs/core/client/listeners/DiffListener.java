@@ -9,15 +9,12 @@ import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.*;
-import org.eclipse.team.ccvs.core.CVSStatus;
-import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 
 public class DiffListener implements ICommandOutputListener {
 	PrintStream patchStream;
 	
-	/**
-	 */
 	public DiffListener(PrintStream patchStream) {
 		this.patchStream = patchStream;
 	}

@@ -5,7 +5,7 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
  
-import org.eclipse.team.ccvs.core.IUserInfo;
+import org.eclipse.team.internal.ccvs.core.IUserInfo;
 
 /**
  * @version 	1.0

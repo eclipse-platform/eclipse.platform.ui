@@ -6,7 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  */
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public abstract class CVSResourceElement extends CVSModelElement implements IAdaptable {

@@ -5,7 +5,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 
 public abstract class RemoteResourceElement extends CVSModelElement {
 	/**

@@ -8,8 +8,8 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.text.ParseException;
 import java.util.Date;
 
-import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;

@@ -5,8 +5,8 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
  * All Rights Reserved.
  */
  
-import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.Policy;

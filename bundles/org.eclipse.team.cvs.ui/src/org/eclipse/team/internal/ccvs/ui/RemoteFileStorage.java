@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 
 public class RemoteFileStorage extends PlatformObject implements IStorage {
 	ICVSRemoteFile file;

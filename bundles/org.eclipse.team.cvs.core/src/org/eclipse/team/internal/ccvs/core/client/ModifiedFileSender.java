@@ -6,8 +6,8 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
  
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 
 /**
  * Visit the CVS file structure, only sending files if they are modified.

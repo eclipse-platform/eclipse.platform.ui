@@ -7,8 +7,8 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.PlatformUI;
 
