@@ -45,6 +45,10 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_"; //$NON-NLS-1$
 	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_"; //$NON-NLS-1$
 	
+	// Count up the time taken for all saves/snaps on markers and sync info
+	private long persistMarkers = 0l;
+	private long persistSyncInfo = 0l;
+	
 public SaveManager(Workspace workspace) {
 	this.workspace = workspace;
 	snapshotRequested = false;
@@ -1244,14 +1248,26 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						// reset the snapshot state.
 						initSnap(null);
 						// save all of the markers and all sync info in the workspace
+						persistMarkers = 0l;
+						persistSyncInfo = 0l;
 						visitAndSave(workspace.getRoot());
+						if (Policy.DEBUG_SAVE) {
+							Policy.debug(false, "Total Save Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+							Policy.debug(false, "Total Save Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
+						}					
 						// reset the snap shot files
 						resetSnapshots(workspace.getRoot());
 						break;
 					case ISaveContext.SNAPSHOT :
 						snapTree(workspace.getElementTree(), Policy.subMonitorFor(monitor, 1));
 						// snapshot the markers and sync info for the workspace
+						persistMarkers = 0l;
+						persistSyncInfo = 0l;
 						visitAndSnap(workspace.getRoot());
+						if (Policy.DEBUG_SAVE) {
+							Policy.debug(false, "Total Snap Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+							Policy.debug(false, "Total Snap Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
+						}					
 						collapseTrees();
 						clearSavedDelta();
 						break;
@@ -1367,13 +1383,17 @@ public void visitAndSave(IResource root) throws CoreException {
 				if (!resource.isPhantom()) {
 					long start = System.currentTimeMillis();
 					markerManager.save(resource, markersOutput, writtenTypes);
-					saveTimes[0] += System.currentTimeMillis() - start;
+					long markerSaveTime = System.currentTimeMillis() - start;
+					saveTimes[0] += markerSaveTime;
+					persistMarkers += markerSaveTime;
 				}
 				// if we have the workspace root then the output stream will be null
 				if (syncInfoOutput != null) {
 					long start = System.currentTimeMillis();
 					synchronizer.saveSyncInfo(resource, syncInfoOutput, writtenPartners);
-					saveTimes[1] += System.currentTimeMillis() - start;
+					long syncInfoSaveTime = System.currentTimeMillis() - start;
+					saveTimes[1] += syncInfoSaveTime;
+					persistSyncInfo += syncInfoSaveTime;
 				}
 			} catch (IOException e) {
 				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
@@ -1387,9 +1407,9 @@ public void visitAndSave(IResource root) throws CoreException {
 	try {
 		int depth = root.getType() == IResource.ROOT ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		root.accept(visitor, depth, true);
-		if (Policy.DEBUG_RESTORE_MARKERS)
+		if (Policy.DEBUG_SAVE_MARKERS)
 			System.out.println("Save Markers for " + root.getFullPath() + ": " + saveTimes[0] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (Policy.DEBUG_RESTORE_SYNCINFO)
+		if (Policy.DEBUG_SAVE_SYNCINFO)
 			System.out.println("Save SyncInfo for " + root.getFullPath() + ": " + saveTimes[1] + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		removeGarbage(markersOutput, markersLocation, markersTempLocation);
 		// if we have the workspace root the output stream will be null and we
@@ -1484,13 +1504,17 @@ public void visitAndSnap(IResource root) throws CoreException {
 				if (!resource.isPhantom()) {
 					long start = System.currentTimeMillis();
 					markerManager.snap(resource, markersOutput);
-					snapTimes[0] += System.currentTimeMillis() - start;
+					long markerSnapTime = System.currentTimeMillis() - start;
+					snapTimes[0] += markerSnapTime;
+					persistMarkers += markerSnapTime;
 				}
 				// if we have the workspace root then the output stream will be null
 				if (syncInfoOutput != null) {
 					long start = System.currentTimeMillis();
 					synchronizer.snapSyncInfo(resource, syncInfoOutput);
-					snapTimes[1] += System.currentTimeMillis() - start;
+					long syncInfoSnapTime = System.currentTimeMillis() - start;
+					snapTimes[1] += syncInfoSnapTime;
+					persistSyncInfo += syncInfoSnapTime;
 				}
 			} catch (IOException e) {
 				String msg = Policy.bind("resources.writeMeta", resource.getFullPath().toString()); //$NON-NLS-1$
