@@ -90,9 +90,11 @@ public class DragUtil {
 			defaultTargets.remove(target);
 		} else {
 			List targetList = getTargetList(control);
-			targetList.remove(target);
-			if (targetList.isEmpty()) {
-				control.setData(DROP_TARGET_ID, null);
+			if (targetList != null) {
+				targetList.remove(target);
+				if (targetList.isEmpty()) {
+					control.setData(DROP_TARGET_ID, null);
+				}
 			}
 		}
 	}
