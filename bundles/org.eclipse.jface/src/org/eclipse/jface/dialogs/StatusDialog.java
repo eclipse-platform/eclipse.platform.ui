@@ -117,7 +117,7 @@ public abstract class StatusDialog extends Dialog {
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
-		fLastStatus = Status.OK_STATUS;
+		fLastStatus = new Status(IStatus.OK,new String(),IStatus.OK,new String(),null);
 	}
 
 	/**
