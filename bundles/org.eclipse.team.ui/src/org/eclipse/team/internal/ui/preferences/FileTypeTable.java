@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,8 +28,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.Team;
@@ -37,7 +40,7 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.SWTUtils;
 
 
-public class FileTypeTable implements ICellModifier, IStructuredContentProvider, ITableLabelProvider {
+public class FileTypeTable implements ICellModifier, IStructuredContentProvider, ITableLabelProvider, IColorProvider {
     
     private final static int COMBO_INDEX_BINARY= 0;
     private final static int COMBO_INDEX_TEXT= 1;
@@ -75,8 +78,9 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
         public final String name;
         public boolean save;
         public int mode;
+        public boolean contributed;
         
-        public Item(String name) { this.name= name; save= true; mode= Team.BINARY; }
+        public Item(String name, boolean contributed) { this.name= name; this.contributed = contributed; save= true; mode= Team.BINARY; }
         
         /* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
@@ -87,11 +91,11 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     }
     
     public static class Extension extends Item {
-        public Extension(String name) { super(name); }
+        public Extension(String name, boolean contributed) { super(name, contributed); }
     }
 
     public static class Name extends Item {
-        public Name(String name) { super(name); }
+        public Name(String name, boolean contributed) { super(name, contributed); }
     }
     
     private final static int SMALL_COLUMN= 15;
@@ -116,7 +120,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		 */
 		final Table table = new Table(composite, SWT.V_SCROLL | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		table.setLayoutData(SWTUtils.createHVFillGridData());
-		table.setLinesVisible(false);
+		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		
         final PixelConverter converter= SWTUtils.createDialogPixelConverter(composite);
@@ -270,5 +274,26 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     
     public TableViewer getViewer() {
         return fTableViewer;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+     */
+    public Color getForeground(Object element) {
+        return null;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+     */
+    public Color getBackground(Object element) {
+        if (element instanceof Item) {
+            if (((Item)(element)).contributed) {
+                return Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+            }
+        }
+        return null;
     }
 }

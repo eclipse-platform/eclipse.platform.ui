@@ -43,6 +43,7 @@ import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.preferences.FileTypeTable.Item;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -99,9 +100,6 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 
     protected FileTypeTable fTable;
 
-	private Set fPluginNames;
-	private Set fPluginExtensions;
-    
     public TextPreferencePage() {
         fItems= new ArrayList();
         initializeItems();
@@ -116,19 +114,19 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	    final IStringMapping [] extensionInfoArray= manager.getExtensionMappings();
         final IStringMapping [] nameInfoArray= manager.getNameMappings();
         
-        fPluginNames= makeSetOfStrings(manager.getDefaultNameMappings());
-        fPluginExtensions= makeSetOfStrings(manager.getDefaultExtensionMappings());
+        Set fPluginNames= makeSetOfStrings(manager.getDefaultNameMappings());
+        Set fPluginExtensions= makeSetOfStrings(manager.getDefaultExtensionMappings());
         
         for (int i = 0; i < extensionInfoArray.length; i++) {
             final IStringMapping info= extensionInfoArray[i];
-            final FileTypeTable.Extension extension= new FileTypeTable.Extension(info.getString());
+            final FileTypeTable.Extension extension= new FileTypeTable.Extension(info.getString(), fPluginExtensions.contains(info.getString()));
             extension.mode= info.getType();
             fItems.add(extension);
         }
         
         for (int i = 0; i < nameInfoArray.length; i++) {
             final IStringMapping info= nameInfoArray[i];
-            final FileTypeTable.Name name= new FileTypeTable.Name(info.getString());
+            final FileTypeTable.Name name= new FileTypeTable.Name(info.getString(), fPluginNames.contains(info.getString()));
             name.mode= info.getType();
             fItems.add(name);
         }
@@ -307,7 +305,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 				return;
 			}
 		}
-		final FileTypeTable.Item item= new FileTypeTable.Extension(extension);
+		final FileTypeTable.Item item= new FileTypeTable.Extension(extension, false);
 		fItems.add(item);
 		fTable.getViewer().refresh();
 	}
@@ -331,7 +329,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 				return;
 			}
 		}
-		final FileTypeTable.Item item= new FileTypeTable.Name(name);
+		final FileTypeTable.Item item= new FileTypeTable.Name(name, false);
 		fItems.add(item);
 		fTable.getViewer().refresh();
 	}
@@ -346,13 +344,12 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		
 		for (final Iterator it = selection.iterator(); it.hasNext(); ) {
 			final FileTypeTable.Item item= (FileTypeTable.Item)it.next();
-			if (item instanceof FileTypeTable.Extension && fPluginExtensions.contains(item.name))
-				continue;
-			if (item instanceof FileTypeTable.Name && fPluginNames.contains(item.name))
+			if (item.contributed)
 				continue;
 			fItems.remove(item);
 		}
 		fTable.getViewer().refresh();
+        handleSelection();
 	}
 	/**
 	 * Toggle the selected items' content types
@@ -374,7 +371,9 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	void handleSelection() {
 		final boolean empty = fTable.getSelection().isEmpty();
-		fRemoveButton.setEnabled(!empty);
+        FileTypeTable.Item selectedItem = (Item) fTable.getSelection().getFirstElement();
+        
+		fRemoveButton.setEnabled(!empty && !selectedItem.contributed);
 		fChangeButton.setEnabled(!empty);
 	}
 }
