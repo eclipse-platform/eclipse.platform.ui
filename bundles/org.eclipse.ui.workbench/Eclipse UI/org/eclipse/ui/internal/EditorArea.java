@@ -332,6 +332,7 @@ public void updateTabList() {
 	}
 	private void addDropSupport() {
 		if (dropTarget == null) {
+			// @issue support for d&d of IDE specific transfers (resources, markers)
 			Transfer[] types = new Transfer[] {
 					EditorInputTransfer.getInstance(), 
 					ResourceTransfer.getInstance(),

@@ -316,6 +316,7 @@ public class ActionExpression {
 		}
 	}
 
+	// @issue adaptable attribute has IDE specific semantics
 	private static class ObjectStateExpression extends AbstractExpression {
 		private String name;
 		private String value;

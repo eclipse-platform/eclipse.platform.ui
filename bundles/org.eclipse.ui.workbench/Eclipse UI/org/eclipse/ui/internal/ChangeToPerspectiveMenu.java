@@ -47,6 +47,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		// has an active perspective.
 		if (IPreferenceConstants.OPM_NEW_WINDOW == mode && persp != null) {
 			try {
+				// @issue need to ask the adviser what input to use for the page
 				IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
 				IWorkbench workbench = getWindow().getWorkbench();
 				workbench.openWorkbenchWindow(desc.getId(), input);
@@ -58,6 +59,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 				page.setPerspective(desc);
 			} else {
 				try {
+					// @issue need to ask the adviser what input to use for the page
 					IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
 					getWindow().openPage(desc.getId(), input);
 				} catch(WorkbenchException e) {

@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -210,6 +208,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * Returns the marker help registry for the workbench.
 	 *
 	 * @return the marker help registry
+	 * @issue this code should be moved to IDE class
 	 */
 	public MarkerHelpRegistry getMarkerHelpRegistry() {
 		if (markerHelpRegistry == null) {
@@ -295,15 +294,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			perspRegistry.load();
 		}
 		return perspRegistry;
-	}
-	/**
-	 * Return the workspace used by the workbench
-	 *
-	 * This method is internal to the workbench and must not be called
-	 * by any plugins.
-	 */
-	public static IWorkspace getPluginWorkspace() {
-		return ResourcesPlugin.getWorkspace();
 	}
 	/**
 	 * Returns the working set manager

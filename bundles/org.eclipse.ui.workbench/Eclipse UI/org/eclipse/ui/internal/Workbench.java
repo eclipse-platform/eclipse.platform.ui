@@ -537,13 +537,6 @@ public final class Workbench implements IWorkbench {
 	public ISharedImages getSharedImages() {
 		return WorkbenchPlugin.getDefault().getSharedImages();
 	}
-	/* (non-Javadoc)
-	 * Method declared on IWorkbench.
-	 */
-	public IMarkerHelpRegistry getMarkerHelpRegistry() {
-		return WorkbenchPlugin.getDefault().getMarkerHelpRegistry();
-	}
-	
 	/**
 	 * Returns the window manager for this workbench.
 	 * 

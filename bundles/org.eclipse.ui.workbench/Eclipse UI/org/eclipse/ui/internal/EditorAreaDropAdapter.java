@@ -27,6 +27,7 @@ import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 
+// @issue support for d&d of IDE specific transfers (resources, markers)
 /* package */ class EditorAreaDropAdapter extends DropTargetAdapter {
 	
 	private WorkbenchPage page;

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
@@ -41,7 +40,6 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 		private Text text;
 		public void doSave(IProgressMonitor monitor) {}
 		public void doSaveAs() {}
-		public void gotoMarker(IMarker marker) {}
 		public void init(IEditorSite site, IEditorInput input) {
 			setSite(site);
 			setInput(input);

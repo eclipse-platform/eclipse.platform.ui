@@ -1810,51 +1810,6 @@ public void reuseEditor(IReusableEditor editor,IEditorInput input) {
 /**
  * See IWorkbenchPage.
  */
-public IEditorPart openEditor(IFile file) 
-	throws PartInitException
-{
-	// funnel through IWorkbenchPage.openEditor(IEditorInput,String,boolean)
-	return openEditor(new FileEditorInput(file), null, true);
-}
-/**
- * See IWorkbenchPage.
- */
-public IEditorPart openEditor(IFile file, String editorID)
-	throws PartInitException 
-{
-	// funnel through IWorkbenchPage.openEditor(IEditorInput,String,boolean)
-	return openEditor(new FileEditorInput(file), editorID, true);
-}
-/**
- * See IWorkbenchPage.
- */
-public IEditorPart openEditor(IFile file, String editorID,boolean activate)
-	throws PartInitException 
-{
-	// N.B. all IWorkbenchPage.openEditor(IFile,*) methods funnel through here
-	return openEditor(new FileEditorInput(file),editorID,activate,editorID != null,false);
-}
-/**
- * See IWorkbenchPage.
- */
-public IEditorPart openEditor(IMarker marker)
-	throws PartInitException
-{
-	// funnel through IWorkbenchPage.openEditor(IMarker,boolean)
-	return openEditor(marker, true);
-}
-/**
- * @see IWorkbenchPage
- */
-public IEditorPart openEditor(IMarker marker, boolean activate) 
-	throws PartInitException 
-{
-	// N.B. all IWorkbenchPage.openEditor(IMarker,*) methods funnel through here
-	return openMarker(marker, activate, false);
-}
-/**
- * See IWorkbenchPage.
- */
 public IEditorPart openEditor(IEditorInput input, String editorID) 
 	throws PartInitException
 {
@@ -1880,16 +1835,7 @@ public IEditorPart openInternalEditor(IEditorInput input, String editorId)
 	return openEditor(input,editorId,true,true,true);
 
 }
-/**
- * Method openInternalEditor.
- * @param iMarker
- */
-public IEditorPart openInternalEditor(IMarker marker)
-	throws PartInitException {
-		
-	return openMarker(marker, true, true);
-}
-
+// @issue need to figure out where this logic will go now
 private IEditorPart openMarker(IMarker marker, boolean activate, boolean forceInternal)
 	throws PartInitException {
 	// Get the resource.
@@ -1920,14 +1866,6 @@ private IEditorPart openMarker(IMarker marker, boolean activate, boolean forceIn
 	if (editor != null)
 		editor.gotoMarker(marker);
 	return editor;
-}
-/**
- * Method openInternalEditor.
- * @param iFile
- */
-public IEditorPart openInternalEditor(IFile file)
-	throws PartInitException {
-	return openEditor(new FileEditorInput(file),null,true,false,true);
 }
 /**
  * See IWorkbenchPage.
@@ -2055,14 +1993,6 @@ private void showEditor(boolean activate, IEditorPart editor) {
  */
 public boolean isEditorPinned(IEditorPart editor) {
 	return !((EditorSite)editor.getEditorSite()).getReuseEditor();
-}
-/**
- * See IWorkbenchPage.
- */
-public void openSystemEditor(IFile input) 
-	throws PartInitException
-{
-	getEditorManager().openSystemEditor(input);
 }
 /**
  * Returns whether changes to a part will affect zoom.
