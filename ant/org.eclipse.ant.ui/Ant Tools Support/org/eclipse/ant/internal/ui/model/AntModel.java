@@ -64,7 +64,6 @@ public class AntModel {
 	private static ClassLoader fgClassLoader;
 	private static int fgInstanceCount= 0;
 	
-	private AntModelCore fCore;
 	private IDocument fDocument;
 	private IProblemRequestor fProblemRequestor;
 	private LocationProvider fLocationProvider;
@@ -122,8 +121,7 @@ public class AntModel {
 		}
 	};
 
-	public AntModel(AntModelCore core, IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
-		fCore= core;
+	public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		fDocument= document;
 		fProblemRequestor= problemRequestor;
 		fMarkerUpdater= new AntEditorMarkerUpdater();
@@ -144,7 +142,7 @@ public class AntModel {
 		}
 		fIsDirty= true;
 		reconcile();
-		fCore.notifyAntModelListeners(new AntModelChangeEvent(this, true));
+		AntModelCore.getDefault().notifyAntModelListeners(new AntModelChangeEvent(this, true));
 		fMarkerUpdater.updateMarkers();
 	}
 
@@ -166,7 +164,7 @@ public class AntModel {
 				fDocument.removeDocumentListener(fListener);
 			}
 			fDocument= null;
-			fCore= null;
+			fLocationProvider= null;
 			ProjectHelper.setAntModel(null);
 		}
 		
@@ -194,7 +192,7 @@ public class AntModel {
 		}
 
 		synchronized (this) {
-			if (fCore == null) {
+			if (fLocationProvider == null) {
 				// disposed
 				return;
 			}
@@ -207,7 +205,7 @@ public class AntModel {
 				reconcileTaskAndTypes();
 			} 
 	
-			fCore.notifyAntModelListeners(new AntModelChangeEvent(this));
+			AntModelCore.getDefault().notifyAntModelListeners(new AntModelChangeEvent(this));
 		}
 	}
 

@@ -24,7 +24,6 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.IProblem;
 import org.eclipse.ant.internal.ui.model.IProblemRequestor;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
-import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -274,16 +273,11 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 			fList.clear();
 		}
 	}
-	
-	
-	private AntModelCore fCore;
 
-	public AntEditorDocumentProvider(AntModelCore core) {
+	public AntEditorDocumentProvider() {
 		IDocumentProvider provider= new TextFileDocumentProvider(new AntStorageDocumentProvider());
 		provider= new ForwardingDocumentProvider(AntDocumentSetupParticipant.ANT_PARTITIONING, new AntDocumentSetupParticipant(), provider);
 		setParentDocumentProvider(provider);
-		
-		fCore= core;
 	}
 
     public AntModel getAntModel(Object element) {
@@ -304,7 +298,7 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 
     protected AntModel createAntModel(Object element, IDocument document, IAnnotationModel annotationModel) {
 	    IProblemRequestor requestor= annotationModel instanceof IProblemRequestor ? (IProblemRequestor) annotationModel : null;
-	    return new AntModel(fCore, document, requestor, new LocationProvider(element instanceof IEditorInput ? (IEditorInput) element : null));
+	    return new AntModel(document, requestor, new LocationProvider(element instanceof IEditorInput ? (IEditorInput) element : null));
     }
     
     /*
