@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.IContext;
+import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.Window;
@@ -20,6 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class ContextHelpWindow extends Window {
@@ -107,6 +109,10 @@ public class ContextHelpWindow extends Window {
 
 	protected Control createContents(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
+				HyperlinkGroup.UNDERLINE_HOVER);
+		// toolkit.setBackground(toolkit.getColors().createNoContentBackground());
+		toolkit.getColors().initializeSectionToolBarColors();
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
@@ -126,6 +132,8 @@ public class ContextHelpWindow extends Window {
 		helpPart = new ReusableHelpPart(PlatformUI.getWorkbench()
 				.getProgressService());
 		helpPart.init(null, tbm, null);
+		helpPart.setDefaultContextHelpText(HelpUIResources
+				.getString("HelpView.defaultText")); //$NON-NLS-1$		
 		helpPart.createControl(container, toolkit);
 		helpPart.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		hookListeners();
@@ -151,6 +159,10 @@ public class ContextHelpWindow extends Window {
 	}
 	
 	public void dock(boolean changeSides) {
+		getShell().setBounds(computeDockedBounds(changeSides));
+	}
+	
+	public Rectangle computeDockedBounds(boolean changeSides) {
 		Display d = getShell().getDisplay();
 		Rectangle dbounds = d.getBounds();
 		Rectangle pbounds = getShell().getParent().getBounds();
@@ -198,11 +210,10 @@ public class ContextHelpWindow extends Window {
 				x = dbounds.width-newSize;
 			}
 		}
-		getShell().setLocation(x, pbounds.y);
-		getShell().setSize(newSize, pbounds.height);
 		savedPbounds = pbounds;
 		savedBounds = getShell().getBounds();
-	}
+		return new Rectangle(x, pbounds.y, newSize, pbounds.height);
+	}	
 	
 	private boolean onWindowMove() {
 		if (savedBounds==null) {
