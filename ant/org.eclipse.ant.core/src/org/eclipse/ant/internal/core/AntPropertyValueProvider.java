@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 BBDO Detroit and others.
+ * Copyright (c) 2003, 2004 BBDO Detroit and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,11 @@
  * 
  * Contributors:
  *     Thierry Lach (thierry.lach@bbdodetroit.com) - initial API and implementation for bug 40502
- *     IBM Corporation - added eclipse.running property
+ *     IBM Corporation - added eclipse.running property, bug 65655
  *******************************************************************************/
 package org.eclipse.ant.internal.core;
 
+import java.io.File;
 import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -45,7 +46,7 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 			return "true"; //$NON-NLS-1$
 		} else if ("eclipse.home".equals(propertyName)) { //$NON-NLS-1$
 			try {
-				value = Platform.resolve(new URL("platform:/base/")).getPath(); //$NON-NLS-1$
+				value = new File(Platform.resolve(new URL("platform:/base/")).getPath()).getAbsolutePath(); //$NON-NLS-1$
 				if (value.endsWith("/")) { //$NON-NLS-1$
 				    value = value.substring(0, value.length() - 1);
 				}
