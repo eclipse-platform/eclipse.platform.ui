@@ -198,7 +198,7 @@ public abstract class SynchronizeModelElement extends DiffNode implements IAdapt
 				// If the parent doesn't have the tag, no recalculation is required
 				// Also, if the parent still has a child with the tag, no recalculation is needed
 				if (parent.getProperty(flag) && !parent.hasChildWithFlag(flag)) {
-					// The parent no longer has the flag so propogate the reclaculation
+					// The parent no longer has the flag so propogate the recalculation
 					parent.removeToRoot(flag);
 				}
 			}
