@@ -569,6 +569,19 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		return null;
 	}
 }
+
+/**
+ * Cycles the editors forward or backward.
+ * 
+ * @param forward true to cycle forward, false to cycle backward
+ */
+public void cycleEditors(boolean forward) {
+	IEditorPart editor = activationList.cycleEditors(forward);
+	if (editor != null) {
+		activate(editor);
+	}
+}
+
 /**
  * Open the tracker to allow the user to move
  * the specified part using keyboard.
