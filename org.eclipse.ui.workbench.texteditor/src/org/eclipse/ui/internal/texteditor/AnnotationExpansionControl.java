@@ -383,8 +383,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	private Item fSelection;
 	/** The hover manager for the per-item hovers. */
 	private HoverManager fHoverManager;
-	/** The annotation access. */
-	private IAnnotationAccess fAnnotationAccess;
 	/** The annotation access extension. */
 	private IAnnotationAccessExtension fAnnotationAccessExtension;
 
@@ -421,7 +419,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		};
 		fLayouter= new LinearLayouter();
 		
-		fAnnotationAccess= access;
 		if (access instanceof IAnnotationAccessExtension)
 			fAnnotationAccessExtension= (IAnnotationAccessExtension) access;
 		

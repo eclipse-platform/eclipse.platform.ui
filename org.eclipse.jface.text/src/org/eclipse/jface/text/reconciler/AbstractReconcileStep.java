@@ -160,10 +160,4 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	}
 	
 	abstract public IReconcilableModel getModel();
-
-	/*
-	 * @see IReconcileStep#initialReconcile()
-	 */
-	public void initialReconcile() {
-	}
 }
