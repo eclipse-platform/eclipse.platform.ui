@@ -5,13 +5,20 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugViewAdapter;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.StructuredViewer;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.*;import org.eclipse.ui.part.ViewPart;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugViewAdapter;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.*;
+import org.eclipse.ui.part.ViewPart;
 
 /**
  * Functionality common to views in the debugger
  */
 
-public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter, IPartListener {
+public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter {
 	
 	protected final static String TITLE_TOOLTIPTEXT= "title_toolTipText";
 	
@@ -25,18 +32,8 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			return this;
 		}
 		return super.getAdapter(adapter);
-	}
-	
-	/**
-	 * @see IViewPart
-	 */
-	public void init(IViewSite site) throws PartInitException {
-		super.init(site);
-		getSite().getPage().addPartListener(this);
-	}
-
+	}
 	public void dispose() {
-		getSite().getPage().removePartListener(this);
 		fViewer= null;
 		super.dispose();
 	}
@@ -68,8 +65,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 
 		// register the context menu such that other plugins may contribute to it
 		getSite().registerContextMenu(menuMgr, fViewer);
-	}
-
+	}
 	/**
 	 * Configures the toolBar
 	 */
@@ -121,34 +117,5 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	protected abstract void fillContextMenu(IMenuManager mgr);
 	
 	protected abstract void configureToolBar(IToolBarManager tbm);	
-	/**
-	 * @see IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partOpened(IWorkbenchPart arg0) {
-	}
-
-	/**
-	 * @see IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart arg0) {
-	}
-
-	/**
-	 * @see IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partClosed(IWorkbenchPart arg0) {
-	}
-
-	/**
-	 * @see IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partBroughtToTop(IWorkbenchPart arg0) {
-	}
-
-	/**
-	 * @see IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart arg0) {
-	}
 }	
-
+

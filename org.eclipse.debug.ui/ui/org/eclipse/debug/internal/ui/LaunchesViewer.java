@@ -43,6 +43,10 @@ public class LaunchesViewer extends TreeViewer {
 		fView.updateButtons();			
 	}
 	
+	protected void autoExpand(Object element, boolean refreshNeeded) {
+		fView.autoExpand(element, refreshNeeded);
+	}
+	
 	protected void updateMarkerForSelection() {
 		// update the instruction pointer
 		if (fView instanceof DebugView) {

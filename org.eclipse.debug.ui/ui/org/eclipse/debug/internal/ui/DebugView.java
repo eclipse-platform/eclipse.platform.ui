@@ -7,7 +7,7 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.core.resources.*;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.debug.core.DebugException;import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.viewers.*;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.texteditor.ITextEditor;
 
-public class DebugView extends LaunchesView {
+public class DebugView extends LaunchesView implements IPartListener {
 	
 	protected final static String PREFIX= "debug_view.";
 
@@ -54,6 +54,14 @@ public class DebugView extends LaunchesView {
 		}
 	}
 	
+	/**
+	 * @see IViewPart
+	 */
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		getSite().getPage().addPartListener(this);
+	}
+	
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		WorkbenchHelp.setHelp(
@@ -66,6 +74,7 @@ public class DebugView extends LaunchesView {
 	 */
 	public void dispose() {
 		super.dispose();
+		getSite().getPage().removePartListener(this);
 		fEditor = null;
 	}
 
@@ -414,8 +423,9 @@ public class DebugView extends LaunchesView {
 	 * Auto-expand and select the given element - must be called in UI thread.
 	 * This is used to implement auto-expansion-and-select on a SUSPEND event.
 	 */
-	public void autoExpand(Object element) {
+	public void autoExpand(Object element, boolean refreshNeeded) {
 		Object selectee = element;
+		Object[] children= null;
 		if (element instanceof IThread) {
 			// try the top stack frame
 			try {
@@ -426,15 +436,27 @@ public class DebugView extends LaunchesView {
 				selectee = element;
 			}
 		} else if (element instanceof ILaunch) {
-			Object dt = ((ILaunch)element).getDebugTarget();
+			IDebugTarget dt = ((ILaunch)element).getDebugTarget();
 				if (dt != null) {
 					selectee= dt;
+					try {
+						children= dt.getChildren();
+					} catch (DebugException de) {
+						DebugUIUtils.logError(de);
+					}
 				}
 		}
-		//ensures that the child item exists in the viewer widget
-		//set selection only works if the child exists
-		fViewer.refresh(element);
-		fViewer.setSelection(new StructuredSelection(selectee), true);
+		
+		if (refreshNeeded) {
+			//ensures that the child item exists in the viewer widget
+			//set selection only works if the child exists
+			fViewer.refresh(element);
+		}
+		fViewer.setSelection(new StructuredSelection(selectee));
+		if (children != null && children.length > 0) {
+			//reveal the thread children of a debug target
+			fViewer.reveal(children[0]);
+		}
 	}
 	
 	/**
@@ -451,8 +473,31 @@ public class DebugView extends LaunchesView {
 		if (part.equals(fEditor)) {
 			fEditor = null;
 		}
-		super.partClosed(part);
 	}
+	
+	/**
+	 * @see IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partOpened(IWorkbenchPart arg0) {
+	}
+
+	/**
+	 * @see IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart arg0) {
+	}
+
+	/**
+	 * @see IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partBroughtToTop(IWorkbenchPart arg0) {
+	}
+
+	/**
+	 * @see IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart arg0) {
+	}	
 
 	/**
 	 * @see IViewPart

@@ -5,7 +5,25 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;import org.eclipse.core.resources.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.*;import org.eclipse.debug.core.model.*;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.debug.ui.IDebugUIEventFilter;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageRegistry;import org.eclipse.jface.text.*;import org.eclipse.jface.util.ListenerList;import org.eclipse.jface.viewers.*;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.graphics.RGB;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.ui.*;import org.eclipse.ui.model.IWorkbenchAdapter;import org.eclipse.ui.plugin.AbstractUIPlugin;
+import java.util.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.debug.core.*;
+import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IDebugUIEventFilter;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The Debug UI Plugin.
@@ -17,7 +35,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 															   IDocumentListener, 
 															   ILaunchListener,
 															   IResourceChangeListener {
-
+															   	
 	/**
 	 * The singleton debug plugin instance
 	 */
@@ -95,7 +113,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 */
 	protected static ResourceDeletedVisitor fgDeletedVisitor;
 	
-
+	protected SwitchContext fSwitchContext= new SwitchContext();
 	/**
 	 * Visitor for handling resource deltas
 	 */
@@ -115,6 +133,167 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	}
 
 	/**
+	 * Tracks the debugger page and perspective for
+	 * the DebugUIPlugin
+	 */
+	class SwitchContext implements IPartListener, IPageListener {
+		protected IWorkbenchWindow fWindow;
+		protected IWorkbenchPage fPage;
+		protected IPerspectiveDescriptor fPerspective;
+		protected LaunchesView fDebuggerView;
+		protected boolean fPageCreated;
+		protected boolean fContextChanged= true;
+		protected String fMode;
+		
+		protected void init(String mode) {
+			fMode= mode;
+			fPageCreated= false;
+			if (fPage != null) {
+				fPage.removePartListener(this);
+			}
+			fPage= null;
+			fDebuggerView= null;
+			if (fWindow != null) {
+				fWindow.removePageListener(this);
+			}
+			fWindow= getActiveWorkbenchWindow();
+			fWindow.addPageListener(this);
+			fContextChanged= false;
+		}
+		
+		protected void shutdown() {
+			if (fPage != null) {
+				fPage.removePartListener(this);
+			}
+			fWindow.removePageListener(this);
+		}
+		
+		/**
+		 * Returns whether the world has changed in a way that will
+		 * require switching to the debug perspective.
+		 */
+		protected boolean contextChanged(String mode) {
+			if (!fContextChanged) {
+				if (fMode == null || !fMode.equals(mode)) {
+					return true;
+				}
+			}
+			boolean changed=  fContextChanged || 
+				!fWindow.equals(getActiveWorkbenchWindow()) ||
+				!fWindow.getActivePage().equals(fPage) ||
+				!fWindow.getActivePage().getPerspective().equals(fPerspective);
+			
+			return changed;
+		}
+		
+		/**
+		 * Returns whether the DebugUIPlugin has recently caused
+		 * a debugger page to be created.
+		 */
+		protected boolean wasPageCreated() {
+			return fPageCreated;
+		}
+		
+		/**
+		 * Sets whether the DebugUIPlugin has recently caused
+		 * a debugger page to be created.
+		 */
+		protected void setPageCreated(boolean created) {
+			fPageCreated= created;
+		}
+		
+		protected IWorkbenchPage getPage() {
+			return fPage;
+		}
+		
+		protected void setPage(IWorkbenchPage page) {
+			if (fPage != null) {
+				fPage.removePartListener(this);
+			}
+			fPage = page;
+			fPage.addPartListener(this);
+			fPerspective= page.getPerspective();
+		}
+	
+		protected IWorkbenchWindow getWindow() {
+			return fWindow;
+		}
+		
+		protected void setWindow(IWorkbenchWindow window) {
+			fWindow.removePageListener(this);
+			fWindow = window;
+			fWindow.addPageListener(this);
+		}
+		
+		protected LaunchesView getDebuggerView() {
+			return fDebuggerView;
+		}
+		
+		protected void setDebuggerView(LaunchesView debuggerView) {
+			fDebuggerView = debuggerView;
+		}
+		/**
+		 * @see IPartListener#partActivated(IWorkbenchPart)
+		 */
+		public void partActivated(IWorkbenchPart part) {
+			if (part == fDebuggerView) {
+				fContextChanged= false;
+			}
+		}
+		/**
+		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
+		 */
+		public void partBroughtToTop(IWorkbenchPart arg0) {
+		}
+
+		/**
+		 * @see IPartListener#partClosed(IWorkbenchPart)
+		 */
+		public void partClosed(IWorkbenchPart part) {
+			if (part == fDebuggerView) {
+				fContextChanged= true;
+			}
+		}
+
+		/**
+		 * @see IPartListener#partDeactivated(IWorkbenchPart)
+		 */
+		public void partDeactivated(IWorkbenchPart part) {
+			if (part == fDebuggerView) {
+				fContextChanged= true;
+			}
+		}
+
+		/**
+		 * @see IPartListener#partOpened(IWorkbenchPart)
+		 */
+		public void partOpened(IWorkbenchPart arg0) {
+		}
+		
+		/**
+		 * @see IPageListener#pageActivated(IWorkbenchPage)
+		 */
+		public void pageActivated(IWorkbenchPage arg0) {
+		}
+
+		/**
+		 * @see IPageListener#pageClosed(IWorkbenchPage)
+		 */
+		public void pageClosed(IWorkbenchPage page) {
+			if (page.equals(fPage)) {
+				init(null);
+				fContextChanged= true;
+			}
+		}
+
+		/**
+		 * @see IPageListener#pageOpened(IWorkbenchPage)
+		 */
+		public void pageOpened(IWorkbenchPage arg0) {
+		}
+	}
+
+	/**
 	 * Constructs the debug UI plugin
 	 */
 	public DebugUIPlugin(IPluginDescriptor descriptor) {
@@ -123,30 +302,36 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	}
 
 	/**
-	 * On a SUSPEND event, switch to the perspective specified
-	 * by the launcher.
+	 * On a SUSPEND event, show the debug view or if no debug view is open,
+	 * switch to the perspective specified by the launcher.
 	 *
 	 * @see IDebugEventListener
 	 */
 	public void handleDebugEvent(final DebugEvent event) {
-		// open the debugger if this is a suspend event and the debugger is not yet open
+		// open the debugger if this is a suspend event and the debug view is not yet open
 		// and the preferences are set to switch
 		if (event.getKind() == DebugEvent.SUSPEND) {
-			Display display= getDisplay();
-			if (display != null) {
-				display.asyncExec(new Runnable() {
-					public void run() {
+			getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (fSwitchContext.contextChanged(ILaunchManager.DEBUG_MODE)) {
 						if (showSuspendEvent(event)) {				
 							if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW)) {
-								switchToDebugPerspective0(event.getSource(), ILaunchManager.DEBUG_MODE, true);
+								switchToDebugPerspective(event.getSource(), ILaunchManager.DEBUG_MODE);
 							}
+						} 
+					}
+					if (fSwitchContext.wasPageCreated()) {
+						fSwitchContext.setPageCreated(false);
+						LaunchesView view= fSwitchContext.getDebuggerView();
+						if (view != null) {
+							view.autoExpand(event.getSource(), true);
 						}
 					}
-				});
-			}
+				}
+			});
 		}
 	}
-
+
 	/**
 	 * Poll the filters to determine if the event should be shown
 	 */
@@ -183,71 +368,54 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		return true;
 	}
 
-
 	/** 
 	 * Opens the a workbench page with the layout specified by the launcher 
 	 * if it had not already been opened in any workbench window.
-	 * If the switch is suspend triggered, a switch only occurs if 
-	 * a debug view is not present in any workbench window.
+	 * 
+	 * A switch only occurs if a debug view is not present in any workbench window.
 	 */
-	private void switchToDebugPerspective0(Object source, String mode, boolean suspendTriggered) {
+	protected void switchToDebugPerspective(Object source, String mode) {
+		fSwitchContext.init(mode);
 		String layoutId= getLauncherPerspective(source);
-		Object[] results= findDebugPresentation(source, mode, layoutId, suspendTriggered);
-		if (results == null) {
-			return;
-		} 
-		IWorkbenchWindow window= null;
-		IWorkbenchPage page= null;
-		if (results.length == 0) {
-			window= getActiveWorkbenchWindow();
-		} else {
-			window= (IWorkbenchWindow)results[0];
-			page= (IWorkbenchPage)results[1];
-		}
-				
-		page= activateDebugLayoutPage(page, window, layoutId);
+		findDebugPresentation(fSwitchContext, mode, layoutId);
+		activateDebugLayoutPage(fSwitchContext, layoutId);
 		// bring debug to the front
-		activateDebuggerPart(source, page, mode);
+		activateDebuggerPart(fSwitchContext, mode);
+		if (fSwitchContext.wasPageCreated()) {
+			LaunchesView view2= fSwitchContext.getDebuggerView();
+			if (view2 != null) {
+				view2.autoExpand(source, true);
+			}
+		}
 	}
 	
 	/**
 	 * Debug ui thread safe access to a display
 	 */
 	protected Display getDisplay() {
-		IWorkbench workbench= getWorkbench();
-		if (workbench != null) {
-			IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-			Display display= null;
-			if (windows != null && windows.length > 0) {
-				Shell shell= windows[0].getShell();
-				if (!shell.isDisposed()) {
-					return shell.getDisplay();
-				}
-			}
-		}
-		return null;
+		//we can rely on not creating a display as we 
+		//prereq the base eclipse ui plugin.
+		return Display.getDefault();
 	}
 	
 	/**
 	 * Activates (may include creates) a debugger part based on the mode
-	 * in the specified page.
+	 * in the specified switch context.
 	 * Must be called in the UI thread.
 	 */
-	protected void activateDebuggerPart(final Object source, IWorkbenchPage page, String mode) {
+	protected void activateDebuggerPart(SwitchContext switchContext, String mode) {
 		LaunchesView debugPart= null;
 		try {
 			if (mode == ILaunchManager.DEBUG_MODE) {
-				debugPart= (LaunchesView) page.showView(IDebugUIConstants.ID_DEBUG_VIEW);							
+				debugPart= (LaunchesView) switchContext.getPage().showView(IDebugUIConstants.ID_DEBUG_VIEW);							
 			} else {
-				debugPart= (LaunchesView) page.showView(IDebugUIConstants.ID_PROCESS_VIEW);
+				debugPart= (LaunchesView) switchContext.getPage().showView(IDebugUIConstants.ID_PROCESS_VIEW);
 			}
 		} catch (PartInitException pie) {
 			IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, pie.getMessage(), pie);
-			DebugUIUtils.errorDialog(page.getWorkbenchWindow().getShell(), "debug_ui_plugin.switch_perspective.error.", status);
+			DebugUIUtils.errorDialog(getActiveWorkbenchWindow().getShell(), "debug_ui_plugin.switch_perspective.error.", status);
 		}
-		if (debugPart != null) {
-			debugPart.autoExpand(source);
-		}
+		switchContext.setDebuggerView(debugPart);
 	}
 	
 	/**
@@ -255,46 +423,46 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * If no debugger view is found, looks for a page in any window
 	 * that has the specified debugger layout id.
 	 * Must be called in UI thread.
-	 * @return an Object array that 
-	 * 		is null if a debugger part has been found
-	 * 		is empty if no page could be found with the debugger layout id
-	 * 		has two elements if a debugger layout page is found
-	 *			 first element is a window, the second is a page
 	 */
-	protected Object[] findDebugPresentation(final Object source, String mode, String layoutId, boolean suspendTriggered) {
+	protected void findDebugPresentation(SwitchContext switchContext, String mode, String layoutId) {
 		
 		IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
 		IWorkbenchWindow activeWindow= getActiveWorkbenchWindow();
+		
+		//check the active page of the active window for
+		//debug view
+		LaunchesView part= findDebugPart(activeWindow, mode);
+		if (part != null) {
+			switchContext.setWindow(activeWindow);
+			switchContext.setPage(part.getSite().getPage());
+			return;
+		}
+		//check active pages of all windows for debug view
 		int i;
-		if (suspendTriggered) {
-			LaunchesView part= findDebugPart(activeWindow, mode);
-			if (part != null) {
-				part.autoExpand(source);
-				return null;
+		for (i= 0; i < windows.length; i++) {
+			IWorkbenchWindow window= windows[i];
+			LaunchesView lPart= findDebugPart(window, mode);
+			if (lPart != null) {
+				switchContext.setWindow(window);
+				switchContext.setPage(lPart.getSite().getPage());
+				return;
 			}
-			//check active pages for debugger view
-			for (i= 0; i < windows.length; i++) {
-				IWorkbenchWindow window= windows[i];
-				LaunchesView lPart= findDebugPart(window, mode);
-				if (lPart != null) {
-					lPart.autoExpand(source);
-					return null;
-				}
-			}
-		} 
+		}
 		
 		//check the pages for the debugger layout.
 		//check the pages of the active window first
 		IWorkbenchPage page= null;
 		IWorkbenchPage[] pages= activeWindow.getPages();
-		for (int j= 0; j < pages.length; j++) {
-			if (pages[j].getPerspective().getId().equals(layoutId)) {
-				page= pages[j];
+		for (i= 0; i < pages.length; i++) {
+			if (pages[i].getPerspective().getId().equals(layoutId)) {
+				page= pages[i];
 				break;
 			}
 		}
 		if (page != null) {
-			return new Object[]{activeWindow, page};
+			switchContext.setWindow(activeWindow);
+			switchContext.setPage(page);
+			return;
 		}
 
 		i= 0;
@@ -314,10 +482,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		} 
 				
 		if (page != null) {
-			return new Object[]{windows[i], page};
+			switchContext.setWindow(windows[i]);
+			switchContext.setPage(page);
+			return;
 		} 
-		
-		return new Object[0];
 	}
 	
 	/**
@@ -342,12 +510,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	}
 	
 	/**
-	 * Activates (may include creates) and returns a debugger page with the
-	 * specified layout in the supplied window.
-	 *
-	 * @return the page that was activated (and possibly created)
+	 * Activates (may include creates) a debugger page with the
+	 * specified layout within the switch context.
 	 */
-	protected IWorkbenchPage activateDebugLayoutPage(IWorkbenchPage page, IWorkbenchWindow window, String layoutId) {
+	protected void activateDebugLayoutPage(SwitchContext switchContext, String layoutId) {
+		IWorkbenchPage page= switchContext.getPage();
+		IWorkbenchWindow window= switchContext.getWindow();
 		if (page == null) {
 			try {
 				IContainer root= ResourcesPlugin.getWorkspace().getRoot();
@@ -373,16 +541,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 						page.setPerspective(wb.getPerspectiveRegistry().findPerspectiveWithId(layoutId));
 					}
 				}
+				switchContext.setPageCreated(true);
 			} catch (WorkbenchException e) {
 				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.INTERNAL_ERROR, e.getMessage(), e);
 				DebugUIUtils.errorDialog(window.getShell(), "debug_ui_plugin.switch_perspective.error.", status);
-				return null;
+				return;
 			}
+			switchContext.setPage(page);
+			switchContext.setWindow(window);
 		} else {
 			window.getShell().moveAbove(null);
+			window.getShell().setFocus();
 			window.setActivePage(page);
 		}
-		return page;
 	}
 	/**
 	 * Returns the launcher perspective specified in the launcher
@@ -403,18 +574,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		}
 		return perspectiveID;
 	}
-
+
 	/**
 	 * Returns the singleton instance of the debug plugin.
 	 */
 	public static DebugUIPlugin getDefault() {
 		return fgDebugUIPlugin;
 	}
-
+
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
-
+
 /**
  * Creates an extension.  If the extension plugin has not
  * been loaded a busy cursor will be activated during the duration of
@@ -454,7 +625,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	protected ImageRegistry createImageRegistry() {
 		return DebugPluginImages.initializeImageRegistry();
 	}
-
+
 	/**
 	 * Shuts down this plug-in and discards all plug-in state.
 	 * If a plug-in has been started, this method is automatically
@@ -483,8 +654,9 @@ public static Object createExtension(final IConfigurationElement element, final 
 			doc.removeDocumentListener(this);
 			doc.close();
 		}
+		fSwitchContext.shutdown();
 	}
-
+
 	/**
 	 * Starts up this plug-in.
 	 * <p>
@@ -504,7 +676,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 			launchRegistered(launches[i]);
 		}
 	}
-
+
 	/**
 	 * Adds the selection provider for the debug UI.
 	 */
@@ -513,7 +685,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 		fSelectionParts.add(part);
 		provider.addSelectionChangedListener(this);
 	}
-
+
 	/**
 	 * Removes the selection provider from the debug UI.
 	 */
@@ -523,21 +695,21 @@ public static Object createExtension(final IConfigurationElement element, final 
 		provider.removeSelectionChangedListener(this);
 		selectionChanged(null);
 	}
-
+
 	/**
 	 * Adds an <code>ISelectionListener</code> to the debug selection manager.
 	 */
 	public void addSelectionListener(ISelectionListener l) {
 		fListeners.add(l);
 	}
-
+
 	/**
 	 * Removes an <code>ISelectionListener</code> from the debug selection manager.
 	 */
 	public synchronized void removeSelectionListener(ISelectionListener l) {
 		fListeners.remove(l);
 	}
-
+
 	/**
 	 * Selection has changed in the debug selection provider.
 	 * Notify the listeners.
@@ -561,7 +733,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 			((ISelectionListener)copiedListeners[i]).selectionChanged(part, selection);
 		}
 	}
-
+
 	/**
 	 * Sets the console document for the specified process.
 	 * If the document is <code>null</code> the mapping for the
@@ -571,11 +743,11 @@ public static Object createExtension(final IConfigurationElement element, final 
 		if (doc == null) {
 			fConsoleDocuments.remove(process);
 		} else {
-
+
 			fConsoleDocuments.put(process, doc);
 		}
 	}
-
+
 	/**
 	 * Returns the correct document for the process, determining the current
 	 * process if required (process argument is null).
@@ -602,7 +774,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 			if (getCurrentProcess() == null) {
 				setCurrentProcess(determineCurrentProcess());
 			}
-
+
 			IProcess currentProcess= getCurrentProcess();
 			if (currentProcess != null) {
 				IDocument document= (IDocument) fConsoleDocuments.get(currentProcess);
@@ -614,17 +786,17 @@ public static Object createExtension(final IConfigurationElement element, final 
 				return document;
 			}
 		}
-
+
 		return new ConsoleDocument(null);
 	}
-
+
 	/**
 	 * Returns the color manager to use in the debug UI
 	 */
 	public ColorManager getColorManager() {
 		return fColorManager;
 	}
-
+
 	/**
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
 	 */
@@ -632,7 +804,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 		prefs.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, true);
 		prefs.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, true);
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN, true);
-
+
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
@@ -698,7 +870,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * Can return <code>null</code>.
 	 */
 	public IProcess determineCurrentProcess() {
-
+
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		IDebugTarget[] debugTargets= launchManager.getDebugTargets();
 		for (int i = 0; i < debugTargets.length; i++) {
@@ -708,15 +880,15 @@ public static Object createExtension(final IConfigurationElement element, final 
 				return process;
 			}
 		}
-
+
 		IProcess[] processes= launchManager.getProcesses();
 		if ((processes != null) && (processes.length > 0)) {
 			return processes[0];
 		}
-
+
 		return null;
 	}
-
+
 	protected IProcess getProcessFromInput(Object input) {
 		IProcess processInput= null;
 		if (input instanceof IProcess) {
@@ -736,14 +908,14 @@ public static Object createExtension(final IConfigurationElement element, final 
 				if (input instanceof IDebugElement) {
 					processInput= ((IDebugElement) input).getProcess();
 				}
-
+
 		if ((processInput == null) || (processInput.getLaunch() == null)) {
 			return null;
 		} else {
 			return processInput;
 		}
 	}
-
+
 	/**
 	 * @see IDocumentListener
 	 */
@@ -753,34 +925,31 @@ public static Object createExtension(final IConfigurationElement element, final 
 			return;
 		}
 		
-		Display display= getDisplay();
-		if (display != null) {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					IWorkbenchWindow window = getActiveWorkbenchWindow();
-					if (window != null) {
-						IWorkbenchPage page= window.getActivePage();
-						if (page != null) {
-							try { // show the console
-								ConsoleView consoleView= (ConsoleView)page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
-								if(consoleView == null) {
-									IWorkbenchPart activePart= page.getActivePart();
-									consoleView= (ConsoleView)page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
-									consoleView.setViewerInput(getCurrentProcess());
-									//restore focus stolen by the creation of the console
-									page.activate(activePart);
-								} else {
-									page.bringToTop(consoleView);
-								}
-							} catch (PartInitException pie) {
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IWorkbenchWindow window = getActiveWorkbenchWindow();
+				if (window != null) {
+					IWorkbenchPage page= window.getActivePage();
+					if (page != null) {
+						try { // show the console
+							ConsoleView consoleView= (ConsoleView)page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
+							if(consoleView == null) {
+								IWorkbenchPart activePart= page.getActivePart();
+								consoleView= (ConsoleView)page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
+								consoleView.setViewerInput(getCurrentProcess());
+								//restore focus stolen by the creation of the console
+								page.activate(activePart);
+							} else {
+								page.bringToTop(consoleView);
 							}
+						} catch (PartInitException pie) {
 						}
 					}
 				}
-			});
-		}
+			}
+		});
 	}
-
+
 	/**
 	 * @see IDocumentListener
 	 */
@@ -790,7 +959,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	public IProcess getCurrentProcess() {
 		return fCurrentProcess;
 	}
-
+
 	public void setCurrentProcess(IProcess process) {
 		if (fCurrentProcess != null) {
 			getConsoleDocument(fCurrentProcess).removeDocumentListener(this);
@@ -818,30 +987,28 @@ public static Object createExtension(final IConfigurationElement element, final 
 		}		
 	}
 	
-
+
 	/**
 	 * @see ILaunchListener
 	 */
-	public void launchDeregistered(ILaunch launch) {
-		Display display= getDisplay();
-		if (display != null) {
-			display.syncExec(new Runnable () {
-				public void run() {
-					IProcess currentProcess= getCurrentProcess();
-					if (currentProcess != null && currentProcess.getLaunch() == null) {
-						ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(currentProcess);
-						doc.removeDocumentListener(DebugUIPlugin.this);
-						doc.close();
-						setConsoleDocument(currentProcess, null);
-						fCurrentProcess= null;
-					}
+	public void launchDeregistered(final ILaunch launch) {
+		getDisplay().syncExec(new Runnable () {
+			public void run() {
+				IProcess[] processes= launch.getProcesses();
+				IProcess currentProcess= getCurrentProcess();
+				if (currentProcess != null && currentProcess.getLaunch() == null) {
+					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(currentProcess);
+					doc.removeDocumentListener(DebugUIPlugin.this);
+					doc.close();
+					setConsoleDocument(currentProcess, null);
+					fCurrentProcess= null;
 				}
-			});
-		} 
+			}
+		});
 		setCurrentProcess(determineCurrentProcess());
 		setConsoleInput(getCurrentProcess());
 	}
-
+
 	/**
 	 * Must not assume that will only be called from the UI thread.
 	 *
@@ -854,8 +1021,20 @@ public static Object createExtension(final IConfigurationElement element, final 
 		updateHistories(launch);
 		switchToDebugPerspectiveIfPreferred(launch);
 		
+		getDisplay().syncExec(new Runnable () {
+			public void run() {
+				IProcess[] processes= launch.getProcesses();
+				if (processes != null) {
+					for (int i= 0; i < processes.length; i++) {
+						ConsoleDocument doc= new ConsoleDocument(processes[i]);
+						doc.startReading();
+						setConsoleDocument(processes[i], doc);
+					}
+				}
+			}
+		});
+		
 		IProcess newProcess= null;
-
 		IDebugTarget target= launch.getDebugTarget();
 		if (target != null) {
 			newProcess= target.getProcess();
@@ -865,23 +1044,6 @@ public static Object createExtension(final IConfigurationElement element, final 
 				newProcess= processes[processes.length - 1];
 			}
 		}
-
-		Display display= getDisplay();
-		if (display != null) {
-			display.syncExec(new Runnable () {
-				public void run() {
-					IProcess[] processes= launch.getProcesses();
-					if (processes != null) {
-						for (int i= 0; i < processes.length; i++) {
-							ConsoleDocument doc= new ConsoleDocument(processes[i]);
-							doc.startReading();
-							setConsoleDocument(processes[i], doc);
-						}
-					}
-				}
-			});
-		}
-	
 		setCurrentProcess(newProcess);
 		setConsoleInput(newProcess);
 	}
@@ -891,21 +1053,18 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * if the user preferences specify to do so.
 	 */
 	protected void switchToDebugPerspectiveIfPreferred(final ILaunch launch) {
-		Display display= getDisplay();
-		if (display != null) {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					String mode= launch.getLaunchMode();
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				String mode= launch.getLaunchMode();
+				if (fSwitchContext.contextChanged(mode)) {	
 					boolean isDebug= mode.equals(ILaunchManager.DEBUG_MODE);
 					boolean doSwitch= userPreferenceToSwitchPerspective(isDebug);
-					if (doSwitch) {
-						if (showLaunch(launch)) {	
-							switchToDebugPerspective0(launch, mode, false);
-						}
+					if (doSwitch && showLaunch(launch)) {
+						switchToDebugPerspective(launch, mode);
 					}
-				}
-			});
-		}
+				} 
+			}
+		});
 	}
 	
 	/**
@@ -921,29 +1080,26 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * consoles that exist in a thread safe manner.
 	 */
 	protected void setConsoleInput(final IProcess process) {
-		Display display= getDisplay();
-		if (display != null) {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
-					for (int j= 0; j < windows.length; j++) {
-						IWorkbenchWindow window= windows[j];
-						IWorkbenchPage[] pages= window.getPages();
-						if (pages != null) {
-							for (int i= 0; i < pages.length; i++) {
-								IWorkbenchPage page= pages[i];
-								ConsoleView consoleView= (ConsoleView)page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
-								if (consoleView != null) {
-									consoleView.setViewerInput(process);
-								} 
-							}
+		getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
+				for (int j= 0; j < windows.length; j++) {
+					IWorkbenchWindow window= windows[j];
+					IWorkbenchPage[] pages= window.getPages();
+					if (pages != null) {
+						for (int i= 0; i < pages.length; i++) {
+							IWorkbenchPage page= pages[i];
+							ConsoleView consoleView= (ConsoleView)page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
+							if (consoleView != null) {
+								consoleView.setViewerInput(process);
+							} 
 						}
 					}
 				}
-			});
-		}
+			}
+		});
 	}
-
+
 	/**
 	 * Returns the collection of most recent debug launches, which 
 	 * can be empty.
@@ -998,7 +1154,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 			}
 		}
 	}
-
+
 	/**
 	 * Given a launch, try to add it to both of the run & debug histories.
 	 */
@@ -1094,15 +1250,12 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * of events posted to the queue have been processed.
 	 */
 	public void removeEventFilter(final IDebugUIEventFilter filter) {
-		Display display= getDisplay();
-		if (display != null) {
-			Runnable runnable = new Runnable() {
-				public void run() {
-					fEventFilters.remove(filter);
-				}
-			};
-			display.asyncExec(runnable);
-		}
+		Runnable runnable = new Runnable() {
+			public void run() {
+				fEventFilters.remove(filter);
+			}
+		};
+		getDisplay().asyncExec(runnable);
 	}
 	
 	/**
@@ -1129,4 +1282,4 @@ public static Object createExtension(final IConfigurationElement element, final 
 		return e.getAttribute("wizard") != null;
 	}
 }
-
+

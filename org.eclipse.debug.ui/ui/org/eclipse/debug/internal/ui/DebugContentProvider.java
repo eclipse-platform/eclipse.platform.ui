@@ -103,40 +103,10 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 				updateButtons();
 				break;
 			case DebugEvent.RESUME :
-				if (element instanceof ISuspendResume) {
-					if (((ISuspendResume)element).isSuspended()) {
-						return;
-					}
-				}
-				clearSourceSelection();
-				if (event.getDetail() != DebugEvent.STEP_START) {
-					refresh(element);
-					if (element instanceof IThread) {
-						//select and reveal will update buttons
-						//via selection changed callback
-						selectAndReveal(element);
-						break;
-					}
-				}
-				labelChanged(element);
-				updateButtons();
+				doHandleResumeEvent(event, element);
 				break;
 			case DebugEvent.SUSPEND :
-				refresh(element);
-				if (!DebugUIPlugin.getDefault().userPreferenceToSwitchPerspective(true)) {
-					Object tos= null;
-					if (element instanceof IThread) {
-						// select the top stack frame
-						try {
-							tos= ((IThread) element).getTopStackFrame();	
-						} catch (DebugException de) {
-						}
-					}
-					if (tos != null) {
-						selectAndReveal(tos);
-					}
-				}
-				updateButtons();
+				doHandleSuspendEvent(element);
 				break;
 			case DebugEvent.CHANGE :
 				refresh(element);
@@ -145,6 +115,33 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 		}
 	}
 
+	protected void doHandleResumeEvent(DebugEvent event, Object element) {
+		if (element instanceof ISuspendResume) {
+			if (((ISuspendResume)element).isSuspended()) {
+				return;
+			}
+		}
+		clearSourceSelection();
+		if (event.getDetail() != DebugEvent.STEP_START) {
+			refresh(element);
+			if (element instanceof IThread) {
+				//select and reveal will update buttons
+				//via selection changed callback
+				selectAndReveal(element);
+				return;
+			}
+		}
+		labelChanged(element);
+		updateButtons();
+	}
+	
+	protected void doHandleSuspendEvent(Object element) {
+		if (element instanceof IThread) {
+			((LaunchesViewer)fViewer).autoExpand(element, true);
+		}
+		updateButtons();
+	}
+	
 	/**
 	 * Helper method for inserting the given element - must be called in UI thread
 	 */
@@ -223,6 +220,24 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 			public void run() {
 				if (!isDisposed()) {
 					remove(launch);
+					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
+					IDebugTarget[] targets= lm.getDebugTargets();
+					if (targets.length > 0) {
+						IDebugTarget target= targets[0];
+						try {
+							IDebugElement[] threads= target.getChildren();
+							for (int i=0; i < threads.length; i++) {
+								if (((IThread)threads[i]).isSuspended()) {
+									((LaunchesViewer)fViewer).autoExpand(threads[i], false);
+									return;
+								}
+							}						
+						} catch (DebugException de) {
+							DebugUIUtils.logError(de);
+						}
+						
+						((LaunchesViewer)fViewer).autoExpand(target.getLaunch(), false);
+					}
 					updateButtons();
 				}
 			}
@@ -239,17 +254,12 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 			public void run() {
 				if (!isDisposed()) {
 					insert(launch);
-					if (!DebugUIPlugin.getDefault().userPreferenceToSwitchPerspective(true)) {
-						Object dt = launch.getDebugTarget();
-						if (dt != null) {
-							selectAndReveal(dt);
-						}
-					}
+					((LaunchesViewer)fViewer).autoExpand(launch, false);
 				}
 			}
 		};
 
-		asyncExec(r);
+		syncExec(r);
 	}
 
 	/**

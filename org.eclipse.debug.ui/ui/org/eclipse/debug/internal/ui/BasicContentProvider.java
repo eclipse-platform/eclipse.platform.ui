@@ -47,6 +47,18 @@ public abstract class BasicContentProvider implements IStructuredContentProvider
 	}
 	
 	/**
+	 * @see Display.syncExec(Runnable)
+	 */
+	protected void syncExec(Runnable r) {
+		if (fViewer != null) {
+			Control ctrl= fViewer.getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				ctrl.getDisplay().syncExec(r);
+			}
+		}
+	}
+	
+	/**
 	 * Refreshes the viewer - must be called in UI thread.
 	 */
 	protected void refresh() {

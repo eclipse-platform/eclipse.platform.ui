@@ -46,11 +46,9 @@ public class ProcessesContentProvider extends DebugContentProvider {
 			public void run() {
 				if (!isDisposed()) {
 					insert(launch);
-					if (!DebugUIPlugin.getDefault().userPreferenceToSwitchPerspective(true)) {
-						IProcess[] ps= launch.getProcesses();
-						if (ps != null && ps.length > 0) {
-							selectAndReveal(ps[0]);
-						}
+					IProcess[] ps= launch.getProcesses();
+					if (ps != null && ps.length > 0) {
+						selectAndReveal(ps[0]);
 					}
 				}
 			}

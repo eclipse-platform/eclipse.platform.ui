@@ -153,6 +153,10 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	 * Auto-expand and select the given element - must be called in UI thread.
 	 * This is used to implement auto-expansion-and-select on a SUSPEND event.
 	 */
+	public void autoExpand(Object element, boolean refreshNeeded) {
+		autoExpand(element);
+	}
+	
 	public void autoExpand(Object element) {
 		Object selectee = element;
 		if (element instanceof ILaunch) {
