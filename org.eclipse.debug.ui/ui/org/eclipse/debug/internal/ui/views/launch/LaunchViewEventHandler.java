@@ -103,13 +103,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			Object source= event.getSource();
 			switch (event.getKind()) {
 				case DebugEvent.CREATE :
-					Object parent = getParent(source);
-					if (parent != null) {
-						refresh(parent);
-					}
-					refresh(source);
-					if (source instanceof IDebugTarget) {
-						getLaunchView().autoExpand(source, true);
+					if (source instanceof IThread) {
+						insert(source);
+					} else {
+						Object parent = getParent(source);
+						if (parent != null) {
+							refresh(parent);
+						}
+						if (source instanceof IDebugTarget) {
+							getLaunchView().autoExpand(source, true);
+						}
 					}
 					break;
 				case DebugEvent.TERMINATE :
@@ -118,7 +121,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 						fThreadTimer.getTimedOutThreads().remove(source);
 						remove(source);
 					} else {
-					    parent = getParent(source);
+					    Object parent = getParent(source);
 						if (parent != null) {
 						    refresh(parent);
 						}
