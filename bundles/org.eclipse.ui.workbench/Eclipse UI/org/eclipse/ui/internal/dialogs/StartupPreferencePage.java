@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.osgi.framework.Constants;
 
 /**
@@ -124,6 +125,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
 		String pref = preference.toString();
 		IPreferenceStore store = workbench.getPreferenceStore();
 		store.putValue(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP,pref);
+		PrefUtil.savePrefs();
 		return true;
 	}
 }

@@ -102,6 +102,8 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
                 exitPromptButton.getSelection());
 
+        IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+        
         return super.performOk();
     }
 
