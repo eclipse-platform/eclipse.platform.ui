@@ -365,6 +365,8 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
 		if (socket == null) {
 			try {
 				socket = Util.createSocket(host, port, monitor);
+				// Bug 36351: disable buffering and send bytes immediately
+				socket.setTcpNoDelay(true);
 			} catch (InterruptedIOException e) {
 				// If we get this exception, chances are the host is not responding
 				throw new InterruptedIOException(Policy.bind("Client.socket", new Object[] {host}));//$NON-NLS-1$
