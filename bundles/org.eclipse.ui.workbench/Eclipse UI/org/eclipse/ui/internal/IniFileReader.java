@@ -170,6 +170,15 @@ public class IniFileReader {
 	}
 	
 	/**
+	 * Returns the descriptor for the corresponding plug-in of this feature.
+	 * 
+	 * @return the plug-in descriptor or <code>null</code> if none found
+	 */
+	public IPluginDescriptor getPluginDescriptor() {
+		return pluginDescriptor;
+	}
+	
+	/**
 	 * Returns the string value for the given key, or <code>null</code>.
 	 * The string value is NLS if requested.
 	 * 

@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Hashtable;
 import java.util.zip.CRC32;
 
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -42,6 +43,7 @@ public final class AboutInfo {
 
 	private String featureId;
 	private PluginVersionIdentifier versionId;
+	private IPluginDescriptor pluginDescriptor;
 	private String featurePluginLabel;
 	private String providerName;
 	private String appName;
@@ -86,6 +88,7 @@ public final class AboutInfo {
 				featureVersion = WorkbenchMessages.getString("AboutInfo.NoVersion"); //$NON-NLS-1$
 			runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
 
+			info.pluginDescriptor = reader.getPluginDescriptor();
 			info.featurePluginLabel = reader.getFeaturePluginLabel();
 			info.providerName = reader.getProviderName();
 			info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
@@ -232,6 +235,15 @@ public final class AboutInfo {
 	}
 
 	/**
+	 * Returns the descriptor for the corresponding plug-in of this feature.
+	 * 
+	 * @return the plug-in descriptor or <code>null</code> if none found
+	 */
+	public IPluginDescriptor getPluginDescriptor() {
+		return pluginDescriptor;
+	}
+	
+	/**
 	 * Returns the product name or <code>null</code>.
 	 * This is shown in the window title and the About action.
 	 *
@@ -259,6 +271,15 @@ public final class AboutInfo {
 		if (versionId == null)
 			return null;
 		return versionId.toString();
+	}
+
+	/**
+	 * Returns the plug-in version identifier or <code>null</code>.
+	 *
+	 * @return the plug-in version identifier, or <code>null</code>
+	 */
+	public PluginVersionIdentifier getVersionId() {
+		return versionId;
 	}
 
 	/**

@@ -13,14 +13,41 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.AboutInfo;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.actions.ExportResourcesAction;
+import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.ui.actions.ImportResourcesAction;
+import org.eclipse.ui.actions.LabelRetargetAction;
+import org.eclipse.ui.actions.NewWizardAction;
+import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.actions.OpenInNewWindowAction;
+import org.eclipse.ui.actions.QuickStartAction;
+import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
@@ -833,27 +860,29 @@ public final class WorkbenchActionBuilder {
 		// events.
 		//keyBindingService.registerGlobalAction(deleteAction);
 
-// @issue Need API to get the about info for all features
-/*
-		AboutInfo[] infos =
-			((Workbench) workbench).getConfigurationInfo().getFeaturesInfo();
-		// See if a welcome page is specified
-		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getWelcomePageURL() != null) {
-				quickStartAction = new QuickStartAction(getWindow());
-				getWindow().registerGlobalAction(quickStartAction);
-				break;
+		try {
+			AboutInfo[] infos = windowConfigurer.getWorkbenchConfigurer().getAllFeaturesAboutInfo();
+			// See if a welcome page is specified
+			for (int i = 0; i < infos.length; i++) {
+				if (infos[i].getWelcomePageURL() != null) {
+					quickStartAction = new QuickStartAction(getWindow());
+					registerGlobalAction(quickStartAction);
+					break;
+				}
 			}
-		}
-		// See if a tips and tricks page is specified
-		for (int i = 0; i < infos.length; i++) {
-			if (infos[i].getTipsAndTricksHref() != null) {
-				tipsAndTricksAction = new TipsAndTricksAction(getWindow());
-				getWindow().registerGlobalAction(tipsAndTricksAction);
-				break;
+			// See if a tips and tricks page is specified
+			for (int i = 0; i < infos.length; i++) {
+				if (infos[i].getTipsAndTricksHref() != null) {
+					tipsAndTricksAction = new TipsAndTricksAction(getWindow());
+					registerGlobalAction(tipsAndTricksAction);
+					break;
+				}
 			}
+			
+		} catch (WorkbenchException e) {
+			IDEWorkbenchPlugin.log("Failed to read about info for all installed features.", e.getStatus()); //$NON-NLS-1$
 		}
-*/
+
 		// Actions for invisible accelerators
 		showViewMenuAction = new ShowViewMenuAction(getWindow());
 		showViewMenuAction.setActionDefinitionId(showViewMenuActionDefId);

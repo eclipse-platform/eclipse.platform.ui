@@ -45,9 +45,30 @@ public interface IWorkbenchConfigurer {
 	 * Fails if the <code>about.ini</code> file cannot be opened
 	 * and parsed correctly.
 	 * 
-	 * @return the confirguration information for the primary feature
+	 * @return the configuration information for the primary feature
 	 */
 	public AboutInfo getPrimaryFeatureAboutInfo() throws WorkbenchException;
+	
+	/**
+	 * Returns the configuration information found in the
+	 * <code>about.ini</code> file for all installed features.
+	 * Fails if the <code>about.ini</code> file cannot be opened
+	 * and parsed correctly.
+	 * 
+	 * @return the configuration information for all features
+	 */
+	public AboutInfo[] getAllFeaturesAboutInfo() throws WorkbenchException;
+	
+	/**
+	 * Returns the configuration information found in the
+	 * <code>about.ini</code> file for all new installed features
+	 * since the last time the workbench was started. Fails if the
+	 * <code>about.ini</code> file cannot be opened and parsed
+	 * correctly.
+	 * 
+	 * @return the configuration information for new installed features
+	 */
+	public AboutInfo[] getNewFeaturesAboutInfo() throws WorkbenchException;
 	
 	/**
 	 * Returns whether the workbench state should be saved on close and 
