@@ -9,14 +9,24 @@
 //
 package org.eclipse.ui.externaltools.internal.ant.editor.outline;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -59,13 +69,16 @@ public class OutlinePreparingHandler extends DefaultHandler {
      * The root element of the DOM Tree that we create while parsing.
      */
     protected XmlElement rootElement;
+    
+    protected File mainFile;
 
 
     /**
      * Creates an instance.
      */
-    public OutlinePreparingHandler() throws ParserConfigurationException {
+    public OutlinePreparingHandler(File mainFile) throws ParserConfigurationException {
         super();
+        this.mainFile= mainFile;
     }
 
 
@@ -367,5 +380,40 @@ public class OutlinePreparingHandler extends DefaultHandler {
           //  super.fatalError(anException);
         }
     }
+
+	/**
+	 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
+	 */
+	public InputSource resolveEntity(String publicId, String systemId)
+		throws SAXException {
+			int index= systemId.indexOf(':');
+			if (index > 0) {
+				//remove file:
+				systemId= systemId.substring(index+1, systemId.length());
+			}
+			File relativeFile= null;
+			IPath filePath= new Path(systemId);
+			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
+			if (file == null) {
+				//relative path
+				try {
+					//this call is ok if mainFile is null
+					relativeFile= FileUtils.newFileUtils().resolveFile(mainFile, systemId);
+				} catch (BuildException be) {
+					return null;
+				}
+			}
+		
+			if (relativeFile.exists()) {
+				try {
+					return new InputSource(new FileReader(relativeFile));
+				} catch (FileNotFoundException e) {
+					return null;
+				}
+				
+			}
+					
+		return super.resolveEntity(publicId, systemId);
+	}
 
 }

@@ -9,6 +9,7 @@
 //
 package org.eclipse.ui.externaltools.internal.ant.editor.test;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -578,7 +579,7 @@ public class PlantyContentOutlineTest extends TestCase {
     public void testOutlinePreparingHandler() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
 
-        OutlinePreparingHandler tempHandler = new OutlinePreparingHandler();
+        OutlinePreparingHandler tempHandler = new OutlinePreparingHandler(new File(getClass().getResource("/de/gebit/planty/test/test2.xml").getFile()));
         InputStream tempStream = getClass().getResourceAsStream("/de/gebit/planty/test/test2.xml");
         try {
             tempParser.parse(tempStream, tempHandler);
