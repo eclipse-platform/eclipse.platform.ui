@@ -83,5 +83,14 @@
   used in its place to retrieve the launch delegate for a specific launch mode. 
   The deprecated method has been changed to return the launch delegate for the 
   <code>run</code> mode.</p>
+<h3>Launch Tabs &amp; Tab Groups</h3>
+<p>Launch tab groups and launch tabs are no longer notified when a launch completes. 
+  The method <code>launched(ILaunch)</code> in the interfaces <code>ILaunchConfigurationTab</code> 
+  and <code>ILaunchConfigurationTabGroup</code> has been deprecated and is no 
+  longer called. Relying on this method for launch function was always problematic, 
+  since tabs only exist when launching is performed from the launch dialog. Also, 
+  with the introduction of background launching, this method can no longer be 
+  called, as the launch dialog is be closed before the resulting launch object 
+  exists.</p>
 </body>
 </html>
