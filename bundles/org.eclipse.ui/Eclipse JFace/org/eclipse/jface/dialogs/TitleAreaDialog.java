@@ -264,7 +264,7 @@ private Composite createTitleArea(Composite parent) {
 	messageLabel = new Label(messageArea, SWT.WRAP);
 	messageLabel.setBackground(bg);
 	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
-	messageLabel.setFont(parent.getFont());
+	messageLabel.setFont(JFaceResources.getDialogFont());
 
 	// Dialog image @ right
 	titleImage = new Label(titleArea, SWT.CENTER);

@@ -213,6 +213,15 @@ protected void configureShell(Shell shell) {
 	shell.setLayout(new ApplicationWindowLayout());
 
 	new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+
+	Font font = getFont();
+	if (toolBarManager != null) {
+		Control control = toolBarManager.createControl(shell);
+	}
+
+	if (statusLineManager != null) {
+		Control control = statusLineManager.createControl(shell);
+	}
 }
 /**
  * Returns a new menu manager for the window.
@@ -289,7 +298,7 @@ protected StatusLineManager getStatusLineManager() {
  * @return the symbolic font name
  */
 public String getSymbolicFontName() {
-	return JFaceResources.WINDOW_FONT;
+	return JFaceResources.DEFAULT_FONT;
 }
 /**
  * Returns the tool bar manager for this window (if it has one).
