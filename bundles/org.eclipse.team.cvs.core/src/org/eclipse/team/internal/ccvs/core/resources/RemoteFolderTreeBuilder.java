@@ -264,6 +264,9 @@ public class RemoteFolderTreeBuilder {
 				remoteFile = new RemoteFile(remoteRoot, file.getSyncInfo());
 			} else {
 				DeltaNode d = (DeltaNode)deltas.get(file.getName());
+				if (d.getRevision() == DELETED) {
+					return null;
+				}
 				remoteFile = new RemoteFile(remoteRoot, d.getSyncState(), file.getName(), tagForRemoteFolder(remoteRoot, tag));
 			}
 			// Add the resource to its parent
