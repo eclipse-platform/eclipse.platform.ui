@@ -25,11 +25,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.KeySupport;
 import org.eclipse.ui.keys.ParseException;
 
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -373,7 +376,8 @@ public class WorkbenchKeyboard {
 				KeySequence.getInstance(sequenceBeforeKeyStroke, (KeyStroke) iterator.next());
 
 			if (isPartialMatch(sequenceAfterKeyStroke)) {
-				state.setCollapseFully(false);
+				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				state.setCollapseFully(!store.getBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
 				state.setCurrentSequence(sequenceAfterKeyStroke);
 				return true;
 
