@@ -4,15 +4,18 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert; 
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
 
 /**
  * Abstract base implementation for all preference page implementations.
@@ -496,5 +499,19 @@ public String toString() {
 protected void updateApplyButton() {
 	if (applyButton != null)
 		applyButton.setEnabled(isValid());
+}
+/**
+ * Return the GridData that sets the height of the
+ * button to maintain the Eclipse look and feel.
+ * Set the text before this method is called so that
+ * the width calculation takes it into account.
+ */
+	
+protected void setButtonLayoutData(Button button){
+	GridData data = new GridData();
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	button.setLayoutData(data);
 }
 }
