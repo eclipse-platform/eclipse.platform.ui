@@ -1,5 +1,12 @@
 package org.eclipse.ui.externaltools.internal.variable;
 
+/**********************************************************************
+Copyright (c) 2003 IBM Corp. and others. All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
