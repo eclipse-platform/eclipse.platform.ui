@@ -107,7 +107,7 @@ public void addMenuListener(IMenuListener listener) {
  * @return the menu control
  */
 public Menu createContextMenu(Control parent) {
-	if (menu == null || menu.isDisposed()) {
+	if (!menuExist()) {
 		menu = new Menu(parent);
 		initializeMenu();
 	}
@@ -122,7 +122,7 @@ public Menu createContextMenu(Control parent) {
  * @return the menu control
  */
 public Menu createMenuBar(Shell parent) {
-	if (menu == null || menu.isDisposed()) {
+	if (!menuExist()) {
 		menu = new Menu(parent, SWT.BAR);
 		update(false);
 	}
@@ -135,10 +135,10 @@ public Menu createMenuBar(Shell parent) {
  * Use <code>removeAll</code> for that purpose.
  */
 public void dispose() {
-	if (menu != null) {
+	if (menuExist())
 		menu.dispose();
-		menu = null;
-	}
+	menu = null;
+	
 	if (menuItem != null) {
 		menuItem.dispose();
 		menuItem = null;
@@ -160,7 +160,7 @@ public void fill(Menu parent, int index) {
 
 		menuItem.setText(menuText);
 
-		if (menu == null || menu.isDisposed())
+		if (!menuExist())
 			menu = new Menu(parent);
 
 		menuItem.setMenu(menu);
@@ -331,6 +331,16 @@ public boolean isSubstituteFor(IContributionItem item) {
 public boolean isVisible() {
 	return visible;
 }
+/**
+ * Returns whether the menu control is created
+ * and not disposed.
+ * 
+ * @return <code>true</code> if the control is created
+ *	and not disposed, <code>false</code> otherwise
+ */
+private boolean menuExist() {
+	return menu != null && !menu.isDisposed();
+}
 /* (non-Javadoc)
  * Method declared on IMenuManager.
  */
@@ -376,7 +386,7 @@ public void update(boolean force) {
  */
 protected void update(boolean force, boolean recursive) {
 	if (isDirty() || force) {
-		if (menu != null && !menu.isDisposed()) {
+		if (menuExist()) {
 
 			// clean contains all active items without double separators
 			IContributionItem[] items= getItems();
@@ -485,7 +495,7 @@ public void updateAll(boolean force) {
  * Does nothing if this menu is not a submenu.
  */
 private void updateMenuItem() {
-	if (menuItem != null && !menuItem.isDisposed()) {
+	if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
 		boolean enabled = menu.getItemCount() > 0;
 		// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
 		if (menuItem.getEnabled() != enabled)

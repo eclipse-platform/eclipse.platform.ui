@@ -42,7 +42,7 @@ public StatusLineManager() {
  * @return the status line control
  */
 public StatusLine createControl(Composite parent) {
-	if (statusLine == null && parent != null) {
+	if (!statusLineExist() && parent != null) {
 		statusLine= new StatusLine(parent);
 		update(false);
 	}
@@ -55,10 +55,9 @@ public StatusLine createControl(Composite parent) {
  * Use <code>removeAll</code> for that purpose.
  */
 public void dispose() {
-	if (statusLine != null) {
+	if (statusLineExist())
 		statusLine.dispose();
-		statusLine = null;
-	}
+	statusLine = null;
 }
 /**
  * Internal -- returns the StatusLine control.
@@ -80,42 +79,52 @@ public IProgressMonitor getProgressMonitor() {
  * Method declared on IStatueLineManager
  */
 public boolean isCancelEnabled() {
-	return statusLine != null && statusLine.isCancelEnabled();
+	return statusLineExist() && statusLine.isCancelEnabled();
 }
 /* (non-Javadoc)
  * Method declared on IStatueLineManager
  */
 public void setCancelEnabled(boolean enabled) {
-	if (statusLine != null && !statusLine.isDisposed())
+	if (statusLineExist())
 		statusLine.setCancelEnabled(enabled);
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
  */
 public void setErrorMessage(String message) {
-	if (statusLine != null)
+	if (statusLineExist())
 		statusLine.setErrorMessage(message);
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
  */
 public void setErrorMessage(Image image, String message) {
-	if (statusLine != null)
+	if (statusLineExist())
 		statusLine.setErrorMessage(image, message);
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
  */
 public void setMessage(String message) {
-	if (statusLine != null)
+	if (statusLineExist())
 		statusLine.setMessage(message);
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
  */
 public void setMessage(Image image, String message) {
-	if (statusLine != null)
+	if (statusLineExist())
 		statusLine.setMessage(image, message);
+}
+/**
+ * Returns whether the status line control is created
+ * and not disposed.
+ * 
+ * @return <code>true</code> if the control is created
+ *	and not disposed, <code>false</code> otherwise
+ */
+private boolean statusLineExist() {
+	return statusLine != null && !statusLine.isDisposed(); 
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
@@ -126,7 +135,7 @@ public void update(boolean force) {
 	
 	if (isDirty() || force) {
 		
-		if (statusLine != null) {
+		if (statusLineExist()) {
 
 			statusLine.setRedraw(false);
 	

@@ -67,7 +67,7 @@ public ToolBarManager(ToolBar toolbar) {
  * @return the tool bar control
  */
 public ToolBar createControl(Composite parent) {
-	if (toolBar == null && parent != null) {
+	if (!toolBarExist() && parent != null) {
 		toolBar = new ToolBar(parent, itemStyle);
 		update(false);
 	}
@@ -80,10 +80,9 @@ public ToolBar createControl(Composite parent) {
  * Use <code>removeAll</code> for that purpose.
  */
 public void dispose() {
-	if (toolBar != null) {
+	if (toolBarExist())
 		toolBar.dispose();
-		toolBar = null;
-	}
+	toolBar = null;
 }
 /**
  * Returns the tool bar control for this manager.
@@ -110,6 +109,16 @@ protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
 	if ((oldCount == 0) != (newCount == 0))
 		toolBar.getParent().layout();
 }
+/**
+ * Returns whether the tool bar control is created
+ * and not disposed.
+ * 
+ * @return <code>true</code> if the control is created
+ *	and not disposed, <code>false</code> otherwise
+ */
+private boolean toolBarExist() {
+	return toolBar != null && !toolBar.isDisposed(); 
+}
 /* (non-Javadoc)
  * Method declared on IContributionManager.
  */
@@ -123,7 +132,7 @@ public void update(boolean force) {
 				
 	if (isDirty() || force) {
 		
-		if (toolBar != null) {
+		if (toolBarExist()) {
 		
 			int oldCount= toolBar.getItemCount();
 
