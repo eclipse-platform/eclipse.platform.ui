@@ -11,7 +11,7 @@ import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete implementation of the <code>IStructuredSelection</code> interface,
- * suitable for instantiating or subclassing.
+ * suitable for instantiating.
  * <p>
  * This class is not intended to be subclassed.
  * </p>
