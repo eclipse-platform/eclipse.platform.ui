@@ -944,6 +944,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		String message;
 		try {
 			monitor.beginTask(null, Policy.totalWork);
+			//the tree must be immutable
+			tree.immutable();
 			// don't need to snapshot if there are no changes 
 			if (tree == lastSnap)
 				return;
