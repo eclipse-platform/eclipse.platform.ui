@@ -64,7 +64,7 @@ IMG {
 }
 
 
-A, A:visited, A:hover, A:link {
+A {
 	text-decoration:none; 
 	color:WindowText;
 	padding-right:2px;
@@ -74,13 +74,15 @@ A, A:visited, A:hover, A:link {
 
 A:hover{
 	text-decoration:underline; 
-	color:WindowText;
-	padding-right:2px;
-	/* this works in ie5.5, but not in ie5.0  */
-	white-space: nowrap;
 }
 
 A.active{ 
+	background:ButtonFace;
+	width:100%;
+}
+
+A.active:hover{
+	text-decoration:underline; 
 	background:ButtonFace;
 	width:100%;
 }
@@ -93,7 +95,7 @@ A.active{
 <script language="JavaScript"> 
  var extraStyle = "";
  if (isMozilla)
-  	 extraStyle = "<style type='text/css'>UL { margin-left:-20px;} #root{ margin-left:-35px; margin-top:5px;} </style>";
+  	 extraStyle = "<style type='text/css'>UL { margin-left:-20px;} #root{ margin-left:-35px; margin-top:5px;} A.active, A.active:hover {background:WindowText;color:Window;} </style>";
  
  document.write(extraStyle);
 </script>
