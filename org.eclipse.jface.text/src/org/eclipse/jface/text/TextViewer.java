@@ -2394,16 +2394,18 @@ public class TextViewer extends Viewer implements
 		if (fVisibleDocument != null) {
 			
 			IRegion widgetRange= modelRange2WidgetRange(new Region(offset, length));
-			
-			fWidgetCommand.event= null;
-			fWidgetCommand.start= widgetRange.getOffset();
-			fWidgetCommand.length= widgetRange.getLength();
-			
-			try {
-				fWidgetCommand.text= fVisibleDocument.get(widgetRange.getOffset(), widgetRange.getLength());
-				updateTextListeners(fWidgetCommand);
-			} catch (BadLocationException x) {
-				// can not happen because of previous checking
+			if (widgetRange != null) {
+				
+				fWidgetCommand.event= null;
+				fWidgetCommand.start= widgetRange.getOffset();
+				fWidgetCommand.length= widgetRange.getLength();
+				
+				try {
+					fWidgetCommand.text= fVisibleDocument.get(widgetRange.getOffset(), widgetRange.getLength());
+					updateTextListeners(fWidgetCommand);
+				} catch (BadLocationException x) {
+					// can not happen because of previous checking
+				}
 			}
 		}
 	}
@@ -3784,8 +3786,8 @@ public class TextViewer extends Viewer implements
 		try {
 			
 			if (modelRange.getLength() < 0) {
-				Region reveresed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
-				IRegion result= fInformationMapping.toImageRegion(reveresed);
+				Region reversed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
+				IRegion result= fInformationMapping.toImageRegion(reversed);
 				return new Region(result.getOffset() + result.getLength(), -result.getLength());
 			} else {
 				return fInformationMapping.toImageRegion(modelRange);
