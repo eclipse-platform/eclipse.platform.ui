@@ -21,7 +21,11 @@ import org.eclipse.core.runtime.CoreException;
 public class SpySupport {
 
 /**
- * Return the property store which is associated with the given resource. * * @param resource the resource whose property store is being accessed * @return the resource's property store * @throws CoreException if there was a problem accessing the resource's property store
+ * Return the property store which is associated with the given resource.
+ *
+ * @param resource the resource whose property store is being accessed
+ * @return the resource's property store
+ * @throws CoreException if there was a problem accessing the resource's property store
  */
 public static PropertyStore getPropertyStore(IResource resource) throws CoreException {
 	return ((Resource) resource).getPropertyManager().getPropertyStore(resource);
