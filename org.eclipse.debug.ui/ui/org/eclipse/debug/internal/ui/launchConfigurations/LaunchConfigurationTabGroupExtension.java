@@ -12,8 +12,9 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,6 +38,11 @@ public class LaunchConfigurationTabGroupExtension {
 	 * default.
 	 */
 	private Set fModes;
+	
+	/**
+	 * Perspectives for each mode
+	 */
+	private Map fPerspectives;
 	
 	/**
 	 * Constructs a launch configuration tab extension based
@@ -89,17 +95,40 @@ public class LaunchConfigurationTabGroupExtension {
 	 */
 	protected Set getModes() {
 		if (fModes == null) {
-			String modes= getConfigurationElement().getAttribute("modes"); //$NON-NLS-1$
-			if (modes != null) {
-				StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
-				fModes = new HashSet(tokenizer.countTokens());
-				while (tokenizer.hasMoreTokens()) {
-					fModes.add(tokenizer.nextToken().trim());
+			IConfigurationElement[] modes= getConfigurationElement().getChildren("launchMode"); //$NON-NLS-1$
+			if (modes.length > 0) {
+				fModes = new HashSet(modes.length);
+				fPerspectives = new Hashtable(modes.length);
+				for (int i = 0; i < modes.length; i++) {
+					IConfigurationElement element = modes[i];
+					String mode = element.getAttribute("mode"); //$NON-NLS-1$
+					fModes.add(mode);
+					String perspective = element.getAttribute("perspective"); //$NON-NLS-1$
+					if (perspective != null) {
+						fPerspectives.put(mode, perspective);
+					}
 				}
 			}
 		}
 		return fModes;
-	}	
+	}
+	
+	/**
+	 * Returns the default perspective associated with the given launch
+	 * mode, or <code>null</code> if none.
+	 * 
+	 * @param mode launch mode
+	 * @return perspective identifier, or <code>null</code>
+	 */
+	protected String getPerspective(String mode) {
+		// ensure modes are initialized
+		getModes();
+		String id = null;
+		if (fPerspectives != null) {
+			id = (String)fPerspectives.get(mode);
+		}
+		return id;
+	}
 	
 	/**
 	 * Returns the identifier of the type of launch configuration this

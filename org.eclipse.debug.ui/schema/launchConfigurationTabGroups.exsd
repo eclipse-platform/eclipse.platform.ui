@@ -42,6 +42,9 @@ dialog for a type of launch configuration.
 
    <element name="launchConfigurationTabGroup">
       <complexType>
+         <sequence>
+            <element ref="launchMode" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -74,10 +77,27 @@ launch configuration type extension).
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="modes" type="string">
+      </complexType>
+   </element>
+
+   <element name="launchMode">
+      <annotation>
+         <documentation>
+            A launch mode element specifies a launch mode this tab group is specific to. A tab grounp can be associated with one or more launch modes. For backwards compatibility (previous to 3.0), a launch mode does not neet to be specified. When unspecified, a tab group is registered as the default tab group for the associated launch confiugration type (i.e. applicable to all supported launch modes for which a specific tab group has not been contributed).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="mode" type="string" use="required">
             <annotation>
                <documentation>
-                  a comma seperated list of launch modes specifying the launch modes this tab group is applicable to. When unspecified, this tab group is the default set of tabs for this tab group&apos;s launch confiugration type.
+                  identifier for a launch mode this tab group is specific to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="perspective" type="string">
+            <annotation>
+               <documentation>
+                  the default perspective identifier associated with this launch configuration type and launch mode. This allows an extension to cause a perspective switch (or open) when a corresponding launch is registered with the debug plug-in. When unspecified, it indicates that by default, no perspective switch should occurr.
                </documentation>
             </annotation>
          </attribute>
