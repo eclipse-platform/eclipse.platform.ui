@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.ICategory;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -26,10 +26,8 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * set of capabilities on a project.
  */
 public class ProjectCapabilitySelectionGroup {
-	// Initial number of visible capabilities in the list.
-	private static final int PROJECT_LIST_MULTIPLIER = 25;
-
 	private CapabilityRegistry registry;
+	private ICategory[] initialCategories;
 	private Capability[] initialCapabilities;
 	private boolean modified = false;
 	private CheckboxTableViewer listViewer;
@@ -44,11 +42,13 @@ public class ProjectCapabilitySelectionGroup {
 	/**
 	 * Creates a new instance of the <code>ProjectCapabilitySelectionGroup</code>
 	 * 
+	 * @param categories the initial collection of categories to select
 	 * @param capabilities the intial collection of capabilities to select
 	 * @param registry all available capabilities registered by plug-ins
 	 */
-	public ProjectCapabilitySelectionGroup(Capability[] capabilities, CapabilityRegistry registry) {
+	public ProjectCapabilitySelectionGroup(ICategory[] categories, Capability[] capabilities, CapabilityRegistry registry) {
 		super();
+		this.initialCategories = categories;
 		this.initialCapabilities = capabilities;
 		this.registry = registry;
 	}
@@ -73,12 +73,7 @@ public class ProjectCapabilitySelectionGroup {
 		
 		// Checkbox tree viewer of all available capabilities
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		data.heightHint =
-			getDefaultFontHeight(listViewer.getTable(), PROJECT_LIST_MULTIPLIER);
-		listViewer.getTable().setLayoutData(data);
+		listViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		listViewer.setLabelProvider(new WorkbenchLabelProvider());
 		listViewer.setContentProvider(new WorkbenchContentProvider());
 		listViewer.setInput(registry);
@@ -152,23 +147,6 @@ public class ProjectCapabilitySelectionGroup {
 		}
 		
 		return false;
-	}
-	
-	/**
-	 * Get the default widget height for the supplied control.
-	 * 
-	 * @param control  the control being queried about fonts.
-	 * @param lines  the number of lines to be shown on the table.
-	 * @return int  the font height required to show the requested lines.
-	 */
-	private int getDefaultFontHeight(Control control, int lines) {
-		FontData[] viewerFontData = control.getFont().getFontData();
-		int fontHeight = 10;
-	
-		//If we have no font data use our guess
-		if (viewerFontData.length > 0)
-			fontHeight = viewerFontData[0].getHeight();
-		return lines * fontHeight;
 	}
 	
 	/**
@@ -456,15 +434,6 @@ public class ProjectCapabilitySelectionGroup {
 		return checkStateListener;
 	}
 
-	/**
-	 * Sets the initial category selection. Ignored if the
-	 * createContents method has not been called yet.
-	 */
-	public void setInitialSelectedCategories(Category[] categories) {
-		if (categories != null) {
-		}
-	}
-	
 	/**
 	 * Set the current listener interested when the check
 	 * state of a capability actually changes.

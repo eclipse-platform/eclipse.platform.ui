@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.InstallCapabilityStep.IProjectProvider;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.ICategory;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 /**
@@ -43,7 +43,7 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 	// initial values for the pages provided by this wizard
 	private String initialProjectName;
 	private Capability[] initialProjectCapabilities;
-	private Category[] initialSelectedCategories;
+	private ICategory[] initialSelectedCategories;
 	
 	/**
 	 * Creates an empty wizard for creating a new project
@@ -182,7 +182,7 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard, IPr
 	 * 
 	 * @param categories initial categories to select
 	 */
-	public void setInitialSelectedCategories(Category[] categories) {
+	public void setInitialSelectedCategories(ICategory[] categories) {
 		initialSelectedCategories = categories;
 	}
 	

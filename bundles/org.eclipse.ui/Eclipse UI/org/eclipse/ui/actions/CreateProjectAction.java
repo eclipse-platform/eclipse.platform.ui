@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.dialogs.NewProjectWizard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.ICategory;
 
 /**
  * Standard action for launching the new project creation
@@ -61,7 +61,7 @@ public class CreateProjectAction extends Action {
 	/**
 	 * The suggested categories to be selected
 	 */
-	private Category[] initialSelectedCategories;
+	private ICategory[] initialSelectedCategories;
 
 	/**
 	 * Creates a new action for launching the new project

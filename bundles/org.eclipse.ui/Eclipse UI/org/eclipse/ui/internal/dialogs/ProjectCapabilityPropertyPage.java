@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProjectCapabilitySelectionGroup;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
+import org.eclipse.ui.internal.registry.ICategory;
 
 /**
  * A property page for IProject resources to view and edit the
@@ -61,7 +62,8 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		noDefaultAndApplyButton();
 		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
 		Capability[] caps = reg.getProjectCapabilities(getProject());
-		capabilityGroup = new ProjectCapabilitySelectionGroup(caps, reg);
+		ICategory[] cats = new ICategory[0];
+		capabilityGroup = new ProjectCapabilitySelectionGroup(cats, caps, reg);
 		return capabilityGroup.createContents(parent);
 	}
 	

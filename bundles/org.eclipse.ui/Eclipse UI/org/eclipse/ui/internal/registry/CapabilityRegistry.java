@@ -100,10 +100,12 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * Finds the category for each specified identifier.
 	 * Any <code>null</code> entries in the resulting array
 	 * are for identifiers to which no category exist.
+	 * 
+	 * @return an array of <code>ICategory</code>
 	 */
-	public Category[] findCategories(String[] ids) {
+	public ICategory[] findCategories(String[] ids) {
 		int count = categories.size();
-		Category[] results = new Category[ids.length];
+		ICategory[] results = new Category[ids.length];
 		
 		for (int i = 0; i < ids.length; i++) {
 			String id = ids[i];
