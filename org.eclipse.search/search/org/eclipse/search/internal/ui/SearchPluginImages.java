@@ -53,6 +53,7 @@ public class SearchPluginImages {
 	public static final String IMG_CLCL_SEARCH_PREV= NAME_PREFIX + "search_prev.gif";
 	public static final String IMG_CLCL_SEARCH_GOTO= NAME_PREFIX + "search_goto.gif";
 	public static final String IMG_CLCL_SEARCH_SORT= NAME_PREFIX + "search_sortmatch.gif";
+	public static final String IMG_CLCL_SEARCH_HISTORY= NAME_PREFIX + "search_history.gif";
 
 	public static final String IMG_CVIEW_SEARCHRES= NAME_PREFIX + "searchres.gif";
 
@@ -72,6 +73,7 @@ public class SearchPluginImages {
 	public static final ImageDescriptor DESC_CLCL_SEARCH_PREV= createManaged(T_CLCL, IMG_CLCL_SEARCH_PREV);
 	public static final ImageDescriptor DESC_CLCL_SEARCH_GOTO= createManaged(T_CLCL, IMG_CLCL_SEARCH_GOTO);
 	public static final ImageDescriptor DESC_CLCL_SEARCH_SORT= createManaged(T_CLCL, IMG_CLCL_SEARCH_SORT);
+	public static final ImageDescriptor DESC_CLCL_SEARCH_HISTROY= createManaged(T_CLCL, IMG_CLCL_SEARCH_HISTORY);
 
 	public static final ImageDescriptor DESC_CVIEW_SEARCHRES= createManaged(T_CLCL, IMG_CVIEW_SEARCHRES);
 	
