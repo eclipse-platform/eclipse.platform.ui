@@ -233,6 +233,17 @@ public interface IDebugUIConstants {
 	public static final String PREF_SWITCH_TO_PERSPECTIVE= PLUGIN_ID + ".switch_to_perspective"; //$NON-NLS-1$
 	
 	/**
+	 * String preference controlling whether the debugger switching to
+	 * the associated perspective when a launch suspends.
+	 * Valid values are either "always", "never", or "prompt".
+	 * If "always" or "never", suspension will switch perspectives (or not) automatically.
+	 * If "prompt", the user will be prompted each time.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_SWITCH_PERSPECTIVE_ON_SUSPEND = PLUGIN_ID + ".switch_perspective_on_suspend"; //$NON-NLS-1$
+	
+	/**
 	 * String preference controlling whether the debugger waits for a currently
 	 * pending (running or waiting) background build to complete before launching.
 	 * Valid values are either "always", "never", or "prompt".

@@ -21,7 +21,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.AlwaysNeverDialog;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -40,7 +39,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -76,10 +74,6 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 	 * Combo boxes corresponding to modes
 	 */
 	private Combo[] fCombos = null;
-	
-	private Button fAlwaysButton;
-	private Button fNeverButton;
-	private Button fPromptButton;
 	
 	private Button fRestoreDefaults;
 	
@@ -243,32 +237,10 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		
 		createVerticalSpacer(composite, 2);
 		
-		createSwitchOnSuspendEditor(composite);
-		
-		createVerticalSpacer(composite, 2);
-		
 		fRestoreDefaults = createPushButton(composite, LaunchConfigurationsMessages.getString("PerspectivesTab.3"), null); //$NON-NLS-1$
 		fRestoreDefaults.addSelectionListener(fSelectionAdapter);
 		
 		Dialog.applyDialogFont(composite);
-	}
-	
-	public void createSwitchOnSuspendEditor(Composite parent) {
-		Group group= new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns= 3;
-		group.setLayout(layout);
-		GridData gridData= new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan= 2;
-		group.setLayoutData(gridData);
-		group.setText(MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectivesTab.8"), new String[] { getLaunchConfigurationType().getName() })); //$NON-NLS-1$
-		
-		fAlwaysButton= createRadioButton(group, LaunchConfigurationsMessages.getString("PerspectivesTab.9")); //$NON-NLS-1$
-		fAlwaysButton.addSelectionListener(fSelectionAdapter);
-		fNeverButton= createRadioButton(group, LaunchConfigurationsMessages.getString("PerspectivesTab.10")); //$NON-NLS-1$
-		fNeverButton.addSelectionListener(fSelectionAdapter);
-		fPromptButton= createRadioButton(group, LaunchConfigurationsMessages.getString("PerspectivesTab.11")); //$NON-NLS-1$
-		fPromptButton.addSelectionListener(fSelectionAdapter);
 	}
 
 	/* (non-Javadoc)
@@ -315,18 +287,6 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 				DebugUIPlugin.log(e);
 			}
 		}
-		String switchOnSuspend= AlwaysNeverDialog.NEVER;
-		try {
-			switchOnSuspend= configuration.getAttribute(LaunchConfigurationManager.ATTR_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.NEVER);
-		} catch (CoreException e) {
-		}
-		if (AlwaysNeverDialog.NEVER.equals(switchOnSuspend)) {
-			fNeverButton.setSelection(true);
-		} else if (AlwaysNeverDialog.ALWAYS.equals(switchOnSuspend)) {
-			fAlwaysButton.setSelection(true);
-		} else {
-			fPromptButton.setSelection(true); // PROMPT
-		}
 		fInitializing = false;
 
 	}
@@ -338,13 +298,6 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		for (int i = 0; i < fCombos.length; i++) {
 			updateConfigFromCombo(fCombos[i], configuration);
 		}
-		String switchOnSuspend= AlwaysNeverDialog.NEVER;
-		if (fAlwaysButton.getSelection()) {
-			switchOnSuspend= AlwaysNeverDialog.ALWAYS;
-		} else if (fPromptButton.getSelection()) {
-			switchOnSuspend= AlwaysNeverDialog.PROMPT;
-		}
-		configuration.setAttribute(LaunchConfigurationManager.ATTR_SWITCH_PERSPECTIVE_ON_SUSPEND, switchOnSuspend);
 	}
 	
 	protected void updateConfigFromCombo(Combo combo, ILaunchConfigurationWorkingCopy workingCopy) {

@@ -30,7 +30,6 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -321,35 +320,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically when the given launch suspends
 	 */
 	protected boolean shouldSwitchPerspectiveForSuspend(String perspectiveId, ILaunch launch) {
-		if (isCurrentPerspective(perspectiveId)) {
-			return false;
-		}
-		boolean answer= false;
-		try {
-			ILaunchConfiguration configuration = LaunchConfigurationManager.getSharedTypeConfig(launch.getLaunchConfiguration().getType());
-			String switchString = configuration.getAttribute(LaunchConfigurationManager.ATTR_SWITCH_PERSPECTIVE_ON_SUSPEND, AlwaysNeverDialog.NEVER);
-			if (AlwaysNeverDialog.NEVER.equals(switchString)) {
-				answer= false;
-			} else if (AlwaysNeverDialog.ALWAYS.equals(switchString)) {
-				answer= true;
-			} else { // PROMPT
-				Shell shell= Display.getDefault().getActiveShell();
-				if (shell != null) {
-					String perspectiveName= getPerspectiveLabel(perspectiveId);
-					StringBuffer buffer= new StringBuffer();
-					answer= AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.13"), new String[] { perspectiveName }), buffer); //$NON-NLS-1$ //$NON-NLS-2$
-					String result= buffer.toString();
-					if (result.length() > 0 && !result.equals(switchString)) {
-						ILaunchConfigurationWorkingCopy workingCopy= configuration.getWorkingCopy();
-						workingCopy.setAttribute(LaunchConfigurationManager.ATTR_SWITCH_PERSPECTIVE_ON_SUSPEND, result);
-						workingCopy.doSave();
-					}
-				}
-			}
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
-		}
-		return answer;
+		return shouldSwitchPerspective(perspectiveId, LaunchConfigurationsMessages.getString("PerspectiveManager.13"), IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); //$NON-NLS-1$
 	}
 	
 	/**
@@ -363,6 +334,23 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically when a launch occurs
 	 */
 	protected boolean shouldSwitchPerspectiveForLaunch(String perspectiveId) {
+		return shouldSwitchPerspective(perspectiveId, LaunchConfigurationsMessages.getString("PerspectiveManager.15"), IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns whether or not the user wishes to switch to the specified
+	 * perspective when a launch occurs.
+	 * 
+	 * @param perspectiveName the name of the perspective that will be presented
+	 *  to the user for confirmation if they've asked to be prompted about
+	 *  perspective switching
+	 * @param message a message to be presented to the user. This message is expected to
+	 *  contain a slot for the perspective name to be inserted ("{0}").
+	 * @param preferenceKey the preference key of the perspective switching preference
+	 * @return whether or not the user wishes to switch to the specified perspective
+	 *  automatically
+	 */
+	private boolean shouldSwitchPerspective(String perspectiveId, String message, String preferenceKey) {
 		if (isCurrentPerspective(perspectiveId)) {
 			return false;
 		}
@@ -371,13 +359,13 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		if (perspectiveName == null || shell == null) {
 			return false;
 		}
-		String switchPerspective = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE);
+		String switchPerspective = DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
 		if (AlwaysNeverDialog.ALWAYS.equals(switchPerspective)) {
 			return true;
 		} else if (AlwaysNeverDialog.NEVER.equals(switchPerspective)) {
 			return false;
 		}
-		return AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectiveManager.15"), new String[] { perspectiveName }), IDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$
+		return AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), preferenceKey, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
 	}
 	
 	/**

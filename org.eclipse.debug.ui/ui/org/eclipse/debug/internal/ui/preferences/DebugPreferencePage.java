@@ -62,7 +62,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		createWaitForBuildEditor();
-		createSwitchPerspectiveEditor();
 		
 		createSpacer(getFieldEditorParent(), 2);
 		
@@ -70,6 +69,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.getString("DebugPreferencePage.Reuse_editor_when_displa&ying_source_code_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.getString("DebugPreferencePage.Activate_the_&workbench_when_a_breakpoint_is_hit_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, "Activate the &debug view when a breakpoint is hit", SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		createSwitchPerspectiveOnSuspendEditor();
+		createSwitchPerspectiveEditor();
 		
 		createSpacer(getFieldEditorParent(), 2);
 		
@@ -125,6 +126,16 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 				new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.18"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
 								{DebugPreferencesMessages.getString("DebugPreferencePage.19"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
 								{DebugPreferencesMessages.getString("DebugPreferencePage.20"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
+				getFieldEditorParent(),
+				true));
+	}
+	
+	private void createSwitchPerspectiveOnSuspendEditor() {
+		addField(new RadioGroupFieldEditor(IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND,
+				DebugPreferencesMessages.getString("DebugPreferencePage.21"), 3, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.22"), AlwaysNeverDialog.ALWAYS}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("DebugPreferencePage.23"), AlwaysNeverDialog.NEVER}, //$NON-NLS-1$
+								{DebugPreferencesMessages.getString("DebugPreferencePage.24"), AlwaysNeverDialog.PROMPT}}, //$NON-NLS-1$
 				getFieldEditorParent(),
 				true));
 	}
