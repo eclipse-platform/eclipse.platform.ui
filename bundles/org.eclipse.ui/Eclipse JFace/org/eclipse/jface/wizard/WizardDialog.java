@@ -214,8 +214,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	}
 /**
  * Creates a new wizard dialog for the given wizard. 
- * The dialog title is obtained from JFace's resource bundle using the key
- * "Wizard.title".
  *
  * @param parentShell the parent shell
  * @param newWizard the wizard this dialog is working on
