@@ -216,14 +216,29 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @param control
 		 */
 		public void applyFontsAndColors(TableItem control) {
-			if(usedDecorators || background != null)
-				control.setBackground(background);
+			if(usedDecorators){
+				if(background != null)
+					control.setBackground(background);
 			
-			if(usedDecorators || foreground != null)
-				control.setForeground(foreground);
+				if(foreground != null)
+					control.setForeground(foreground);
 			
-			if(usedDecorators || font != null)
-				control.setFont(font);
+				if(font != null)
+					control.setFont(font);
+				
+			}else{
+			
+				//If there is a color provider and no decoration
+				//always apply
+				if(colorProvider != null){
+					control.setBackground(background);
+					control.setForeground(foreground);
+				}
+				
+				if(fontProvider != null){
+					control.setFont(font);
+				}
+			}
 			
 			clear();
 		}
@@ -234,14 +249,29 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @param control
 		 */
 		public void applyFontsAndColors(TreeItem control) {
-			if(usedDecorators || background != null)
-				control.setBackground(background);
+			if(usedDecorators){
+				if(background != null)
+					control.setBackground(background);
 			
-			if(usedDecorators || foreground != null)
-				control.setForeground(foreground);
+				if(foreground != null)
+					control.setForeground(foreground);
 			
-			if(usedDecorators || font != null)
-				control.setFont(font);
+				if(font != null)
+					control.setFont(font);
+				
+			}else{
+			
+				//If there is a color provider and no decoration
+				//always apply
+				if(colorProvider != null){
+					control.setBackground(background);
+					control.setForeground(foreground);
+				}
+				
+				if(fontProvider != null){
+					control.setFont(font);
+				}
+			}
 			
 			clear();
 		}
@@ -252,15 +282,29 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @param control
 		 */
 		public void applyFontsAndColors(TableTreeItem control) {
-			if(usedDecorators || background != null)
-				control.setBackground(background);
+			if(usedDecorators){
+				if(background != null)
+					control.setBackground(background);
 			
-			if(usedDecorators || foreground != null)
-				control.setForeground(foreground);
+				if(foreground != null)
+					control.setForeground(foreground);
 			
-			if(usedDecorators || font != null)
-				control.setFont(font);
+				if(font != null)
+					control.setFont(font);
+				
+			}else{
 			
+				//If there is a color provider and no decoration
+				//always apply
+				if(colorProvider != null){
+					control.setBackground(background);
+					control.setForeground(foreground);
+				}
+				
+				if(fontProvider != null){
+					control.setFont(font);
+				}
+			}
 			clear();
 		}
 		
