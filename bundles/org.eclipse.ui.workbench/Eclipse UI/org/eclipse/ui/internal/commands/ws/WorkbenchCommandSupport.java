@@ -21,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -30,20 +29,20 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IMutableCommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.HandlerProxy;
-import org.eclipse.ui.keys.KeyFormatterFactory;
-import org.eclipse.ui.keys.SWTKeySupport;
-
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.CommandManagerFactory;
+import org.eclipse.ui.internal.commands.MutableCommandManager;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeyFormatterFactory;
+import org.eclipse.ui.keys.SWTKeySupport;
 
 /**
  * Provides command support in terms of the workbench.
@@ -100,7 +99,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
     private Map handlerSubmissionsByCommandId = new HashMap();
 
-    private ICommandManager mutableCommandManager;
+    private IMutableCommandManager mutableCommandManager;
 
     private IPageListener pageListener = new IPageListener() {
 
@@ -164,7 +163,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      */
     public WorkbenchCommandSupport(final Workbench workbenchToSupport) {
         workbench = workbenchToSupport;
-        mutableCommandManager = CommandManagerFactory.getCommandManager();
+        mutableCommandManager = CommandManagerFactory.getMutableCommandManager();
         KeyFormatterFactory.setDefault(SWTKeySupport
                 .getKeyFormatterForPlatform());
 
@@ -172,28 +171,25 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         workbenchToSupport.getDisplay().addFilter(SWT.Activate,
                 activationListener);
         
-        // Add submissions for the defined handlers.
-        if (mutableCommandManager instanceof CommandManager) {
-            final List submissions = new ArrayList();
-            final CommandManager commandManager = (CommandManager) mutableCommandManager;
-            final Set handlers = commandManager.getDefinedHandlers();
-            final Iterator handlerItr = handlers.iterator();
-            
-            while (handlerItr.hasNext()) {
-                final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
-                try {
-                    final String commandId = (String) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
-                    final Integer priority = (Integer) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
-                    final HandlerSubmission submission = new HandlerSubmission(null, null, commandId, proxy, priority.intValue());
-                    submissions.add(submission);
-                } catch (final NoSuchAttributeException e) {
-                    // This submission can't be created.  Nothing to do.
-                }
+        final List submissions = new ArrayList();
+        final MutableCommandManager commandManager = (MutableCommandManager) mutableCommandManager;
+        final Set handlers = commandManager.getDefinedHandlers();
+        final Iterator handlerItr = handlers.iterator();
+        
+        while (handlerItr.hasNext()) {
+            final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
+            try {
+                final String commandId = (String) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
+                final Integer priority = (Integer) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
+                final HandlerSubmission submission = new HandlerSubmission(null, null, commandId, proxy, priority.intValue());
+                submissions.add(submission);
+            } catch (final NoSuchAttributeException e) {
+                // This submission can't be created.  Nothing to do.
             }
-            
-            if (!submissions.isEmpty()) {
-                addHandlerSubmissions(submissions);
-            }
+        }
+        
+        if (!submissions.isEmpty()) {
+            addHandlerSubmissions(submissions);
         }
         // TODO Should these be removed at shutdown?  Is life cycle important?
     }
@@ -248,6 +244,10 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         return mutableCommandManager;
     }
 
+    public void setActiveContextIds(Set activeContextIds) {
+        mutableCommandManager.setActiveContextIds(activeContextIds);
+    }
+    
     // TODO Remove this method -- deprecated.
     /*
      * (non-Javadoc)
@@ -414,8 +414,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                 bestHandlerSubmission.getHandler());
             }
 
-            ((CommandManager) mutableCommandManager)
-                    .setHandlersByCommandId(handlersByCommandId);
+            mutableCommandManager.setHandlersByCommandId(handlersByCommandId);
         }
     }
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands.ws;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,6 +35,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.commands.CommandEvent;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandListener;
+import org.eclipse.ui.commands.IImageBinding;
+import org.eclipse.ui.commands.NoSuchAttributeException;
+import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**

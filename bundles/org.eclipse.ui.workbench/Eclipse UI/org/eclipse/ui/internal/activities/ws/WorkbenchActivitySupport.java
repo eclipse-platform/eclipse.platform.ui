@@ -20,12 +20,12 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
-import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.activities.*;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
 import org.eclipse.ui.progress.WorkbenchJob;
 

@@ -1996,9 +1996,8 @@ public final class Workbench implements IWorkbench {
 
         public final void contextManagerChanged(
                 final ContextManagerEvent contextManagerEvent) {
-            getCommandSupport().getCommandManager().setActiveContextIds(
-                    getContextSupport().getContextManager()
-                            .getEnabledContextIds());
+            workbenchCommandSupport.setActiveContextIds(getContextSupport()
+                    .getContextManager().getEnabledContextIds());
         }
     };
 

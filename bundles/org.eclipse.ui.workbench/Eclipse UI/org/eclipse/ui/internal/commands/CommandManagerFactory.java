@@ -9,32 +9,32 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.internal.contexts.MutableContextManager;
+import org.eclipse.ui.commands.IMutableCommandManager;
 
 /**
- * This class allows clients to broker instances of <code>IContextManager</code>.
+ * This class allows clients to broker instances of <code>ICommandManager</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
  */
-public final class ContextManagerFactory {
+public final class CommandManagerFactory {
 
 	/**
-	 * Creates a new instance of <code>IMutableContextManager</code>.
+	 * Creates a new instance of <code>IMutableCommandManager</code>.
 	 * 
-	 * @return a new instance of <code>IMutableContextManager</code>.
+	 * @return a new instance of <code>IMutableCommandManager</code>.
 	 *         Clients should not make assumptions about the concrete
 	 *         implementation outside the contract of the interface. Guaranteed
 	 *         not to be <code>null</code>.
 	 */
-	public static IMutableContextManager getMutableContextManager() {
-		return new MutableContextManager();
+	public static IMutableCommandManager getMutableCommandManager() {
+		return new MutableCommandManager();
 	}
 
-	private ContextManagerFactory() {
+	private CommandManagerFactory() {
 	}
 }

@@ -34,17 +34,17 @@ import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.commands.IMutableCommandManager;
 import org.eclipse.ui.commands.KeyConfigurationEvent;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-public final class CommandManager implements ICommandManager {
+public final class MutableCommandManager implements IMutableCommandManager {
 
 	public final static String SEPARATOR = "_"; //$NON-NLS-1$
 
@@ -191,14 +191,14 @@ public final class CommandManager implements ICommandManager {
 	private IMutableCommandRegistry mutableCommandRegistry;
 	// TODO review end
 
-	public CommandManager() {
+	public MutableCommandManager() {
 		this(
 			new ExtensionCommandRegistry(Platform.getExtensionRegistry()),
 			new PreferenceCommandRegistry(
 				WorkbenchPlugin.getDefault().getPreferenceStore()));
 	}
 
-	public CommandManager(
+	public MutableCommandManager(
 		ICommandRegistry commandRegistry,
 		IMutableCommandRegistry mutableCommandRegistry) {
 		if (commandRegistry == null || mutableCommandRegistry == null)

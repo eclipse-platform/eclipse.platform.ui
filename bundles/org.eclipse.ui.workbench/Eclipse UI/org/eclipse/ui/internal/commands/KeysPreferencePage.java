@@ -201,7 +201,7 @@ public class KeysPreferencePage extends
 
     private Map commandIdsByUniqueName;
 
-    private CommandManager commandManager;
+    private MutableCommandManager commandManager;
 
     private Map commandUniqueNamesById;
 
@@ -970,7 +970,7 @@ public class KeysPreferencePage extends
                 .getContextSupport();
         contextManager = workbenchContextSupport.getContextManager();
         // TODO remove blind cast
-        commandManager = (CommandManager) workbench.getCommandSupport()
+        commandManager = (MutableCommandManager) workbench.getCommandSupport()
                 .getCommandManager();
         commandAssignments = new TreeSet();
         keySequenceAssignments = new TreeSet();
@@ -1629,7 +1629,7 @@ public class KeysPreferencePage extends
                         .getKeyConfigurationId();
                 Set contextIds = (Set) contextIdsByCommandId.get(commandId);
                 boolean validKeySequence = keySequence != null
-                        && CommandManager.validateKeySequence(keySequence);
+                        && MutableCommandManager.validateKeySequence(keySequence);
                 boolean validContextId = contextId == null
                         || contextManager.getDefinedContextIds().contains(
                                 contextId);
@@ -1662,7 +1662,7 @@ public class KeysPreferencePage extends
                         .getKeyConfigurationId();
                 Set contextIds = (Set) contextIdsByCommandId.get(commandId);
                 boolean validKeySequence = keySequence != null
-                        && CommandManager.validateKeySequence(keySequence);
+                        && MutableCommandManager.validateKeySequence(keySequence);
                 boolean validContextId = contextId == null
                         || contextManager.getDefinedContextIds().contains(
                                 contextId);
@@ -1761,14 +1761,14 @@ public class KeysPreferencePage extends
         setContextsForCommand();
         String keyConfigurationId = getKeyConfigurationId();
         KeySequence keySequence = getKeySequence();
-        String[] activeKeyConfigurationIds = CommandManager
+        String[] activeKeyConfigurationIds = MutableCommandManager
                 .extend(commandManager
                         .getKeyConfigurationIds(keyConfigurationId));
-        String[] activeLocales = CommandManager.extend(CommandManager.getPath(
-                commandManager.getActiveLocale(), CommandManager.SEPARATOR));
-        String[] activePlatforms = CommandManager.extend(CommandManager
+        String[] activeLocales = MutableCommandManager.extend(MutableCommandManager.getPath(
+                commandManager.getActiveLocale(), MutableCommandManager.SEPARATOR));
+        String[] activePlatforms = MutableCommandManager.extend(MutableCommandManager
                 .getPath(commandManager.getActivePlatform(),
-                        CommandManager.SEPARATOR));
+                        MutableCommandManager.SEPARATOR));
         KeySequenceBindingNode.solve(tree, activeKeyConfigurationIds,
                 activePlatforms, activeLocales);
         assignmentsByContextIdByKeySequence = KeySequenceBindingNode

@@ -13,6 +13,8 @@ package org.eclipse.ui.contexts;
 
 import java.util.Set;
 
+import org.eclipse.ui.internal.contexts.ContextManagerFactory;
+
 /**
  * An instance of this interface allows clients to manage contexts, as defined
  * by the extension point <code>org.eclipse.ui.contexts</code>.

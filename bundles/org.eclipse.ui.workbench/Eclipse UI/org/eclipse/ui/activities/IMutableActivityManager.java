@@ -13,6 +13,8 @@ package org.eclipse.ui.activities;
 
 import java.util.Set;
 
+import org.eclipse.ui.internal.activities.ActivityManagerFactory;
+
 /**
  * An instance of this interface allows clients to manage activities, as
  * defined by the extension point <code>org.eclipse.ui.activities</code>.
