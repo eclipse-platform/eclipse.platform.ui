@@ -37,18 +37,21 @@ protected boolean readElement(IConfigurationElement element) {
 
 	String id = element.getAttribute(ATT_ID);
 	if (id == null) {
+		// @issue ref to internal generic workbench method
 		logMissingAttribute(element, ATT_ID);
 		return true;
 	}
 
 	String natureId = element.getAttribute(ATT_NATURE_ID);
 	if (natureId == null) {
+		// @issue ref to internal generic workbench method
 		logMissingAttribute(element, ATT_NATURE_ID);
 		return true;
 	}
 
 	String icon = element.getAttribute(ATT_ICON);
 	if (icon == null) {
+		// @issue ref to internal generic workbench method
 		logMissingAttribute(element, ATT_ICON);
 		return true;
 	}
@@ -66,6 +69,7 @@ protected boolean readElement(IConfigurationElement element) {
 public void readProjectNatureImages(IPluginRegistry in, ProjectImageRegistry out)
 {
 	registry = out;
+	// @issue move constant to IDE project
 	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PROJECT_NATURE_IMAGES);
 }
 }

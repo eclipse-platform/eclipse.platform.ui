@@ -49,6 +49,7 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 	public void addHelp(MarkerHelpRegistry registry) {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		markerHelpRegistry = registry;
+		// @issue move constant to be IDE specific
 		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_HELP);
 		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_RESOLUTION);
 	}
@@ -82,6 +83,7 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 		// read attributes and values
 		currentAttributeNames = new ArrayList();
 		currentAttributeValues = new ArrayList();
+		// @issue ref to internal generic workbench method
 		readElementChildren(element);
 		String[] attributeNames = (String[])currentAttributeNames.toArray(
 			new String[currentAttributeNames.size()]);
@@ -104,6 +106,7 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 		// read attributes and values
 		currentAttributeNames = new ArrayList();
 		currentAttributeValues = new ArrayList();
+		// @issue ref to internal generic workbench method
 		readElementChildren(element);
 		String[] attributeNames = (String[])currentAttributeNames.toArray(
 			new String[currentAttributeNames.size()]);

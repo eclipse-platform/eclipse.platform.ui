@@ -79,11 +79,13 @@ public void run() {
 	if(project == null)
 		return;
 		
+	// @issue ref to internal generic workbench class
 	PropertyPageManager pageManager = new PropertyPageManager();
 	String title = "";//$NON-NLS-1$
 
 	// load pages for the selection
 	// fill the manager with contributions from the matching contributors
+	// @issue ref to internal generic workbench class
 	PropertyPageContributorManager.getManager().contribute(pageManager, project);
 	
 	// testing if there are pages in the manager
@@ -99,6 +101,7 @@ public void run() {
 		title = IDEWorkbenchMessages.format("PropertyDialog.propertyMessage", new Object[] {name}); //$NON-NLS-1$
 
 	// @issue should use PropertyDialogAction instead
+	// @issue ref to internal generic workbench class
 	PropertyDialog propertyDialog = new PropertyDialog(workbenchWindow.getShell(), pageManager, new StructuredSelection(project)); 
 	propertyDialog.create();
 	propertyDialog.getShell().setText(title);

@@ -12,6 +12,9 @@ package org.eclipse.ui.actions;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.eclipse.core.resources.IFile;
@@ -34,7 +37,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -61,17 +63,19 @@ public class OpenWithMenu extends ContributionItem {
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenWithMenu";//$NON-NLS-1$
 
-
-	private Sorter sorter = new Sorter() {
+	/*
+	 * Compares the labels from two IEditorDescriptor objects 
+	 */
+	private static final Comparator comparer = new Comparator() {
 		private Collator collator = Collator.getInstance();
-		
-		public boolean compare(Object o1, Object o2) {
-			String s1 = ((IEditorDescriptor)o1).getLabel();
-			String s2 = ((IEditorDescriptor)o2).getLabel();
-			//Return true if elementTwo is 'greater than' elementOne
-			return collator.compare(s2, s1) > 0;
+
+		public int compare(Object arg0, Object arg1) {
+			String s1 = ((IEditorDescriptor)arg0).getLabel();
+			String s2 = ((IEditorDescriptor)arg1).getLabel();
+			return collator.compare(s2, s1);
 		}
-	};
+	}; 
+
 /**
  * Constructs a new instance of <code>OpenWithMenu</code>. 
  * <p>
@@ -178,7 +182,9 @@ public void fill(Menu menu, int index) {
 	IEditorDescriptor defaultEditor = registry.findEditor(IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID); // may be null
 	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file.getName()); // may be null
 	
-	Object[] editors = sorter.sort(registry.getEditors(file.getName()));
+	Object[] editors = registry.getEditors(file.getName());
+	Collections.sort(Arrays.asList(editors), comparer);
+
 	boolean defaultFound = false;
 	
 	//Check that we don't add it twice. This is possible

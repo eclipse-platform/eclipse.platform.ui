@@ -30,6 +30,7 @@ public void syncExec(Runnable runnable) {
 			uiLock.doPendingWork();
 		}
 	};
+	// @issue ref to internal generic workbench class
 	Semaphore work = new Semaphore(runnable);
 	work.setOperationThread(Thread.currentThread());
 	uiLock.addPendingWork(work);

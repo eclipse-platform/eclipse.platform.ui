@@ -47,6 +47,7 @@ public boolean acquire() throws InterruptedException {
 	}
 	return super.acquire();
 }
+// @issue ref to generic workbench class
 void addPendingWork(Semaphore work) {
 	pendingWork = work;
 }

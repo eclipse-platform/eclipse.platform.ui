@@ -67,6 +67,7 @@ public void addPages() {
  * Returns the import wizards that are available for invocation.
  */
 protected AdaptableList getAvailableImportWizards() {
+	// @issue move constant to IDE project
 	return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT).getWizards();
 }
 /**

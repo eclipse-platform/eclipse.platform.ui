@@ -47,29 +47,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  */
 public final class WorkbenchActionBuilder {
 
-	private static final String saveActionDefId = "org.eclipse.ui.file.save"; //$NON-NLS-1$
-	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll"; //$NON-NLS-1$
-	private static final String closeActionDefId = "org.eclipse.ui.file.close"; //$NON-NLS-1$
-	private static final String closeAllActionDefId = "org.eclipse.ui.file.closeAll"; //$NON-NLS-1$
-	private static final String closeAllSavedActionDefId = "org.eclipse.ui.file.closeAllSaved"; //$NON-NLS-1$
-	private static final String deleteActionDefId = "org.eclipse.ui.edit.delete"; //$NON-NLS-1$
-	private static final String showViewMenuActionDefId = "org.eclipse.ui.window.showViewMenu"; //$NON-NLS-1$
-	private static final String showPartPaneMenuActionDefId = "org.eclipse.ui.window.showSystemMenu"; //$NON-NLS-1$
-	private static final String nextEditorActionDefId = "org.eclipse.ui.window.nextEditor"; //$NON-NLS-1$
-	private static final String prevEditorActionDefId = "org.eclipse.ui.window.previousEditor"; //$NON-NLS-1$
-	private static final String nextPartActionDefId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
-	private static final String prevPartActionDefId = "org.eclipse.ui.window.previousView"; //$NON-NLS-1$
-	private static final String nextPerspectiveActionDefId = "org.eclipse.ui.window.nextPerspective"; //$NON-NLS-1$
-	private static final String prevPerspectiveActionDefId = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
-	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
-	private static final String maximizePartActionDefId = "org.eclipse.ui.window.maximizePart"; //$NON-NLS-1$
-	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor"; //$NON-NLS-1$
-	private static final String buildAllActionDefId = "org.eclipse.ui.project.buildAll"; //$NON-NLS-1$
-	private static final String rebuildAllActionDefId = "org.eclipse.ui.project.rebuildAll"; //$NON-NLS-1$
-	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory"; //$NON-NLS-1$
-	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory"; //$NON-NLS-1$
-	private static final String projectPropertiesActionDefId = "org.eclipse.ui.project.properties"; //$NON-NLS-1$
-
 	private IWorkbenchWindowConfigurer windowConfigurer;
 
 	private final IPropertyChangeListener propertyChangeListener =
@@ -264,6 +241,7 @@ public final class WorkbenchActionBuilder {
 		}
 
 		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		// @issue ref to internal generic workbench constant
 		if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			addPinEditorAction(configurer);
 		}
@@ -417,6 +395,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
 		{
 			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
+			// @issue ref to internal generic workbench class - should be on contributionitemfactory
 			showInSubMenu.add(new ShowInMenu(getWindow()));
 			menu.add(showInSubMenu);
 		}
@@ -826,15 +805,19 @@ public final class WorkbenchActionBuilder {
 	private void handlePropertyChange(PropertyChangeEvent event) {
 		IPreferenceStore store =
 			IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		// @issue ref to internal generic workbench constant
 		if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
 				addPinEditorAction(windowConfigurer);
 			else
 				removePinEditorAction(windowConfigurer);
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
+			// @issue ref to internal generic workbench constant
 			// @issue idiosyncratic semantics of pinEditor
 //			pinEditorAction.updateState();
 		} else if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
+			// @issue ref to internal generic workbench constant
+			// @issue this should be moved to the contribution item (open recent editor)
 			Workbench wb = (Workbench) (Workbench) getWindow().getWorkbench();
 			int newValue = store.getInt(IPreferenceConstants.RECENT_FILES);
 			wb.getEditorHistory().reset(newValue);

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Sorter;
@@ -79,6 +80,7 @@ public NewWizardsRegistryReader() {
  * @param projectsOnly if true, only projects are read.
  */
 public NewWizardsRegistryReader(boolean projectsOnly) {
+	// @issue move constant to be IDE specific
 	super(IWorkbenchConstants.PL_NEW);
 	this.projectsOnly = projectsOnly;
 }

@@ -68,6 +68,7 @@ protected WorkbenchWizardElement createWizardElement(IConfigurationElement eleme
 	// WizardElements must have a name attribute
 	String nameString = element.getAttribute(ATT_NAME);
 	if (nameString == null) {
+		// @issue ref to internal generic workbench method
 		logMissingAttribute(element, ATT_NAME);
 		return null;
 	}
@@ -124,6 +125,7 @@ protected boolean initializeWizard(WorkbenchWizardElement element, IConfiguratio
 	}
 	// ensure that a class was specified
 	if (element.getConfigurationElement() == null) {
+		// @issue ref to internal generic workbench method
 		logMissingAttribute(config, ATT_CLASS);
 		return false;
 	}
@@ -147,6 +149,7 @@ protected void readWizards() {
 	if (!areWizardsRead()) {
 		createEmptyWizardCollection();
 		IPluginRegistry pregistry = Platform.getPluginRegistry();
+		// @issue ref to internal generic workbench method
 		readRegistry(pregistry, PlatformUI.PLUGIN_ID, pluginPoint);
 	}
 }
