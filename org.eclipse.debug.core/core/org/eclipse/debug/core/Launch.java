@@ -103,16 +103,16 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public final boolean canTerminate() {
-		IProcess[] processes = getProcesses();
-		for (int i = 0; i < processes.length; i++) {
-			IProcess process = processes[i];
+		List processes = getProcesses0();
+		for (int i = 0; i < processes.size(); i++) {
+			IProcess process = (IProcess)processes.get(i);
 			if (process.canTerminate()) {
 				return true;
 			}
 		}
-		IDebugTarget[] targets = getDebugTargets();
-		for (int i = 0; i < targets.length; i++) {
-			IDebugTarget target = targets[i];
+		List targets = getDebugTargets0();
+		for (int i = 0; i < targets.size(); i++) {
+			IDebugTarget target = (IDebugTarget)targets.get(i);
 			if (target.canTerminate() || target.canDisconnect()) {
 				return true;
 			}
