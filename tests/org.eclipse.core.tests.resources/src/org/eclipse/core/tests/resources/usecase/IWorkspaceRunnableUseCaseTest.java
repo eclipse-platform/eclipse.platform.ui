@@ -58,6 +58,7 @@ public class IWorkspaceRunnableUseCaseTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("0.0", e);
 		}
+		waitForBuild();
 		SignaledBuilder builder = SignaledBuilder.getInstance(project);
 
 		/* should trigger a build */
@@ -70,6 +71,7 @@ public class IWorkspaceRunnableUseCaseTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
+		waitForBuild();
 		assertTrue("1.1", builder.wasExecuted());
 
 		/* should not trigger a build */
@@ -96,6 +98,7 @@ public class IWorkspaceRunnableUseCaseTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("3.0", e);
 		} catch (OperationCanceledException e) {
+			// ignore
 		}
 		assertTrue("3.1", !builder.wasExecuted());
 

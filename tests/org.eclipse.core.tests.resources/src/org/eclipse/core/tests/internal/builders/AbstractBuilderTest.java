@@ -111,17 +111,4 @@ public abstract class AbstractBuilderTest extends EclipseWorkspaceTest {
 		setAutoBuilding(autoBuilding);
 		super.tearDown();
 	}
-
-	/**
-	 * Blocks the calling thread until autobuild completes.
-	 */
-	protected void waitForBuild() {
-		try {
-			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-		} catch (OperationCanceledException e) {
-			//ignore
-		} catch (InterruptedException e) {
-			//ignore
-		}
-	}
 }
