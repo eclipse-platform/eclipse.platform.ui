@@ -203,14 +203,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * 
-	 */
-	protected void updatePerspectiveBar() {
-		if (perspectiveBar.getControl() != null)
-			createPerspectiveBar();
-	}
-
-	/**
 	 * Checks to see if this window contains the given type of submenu.
 	 * 
 	 * @param type the type of submenu, one of: 
@@ -357,7 +349,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    if (perspectiveBar != null) {
 			perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
 			perspectiveBar.update(false);
-			perspectiveBar.getControl().getParent().layout();
+			if (perspectiveBar.getControl() != null) {
+			    perspectiveBar.getControl().getParent().layout();
+			}
 	    }
 	}
 	
@@ -687,8 +681,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				children[i].addListener(SWT.MouseDown, listener);
 		}
 		//fastViewBar.getControl().addListener(SWT.MouseDown, listener);
-		perspectiveBar.getControl().addListener(SWT.MouseDown, listener);
-		
+		if (perspectiveBar.getControl() != null) {
+		    perspectiveBar.getControl().addListener(SWT.MouseDown, listener);
+		}
 		
 		// Create the client composite area (where page content goes).
 		createPageComposite(shell);
