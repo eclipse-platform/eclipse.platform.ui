@@ -1011,7 +1011,7 @@ public void restoreState(IMemento memento) {
 		try {
 			result = new WorkbenchPage(this, pageMem, input);
 			pageList.add(result);
-			pageListeners.firePageOpened(result);
+			firePageOpened(result);
 		} catch (WorkbenchException e) {
 			WorkbenchPlugin.log("Unable to restore perspective - constructor failed.");//$NON-NLS-1$
 			continue;
@@ -1030,7 +1030,7 @@ public void restoreState(IMemento memento) {
 			String defPerspID = workbench.getPerspectiveRegistry().getDefaultPerspective();
 			WorkbenchPage result = new WorkbenchPage(this, defPerspID, root);
 			pageList.add(result);
-			pageListeners.firePageOpened(result);
+			firePageOpened(result);
 		} catch (WorkbenchException e) {
 			WorkbenchPlugin.log("Unable to create default perspective - constructor failed.");//$NON-NLS-1$
 			String productName = workbench.getAboutInfo().getProductName();
@@ -1384,7 +1384,6 @@ public void updateActionSets() {
 			updateTitle();
 	}
 }
-
 /**
  * Updates the window title.
  */

@@ -53,7 +53,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private ViewFactory viewFactory;
 	private PerspectiveList perspList = new PerspectiveList();
 	private Listener mouseDownListener;
-	private IMemento deferredMemento;
 	private PerspectiveDescriptor deferredActivePersp;
 	private IPropertyChangeListener propertyChangeListener= new IPropertyChangeListener() {
 		/*
@@ -430,7 +429,8 @@ public void bringToTop(IWorkbenchPart part) {
 	// Move part.
 	boolean broughtToTop = false;
 	if (part instanceof IEditorPart) {
-		broughtToTop = getEditorManager().setVisibleEditor((IEditorPart)part, false);
+		IEditorReference ref = (IEditorReference)getReference(part);
+		broughtToTop = getEditorManager().setVisibleEditor(ref, false);
 		actionSwitcher.updateTopEditor((IEditorPart)part);
 		if (broughtToTop) {
 			lastActiveEditor = null;
@@ -561,8 +561,10 @@ private IViewPart busyShowView(String viewID, boolean activate)
  * Returns whether a part exists in the current page.
  */
 private boolean certifyPart(IWorkbenchPart part) {
-	if (part instanceof IEditorPart)
-		return getEditorManager().containsEditor((IEditorPart)part);
+	if (part instanceof IEditorPart) {
+		IEditorReference ref = (IEditorReference)getReference(part);
+		return getEditorManager().containsEditor(ref);
+	}
 	if (part instanceof IViewPart)
 		return getActivePerspective().containsView((IViewPart)part);
 	return false;
@@ -590,7 +592,7 @@ public boolean closeAllSavedEditors() {
 	boolean deactivated = false;
 			
 	// Close all editors.
-	IEditorPart [] editors = getEditorManager().getEditors();
+	IEditorPart [] editors = getEditorManager().getDirtyEditors();
 	for (int i = 0; i < editors.length; i ++) {
 		IEditorPart editor = editors[i];
 		if(!editor.isDirty()) {
@@ -601,7 +603,7 @@ public boolean closeAllSavedEditors() {
 				lastActiveEditor = null;
 				actionSwitcher.updateTopEditor(null);
 			}
-			getEditorManager().closeEditor(editor);
+			getEditorManager().closeEditor((IEditorReference)getReference(editor));
 			activationList.remove(editor);
 			firePartClosed(editor);
 			editor.dispose();
@@ -636,14 +638,16 @@ public boolean closeAllEditors(boolean save) {
 	actionSwitcher.updateTopEditor(null);
 			
 	// Close all editors.
-	IEditorPart [] editors = getEditorManager().getEditors();
+	IEditorReference[] editors = getEditorManager().getEditors();
 	getEditorManager().closeAll();
-	for (int nX = 0; nX < editors.length; nX ++) {
-		IEditorPart editor = editors[nX];
-		activationList.remove(editor);
-		firePartClosed(editor);
-		editor.dispose();
+	for (int i = 0; i < editors.length; i ++) {
+		IEditorPart editor = (IEditorPart)editors[i].getPart(false);
+		if(editor != null) {
+			firePartClosed(editor);
+			editor.dispose();
+		}
 	}
+	activationList.removeEditors();
 	if (deactivate)
 		activate(activationList.getActive());
 		
@@ -653,7 +657,17 @@ public boolean closeAllEditors(boolean save) {
 	// Return true on success.
 	return true;
 }
-
+/**
+ * See IWorkbenchPage#closeEditor
+ */
+public boolean closeEditor(IEditorReference editorRef,boolean save) {
+	IEditorPart editor = editorRef.getEditor(false);
+	if(editor != null)
+		return closeEditor(editor,save);
+	getEditorManager().closeEditor(editorRef);
+	activationList.remove(editorRef);
+	return true;
+}
 /**
  * See IWorkbenchPage#closeEditor
  */
@@ -667,7 +681,8 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 		return false;
 
 	boolean partWasVisible = (editor == getActiveEditor());
-	activationList.remove(editor);
+	IEditorReference ref = (IEditorReference)getReference(editor);
+	activationList.remove(ref);
 	boolean partWasActive = (editor == activePart);
 
 	// Deactivate part.
@@ -679,7 +694,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	}
 
 	// Close the part.
-	getEditorManager().closeEditor(editor);
+	getEditorManager().closeEditor(ref);
 	firePartClosed(editor);
 	editor.dispose();
 
@@ -800,27 +815,24 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		Perspective persp = new Perspective(desc, this);
 		perspList.add(persp);
 		window.firePerspectiveOpened(this, desc);
+		IViewReference refs[] = viewFactory.getViews();
 		IViewPart parts[] = persp.getViews();
 		for (int i = 0; i < parts.length; i++) {
-			addPart(parts[i]);
+			IViewReference ref = null;
+			for (int j = 0; j < refs.length; j++) {
+				if(parts[i] == refs[j].getPart(false)) {
+					ref = refs[j];
+					break;
+				}
+			}
+			if(ref != null)
+				addPart(ref);
 		}
 		return persp;
 	} catch (WorkbenchException e) {
 		return null;
 	}
 }
-/**
- * Cycles the editors forward or backward.
- * 
- * @param forward true to cycle forward, false to cycle backward
- */
-public void cycleEditors(boolean forward) {
-	IEditorPart editor = activationList.cycleEditors(forward);
-	if (editor != null) {
-		activate(editor);
-	}
-}
-
 /**
  * Open the tracker to allow the user to move
  * the specified part using keyboard.
@@ -833,8 +845,8 @@ public void openTracker(ViewPane pane) {
 /**
  * Add a editor to the activation list.
  */
-protected void addPart(IWorkbenchPart part) {
-	activationList.add(part);
+protected void addPart(IWorkbenchPartReference ref) {
+	activationList.add(ref);
 }
 /**
  * Deactivate the last known active editor to force its
@@ -860,9 +872,6 @@ private void deactivatePart(IWorkbenchPart part) {
  * Cleanup.
  */
 public void dispose() {
-	// If we were never created just return.
-	if (deferredMemento != null)
-		return;
 		
 	// Always unzoom
 	if (isZoomed())
@@ -872,7 +881,7 @@ public void dispose() {
 	closeAllEditors(false);
 
 	// Capture views.
-	IViewPart [] views = viewFactory.getViews();
+	IViewReference refs[] = viewFactory.getViews();
 	
 	// Get rid of perspectives.  This will close the views.
 	Iterator enum = perspList.iterator();
@@ -886,17 +895,19 @@ public void dispose() {
 
 	// Dispose views.
 	final int errors[] = {0};
-	for (int nX = 0; nX < views.length; nX ++) {
-		final IViewPart view = views[nX];
-		firePartClosed(view);
-		Platform.run(new SafeRunnableAdapter() {
-			public void run() {
-				view.dispose();
-			}
-			public void handleException(Throwable e) {
-				errors[0]++;
-			}
-		});
+	for (int i = 0; i < refs.length; i ++) {
+		final IViewPart view = (IViewPart)refs[i].getPart(false);
+		if(view != null) {
+			firePartClosed(view);
+			Platform.run(new SafeRunnableAdapter() {
+				public void run() {
+					view.dispose();
+				}
+				public void handleException(Throwable e) {
+					errors[0]++;
+				}
+			});
+		}
 	}
 	if (errors[0] > 0) {
 		String message;
@@ -1054,12 +1065,6 @@ public IActionSetDescriptor[] getActionSets() {
 		return new IActionSetDescriptor[0];
 }
 /**
- * Returns the activation list
- */
-/*package*/ ActivationList getActivationList() {
-	return activationList;
-}
-/**
  * @see IWorkbenchPage
  */
 public IEditorPart getActiveEditor() {
@@ -1100,6 +1105,30 @@ public EditorPresentation getEditorPresentation() {
  * See IWorkbenchPage.
  */
 public IEditorPart [] getEditors() {
+	final IEditorReference refs[] = getEditorReferences();
+	final IEditorPart result[] = new IEditorPart[refs.length];
+	Display d = getWorkbenchWindow().getShell().getDisplay();
+	//Must be backward compatible.
+	d.syncExec(new Runnable() {
+		public void run() {
+			for (int i = 0; i < refs.length; i++) {
+				result[i] = (IEditorPart)refs[i].getPart(true);
+			}
+		}
+	});
+	return result;
+}
+
+public IEditorPart[] getDirtyEditors() {
+	return getEditorManager().getDirtyEditors();
+}
+public IEditorPart findEditor(IEditorInput input) {
+	return getEditorManager().findEditor(input);
+}
+/**
+ * See IWorkbenchPage.
+ */
+public IEditorReference[] getEditorReferences() {
 	return getEditorManager().getEditors();
 }
 /**
@@ -1229,6 +1258,17 @@ public ViewFactory getViewFactory() {
 	}
 	return viewFactory;
 }
+
+/**
+ * See IWorkbenchPage.
+ */
+public IViewReference[] getViewReferences() {
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getViewReferences();
+	else
+		return new IViewReference[0];
+}
 /**
  * See IWorkbenchPage.
  */
@@ -1355,24 +1395,6 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 	}
 }
 /**
- * Finish initialization if we have been deferred.
- */
-private void finishInit() {
-	if (deferredMemento == null) 
-		return;
-	BusyIndicator.showWhile(null, new Runnable() {
-		public void run() {
-			try {
-				init(window, null, input);
-			} catch (WorkbenchException e) {
-			}
-			restoreState(deferredMemento);
-			deferredMemento = null;
-			deferredActivePersp = null;
-		}
-	});
-}
-/**
  * See IWorkbenchPage.
  */
 public boolean isEditorAreaVisible() {
@@ -1451,8 +1473,6 @@ private boolean needToZoomOut(IWorkbenchPart part) {
  * This method is called when the page is activated.  
  */
 protected void onActivate() {
-	if (deferredMemento != null)
-		finishInit();
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
 		Perspective perspective = (Perspective) enum.next();
@@ -1615,11 +1635,18 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 	
 	// Otherwise, create a new one. This may cause the new editor to
 	// become the visible (i.e top) editor.
+	IEditorReference ref = null;
+
 	if(useEditorID)
-		editor = getEditorManager().openEditor(editorID, input);
+		ref = getEditorManager().openEditor(editorID, input,true);
 	else
-		editor = getEditorManager().openEditor((IFileEditorInput)input,true);
-				
+		ref = getEditorManager().openEditor(null,input,true);
+		
+	if(ref != null) {
+		editor = ref.getEditor(true);
+		addPart(ref);
+	}
+	
 	if (editor != null) {
 		//firePartOpened(editor);
 		zoomOutIfNecessary(editor);
@@ -1827,8 +1854,6 @@ private void restoreState(IMemento memento) {
  * See IWorkbenchPage
  */
 public boolean saveAllEditors(boolean confirm) {
-	if (deferredMemento != null)
-		return true;
 	return getEditorManager().saveAll(confirm, false);
 }
 /**
@@ -1899,16 +1924,6 @@ protected void saveToolBarLayout() {
  * Save the state of the page.
  */
 public void saveState(IMemento memento) {
-	// If we were never initialized ..
-	if (deferredMemento != null) {
-		XMLMemento realMemento = (XMLMemento) memento;
-		IMemento child = deferredMemento.getChild(IWorkbenchConstants.TAG_EDITORS);
-		realMemento.copyChild(child);
-		child = deferredMemento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-		realMemento.copyChild(child);
-		return;
-	}
-	
 	// We must unzoom to get correct layout.
 	if (isZoomed())
 		zoomOut();
@@ -1964,7 +1979,8 @@ private void setActivePart(IWorkbenchPart newPart) {
 		activationList.setActive(newPart);
 		if (newPart instanceof IEditorPart) {
 			lastActiveEditor = (IEditorPart)newPart;
-			editorMgr.setVisibleEditor(lastActiveEditor,true);
+			IEditorReference ref = (IEditorReference)getReference(lastActiveEditor);
+			editorMgr.setVisibleEditor(ref,true);
 		}
 	}
 	activatePart(activePart);
@@ -2316,10 +2332,8 @@ public void setEditorReuseThreshold(int openEditors) {
 /*
  * Returns the editors in activation order (oldest first).
  */
-public IEditorPart[] getSortedEditors() {
-	ArrayList editors = activationList.getEditors();
-	IEditorPart[] result = new IEditorPart[editors.size()];
-	return (IEditorPart[])editors.toArray(result);
+public IEditorReference[] getSortedEditors() {
+	return activationList.getEditors();
 }
 /**
  * Returns an iterator over the opened perspectives
@@ -2346,41 +2360,64 @@ protected IPerspectiveDescriptor[] getSortedPerspectives() {
 /*
  * Returns the parts in activation order (oldest first).
  */
-public IWorkbenchPart[] getSortedParts() {
+public IWorkbenchPartReference[] getSortedParts() {
 	return activationList.getParts();
 }
 
-class ActivationList {
+private IWorkbenchPartReference getReference(IWorkbenchPart part) {
+	PartPane pane = ((PartSite)part.getSite()).getPane();
+	if(pane instanceof MultiEditorInnerPane) {
+		MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
+		return innerPane.getParentPane().getPartReference();
+	}
+	return pane.getPartReference();
+}
+
+private class ActivationList {
 	//List of parts in the activation order (oldest first)
 	List parts = new ArrayList();
+	
 	/*
 	 * Add/Move the active part to end of the list;
 	 */
 	void setActive(IWorkbenchPart part) {
-		if(parts.size() > 0 && part == parts.get(parts.size() - 1))
+		if(parts.size() <= 0)
 			return;
 		PartPane pane = ((PartSite)part.getSite()).getPane();
 		if(pane instanceof MultiEditorInnerPane) {
 			MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
-			setActive(innerPane.getParentPane().getPart());
+			setActive(innerPane.getParentPane().getPartReference().getPart(true));
 		} else {
-			parts.remove(part);
-			parts.add(part);
+			IWorkbenchPartReference ref = getReference(part);
+			if(ref == parts.get(parts.size() - 1))
+				return;
+			parts.remove(ref);
+			parts.add(ref);
 		}
 	}
 	/*
+	 * Add/Move the active part to end of the list;
+	 */
+	void setActive(IWorkbenchPartReference ref) {
+		setActive(ref.getPart(true));
+	}	
+	/*
 	 * Add the active part to the beginning of the list.
 	 */
-	void add(IWorkbenchPart part) {
-		if(parts.indexOf(part) >= 0)
+	void add(IWorkbenchPartReference ref) {
+		if(parts.indexOf(ref) >= 0)
 			return;
-		PartPane pane = ((PartSite)part.getSite()).getPane();
-		if(pane instanceof MultiEditorInnerPane) {
-			MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
-			add(innerPane.getParentPane().getPart());
-		} else {
-			parts.add(0,part);
+		
+		IWorkbenchPart part = ref.getPart(false);
+		if(part != null) {
+			PartPane pane = ((PartSite)part.getSite()).getPane();
+			if(pane instanceof MultiEditorInnerPane) {
+				MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
+				add(innerPane.getParentPane().getPartReference());
+				return;
+			}
 		}
+		parts.add(0,ref);
 	}
 	/*
 	 * Return the active part. Filter fast views.
@@ -2400,22 +2437,22 @@ class ActivationList {
 	} 
 	/*
 	 * Find a part in the list starting from the end and
-	 * filter fast views.
+	 * filter fast views and views from other perspectives.
 	 */	
-	IWorkbenchPart getActive(int start) {
+	private IWorkbenchPart getActive(int start) {
 		IViewPart[] views = getViews();
 		for (int i = start; i >= 0; i--) {
-			IWorkbenchPart part = (IWorkbenchPart)parts.get(i);
-			if(part instanceof IViewPart) {
-				if(!isFastView((IViewPart)part)) {
+			IWorkbenchPartReference ref = (IWorkbenchPartReference)parts.get(i);
+			if(ref instanceof IViewReference) {
+				if(!((IViewReference)ref).isFastView()) {
 					for (int j = 0; j < views.length; j++) {
-						if(views[j] == part) {
-							return part;
+						if(views[j] == ref.getPart(true)) {
+							return views[j];
 						}
 					}
 				}
 			} else {
-				return part;
+				return ref.getPart(true);
 			}
 		}
 		return null;
@@ -2426,85 +2463,74 @@ class ActivationList {
 	 * was used.
 	 */
 	int indexOf(IWorkbenchPart part) {
-		return parts.indexOf(part);
+		return parts.indexOf(getReference(part));
 	}
 	/*
 	 * Remove a part from the list
 	 */
-	boolean remove(Object part) {
-		return parts.remove(part);
+	boolean remove(IWorkbenchPart part) {
+		return parts.remove(getReference(part));
+	}
+	/*
+	 * Remove a part from the list
+	 */
+	boolean remove(IWorkbenchPartReference ref) {
+		return parts.remove(ref);
 	}
 
 	/*
+	 * Remove the editors from the activation list.
+	 */
+	private void removeEditors() {
+		for (Iterator i = parts.iterator(); i.hasNext();) {
+			IWorkbenchPartReference part = (IWorkbenchPartReference)i.next();
+			if (part instanceof IEditorReference)
+				i.remove();
+		}
+	}
+	/*
 	 * Returns the editors in activation order (oldest first).
 	 */
-	private ArrayList getEditors() {
+	private IEditorReference[] getEditors() {
 		ArrayList editors = new ArrayList(parts.size());
 		for (Iterator i = parts.iterator(); i.hasNext();) {
-			IWorkbenchPart part = (IWorkbenchPart) i.next();
-			if (part instanceof IEditorPart) {
+			IWorkbenchPartReference part = (IWorkbenchPartReference) i.next();
+			if (part instanceof IEditorReference) {
 				editors.add(part);
 			}
 		}
-		return editors;
+		return (IEditorReference[])editors.toArray(new IEditorReference[editors.size()]);
 	}
 	/*
 	 * Return a list with all parts (editors and views).
 	 */
-	private IWorkbenchPart[] getParts() {
+	private IWorkbenchPartReference[] getParts() {
 		IViewPart[] views = getViews();
 		ArrayList resultList = new ArrayList(parts.size());
 		for (Iterator iterator = parts.iterator(); iterator.hasNext();) {
-			IWorkbenchPart part = (IWorkbenchPart)iterator.next();
-			if(part instanceof IViewPart) {
+			IWorkbenchPartReference ref = (IWorkbenchPartReference)iterator.next();
+			if(ref instanceof IViewReference) {
+				//Filter views from other perspectives
 				for (int i = 0; i < views.length; i++) {
-					if(views[i] == part) {
-						resultList.add(part);
+					if(views[i] == ref.getPart(true)) {
+						resultList.add(ref);
 						break;
 					}
 				}
 			} else {
-				resultList.add(part);	
+				resultList.add(ref);	
 			}	
 		}
-		IWorkbenchPart[] result = new IWorkbenchPart[resultList.size()];
-		return (IWorkbenchPart[])resultList.toArray(result);
+		IWorkbenchPartReference[] result = new IWorkbenchPartReference[resultList.size()];
+		return (IWorkbenchPartReference[])resultList.toArray(result);
 	}
-	/*
-	 * Cycles the editors forward or backward, returning the editor to activate,
-	 * or null if none.
-	 * 
-	 * @param forward true to cycle forward, false to cycle backward
-	 */
-	IEditorPart cycleEditors(boolean forward) {
-		ArrayList editors = getEditors();
-		if (editors.size() >= 2) {
-			if (forward) {
-				// move the topmost editor to the bottom
-				IEditorPart top = (IEditorPart) editors.get(editors.size()-1);
-				parts.remove(top);
-				parts.add(0, top);
-				// get the next editor and move it on top of any views
-				IEditorPart next = (IEditorPart) editors.get(editors.size()-2);
-				setActive(next);
-				return next;
-			} else {
-				// move the bottom-most editor to the top
-				IEditorPart prev = (IEditorPart) editors.get(0);
-				setActive(prev);
-				return prev;
-			}
-		}
-		return null;
-	}
-	
 	/*
 	 * Returns the topmost editor on the stack, or null if none.
 	 */
 	IEditorPart getTopEditor() {
-		ArrayList editors = getEditors();
-		if (editors.size() > 0) {
-			return (IEditorPart) editors.get(editors.size()-1);
+		IEditorReference editors[] = getEditors();
+		if (editors.length > 0) {
+			return editors[editors.length - 1].getEditor(true);
 		}
 		return null;
 	}

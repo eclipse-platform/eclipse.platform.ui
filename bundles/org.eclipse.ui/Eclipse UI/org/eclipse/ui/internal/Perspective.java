@@ -19,6 +19,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.part.ViewPart;
+
 import java.util.List;
 
 /**
@@ -393,6 +395,37 @@ public void openTracker(ViewPane pane) {
 /**
  * See IWorkbenchPage.
  */
+public IViewReference [] getViewReferences() {
+	// Get normal views.
+	if(presentation == null)
+		return new IViewReference[0];
+	
+	List panes = new ArrayList(5);
+	presentation.collectViewPanes(panes);
+	
+	IViewReference [] resultArray = new IViewReference[panes.size() + fastViews.size()];
+
+	// Copy fast views.
+	int nView = 0;
+	for (int i = 0; i < panes.size(); i ++) {
+		ViewSite site = (ViewSite)((IViewPart)fastViews.get(i)).getSite();
+		ViewPane pane = (ViewPane)site.getPane();
+		resultArray[nView] = pane.getViewReference();
+		++ nView;
+	}
+	
+	// Copy normal views.
+	for (int i = 0; i < panes.size(); i ++) {
+		ViewPane pane = (ViewPane)panes.get(i);
+		resultArray[nView] = pane.getViewReference();
+		++ nView;
+	}
+	
+	return resultArray;
+}
+/**
+ * See IWorkbenchPage.
+ */
 public IViewPart [] getViews() {
 	// Get normal views.
 	if(presentation == null)
@@ -416,7 +449,7 @@ public IViewPart [] getViews() {
 	// Copy normal views.
 	for (int nX = 0; nX < nNormalViews; nX ++) {
 		ViewPane pane = (ViewPane)resVector.get(nX);
-		resArray[nView] = pane.getViewPart();
+		resArray[nView] = (IViewPart)pane.getViewReference().getPart(true);
 		++ nView;
 	}
 	
@@ -733,8 +766,11 @@ public void restoreState() {
 
 		// Create and open the view.
 		try {
-			ViewPane pane = restoreView(childMem,viewID);
-			page.addPart(pane.getPart());
+			IViewReference ref = restoreView(childMem,viewID);
+			page.addPart(ref);
+			IViewPart view = (IViewPart)ref.getPart(true);
+			ViewSite site = (ViewSite)view.getSite();
+			ViewPane pane = (ViewPane)site.getPane();			
 			pres.replacePlaceholderWithPart(pane);
 		} catch (PartInitException e) {
 			errors.add(e.getStatus());
@@ -761,9 +797,9 @@ public void restoreState() {
 				
 			// Create and open the view.
 			try {
-				ViewPane pane = restoreView(childMem,viewID);
-				page.addPart(pane.getPart());
-				fastViews.add(pane.getPart());
+				IViewReference ref = restoreView(childMem,viewID);
+				page.addPart(ref);
+				fastViews.add(ref.getPart(true));
 			} catch (PartInitException e) {
 				errors.add(e.getStatus());
 			}
@@ -853,17 +889,17 @@ public void restoreState() {
 /*
  * Create and return a new ViewPane. Return null if any error occur; 
  */
-private ViewPane restoreView(final IMemento memento,final String viewID) throws PartInitException {
-	final ViewPane pane[] = new ViewPane[1];
+private IViewReference restoreView(final IMemento memento,final String viewID) throws PartInitException {
+	final IViewReference ref[] = new IViewReference[1];
 	final PartInitException ex[] = new PartInitException[1];
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() {
 			try {
 				IMemento stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
 				if (stateMem == null)
-					pane[0] = getViewFactory().createView(viewID);
+					ref[0] = getViewFactory().createView(viewID);
 				else
-					pane[0] = getViewFactory().createView(viewID,stateMem);
+					ref[0] = getViewFactory().createView(viewID,stateMem);
 			} catch (PartInitException e) {
 				ex[0] = e;
 			}
@@ -877,7 +913,7 @@ private ViewPane restoreView(final IMemento memento,final String viewID) throws 
 	if(ex[0] != null)
 		throw ex[0];
 		
-	return pane[0];
+	return ref[0];
 }
 /**
  * Save the layout.
@@ -1001,7 +1037,7 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	int errors = 0;
 	while (enum.hasNext()) {
 		ViewPane pane = (ViewPane)enum.next();
-		IViewPart view = pane.getViewPart();
+		IViewPart view = (IViewPart)pane.getViewReference().getPart(true);
 		IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
 		viewMemento.putString(IWorkbenchConstants.TAG_ID, view.getSite().getId());
 		if (active && saveInnerViewState)
@@ -1034,7 +1070,7 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	// Save the layout.
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_LAYOUT);
 	presentation.saveState(childMem);
-	
+
 	// Save the editor visibility state
 	if (isEditorAreaVisible())
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
@@ -1251,8 +1287,11 @@ private void showFastView(IViewPart part) {
 public IViewPart showView(String viewID) 
 	throws PartInitException 
 {
-	ViewPane pane = getViewFactory().createView(viewID);
-	IViewPart part = pane.getViewPart();
+	IViewReference ref = getViewFactory().createView(viewID);
+	IViewPart part = (IViewPart)ref.getPart(true);
+	ViewSite site = (ViewSite)part.getSite();
+	ViewPane pane = (ViewPane)site.getPane();
+	
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 	if (presentation.hasPlaceholder(viewID)) {

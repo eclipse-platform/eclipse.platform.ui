@@ -5,9 +5,10 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.internal.ViewPane;
 import java.util.*;
 
 /**
@@ -40,9 +41,7 @@ public ViewFactory(WorkbenchPage page, IViewRegistry reg) {
  * disposed when releaseView is called an equal number of times
  * to getView.
  */
-public ViewPane createView(String id) 
-	throws PartInitException 
-{
+public IViewReference createView(String id) throws PartInitException {
 	return createView(id,null);
 }
 /**
@@ -54,25 +53,24 @@ public ViewPane createView(String id)
  * disposed when releaseView is called an equal number of times
  * to getView.
  */
-public ViewPane createView(String id,IMemento memento) 
+public IViewReference createView(String id,IMemento memento) 
 	throws PartInitException 
 {
 	IViewDescriptor desc = viewReg.find(id);
 	if(desc == null)
 		throw new PartInitException(WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] {id})); //$NON-NLS-1$
-	IViewPart view = (IViewPart)counter.get(desc);
-	if (view == null) {
-		view = createView(desc,memento);
+	IViewReference ref = (IViewReference)counter.get(desc);
+	if (ref == null) {
+		ref = createView(desc,memento);
 	} else {
 		counter.addRef(desc);
 	}
-	PartSite site = (PartSite)view.getSite();
-	return (ViewPane)site.getPane();
+	return ref;
 }
 /**
  * Create a view rec with the given type and parent. 
  */
-private IViewPart createView(IViewDescriptor desc,IMemento memento)
+private ViewReference createView(IViewDescriptor desc,IMemento memento)
 	throws PartInitException
 {
 	// Debugging
@@ -95,15 +93,16 @@ private IViewPart createView(IViewDescriptor desc,IMemento memento)
 
 
 	// Create pane, etc.
-	ViewPane pane = new ViewPane(view, page);
+	ViewReference ref = new ViewReference(view);
+	ViewPane pane = new ViewPane(ref, page);
 	site.setPane(pane);
 	site.setActionBars(new ViewActionBars(page.getActionBars(), pane));
 	
 	// Add ref to view.
-	counter.put(desc, view);
+	counter.put(desc, ref);
 	
 	// Return view.
-	return view;
+	return ref;
 }
 /**
  * Remove a view rec from the manager.
@@ -129,18 +128,18 @@ private void destroyView(IViewDescriptor desc, IViewPart view)
 /**
  * Returns the view with the given id, or <code>null</code> if not found.
  */
-public IViewPart getView(String id) {
+public IViewReference getView(String id) {
 	IViewDescriptor desc = viewReg.find(id);
-	return (IViewPart) counter.get(desc);
+	return (IViewReference) counter.get(desc);
 }
 /**
  * Returns a list of views which are open.
  */
-public IViewPart [] getViews() {
+public IViewReference[] getViews() {
 	List list = counter.values();
-	IViewPart [] array = new IViewPart[list.size()];
+	IViewReference [] array = new IViewReference[list.size()];
 	for (int i = 0; i < array.length; i++) {
-		array[i] = (IViewPart)list.get(i);
+		array[i] = (IViewReference)list.get(i);
 	}
 	return array;
 }
@@ -149,7 +148,7 @@ public IViewPart [] getViews() {
  */
 public boolean hasView(String id) {
 	IViewDescriptor desc = viewReg.find(id);
-	IViewPart view = (IViewPart)counter.get(desc);
+	Object view = counter.get(desc);
 	return (view != null);
 }
 /**
@@ -158,14 +157,72 @@ public boolean hasView(String id) {
  * This factory does reference counting.  For more info see
  * getView.
  */
-public void releaseView(String id) 
-{
+public void releaseView(String id) {
 	IViewDescriptor desc = viewReg.find(id);
-	IViewPart view = (IViewPart)counter.get(desc);
-	if (view == null)
+	IViewReference ref = (IViewReference)counter.get(desc);
+	if (ref == null)
 		return;
 	int count = counter.removeRef(desc);
-	if (count <= 0)
-		destroyView(desc, view);
+	if (count <= 0) {
+		IViewPart view = (IViewPart)ref.getPart(false);
+		if(view != null)
+			destroyView(desc, view);
+	}
 }
+
+private class ViewReference extends WorkbenchPartReference implements IViewReference {
+
+	private IViewPart part;
+
+	public ViewReference(IViewPart part) {
+		this.part = part;
+		super.setPart(part);
+	}
+	/**
+	 * @see IViewReference#isFastView()
+	 */
+	public boolean isFastView() {
+		return ((WorkbenchPage)part.getSite().getPage()).isFastView(part);
+	}
+	/**
+	 * @see IWorkbenchPartReference#getPart(boolean)
+	 */
+	public IWorkbenchPart getPart(boolean restore) {
+		return part;
+	}
+	/**
+	 * @see IViewReference#getView(boolean)
+	 */
+	public IViewPart getView(boolean restore) {
+		return (IViewPart)getPart(restore);
+	}
+	/**
+	 * @see IWorkbenchPartReference#getTitle()
+	 */
+	public String getTitle() {
+		return part.getTitle();
+	}
+	/**
+	 * @see IWorkbenchPartReference#getTitleImage()
+	 */
+	public Image getTitleImage() {
+		return part.getTitleImage();
+	}
+	/**
+	 * @see IWorkbenchPartReference#getId()
+	 */	
+	public String getId() {
+		return part.getSite().getId();
+	}
+	public void setPane(PartPane pane) {
+		((PartSite)part.getSite()).setPane(pane);
+	}
+	public PartPane getPane() {
+		return ((PartSite)part.getSite()).getPane();
+	}
+	public String getTitleToolTip() {
+		return part.getTitleToolTip();
+	}
+}
+
 }

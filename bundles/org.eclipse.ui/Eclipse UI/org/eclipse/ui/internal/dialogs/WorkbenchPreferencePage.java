@@ -35,6 +35,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button linkButton;
+	private Button refreshButton;
 	private Combo accelConfigCombo;
 
 	private Button reuseEditors;
@@ -94,6 +95,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		linkButton = new Button(composite, SWT.CHECK);
 		linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
 
+		refreshButton = new Button(composite, SWT.CHECK);
+		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
+
 		createSpace(composite);
 		createEditorHistoryGroup(composite);
 		
@@ -108,6 +112,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
+		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 
 		return composite;
 	}
@@ -314,6 +319,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
+		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditorsThreshold.loadDefault();
@@ -370,6 +376,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// store the link navigator to editor setting
 		store.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, linkButton.getSelection());
+
+		// store the link navigator to editor setting
+		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
 
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());

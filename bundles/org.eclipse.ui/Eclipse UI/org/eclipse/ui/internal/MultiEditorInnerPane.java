@@ -3,6 +3,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import org.eclipse.ui.*;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.MultiEditor;
 
@@ -15,8 +16,8 @@ public class MultiEditorInnerPane extends EditorPane {
 	/**
 	 * Constructor for MultiEditorInnerPane.
 	 */
-	public MultiEditorInnerPane(EditorPane pane,IEditorPart part, WorkbenchPage page, EditorWorkbook workbook) {
-		super(part, page, workbook);
+	public MultiEditorInnerPane(EditorPane pane,IEditorReference ref, WorkbenchPage page, EditorWorkbook workbook) {
+		super(ref, page, workbook);
 		parentPane = pane;
 	}
 	/**
@@ -29,7 +30,7 @@ public class MultiEditorInnerPane extends EditorPane {
 	 * Update the gradient on the inner editor title bar
 	 */
 	private void updateGradient() {
-		((MultiEditor)parentPane.getPart()).updateGradient(this.getEditorPart());
+		((MultiEditor)parentPane.getPartReference().getPart(true)).updateGradient((IEditorPart)this.getEditorReference().getPart(true));
 	}
 	/**
  	 * Indicate focus in part.

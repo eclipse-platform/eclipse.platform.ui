@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.MultiEditor;
 
 import java.util.*;
@@ -54,15 +55,31 @@ public void closeAllEditors() {
  *
  * @param part the editor to close
  */
+public void closeEditor(IEditorReference ref) {
+	EditorPane pane = (EditorPane)((WorkbenchPartReference)ref).getPane();
+	closeEditor(pane);
+}
+/**
+ * Closes an editor.   
+ *
+ * @param part the editor to close
+ */
 public void closeEditor(IEditorPart part) {
 	EditorPane pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
+	closeEditor(pane);
+}
+/**
+ * Closes an editor.   
+ *
+ * @param part the editor to close
+ */
+private void closeEditor(EditorPane pane) {
 	if (pane != null) {
 		if (!(pane instanceof MultiEditorInnerPane))
 			editorArea.removeEditor(pane);
 		editorTable.remove(pane);
 		pane.dispose();
 	}
-	
 }
 /**
  * Deref a given part.  Deconstruct its container as required.
@@ -110,11 +127,11 @@ public String getActiveEditorWorkbookID() {
  *
  * @return an array of open editors
  */
-public IEditorPart[] getEditors() {
+public IEditorReference[] getEditors() {
 	int nSize = editorTable.size();
-	IEditorPart [] retArray = new IEditorPart[nSize];
+	IEditorReference [] retArray = new IEditorReference[nSize];
 	for (int i = 0; i < retArray.length; i++){
-		retArray[i] = ((EditorPane)editorTable.get(i)).getEditorPart();
+		retArray[i] = ((EditorPane)editorTable.get(i)).getEditorReference();
 	}
 	return retArray;
 }
@@ -132,13 +149,17 @@ public LayoutPart getLayoutPart() {
  *
  * @return the active editor, or <code>null</code> if no editor is active
  */
-public IEditorPart getVisibleEditor() {
+public IEditorReference getVisibleEditor() {
 	EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
 	EditorPane pane = activeWorkbook.getVisibleEditor();
 	if (pane != null) {
-		IEditorPart result = pane.getEditorPart();
-		if(result instanceof MultiEditor)
-			result = ((MultiEditor)result).getActiveEditor();
+		IEditorReference result = pane.getEditorReference();
+		IEditorPart editorPart = (IEditorPart)result.getPart(false);
+		if((editorPart != null) && (editorPart instanceof MultiEditor)) {
+			editorPart = ((MultiEditor)result.getPart(true)).getActiveEditor();
+			EditorSite site = (EditorSite)editorPart.getSite();
+			result = (IEditorReference)site.getPane().getPartReference();
+		}
 		return result;
 	}
 	return null;
@@ -283,9 +304,9 @@ private void onPartDrop(PartDropEvent e) {
  * </p>
  * @param part the editor
  */
-public void openEditor(IEditorPart part,IEditorPart[] innerEditors, boolean setVisible) {
-	EditorPane pane = new MultiEditorOuterPane(part, page, editorArea.getActiveWorkbook());
-	initPane(pane,part);
+public void openEditor(IEditorReference ref,IEditorReference[] innerEditors, boolean setVisible) {
+	EditorPane pane = new MultiEditorOuterPane(ref, page, editorArea.getActiveWorkbook());
+	initPane(pane,ref);
 	for (int i = 0; i < innerEditors.length; i++) {
 		EditorPane innerPane = new MultiEditorInnerPane(pane,innerEditors[i], page, editorArea.getActiveWorkbook());
 		initPane(innerPane,innerEditors[i]);
@@ -293,26 +314,25 @@ public void openEditor(IEditorPart part,IEditorPart[] innerEditors, boolean setV
 	// Show the editor.
 	editorArea.addEditor(pane);
 	if(setVisible)
-		setVisibleEditor(part, true);
+		setVisibleEditor(ref, true);
 }
 /**
  * Opens an editor within the presentation.  
  * </p>
  * @param part the editor
  */
-public void openEditor(IEditorPart part,boolean setVisible) {
+public void openEditor(IEditorReference ref,boolean setVisible) {
 	
-	EditorPane pane = new EditorPane(part, page, editorArea.getActiveWorkbook());
-	initPane(pane,part);
+	EditorPane pane = new EditorPane(ref, page, editorArea.getActiveWorkbook());
+	initPane(pane,ref);
 	
 	// Show the editor.
 	editorArea.addEditor(pane);
 	if(setVisible)
-		setVisibleEditor(part, true);
+		setVisibleEditor(ref, true);
 }
-private EditorPane initPane(EditorPane pane, IEditorPart part) {
-	PartSite site = (PartSite)part.getSite();
-	site.setPane(pane);
+private EditorPane initPane(EditorPane pane, IEditorReference ref) {
+	((WorkbenchPartReference)ref).setPane(pane);
 	// Record the new editor.
 	editorTable.add(pane);
 	return pane;
@@ -344,9 +364,10 @@ public void setActiveEditorWorkbookFromID(String id) {
  * @param setFocus whether to give the editor focus
  * @return true if the active editor was changed, false if not.
  */
-public boolean setVisibleEditor(IEditorPart part, boolean setFocus) {
-	IEditorPart visibleEditor = getVisibleEditor();
-	if (part != visibleEditor) {
+public boolean setVisibleEditor(IEditorReference ref, boolean setFocus) {
+	IEditorReference visibleEditor = getVisibleEditor();
+	if (ref != visibleEditor) {
+		IEditorPart part = (IEditorPart)ref.getPart(true);
 		EditorPane pane = (EditorPane)((PartSite)part.getEditorSite()).getPane();
 		if (pane != null) {
 			if(pane instanceof MultiEditorInnerPane) {

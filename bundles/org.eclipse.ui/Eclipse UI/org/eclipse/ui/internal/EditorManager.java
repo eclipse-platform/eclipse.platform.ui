@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 
@@ -17,6 +18,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.presentation.PresentationReconciler;
+import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.PartInitException;
@@ -27,6 +31,7 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 
@@ -68,13 +73,15 @@ public class EditorManager {
 	 */
 	public void closeAll() {
 		// Close the pane, action bars, pane, etc.
-		IEditorPart[] editors = editorPresentation.getEditors();
+		IEditorReference[] editors = editorPresentation.getEditors();
 		editorPresentation.closeAllEditors();
-		for (int nX = 0; nX < editors.length; nX++) {
-			IEditorPart part = editors[nX];
-			PartSite site = (PartSite) part.getSite();
-			disposeEditorActionBars((EditorActionBars) site.getActionBars());
-			site.dispose();
+		for (int i = 0; i < editors.length; i++) {
+			IEditorPart part = (IEditorPart)editors[i].getPart(false);
+			if(part != null) {
+				PartSite site = (PartSite) part.getSite();
+				disposeEditorActionBars((EditorActionBars) site.getActionBars());
+				site.dispose();
+			}
 		}
 	}
 	/**
@@ -83,38 +90,44 @@ public class EditorManager {
 	 * This method will close the presentation for the editor.
 	 * The IEditorPart.dispose method must be called at a higher level.
 	 */
-	public void closeEditor(IEditorPart part) {
+	public void closeEditor(IEditorReference ref) {
 		// Close the pane, action bars, pane, etc.
-		if(part instanceof MultiEditor) {
-			IEditorPart innerEditors[] = ((MultiEditor)part).getInnerEditors();
-			for (int i = 0; i < innerEditors.length; i++) {
-				EditorSite site = (EditorSite) innerEditors[i].getEditorSite();
-				editorPresentation.closeEditor(innerEditors[i]);
-				disposeEditorActionBars((EditorActionBars) site.getActionBars());
-				site.dispose();				
+		IEditorPart part = ref.getEditor(false);
+		if(part != null) {
+			if(part instanceof MultiEditor) {
+				IEditorPart innerEditors[] = ((MultiEditor)part).getInnerEditors();
+				for (int i = 0; i < innerEditors.length; i++) {
+					EditorSite site = (EditorSite) innerEditors[i].getEditorSite();
+					editorPresentation.closeEditor(innerEditors[i]);
+					disposeEditorActionBars((EditorActionBars) site.getActionBars());
+					site.dispose();				
+				}
+			} else {
+				EditorSite site = (EditorSite) part.getEditorSite();
+				if(site.getPane() instanceof MultiEditorInnerPane) {
+					MultiEditorInnerPane pane = (MultiEditorInnerPane)site.getPane();
+					page.closeEditor((IEditorReference)pane.getParentPane().getPartReference(),true);
+					return;
+				}
 			}
-		} else {
 			EditorSite site = (EditorSite) part.getEditorSite();
-			if(site.getPane() instanceof MultiEditorInnerPane) {
-				MultiEditorInnerPane pane = (MultiEditorInnerPane)site.getPane();
-				closeEditor((IEditorPart)pane.getParentPane().getPart());
-				return;
-			}
+			editorPresentation.closeEditor(part);
+			disposeEditorActionBars((EditorActionBars) site.getActionBars());
+			site.dispose();
+		} else {
+			editorPresentation.closeEditor(ref);
+			((Editor)ref).dispose();
 		}
-		EditorSite site = (EditorSite) part.getEditorSite();
-		editorPresentation.closeEditor(part);
-		disposeEditorActionBars((EditorActionBars) site.getActionBars());
-		site.dispose();
 	}
 	/**
 	 * Answer a list of dirty editors.
 	 */
-	private List collectDirtyEditors(boolean closing) {
+	private List collectDirtyEditors() {
 		List result = new ArrayList(3);
-		IEditorPart[] editors = editorPresentation.getEditors();
-		for (int nX = 0; nX < editors.length; nX++) {
-			IEditorPart part = editors[nX];
-			if (part.isDirty())
+		IEditorReference[] editors = editorPresentation.getEditors();
+		for (int i = 0; i < editors.length; i++) {
+			IEditorPart part = (IEditorPart)editors[i].getPart(false);
+			if (part != null && part.isDirty())
 				result.add(part);
 
 		}
@@ -123,14 +136,14 @@ public class EditorManager {
 	/**
 	 * Returns whether the manager contains an editor.
 	 */
-	public boolean containsEditor(IEditorPart part) {
-		IEditorPart[] editors = editorPresentation.getEditors();
-		for (int nX = 0; nX < editors.length; nX++) {
-			if (part == editors[nX])
+	public boolean containsEditor(IEditorReference ref) {
+		IEditorReference[] editors = editorPresentation.getEditors();
+		for (int i = 0; i < editors.length; i++) {
+			if (ref == editors[i])
 				return true;
 		}
 		return false;
-	}
+	}	
 	/*
 	 * Creates the action bars for an editor.   Editors of the same type should share a single 
 	 * editor action bar, so this implementation may return an existing action bar vector.
@@ -201,11 +214,28 @@ public class EditorManager {
 	 * exists return null.
 	 */
 	public IEditorPart findEditor(IEditorInput input) {
-		IEditorPart[] editors = editorPresentation.getEditors();
-		for (int nX = 0; nX < editors.length; nX++) {
-			IEditorPart part = editors[nX];
-			if (input.equals(part.getEditorInput()))
+		IEditorReference[] editors = editorPresentation.getEditors();
+		for (int i = 0; i < editors.length; i++) {
+			IEditorPart part = (IEditorPart)editors[i].getPart(false);
+			if (part != null && input.equals(part.getEditorInput()))
 				return part;
+		}
+		String name = input.getName();
+		IPersistableElement persistable = input.getPersistable();
+		if(name == null || persistable == null)
+			return null;
+		String id = persistable.getFactoryId();
+		if(id == null)
+			return null;
+		for (int i = 0; i < editors.length; i++) { 
+			Editor e = (Editor)editors[i];
+			if(name.equals(e.getName()) && id.equals(e.getFactoryId())) {
+				IEditorPart editor = e.getEditor(true);
+				if(editor != null) {
+					if(input.equals(editor.getEditorInput()))
+						return editor;
+				}
+			}	
 		}
 		return null;
 	}
@@ -219,8 +249,7 @@ public class EditorManager {
 	 * Answer the number of editors.
 	 */
 	public int getEditorCount() {
-		IEditorPart[] editors = editorPresentation.getEditors();
-		return editors.length;
+		return editorPresentation.getEditors().length;
 	}
 	/*
 	 * Answer the editor registry.
@@ -231,56 +260,56 @@ public class EditorManager {
 	/*
 	 * See IWorkbenchPage.
 	 */
-	public IEditorPart[] getEditors() {
+	public IEditorPart[] getDirtyEditors() {
+		List dirtyEditors = collectDirtyEditors();
+		return (IEditorPart[])dirtyEditors.toArray(new IEditorPart[dirtyEditors.size()]);
+	}
+	/*
+	 * See IWorkbenchPage.
+	 */
+	public IEditorReference[] getEditors() {
 		return editorPresentation.getEditors();
 	}
 	/*
 	 * See IWorkbenchPage#getFocusEditor
 	 */
 	public IEditorPart getVisibleEditor() {
-		return editorPresentation.getVisibleEditor();
+		if(editorPresentation.getVisibleEditor() == null)
+			return null;
+		return (IEditorPart)editorPresentation.getVisibleEditor().getPart(true);
 	}
 	/**
 	 * Answer true if save is needed in any one of the editors.
 	 */
 	public boolean isSaveAllNeeded() {
-		IEditorPart[] editors = editorPresentation.getEditors();
-		for (int nX = 0; nX < editors.length; nX++) {
-			IEditorPart part = editors[nX];
-			if (part.isDirty())
+		IEditorReference[] editors = editorPresentation.getEditors();
+		for (int i = 0; i < editors.length; i++) {
+			IEditorReference ed = editors[i];
+			if (ed.isDirty())
 				return true;
 		}
 		return false;
 	}
 	/*
-	 * See IWorkbenchPage.
-	 */
-	public IEditorPart openEditor(String editorID, IEditorInput input) throws PartInitException {
-		IEditorRegistry reg = getEditorRegistry();
-		EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorID);
-		if (desc == null) {
-			throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorID })); //$NON-NLS-1$
-		}
-		return openEditor(desc, input);
-	}
-	/*
 	 * @see IWorkbenchPage.
 	 */
-	public IEditorPart openEditor(IFileEditorInput input, boolean setVisible) throws PartInitException {
+	private IEditorReference openEditorFromInput(IEditorReference ref,IFileEditorInput input, boolean setVisible) throws PartInitException {
 		IFile file = input.getFile();
 		// If there is a registered editor for the file use it.
 		EditorDescriptor desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor(file);
 		if (desc != null) {
-			return openEditor(desc, input);
+			return openEditorFromDescriptor(ref,desc, input);
 		}
 
 		// Try to open an OLE editor.
 		IEditorPart componentEditor = ComponentSupport.getComponentEditor(file);
 		if (componentEditor != null) {
-			openInternalEditor(componentEditor, null, input, setVisible);
+			((Editor)ref).setPart(componentEditor);
+			createSite(componentEditor, desc, input);
+			createEditorTab(ref, null, input, setVisible);
 			Workbench wb = (Workbench) window.getWorkbench();
 			wb.getEditorHistory().add(input, desc);
-			return componentEditor;
+			return ref;
 		}
 
 		// Try to open a system editor.
@@ -294,15 +323,15 @@ public class EditorManager {
 		// There is no registered editor.  
 		// Use the default text editor.
 		desc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
-		return openEditor(desc, input);
+		return openEditorFromDescriptor(ref,desc, input);
 	}
 	/*
 	 * Prompt the user to save the reusable editor.
 	 * Return false if a new editor should be opened.
 	 */
-	private IEditorPart findReusableEditor(EditorDescriptor desc) {
+	private IEditorReference findReusableEditor(EditorDescriptor desc) {
 
-		IEditorPart editors[] = page.getSortedEditors();
+		IEditorReference editors[] = page.getSortedEditors();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();		
 		boolean reuse = store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
 		if(!reuse)
@@ -311,15 +340,14 @@ public class EditorManager {
 		if (editors.length < page.getEditorReuseThreshold())
 			return null;
 
-		IEditorPart dirtyEditor = null;
-		//	IWorkbenchPart activePart = page.getActivePart();
+		IEditorReference dirtyEditor = null;
+
 		//Find a editor to be reused
 		for (int i = 0; i < editors.length; i++) {
-			IEditorPart editor = editors[i];
+			IEditorReference editor = editors[i];
 			//		if(editor == activePart)
 			//			continue;
-			EditorSite site = (EditorSite) editor.getEditorSite();
-			if (!site.getReuseEditor())
+			if (editor.isPinned())
 				continue;
 			if (editor.isDirty()) {
 				dirtyEditor = editor;
@@ -330,20 +358,17 @@ public class EditorManager {
 		if (dirtyEditor == null)
 			return null;
 
-		//Should we have a global preference "Allways open new Editor when dirty"?
-		//if(openNewWhenDirty)
-		//	return null;
-			MessageDialog dialog =
-				new MessageDialog(window.getShell(), WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"), null, // accept the default window icon //$NON-NLS-1$
-	WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[] { dirtyEditor.getEditorInput().getName()}), //$NON-NLS-1$
-		MessageDialog.QUESTION,
-		new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, WorkbenchMessages.getString("EditorManager.openNewEditorLabel")}, //$NON-NLS-1$
-		0);
+		MessageDialog dialog =
+			new MessageDialog(window.getShell(), WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"), null, // accept the default window icon //$NON-NLS-1$
+			WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[] { dirtyEditor.getName()}), //$NON-NLS-1$
+			MessageDialog.QUESTION,
+			new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, WorkbenchMessages.getString("EditorManager.openNewEditorLabel")}, //$NON-NLS-1$
+			0);
 		int result = dialog.open();
 		if (result == 0) { //YES
 			ProgressMonitorDialog pmd = new ProgressMonitorDialog(dialog.getShell());
 			pmd.open();
-			dirtyEditor.doSave(pmd.getProgressMonitor());
+			dirtyEditor.getEditor(true).doSave(pmd.getProgressMonitor());
 			pmd.close();
 		} else if ((result == 2) || (result == -1)){
 			return null;
@@ -352,19 +377,36 @@ public class EditorManager {
 	}
 	/*
 	 * See IWorkbenchPage.
+	 */	
+	public IEditorReference openEditor(String editorId,IEditorInput input,boolean setVisible) throws PartInitException {
+		if(editorId == null) {
+			return openEditorFromInput(new Editor(),(IFileEditorInput)input,setVisible);
+		} else {
+			IEditorRegistry reg = getEditorRegistry();
+			EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorId);
+			if (desc == null) {
+				throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorId })); //$NON-NLS-1$
+			}
+			return openEditorFromDescriptor(new Editor(),desc, input);
+		}
+	}
+	/*
+	 * See IWorkbenchPage.
 	 */
-	private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input) throws PartInitException {
-		IEditorPart result;
+	private IEditorReference openEditorFromDescriptor(IEditorReference ref,EditorDescriptor desc, IEditorInput input) throws PartInitException {
+		IEditorReference result = ref;
 		if (desc.isInternal()) {
 			result = reuseInternalEditor(desc, input);
 			if (result == null)
-				result = openInternalEditor(desc, input, true);
+				result = openInternalEditor(ref,desc, input, true);
 		} else if (desc.isOpenInPlace()) {
-			result = ComponentSupport.getComponentEditor();
-			if (result == null)
+			IEditorPart cEditor = ComponentSupport.getComponentEditor();
+			((Editor)ref).setPart(cEditor);
+			if (cEditor == null)
 				return null;
 			else {
-				openInternalEditor(result, desc, input, true);
+				createSite(cEditor, desc, input);
+				createEditorTab(ref, desc, input, true);
 			}
 		} else if (desc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID)) {
 			if (input instanceof IFileEditorInput) {
@@ -423,16 +465,17 @@ public class EditorManager {
 	/*
 	 * Create the site and action bars for each inner editor.
 	 */
-	private void openMultiEditor(final MultiEditor part, final EditorDescriptor desc, final MultiEditorInput input, final boolean setVisible)
+	private IEditorReference[] openMultiEditor(final IEditorReference ref, final MultiEditor part, final EditorDescriptor desc, final MultiEditorInput input, final boolean setVisible)
 		throws PartInitException {
-		
-		createSite(part,desc,input);
+
 		String[] editorArray = input.getEditors();
 		IEditorInput[] inputArray = input.getInput();
 		
 		//find all descriptors
 		EditorDescriptor[] descArray = new EditorDescriptor[editorArray.length];
+		IEditorReference refArray[] = new IEditorReference[editorArray.length];
 		IEditorPart partArray[] = new IEditorPart[editorArray.length];
+
 
 		IEditorRegistry reg = getEditorRegistry();		
 		for (int i = 0; i < editorArray.length; i++) {
@@ -441,32 +484,39 @@ public class EditorManager {
 				throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorArray[i] })); //$NON-NLS-1$
 			descArray[i] = innerDesc;
 			partArray[i] = createPart(descArray[i]);
+			refArray[i] = new Editor();
+			((Editor)refArray[i]).setPart(partArray[i]);
 			createSite(partArray[i],descArray[i],inputArray[i]);				
 		}
 		part.setChildren(partArray);
-		editorPresentation.openEditor(part,partArray,setVisible);
+		return refArray;
 	}
 	/*
 	 * Opens an editor part.
 	 */
-	private void openInternalEditor(final IEditorPart part, final EditorDescriptor desc, final IEditorInput input, final boolean setVisible)
+	private void createEditorTab(final IEditorReference ref, final EditorDescriptor desc, final IEditorInput input, final boolean setVisible)
 		throws PartInitException {
-		//Must catch PartInitException inside the runnable because
-		//the Runnable.run() does not throw exceptions. 
 
+		//Check it there is already a tab for this ref.
+		IEditorReference refs[] = editorPresentation.getEditors();
+		for (int i = 0; i < refs.length; i++) {
+			if(ref == refs[i])
+				return;
+		}
+				
 		final PartInitException ex[] = new PartInitException[1];
-
-		// Start busy indicator.
 		BusyIndicator.showWhile(getDisplay(), new Runnable() {
 			public void run() {
 				try {
-					if (part instanceof MultiEditor) {
-						openMultiEditor((MultiEditor) part, desc, (MultiEditorInput)input, setVisible);
-					} else {
-						// Create the site, action bars, pane, etc.
-						createSite(part, desc, input);
-						editorPresentation.openEditor(part, setVisible);
+					if(input != null) {
+						IEditorPart part = ref.getEditor(false);
+						if (part != null && part instanceof MultiEditor) {
+							IEditorReference refArray[] = openMultiEditor(ref, (MultiEditor)part, desc, (MultiEditorInput)input, setVisible);
+							editorPresentation.openEditor(ref,refArray,setVisible);
+							return;
+						}
 					}
+					editorPresentation.openEditor(ref, setVisible);
 				} catch (PartInitException e) {
 					ex[0] = e;
 				}
@@ -494,9 +544,15 @@ public class EditorManager {
 	/*
 	 * See IWorkbenchPage.
 	 */
-	private IEditorPart reuseInternalEditor(EditorDescriptor desc, IEditorInput input) throws PartInitException {
-		IEditorPart reusableEditor = findReusableEditor(desc);
-		if (reusableEditor != null) {
+	private IEditorReference reuseInternalEditor(EditorDescriptor desc, IEditorInput input) throws PartInitException {
+		IEditorReference reusableEditorRef = findReusableEditor(desc);
+		if (reusableEditorRef != null) {
+			IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
+			if(reusableEditor == null) {
+				IEditorReference result = openInternalEditor(new Editor(),desc, input, true);
+				page.closeEditor(reusableEditorRef,false);
+				return result;	
+			}
 			EditorSite site = (EditorSite) reusableEditor.getEditorSite();
 			IEditorInput editorInput = reusableEditor.getEditorInput();
 			EditorDescriptor oldDesc = site.getEditorDescriptor();
@@ -507,10 +563,10 @@ public class EditorManager {
 				editorPresentation.moveEditor(reusableEditor, -1);
 				wb.getEditorHistory().add(reusableEditor.getEditorInput(), site.getEditorDescriptor());
 				((IReusableEditor) reusableEditor).setInput(input);
-				return reusableEditor;
+				return reusableEditorRef;
 			} else {
 				//findReusableEditor(...) makes sure its neither pinned nor dirty
-				IEditorPart result = openInternalEditor(desc, input, true);
+				IEditorReference result = openInternalEditor(new Editor(),desc, input, true);
 				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor, true);
 				return result;
 			}
@@ -521,13 +577,14 @@ public class EditorManager {
 	 * Open an internal editor on an file.  Throw up an error dialog if
 	 * an exception occurs.
 	 */
-	private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput input, boolean setVisible) throws PartInitException {
+	private IEditorReference openInternalEditor(IEditorReference ref,final EditorDescriptor desc, IEditorInput input, boolean setVisible) throws PartInitException {
 		// Create an editor instance.
 		final IEditorPart editor = createPart(desc);
-
 		// Open the instance.
-		openInternalEditor(editor, desc, input, setVisible);
-		return editor;
+		createSite(editor, desc, input);
+		((Editor)ref).setPart(editor);
+		createEditorTab(ref, desc, input, setVisible);
+		return ref;
 	}
 	
 	private IEditorPart createPart(final EditorDescriptor desc) throws PartInitException {
@@ -566,6 +623,20 @@ public class EditorManager {
 			throw new PartInitException(WorkbenchMessages.format("EditorManager.unableToOpenExternalEditor", new Object[] { input.getName()})); //$NON-NLS-1$
 		}
 	}
+	
+	private ImageDescriptor findImage(EditorDescriptor desc,IFile file) {
+		ImageDescriptor iDesc;
+		if(desc != null) {
+			iDesc = desc.getImageDescriptor();
+		} else if(file != null && (testForSystemEditor(file) || ComponentSupport.testForOleEditor(file))) {
+			iDesc = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file);;
+		} else {
+			// There is no registered editor.  
+			// Use the default text editor's.
+			iDesc = desc.getImageDescriptor();
+		}
+		return iDesc;
+	}
 	/**
 	 * @see IPersistablePart
 	 */
@@ -584,81 +655,70 @@ public class EditorManager {
 
 		// Loop through the editors.
 		final int errors[] = new int[1];
-		IMemento[] editors = memento.getChildren(IWorkbenchConstants.TAG_EDITOR);
-		for (int x = 0; x < editors.length; x++) {
-			final IMemento editorMem = editors[x];
-			Platform.run(new SafeRunnableAdapter() {
-				public void run() {
-					// Get the input factory.
-					IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
-					String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-					if (factoryID == null) {
-						WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
-						errors[0]++;
-						return;
-					}
-					IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
-					if (factory == null) {
-						WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
-						errors[0]++;
-						return;
-					}
-
-					// Get the input element.
-					IAdaptable input = factory.createElement(inputMem);
-					if (input == null) {
-						WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
-						return;
-					}
-					if (!(input instanceof IEditorInput)) {
-						WorkbenchPlugin.log("Unable to restore editor - input is not IEditorInput"); //$NON-NLS-1$
-						errors[0]++;
-						return;
-					}
-					IEditorInput editorInput = (IEditorInput) input;
-
+		IMemento[] editorMems = memento.getChildren(IWorkbenchConstants.TAG_EDITOR);
+		for (int x = 0; x < editorMems.length; x++) {
+			final IMemento editorMem = editorMems[x];
+			String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
+			boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
+			if(visibleEditor) {
+				Editor e = new Editor();
+				activeEditors.add(e);
+				page.addPart(e);
+				restoreEditor(e,editorMem,errors);
+				if(e.getPart(true) != null) {
+					String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
+					if ("true".equals(strActivePart)) //$NON-NLS-1$
+						activeEditor[0] = (IEditorPart)e.getPart(true);
+				}
+			} else {
+				String editorName = editorMem.getString(IWorkbenchConstants.TAG_TITLE);
+				String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
+				boolean pinned = "true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED));
+				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
+				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				if (factoryID == null)
+					WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
+					
+				if(editorName == null) { //backward compatible format of workbench.xml
+					Editor e = new Editor();
+					restoreEditor(e,editorMem,errors);
+					page.addPart(e);
+				} else {
 					// Get the editor descriptor.
-					String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
 					EditorDescriptor desc = null;
 					if (editorID != null) {
 						IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
 						desc = (EditorDescriptor) reg.findEditor(editorID);
 					}
-
-					// Open the editor.
+					IFile file = null;
+					if(desc == null) {
+						String path = editorMem.getString(IWorkbenchConstants.TAG_PATH);	
+						IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(path));
+						if (res instanceof IFile)
+							file = (IFile)res;
+					}
+					ImageDescriptor iDesc = findImage(desc,file);
+					
+					String tooltip = editorMem.getString(IWorkbenchConstants.TAG_TOOLTIP);
+					if(tooltip == null) tooltip = "";
+										
+					Editor e = new Editor(editorID,editorMem,editorName,tooltip,iDesc,factoryID,pinned);
+					page.addPart(e);
 					try {
-						String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
-						editorPresentation.setActiveEditorWorkbookFromID(workbookID);
-						IEditorPart part;
-						if (desc == null) {
-							part = openEditor((IFileEditorInput) editorInput, false);
-						} else {
-							part = openInternalEditor(desc, editorInput, false);
-							((WorkbenchPage) part.getEditorSite().getPage()).addPart(part);
-						}
-						String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
-						if ("true".equals(strFocus)) //$NON-NLS-1$
-							activeEditors.add(part);
-						String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
-						if ("true".equals(strActivePart)) //$NON-NLS-1$
-							activeEditor[0] = part;
-
-					} catch (PartInitException e) {
-						WorkbenchPlugin.log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
+						createEditorTab(e,null,null,false);
+					} catch (PartInitException ex) {
+						ex.printStackTrace();
 						errors[0]++;
 					}
 				}
-				public void handleException(Throwable e) {
-					errors[0]++;
-				}
-			});
+			}
 		}
 
 		Platform.run(new SafeRunnableAdapter() {
 			public void run() {
 				// Update each workbook with its visible editor.
 				for (int i = 0; i < activeEditors.size(); i++)
-					setVisibleEditor((IEditorPart) activeEditors.get(i), false);
+					setVisibleEditor((IEditorReference) activeEditors.get(i), false);
 
 				// Update the active workbook
 				if (activeWorkbookID[0] != null)
@@ -668,6 +728,7 @@ public class EditorManager {
 					page.activate(activeEditor[0]);
 			}
 			public void handleException(Throwable e) {
+				e.printStackTrace();
 				errors[0]++;
 			}
 		});
@@ -678,6 +739,81 @@ public class EditorManager {
 				message = WorkbenchMessages.getString("EditorManager.oneErrorRestoring"); //$NON-NLS-1$
 			MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 		}
+	}
+	public IEditorReference restoreEditor(final Editor ref,final IMemento editorMem,final int errors[]) {
+		final IEditorReference result[] = new IEditorReference[1];
+		BusyIndicator.showWhile(
+			Display.getCurrent(),
+			new Runnable() {
+				public void run() {
+					result[0] = busyRestoreEditor(ref,editorMem,errors);
+				}
+			});
+		return result[0];
+	}
+	public IEditorReference busyRestoreEditor(final Editor ref,final IMemento editorMem,final int errors[]) {
+		final Editor result[] = new Editor[1];
+		if(ref != null)
+			result[0] = ref;
+			
+		Platform.run(new SafeRunnableAdapter() {
+			public void run() {
+				// Get the input factory.
+				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
+				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				if (factoryID == null) {
+					WorkbenchPlugin.log("Unable to restore editor - no input factory ID."); //$NON-NLS-1$
+					errors[0]++;
+					return;
+				}
+				IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+				if (factory == null) {
+					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+					errors[0]++;
+					return;
+				}
+
+				// Get the input element.
+				IAdaptable input = factory.createElement(inputMem);
+				if (input == null) {
+					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
+					return;
+				}
+				if (!(input instanceof IEditorInput)) {
+					WorkbenchPlugin.log("Unable to restore editor - input is not IEditorInput"); //$NON-NLS-1$
+					errors[0]++;
+					return;
+				}
+				IEditorInput editorInput = (IEditorInput) input;
+
+				// Get the editor descriptor.
+				String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
+				EditorDescriptor desc = null;
+				if (editorID != null) {
+					IEditorRegistry reg = WorkbenchPlugin.getDefault().getEditorRegistry();
+					desc = (EditorDescriptor) reg.findEditor(editorID);
+				}
+
+				// Open the editor.
+				try {
+					String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
+					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
+					if (desc == null) {
+						result[0] = (Editor)openEditorFromInput(ref,(IFileEditorInput) editorInput, false);
+					} else {
+						result[0] = (Editor)openInternalEditor(ref,desc, editorInput, false);
+					}
+					result[0].getPane().createChildControl();
+				} catch (PartInitException e) {
+					WorkbenchPlugin.log("Exception creating editor: " + e.getMessage()); //$NON-NLS-1$
+					errors[0]++;
+				}
+			}
+			public void handleException(Throwable e) {
+				errors[0]++;
+			}
+		});
+		return result[0];
 	}
 	/**
 	 * Runs a progress monitor operation.
@@ -706,7 +842,7 @@ public class EditorManager {
 	public boolean saveAll(boolean confirm, boolean closing) {
 		// Get the list of dirty editors.  If it is
 		// empty just return.
-		List dirtyEditors = collectDirtyEditors(closing);
+		List dirtyEditors = collectDirtyEditors();
 		if (dirtyEditors.size() == 0)
 			return true;
 
@@ -827,11 +963,17 @@ public class EditorManager {
 		editorAreaMem.putString(IWorkbenchConstants.TAG_ACTIVE_WORKBOOK, editorPresentation.getActiveEditorWorkbookID());
 
 		// Save each open editor.
-		IEditorPart[] editors = getEditors();
 		final int errors[] = new int[1];
-		for (int x = 0; x < editors.length; x++) {
-			final IEditorPart editor = editors[x];
-			EditorSite site = (EditorSite)editor.getEditorSite();
+		IEditorReference editors[] = editorPresentation.getEditors();
+		for (int i = 0; i < editors.length; i++) {
+			IEditorReference editorReference = (IEditorReference)editors[i];
+			final IEditorPart editor = editorReference.getEditor(false);
+			if(editor == null) {
+				IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
+				editorMem.putMemento(((Editor)editorReference).getMemento());
+				continue;
+			}
+			final EditorSite site = (EditorSite)editor.getEditorSite();
 			if(site.getPane() instanceof MultiEditorInnerPane)
 				continue;
 				
@@ -845,7 +987,12 @@ public class EditorManager {
 
 					// Save editor.
 					IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
+					editorMem.putString(IWorkbenchConstants.TAG_TITLE,input.getName());
 					editorMem.putString(IWorkbenchConstants.TAG_ID, editor.getSite().getId());
+					editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editor.getTitleToolTip()); //$NON-NLS-1$
+
+					if(!site.getReuseEditor())
+						editorMem.putString(IWorkbenchConstants.TAG_PINNED,"true");
 
 					EditorPane editorPane = (EditorPane) ((EditorSite) editor.getEditorSite()).getPane();
 					editorMem.putString(IWorkbenchConstants.TAG_WORKBOOK, editorPane.getWorkbook().getID());
@@ -855,7 +1002,12 @@ public class EditorManager {
 
 					if (editorPane == editorPane.getWorkbook().getVisibleEditor())
 						editorMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
-
+						
+					if (input instanceof IFileEditorInput) {
+						IFile file = ((IFileEditorInput)input).getFile();
+						editorMem.putString(IWorkbenchConstants.TAG_PATH,file.getFullPath().toString());
+					}
+			
 					// Save input.
 					IMemento inputMem = editorMem.createChild(IWorkbenchConstants.TAG_INPUT);
 					inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
@@ -880,7 +1032,7 @@ public class EditorManager {
 	 *
 	 * @return true if the active editor was changed, false if not.
 	 */
-	public boolean setVisibleEditor(IEditorPart newEd, boolean setFocus) {
+	public boolean setVisibleEditor(IEditorReference newEd, boolean setFocus) {
 		return editorPresentation.setVisibleEditor(newEd, setFocus);
 	}
 	/**
@@ -895,5 +1047,151 @@ public class EditorManager {
 			return Program.findProgram(strName) != null;
 		}
 		return false;
+	}
+	
+	private class Editor extends WorkbenchPartReference implements IEditorReference {
+		private IEditorPart part;
+		private IMemento editorMemento;
+		private String name;
+		private String factoryId;
+		private boolean pinned = false;
+		private String editorId;
+		private PartPane pane;
+		private ImageDescriptor imageDescritor;
+		private String tooltip;
+		private Image image;
+		
+		Editor(String editorId,IMemento memento,String name,String tooltip,ImageDescriptor desc,String factoryId,boolean pinned) {
+			this.editorMemento = memento;
+			this.name = name;
+			this.factoryId = factoryId;
+			this.editorId = editorId;
+			this.imageDescritor = desc;
+			this.tooltip = tooltip;
+		}
+		Editor() {
+		}
+		public void dispose() {
+			if(image != null && imageDescritor != null) {
+				ReferenceCounter imageCache = WorkbenchImages.getImageCache();
+				if(image != null) {
+					int count = imageCache.removeRef(imageDescritor);
+					if(count <= 0)
+						image.dispose();				
+				}
+				imageDescritor = null;
+				image = null;
+			}
+		}
+		public String getFactoryId() {
+			if(part != null) {
+				IPersistableElement persistable = part.getEditorInput().getPersistable();
+				if(persistable != null)
+					return persistable.getFactoryId();
+				return null;
+			}
+			return factoryId;
+		}
+		public String getName() {
+			if(part != null)
+				return part.getEditorInput().getName();
+			return name;
+		}
+		public IWorkbenchPart getPart(boolean restore) {
+			return getEditor(restore);
+		}
+		public IEditorPart getEditor(boolean restore) {
+			if(part != null)
+				return part;
+			if(!restore || editorMemento == null)
+				return null;
+			restoreEditor(this,editorMemento,new int[1]);
+			setPane(this.pane);
+			this.pane = null;	
+			editorMemento = null;
+			tooltip = null;
+			if(image != null && imageDescritor != null) {
+				ReferenceCounter imageCache = WorkbenchImages.getImageCache();
+				if(image != null) {
+					int count = imageCache.removeRef(imageDescritor);
+					if(count <= 0)
+						image.dispose();				
+				}
+				imageDescritor = null;
+				image = null;
+			}
+			return part;
+		}
+		public void setPart(IEditorPart part) {
+			this.part = part;
+			super.setPart(part);
+			EditorSite site = (EditorSite)part.getSite();
+			if(site != null) {
+				site.setPane(this.pane);
+				this.pane = null;
+			}
+		}
+		public IMemento getMemento() {
+			return editorMemento;
+		}
+		public boolean isDirty() {
+			if(part == null)
+				return false;
+			return part.isDirty();
+		}
+		public boolean isPinned() {
+			if(part != null)
+				return !((EditorSite)part.getEditorSite()).getReuseEditor();
+			return pinned;
+		}
+		public String getTitle() {
+			return getName();
+		}
+		public Image getTitleImage() {
+			if(part != null)
+				return part.getTitleImage();
+			if(image != null)
+				return image;
+			ReferenceCounter imageCache = WorkbenchImages.getImageCache();
+			image = (Image)imageCache.get(imageDescritor);
+			if(image != null) {
+				imageCache.addRef(imageDescritor);
+				return image;
+			}
+			image = imageDescritor.createImage();
+			imageCache.put(imageDescritor,image);
+			return image;		
+		}
+		public String getId() {
+			if(part != null)
+				return part.getSite().getId();
+			return editorId;
+		}
+		public void setPane(PartPane pane) {
+			if(pane == null)
+				return;
+			if(part != null) {
+				PartSite site = (PartSite)part.getSite();
+				site.setPane(pane);
+			} else {
+				this.pane = pane;
+			}
+		}
+		public PartPane getPane() {
+			PartPane result;
+			if(part != null)
+				result = ((PartSite)part.getSite()).getPane();
+			else 
+				result = pane;
+			if(result == null)
+				System.err.println("RESULT SHOULD NOT BE NULL");
+			return result;
+		}
+		public String getTitleToolTip() {
+			if(part != null)
+				return part.getTitleToolTip();
+			else
+				return tooltip;
+		}
 	}
 }

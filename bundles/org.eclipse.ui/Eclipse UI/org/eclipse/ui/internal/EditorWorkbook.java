@@ -76,13 +76,14 @@ public EditorWorkbook(EditorArea editorArea) {
  */
 public void add(LayoutPart part) {
 	if (part instanceof EditorPane) {
-		EditorPane editorPart = (EditorPane) part;
-		editors.add(editorPart);
-		editorPart.setWorkbook(this);
-		editorPart.setZoomed(isZoomed);
+		EditorPane editorPane = (EditorPane) part;
+		editors.add(editorPane);
+		editorPane.setWorkbook(this);
+		editorPane.setZoomed(isZoomed);
 		if (tabFolder != null) {
-			createPage(editorPart);
-			setVisibleEditor(editorPart);
+			createTab(editorPane);
+			createPage(editorPane);
+			setVisibleEditor(editorPane);
 		}
 	}
 }
@@ -184,8 +185,9 @@ public void createControl(Composite parent) {
 	// Create tabs.
 	Iterator enum = editors.iterator();
 	while (enum.hasNext()) {
-		EditorPane part = (EditorPane) enum.next();
-		createPage(part);
+		EditorPane pane = (EditorPane) enum.next();
+		createTab(pane);
+		createPage(pane);
 	}
 
 	// Set active tab.
@@ -225,15 +227,14 @@ private boolean overImage(CTabItem item,int x) {
  * Create a page and tab for an editor.
  */
 private void createPage(EditorPane editorPane) {
-	createTab(editorPane);
 	editorPane.createControl(parent);
 	editorPane.setContainer(this);
 	enableDrop(editorPane);
 	// Update tab to be in-sync after creation of
 	// pane's control since prop listener was not on
-	IEditorPart editorPart = editorPane.getEditorPart();
-	updateEditorTab(editorPart);
-	editorPart.addPropertyListener(this);
+	IEditorReference editorRef = editorPane.getEditorReference();
+	updateEditorTab(editorRef);
+	editorRef.addPropertyListener(this);
 
 	// When first editor added, also enable workbook for
 	// D&D - this avoids dragging the initial empty workbook
@@ -250,11 +251,11 @@ private CTabItem createTab(EditorPane editorPane) {
  * Create a new tab for an item at a particular index.
  */
 private CTabItem createTab(EditorPane editorPane, int index) {
-	IEditorPart editorPart = editorPane.getEditorPart();
+	IEditorReference editorRef = editorPane.getEditorReference();
 	CTabItem tab = new CTabItem(tabFolder, SWT.NONE, index);
 	mapTabToEditor.put(tab, editorPane);
 	enableTabDrag(editorPane, tab);
-	updateEditorTab(editorPart);
+	updateEditorTab((IEditorReference)editorPane.getPartReference());
 	return tab;
 }
 private void disableTabDrag(LayoutPart part) {
@@ -264,6 +265,7 @@ private void disableTabDrag(LayoutPart part) {
 		mapPartToDragMonitor.remove(part);
 	}
 }
+
 /**
  * See LayoutPart#dispose
  */
@@ -296,7 +298,7 @@ public void dispose() {
 private void doZoom() {
 	if (visibleEditor == null)
 		return;
-	((WorkbenchPage)(getWorkbenchWindow().getActivePage())).toggleZoom(visibleEditor.getPart());
+	((WorkbenchPage)(getWorkbenchWindow().getActivePage())).toggleZoom(visibleEditor.getPartReference().getPart(true));
 }
 /**
  * Draws the applicable gradient on the active tab
@@ -414,12 +416,13 @@ public Composite getParent() {
 /**
  * Returns the tab for a part.
  */
-private CTabItem getTab(IEditorPart editorPart) {
+private CTabItem getTab(IEditorReference editorRef) {
 	Iterator tabs = mapTabToEditor.keySet().iterator();
+	PartPane pane = ((WorkbenchPartReference)editorRef).getPane();
 	while (tabs.hasNext()) {
 		CTabItem tab = (CTabItem) tabs.next();
-		EditorPane pane = (EditorPane) mapTabToEditor.get(tab);
-		if (pane != null && pane.getEditorPart() == editorPart)
+		PartPane p = (PartPane)mapTabToEditor.get(tab);
+		if (p != null && p == pane)
 			return tab;
 	}
 	
@@ -587,9 +590,7 @@ private void removeListeners(EditorPane editor) {
 	if (mapPartToDragMonitor.size() == 1)
 		disableTabDrag(this);
 
-	IEditorPart editorPart = editor.getEditorPart();
-	if (editorPart != null)
-		editorPart.removePropertyListener(this);
+	editor.getPartReference().removePropertyListener(this);
 }
 /**
  * Remove the tab item from the tab folder
@@ -809,19 +810,41 @@ public LayoutPart targetPartFor(LayoutPart dragSource) {
  * Update the tab for an editor.  This is typically called
  * by a site when the tab title changes.
  */
-public void updateEditorTab(IEditorPart editor) {
+public void updateEditorTab(IEditorPart part) {
+	PartPane pane = ((EditorSite)part.getSite()).getPane();
+	String title = part.getTitle();
+	boolean isDirty = part.isDirty();
+	Image image = part.getTitleImage();
+	String toolTip = part.getTitleToolTip();
+	updateEditorTab(pane,title,isDirty,image,toolTip);
+}
+/**
+ * Update the tab for an editor.  This is typically called
+ * by a site when the tab title changes.
+ */
+public void updateEditorTab(IEditorReference ref) {
+	PartPane pane = ((WorkbenchPartReference)ref).getPane();
+	String title = ref.getTitle();
+	boolean isDirty = ref.isDirty();
+	Image image = ref.getTitleImage();
+	String toolTip = ref.getTitleToolTip();
+	updateEditorTab(pane,title,isDirty,image,toolTip);
+}
+/**
+ * Update the tab for an editor.  This is typically called
+ * by a site when the tab title changes.
+ */
+public void updateEditorTab(PartPane pane,String title,boolean isDirty,Image image,String toolTip) {
 	// Get tab.
-	CTabItem tab = getTab(editor);
+	CTabItem tab = getTab(pane);
 	if(tab == null) return;
 	
 	// Update title.
-	String title = editor.getTitle();
-	if (editor.isDirty())
+	if (isDirty)
 		title = "*" + title;//$NON-NLS-1$
 	tab.setText(title);
 
 	// Update the tab image
-	Image image = editor.getTitleImage();
 	if (image == null) {
 		// Normal image.
 		tab.setImage(null);
@@ -838,13 +861,13 @@ public void updateEditorTab(IEditorPart editor) {
 		Image disableImage = tab.getDisabledImage();
 		if (disableImage != null)
 			disableImage.dispose();
-		Display display = editor.getEditorSite().getShell().getDisplay();
+		Display display = tab.getDisplay();
 		disableImage = new Image(display, image, SWT.IMAGE_DISABLE);
 		tab.setDisabledImage(disableImage);
 	}
 
 	// Tool tip.
-	tab.setToolTipText(editor.getTitleToolTip());
+	tab.setToolTipText(toolTip);
 	tab.getParent().update();
 }
 /**

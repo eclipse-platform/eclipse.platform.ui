@@ -23,7 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * </p>
  * 
  */
-public interface IViewDescriptor {
+public interface IViewDescriptor extends IWorkbenchPartDescriptor {
 /**
  * Creates an instance of the view defined in the descriptor.
  */

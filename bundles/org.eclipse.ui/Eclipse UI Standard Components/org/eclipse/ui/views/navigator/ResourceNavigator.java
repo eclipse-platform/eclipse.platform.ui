@@ -687,15 +687,11 @@ public class ResourceNavigator
 		if (obj instanceof IFile && selection.size() == 1) {
 			IFile file = (IFile) obj;
 			IWorkbenchPage page = getSite().getPage();
-			IEditorPart editorArray[] = page.getEditors();
-			for (int i = 0; i < editorArray.length; ++i) {
-				IEditorPart editor = editorArray[i];
-				IEditorInput input = editor.getEditorInput();
-				if (input instanceof IFileEditorInput
-					&& file.equals(((IFileEditorInput) input).getFile())) {
-					page.bringToTop(editor);
-					return;
-				}
+			//Using internal WorkbenchPage. Must change.
+			IEditorPart editor = page.findEditor(new FileEditorInput(file));
+			if(editor != null) {
+				page.bringToTop(editor);
+				return;
 			}
 		}
 	}

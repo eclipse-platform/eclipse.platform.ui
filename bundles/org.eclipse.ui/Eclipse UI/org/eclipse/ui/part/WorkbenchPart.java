@@ -34,7 +34,6 @@ public abstract class WorkbenchPart implements IWorkbenchPart, IExecutableExtens
 	private IWorkbenchPartSite partSite;
 	private ListenerList propChangeListeners = new ListenerList(2);
 	
-	private static ReferenceCounter imageCache = new ReferenceCounter();
 /**
  * Creates a new workbench part.
  */
@@ -64,6 +63,7 @@ public abstract void createPartControl(Composite parent);
  * loaded by <code>setInitializationData</code>. Subclasses may extend.
  */
 public void dispose() {
+	ReferenceCounter imageCache = WorkbenchImages.getImageCache();
 	Image image = (Image)imageCache.get(imageDescriptor);
 	if (image != null) {
 		int count = imageCache.removeRef(imageDescriptor);
@@ -201,6 +201,7 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 			/* remember the image in a separatly from titleImage,
 			 * since it must be disposed even if the titleImage is changed
 			 * to something else*/
+		 	ReferenceCounter imageCache = WorkbenchImages.getImageCache();
 			Image image = (Image)imageCache.get(imageDescriptor);
 			if(image != null) {
 				imageCache.addRef(imageDescriptor);

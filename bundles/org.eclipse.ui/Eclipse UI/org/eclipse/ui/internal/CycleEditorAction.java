@@ -36,31 +36,29 @@ protected void setText() {
  * Updates the enabled state.
  */
 public void updateState() {
-	IWorkbenchPage page = getActivePage();
+	WorkbenchPage page = (WorkbenchPage)getActivePage();
 	if (page == null) {
 		setEnabled(false);
 		return;
 	}
 	// enable iff there is at least one other editor to switch to
-	setEnabled(page.getEditors().length >= 1);
+	setEnabled(page.getSortedEditors().length >= 1);
 }
 
 /**
  * Add all views to the dialog in the activation order
  */
 protected void addItems(Table table,WorkbenchPage page) {
-	IEditorPart parts[] = page.getSortedEditors();
-	for (int i = parts.length - 1; i >= 0 ; i--) {
+	IEditorReference refs[] = page.getSortedEditors();
+	for (int i = refs.length - 1; i >= 0 ; i--) {
 		TableItem item  = null;
-		if(parts[i] instanceof IEditorPart) {
-			item = new TableItem(table,SWT.NONE);
-			if(parts[i].isDirty())
-				item.setText("*" + parts[i].getTitle()); //$NON-NLS-1$
-			else
-				item.setText(parts[i].getTitle());
-			item.setImage(parts[i].getTitleImage());
-			item.setData(parts[i]);
-		}
+		item = new TableItem(table,SWT.NONE);
+		if(refs[i].isDirty())
+			item.setText("*" + refs[i].getName()); //$NON-NLS-1$
+		else
+			item.setText(refs[i].getName());
+		item.setImage(refs[i].getTitleImage());
+		item.setData(refs[i]);
 	}
 }
 /**
