@@ -358,6 +358,13 @@ public final class RefreshSubscriberJob extends Job {
 				return true;
 			}
 			
+			public String getToolTipText() {
+				if(gotoAction[0] != null) {
+					return gotoAction[0].getToolTipText();
+				}
+				return super.getToolTipText();
+			}
+			
 			public void dispose() {
 				super.dispose();
 				if(gotoAction[0] != null) {
@@ -403,6 +410,7 @@ public final class RefreshSubscriberJob extends Job {
 					} else {
 						gotoAction[0] = runnable;
 						actionWrapper.setEnabled(runnable.isEnabled());
+						actionWrapper.setToolTipText(runnable.getToolTipText());
 						runnable.addPropertyChangeListener(new IPropertyChangeListener() {
 							public void propertyChange(PropertyChangeEvent event) {
 								if(event.getProperty().equals(IAction.ENABLED)) {

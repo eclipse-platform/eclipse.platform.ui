@@ -81,6 +81,16 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 						view.display(participant);
 					}
 				}
+				setToolTipText(getToolTipText());
+			}
+			
+			public String getToolTipText() {
+				boolean prompt = (event.getStatus().getCode() == IRefreshEvent.STATUS_NO_CHANGES);
+				if(prompt) {
+					return Policy.bind("RefreshSubscriberJob.2a"); //$NON-NLS-1$
+				} else {
+					return Policy.bind("RefreshSubscriberJob.2b", participant.getName()); //$NON-NLS-1$
+				}
 			}
 		};
 	}
