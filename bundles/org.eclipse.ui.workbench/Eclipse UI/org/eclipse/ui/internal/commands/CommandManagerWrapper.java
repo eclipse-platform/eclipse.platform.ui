@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
@@ -456,55 +454,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 	}
 
 	private void readRegistry() {
-		// Copy in the category definitions.
-		final Collection categoryDefinitions = new ArrayList();
-		categoryDefinitions.addAll(commandRegistry.getCategoryDefinitions());
-		categoryDefinitions.addAll(mutableCommandRegistry
-				.getCategoryDefinitions());
-		final Map categoryDefinitionsById = new HashMap(CategoryDefinition
-				.categoryDefinitionsById(categoryDefinitions, false));
-		Iterator categoryDefinitionItr = categoryDefinitionsById.values()
-				.iterator();
-		while (categoryDefinitionItr.hasNext()) {
-			final CategoryDefinition categoryDefinition = (CategoryDefinition) categoryDefinitionItr
-					.next();
-			final String name = categoryDefinition.getName();
-			if ((name != null) && (name.length() > 0)) {
-				final String categoryId = categoryDefinition.getId();
-				final Category category = commandManager
-						.getCategory(categoryId);
-				category.define(categoryDefinition.getName(),
-						categoryDefinition.getDescription());
-			}
-		}
-
-		// Copy in the command definitions.
-		Collection commandDefinitions = new ArrayList();
-		commandDefinitions.addAll(commandRegistry.getCommandDefinitions());
-		commandDefinitions.addAll(mutableCommandRegistry
-				.getCommandDefinitions());
-		Map commandDefinitionsById = new HashMap(CommandDefinition
-				.commandDefinitionsById(commandDefinitions, false));
-		for (Iterator iterator = commandDefinitionsById.values().iterator(); iterator
-				.hasNext();) {
-			CommandDefinition commandDefinition = (CommandDefinition) iterator
-					.next();
-			String name = commandDefinition.getName();
-			if (name == null || name.length() == 0)
-				iterator.remove();
-		}
-		final Iterator commandDefinitionItr = commandDefinitionsById.values()
-				.iterator();
-		while (commandDefinitionItr.hasNext()) {
-			final CommandDefinition commandDefinition = (CommandDefinition) commandDefinitionItr
-					.next();
-			final String commandId = commandDefinition.getId();
-			final Command command = commandManager.getCommand(commandId);
-			command.define(commandDefinition.getName(), commandDefinition
-					.getDescription(), commandManager
-					.getCategory(commandDefinition.getCategoryId()));
-		}
-
 		// Copy in the handler submissions
 		definedHandlers.clear();
 		definedHandlers.addAll(commandRegistry.getHandlers());

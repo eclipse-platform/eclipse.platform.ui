@@ -88,6 +88,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
@@ -836,8 +837,10 @@ public final class Workbench implements IWorkbench {
 		 * and such like. This needs to be further thought out.
 		 */
 		commandManager = new CommandManager();
-		services[IWorkbenchServices.COMMAND] = new CommandService(
+		final ICommandService commandService = new CommandService(
 				commandManager);
+		services[IWorkbenchServices.COMMAND] = commandService;
+		commandService.readRegistryAndPreferences();
 		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
 		contextManager = new ContextManager();
 		services[IWorkbenchServices.CONTEXT] = new ContextService(

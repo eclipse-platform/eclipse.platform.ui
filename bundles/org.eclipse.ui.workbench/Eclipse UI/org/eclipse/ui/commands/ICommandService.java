@@ -69,4 +69,15 @@ public interface ICommandService extends IService {
 	 *         that are defined; never <code>null</code>, but may be empty.
 	 */
 	public Collection getDefinedCommandIds();
+
+	/**
+	 * <p>
+	 * Reads the command information from the registry and the preferences. This
+	 * will overwrite any of the existing information in the command service.
+	 * This method is intended to be called during start-up. When this method
+	 * completes, this command service will reflect the current state of the
+	 * registry and preference store.
+	 * </p>
+	 */
+	public void readRegistryAndPreferences();
 }

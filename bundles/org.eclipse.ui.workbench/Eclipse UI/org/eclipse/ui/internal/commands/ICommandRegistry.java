@@ -18,13 +18,7 @@ public interface ICommandRegistry {
     void addCommandRegistryListener(
             ICommandRegistryListener commandRegistryListener);
 
-    List getCategoryDefinitions();
-
-    List getCommandDefinitions();
-
     List getHandlers();
-
-    List getImageBindingDefinitions();
 
     void removeCommandRegistryListener(
             ICommandRegistryListener commandRegistryListener);

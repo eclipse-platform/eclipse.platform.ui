@@ -76,4 +76,8 @@ public final class CommandService implements ICommandService {
 	public final Collection getDefinedCommandIds() {
 		return commandManager.getDefinedCommandIds();
 	}
+
+	public final void readRegistryAndPreferences() {
+		CommandPersistence.read(commandManager);
+	}
 }

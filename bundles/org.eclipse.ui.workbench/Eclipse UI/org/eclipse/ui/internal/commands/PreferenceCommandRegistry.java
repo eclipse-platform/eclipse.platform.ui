@@ -12,19 +12,10 @@
 package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
 
 /**
  * The persistent store for the preferences related to the commands
@@ -88,39 +79,6 @@ public final class PreferenceCommandRegistry extends
      *             If something happens while trying to read the store.
      */
     public void load() throws IOException {
-        String preferenceString = preferenceStore.getString(KEY);
-
-        if (preferenceString != null && preferenceString.length() != 0) {
-            Reader reader = new StringReader(preferenceString);
-
-            try {
-                IMemento memento = XMLMemento.createReadRoot(reader);
-                List categoryDefinitions = Collections
-                        .unmodifiableList(Persistence.readCategoryDefinitions(
-                                memento, Persistence.TAG_CATEGORY, null));
-                List commandDefinitions = Collections
-                        .unmodifiableList(Persistence.readCommandDefinitions(
-                                memento, Persistence.TAG_COMMAND, null));
-                boolean commandRegistryChanged = false;
-
-                if (!categoryDefinitions.equals(this.categoryDefinitions)) {
-                    this.categoryDefinitions = categoryDefinitions;
-                    commandRegistryChanged = true;
-                }
-
-                if (!commandDefinitions.equals(this.commandDefinitions)) {
-                    this.commandDefinitions = commandDefinitions;
-                    commandRegistryChanged = true;
-                }
-
-                if (commandRegistryChanged)
-                    fireCommandRegistryChanged();
-            } catch (WorkbenchException eWorkbench) {
-                throw new IOException();
-            } finally {
-                reader.close();
-            }
-        }
     }
 
     /**
@@ -131,18 +89,5 @@ public final class PreferenceCommandRegistry extends
      *             store.
      */
     public void save() throws IOException {
-        XMLMemento xmlMemento = XMLMemento.createWriteRoot(KEY);
-        Persistence.writeCategoryDefinitions(xmlMemento,
-                Persistence.TAG_CATEGORY, categoryDefinitions);
-        Persistence.writeCommandDefinitions(xmlMemento,
-                Persistence.TAG_COMMAND, commandDefinitions);
-        Writer writer = new StringWriter();
-
-        try {
-            xmlMemento.save(writer);
-            preferenceStore.setValue(KEY, writer.toString());
-        } finally {
-            writer.close();
-        }
     }
 }
