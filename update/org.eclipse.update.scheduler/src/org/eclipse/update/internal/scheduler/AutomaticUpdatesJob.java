@@ -19,6 +19,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.*;
@@ -83,12 +84,30 @@ public class AutomaticUpdatesJob
 					+ updates.size()
 					+ " results.");
 			if (updates.size() > 0) {
-				// prompt the user
-				getStandardDisplay().asyncExec(new Runnable() {
-					public void run() {
-						asyncNotifyUser();
+				boolean download = UpdateCore.getPlugin().getPluginPreferences().getBoolean(UpdateScheduler.P_DOWNLOAD);
+				// silently download if download enabled 
+				if (download)
+				{
+					for (int i=0; i<updates.size(); i++) {
+						IInstallFeatureOperation op = (IInstallFeatureOperation)updates.get(i);
+						IFeature feature = op.getFeature();
+						UpdateUtils.downloadFeatureContent(feature, monitor);
 					}
-				});
+				}
+				// prompt the user
+				if (download) {
+					getStandardDisplay().asyncExec(new Runnable() {
+						public void run() {
+							asyncNotifyDownloadUser();
+						}
+					});
+				} else {
+					getStandardDisplay().asyncExec(new Runnable() {
+						public void run() {
+							asyncNotifyUser();
+						}
+					});	
+				}
 				return Job.ASYNC_FINISH;
 			}
 		} catch (CoreException e) {
@@ -105,6 +124,24 @@ public class AutomaticUpdatesJob
 				UpdateScheduler.getActiveWorkbenchShell(),
 				"Eclipse Updates",
 				"New updates are available. Do you want to review and install them now?")) {
+			BusyIndicator.showWhile(getStandardDisplay(), new Runnable() {
+				public void run() {
+					openInstallWizard();
+				}
+			});
+		}
+		// notify the manager that the job is done
+		done(OK_STATUS);
+	}
+	
+	private void asyncNotifyDownloadUser() {
+		// ask the user to install updates
+		getStandardDisplay().beep();
+		if (MessageDialog
+			.openQuestion(
+				UpdateScheduler.getActiveWorkbenchShell(),
+				"Eclipse Updates",
+				"New updates are available and downloaded. Do you want to review and install them now?")) {
 			BusyIndicator.showWhile(getStandardDisplay(), new Runnable() {
 				public void run() {
 					openInstallWizard();

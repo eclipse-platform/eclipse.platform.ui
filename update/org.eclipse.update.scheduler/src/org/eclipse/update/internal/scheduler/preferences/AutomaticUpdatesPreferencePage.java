@@ -28,6 +28,8 @@ public class AutomaticUpdatesPreferencePage
 	private Button onScheduleRadio;
 	private Combo dayCombo;
 	private Combo hourCombo;
+	private Button searchOnlyRadio;
+	private Button searchAndDownloadRadio;
 
 	public void init(IWorkbench workbench) {
 	}
@@ -89,7 +91,38 @@ public class AutomaticUpdatesPreferencePage
 		gd = new GridData();
 		gd.widthHint = 60;
 		hourCombo.setLayoutData(gd);
+	
+		group = new Group(container, SWT.NONE);
+		group.setText("&Download Options");
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		group.setLayout(layout);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(gd);
 
+		searchOnlyRadio = new Button(group, SWT.RADIO);
+		searchOnlyRadio.setText(
+			"Search for updates and notify me when they are available");
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		searchOnlyRadio.setLayoutData(gd);
+		searchOnlyRadio.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				pageChanged();
+			}
+		});
+
+		searchAndDownloadRadio = new Button(group, SWT.RADIO);
+		searchAndDownloadRadio.setText("Download new updates automatically and notify me when ready to install them");
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		searchAndDownloadRadio.setLayoutData(gd);
+		searchAndDownloadRadio.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				pageChanged();
+			}
+		});
+			
 		initialize();
 
 		enabledCheck.addSelectionListener(new SelectionAdapter() {
@@ -115,6 +148,9 @@ public class AutomaticUpdatesPreferencePage
 
 		dayCombo.setText(UpdateScheduler.DAYS[getDay(pref)]);
 		hourCombo.setText(UpdateScheduler.HOURS[getHour(pref)]);
+		
+		searchOnlyRadio.setSelection(pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
+		searchAndDownloadRadio.setSelection(!pref.getBoolean(UpdateScheduler.P_DOWNLOAD));
 
 		pageChanged();
 	}
@@ -155,6 +191,8 @@ public class AutomaticUpdatesPreferencePage
 			
 		pref.setValue(UpdateScheduler.P_DAY, dayCombo.getText());
 		pref.setValue(UpdateScheduler.P_HOUR, hourCombo.getText());
+		
+		pref.setValue(UpdateScheduler.P_DOWNLOAD, searchAndDownloadRadio.getSelection());
 		
 		UpdateScheduler.getDefault().savePluginPreferences();
 		

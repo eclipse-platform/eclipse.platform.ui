@@ -31,6 +31,8 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 	public static final String P_SCHEDULE = "schedule";
 	public static final String VALUE_ON_STARTUP = "on-startup";
 	public static final String VALUE_ON_SCHEDULE = "on-schedule";
+	
+	public static final String P_DOWNLOAD = "download"; // value is true or false, default is false
 
 	// values are to be picked up from the arryas DAYS and HOURS 
 	public static final String P_DAY = "day";
@@ -218,6 +220,7 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		Preferences pref = getPluginPreferences();
 		pref.setDefault(P_ENABLED, false);
 		pref.setDefault(P_SCHEDULE, VALUE_ON_STARTUP);
+		pref.setDefault(P_DOWNLOAD, false);
 	}
 
 	public void shutdown() throws CoreException {
