@@ -398,11 +398,12 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				byte changeFlag = memoryBuffer[j].getFlags();
 				if (manageDelta)
 				{
-					// turn off both change and unchanged bits to make sure that
+					// turn off both change and known bits to make sure that
 					// the change bits returned by debug adapters do not take
 					// any effect
 					
-					changeFlag |= MemoryByte.UNKNOWN;
+					changeFlag |= MemoryByte.KNOWN;
+					changeFlag ^= MemoryByte.KNOWN;
 					
 					changeFlag |= MemoryByte.CHANGED;
 					changeFlag ^= MemoryByte.CHANGED;
@@ -416,7 +417,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				if (!manageDelta)
 				{
 					// If the byte is marked as unknown, the line is not monitored
-					if (memoryBuffer[j].isUnknown())
+					if (!memoryBuffer[j].isKnown())
 					{
 						isMonitored = false;
 					}

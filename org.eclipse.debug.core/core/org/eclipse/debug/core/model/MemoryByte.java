@@ -16,12 +16,12 @@ package org.eclipse.debug.core.model;
  * attributes indicating if the byte is read-only, valid, or if its value has
  * changed.
  * <p>
- * Clients may subclass this class.
- * TODO: when would a client subclass this class?
+ * Clients may instantiate this class. Clients may subclass this class to 
+ * add other attributes to a memory byte, as required.
  * </p>
  * @since 3.1
  */
-public abstract class MemoryByte {
+public class MemoryByte {
 	
     /**
      * Bit mask used to indicate a byte is read-only.
@@ -30,24 +30,25 @@ public abstract class MemoryByte {
 	
 	/**
 	 * Bit mask used to indicate a byte is valid.
-	 * 
-	 * TODO: specify what makes a byte valid - when is a byte invalid?
+	 * A memory byte is valid when its value and attributes are retrievable.
+	 * Otherwise, a byte is considered invalid.
 	 */
 	public static final byte	VALID		= 0x02;
 	
 	/**
-	 * Bit mask used to indicate a byte has changed.
+	 * Bit mask used to indicate a byte has changed since the last
+	 * suspend event.
 	 * 
-	 * TODO: specify CHANGE flag more clearly - changed since when? 
+	 * @see org.eclipse.debug.core.DebugEvent#SUSPEND
 	 */
 	public static final byte	CHANGED		= 0x04;
 	
 	/**
-	 * Bit mask used to indicate a byte has no history to
-	 * determine if the byte is changed or not. The change bit has
-	 * no meaning if this bit is on.
+	 * Bit mask used to indicate a memory byte has history to
+	 * determine if its value has changed. When a memory byte's
+	 * history is unknown, the change state has no meaning.
 	 */
-	public static final byte 	UNKNOWN		= 0x08;
+	public static final byte 	KNOWN		= 0x08;
 	
 	/**
 	 * Value of this byte.
@@ -64,24 +65,22 @@ public abstract class MemoryByte {
 	protected byte flags;
 	
 	/**
-	 * Constructs a read-write, invalid, unchanged memory byte with a
-	 * value of 0.
-	 * 
-	 * TODO: should the valid flag be set for convenience?
+	 * Constructs a read-write, valid memory byte without a change history,
+	 * and a value of 0.
 	 */
 	public MemoryByte() {
+	    this((byte)0, VALID);
 	}
 	
 	/**
-	 * Constructs a read-write, invalid, unchanged memory byte with
-	 * the given value.
+	 * Constructs a read-write, valid memory byte without a change history,
+	 * with the given value.
 	 * 
 	 * @param byteValue value of this memory byte
 	 * 
-	 * TODO: should the valid flag be set for convenience?
 	 */
 	public MemoryByte(byte byteValue) {
-		value = byteValue;
+	    this(byteValue, VALID);
 	}
 	
 	/**
@@ -90,7 +89,7 @@ public abstract class MemoryByte {
 	 * @param byteValue value of this memory byte
 	 * @param byteFlags attributes of the byte specified as a bit mask 
 	 */
-	public MemoryByte(byte byteValue, byte byteFlags) {
+	public MemoryByte(byte byteValue, byte byteFlags) {		
 		value = byteValue;
 		flags = byteFlags;
 	}
@@ -131,7 +130,9 @@ public abstract class MemoryByte {
 	}
 	
 	/**
-	 * Sets whether this memory byte is valid.
+	 * Sets whether this memory byte is valid. A memory byte
+	 * is considered valid when its value and attributes are
+	 * retrievable.
 	 * 
 	 * @param valid whether this memory byte is valid
 	 */
@@ -142,7 +143,9 @@ public abstract class MemoryByte {
 	}
 	
 	/**
-	 * Returns whether this memory byte is valid.
+	 * Returns whether this memory byte is valid. A memory byte
+	 * is considered valid when its value and attributes are
+	 * retrievable.
 	 * 
 	 * @return whether this memory byte is valid
 	 */
@@ -191,30 +194,25 @@ public abstract class MemoryByte {
 	}
 	
 	/**
-	 * Sets whether the value of this byte is unknown. When a value
+	 * Sets whether the history of this byte is known. When history
 	 * is unknown, the change state of a memory byte has no meaning.
 	 * 
-	 * TODO: this flag should be changed to the 'positive' KNOWN rather than
-	 *  the 'negative' UNKNOWN. All other flags read in the positive state:
-	 *  is valid, is read-only, is changed. Similarly, this flag should read
-	 *  as is known.
-	 * 
-	 * @param unknown whether the value of this byte is unknown
+	 * @param known whether the change state of this byte is known
 	 */
-	public void setUnknown(boolean unknown) {
-		flags |= MemoryByte.UNKNOWN;
-		if (!unknown)
-			flags ^= MemoryByte.UNKNOWN;
+	public void setKnown(boolean known) {
+		flags |= MemoryByte.KNOWN;
+		if (!known)
+			flags ^= MemoryByte.KNOWN;
 	}
 	
 	/**
-	 * Returns whether the value of this byte is unknown. When a value
+	 * Returns whether the history of this byte is known. When history
 	 * is unknown, the change state of a memory byte has no meaning.
 	 * 
-	 * @return whether the value of this byte is unknown
+	 * @return whether the change state of this byte is known
 	 */
-	public boolean isUnknown() {
-		return ((flags & MemoryByte.UNKNOWN) == MemoryByte.UNKNOWN);
+	public boolean isKnown() {
+		return ((flags & MemoryByte.KNOWN) == MemoryByte.KNOWN);
 	}
 	
 	

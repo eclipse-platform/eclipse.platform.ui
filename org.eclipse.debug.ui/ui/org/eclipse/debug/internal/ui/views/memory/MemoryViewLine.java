@@ -197,8 +197,8 @@ public class MemoryViewLine extends Object {
 			
 		for (int i=0; i<fBytes.length; i++)
 		{
-			// turn off unknown bit
-			fBytes[i].setUnknown(false);
+			// turn on known bit
+			fBytes[i].setKnown(true);
 			
 			if ((fBytes[i].getFlags() & MemoryByte.VALID) != (oldMemory[i].getFlags() & MemoryByte.VALID))
 			{
@@ -261,14 +261,18 @@ public class MemoryViewLine extends Object {
 	
 	public boolean isRangeChange(int offset, int endOffset)
 	{	
-		byte ret = fBytes[offset].getFlags();
+		boolean allBytesKnown = true;
+		boolean allBytesUnchanged = true;
+		
 		for (int i=offset; i<=endOffset; i++)
 		{
-			ret |= fBytes[i].getFlags();
+			if (!fBytes[i].isKnown())
+				allBytesKnown = false;
+			if (fBytes[i].isChanged())
+				allBytesUnchanged = false;
 		}
 		
-		if ((ret&MemoryByte.CHANGED) == MemoryByte.CHANGED &&
-			 (ret&MemoryByte.UNKNOWN) != MemoryByte.UNKNOWN) {
+		if (allBytesKnown && !allBytesUnchanged) {
 			return true;
 		}
 		return false;
