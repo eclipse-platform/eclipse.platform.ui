@@ -46,8 +46,15 @@ private Properties buildPathProperties(Hashtable paths) {
 /**
  * 
  */
-public void createLocation() {
-	getLocation().toFile().mkdirs();
+public void createLocation() throws CoreException {
+	File file = getLocation().toFile();
+	try {
+		file.mkdirs();
+	} catch (Exception e) {
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, "Error trying to create metadata area.", e));
+	}
+	if (!file.canWrite())
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, "Problem trying to create metadata area.", null));
 }
 public IPath getBackupFilePathFor(IPath file) {
 	return file.removeLastSegments(1).append(file.lastSegment() + F_BACKUP);
