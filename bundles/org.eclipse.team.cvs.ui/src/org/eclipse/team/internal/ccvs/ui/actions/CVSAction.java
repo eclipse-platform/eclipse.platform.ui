@@ -487,20 +487,8 @@ abstract public class CVSAction extends TeamAction {
 		if (option != ICVSUIConstants.OPTION_NEVER) {		
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					IWorkbenchPage oldPage = CVSUIPlugin.getActivePage();
 					boolean confirm = option == ICVSUIConstants.OPTION_PROMPT;
-					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-					for (int i = 0; i < windows.length; i++) {
-						IWorkbenchPage[] pages = windows[i].getPages();
-						for (int j = 0; j < pages.length; j++) {	
-							okToContinue[0] = pages[j].saveAllEditors(confirm);
-							if (!okToContinue[0]) break;
-						}
-						if (!okToContinue[0]) break;
-					}
-					if (oldPage != null) {
-						oldPage.getWorkbenchWindow().getShell().setFocus();
-					}
+					okToContinue[0] = PlatformUI.getWorkbench().saveAllEditors(confirm);
 				}
 			});
 		} 
