@@ -507,7 +507,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 							IThread[] threads= target.getThreads();
 							for (int i=0; i < threads.length; i++) {
 								if (threads[i].isSuspended()) {
-									getLaunchView().autoExpand(threads[i].getTopStackFrame(), true);
+									IStackFrame topStackFrame = threads[i].getTopStackFrame();
+									if (topStackFrame != null) {
+									    getLaunchView().autoExpand(topStackFrame, true);
+									}
 									return;
 								}
 							}						

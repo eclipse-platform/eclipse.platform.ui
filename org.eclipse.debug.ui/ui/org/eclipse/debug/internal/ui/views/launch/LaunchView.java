@@ -919,6 +919,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	/**
 	 * Auto-expand and select the given element - must be called in UI thread.
 	 * This is used to implement auto-expansion-and-select on a SUSPEND event.
+	 * 
+	 * @param element the element to expand, cannot be <code>null</code>
+	 * @param selectNeeded whether the element should be selected
 	 */
 	public void autoExpand(Object element, boolean selectNeeded) {
 	    boolean refresh = false;
