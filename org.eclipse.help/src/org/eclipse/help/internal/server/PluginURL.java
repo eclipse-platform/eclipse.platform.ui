@@ -14,7 +14,7 @@ public class PluginURL extends HelpURL {
 	protected String file;
 	/**
 	 * FileURL constructor comment.
-	 * @param url java.lang.String
+	 * @param url pluginid/file
 	 */
 	public PluginURL(String url, String query) {
 		super(url, query);

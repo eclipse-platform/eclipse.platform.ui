@@ -25,8 +25,8 @@ public class HelpURLFactory {
 			url = url.substring(1, indx);
 		} else
 			url = url.substring(1);
-		if (url.startsWith(TempURL.getPrefix())) // "/temp"
-			return new TempURL(url.substring(TempURL.getPrefix().length() + 1), query);
+		if (url.startsWith(TocURL.getPrefix())) // "/toc"
+			return new TocURL(url.substring(TocURL.getPrefix().length()), query);
 		else
 			return new PluginURL(url, query);
 	}
