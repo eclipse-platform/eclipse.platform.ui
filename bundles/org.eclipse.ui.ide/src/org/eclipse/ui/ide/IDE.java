@@ -206,8 +206,30 @@ public final class IDE {
 	 * If this page already has an editor open on the target file that editor is 
 	 * brought to front; otherwise, a new editor is opened. If 
 	 * <code>activate == true</code> the editor will be activated. 
-	 * </p><p>
-	 * An appropriate editor for the file input is determined using a multistep process.
+	 * </p>
+	 *
+	 * @param page the workbench page to open the editor in
+	 * @param input the file to edit
+	 * @param activate if <code>true</code> the editor will be activated
+	 * @return an open editor or <code>null</code> if external editor open
+	 * @exception PartInitException if the editor could not be initialized
+	 * @see IDE#getEditorDescriptor(IFile)
+	 */
+	public static IEditorPart openEditor(IWorkbenchPage page, IFile input, boolean activate) throws PartInitException {
+		//sanity checks
+		if (page == null) {
+			throw new IllegalArgumentException();
+		}		
+		IEditorDescriptor editorDesc = getEditorDescriptor(input);
+		
+		// open the editor on the file
+		return page.openEditor(new FileEditorInput(input), editorDesc.getId(), activate);
+	}
+
+	/**
+	 * Finds an editor descriptor on the given file resource.  
+	 * <p>
+	 * An appropriate editor descriptor for the file input is determined using a multistep process.
 	 * </p>
 	 * <ol>
 	 *   <li>The file input is consulted for a persistent property named
@@ -223,19 +245,15 @@ public final class IDE {
 	 * 		editor is available.</li>
 	 * </ol>
 	 * </p>
-	 *
-	 * @param page the workbench page to open the editor in
-	 * @param input the file to edit
-	 * @param activate if <code>true</code> the editor will be activated
-	 * @return an open editor or <code>null</code> if external editor open
-	 * @exception PartInitException if the editor could not be initialized
+	 * @param input The file to open the editor on.
+	 * @return IEditorDescriptor 
+	 * @throws PartInitException if no editor can be found.
 	 */
-	public static IEditorPart openEditor(IWorkbenchPage page, IFile input, boolean activate) throws PartInitException {
-		// sanity checks
-		if (page == null || input == null) {
+	public static IEditorDescriptor getEditorDescriptor(IFile input) throws PartInitException {
+		
+		if (input == null) {
 			throw new IllegalArgumentException();
-		}
-
+		}	
 		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
 		
 		// check for a default editor
@@ -260,9 +278,7 @@ public final class IDE {
 		if (editorDesc == null) {
 			throw new PartInitException(IDEWorkbenchMessages.getString("IDE.noFileEditorFound")); //$NON-NLS-1$
 		}
-		
-		// open the editor on the file
-		return page.openEditor(new FileEditorInput(input), editorDesc.getId(), activate);
+		return editorDesc;
 	}
 
 	/**
