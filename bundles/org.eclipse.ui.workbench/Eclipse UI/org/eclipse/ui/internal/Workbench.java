@@ -668,37 +668,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
 		
-	public void updateKeys() {	
-		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
-	
-		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
-			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-	
-			if (wWinKeyBindingService != null) {
-				IWorkbenchPage activePage = workbenchWindow.getActivePage();
-					
-				if (activePage != null) {
-					IWorkbenchPart activePart = activePage.getActivePart();
-							
-					if (activePart != null) {
-						wWinKeyBindingService.update(activePart);
-						return;
-					}
-				}
-			}		
-			
-			wWinKeyBindingService.clear();
-		}
-	}
-		
 	/**
 	 * Initializes the workbench.
 	 *
 	 * @return true if init succeeded.
 	 */
-	private boolean init(String[] commandLineArgs) {
-		Manager.getInstance();
-		
+	private boolean init(String[] commandLineArgs) {	
 		this.commandLineArgs = commandLineArgs;
 
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
@@ -714,7 +689,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
 		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
 		initializeFonts();	
-		updateKeys();
 		initializeSingleClickOption();
 		boolean avoidDeadlock = true;
 		

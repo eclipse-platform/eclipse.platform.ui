@@ -39,6 +39,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -60,9 +62,14 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.WWinKeyBindingService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -304,8 +311,30 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		Manager.getInstance().reset();
 
-		if (workbench instanceof Workbench)
-			((Workbench) this.workbench).updateKeys();
+		if (workbench instanceof Workbench) {	
+			IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+	
+			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
+				boolean update = false;
+				WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
+	
+				if (wWinKeyBindingService != null) {
+					IWorkbenchPage activePage = workbenchWindow.getActivePage();
+					
+					if (activePage != null) {
+						IWorkbenchPart activePart = activePage.getActivePart();
+							
+						if (activePart != null) {
+							wWinKeyBindingService.update(activePart);
+							update = true;
+						}
+					}
+				}		
+			
+				if (!update)
+					wWinKeyBindingService.clear();
+			}
+		}
 
 		return super.performOk();
 	}
@@ -816,6 +845,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		//	public void selectionChanged(SelectionChangedEvent event) {
 		//	}
 		//});
+
+		comboSequence.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent e) {		
+			}
+
+			public void keyReleased(KeyEvent e) {
+			}		
+		});
 
 		comboSequence.addModifyListener(new ModifyListener() {			
 			public void modifyText(ModifyEvent modifyEvent) {

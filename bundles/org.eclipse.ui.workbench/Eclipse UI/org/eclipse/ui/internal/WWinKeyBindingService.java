@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.commands.SequenceMachine;
 import org.eclipse.ui.internal.commands.Stroke;
 import org.eclipse.ui.internal.registry.IActionSet;
 
-final class WWinKeyBindingService {
+public final class WWinKeyBindingService {
 
 	private static class KeyModeContributionItem extends ContributionItem {
 
@@ -161,7 +161,7 @@ final class WWinKeyBindingService {
 		});		
 	}
 
-	void clear() {		
+	public void clear() {		
 		Manager.getInstance().getKeyMachine().setMode(Sequence.create());
 		keyModeContributionItem.setText(""); //$NON-NLS-1$	
 		updateAccelerators();
@@ -240,7 +240,7 @@ final class WWinKeyBindingService {
 			globalActionsCommandIdToActionMap.put(command, globalAction);
 	}
 
-	void update(IWorkbenchPart workbenchPart) {
+	public void update(IWorkbenchPart workbenchPart) {
 		String[] scopes = new String[] { "" }; //$NON-NLS-1$
 
 		if (workbenchPart != null) {
