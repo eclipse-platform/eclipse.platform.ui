@@ -45,8 +45,9 @@ public class ColorManager {
 	
 	public void dispose() {
 		Iterator e= fColorTable.values().iterator();
-		while (e.hasNext())
+		while (e.hasNext()) {
 			((Color) e.next()).dispose();
+		}
 	}
 }
 
