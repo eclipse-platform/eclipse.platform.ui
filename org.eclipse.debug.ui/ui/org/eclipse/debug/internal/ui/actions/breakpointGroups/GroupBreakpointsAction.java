@@ -18,13 +18,22 @@ import org.eclipse.debug.ui.IBreakpointContainerFactory;
 import org.eclipse.jface.action.Action;
 
 /**
- * 
+ * An action which sets the breakpoint factory on a breakpoint view,
+ * effectively telling the view to group breakpoints according to
+ * some criteria (as determined by the factory).
  */
 public class GroupBreakpointsAction extends Action {
     
     private IBreakpointContainerFactory fFactory;
     private BreakpointsView fView;
 
+    /**
+     * Creates a new action which will group breakpoints in the given
+     * breakpoint view using the given breakpoint container factory
+     * @param factory the factory that will be applied to the given view
+     *  when this action is run
+     * @param view the breakpoints view
+     */
     public GroupBreakpointsAction(IBreakpointContainerFactory factory, BreakpointsView view) {
         fFactory= factory;
         fView= view;
