@@ -185,6 +185,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			internalRemove(key, oldValue);
 	}
 
+	/*
+	 * Added so the backwards compatibility layer (PreferenceForwarder)
+	 * gets preference change events of the correct types.
+	 */
 	public void removeInt(String key) {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -202,6 +206,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 	}
 
+	/*
+	 * Added so the backwards compatibility layer (PreferenceForwarder)
+	 * gets preference change events of the correct types.
+	 */
 	public void removeDouble(String key) {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -219,6 +227,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 	}
 
+	/*
+	 * Added so the backwards compatibility layer (PreferenceForwarder)
+	 * gets preference change events of the correct types.
+	 */
 	public void removeFloat(String key) {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -236,6 +248,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 	}
 
+	/*
+	 * Added so the backwards compatibility layer (PreferenceForwarder)
+	 * gets preference change events of the correct types.
+	 */
 	public void removeLong(String key) {
 		// illegal state if this node has been removed
 		checkRemoved();
@@ -253,6 +269,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 	}
 
+	/*
+	 * Added so the backwards compatibility layer (PreferenceForwarder)
+	 * gets preference change events of the correct types.
+	 */
 	public void removeBoolean(String key) {
 		// illegal state if this node has been removed
 		checkRemoved();
