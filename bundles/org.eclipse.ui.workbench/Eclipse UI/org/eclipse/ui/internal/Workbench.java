@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
@@ -93,6 +94,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
@@ -100,6 +102,7 @@ import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
@@ -107,8 +110,7 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
-import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -116,6 +118,7 @@ import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -177,7 +180,7 @@ public final class Workbench implements IWorkbench {
     /**
      * PlatformUI return code (as opposed to IPlatformRunnable return code).
      */
-    private int returnCode;
+    private int returnCode = PlatformUI.RETURN_UNSTARTABLE;
 
     private ListenerList windowListeners = new ListenerList();
 
@@ -727,6 +730,14 @@ public final class Workbench implements IWorkbench {
     /*
      * (non-Javadoc) Method declared on IWorkbench.
      */
+    public IWorkbenchOperationSupport getOperationSupport() {
+        return WorkbenchPlugin.getDefault().getOperationSupport();
+    }
+    
+
+    /*
+     * (non-Javadoc) Method declared on IWorkbench.
+     */
     public IPerspectiveRegistry getPerspectiveRegistry() {
         return WorkbenchPlugin.getDefault().getPerspectiveRegistry();
     }
@@ -1109,6 +1120,7 @@ public final class Workbench implements IWorkbench {
      * @since 3.0
      */
     private void uninitializeImages() {
+        WorkbenchImages.dispose();
         Window.setDefaultImage(null);
     }
 
@@ -1122,10 +1134,8 @@ public final class Workbench implements IWorkbench {
         WorkbenchColors.startup();
     }
 
-    /**
-     * Returns <code>true</code> if the workbench is in the process of
-     * closing.
-     * @return boolean
+    /*
+     * (non-Javadoc) Method declared on IWorkbench.
      */
     public boolean isClosing() {
         return isClosing;
@@ -1439,8 +1449,7 @@ public final class Workbench implements IWorkbench {
             try {
                 result.merge(newWindow.restoreState(childMem, null));
                 try {
-                    getAdvisor().postWindowRestore(
-                            newWindow.getWindowConfigurer());
+                    newWindow.fireWindowRestored();
                 } catch (WorkbenchException e) {
                     result.add(e.getStatus());
                 }
@@ -1540,7 +1549,7 @@ public final class Workbench implements IWorkbench {
 
             // initialize workbench and restore or open one window
             boolean initOK = init(display);
-
+            
             // drop the splash screen now that a workbench window is up
             Platform.endSplash();
 
@@ -1576,6 +1585,11 @@ public final class Workbench implements IWorkbench {
             }
         } finally {
             // mandatory clean up
+            
+            // The runEventLoop flag may not have been cleared if an exception occurred
+            // Needs to be false to ensure PlatformUI.isWorkbenchRunning() returns false.
+            runEventLoop = false;
+            
             if (!display.isDisposed()) {
                 display.removeListener(SWT.Close, closeListener);
             }
@@ -1731,7 +1745,8 @@ public final class Workbench implements IWorkbench {
                 if (desc == null)
                     throw new WorkbenchException(
                             WorkbenchMessages
-                                    .getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+                                    .format(
+                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
                 win.getShell().open();
                 if (page == null)
                     page = win.openPage(perspectiveId, input);
@@ -1828,7 +1843,8 @@ public final class Workbench implements IWorkbench {
                 if (desc == null)
                     throw new WorkbenchException(
                             WorkbenchMessages
-                                    .getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+                                    .format(
+                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
                 win.getShell().open();
                 if (page == null)
                     page = win.openPage(perspectiveId, input);
@@ -1851,7 +1867,8 @@ public final class Workbench implements IWorkbench {
                 if (desc == null)
                     throw new WorkbenchException(
                             WorkbenchMessages
-                                    .getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+                                    .format(
+                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
                 win.getShell().open();
                 if (page == null)
                     page = win.openPage(perspectiveId, input);
@@ -1880,6 +1897,7 @@ public final class Workbench implements IWorkbench {
                 extensionEventHandler);
         Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
+        WorkbenchHelpSystem.disposeIfNecessary();
         // shutdown the rest of the workbench
         WorkbenchColors.shutdown();
         activityHelper.shutdown();
@@ -1890,6 +1908,8 @@ public final class Workbench implements IWorkbench {
         WorkbenchThemeManager.getInstance().dispose();
         PropertyPageContributorManager.getManager().dispose();
         ObjectActionContributorManager.getManager().dispose();
+        if (tracker != null)
+        	tracker.close();
     }
 
     /*
@@ -2165,7 +2185,7 @@ public final class Workbench implements IWorkbench {
      * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
      */
     private IntroDescriptor introDescriptor;
-	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
+	private IExtensionTracker tracker;
 	private IRegistryChangeListener startupRegistryListener = new IRegistryChangeListener() {
 
 		/* (non-Javadoc)
@@ -2283,11 +2303,13 @@ public final class Workbench implements IWorkbench {
         }
     }
 
-	/**
-     * EXPERIMENTAL
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getExtensionTracker()
 	 */
-	public IConfigurationElementTracker getConfigurationElementTracker() {		
+	public IExtensionTracker getExtensionTracker() {		
+		if (tracker == null) {
+			tracker = new UIExtensionTracker(getDisplay());
+		}
 		return tracker ;
 	}
 	
@@ -2300,6 +2322,14 @@ public final class Workbench implements IWorkbench {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		registry.addRegistryChangeListener(startupRegistryListener);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getHelpSystem()
+	 */
+	public IWorkbenchHelpSystem getHelpSystem() {
+		return WorkbenchHelpSystem.getInstance();
+	}
+	
 
 	private IService[] services = new IService[5];
 	
