@@ -95,11 +95,11 @@
 </head>
 
 
-<frameset onload="onloadFrameset()" rows="<%=banner!=null?banner_height+",":""%>35,27,*"  frameborder="0" framespacing="0" border="0" spacing="0">
+<frameset onload="onloadFrameset()" rows="<%=banner!=null?banner_height+",":""%>35,27,*"  frameborder="0" border="0">
 <%
 	if (banner != null){
 %>
-	<frame name="BannerFrame" src='<%=banner%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
+	<frame name="BannerFrame" src='<%=banner%>' scrolling="no">
 <%
 	}
 %>
