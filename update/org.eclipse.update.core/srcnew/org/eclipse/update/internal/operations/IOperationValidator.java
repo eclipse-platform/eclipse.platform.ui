@@ -40,12 +40,6 @@ public interface IOperationValidator {
 	public IStatus validatePendingRevert(IInstallConfiguration config);
 
 	/**
-	 * Called by the UI before doing a one-click update operation
-	 * Returns null when status cannot be reported.
-	 */
-	public IStatus validatePendingOneClickUpdate(PendingOperation[] jobs);
-
-	/**
 	 * Called by the UI before doing a batched processing of
 	 * several pending changes.
 	 * Returns null when status cannot be reported.

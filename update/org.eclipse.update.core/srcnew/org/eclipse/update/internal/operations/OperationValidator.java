@@ -147,27 +147,6 @@ public class OperationValidator implements IOperationValidator{
 	}
 
 	/*
-	 * Called by the UI before doing a one-click update operation
-	 */
-	public IStatus validatePendingOneClickUpdate(PendingOperation[] jobs) {
-		// check initial state
-		ArrayList beforeStatus = new ArrayList();
-		validateInitialState(beforeStatus);
-
-		// check proposed change
-		ArrayList status = new ArrayList();
-
-		// report status
-		if (status.size() > 0) {
-			if (beforeStatus.size() > 0)
-				return createMultiStatus(KEY_ROOT_MESSAGE_INIT, beforeStatus);
-			else
-				return createMultiStatus(KEY_ROOT_MESSAGE, status);
-		}
-		return null;
-	}
-
-	/*
 	 * Called by the UI before doing a batched processing of
 	 * several pending changes.
 	 */
