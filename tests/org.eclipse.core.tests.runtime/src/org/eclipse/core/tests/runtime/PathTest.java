@@ -290,15 +290,27 @@ public void testIsAbsolute() {
 	assertTrue("2.0", !new Path("first/second/third").isAbsolute());
 	assertTrue("2.1", !Path.EMPTY.isAbsolute());
 	assertTrue("2.2", !new Path("c:first/second/third").isAbsolute());
+	
+	// unc
+	assertTrue("3.0", new Path("c://").isAbsolute());
+	assertTrue("3.1", new Path("//").isAbsolute());
+	assertTrue("3.2", new Path("//a").isAbsolute());
+	assertTrue("3.3", new Path("//a/b/").isAbsolute());
+	
 }
 public void testIsEmpty() {
 
 	// positive
 	assertTrue("1.0", Path.EMPTY.isEmpty());
+	assertTrue("1.1", new Path("//").isEmpty());
+	assertTrue("1.2", new Path("").isEmpty());
+	assertTrue("1.1", new Path("c:").isEmpty());
 	
 	// negative
-	assertTrue("1.1", !new Path("first/second/third").isEmpty());
-	assertTrue("1.2", !Path.ROOT.isEmpty());
+	assertTrue("2.0", !new Path("first/second/third").isEmpty());
+	assertTrue("2.1", !Path.ROOT.isEmpty());
+	assertTrue("2.2", !new Path("//a").isEmpty());
+	assertTrue("2.3", !new Path("c:/").isEmpty());
 }
 public void testIsPrefixOf() {
 
@@ -323,7 +335,7 @@ public void testIsRoot() {
 	assertTrue("1.0", !new Path("/first/second").isRoot());
 	assertTrue("1.1", !Path.EMPTY.isRoot());
 	assertTrue("1.2", !new Path("//").isRoot());
-
+	
 	// positive
 	assertTrue("2.0", Path.ROOT.isRoot());
 	assertTrue("2.1", new Path("/").isRoot());

@@ -519,7 +519,8 @@ public boolean isAbsolute() {
  */
 public boolean isEmpty() {
 	//true if no segments and no leading prefix
-	return segments.length == 0 && ((separators & HAS_LEADING) == 0);
+	return segments.length == 0 && ((separators & ALL_SEPARATORS) != HAS_LEADING);
+	
 }
 /* (Intentionally not included in javadoc)
  * @see IPath#isPrefixOf

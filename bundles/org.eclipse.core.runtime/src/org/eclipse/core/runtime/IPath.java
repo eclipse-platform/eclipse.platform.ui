@@ -169,7 +169,7 @@ public boolean hasTrailingSeparator();
  * <p>
  * Absolute paths start with a path separator.
  * A root path, like <code>/</code> or <code>C:/</code>, 
- * is considered absolute.
+ * is considered absolute.  UNC paths are always absolute.
  * </p>
  *
  * @return <code>true</code> if this path is an absolute path,
@@ -201,7 +201,7 @@ public boolean isPrefixOf(IPath anotherPath);
 /**
  * Returns whether this path is a root path.
  * <p>
- * The root path is the absolute path with zero segments; 
+ * The root path is the absolute non-UNC path with zero segments; 
  * e.g., <code>/</code> or <code>C:/</code>.
  * The separator is considered a leading separator, not a trailing one.
  * </p>
