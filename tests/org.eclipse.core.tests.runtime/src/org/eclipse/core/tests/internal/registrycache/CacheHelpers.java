@@ -301,18 +301,21 @@ public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, S
 		assertTrue("2.0 IOException encountered", true);
 	}
 	
-	// Cobble together a plugin path that isn't really relevant
-	Map regIndex = InternalPlatform.getRegIndex();
-	int entrySize = regIndex.keySet().size();
-	URL[] pluginPath = new URL[entrySize];
-	int i = 0;
-	for (Iterator list = regIndex.keySet().iterator(); list.hasNext();) {
-		String fileName = (String)list.next();
-		fileName = "file:" + fileName;
-		try {
-			pluginPath[i++] = new URL(fileName);
-		} catch (MalformedURLException badURL) {
-			assertTrue("2.1 Bad url found for " + fileName + ".", true);
+	// Cobble together a plugin path
+	Map regIndex = ((PluginRegistry)inRegistry).getRegIndex();
+	URL[] pluginPath = null;
+	if (regIndex != null) {
+		int entrySize = regIndex.keySet().size();
+		pluginPath = new URL[entrySize];
+		int i = 0;
+		for (Iterator list = regIndex.keySet().iterator(); list.hasNext();) {
+			String fileName = (String)list.next();
+			fileName = "file:" + fileName;
+			try {
+				pluginPath[i++] = new URL(fileName);
+			} catch (MalformedURLException badURL) {
+				assertTrue("2.1 Bad url found for " + fileName + ".", true);
+			}
 		}
 	}
 	RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
