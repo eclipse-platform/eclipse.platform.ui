@@ -103,7 +103,7 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
 		</objectContribution>
 		<objectContribution 
-			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
+			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
 			objectClass="org.eclipse.team.ccvs.core.IRemoteFolder">
 			<action 
 				id="org.eclipse.team.ccvs.ui.addToWorkspace"
@@ -112,7 +112,7 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"/>
 		</objectContribution>
 		<objectContribution 
-			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
+			id="org.eclipse.team.ccvs.ui.RemoteFileContributions" 
 			objectClass="org.eclipse.team.ccvs.core.IRemoteFile">
 			<action 
 				id="org.eclipse.team.ccvs.ui.openRemoteFile"
@@ -124,6 +124,15 @@
 				label="%ShowHistoryAction.label"
 				tooltip="%ShowHistoryAction.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.LogEntryContributions"
+			objectClass="org.eclipse.team.ccvs.core.ILogEntry">
+			<action
+				id="org.eclipse.team.ccvs.ui.openLogEntry"
+				label="%OpenLogEntryAction.label"
+				tooltip="%OpenLogEntryAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction"/>
 		</objectContribution>
 	</extension> 
 
