@@ -321,26 +321,18 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public void asyncExec(Runnable r) {
-		if (fRunnables == null) {
-			// initialize runnables and async job
-			fRunnables= new Vector(10);
-			fAsynchJob = new AsynchJob();
-			if (!isDispatching()) {
-				fAsynchJob.schedule();
-			} 
-			fRunnables.add(r);
-		} else {
-			synchronized (fRunnables) {
-				if (fRunnables == null) {
-					// initialize runnables and async job
-					fRunnables= new Vector(10);
-					fAsynchJob = new AsynchJob();
-					if (!isDispatching()) {
-						fAsynchJob.schedule();
-					} 
-				}
+		synchronized (fRunnables) {
+			if (fRunnables == null) {
+				// initialize runnables and async job
+				fRunnables= new Vector(10);
+				fAsynchJob = new AsynchJob();
 				fRunnables.add(r);
-			}
+				if (!isDispatching()) {
+					fAsynchJob.schedule();
+				} 
+			} else {
+				fRunnables.add(r);
+			}			
 		}
 	}
 	
