@@ -38,7 +38,7 @@ import org.osgi.framework.Bundle;
  *   public class MyPackageFragmentTester {
  *       public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
  *           IPackageFragment fragement= (IPackageFragment)receiver;
- *	         if ("isDefaultPackage".equals(method)) { 
+ *	         if ("isDefaultPackage".equals(property)) { 
  *               return fragement.isDefaultPackage();
  *           }
  *           Assert.isTrue(false);
