@@ -32,6 +32,9 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object parent) {
+		if (parent instanceof IBreakpoint) {
+			return new Object[0];
+		}
 		Object children[];
 		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
 		if (fBreakpointContainerFactories.isEmpty()) {
