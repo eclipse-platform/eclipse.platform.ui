@@ -22,7 +22,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
 		implements
 			IStructuredContentProvider {
 	ProgressViewer progressViewer;
-	HashSet jobsToShow;
 	
 	/**
 	 * Create a new instance of the receiver.
@@ -31,7 +30,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
 	 */
 	public ProgressViewerContentProvider(ProgressViewer structured) {
 		progressViewer = structured;
-		jobsToShow = new HashSet();
 	}
 	/*
 	 * (non-Javadoc)
@@ -39,19 +37,9 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#add(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void add(Object[] elements) {
-		addToShowList(elements);
 		progressViewer.setInput(this);
 	}
-	/**
-	 * Add the jobs to the temporary job list.
-	 * 
-	 * @param elements
-	 *            the array of elements.
-	 */
-	private void addToShowList(Object[] elements) {
-		for (int index = 0; index < elements.length; index++)
-			jobsToShow.add(elements[index]);
-	}
+	
 	/**
 	 * Return only the elements that we want to display.
 	 * 
@@ -98,7 +86,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
 	 * @see org.eclipse.ui.internal.progress.IProgressUpdateCollector#remove(org.eclipse.ui.internal.progress.JobTreeElement[])
 	 */
 	public void remove(Object[] elements) {
-		jobsToShow.remove(getRoots(elements, false));
 		progressViewer.setInput(this);
 	}
 	/*
@@ -109,7 +96,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
 	public Object[] getElements(Object inputElement) {
 		JobTreeElement[] elements = ProgressManager.getInstance()
 				.getRootElements(false);
-		addToShowList(elements);
 		return getDisplayedValues(elements);
 	}
 	/**
