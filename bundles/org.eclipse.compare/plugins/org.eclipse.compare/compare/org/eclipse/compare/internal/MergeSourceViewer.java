@@ -94,6 +94,12 @@ public class MergeSourceViewer extends SourceViewer
 			te.setFont(font);
 	}
 	
+	public void setBackgroundColor(Color color) {
+		StyledText te= getTextWidget();
+		if (te != null)
+			te.setBackground(color);
+	}
+	
 	public void setEnabled(boolean enabled) {
 		if (enabled != fEnabled) {
 			fEnabled= enabled;

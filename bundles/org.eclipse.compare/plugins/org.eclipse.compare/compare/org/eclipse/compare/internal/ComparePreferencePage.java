@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.*;
@@ -19,6 +21,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
@@ -57,12 +60,16 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
 	
 	private WorkbenchChainedTextFontFieldEditor fFontEditor;
-	private TextMergeViewer fTextMergeViewer;
+	private TextMergeViewer fPreviewViewer;
 	private IPropertyChangeListener	fPreferenceChangeListener;
 	private CompareConfiguration fCompareConfiguration;
 	private OverlayPreferenceStore fOverlayStore;
 	private Map fCheckBoxes= new HashMap();
 	private SelectionListener fCheckBoxListener;
+	private Button fBackgroundDefaultRadioButton;
+	private Button fBackgroundCustomRadioButton;
+	private Button fBackgroundColorButton;
+	private ColorEditor fBackgroundColorEditor;
 
 
 	public final OverlayPreferenceStore.OverlayKey[] fKeys= new OverlayPreferenceStore.OverlayKey[] {	
@@ -71,10 +78,13 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_PSEUDO_CONFLICTS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, INITIALLY_SHOW_ANCESTOR_PANE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_MORE_INFO),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TEXT_FONT)
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TEXT_FONT),
+		
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
 	};
 	
-
+	
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(OPEN_STRUCTURE_COMPARE, true);
 		store.setDefault(SYNCHRONIZE_SCROLLING, true);
@@ -82,6 +92,11 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
 		store.setDefault(SHOW_MORE_INFO, false);
 		
+		Display display= Display.getDefault();
+		Color color= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		PreferenceConverter.setDefault(store,  AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, color.getRGB());		
+		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
+
 		WorkbenchChainedTextFontFieldEditor.startPropagate(store, TEXT_FONT);
 	}
 
@@ -207,11 +222,59 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	}
 	
 	private Control createTextComparePage(Composite parent) {
+		
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
 		composite.setLayout(layout);
-				
+		
+		
+			// background color
+			Composite backgroundComposite= new Composite(composite, SWT.NULL);
+			layout= new GridLayout();
+			layout.marginHeight= 0;
+			layout.marginWidth= 0;
+			layout.numColumns= 2;
+			backgroundComposite.setLayout(new RowLayout());
+	
+			Label label= new Label(backgroundComposite, SWT.NULL);
+			label.setText("Bac&kground Color:");
+	
+			SelectionListener backgroundSelectionListener= new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {				
+					boolean custom= fBackgroundCustomRadioButton.getSelection();
+					fBackgroundColorButton.setEnabled(custom);
+					fOverlayStore.setValue(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, !custom);
+				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
+			};
+	
+			fBackgroundDefaultRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
+			fBackgroundDefaultRadioButton.setText("S&ystem Default");
+			fBackgroundDefaultRadioButton.addSelectionListener(backgroundSelectionListener);
+	
+			fBackgroundCustomRadioButton= new Button(backgroundComposite, SWT.RADIO | SWT.LEFT);
+			fBackgroundCustomRadioButton.setText("C&ustom");
+			fBackgroundCustomRadioButton.addSelectionListener(backgroundSelectionListener);
+	
+			fBackgroundColorEditor= new ColorEditor(backgroundComposite);
+			
+			fBackgroundColorButton= fBackgroundColorEditor.getButton();
+			fBackgroundColorButton.addSelectionListener(
+				new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// do nothing
+					}
+					public void widgetSelected(SelectionEvent e) {
+						PreferenceConverter.setValue(fOverlayStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, fBackgroundColorEditor.getColorValue());					
+					}
+				}
+			);
+
+
+			// background color end
+		
+		
 		addCheckBox(composite, "ComparePreferencePage.synchronizeScrolling.label", SYNCHRONIZE_SCROLLING, 0);	//$NON-NLS-1$
 		
 		addCheckBox(composite, "ComparePreferencePage.initiallyShowAncestorPane.label", INITIALLY_SHOW_ANCESTOR_PANE, 0);	//$NON-NLS-1$
@@ -246,9 +309,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		fCompareConfiguration.setRightLabel(Utilities.getString("ComparePreferencePage.right.label"));	//$NON-NLS-1$
 		fCompareConfiguration.setRightEditable(false);
 		
-		fTextMergeViewer= new TextMergeViewer(parent, SWT.BORDER, fCompareConfiguration);
-				
-		fTextMergeViewer.setInput(
+		fPreviewViewer= new TextMergeViewer(parent, SWT.BORDER, fCompareConfiguration);
+		
+		fPreviewViewer.setInput(
 			new DiffNode(Differencer.CONFLICTING,
 				new FakeInput("previewAncestor.txt"),	//$NON-NLS-1$
 				new FakeInput("previewLeft.txt"),	//$NON-NLS-1$
@@ -256,9 +319,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			)
 		);
 
-		return fTextMergeViewer.getControl();
+		return fPreviewViewer.getControl();
 	}
-		
+			
 	private void initializeFields() {
 		
 		Iterator e= fCheckBoxes.keySet().iterator();
@@ -267,6 +330,13 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			String key= (String) fCheckBoxes.get(b);
 			b.setSelection(fOverlayStore.getBoolean(key));
 		}
+
+		RGB rgb= PreferenceConverter.getColor(fOverlayStore, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+		fBackgroundColorEditor.setColorValue(rgb);		
+		boolean default_= fOverlayStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
+		fBackgroundDefaultRadioButton.setSelection(default_);
+		fBackgroundCustomRadioButton.setSelection(!default_);
+		fBackgroundColorButton.setEnabled(!default_);
 	}
 
 	// overlay stuff

@@ -48,6 +48,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.MergeSourceViewer;
@@ -267,6 +268,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	// SWT resources to be disposed
 	private Map fColors;
 	private Font fFont;
+	private Color fBackgroundColor;
 	private Cursor fBirdsEyeCursor;
 					
 					
@@ -562,7 +564,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			};
 			fPreferenceStore.addPropertyChangeListener(fPreferenceChangeListener);
 			
-			updateFont(fPreferenceStore, parent);
+			Display display= parent.getDisplay();
+			updateFont(fPreferenceStore, display);
+			updateBackgroundColor(fPreferenceStore, display);
+
 			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
 			fShowMoreInfo= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
@@ -591,7 +596,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fBirdsEyeCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 	}
 	
-	private void updateFont(IPreferenceStore ps, Control c) {
+	private void updateFont(IPreferenceStore ps, Display display) {
 		
 		Font oldFont= fFont;
 		
@@ -602,7 +607,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		else
 			fontData= PreferenceConverter.getDefaultFontData(ps, ComparePreferencePage.TEXT_FONT);
 		if (fontData != null) {
-			fFont= new Font(c.getDisplay(), fontData);
+			fFont= new Font(display, fontData);
 			
 			if (fAncestor != null)
 				fAncestor.setFont(fFont);
@@ -614,6 +619,48 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (oldFont != null)
 				oldFont.dispose();
 		}
+	}
+	
+	private void updateBackgroundColor(IPreferenceStore ps, Display display) {
+		
+		Color color= null;
+		if (ps.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT))
+			color= null;
+		else
+			color= createColor(ps, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, display);
+		
+		if (fAncestor != null)
+			fAncestor.setBackgroundColor(color);
+		if (fLeft != null)
+			fLeft.setBackgroundColor(color);
+		if (fRight != null)
+			fRight.setBackgroundColor(color);
+				
+		if (fBackgroundColor != null)
+			fBackgroundColor.dispose();
+		fBackgroundColor= color;
+	}
+	
+	/**
+	 * Creates a color from the information stored in the given preference store.
+	 * Returns <code>null</code> if there is no such information available.
+	 */
+	private static Color createColor(IPreferenceStore store, String key, Display display) {
+	
+		RGB rgb= null;		
+		
+		if (store.contains(key)) {
+			
+			if (store.isDefault(key))
+				rgb= PreferenceConverter.getDefaultColor(store, key);
+			else
+				rgb= PreferenceConverter.getColor(store, key);
+		
+			if (rgb != null)
+				return new Color(display, rgb);
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -700,7 +747,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fFont.dispose();
 			fFont= null;
 		}
-		
+		if (fBackgroundColor != null) {
+			fBackgroundColor.dispose();
+			fBackgroundColor= null;
+		}
 		if (fBirdsEyeCursor != null) {
 			fBirdsEyeCursor.dispose();
 			fBirdsEyeCursor= null;
@@ -1007,6 +1057,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		if (fFont != null)
 			te.setFont(fFont);
+		if (fBackgroundColor != null)
+			te.setBackground(fBackgroundColor);
 		
 		configureTextViewer(part);
 		
@@ -2380,7 +2432,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 		} else if (key.equals(ComparePreferencePage.TEXT_FONT)) {
 			if (fPreferenceStore != null) {
-				updateFont(fPreferenceStore, fComposite);
+				updateFont(fPreferenceStore, fComposite.getDisplay());
 				invalidateLines();
 			}
 			
@@ -2401,6 +2453,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					clearStatus();
 			}
 		
+		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)
+						|| key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+
+			if (fPreferenceStore != null) {
+				updateBackgroundColor(fPreferenceStore, fComposite.getDisplay());
+			}
+			
 		} else
 			super.propertyChange(event);
 	}
