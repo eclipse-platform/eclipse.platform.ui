@@ -75,6 +75,9 @@ public class RemoveTagAction extends TeamAction {
 	protected boolean isEnabled() throws TeamException {
 		Tag[] tags = getSelectedTags();
 		if (tags.length == 0) return false;
+		for (int i = 0; i < tags.length; i++) {
+			if (tags[i].getTag().equals("HEAD")) return false;
+		}
 		return true;
 	}
 }
