@@ -1,0 +1,247 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.tests.resources.perf;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.resources.ResourceTest;
+
+/**
+ * Contains a set of use case-oriented performance tests for the local history.
+ *  
+ * @since 3.1
+ */
+public class LocalHistoryPerformanceTest extends ResourceTest {
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite(LocalHistoryPerformanceTest.class.getName());
+		//		suite.addTest(new LocalHistoryPerformanceTest("testCopyHistory100x4"));		
+		//		suite.addTest(new LocalHistoryPerformanceTest("testCopyHistory20x20"));
+		//		suite.addTest(new LocalHistoryPerformanceTest("testCopyHistory4x100"));
+		suite.addTest(new LocalHistoryPerformanceTest("testGetHistory"));
+		return suite;
+//		return new TestSuite(LocalHistoryPerformanceTest.class);
+	}
+
+	public LocalHistoryPerformanceTest(String name) {
+		super(name);
+	}
+
+	/**
+	 * Creates a tree of resources containing history. 
+	 */
+	private void createTree(IFolder base, int filesPerFolder, int statesPerFile) {
+		IFolder[] folders = new IFolder[5];
+		folders[0] = base.getFolder("folder1");
+		folders[1] = base.getFolder("folder2");
+		folders[2] = folders[0].getFolder("folder3");
+		folders[3] = folders[2].getFolder("folder4");
+		folders[4] = folders[3].getFolder("folder5");
+		ensureExistsInWorkspace(folders, true);
+		for (int i = 0; i < folders.length; i++) {
+			for (int j = 0; j < filesPerFolder; j++) {
+				IFile file = folders[i].getFile("file" + j);
+				ensureExistsInWorkspace(file, getRandomContents());
+				try {
+					for (int k = 0; k < statesPerFile; k++)
+						file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+				} catch (CoreException ce) {
+					fail("0.5", ce);
+				}
+			}
+		}
+	}
+
+	private void restoreDescription(String failureMessage, IWorkspaceDescription toRestore) {
+		if (toRestore == null)
+			return;
+		try {
+			getWorkspace().setDescription(toRestore);
+		} catch (CoreException e) {
+			fail(failureMessage, e);
+		}
+	}
+
+	private IWorkspaceDescription setMaxFileStates(String failureMessage, int maxFileStates) {
+		IWorkspaceDescription currentDescription = getWorkspace().getDescription();
+		IWorkspaceDescription testDescription = getWorkspace().getDescription();
+		testDescription.setMaxFileStates(maxFileStates);
+		try {
+			getWorkspace().setDescription(testDescription);
+		} catch (CoreException e) {
+			fail(failureMessage, e);
+		}
+		return currentDescription;
+	}
+
+	public void testAddState() {
+		IProject project = null;
+		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
+		try {
+			project = getWorkspace().getRoot().getProject("proj1");
+			final IFile file = project.getFile("file.txt");
+			ensureExistsInWorkspace(file, getRandomContents());
+			runPerformanceTest(this, new Runnable() {
+				public void run() {
+					try {
+						file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+					} catch (CoreException e) {
+						fail("", e);
+					}
+				}
+			}, 10, 30);
+		} finally {
+			restoreDescription("99.9", savedDescription);
+		}
+	}
+
+	private void testClearHistory(final int filesPerFolder, final int statesPerFile) {
+		IProject project = null;
+		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
+		try {
+			project = getWorkspace().getRoot().getProject("proj1");
+			final IFolder base = project.getFolder("base");
+			ensureDoesNotExistInWorkspace(base);
+			runPerformanceTest(this, new Runnable() {
+				public void run() {
+					createTree(base, filesPerFolder, statesPerFile);
+					ensureDoesNotExistInWorkspace(base);
+				}
+			}, new Runnable() {
+				public void run() {
+					try {
+						base.clearHistory(getMonitor());
+					} catch (CoreException e) {
+						fail("", e);
+					}
+				}
+			}, null, 4, 3);
+		} finally {
+			restoreDescription("99.9", savedDescription);
+		}
+	}
+
+	public void testClearHistory100x4() {
+		testClearHistory(100, 4);
+	}
+
+	public void testClearHistory20x20() {
+		testClearHistory(20, 20);
+	}
+
+	public void testClearHistory4x100() {
+		testClearHistory(4, 100);
+	}
+
+	private void testCopyHistory(int filesPerFolder, int statesPerFile) {
+		IProject project = null;
+		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
+		try {
+			project = getWorkspace().getRoot().getProject("proj1");
+			IFolder base = project.getFolder("base");
+			createTree(base, filesPerFolder, statesPerFile);
+			// need a final reference so the inner class can see it
+			final IProject[] tmpProject = new IProject[] {project};
+			runPerformanceTest(this, new Runnable() {
+				public void run() {
+					try {
+						String newProjectName = getUniqueString();
+						IProject newProject = getWorkspace().getRoot().getProject(newProjectName);
+						tmpProject[0].copy(newProject.getFullPath(), true, getMonitor());
+						tmpProject[0] = newProject;
+					} catch (CoreException e) {
+						fail("", e);
+					}
+				}
+			}, 10, 1);
+		} finally {
+			restoreDescription("99.9", savedDescription);
+		}
+	}
+
+	public void testCopyHistory100x4() {
+		testCopyHistory(100, 4);
+	}
+
+	public void testCopyHistory20x20() {
+		testCopyHistory(20, 20);
+	}
+
+	public void testCopyHistory4x100() {
+		testCopyHistory(4, 100);
+	}
+
+	private void testGetDeletedMembers(int filesPerFolder, int statesPerFile) {
+		IProject project = null;
+		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
+		try {
+			project = getWorkspace().getRoot().getProject("proj1");
+			IFolder base = project.getFolder("base");
+			createTree(base, filesPerFolder, statesPerFile);
+			ensureDoesNotExistInWorkspace(base);
+			// need a final reference so the inner class can see it
+			final IProject tmpProject = project;
+			runPerformanceTest(this, new Runnable() {
+				public void run() {
+					try {
+						tmpProject.findDeletedMembersWithHistory(IResource.DEPTH_INFINITE, getMonitor());
+					} catch (CoreException e) {
+						fail("", e);
+					}
+				}
+			}, 2, 5);
+		} finally {
+			restoreDescription("99.9", savedDescription);
+		}
+	}
+
+	public void testGetDeletedMembers100x4() {
+		testGetDeletedMembers(100, 4);
+	}
+
+	public void testGetDeletedMembers20x20() {
+		testGetDeletedMembers(20, 20);
+	}
+
+	public void testGetDeletedMembers4x100() {
+		testGetDeletedMembers(4, 100);
+	}
+
+	public void testGetHistory() {
+		IProject project = null;
+		IWorkspaceDescription savedDescription = setMaxFileStates("0.01", 100);
+		try {
+			project = getWorkspace().getRoot().getProject("proj1");
+			final IFile file = project.getFile("file.txt");
+			ensureExistsInWorkspace(file, getRandomContents());
+			try {
+				for (int i = 0; i < 100; i++)
+					file.setContents(getRandomContents(), IResource.KEEP_HISTORY, getMonitor());
+			} catch (CoreException ce) {
+				fail("0.5", ce);
+			}
+			runPerformanceTest(this, new Runnable() {
+				public void run() {
+					try {
+						file.getHistory(getMonitor());
+					} catch (CoreException e) {
+						fail("", e);
+					}
+				}
+			}, 1, 150);
+		} finally {
+			restoreDescription("99.9", savedDescription);
+		}
+	}
+
+}
