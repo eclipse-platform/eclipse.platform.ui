@@ -5,7 +5,7 @@
    xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
    name="Platform UI IDE">
  <plugin id="org.eclipse.ui.ide" />
- <plugin id="org.eclipse.ui.workbench.compatibility" />
+ <plugin id="org.eclipse.ui.workbench.compatibility" fragment="true" />
  <plugin id="org.eclipse.ui.win32" fragment="true" />
 
 <package name="org.eclipse.ui" exclusive="false" >
