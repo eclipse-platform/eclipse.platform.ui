@@ -316,11 +316,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				e.gc.fillRectangle(r);
 				if (d != null)
 					drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+
+				e.gc.setForeground(fSeparatorColor);
+				e.gc.setLineWidth(1);
+				e.gc.drawLine(0+1, s.y-1, s.x-1-1, s.y-1);
 			}
-			
-			e.gc.setForeground(fSeparatorColor);
-			e.gc.setLineWidth(1);
-			e.gc.drawLine(0+1, s.y-1, s.x-1-1, s.y-1);
 		}
 	};
 
