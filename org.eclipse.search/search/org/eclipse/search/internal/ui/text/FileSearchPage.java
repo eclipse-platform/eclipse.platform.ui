@@ -80,11 +80,11 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		IFile file= (IFile) match.getElement();
 		IWorkbenchPage page= SearchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IEditorPart editor= IDE.openEditor(page, file, false);
-		if (!(editor instanceof ITextEditor)) {
-			showWithMarker(editor, file, offset, length);
-		} else {
+		if (editor instanceof ITextEditor) {
 			ITextEditor textEditor= (ITextEditor) editor;
 			textEditor.selectAndReveal(offset, length);
+		} else if (editor != null){
+			showWithMarker(editor, file, offset, length);
 		}
 	}
 	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
