@@ -102,7 +102,7 @@ function bookmarkKeyDownHandler(e) {
 </head>
 
 
-<body>
+<body dir="<%=direction%>">
  
 <%
 if(data.getBookmarks().length == 0) {
@@ -118,7 +118,7 @@ if(data.getBookmarks().length == 0) {
 %>
 
 <tr class='list' id='r<%=i%>'>
-	<td align='left' class='label' nowrap>
+	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap>
 		<a id='a<%=i%>' 
 		   href='<%=bookmarks[i].getHref()%>' 
 		   onmouseover="showStatus(event);return true;"

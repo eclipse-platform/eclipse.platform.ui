@@ -92,7 +92,7 @@ function showView(view)
 
 </head>
    
-<body tabIndex="-1">
+<body dir="<%=direction%>" tabIndex="-1">
 <%
 	for (int i=0; i<views.length; i++) 
 	{

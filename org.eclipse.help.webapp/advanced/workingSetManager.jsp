@@ -219,7 +219,7 @@ function closeWorkingSetDialog()
 
 </head>
 
-<body onload="onloadHandler()" onunload="closeWorkingSetDialog()">
+<body dir="<%=direction%>" onload="onloadHandler()" onunload="closeWorkingSetDialog()">
 <form onsubmit="selectWorkingSet();return false;">
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
@@ -278,8 +278,8 @@ for (int i=0; i<wsets.length; i++)
 	</table>
 </div>
 <div style="height:50px;">
-	<table valign="bottom" align="right" style="background:<%=prefs.getToolbarBackground()%>">
-		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="right">
+	<table valign="bottom" align="<%=isRTL?"left":"right"%>" style="background:<%=prefs.getToolbarBackground()%>">
+		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>

@@ -41,7 +41,7 @@ function onloadHandler()
 }
 </script>
 </head>
-<body onload="onloadHandler()">
+<body dir="<%=direction%>" onload="onloadHandler()">
 <%
 		int toc=data.getSelectedToc();
 		// Only generate the selected toc

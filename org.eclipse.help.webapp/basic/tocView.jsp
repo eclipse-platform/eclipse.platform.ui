@@ -26,7 +26,7 @@
 </head>
 
 
-<body bgcolor="<%=prefs.getBasicViewBackground()%>">
+<body dir="<%=direction%>" bgcolor="<%=prefs.getBasicViewBackground()%>">
 <table border="0" cellpadding="0" cellspacing="0">
 <%
 	for (int toc=0; toc<data.getTocCount(); toc++) {
@@ -44,7 +44,7 @@
 						ServletResources.getString("bookClosed", request) ;
 %>
 	<tr>
-		<td align='left' nowrap>
+		<td align='<%=isRTL?"right":"left"%>' nowrap>
 			<b><img src="<%=icon%>" alt="<%=alt%>"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
 		</td>
 	</tr>
@@ -53,7 +53,7 @@
 		if (isSelected) {
 %>		
 	<tr>
-		<td align='left' nowrap>
+		<td align='<%=isRTL?"right":"left"%>' nowrap>
 			<ul>
 <%
 			data.generateBasicToc(toc, out);

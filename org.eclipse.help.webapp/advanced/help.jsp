@@ -28,7 +28,7 @@ HTML {
 <%
 if (data.isMozilla()){
 %>
-	padding:0px 3px 2px 2px;
+	padding:<%=isRTL?"0px 2px 2px 3px":"0px 3px 2px 2px"%>;
 <%
 }
 %>
@@ -39,8 +39,8 @@ if (data.isMozilla()){
 <script language="JavaScript">
 
 // vars to keep track of frame sizes before max/restore
-var leftCols = "29.5%";
-var rightCols = "70.5%";
+var leftCols = "<%=isRTL?"70.5%":"29.5%"%>";
+var rightCols = "<%=isRTL?"29.5%":"70.5%"%>";
 
 function toggleFrame(title)
 {
@@ -57,8 +57,19 @@ function toggleFrame(title)
 		// the "cols" attribute is not always accurate, especially after resizing.
 		// offsetWidth is also not accurate, so we do a combination of both and 
 		// should get a reasonable behavior
+<%
+if(isRTL) {
+%>
+		var leftSize = ContentFrame.document.body.offsetWidth;
+		var rightSize = NavFrame.document.body.offsetWidth;
+<%
+} else {
+%>
 		var leftSize = NavFrame.document.body.offsetWidth;
 		var rightSize = ContentFrame.document.body.offsetWidth;
+<%
+}
+%>
 		
 		leftCols = leftSize * 100 / (leftSize + rightSize);
 		rightCols = 100 - leftCols;
@@ -67,10 +78,23 @@ function toggleFrame(title)
 		//leftCols = left;
 		//rightCols = right;
 		// Assumption: the content toolbar does not have a default title.
-		if (title != "") // this is the left side
+<%
+if(isRTL) {
+%>
+		if (title != "") // this is the right side for right-to-left rendering
+			frameset.setAttribute("cols", "*,100%");
+		else // this is the content toolbar
+			frameset.setAttribute("cols", "100%,*");
+<%
+} else {
+%>
+		if (title != "") // this is the left side for left-to-right rendering
 			frameset.setAttribute("cols", "100%,*");
 		else // this is the content toolbar
 			frameset.setAttribute("cols", "*,100%");
+<%
+}
+%>
 	}
 }
 </script>
@@ -87,9 +111,20 @@ if (data.isIE()) {
 <%
 }
 %> 
-    id="helpFrameset" cols='29.5%,70.5%' framespacing="3" border="6"  frameborder="1"   scrolling="no">
+    id="helpFrameset" cols="<%=isRTL?"70.5%,29.5%":"29.5%,70.5%"%>" framespacing="3" border="6"  frameborder="1"   scrolling="no">
+<%
+if (isRTL) {
+%>
+   	<frame name="ContentFrame" title="<%=ServletResources.getString("ignore", "ContentFrame", request)%>" class="content" src='<%="content.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+   	<frame class="nav" name="NavFrame" title="<%=ServletResources.getString("ignore", "NavFrame", request)%>" src='<%="nav.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="1" resize=yes>
+<%
+} else {
+%>
    	<frame class="nav" name="NavFrame" title="<%=ServletResources.getString("ignore", "NavFrame", request)%>" src='<%="nav.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="1" resize=yes>
    	<frame name="ContentFrame" title="<%=ServletResources.getString("ignore", "ContentFrame", request)%>" class="content" src='<%="content.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+<%
+}
+%>
 </frameset>
 
 </html>

@@ -77,8 +77,8 @@ if (data.isMozilla()) {
 
 .button a:hover { 
 	border-top:1px solid ButtonHighlight; 
-	border-left:1px solid ButtonHighlight; 
-	border-right:1px solid ButtonShadow; 
+	border-<%=isRTL?"right":"left"%>:1px solid ButtonHighlight; 
+	border-<%=isRTL?"left":"right"%>:1px solid ButtonShadow; 
 	border-bottom:1px solid ButtonShadow;
 }
 
@@ -106,7 +106,7 @@ if (data.isMozilla() && "content".equals(request.getParameter("toolbar"))) {
 HTML { 
 	margin:0px;
 	padding:0px;
-	border-right:1px solid ThreeDShadow;
+	border-<%=isRTL?"left":"right"%>:1px solid ThreeDShadow;
 }
 <%
 }
@@ -183,11 +183,11 @@ if (data.getScript() != null) {
 <%
 if(buttons.length > 0){
 %>
-	<body>
+	<body dir="<%=direction%>">
 <%
 }else{
 %>
-	<body tabIndex="-1">
+	<body dir="<%=direction%>" tabIndex="-1">
 <%
 }
 %>
@@ -200,10 +200,10 @@ if(buttons.length > 0){
 			</div>
 		
 		
-		<div style="position:absolute; top:2px; right:0px;">
+		<div style="position:absolute; top:2px; <%=isRTL?"left":"right"%>:0px;">
 		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>
-				<td align="right">
+				<td align="<%=isRTL?"left":"right"%>">
 					<table border="0" cellspacing="0" cellpadding="0" height="100%" style="background:<%=prefs.getToolbarBackground()%>">
 					<tr>
 <%

@@ -23,9 +23,20 @@
 
 </head>
 
-<frameset cols="250,*">
+<frameset cols="<%=isRTL?"*,250":"250,*"%>">
+<%
+if (isRTL) {
+%>
+	<frame name="ContentViewFrame" title="<%=ServletResources.getString("aView", ServletResources.getString("topic", request), request)%>" src='<%=data.getContentURL()%>' marginwidth="5" marginheight="5">
 	<frame name="ViewsFrame" title="<%=ServletResources.getString("ignore", "ViewsFrame", request)%>" src='<%="view.jsp?view="+data.getVisibleView()+"&"+request.getQueryString()%>' marginwidth="0" marginheight="0" scrolling="no">
-	<frame name="ContentViewFrame" title="<%=ServletResources.getString("topicView", request)%>" src='<%=data.getContentURL()%>' marginwidth="5" marginheight="5">
+<%
+} else {
+%>
+	<frame name="ViewsFrame" title="<%=ServletResources.getString("ignore", "ViewsFrame", request)%>" src='<%="view.jsp?view="+data.getVisibleView()+"&"+request.getQueryString()%>' marginwidth="0" marginheight="0" scrolling="no">
+	<frame name="ContentViewFrame" title="<%=ServletResources.getString("aView", ServletResources.getString("topic", request), request)%>" src='<%=data.getContentURL()%>' marginwidth="5" marginheight="5">
+<%
+}
+%>
 </frameset>
 
 </html>

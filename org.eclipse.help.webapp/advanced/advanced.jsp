@@ -180,7 +180,7 @@ function onloadHandler()
 
 </head>
 
-<body onload="onloadHandler()">
+<body dir="<%=direction%>" onload="onloadHandler()">
 
 <form name="searchForm" onsubmit="doAdvancedSearch()">
 <div style="overflow:auto;height:250px;">
@@ -195,7 +195,7 @@ function onloadHandler()
     </table>
   
   	<table id="filterTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center  style="background:transparent;">
-		<tr><td><div id="selectBook" style="margin-left:10px;"><%=ServletResources.getString("Select", request)%></div>
+		<tr><td><div id="selectBook" style="margin-<%=isRTL?"right":"left"%>:10px;"><%=ServletResources.getString("Select", request)%></div>
 		</td></tr>
 		<tr><td>
 			<div id="booksContainer">
@@ -214,9 +214,9 @@ for (int i=0; i<tocData.getTocCount(); i++)
 	</table>
 </div>
 <div style="height:50px;">
-	<table valign="bottom" align="right">
-		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="right">
-  			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
+	<table valign="bottom" align="<%=isRTL?"left":"right"%>">
+		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">
+  			<table cellspacing=10 cellpading=0 border=0 align=<%=isRTL?"left":"right"%>  style="background:transparent;">
 				<tr>
 					<td>
 						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=ServletResources.getString("Search", request)%>'  id="go" alt='<%=ServletResources.getString("Search", request)%>' title='<%=ServletResources.getString("Search", request)%>'>

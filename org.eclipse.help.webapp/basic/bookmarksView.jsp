@@ -30,7 +30,7 @@
 </head>
 
 
-<body bgcolor="<%=prefs.getBasicViewBackground()%>">
+<body dir="<%=direction%>" bgcolor="<%=prefs.getBasicViewBackground()%>">
  
 <table border="0" cellpadding="0" cellspacing="0">
 
@@ -41,7 +41,7 @@
 %>
 
 <tr>
-	<td align='left' nowrap>
+	<td align='<%=isRTL?"right":"left"%>' nowrap>
 		<a href='<%=bookmarks[i].getHref()%>'>
 		   <img src="<%=prefs.getImagesDirectory()%>/bookmark_obj.gif" border=0>
 		   		<%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%>

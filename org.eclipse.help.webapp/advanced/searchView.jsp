@@ -46,7 +46,7 @@ function refresh()
 
 </head>
 
-<body >
+<body dir="<%=direction%>">
 
 <%
 if (!data.isSearchRequest()) {
@@ -59,7 +59,7 @@ if (!data.isSearchRequest()) {
 <CENTER>
 <TABLE BORDER='0'>
 	<TR><TD><%=ServletResources.getString("Indexing", request)%></TD></TR>
-	<TR><TD ALIGN='LEFT'>
+	<TR><TD ALIGN='<%=isRTL?"RIGHT":"LEFT"%>'>
 		<DIV STYLE='width:100px;height:16px;border:1px solid ThreeDShadow;'>
 			<DIV ID='divProgress' STYLE='width:<%=data.getIndexedPercentage()%>px;height:100%;background-color:Highlight'></DIV>
 		</DIV>
@@ -94,8 +94,8 @@ setTimeout('refresh()', 2000);
 %>
 
 <tr class='list' id='r<%=topic%>'>
-	<td class='score' align='right'><%=data.getTopicScore(topic)%></td>
-	<td align='left' class='label' nowrap>
+	<td class='score' align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
+	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap>
 		<a id='a<%=topic%>' 
 		   href='<%=data.getTopicHref(topic)%>' 
 		   onmouseover="showStatus(event);return true;"
@@ -123,8 +123,8 @@ setTimeout('refresh()', 2000);
 %>
 
 <tr class='list' id='r<%=topic%>'>
-	<td class='score' align='right'><%=data.getTopicScore(topic)%></td>
-	<td align='left' class='label' nowrap>
+	<td class='score' align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
+	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap>
 		<a id='a<%=topic%>' 
 		   href='<%=data.getTopicHref(topic)%>' 
 		   onmouseover="showStatus(event);return true;"

@@ -63,7 +63,7 @@ TD, TR {
 	border:	2px inset ThreeDHighlight;
 	margin:10px;
 	margin-top:2px;
-	padding-left:5px;
+	padding-<%=isRTL?"right":"left"%>:5px;
 	overflow:auto;
 	height:350px;
 }
@@ -75,7 +75,7 @@ TD, TR {
 }
 
 .topic {
-	margin-left:30px;
+	margin-<%=isRTL?"right":"left"%>:30px;
 	border:0px;
 	padding:0px;
 }
@@ -338,14 +338,14 @@ function enableOK() {
 
 </head>
 
-<body onload="onloadHandler()">
+<body dir="<%=direction%>" onload="onloadHandler()">
 <form onsubmit="doSubmit();return false;">
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet" accesskey="<%=ServletResources.getAccessKey("WorkingSetName", request)%>"><%=ServletResources.getLabel("WorkingSetName", request)%>:</label>
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' title='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
         </td></tr>
-        <tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
+         <tr><td><div id="selectBook" style="padding-top:5px; margin-<%=isRTL?"right":"left"%>:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
 		</td></tr>
     </table>
  
@@ -399,8 +399,8 @@ for (int i=0; i<data.getTocCount(); i++)
 
 </div>
 <div style="height:50px;">
-	<table valign="bottom" align="right">
-		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="right">
+	<table valign="bottom" align="<%=isRTL?"left":"right"%>">
+		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>

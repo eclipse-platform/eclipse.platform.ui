@@ -13,7 +13,7 @@ BODY {
 	background-color: <%=prefs.getViewBackground()%>;
 	font: <%=prefs.getViewFont()%>;
 	margin-top:5px;
-	margin-left:5px;
+	margin-<%=isRTL?"right":"left"%>:5px;
 	padding:0;
 	border:0;
 	cursor:default;
@@ -34,7 +34,7 @@ IMG {
 	border:0px;
 	margin:0px;
 	padding:0px;
-	margin-right:4px;
+	margin-<%=isRTL?"left":"right"%>:4px;
 }
 
 TABLE {
@@ -62,7 +62,7 @@ TABLE {
 }
 
 .label {
-	margin-left:4px;
+	margin-<%=isRTL?"right":"left"%>:4px;
 }
 
 #menu {
@@ -88,7 +88,7 @@ TABLE {
 }
 
 .score {
-	padding-right:5px;
+	padding-<%=isRTL?"left":"right"%>:5px;
 }
 
  

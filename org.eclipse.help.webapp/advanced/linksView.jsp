@@ -33,7 +33,7 @@
 </head>
 
 
-<body>
+<body dir="<%=direction%>">
  
 <%
 if(!data.isLinksRequest()) {
@@ -51,7 +51,7 @@ if(!data.isLinksRequest()) {
 %>
 
 <tr class='list' id='r<%=topic%>'>
-	<td align='left' class='label' nowrap>
+	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap>
 		<a id='a<%=topic%>' 
 		   href='<%=data.getTopicHref(topic)%>' 
 		   onmouseover="showStatus(event);return true;"

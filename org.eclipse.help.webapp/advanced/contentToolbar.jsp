@@ -13,6 +13,14 @@
 <% 
 	RequestData data = new RequestData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
+	String forwardImage, backImage;
+	if(isRTL) {
+		forwardImage = "back.gif";
+		backImage = "forward.gif";
+	} else {
+		forwardImage = "forward.gif";
+		backImage = "back.gif";
+	}
 
 	// It looks like we cannot put the if statement just around the extra button
 	if (prefs.isBookmarksView()) 
@@ -24,12 +32,12 @@
 	
 	<jsp:param name="name"     value="back"/>
 	<jsp:param name="tooltip"  value='back_tip'/>
-	<jsp:param name="image"    value='back.gif'/>
+	<jsp:param name="image"    value='<%=backImage%>'/>
 	<jsp:param name="action"   value="goBack"/>
 	
 	<jsp:param name="name"     value="forward"/>
 	<jsp:param name="tooltip"  value='forward_tip'/>
-	<jsp:param name="image"    value='forward.gif'/>
+	<jsp:param name="image"    value='<%=forwardImage%>'/>
 	<jsp:param name="action"   value="goForward"/>
 	
 	<jsp:param name="name"     value=""/>
@@ -62,12 +70,12 @@
 
 	<jsp:param name="name"     value="back"/>
 	<jsp:param name="tooltip"  value='back_tip'/>
-	<jsp:param name="image"    value='back.gif'/>
+	<jsp:param name="image"    value='<%=backImage%>'/>
 	<jsp:param name="action"   value="goBack"/>
 	
 	<jsp:param name="name"     value="forward"/>
 	<jsp:param name="tooltip"  value='forward_tip'/>
-	<jsp:param name="image"    value='forward.gif'/>
+	<jsp:param name="image"    value='<%=forwardImage%>'/>
 	<jsp:param name="action"   value="goForward"/>
 	
 	<jsp:param name="name"     value=""/>

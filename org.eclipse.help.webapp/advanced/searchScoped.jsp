@@ -65,8 +65,8 @@ A {
 }
 
 #searchTD {
-	padding-left:7px;
-	padding-right:4px;
+	padding-<%=isRTL?"right":"left"%>:7px;
+	padding-<%=isRTL?"left":"right"%>:4px;
 }
 
 #searchWord {
@@ -87,12 +87,12 @@ A {
 	text-decoration:underline; 
 	color:#0066FF; 
 	cursor:hand;
-	padding-left:15px;
+	padding-left:15px;   /* This should be the same for both RTL and LTR. */
 }
 
 #scope { 
-	text-align:right;
-	margin-left:5px;
+	text-align:<%=isRTL?"left":"right"%>;
+	margin-<%=isRTL?"right":"left"%>:5px;
 	border:0px;
 	color:WindowText;
 	text-decoration:none;
@@ -102,7 +102,7 @@ A {
 	if (data.isIE()) {
 %>
 #go {
-	padding-left:1px;
+	padding-<%=isRTL?"right":"left"%>:1px;
 }
 <%
 	}
@@ -207,12 +207,12 @@ function onloadHandler(e)
 
 </head>
 
-<body onload="onloadHandler()"  onunload="closeAdvanced()">
+<body dir="<%=direction%>" onload="onloadHandler()"  onunload="closeAdvanced()">
 
 	<form  name="searchForm"   onsubmit="doSearch()">
-		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
+		<table id="searchTable" align="<%=isRTL?"right":"left"%>" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
-				<td id="searchTD">
+				<td <%=isRTL?"nowrap":""%> id="searchTD">
 					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("Search", request)%>">
 					&nbsp;<%=ServletResources.getLabel("Search", request)%>:
 					</label>

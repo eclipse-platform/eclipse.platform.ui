@@ -35,7 +35,7 @@ if (data.isProgressRequest()) {
 <base target="ContentViewFrame">
 </head>
 
-<body bgcolor="<%=prefs.getBasicViewBackground()%>">
+<body dir="<%=direction%>" bgcolor="<%=prefs.getBasicViewBackground()%>">
 <%
 if (data.isProgressRequest()) {
 %>
@@ -82,8 +82,8 @@ if (data.isProgressRequest()) {
 				}
 %>
 <tr>
-	<td align='right'><%=data.getTopicScore(topic)%></td>
-	<td align='left' nowrap>
+	<td align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
+	<td align='<%=isRTL?"right":"left"%>' nowrap>
 		&nbsp;
 		<a <%=("a"+topic).equals(data.getSelectedTopicId())?" name=\"selectedItem\" ":""%>
 			href='<%=data.getTopicHref(topic)%>' 
@@ -109,8 +109,8 @@ if (data.isProgressRequest()) {
 					}
 %>
 <tr>
-	<td align='right'><%=data.getTopicScore(topic)%></td>
-	<td align='left' nowrap>
+	<td align='<%=isRTL?"left":"right"%>'><%=data.getTopicScore(topic)%></td>
+	<td align='<%=isRTL?"right":"left"%>' nowrap>
 		&nbsp;
 		<a <%=("a"+topic).equals(data.getSelectedTopicId())?" name=\"selectedItem\" ":""%>
 			href='<%=data.getTopicHref(topic)%>' 

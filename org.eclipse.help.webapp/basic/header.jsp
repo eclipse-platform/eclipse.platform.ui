@@ -8,10 +8,12 @@
  Contributors:
      IBM Corporation - initial API and implementation
 --%>
-<%@ page errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="org.eclipse.help.internal.webapp.data.*" errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	request.setCharacterEncoding("UTF-8");
+	boolean isRTL = UrlUtil.isRTL(request, response);
+	String  direction = isRTL?"rtl":"ltr";
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

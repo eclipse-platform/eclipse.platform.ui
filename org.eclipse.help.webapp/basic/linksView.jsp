@@ -28,7 +28,7 @@
 </head>
 
 
-<body bgcolor="<%=prefs.getBasicViewBackground()%>">
+<body dir="<%=direction%>" bgcolor="<%=prefs.getBasicViewBackground()%>">
  
 <%
 if(!data.isLinksRequest()) {
@@ -46,7 +46,7 @@ if(!data.isLinksRequest()) {
 %>
 
 <tr>
-	<td align='left' nowrap>
+	<td align='<%=isRTL?"right":"left"%>' nowrap>
 		<a href='<%=data.getTopicHref(link)%>'>
 		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif"  alt="" border=0>
 		   <%=data.getTopicLabel(link)%>

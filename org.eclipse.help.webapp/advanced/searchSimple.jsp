@@ -61,7 +61,7 @@ INPUT {
 
 
 #searchTable {
-	padding-left:5;
+	padding-<%=isRTL?"right":"left"%>:5;
 }
 
 #searchWord {	
@@ -80,10 +80,10 @@ INPUT {
 
 #advanced {
 	text-decoration:underline; 
-	text-align:right;
+	text-align:<%=isRTL?"left":"right"%>;
 	color:#0066FF; 
 	cursor:hand;
-	margin-left:4px;
+	margin-<%=isRTL?"right":"left"%>:4px;
 	border:0px;
 }
 
@@ -91,7 +91,7 @@ INPUT {
 	if (data.isIE()) {
 %>
 #go {
-	padding-left:1px;
+	padding-<%=isRTL?"right":"left"%>:1px;
 }
 <%
 	}
@@ -194,12 +194,12 @@ function onloadHandler(e)
 
 </head>
 
-<body onload="onloadHandler()"  onunload="closeAdvanced()">
+<body dir="<%=direction%>" onload="onloadHandler()"  onunload="closeAdvanced()">
 
 	<form  name="searchForm"   onsubmit="doSearch()">
-		<table id="searchTable" align="left" valign="middle" cellspacing="0" cellpadding="0" border="0">
+		<table id="searchTable" align="<%=isRTL?"right":"left"%>" valign="middle" cellspacing="0" cellpadding="0" border="0">
 			<tr nowrap  valign="middle">
-				<td>
+				<td <%=isRTL?"nowrap":""%>>
 					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("Search", request)%>">
 					&nbsp;<%=ServletResources.getLabel("Search", request)%>:
 					</label>

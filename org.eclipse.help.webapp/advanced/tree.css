@@ -19,12 +19,12 @@ BODY {
 
 UL { 
 	border-width:0; 
-	margin-left:20px; 
+	margin-<%=isRTL?"right":"left"%>:20px; 
 }
 
 #root {
 	margin-top:5px;
-	margin-left:5px;
+	margin-<%=isRTL?"right":"left"%>:5px;
 }
   
 UL.expanded {
@@ -46,14 +46,14 @@ IMG {
 	border:0px;
 	margin:0px;
 	padding:0px;
-	margin-right:4px;
+	margin-<%=isRTL?"left":"right"%>:4px;
 }
 
 
 A {
 	text-decoration:none; 
 	color:WindowText;
-	padding-right:2px;
+	padding-<%=isRTL?"left":"right"%>:2px;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 }
@@ -79,10 +79,10 @@ A.active:hover{
 if (data.isMozilla()){
 %>
 UL { 
-	margin-left:-20px;
+	margin-<%=isRTL?"right":"left"%>:-20px;
 } 
 #root{ 
-	margin-left:-35px; 
+	margin-<%=isRTL?"right":"left"%>:-35px; 
 	margin-top:5px;
 } 
  

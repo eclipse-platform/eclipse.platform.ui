@@ -122,7 +122,7 @@ if (data.isIE()){
 </head>
 
 
-<body onload="onloadHandler()" onunload="onunloadHandler()">
+<body dir="<%=direction%>" onload="onloadHandler()" onunload="onunloadHandler()">
 	<ul class='expanded' id='root'>
 <%
 	for (int toc=0; toc<data.getTocCount(); toc++) {
