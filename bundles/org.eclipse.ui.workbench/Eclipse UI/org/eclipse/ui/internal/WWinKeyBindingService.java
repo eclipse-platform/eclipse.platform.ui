@@ -173,7 +173,6 @@ public class WWinKeyBindingService {
    	private void update(IWorkbenchPart part,boolean force) {
    		if(part==null)
    			return;
-   	
    		AcceleratorScope oldScope = null;
    		if(activeService != null)
    			oldScope = activeService.getActiveAcceleratorScope();
@@ -229,17 +228,13 @@ public class WWinKeyBindingService {
 			return null;
 		return acc.getAccelerators();
     }
-    /** 
-     * Set the <code>acceleratorsMenu</code> which is used to
-     * add items for all accelerators in the current mode.
-     */
-    public void setAcceleratorsMenu(KeyBindingMenu acceleratorsMenu) {
-    	this.acceleratorsMenu = acceleratorsMenu;
-    }
 	/**
 	 * Update the KeyBindingMenu with the current set of accelerators.
 	 */
 	public void updateAccelerators(boolean defaultMode) {
+		if(acceleratorsMenu == null)
+			acceleratorsMenu = new KeyBindingMenu(window);
+		
 	   	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
 	   	int[] accs;
 	   	if(defaultMode) {

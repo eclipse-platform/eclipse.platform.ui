@@ -17,12 +17,11 @@ import org.eclipse.ui.internal.registry.AcceleratorScope;
 /**
  * A submenu with an item for each accelerator in the AcceleratorScope table.
  */
-public class KeyBindingMenu extends ContributionItem {
+public class KeyBindingMenu {
 
 	private WorkbenchWindow workbenchWindow;
-	private Menu acceleratorsMenu;
-	private MenuItem cascade;
-	private Control focusControl;
+	KeyTable keyTable;
+	Control focusControl;
 
 	private ResetModeListener resetModeListener = new ResetModeListener();
 
@@ -40,57 +39,21 @@ public class KeyBindingMenu extends ContributionItem {
 	 * Initializes this contribution item with its window.
 	 */
 	public KeyBindingMenu(WorkbenchWindow window) {
-		super("Key binding menu"); //$NON-NLS-1$
 		this.workbenchWindow = window;
-	}
-	/** 
-	 * Creates the cascade menu which will be hidden from the user.
-	 */
-	public void fill(final Menu parent, int index) {
-		cascade = new MenuItem(parent, SWT.CASCADE,index);
-		cascade.setText("Key binding menu"); //$NON-NLS-1$
-		cascade.setMenu (acceleratorsMenu = new Menu (cascade));
-		workbenchWindow.getKeyBindingService().setAcceleratorsMenu(this);
-		parent.addListener (SWT.Show, new Listener () {
-			public void handleEvent (Event event) {
-				cascade.setMenu (null);
-				cascade.dispose ();
-			}
-		});
-		parent.addListener (SWT.Hide, new Listener () {
-			public void handleEvent (Event event) {
-				cascade = new MenuItem (parent, SWT.CASCADE, 0);
-				cascade.setText("Key binding menu"); //$NON-NLS-1$
-				cascade.setMenu(acceleratorsMenu);
-			}
-		});
+		keyTable = new KeyTable(window.getShell());
 	}
 	/** 
 	 * Disposes the current menu and create a new one with items for
 	 * the specified accelerators.
 	 */
-	public void setAccelerators(final int accs[],final AcceleratorScope scope,final KeyBindingService activeService,boolean defaultMode) {
-		if(acceleratorsMenu != null) {
-			acceleratorsMenu.dispose();
-			acceleratorsMenu = null;
-		}
-		acceleratorsMenu = new Menu (cascade);
-		cascade.setMenu(acceleratorsMenu);
-//		Arrays.sort(accs);
-		for (int i = 0; i < accs.length; i++) {
-			final int acc = accs[i];
-			String accId = scope.getActionDefinitionId(acc);
-			if(accId == null || activeService.getAction(accId) == null)
-				continue;
-			MenuItem item = new MenuItem(acceleratorsMenu,SWT.PUSH);
-//			item.setText(Action.convertAccelerator(acc));
-			item.setAccelerator(acc);
-			item.addListener(SWT.Selection, new Listener() {
-				public void handleEvent (Event event) {
-					scope.processKey(activeService,event,acc);
-				}
-			});
-		}
+	public void setAccelerators(int accs[],final AcceleratorScope scope,final KeyBindingService activeService,boolean defaultMode) {
+		Arrays.sort(accs);
+		keyTable.setKeys(accs);
+		keyTable.addKeyTableListener(new KeyTable.KeyTableListener() {
+			public void keyPressed(int key) {
+				scope.processKey(activeService,new Event(),key);
+			}
+		});
 		resetModeListener.scope = scope;
 		resetModeListener.service = activeService;
 		updateCancelListener(defaultMode);
