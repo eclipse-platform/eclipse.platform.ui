@@ -18,6 +18,11 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 		elements.add(o);
 		viewer.add(o);
 	}
+	
+	public void addAll(List list) {
+		elements.addAll(list);
+		viewer.add(list.toArray());
+	}
 
 	public void dispose() {
 	}
@@ -38,6 +43,11 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	public void remove(Object o) {
 		elements.remove(o);
 		viewer.remove(o);
+	}
+	
+	public void removeAll(List list) {
+		elements.removeAll(list);
+		viewer.remove(list.toArray());
 	}
 	
 	public void remove(IStructuredSelection selection) {
