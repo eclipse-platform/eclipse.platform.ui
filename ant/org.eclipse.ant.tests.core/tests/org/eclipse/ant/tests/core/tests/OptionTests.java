@@ -572,25 +572,6 @@ public class OptionTests extends AbstractAntTest {
 		assertSuccessful();	
 	}
 
-		/**
-		 * Tests the "-keep-going" option
-		 * On hold as I figure out what -keep-going is supposed to do
-		 */
-		//public void testMinusKeepGoing() throws CoreException {
-		//	run("failingTargets.xml", new String[]{"-keep-going"});
-		//	assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
-		//}
-		
-		/**
-		 * Tests the "-k" option
-		 * On hold as I figure out what -keep-going is supposed to do
-		 */
-	//	public void testMinusK() throws CoreException {
-	//		run("failingTargets.xml", new String[]{"-k"});
-	//		assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
-	//	}
-		
-
 	/**
 	 * Tests the "-keep-going" option
 	 * On hold as I figure out what -keep-going is supposed to do
