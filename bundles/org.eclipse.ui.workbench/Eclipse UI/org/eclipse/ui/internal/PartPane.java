@@ -121,9 +121,9 @@ protected void createChildControl() {
 	page.firePartOpened(part[0]);	
 }
 
-public void addSizeMenuItem (Menu menu) {
+public void addSizeMenuItem (Menu menu, int index) {
 	//Add size menu
-	MenuItem item = new MenuItem(menu, SWT.CASCADE);
+	MenuItem item = new MenuItem(menu, SWT.CASCADE, index);
 	item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
 	Menu sizeMenu = new Menu(menu);
 	item.setMenu(sizeMenu);

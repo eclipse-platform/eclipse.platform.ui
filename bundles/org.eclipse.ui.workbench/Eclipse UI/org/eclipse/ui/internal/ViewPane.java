@@ -568,9 +568,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PartPane#addSizeMenuItem(org.eclipse.swt.widgets.Menu)
 	 */
-	public void addSizeMenuItem(Menu menu) {
+	public void addSizeMenuItem(Menu menu, int index) {
 		if(isMoveable())
-			super.addSizeMenuItem(menu);
+			super.addSizeMenuItem(menu, index);
 	}
 
 	/* (non-Javadoc)
