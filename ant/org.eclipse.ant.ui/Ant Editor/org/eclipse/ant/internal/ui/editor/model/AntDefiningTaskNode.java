@@ -21,9 +21,11 @@ import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class AntDefiningTaskNode extends AntTaskNode {
@@ -44,12 +46,16 @@ public class AntDefiningTaskNode extends AntTaskNode {
 	 * Execute the defining task.
 	 */
 	public boolean configure(boolean validateFully) {
-		try {
-			getTask().maybeConfigure();
-			getTask().execute();
-			return false;
-		} catch (BuildException be) {
-			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
+		boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS);
+		if (enabled) {
+			try {
+				getTask().maybeConfigure();
+				getTask().execute();
+				return false;
+			} catch (BuildException be) {
+				handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_CLASSPATH);
+			}
 		}
 		return false;
 	}

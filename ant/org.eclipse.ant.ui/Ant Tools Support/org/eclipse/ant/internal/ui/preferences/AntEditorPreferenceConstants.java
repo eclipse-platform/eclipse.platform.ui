@@ -52,13 +52,23 @@ public class AntEditorPreferenceConstants {
 	public final static String CODEASSIST_AUTOINSERT= "content_assist_autoinsert"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that holds the characters that auto activate code assist in Java code.
+	 * A named preference that holds the characters that auto activate code assist in an Ant buildfile.
 	 * <p>
-	 * Value is of type <code>Sring</code>. All characters that trigger auto code assist in Java code.
+	 * Value is of type <code>Sring</code>. All characters that trigger auto code assist in an Ant buildfile.
 	 * </p>
 	 */
 	public final static String CODEASSIST_AUTOACTIVATION_TRIGGERS= "content_assist_autoactivation_triggers_java"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls if the Ant editor presents code assist proposals for 
+	 * user defined tasks
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * @since 3.0
+	 */
+	public final static String CODEASSIST_USER_DEFINED_TASKS= "content_assist_userDefinedTasks"; //$NON-NLS-1$
+	
 	/**
 	 * The symbolic names for colors for displaying code assist proposals
 	 * @see org.eclipse.jface.resource.ColorRegistry
@@ -182,6 +192,7 @@ public class AntEditorPreferenceConstants {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 		store.setDefault(CODEASSIST_AUTOINSERT, true);
+		store.setDefault(CODEASSIST_USER_DEFINED_TASKS, true);
 		store.setDefault(CODEASSIST_AUTOACTIVATION, true);
 		store.setDefault(CODEASSIST_AUTOACTIVATION_DELAY, 500);
 		PreferenceConverter.setDefault(store, CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));

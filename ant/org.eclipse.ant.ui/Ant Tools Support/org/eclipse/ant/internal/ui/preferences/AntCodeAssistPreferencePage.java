@@ -52,6 +52,7 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND));		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS));
@@ -80,6 +81,9 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		String text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.Insert"); //$NON-NLS-1$
 		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, 0);		
 
+		text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.0"); //$NON-NLS-1$
+		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS, 0);
+		
 		text= AntPreferencesMessages.getString("AntCodeAssistPreferencePage.&Enable_auto_activation_2"); //$NON-NLS-1$
 		final Button autoactivation= addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, 0);
 		autoactivation.addSelectionListener(new SelectionAdapter(){
