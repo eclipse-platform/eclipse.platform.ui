@@ -846,17 +846,23 @@ public class ConfiguredSite
 			
 		String siteLocation = siteURL.getFile();
 		File file = new File(siteLocation);
-		
-		String differentProductName = getProductName(file);
-		if (differentProductName!=null){
-			verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NotSameProductId",differentProductName),null); //$NON-NLS-1$
-			return verifyStatus;
-		}
-		
-		File container = getSiteContaining(file);
-		if (container!=null){
-			verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainedInAnotherSite",container.getAbsolutePath()),null);	//$NON-NLS-1$
-			return verifyStatus;
+
+		// get the product name of the private marker
+		// if there is no private marker, check if the site is contained in another site
+		// if there is a marker and this is a different product, return false
+		// otherwise don't check if we are contained in another site
+		String productName = getProductName(file);
+		if (productName!=null){
+			if (!productName.equals(getProductIdentifier("id",getProductFile()))){
+				verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NotSameProductId",productName),null); //$NON-NLS-1$
+				return verifyStatus;
+			} 
+		} else {
+			File container = getSiteContaining(file);
+			if (container!=null){
+				verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainedInAnotherSite",container.getAbsolutePath()),null);	//$NON-NLS-1$
+				return verifyStatus;
+			}
 		}
 			
 		if (!canWrite(file)){
@@ -938,9 +944,11 @@ public class ConfiguredSite
 		}
 		
 		File productFile = getProductFile();
+		String productId = null;
+		String privateId = null;
 		if (productFile!=null){		
-			String productId = getProductIdentifier("id",productFile);
-			String privateId = getProductIdentifier("id",markerFile);
+			productId = getProductIdentifier("id",productFile);
+			privateId = getProductIdentifier("id",markerFile);
 			if (productId == null){
 				UpdateManagerPlugin.warn("Product ID is null at:"+productFile);
 				return null;
@@ -952,6 +960,8 @@ public class ConfiguredSite
 				String markerID = (name==null)?version:name+":"+version;
 				if (markerID==null) markerID="";
 				return markerID;
+			} else {
+				return privateId;
 			}
 		} else {
 			UpdateManagerPlugin.warn("Product Marker doesn't exist:"+productFile);			
