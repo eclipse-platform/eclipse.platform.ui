@@ -28,6 +28,7 @@ import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathModel;
 import org.eclipse.jdt.internal.debug.ui.classpath.IClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.launcher.IClasspathViewer;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -55,7 +56,8 @@ public class AntClasspathTab extends JavaClasspathTab {
 		createButton(pathButtonComp, new RemoveAction(fClasspathViewer));
 		createButton(pathButtonComp, new AddJarAction(fClasspathViewer));
 		createButton(pathButtonComp, new AddExternalJarAction(fClasspathViewer, DIALOG_SETTINGS_PREFIX));
-		createButton(pathButtonComp, new AddFolderAction(fClasspathViewer));
+		Button button = createButton(pathButtonComp, new AddFolderAction(fClasspathViewer));
+		button.setText(AntLaunchConfigurationMessages.getString("AntClasspathTab.0")); //$NON-NLS-1$
 		createButton(pathButtonComp, new AddVariableStringAction(fClasspathViewer));
 		RuntimeClasspathAction action= new RestoreDefaultEntriesAction(fClasspathViewer, this);
 		createButton(pathButtonComp, action);
