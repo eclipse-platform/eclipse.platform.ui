@@ -527,7 +527,7 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 	/**
 	 * Return an array of mirror update sites.
 	 * 
-	 * @see ISite#getMirrorSiteEntries()
+	 * @return an array of mirror update sites
 	 * @since 2.0
 	 */
 	public IURLEntry[] getMirrorSiteEntries() {

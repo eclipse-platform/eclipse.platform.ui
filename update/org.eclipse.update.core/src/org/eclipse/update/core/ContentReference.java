@@ -308,7 +308,7 @@ public class ContentReference {
 	
 	/**
 	 * Returns the timestamp when the content was last modified
-	 * @return
+	 * @return the timestamp
 	 * @since 3.0
 	 */
 	public long getLastModified() {

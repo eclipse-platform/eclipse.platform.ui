@@ -440,7 +440,7 @@ public class SiteModel extends ModelObject {
 	 * methods should be called.
 	 * Throws a runtime exception if this object is marked read-only.
 	 * 
-	 * @param mirrors additional update site mirrors
+	 * @param mirrorsURL additional update site mirrors
 	 * @since 3.1
 	 */
 	public void setMirrorsURLString(String mirrorsURL) {
