@@ -48,6 +48,11 @@ public void partBroughtToTop(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part has been closed.
+ * <p>
+ * Note that if other perspectives in the same page share the view,
+ * this notification is not sent.  It is only sent when the view
+ * is being removed from the page entirely (it is being disposed).
+ * </p>
  *
  * @param partRef the part that was closed
  * @see IWorkbenchPage#hideView
@@ -64,6 +69,11 @@ public void partDeactivated(IWorkbenchPartReference partRef);
 
 /**
  * Notifies this listener that the given part has been opened.
+ * <p>
+ * Note that if other perspectives in the same page share the view,
+ * this notification is not sent.  It is only sent when the view
+ * is being newly opened in the page (it is being created).
+ * </p>
  *
  * @param partRef the part that was opened
  * @see IWorkbenchPage#showView
@@ -85,9 +95,9 @@ public void partHidden(IWorkbenchPartReference partRef);
 public void partVisible(IWorkbenchPartReference partRef);
 
 /**
- * Notifies this listener that the given part input was changed.
+ * Notifies this listener that the given part's input was changed.
  *
- * @param partRef the part that is visible
+ * @param partRef the part whose input was changed
  */
 public void partInputChanged(IWorkbenchPartReference partRef);
 }
