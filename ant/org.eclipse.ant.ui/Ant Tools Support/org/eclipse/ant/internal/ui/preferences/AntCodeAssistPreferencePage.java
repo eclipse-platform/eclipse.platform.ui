@@ -165,6 +165,9 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 			}
 			public void widgetSelected(SelectionEvent e) {
 				int i= fContentAssistColorList.getSelectionIndex();
+				if (i == -1) { //bug 85590
+					return;
+				}
 				String key= fContentAssistColorListModel[i][1];
 				
 				PreferenceConverter.setValue(getOverlayStore(), key, fContentAssistColorEditor.getColorValue());
@@ -176,6 +179,9 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 	
 	private void handleContentAssistColorListSelection() {	
 		int i= fContentAssistColorList.getSelectionIndex();
+		if (i == -1) { //bug 85590
+			return;
+		}
 		String key= fContentAssistColorListModel[i][1];
 		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), key);
 		fContentAssistColorEditor.setColorValue(rgb);

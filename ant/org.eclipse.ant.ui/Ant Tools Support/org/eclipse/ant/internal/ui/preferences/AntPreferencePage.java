@@ -188,8 +188,10 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		foregroundColorButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int i= fConsoleColorList.getSelectionIndex();
+				if (i == -1) { //bug 85590
+					return;
+				}
 				String key= fAppearanceColorListModel[i][1];
-		
 				PreferenceConverter.setValue(getPreferenceStore(), key, fConsoleColorEditor.getColorValue());
 			}
 		});
@@ -217,6 +219,9 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	
 	private void handleAppearanceColorListSelection() {	
 		int i= fConsoleColorList.getSelectionIndex();
+		if (i == -1) { //bug 85590
+			return;
+		}
 		String key= fAppearanceColorListModel[i][1];
 		RGB rgb= PreferenceConverter.getColor(getPreferenceStore(), key);
 		fConsoleColorEditor.setColorValue(rgb);		
