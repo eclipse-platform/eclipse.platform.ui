@@ -12,6 +12,7 @@
 package org.eclipse.jface.text;
 
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -27,6 +28,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 
 /**
@@ -54,7 +57,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * or the subject control is resized or moved.
 	 */
 	class Closer extends MouseTrackAdapter 
-		implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener {
+		implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, Listener {
 		
 		/** The closer's subject control */
 		private Control fSubjectControl;
@@ -98,6 +101,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.addMouseTrackListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
+				fSubjectControl.getShell().addListener(SWT.Deactivate, this);
 			}
 		}
 		
@@ -127,6 +131,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeMouseTrackListener(this);
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
+				fSubjectControl.getShell().removeListener(SWT.Deactivate, this);
 			}			
 		}
 		
@@ -190,6 +195,15 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void keyPressed(KeyEvent event) {
 			stop(true);
+		}
+
+		/*
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 * @since 3.1
+		 */
+		public void handleEvent(Event event) {
+			if (event.type == SWT.Deactivate)
+				stop();
 		}
 	}
 	

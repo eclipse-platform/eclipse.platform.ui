@@ -14,6 +14,7 @@ package org.eclipse.jface.text.source;
 
 import java.util.Iterator;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -28,6 +29,8 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -58,7 +61,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @since 3.0
 	 */
 	protected class Closer extends MouseTrackAdapter 
-	implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener {
+	implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener, Listener {
 		
 		/** The closer's subject control */
 		private Control fSubjectControl;
@@ -104,10 +107,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.addMouseListener(this);
 				fSubjectControl.addMouseMoveListener(this);
 				fSubjectControl.addMouseTrackListener(this);
-			}
-			
-			// install control and key listeners on subject control in any case 
-			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
+				fSubjectControl.getShell().addListener(SWT.Deactivate, this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
 			}
@@ -137,9 +137,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.removeMouseListener(this);
 				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.removeMouseTrackListener(this);
-			}
-			
-			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
+				fSubjectControl.getShell().removeListener(SWT.Deactivate, this);				
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}			
@@ -206,6 +204,15 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 */
 		public void keyPressed(KeyEvent event) {
 			stop(true);
+		}
+		
+		/*
+		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+		 * @since 3.1
+		 */
+		public void handleEvent(Event event) {
+			if (event.type == SWT.Deactivate)
+				stop();
 		}
 
 		/*
