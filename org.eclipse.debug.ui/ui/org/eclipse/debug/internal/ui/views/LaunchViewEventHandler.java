@@ -43,11 +43,6 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	private LaunchViewer fViewer;
 	
 	/**
-	 * Whether this event handler has been disposed
-	 */
-	private boolean fIsDisposed = false;
-	
-	/**
 	 * Stack frame counts keyed by thread.  Used to optimize thread refreshing.
 	 */
 	private HashMap fStackFrameCountByThread = new HashMap(5);
@@ -66,30 +61,6 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		plugin.addDebugEventListener(this);
 		plugin.getLaunchManager().addLaunchListener(this);
 	}
-
-	/**
-	 * @see Display.asyncExec(Runnable)
-	 */
-	protected void asyncExec(Runnable r) {
-		if (getViewer() != null) {
-			Control ctrl= getViewer().getControl();
-			if (ctrl != null && !ctrl.isDisposed()) {
-				ctrl.getDisplay().asyncExec(r);
-			}
-		}
-	}
-	
-	/**
-	 * @see Display.syncExec(Runnable)
-	 */
-	protected void syncExec(Runnable r) {
-		if (getViewer() != null) {
-			Control ctrl= getViewer().getControl();
-			if (ctrl != null && !ctrl.isDisposed()) {
-				ctrl.getDisplay().syncExec(r);
-			}
-		}
-	}	
 	
 	/**
 	 * @see IDebugEventListener
@@ -104,26 +75,14 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				if (!isDisposed()) {
-					doHandleDebugEvent(event);
-				}
+				doHandleDebugEvent(event);
 			}
 		};
 		
-		asyncExec(r);
+		getView().asyncExec(r);
 	}
 	
-	/**
-	 * Returns whether this event handler has been
-	 * disposed.
-	 * 
-	 * @return whether this event handler has been
-	 *  disposed
-	 */
-	protected boolean isDisposed() {
-		return fIsDisposed;
-	}
-	
+
 	/**
 	 * @see BasicContentProvider#doHandleDebug(Event)
 	 */
@@ -329,32 +288,30 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	public void launchDeregistered(final ILaunch launch) {
 		Runnable r= new Runnable() {
 			public void run() {
-				if (!isDisposed()) {
-					remove(launch);
-					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-					IDebugTarget[] targets= lm.getDebugTargets();
-					if (targets.length > 0) {
-						IDebugTarget target= targets[targets.length - 1];
-						try {
-							IThread[] threads= target.getThreads();
-							for (int i=0; i < threads.length; i++) {
-								if (threads[i].isSuspended()) {
-									getView().autoExpand(threads[i], false, true);
-									return;
-								}
-							}						
-						} catch (DebugException de) {
-							DebugUIPlugin.logError(de);
-						}
-						
-						getView().autoExpand(target.getLaunch(), false, true);
+				remove(launch);
+				ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
+				IDebugTarget[] targets= lm.getDebugTargets();
+				if (targets.length > 0) {
+					IDebugTarget target= targets[targets.length - 1];
+					try {
+						IThread[] threads= target.getThreads();
+						for (int i=0; i < threads.length; i++) {
+							if (threads[i].isSuspended()) {
+								getView().autoExpand(threads[i], false, true);
+								return;
+							}
+						}						
+					} catch (DebugException de) {
+						DebugUIPlugin.logError(de);
 					}
-					updateButtons();
+					
+					getView().autoExpand(target.getLaunch(), false, true);
 				}
+				updateButtons();
 			}
 		};
 
-		asyncExec(r);
+		getView().asyncExec(r);
 	}
 
 	/**
@@ -362,32 +319,29 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 */
 	public void launchRegistered(final ILaunch newLaunch) {
 		Runnable r= new Runnable() {
-			public void run() {
-				if (!isDisposed()) {			
-					if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
-						ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-						Object[] launches= lManager.getLaunches();
-						for (int i= 0; i < launches.length; i++) {
-							ILaunch launch= (ILaunch)launches[i];
-							if (launch != newLaunch && launch.isTerminated()) {
-								lManager.deregisterLaunch(launch);
-							}
+			public void run() {		
+				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
+					ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+					Object[] launches= lManager.getLaunches();
+					for (int i= 0; i < launches.length; i++) {
+						ILaunch launch= (ILaunch)launches[i];
+						if (launch != newLaunch && launch.isTerminated()) {
+							lManager.deregisterLaunch(launch);
 						}
 					}
-					insert(newLaunch);
-					getView().autoExpand(newLaunch, false, true);
 				}
+				insert(newLaunch);
+				getView().autoExpand(newLaunch, false, true);
 			}
 		};
 
-		syncExec(r);
+		getView().syncExec(r);
 	}
 
 	/**
 	 * De-registers this event handler from the debug model.
 	 */
 	public void dispose() {
-		fIsDisposed = true;
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.removeDebugEventListener(this);
 		plugin.getLaunchManager().removeLaunchListener(this);

@@ -64,20 +64,11 @@
          class="org.eclipse.debug.internal.ui.views.LaunchView"
          id="org.eclipse.debug.ui.DebugView">
    </view>
-<!-- Process view no longer exists   
-   <view
-         name="%ProcessesView.name"
-         icon="icons/full/cview16/process_view.gif"
-         category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.LaunchesView"
-         id="org.eclipse.debug.ui.ProcessView">
-   </view>
--->
    <view
          name="%BreakpointsView.name"
          icon="icons/full/cview16/breakpoint_view.gif"
          category="org.eclipse.debug.ui"
-         class="org.eclipse.debug.internal.ui.BreakpointsView"
+         class="org.eclipse.debug.internal.ui.views.BreakpointsView"
          id="org.eclipse.debug.ui.BreakpointView">
    </view>
    <view

@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui;
+package org.eclipse.debug.internal.ui.views;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -8,20 +8,28 @@ package org.eclipse.debug.internal.ui;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.EnableDisableBreakpointAction;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.OpenBreakpointMarkerAction;
+import org.eclipse.debug.internal.ui.RemoveAllBreakpointsAction;
+import org.eclipse.debug.internal.ui.RemoveBreakpointAction;
+import org.eclipse.debug.internal.ui.ShowQualifiedAction;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
@@ -37,17 +45,20 @@ public class BreakpointsView extends AbstractDebugView {
 	
 	private Vector fBreakpointListenerActions;
 	
+	private BreakpointsViewEventHandler fEventHandler;
+	
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
 	protected StructuredViewer createViewer(Composite parent) {
 		StructuredViewer viewer = new TableViewer(parent, SWT.MULTI| SWT.H_SCROLL | SWT.V_SCROLL);
-		viewer.setContentProvider(new BreakpointsContentProvider());
+		viewer.setContentProvider(new BreakpointsViewContentProvider());
 		viewer.setLabelProvider(new DelegatingModelPresentation());
 		viewer.setSorter(new WorkbenchViewerSorter());
 		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());		
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
+		setEventHandler(new BreakpointsViewEventHandler());
 		return viewer;
 	}	
 	
@@ -64,6 +75,9 @@ public class BreakpointsView extends AbstractDebugView {
 	public void dispose() {
 		super.dispose();
 		cleanupActions();
+		if (getEventHandler() != null) {
+			getEventHandler().dispose();
+		}
 	}
 
 	/**
@@ -178,6 +192,107 @@ public class BreakpointsView extends AbstractDebugView {
 			fBreakpointListenerActions= new Vector(2);
 		}
 		return fBreakpointListenerActions;
+	}
+
+	/**
+	 * Provides the contents for a this view
+	 */
+	class BreakpointsViewContentProvider implements IStructuredContentProvider {
+
+		/**
+		 * @see IStructuredContentProvider#getElements(Object)
+		 */
+		public Object[] getElements(Object parent) {
+			return ((IBreakpointManager) parent).getBreakpoints();
+		}
+		
+		/**
+		 * @see IContentProvider
+		 */
+		public void dispose() {
+		}
+	
+		/**
+		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+		
+	}
+	
+	/**
+	 * Handles breakpoint events, updating the breakpoints view
+	 * and viewer.
+	 */
+	class BreakpointsViewEventHandler implements IBreakpointListener {
+	
+		/**
+		 * Constructs an enent handler for the breakpoints view.
+		 */
+		public BreakpointsViewEventHandler() {
+			DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+		}
+		
+		public void dispose() {
+			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+		}
+	
+	
+		/**
+		 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
+		 */
+		public void breakpointAdded(final IBreakpoint breakpoint) {
+			if (breakpoint.getMarker().exists()) {		
+				asyncExec(new Runnable() {
+					public void run() {
+						((TableViewer)getViewer()).add(breakpoint);
+					}
+				});
+			}
+		}
+	
+	
+		/**
+		 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
+		 */
+		public void breakpointRemoved(final IBreakpoint breakpoint, IMarkerDelta delta) {
+			asyncExec(new Runnable() {
+				public void run() {
+					((TableViewer)getViewer()).remove(breakpoint);
+				}
+			});
+		}
+	
+		/**
+		 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
+		 */
+		public void breakpointChanged(final IBreakpoint breakpoint, IMarkerDelta delta) {
+			if (breakpoint.getMarker().exists()) {
+				asyncExec(new Runnable() {
+					public void run() {
+						((TableViewer)getViewer()).refresh(breakpoint);
+					}
+				});
+			}
+		}
+	}
+	
+	/**
+	 * Returns this view's event handler
+	 * 
+	 * @return a breakpoint view event handler
+	 */
+	protected BreakpointsViewEventHandler getEventHandler() {
+		return fEventHandler;
+	}
+
+	/**
+	 * Sets this view's event handler.
+	 * 
+	 * @param eventHandler a breakpoint view event handler
+	 */
+	private void setEventHandler(BreakpointsViewEventHandler eventHandler) {
+		fEventHandler = eventHandler;
 	}
 
 }

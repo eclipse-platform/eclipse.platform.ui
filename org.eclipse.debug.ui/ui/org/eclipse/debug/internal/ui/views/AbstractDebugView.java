@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui;
+package org.eclipse.debug.internal.ui.views;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -388,5 +389,35 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			action.run();
 		}
 	}	
+	
+	/**
+	 * Registers the given runnable with the display
+	 * assocaited with this view's control, if any.
+	 * 
+	 * @see Display.asyncExec(Runnable)
+	 */
+	protected void asyncExec(Runnable r) {
+		if (getViewer() != null) {
+			Control ctrl= getViewer().getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				ctrl.getDisplay().asyncExec(r);
+			}
+		}
+	}
+	
+	/**
+	 * Registers the given runnable with the display
+	 * assocaited with this view's control, if any.
+ 	 *
+	 * @see Display.syncExec(Runnable)
+	 */
+	protected void syncExec(Runnable r) {
+		if (getViewer() != null) {
+			Control ctrl= getViewer().getControl();
+			if (ctrl != null && !ctrl.isDisposed()) {
+				ctrl.getDisplay().syncExec(r);
+			}
+		}
+	}		
 }	
 

@@ -388,7 +388,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * Returns the presentation registered for the given id, or <code>null</code>
 	 * of nothing is registered for the id.
 	 */
-	protected IDebugModelPresentation getPresentation(String id) {
+	public IDebugModelPresentation getPresentation(String id) {
 		IDebugModelPresentation lp= (IDebugModelPresentation) getLabelProviders().get(id);
 		if (lp != null) {
 			Iterator keys= getAttributes().keySet().iterator();
