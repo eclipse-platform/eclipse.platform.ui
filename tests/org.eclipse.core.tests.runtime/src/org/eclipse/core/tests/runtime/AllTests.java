@@ -46,7 +46,7 @@ public class AllTests extends TestCase {
 		suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
 		suite.addTest(PreferenceForwarderTest.suite());
 		suite.addTest(org.eclipse.core.tests.internal.osgi.AllTests.suite());
-		suite.addTest(IContentTypeManagerTest.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());
 		suite.addTest(PluginCompatibilityTests.suite());
 		return suite;
 	}

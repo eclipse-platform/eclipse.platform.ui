@@ -25,20 +25,25 @@ public class XMLContentDescriber implements IContentDescriber {
 
 	public int describe(InputStream input, IContentDescription description, int flags) throws IOException {
 		//TODO: support BOM
-		// the XMLDecl is some kind of Unicode, not matter what the encoding for the 
-		// rest of the document is
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8")); //$NON-NLS-1$
-		String line = reader.readLine();
-		// end of stream
-		if (line == null)
-			return INDETERMINATE;
-		// XMLDecl should be the first string (no blanks allowed)
-		if (!line.startsWith(XML_PREFIX))
+		byte[] prefix = new byte[XML_PREFIX.length()];
+		if (input.read(prefix) < prefix.length)
 			return INDETERMINATE;
 		// describe charset if requested
-		if ((flags & IContentDescription.CHARSET) != 0)
-			description.setCharset(getCharset(line));
+		if ((flags & IContentDescription.CHARSET) != 0) {
+			String fullXMLDecl = readFullXMLDecl(input);
+			if (fullXMLDecl != null)
+				description.setCharset(getCharset(fullXMLDecl));
+		}
 		return VALID;
+	}
+
+	private String readFullXMLDecl(InputStream input) throws IOException {
+		StringBuffer xmlDecl = new StringBuffer(50);
+		int c;
+		// looks for XMLDecl ending char (?)
+		while (((c = input.read()) != -1 && c != '?'))
+			xmlDecl.append((char) c);
+		return c == '?' ? xmlDecl.toString() : null;
 	}
 
 	public int describe(Reader input, IContentDescription description, int flags) throws IOException {
