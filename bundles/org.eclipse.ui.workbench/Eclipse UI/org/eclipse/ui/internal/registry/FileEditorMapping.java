@@ -19,11 +19,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.activities.IObjectContributionRecord;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
-import org.eclipse.ui.internal.roles.ObjectContributionRecord;
-import org.eclipse.ui.internal.roles.RoleManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /* (non-Javadoc)
  * Implementation of IFileEditorMapping.
@@ -79,13 +79,13 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
      * @since 3.0
      */
 	private void addToObjectActivityManager(EditorDescriptor editor) {
-        ObjectActivityManager objectManager = getObjectActivityManager();
+	   IObjectActivityManager objectManager = getObjectActivityManager();
         String pluginId = editor.getPluginID();
         if (pluginId == null) {
             return;
         }
-        ObjectContributionRecord contributionRecord = objectManager.addObject(pluginId, editor.getId(), editor);
-        RoleManager.getInstance().applyPatternBindings(objectManager, contributionRecord);
+        IObjectContributionRecord contributionRecord = objectManager.addObject(pluginId, editor.getId(), editor);
+        objectManager.applyPatternBindings(contributionRecord);
     }
     
     /**
@@ -95,8 +95,10 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
      * @return the manager
      * @since 3.0
      */
-    private ObjectActivityManager getObjectActivityManager() {
-        return ObjectActivityManager.getManager(IWorkbenchConstants.PL_EDITOR + getName() + getExtension(), true);
+    private IObjectActivityManager getObjectActivityManager() {
+        return 
+        	WorkbenchPlugin.getDefault().getWorkbench().
+				getActivityManager(IWorkbenchConstants.PL_EDITOR + getName() + getExtension(), true);
     }
     /**
 	 * Clone the receiver.
@@ -263,7 +265,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 * @return List
 	 */
 	private List filteredEditors() {
-        ObjectActivityManager objectManager = getObjectActivityManager();
+        IObjectActivityManager objectManager = getObjectActivityManager();
         ArrayList filtered = new ArrayList(editors);
         filtered.retainAll(objectManager.getActiveObjects());
         return filtered;

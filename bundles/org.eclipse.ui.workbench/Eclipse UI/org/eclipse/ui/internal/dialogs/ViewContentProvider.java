@@ -17,12 +17,13 @@ import java.util.Iterator;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.ICategory;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.roles.IDERoleManager;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
 
 public class ViewContentProvider implements ITreeContentProvider {
 	/**
@@ -41,7 +42,11 @@ public class ViewContentProvider implements ITreeContentProvider {
 			IViewRegistry reg = (IViewRegistry) element;
 			ICategory[] categories = reg.getCategories();
 
-            ObjectActivityManager objectManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_VIEWS, false);
+            IObjectActivityManager objectManager = 
+            	WorkbenchPlugin.getDefault()
+            		.getWorkbench()
+            		.getActivityManager(
+            			IWorkbenchConstants.PL_VIEWS, false);
             if (objectManager != null) {
                 ArrayList filtered = new ArrayList();
                 Collection activeObjects = objectManager.getActiveObjects();                
@@ -56,9 +61,14 @@ public class ViewContentProvider implements ITreeContentProvider {
 		} else if (element instanceof ICategory) {
 			ArrayList list = ((ICategory) element).getElements();            
 			if (list != null) {
-                ObjectActivityManager objectManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_VIEWS, false);
-                Collection activeObjects = objectManager.getActiveObjects();
+
+				IObjectActivityManager objectManager = 
+					WorkbenchPlugin.getDefault()
+						.getWorkbench()
+						.getActivityManager(
+							IWorkbenchConstants.PL_VIEWS, false);              
                 if (objectManager != null) {
+					Collection activeObjects = objectManager.getActiveObjects();
                     ArrayList filtered = new ArrayList();
                     for (Iterator i = list.iterator(); i.hasNext();) {
                         IViewDescriptor desc = (IViewDescriptor) i.next();

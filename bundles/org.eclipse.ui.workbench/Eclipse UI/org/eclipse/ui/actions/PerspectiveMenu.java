@@ -35,6 +35,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -43,7 +44,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
 
 /**
  * A menu for perspective selection.  
@@ -214,7 +214,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		if (ids == null)
 			return list;
 
-        ObjectActivityManager activityManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+        IObjectActivityManager activityManager = window.getWorkbench().getActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
         if (activityManager != null) {
             // prune all non-active contributions.
             ids.retainAll(activityManager.getActiveObjects());

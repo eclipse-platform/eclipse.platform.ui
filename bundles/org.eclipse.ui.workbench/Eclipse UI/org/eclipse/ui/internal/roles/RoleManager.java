@@ -40,6 +40,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.activities.*;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -51,7 +52,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class RoleManager implements IActivityListener {
 
 	private static RoleManager singleton;
-	private boolean filterRoles = true;
+	private boolean filterRoles = false;
 
 	private Role[] roles = new Role[0];
 	private Hashtable activities = new Hashtable();
@@ -86,9 +87,9 @@ public class RoleManager implements IActivityListener {
 	 * @return RoleManager
 	 */
 	public static RoleManager getInstance() {
-		if (singleton == null)
-			singleton = new RoleManager();
-
+		if (singleton == null){
+			setManager(new RoleManager());
+		}
 		return singleton;
 
 	}
@@ -199,7 +200,7 @@ public class RoleManager implements IActivityListener {
 	 */
 	public void applyPatternBindings(ObjectActivityManager manager, Collection keys) {
 		for (Iterator i = keys.iterator(); i.hasNext();) {
-			ObjectContributionRecord record = (ObjectContributionRecord) i.next();
+			IObjectContributionRecord record = (IObjectContributionRecord) i.next();
 			String objectKey = record.toString();
 			for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext();) {
 				Map.Entry patternEntry = (Map.Entry) j.next();
@@ -235,7 +236,7 @@ public class RoleManager implements IActivityListener {
      * @param record 
      * @since 3.0
      */
-    public void applyPatternBindings(ObjectActivityManager manager, ObjectContributionRecord record) {
+    public void applyPatternBindings(ObjectActivityManager manager, IObjectContributionRecord record) {
         applyPatternBindings(manager, Collections.singleton(record));
     }            
 
@@ -315,7 +316,8 @@ public class RoleManager implements IActivityListener {
 	//classes referring to the startup state.
 	protected void startup() {
 
-		if (readRoles()) {
+		filterRoles = readRoles();
+		if (filterRoles) {
 			//recent activities expire after an hour - create this irre
 			recentActivities = new RecentActivityManager(3600000L);
 			loadEnabledStates();
@@ -569,4 +571,13 @@ public class RoleManager implements IActivityListener {
 		else
 			return true;
 	}
+	/**
+	 * Return the bindings between patterns (key) and an array of 
+	 * activities (value.
+	 * @return Hashtable
+	 */
+	Map getPatternBindings() {
+		return patternBindings;
+	}
+
 }

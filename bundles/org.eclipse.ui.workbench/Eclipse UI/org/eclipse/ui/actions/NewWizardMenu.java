@@ -11,17 +11,33 @@
 package org.eclipse.ui.actions;
 
 
-import org.eclipse.jface.action.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.swt.widgets.Menu;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.NewWizardShortcutAction;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
-
-import java.util.*;
-import java.util.List;
 
 /**
  * A <code>NewWizardMenu</code> is used to populate a menu manager with
@@ -91,8 +107,9 @@ public class NewWizardMenu extends ContributionItem {
 				actions = new ArrayList(((WorkbenchPage) page).getNewWizardActionIds());
                                 
 			if (actions != null) {
-                ObjectActivityManager manager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_NEW, false);
-                if (manager != null) {
+                IObjectActivityManager manager = window.getWorkbench().getActivityManager(IWorkbenchConstants.PL_NEW, false);
+                
+               if (manager != null) {
                     // prune away all IDs that arent active based on the managers opinion.
                     actions.retainAll(manager.getActiveObjects());
                 }

@@ -17,22 +17,45 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
-import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -361,7 +384,9 @@ public class BasicNewProjectResourceWizard
 		IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
 		if (finalPersp != null) {
 			//Enable the role if required.
-            ObjectActivityManager activityManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
+            IObjectActivityManager activityManager = 
+            	PlatformUI.getWorkbench().
+            		getActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
             if (activityManager != null) {
                 activityManager.setEnablementFor(finalPerspId, true);
             }

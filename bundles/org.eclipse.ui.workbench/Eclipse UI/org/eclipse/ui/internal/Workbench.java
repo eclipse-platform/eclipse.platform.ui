@@ -120,6 +120,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
@@ -148,6 +149,7 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.roles.IDERoleManager;
+import org.eclipse.ui.internal.roles.ObjectActivityManager;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -2651,4 +2653,13 @@ public class Workbench
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String, boolean)
+	 */
+	public IObjectActivityManager getActivityManager(String id, boolean create) {
+		return ObjectActivityManager.getManager(id,create);
+	}
+	
+	
 }

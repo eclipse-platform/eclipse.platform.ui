@@ -38,10 +38,10 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
 
 
 
@@ -272,7 +272,10 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget, org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-        ObjectActivityManager prefManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_PREFERENCES, false);
+        IObjectActivityManager prefManager =
+			WorkbenchPlugin.getDefault().getWorkbench()
+        		.getActivityManager(
+        			IWorkbenchConstants.PL_PREFERENCES, false);
         if (prefManager != null) {
             Collection activePages = prefManager.getActiveObjects();            
             if (node instanceof WorkbenchPreferenceNode && !activePages.contains(node)) {

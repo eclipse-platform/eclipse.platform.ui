@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.eclipse.ui.activities.*;
+
 /**
  * Provides a registry of id-&gt;object mappings (likely derived from extension
  * point contributions), id-&gt;activity mappings, and a means of filtering the
@@ -33,7 +35,7 @@ import java.util.Map.Entry;
  * 
  * @since 3.0
  */
-public class ObjectActivityManager implements IActivityListener{
+public class ObjectActivityManager implements IActivityListener, IObjectActivityManager{
 
     /**
      * The map of all known managers.
@@ -127,7 +129,7 @@ public class ObjectActivityManager implements IActivityListener{
      * @param activityId
      * @since 3.0
      */
-    public void addActivityBinding(ObjectContributionRecord record, String activityId) {
+    public void addActivityBinding(IObjectContributionRecord record, String activityId) {
         if (record == null || activityId == null) {
             throw new IllegalArgumentException();
         }    
@@ -157,13 +159,13 @@ public class ObjectActivityManager implements IActivityListener{
      * provided object.
      * @since 3.0
      */
-    public ObjectContributionRecord addObject(String pluginId, String localId, Object object ) {
+    public IObjectContributionRecord addObject(String pluginId, String localId, Object object ) {
     	
         if (pluginId == null || localId == null || object == null) {
             throw new IllegalArgumentException();
         }
 
-        ObjectContributionRecord record = new ObjectContributionRecord(pluginId, localId);
+        IObjectContributionRecord record = new ObjectContributionRecord(pluginId, localId);
         Object oldObject = objectMap.put(record, object);
 
         if (!object.equals(oldObject)) {
@@ -180,11 +182,11 @@ public class ObjectActivityManager implements IActivityListener{
      * @param objectOfInterest
      * @return ObjectContributionRecord or <code>null</code>
      */
-    private ObjectContributionRecord findObjectContributionRecord(Object objectOfInterest) {
+    private IObjectContributionRecord findObjectContributionRecord(Object objectOfInterest) {
         for (Iterator i = objectMap.entrySet().iterator(); i.hasNext(); ) {    
             Map.Entry entry = (Entry) i.next();
             if (entry.getValue().equals(objectOfInterest)) {
-                return (ObjectContributionRecord) entry.getKey();
+                return (IObjectContributionRecord) entry.getKey();
             }
         }
         return null;
@@ -205,7 +207,7 @@ public class ObjectActivityManager implements IActivityListener{
                     Collection activeActivities = getActivityIds();
                     for (Iterator iter = objectMap.entrySet().iterator(); iter.hasNext();) {
                         Map.Entry entry = (Entry) iter.next();
-                        ObjectContributionRecord record = (ObjectContributionRecord) entry.getKey();
+                        IObjectContributionRecord record = (IObjectContributionRecord) entry.getKey();
 						Collection activitiesForId = getActivityIdsFor(record, false);
                         if (activitiesForId == null) {
                             activeObjects.add(entry.getValue());
@@ -254,7 +256,7 @@ public class ObjectActivityManager implements IActivityListener{
      * @param create
      * @return Collection
      */
-    private Collection getActivityIdsFor(ObjectContributionRecord record, boolean create) {
+    private Collection getActivityIdsFor(IObjectContributionRecord record, boolean create) {
         Collection set = (Collection) activityMap.get(record);
         if (set == null && create) {
             set = new HashSet();
@@ -301,7 +303,7 @@ public class ObjectActivityManager implements IActivityListener{
      * @param id the id of the object to remove bindings for.
      * @since 3.0  
      */
-    public void removeActivityBinding(ObjectContributionRecord id) {
+    public void removeActivityBinding(IObjectContributionRecord id) {
         activityMap.remove(id);
     }
     
@@ -355,7 +357,7 @@ public class ObjectActivityManager implements IActivityListener{
      * @param id the id of the object to remove.
      * @since 3.0  
      */
-    public void removeObject(ObjectContributionRecord id) {
+    public void removeObject(IObjectContributionRecord id) {
         synchronized (activeObjects) {
             if (activeObjects.contains(objectMap.remove(id))) {
                 // the cache contained the given object so invalidate it
@@ -374,7 +376,7 @@ public class ObjectActivityManager implements IActivityListener{
      * @since 3.0
      */
     public void setEnablementFor(Object objectOfInterest, boolean enablement) {
-        ObjectContributionRecord record = findObjectContributionRecord(objectOfInterest);
+        IObjectContributionRecord record = findObjectContributionRecord(objectOfInterest);
         if (record != null) {
 			Collection activities = getActivityIdsFor(record, false); 
             if (activities != null && activities.size() > 0) {           
@@ -382,4 +384,47 @@ public class ObjectActivityManager implements IActivityListener{
             }
         }
     }
+    
+	/**
+	 * Apply default pattern bindings to a subset of keys governed by the given 
+	 * manager.
+	 * 
+	 * @param keys a Collection of ObjectContributionRecords on which to apply patterns.
+	 * @since 3.0
+	 */
+    public void applyPatternBindings(Collection keys) {
+   	
+		Map patternBindings = RoleManager.getInstance().getPatternBindings();
+		for (Iterator i = keys.iterator(); i.hasNext();) {
+			IObjectContributionRecord record = (IObjectContributionRecord) i.next();
+			String objectKey = record.toString();
+			for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext();) {
+				Map.Entry patternEntry = (Map.Entry) j.next();
+				if (objectKey.matches((String) patternEntry.getKey())) {
+					Collection activityIds = (Collection) patternEntry.getValue();
+					for (Iterator k = activityIds.iterator(); k.hasNext();) {
+						String activityId = (String) k.next();
+						if (RoleManager.getInstance().getActivity(activityId) != null) {
+							addActivityBinding(record, activityId);
+						}
+					}
+				}
+			}
+		}
+	}
+   
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.IObjectActivityManager#applyPatternBindings()
+	 */
+	public void applyPatternBindings() {
+		applyPatternBindings(getObjectIds());
+	}
+   
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.IObjectActivityManager#applyPatternBindings(org.eclipse.ui.internal.roles.ObjectContributionRecord)
+	 */
+	public void applyPatternBindings(IObjectContributionRecord record) {
+		applyPatternBindings(Collections.singleton(record));
+	
+	}        
 }

@@ -36,11 +36,11 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.roles.ObjectActivityManager;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with
@@ -122,7 +122,7 @@ public class ShowViewMenu extends ContributionItem {
 		// Get visible actions. (copy, we're going to be modifying it)
 		List viewIds = new ArrayList(((WorkbenchPage) page).getShowViewActionIds());
         
-        ObjectActivityManager objectManager = ObjectActivityManager.getManager(IWorkbenchConstants.PL_VIEWS, false);
+        IObjectActivityManager objectManager = window.getWorkbench().getActivityManager(IWorkbenchConstants.PL_VIEWS, false);
         if (objectManager != null) {
             // prune off all filtered views
             viewIds.retainAll(objectManager.getActiveObjects());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
+
+import org.eclipse.ui.activities.*;
 
 /**
  * Class that represents an extension contribution from a given plugin with a 
@@ -25,7 +27,7 @@ package org.eclipse.ui.internal.roles;
  * 
  * This class is immutible for efficiency.  
  */
-public class ObjectContributionRecord {
+class ObjectContributionRecord implements IObjectContributionRecord {
     
     private String pluginId, localId, toString;
     
@@ -86,7 +88,7 @@ public class ObjectContributionRecord {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object arg0) {
-        if (arg0 instanceof ObjectContributionRecord) {
+        if (arg0 instanceof IObjectContributionRecord) {
             return toString().equals(arg0);    
         }
         else {
