@@ -470,7 +470,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				DiffRegion newInfo= new DiffRegion(nextInfo.getType(), nextInfo.getRemovedLinesBelow(), nextInfo.getRemovedLinesAbove());
 				String[] original= nextInfo.getOriginalText();
 				for (int i= 0; i < original.length; i++) {
-					if (i == 0)
+					if (i == 0 && newInfo.type != ILineDiffInfo.UNCHANGED)
 						newInfo.restore= original[i];
 					else {
 						if (newInfo.hidden == null)
@@ -478,7 +478,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 						newInfo.hidden.add(original[i]);
 					}
 				}
-				newInfo.deletedBehind= Math.max(original.length - 1, 0);
+				newInfo.deletedBehind= Math.max(original.length - (newInfo.type == ILineDiffInfo.UNCHANGED ? 0 : 1), 0);
 				Assert.isTrue(newInfo.hidden == null || (newInfo.hidden.size() == newInfo.getRemovedLinesBelow()));
 
 				table.add(newInfo);
@@ -580,7 +580,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		fInitializationJob= new Job(QuickDiffMessages.getString("quickdiff.initialize")) { //$NON-NLS-1$
 
 			public IStatus run(IProgressMonitor monitor) {
-				final IDocument reference= fReferenceProvider == null ? null : fReferenceProvider.getReference();
+				final IDocument reference= fReferenceProvider == null ? null : fReferenceProvider.getReference(monitor);
 				if (monitor != null && monitor.isCanceled())
 					return Status.CANCEL_STATUS;
 

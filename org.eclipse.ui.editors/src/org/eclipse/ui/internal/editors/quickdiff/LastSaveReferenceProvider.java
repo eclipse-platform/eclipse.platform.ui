@@ -18,6 +18,7 @@ import java.io.Reader;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -51,7 +52,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	/*
 	 * @see org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider#getReference()
 	 */
-	public IDocument getReference() {
+	public IDocument getReference(IProgressMonitor monitor) {
 		if (!fDocumentRead)
 			readDocument();
 		return fReference;

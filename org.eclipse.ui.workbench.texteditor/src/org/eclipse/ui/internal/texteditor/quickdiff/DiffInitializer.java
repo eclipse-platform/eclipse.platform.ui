@@ -162,7 +162,6 @@ class DiffInitializer {
 					boolean addLast= last == null;
 					if (addLast) {
 						last= new DiffRegion(ILineDiffInfo.UNCHANGED, 0);
-						last.restore.add(reference.get(reference.getLineOffset(leftLine - 1), reference.getLineLength(leftLine - 1)));
 					} 
 					last.deletedBehind= deleted;
 					for (int j= leftLine; j < leftLine + deleted; j++)

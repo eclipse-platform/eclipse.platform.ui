@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor.quickdiff;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.text.IDocument;
 
 
@@ -27,9 +29,10 @@ public interface IQuickDiffReferenceProvider {
 	/**
 	 * Returns the reference document for the quick diff display.
 	 * 
+	 * @param monitor a preference monitor to monitor / cancel the process, or <code>null</code>
 	 * @return the reference document for the quick diff display
 	 */
-	IDocument getReference();
+	IDocument getReference(IProgressMonitor monitor);
 
 	/**
 	 * Called when the reference is no longer used and the provider can free resources.
