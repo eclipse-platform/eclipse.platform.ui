@@ -86,16 +86,17 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 
 	
 	class ListLayout extends Layout {
+	    static final int VERTICAL_SPACING = 1;
 		boolean refreshBackgrounds;
 		
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {		
-			int w= 0, h= 0;
+			int w= 0, h= -VERTICAL_SPACING;
 			Control[] cs= composite.getChildren();
 			for (int i= 0; i < cs.length; i++) {
 				Control c= cs[i];
 				Point e= c.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 				w= Math.max(w, e.x);
-				h+= e.y;
+				h+= e.y+VERTICAL_SPACING;
 			}
 			return new Point(w, h);
 		}
@@ -120,7 +121,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				Control c= cs[i];
 				Point s= c.computeSize(e.x, SWT.DEFAULT, flushCache);
 				c.setBounds(x, y, s.x, s.y);
-				y+= s.y;
+				y+= s.y+VERTICAL_SPACING;
 				if (refreshBackgrounds && c instanceof JobItem) {
 					((JobItem)c).updateBackground(dark);
 					dark= !dark;

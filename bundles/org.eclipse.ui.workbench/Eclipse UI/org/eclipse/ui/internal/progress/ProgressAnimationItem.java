@@ -78,9 +78,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    	    
 	    if (okImage == null) {
 	        Display display= parent.getDisplay();
-	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.gif").createImage(display);
-	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.gif").createImage(display);
-	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.gif").createImage(display);
+	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.png").createImage(display);
+	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.png").createImage(display);
+	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.png").createImage(display);
 	    }
 		
 		top = new Composite(parent, SWT.NULL);
