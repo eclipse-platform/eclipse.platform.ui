@@ -35,11 +35,10 @@
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
-			<fileset dir="${basedir}" includes="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,webapp.properties" excludes="WEB-INF/classes/"/>
+			<fileset dir="${basedir}" includes="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,webapp.properties" excludes="about.html,WEB-INF/classes/"/>
 		</copy>
 		<!-- custom addition begin -->
 		<copy file="${basedir}/infocenter/web.xml" todir="${destination.temp.folder}/${full.name}/WEB-INF" overwrite="true"/>
-		<copy file="${basedir}/infocenter/about.html" todir="${destination.temp.folder}/${full.name}" overwrite="true"/>
 		<copy file="${basedir}/../org.apache.xerces/xmlParserAPIs.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${basedir}/../org.apache.xerces/xercesImpl.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<!-- custom end -->
@@ -70,7 +69,12 @@
 	<target name="WEB-INF/lib/webappsrc.zip" depends="init" unless="WEB-INF/lib/webappsrc.zip">
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
 		<zip zipfile="${build.result.folder}/WEB-INF/lib/webappsrc.zip" filesonly="false">
+		<!-- custom change begin -->
+		<!--
+			<fileset dir="src/" includes="**/*.java"/>
+		-->
 			<fileset dir="src/" includes="**/*.java" excludes="org/eclipse/help/internal/proxy/**"/>
+		<!-- custom end -->
 		</zip>
 	</target>
 
@@ -91,7 +95,7 @@
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
-			<fileset dir="${basedir}" includes="about.html"/>
+			<fileset dir="${basedir}" includes="cpl-v10.html,notice.html"/>
 		</copy>
 	</target>
 
@@ -105,7 +109,7 @@
 		<delete file="${build.result.folder}/WEB-INF/lib/webappsrc.zip"/>
 		<delete file="${plugin.destination}/${full.name}.jar"/>
 		<!-- custom addition begin -->
-		<delete file="${plugin.destination}/eclipseinfocenter.zip"/>
+		<delete file="${plugin.destination}/${full.name}.war"/>
 		<!-- custom end -->
 		<delete file="${plugin.destination}/${full.name}.zip"/>
 		<delete dir="${temp.folder}"/>
@@ -118,10 +122,11 @@
 	<!-- custom change begin -->
 	<!--
 	<target name="zip.plugin" depends="init">
-		<delete dir="${temp.folder}"/>
-		<mkdir dir="${temp.folder}"/>
 	-->
 	<target name="build.war" depends="init">
+	<!-- custom end -->
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
 		<antcall target="build.jars"/>
 		<antcall target="build.sources"/>
 		<antcall target="gather.bin.parts">
@@ -133,25 +138,13 @@
 		<delete>
 			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
 		</delete>
+		<!-- custom change begin -->
 		<!--
 		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="true"/>
-		<delete dir="${temp.folder}"/>
 		-->
-		<jar jarfile="${temp.folder}/$eclipseinfocenter.war" basedir="${temp.folder}/${full.name}" filesonly="false"/>
-	</target>
-	<!-- custom end -->
-
-	<!-- custom addition begin -->
-	<target name="zip.infocenter" depends="init">
-		<delete dir="${temp.folder}"/>
-		<mkdir dir="${temp.folder}"/>
-		<antcall target="build.war"/>
-		<zip zipfile="${plugin.destination}/eclipseinfocenter.zip">
-		    <zipfileset dir="${temp.folder}" includes="eclipseinfocenter.war"/>
-		    <zipfileset dir="${basedir}/infocenter" includes="about.html,notice.html,cpl-v10.html"/>
-		</zip>
+		<jar jarfile="${plugin.destination}/${full.name}.war" basedir="${temp.folder}/${full.name}" filesonly="false"/>
+		<!-- custom end -->
 		<delete dir="${temp.folder}"/>
 	</target>
-	<!-- custom end -->
 
 </project>
