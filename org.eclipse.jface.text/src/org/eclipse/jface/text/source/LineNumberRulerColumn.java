@@ -338,6 +338,28 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private int fCachedNumberOfDigits= -1;
 	/** Flag indicating whether a relayout is required */
 	private boolean fRelayoutRequired= false;
+	/**
+	 * Redraw runnable lock
+	 * @since 3.0
+	 */
+	private Object fRunnableLock= new Object();
+	/**
+	 * Redraw runnable state
+	 * @since 3.0
+	 */
+	private boolean fIsRunnablePosted= false;
+	/**
+	 * Redraw runnable
+	 * @since 3.0
+	 */
+	private Runnable fRunnable= new Runnable() {
+		public void run() {
+			synchronized (fRunnableLock) {
+				fIsRunnablePosted= false;
+			}
+			redraw();
+		}
+	};
 	
 	
 	/**
@@ -816,11 +838,12 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
-				d.asyncExec(new Runnable() {
-					public void run() {
-						redraw();
-					}
-				});
+				synchronized (fRunnableLock) {
+					if (fIsRunnablePosted)
+						return;
+					fIsRunnablePosted= true;
+				}
+				d.asyncExec(fRunnable);
 			}
 		}
 	}
