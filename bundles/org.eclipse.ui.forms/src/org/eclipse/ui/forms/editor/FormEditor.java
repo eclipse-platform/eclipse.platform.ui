@@ -31,7 +31,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	private FormToolkit toolkit;
 	protected Vector pages;
 	private IEditorPart sourcePage;
-	private IEditorPart lastActiveEditor = null;
 	private int currentPage = -1;
 	/**
 	 * The constructor.
@@ -56,13 +55,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * 'addPage(IFormPage)' method.
 	 */
 	protected abstract void addPages();
-	/**
-	 * Overrides 'super' to create a multi-page key binding editor site for key
-	 * binding delegation down to the editor nested sites.
-	 */
-	protected IEditorSite createSite(IEditorPart editor) {
-		return new MultiPageKeyBindingEditorSite(this, editor);
-	}
 	/**
 	 * Adds the form page to this editor.
 	 * 
@@ -137,12 +129,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 * @see MultiPageEditorPart#pageChange(int)
 	 */
 	protected void pageChange(int newPageIndex) {
-		// deactivate the old editor's site
-		if (lastActiveEditor != null) {
-			((MultiPageKeyBindingEditorSite) lastActiveEditor.getSite())
-					.deactivate();
-			lastActiveEditor = null;
-		}
 		// Now is the absolute last moment to create the page control.
 		IFormPage page = (IFormPage) pages.get(newPageIndex);
 		if (page.getPartControl() == null) {
@@ -170,15 +156,6 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			((IFormPage) pages.get(oldPage)).setActive(false);
 		// Call super - this will cause pages to switch
 		super.pageChange(newPageIndex);
-		// activate the new editor's site
-		IEditorPart activeEditor = getActiveEditor();
-		if (activeEditor != null) {
-			if (activeEditor.getSite() instanceof MultiPageKeyBindingEditorSite) {
-				((MultiPageKeyBindingEditorSite) activeEditor.getSite())
-						.activate();
-				lastActiveEditor = activeEditor;
-			}
-		}
 		this.currentPage = newPageIndex;
 	}
 	/**
