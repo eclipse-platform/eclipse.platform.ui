@@ -203,7 +203,8 @@ function selectTopic(topic)
  */
 function onloadHandler(title)
 {
-	parent.setToolbarTitle(title);
+	if(parent.args && parent.args["tab"]=="toc")
+		parent.setToolbarTitle(title);
 }
 
 // listen for clicks
