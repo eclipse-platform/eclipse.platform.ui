@@ -17,6 +17,7 @@ public abstract class InstallModel extends PluginModelObject {
 	private String version = null;
 	private String providerName = null;
 	private String description = null;
+	private String location = null;
 	private URLModel[] updates = new URLModel[0];
 	private URLModel[] discoveries = new URLModel[0];
 
@@ -31,6 +32,15 @@ public abstract class InstallModel extends PluginModelObject {
  */
 public String getId() {
 	return id;
+}
+
+/**
+ * Returns the location of this component.
+ *
+ * @return the location of this component or <code>null</code>
+ */
+public String getLocation() {
+	return location;
 }
 
 /**
@@ -151,6 +161,17 @@ public void setDescription(String value) {
 }
 
 /**
+ * Sets the location of this component.
+ * This object must not be read-only.
+ *
+ * @param value the location of this component
+ */
+public void setLocation(String value) {
+	assertIsWriteable();
+	location = value;
+}
+
+/**
  * Sets the list of update URLs for this component.
  * This object must not be read-only.
  *
@@ -172,12 +193,4 @@ public void setDiscoveries(URLModel[] value) {
 	discoveries = value;
 }
 
-private String location;
-public String getLocation() {
-	return location;
-}
-public void setLocation(String value) {
-	assertIsWriteable();
-	location = value;
-}
 }
