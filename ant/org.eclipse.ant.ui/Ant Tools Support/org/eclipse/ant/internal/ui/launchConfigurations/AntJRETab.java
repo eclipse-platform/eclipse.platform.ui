@@ -41,10 +41,11 @@ import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -63,20 +64,29 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		Font font= parent.getFont();
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
-		Control control= fJREBlock.getControl();
-		Label label= new Label((Composite) control, SWT.NULL);
-		GridData data = new GridData(GridData.BEGINNING);
-		data.horizontalSpan = 3;
-		label.setLayoutData(data);
+		Composite comp= (Composite)fJREBlock.getControl();
 		
-		label= new Label((Composite) control, SWT.NULL);
+		createVerticalSpacer(comp, 3);
+		
+		Composite updateComp = new Composite(comp, SWT.NONE);
+				
+		GridLayout updateLayout = new GridLayout();
+		updateLayout.numColumns = 2;
+		updateLayout.marginHeight=0;
+		updateLayout.marginWidth=0;
+		updateComp.setLayout(updateLayout);
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 3;
+		updateComp.setLayoutData(gd);
+		updateComp.setFont(font);
+		
+		Label label= new Label(updateComp, SWT.NULL);
 		label.setText(AntLaunchConfigurationMessages.getString("AntJRETab.9")); //$NON-NLS-1$
-		label.setFont(parent.getFont());
+		label.setFont(font);
 		
-		updateClasspathButton= new Button((Composite) control, SWT.PUSH);
-		updateClasspathButton.setFont(parent.getFont());
-		updateClasspathButton.setText(AntLaunchConfigurationMessages.getString("AntJRETab.10")); //$NON-NLS-1$
+		updateClasspathButton= createPushButton(updateComp, AntLaunchConfigurationMessages.getString("AntJRETab.10"), null); //$NON-NLS-1$
 		updateClasspathButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				updateClasspath(getLaunchConfigurationWorkingCopy());
