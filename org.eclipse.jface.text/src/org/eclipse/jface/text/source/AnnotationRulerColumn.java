@@ -228,7 +228,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * 
 	 * @return document offset of the upper left corner including partially visible lines
 	 */
-	private int getInclusiveTopIndexStartOffset() {
+	protected int getInclusiveTopIndexStartOffset() {
 		
 		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {	
 			int top= fCachedTextViewer.getTopIndex();
@@ -249,7 +249,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * 
 	 * @param gc the gc to draw into
 	 */
-	private void doPaint(GC gc) {
+	protected void doPaint(GC gc) {
 	
 		if (fModel == null || fCachedTextViewer == null)
 			return;
