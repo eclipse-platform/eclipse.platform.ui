@@ -25,7 +25,6 @@
 		<zip zipfile="${dest}/externaltoolssrc.zip">
 			<fileset dir="Ant Runner Support"/>
 			<fileset dir="Ant Tools Support"/>
-			<fileset dir="Ant View"/>
 			<fileset dir="External Tools Base"/>
 			<fileset dir="Program Tools Support"/>
 		</zip>
@@ -33,7 +32,6 @@
 		<copy file="plugin.properties" todir="${dest}"/>
 		<copy file=".classpath" todir="${dest}"/>
 		<copy file=".options" todir="${dest}"/>
-<!--		<ant antfile="scripts/buildExtraJAR.xml" target="build"/>  -->
 		<copy file="lib/antrunner.jar" todir="${dest}/lib"/>
 		<copy todir="${dest}/icons">
 			<fileset dir="icons" />

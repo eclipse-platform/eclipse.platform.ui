@@ -41,6 +41,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.*;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;

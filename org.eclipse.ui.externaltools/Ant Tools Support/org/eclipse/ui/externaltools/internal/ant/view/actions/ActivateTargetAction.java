@@ -1,9 +1,10 @@
-package org.eclipse.ui.externaltools.internal.ant.view;
+package org.eclipse.ui.externaltools.internal.ant.view.actions;
 
 import java.util.Iterator;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.texteditor.IUpdate;
 
