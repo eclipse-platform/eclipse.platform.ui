@@ -543,22 +543,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Something other than an <code>ILaunchConfiguration</code> was selected in
-	 * the workbench, so try to determine an <code>ILaunchConfigurationType</code>
-	 * from the selection, then create a new working copy of that type, initialize
-	 * its default values, set this new launch configuration so that the edit area
-	 * tabs get populated, and finally make sure the config type is selected in the 
-	 * configuration tree.
-	 */
-	protected ILaunchConfiguration createConfigFromContext() {
-		ILaunchConfigurationType configType = determineConfigTypeFromContext();
-		if (configType == null) {
-			return null;
-		}
-		return createConfigOfType(configType);
-	}
-	
-	/**
 	 * Create and return a launch configuration of the specified type.
 	 * This method is intended to be called before the UI has been realized, such as in
 	 * the case of single-click launching or creating a config for an initial configuration
@@ -614,20 +598,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		}
  		return group;
 	}
-	
-	/**
-	 * Attempt to determine the launch config type most closely associated
-	 * with the current workbench selection.
-	 */
-	protected ILaunchConfigurationType determineConfigTypeFromContext() {		
-		IResource resource = getResourceContext();
-		ILaunchConfigurationType type = null;
-		if (resource != null) {
-			type = getLaunchManager().getDefaultLaunchConfigurationType(resource.getFileExtension());
-		}
-		return type;		
-	}
-	
+		
 	/**
 	 * Returns the selected IResource context from the workbench,
 	 * or <code>null</code> if there was no context in the workbench.

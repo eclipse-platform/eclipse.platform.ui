@@ -173,45 +173,6 @@ public interface ILaunchManager {
 	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);	
 	
 	/**
-	 * Returns the default launch configuration type for the specified file extension, 
-	 * or <code>null</code> if there is none.
-	 * 
-	 * @param fileExtension the file extension whose associated default launch configuration type 
-	 *  will be returned
-	 * @since 2.0
-	 */
-	public ILaunchConfigurationType getDefaultLaunchConfigurationType(String fileExtension);
-
-	/**
-	 * Return an array of Strings representing all file extensions that have been registered
-	 * by launch configuration types.
-	 * 
-	 * @since 2.0
-	 */
-	public String[] getAllRegisteredFileExtensions();
-
-	/**
-	 * Return an array of launch configuration types that are capable of launching resources
-	 * with the specified file extension, or <code>null</code> if there are none.
-	 * 
-	 * @param fileExtension the file extension that all of the returned launch configuration types
-	 *  are capable of launching
-	 * @since 2.0
-	 */
-	public ILaunchConfigurationType[] getAllLaunchConfigurationTypesFor(String fileExtension);
-
-	/**
-	 * Set the specified launch configuration type as the default for resources with the specified
-	 * file extension.
-	 * 
-	 * @param fileExtension the file extension whose default launch configuration type is being set
-	 * @param configType the String ID of the launch configuration type that is being set as the default for 
-	 *  resources with the specified file extension
-	 * @since 2.0
-	 */
-	public void setDefaultLaunchConfigurationType(String fileExtension, String configTypeID);
-	
-	/**
 	 * Return <code>true</code> if there is a launch configuration with the specified name, 
 	 * <code>false</code> otherwise.
 	 * 
