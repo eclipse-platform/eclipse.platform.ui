@@ -21,39 +21,31 @@ understanding that any code that uses this API will almost certainly be broken
 
 <p>Eclipse Debug Tools UI (debug UI plug-in) provides a set of classes and interfaces to
 support a debugger user interface. A generic debug perspective is provided with a common
-set of views. Clients are allowed to contribute actions to the debug views via the
-standard workbench <b>viewAction</b> extension point, and can
-contribute to popup menus in the debug views via the standard <b>popupMenu</b>
-extension point.</p>
+set of views. Clients contribute actions to the debug views via the
+standard workbench extension points.</p>
 
 <h4>The Debug View</h4>
 
-<p>The debug view presents a tree of launched debug sessions. The view provides support
-for standard debug interactions such as terminating, stepping, suspending, and resuming
-threads and debug targets. The debug view is linked to an editor view, variable view, and
+<p>The debug view presents a tree of launched programs in debug and non-debug (run) mode.
+The view provides support for standard interactions such as terminating, stepping, suspending, and resuming
+threads, debug targets, and processes. The debug view is linked to an editor view, variable view, and
 console. The editor view is used to display source code for stack frames. A selection in
 the debug view causes the line of code being executed to be highlighted in the editor
 view. The variable view shows the visible variables in the selected stack frame, and the
 console view handles I/O for the debuggable process.</p>
 
-<h4>The Process View</h4>
+<h4>The Variables View</h4>
 
-<p>The process view presents a tree of launched programs in normal (non-debug) mode. The
-view provides support for terminating processes, and is linked to the console view to
-support I/O.</p>
+<p>The variables view presents a tree of variables for the currently selected stack frame.</p>
 
-<h4>The Variable View</h4>
+<h4>The Breakpoints View</h4>
 
-<p>The variable view presents a tree of variables for the currently selected stack frame.</p>
-
-<h4>The Breakpoint View</h4>
-
-<p>The breakpoint view presents a list of all breakpoints currently defined in the
+<p>The breakpoints view presents a list of all breakpoints currently defined in the
 workspace. It supports enabling/disabling and breakpoint removal.</p>
 
-<h4>The Inspector View</h4>
+<h4>The Experssion View</h4>
 
-<p>The inspector view presents a tree of expressions that have been evaluated.</p>
+<p>The expression view presents a tree of expressions and their corresponding values.</p>
 
 <h4>Debug Model Presentation</h4>
 
@@ -66,7 +58,7 @@ implementation of a debug model presentation. The presentation provides:
 <ul>
   <li>an image for a debug element or breakpoint</li>
   <li>a label for a debug element or breakpoint</li>
-  <li>an editor input and editor id used to display the debug element or breakpoint</li>
+  <li>an editor input and editor id used to display a debug element, breakpoint, or source element</li>
 </ul>
 
 <h4>Launch Wizard</h4>
