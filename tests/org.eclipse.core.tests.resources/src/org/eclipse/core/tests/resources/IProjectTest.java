@@ -232,6 +232,95 @@ public void testIsNatureEnabled() {
 	}
 }
 
+public void testWorkspaceNotificationDelete() {
+	final int[] count = new int[1];
+	IResourceChangeListener listener = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
+			count[0]++;
+			assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
+			assertTrue("1.2", event.getResource().exists());
+		}	
+	};
+	getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE);
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("1.3", e);
+	}
+	assertTrue("1.4", project.exists());
+	try {
+		project.delete(IResource.FORCE, getMonitor());
+	} catch (CoreException e) {
+		fail("1.5", e);
+	}
+	assertEquals("1.6", 1, count[0]);
+	assertTrue("1.7", !project.exists());
+	getWorkspace().removeResourceChangeListener(listener);
+}
+public void testWorkspaceNotificationMove() {
+	final int[] count = new int[1];
+	IResourceChangeListener listener = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			assertEquals("1.0", IResourceChangeEvent.PRE_DELETE, event.getType());
+			count[0]++;
+			assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
+			assertTrue("1.2", event.getResource().exists());
+		}	
+	};
+	getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE);
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("1.3", e);
+	}
+	assertTrue("1.4", project.exists());
+	try {
+		project.move(new Path("MyNewProject"), IResource.FORCE, getMonitor());
+	} catch (CoreException e) {
+		fail("1.5", e);
+	}
+	assertEquals("1.6", 1, count[0]);
+	assertTrue("1.7", !project.exists());
+	getWorkspace().removeResourceChangeListener(listener);
+}
+public void testWorkspaceNotificationClose() {
+	final int[] count = new int[1];
+	IResourceChangeListener listener = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			assertEquals("1.0", IResourceChangeEvent.PRE_CLOSE, event.getType());
+			count[0]++;
+			assertEquals("1.1", IResource.PROJECT, event.getResource().getType());
+			assertTrue("1.2", event.getResource().exists());
+			assertTrue("1.3", ((IProject) event.getResource()).isOpen());
+		}	
+	};
+	getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_CLOSE);
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("1.4", e);
+	}
+	assertTrue("1.5", project.exists());
+	assertTrue("1.6", project.isOpen());
+	try {
+		project.close(getMonitor());
+	} catch (CoreException e) {
+		fail("1.7", e);
+	}
+	assertEquals("1.8", 1, count[0]);
+	assertTrue("1.9", project.exists());
+	assertTrue("1.10", !project.isOpen());
+	getWorkspace().removeResourceChangeListener(listener);
+}
+
+
 public void testProjectCloseOpen() {
 	IProject target = getWorkspace().getRoot().getProject("Project");
 	ensureExistsInWorkspace(target, true);
