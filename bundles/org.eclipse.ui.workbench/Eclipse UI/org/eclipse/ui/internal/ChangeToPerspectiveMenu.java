@@ -53,7 +53,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		if (IPreferenceConstants.OPM_NEW_WINDOW == mode && persp != null) {
 			try {
 				IWorkbench workbench = getWindow().getWorkbench();
-				IAdaptable input = ((Workbench) workbench).getDefaultWindowInput();
+				IAdaptable input = ((Workbench) workbench).getDefaultPageInput();
 				workbench.openWorkbenchWindow(desc.getId(), input);
 			} catch (WorkbenchException e) {
 				handleWorkbenchException(e);
@@ -64,7 +64,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 			} else {
 				try {
 					IWorkbench workbench = getWindow().getWorkbench();
-					IAdaptable input = ((Workbench) workbench).getDefaultWindowInput();
+					IAdaptable input = ((Workbench) workbench).getDefaultPageInput();
 					getWindow().openPage(desc.getId(), input);
 				} catch(WorkbenchException e) {
 					handleWorkbenchException(e);

@@ -1783,6 +1783,10 @@ public class PerspectivePresentation {
 
 			ILayoutContainer parentContainer = ((ViewPane) pane).getContainer();
 			if (parentContainer instanceof PartTabFolder) {
+				//Check if it is a PartTabFolder as we only want to zoom
+				//the folder. 
+				//TODO: Remove once all views are in PartTabFolder
+				//TODO: See Bug 48794
 				PartTabFolder parent = (PartTabFolder) parentContainer;
 				Perspective persp = page.getActivePerspective();
 				if (persp != null

@@ -19,4 +19,14 @@ public class WorkbenchWindowCommandSupport
 	public ICommandHandlerService getCommandHandlerService() {
 		return workbenchWindowCommandHandlerService;
 	}
+
+	// TODO review post M6 start
+	public void addCommandHandlerService(ICommandHandlerService commandHandlerService) {
+		workbenchWindowCommandHandlerService.addCommandHandlerService(commandHandlerService);	
+	}
+	
+	public void removeCommandHandlerService(ICommandHandlerService commandHandlerService) {
+		workbenchWindowCommandHandlerService.removeCommandHandlerService(commandHandlerService);		
+	}
+	// TODO review post M6 end
 }

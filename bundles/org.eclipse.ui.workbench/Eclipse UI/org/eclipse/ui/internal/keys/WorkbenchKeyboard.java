@@ -20,7 +20,7 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
@@ -39,23 +39,28 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.NotDefinedException;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.util.StatusLineContributionItem;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.keys.SWTKeySupport;
+
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -74,6 +79,11 @@ import org.eclipse.ui.keys.SWTKeySupport;
  */
 public class WorkbenchKeyboard {
 
+	/** 
+	 * Whether the keyboard should kick into debugging mode.  This is a local
+	 * flag, that allows the debugging stuff to be compiled out.
+	 */
+	private static final boolean DEBUG = false;
 	/**
 	 * The maximum height of the multi-stroke key binding assistant shell.
 	 */
@@ -199,6 +209,13 @@ public class WorkbenchKeyboard {
 	 */
 	private final Listener keyDownFilter = new Listener() {
 		public void handleEvent(Event event) {
+			if (DEBUG) {
+				System.out.println("Listener.handleEvent(type=" //$NON-NLS-1$
+				+event.type + ",stateMask=0x" //$NON-NLS-1$
+				+Integer.toHexString(event.stateMask) + ",keyCode=0x" //$NON-NLS-1$
+				+Integer.toHexString(event.keyCode) + ",character=0x" //$NON-NLS-1$
+				+Integer.toHexString(event.character) + ")"); //$NON-NLS-1$
+			}
 			filterKeySequenceBindings(event);
 		}
 	};
@@ -351,6 +368,10 @@ public class WorkbenchKeyboard {
 	 *         otherwise.
 	 */
 	private boolean executeCommand(String commandId, Event event) {
+		if (DEBUG) {
+			System.out.println("WorkbenchKeyboard.executeCommand(commandId=" + commandId + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
 		// Reset the key binding state (close window, clear status line, etc.)
 		resetState();
 
@@ -359,13 +380,15 @@ public class WorkbenchKeyboard {
 		org.eclipse.ui.commands.IHandler action =
 			(org.eclipse.ui.commands.IHandler) actionsById.get(commandId);
 
-		/*
-		if (action == null)
-			System.out.println(commandId + ": null ");
-		else 
-			System.out.println(commandId + ": " + ((ActionHandler) action).getAction());
-		*/
-		
+		if (DEBUG) {
+			if (action == null) {
+				System.out.println("\taction=null"); //$NON-NLS-1$
+			} else {
+				System.out.println("\taction=" + ((ActionHandler) action).getAction()); //$NON-NLS-1$
+				System.out.println("\taction.isEnabled()=" + action.isEnabled()); //$NON-NLS-1$
+			}
+		}
+
 		if (action != null && action.isEnabled()) {
 			try {
 				action.execute(event);
@@ -716,6 +739,11 @@ public class WorkbenchKeyboard {
 	 */
 	public boolean press(List potentialKeyStrokes, Event event, boolean dialogOnly) {
 		// TODO remove event parameter once key-modified actions are removed
+		if (DEBUG) {
+			System.out.println("WorkbenchKeyboard.press(potentialKeyStrokes=" //$NON-NLS-1$
+			+potentialKeyStrokes + ",dialogOnly=" //$NON-NLS-1$
+			+dialogOnly + ")"); //$NON-NLS-1$
+		}
 		// TODO Add proper dialog support
 		if (dialogOnly) {
 			return false;
@@ -730,7 +758,7 @@ public class WorkbenchKeyboard {
 				incrementState(sequenceAfterKeyStroke);
 				return true;
 			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
-				String commandId = getPerfectMatch(sequenceAfterKeyStroke);							
+				String commandId = getPerfectMatch(sequenceAfterKeyStroke);
 				return (executeCommand(commandId, event) || sequenceBeforeKeyStroke.isEmpty());
 			} else if (
 				(multiKeyAssistShell != null)

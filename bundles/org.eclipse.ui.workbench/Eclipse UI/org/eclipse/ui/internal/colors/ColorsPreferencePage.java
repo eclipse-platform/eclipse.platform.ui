@@ -11,12 +11,25 @@
 package org.eclipse.ui.internal.colors;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.ColorSelector;
@@ -31,17 +44,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -51,35 +54,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * 
  * @since 3.0
  */
-public class ColorsPreferencePage
-	extends PreferencePage
-	implements IWorkbenchPreferencePage {
-
-	/**
-	 * Comparator used in <code>ColorDefinition</code> [] searching.
-	 */
-	private static final Comparator COMPARATOR = new Comparator() {
-
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
-		public int compare(Object arg0, Object arg1) {
-			String str0 = getCompareString(arg0);
-			String str1 = getCompareString(arg1);
-			return str0.compareTo(str1);
-		}
-
-		/**
-		 * @param object
-		 * @return <code>String</code> representation of the object.
-		 */
-		private String getCompareString(Object object) {
-			if (object instanceof String)
-				return (String) object;
-			else
-				return ((ColorDefinition) object).getId();
-		}
-	};
+public class ColorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
 	 * The translation bundle in which to look up internationalized text.
@@ -91,11 +66,18 @@ public class ColorsPreferencePage
 	private ColorSelector colorSelector;
 	private Text commentText;
 	private Text descriptionText;
+
+	/**
+	 * Map of defintion id->RGB objects that map to changes expressed in this
+	 * UI session.  These changes should be made in preferences and the 
+	 * registry.
+	 */
+	private Map preferencesToSet = new HashMap(7);
 	private Button resetButton;
 
 	/**
 	 * Map of defintion id->RGB objects that map to changes expressed in this
-	 * UI session.
+	 * UI session.  These changes should be made in the registry.
 	 */
 	private Map valuesToSet = new HashMap(7);
 
@@ -103,6 +85,7 @@ public class ColorsPreferencePage
 	 * Create a new instance of the receiver. 
 	 */
 	public ColorsPreferencePage() {
+		//no-op
 	}
 
 	/**
@@ -155,9 +138,7 @@ public class ColorsPreferencePage
 		Dialog.applyDialogFont(label);
 
 		colorList =
-			new ListViewer(
-				composite,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new ListViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		colorList.setContentProvider(new ArrayContentProvider());
 		colorList.setInput(ColorDefinition.getDefinitions());
 		colorList.setLabelProvider(new LabelProvider() {
@@ -170,9 +151,7 @@ public class ColorsPreferencePage
 		});
 
 		colorList.getControl().setFont(JFaceResources.getViewerFont());
-		data =
-			new GridData(
-				GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		colorList.getControl().setLayoutData(data);
 	}
@@ -197,10 +176,9 @@ public class ColorsPreferencePage
 		label.setText(RESOURCE_BUNDLE.getString("ColorsPreferencePage.comment")); //$NON-NLS-1$
 		Dialog.applyDialogFont(label);
 
-		commentText =
-			new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
+		commentText = new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
 		commentText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 	}
 
 	/* (non-Javadoc)
@@ -253,10 +231,87 @@ public class ColorsPreferencePage
 		label.setText(RESOURCE_BUNDLE.getString("ColorsPreferencePage.description")); //$NON-NLS-1$
 		Dialog.applyDialogFont(label);
 
-		descriptionText =
-			new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
+		descriptionText = new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
 		data = new GridData(GridData.FILL_BOTH);
 		descriptionText.setLayoutData(data);
+	}
+
+	/**
+	 * Get the ancestor of the given color, if any.
+	 * 
+	 * @param definition the descendant <code>ColorDefinition</code>.
+	 * @return the ancestror <code>ColorDefinition</code>, or <code>null</code> 
+	 * 		if none.
+	 */
+	private ColorDefinition getAncestor(ColorDefinition definition) {
+		String defaultsTo = definition.getDefaultsTo();
+		if (defaultsTo == null)
+			return null;
+
+		int idx =
+			Arrays.binarySearch(
+				ColorDefinition.getDefinitions(),
+				defaultsTo,
+				ColorDefinition.ID_COMPARATOR);
+		if (idx < 0)
+			return null;
+		return ColorDefinition.getDefinitions()[idx];
+	}
+
+	/**
+	 * Get the RGB value of the given colors ancestor, if any.
+	 * 
+	 * @param definition the descendant <code>ColorDefinition</code>.
+	 * @return the ancestror <code>RGB</code>, or <code>null</code> if none.
+	 */
+	private RGB getAncestorValue(ColorDefinition definition) {
+		ColorDefinition ancestor = getAncestor(definition);
+		if (ancestor == null)
+			return null;
+
+		return getValue(ancestor);
+	}
+
+	/**
+	 * Get colors that descend from the provided color.
+	 * 
+	 * @param definition the ancestor <code>ColorDefinition</code>.
+	 * @return the ColorDefinitions that have the provided definition as their 
+	 * 		defaultsTo attribute.
+	 */
+	private ColorDefinition[] getDescendantColors(ColorDefinition definition) {
+		List list = new ArrayList(5);
+		String id = definition.getId();
+
+		ColorDefinition[] sorted = new ColorDefinition[ColorDefinition.getDefinitions().length];
+		System.arraycopy(ColorDefinition.getDefinitions(), 0, sorted, 0, sorted.length);
+
+		Arrays.sort(sorted, ColorDefinition.HIERARCHY_COMPARATOR);
+
+		for (int i = 0; i < sorted.length; i++) {
+			if (id.equals(sorted[i].getDefaultsTo()))
+				list.add(sorted[i]);
+		}
+
+		return (ColorDefinition[]) list.toArray(new ColorDefinition[list.size()]);
+	}
+
+	/**
+	 * Get the RGB value for the specified definition.  Cascades through 
+	 * preferenceToSet, valuesToSet and finally the registry.
+	 * 
+	 * @param definition the <code>ColorDefinition</code>.
+	 * @return the <code>RGB</code> value.
+	 */
+	private RGB getValue(ColorDefinition definition) {
+		String id = definition.getId();
+		RGB updatedRGB = (RGB) preferencesToSet.get(id);
+		if (updatedRGB == null) {
+			updatedRGB = (RGB) valuesToSet.get(id);
+			if (updatedRGB == null)
+				updatedRGB = JFaceResources.getColorRegistry().getRGB(id);
+		}
+		return updatedRGB;
 	}
 
 	/**
@@ -270,13 +325,12 @@ public class ColorsPreferencePage
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
 				ColorDefinition definition =
-					(ColorDefinition) ((IStructuredSelection) colorList
-						.getSelection())
+					(ColorDefinition) ((IStructuredSelection) colorList.getSelection())
 						.getFirstElement();
 
 				RGB newRGB = (RGB) event.getNewValue();
-				if (definition != null && newRGB != null) {
-					valuesToSet.put(definition.getId(), newRGB);
+				if (definition != null && newRGB != null && !newRGB.equals(event.getOldValue())) {
+					setPreferenceValue(definition, newRGB);
 				}
 
 				updateControls(definition);
@@ -293,8 +347,7 @@ public class ColorsPreferencePage
 					updateControls(null);
 				} else {
 					updateControls(
-						(ColorDefinition) ((IStructuredSelection) event
-							.getSelection())
+						(ColorDefinition) ((IStructuredSelection) event.getSelection())
 							.getFirstElement());
 				}
 			}
@@ -307,8 +360,7 @@ public class ColorsPreferencePage
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				ColorDefinition definition =
-					(ColorDefinition) ((IStructuredSelection) colorList
-						.getSelection())
+					(ColorDefinition) ((IStructuredSelection) colorList.getSelection())
 						.getFirstElement();
 				if (resetColor(definition))
 					updateControls(definition);
@@ -333,21 +385,27 @@ public class ColorsPreferencePage
 	 */
 	private boolean isDefault(ColorDefinition definition) {
 		String id = definition.getId();
-		if (valuesToSet.containsKey(id)) {
-			if (valuesToSet
-				.get(id)
-				.equals(
-					StringConverter.asRGB(
-						getPreferenceStore().getDefaultString(id),
-						null)))
-				return true;
 
-			return false;
+		if (preferencesToSet.containsKey(id)) {
+			if (definition.getValue() != null) { // value-based color
+				if (preferencesToSet
+					.get(id)
+					.equals(StringConverter.asRGB(getPreferenceStore().getDefaultString(id), null)))
+					return true;
+			} else {
+				if (preferencesToSet.get(id).equals(getAncestorValue(definition)))
+					return true;
+			}
+		} else {
+			if (definition.getValue() != null) { // value-based color
+				if (getPreferenceStore().isDefault(id))
+					return true;
+			} else {
+				// a descendant is default if it's the same value as its ancestor
+				if (getValue(definition).equals(getAncestorValue(definition)))
+					return true;
+			}
 		}
-
-		if (getPreferenceStore().isDefault(id))
-			return true;
-
 		return false;
 	}
 
@@ -356,22 +414,27 @@ public class ColorsPreferencePage
 	 */
 	protected void performDefaults() {
 		ColorDefinition[] definitions = ColorDefinition.getDefinitions();
-		for (int i = 0; i < definitions.length; i++) {
-			resetColor(definitions[i]);
-		}
+
+		// apply defaults in depth-order.
+		ColorDefinition[] definitionsCopy = new ColorDefinition[definitions.length];
+		System.arraycopy(definitions, 0, definitionsCopy, 0, definitions.length);
+
+		Arrays.sort(definitionsCopy, ColorDefinition.HIERARCHY_COMPARATOR);
+
+		for (int i = 0; i < definitionsCopy.length; i++)
+			resetColor(definitionsCopy[i]);
 
 		updateControls(
-			(ColorDefinition) ((IStructuredSelection) colorList.getSelection())
-				.getFirstElement());
+			(ColorDefinition) ((IStructuredSelection) colorList.getSelection()).getFirstElement());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		for (Iterator i = valuesToSet.keySet().iterator(); i.hasNext();) {
+		for (Iterator i = preferencesToSet.keySet().iterator(); i.hasNext();) {
 			String id = (String) i.next();
-			RGB rgb = (RGB) valuesToSet.get(id);
+			RGB rgb = (RGB) preferencesToSet.get(id);
 			String rgbString = StringConverter.asString(rgb);
 			String storeString = getPreferenceStore().getString(id);
 
@@ -381,7 +444,17 @@ public class ColorsPreferencePage
 			}
 		}
 
+		preferencesToSet.clear();
+
+		for (Iterator i = valuesToSet.keySet().iterator(); i.hasNext();) {
+			String id = (String) i.next();
+			RGB rgb = (RGB) valuesToSet.get(id);
+
+			JFaceResources.getColorRegistry().put(id, rgb);
+		}
+
 		valuesToSet.clear();
+
 		return true;
 	}
 
@@ -393,17 +466,54 @@ public class ColorsPreferencePage
 	 */
 	private boolean resetColor(ColorDefinition definition) {
 		if (!isDefault(definition)) {
-			RGB newRGB =
-				StringConverter.asRGB(
-					getPreferenceStore().getDefaultString(definition.getId()),
-					null);
+
+			RGB newRGB;
+			if (definition.getValue() != null) {
+				newRGB =
+					StringConverter.asRGB(
+						getPreferenceStore().getDefaultString(definition.getId()),
+						null);
+			} else {
+				newRGB = getAncestorValue(definition);
+			}
 
 			if (newRGB != null) {
-				valuesToSet.put(definition.getId(), newRGB);
+				setPreferenceValue(definition, newRGB);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Set the value (in registry) for the given colors children.  
+	 * 
+	 * @param definition the <code>ColorDefinition</code> whos children should 
+	 * 		be set.
+	 * @param newRGB the new <code>RGB</code> value for the definitions 
+	 * 		identifier.
+	 */
+	private void setDescendantRegistryValues(ColorDefinition definition, RGB newRGB) {
+		ColorDefinition[] children = getDescendantColors(definition);
+
+		for (int i = 0; i < children.length; i++) {
+			if (isDefault(children[i])) {
+				valuesToSet.put(children[i].getId(), newRGB);
+				setDescendantRegistryValues(children[i], newRGB);
+			}
+		}
+	}
+
+	/**
+	 * Set the value (in preferences) for the given color.  
+	 * 
+	 * @param definition the <code>ColorDefinition</code> to set.
+	 * @param newRGB the new <code>RGB</code> value for the definitions 
+	 * 		identifier.
+	 */
+	protected void setPreferenceValue(ColorDefinition definition, RGB newRGB) {
+		setDescendantRegistryValues(definition, newRGB);
+		preferencesToSet.put(definition.getId(), newRGB);
 	}
 
 	/**
@@ -412,16 +522,9 @@ public class ColorsPreferencePage
 	 * @param definition The currently selected <code>ColorDefinition</code>.
 	 */
 	private void updateControls(ColorDefinition definition) {
-		if (definition != null) {
+		if (definition != null)
+			colorSelector.setColorValue(getValue(definition));
 
-			RGB updatedRGB = (RGB) valuesToSet.get(definition.getId());
-			if (updatedRGB == null)
-				updatedRGB =
-					JFaceResources.getColorRegistry().getRGB(
-						definition.getId());
-
-			colorSelector.setColorValue(updatedRGB);
-		}
 		if (definition != null) {
 			resetButton.setEnabled(true);
 			colorSelector.setEnabled(true);
@@ -431,14 +534,11 @@ public class ColorsPreferencePage
 						Arrays.binarySearch(
 							ColorDefinition.getDefinitions(),
 							definition.getDefaultsTo(),
-							COMPARATOR);
+							ColorDefinition.ID_COMPARATOR);
 
 					if (idx >= 0) {
 						commentText.setText(MessageFormat.format(RESOURCE_BUNDLE.getString("ColorsPreferencePage.currentlyMappedTo"), //$NON-NLS-1$
-						new Object[] {
-							ColorDefinition
-								.getDefinitions()[idx]
-								.getLabel()}));
+						new Object[] { ColorDefinition.getDefinitions()[idx].getLabel()}));
 					} else
 						commentText.setText(""); //$NON-NLS-1$
 				} else

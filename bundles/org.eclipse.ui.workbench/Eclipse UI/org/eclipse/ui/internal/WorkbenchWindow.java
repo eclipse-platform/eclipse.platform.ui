@@ -112,7 +112,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private IPartDropListener partDropListener;
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
-	private KeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
@@ -281,8 +280,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		workbenchWindowCommandSupport = new WorkbenchWindowCommandSupport(this);
 		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);
-		ICompoundCommandHandlerService compoundCommandHandlerService = getWorkbenchImpl().getCommandSupport().getCompoundCommandHandlerService();
-		compoundCommandHandlerService.addCommandHandlerService(actionSetAndGlobalActionCommandHandlerService);
+		((WorkbenchWindowCommandSupport) workbenchWindowCommandSupport).addCommandHandlerService(actionSetAndGlobalActionCommandHandlerService);
 	}
 	/**
 	 * Return the style bits for the fastView bar.
@@ -297,7 +295,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected int perspectiveBarStyle() {
 		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL;
-	}	private Map actionSetHandlersByCommandId = new HashMap();
+	}	
+
+	private Map actionSetHandlersByCommandId = new HashMap();
 	private Map globalActionHandlersByCommandId = new HashMap();
 	private IMutableCommandHandlerService actionSetAndGlobalActionCommandHandlerService = CommandHandlerServiceFactory.getMutableCommandHandlerService();
 	
@@ -1193,6 +1193,94 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 		}
 
+		// Restore the cool bar order by creating all the tool bar contribution items
+		// This needs to be done before pages are created to ensure proper canonical creation
+		// of cool items
+		if (getCoolBarManager() != null) {
+			CoolBarManager coolBarMgr = getCoolBarManager();
+			IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
+			if (coolBarMem != null) {
+				// Check if the layout is locked
+				Integer lockedInt = coolBarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
+				if ((lockedInt != null) && (lockedInt.intValue() == 1)) {
+					coolBarMgr.setLockLayout(true);
+				}else {
+					coolBarMgr.setLockLayout(false);
+				}
+				// The new layout of the cool bar manager
+				ArrayList layout = new ArrayList();
+				// Traverse through all the cool item in the memento
+				IMemento contributionMems[] =
+					coolBarMem.getChildren(IWorkbenchConstants.TAG_COOLITEM);
+				for (int i = 0; i < contributionMems.length; i++) {
+					IMemento contributionMem = contributionMems[i];
+					String type = contributionMem.getString(IWorkbenchConstants.TAG_ITEM_TYPE);
+					if (type == null) {
+						// Do not recognize that type
+						continue;
+					}
+					String id = contributionMem.getString(IWorkbenchConstants.TAG_ID);
+					IContributionItem newItem = null;
+					if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
+						if (id != null) {
+							newItem = new Separator(id);
+						} else {
+							newItem = new Separator();
+						}
+					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER))) {
+						newItem = new GroupMarker(id);
+					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION))) {
+
+						// Get Width and height
+						Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
+						Integer height = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_Y);
+						// Look for the object in the current cool bar manager
+						IContributionItem oldItem = coolBarMgr.find(id);
+						// If a tool bar contribution item already exists for this id then use the old object
+						if (oldItem instanceof ToolBarContributionItem) {
+							newItem = (ToolBarContributionItem) oldItem;
+						} else {
+							newItem =
+								new ToolBarContributionItem(
+										new ToolBarManager(coolBarMgr.getStyle()),
+										id);
+							// make it invisible by default
+							newItem.setVisible(false);
+							// Need to add the item to the cool bar manager so that its canonical order can be preserved
+							IContributionItem refItem =
+								findAlphabeticalOrder(
+										IWorkbenchActionConstants.MB_ADDITIONS,
+										id,
+										coolBarMgr);
+							coolBarMgr.insertAfter(refItem.getId(), newItem);
+						}
+						// Set the current height and width
+						if (width != null) {
+							((ToolBarContributionItem) newItem).setCurrentWidth(width.intValue());
+						}
+						if (height != null) {
+							((ToolBarContributionItem) newItem).setCurrentHeight(height.intValue());
+						}
+					}
+					// Add new item into cool bar manager
+					if (newItem != null) {
+						layout.add(newItem);
+						newItem.setParent(coolBarMgr);
+						coolBarMgr.markDirty();
+					}
+				}
+				// Set the cool bar layout to the given layout.
+				coolBarMgr.setLayout(layout);
+			}else {
+				// For older workbenchs
+				coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+				if (coolBarMem != null) {
+					// Restore an older layout
+					restoreOldCoolBar(coolBarMem);
+				}
+			}
+		}
+
 		// Recreate each page in the window. 
 		IWorkbenchPage newActivePage = null;
 		IMemento[] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
@@ -1203,32 +1291,34 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				continue;
 
 			// Get the input factory.
+			IAdaptable input = null;
 			IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
-			String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-			if (factoryID == null) {
-				WorkbenchPlugin.log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
-				result.add(unableToRestorePage(pageMem));
-				continue;
-			}
-			IAdaptable input;
-			try {
-				UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
-				IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
-				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+			if (inputMem != null) {
+				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+				if (factoryID == null) {
+					WorkbenchPlugin.log("Unable to restore page - no input factory ID."); //$NON-NLS-1$
 					result.add(unableToRestorePage(pageMem));
 					continue;
 				}
-
-				// Get the input element.
-				input = factory.createElement(inputMem);
-				if (input == null) {
-					WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
-					result.add(unableToRestorePage(pageMem));
-					continue;
+				try {
+					UIStats.start(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
+					IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
+					if (factory == null) {
+						WorkbenchPlugin.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+						result.add(unableToRestorePage(pageMem));
+						continue;
+					}
+	
+					// Get the input element.
+					input = factory.createElement(inputMem);
+					if (input == null) {
+						WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
+						result.add(unableToRestorePage(pageMem));
+						continue;
+					}
+				} finally {
+					UIStats.end(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
 				}
-			} finally {
-				UIStats.end(UIStats.RESTORE_WORKBENCH, "WorkbenchPageFactory"); //$NON-NLS-1$
 			}
 			// Open the perspective.
 			WorkbenchPage newPage = null;
@@ -1253,7 +1343,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				String defPerspID =
 					getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
 				WorkbenchPage newPage =
-					new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultWindowInput());
+					new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultPageInput());
 				pageList.add(newPage);
 				firePageOpened(newPage);
 			} catch (WorkbenchException e) {
@@ -1316,6 +1406,171 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		return items[insertIndex];
 	}
+
+	
+	/**
+	 * Restores cool item order from an old workbench.
+	 */
+	private boolean restoreOldCoolBar(IMemento coolbarMem) {
+		// Make sure the tag exist
+		if (coolbarMem == null) {
+			return false;
+		}
+		CoolBarManager coolBarMgr = getCoolBarManager();
+		// Check to see if layout is locked
+		Integer locked = coolbarMem.getInteger(IWorkbenchConstants.TAG_LOCKED);
+		boolean state = (locked != null) && (locked.intValue() == 1);
+		coolBarMgr.setLockLayout(state);
+		
+		// Get the visual layout
+		IMemento visibleLayout = coolbarMem.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+		ArrayList visibleWrapIndicies = new ArrayList();
+		ArrayList visibleItems = new ArrayList();
+		if (visibleLayout != null) {
+			if (readLayout(visibleLayout,visibleItems,visibleWrapIndicies) == false ) {
+				return false;
+			}	
+		}
+		// Get the remembered layout
+		IMemento rememberedLayout = coolbarMem.getChild(IWorkbenchConstants.TAG_LAYOUT);
+		ArrayList rememberedWrapIndicies = new ArrayList();
+		ArrayList rememberedItems = new ArrayList();
+		if (rememberedLayout != null) {
+			if (readLayout(rememberedLayout,rememberedItems,rememberedWrapIndicies) == false ) {
+				return false;
+			}	
+		}
+
+		// Create the objects
+		if (visibleItems != null) {
+			// Merge remembered layout into visible layout
+			if (rememberedItems != null) {		
+				// Traverse through all the remembered items
+				int currentIndex = 0;
+				for (Iterator i = rememberedItems.iterator(); i.hasNext();currentIndex++) {
+					String id = (String)i.next();
+					int index = -1;
+					for(Iterator iter=visibleItems.iterator();iter.hasNext();) {
+						String visibleId = (String)iter.next();
+						if (visibleId.equals(id)) {
+							index = visibleItems.indexOf(visibleId);
+							break;
+						}
+					}
+					// The item is not in the visible list
+					if (index == -1) {
+						int insertAt = Math.max(0,Math.min(currentIndex,visibleItems.size()));
+						boolean separateLine = false;
+						// Check whether this item is on a separate line
+						for(Iterator iter=rememberedWrapIndicies.iterator();iter.hasNext();) {
+							Integer wrapIndex = (Integer)iter.next();
+							if (wrapIndex.intValue() <= insertAt) {
+								insertAt = visibleItems.size();
+								// Add new wrap index for this Item
+								visibleWrapIndicies.add(new Integer(insertAt));
+								separateLine = true;
+							}
+						}
+						// Add item to array list
+						visibleItems.add(insertAt,id);
+						// If the item was not on a separate line then adjust the visible wrap indicies
+						if (!separateLine) {
+							// Adjust visible wrap indicies
+							for(int j=0; j < visibleWrapIndicies.size();j++) {
+								Integer index2 = (Integer)visibleWrapIndicies.get(j);
+								if (index2.intValue() >= insertAt) {
+									visibleWrapIndicies.set(j, new Integer(index2.intValue() + 1));				
+								}
+							}
+						}
+					}
+				}
+			}
+			// The new layout of the cool bar manager
+			ArrayList layout = new ArrayList(visibleItems.size());
+			// Add all visible items to the layout object
+			for (Iterator i = visibleItems.iterator(); i.hasNext();) {
+				String id = (String)i.next();
+				// Look for the object in the current cool bar manager
+				IContributionItem oldItem = null;
+				IContributionItem newItem = null;
+				if (id != null) {
+					oldItem = coolBarMgr.find(id);
+				}
+				// If a tool bar contribution item already exists for this id then use the old object
+				if (oldItem instanceof ToolBarContributionItem) {
+					newItem = (ToolBarContributionItem) oldItem;
+				} else {
+					newItem =
+						new ToolBarContributionItem(
+								new ToolBarManager(coolBarMgr.getStyle()),
+								id);
+					// make it invisible by default
+					newItem.setVisible(false);
+					// Need to add the item to the cool bar manager so that its canonical order can be preserved
+					IContributionItem refItem =
+						findAlphabeticalOrder(
+								IWorkbenchActionConstants.MB_ADDITIONS,
+								id,
+								coolBarMgr);
+					coolBarMgr.insertAfter(refItem.getId(), newItem);
+				}
+				// Add new item into cool bar manager
+				if (newItem != null) {
+					layout.add(newItem);
+					newItem.setParent(coolBarMgr);
+					coolBarMgr.markDirty();
+				}
+			}
+			
+			// Add separators to the displayed Items data structure
+			int offset = 0;
+			for(int i=1; i < visibleWrapIndicies.size(); i++) {
+				int insertAt = ((Integer)visibleWrapIndicies.get(i)).intValue() + offset;
+				layout.add(insertAt,new Separator(CoolBarManager.USER_SEPARATOR));
+				offset++;
+			}
+			
+			// Add any group markers in their appropriate places
+			IContributionItem[] items = coolBarMgr.getItems();
+			for (int i=0; i < items.length; i++) {
+				IContributionItem item = items[i];
+				if (item.isGroupMarker()) {
+					layout.add(Math.max(Math.min(i,layout.size()), 0),item);
+				}
+			}
+			
+			coolBarMgr.setLayout(layout);
+		}
+		return true;
+	}
+	
+	/**
+	 * Helper method used for restoring an old cool bar layout. This method reads the memento
+	 * and populatates the item id's and wrap indicies.
+	 */
+	private boolean readLayout(IMemento memento, ArrayList itemIds, ArrayList wrapIndicies) {
+		// Get the Wrap indicies
+		IMemento [] wraps = memento.getChildren(IWorkbenchConstants.TAG_ITEM_WRAP_INDEX);
+		if (wraps == null) return false;
+		for (int i = 0; i < wraps.length; i++) {
+			IMemento wrapMem = wraps[i];
+			Integer index = wrapMem.getInteger(IWorkbenchConstants.TAG_INDEX);
+			if (index == null) return false;
+			wrapIndicies.add(index);
+		}
+		// Get the Item ids
+		IMemento [] savedItems = memento.getChildren(IWorkbenchConstants.TAG_ITEM);
+		if (savedItems == null) return false;
+		for (int i = 0; i < savedItems.length; i++) {
+			IMemento savedMem = savedItems[i];
+			String id = savedMem.getString(IWorkbenchConstants.TAG_ID);
+			if (id == null) return false;
+			itemIds.add(id);
+		}
+		return true;
+	}
+	
 
 	/* (non-Javadoc)
 	 * Method declared on IRunnableContext.
@@ -1432,32 +1687,33 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		while (enum.hasNext()) {
 			WorkbenchPage page = (WorkbenchPage) enum.next();
 
-			// Get the input.
-			IAdaptable input = page.getInput();
-			if (input == null) {
-				WorkbenchPlugin.log("Unable to save page input: " + page); //$NON-NLS-1$
-				continue;
-			}
-			IPersistableElement persistable =
-				(IPersistableElement) input.getAdapter(IPersistableElement.class);
-			if (persistable == null) {
-				WorkbenchPlugin.log("Unable to save page input: " + input); //$NON-NLS-1$
-				continue;
-			}
-
 			// Save perspective.
 			IMemento pageMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
 			pageMem.putString(IWorkbenchConstants.TAG_LABEL, page.getLabel());
 			result.add(page.saveState(pageMem));
-
+			
 			if (page == getActiveWorkbenchPage()) {
 				pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
 			}
 
-			// Save input.
-			IMemento inputMem = pageMem.createChild(IWorkbenchConstants.TAG_INPUT);
-			inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-			persistable.saveState(inputMem);
+			// Get the input.
+			IAdaptable input = page.getInput();
+			if (input != null) {
+				IPersistableElement persistable =
+					(IPersistableElement) input.getAdapter(IPersistableElement.class);
+				if (persistable == null) {
+					WorkbenchPlugin.log(
+						"Unable to save page input: " //$NON-NLS-1$
+							+ input
+							+ ", because it does not adapt to IPersistableElement"); //$NON-NLS-1$
+				}
+				else {
+					// Save input.	
+					IMemento inputMem = pageMem.createChild(IWorkbenchConstants.TAG_INPUT);
+					inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+					persistable.saveState(inputMem);
+				}
+			}
 		}
 		return result;
 	}

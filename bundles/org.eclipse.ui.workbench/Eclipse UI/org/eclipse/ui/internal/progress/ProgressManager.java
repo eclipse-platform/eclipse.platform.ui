@@ -928,7 +928,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	
 	public void shutdown(){
-		this.listeners.clear();
+		synchronized(listenerKey){
+			this.listeners.clear();
+		}
 		Platform.getJobManager().setProgressProvider(null);
 		Platform.getJobManager().removeJobChangeListener(this.changeListener);
 	}

@@ -48,7 +48,7 @@ public class OpenInNewWindowAction
 	 * @param window the workbench window containing this action
 	 */
 	public OpenInNewWindowAction(IWorkbenchWindow window) {
-		this(window, ((Workbench)window.getWorkbench()).getDefaultWindowInput());
+		this(window, ((Workbench)window.getWorkbench()).getDefaultPageInput());
 	}
 
 	/**

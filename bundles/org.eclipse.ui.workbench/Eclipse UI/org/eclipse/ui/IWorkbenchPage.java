@@ -15,6 +15,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.commands.IWorkbenchPageCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
 
+import org.eclipse.ui.internal.ICompatibleWorkbenchPage;
+
 /**
  * A workbench page consists of an arrangement of views and editors intended to
  * be presented together to the user in a single workbench window.
@@ -41,7 +43,7 @@ import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
  * @see IEditorPart
  * @see IViewPart
  */
-public interface IWorkbenchPage extends IPartService, ISelectionService {
+public interface IWorkbenchPage extends IPartService, ISelectionService, ICompatibleWorkbenchPage {
 	/**
 	 * An optional attribute within a workspace marker (<code>IMarker</code>)
 	 * which identifies the preferred editor type to be opened when <code>openEditor</code>

@@ -53,11 +53,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 			CommandHandlerServiceFactory.getCompoundCommandHandlerService();
 
 		keyboard = new WorkbenchKeyboard(workbench, getCommandManager());
-		Display display = workbench.getDisplay();
-		Listener keyFilter = keyboard.getKeyDownFilter();
-		display.addFilter(SWT.Traverse, keyFilter);
-		display.addFilter(SWT.KeyDown, keyFilter);
-		display.addFilter(SWT.FocusOut, keyFilter);
+		enableKeyFilter();
 	}
 
 	/*

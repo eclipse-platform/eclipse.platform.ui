@@ -184,6 +184,45 @@ public final class Util {
 		}
 	}
 
+	public static boolean endsWith(List left, List right, boolean equals) {
+		if (left == null || right == null)
+			return false;
+		else {
+			int l = left.size();
+			int r = right.size();
+
+			if (r > l || !equals && r == l)
+				return false;
+
+			for (int i = 0; i < r; i++)
+				if (!equals(left.get(l - i - 1), right.get(r - i - 1)))
+					return false;
+
+			return true;
+		}
+	}
+
+	public static boolean endsWith(
+		Object[] left,
+		Object[] right,
+		boolean equals) {
+		if (left == null || right == null)
+			return false;
+		else {
+			int l = left.length;
+			int r = right.length;
+
+			if (r > l || !equals && r == l)
+				return false;
+
+			for (int i = 0; i < r; i++)
+				if (!equals(left[l - i - 1], right[r - i - 1]))
+					return false;
+
+			return true;
+		}
+	}
+
 	public static boolean equals(boolean left, boolean right) {
 		return left == right;
 	}

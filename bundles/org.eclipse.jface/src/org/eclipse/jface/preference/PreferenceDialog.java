@@ -21,7 +21,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.HelpEvent;
@@ -109,6 +112,10 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 	//The id of the last page that was selected
 	private static String lastPreferenceId = null;
+
+	//The last known sash weights
+	private static int[] lastSashWeights = null;
+
 	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR; //$NON-NLS-1$
 	/**
 	 * Title area fields
@@ -119,7 +126,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif")); //$NON-NLS-1$
 	}
-
+		
 	/**
 	 * The Cancel button.
 	 */
@@ -332,15 +339,39 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
-		((GridLayout) composite.getLayout()).numColumns = 2;
-		((GridLayout) composite.getLayout()).horizontalSpacing = 10;
+		final Composite composite = (Composite) super.createDialogArea(parent);
+		((GridLayout) composite.getLayout()).numColumns = 1;
+		final SashForm form = new SashForm(composite, SWT.HORIZONTAL);
+		form.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createTreeAreaContents(composite);
+		createTreeAreaContents(form);
+
+		Composite pageAreaComposite = new Composite(form, SWT.NONE);
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 10;
+		pageAreaComposite.setLayout(layout);
+
+		pageAreaComposite.addControlListener(new ControlListener() {
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
+			 */
+			public void controlMoved(ControlEvent e) {
+				// no-op
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
+			 */
+			public void controlResized(ControlEvent e) {
+				setFormWeights(form.getWeights());
+			}
+		});
 
 		// Build the title area and separator line
-		Composite titleComposite = new Composite(composite, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		Composite titleComposite = new Composite(pageAreaComposite, SWT.NONE);
+		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 0;
@@ -351,11 +382,16 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		createTitleArea(titleComposite);
 
 		// Build the Page container
-		pageContainer = createPageContainer(composite);
+		pageContainer = createPageContainer(pageAreaComposite);
 		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		int[] weights = getFormWeights();
+		if (weights == null)
+			weights = new int[] { 1, 3 };
+		form.setWeights(weights);
+
 		// Build the separator line
-		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
@@ -561,6 +597,15 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				return node;
 		}
 		return null;
+	}
+
+	/**
+	 * Get the last known sash weights.
+	 * 
+	 * @return the sash weights, or <code>null</code> if unknown.
+	 */
+	private int[] getFormWeights() {
+		return lastSashWeights;
 	}
 
 	/**
@@ -802,6 +847,15 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			}
 		}
 		titleArea.layout(true);
+	}
+
+	/**
+	 * Save the last known sash weights.
+	 * 
+	 * @param weights the weights.
+	 */
+	private void setFormWeights(int[] weights) {
+		lastSashWeights = weights;
 	}
 
 	/**
@@ -1147,7 +1201,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	public void updateTitle() {
 		updateMessage();
 	}
-	
+
 	/**
 	 * Update the tree to use the specified <code>Font</code>.
 	 * 
@@ -1155,6 +1209,6 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @since 3.0
 	 */
 	protected void updateTreeFont(Font dialogFont) {
-		getTreeViewer().getControl().setFont(dialogFont);		
-	}	
+		getTreeViewer().getControl().setFont(dialogFont);
+	}
 }

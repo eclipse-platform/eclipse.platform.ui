@@ -87,6 +87,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_TITLE = "title"; //$NON-NLS-1$
 	public static final String TAG_X = "x"; //$NON-NLS-1$
 	public static final String TAG_Y = "y"; //$NON-NLS-1$
+	public static final String TAG_ITEM_WRAP_INDEX = "wrapIndex";	//$NON-NLS-1$
+	public static final String TAG_TOOLBAR_LAYOUT = "toolbarLayout";	//$NON-NLS-1$
 	public static final String TAG_WIDTH = "width"; //$NON-NLS-1$
 	public static final String TAG_HEIGHT = "height"; //$NON-NLS-1$
 	public static final String TAG_MINIMIZED = "minimized"; //$NON-NLS-1$

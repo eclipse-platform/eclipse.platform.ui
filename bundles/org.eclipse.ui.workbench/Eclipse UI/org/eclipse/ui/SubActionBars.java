@@ -333,7 +333,6 @@ public class SubActionBars implements IActionBars {
 	 * menu, status line, or toolbar.
 	 */
 	public void updateActionBars() {
-		IToolBarManager mgr = getToolBarManager();
 		parent.updateActionBars();
 		fireActionHandlersChanged();
 	}
