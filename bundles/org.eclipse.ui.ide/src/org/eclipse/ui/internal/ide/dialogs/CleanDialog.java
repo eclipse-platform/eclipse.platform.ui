@@ -125,7 +125,7 @@ public class CleanDialog extends MessageDialog {
                     //start an immediate workspace build
                     GlobalBuildAction build = new GlobalBuildAction(window,
                             IncrementalProjectBuilder.INCREMENTAL_BUILD);
-                    build.run();
+                    build.doBuild();
                 }
                 return Status.OK_STATUS;
     		}
@@ -179,7 +179,8 @@ public class CleanDialog extends MessageDialog {
             buildNowButton = new Button(parent, SWT.CHECK);
             buildNowButton.setText(IDEWorkbenchMessages
                     .getString("CleanDialog.buildNowButton")); //$NON-NLS-1$
-            buildNowButton.setSelection(settings.getBoolean(BUILD_NOW));
+            String buildNow = settings.get(BUILD_NOW);
+            buildNowButton.setSelection(buildNow == null || Boolean.valueOf(buildNow).booleanValue());
             buildNowButton.setLayoutData(new GridData(
                     GridData.HORIZONTAL_ALIGN_BEGINNING));
         }
