@@ -11,7 +11,7 @@ click on Java Package in the right column. Fill in the name of your package and 
 
 To create a Java class, select the package in the navigator view and click on the 
 "Open the New Wizard" toolbar button (on the far left of the toolbar). This toolbar button
-provides us with a quick alternative to File > New.  Choose Java Class in the right column of
+provides us with a quick alternative to File > New > Other... .  Choose Java Class in the right column of
 the category Java, and click Next. In the class wizard fill in the name of your class and 
 click Finish to create the class and start editing it.</item>
 
