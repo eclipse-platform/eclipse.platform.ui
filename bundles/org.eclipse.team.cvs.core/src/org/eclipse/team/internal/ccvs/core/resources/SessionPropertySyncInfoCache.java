@@ -147,11 +147,19 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			IResource[] members = container.members();
 			for (int i = 0; i < members.length; i++) {
 				IResource resource = members[i];
-				resource.setSessionProperty(RESOURCE_SYNC_KEY, null);
+				purgeResourceSyncCache(resource);
 				if (deep && resource.getType() != IResource.FILE) {
 					purgeCache((IContainer) resource, deep);
 				}
 			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	
+	/* package*/ void purgeResourceSyncCache(IResource resource) throws CVSException {
+		try {
+			resource.setSessionProperty(RESOURCE_SYNC_KEY, null);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}

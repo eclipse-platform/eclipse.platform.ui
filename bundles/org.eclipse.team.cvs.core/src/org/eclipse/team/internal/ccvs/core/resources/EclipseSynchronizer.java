@@ -440,6 +440,13 @@ public class EclipseSynchronizer {
 			monitor.done();
 		}
 	}
+
+	private void purgeCache(IResource resource, boolean deep) throws CVSException {
+		sessionPropertyCache.purgeResourceSyncCache(resource);
+		if (resource.getType() != IResource.FILE) {
+			sessionPropertyCache.purgeCache((IContainer)resource, deep);
+		}
+	}
 	
 	/**
 	 * Called to notify the synchronizer that meta files have changed on disk, outside 
@@ -469,6 +476,7 @@ public class EclipseSynchronizer {
 	 * Take any appropriate action to remember the CVS information.
 	 */
 	public void prepareForDeletion(IResource resource) throws CVSException {
+		if (!resource.exists()) return;
 		try {
 			beginOperation(null);
 			// Flush the dirty info for the resource and it's ancestors.
@@ -511,6 +519,37 @@ public class EclipseSynchronizer {
 		} finally {
 			endOperation(null);
 		}
+	}
+	
+	/**
+	 * Prepare for a move or delete within the move/delete hook by moving the
+	 * sync info into phantom space and flushing the session properties cache.
+	 * This will allow sync info for deletions to be maintained in the source
+	 * location and sync info at the destination to be preserved as well.
+	 * 
+	 * @param resource
+	 * @param monitor
+	 * @throws CVSException
+	 */
+	public void prepareForMoveDelete(IResource resource, IProgressMonitor monitor) throws CVSException {
+		// Move sync info to phantom space for the resource and all it's children
+		try {
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+					try {
+						prepareForDeletion(resource);
+					} catch (CVSException e) {
+						CVSProviderPlugin.log(e);
+						throw new CoreException(e.getStatus());
+					}
+					return true;
+				}
+			});
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+		// purge the sync info to clear the session properties
+		purgeCache(resource, true);
 	}
 	
 	public void created(IResource resource) throws CVSException {
