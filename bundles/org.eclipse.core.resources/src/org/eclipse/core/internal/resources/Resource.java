@@ -616,9 +616,9 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.deleting", getFullPath().toString()); //$NON-NLS-1$
-		monitor.beginTask(message, Policy.totalWork*1000);
+		monitor.beginTask(message, Policy.totalWork * 1000);
 		try {
-			workspace.prepareOperation(getParent());
+			workspace.prepareOperation(getType() == ROOT ? (ISchedulingRule)this : getParent());
 			/* if there is no such resource (including type check) then there is nothing
 			   to delete so just return. */
 			if (!exists())
@@ -632,25 +632,25 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 			ResourceTree tree = new ResourceTree(status, updateFlags);
 			IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 			switch (getType()) {
-				case IResource.FILE:
-					if (!hook.deleteFile(tree, (IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
-						tree.standardDeleteFile((IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
+				case IResource.FILE :
+					if (!hook.deleteFile(tree, (IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
+						tree.standardDeleteFile((IFile) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
 					break;
-				case IResource.FOLDER:
-					if (!hook.deleteFolder(tree, (IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
-						tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
+				case IResource.FOLDER :
+					if (!hook.deleteFolder(tree, (IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
+						tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
 					break;
-				case IResource.PROJECT:
+				case IResource.PROJECT :
 					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, this));
-					if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2)))
-						tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/2));
+					if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
+						tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2));
 					break;
-				case IResource.ROOT:
+				case IResource.ROOT :
 					IProject[] projects = ((IWorkspaceRoot) this).getProjects();
 					for (int i = 0; i < projects.length; i++) {
 						workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
-						if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2)))
-							tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork*1000/projects.length/2));
+						if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2)))
+							tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2));
 					}
 					// need to clear out the root info
 					workspace.getMarkerManager().removeMarkers(this, IResource.DEPTH_ZERO);
@@ -670,7 +670,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork*1000));
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork * 1000));
 		}
 	} finally {
 		monitor.done();
@@ -1164,14 +1164,13 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = (getType() == ROOT) 
-			? Policy.bind("resources.refreshingRoot") //$NON-NLS-1$
-			: Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$
+		boolean isRoot = getType() == ROOT;
+		String message = isRoot ? Policy.bind("resources.refreshingRoot") : Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
 		try {
-			workspace.prepareOperation(getParent());
-			if (getType() != ROOT && !getProject().isAccessible())
+			workspace.prepareOperation(isRoot ? (ISchedulingRule) this : getParent());
+			if (!isRoot && !getProject().isAccessible())
 				return;
 			workspace.beginOperation(true);
 			build = getLocalManager().refresh(this, depth, true, Policy.subMonitorFor(monitor, Policy.opWork));
