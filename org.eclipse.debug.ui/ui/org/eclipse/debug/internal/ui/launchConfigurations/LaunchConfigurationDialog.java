@@ -481,7 +481,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		int marginWidth = ((GridLayout)getSelectionArea().getLayout()).marginWidth;
 		int horizontalSpacing = ((GridLayout)getSelectionArea().getLayout()).horizontalSpacing;
 		requiredWidth += (2 * marginWidth) + horizontalSpacing;
-		int currentWidth = getSelectionArea().getBounds().width + (2 * marginWidth);
+		//int currentWidth = getSelectionArea().getBounds().width + (2 * marginWidth);
+		int currentWidth = getSelectionArea().getBounds().width;
 
 		if (requiredWidth > currentWidth) {
 			int[] newSashWeights = new int[2];
