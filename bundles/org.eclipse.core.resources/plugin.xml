@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="Core Resource Management"
+  name="%pluginName"
   id="org.eclipse.core.resources"
   version="0.9"
   provider-name="Object Technology International, Inc."
@@ -16,32 +16,32 @@
     </library>
   </runtime>
 
-  <extension-point name="Builders" id="builders"/>
-  <extension-point name="Markers" id="markers"/>
-  <extension-point name="Project Natures" id="natures"/>
+  <extension-point name="%buildersName" id="builders"/>
+  <extension-point name="%markersName" id="markers"/>
+  <extension-point name="%naturesName" id="natures"/>
 
-  <extension id="marker" point="org.eclipse.core.resources.markers" name="Marker"/>
-  <extension id="problemmarker" point="org.eclipse.core.resources.markers" name="Problem">
+  <extension id="marker" point="org.eclipse.core.resources.markers" name="%markerName"/>
+  <extension id="problemmarker" point="org.eclipse.core.resources.markers" name="%problemName">
     <super type="org.eclipse.core.resources.marker"/>
     <persistent value="true"/>
     <attribute name="severity"/>
     <attribute name="message"/>
     <attribute name="location"/>
   </extension>
-  <extension id="taskmarker" point="org.eclipse.core.resources.markers" name="Task">
+  <extension id="taskmarker" point="org.eclipse.core.resources.markers" name="%taskName">
     <super type="org.eclipse.core.resources.marker"/>
     <persistent value="true"/>
     <attribute name="priority"/>
     <attribute name="message"/>
     <attribute name="done"/>
   </extension>
-  <extension id="bookmark" point="org.eclipse.core.resources.markers" name="Bookmark">
+  <extension id="bookmark" point="org.eclipse.core.resources.markers" name="%bookmarkName">
     <super type="org.eclipse.core.resources.marker"/>
     <persistent value="true"/>
     <attribute name="message"/>
     <attribute name="location"/>
   </extension>
-  <extension id="textmarker" point="org.eclipse.core.resources.markers" name="Text">
+  <extension id="textmarker" point="org.eclipse.core.resources.markers" name="%textName">
     <super type="org.eclipse.core.resources.marker"/>
     <attribute name="charStart"/>
     <attribute name="charEnd"/>
