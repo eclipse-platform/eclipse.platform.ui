@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ant.core;
-
 
 import java.net.URL;
 import java.util.Arrays;
@@ -95,6 +94,13 @@ public class AntCorePlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public static final String HEADLESS = "headless"; //$NON-NLS-1$
+	
+	/**
+	 * Simple identifier constant (value <code>"eclipseRuntime"</code>) of a tag
+	 * that appears in Ant extensions.
+	 * @since 3.0
+	 */
+	public static final String ECLIPSE_RUNTIME = "eclipseRuntime"; //$NON-NLS-1$
 	
 	/**
 	 * Simple identifier constant (value <code>"value"</code>) of a tag

@@ -74,8 +74,16 @@
          <attribute name="headless" type="string" use="optional">
             <annotation>
                <documentation>
-                  Indicates whether this property is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
+                  indicates whether this property is suitable for use in a "headless" Ant environment. If running headless and the attribute is "false", 
                   the property will not be set and any specified &lt;samp&gt;org.eclipse.ant.core.IAntPropertyProvider&lt;/samp&gt; will not be instantiated.
+                  The implied value is true, when not specified.
+               </documentation>
+            </annotation>
+         </attribute>
+          <attribute name="eclipseRuntime" type="string" use="optional">
+            <annotation>
+               <documentation>
+                  indicates whether this property requires the context of the Eclipse runtime to be relevant.
                   The implied value is true, when not specified.
                </documentation>
             </annotation>
