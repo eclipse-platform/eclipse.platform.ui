@@ -35,6 +35,9 @@ public interface ILocalSite {
 	 * an empty array is there is no history
 	 */
 	public IInstallConfiguration [] getConfigurationHistory();
+	
+	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
+	void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
 
 }
 

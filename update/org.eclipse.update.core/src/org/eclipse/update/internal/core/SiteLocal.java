@@ -9,6 +9,7 @@ import java.net.URL;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.ILocalSiteChangedListener;
 
 /**
  * This class manages the configurations.
@@ -16,6 +17,7 @@ import org.eclipse.update.core.*;
 
 public class SiteLocal implements ILocalSite {
 
+	private ListenersList listeners = new ListenersList();
 	public static final String INSTALL_CONFIGURATION_FILE = "Local_site.config";
 
 	private IInstallConfiguration[] configurations;
@@ -67,6 +69,12 @@ public class SiteLocal implements ILocalSite {
 				ISite site = SiteManager.getSite(execURL);
 				currentConfiguration = new InstallConfiguration();
 
+				// notify listeners
+				Object[] localSiteListeners = listeners.getListeners();
+				for (int i = 0; i < localSiteListeners.length; i++) {
+					((ILocalSiteChangedListener) localSiteListeners[i]).currentInstallConfigurationChanged(currentConfiguration);
+				}
+
 				//FIXME: the pluign site may not be read-write
 				currentConfiguration.addInstallSite(site);
 			} catch (Exception e) {
@@ -77,4 +85,22 @@ public class SiteLocal implements ILocalSite {
 		}
 
 	}
+	/*
+	 * @see ILocalSite#addLocalSiteChangedListener(ILocalSiteChangedListener)
+	 */
+	public void addLocalSiteChangedListener(ILocalSiteChangedListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	/*
+	 * @see ILocalSite#removeLocalSiteChangedListener(ILocalSiteChangedListener)
+	 */
+	public void removeLocalSiteChangedListener(ILocalSiteChangedListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
 }

@@ -77,6 +77,9 @@ public interface IInstallConfiguration {
 	 */
 	public void removeLinkedSite(ISite site);	
 	
+	void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
+	void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
+	
 
 }
 

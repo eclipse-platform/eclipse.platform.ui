@@ -9,17 +9,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IInstallConfigurationChangedListener;
 
 public class InstallConfiguration implements IInstallConfiguration {
-	
+
+	private ListenersList listeners = new ListenersList();
 	private boolean isCurrent;
-	private List installSites ;
-	private List linkedSites ;
-	private List features ;
-	
+	private List installSites;
+	private List linkedSites;
+	private List features;
+
 	/*
 	 * default constructor. Create
-	 */ 
+	 */
 	public InstallConfiguration() {
 		this.isCurrent = true;
 	}
@@ -28,37 +30,37 @@ public class InstallConfiguration implements IInstallConfiguration {
 	 * @see IInstallConfiguration#getFeatures()
 	 */
 	public IFeatureReference[] getFeatures() {
-		
+
 		IFeatureReference[] result = new IFeatureReference[0];
-		
+
 		// initialize if needed
-		if (features==null){
+		if (features == null) {
 			features = new ArrayList();
 			//FIXME: what about startup
 			//don't they resolve the plugin list
-			if (installSites!=null){			
+			if (installSites != null) {
 				Iterator iter = installSites.iterator();
 				while (iter.hasNext()) {
 					ISite currentSite = (ISite) iter.next();
-					features.addAll(Arrays.asList(currentSite.getFeatureReferences()));		
+					features.addAll(Arrays.asList(currentSite.getFeatureReferences()));
 				}
 			}
-			if (linkedSites!=null){
+			if (linkedSites != null) {
 				Iterator iter = linkedSites.iterator();
 				while (iter.hasNext()) {
 					ISite currentSite = (ISite) iter.next();
-					features.addAll(Arrays.asList(currentSite.getFeatureReferences()));		
+					features.addAll(Arrays.asList(currentSite.getFeatureReferences()));
 				}
 			}
 		}
 
-System.out.println(features);
-		if (features!=null && !features.isEmpty()){
+		System.out.println(features);
+		if (features != null && !features.isEmpty()) {
 			// move List in Array
 			result = new IFeatureReference[features.size()];
-			features.toArray(result);	
-		}		
-		
+			features.toArray(result);
+		}
+
 		return result;
 	}
 
@@ -67,7 +69,7 @@ System.out.println(features);
 	 */
 	public ISite[] getInstallSites() {
 		ISite[] sites = new ISite[0];
-		if (installSites!=null && !installSites.isEmpty()) {
+		if (installSites != null && !installSites.isEmpty()) {
 			sites = new ISite[installSites.size()];
 			installSites.toArray(sites);
 		}
@@ -78,21 +80,35 @@ System.out.println(features);
 	 * @see IInstallConfiguration#addInstallSite(ISite)
 	 */
 	public void addInstallSite(ISite site) {
-		if (!isCurrent) return;
-		if (installSites==null){
+		if (!isCurrent)
+			return;
+		if (installSites == null) {
 			installSites = new ArrayList();
 		}
 		installSites.add(site);
+
+		// notify listeners
+		Object[] configurationListeners = listeners.getListeners();
+		for (int i = 0; i < configurationListeners.length; i++) {
+			((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteAdded(site);
+		}
 	}
 
 	/*
 	 * @see IInstallConfiguration#removeInstallSite(ISite)
 	 */
 	public void removeInstallSite(ISite site) {
-		if (!isCurrent) return;
+		if (!isCurrent)
+			return;
 		//FIXME: remove should make sure we synchronize
-		if (installSites!=null){
+		if (installSites != null) {
 			installSites.remove(site);
+
+			// notify listeners
+			Object[] configurationListeners = listeners.getListeners();
+			for (int i = 0; i < configurationListeners.length; i++) {
+				((IInstallConfigurationChangedListener) configurationListeners[i]).installSiteRemoved(site);
+			}
 		}
 	}
 
@@ -101,7 +117,7 @@ System.out.println(features);
 	 */
 	public ISite[] getLinkedSites() {
 		ISite[] sites = new ISite[0];
-		if (linkedSites!=null){
+		if (linkedSites != null) {
 			sites = new ISite[linkedSites.size()];
 			linkedSites.toArray(sites);
 		}
@@ -112,21 +128,33 @@ System.out.println(features);
 	 * @see IInstallConfiguration#addLinkedSite(ISite)
 	 */
 	public void addLinkedSite(ISite site) {
-		if (!isCurrent) return;
-		if (linkedSites==null){
+		if (!isCurrent)
+			return;
+		if (linkedSites == null) {
 			linkedSites = new ArrayList();
 		}
 		linkedSites.add(site);
+		// notify listeners
+		Object[] configurationListeners = listeners.getListeners();
+		for (int i = 0; i < configurationListeners.length; i++) {
+			((IInstallConfigurationChangedListener) configurationListeners[i]).linkedSiteAdded(site);
+		}
 	}
 
 	/*
 	 * @see IInstallConfiguration#removeLinkedSite(ISite)
 	 */
 	public void removeLinkedSite(ISite site) {
-		if (!isCurrent) return;
+		if (!isCurrent)
+			return;
 		//FIXME: remove should make sure we synchronize
-		if (linkedSites!=null){
+		if (linkedSites != null) {
 			linkedSites.remove(site);
+			// notify listeners
+			Object[] configurationListeners = listeners.getListeners();
+			for (int i = 0; i < configurationListeners.length; i++) {
+				((IInstallConfigurationChangedListener) configurationListeners[i]).linkedSiteRemoved(site);
+			}
 		}
 	}
 
@@ -137,5 +165,22 @@ System.out.println(features);
 		return isCurrent;
 	}
 
-}
+	/*
+	 * @see IInstallConfiguration#addInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
+	 */
+	public void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
 
+	/*
+	 * @see IInstallConfiguration#removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
+	 */
+	public void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+}

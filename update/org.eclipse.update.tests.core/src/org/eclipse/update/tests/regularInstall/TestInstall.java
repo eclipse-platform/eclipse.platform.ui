@@ -9,10 +9,39 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestInstall extends UpdateManagerTestCase {
+	
+	
+	public class Listener implements ISiteChangedListener{
+		
+		public boolean notified = false;
+		/*
+		 * @see ISiteChangedListener#featureUpdated(IFeature)
+		 */
+		public void featureUpdated(IFeature feature) {}
+
+			/*
+		 * @see ISiteChangedListener#featureInstalled(IFeature)
+		 */
+		public void featureInstalled(IFeature feature) {
+			notified = true;
+			System.out.println("Notified Feature Installed");
+		}
+
+		/*
+		 * @see ISiteChangedListener#featureUninstalled(IFeature)
+		 */
+		public void featureUninstalled(IFeature feature) {}
+
+		public boolean isNotified() {
+			return notified;
+		}
+}	
+	
 	/**
 	 * Constructor for Test1
 	 */
@@ -114,9 +143,14 @@ public class TestInstall extends UpdateManagerTestCase {
 			}
 		}
 
+		
+
 		assertNotNull("Cannot find help.jar on site", remoteFeature);
 		ILocalSite localSite = SiteManager.getLocalSite();
 		ISite site = localSite.getCurrentConfiguration().getInstallSites()[0];
+		Listener listener = new Listener();
+		site.addSiteChangedListener(listener);
+		
 		site.install(remoteFeature, null);
 
 
@@ -133,14 +167,22 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
+		
+		assertTrue("Listener hasn't received notification",listener.isNotified());
 	}
 	
 	
 	public void testFileSiteWithoutSiteXML() throws Exception {
-		ISite remoteSite = SiteManager.getTempSite();
+		
+		
+		ISite remoteSite = SiteManager.getLocalSite().getCurrentConfiguration().getInstallSites()[0];
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
-		if (features.length!=0) fail("The site contains feature");
+		if (features.length==0) fail("The local site does not contain feature, should not contain an XML file but features should be found anyway by parsing");
+		
+		remoteSite = SiteManager.getSite(new URL("http://www.eclipse.org/"));
+		features = remoteSite.getFeatureReferences();
+		if (features.length!=0) fail("The site contains feature... it is an HTTP site without an XML file, so it should not contain any features");
+		
 	}
-	
 	
 }
