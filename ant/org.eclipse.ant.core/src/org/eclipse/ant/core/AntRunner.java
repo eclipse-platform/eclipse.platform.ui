@@ -349,11 +349,16 @@ public class AntRunner implements IPlatformRunnable {
 			problemLoadingClass(realException);
 			return;
 		}
+		boolean internalError= false;
 		if (message == null) {
+			//error did not result from a BuildException
+			internalError= true;
 			message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
 		}
 		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException);
-		AntCorePlugin.getPlugin().getLog().log(status);
+		if (internalError) {
+			AntCorePlugin.getPlugin().getLog().log(status);
+		}
 		throw new CoreException(status);
 	}
 
