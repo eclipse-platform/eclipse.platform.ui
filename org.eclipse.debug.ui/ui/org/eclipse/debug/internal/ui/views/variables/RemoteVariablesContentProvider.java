@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -182,14 +181,6 @@ public class RemoteVariablesContentProvider extends BaseWorkbenchContentProvider
 			p = getParent(p);
 		}
 		return false;
-	}
-	
-	/**
-	 * Extract the debug model id from the specified <code>IDebugElement</code>
-	 * and return it.
-	 */
-	protected  String getDebugModelId(IDebugElement debugElement) {
-		return debugElement.getModelIdentifier();
 	}
 
 	/**

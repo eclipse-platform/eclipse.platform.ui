@@ -210,21 +210,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
-	 * Sets this container's launch history.
-	 * 
-	 * @param history
-	 */
-	public void setHistory(ILaunchConfiguration[] history) {
-		fHistory = new ArrayList(history.length);
-		for (int i = 0; i < history.length; i++) {
-			fHistory.add(history[i]);
-		}
-		resizeHistory();
-		setDirty();
-		save();
-	}
-	
-	/**
 	 * Sets this container's favorites.
 	 * 
 	 * @param favorites

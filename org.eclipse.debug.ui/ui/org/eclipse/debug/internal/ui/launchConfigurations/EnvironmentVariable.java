@@ -48,16 +48,7 @@ public class EnvironmentVariable
 	{
 		return value;
 	}
-	
-	/**
-	 * Sets this variable's name (key)
-	 * @param name
-	 */
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	
+		
 	/**
 	 * Sets this variable's value
 	 * @param value

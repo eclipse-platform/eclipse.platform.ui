@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
@@ -28,7 +29,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -153,10 +153,6 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 			}
 		}
 		super.okPressed();
-	}
-	
-	protected void addFilter(ViewerFilter filter) {
-		fViewer.addFilter(filter);
 	}
 	
 }

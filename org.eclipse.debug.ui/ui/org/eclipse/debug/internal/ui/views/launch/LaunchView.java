@@ -313,16 +313,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setEventHandler(new LaunchViewEventHandler(this));
 		return lv;
 	}
-	
-	/**
-	 * Returns the label decorator used by this view.
-	 * 
-	 * @return this view's label decorator
-	 */
-	public DebugViewLabelDecorator getLabelDecorator() {
-		return (DebugViewLabelDecorator) ((DebugViewDecoratingLabelProvider) ((LaunchViewer) getViewer()).getLabelProvider()).getLabelDecorator();
-	}
-	
+		
 	private void handleDeleteKeyPressed() {
 		IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection();
 		Iterator iter= selection.iterator();

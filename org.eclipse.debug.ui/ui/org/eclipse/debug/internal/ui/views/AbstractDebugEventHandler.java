@@ -27,9 +27,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -128,17 +125,6 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 		plugin.addDebugEventListener(this);
 	}
 
-	/**
-	 * Returns the active workbench page or <code>null</code> if none.
-	 */
-	protected IWorkbenchPage getActivePage() {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window == null) {
-			return null;
-		}
-		return window.getActivePage();
-	}
-	
 	/**
 	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */

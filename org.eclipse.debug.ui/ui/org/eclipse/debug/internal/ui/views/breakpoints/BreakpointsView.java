@@ -793,18 +793,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             return true;
         }
         return false;
-    }    
-    
-    /**
-     * Returns the root containers containing the given breakpoint, or <code>null</code>
-     * if none
-     * 
-     * @param breakpoint
-     * @return root containers containing the given breakpoint or <code>null</code>
-     */
-    public BreakpointContainer[] getRoots(IBreakpoint breakpoint) {
-        return fContentProvider.getRoots(breakpoint);
-    }    
+    }      
     
     public BreakpointContainer[] getMovedFromContainers(ISelection selection) {
         List list = new ArrayList();

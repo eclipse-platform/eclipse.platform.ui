@@ -143,16 +143,6 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		return DEFAULT_SASH_WEIGHTS;
 	}
 	
-	/*
-	 * TODO: This method not used yet
-	 */	
-	protected void persistSashWeights() {
-		IDialogSettings settings = getDialogSettings();
-		int[] sashes = sashForm.getWeights();
-		settings.put(SASH_KEY+"_ONE", sashes[0]); //$NON-NLS-1$
-		settings.put(SASH_KEY+"_TWO", sashes[1]); //$NON-NLS-1$
-	}
-
 	private void updateValueDisplay(IValue val) {
 		IValueDetailListener valueDetailListener = new IValueDetailListener() {
 			public void detailComputed(IValue value, final String result) {

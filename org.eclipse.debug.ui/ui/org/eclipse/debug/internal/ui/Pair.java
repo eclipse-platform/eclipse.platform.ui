@@ -31,13 +31,4 @@ public class Pair {
 	public String secondAsString() {
 		return (String) fSecond;
 	}
-	/*
-	 * Integer accessors
-	 */
-	public Integer firstAsInteger() {
-		return (Integer) fFirst;
-	}
-	public Integer secondAsInteger() {
-		return (Integer) fSecond;
-	}
 }

@@ -49,7 +49,6 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
@@ -79,16 +78,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -245,10 +240,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		fgDebugUIPlugin= this;
 	}
 		
-	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
-	
 	/**
 	 * Returns the singleton instance of the debug plugin.
 	 */
@@ -432,29 +423,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		fServiceTracker.open();
 		fPackageAdminService = (PackageAdmin) fServiceTracker.getService();
 		
-	}
-
-	protected IProcess getProcessFromInput(Object input) {
-		IProcess processInput= null;
-		if (input instanceof IProcess) {
-			processInput= (IProcess) input;
-		} else
-			if (input instanceof ILaunch) {
-				IDebugTarget target= ((ILaunch) input).getDebugTarget();
-				if (target != null) {
-					processInput= target.getProcess();
-				} else {
-					IProcess[] processes= ((ILaunch) input).getProcesses();
-					if ((processes != null) && (processes.length > 0)) {
-						processInput= processes[0];
-					}
-				}
-			} else
-				if (input instanceof IDebugElement) {
-					processInput= ((IDebugElement) input).getDebugTarget().getProcess();
-				}
-
-		return processInput;
 	}
 
 	/**
@@ -664,39 +632,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		Document doc= docBuilder.newDocument();
 		return doc;
 	}
-	
-	/**
-	 * Determines and returns the selection in the specified window.  If nothing is
-	 * actually selected, look for an active editor.
-	 */
-	public static IStructuredSelection resolveSelection(IWorkbenchWindow window) {
-		if (window == null) {
-			return null;
-		}
-		ISelection selection= window.getSelectionService().getSelection();
-		if (selection == null || selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
-			// there is no obvious selection - go fishing
-			selection= null;
-			IWorkbenchPage page= window.getActivePage();
-			if (page == null) {
-				//workspace is closed
-				return null;
-			}
-
-			// first, see if there is an active editor, and try its input element
-			IEditorPart editor= page.getActiveEditor();
-			Object element= null;
-			if (editor != null) {
-				element= editor.getEditorInput();
-			}
-
-			if (selection == null && element != null) {
-				selection= new StructuredSelection(element);
-			}
-		}
-		return (IStructuredSelection)selection;
-	}
-	
+		
 	/**
 	 * When the first launch is added, instantiate launch processors,
 	 * and stop listening to launch notifications.

@@ -18,8 +18,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 
 
@@ -75,15 +73,6 @@ public class LaunchConfigurationTabGroupExtension {
 	 */
 	protected IConfigurationElement getConfigurationElement() {
 		return fConfig;
-	}
-	
-	/**
-	 * Returns the type of launch configuration this tab group is associated with
-	 * 
-	 * @return the type of launch configuration this tab group is associated with
-	 */
-	public ILaunchConfigurationType getType() {
-		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(getTypeIdentifier());
 	}
 	
 	/**

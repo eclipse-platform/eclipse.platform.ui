@@ -28,24 +28,10 @@ public class PixelConverter {
 	}
 		
 	/**
-	 * @see DialogPage#convertHeightInCharsToPixels
-	 */
-	public int convertHeightInCharsToPixels(int chars) {
-		return Dialog.convertHeightInCharsToPixels(fFontMetrics, chars);
-	}
-
-	/**
 	 * @see DialogPage#convertHorizontalDLUsToPixels
 	 */
 	public int convertHorizontalDLUsToPixels(int dlus) {
 		return Dialog.convertHorizontalDLUsToPixels(fFontMetrics, dlus);
-	}
-
-	/**
-	 * @see DialogPage#convertVerticalDLUsToPixels
-	 */
-	public int convertVerticalDLUsToPixels(int dlus) {
-		return Dialog.convertVerticalDLUsToPixels(fFontMetrics, dlus);
 	}
 	
 	/**

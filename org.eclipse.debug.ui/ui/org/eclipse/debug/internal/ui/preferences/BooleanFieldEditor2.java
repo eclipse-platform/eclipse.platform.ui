@@ -35,13 +35,6 @@ public class BooleanFieldEditor2 extends BooleanFieldEditor {
 	}
 
 	/**
-	 * @see BooleanFieldEditor#BooleanFieldEditor(java.lang.String, java.lang.String, org.eclipse.swt.widgets.Composite)
-	 */
-	public BooleanFieldEditor2(String name, String label, Composite parent) {
-		super(name, label, parent);
-	}
-
-	/**
 	 * @see org.eclipse.jface.preference.BooleanFieldEditor#getChangeControl(Composite)
 	 */
 	public Button getChangeControl(Composite parent) {

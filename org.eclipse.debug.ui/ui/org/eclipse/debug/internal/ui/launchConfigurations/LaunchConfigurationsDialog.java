@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -54,7 +55,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
@@ -1364,18 +1364,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void setInitialSelection(IStructuredSelection selection) {
 		fInitialSelection = selection;
-	}
-	
-	/**
-	 * Handles key events in the tree viewer. Specifically
-	 * when the delete key is pressed.
-	 */
-	protected void handleTreeViewerKeyPressed(KeyEvent event) {
-		if (event.character == SWT.DEL && event.stateMask == 0) {
-			if (getButtonActionDelete().isEnabled()) {
-				getButtonActionDelete().run();
-			}
-		} 
 	}
 	
 	private void setButtonActionNew(ButtonAction action) {

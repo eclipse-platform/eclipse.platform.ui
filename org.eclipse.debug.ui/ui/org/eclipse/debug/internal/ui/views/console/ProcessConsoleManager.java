@@ -29,7 +29,6 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
@@ -210,30 +209,7 @@ public class ProcessConsoleManager implements ILaunchListener {
             fProcesses.clear();
         }
     }
-    
-    /**
-     * Notifies the console document manager that system err is about to be written
-     * to the console. The manager will open the console if the preference is
-     * set to show the console on system err.
-     */
-    protected void aboutToWriteSystemErr(IProcess process) {
-        if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR)) {
-            showConsole(process);
-        }
-    }
-    
-    /**
-     * Notifies the console document manager that system out is about to be written
-     * to the console. The manager will open the console if the preference is
-     * set to show the console on system out and the console document being written 
-     * is associated with the current process.
-     */	
-    protected void aboutToWriteSystemOut(IProcess process) {
-        if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT)) {
-            showConsole(process);
-        }
-    }
-    
+      
     /**
      * Opens the console view. If the view is already open, it is brought to the front.
      */
