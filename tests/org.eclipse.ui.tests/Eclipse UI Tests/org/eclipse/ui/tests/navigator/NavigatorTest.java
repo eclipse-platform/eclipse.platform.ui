@@ -57,7 +57,7 @@ public class NavigatorTest extends UITestCase {
 		navigator = (ResourceNavigator) window.getActivePage().showView(NAVIGATOR_VIEW_ID);
 	}
 	
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		if (testProject != null) {
 			try {
 				testProject.delete(true, null);

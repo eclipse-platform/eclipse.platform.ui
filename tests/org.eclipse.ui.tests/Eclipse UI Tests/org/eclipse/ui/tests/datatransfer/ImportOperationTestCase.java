@@ -99,7 +99,7 @@ public class ImportOperationTestCase
 	 * Tear down. Delete the project we created and all of the
 	 * files on the file system.
 	 */
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		super.tearDown();
 		try {
 			project.delete(true,true,null);
