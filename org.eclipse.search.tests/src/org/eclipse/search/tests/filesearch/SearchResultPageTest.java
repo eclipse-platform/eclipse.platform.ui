@@ -52,7 +52,7 @@ public class SearchResultPageTest extends TestCase {
 		fQuery1= new FileSearchQuery(scope, "", "Test");
 	}
 
-	public void testBasicDisplay() throws Exception {
+	public void atestBasicDisplay() throws Exception {
 		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
@@ -75,7 +75,7 @@ public class SearchResultPageTest extends TestCase {
 		}
 	}
 
-	public void testRemoveTreeMatches() throws Exception {
+	public void atestRemoveTreeMatches() throws Exception {
 		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchPage page= (FileSearchPage) view.getActivePage();

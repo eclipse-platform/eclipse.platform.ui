@@ -154,7 +154,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		int charLength= 0;
 		if (lineLength > 0) {
 			int lastLine= lineOffset+lineLength-1;
-			int endPosition= doc.getLineOffset(lastLine)+doc.getLineLength(lastLine)-1;
+			int endPosition= doc.getLineOffset(lastLine)+doc.getLineLength(lastLine);
 			charLength= endPosition-charOffset;
 		}
 		return new Position(charOffset, charLength);
@@ -214,7 +214,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		int offset= doc.getLineOfOffset(pos.getOffset());
 		int end= doc.getLineOfOffset(pos.getOffset()+pos.getLength());
 		int lineLength= end-offset;
-		if (pos.getLength() > 0) {
+		if (pos.getLength() > 0 && lineLength == 0) {
 			// if the character length is > 0, add the last line, too
 			lineLength++;
 		}

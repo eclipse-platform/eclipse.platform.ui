@@ -32,8 +32,8 @@ import org.eclipse.ui.ide.IDE;
 public class LineConversionTest extends TestCase {
 	private IFile fFile;
 	
-	private static final String LINE_TWO= "This is the second line";
-	private static final String LINE_ONE= "This is the first line";
+	private static final String LINE_TWO= "This is the second line\n";
+	private static final String LINE_ONE= "This is the first line\n";
 	private static final String LINE_THREE= "This is the third line";
 
 	protected void setUp() throws Exception {
@@ -52,7 +52,7 @@ public class LineConversionTest extends TestCase {
 	}
 
 	private String getFileContents() {
-		return LINE_ONE+"\n"+LINE_TWO+"\n"+LINE_THREE;
+		return LINE_ONE+LINE_TWO+LINE_THREE;
 	}
 	
 	public void testConvertToCharacter() throws Exception {

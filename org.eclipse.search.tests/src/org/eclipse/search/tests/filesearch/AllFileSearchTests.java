@@ -22,8 +22,7 @@ public class AllFileSearchTests extends TestSuite {
 	public AllFileSearchTests() {
 		addTest(AnnotationManagerTest.allTests());
 		addTest(LineAnnotationManagerTest.allTests());
-		// the following currently doesn't work because of UI liveness issues.
-		//addTest(SearchResultPageTest.allTests()); 
+		addTest(SearchResultPageTest.allTests()); 
 		addTest(ResultUpdaterTest.allTests());
 		addTest(SortingTest.allTests());
 	}
