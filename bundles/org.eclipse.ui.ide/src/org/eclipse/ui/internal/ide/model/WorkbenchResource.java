@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IResourceActionFilter;
 import org.eclipse.ui.actions.SimpleWildcardTester;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
@@ -103,6 +104,10 @@ public boolean testAttribute(Object target, String name, String value) {
 		return testProperty(res, false, false, value);
 	} else if (name.equals(PROJECT_SESSION_PROPERTY)) {
 		return testProperty(res, false, true, value);
+	} else if (name.equals(XML_FIRST_TAG)) {
+		return testXMLProperty(res, name, value);
+	} else if (name.equals(XML_DTD_NAME)) {
+		return testXMLProperty(res, name, value);
 	} 
 	return false;
 }
@@ -162,6 +167,80 @@ private boolean testProperty(IResource resource, boolean persistentFlag, boolean
 		}
 	} catch (CoreException e) {
 		// ignore
+	}
+	return false;		
+}
+
+/*
+ * Test whether a given xml property matches that xml
+ * element in the file.  Note that these properties will
+ * be stored as persistent properties.  If the underlying 
+ * xml file changes, the xml will be reparsed to re-retrieve
+ * these property values.
+ * 
+ * @param resource the resource associated with the xml file
+ * @param propertyName the name of the property we are looking for
+ * @param value the value we expect to find
+ * @return true if the value found for this property, matches
+ *     the value passed in as a parameter.
+ */
+private boolean testXMLProperty(IResource resource, String propertyName, String value) {
+	String expectedVal;
+	expectedVal = value.trim();
+	try {
+		QualifiedName key;
+		key = new QualifiedName(resource.getLocation().toString(), propertyName);
+		IResource resToCheck = resource;
+		if (resToCheck == null) {
+			return false;
+		}
+		// Check to see if the persistent properties are stale
+		long modTime = resToCheck.getModificationStamp();
+		QualifiedName modKey = new QualifiedName(resource.getLocation().toString(), XML_LAST_MOD);
+		String lastPropMod = resToCheck.getPersistentProperty(modKey);
+		long realLastPropMod = lastPropMod == null ? 0L : new Long(lastPropMod).longValue();
+		String actualVal = null;
+		if (modTime != IResource.NULL_STAMP && realLastPropMod == modTime) {
+			// Make sure we don't pick up stale information
+			actualVal = resToCheck.getPersistentProperty(key);
+		} else if (realLastPropMod > 0l){
+			// Make sure that these persistent properties
+			// are cleared so that we don't pick up any
+			// stale values by mistake.  If we've never parsed
+			// this file, however, we don't need to worry
+			// about stale values.
+			QualifiedName qname1 = new QualifiedName(resToCheck.getLocation().toString(), IResourceActionFilter.XML_DTD_NAME);
+			QualifiedName qname2 = new QualifiedName(resToCheck.getLocation().toString(), IResourceActionFilter.XML_FIRST_TAG);
+			try {
+				resToCheck.setPersistentProperty(qname1, null);
+				resToCheck.setPersistentProperty(qname2, null);
+			} catch (CoreException c) {
+				IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem clearing stale xml properties", c); //$NON-NLS-1$ //$NON-NLS-2$
+				Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH).getLog().log(status); 
+			}
+		}
+		
+		// Either we have never parsed this file or we 
+		// have parsed it but the file has changed since
+		// the last time it was parsed.
+		if (actualVal == null) {
+			try {
+				new PropertyParser().parseResource(resToCheck);
+			} catch (Exception e) {
+				IStatus status = new Status(IStatus.ERROR,IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem parsing for xml properties", e); //$NON-NLS-1$ //$NON-NLS-2$
+				Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH).getLog().log(status); 
+			}
+			// Now recheck the persistent property as it may have
+			// been populated.
+			actualVal = resToCheck.getPersistentProperty(key);
+			if (actualVal == null)
+				return false;
+		}
+		return expectedVal == null || expectedVal.equals(actualVal);
+	} catch (CoreException e) {
+		// Just output a message to the log file and continue
+		IStatus status = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, "Problem testing xml property", e); //$NON-NLS-1$ //$NON-NLS-2$
+		Platform.getPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH).getLog().log(status); 
 	}
 	return false;		
 }

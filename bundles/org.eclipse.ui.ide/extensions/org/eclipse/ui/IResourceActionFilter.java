@@ -91,4 +91,25 @@ public interface IResourceActionFilter extends IActionFilter {
 	 * with the specified name and tests it for equality with the specified value.
 	 */
 	public static final String PROJECT_SESSION_PROPERTY = "projectSessionProperty";	 //$NON-NLS-1$
+	/**
+	 * An attribute indicating that this is an xml file
+	 * and we should ensure that the first tag (or top-level
+	 * tag) has this name.
+	 */
+	public static final String XML_FIRST_TAG = "xmlFirstTag"; //$NON-NLS-1$
+	
+	/**
+	 * An attribute indicating that this is an xml file and we should ensure that the DTD
+	 * definition in this xml file is the value supplied with this attribute.
+	 */
+	public static final String XML_DTD_NAME = "xmlDTDName";	 //$NON-NLS-1$
+	
+	/**
+	 * An attribute used to store the last modified time
+	 * so we may determine if the other XML based attributes
+	 * (XML_DTD_NAME and XML_FIRST_TAG) are stale and,
+	 * therefore, the xml file must be reparsed for this
+	 * information.
+	 */
+	public static final String XML_LAST_MOD = "xmlLastMod";	 //$NON-NLS-1$
 }
