@@ -32,6 +32,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationMap;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
@@ -296,7 +297,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	public Position getMarkerPosition(IMarker marker) {
 		MarkerAnnotation a= getMarkerAnnotation(marker);
 		if (a != null) {
-			return (Position) fAnnotations.get(a);
+			return (Position) getAnnotationMap().get(a);
 		}
 		return null;
 	}
@@ -513,7 +514,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 
 		Assert.isTrue(fDocument == document);
 		
-		if (fAnnotations.size() == 0 && fDeletedAnnotations.size() == 0)
+		IAnnotationMap annotationMap= getAnnotationMap();
+		
+		if (annotationMap.size() == 0 && fDeletedAnnotations.size() == 0)
 			return;
 			
 		if (fMarkerUpdaterSpecifications == null)
@@ -527,7 +530,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 			if (o instanceof MarkerAnnotation) {
 				MarkerAnnotation a= (MarkerAnnotation) o;
 				IMarker marker= a.getMarker();
-				Position position= (Position) fAnnotations.get(a);
+				Position position= (Position) annotationMap.get(a);
 				if ( !updateMarker(marker, document, position)) {
 					if ( !fDeletedAnnotations.contains(a))
 						fDeletedAnnotations.add(a);

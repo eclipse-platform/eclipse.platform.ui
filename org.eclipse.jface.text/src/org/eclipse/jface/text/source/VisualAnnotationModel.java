@@ -111,7 +111,7 @@ class VisualAnnotationModel extends AnnotationModel implements IAnnotationModelL
 	 */
 	public Position getPosition(Annotation annotation) {
 		
-		Position p= (Position) fAnnotations.get(annotation);
+		Position p= (Position) getAnnotationMap().get(annotation);
 		if (p != null)
 			return p;
 		

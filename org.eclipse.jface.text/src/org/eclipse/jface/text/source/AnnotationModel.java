@@ -11,7 +11,6 @@
 package org.eclipse.jface.text.source;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +22,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
 
 
@@ -31,7 +31,7 @@ import org.eclipse.jface.text.Position;
  * be used by clients. Subclasses may adapt this annotation model to other existing 
  * annotation mechanisms.
  */
-public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension {
+public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension, ISynchronizable {
 	
 	/**
 	 * Internal annotation model listener for forwarding annotation model changes from the attached models to the
@@ -56,7 +56,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 	}
 
-	/** The list of managed annotations */
+	/** 
+	 * The list of managed annotations 
+	 * @deprecated since 3.0 use <code>getAnnotationMap</code> instead
+	 */
 	protected Map fAnnotations;
 	/** The list of annotation model listeners */
 	protected ArrayList fAnnotationModelListeners;
@@ -92,7 +95,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * manage any annotations and is not connected to any document.
 	 */
 	public AnnotationModel() {
-		fAnnotations= Collections.synchronizedMap(new HashMap(10));
+		fAnnotations= new AnnotationMap(10);
 		fAnnotationModelListeners= new ArrayList(2);
 		
 		fDocumentListener= new IDocumentListener() {
@@ -105,6 +108,29 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 		};
 	}
+	
+	/**
+	 * Returns the annotation map internally used by this annotation model.
+	 * 
+	 * @return the annotation map internally used by this annotation model
+	 */
+	protected IAnnotationMap getAnnotationMap() {
+		return (IAnnotationMap) fAnnotations;
+	}
+	
+    /*
+     * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
+     */
+    public Object getLockObject() {
+        return getAnnotationMap().getLockObject();
+    }
+    
+    /*
+     * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
+     */
+    public void setLockObject(Object lockObject) {
+        getAnnotationMap().setLockObject(lockObject);
+    }
 
 	/*
 	 * @see IAnnotationModel#addAnnotation(Annotation, Position)
@@ -238,7 +264,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		
 		if (fDocument == null) {
 			fDocument= document;
-			Iterator e= fAnnotations.values().iterator();
+			Iterator e= getAnnotationMap().valuesIterator();
 			while (e.hasNext())
 				try {
 					addPosition(fDocument, (Position) e.next());
@@ -292,7 +318,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fDocument.removeDocumentListener(fDocumentListener);
 		
 			if (fDocument != null) {
-				Iterator e= fAnnotations.values().iterator();
+				Iterator e= getAnnotationMap().valuesIterator();
 				while (e.hasNext()) {
 					Position p= (Position) e.next();
 					removePosition(fDocument, p);
@@ -379,7 +405,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			fDocumentChanged= false;
 			
 			ArrayList deleted= new ArrayList();
-			Iterator e= new ArrayList(fAnnotations.keySet()).iterator();
+			Iterator e= getAnnotationMap().keySetIterator();
 			while (e.hasNext()) {
 				Annotation a= (Annotation) e.next();
 				Position p= (Position) fAnnotations.get(a);
@@ -417,7 +443,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		List iterators= new ArrayList(fAttachments.size() + 1);
 		iterators.add(getAnnotationIterator(cleanup));
 		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
-			iterators.add(((IAnnotationModel)fAttachments.get(it.next())).getAnnotationIterator());
+			iterators.add(((IAnnotationModel) fAttachments.get(it.next())).getAnnotationIterator());
 		}
 		
 		final Iterator iter= iterators.iterator();
@@ -464,9 +490,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (cleanup)
 			cleanup(true);
 			
-		synchronized (fAnnotations) {
-			return new ArrayList(fAnnotations.keySet()).iterator();
-		}
+		return getAnnotationMap().keySetIterator();
 	}
 	
 	/*
@@ -479,7 +503,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		
 		Iterator it= fAttachments.values().iterator();
 		while (position == null && it.hasNext())
-			position= ((IAnnotationModel)it.next()).getPosition(annotation);	
+			position= ((IAnnotationModel) it.next()).getPosition(annotation);	
 		return position;
 	}
 	
@@ -500,7 +524,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	protected void removeAllAnnotations(boolean fireModelChanged) {
 		
 		if (fDocument != null) {
-			Iterator e= fAnnotations.keySet().iterator();
+			Iterator e= getAnnotationMap().keySetIterator();
 			while (e.hasNext()) {
 				Annotation a= (Annotation) e.next();
 				Position p= (Position) fAnnotations.get(a);
