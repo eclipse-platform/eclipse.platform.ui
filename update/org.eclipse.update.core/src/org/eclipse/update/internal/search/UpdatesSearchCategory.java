@@ -278,8 +278,10 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			if (job == null)
 				continue;
 			// do not accept updates without a license
-			if (!UpdateUtils.hasLicense(job.getFeature()))
+			if (!UpdateUtils.hasLicense(job.getFeature())) {
+				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Policy.bind("DefaultFeatureParser.NoLicenseText"), null);
 				continue;
+			}
 			IStatus status = OperationsManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
 			if (status == null || status.getCode() == IStatus.WARNING) {
 				if (hit.isPatch()) {
