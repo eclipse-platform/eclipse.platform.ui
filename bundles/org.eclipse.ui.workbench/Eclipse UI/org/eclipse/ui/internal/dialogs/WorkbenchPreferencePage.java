@@ -81,22 +81,18 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton = new Button(composite, SWT.CHECK);
 		autoBuildButton.setText(WorkbenchMessages.getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
 		autoBuildButton.setFont(font);
-		setButtonLayoutData(autoBuildButton);
 
 		autoSaveAllButton = new Button(composite, SWT.CHECK);
 		autoSaveAllButton.setText(WorkbenchMessages.getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
 		autoSaveAllButton.setFont(font);
-		setButtonLayoutData(autoSaveAllButton);
 
 		refreshButton = new Button(composite, SWT.CHECK);
 		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
 		refreshButton.setFont(font);
-		setButtonLayoutData(refreshButton);
 		
 		showTasks = new Button(composite, SWT.CHECK);
 		showTasks.setText(WorkbenchMessages.getString("WorkbenchPreference.showTasks")); //$NON-NLS-1$
 		showTasks.setFont(font);
-		setButtonLayoutData(showTasks);
 
 		createSpace(composite);
 		createSaveIntervalGroup(composite);
