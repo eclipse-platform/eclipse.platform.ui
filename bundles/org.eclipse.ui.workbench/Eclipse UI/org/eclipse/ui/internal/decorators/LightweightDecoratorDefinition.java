@@ -157,4 +157,13 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 
 	}
 
+	/**
+	 * Returns the lightweight decorator, or <code>null</code> if not enabled.
+	 * 
+	 * @return the lightweight decorator, or <code>null</code> if not enabled
+	 */
+	public ILightweightLabelDecorator getDecorator() {
+		return decorator;
+	}
+
 }

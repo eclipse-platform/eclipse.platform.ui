@@ -172,12 +172,11 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 	}
 
 	/**
-	 * Gets the decorator.
-	 * @return Returns a ILabelDecorator
-	 * @throws CoreException. This will be removed and is only
-	 * here for backwards compatability.
+	 * Returns the decorator, or <code>null</code> if not enabled.
+	 * 
+	 * @return the decorator, or <code>null</code> if not enabled
 	 */
-	public ILabelDecorator getDecorator() throws CoreException {
+	public ILabelDecorator getDecorator() {
 		return decorator;
 	}
 

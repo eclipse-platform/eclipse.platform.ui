@@ -570,12 +570,20 @@ public class DecoratorManager
 			getFullDecoratorDefinition(decoratorId);
 
 		//Do not return for a disabled decorator
-		if (definition.isEnabled()) {
-			try {
-				return definition.getDecorator();
-			} catch (CoreException exception) {
-				//Cannot be thrown - remove when API is updated
-			}
+		if (definition != null && definition.isEnabled()) {
+			return definition.getDecorator();
+		}
+		return null;
+	}
+
+	/**
+	 * @see IDecoratorManager#getLightweightLabelDecorator(String)
+	 */
+	public ILightweightLabelDecorator getLightweightLabelDecorator(String decoratorId) {
+		LightweightDecoratorDefinition definition = lightweightManager.getDecoratorDefinition(decoratorId);
+		//Do not return for a disabled decorator
+		if (definition != null && definition.isEnabled()) {
+			return definition.getDecorator();
 		}
 		return null;
 	}
