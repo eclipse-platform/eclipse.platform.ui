@@ -203,11 +203,12 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			table = (Map) lookup.get(adaptable.getName());
 			if (table != null)
 				return (IAdapterFactory) table.get(adapterName);
-		} else
-			lookup = new HashMap(30);
+		}
 		// Its not in the cache so we have to build the adapter table for this class.
 		table = computeClassOrder(adaptable);
 		//cache the table and do the lookup again.
+		if (lookup == null)
+			lookup = new HashMap(30);
 		lookup.put(adaptable.getName(), table);
 		return (IAdapterFactory) table.get(adapterName);
 	}
