@@ -7,6 +7,18 @@
    provider-name="%providerName"
    class="org.eclipse.ui.internal.WorkbenchPlugin">
 
+   <!-- N.B.: Do not re-order.
+     compatibility.jar only exists in configurations providing extra binary
+     compatibility for pre-3.0 plug-ins.
+     compatibility.jar is contributed by a fragment.
+     compatibility.jar must end up on the plug-in classpath before workbench.jar
+     since it redefines some classes found in workbench.jar. -->
+   <runtime>
+      <library name="compatibility.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.ui.internal"/>
+      </library>
+   </runtime>
    <runtime>
       <library name="workbench.jar">
          <export name="*"/>

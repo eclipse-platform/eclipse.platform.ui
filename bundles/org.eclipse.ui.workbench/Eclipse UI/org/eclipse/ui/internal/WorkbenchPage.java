@@ -87,7 +87,7 @@ import org.eclipse.ui.part.MultiEditor;
 /**
  * A collection of views and editors in a workbench.
  */
-public class WorkbenchPage implements IWorkbenchPage {
+public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbenchPage {
 	private WorkbenchWindow window;
 	private IAdaptable input;
 	private IWorkingSet workingSet;
