@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
@@ -80,7 +81,7 @@ import org.eclipse.jface.viewers.Viewer;
 public class TextViewer extends Viewer implements 
 					ITextViewer, ITextViewerExtension, ITextViewerExtension2,
 					ITextOperationTarget, ITextOperationTargetExtension,
-					IWidgetTokenOwner {
+					IWidgetTokenOwner, IPostSelectionProvider {
 	
 	/** Internal flag to indicate the debug state. */
 	public static boolean TRACE_ERRORS= false;
@@ -287,7 +288,7 @@ public class TextViewer extends Viewer implements
 		public void documentChanged(final DocumentEvent e) {
 			if (fWidgetCommand.event == e)
 				updateTextListeners(fWidgetCommand);
-			fLastSentSelection= null;
+			fLastSentSelectionChange= null;
 		}
 	};
 	
@@ -1012,8 +1013,7 @@ public class TextViewer extends Viewer implements
 	};
 
 	/**
-	 * Internal cursor listener i.e. aggregation 
-	 * of mouse and key listener.
+	 * Internal cursor listener i.e. aggregation of mouse and key listener.
 	 * 
 	 * @since 3.0
 	 */
@@ -1040,14 +1040,6 @@ public class TextViewer extends Viewer implements
 		}
 
 		/*
-		 * @see TextViewer#getEmptySelectionChangedEventDelay()
-		 */
-		private final int EMPTY_SELECTION_CHANGED_EVENT_DELAY= getEmptySelectionChangedEventDelay(); 
-
-		/** Cursor event count. */
-		private final int[] fCursorEventCount= new int[1];
-
-		/*
 		 * @see KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 		 */
 		public void keyPressed(KeyEvent event) {
@@ -1058,7 +1050,7 @@ public class TextViewer extends Viewer implements
 		 */
 		public void keyReleased(KeyEvent e) {
 			if (fTextWidget.getSelectionCount() == 0)
-				sendEmptySelectionChangedEvent();
+				queuePostSelectionChanged();
 		}
 			
 		/*
@@ -1078,48 +1070,7 @@ public class TextViewer extends Viewer implements
 		 */
 		public void mouseUp(MouseEvent event) {
 			if (fTextWidget.getSelectionCount() == 0)
-				sendEmptySelectionChangedEvent();
-		}
-
-		/**
-		 * Sends out an empty selection changed event as soon
-		 * as there are no new events coming in for a given
-		 * time.
-		 * 
-		 * @see TextViewer#EMPTY_SELECTION_EVENT_INTERVAL
-		 */
-		private void sendEmptySelectionChangedEvent() {
-			if (getDisplay() == null)
-				return; 		
-
-			fCursorEventCount[0]++;
-			getDisplay().timerExec(EMPTY_SELECTION_CHANGED_EVENT_DELAY, new Runnable() {
-				final int id= fCursorEventCount[0];
-				public void run() {
-					if (id == fCursorEventCount[0]) {
-						// Check again becaues this is executed later
-						if (getDisplay() != null)
-							selectionChanged(fTextWidget.getCaretOffset(), 0);
-					}
-				}
-			});
-		}
-
-		/**
-		 * Get the text widget's display.
-		 * 
-		 * @returns 	the display or <code>null</code> if the display cannot
-		 * 				be retrieved or if the display is disposed
-		 */
-		private Display getDisplay() {
-			if (fTextWidget == null || fTextWidget.isDisposed())
-				return null;
-			
-			Display display= fTextWidget.getDisplay();
-			if (display != null && display.isDisposed())
-				return null;
-			
-			return display;
+				queuePostSelectionChanged();
 		}
 	}
 		
@@ -1230,10 +1181,25 @@ public class TextViewer extends Viewer implements
 	 */
 	private CursorListener fCursorListener;
 	/**
-	 * Last sent selection range.
+	 * Last selection range sent to selection change liseners.
 	 * @since 3.0
 	 */
-	private IRegion fLastSentSelection;
+	private IRegion fLastSentSelectionChange;
+	/**
+	 * The registered post selection changed listeners.
+	 * @since 3.0
+	 */
+	private List fPostSelectionChangedListeners;
+	/** 
+	 * Queued post selection changed events count. 
+	 * @since 3.0
+	 */
+	private final int[] fNumberOfPostSelectionChangedEvents= new int[1];
+	/**
+	 * Last selection range sent to post selection change listeners.
+	 * @since 3.0
+	 */
+	private IRegion fLastSentPostSelectionChange;
 
 	
 	/** Should the auto indent strategies ignore the next edit operation */
@@ -1439,6 +1405,16 @@ public class TextViewer extends Viewer implements
 		if (fTextListeners != null) {
 			fTextListeners.clear();
 			fTextListeners= null;
+		}
+		
+		if (fTextInputListeners != null)  {
+			fTextInputListeners.clear();
+			fTextInputListeners= null;
+		}
+		
+		if (fPostSelectionChangedListeners != null)  {
+			fPostSelectionChangedListeners.clear();
+			fPostSelectionChangedListeners= null;
 		}
 		
 		if (fAutoIndentStrategies != null) {
@@ -1954,17 +1930,123 @@ public class TextViewer extends Viewer implements
 		return this;
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.IPostSelectionProvider#addPostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 * @since 3.0
+	 */
+	public void addPostSelectionChangedListener(ISelectionChangedListener listener)  {
+
+		Assert.isNotNull(listener);
+
+		if (fPostSelectionChangedListeners == null)
+			fPostSelectionChangedListeners= new ArrayList();
+			
+		if (! fPostSelectionChangedListeners.contains(listener))
+			fPostSelectionChangedListeners.add(listener);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IPostSelectionProvider#removePostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 * @since 3.0
+	 */
+	public void removePostSelectionChangedListener(ISelectionChangedListener listener)  {
+
+		Assert.isNotNull(listener);
+
+		if (fPostSelectionChangedListeners != null)  {
+			fPostSelectionChangedListeners.remove(listener);
+			if (fPostSelectionChangedListeners.size() == 0)
+				fPostSelectionChangedListeners= null;
+		}
+	}
+	
 	/**
-	 * Sends out a text selection changed event to all registered listeners.
+	 * Get the text widget's display.
+	 * 
+	 * @return the display or <code>null</code> if the display cannot be retrieved or if the display is disposed
+	 * @since 3.0
+	 */
+	private Display getDisplay() {
+		if (fTextWidget == null || fTextWidget.isDisposed())
+			return null;
+			
+		Display display= fTextWidget.getDisplay();
+		if (display != null && display.isDisposed())
+			return null;
+			
+		return display;
+	}
+	
+	/**
+	 * Starts a timer to send out a post selection changed event.
+	 * 
+	 * @since 3.0
+	 */
+	private void queuePostSelectionChanged() {
+		Display display= getDisplay();
+		if (display == null)
+			return; 		
+
+		fNumberOfPostSelectionChangedEvents[0]++;
+		display.timerExec(getEmptySelectionChangedEventDelay(), new Runnable() {
+			final int id= fNumberOfPostSelectionChangedEvents[0];
+			public void run() {
+				if (id == fNumberOfPostSelectionChangedEvents[0]) {
+					// Check again because this is executed after the delay
+					if (getDisplay() != null)  {
+						Point selection= fTextWidget.getSelectionRange();
+						if (selection != null)
+							firePostSelectionChanged(selection.x, selection.y);
+					}
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Sends out a text selection changed event to all registered post selection changed listeners.
+	 *
+	 * @param offset the offset of the newly selected range in the visible document
+	 * @param length the length of the newly selected range in the visible document
+	 * @since 3.0
+	 */
+	protected void firePostSelectionChanged(int offset, int length) {
+		if (redraws()) {
+			IRegion r= widgetRange2ModelRange(new Region(offset, length));
+			if ((r != null && !r.equals(fLastSentPostSelectionChange)) || r == null)  {
+				fLastSentPostSelectionChange= r;
+				ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
+				SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+				firePostSelectionChanged(event);
+			}
+		}
+	}
+	
+	/**
+	 * Sends out a text selection changed event to all registered listeners and
+	 * registers the selection changed event to be send out to all post selection
+	 * listeners.
 	 *
 	 * @param offset the offset of the newly selected range in the visible document
 	 * @param length the length of the newly selected range in the visible document
 	 */
 	protected void selectionChanged(int offset, int length) {
+		queuePostSelectionChanged();
+		fireSelectionChanged(offset, length);
+	}
+
+	/**
+	 * Sends out a text selection changed event to all registered listeners.
+	 *
+	 * @param offset the offset of the newly selected range in the visible document
+	 * @param length the length of the newly selected range in the visible document
+	 * @since 3.0
+	 */
+	protected void fireSelectionChanged(int offset, int length) {
 		if (redraws()) {
 			IRegion r= widgetRange2ModelRange(new Region(offset, length));
-			if ((r != null && !r.equals(fLastSentSelection)) || r == null)  {
-				fLastSentSelection= r;
+			if ((r != null && !r.equals(fLastSentSelectionChange)) || r == null)  {
+				fLastSentSelectionChange= r;
 				ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
 				SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
 				fireSelectionChanged(event);
@@ -1972,6 +2054,21 @@ public class TextViewer extends Viewer implements
 		}
 	}
 	
+	/**
+	 * Sends the given event to all registered post selection changed listeners.
+	 * 
+	 * @param event the selection event
+	 * @since 3.0
+	 */
+	private void firePostSelectionChanged(SelectionChangedEvent event) {
+		if (fPostSelectionChangedListeners != null) {
+			for (int i= 0; i < fPostSelectionChangedListeners.size(); i++) {
+				ISelectionChangedListener l= (ISelectionChangedListener) fPostSelectionChangedListeners.get(i);
+				l.selectionChanged(event);
+			}
+		}
+	}
+
 	/**
 	 * Sends out a mark selection changed event to all registered listeners.
 	 * 
@@ -2001,6 +2098,9 @@ public class TextViewer extends Viewer implements
 	 * @see ITextViewer#addTextListener(ITextListener)
 	 */
 	public void addTextListener(ITextListener listener) {
+
+		Assert.isNotNull(listener);
+
 		if (fTextListeners == null)
 			fTextListeners= new ArrayList();
 	
@@ -2012,6 +2112,9 @@ public class TextViewer extends Viewer implements
 	 * @see ITextViewer#removeTextListener(ITextListener)
 	 */
 	public void removeTextListener(ITextListener listener) {
+
+		Assert.isNotNull(listener);
+
 		if (fTextListeners != null) {
 			fTextListeners.remove(listener);
 			if (fTextListeners.size() == 0)
@@ -2047,6 +2150,9 @@ public class TextViewer extends Viewer implements
 	 * @see ITextViewer#addTextInputListener(ITextInputListener)
 	 */
 	public void addTextInputListener(ITextInputListener listener) {
+		
+		Assert.isNotNull(listener);
+
 		if (fTextInputListeners == null)
 			fTextInputListeners= new ArrayList();
 	
@@ -2058,6 +2164,9 @@ public class TextViewer extends Viewer implements
 	 * @see ITextViewer#removeTextInputListener(ITextInputListener)
 	 */
 	public void removeTextInputListener(ITextInputListener listener) {
+
+		Assert.isNotNull(listener);
+
 		if (fTextInputListeners != null) {
 			fTextInputListeners.remove(listener);
 			if (fTextInputListeners.size() == 0)
@@ -2141,7 +2250,7 @@ public class TextViewer extends Viewer implements
 		inputChanged(fDocument, oldDocument);
 		
 		fireInputDocumentChanged(oldDocument, fDocument);
-		fLastSentSelection= null;
+		fLastSentSelectionChange= null;
 		fReplaceTextPresentation= false;
 	}
 	
@@ -2169,7 +2278,7 @@ public class TextViewer extends Viewer implements
 		inputChanged(fDocument, oldDocument);
 		
 		fireInputDocumentChanged(oldDocument, fDocument);
-		fLastSentSelection= null;
+		fLastSentSelectionChange= null;
 		fReplaceTextPresentation= false;
 	}
 	

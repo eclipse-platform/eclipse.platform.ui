@@ -95,6 +95,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IMarkRegionTarget;
+import org.eclipse.jface.text.IPostSelectionProvider;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextInputListener;
@@ -1083,7 +1084,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Editor specific selection provider which wraps the source viewer's selection provider.
 	 * @since 2.1
 	 */
-	class SelectionProvider implements ISelectionProvider {
+	class SelectionProvider implements ISelectionProvider, IPostSelectionProvider {
 	
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
@@ -1113,6 +1114,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void setSelection(ISelection selection) {
 			doSetSelection(selection);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IPostSelectionProvider#addPostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
+			if (fSourceViewer != null) {
+				if (fSourceViewer.getSelectionProvider() instanceof IPostSelectionProvider)  {
+					IPostSelectionProvider provider= (IPostSelectionProvider) fSourceViewer.getSelectionProvider();
+					provider.addPostSelectionChangedListener(listener);
+				}
+			}
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IPostSelectionProvider#removePostSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+		 */
+		public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
+			if (fSourceViewer != null)  {
+				if (fSourceViewer.getSelectionProvider() instanceof IPostSelectionProvider)  {
+					IPostSelectionProvider provider= (IPostSelectionProvider) fSourceViewer.getSelectionProvider();
+					provider.removePostSelectionChangedListener(listener);
+				}
+			}
 		}
 	};
 	
