@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -89,6 +90,7 @@ class WorkingSetDialog extends InputDialog {
 		Composite composite= (Composite)super.createDialogArea(parent);
 
 		fTree= new CheckboxTreeViewer(composite);
+		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new WorkbenchContentProvider());
 		fTree.setLabelProvider(new WorkbenchLabelProvider());
 		fTree.setInput(SearchPlugin.getWorkspace().getRoot());
@@ -108,9 +110,13 @@ class WorkingSetDialog extends InputDialog {
 			public void treeCollapsed(TreeExpansionEvent event) {
 			}
 			public void treeExpanded(TreeExpansionEvent event) {
-				Object element= event.getElement();
+				final Object element= event.getElement();
 				if (!fTree.getGrayed(element))
-					setSubtreeChecked((IContainer)element, fTree.getChecked(element), false);
+					BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+						public void run() {
+							setSubtreeChecked((IContainer)element, fTree.getChecked(element), false);
+						}
+					});
 			}
 		});
 		
@@ -170,23 +176,27 @@ class WorkingSetDialog extends InputDialog {
 
 	//--- Checked state handling --------------------------	
 
-	void handleCheckStateChange(CheckStateChangedEvent event) {
-		IResource resource= (IResource)event.getElement();
-		if (!resource.isAccessible()) {
-			MessageDialog.openInformation(getShell(), WorkingSetMessages.getString("WorkingSetDialog.projectClosedDialog.title"), WorkingSetMessages.getString("WorkingSetDialog.projectClosedDialog.message")); //$NON-NLS-2$ //$NON-NLS-1$
-			fTree.setChecked(resource, false);
-			fTree.setGrayed(resource, true);
-			return;
-		}
-		boolean state= event.getChecked();		
-		fTree.setGrayed(resource, false);
-		if (resource instanceof IContainer)
-			setSubtreeChecked((IContainer)resource, state, true);
-		updateParentState(resource, state);
+	void handleCheckStateChange(final CheckStateChangedEvent event) {
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				IResource resource= (IResource)event.getElement();
+				if (!resource.isAccessible()) {
+					MessageDialog.openInformation(getShell(), WorkingSetMessages.getString("WorkingSetDialog.projectClosedDialog.title"), WorkingSetMessages.getString("WorkingSetDialog.projectClosedDialog.message")); //$NON-NLS-2$ //$NON-NLS-1$
+					fTree.setChecked(resource, false);
+					fTree.setGrayed(resource, true);
+					return;
+				}
+				boolean state= event.getChecked();		
+				fTree.setGrayed(resource, false);
+				if (resource instanceof IContainer)
+					setSubtreeChecked((IContainer)resource, state, true);
+					
+				updateParentState(resource, state);
+			}
+		});
 	}
 
 	private void setSubtreeChecked(IContainer container, boolean state, boolean checkExpandedState) {
-		
 		if (!container.isAccessible() || !fTree.getExpandedState(container) && checkExpandedState)
 			return;
 		
@@ -198,8 +208,12 @@ class WorkingSetDialog extends InputDialog {
 		}
 		for (int i= members.length - 1; i >= 0; i--) {
 			IResource element= members[i];
-			fTree.setChecked(element, state);
-			fTree.setGrayed(element, false);
+			if (state) {
+				fTree.setChecked(element, true);
+				fTree.setGrayed(element, false);
+			}
+			else
+				fTree.setGrayChecked(element, false);
 			if (element instanceof IContainer)
 				setSubtreeChecked((IContainer)element, state, true);
 		}
@@ -235,12 +249,16 @@ class WorkingSetDialog extends InputDialog {
 		if (fWorkingSet == null)
 			return;
 
-		IResource[] resources= fWorkingSet.getResources();
-		fTree.setCheckedElements(resources);
-		for (int i= 0; i < resources.length; i++) {
-			if (resources[i] instanceof IContainer)
-				setSubtreeChecked((IContainer)resources[i], true, true);
-			updateParentState(resources[i], true);
-		}
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				IResource[] resources= fWorkingSet.getResources();
+				fTree.setCheckedElements(resources);
+				for (int i= 0; i < resources.length; i++) {
+					if (resources[i] instanceof IContainer)
+						setSubtreeChecked((IContainer)resources[i], true, true);
+					updateParentState(resources[i], true);
+				}
+			}
+		});
 	}
 }
