@@ -368,7 +368,7 @@ public class PerspectiveTab implements ILaunchConfigurationTab {
 		} else {
 			getLaunchConfiguration().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, null);
 		}
-		
+		getLaunchDialog().refreshStatus();	
 	}
 	
 	/**
@@ -382,6 +382,7 @@ public class PerspectiveTab implements ILaunchConfigurationTab {
 		} else {
 			getLaunchConfiguration().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, null);
 		}
+		getLaunchDialog().refreshStatus();
 		
 	}	
 
