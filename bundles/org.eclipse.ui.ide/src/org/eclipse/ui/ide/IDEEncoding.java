@@ -59,17 +59,17 @@ public class IDEEncoding {
 	public static List getIDEEncodings() {
 		List encodings = WorkbenchEncoding.getStandardEncodings();
 
-		String enc = getResourceEncoding();
-
-		if (!(enc == null || encodings.contains(enc))) {
-			encodings.add(enc);
-		}
-
 		String[] userEncodings = getIDEEncodingsPreference();
 		for (int i = 0; i < userEncodings.length; i++) {
 			encodings.add(userEncodings[i]);
 
 		}
+		
+		String enc = getResourceEncoding();
+
+		if (!(enc == null || encodings.contains(enc))) 
+			encodings.add(enc);
+		
 		Collections.sort(encodings);
 		return encodings;
 	}
