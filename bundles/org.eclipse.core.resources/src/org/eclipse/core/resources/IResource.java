@@ -562,7 +562,7 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * Creates and returns the marker with the specified type on this resource.
  * Marker type ids are the id of an extension installed in the
  * <code>org.eclipse.core.resources.markers</code> extension
- * point.
+ * point. The specified type string must not be <code>null</code>.
  *
  * @param type the type of the marker to create
  * @return the handle of the new marker

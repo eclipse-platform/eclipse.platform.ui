@@ -365,7 +365,8 @@ public long getId();
  */
 public IResource getResource();
 /**
- * Returns the type of this marker.
+ * Returns the type of this marker. The returned marker type will not be 
+ * <code>null</code>.
  *
  * @return the type of this marker
  * @exception CoreException if this method fails. Reasons include:
