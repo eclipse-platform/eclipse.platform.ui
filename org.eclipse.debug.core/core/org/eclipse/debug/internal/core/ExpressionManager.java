@@ -11,9 +11,7 @@
 package org.eclipse.debug.internal.core;
 
  
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -49,7 +44,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * The expression manager manages all registered expressions
@@ -156,24 +150,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		if (expressionsString.length() == 0) {
 			return;
 		}
-		Element root= null;
+		Element root;
 		try {
-			ByteArrayInputStream stream = new ByteArrayInputStream(expressionsString.getBytes("UTF-8")); //$NON-NLS-1$
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			root = parser.parse(stream).getDocumentElement();
-		} catch (UnsupportedEncodingException e) {
-			DebugPlugin.logMessage("An exception occurred while loading watch expressions.", e); //$NON-NLS-1$
-			return;
-		} catch (ParserConfigurationException e) {
-			DebugPlugin.logMessage("An exception occurred while loading watch expressions.", e); //$NON-NLS-1$
-			return;			
-		} catch (FactoryConfigurationError e) {
-			DebugPlugin.logMessage("An exception occurred while loading watch expressions.", e); //$NON-NLS-1$
-			return;
-		} catch (SAXException e) {
-			DebugPlugin.logMessage("An exception occurred while loading watch expressions.", e); //$NON-NLS-1$
-			return;
-		} catch (IOException e) {
+			root = DebugPlugin.parseDocument(expressionsString);
+		} catch (CoreException e) {
 			DebugPlugin.logMessage("An exception occurred while loading watch expressions.", e); //$NON-NLS-1$
 			return;
 		}
