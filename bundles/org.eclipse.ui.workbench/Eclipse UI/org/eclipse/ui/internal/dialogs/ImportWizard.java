@@ -42,11 +42,7 @@ public class ImportWizard extends Wizard {
 
 	//the list selection page
 	class SelectionPage extends WorkbenchWizardListSelectionPage {
-		SelectionPage(
-			IWorkbench w,
-			IStructuredSelection ss,
-			AdaptableList e,
-			String s) {
+		SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e, String s) {
 			super(w, ss, e, s);
 		}
 		public void createControl(Composite parent) {
@@ -58,8 +54,7 @@ public class ImportWizard extends Wizard {
 		public IWizardNode createWizardNode(WorkbenchWizardElement element) {
 			return new WorkbenchWizardNode(this, element) {
 				public IWorkbenchWizard createWizard() throws CoreException {
-					return (IWorkbenchWizard) wizardElement
-						.createExecutableExtension();
+					return (IWorkbenchWizard) wizardElement.createExecutableExtension();
 				}
 			};
 		}
@@ -77,22 +72,18 @@ public class ImportWizard extends Wizard {
 	 * Returns the import wizards that are available for invocation.
 	 */
 	protected AdaptableList getAvailableImportWizards() {
-		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT)
-			.getWizards();
+		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT).getWizards();
 	}
 	/**
 	 * Initializes the wizard.
 	 */
-	public void init(
-		IWorkbench aWorkbench,
-		IStructuredSelection currentSelection) {
+	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
 		this.workbench = aWorkbench;
 		this.selection = currentSelection;
 
 		setWindowTitle(WorkbenchMessages.getString("ImportWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
+			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
 		setNeedsProgressMonitor(true);
 	}
 	/**
@@ -111,8 +102,7 @@ public class ImportWizard extends Wizard {
 
 		IActivityManager activityManager = support.getActivityManager();
 		IIdentifier identifier =
-			activityManager.getIdentifier(
-				first.getSelectedNode().getWizard().getClass().getName());
+			activityManager.getIdentifier(first.getSelectedNode().getWizard().getClass().getName());
 		Set activities = new HashSet(activityManager.getEnabledActivityIds());
 		if (activities.addAll(identifier.getActivityIds())) {
 			support.setEnabledActivityIds(activities);

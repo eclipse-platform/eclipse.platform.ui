@@ -44,17 +44,14 @@ public class NewWizard extends Wizard {
 	 * Create the wizard pages
 	 */
 	public void addPages() {
-		NewWizardsRegistryReader rdr =
-			new NewWizardsRegistryReader(projectsOnly);
+		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(projectsOnly);
 		WizardCollectionElement wizards = rdr.getWizardElements();
 
 		if (categoryId != null) {
 			WizardCollectionElement categories = wizards;
-			StringTokenizer familyTokenizer =
-				new StringTokenizer(categoryId, CATEGORY_SEPARATOR);
+			StringTokenizer familyTokenizer = new StringTokenizer(categoryId, CATEGORY_SEPARATOR);
 			while (familyTokenizer.hasMoreElements()) {
-				categories =
-					getChildWithID(categories, familyTokenizer.nextToken());
+				categories = getChildWithID(categories, familyTokenizer.nextToken());
 				if (categories == null)
 					break;
 			}
@@ -62,8 +59,7 @@ public class NewWizard extends Wizard {
 				wizards = categories;
 		}
 
-		mainPage =
-			new NewWizardSelectionPage(this.workbench, this.selection, wizards);
+		mainPage = new NewWizardSelectionPage(this.workbench, this.selection, wizards);
 		addPage(mainPage);
 	}
 	/**
@@ -79,13 +75,10 @@ public class NewWizard extends Wizard {
 	/**
 	 * Returns the child collection element for the given id
 	 */
-	private WizardCollectionElement getChildWithID(
-		WizardCollectionElement parent,
-		String id) {
+	private WizardCollectionElement getChildWithID(WizardCollectionElement parent, String id) {
 		Object[] children = parent.getChildren(null);
 		for (int i = 0; i < children.length; ++i) {
-			WizardCollectionElement currentChild =
-				(WizardCollectionElement) children[i];
+			WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
 			if (currentChild.getId().equals(id))
 				return currentChild;
 		}
@@ -94,9 +87,7 @@ public class NewWizard extends Wizard {
 	/**
 	 * Lazily create the wizards pages
 	 */
-	public void init(
-		IWorkbench aWorkbench,
-		IStructuredSelection currentSelection) {
+	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
 		this.workbench = aWorkbench;
 		this.selection = currentSelection;
 
@@ -105,8 +96,7 @@ public class NewWizard extends Wizard {
 		else
 			setWindowTitle(WorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(
-				IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
+			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
 		setNeedsProgressMonitor(true);
 	}
 	/**
@@ -127,8 +117,7 @@ public class NewWizard extends Wizard {
 			return true;
 
 		IActivityManager activityManager = support.getActivityManager();
-		IIdentifier identifier =
-			activityManager.getIdentifier(selectedWizard.getClass().getName());
+		IIdentifier identifier = activityManager.getIdentifier(selectedWizard.getClass().getName());
 		Set activities = new HashSet(activityManager.getEnabledActivityIds());
 		if (activities.addAll(identifier.getActivityIds())) {
 			support.setEnabledActivityIds(activities);
