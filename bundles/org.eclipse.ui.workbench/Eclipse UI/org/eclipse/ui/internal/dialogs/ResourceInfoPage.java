@@ -47,6 +47,8 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String FILE_LABEL = WorkbenchMessages.getString("ResourceInfo.file"); //$NON-NLS-1$
 	private static String FOLDER_LABEL = WorkbenchMessages.getString("ResourceInfo.folder"); //$NON-NLS-1$
 	private static String PROJECT_LABEL = WorkbenchMessages.getString("ResourceInfo.project"); //$NON-NLS-1$
+	private static String LINKED_FILE_LABEL = WorkbenchMessages.getString("ResourceInfo.linkedFile"); //$NON-NLS-1$
+	private static String LINKED_FOLDER_LABEL = WorkbenchMessages.getString("ResourceInfo.linkedFolder"); //$NON-NLS-1$
 	private static String UNKNOWN_LABEL = WorkbenchMessages.getString("ResourceInfo.unknown"); //$NON-NLS-1$
 	private static String NOT_LOCAL_TEXT = WorkbenchMessages.getString("ResourceInfo.notLocal"); //$NON-NLS-1$
 	private static String PATH_TITLE = WorkbenchMessages.getString("ResourceInfo.path"); //$NON-NLS-1$
@@ -308,11 +310,19 @@ private String getSizeString(IFile file) {
  */
 private String getTypeString(IResource resource) {
 	
-	if(resource.getType() == IResource.FILE)
+	if(resource.getType() == IResource.FILE) {
+		if (resource.isLinked())
+			return LINKED_FILE_LABEL;
+			
 		return FILE_LABEL;
+	}
 
-	if(resource.getType() == IResource.FOLDER)
+	if(resource.getType() == IResource.FOLDER) {
+		if (resource.isLinked())
+			return LINKED_FOLDER_LABEL;
+			
 		return FOLDER_LABEL;
+	}
 
 	if(resource.getType() == IResource.PROJECT)
 		return PROJECT_LABEL;
