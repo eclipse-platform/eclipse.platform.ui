@@ -110,7 +110,7 @@ public class ListSelectionDialog extends SelectionDialog {
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
                 | GridData.GRAB_HORIZONTAL);
         data.grabExcessHorizontalSpace = true;
-        composite.setData(data);
+        buttonComposite.setLayoutData(data);
 
         Button selectButton = createButton(buttonComposite,
                 IDialogConstants.SELECT_ALL_ID, SELECT_ALL_TITLE, false);
