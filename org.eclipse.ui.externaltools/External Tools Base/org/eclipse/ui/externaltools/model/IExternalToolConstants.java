@@ -220,6 +220,21 @@ public interface IExternalToolConstants {
 	 */
 	public static final String IMG_WIZBAN_EXTERNAL_TOOLS = PLUGIN_ID + ".IMG_WIZBAN_EXTERNAL_TOOLS"; //$NON-NLS-1$
 	
+	/**
+	 * Refresh action image
+	 */
+	public static final String IMG_ACTION_REFRESH = PLUGIN_ID + ".IMG_ACTION_REFRESH"; //$NON-NLS-1$
+	
+	/**
+	 * Main tab image.
+	 */ 
+	public static final String IMG_TAB_MAIN = PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
+	
+	/**
+	 * Options tab image.
+	 */ 
+	public static final String IMG_TAB_OPTIONS = PLUGIN_ID + ".IMG_TAB_OPTIONS"; //$NON-NLS-1$	
+	
 	// ------- Common External Tool Launch Configuration Attributes -------
 	/**
 	 * String attribute identifying the location of an external. Default value

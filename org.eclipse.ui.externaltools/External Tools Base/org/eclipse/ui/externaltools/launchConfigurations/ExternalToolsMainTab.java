@@ -24,6 +24,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,6 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
@@ -383,4 +385,12 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			workDirectoryField.setText(text);
 		}
 	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_MAIN);
+	}
+
 }

@@ -15,12 +15,14 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
@@ -237,4 +239,11 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 		}
 		return IMessageProvider.NONE;
 	}
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_ACTION_REFRESH);
+	}
+
 }

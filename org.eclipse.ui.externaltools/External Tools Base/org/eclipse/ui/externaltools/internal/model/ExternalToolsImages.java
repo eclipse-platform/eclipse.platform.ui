@@ -65,6 +65,13 @@ public class ExternalToolsImages {
 	private static void declareImages() {
 		// Wizards
 		declareRegistryImage(IExternalToolConstants.IMG_WIZBAN_EXTERNAL_TOOLS, WIZBAN + "ext_tools_wiz.gif"); //$NON-NLS-1$
+		
+		// Actions
+		declareRegistryImage(IExternalToolConstants.IMG_ACTION_REFRESH, LOCALTOOL + "refresh.gif"); //$NON-NLS-1$
+		
+		// Objects
+		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolConstants.IMG_TAB_OPTIONS, OBJECT + "options_tab.gif"); //$NON-NLS-1$
 	}
 
 	/**

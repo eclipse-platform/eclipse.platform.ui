@@ -22,6 +22,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,6 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.externaltools.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
@@ -517,4 +519,11 @@ public class ExternalToolsOptionTab extends AbstractLaunchConfigurationTab {
 			return form;
 		}
 	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_OPTIONS);
+	}	
 }
