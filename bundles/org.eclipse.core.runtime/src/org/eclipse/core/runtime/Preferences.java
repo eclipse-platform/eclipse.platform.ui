@@ -474,21 +474,21 @@ public class Preferences {
 			throw new IllegalArgumentException();
 		Object[] changeListeners = this.listeners.getListeners();
 		// Do we even need to fire an event?
-		if (changeListeners.length > 0) {
-			final PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
-			for (int i = 0; i < changeListeners.length; ++i) {
-				final IPropertyChangeListener l = (IPropertyChangeListener) changeListeners[i];
-				ISafeRunnable job = new ISafeRunnable() {
-					public void handleException(Throwable exception) {
-						// already being logged in Platform#run()
-					}
+		if (changeListeners.length == 0)
+			return;
+		final PropertyChangeEvent pe = new PropertyChangeEvent(this, name, oldValue, newValue);
+		for (int i = 0; i < changeListeners.length; ++i) {
+			final IPropertyChangeListener l = (IPropertyChangeListener) changeListeners[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already being logged in Platform#run()
+				}
 
-					public void run() throws Exception {
-						l.propertyChange(pe);
-					}
-				};
-				Platform.run(job);
-			}
+				public void run() throws Exception {
+					l.propertyChange(pe);
+				}
+			};
+			Platform.run(job);
 		}
 	}
 
