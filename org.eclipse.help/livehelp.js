@@ -49,7 +49,7 @@ function liveAction(pluginId, className, argument)
  */
 function showTopicInContents(topic) {
 		var helpTop=findHelpTop();
-		if (helpTop != null && helpTop.howTopicInContentsInternal){
+		if (helpTop != null && helpTop.showTopicInContentsInternal){
 			return helpTop.showTopicInContents(helpTop, topic);
 		}
 }
