@@ -67,13 +67,14 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
-import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-import org.eclipse.ui.internal.editors.text.*;
+
+import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
+import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
 
 /**
  * @since 3.0
  */
-public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
+public class TextFileDocumentProvider implements IDocumentProvider, IDocumentProviderExtension, IDocumentProviderExtension2, IDocumentProviderExtension3, IStorageDocumentProvider {
 	
 	/**
 	 * Operation created by the document provider and to be executed by the providers runnable context.
@@ -487,7 +488,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	}
 
 	protected IAnnotationModel createAnnotationModel(IFile file) {
-		return new ResourceMarkerAnnotationModel(file);
+		return null;
 	}
 
 	/*
@@ -749,8 +750,11 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 */
 	public IAnnotationModel getAnnotationModel(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)
-			return info.fModel;
+		if (info != null) {
+			if (info.fModel != null)
+				return info.fModel;
+			return info.fTextFileBuffer.getAnnotationModel();
+		}
 		return getParentProvider().getAnnotationModel(element);
 	}
 

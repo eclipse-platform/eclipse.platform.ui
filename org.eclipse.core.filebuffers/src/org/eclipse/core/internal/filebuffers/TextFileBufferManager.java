@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IAnnotationModelFactory;
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -35,6 +36,7 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * @since 3.0
@@ -155,6 +157,18 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 		
 		return document;
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath)
+	 */
+	public IAnnotationModel createAnnotationModel(IPath location) {
+		Assert.isNotNull(location);
+		location= FileBuffers.normalizeLocation(location);
+		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location);
+		if (factory != null)
+			return factory.createAnnotationModel(location);
+		return null;
 	}
 	
 	/*

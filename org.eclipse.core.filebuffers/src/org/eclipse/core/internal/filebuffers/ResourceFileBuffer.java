@@ -235,18 +235,37 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	public void connect() {
 		++ fReferenceCount;
 		if (fReferenceCount == 1)
-			fFileSynchronizer.install();
+			connected();
 	}
 	
+	/**
+	 * Called when this file buffer has been connected. This is the case when
+	 * there is exactly one connection.
+	 * <p>
+	 * Clients may extend this method.
+	 */
+	protected void connected() {
+		fFileSynchronizer.install();
+	}
+
 	public void disconnect() throws CoreException {
 		-- fReferenceCount;
-		if (fReferenceCount == 0) {
-			if (fFileSynchronizer != null)
-				fFileSynchronizer.uninstall();
-			fFileSynchronizer= null;
-		}
+		if (fReferenceCount == 0)
+			disconnected();
 	}
 	
+	/**
+	 * Called when this file buffer has been disconnected. This is the case when
+	 * the number of connections drops to <code>0</code>.
+	 * <p>
+	 * Clients may extend this method.
+	 */
+	protected void disconnected() {
+		if (fFileSynchronizer != null)
+			fFileSynchronizer.uninstall();
+		fFileSynchronizer= null;
+	}
+
 	/**
 	 * Returns whether this file buffer has already been disposed.
 	 * 

@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceStatus;
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * 
@@ -84,7 +86,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	protected String fEncoding;
 	/** Internal document listener */
 	protected IDocumentListener fDocumentListener= new DocumentListener();
-
+	/** The element's annotation model */
+	protected IAnnotationModel fAnnotationModel;
 
 
 	public ResourceTextFileBuffer(TextFileBufferManager manager) {
@@ -96,6 +99,13 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	public IDocument getDocument() {
 		return fDocument;
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getAnnotationModel()
+	 */
+	public IAnnotationModel getAnnotationModel() {
+		return fAnnotationModel;
 	}
 
 	/*
@@ -167,7 +177,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			
 			if (replaceContents)
 				fManager.fireBufferContentReplaced(this);
-				
+			
+			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
+				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+				persistableModel.revert(fDocument);
+			}
+			
 			fManager.fireDirtyStateChanged(this, fCanBeSaved);
 		}
 	}
@@ -212,12 +227,34 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			} else {
 				fEncoding= fFile.getCharset();
 			}
+			
 			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
+			
+			fAnnotationModel= fManager.createAnnotationModel(fFile.getLocation());
+						
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			fStatus= x.getStatus();
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#connected()
+	 */
+	protected void connected() {
+		super.connected();
+		if (fAnnotationModel != null)
+			fAnnotationModel.connect(fDocument);
+	}
+	
+	/*
+	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#disconnected()
+	 */
+	protected void disconnected() {
+		if (fAnnotationModel != null)
+			fAnnotationModel.disconnect(fDocument);
+		super.disconnected();
 	}
 	
 	/*
@@ -244,7 +281,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				// set synchronization stamp to know whether the file synchronizer must become active
 				fSynchronizationStamp= fFile.getModificationStamp();
 				
-				// TODO if there is an annotation model update it here
+				if (fAnnotationModel instanceof IPersistableAnnotationModel) {
+					IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+					persistableModel.commit(fDocument);
+				}
 				
 			} else {
 
@@ -296,6 +336,15 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			addFileBufferContentListeners();
 			
 			fManager.fireBufferContentReplaced(this);
+			
+			if (fAnnotationModel instanceof IPersistableAnnotationModel) {
+				IPersistableAnnotationModel persistableModel= (IPersistableAnnotationModel) fAnnotationModel;
+				try {
+					persistableModel.reinitialize(fDocument);
+				} catch (CoreException x) {
+					fStatus= status;
+				}
+			}
 			
 		} else {
 			

@@ -14,6 +14,7 @@ package org.eclipse.core.filebuffers;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 
 /**
@@ -61,4 +62,12 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @return a new empty document
 	 */
 	IDocument createEmptyDocument(IPath location);
+	
+	/**
+	 * Creates a new annotation for the given location.
+	 * 
+	 * @param location the location
+	 * @return the newly created annotation model
+	 */
+	IAnnotationModel createAnnotationModel(IPath location);
 }

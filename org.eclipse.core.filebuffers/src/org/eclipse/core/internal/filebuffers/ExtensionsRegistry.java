@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -35,6 +34,8 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IAnnotationModelFactory;
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 
@@ -102,15 +103,19 @@ public class ExtensionsRegistry {
 	
 	private final static String WILDCARD= "*";  //$NON-NLS-1$
 	
-	/** The mapping between name extensions and configuration elements describing document factories. */
+	/** The mapping between file attributes and configuration elements describing document factories. */
 	private Map fFactoryDescriptors= new HashMap();
 	/** The mapping between configuration elements for document factories and instantiated document factories. */
 	private Map fFactories= new HashMap();
-	/** The mapping between name extensions and configuration elements describing document setup participants. */
+	/** The mapping between file attributes and configuration elements describing document setup participants. */
 	private Map fSetupParticipantDescriptors= new HashMap();
 	/** The mapping between configuration elements for setup participants and instantiated setup participants. */
 	private Map fSetupParticipants= new HashMap();
-
+	/** The mapping between file attributes and configuration elements describing annotation model factories. */
+	private Map fAnnotationModelFactoryDescriptors= new HashMap();
+	/** The mapping between configuration elements for annotation model factories */
+	private Map fAnnotationModelFactories= new HashMap();
+	/** The content type manager. */
 	private IContentTypeManager fContentTypeManager= Platform.getContentTypeManager();
 	
 	
@@ -120,11 +125,15 @@ public class ExtensionsRegistry {
 	 */
 	public ExtensionsRegistry() {
 		initialize("documentCreation", "contentTypeId", true,  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("documentCreation", "fileNames", fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("documentCreation", "extensions",  fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("documentSetup", "contentTypeId", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("documentSetup", "fileNames", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
-		initialize("documentSetup", "extensions", fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentCreation", "fileNames", false, fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentCreation", "extensions",  false, fFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentSetup", "contentTypeId", true, fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentSetup", "fileNames", false, fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("documentSetup", "extensions", false, fSetupParticipantDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("annotationModelCreation", "contentTypeId", true, fAnnotationModelFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("annotationModelCreation", "fileNames", false, fAnnotationModelFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		initialize("annotationModelCreation", "extensions", false, fAnnotationModelFactoryDescriptors); //$NON-NLS-1$ //$NON-NLS-2$
+		
 	}
 	
 	/**
@@ -185,19 +194,6 @@ public class ExtensionsRegistry {
 	private void log(IStatus status) {
 		ILog log=  Platform.getPlugin(FileBuffersPlugin.PLUGIN_ID).getLog();
 		log.log(status);
-	}
-
-	/**
-	 * Initializes this registry. It retrieves all implementers of the given
-	 * extension point and remembers those implementers based on the
-	 * file name extensions in the given map.
-	 * 
-	 * @param extensionPointName the name of the extension point
-	 * @param childElementName the name of the child elements
-	 * @param descriptors the map to be filled 
-	 */
-	private void initialize(String extensionPointName, String childElementName, Map descriptors) {
-		initialize(extensionPointName, childElementName, false, descriptors);
 	}
 	
 	/**
@@ -271,13 +267,13 @@ public class ExtensionsRegistry {
 	}
 
 	/**
-	 * Returns a sharable document factory for the given file name extension.
+	 * Returns a sharable document factory for the given file name or file extension.
 	 *
-	 * @param extension the name extension to be used for lookup
+	 * @param nameOrExtension the name or extension to be used for lookup
 	 * @return the sharable document factory or <code>null</code>
 	 */
-	private IDocumentFactory getDocumentFactory(String extension) {
-		Set set= (Set) fFactoryDescriptors.get(extension);
+	private IDocumentFactory getDocumentFactory(String nameOrExtension) {
+		Set set= (Set) fFactoryDescriptors.get(nameOrExtension);
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
 			return (IDocumentFactory) getExtension(entry, fFactories, IDocumentFactory.class);
@@ -306,13 +302,13 @@ public class ExtensionsRegistry {
 	}
 	
 	/**
-	 * Returns the set of setup participants for the given file name.
+	 * Returns the set of setup participants for the given file name or extension.
 	 * 
-	 * @param extension the name extension to be used for lookup
+	 * @param nameOrExtension the name or extension to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
-	private List getDocumentSetupParticipants(String extension) {
-		Set set= (Set) fSetupParticipantDescriptors.get(extension);
+	private List getDocumentSetupParticipants(String nameOrExtension) {
+		Set set= (Set) fSetupParticipantDescriptors.get(nameOrExtension);
 		if (set == null)
 			return null;
 		
@@ -355,8 +351,45 @@ public class ExtensionsRegistry {
 		return participants;
 	}
 	
+	/**
+	 * Returns a sharable annotation model factory for the given content types.
+	 *
+	 * @param contentTypes the content types used to find the factory
+	 * @return the sharable annotation model factory or <code>null</code>
+	 */
+	private IAnnotationModelFactory getAnnotationModelFactory(IContentType[] contentTypes) {
+		Set set= null;
+		int i= 0;
+		while (i < contentTypes.length && set == null) {
+			set= (Set) fAnnotationModelFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
+		}
+
+		if (set != null) {
+			IConfigurationElement entry= selectConfigurationElement(set);
+			return (IAnnotationModelFactory) getExtension(entry, fAnnotationModelFactories, IAnnotationModelFactory.class);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a sharable annotation model factory for the given file name or file extension.
+	 *
+	 * @param extension the name or extension to be used for lookup
+	 * @return the sharable document factory or <code>null</code>
+	 */
+	private IAnnotationModelFactory getAnnotationModelFactory(String extension) {
+		Set set= (Set) fAnnotationModelFactoryDescriptors.get(extension);
+		if (set != null) {
+			IConfigurationElement entry= selectConfigurationElement(set);
+			return (IAnnotationModelFactory) getExtension(entry, fAnnotationModelFactories, IAnnotationModelFactory.class);
+		}
+		return null;
+	}
+	
 	private IContentType[] findContentTypes(IPath path) {
-		IFile file= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(path);
+		if (file == null)
+			return new IContentType[0];
 		
 		IContentDescription contentDescription;
 		try {
@@ -419,5 +452,22 @@ public class ExtensionsRegistry {
 		IDocumentSetupParticipant[] result= new IDocumentSetupParticipant[participants.size()];
 		participants.toArray(result);
 		return result;
+	}
+	
+	/**
+	 * Returns the sharable annotation model factory for the given location.
+	 * 
+	 * @param location the location for which to look up the factory
+	 * @return the sharable annotation model factory
+	 */
+	public IAnnotationModelFactory getAnnotationModelFactory(IPath location) {
+		IAnnotationModelFactory factory= getAnnotationModelFactory(findContentTypes(location));
+		if (factory == null)
+			factory= getAnnotationModelFactory(location.lastSegment());
+		if (factory == null)
+			factory= getAnnotationModelFactory(location.getFileExtension());
+		if (factory == null)
+			factory= getAnnotationModelFactory(WILDCARD);
+		return factory;
 	}
 }

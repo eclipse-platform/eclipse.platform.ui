@@ -479,15 +479,21 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 			/** The current iterator. */
 			private Iterator fCurrent= (Iterator) iter.next(); // there is at least one.
+			/** The current element. */
+			private Object fCurrentElement;
 			
 			public void remove() {
 				throw new UnsupportedOperationException();
 			}
 
 			public boolean hasNext() {
-				if (fCurrent.hasNext())
+				if (fCurrentElement != null)
 					return true;
-				else if (iter.hasNext()) {
+				
+				if (fCurrent.hasNext()) {
+					fCurrentElement= fCurrent.next();
+					return true;
+				} else if (iter.hasNext()) {
 					fCurrent= (Iterator) iter.next();
 					return hasNext();
 				} else
@@ -497,8 +503,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			public Object next() {
 				if (!hasNext())
 					throw new NoSuchElementException();
-				else
-					return fCurrent.next();
+				
+				Object element= fCurrentElement;
+				fCurrentElement= null;
+				return element;
 			}
 			
 		};

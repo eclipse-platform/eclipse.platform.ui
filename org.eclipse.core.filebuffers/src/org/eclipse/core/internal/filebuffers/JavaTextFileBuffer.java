@@ -32,6 +32,7 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * @since 3.0
@@ -94,6 +95,13 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 */
 	public IDocument getDocument() {
 		return fDocument;
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBuffer#getAnnotationModel()
+	 */
+	public IAnnotationModel getAnnotationModel() {
+		return null;
 	}
 
 	/*

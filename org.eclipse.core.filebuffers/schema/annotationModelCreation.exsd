@@ -3,17 +3,17 @@
 <schema targetNamespace="org.eclipse.core.filebuffers">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.core.filebuffers" id="documentSetup" name="Document Setup"/>
+         <meta.schema plugin="org.eclipse.core.filebuffers" id="annotationModelCreation" name="Annotation Model Creation"/>
       </appInfo>
       <documentation>
-         This extension point is interesting if you want to install specific partitioners etc. on documents created by the file buffer manager for certain file content types, file extensions, or file names.
+         This extension point is interesting for your if you want the file buffer manager to instantiate a specific annotation models for certain file content types, file extensions, or file names.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="participant"/>
+            <element ref="factory"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,7 +39,7 @@
       </complexType>
    </element>
 
-   <element name="participant">
+   <element name="factory">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -47,7 +47,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IDocumentSetupParticipant"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IAnnotationModelFactory"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -80,7 +80,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.0
+         [Enter the first release in which this extension point appears.]
       </documentation>
    </annotation>
 
@@ -116,12 +116,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-&lt;a href=&quot;hglegal.htm&quot;&gt;
- &lt;img SRC=&quot;ngibmcpy.gif&quot;
-   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
-   BORDER=&quot;0&quot; height=&quot;14&quot; width=&quot;324&quot;&gt;&lt;/a&gt;
-&lt;/p&gt;
+         
       </documentation>
    </annotation>
 

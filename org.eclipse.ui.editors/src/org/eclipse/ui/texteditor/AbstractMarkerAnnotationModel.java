@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -61,7 +62,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.0
  */
-public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
+public abstract class AbstractMarkerAnnotationModel extends AnnotationModel implements IPersistableAnnotationModel {
 
 	/** List of annotations whose text range became invalid because of document changes */
 	private List fDeletedAnnotations= new ArrayList(2);
@@ -584,7 +585,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 */
 	public void resetMarkers() {
 		
-		// reinitializes the positions from the markers
+		// re-initializes the positions from the markers
 		for (Iterator e= getAnnotationIterator(false); e.hasNext();) {
 			Object o= e.next();
 			if (o instanceof MarkerAnnotation) {
@@ -619,5 +620,26 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		
 		// fire annotation model changed
 		fireModelChanged();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IPersistableAnnotationModel#commit(org.eclipse.jface.text.IDocument)
+	 */
+	public void commit(IDocument document) throws CoreException {
+		updateMarkers(document);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IPersistableAnnotationModel#revert(org.eclipse.jface.text.IDocument)
+	 */
+	public void revert(IDocument document) {
+		resetMarkers();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IPersistableAnnotationModel#reinitialize(org.eclipse.jface.text.IDocument)
+	 */
+	public void reinitialize(IDocument document) {
+		resetMarkers();
 	}
 }

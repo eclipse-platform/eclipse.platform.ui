@@ -12,13 +12,6 @@ package org.eclipse.jface.text.source;
 
 
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-
 /**
  * Annotation managed by an <code>IAnnotationModel</code>.
  * Annotations are considered being located at layers and are considered being painted
@@ -34,73 +27,9 @@ public class Annotation {
 	 * Constant for unknown annotation types.
 	 * @since 3.0
 	 */
-	public final static String TYPE_UNKNOWN= "org.eclipse.text.annotation.unknown";  //$NON-NLS-1$
-	
-	/**
-	 * Convenience method for drawing an image aligned inside a rectangle.
-	 *
-	 * @param image the image to be drawn
-	 * @param gc the drawing GC
-	 * @param canvas the canvas on which to draw
-	 * @param r the clipping rectangle
-	 * @param halign the horizontal alignment of the image to be drawn
-	 * @param valign the vertical alignment of the image to be drawn
-	 */
-	protected static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int halign, int valign) {
-		if (image != null) {
-			
-			Rectangle bounds= image.getBounds();
-			
-			int x= 0;
-			switch(halign) {
-			case SWT.LEFT:
-				break;
-			case SWT.CENTER:
-				x= (r.width - bounds.width) / 2;
-				break;
-			case SWT.RIGHT:
-				x= r.width - bounds.width;
-				break;
-			}
-			
-			int y= 0;
-			switch (valign) {
-			case SWT.TOP: {
-				FontMetrics fontMetrics= gc.getFontMetrics();
-				y= (fontMetrics.getHeight() - bounds.height)/2;
-				break;
-			}
-			case SWT.CENTER:
-				y= (r.height - bounds.height) / 2;
-				break;
-			case SWT.BOTTOM: {
-				FontMetrics fontMetrics= gc.getFontMetrics();
-				y= r.height - (fontMetrics.getHeight() + bounds.height)/2;
-				break;
-			}
-			}
-			
-			gc.drawImage(image, r.x+x, r.y+y);
-		}
-	}
-	
-	/**
-	 * Convenience method for drawing an image aligned inside a rectangle.
-	 *
-	 * @param image the image to be drawn
-	 * @param gc the drawing GC
-	 * @param canvas the canvas on which to draw
-	 * @param r the clipping rectangle
-	 * @param align the alignment of the image to be drawn
-	 */
-	protected static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {
-		drawImage(image, gc, canvas, r, align, SWT.CENTER);
-	}
+	public final static String TYPE_UNKNOWN= "org.eclipse.text.annotation.unknown";  //$NON-NLS-1$	
 	
 	
-	
-	/** The layer of this annotation. */
-	private int fLayer;
 	/**
 	 * The type of this annotation.
 	 * @since 3.0
@@ -121,7 +50,6 @@ public class Annotation {
 	 * @since 3.0
 	 */
 	private String fText;
-	
 	
 	
 	/**
@@ -227,38 +155,5 @@ public class Annotation {
 	 */
 	public String getText() {
 		return fText;
-	}
-	
-	/**
-	 * Sets the layer of this annotation.
-	 *
-	 * @param layer the layer of this annotation
-	 * @deprecated since 3.0
-	 */
-	protected void setLayer(int layer) {
-		fLayer= layer;
-	}
-	
-	/**
-	 * Returns the annotations drawing layer.
-	 *
-	 * @return the annotations drawing layer
-	 * @deprecated use <code>IAnnotationAccessExtension.getLayer(Annotation)</code>
-	 */
-	public int getLayer() {
-		return fLayer;
-	}
-	
-	/**
-	 * Implement this method to draw a graphical representation 
-	 * of this annotation within the given bounds. This default implementation
-	 * does nothing.
-	 *
-	 * @param gc the drawing GC
-	 * @param canvas the canvas to draw on
-	 * @param bounds the bounds inside the canvas to draw on
-	 * @deprecated use <code>IAnnotationAccessExtension.paint(Annotation, GC, Canvas, Rectangle)</code>
-	 */
-	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
 	}
 }
