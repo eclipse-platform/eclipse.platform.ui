@@ -331,7 +331,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
                 throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
             }
             
-            Pattern pattern = Pattern.compile(matchListener.getPattern());
+            Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
             CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, matchListener);
             patterns.add(notifier);
             
@@ -371,7 +371,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         synchronized(patterns) {
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchListener pattern = (CompiledPatternMatchListener) iter.next();
-                int start = Math.min(pattern.end, event.fOffset);
+                int start = pattern.end;
+                if (event.fLength > 0) {
+                	start = Math.min(pattern.end, event.fOffset);
+                }
                 try {
                     testForMatch(pattern, start);
                 } catch (BadLocationException e) {
@@ -386,12 +389,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         Matcher matcher = compiled.pattern.matcher(contents);
         IPatternMatchListener notifier = compiled.listener;
         while(matcher.find()) {
-            String group = matcher.group();
-            if (group.length() > 0) {
-                int matchOffset = documentOffset + matcher.start();
-                notifier.matchFound(new PatternMatchEvent(this, matchOffset, group.length()));
-                compiled.end = matcher.end() + documentOffset;
-            }
+        	String group = matcher.group();
+        	int matchOffset = documentOffset + matcher.start();
+        	notifier.matchFound(new PatternMatchEvent(this, matchOffset, group.length()));
+        	compiled.end = matcher.end() + documentOffset + 1;
         }
     }
 

@@ -27,6 +27,8 @@ public interface IPatternMatchListener {
      */
     public String getPattern();
     
+    public int getCompilerFlags();
+    
     /**
      * Notification that a match has been found.
      * 
