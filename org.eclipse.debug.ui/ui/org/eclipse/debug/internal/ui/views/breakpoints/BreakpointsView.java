@@ -37,7 +37,6 @@ import org.eclipse.debug.internal.ui.actions.SkipAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveFromWorkingSetAction;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.ShowEmptyGroupsAction;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -408,7 +407,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		setAction(DOUBLE_CLICK_ACTION, action);
 		setAction("ShowBreakpointsForModel", new ShowSupportedBreakpointsAction(getStructuredViewer(),this)); //$NON-NLS-1$
 		setAction("SkipBreakpoints", new SkipAllBreakpointsAction()); //$NON-NLS-1$
-        getViewSite().getActionBars().getMenuManager().add(new ShowEmptyGroupsAction((StructuredViewer) getViewer()));
         
         fClipboard= new Clipboard(getSite().getShell().getDisplay());
         

@@ -45,9 +45,9 @@ public class BreakpointContainer extends PlatformObject    {
         fBreakpoints = new ArrayList();
         fNesting = nesting;
         fCategoriesToContainers = new HashMap();
-        // seed with empty nested categories
+        // seed with all nested categories
         if (nesting != null && nesting.length > 0) {
-            IAdaptable[] emptyCategories = nesting[0].getEmptyCategories();
+            IAdaptable[] emptyCategories = nesting[0].getCategories();
             if (emptyCategories != null) {
                 for (int i = 0; i < emptyCategories.length; i++) {
                     IAdaptable empty = emptyCategories[i];

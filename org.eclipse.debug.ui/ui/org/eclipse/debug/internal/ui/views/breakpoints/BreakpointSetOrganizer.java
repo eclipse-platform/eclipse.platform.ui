@@ -254,17 +254,17 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getEmptyCategories()
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories()
      */
-    public IAdaptable[] getEmptyCategories() {
+    public IAdaptable[] getCategories() {
         IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
-        List empty = new ArrayList();
+        List all = new ArrayList();
         for (int i = 0; i < workingSets.length; i++) {
             IWorkingSet set = workingSets[i];
-            if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId()) && set.getElements().length == 0) {
-                empty.add(new WorkingSetCategory(set));
+            if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
+                all.add(new WorkingSetCategory(set));
             }
         }
-        return (IAdaptable[]) empty.toArray(new IAdaptable[empty.size()]);
+        return (IAdaptable[]) all.toArray(new IAdaptable[all.size()]);
     }
 }

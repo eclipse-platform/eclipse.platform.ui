@@ -212,7 +212,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                 }
             }
             // add empty categories
-            IAdaptable[] emptyCategories = organizer.getEmptyCategories();
+            IAdaptable[] emptyCategories = organizer.getCategories();
             if (emptyCategories != null) {
                 for (int i = 0; i < emptyCategories.length; i++) {
                     IAdaptable category = emptyCategories[i];

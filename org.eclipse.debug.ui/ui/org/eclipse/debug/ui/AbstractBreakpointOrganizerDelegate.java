@@ -115,9 +115,9 @@ public abstract class AbstractBreakpointOrganizerDelegate implements IBreakpoint
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getEmptyCategories()
+     * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegate#getCategories()
      */
-    public IAdaptable[] getEmptyCategories() {
+    public IAdaptable[] getCategories() {
         return null;
     }
 }
