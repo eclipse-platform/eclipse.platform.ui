@@ -262,7 +262,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	// points for center curves
 	private double[] fBasicCenterCurve;
 	
-	private MenuManager fCenterMenuManager;
+//	private MenuManager fCenterMenuManager;
 	private Menu fCenterMenu;
 	private Button fCenterButton;
 	private Diff fButtonDiff;
@@ -1235,7 +1235,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 							if (diff != null && diff.isResolved()/*!diff.isUnresolvedIncomingOrConflicting()*/ )
 								diff= null;
 							if (diff != fButtonDiff) {
-								//setCurrentDiff(diff, false);
 								if (diff != null) {
 									if (fLeft.isEditable() && diff.isUnresolvedIncoming()) {
 										fButtonDiff= diff;
@@ -1259,19 +1258,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						}
 					}
 				);
-//				canvas.addMouseTrackListener(
-//					new MouseTrackAdapter() {
-//						public void mouseEnter(MouseEvent e) {
-//							System.out.println("enter");
-//							if (fCenterButton != null)
-//								fCenterButton.setVisible(false);
-//						}
-//						public void mouseExit(MouseEvent e) {
-//							if (fCenterButton != null)
-//								fCenterButton.setVisible(false);
-//						}
-//					}
-//				);
 				
 				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);
 				fCenterButton.setText("<");
@@ -1289,19 +1275,19 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					}
 				);
 				
-				fCenterMenuManager= new MenuManager();
-				fCenterMenuManager.setRemoveAllWhenShown(true);
-				fCenterMenuManager.addMenuListener(
-					new IMenuListener() {
-						public void menuAboutToShow(IMenuManager manager) {
-							updateControls();
-							if (fCopyDiffRightToLeftItem != null)
-								manager.add(fCopyDiffRightToLeftItem.getAction());
-							if (fCopyDiffLeftToRightItem != null)
-								manager.add(fCopyDiffLeftToRightItem.getAction());
-						}
-					}
-				);
+//				fCenterMenuManager= new MenuManager();
+//				fCenterMenuManager.setRemoveAllWhenShown(true);
+//				fCenterMenuManager.addMenuListener(
+//					new IMenuListener() {
+//						public void menuAboutToShow(IMenuManager manager) {
+//							updateControls();
+//							if (fCopyDiffRightToLeftItem != null)
+//								manager.add(fCopyDiffRightToLeftItem.getAction());
+//							if (fCopyDiffLeftToRightItem != null)
+//								manager.add(fCopyDiffLeftToRightItem.getAction());
+//						}
+//					}
+//				);
 			}
 			
 			return canvas;
