@@ -326,5 +326,16 @@ public class UpdateCore extends Plugin {
 		getPluginPreferences().setDefault(P_CHECK_SIGNATURE, true);		
 		getPluginPreferences().setDefault(P_HISTORY_SIZE, 50);
 		getPluginPreferences().setDefault(P_UPDATE_VERSIONS, EQUIVALENT_VALUE);
+		
+		// If proxy host and port are set as system properties, use them as defaults
+		String proxyHost = System.getProperty("http.proxyHost");
+		if (proxyHost != null && proxyHost.trim().length() > 0) {
+			String proxyPort = System.getProperty("http.proxyPort");
+			if (proxyPort == null || proxyPort.trim().length() == 0)
+				proxyPort = "80";
+			getPluginPreferences().setDefault(HTTP_PROXY_ENABLE, true);
+			getPluginPreferences().setDefault(HTTP_PROXY_HOST, proxyHost);
+			getPluginPreferences().setDefault(HTTP_PROXY_PORT, proxyPort);
+		}
 	}
 }
