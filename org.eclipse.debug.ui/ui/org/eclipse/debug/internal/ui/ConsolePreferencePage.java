@@ -31,6 +31,9 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
+	/**
+	 * @see PreferencePage#createControl(Composite)
+	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(
@@ -59,7 +62,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	}
 
 	/**
-	 * @see IWorkbenchPreferencePage#init
+	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
 	}
@@ -83,12 +86,11 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		return fontData;
 	}
 	
-	public static void initDefaults(IPreferenceStore store) {
+	protected static void initDefaults(IPreferenceStore store) {
 		WorkbenchChainedTextFontFieldEditor.startPropagate(store, CONSOLE_FONT);
 		
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
-		
 	}	
 }
