@@ -1001,7 +1001,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
                 title = title.substring(1);
             } else if (index > 0) {
                 //DBCS languages use "(&X)" format
-                if (title.charAt(index - 1) == '(' && title.length() >= index + 2 && title.charAt(index + 2) == ')') {
+                if (title.charAt(index - 1) == '(' && title.length() >= index + 3 && title.charAt(index + 2) == ')') {
                     String first = title.substring(0, index - 1);
                     String last = title.substring(index + 3);
                     title = first + last;
