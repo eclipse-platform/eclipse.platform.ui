@@ -143,9 +143,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/** Width of center bar */
 	private static final int CENTER_WIDTH= 34;
 	/** Width of birds eye view */
-	private static final int BIRDS_EYE_VIEW_WIDTH= 10;
+	private static final int BIRDS_EYE_VIEW_WIDTH= 12;
 	/** Width of birds eye view */
-	private static final int BIRDS_EYE_VIEW_INSET= 1;
+	private static final int BIRDS_EYE_VIEW_INSET= 2;
 	/** */
 	private static final int RESOLVE_SIZE= 5;
 	/** if true copying conflicts from one side to other concatenates both sides */
@@ -270,8 +270,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 	class HeaderPainter implements PaintListener {
 		
-		private static final int INSET= 2;
-		private static final int ANNOTATION_HEIGHT= 4;
+		private static final int INSET= BIRDS_EYE_VIEW_INSET;
 
 		private Color fIndicatorColor;
 		private Color fSeparatorColor;
@@ -300,7 +299,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			if (fIndicatorColor != null) {
 				e.gc.setBackground(fIndicatorColor);
-				Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+				//Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+				int min= Math.min(s.x, s.y)-2*INSET;
+				Rectangle r= new Rectangle((s.x-min)/2, (s.y-min)/2, min, min);
 				e.gc.fillRectangle(r);
 				Display d= fSummaryHeader.getDisplay();
 				if (d != null)
@@ -309,7 +310,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			e.gc.setForeground(fSeparatorColor);
 			e.gc.setLineWidth(1);
-			e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
+			e.gc.drawLine(0+1, s.y-1, s.x-1-1, s.y-1);
 		}
 	};
 
@@ -2049,7 +2050,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
   		if (fBirdsEyeCanvas != null) {
   			if (fSummaryHeader != null)
-				fSummaryHeader.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
+				fSummaryHeader.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, scrollbarWidth);
   			y+= scrollbarHeight;
   			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(3*scrollbarHeight));
    		}
