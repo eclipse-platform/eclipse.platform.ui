@@ -78,69 +78,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	/**
-	 * Note: IJobManager.shutdown API was removed, but this test is left behind
-	 * in case it was revived. See bug 46958 for discussion.
-	 */
-	public void _testJobManagerShutdown() {
-		Job job = new TestJob("testShutdown", 100, 100);
-		job.schedule();
-		//		manager.shutdown();
-		try {
-			job.schedule();
-			fail("Manager is shutdown and cannot schedule new jobs.");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-
-		//repeated calls should make no difference
-		//		manager.shutdown();
-		//		manager.shutdown();
-		//		manager.shutdown();
-		//		manager.shutdown();
-	}
-
-	/**
-	 * Note: IJobManager.startup API was removed, but this test is left behind
-	 * in case it was revived. See bug 46958 for discussion.
-	 *
-	 */
-	public void _testJobManagerStartup() {
-		Job job = new TestJob("testShutdown", 100, 100);
-
-		//		manager.shutdown();
-		try {
-			job.schedule();
-			fail("Manager is shutdown and cannot schedule new jobs.");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-
-		//		manager.startup();
-		try {
-			job.schedule();
-		} catch (RuntimeException e) {
-			fail("Manager is started up and should schedule new jobs normally.");
-		}
-		waitForCompletion();
-
-		Job second = new TestJob("testShutdown2", 100, 100);
-		job.schedule(1000);
-		//		manager.shutdown();
-		try {
-			second.schedule();
-			fail("Manager is shutdown and cannot schedule new jobs.");
-		} catch (RuntimeException e) {
-			//should fail
-		}
-		//start the manager back up
-		//		manager.startup();
-		//		//repeated calls should make no difference
-		//		manager.startup();
-		//		manager.startup();
-		//		manager.startup();
-	}
-
-	/**
 	 * Asserts the current job state
 	 */
 	public void assertState(String msg, Job job, int expectedState) {
