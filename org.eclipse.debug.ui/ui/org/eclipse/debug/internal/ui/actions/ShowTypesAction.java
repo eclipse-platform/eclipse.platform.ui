@@ -19,6 +19,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -33,7 +34,7 @@ public class ShowTypesAction extends Action {
 	private IDebugView fView;
 
 	public ShowTypesAction(IDebugView view) {
-		super(ActionMessages.getString("ShowTypesAction.Show_&Type_Names_1"), Action.AS_CHECK_BOX); //$NON-NLS-1$
+		super(ActionMessages.getString("ShowTypesAction.Show_&Type_Names_1"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
 		setView(view);
 		setToolTipText(ActionMessages.getString("ShowTypesAction.Show_Type_Names")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));

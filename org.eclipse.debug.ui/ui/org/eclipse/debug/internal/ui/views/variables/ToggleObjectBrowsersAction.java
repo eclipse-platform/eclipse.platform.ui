@@ -18,6 +18,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IRootVariablesContentProvider;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -32,7 +33,7 @@ public class ToggleObjectBrowsersAction extends Action {
 	private IDebugView fView;
 
 	public ToggleObjectBrowsersAction(IDebugView view) {
-		super(null, Action.AS_CHECK_BOX);
+		super(null, IAction.AS_CHECK_BOX);
 		setView(view);
 		setToolTipText(VariablesViewMessages.getString("ToggleObjectBrowsersAction.1"));  //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_VARIABLES_CONTENT_PROVIDERS));

@@ -44,8 +44,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextStore;
-import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -269,31 +269,31 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		// (e.g., Ctrl-C, Ctrl-V), we *must* set a global action handler for
 		// each action		
 		IActionBars actionBars= getViewSite().getActionBars();
-		TextViewerAction action= new TextViewerAction(getTextViewer(), TextViewer.CUT);
+		TextViewerAction action= new TextViewerAction(getTextViewer(), ITextOperationTarget.CUT);
 		action.configureAction(DebugUIViewsMessages.getString("ConsoleView.Cu&t@Ctrl+X_3"), DebugUIViewsMessages.getString("ConsoleView.Cut_4"), DebugUIViewsMessages.getString("ConsoleView.Cut_4")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT_HOVER));
-		setGlobalAction(actionBars, ITextEditorActionConstants.CUT, action);
-		action= new TextViewerAction(getTextViewer(), TextViewer.COPY);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.CUT, action);
+		action= new TextViewerAction(getTextViewer(), ITextOperationTarget.COPY);
 		action.configureAction(DebugUIViewsMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIViewsMessages.getString("ConsoleView.Copy_7"), DebugUIViewsMessages.getString("ConsoleView.Copy_7")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));		
-		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, action);
-		action= new TextViewerAction(getTextViewer(), TextViewer.PASTE);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.COPY, action);
+		action= new TextViewerAction(getTextViewer(), ITextOperationTarget.PASTE);
 		action.configureAction(DebugUIViewsMessages.getString("ConsoleView.&Paste@Ctrl+V_9"), DebugUIViewsMessages.getString("ConsoleView.Paste_10"), DebugUIViewsMessages.getString("ConsoleView.Paste_Clipboard_Text_11")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
 		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_HOVER));		
-		setGlobalAction(actionBars, ITextEditorActionConstants.PASTE, action);
-		action= new TextViewerAction(getTextViewer(), TextViewer.SELECT_ALL);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.PASTE, action);
+		action= new TextViewerAction(getTextViewer(), ITextOperationTarget.SELECT_ALL);
 		action.configureAction(DebugUIViewsMessages.getString("ConsoleView.Select_&All@Ctrl+A_12"), DebugUIViewsMessages.getString("ConsoleView.Select_All"), DebugUIViewsMessages.getString("ConsoleView.Select_All")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, action);
+		setGlobalAction(actionBars, IWorkbenchActionConstants.SELECT_ALL, action);
 		
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.DebugUIViewsMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
+		setGlobalAction(actionBars, IWorkbenchActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
 	
 		action= new TextViewerGotoLineAction(getConsoleViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
@@ -323,9 +323,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			}
 		});
 		
-		fSelectionActions.add(ITextEditorActionConstants.CUT);
-		fSelectionActions.add(ITextEditorActionConstants.COPY);
-		fSelectionActions.add(ITextEditorActionConstants.PASTE);
+		fSelectionActions.add(IWorkbenchActionConstants.CUT);
+		fSelectionActions.add(IWorkbenchActionConstants.COPY);
+		fSelectionActions.add(IWorkbenchActionConstants.PASTE);
 				
 		// initialize input, after viewer has been created
 		setViewerInput(DebugUITools.getCurrentProcess());
@@ -356,18 +356,18 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 			return;
 		}
 		if (doc.isReadOnly()) {
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));						
+			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.COPY));
+			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.SELECT_ALL));						
 		} else {
-			updateAction(ITextEditorActionConstants.PASTE);
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.CUT));
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.PASTE));
-			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
+			updateAction(IWorkbenchActionConstants.PASTE);
+			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.CUT));
+			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.COPY));
+			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.PASTE));
+			menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.SELECT_ALL));
 		}
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
+		menu.add((IAction)fGlobalActions.get(IWorkbenchActionConstants.FIND));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		fFollowLinkAction.setEnabled(fFollowLinkAction.getHyperLink() != null);
 		menu.add(fFollowLinkAction);
@@ -419,7 +419,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 					}
 				}
 				public void inputDocumentChanged(IDocument doc, IDocument doc2) {
-					updateAction(ITextEditorActionConstants.FIND);
+					updateAction(IWorkbenchActionConstants.FIND);
 				}
 			};
 	}
@@ -477,7 +477,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * @see IDocumentListener#documentChanged(DocumentEvent)
 	 */
 	public void documentChanged(DocumentEvent e) {
-		updateAction(ITextEditorActionConstants.FIND);
+		updateAction(IWorkbenchActionConstants.FIND);
 	}
 
 	public ConsoleViewer getConsoleViewer() {
