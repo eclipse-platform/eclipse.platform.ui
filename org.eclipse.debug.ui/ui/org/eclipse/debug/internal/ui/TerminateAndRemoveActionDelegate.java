@@ -46,7 +46,13 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate
 	 */
 	public boolean isEnabledFor(Object element) {
-		return element instanceof ITerminate;
+		if (element instanceof ITerminate) {
+			ITerminate terminate= (ITerminate)element;
+			//do not want to terminate an attach launch that does not
+			//have termination enabled
+			return terminate.canTerminate() || terminate.isTerminated();
+		}
+		return false;
 	}	
 	/**
 	 * @see ControlActionDelegate
