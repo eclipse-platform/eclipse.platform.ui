@@ -335,9 +335,8 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		private void setText(String t) {
 			if (t == null)
 				t= "";	//$NON-NLS-1$
-			else
-				t= shortenText(this, t);
 			if (!t.equals(text)) {
+				setToolTipText(t);
 				text= t;
 				redraw();
 			}
@@ -410,11 +409,11 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			Image buffer= new Image(getDisplay(), clientArea.width, clientArea.height);
 			buffer.setBackground(bg);
 			GC bufferGC= new GC(buffer, gc.getStyle());
+			bufferGC.setForeground(fg);
 			bufferGC.setBackground(bg);
 			bufferGC.fillRectangle(0, 0, clientArea.width, clientArea.height);
 			bufferGC.setFont(getFont());
-			bufferGC.setForeground(fg);
-			String t= shortenText(bufferGC, clientArea.height, text);
+			String t= shortenText(bufferGC, clientArea.width, text);
 			bufferGC.drawText(t, MARGINWIDTH, MARGINHEIGHT, true);
 			int sw= bufferGC.stringExtent(t).x;
 			if (linkEnabled) {
@@ -816,6 +815,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		    	name= getJobHeader((JobInfo) jobTreeElement, job);		    	
 		    if (name == null)
 		    	name= stripPercent(jobTreeElement.getDisplayString());
+		    nameItem.setToolTipText(name);
 		    nameItem.setText(shortenText(nameItem, name));
 
 			// percentage
@@ -1386,7 +1386,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			int l1 = gc.textExtent(s1).x;
 			int l2 = gc.textExtent(s2).x;
 			if (l1 + ellipsisWidth + l2 < maxWidth) {
-				gc.dispose();
 				return s1 + ELLIPSIS + s2;
 			}
 			start--;

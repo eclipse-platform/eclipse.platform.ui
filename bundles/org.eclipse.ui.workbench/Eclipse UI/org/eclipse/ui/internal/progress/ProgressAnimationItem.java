@@ -81,15 +81,9 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    	    
 	    if (okImage == null) {
 	        Display display= parent.getDisplay();
-	        if (true) {
-	        	noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none_2.gif").createImage(display); //$NON-NLS-1$
-	        	okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok_2a.gif").createImage(display); //$NON-NLS-1$
-	        	errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error_2.gif").createImage(display); //$NON-NLS-1$
-	        } else {
-	        	noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none_3.gif").createImage(display); //$NON-NLS-1$
-	        	okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok_3.gif").createImage(display); //$NON-NLS-1$
-	        	errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error_3.gif").createImage(display); //$NON-NLS-1$
-	        }
+	        noneImage= ImageDescriptor.createFromFile(getClass(), "newprogress_none.gif").createImage(display); //$NON-NLS-1$
+	        okImage= ImageDescriptor.createFromFile(getClass(), "newprogress_ok.gif").createImage(display); //$NON-NLS-1$
+	        errorImage= ImageDescriptor.createFromFile(getClass(), "newprogress_error.gif").createImage(display); //$NON-NLS-1$
 	    }
 		
 		top = new Composite(parent, SWT.NULL);
@@ -106,7 +100,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		gl.numColumns= 2;
 		gl.marginHeight= 0;
 		gl.marginWidth= 0;
-		gl.horizontalSpacing= 0;
+		gl.horizontalSpacing= 2;
 		top.setLayout(gl);
 		
 		bar = new ProgressBar(top, SWT.HORIZONTAL | SWT.INDETERMINATE);
@@ -120,7 +114,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		toolbar.setVisible(false);
 		//toolbar.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_MAGENTA));
 		toolButton= new ToolItem(toolbar, SWT.NONE);
-		toolButton.setImage(noneImage);
+		setNoneImage();
 		toolButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 progressRegion.processDoubleClick();
@@ -173,10 +167,25 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 		
 		long ts= FinishedJobs.getInstance().getTimeStamp();
 		if (ts <= timeStamp) {
-	        toolButton.setImage(noneImage);
+			setNoneImage();
 	        timeStamp= ts;
 		}
         toolbar.setVisible(true);
+	}
+	
+	private void setNoneImage() {
+        toolButton.setImage(noneImage);
+        toolButton.setToolTipText(ProgressMessages.format("There are active background tasks", new Object[] { } ));
+	}
+
+	private void setErrorImage(Job job) {
+        toolButton.setImage(errorImage);		
+        toolButton.setToolTipText(ProgressMessages.format("Task ''{0}'' finished with errors", new Object[] { job.getName() } ));
+	}
+
+	private void setOkImage(Job job) {
+        toolButton.setImage(okImage);		
+        toolButton.setToolTipText(ProgressMessages.format("Task ''{0}'' returned result", new Object[] { job.getName() } ));
 	}
 
     public void removed(JobTreeElement info) {
@@ -202,10 +211,10 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    if (status != null && !toolbar.isDisposed()) {
 	        toolbar.getDisplay().beep();
 	        if (status.getSeverity() == IStatus.ERROR)
-	            toolButton.setImage(errorImage);
+	            setErrorImage(job);
 	        else
 	        	if (toolButton.getImage() != errorImage)
-	        		toolButton.setImage(okImage);
+	        		setOkImage(job);
     		toolbar.setVisible(true);
 	    }
 	}
@@ -215,7 +224,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 	    display.asyncExec(new Runnable() {
 	        public void run() {
 	            if (!toolbar.isDisposed()) {
-    				toolButton.setImage(noneImage);
+	            	setNoneImage();
                 	toolbar.setVisible(animationRunning);
 	            }
 	        	timeStamp= FinishedJobs.getInstance().getTimeStamp();
