@@ -107,16 +107,7 @@ In the example above, the specified status handler will be registered for to han
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interfact &lt;b&gt;org.eclipse.debug.core.IStatusHandler&lt;/b&gt;.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.IStatusHandler&lt;/b&gt;.
       </documentation>
    </annotation>
 

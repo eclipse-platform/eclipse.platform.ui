@@ -105,15 +105,6 @@
 
    <annotation>
       <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
