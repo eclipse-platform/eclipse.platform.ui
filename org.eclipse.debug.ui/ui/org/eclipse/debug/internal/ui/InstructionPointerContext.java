@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui;
 
  
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -22,11 +21,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class InstructionPointerContext {
 
 	/**
-	 * The stack frame for this context.
-	 */
-	private IStackFrame fStackFrame;
-	
-	/**
 	 * The text editor for this context.
 	 */
 	private ITextEditor fTextEditor;
@@ -36,8 +30,7 @@ public class InstructionPointerContext {
 	 */
 	private InstructionPointerAnnotation fAnnotation;
 
-	public InstructionPointerContext(IStackFrame stackFrame, ITextEditor textEditor, InstructionPointerAnnotation annotation) {
-		setStackFrame(stackFrame);
+	public InstructionPointerContext(ITextEditor textEditor, InstructionPointerAnnotation annotation) {
 		setTextEditor(textEditor);
 		setAnnotation(annotation);
 	}
@@ -48,7 +41,7 @@ public class InstructionPointerContext {
 	public boolean equals(Object other) {
 		if (other instanceof InstructionPointerContext) {
 			InstructionPointerContext otherContext = (InstructionPointerContext) other;
-			return getStackFrame().equals(otherContext.getStackFrame());
+			return getAnnotation().equals(otherContext.getAnnotation());
 		}
 		return false;
 	}
@@ -57,15 +50,7 @@ public class InstructionPointerContext {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getStackFrame().hashCode();
-	}
-
-	private void setStackFrame(IStackFrame stackFrame) {
-		fStackFrame = stackFrame;
-	}
-
-	public IStackFrame getStackFrame() {
-		return fStackFrame;
+		return getAnnotation().hashCode();
 	}
 
 	private void setTextEditor(ITextEditor textEditor) {

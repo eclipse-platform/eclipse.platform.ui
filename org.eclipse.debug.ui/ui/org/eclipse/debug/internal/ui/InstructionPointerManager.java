@@ -121,7 +121,7 @@ public class InstructionPointerManager {
 		}
 		
 		// Create a context object & add it to the list
-		InstructionPointerContext context = new InstructionPointerContext(stackFrame, textEditor, instPtrAnnotation);
+		InstructionPointerContext context = new InstructionPointerContext(textEditor, instPtrAnnotation);
 		contextList.remove(context);
 		contextList.add(context);
 	}
