@@ -10,6 +10,7 @@ import java.util.Vector;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.Document;
@@ -72,7 +73,7 @@ public class Console extends ViewPart {
 			}
 		};
 		
-		clearOutputAction = new Action(Policy.bind("Console.clearOutput")) {
+		clearOutputAction = new Action(Policy.bind("Console.clearOutput"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CLEAR)) {
 			public void run() {
 				clearOutput();
 			}
@@ -87,6 +88,11 @@ public class Console extends ViewPart {
 		});
 		Menu menu = mgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
+
+		// Create the local tool bar
+		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+		tbm.add(clearOutputAction);
+		tbm.update(false);
 	}
 
 	/**

@@ -125,6 +125,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_REFRESH, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_TAG, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_CLEAR, baseURL);
 	}
 	/**
 	 * Convenience method for logging statuses to the plugin log

@@ -18,6 +18,7 @@ public interface ICVSUIConstants {
 	
 	// toolbar
 	public final String IMG_REFRESH = "clcl16/refresh.gif";
+	public final String IMG_CLEAR = "clcl16/clear_co.gif";
 	
 	// wizards
 	public final String IMG_NEWLOCATION = "wizards/newlocation_wiz.gif";
