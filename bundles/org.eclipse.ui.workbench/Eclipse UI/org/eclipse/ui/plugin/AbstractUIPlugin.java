@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WWinPluginAction;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Bundle;
@@ -468,8 +467,8 @@ public abstract class AbstractUIPlugin extends Plugin {
      * </p>
      */
     protected void refreshPluginActions() {
-        // If the workbench is not created yet, do nothing.
-        if (Workbench.getInstance() == null)
+        // If the workbench is not started yet, or is no longer running, do nothing.
+        if (!PlatformUI.isWorkbenchRunning())
             return;
 
         // startup() is not guaranteed to be called in the UI thread,
@@ -585,7 +584,12 @@ public abstract class AbstractUIPlugin extends Plugin {
             public void bundleChanged(BundleEvent event) {
                 if (event.getBundle() == getBundle()) {
                     if (event.getType() == BundleEvent.STARTED) {
-                        refreshPluginActions();
+                        // We're getting notified that the bundle has been started.
+                        // Make sure it's still active.  It may have been shut down between
+                        // the time this event was queued and now.
+                        if (getBundle().getState() == Bundle.ACTIVE) {
+                            refreshPluginActions();
+                        }
                         fc.removeBundleListener(this);
                     }
                 }
