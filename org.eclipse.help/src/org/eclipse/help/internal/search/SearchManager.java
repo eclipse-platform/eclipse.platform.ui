@@ -79,6 +79,11 @@ public class SearchManager {
 		SearchIndex index = getIndex(searchQuery.getLocale());
 		try {
 			updateIndex(pm, index);
+			if(!index.exists()){
+				//no indexable documents, hence no index
+				//or index is corrupted
+				return;
+			}
 		} catch (IndexingOperation.IndexingException ie) {
 			Logger.logDebugMessage(
 				this.getClass().getName(),
