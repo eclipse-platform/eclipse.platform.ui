@@ -266,6 +266,7 @@ public class JobManager implements IJobManager {
 	 */
 	protected void endJob(InternalJob job, IStatus result, boolean notify) {
 		InternalJob blocked = null;
+		int blockedJobCount = 0;
 		synchronized (lock) {
 			//if the job is finishing asynchronously, there is nothing more to do for now
 			if (result == Job.ASYNC_FINISH)
@@ -281,21 +282,25 @@ public class JobManager implements IJobManager {
 			job.setThread(null);
 			blocked = job.previous();
 			job.setPrevious(null);
-		}
 
-		//add any blocked jobs back to the wait queue
-		while (blocked != null) {
-			InternalJob previous = blocked.previous();
-			//blocked job may have been canceled
-			if (blocked.internalGetState() == InternalJob.BLOCKED) {
-				changeState(blocked, Job.WAITING);
-				pool.jobQueued(blocked);
+			//add any blocked jobs back to the wait queue
+			while (blocked != null) {
+				InternalJob previous = blocked.previous();
+				//blocked job may have been canceled
+				if (blocked.internalGetState() == InternalJob.BLOCKED) {
+					changeState(blocked, Job.WAITING);
+					blockedJobCount++;
+				}
+				blocked = previous;
 			}
-			blocked = previous;
 		}
+		//notify queue outside sync block
+		for (int i = 0; i < blockedJobCount; i++)
+			pool.jobQueued(blocked);
+
 		//notify listeners outside sync block
 		if (notify)
-			jobListeners.done((Job)job, result);
+			jobListeners.done((Job) job, result);
 	}
 	public void endRule(ISchedulingRule rule) {
 		implicitJobs.end(rule);
