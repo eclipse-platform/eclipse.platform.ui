@@ -12,6 +12,11 @@
     <mkdir dir="${plugins}"/>
  
     <antcall target="buildPlugin">
+      <param name="pluginName" value="org.eclipse.osgi.tests" />
+      <param name="jarName" value="osgitests.jar" />
+    </antcall>
+ 
+    <antcall target="buildPlugin">
       <param name="pluginName" value="org.eclipse.core.tests.resources" />
       <param name="jarName" value="resourcestests.jar" />
     </antcall>
