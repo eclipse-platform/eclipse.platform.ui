@@ -21,7 +21,7 @@
 		/>
 		<!-- Create the source zip -->
 		<zip zipfile="${dest}/dtcoresrc.zip">
-			<fileset dir="../Eclipse Debug Core"/>
+			<fileset dir="../core"/>
 		</zip>		
 		<copy file="../plugin.xml" todir="${dest}"/>
 		<copy file="../plugin.jars" todir="${dest}"/>

@@ -21,7 +21,7 @@
 		/>
 		<!-- Create the source zip -->
 		<zip zipfile="${dest}/dtuisrc.zip">
-			<fileset dir="../Eclipse Debug UI"/>
+			<fileset dir="../ui"/>
 		</zip>
 		<copy file="../plugin.xml" todir="${dest}"/>
 		<copy file="../plugin.jars" todir="${dest}"/>
