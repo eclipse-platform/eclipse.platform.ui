@@ -21,7 +21,7 @@
 		<delete dir="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<!-- compile the source code -->
-		<javac target="1.3" source="1.3" destdir="${temp.folder}/lib/antsupportlib.jar.bin"
+		<javac target="1.4" source="1.4" destdir="${temp.folder}/lib/antsupportlib.jar.bin"
 			failonerror="true"
 			verbose="false"
 			debug="on"
