@@ -733,6 +733,7 @@ public class PreferenceDialog extends Dialog
 			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 			 */
 			public void run() {
+				getButton(IDialogConstants.OK_ID).setEnabled(false);
 				errorOccurred = false;
 				try {
 					// Notify all the pages and give them a chance to abort
