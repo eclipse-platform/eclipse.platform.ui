@@ -53,10 +53,13 @@ public class CheckboxTreeViewerTest extends TreeViewerTest {
 		fTreeViewer.expandToLevel(firstfirst, 0);
 
 		ctv.setSubtreeChecked(first, true);
-		assertTrue(!ctv.setSubtreeChecked(firstfirstfirst, true));
 		assertTrue(ctv.getChecked(firstfirst));
 		ctv.setSubtreeChecked(first, false);
 		assertTrue(!ctv.getChecked(firstfirst));
+
+		// uncheck invisible subtree
+		assertTrue(ctv.setSubtreeChecked(firstfirstfirst, false));
+		assertTrue(!ctv.getChecked(firstfirstfirst));
 	}
 	public void testGrayed() {
 		CheckboxTreeViewer ctv = (CheckboxTreeViewer) fViewer;

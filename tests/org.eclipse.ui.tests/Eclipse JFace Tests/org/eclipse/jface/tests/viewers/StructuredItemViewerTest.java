@@ -32,8 +32,14 @@ public void testCheckElement() {
 		assertTrue(ctv.getChecked(first));
 
 		// checking an invisible element
-		assertTrue(!ctv.setChecked(firstfirst, true));
-		assertTrue(!ctv.getChecked(firstfirst));
+		if (fViewer instanceof AbstractTreeViewer) {
+			// The first child of the first child can only be resolved in a tree
+			assertTrue(ctv.setChecked(firstfirst, true));
+			assertTrue(ctv.getChecked(firstfirst));
+		} else {
+			assertTrue(!ctv.setChecked(firstfirst, true));
+			assertTrue(!ctv.getChecked(firstfirst));
+		}
 
 		ctv.setChecked(first, false);
 		assertTrue(!ctv.getChecked(first));
