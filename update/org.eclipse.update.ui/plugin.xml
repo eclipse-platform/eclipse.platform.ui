@@ -202,5 +202,26 @@
             class="org.eclipse.update.internal.ui.wizards.InstallDeltaWizard">
       </display>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.update.ui.UpdatePerspective">
+         <viewShortcut
+               id="org.eclipse.update.ui.UpdatesView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.update.ui.ConfigurationView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.update.ui.DetailsView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.update.ui.SearchResultsView">
+         </viewShortcut>
+         <viewShortcut
+               id="org.eclipse.update.ui.ItemsView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>
