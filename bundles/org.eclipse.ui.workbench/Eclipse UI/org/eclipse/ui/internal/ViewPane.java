@@ -615,9 +615,7 @@ public void showFocus(boolean inFocus) {
 /**
  * Shows the pane menu (system menu) for this pane.
  */
-public void showPaneMenu() {
-	
-}
+public void showPaneMenu() {}
 /**
  * Return true if this view is a fast view.
  */

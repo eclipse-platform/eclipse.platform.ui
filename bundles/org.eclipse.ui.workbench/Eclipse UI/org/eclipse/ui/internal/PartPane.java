@@ -420,7 +420,7 @@ public abstract void showViewMenu();
 /**
  * Show a title label menu for this pane.
  */
-final protected void showPaneMenu(Control parent, Point point) {
+final public void showPaneMenu(Control parent, Point point) {
 	if(paneMenuManager == null) {
 		paneMenuManager = new MenuManager();
 		paneMenuManager.add(new PaneContribution());			

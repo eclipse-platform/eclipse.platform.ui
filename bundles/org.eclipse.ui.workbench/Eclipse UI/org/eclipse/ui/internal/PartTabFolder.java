@@ -227,8 +227,8 @@ public void createControl(Composite parent) {
 			 */
 			public void handleEvent(Event event) {
 				LayoutPart part = PartTabFolder.this.current;
-				if(part instanceof ViewPane){
-					((ViewPane) part).showViewMenu();
+				if(part instanceof PartPane){
+					((PartPane) part).showPaneMenu(tabFolder,new Point(event.x,event.y));
 				}
 
 			}
