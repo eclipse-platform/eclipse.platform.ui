@@ -158,7 +158,7 @@ public class Options {
 		}
 
 		// read -data option
-		List workspaces = getOption(eclipseArgs, "-data"); //$NON-NLS-1$
+		List workspaces = extractOption(eclipseArgs, "-data"); //$NON-NLS-1$
 		if (workspaces != null && !workspaces.isEmpty()) {
 			String workspacePath = (String) workspaces.get(0);
 			workspace = new File(workspacePath);
@@ -211,6 +211,9 @@ public class Options {
 
 		// modify the options for passing them to eclipse
 		// add -application option
+		eclipseArgs.add(0, "-data"); //$NON-NLS-1$
+		eclipseArgs.add(1, getWorkspace().getAbsolutePath());
+
 		extractOption(eclipseArgs, "-application"); //$NON-NLS-1$
 		eclipseArgs.add(0, "-application"); //$NON-NLS-1$
 		eclipseArgs.add(1, appId);
