@@ -141,7 +141,7 @@ function doAdvancedSearch()
 
 <body>
 
-<form name="searchForm" action="doAdvancedSearch()">
+<form name="searchForm" onsubmit="doAdvancedSearch()">
   
 <div style="width:100%; height:15px; margin-left:12px; margin-top:10px;"><%=WebappResources.getString("SearchExpression", null)%></div>
 
