@@ -131,29 +131,28 @@ public abstract class AbstractSectionForm extends AbstractForm {
 	}
 
 	public static void ensureVisible(ScrolledComposite scomp, Control control) {
-//		Point controlSize = control.getSize();
-//		Point origin = scomp.getOrigin();
-//		Rectangle area = sc1.getClientArea();
-//		
-//		Point displayOrigin = scomp.toDisplay(origin);
-//		Point controlOrigin = control.toDisplay(control.getLocation());
-//		
-//		int x = origin.x;
-//		int y = origin.y;
-//		if (bounds.x < origin.x) {
-//			x = Math.max(0, bounds.x);
-//		}
-//		if (bounds.y < origin.y) {
-//			y = Math.max(0, bounds.y);
-//		}
-//		if (bounds.x + bounds.width > origin.x + area.width) {
-//			x = Math.max(0, bounds.x + bounds.width - area.width);
-//		}
-//		if (bounds.y + bounds.height > origin.y + area.height) {
-//			y = Math.max(0, bounds.y + bounds.height - area.height);
-//		}
-//		sc1.setOrigin(x, y);
+		Point controlSize = control.getSize();
+		Rectangle area = scomp.getClientArea();
+		Point areaOrigin = scomp.toDisplay(new Point(area.x, area.y));
+		
+		Point scompOrigin = scomp.toDisplay(scomp.getOrigin());
+		Point controlOrigin = control.toDisplay(control.getLocation());
+		
+		int x = scompOrigin.x;
+		int y = scompOrigin.y;
 
+		if (controlOrigin.x < scompOrigin.x) {
+			x = Math.max(areaOrigin.x, controlOrigin.x);
+		}
+		if (controlOrigin.y < scompOrigin.y) {
+			y = Math.max(areaOrigin.y, controlOrigin.y);
+		}
+		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
+			x = Math.max(areaOrigin.x, controlOrigin.x + controlSize.x - area.width);
+		}
+		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.height) {
+			y = Math.max(areaOrigin.y, controlOrigin.y + controlSize.y - area.height);
+		}
+		scomp.setOrigin(scomp.toControl(new Point(x, y)));
 	}
-
 }
