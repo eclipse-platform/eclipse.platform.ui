@@ -207,6 +207,7 @@ function collapse(node) {
  * Expands a tree rooted at the specified element
  */
 function expand(node) {
+	adjustImages(node);
   	node.className = "expanded";
   	node.src = minus.src;
   	// set the UL as well
@@ -255,6 +256,29 @@ function isExpanded(node) {
  */
 function isCollapsed(node) {
   return  node.className == "collapsed";
+}
+
+/*
+ * Inserts the tree images (+/-) upon expansion of a node.
+ */
+function adjustImages(node) {
+	var ul = getChildNode(node.parentNode, "UL");
+	if (!ul) return;
+	var nodes = ul.childNodes;
+	for (var i=0; i<nodes.length; i++) {
+		var li = nodes.item(i);
+		if (li.firstChild.tagName == "A"){	
+			var img = document.createElement("IMG");
+			if (li.lastChild.tagName == "UL") {
+				img.className = "collapsed";
+				img.src = plus.src;
+			} else {
+				img.className = "h";
+				img.src = plus.src;
+			}
+			li.insertBefore(img, li.firstChild);
+		}
+	}
 }
 
 /**
