@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.operations;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
@@ -129,7 +130,7 @@ public class OperationsAPITest extends TestCase {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
 	}
 
-	public void testContextDispose() {
+	public void testContextDispose() throws ExecutionException {
 		assertSame(history.getUndoOperation(c1), op6);
 		assertSame(history.getUndoOperation(c3), op6);
 		history.dispose(c1, true, true);
@@ -148,7 +149,7 @@ public class OperationsAPITest extends TestCase {
 		assertEquals(ops.length, 2);
 	}
 
-	public void testContextHistories() {
+	public void testContextHistories() throws ExecutionException {
 		assertSame(history.getUndoOperation(c1), op6);
 		assertSame(history.getUndoOperation(c2), op5);
 		assertSame(history.getUndoOperation(c3), op6);
@@ -163,7 +164,7 @@ public class OperationsAPITest extends TestCase {
 		assertSame(history.getUndoOperation(c1), op6);
 	}
 
-	public void testHistoryLimit() {
+	public void testHistoryLimit() throws ExecutionException {
 		history.setLimit(c1, 2);
 		assertTrue(history.getUndoHistory(c1).length == 2);
 		history.add(op1);
@@ -179,7 +180,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.getUndoHistory(c2).length == 1);
 	}
 	
-	public void testLocalHistoryLimits() {
+	public void testLocalHistoryLimits() throws ExecutionException {
 		history.setLimit(c3, 2);
 		assertTrue(history.getUndoHistory(c3).length == 2);
 		// op2 should have context c3 removed as part of forcing the limit
@@ -194,7 +195,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.getUndoHistory(c2).length == 1);
 	}
 	
-	public void testOpenOperation() {
+	public void testOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
 		history.openOperation(op1);
@@ -204,7 +205,7 @@ public class OperationsAPITest extends TestCase {
 		history.execute(op3, null, null);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("no operations should be in history yet", op == null);
-		history.closeOperation();
+		history.closeOperation(true, true);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("Operation should be batching", op == op1);
 		op.removeContext(c2);
@@ -212,7 +213,42 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Removal of open operation's context should not affect original operation", op2.hasContext(c2));
 	}
 	
-	public void testMultipleOpenOperation() {
+	public void testUnsuccessfulOpenOperation() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.openOperation(op1);
+		op1.execute(null, null);
+		op2.execute(null, null);
+		history.add(op2);
+		history.execute(op3, null, null);
+		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("no operations should be in history yet", op == null);
+		history.closeOperation(false, true);
+		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertNull("Unsuccessful operation should not be added to history", op);
+		assertTrue("NOT_OK notification should have been received", notOK == 1);
+		assertTrue("DONE should not be sent while batching", postExec == 0);
+		assertTrue("ADDED should not have been sent while batching", add == 0);
+	}
+	
+	public void testNotAddedOpenOperation() throws ExecutionException {
+		// clear out history which will also reset operation execution counts
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
+		history.openOperation(op1);
+		op1.execute(null, null);
+		op2.execute(null, null);
+		history.add(op2);
+		history.execute(op3, null, null);
+		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertTrue("no operations should be in history yet", op == null);
+		history.closeOperation(true, false);
+		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
+		assertNull("Operation should not be added to history", op);
+		assertTrue("DONE notification should have been received", postExec == 1);
+		assertTrue("ADDED should not have occurred or be sent while batching", add == 0);
+	}
+	
+	public void testMultipleOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
 		history.openOperation(op1);
@@ -222,13 +258,13 @@ public class OperationsAPITest extends TestCase {
 		history.execute(op3, null, null);
 		history.openOperation(op4);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
-		assertSame("First operation should be closed", op, op1);
-		history.closeOperation();
+		assertNull("Unexpected nested open should not add original", op);
+		history.closeOperation(true, true);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertSame("Second operation should be closed", op, op4);
 	}
 	
-	public void testAbortedOpenOperation() {
+	public void testAbortedOpenOperation() throws ExecutionException {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
 		history.openOperation(op1);
 		op1.execute(null, null);
@@ -237,12 +273,13 @@ public class OperationsAPITest extends TestCase {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
 		// op3 should be added as its own op since we flushed while open
 		history.add(op3);
-		history.closeOperation();
+		// should really have no effect
+		history.closeOperation(true, true);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertTrue("Open operation should be flushed", op == op3);
 	}
 
-	public void testOperationApproval() {
+	public void testOperationApproval() throws ExecutionException {
 		history.addOperationApprover(new ContextConsultingOperationApprover());
 		c2.setOperationApprover(new LinearUndoEnforcer());
 		c3.setOperationApprover(new LinearUndoEnforcer());
@@ -282,7 +319,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse(history.undo(c3, null, null).isOK());
 	}
 
-	public void testOperationFailure() {
+	public void testOperationFailure() throws ExecutionException {
 		history.addOperationApprover(new IOperationApprover() {
 
 			public IStatus proceedRedoing(IUndoableOperation o, IOperationHistory h, IAdaptable a) {
@@ -312,7 +349,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(status.isOK());
 	}
 
-	public void testOperationRedo() {
+	public void testOperationRedo() throws ExecutionException {
 		history.undo(c2, null, null);
 		history.undo(c2, null, null);
 		history.undo(c3, null, null);
@@ -330,7 +367,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.canUndo(c3));
 	}
 
-	public void testOperationRemoval() {
+	public void testOperationRemoval() throws ExecutionException {
 		assertSame(history.getUndoOperation(c1), op6);
 		history.remove(op6);
 		assertSame(history.getUndoOperation(c1), op4);
@@ -343,7 +380,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse(history.canRedo(c2));
 	}
 
-	public void testOperationUndo() {
+	public void testOperationUndo() throws ExecutionException {
 		history.undo(c1, null, null);
 		history.undo(c1, null, null);
 		assertSame(history.getRedoOperation(c1), op4);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.ui.ISharedImages;
@@ -52,7 +53,7 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	protected void flush() {
-		getHistory().dispose(fContext, false, true);
+		getHistory().dispose(undoContext, false, true);
 	}
 
 	protected String getCommandString() {
@@ -60,18 +61,23 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	protected IUndoableOperation getOperation() {
-		return getHistory().getRedoOperation(fContext);
+		return getHistory().getRedoOperation(undoContext);
 	}
 
 	public void run() {
-		getHistory().redo(fContext, null, this);
+		try {
+			getHistory().redo(undoContext, null, this);
+		}
+		catch (ExecutionException e) {
+			reportException(e);
+		}
 	}
 
 	protected boolean shouldBeEnabled() {
 		// make sure a context is set. If a part doesn't return
 		// a context, then we should not enable.
-		if (fContext == null)
+		if (undoContext == null)
 			return false;
-		return getHistory().canRedo(fContext);
+		return getHistory().canRedo(undoContext);
 	}
 }

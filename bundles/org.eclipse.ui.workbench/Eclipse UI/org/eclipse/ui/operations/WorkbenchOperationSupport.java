@@ -12,12 +12,13 @@
 package org.eclipse.ui.operations;
 
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
-
+import org.eclipse.ui.PlatformUI;
 /**
  * <p>
  * Provides operation support for the workbench.
@@ -35,7 +36,7 @@ import org.eclipse.core.commands.operations.LinearUndoEnforcer;
  */
 public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 
-	private WorkbenchUndoContext undoContext;
+	private ObjectUndoContext undoContext;
 	private IOperationApprover approver;
 
 	/**
@@ -62,7 +63,7 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	 */
 	public IUndoContext getUndoContext() {
 		if (undoContext == null) {
-			undoContext = new WorkbenchUndoContext(
+			undoContext = new ObjectUndoContext(PlatformUI.getWorkbench(),
 					"Workbench Context"); //$NON-NLS-1$
 			undoContext.setOperationApprover(new LinearUndoEnforcer());
 		}

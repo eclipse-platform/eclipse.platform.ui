@@ -12,16 +12,22 @@ package org.eclipse.ui.operations;
 
 import java.text.MessageFormat;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <p>
@@ -61,11 +67,11 @@ import org.eclipse.ui.actions.ActionFactory;
 public abstract class OperationHistoryActionHandler extends Action implements
 		ActionFactory.IWorkbenchAction, IAdaptable, IOperationHistoryListener {
 
-	protected IUndoContext fContext = null;
+	protected IUndoContext undoContext = null;
 
-	private boolean fPruning = false;
+	private boolean pruning = false;
 
-	protected IWorkbenchWindow fWorkbenchWindow;
+	protected IWorkbenchWindow workbenchWindow;
 
 	/**
 	 * Construct an operation history action for the specified workbench window
@@ -80,8 +86,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			IUndoContext context) {
 		// string will be reset inside action
 		super(""); //$NON-NLS-1$
-		fWorkbenchWindow = window;
-		fContext = context;
+		workbenchWindow = window;
+		undoContext = context;
 		getHistory().addOperationHistoryListener(this);
 	}
 
@@ -106,7 +112,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the operation history we are using.
 	 */
 	protected IOperationHistory getHistory() {
-		return fWorkbenchWindow.getWorkbench().getOperationSupport()
+		return workbenchWindow.getWorkbench().getOperationSupport()
 				.getOperationHistory();
 	}
 
@@ -127,10 +133,10 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(Shell.class)) {
-			return fWorkbenchWindow.getShell();
+			return workbenchWindow.getShell();
 		}
 		if (adapter.equals(IWorkbenchWindow.class)) {
-			return fWorkbenchWindow;
+			return workbenchWindow;
 		}
 		return null;
 	}
@@ -151,7 +157,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 *            the context to be used for the undo history
 	 */
 	public void setContext(IUndoContext context) {
-		fContext = context;
+		undoContext = context;
 		update();
 	}
 
@@ -166,7 +172,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * 
 	 */
 	public void setPruneHistory(boolean prune) {
-		fPruning = prune;
+		pruning = prune;
 	}
 
 	/**
@@ -182,7 +188,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		case OperationHistoryEvent.OPERATION_REMOVED:
 		case OperationHistoryEvent.UNDONE:
 		case OperationHistoryEvent.REDONE:
-			if (event.getOperation().hasContext(fContext))
+			if (event.getOperation().hasContext(undoContext))
 				update();
 			break;
 		case OperationHistoryEvent.OPERATION_CHANGED:
@@ -207,10 +213,29 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			 * if there is nothing to do and we are pruning the history, flush
 			 * the history of this context.
 			 */
-			if (fContext != null && fPruning)
+			if (undoContext != null && pruning)
 				flush();
 		}
 		setText(text.toString());
 		setEnabled(enabled);
 	}
+	
+	/*
+	 * Report the specified execution exception to the log and to the user.
+	 */
+	final void reportException(ExecutionException e) {
+			Throwable nestedException = e.getCause();
+			Throwable exception = (nestedException == null) ? e : nestedException;
+			String title = WorkbenchMessages.Error;
+			String message = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
+			String exceptionMessage = exception.getMessage();
+			if (exceptionMessage == null) {
+				exceptionMessage = message;
+			}
+			IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+			WorkbenchPlugin.log(message, status);
+			ErrorDialog.openError(workbenchWindow.getShell(), title, message, status);
+		}
+
 }

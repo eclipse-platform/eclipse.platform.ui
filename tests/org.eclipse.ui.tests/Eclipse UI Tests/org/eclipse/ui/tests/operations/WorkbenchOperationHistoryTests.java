@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.operations;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IContextOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -19,7 +20,6 @@ import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.operations.WorkbenchUndoContext;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -73,7 +73,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
 	}
 
-	public void testWorkbenchOperationApproval() {
+	public void testWorkbenchOperationApproval() throws ExecutionException {
 		// Enforcing of linear undo should be in effect for the workbench
 		// context.
 		// The first undo in c1 should be fine
@@ -109,7 +109,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 			public boolean matches(IUndoContext otherContext) { return false; }
 		};
 		assertFalse(newContext.matches(context));
-		((WorkbenchUndoContext)context).addMatch(newContext);
+		((ObjectUndoContext)context).addMatch(newContext);
 		assertTrue(history.getUndoHistory(context).length == history.getUndoHistory(newContext).length);
 		assertTrue(op1.hasContext(newContext));
 		assertFalse(op3.hasContext(context));

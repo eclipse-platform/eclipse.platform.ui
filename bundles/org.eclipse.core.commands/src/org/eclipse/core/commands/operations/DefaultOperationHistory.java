@@ -15,10 +15,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.internal.commands.util.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -223,12 +225,16 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @param operation
 	 */
 	protected IStatus doRedo(IProgressMonitor monitor, IAdaptable info, IUndoableOperation operation,
-			boolean flushOnError) {
+			boolean flushOnError) throws ExecutionException{
 
 		IStatus status = getRedoApproval(operation, info);
 		if (status.isOK()) {
 			notifyAboutToRedo(operation);
-			status = operation.redo(monitor, info);
+			try {
+				status = operation.redo(monitor, info);
+			} catch (OperationCanceledException e) {
+				status = Status.CANCEL_STATUS;
+			}
 		}
 
 		// if successful, the operation is removed from the redo history and
@@ -264,11 +270,15 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @param operation
 	 */
 	protected IStatus doUndo(IProgressMonitor monitor, IAdaptable info, IUndoableOperation operation,
-			boolean flushOnError) {
+			boolean flushOnError) throws ExecutionException {
 		IStatus status = getUndoApproval(operation, info);
 		if (status.isOK()) {
 			notifyAboutToUndo(operation);
-			status = operation.undo(monitor, info);
+			try {
+				status = operation.undo(monitor, info);
+			} catch (OperationCanceledException e) {
+				status = Status.CANCEL_STATUS;
+			}
 		}
 		// if successful, the operation is removed from the undo history and
 		// placed in the redo history.
@@ -301,7 +311,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#execute(org.eclipse.core.commands.operations.IUndoableOperation, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus execute(IUndoableOperation operation, IProgressMonitor monitor, IAdaptable info) {
+	public IStatus execute(IUndoableOperation operation, IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		Assert.isNotNull(operation);
 		
 		// error if operation is invalid
@@ -333,7 +343,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 		 * Execute the operation
 		 */
 		if (!merging) notifyAboutToExecute(operation);
-		IStatus status = operation.execute(monitor, info);
+		IStatus status;
+		try {
+			status = operation.execute(monitor, info);
+		} catch (OperationCanceledException e) {
+			status = Status.CANCEL_STATUS;
+		}
 
 		// if successful, the notify listeners are notified and the operation is
 		// added to the history
@@ -723,7 +738,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#redo(org.eclipse.core.commands.operations.IUndoContext, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus redo(IUndoContext context, IProgressMonitor monitor, IAdaptable info) {
+	public IStatus redo(IUndoContext context, IProgressMonitor monitor, IAdaptable info) throws ExecutionException{
 		Assert.isNotNull(context);
 		IUndoableOperation operation = getRedoOperation(context);
 
@@ -744,7 +759,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#redoOperation(org.eclipse.core.commands.operations.IUndoableOperation, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
 
-	public IStatus redoOperation(IUndoableOperation operation, IProgressMonitor monitor, IAdaptable info) {
+	public IStatus redoOperation(IUndoableOperation operation, IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 		Assert.isNotNull(operation);
 		IStatus status;
 		if (operation.canRedo()) {
@@ -818,7 +833,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#undo(org.eclipse.core.commands.operations.IUndoContext, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus undo(IUndoContext context, IProgressMonitor monitor, IAdaptable info) {
+	public IStatus undo(IUndoContext context, IProgressMonitor monitor, IAdaptable info) throws ExecutionException{
 		Assert.isNotNull(context);
 		IUndoableOperation operation = getUndoOperation(context);
 
@@ -838,7 +853,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#undoOperation(org.eclipse.core.commands.operations.IUndoableOperation, org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus undoOperation(IUndoableOperation operation, IProgressMonitor monitor, IAdaptable info) {
+	public IStatus undoOperation(IUndoableOperation operation, IProgressMonitor monitor, IAdaptable info) throws ExecutionException{
 		Assert.isNotNull(operation);
 		IStatus status;
 		if (operation.canUndo()) {
@@ -859,21 +874,35 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public void openOperation(IUndoableOperation operation) {
 		if (fBatchingOperation != null) {
-			closeOperation();	
+			// unexpected nesting of operations.  The original batching operation
+			// will be closed and will be considered unsuccessful.
+			closeOperation(false, false);	
 		} 
 		fBatchingOperation = operation;
 		notifyAboutToExecute(operation);	
+	}
+	
+	/**
+	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation()
+	 * @deprecated
+	 */
+	public void closeOperation() {
+		closeOperation(true, true);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation()
+	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation(boolean, boolean)
 	 */
-	public void closeOperation() {
+	public void closeOperation(boolean operationOK, boolean addToHistory) {
 		if (fBatchingOperation != null) {
-			notifyDone(fBatchingOperation);
-			add(fBatchingOperation);
+			if (operationOK) {
+				notifyDone(fBatchingOperation);
+				if (addToHistory) add(fBatchingOperation);
+			} else {
+				notifyNotOK(fBatchingOperation);
+			}
 			fBatchingOperation = null;
 		}
 	}

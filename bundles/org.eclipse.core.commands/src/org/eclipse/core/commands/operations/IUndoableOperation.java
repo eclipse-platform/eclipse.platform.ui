@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -110,10 +111,10 @@ public interface IUndoableOperation {
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user.
 	 * @param info -
-	 *            the IAdaptable (or <code>null</code>) provided by the caller
-	 *            containing additional information.  When this API is called
-	 *            from the UI, callers can use this to provide additional info
-	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller containing additional information. When this API is
+	 *            called from the UI, callers can use this to provide additional
+	 *            info for prompting the user. If an IAdaptable is provided,
 	 *            callers are encourated to provide an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
 	 * 
@@ -121,8 +122,11 @@ public interface IUndoableOperation {
 	 *         to <code>OK</code> if the operation was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the execution.
+	 * @throws ExecutionException
+	 *             if an exception occurred during execution.
 	 */
-	IStatus execute(IProgressMonitor monitor, IAdaptable info);
+	IStatus execute(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException;
 
 	/**
 	 * Returns the array of contexts that have been assigned to the operation.
@@ -167,19 +171,22 @@ public interface IUndoableOperation {
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user.
 	 * @param info -
-	 *            the IAdaptable (or <code>null</code>) provided by the caller
-	 *            containing additional information.  When this API is called
-	 *            from the UI, callers can use this to provide additional info
-	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller containing additional information. When this API is
+	 *            called from the UI, callers can use this to provide additional
+	 *            info for prompting the user. If an IAdaptable is provided,
 	 *            callers are encourated to provide an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus of the redo. The status severity should be set to
 	 *         <code>OK</code> if the redo was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the redo.
+	 * @throws ExecutionException
+	 *             if an exception occurred during redo.
 	 */
 
-	IStatus redo(IProgressMonitor monitor, IAdaptable info);
+	IStatus redo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException;
 
 	/**
 	 * Remove the specified context from the operation. This method has no
@@ -198,17 +205,20 @@ public interface IUndoableOperation {
 	 *            the progress monitor (or <code>null</code>) to use for
 	 *            reporting progress to the user.
 	 * @param info -
-	 *            the IAdaptable (or <code>null</code>) provided by the caller
-	 *            containing additional information.  When this API is called
-	 *            from the UI, callers can use this to provide additional info
-	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller containing additional information. When this API is
+	 *            called from the UI, callers can use this to provide additional
+	 *            info for prompting the user. If an IAdaptable is provided,
 	 *            callers are encourated to provide an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus of the undo. The status severity should be set to
 	 *         <code>OK</code> if the redo was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the undo.
+	 * @throws ExecutionException
+	 *             if an exception occurred during undo.
 	 */
-	IStatus undo(IProgressMonitor monitor, IAdaptable info);
+	IStatus undo(IProgressMonitor monitor, IAdaptable info)
+			throws ExecutionException;
 
 }

@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
+
 
 /**
  * <p>
@@ -51,7 +53,7 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	protected void flush() {
-		getHistory().dispose(fContext, true, false);
+		getHistory().dispose(undoContext, true, false);
 	}
 
 	protected String getCommandString() {
@@ -59,18 +61,22 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	protected IUndoableOperation getOperation() {
-		return getHistory().getUndoOperation(fContext);
+		return getHistory().getUndoOperation(undoContext);
 
 	}
 
 	public void run() {
-		getHistory().undo(fContext, null, this);
+		try {
+			getHistory().undo(undoContext, null, this);
+		} catch (ExecutionException e) {
+			reportException(e);
+		}
 	}
 
 	protected boolean shouldBeEnabled() {
 		// if a context was not supplied, do not enable.
-		if (fContext == null)
+		if (undoContext == null)
 			return false;
-		return getHistory().canUndo(fContext);
+		return getHistory().canUndo(undoContext);
 	}
 }

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <p>
  * An operation context that can be used to represent any given object. The
@@ -28,9 +31,13 @@ package org.eclipse.core.commands.operations;
  */
 public class ObjectUndoContext extends UndoContext {
 
-	private IContextOperationApprover fApprover = null;
+	private IContextOperationApprover approver = null;
 
-	private Object fObject;
+	private Object object;
+
+	private String label;
+
+	private List children = new ArrayList();
 
 	/**
 	 * Construct an operation context that represents the given object.
@@ -39,15 +46,33 @@ public class ObjectUndoContext extends UndoContext {
 	 *            the object to be represented.
 	 */
 	public ObjectUndoContext(Object object) {
-		super();
-		fObject = object;
+		this(object, null);
 	}
-	
-	/* (non-Javadoc)
+
+	/**
+	 * Construct an operation context that represents the given object and has
+	 * a specialized label.
+	 * 
+	 * @param object -
+	 *            the object to be represented.
+	 * @param label -
+	 *            the label for the context
+	 */
+	public ObjectUndoContext(Object object, String label) {
+		super();
+		this.object = object;
+		this.label = label;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
 	 */
 	public String getLabel() {
-		return fObject.toString();
+		if (label == null)
+			return object.toString();
+		return label;
 	}
 
 	/**
@@ -56,14 +81,16 @@ public class ObjectUndoContext extends UndoContext {
 	 * @return - the object represented by this context.
 	 */
 	public Object getObject() {
-		return fObject;
+		return object;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.operations.IUndoContext#getOperationApprover()
 	 */
 	public IContextOperationApprover getOperationApprover() {
-		return fApprover;
+		return approver;
 	}
 
 	/**
@@ -74,7 +101,34 @@ public class ObjectUndoContext extends UndoContext {
 	 *            the operation approver to be used for this context
 	 */
 	public void setOperationApprover(IContextOperationApprover approver) {
-		fApprover = approver;
+		this.approver = approver;
+	}
+
+	/**
+	 * Add the specified context as a match of this context. Contexts added as
+	 * matches of this context will be interpreted as a match of this context
+	 * when the history is filtered for a particular context. Adding a match
+	 * allows components to create their own contexts for implementing
+	 * specialized behavior, yet have their operations appear in the workbench
+	 * filtered operations list.
+	 * 
+	 * @param context -
+	 *            the context to be added as a match of this context
+	 */
+	public void addMatch(IUndoContext context) {
+		children.add(context);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext
+	 *      context)
+	 */
+	public boolean matches(IUndoContext context) {
+		if (children.contains(context))
+			return true;
+		return super.matches(context);
 	}
 
 }
