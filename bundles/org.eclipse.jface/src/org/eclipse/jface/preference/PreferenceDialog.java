@@ -531,9 +531,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	protected Control createTreeAreaContents(Composite parent) {
 		// Build the tree an put it into the composite.
 		treeViewer = createTreeViewer(parent);
-		treeViewer.setLabelProvider(new PreferenceLabelProvider());
-		treeViewer.setContentProvider(new PreferenceContentProvider());
-		treeViewer.setInput(preferenceManager);
+		treeViewer.setInput(getPreferenceManager());
 
 		layoutTreeAreaControl(treeViewer.getControl());
 		return treeViewer.getControl();
@@ -603,6 +601,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				}
 			}
 		});
+
+		viewer.setLabelProvider(new PreferenceLabelProvider());
+		viewer.setContentProvider(new PreferenceContentProvider());
 
 		return viewer;
 	}

@@ -13,31 +13,21 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 
 import org.eclipse.jface.preference.PreferenceContentProvider;
-
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
-import org.eclipse.ui.internal.activities.ws.FilterableObject;
-
 /**
- * Adds filtering support to <code>PreferenceContentProvider</code>.
+ * Adds activity filtering support to <code>PreferenceContentProvider</code>.
  * 
  * @since 3.0
  */
 public class FilteredPreferenceContentProvider extends PreferenceContentProvider {
-
-	/**
-	 * Filtering support.
-	 */
-	private FilterableObject filterableObject;
-
+    
 	/**
 	 * Create a new instance of the <code>FilteringPreferenceContentProvider</code>.
 	 * 
-	 * @param filtering
-	 *            the initial filtering state.
 	 */
-	public FilteredPreferenceContentProvider(boolean filtering) {
-		filterableObject = new FilterableObject(filtering);
+	public FilteredPreferenceContentProvider() {
+	    //no-op
 	}
 
 	/* (non-Javadoc)
@@ -45,9 +35,6 @@ public class FilteredPreferenceContentProvider extends PreferenceContentProvider
 	 */
 	public Object[] getChildren(Object parentElement) {
 		Object[] children = super.getChildren(parentElement);
-		if (!getFiltering())
-			return children;
-
 		ArrayList filteredChildren = new ArrayList(children.length);
 		for (int i = 0; i < children.length; i++) {
 			if (WorkbenchActivityHelper.filterItem(children[i]))
@@ -58,12 +45,6 @@ public class FilteredPreferenceContentProvider extends PreferenceContentProvider
 		return filteredChildren.toArray();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.activities.ws.FilterableObject#getFiltering()
-	 */
-	public boolean getFiltering() {
-		return filterableObject.getFiltering();
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
@@ -74,12 +55,4 @@ public class FilteredPreferenceContentProvider extends PreferenceContentProvider
 			return null;
 		return parent;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.activities.ws.FilterableObject#setFiltering(boolean)
-	 */
-	public void setFiltering(boolean filtering) {
-		filterableObject.setFiltering(filtering);
-	}
-
 }

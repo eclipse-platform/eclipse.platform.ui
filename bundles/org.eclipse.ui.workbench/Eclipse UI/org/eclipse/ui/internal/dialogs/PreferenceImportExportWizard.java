@@ -10,6 +10,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
 import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -19,6 +20,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.Wizard;
@@ -49,7 +51,7 @@ public class PreferenceImportExportWizard extends Wizard {
 	 * The dialog which opened this wizard. This is used to get a handle on the
 	 * preferences. This value should never be <code>null</code>.
 	 */
-	private final FilteredPreferenceDialog parent;
+	private final PreferenceDialog parent;
 	/**
 	 * The page containing the preferences selection controls. This is the
 	 * second page shown to the user. This valud should not be <code>null</code>
@@ -68,7 +70,7 @@ public class PreferenceImportExportWizard extends Wizard {
 	 *            wizard dialog itself). This parameter should not be <code>null</code>.
 	 */
 	public PreferenceImportExportWizard(final boolean exportWizard,
-			FilteredPreferenceDialog parentDialog) {
+			PreferenceDialog parentDialog) {
 		super();
 		export = exportWizard;
 		parent = parentDialog;
