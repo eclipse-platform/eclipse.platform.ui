@@ -17,7 +17,6 @@ import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Updates the variables view
