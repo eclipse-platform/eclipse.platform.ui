@@ -391,6 +391,11 @@ public interface IWorkbenchActionConstants {
 	 */
 	public static final String GROUP_FILE = "group.file"; //$NON-NLS-1$
 
+	/**
+	 * Toolbar: name of group for editor action bars.
+	 */
+	public static final String GROUP_EDITOR = "group.editor"; //$NON-NLS-1$
+	
 // Standard view actions:
 	/**
 	 * View menu: name of group for additional view-like items.
@@ -410,7 +415,6 @@ public interface IWorkbenchActionConstants {
 	 * (value <code>"additions"</code>).
 	 */
 	public static final String LAUNCH_EXT = MB_ADDITIONS;	// Group.
-	
 	
 // menu reorg
 	/**

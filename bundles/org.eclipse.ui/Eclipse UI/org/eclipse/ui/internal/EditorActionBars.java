@@ -77,12 +77,6 @@ public String getEditorType() {
 	return type;
 }
 /**
- * Returns the editor type.
- */
-protected static String getGroupMarkerId() {
-	return groupMarkerId;
-}
-/**
  * Returns the tool bar manager.  If items are added or
  * removed from the manager be sure to call <code>updateActionBars</code>.
  * Overridden to support CoolBars.
@@ -98,7 +92,7 @@ public IToolBarManager getToolBarManager() {
 			// Create a CoolBar item for this action bar.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
 			CoolItemToolBarManager tBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
-			tBarMgr.add(new GroupMarker(getGroupMarkerId()));
+			tBarMgr.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
 			toolBarMgr = createSubToolBarManager(tBarMgr);
 			coolBarItem = new CoolBarContributionItem(cBarMgr, tBarMgr, type);
 			cBarMgr.add(coolBarItem);

@@ -959,7 +959,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, pinEditorGroup); //$NON-NLS-1$
 			// we want to add the pin editor cool item before the editor cool item (if
 			// it exists)
-			IContributionItem refItem = cBarMgr.findSubId(EditorActionBars.getGroupMarkerId());
+			IContributionItem refItem = cBarMgr.findSubId(IWorkbenchActionConstants.GROUP_EDITOR);
 			if (refItem == null) {
 				cBarMgr.add(coolBarItem);
 			} else {
