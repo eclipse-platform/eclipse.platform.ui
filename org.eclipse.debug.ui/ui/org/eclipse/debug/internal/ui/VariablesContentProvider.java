@@ -7,7 +7,10 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.internal.IPreferenceConstants;
 
 /**
  * Provide the contents for a variables viewer.
@@ -63,10 +66,8 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 	protected void doHandleDebugEvent(DebugEvent event) {
 		switch (event.getKind()) {
 			case DebugEvent.SUSPEND:
-				refresh();
-				break;
 			case DebugEvent.CHANGE:
-				refresh(event.getSource());
+				refresh();
 				break;
 		}
 	}
