@@ -778,10 +778,6 @@ public class InternalAntRunner {
 				throw new BuildException(message);
 			} 
 			setBuildFileLocation(args[0]);
-			targets = new Vector(args.length - 1);
-			for (int i = 1; i < args.length; i++) {
-				targets.add(args[i]);
-			}
 		}
 		
 		args= getArguments(commands, "-propertyfile"); //$NON-NLS-1$
@@ -802,13 +798,35 @@ public class InternalAntRunner {
 			return false;
 		}
 
-		if (!commands.isEmpty()) {
-			//unrecognized args
-			logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{commands.get(0)}), Project.MSG_ERR); //$NON-NLS-1$
-			printUsage();
-			return false;
+		if (commands != null && !commands.isEmpty()) {
+			if (!processTargets(commands)) {
+				//unrecognized argument
+				return false;
+			}
 		}
 		
+		return true;
+	}
+
+	/**
+	 * Checks for targets specified at the command line.
+	 * Returns whether execution should continue; false if
+	 * an unrecognized argument is encountered.	 */
+	protected boolean processTargets(List commands) {
+		if (targets == null) {
+			targets = new Vector(commands.size());
+		}
+		for (Iterator iter = commands.iterator(); iter.hasNext();) {
+			String arg = (String) iter.next();
+			if (!arg.startsWith("-")) {
+				targets.add(arg);
+			} else {
+				//unrecognized args
+				logMessage(getCurrentProject(), MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Unknown_argument__{0}_2"), new Object[]{arg}), Project.MSG_ERR); //$NON-NLS-1$
+				printUsage();
+				return false;
+			}
+		}
 		return true;
 	}
 
