@@ -172,9 +172,7 @@ IMarker[] getMarkers() throws CoreException {
 	ArrayList list = new ArrayList();
 	for (int i = 0; i < types.length; ++i) {
 		IMarker[] markers = res.findMarkers(types[i], true, depth);
-		for(int j = 0; j < markers.length; j ++){
-			list.add(new TaskListMarker(markers[j]));
-		}
+		list.addAll(Arrays.asList(markers));
 	}
 	IMarker[] result = new IMarker[list.size()];
 	list.toArray(result);
