@@ -292,11 +292,6 @@ public class SourceViewerDecorationSupport {
 			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
 		}
 		
-		if (fMarginPainter != null) {
-			fFontPropertyChangeListener= new FontPropertyChangeListener();
-			JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
-		}
-		
 		updateTextDecorations();
 		updateOverviewDecorations();
 	}
@@ -394,11 +389,6 @@ public class SourceViewerDecorationSupport {
 			fPropertyChangeListener= null;
 			fPreferenceStore= null;
 		}
-		
-		if (fFontPropertyChangeListener != null) {		
-			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
-			fFontPropertyChangeListener= null;
-		}
 	}
 	
 	/**
@@ -409,6 +399,25 @@ public class SourceViewerDecorationSupport {
 		uninstall();
 		updateTextDecorations();
 		updateOverviewDecorations();
+		
+		if (fFontPropertyChangeListener != null) {
+			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+			fFontPropertyChangeListener= null;
+		}
+		
+		fOverviewRuler= null;
+		
+		// Painters got disposed in updateTextDecorations() or by the PaintManager
+		fMatchingCharacterPainter= null;
+		fCursorLinePainter= null;
+		fAnnotationPainter= null;
+		fCursorLinePainter= null;
+		fMarginPainter= null;
+		
+		if (fAnnotationTypeKeyMap != null) {
+			fAnnotationTypeKeyMap.clear();
+			fAnnotationTypeKeyMap= null;
+		}
 	}
 	
 	/**
