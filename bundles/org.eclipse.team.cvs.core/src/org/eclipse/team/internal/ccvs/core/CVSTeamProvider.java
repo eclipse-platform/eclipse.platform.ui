@@ -10,26 +10,65 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
-import java.io.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Commit;
+import org.eclipse.team.internal.ccvs.core.client.Diff;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.client.listeners.*;
+import org.eclipse.team.internal.ccvs.core.client.listeners.AdminKSubstListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.EditorsListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
-import org.eclipse.team.internal.ccvs.core.util.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
+import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
@@ -214,9 +253,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 				format = CONTEXT_FORMAT;
 			}
 		}
-		
 		if (includeNewFiles)  {
-			newFileDiff(commandRoot, stream, doNotRecurse, format);
+			newFileDiff(cvsResource, stream, doNotRecurse, format);
 		}
 	}
 	
@@ -228,17 +266,18 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @param format
 	 * @throws CVSException
 	 */
-	private void newFileDiff(final ICVSFolder resource, final PrintStream stream, final boolean doNotRecurse, final int format) throws CVSException {
+	private void newFileDiff(final ICVSResource resource, final PrintStream stream, final boolean doNotRecurse, final int format) throws CVSException {
+		final ICVSFolder rootFolder= resource instanceof ICVSFolder ? (ICVSFolder)resource : resource.getParent();
 		resource.accept(new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				if (!(file.isIgnored() || file.isManaged()))  {
-					addFileToDiff(resource, file, stream, format);
+					addFileToDiff(rootFolder, file, stream, format);
 				}
 			}
 			public void visitFolder(ICVSFolder folder) throws CVSException {
 				// Even if we are not supposed to recurse we still need to go into
 				// the root directory.
-				if (!folder.exists() || folder.isIgnored() || (doNotRecurse && !folder.equals(resource)))  {
+				if (!folder.exists() || folder.isIgnored() || (doNotRecurse && !folder.equals(rootFolder)))  {
 					return;
 				} else  {
 					folder.acceptChildren(this);
@@ -256,61 +295,72 @@ public class CVSTeamProvider extends RepositoryProvider {
 		
 		String pathString = file.getRelativePath(cmdRoot);
 
-		BufferedReader fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
 		int lines = 0;
+		BufferedReader fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
 		try {
 			while (fileReader.readLine() != null)  {
 				lines++;
 			}
-			fileReader.close();
-			
-			switch (format) {
-				case UNIFIED_FORMAT :
-					nullFilePrefix = "--- ";	//$NON-NLS-1$
-					newFilePrefix = "+++ "; 	//$NON-NLS-1$
-					positionInfo = "@@ -0,0 +1," + lines + " @@" ;	//$NON-NLS-1$ //$NON-NLS-2$
-					linePrefix = "+"; //$NON-NLS-1$
-					break;
-
-				case CONTEXT_FORMAT :
-					nullFilePrefix = "*** ";	//$NON-NLS-1$
-					newFilePrefix = "--- ";		//$NON-NLS-1$
-					positionInfo = "--- 1," + lines + " ----";	//$NON-NLS-1$ //$NON-NLS-2$
-					linePrefix = "+ ";	//$NON-NLS-1$
-					break;
-				
-				default :
-					positionInfo = "0a1," + lines;	//$NON-NLS-1$
-					linePrefix = "> ";	//$NON-NLS-1$
-					break;
+		} catch (IOException e) {
+			throw CVSException.wrapException(file.getIResource(), Policy.bind("CVSTeamProvider.errorAddingFileToDiff", pathString), e); //$NON-NLS-1$
+		} finally {
+			try {
+				fileReader.close();
+			} catch (IOException e1) {
+				//ignore
 			}
+		}
 			
-			fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
+		// Ignore empty files
+		if (lines == 0)
+			return;
+		
+		switch (format) {
+		case UNIFIED_FORMAT :
+			nullFilePrefix = "--- ";	//$NON-NLS-1$
+			newFilePrefix = "+++ "; 	//$NON-NLS-1$
+			positionInfo = "@@ -0,0 +1," + lines + " @@" ;	//$NON-NLS-1$ //$NON-NLS-2$
+			linePrefix = "+"; //$NON-NLS-1$
+			break;
+			
+		case CONTEXT_FORMAT :
+			nullFilePrefix = "*** ";	//$NON-NLS-1$
+			newFilePrefix = "--- ";		//$NON-NLS-1$
+			positionInfo = "--- 1," + lines + " ----";	//$NON-NLS-1$ //$NON-NLS-2$
+			linePrefix = "+ ";	//$NON-NLS-1$
+			break;
+			
+		default :
+			positionInfo = "0a1," + lines;	//$NON-NLS-1$
+		linePrefix = "> ";	//$NON-NLS-1$
+					break;
+		}
+		
+		fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
+		try {
 				
 			stream.println("Index: " + pathString);		//$NON-NLS-1$
 			stream.println("===================================================================");	//$NON-NLS-1$
 			stream.println("RCS file: " + pathString);	//$NON-NLS-1$
 			stream.println("diff -N " + pathString);	//$NON-NLS-1$
 			
-			if (lines > 0)  {
-				
-				if (format != STANDARD_FORMAT)  {
-					stream.println(nullFilePrefix + "/dev/null	1 Jan 1970 00:00:00 -0000");	//$NON-NLS-1$
-					// Technically this date should be the local file date but nobody really cares.
-					stream.println(newFilePrefix + pathString + "	1 Jan 1970 00:00:00 -0000");	//$NON-NLS-1$
-				}
-				
-				if (format == CONTEXT_FORMAT)  {
-					stream.println("***************");	//$NON-NLS-1$
-					stream.println("*** 0 ****");		//$NON-NLS-1$
-				}
-				
-				stream.println(positionInfo);
-				
-				for (int i = 0; i < lines; i++)  {
-					stream.print(linePrefix);
-					stream.println(fileReader.readLine());
-				}
+			
+			if (format != STANDARD_FORMAT)  {
+				stream.println(nullFilePrefix + "/dev/null	1 Jan 1970 00:00:00 -0000");	//$NON-NLS-1$
+				// Technically this date should be the local file date but nobody really cares.
+				stream.println(newFilePrefix + pathString + "	1 Jan 1970 00:00:00 -0000");	//$NON-NLS-1$
+			}
+			
+			if (format == CONTEXT_FORMAT)  {
+				stream.println("***************");	//$NON-NLS-1$
+				stream.println("*** 0 ****");		//$NON-NLS-1$
+			}
+			
+			stream.println(positionInfo);
+			
+			for (int i = 0; i < lines; i++)  {
+				stream.print(linePrefix);
+				stream.println(fileReader.readLine());
 			}
 		} catch (IOException e) {
 			throw CVSException.wrapException(file.getIResource(), Policy.bind("CVSTeamProvider.errorAddingFileToDiff", pathString), e); //$NON-NLS-1$
