@@ -46,11 +46,16 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		if (page == null) {
 			return;
 		}
-		IEditorPart part= null;
-		IStructuredSelection selection= (IStructuredSelection)getStructuredSelection();
+		
+		IStructuredSelection selection= getStructuredSelection();
+		if (selection.isEmpty()) {
+			setEnabled(false);
+			return;
+		}
 		Iterator enum= selection.iterator();
 		IBreakpoint breakpoint= (IBreakpoint)enum.next();
 		IEditorInput input= fgPresentation.getEditorInput(breakpoint);
+		IEditorPart part= null;
 		if (input != null) {
 			String editorId = fgPresentation.getEditorId(input, breakpoint);
 			try {
@@ -76,4 +81,3 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		}
 	}
 }
-
