@@ -136,22 +136,7 @@ public interface IActivity extends Comparable {
 	 *         <code>IPatternBinding</code>.
 	 */	
 	List getPatternBindings();
-	
-	/**
-	 * <p>
-	 * Returns whether or not this activity is active. Instances of 
-	 * <code>IActivity</code> are activated and deactivated by the instance of
-	 * <code>IActivityManager</code> from whence they were brokered.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 * 
-	 * @return <code>true</code>, iff this activity is active. 
-	 */	
-	boolean isActive();
-	
+
 	/**
 	 * <p>
 	 * Returns whether or not the activity represented by this handle is 

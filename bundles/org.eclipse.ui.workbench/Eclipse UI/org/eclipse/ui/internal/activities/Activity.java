@@ -27,7 +27,6 @@ final class Activity implements IActivity {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
 
-	private boolean active;
 	private List activityListeners;
 	private ActivityManager activityManager;
 	private boolean defined;
@@ -66,29 +65,25 @@ final class Activity implements IActivity {
 
 	public int compareTo(Object object) {
 		Activity castedObject = (Activity) object;
-		int compareTo = Util.compare(active, castedObject.active);
-
-		if (compareTo == 0) {
-			compareTo = Util.compare(defined, castedObject.defined);
+		int compareTo = Util.compare(defined, castedObject.defined);
 			
+		if (compareTo == 0) {
+			compareTo = Util.compare(description, castedObject.description);
+
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, castedObject.description);
+				compareTo = Util.compare(enabled, castedObject.enabled);
+							
+				if (compareTo == 0) {		
+					compareTo = Util.compare(id, castedObject.id);			
+				
+					if (compareTo == 0) {
+						compareTo = Util.compare(name, castedObject.name);
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(enabled, castedObject.enabled);
-								
-					if (compareTo == 0) {		
-						compareTo = Util.compare(id, castedObject.id);			
-					
 						if (compareTo == 0) {
-							compareTo = Util.compare(name, castedObject.name);
+							compareTo = Util.compare(parentId, castedObject.parentId);
 
-							if (compareTo == 0) {
-								compareTo = Util.compare(parentId, castedObject.parentId);
-
-								if (compareTo == 0) 
-									compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) castedObject.patternBindingsAsArray); 
-							}
+							if (compareTo == 0) 
+								compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) castedObject.patternBindingsAsArray); 
 						}
 					}
 				}
@@ -104,7 +99,6 @@ final class Activity implements IActivity {
 
 		Activity castedObject = (Activity) object;	
 		boolean equals = true;
-		equals &= Util.equals(active, castedObject.active);
 		equals &= Util.equals(defined, castedObject.defined);
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(enabled, castedObject.enabled);
@@ -150,7 +144,6 @@ final class Activity implements IActivity {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(active);			
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
@@ -162,10 +155,6 @@ final class Activity implements IActivity {
 		}
 			
 		return hashCode;		
-	}
-
-	public boolean isActive() {
-		return active;
 	}
 	
 	public boolean isDefined() {
@@ -207,8 +196,6 @@ final class Activity implements IActivity {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(active);
-			stringBuffer.append(',');
 			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
@@ -238,18 +225,6 @@ final class Activity implements IActivity {
 				((IActivityListener) activityListeners.get(i)).activityChanged(activityEvent);
 	}
 	
-	boolean setActive(boolean active) {
-		if (active != this.active) {
-			this.active = active;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
-	}
-
 	boolean setDefined(boolean defined) {
 		if (defined != this.defined) {
 			this.defined = defined;

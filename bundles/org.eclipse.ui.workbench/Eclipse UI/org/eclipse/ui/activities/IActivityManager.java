@@ -17,7 +17,7 @@ import java.util.Set;
  * <p>
  * An instance of <code>IActivityManager</code> can be used to obtain instances
  * of <code>IActivity</code>, as well as manage whether or not those instances
- * are active or inactive, enabled or disabled.
+ * are enabled or disabled.
  * </p> 
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -47,23 +47,6 @@ public interface IActivityManager {
 	 *                                instance, no operation is performed.
 	 */		
 	void addActivityManagerListener(IActivityManagerListener activityManagerListener);
-
-	/**
-	 * <p>
-	 * Returns the set of identifiers to active activities. This set is not 
-	 * necessarily a subset of the set of identifiers to defined activities.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 *
-	 * @return the set of identifiers to active activities. This set may be 
-	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
-	 *         is not empty, it is guaranteed to only contain instances of 
-	 *         <code>String</code>.
-	 */	
-	Set getActiveActivityIds();
 
 	/**
 	 * Returns a handle to an activity given an identifier.
@@ -110,6 +93,11 @@ public interface IActivityManager {
 	 * TODO javadoc
 	 */	
 	boolean match(String string, Set activityIds);	
+
+	/**
+	 * TODO javadoc
+	 */	
+	Set matches(String string, Set activityIds);
 	
 	/**
 	 * Unregisters an instance of <code>IActivityManagerListener</code> 
@@ -125,17 +113,6 @@ public interface IActivityManager {
 	 *                                instance, no operation is performed.
 	 */
 	void removeActivityManagerListener(IActivityManagerListener activityManagerListener);
-
-	/**
-	 * Sets the set of identifiers to active activities. 
-	 *
-	 * @param activeActivityIds the set of identifiers to active activities. 
-	 *                          This set may be empty, but it must not be 
-	 *                          <code>null</code>. If this set is not empty, it 
-	 *                          must only contain instances of 
-	 *                          <code>String</code>.	
-	 */
-	void setActiveActivityIds(Set activeActivityIds);
 	
 	/**
 	 * Sets the set of identifiers to enabled activities. 
