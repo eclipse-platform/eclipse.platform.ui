@@ -210,7 +210,7 @@ public interface IWorkbench {
      * @exception WorkbenchException
      *                if a new window and page could not be opened
      * 
-     * @see IWorkbench#showPerspective
+     * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
      */
     public IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
             IAdaptable input) throws WorkbenchException;
@@ -239,7 +239,7 @@ public interface IWorkbench {
      * @exception WorkbenchException
      *                if a new window and page could not be opened
      * 
-     * @see IWorkbench#showPerspective
+     * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
      */
     public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
             throws WorkbenchException;
