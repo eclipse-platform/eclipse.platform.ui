@@ -4,6 +4,7 @@
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -19,6 +20,7 @@ class VariableSelectionDialog extends SelectionDialog {
 	private ExternalToolVariableForm form;
 	public VariableSelectionDialog(ExternalToolsMainTab externalToolsMainTab, Shell parent) {
 		super(parent);
+		setShellStyle(SWT.RESIZE);
 		this.externalToolsMainTab = externalToolsMainTab;
 		setTitle(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Select_variable_10")); //$NON-NLS-1$
 	}

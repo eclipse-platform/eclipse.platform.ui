@@ -66,7 +66,7 @@ public class ResourceComponent extends AbstractVariableComponent {
 	protected void createResourceList() {
 		Tree tree = new Tree(mainGroup, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = tree.getItemHeight();
+		data.heightHint = tree.getItemHeight() * 8;
 		tree.setLayoutData(data);
 		tree.setFont(mainGroup.getFont());
 		
