@@ -160,4 +160,8 @@ public class TagOperation extends RepositoryProviderOperation implements ITagOpe
         return TagSource.create(getResources());
     }
 
+    protected boolean isReportableError(IStatus status) {
+        return super.isReportableError(status)
+        	|| status.getCode() == CVSStatus.TAG_ALREADY_EXISTS;
+    }
 }

@@ -117,4 +117,9 @@ public class TagInRepositoryOperation extends RemoteOperation implements ITagOpe
     public TagSource getTagSource() {
         return TagSource.create(getCVSResources());
     }
+    
+    protected boolean isReportableError(IStatus status) {
+        return super.isReportableError(status)
+        	|| status.getCode() == CVSStatus.TAG_ALREADY_EXISTS;
+    }
 }
