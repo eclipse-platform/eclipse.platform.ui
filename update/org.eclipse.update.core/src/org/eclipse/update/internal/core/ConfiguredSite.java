@@ -1137,7 +1137,7 @@ public class ConfiguredSite
 		 	for (int i = 0; i < sites.length; i++) {
 				siteURL = sites[i].getURL();
 				URL resolvedURL = Platform.resolve(siteURL);
-				if (sameURL(resolvedURL,urlToCheck))
+				if (UpdateManagerUtils.sameURL(resolvedURL,urlToCheck))
 					return true;
 			}
 		} catch (MalformedURLException e){
@@ -1149,33 +1149,5 @@ public class ConfiguredSite
 		}
 		
 		return false;
-	}
-	
-	/*
-	 * Compares two URL for equality
-	 * Return false if one of them is null
-	 */
-	private boolean sameURL(URL url1, URL url2) {
-		if (url1 == null)
-			return false;
-		if (url1.equals(url2))
-			return true;
-
-		// check if URL are file: URL as we may
-		// have 2 URL pointing to the same featureReference
-		// but with different representation
-		// (i.e. file:/C;/ and file:C:/)
-		if (!"file".equalsIgnoreCase(url1.getProtocol()))
-			return false;
-		if (!"file".equalsIgnoreCase(url2.getProtocol()))
-			return false;
- 
-		File file1 = new File(url1.getFile());
-		File file2 = new File(url2.getFile());
-
-		if (file1 == null)
-			return false;
-
-		return (file1.equals(file2));
-	}		 
+	}	 
 }

@@ -2,4 +2,6 @@
 <site>
   <feature url="features/rootfeature.jar"/>
   <feature url="features/childrenfeature.jar"/>  
+  
+  <archive path="features/org.eclipse.update.core.tests.childrenfeature_2.0.0.jar" url="features/childrenfeature.jar"/>  
 </site>

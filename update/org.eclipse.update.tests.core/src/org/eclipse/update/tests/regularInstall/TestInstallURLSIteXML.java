@@ -99,6 +99,10 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	 */
 	public void testHTTPSite() throws Exception {
 
+		// clean
+		File targetFile  = new File(TARGET_FILE_SITE.getFile());
+		UpdateManagerUtils.removeFromFileSystem(targetFile);
+
 		ISite remoteSite =
 			SiteManager.getSite(new URL(SOURCE_HTTP_SITE, Site.SITE_XML));
 		IFeatureReference[] features = remoteSite.getFeatureReferences();

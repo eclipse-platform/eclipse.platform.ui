@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
@@ -84,20 +85,7 @@ public class Site extends SiteModel implements ISite {
 			return false;
 		ISite otherSite = (ISite) obj;
 
-		if (getURL().equals(otherSite.getURL())) return true;
-		
-		// check if URL are file: URL as we may
-		// have 2 URL pointing to the same featureReference
-		// but with different representation
-		// (i.e. file:/C;/ and file:C:/)
-		if (!"file".equalsIgnoreCase(getURL().getProtocol())) return false;
-		if (!"file".equalsIgnoreCase(otherSite.getURL().getProtocol())) return false;		
-		
-		File file1 = new File(getURL().getFile());
-		File file2 = new File(otherSite.getURL().getFile());
-		
-		if (file1==null) return false;
-		return (file1.equals(file2));		
+		return UpdateManagerUtils.sameURL(getURL(),otherSite.getURL());	
 	}
 
 	/**
@@ -205,12 +193,8 @@ public class Site extends SiteModel implements ISite {
 		for (int i = 0; i < references.length; i++) {
 			currentReference = references[i];
 			// do not compare the URL 
-			try {
-				if (feature.equals(currentReference.getFeature()))
-					return currentReference;
-			} catch (CoreException e) {
-				UpdateManagerPlugin.warn(null,e);
-			}
+			if (UpdateManagerUtils.sameURL(feature.getURL(), currentReference.getURL()))
+				return currentReference;
 		}
 		return null;
 	}

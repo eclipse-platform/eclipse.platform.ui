@@ -15,6 +15,7 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.ModelObject;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * 
@@ -94,7 +95,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		Iterator iter = list.iterator();
 		while (iter.hasNext() && !found) {
 			FeatureReferenceModel element = (FeatureReferenceModel) iter.next();
-			if (sameURL(element.getURL(),featureURL)) {
+			if (UpdateManagerUtils.sameURL(element.getURL(),featureURL)) {
 				list.remove(element);
 				found = true;
 			}
@@ -117,7 +118,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		Iterator iter = list.iterator();
 		while (iter.hasNext() && !found) {
 			FeatureReferenceModel element = (FeatureReferenceModel) iter.next();
-			if (sameURL(element.getURL(),featureURL)) {
+			if (UpdateManagerUtils.sameURL(element.getURL(),featureURL)) {
 				found = true;
 			}
 		}
@@ -218,34 +219,5 @@ public class ConfigurationPolicyModel extends ModelObject {
 	protected void setUnconfiguredFeatureReferences(IFeatureReference[] featureReferences) {
 		unconfiguredFeatureReferences = new ArrayList();
 		unconfiguredFeatureReferences.addAll(Arrays.asList(featureReferences));
-	}
-
-	/*
-	 * Compares two URL for equality
-	 * Return false if one of them is null
-	 */
-	private boolean sameURL(URL url1, URL url2) {
-		
-		if (url1 == null)
-			return false;
-		if (url1.equals(url2))
-			return true;
-
-		// check if URL are file: URL as we may
-		// have 2 URL pointing to the same featureReference
-		// but with different representation
-		// (i.e. file:/C;/ and file:C:/)
-		if (!"file".equalsIgnoreCase(url1.getProtocol()))
-			return false;
-		if (!"file".equalsIgnoreCase(url2.getProtocol()))
-			return false;
-
-		File file1 = new File(url1.getFile());
-		File file2 = new File(url2.getFile());
-
-		if (file1 == null)
-			return false;
-
-		return (file1.equals(file2));
 	}
 }
