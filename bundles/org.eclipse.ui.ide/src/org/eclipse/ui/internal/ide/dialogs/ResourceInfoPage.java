@@ -191,6 +191,8 @@ public class ResourceInfoPage extends PropertyPage {
 		gd.horizontalAlignment = GridData.FILL;
 		pathValueText.setLayoutData(gd);
 		pathValueText.setFont(font);
+		pathValueText.setBackground(pathValueText.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
 
 		//The group for types
 		Label typeTitle = new Label(basicInfoComposite, SWT.LEFT);
@@ -199,6 +201,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 		Text typeValue = new Text(basicInfoComposite, SWT.LEFT | SWT.READ_ONLY);
 		typeValue.setText(getTypeString(resource));
+		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
 		typeValue.setFont(font);
 
 		//The group for location
@@ -218,6 +222,8 @@ public class ResourceInfoPage extends PropertyPage {
 		gd.horizontalAlignment = GridData.FILL;
 		locationValue.setLayoutData(gd);
 		locationValue.setFont(font);
+		locationValue.setBackground(locationValue.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
 
 		if (isPathVariable(resource)) {
 			Label resolvedLocationTitle = new Label(basicInfoComposite,
@@ -237,6 +243,8 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.horizontalAlignment = GridData.FILL;
 			resolvedLocationValue.setLayoutData(gd);
 			resolvedLocationValue.setFont(font);
+			resolvedLocationValue.setBackground(resolvedLocationValue
+					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		}
 		if (resource.getType() == IResource.FILE) {
 			//The group for size
@@ -253,6 +261,8 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.horizontalAlignment = GridData.FILL;
 			sizeValue.setLayoutData(gd);
 			sizeValue.setFont(font);
+			sizeValue.setBackground(sizeValue.getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_BACKGROUND));
 		}
 
 		return basicInfoComposite;
@@ -452,6 +462,8 @@ public class ResourceInfoPage extends PropertyPage {
 		Text timeStampValue = new Text(composite, SWT.READ_ONLY);
 		timeStampValue.setText(getDateStringValue(resource));
 		timeStampValue.setFont(font);
+		timeStampValue.setBackground(timeStampValue.getDisplay()
+				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		timeStampValue.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
 
