@@ -111,6 +111,11 @@ public IStatus busyRestoreView(final IViewReference ref) {
 				view = desc.createView();
 				((ViewReference)ref).setPart(view);
 			} catch (CoreException e) {
+				PartPane pane = ((ViewReference)ref).getPane();
+				if(pane != null) {
+					page.getPerspectivePresentation().removePart(pane);
+					pane.dispose();
+				}
 				result[0] = new Status(
 					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
 					WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()}), //$NON-NLS-1$

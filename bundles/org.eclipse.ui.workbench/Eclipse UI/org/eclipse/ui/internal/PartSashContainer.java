@@ -184,6 +184,7 @@ public void createControl(Composite parentWidget) {
 	parent = createParent(parentWidget);
 	parent.addControlListener(resizeListener);
 	
+	ArrayList children = (ArrayList)this.children.clone();
 	for (int i = 0, length = children.size(); i < length; i++) {
 		LayoutPart child = (LayoutPart)children.get(i);
 		child.setContainer(this);

@@ -1201,6 +1201,14 @@ private EditorManager getEditorManager() {
 	return editorMgr;
 }
 /**
+ * Answer the perspective presentation.
+ */
+public PerspectivePresentation getPerspectivePresentation() {
+	if(getActivePerspective() != null)
+		return getActivePerspective().getPresentation();
+	return null;
+}
+/**
  * Answer the editor presentation.
  */
 public EditorPresentation getEditorPresentation() {
