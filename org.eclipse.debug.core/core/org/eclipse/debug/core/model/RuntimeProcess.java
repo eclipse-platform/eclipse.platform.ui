@@ -184,12 +184,16 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			if (fStreamsProxy instanceof StreamsProxy) {
 				((StreamsProxy)fStreamsProxy).kill();
 			}
-			fProcess.destroy();
+			Process process = getSystemProcess();
+			if (process != null) {
+			    process.destroy();
+			}
 			int attempts = 0;
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {
-					if (fProcess != null) {
-						fExitValue = fProcess.exitValue(); // throws exception if process not exited
+				    process = getSystemProcess();
+					if (process != null) {
+						fExitValue = process.exitValue(); // throws exception if process not exited
 					}
 					return;
 				} catch (IllegalThreadStateException ie) {
