@@ -30,20 +30,6 @@ public class ActionSetMenuManager extends SubMenuManager {
         this.actionSetId = actionSetId;
     }
 
-    /**
-     * Makes sure to dispose of the contribution items contained within this
-     * menu manager. This is to prevent memory leaks via the identifier
-     * listeners on <code>PluginActionContributionItem</code>. Please see Bug
-     * 64024.
-     */
-    public void dispose() {
-        final IContributionItem[] items = getItems();
-        for (int i = 0; i < items.length; i++) {
-            items[i].dispose();
-        }
-        removeAll();
-    }
-
     /* (non-Javadoc)
      * Method declared on IContributionManager.
      *
