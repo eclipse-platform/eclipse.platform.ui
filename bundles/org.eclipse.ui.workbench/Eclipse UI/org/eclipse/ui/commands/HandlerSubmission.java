@@ -258,7 +258,7 @@ public final class HandlerSubmission implements Comparable {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append("[activePartId="); //$NON-NLS-1$
             stringBuffer.append(activePartId);
-            stringBuffer.append("activeShell="); //$NON-NLS-1$
+            stringBuffer.append(",activeShell="); //$NON-NLS-1$
             stringBuffer.append(activeShell);
             stringBuffer.append(",activeWorkbenchSite="); //$NON-NLS-1$
             stringBuffer.append(activeWorkbenchPartSite);
