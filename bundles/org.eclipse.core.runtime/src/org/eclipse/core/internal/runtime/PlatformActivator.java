@@ -132,7 +132,6 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 	public void stop(BundleContext context) throws Exception {
 		// Stop the registry
 		stopRegistry(context);
-		unregisterPluginConverter();
 		environmentInfoServiceReleased(environmentServiceReference);
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(context);
@@ -169,16 +168,7 @@ public class PlatformActivator implements BundleActivator, ServiceListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		registerPluginConverter();
 		startRegistry(context);
-	}
-//
-//	private void registerPluginConverter() {
-//		converterRegistration = context.registerService(IPluginConverter.class.getName(), new PluginConverter(), null);
-//	}	
-   
-	private void unregisterPluginConverter() {
-		converterRegistration.unregister();
 	}
 
 	private void environmentInfoServiceReleased(ServiceReference reference) {
