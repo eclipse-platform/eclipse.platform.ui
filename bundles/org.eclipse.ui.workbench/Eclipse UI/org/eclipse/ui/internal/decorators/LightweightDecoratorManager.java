@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
+
 /*
  * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
@@ -23,6 +26,42 @@ import java.util.*;
  * that encapsulates the behavior for the lightweight decorators.
  */
 class LightweightDecoratorManager {
+
+	/**
+	 * The runnable is the object used to run the decorations
+	 * so that an error in someones decorator will not kill the thread.
+	 * It is implemented here to prevent aborting of decoration
+	 * i.e. successful decorations will still be applied.
+	 */
+
+	private class LightweightRunnable implements ISafeRunnable {
+		private Object element;
+		private DecorationBuilder decoration;
+		private LightweightDecoratorDefinition decorator;
+
+		private void setValues(
+			Object object,
+			DecorationBuilder builder,
+			LightweightDecoratorDefinition definition) {
+			element = object;
+			decoration = builder;
+			decorator = definition;
+
+		}
+		/*
+		 * @see ISafeRunnable.handleException(Throwable).
+		 */
+		public void handleException(Throwable exception) {
+		}
+		/*
+		 * @see ISafeRunnable.run
+		 */
+		public void run() throws Exception {
+			decorator.decorate(element, decoration);
+		}
+	}
+
+	private LightweightRunnable runnable = new LightweightRunnable();
 
 	//The cachedDecorators are a 1-many mapping of type to full decorator.
 	private HashMap cachedLightweightDecorators = new HashMap();
@@ -149,7 +188,7 @@ class LightweightDecoratorManager {
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
 				decoration.setCurrentDefinition(decorators[i]);
-				decorators[i].decorate(element, decoration);
+				decorate(element, decoration, decorators[i]);
 			}
 		}
 
@@ -159,10 +198,26 @@ class LightweightDecoratorManager {
 			for (int i = 0; i < decorators.length; i++) {
 				if (decorators[i].getEnablement().isEnabledFor(adapted)) {
 					decoration.setCurrentDefinition(decorators[i]);
-					decorators[i].decorate(adapted, decoration);
+					decorate(adapted, decoration, decorators[i]);
 				}
 			}
 		}
+
+	}
+
+	/**
+	 * Decorate the element receiver in a SafeRunnable.
+	 * @param element. The Object to be decorated
+	 * @param decoration. The object building decorations.
+	 * @param decorator. The decorator being applied.
+	 */
+	private void decorate(
+		Object element,
+		DecorationBuilder decoration,
+		LightweightDecoratorDefinition decorator) {
+
+		runnable.setValues(element, decoration, decorator);
+		Platform.run(runnable);
 
 	}
 	/**
