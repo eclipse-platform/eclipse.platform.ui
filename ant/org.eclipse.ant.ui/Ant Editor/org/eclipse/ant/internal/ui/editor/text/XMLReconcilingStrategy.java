@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.editor.text;
 
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -24,6 +25,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class XMLReconcilingStrategy implements IReconcilingStrategy {
 
+	/**
+	 * How long the reconciler will wait for further text changes before reconciling
+	 */
+	public static final int DELAY= 500;
+	
 	private ITextEditor fEditor;
 
 	public XMLReconcilingStrategy(ITextEditor editor) {
@@ -31,24 +37,29 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy {
 	}
 	
 	private void internalReconcile(DirtyRegion dirtyRegion) {
-		IDocumentProvider provider= fEditor.getDocumentProvider();
-		if (provider instanceof AntEditorDocumentProvider) {
-			AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
-			AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
-			if (model != null)
-				model.reconcile(dirtyRegion);
+		try {
+			IDocumentProvider provider= fEditor.getDocumentProvider();
+			if (provider instanceof AntEditorDocumentProvider) {
+				AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
+				AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
+				if (model != null) {
+					model.reconcile(dirtyRegion);
+				}
+			} 
+		} catch (Exception e) {
+			AntUIPlugin.log(e);
 		}
 	}
 
-	/*
-	 * @see IReconcilingStrategy#reconcile(IRegion)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(IRegion partition) {
 		internalReconcile(null);
 	}
 
-	/*
-	 * @see IReconcilingStrategy#reconcile(DirtyRegion, IRegion)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		internalReconcile(dirtyRegion);
@@ -57,8 +68,8 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy {
 		}
 	}
 
-	/*
-	 * @see IReconcilingStrategy#setDocument(IDocument)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
 	}
