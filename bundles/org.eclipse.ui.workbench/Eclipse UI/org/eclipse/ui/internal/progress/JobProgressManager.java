@@ -43,22 +43,25 @@ public class JobProgressManager
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
 
-	private static final String PROGRESS_25 = "progress25.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_50 = "progress50.gif"; //$NON-NLS-1$
-	private static final String PROGRESS_75 = "progress75.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_20 = "progress20.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_40 = "progress40.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_60 = "progress60.gif"; //$NON-NLS-1$
+	private static final String PROGRESS_80 = "progress80.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_100 = "progress100.gif"; //$NON-NLS-1$
 
-	private static final String PROGRESS_25_KEY = "PROGRESS_25"; //$NON-NLS-1$
-	private static final String PROGRESS_50_KEY = "PROGRESS_50"; //$NON-NLS-1$
-	private static final String PROGRESS_75_KEY = "PROGRESS_75"; //$NON-NLS-1$
+	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
+	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
+	private static final String PROGRESS_60_KEY = "PROGRESS_60"; //$NON-NLS-1$
+	private static final String PROGRESS_80_KEY = "PROGRESS_80"; //$NON-NLS-1$
 	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
 	static String[] keys =
 		new String[] {
-			PROGRESS_25_KEY,
-			PROGRESS_50_KEY,
-			PROGRESS_75_KEY,
+			PROGRESS_20_KEY,
+			PROGRESS_40_KEY,
+			PROGRESS_60_KEY,
+			PROGRESS_80_KEY,
 			PROGRESS_100_KEY };
 
 	/**
@@ -187,9 +190,10 @@ public class JobProgressManager
 				new Path(JobProgressManager.PROGRESS_FOLDER));
 
 		try {
-			setUpImage(iconsRoot,PROGRESS_25,PROGRESS_25_KEY);
-			setUpImage(iconsRoot,PROGRESS_50,PROGRESS_50_KEY);
-			setUpImage(iconsRoot,PROGRESS_75,PROGRESS_75_KEY);
+			setUpImage(iconsRoot,PROGRESS_20,PROGRESS_20_KEY);
+			setUpImage(iconsRoot,PROGRESS_40,PROGRESS_40_KEY);
+			setUpImage(iconsRoot,PROGRESS_60,PROGRESS_60_KEY);
+			setUpImage(iconsRoot,PROGRESS_80,PROGRESS_80_KEY);
 			setUpImage(iconsRoot,PROGRESS_100,PROGRESS_100_KEY);
 		} catch (MalformedURLException e) {
 			ProgressUtil.logException(e);
@@ -535,7 +539,7 @@ public class JobProgressManager
 			JobInfo info = (JobInfo) element;
 			int done = info.getPercentDone();
 			if(done > 0){
-				int index = Math.min(3,(done / 25));
+				int index = Math.min(4,(done / 20));
 				return JFaceResources.getImage(keys[index]);
 			}				
 		}
