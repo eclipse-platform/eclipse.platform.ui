@@ -12,6 +12,7 @@ package org.eclipse.core.tests.runtime.jobs;
 import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.InternalJob;
 import org.eclipse.core.internal.jobs.JobQueue;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -22,6 +23,9 @@ public class JobQueueTest extends TestCase {
 		Entry(int value) {
 			super("Entry");
 			setPriority(value);
+		}
+		protected IStatus run(IProgressMonitor monitor) {
+			return Status.OK_STATUS;
 		}
 	}
 	private JobQueue queue;
