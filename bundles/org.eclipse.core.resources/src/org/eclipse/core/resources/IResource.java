@@ -245,11 +245,6 @@ public interface IResource extends IAdaptable {
  * unless the visitor ignores a subtree by returning <code>false</code> from its
  * visit method.
  * </p>
- * <p>
- * This method acquires the workspace lock during initialization of the visitor.
- * Like other workspace changing operations, this method will block until the
- * workspace lock becomes available.
- * </p>
  *  <p>No  guarantees are made about the behavior of this method if resources
  * are deleted or added during the traversal of this resource hierarchy.  If
  * resources are deleted during the traversal, they may still be passed to the
