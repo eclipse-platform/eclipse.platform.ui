@@ -18,14 +18,12 @@ public class HelpContribution implements Contribution {
 
 	protected HelpContribution parent;
 	protected List children = new ArrayList(/* of HelpContribution */);
-
 	protected String id;
-
+	protected String label;
+	protected String translatedLabel;
 	// counter to track children with FIRST or LAST position preferences
 	protected int firstChildrenNo = 0;
-	protected String label;
 	protected int lastChildrenNo = 0;
-	protected String translatedLabel;
 
 	/**
 	 */
@@ -33,15 +31,15 @@ public class HelpContribution implements Contribution {
 		if (attrs == null)
 			return;
 
+		// set the id
+		id = attrs.getValue("id");
+		
 		// set the label
 		this.label = attrs.getValue("label");
 		if (this.label == null)
-			this.label = attrs.getValue("id");
+			this.label = id;
 		if (this.label == null)
-			this.label = getClass().toString();
-
-		// set the id
-		id = attrs.getValue("id");
+			this.label = " ";
 	}
 	/**
 	 * Implements the method for the Visitor pattern

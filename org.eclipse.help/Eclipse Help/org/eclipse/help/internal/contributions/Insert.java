@@ -12,7 +12,7 @@ import java.lang.*;
  */
 public interface Insert extends Contribution {
 
-	public String getMode();
+	public int    getMode();
 	public String getSource();
 	public String getTarget();
 }
