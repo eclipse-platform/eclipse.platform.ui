@@ -189,7 +189,9 @@ public class SiteLocal
 			// set configuration as current		
 			if (getCurrentConfigurationModel() != null)
 				getCurrentConfigurationModel().setCurrent(false);
-			config.setCurrent(true);
+			if (config instanceof InstallConfiguration)	
+				((InstallConfiguration)config).setCurrent(true);
+			
 			setCurrentConfigurationModel((InstallConfigurationModel) config);
 			((InstallConfigurationModel) config).markReadOnly();
 

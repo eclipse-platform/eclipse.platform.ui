@@ -19,12 +19,4 @@ public class UIProblemHandler implements IProblemHandler {
 		String title = UpdateUIPlugin.getResourceString(KEY_TITLE);
 		return MessageDialog.openQuestion(UpdateUIPlugin.getActiveWorkbenchShell(), title, problemText);
 	}
-	/*
-	 * @see IProblemHandler#reportProblem(String, MultiStatus)
-	 */
-	public boolean reportProblem(String problemText, MultiStatus status) {
-		String title = UpdateUIPlugin.getResourceString(KEY_TITLE);
-		return MessageDialog.openQuestion(UpdateUIPlugin.getActiveWorkbenchShell(), title, problemText);
-	}
-
 }

@@ -29,15 +29,6 @@ public interface IInstallConfiguration extends IAdaptable {
 	public boolean isCurrent();
 
 	/**
-	 * Marks the configuration current
-	 * 
-	 * @param isCurrent <code>true</code> if this is the current
-	 * configuration, <code>false</code> otherwise
-	 * @since 2.0 
-	 */
-	public void setCurrent(boolean isCurrent);
-
-	/**
 	 * Return the sites that are part of this configuration.
 	 * 
 	 * @return an array of configured sites, or an empty array.
