@@ -3943,7 +3943,10 @@ public class TextViewer extends Viewer implements
 			}
 		
 		} else {
-			
+			IRegion region= modelRange2WidgetRange(presentation.getCoverage());
+			if (region == null)
+				return;
+
 			List list= new ArrayList();
 			Iterator e= presentation.getAllStyleRangeIterator();
 			while (e.hasNext()) {
@@ -3956,7 +3959,6 @@ public class TextViewer extends Viewer implements
 			if (!list.isEmpty()) {
 				StyleRange[] ranges= new StyleRange[list.size()];
 				list.toArray(ranges);
-				IRegion region= modelRange2WidgetRange(presentation.getCoverage());
 				fTextWidget.replaceStyleRanges(region.getOffset(), region.getLength(), ranges);
 			}
 		}
