@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
  
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.ui.*;
@@ -49,25 +50,26 @@ public IEditorInput getInput() {
  * 
  * @param memento the memento to restore the object state from
  */
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	String factoryId = memento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 	
+	Status result = new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 	if (factoryId == null) {
 		WorkbenchPlugin.log("Unable to restore mru list - no input factory ID.");//$NON-NLS-1$
-		return;
+		return result;
 	}
 	IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryId);
 	if (factory == null) {
-		return;
+		return result;
 	}
 	IMemento persistableMemento = memento.getChild(IWorkbenchConstants.TAG_PERSISTABLE);
 	if (persistableMemento == null) {
 		WorkbenchPlugin.log("Unable to restore mru list - no input element state: " + factoryId);//$NON-NLS-1$
-		return;
+		return result;
 	}
 	IAdaptable adaptable = factory.createElement(persistableMemento);
 	if (adaptable == null || (adaptable instanceof IEditorInput) == false) {
-		return;
+		return result;
 	}
 	input = (IEditorInput) adaptable;
 	// Get the editor descriptor.
@@ -76,6 +78,7 @@ public void restoreState(IMemento memento) {
 		IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
 		descriptor = registry.findEditor(editorId);
 	}
+	return result;
 }
 /**
  * Saves the object state in the given memento. 

@@ -7,6 +7,7 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
@@ -68,56 +69,79 @@ public IViewReference createView(final String id) throws PartInitException {
  * disposed when releaseView is called an equal number of times
  * to getView.
  */
-private void restoreView(final IViewReference ref) throws PartInitException {
+public IStatus restoreView(final IViewReference ref) {
 	if(ref.getPart(false) != null)
-		return;
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+		
 	final String viewID = ref.getId();
 	final IMemento stateMem = (IMemento)mementoTable.get(viewID);
 	mementoTable.remove(viewID);
 	
-	final PartInitException ex[] = new PartInitException[1];
+	final IStatus result[] = new IStatus[]{new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null)};
 	Platform.run(new SafeRunnable() {
 		public void run() {
-			try {
-				IViewDescriptor desc = viewReg.find(viewID);
-				if(desc == null)
-					throw new PartInitException(WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] {viewID})); //$NON-NLS-1$
-
-				// Debugging
-				if (DEBUG)
-					System.out.println("Create " + desc.getLabel());//$NON-NLS-1$
-			
-				// Create the view.
-				IViewPart view = null;
-				try {
-					view = desc.createView();
-					((ViewReference)ref).setPart(view);
-				} catch (CoreException e) {
-					throw new PartInitException(WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()}),e); //$NON-NLS-1$
-				}
-				
-				// Create site
-				ViewSite site = new ViewSite(view, page, desc);
-				view.init(site,stateMem);
-				if (view.getSite() != site)
-					throw new PartInitException(WorkbenchMessages.format("ViewFactory.siteException", new Object[] {desc.getID()})); //$NON-NLS-1$
-			
-				ViewPane pane = new ViewPane(ref, page);
-				site.setPane(pane);
-				site.setActionBars(new ViewActionBars(page.getActionBars(), pane));
-					
-			} catch (PartInitException e) {
-				ex[0] = e;
+			IViewDescriptor desc = viewReg.find(viewID);
+			if(desc == null) {
+				result[0] = new Status(
+					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+					WorkbenchMessages.format("ViewFactory.couldNotCreate", new Object[] {viewID}), //$NON-NLS-1$
+					null);
+				return;
 			}
+
+			// Debugging
+			if (DEBUG)
+				System.out.println("Create " + desc.getLabel());//$NON-NLS-1$
+		
+			// Create the view.
+			IViewPart view = null;
+			try {
+				view = desc.createView();
+				((ViewReference)ref).setPart(view);
+			} catch (CoreException e) {
+				result[0] = new Status(
+					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+					WorkbenchMessages.format("ViewFactory.initException", new Object[] {desc.getID()}), //$NON-NLS-1$
+					e);
+				return;
+			}
+			
+			// Create site
+			ViewSite site = new ViewSite(view, page, desc);
+			try {
+				view.init(site,stateMem);
+			} catch (PartInitException e) {
+				releaseView(viewID);
+				result[0] = new Status(
+					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+					WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID}), //$NON-NLS-1$
+					e);
+				return;
+			}				
+			if (view.getSite() != site)  {
+				releaseView(viewID);
+				result[0] = new Status(
+					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+					WorkbenchMessages.format("ViewFactory.siteException", new Object[] {desc.getID()}), //$NON-NLS-1$
+					null);
+				return;
+			}
+		
+			ViewPane pane = new ViewPane(ref, page);
+			site.setPane(pane);
+			site.setActionBars(new ViewActionBars(page.getActionBars(), pane));
+			result[0] =  new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 		}
 		public void handleException(Throwable e) {
 			//Execption is already logged.
-			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID}); //$NON-NLS-1$
-			ex[0] = new PartInitException(message);
+			result[0] = new Status(
+				IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+				WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID}), //$NON-NLS-1$
+				e);
+
 		}
 	});
-	if(ex[0] != null)
-		throw ex[0];
+	return result[0];
 }
 
 public void saveState(IMemento memento) {
@@ -146,12 +170,13 @@ public void saveState(IMemento memento) {
 		}
 	}
 }
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	IMemento mem[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
 	for (int i = 0; i < mem.length; i++) {
 		String id = mem[i].getString(IWorkbenchConstants.TAG_ID);
 		mementoTable.put(id,mem[i].getChild(IWorkbenchConstants.TAG_VIEW_STATE));
 	}
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 /**
  * Remove a view rec from the manager.
@@ -258,10 +283,22 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 		if(part != null)
 			return part;
 		if(restore) {
-			try {
-				restoreView(this);
-			} catch (PartInitException e) {
-			}
+			IStatus status = restoreView(this);
+		/*
+		 * Views are not lazy created so this code will not run for now.
+		 */
+			
+//			if(status.getSeverity() == IStatus.ERROR) {
+//				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
+//				if(!workbench.isStarting()) {
+//					ErrorDialog.openError(
+//						window.getShell(),
+//						WorkbenchMessages.getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
+//						WorkbenchMessages.format("EditorManager.unableToRestoreEditorMessage",new String[]{getName()}), //$NON-NLS-1$
+//						status,
+//						IStatus.WARNING | IStatus.ERROR);
+//				} 
+//			}			
 		}
 		return part;
 	}
@@ -281,8 +318,11 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 	 * @see IWorkbenchPartReference#getId()
 	 */	
 	public String getId() {
-		if(part != null)
+		if(part != null) {
+			if(part.getSite() == null)
+				return viewId;
 			return part.getSite().getId();
+		}
 		return viewId;
 	}
 	public void setPane(PartPane pane) {

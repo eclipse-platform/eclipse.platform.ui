@@ -4,6 +4,8 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import java.util.*;
@@ -64,8 +66,12 @@ public Control getControl() {
 /**
  * @see IPersistablePart
  */
-public void restoreState(IMemento memento) 
+public IStatus restoreState(IMemento memento) 
 {
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("RootLayoutContainer.problemsRestoringPerspective"),null);
+	
 	// Read the info elements.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_INFO);
 
@@ -94,7 +100,7 @@ public void restoreState(IMemento memento)
 		else {
 			PartTabFolder folder = new PartTabFolder();
 			folder.setID(partID);
-			folder.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER));
+			result.add(folder.restoreState(childMem.getChild(IWorkbenchConstants.TAG_FOLDER)));
 			ContainerPlaceholder placeholder = new ContainerPlaceholder(partID);
 			placeholder.setRealContainer(folder);
 			part = placeholder;
@@ -115,6 +121,7 @@ public void restoreState(IMemento memento)
 		}
 		mapIDtoPart.put(partID, part);
 	}
+	return result;
 }
 /**
  * @see IPersistablePart

@@ -12,9 +12,10 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
 
 /**
  * Represents the area set aside for editor workbooks.
@@ -192,7 +193,7 @@ public void removeEditor(EditorPane pane) {
 /**
  * @see IPersistablePart
  */
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	// Remove the default editor workbook that is
 	// initialy created with the editor area.
 	if (children != null) {
@@ -244,6 +245,7 @@ public void restoreState(IMemento memento) {
 		}
 		mapIDtoPart.put(partID, workbook);
 	}
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 }
 /**
  * @see IPersistablePart

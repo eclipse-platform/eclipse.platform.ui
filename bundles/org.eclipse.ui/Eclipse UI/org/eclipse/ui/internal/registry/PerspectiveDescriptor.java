@@ -55,10 +55,12 @@ public PerspectiveDescriptor(File file)
 		InputStreamReader reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
 		// Restore the layout state.
 		IMemento memento = XMLMemento.createReadRoot(reader);
-		restoreState(memento);
+		IStatus status = restoreState(memento);
 		reader.close();
 		stream = null;
 		customFile = file;
+		if(status.getSeverity() == IStatus.ERROR)
+			throw new WorkbenchException(status);
 	} finally {
 		if (stream != null)
 			stream.close();
@@ -185,28 +187,30 @@ public boolean isSingleton() {
 /**
  * @see IPersistable
  */
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_DESCRIPTOR);
-	if(childMem == null) return;
-	id = childMem.getString(IWorkbenchConstants.TAG_ID);
-	originalId = childMem.getString(IWorkbenchConstants.TAG_DESCRIPTOR);
-	label = childMem.getString(IWorkbenchConstants.TAG_LABEL);
-	className = childMem.getString(IWorkbenchConstants.TAG_CLASS);
-	String customFileStr = childMem.getString(IWorkbenchConstants.TAG_FILE);
-	if(customFileStr != null) {
-		IPath path = WorkbenchPlugin.getDefault().getStateLocation();
-		path = path.append(customFileStr);
-		customFile = path.toFile();
+	if(childMem != null) {
+		id = childMem.getString(IWorkbenchConstants.TAG_ID);
+		originalId = childMem.getString(IWorkbenchConstants.TAG_DESCRIPTOR);
+		label = childMem.getString(IWorkbenchConstants.TAG_LABEL);
+		className = childMem.getString(IWorkbenchConstants.TAG_CLASS);
+		String customFileStr = childMem.getString(IWorkbenchConstants.TAG_FILE);
+		if(customFileStr != null) {
+			IPath path = WorkbenchPlugin.getDefault().getStateLocation();
+			path = path.append(customFileStr);
+			customFile = path.toFile();
+		}
+		singleton = (childMem.getInteger(IWorkbenchConstants.TAG_SINGLETON) != null);
+	
+		//Find a descriptor in the registry.
+		PerspectiveDescriptor descriptor = (PerspectiveDescriptor)WorkbenchPlugin.getDefault().
+			getPerspectiveRegistry().findPerspectiveWithId(getOriginalId());
+	
+		if(descriptor != null)
+			//Copy the state from the registred descriptor.	
+			image = descriptor.image;
 	}
-	singleton = (childMem.getInteger(IWorkbenchConstants.TAG_SINGLETON) != null);
-
-	//Find a descriptor in the registry.
-	PerspectiveDescriptor descriptor = (PerspectiveDescriptor)WorkbenchPlugin.getDefault().
-		getPerspectiveRegistry().findPerspectiveWithId(getOriginalId());
-
-	if(descriptor != null)
-		//Copy the state from the registred descriptor.	
-		image = descriptor.image;
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);		
 }
 /**
  * Revert to the predefined extension template.

@@ -793,8 +793,15 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				}
 				
 				// Restore the saved state
-				restoreState(memento);
+				IStatus restoreResult = restoreState(memento);
 				reader.close();
+				if(restoreResult.getSeverity() == IStatus.ERROR) {
+					ErrorDialog.openError(
+						null,
+						WorkbenchMessages.getString("Workspace.problemsTitle"),
+						WorkbenchMessages.getString("Workbench.problemsRestoringMsg"),
+						restoreResult);
+				}
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
@@ -1057,17 +1064,22 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * Restores the state of the previously saved workbench
 	 */
-	private void restoreState(IMemento memento) {
+	private IStatus restoreState(IMemento memento) {
+
+		MultiStatus result = new MultiStatus(
+			PlatformUI.PLUGIN_ID,IStatus.OK,
+			WorkbenchMessages.getString("Workbench.problemsRestoring"),null);
 		// Read perspective history.
 		// This must be done before we recreate the windows, because it is
 		// consulted during the recreation.
 		IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVE_HISTORY);
 		if (childMem != null)
-			getPerspectiveHistory().restoreState(childMem);
-
+			result.add(getPerspectiveHistory().restoreState(childMem));
+				
 		IMemento mruMemento = memento.getChild(IWorkbenchConstants.TAG_MRU_LIST); //$NON-NLS-1$
-		if (mruMemento != null)
-			getEditorHistory().restoreState(mruMemento);
+		if (mruMemento != null) {
+			result.add(getEditorHistory().restoreState(mruMemento));
+		}
 
 		// Get the child windows.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
@@ -1077,10 +1089,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			childMem = children[x];
 			WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
 			newWindow.create();
-			newWindow.restoreState(childMem);
+			result.merge(newWindow.restoreState(childMem));
 			windowManager.add(newWindow);
 			newWindow.open();
 		}
+		return result;
 	}
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();

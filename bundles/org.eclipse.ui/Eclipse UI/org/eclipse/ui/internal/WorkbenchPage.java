@@ -26,6 +26,7 @@ import org.eclipse.ui.part.MultiEditor;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
@@ -292,18 +293,18 @@ public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input)
 	init(w, layoutID, input);
 }
 /**
- * Constructs an old page from data stored in a persistance file.
+ * Constructs a page.
+ * <code>restoreState(IMemento)</code>should be called to restore this page
+ * from data stored in a persistance file.
  *
  * @param w the parent window
- * @param memento result from previous call to saveState
  * @param input the page input
  */
-public WorkbenchPage(WorkbenchWindow w, IMemento memento, IAdaptable input) 
+public WorkbenchPage(WorkbenchWindow w, IAdaptable input) 
 	throws WorkbenchException
 {
 	super();
 	init(w, null, input);
-	restoreState(memento);
 }
 /**
  * Activates a part.  The part will be brought to the front and given focus.
@@ -952,7 +953,7 @@ public void dispose() {
 		if (errors[0] == 1)
 			message = WorkbenchMessages.getString("WorkbenchPage.oneErrorClosingPage"); //$NON-NLS-1$
 		else
-			message = WorkbenchMessages.getString("EditorManager.multipleErrorsRestoring"); //$NON-NLS-1$
+			message = WorkbenchMessages.getString("WorkbenchPage.multipleErrorsRestoring"); //$NON-NLS-1$
 		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 	}
 	activePart = null;
@@ -1842,8 +1843,15 @@ public void resetPerspective() {
 /**
  * @see IPersistable.
  */
-private void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	// Restore working set
+	String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
+	if(pageName == null) pageName = "";
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.format("WorkbenchPage.unableToRestorePerspective",new String[]{pageName}),
+		null);
+
 	String workingSetName = memento.getString(IWorkbenchConstants.TAG_WORKING_SET);
 	if (workingSetName != null) {
 		WorkingSetManager workingSetManager = (WorkingSetManager) getWorkbenchWindow().getWorkbench().getWorkingSetManager();
@@ -1852,11 +1860,11 @@ private void restoreState(IMemento memento) {
 	
 	// Restore editor manager.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
-	getEditorManager().restoreState(childMem);
+	result.merge(getEditorManager().restoreState(childMem));
 	
 	childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
 	if(childMem != null)
-		getViewFactory().restoreState(childMem);
+		result.merge(getViewFactory().restoreState(childMem));
 
 	// Get persp block.
 	childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
@@ -1869,7 +1877,7 @@ private void restoreState(IMemento memento) {
 	for (int i = 0; i < perspMems.length; i++) {
 		try {
 			Perspective persp = new Perspective(null, this);
-			persp.restoreState(perspMems[i]);
+			result.merge(persp.restoreState(perspMems[i]));
 			if (persp.getDesc().getId().equals(activePerspectiveID))
 				activePerspective = persp;
 			perspList.add(persp);
@@ -1886,9 +1894,9 @@ private void restoreState(IMemento memento) {
 		perspList.setActive(activePerspective);
 	}
 	if (activePerspective == null)
-		return;
+		return result;
 
-	activePerspective.restoreState();
+	result.merge(activePerspective.restoreState());
 	window.firePerspectiveActivated(this, activePerspective.getDesc());
 
 	// Restore active part.
@@ -1897,6 +1905,7 @@ private void restoreState(IMemento memento) {
 		if (view != null)
 			activePart = view;
 	}
+	return result;
 }
 /**
  * See IWorkbenchPage
@@ -2093,8 +2102,14 @@ private void setPerspective(Perspective newPersp) {
 	// items are saved as part of the layout.
 	saveToolBarLayout();
 
-	if(newPersp != null)
-		newPersp.restoreState();	
+	if(newPersp != null) {
+		IStatus status = newPersp.restoreState();	
+		if(status.getSeverity() != IStatus.OK) {
+			String title = WorkbenchMessages.getString("WorkbenchPage.problemRestoringTitle");  //$NON-NLS-1$
+			String msg = WorkbenchMessages.getString("WorkbenchPage.errorReadingState"); //$NON-NLS-1$
+			ErrorDialog.openError(getWorkbenchWindow().getShell(),title,msg,status); 			
+		}
+	}
 	
 	// Deactivate active part.
 	

@@ -8,6 +8,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -994,12 +995,25 @@ protected void resetToolBar() {
 		coolBarMgr.redoLayout();
 	}
 }
+private IStatus unableToRestorePage(IMemento pageMem) {
+	String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
+	if(pageName == null)
+		pageName = "";
+	return new Status(
+		IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+		WorkbenchMessages.format("WorkbenchWindow.unableToRestorePerspective",new String[]{pageName}),
+		null);
+}
 /**
  * @see IPersistable.
  */
-public void restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento) {
 	Assert.isNotNull(getShell());
-	
+
+	MultiStatus result = new MultiStatus(
+		PlatformUI.PLUGIN_ID,IStatus.OK,
+		WorkbenchMessages.getString("WorkbenchWindow.problemsRestoringWindow"),null);
+				
 	// Read the bounds.
 	if("true".equals(memento.getString("maximized"))) {//$NON-NLS-2$//$NON-NLS-1$
 		getShell().setMaximized(true);
@@ -1033,11 +1047,13 @@ public void restoreState(IMemento memento) {
 		String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 		if (factoryID == null) {
 			WorkbenchPlugin.log("Unable to restore page - no input factory ID.");//$NON-NLS-1$
+			result.add(unableToRestorePage(pageMem));
 			continue;
 		}
 		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 		if (factory == null) {
 			WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID);//$NON-NLS-1$
+			result.add(unableToRestorePage(pageMem));
 			continue;
 		}
 			
@@ -1045,24 +1061,27 @@ public void restoreState(IMemento memento) {
 		IAdaptable input = factory.createElement(inputMem);
 		if (input == null) {
 			WorkbenchPlugin.log("Unable to restore page - cannot instantiate input element: " + factoryID);//$NON-NLS-1$
+			result.add(unableToRestorePage(pageMem));
 			continue;
 		}
 
 		// Open the perspective.
-		WorkbenchPage result = null;
+		WorkbenchPage newPage = null;
 		try {
-			result = new WorkbenchPage(this, pageMem, input);
-			pageList.add(result);
-			firePageOpened(result);
+			newPage = new WorkbenchPage(this, input);
+			result.add(newPage.restoreState(pageMem));
+			pageList.add(newPage);
+			firePageOpened(newPage);
 		} catch (WorkbenchException e) {
 			WorkbenchPlugin.log("Unable to restore perspective - constructor failed.");//$NON-NLS-1$
+			result.add(e.getStatus());
 			continue;
 		}
 
 		// Check for focus.
 		String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
 		if (strFocus != null && strFocus.length() > 0)
-			newActivePage = result;
+			newActivePage = newPage;
 	}
 
 	// If there are no pages create a default.
@@ -1070,11 +1089,12 @@ public void restoreState(IMemento memento) {
 		try {
 			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 			String defPerspID = workbench.getPerspectiveRegistry().getDefaultPerspective();
-			WorkbenchPage result = new WorkbenchPage(this, defPerspID, root);
-			pageList.add(result);
-			firePageOpened(result);
+			WorkbenchPage newPage = new WorkbenchPage(this, defPerspID, root);
+			pageList.add(newPage);
+			firePageOpened(newPage);
 		} catch (WorkbenchException e) {
 			WorkbenchPlugin.log("Unable to create default perspective - constructor failed.");//$NON-NLS-1$
+			result.add(e.getStatus());
 			String productName = workbench.getAboutInfo().getProductName();
 			if (productName == null) {
 				productName = ""; //$NON-NLS-1$
@@ -1087,6 +1107,7 @@ public void restoreState(IMemento memento) {
 	if (newActivePage == null)
 		newActivePage = (IWorkbenchPage)pageList.getNextActive();
 	setActivePage(newActivePage);
+	return result;
 }
 /* (non-Javadoc)
  * Method declared on IRunnableContext.
@@ -1161,6 +1182,7 @@ public void saveState(IMemento memento) {
 
 		// Save perspective.
 		IMemento pageMem = memento.createChild(IWorkbenchConstants.TAG_PAGE);
+		pageMem.putString(IWorkbenchConstants.TAG_LABEL,page.getLabel());
 		page.saveState(pageMem);
 		
 		if (page == getActiveWorkbenchPage()) {
