@@ -9,6 +9,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.xml.sax.SAXException;
 
 public class InstallConfiguration implements IInstallConfiguration, IWritable {
 
@@ -24,18 +25,21 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	/*
 	 * default constructor. Create
 	 */
-	public InstallConfiguration(URL location, String label) {
-		this.location = location;
+	public InstallConfiguration(URL newLocation, String label) throws CoreException {
+		this.location = newLocation;
 		this.label = label;
 		this.isCurrent = false;
+		initialize();
 	}
 
 	/*
 	 * copy constructor
 	 */
 	public InstallConfiguration(IInstallConfiguration config,URL newLocation, String label) {
-		this(newLocation,label);
+		this.location = newLocation;
+		this.label = label;
 		// do not copy list of listeners
+		// FIXME: incomplete
 		if (config!=null){
 			configurationSites = Arrays.asList(config.getConfigurationSites());
 			featuresConfigured = Arrays.asList(config.getConfiguredFeatures());
@@ -43,6 +47,35 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		}
 		this.isCurrent = false;
 	}
+	
+	/**
+	 * initialize the configurations from the persistent model.
+	 */
+	private void initialize() throws CoreException {
+
+		try {
+			//URL configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
+			InstallConfigurationParser parser = new InstallConfigurationParser(location.openStream(), this);
+			
+		}  catch (FileNotFoundException exception) {
+			// file doesn't exist, ok, log it and continue 
+			// log no config
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(location.toExternalForm() + " does not exist, the local site is not in synch with the filesystem and is pointing to a file taht doesn;t exist.");
+			}
+		} catch (SAXException exception) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + location.toExternalForm(), exception);
+			throw new CoreException(status);
+		} catch (IOException exception) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during file access :" , exception);
+			throw new CoreException(status);
+		}
+
+	}
+	
+	
 	/**
 	 * Returns all the featuresConfigured of all teh sites
 	 */

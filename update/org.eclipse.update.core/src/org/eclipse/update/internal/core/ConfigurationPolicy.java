@@ -41,7 +41,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		
 		switch (policy) {
 			case IPlatformConfiguration.ISitePolicy.USER_INCLUDE :
-				if (featureReferences.isEmpty()){
+				if (!featureReferences.isEmpty()){
 					result = new IFeatureReference[featureReferences.size()];
 					featureReferences.toArray(result);
 				}

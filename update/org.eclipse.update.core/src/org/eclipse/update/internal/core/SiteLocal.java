@@ -90,8 +90,10 @@ public class SiteLocal implements ILocalSite, IWritable {
 			}*/
 
 			URL configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
-			System.out.println("config" + configXml.toExternalForm());
 			SiteLocalParser parser = new SiteLocalParser(configXml.openStream(), this);
+
+			
+			
 		}  catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config

@@ -107,6 +107,8 @@ public class SiteLocalParser extends DefaultHandler {
 			}
 		} catch (MalformedURLException e) {
 			throw new SAXException("error processing URL. Check the validity of the URLs", e);
+		} catch (CoreException e){
+			throw new SAXException("Error during creation of Config Site:",e);
 		}
 
 	}
@@ -130,7 +132,7 @@ public class SiteLocalParser extends DefaultHandler {
 	/** 
 	 * process the Config info
 	 */
-	private void processConfig(Attributes attributes) throws MalformedURLException {
+	private void processConfig(Attributes attributes) throws MalformedURLException, CoreException {
 
 		// url
 		URL url = UpdateManagerUtils.getURL(site.getLocation(), attributes.getValue("url"), null);

@@ -278,7 +278,7 @@ public class UpdateManagerUtils {
 	 * @return the path of the URL
 	 */
 	public static String getPath(URL url){
-		String result = null;
+		/*String result = null;
 		if (url!=null){
 			String file = url.getFile();
 			int index;
@@ -286,7 +286,8 @@ public class UpdateManagerUtils {
 			if ((index = (file.indexOf("?")))!=-1) file = file.substring(0,index);
 			result = file;
 		}
-		return result;
+		return result;*/
+		return url.getPath();
 	}
 	
 
