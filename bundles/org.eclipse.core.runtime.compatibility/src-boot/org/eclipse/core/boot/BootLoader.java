@@ -14,12 +14,13 @@ import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.internal.boot.OldPlatformConfiguration;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.configurator.IPlatformConfigurationFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-
 /**
  * Special boot loader class for the Eclipse Platform. This class cannot
  * be instantiated; all functionality is provided by static methods.
@@ -34,12 +35,15 @@ import org.osgi.framework.ServiceReference;
  * defined in plug-ins, and shutting down the platform when done.
  * </p>
  * 
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0).
- *
  * @see org.eclipse.core.runtime.Platform
+ * TODO @deprecated 
+ * In Eclipse 3.0 the runtime has been refactored such that the <code>BootLoader</code>
+ * class is no longer relevant.  Most of the function found on <code>BootLoader</code> is
+ * however still supported and has been relocated described in the method comments.
+ * <p>
+ * This interface must only be used by plug-ins 
+ * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
+ * </p>
  */
 public final class BootLoader implements Constants {
 
@@ -89,6 +93,7 @@ public final class BootLoader implements Constants {
 	 * if they are being run individually rather than with <code>Platform.run()</code>.
 	 * 
 	 * @return the command line used to start the platform
+	 * TODO @deprecated Replaced by {@link Platform#getCommandLineArgs()}.
 	 */
 	public static String[] getCommandLineArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
@@ -118,6 +123,7 @@ public final class BootLoader implements Constants {
 	 * The returned value is distinct from the location of any given platform's data.
 	 *
 	 * @return the URL indicating where the platform runtime is installed.
+	 * TODO @deprecated 
 	 */
 	public static URL getInstallURL() {
 		return InternalPlatform.getDefault().getInstallURL();
@@ -127,6 +133,7 @@ public final class BootLoader implements Constants {
 	 * whose path starts with <code>$nl$</code>.
 	 *
 	 * @return the string name of the current locale
+	 * TODO @deprecated Replaced by {@link Platform#getNL()}.
 	 */
 	public static String getNL() {
 		return InternalPlatform.getDefault().getNL();
@@ -141,7 +148,7 @@ public final class BootLoader implements Constants {
 	 *
 	 * @return the string name of the current operating system
 	 * @see #knownOSValues
-	 *  
+	 * TODO @deprecated Replaced by {@link Platform#getOS()}.
 	 */
 	public static String getOS() {
 		return InternalPlatform.getDefault().getOS();
@@ -154,7 +161,7 @@ public final class BootLoader implements Constants {
 	 * 
 	 * @return the string name of the current system architecture
 	 * @since 2.0
-	 *  
+	 * TODO @deprecated Replaced by {@link Platform#getOSArch()}.
 	 */
 	public static String getOSArch() {
 		return InternalPlatform.getDefault().getOSArch();
@@ -188,7 +195,7 @@ public final class BootLoader implements Constants {
 	 * if the window system cannot be determined.
 	 *
 	 * @return the string name of the current window system or <code>null</code>
-	 *  
+	 * TODO @deprecated Replaced by {@link Platform#getWS()}.
 	 */
 	public static String getWS() {
 		return InternalPlatform.getDefault().getWS();
@@ -205,7 +212,8 @@ public final class BootLoader implements Constants {
 	 * @return the list of system architectures known to the system
 	 * @see #getOSArch
 	 * @since 2.0
-	 *  
+	 * XXX @deprecated Unclear whether or not this is required.  We could put it on 
+	 * EnvironmentInfo
 	 */
 	public static String[] knownOSArchValues() {
 		return ARCH_LIST;
@@ -222,7 +230,8 @@ public final class BootLoader implements Constants {
 	 * @return the list of operating systems known to the system
 	 * @see #getOS
 	 * @since 2.0
-	 *  
+	 * XXX @deprecated Unclear whether or not this is required.  We could put it on 
+	 * EnvironmentInfo
 	 */
 	public static String[] knownOSValues() {
 		return OS_LIST;
@@ -239,7 +248,8 @@ public final class BootLoader implements Constants {
 	 * @return the list of window systems known to the system
 	 * @see #getWS
 	 * @since 2.0
-	 *  
+	 * XXX @deprecated Unclear whether or not this is required.  We could put it on 
+	 * EnvironmentInfo
 	 */
 	public static String[] knownWSValues() {
 		return WS_LIST;
@@ -250,7 +260,7 @@ public final class BootLoader implements Constants {
 	 * in debug mode using the "-debug" command line argument.
 	 *
 	 * @return whether or not the platform is running in debug mode
-	 *  
+	 * TODO @deprecated Replaced by {@link EnvironmentInfo#inDebugMode()}.
 	 */
 	public static boolean inDebugMode() {
 		// TODO: need an API to access this (at least a constant for the property name)
@@ -263,7 +273,7 @@ public final class BootLoader implements Constants {
 	 * in development mode using the "-dev" command line argument.
 	 *
 	 * @return whether or not the platform is running in development mode
-	 *  
+	 * TODO @deprecated Replaced by {@link EnvironmentInfo#inDevMode()}.
 	 */
 	public static boolean inDevelopmentMode() {
 		// TODO: need an API to access this (at least a constant for the property name)

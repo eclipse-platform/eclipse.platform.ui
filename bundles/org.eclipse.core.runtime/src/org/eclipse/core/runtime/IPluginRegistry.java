@@ -57,7 +57,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>"builders"</code>)
 	 * @return the configuration elements
-	 * TODO @deprecated Replaced by {IExtensionRegistry#getConfigurationElementsFor(String, String)}.
+	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName);
 	/**
@@ -72,7 +72,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder</code>)
 	 * @return the configuration elements
-	 * TODO @deprecated Replaced by {IExtensionRegistry#getConfigurationElementsFor(String, String, String)}.
+	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String, String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName, String extensionId);
 	/**
@@ -86,7 +86,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
 	 * @return the extension, or <code>null</code>
-	 * TODO @deprecated Replaced by {IExtensionRegistry#getExtension(String, String)}.
+	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String)}.
 	 */
 	public IExtension getExtension(String extensionPointId, String extensionId);
 	/**
@@ -102,7 +102,7 @@ public interface IPluginRegistry {
 	 * @param extensionId the unique identifier of the extension 
 	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
 	 * @return the extension, or <code>null</code>
-	 * TODO @deprecated Replaced by {IExtensionRegistry#getExtension(String, String, String)}.
+	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String, String)}.
 	 */
 	public IExtension getExtension(String pluginId, String extensionPointName, String extensionId);
 	/**
@@ -113,7 +113,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointId the unique identifier of the extension point 
 	 *    (e.g., <code>"org.eclipse.core.resources.builders"</code>)
 	 * @return the extension point, or <code>null</code>
-	 * TODO @deprecated Replaced by {IExtensionRegistry#getExtensionPoint(String)}.
+	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String)}.
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 	/**
@@ -126,7 +126,7 @@ public interface IPluginRegistry {
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>" builders"</code>)
 	 * @return the extension point, or <code>null</code>
-	 * TODO @deprecated Replaced by {IExtensionRegistry#getExtensionPoint(String, String)}.
+	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String, String)}.
 	 */
 	public IExtensionPoint getExtensionPoint(String pluginId, String extensionPointName);
 
@@ -135,7 +135,7 @@ public interface IPluginRegistry {
 	 * Returns an empty array if there are no extension points.
 	 *
 	 * @return the extension points known to this plug-in registry
-	 * TODO @deprecated Replaced by {IExtensionRegistry#getExtensionPoints()}.
+	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoints()}.
 	 */
 	public IExtensionPoint[] getExtensionPoints();
 

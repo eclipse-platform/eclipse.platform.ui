@@ -25,6 +25,15 @@ import java.net.URL;
  * Runtime achieve their final and stable form (post-3.0).
  *
  * @since 2.0
+ * TODO @deprecated 
+ * In Eclipse 3.0 the Update mechanism was cleanly separated from the runtime.
+ * <code>IPlatformConfiguration</code> is part of the Update story and as such has
+ * been moved to {@link org.eclipse.update.configurator.IPlatformConfiguration} in the 
+ * <code>org.eclipse.update.configurator</code> plug-in.
+ * <p>
+ * This interface must only be used by plug-ins 
+ * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
+ * </p>
  */
 public interface IPlatformConfiguration {
 
