@@ -57,6 +57,11 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	 * Re-launches the given configuration in the specified mode.
 	 */
 	public static void relaunch(ILaunchConfiguration config, String mode) {
+		// This is necessary until support for the old-style (launcher-based) form
+		// of launching is removed
+		if (config == null) {
+			return;
+		}
 		try {
 			config.launch(mode);		
 		} catch (CoreException ce) {
