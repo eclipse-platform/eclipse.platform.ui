@@ -147,6 +147,8 @@ public void testCopyFile() throws Throwable {
 	CoreFileSystemLibrary.setReadOnly(target.getAbsolutePath(), true);
 	store.copy(target, copyOfTarget, IResource.DEPTH_INFINITE, null);
 	assertTrue("3.1", compareContent(getContents(content), store.read(copyOfTarget)));
+	// reset readonly flag for cleanup
+	CoreFileSystemLibrary.setReadOnly(copyOfTarget.getAbsolutePath(), false);
 	copyOfTarget.delete();
 
 	/* copy a big file to test progress monitor */
@@ -154,6 +156,8 @@ public void testCopyFile() throws Throwable {
 	for (int i = 0; i < 1000; i++)
 		sb.append("asdjhasldhaslkfjhasldkfjhasdlkfjhasdlfkjhasdflkjhsdaf");
 	File bigFile = new File(temp, "bigFile");
+	// reset the readonly flag for cleanup
+	CoreFileSystemLibrary.setReadOnly(target.getAbsolutePath(), false);
 	Workspace.clear(target);
 	createFile(bigFile, sb.toString());
 	assertTrue("7.1", bigFile.exists());

@@ -241,6 +241,10 @@ public void testReadOnlyFolderCopy() throws Exception {
 	assertExistsInWorkspace("1.1", source);
 	//XXX commented out pending fix for bug 6058.
 //	assertTrue("1.2", dest.isReadOnly());
+
+	// cleanup - ensure that the files can be deleted.
+	source.setReadOnly(false);
+	dest.setReadOnly(false);
 }
 public void testSetGetFolderPersistentProperty() throws Throwable {
 	IResource target = getWorkspace().getRoot().getFolder(new Path("/Project/Folder"));

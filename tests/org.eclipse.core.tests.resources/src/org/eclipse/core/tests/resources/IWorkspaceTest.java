@@ -828,6 +828,8 @@ public void testValidateEdit() {
 	file.setReadOnly(true);
 	result = getWorkspace().validateEdit(new IFile[] {file}, null);
 	assertEquals("1.1", IStatus.ERROR, result.getSeverity());
+	// remove the read-only status so test cleanup will work ok
+	file.setReadOnly(false);
 }
 /**
  * Performs black box testing of the following method:
