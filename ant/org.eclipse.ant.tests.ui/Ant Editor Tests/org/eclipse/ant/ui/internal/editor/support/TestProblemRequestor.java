@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.support;
+package org.eclipse.ant.ui.internal.editor.support;
 
 import org.eclipse.ant.ui.internal.editor.outline.IProblem;
 import org.eclipse.ant.ui.internal.editor.outline.IProblemRequestor;

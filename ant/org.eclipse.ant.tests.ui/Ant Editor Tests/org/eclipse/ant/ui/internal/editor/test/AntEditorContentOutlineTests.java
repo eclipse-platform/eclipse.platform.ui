@@ -12,7 +12,7 @@
  * 	   IBM Corporation - additional tests
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.test;
+package org.eclipse.ant.ui.internal.editor.test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,14 +24,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.ant.ui.internal.editor.outline.AntModel;
 import org.eclipse.ant.ui.internal.editor.outline.XMLCore;
-import org.eclipse.ui.externaltools.internal.ant.editor.support.TestLocationProvider;
-import org.eclipse.ui.externaltools.internal.ant.editor.support.TestUtils;
+import org.eclipse.ant.ui.internal.editor.support.TestLocationProvider;
+import org.eclipse.ant.ui.internal.editor.support.TestUtils;
 import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.xml.sax.SAXException;
 
 /**

@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.support;
+package org.eclipse.ant.ui.internal.editor.support;
 
+import org.eclipse.ant.ui.internal.editor.outline.ILocationProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.ant.ui.internal.editor.outline.ILocationProvider;
 
 
 public class TestLocationProvider implements ILocationProvider {

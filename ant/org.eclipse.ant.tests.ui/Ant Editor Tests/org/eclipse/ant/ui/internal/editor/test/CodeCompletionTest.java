@@ -12,7 +12,7 @@
  * 	   IBM Corporation - additional tests
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.test;
+package org.eclipse.ant.ui.internal.editor.test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,8 +37,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.ant.ui.internal.editor.AntEditorSaxDefaultHandler;
+import org.eclipse.ant.ui.internal.editor.support.TestTextCompletionProcessor;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.externaltools.internal.ant.editor.support.TestTextCompletionProcessor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;

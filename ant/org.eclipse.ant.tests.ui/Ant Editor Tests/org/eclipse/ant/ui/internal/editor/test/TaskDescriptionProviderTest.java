@@ -11,7 +11,7 @@
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial implementation
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.test;
+package org.eclipse.ant.ui.internal.editor.test;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

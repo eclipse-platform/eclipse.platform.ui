@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.support;
+package org.eclipse.ant.ui.internal.editor.support;
 
 import java.io.BufferedReader;
 import java.io.IOException;

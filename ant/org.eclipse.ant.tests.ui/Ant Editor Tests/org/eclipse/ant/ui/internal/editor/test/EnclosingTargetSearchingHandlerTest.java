@@ -12,7 +12,7 @@
  * 	   IBM Corporation - additional tests
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.test;
+package org.eclipse.ant.ui.internal.editor.test;
 
 import java.io.File;
 import java.io.IOException;

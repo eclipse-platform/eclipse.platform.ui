@@ -9,7 +9,7 @@
  *     Object Factory Inc. - Initial implementation
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.dtd.test;
+package org.eclipse.ant.ui.internal.dtd.test;
 
 import java.io.IOException;
 import java.util.Arrays;

@@ -12,11 +12,10 @@
  * 	   IBM Corporation - additional tests
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.test;
+package org.eclipse.ant.ui.internal.editor.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 
 /**
  * Test suite for the Ant Editor
