@@ -997,14 +997,21 @@ public IViewPart showView(String viewID)
 	int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 	if (presentation.hasPlaceholder(viewID)) {
 		presentation.addPart(pane);
-	} else if (openViewMode == IPreferenceConstants.OVM_FAST) {
+	}
+	else if (openViewMode == IPreferenceConstants.OVM_EMBED) {
+		presentation.addPart(pane);
+	}
+	/*
+	 * Detached window no longer supported - remove when confirmed
+	 *
+	 * else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
+	 * 	presentation.addDetachedPart(pane);
+	 * }
+	 */
+	else {
 		fastViews.add(part);
 		pane.setFast(true);
 		showFastView(part);
-	} else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
-		presentation.addDetachedPart(pane);
-	} else {
-		presentation.addPart(pane);
 	}
 	return part;
 }
