@@ -147,7 +147,7 @@ public class AntClasspathBlock {
 			addFolderButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle")); //$NON-NLS-1$;
 			addFolderButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
-					addFolder(antTableViewer, AntPreferencesMessages.getString("AntClasspathBlock.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
+					addFolder(antTableViewer, AntPreferencesMessages.getString("AntClasspathBlock.1")); //$NON-NLS-1$
 				}
 			});
 
@@ -195,7 +195,7 @@ public class AntClasspathBlock {
 			addUserFolderButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle2")); //$NON-NLS-1$;
 			addUserFolderButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
-					addFolder(userTableViewer, AntPreferencesMessages.getString("AntClasspathBlock.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
+					addFolder(userTableViewer, AntPreferencesMessages.getString("AntClasspathBlock.1")); //$NON-NLS-1$
 				}
 			});
 			upUserButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.upButtonTitle2")); //$NON-NLS-1$;
@@ -571,7 +571,7 @@ public class AntClasspathBlock {
 			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		DirectoryDialog dialog = new DirectoryDialog(antTableViewer.getControl().getShell());
-		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.&Choose_a_folder_that_will_be_used_as_the_location_of_ANT_HOME_3")); //$NON-NLS-1$
+		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.3")); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String path = dialog.open();
 		if (path == null) {
