@@ -15,10 +15,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
@@ -26,6 +28,7 @@ import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -139,6 +142,8 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 			}
 		}
 	};
+
+    private boolean performingBackgroundUpdate;
     
 	/**
      * Create the marker update handler.
@@ -534,9 +539,15 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
     }
     
     public void runViewUpdate(final Runnable runnable) {
-        if (Utils.canUpdateViewer(getViewer())) {
+        if (Utils.canUpdateViewer(getViewer()) || isPerformingBackgroundUpdate()) {
             internalRunViewUpdate(runnable);
         } else {
+            if (Thread.currentThread() != getEventHandlerJob().getThread()) {
+                // Run view update should only be called from the UI thread or
+                // the update handler thread. 
+                // We will log the problem for now and make it an assert later
+                TeamUIPlugin.log(IStatus.WARNING, "View update invoked from invalid thread", new TeamException("View update invoked from invalid thread")); //$NON-NLS-1$ //$NON-NLS-2$
+            }
 	        final Control ctrl = getViewer().getControl();
 	        if (ctrl != null && !ctrl.isDisposed()) {
 	        	ctrl.getDisplay().syncExec(new Runnable() {
@@ -554,13 +565,23 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
         }
     }
     
+    /*
+     * Return whether the event handler is performing a background view update.
+     * In other words, a client has invoked <code>performUpdate</code>.
+     */
+    public boolean isPerformingBackgroundUpdate() {
+        return Thread.currentThread() == getEventHandlerJob().getThread() && performingBackgroundUpdate;
+    }
+
     private void internalRunViewUpdate(final Runnable runnable) {
         StructuredViewer viewer = getViewer();
 		try {
-			viewer.getControl().setRedraw(false);
+		    if (Utils.canUpdateViewer(viewer))
+		        viewer.getControl().setRedraw(false);
 			runnable.run();
 		} finally {
-			viewer.getControl().setRedraw(true);
+		    if (Utils.canUpdateViewer(viewer))
+		        viewer.getControl().setRedraw(true);
 		}
 
 		ISynchronizeModelElement root = provider.getModelRoot();
@@ -589,16 +610,27 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
                 IResource[] resources = null;
                 if (preserveExpansion)
                     resources = getExpandedResources();
-                runnable.run(monitor);
+                try {
+                    performingBackgroundUpdate = true;
+	                runnable.run(monitor);
+                } finally {
+                    performingBackgroundUpdate = false;
+                }
                 updateView(resources);
+                
             }
             private IResource[] getExpandedResources() {
                 final IResource[][] resources = new IResource[1][0];
-                runViewUpdate(new Runnable() {
-                    public void run() {
-                        resources[0] = provider.getExpandedResources();
-                    }
-                });
+        	    final StructuredViewer viewer = getViewer();
+        		if (viewer != null && !viewer.getControl().isDisposed() && viewer instanceof AbstractTreeViewer) {
+        			viewer.getControl().getDisplay().syncExec(new Runnable() {
+        				public void run() {
+        					if (viewer != null && !viewer.getControl().isDisposed()) {
+        					    resources[0] = provider.getExpandedResources();
+        					}
+        				}
+        			});
+        		}
                 return resources[0];
             }
             private void updateView(final IResource[] resources) {
