@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -110,6 +111,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		addFav.setLayoutData(gd);		
+		SWTUtil.setButtonDimensionHint(addFav);
 		
 		fRemoveFavoritesButton = new Button(buttonComp, SWT.PUSH);
 		fRemoveFavoritesButton.setText(LaunchConfigurationsMessages.getString("LaunchHistoryPreferenceTab.Re&move_2")); //$NON-NLS-1$
@@ -120,6 +122,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fRemoveFavoritesButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fRemoveFavoritesButton);
 		fRemoveFavoritesButton.setEnabled(false);
 		
 		fMoveUpButton = new Button(buttonComp, SWT.PUSH);
@@ -131,6 +134,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fMoveUpButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fMoveUpButton);
 		fMoveUpButton.setEnabled(false);
 		
 		fMoveDownButton = new Button(buttonComp, SWT.PUSH);
@@ -142,6 +146,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fMoveDownButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fMoveDownButton);
 		fMoveDownButton.setEnabled(false);					
 	
 		createSpacer(topComp, 1);
@@ -181,6 +186,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fAddToFavoritesButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fAddToFavoritesButton);
 		fAddToFavoritesButton.setEnabled(false);
 		
 		fRemoveRecentButton = new Button(buttonComp, SWT.PUSH);
@@ -192,12 +198,13 @@ public abstract class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fRemoveRecentButton.setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(fRemoveRecentButton);
 		fRemoveRecentButton.setEnabled(false);				
 				
 		return topComp;
 	}
 
-	/*
+	/**
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {

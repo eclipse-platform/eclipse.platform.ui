@@ -12,6 +12,7 @@ import java.util.Map;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -282,6 +283,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		getDefaultButton().setLayoutData(gd);
+		SWTUtil.setButtonDimensionHint(getDefaultButton());
 		getDefaultButton().setEnabled(false);
 		
 		return topComp;
