@@ -62,6 +62,9 @@
     <test id="resources.MarkerTest">
       <run class="org.eclipse.core.tests.resources.MarkerTest"/>
     </test>
+    <test id="resources.NatureTest">
+      <run class="org.eclipse.core.tests.resources.NatureTest"/>
+    </test>
     <test id="resources.WorkspaceTest">
       <run class="org.eclipse.core.tests.resources.WorkspaceTest"/>
     </test>
@@ -364,30 +367,116 @@
       <run class="org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder"/> 
     </builder>
   </extension>
-
   <extension point="org.eclipse.core.resources.builders" id="sortbuilder" name="Sort Builder">
     <builder>
       <run class="org.eclipse.core.tests.internal.builders.SortBuilder"/> 
     </builder>
   </extension>
-
   <extension point="org.eclipse.core.resources.builders" id="refreshbuilder" name="Refresh local builder">
     <builder>
       <run class="org.eclipse.core.tests.internal.builders.RefreshLocalJavaFileBuilder"/>
     </builder>
   </extension>
-
   <extension point="org.eclipse.core.resources.builders" id="sigbuilder" name="Signaled Builder">
     <builder>
       <run class="org.eclipse.core.tests.resources.usecase.SignaledBuilder"/> 
     </builder>
   </extension>
-
   <extension point="org.eclipse.core.resources.builders" id="simple" name="Simple Builder">
     <builder>
       <run class="org.eclipse.core.tests.resources.regression.SimpleBuilder"/>
     </builder>
   </extension>
-
-
+  
+<extension
+      id="simpleNature"
+      name="Simple"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.SimpleNature"/>
+   </runtime>
+</extension>
+<extension
+      id="snowNature"
+      name="Snow"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.SnowNature"/>
+   </runtime>
+   <requires-nature
+         id="org.eclipse.core.tests.resources.waterNature">
+   </requires-nature>
+   <one-of-nature
+         id="org.eclipse.core.tests.resources.otherSet">
+   </one-of-nature>
+</extension>
+<extension
+      id="waterNature"
+      name="Water"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.WaterNature">
+			<parameter name="installBuilder" value="true"/>
+		</run>
+   </runtime>
+   <one-of-nature
+         id="org.eclipse.core.tests.resources.stateSet">
+   </one-of-nature>
+</extension>
+<extension
+      id="earthNature"
+      name="Earth"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.EarthNature">
+		</run>
+   </runtime>
+   <one-of-nature id="org.eclipse.core.tests.resources.stateSet"/>
+</extension>
+<extension
+      id="mudNature"
+      name="Mud"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.MudNature"/>
+   </runtime>
+   <requires-nature id="org.eclipse.core.tests.resources.waterNature"/>
+   <requires-nature id="org.eclipse.core.tests.resources.earthNature"/>
+   <one-of-nature id="org.eclipse.core.tests.resources.otherSet"/>
+</extension>
+<extension
+	id="invalidNature"
+	point="org.eclipse.core.resources.natures">
+	<run-thyme>
+		<rrrrun class="foo"/>
+	</run-thyme>
+	<two-of-nature ic="baz"/>
+</extension>
+<extension
+      id="cycle1"
+      name="Cycle1"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.Cycle1Nature"/>
+   </runtime>
+   <requires-nature id="org.eclipse.core.tests.resources.cycle2"/>
+</extension>
+<extension
+      id="cycle2"
+      name="Cycle2"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.Cycle2Nature"/>
+   </runtime>
+   <requires-nature id="org.eclipse.core.tests.resources.cycle3"/>
+</extension>
+<extension
+      id="cycle3"
+      name="Cycle3"
+      point="org.eclipse.core.resources.natures">
+	<runtime>
+		<run class="org.eclipse.core.tests.internal.resources.Cycle3Nature"/>
+   </runtime>
+   <requires-nature id="org.eclipse.core.tests.resources.cycle1"/>
+</extension>
 </plugin>

@@ -302,16 +302,7 @@ protected void assertDoesNotExist(String message, IMarker[] markers) {
 protected void assertDoesNotExist(String message, IMarker marker) {
 	assertTrue(message, !marker.exists());
 }
-protected void assertEquals(String message, Object[] expected, Object[] actual) {
-	if (expected == null && actual == null)
-		return;
-	if (expected == null || actual == null)
-		fail(message);
-	if (expected.length != actual.length)
-		fail(message);
-	for (int i = 0; i < expected.length; i++)
-		assertEquals(message, expected[i], actual[i]);
-}
+
 /**
  * Asserts that the given collection of expected markers contains
  * the same markers as the given collection of actual markers.  The

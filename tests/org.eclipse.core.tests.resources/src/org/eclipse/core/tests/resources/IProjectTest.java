@@ -1,4 +1,8 @@
 package org.eclipse.core.tests.resources;
+/*
+ * (c) Copyright IBM Corp. 2002.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
@@ -34,6 +38,70 @@ protected void tearDown() throws Exception {
 	getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 }
+/**
+ * Tests the API method IProject#hasNature.
+ */
+public void testHasNature() {
+	IWorkspace ws = ResourcesPlugin.getWorkspace();
+	IProject project = ws.getRoot().getProject("Project");
+	
+	//hasNature on non-existent project should fail
+	try {
+		project.hasNature(NATURE_SIMPLE);
+		fail("1.0");
+	} catch (CoreException e) {
+	}
+	try {
+		project.hasNature(NATURE_MISSING);
+		fail("1.1");
+	} catch (CoreException e) {
+	}
+	try {
+		project.create(getMonitor());
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+	//hasNature on closed project should fail
+	try {
+		project.hasNature(NATURE_SIMPLE);
+		fail("2.0");
+	} catch (CoreException e) {
+	}
+	try {
+		project.hasNature(NATURE_MISSING);
+		fail("2.1");
+	} catch (CoreException e) {
+	}
+	try {
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("2.99", e);
+	}
+	//hasNature on open project with no natures
+	try {
+		assertTrue("3.0", !project.hasNature(NATURE_SIMPLE));
+		assertTrue("3.1", !project.hasNature(NATURE_MISSING));
+		assertTrue("3.2", !project.hasNature(NATURE_EARTH));
+	} catch (CoreException e) {
+		fail("3.99", e);
+	}
+	try {
+		IProjectDescription desc = project.getDescription();
+		desc.setNatureIds(new String[] {NATURE_SIMPLE});
+		project.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("4.99", e);
+	}
+	//hasNature on open project with natures
+	try {
+		assertTrue("5.0", project.hasNature(NATURE_SIMPLE));
+		assertTrue("5.1", !project.hasNature(NATURE_MISSING));
+		assertTrue("5.2", !project.hasNature(NATURE_EARTH));
+	} catch (CoreException e) {
+		fail("5.99", e);
+	}
+}
+
 /**
  * Tests creation and manipulation of projects names that are reserved on some platforms.
  */
@@ -90,6 +158,69 @@ public void testInvalidProjectNames() {
 		}
 		assertTrue("2.2 " + names[i], project.exists());		
 		assertTrue("2.3 " + names[i], project.isOpen());
+	}
+}
+/**
+ * Tests the API method IProject#isNatureEnabled.
+ */
+public void testIsNatureEnabled() {
+	IWorkspace ws = ResourcesPlugin.getWorkspace();
+	IProject project = ws.getRoot().getProject("Project");
+	
+	//isNatureEnabled on non-existent project should fail
+	try {
+		project.isNatureEnabled(NATURE_SIMPLE);
+		fail("1.0");
+	} catch (CoreException e) {
+	}
+	try {
+		project.isNatureEnabled(NATURE_MISSING);
+		fail("1.1");
+	} catch (CoreException e) {
+	}
+	try {
+		project.create(getMonitor());
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+	//isNatureEnabled on closed project should fail
+	try {
+		project.isNatureEnabled(NATURE_SIMPLE);
+		fail("2.0");
+	} catch (CoreException e) {
+	}
+	try {
+		project.isNatureEnabled(NATURE_MISSING);
+		fail("2.1");
+	} catch (CoreException e) {
+	}
+	try {
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("2.99", e);
+	}
+	//isNatureEnabled on open project with no natures
+	try {
+		assertTrue("3.0", !project.isNatureEnabled(NATURE_SIMPLE));
+		assertTrue("3.1", !project.isNatureEnabled(NATURE_MISSING));
+		assertTrue("3.2", !project.isNatureEnabled(NATURE_EARTH));
+	} catch (CoreException e) {
+		fail("3.99", e);
+	}
+	try {
+		IProjectDescription desc = project.getDescription();
+		desc.setNatureIds(new String[] {NATURE_SIMPLE});
+		project.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("4.99", e);
+	}
+	//isNatureEnabled on open project with natures
+	try {
+		assertTrue("5.0", project.isNatureEnabled(NATURE_SIMPLE));
+		assertTrue("5.1", !project.isNatureEnabled(NATURE_MISSING));
+		assertTrue("5.2", !project.isNatureEnabled(NATURE_EARTH));
+	} catch (CoreException e) {
+		fail("5.99", e);
 	}
 }
 

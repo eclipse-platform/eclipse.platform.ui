@@ -31,6 +31,7 @@ public AllTests(String name) {
 		suite.addTest(IWorkspaceTest.suite());
 		suite.addTest(MarkerSetTest.suite());
 		suite.addTest(MarkerTest.suite());
+		suite.addTest(NatureTest.suite());
 		suite.addTest(ResourceURLTest.suite());
 		suite.addTest(WorkspaceTest.suite());
 		return suite;

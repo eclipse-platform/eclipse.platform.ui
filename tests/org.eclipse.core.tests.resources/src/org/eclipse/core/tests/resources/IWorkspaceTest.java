@@ -13,6 +13,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class IWorkspaceTest extends EclipseWorkspaceTest {
+
+
 public IWorkspaceTest() {
 }
 public IWorkspaceTest(String name) {
@@ -26,6 +28,18 @@ public String[] defineHierarchy() {
 		"/Project/Folder/File",
 	};
 }
+/**
+ * Returns the nature descriptor with the given Id, or null if not found
+ */
+protected IProjectNatureDescriptor findNature(IProjectNatureDescriptor[] descriptors, String id) {
+	for (int i = 0; i < descriptors.length; i++) {
+		if (descriptors[i].getNatureId().equals(id)) {
+			return descriptors[i];
+		}
+	}
+	return null;
+}
+
 public static Test suite() {
 	TestSuite suite = new TestSuite(IWorkspaceTest.class);
 	return suite;
@@ -303,6 +317,211 @@ public void testDelete() throws CoreException {
 }
 /**
  * Performs black box testing of the following method:
+ *     IProjectNatureDescriptor[] getNatureDescriptors()
+ */
+public void testGetNatureDescriptors() {
+	//NOTE: see static fields for description of available test natures
+	IProjectNatureDescriptor[] descriptors = getWorkspace().getNatureDescriptors();
+	assertEquals("1.0", 9, descriptors.length);
+	
+	IProjectNatureDescriptor current = findNature(descriptors, NATURE_SIMPLE);
+	assertTrue("2.0", current != null);
+	assertEquals("2.1", NATURE_SIMPLE, current.getNatureId());
+	assertEquals("2.2", "Simple", current.getLabel());
+	assertEquals("2.3", 0, current.getRequiredNatureIds().length);
+	assertEquals("2.4", 0, current.getNatureSetIds().length);
+
+	current = findNature(descriptors, NATURE_SNOW);
+	assertTrue("3.0", current != null);
+	assertEquals("3.1", NATURE_SNOW, current.getNatureId());
+	assertEquals("3.2", "Snow", current.getLabel());
+	String[] required = current.getRequiredNatureIds();
+	assertEquals("3.3", 1, required.length);
+	assertEquals("3.4", NATURE_WATER, required[0]);
+	String[] sets = current.getNatureSetIds();
+	assertEquals("3.5", 1, sets.length);
+	assertEquals("3.6", SET_OTHER, sets[0]);
+
+	current = findNature(descriptors, NATURE_WATER);
+	assertTrue("4.0", current != null);
+	assertEquals("4.1", NATURE_WATER, current.getNatureId());
+	assertEquals("4.2", "Water", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("4.3", 0, required.length);
+	sets = current.getNatureSetIds();
+	assertEquals("4.4", 1, sets.length);
+	assertEquals("4.5", SET_STATE, sets[0]);
+
+	current = findNature(descriptors, NATURE_EARTH);
+	assertTrue("5.0", current != null);
+	assertEquals("5.1", NATURE_EARTH, current.getNatureId());
+	assertEquals("5.2", "Earth", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("5.3", 0, required.length);
+	sets = current.getNatureSetIds();
+	assertEquals("5.4", 1, sets.length);
+	assertEquals("5.5", SET_STATE, sets[0]);
+
+	current = findNature(descriptors, NATURE_MUD);
+	assertTrue("6.0", current != null);
+	assertEquals("6.1", NATURE_MUD, current.getNatureId());
+	assertEquals("6.2", "Mud", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("6.3", 2, required.length);
+	//water and earth are required for mud
+	if (required[0].equals(NATURE_WATER)) {
+		assertEquals("6.4", NATURE_EARTH, required[1]);
+	} else {
+		assertEquals("6.5", NATURE_EARTH, required[0]);
+		assertEquals("6.6", NATURE_WATER, required[0]);
+	}
+	sets = current.getNatureSetIds();
+	assertEquals("6.7", 1, sets.length);
+	assertEquals("6.8", SET_OTHER, sets[0]);
+
+	current = findNature(descriptors, NATURE_INVALID);
+	assertTrue("7.0", current != null);
+	assertEquals("7.1", NATURE_INVALID, current.getNatureId());
+	assertEquals("7.2", "", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("7.3", 0, required.length);
+	sets = current.getNatureSetIds();
+	assertEquals("7.4", 0, sets.length);
+
+	current = findNature(descriptors, NATURE_CYCLE1);
+	assertTrue("8.0", current != null);
+	assertEquals("8.1", NATURE_CYCLE1, current.getNatureId());
+	assertEquals("8.2", "Cycle1", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("8.3", 1, required.length);
+	assertEquals("8.4", NATURE_CYCLE2, required[0]);
+	sets = current.getNatureSetIds();
+	assertEquals("8.5", 0, sets.length);
+
+	current = findNature(descriptors, NATURE_CYCLE2);
+	assertTrue("5.0", current != null);
+	assertEquals("9.1", NATURE_CYCLE2, current.getNatureId());
+	assertEquals("9.2", "Cycle2", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("9.3", 1, required.length);
+	assertEquals("9.4", NATURE_CYCLE3, required[0]);
+	sets = current.getNatureSetIds();
+	assertEquals("9.5", 0, sets.length);
+
+	current = findNature(descriptors, NATURE_CYCLE3);
+	assertTrue("10.0", current != null);
+	assertEquals("10.1", NATURE_CYCLE3, current.getNatureId());
+	assertEquals("10.2", "Cycle3", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("10.3", 1, required.length);
+	assertEquals("10.4", NATURE_CYCLE1, required[0]);
+	sets = current.getNatureSetIds();
+	assertEquals("10.5", 0, sets.length);
+}
+/**
+ * Performs black box testing of the following method:
+ *     IProjectNatureDescriptor getNatureDescriptor(String)
+ */
+public void testGetNatureDescriptor() {
+	//NOTE: see static fields for description of available test natures
+	IWorkspace ws = getWorkspace();
+	
+	IProjectNatureDescriptor current = ws.getNatureDescriptor(NATURE_SIMPLE);
+	assertTrue("2.0", current != null);
+	assertEquals("2.1", NATURE_SIMPLE, current.getNatureId());
+	assertEquals("2.2", "Simple", current.getLabel());
+	assertEquals("2.3", 0, current.getRequiredNatureIds().length);
+	assertEquals("2.4", 0, current.getNatureSetIds().length);
+
+	current = ws.getNatureDescriptor(NATURE_SNOW);
+	assertTrue("3.0", current != null);
+	assertEquals("3.1", NATURE_SNOW, current.getNatureId());
+	assertEquals("3.2", "Snow", current.getLabel());
+	String[] required = current.getRequiredNatureIds();
+	assertEquals("3.3", 1, required.length);
+	assertEquals("3.4", NATURE_WATER, required[0]);
+	String[] sets = current.getNatureSetIds();
+	assertEquals("3.5", 1, sets.length);
+	assertEquals("3.6", SET_OTHER, sets[0]);
+
+	current = ws.getNatureDescriptor(NATURE_WATER);
+	assertTrue("4.0", current != null);
+	assertEquals("4.1", NATURE_WATER, current.getNatureId());
+	assertEquals("4.2", "Water", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("4.3", 0, required.length);
+	sets = current.getNatureSetIds();
+	assertEquals("4.4", 1, sets.length);
+	assertEquals("4.5", SET_STATE, sets[0]);
+
+	current = ws.getNatureDescriptor(NATURE_EARTH);
+	assertTrue("5.0", current != null);
+	assertEquals("5.1", NATURE_EARTH, current.getNatureId());
+	assertEquals("5.2", "Earth", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("5.3", 0, required.length);
+	sets = current.getNatureSetIds();
+	assertEquals("5.4", 1, sets.length);
+	assertEquals("5.5", SET_STATE, sets[0]);
+
+	current = ws.getNatureDescriptor(NATURE_MUD);
+	assertTrue("6.0", current != null);
+	assertEquals("6.1", NATURE_MUD, current.getNatureId());
+	assertEquals("6.2", "Mud", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("6.3", 2, required.length);
+	//water and earth are required for mud
+	if (required[0].equals(NATURE_WATER)) {
+		assertEquals("6.4", NATURE_EARTH, required[1]);
+	} else {
+		assertEquals("6.5", NATURE_EARTH, required[0]);
+		assertEquals("6.6", NATURE_WATER, required[0]);
+	}
+	sets = current.getNatureSetIds();
+	assertEquals("6.7", 1, sets.length);
+	assertEquals("6.8", SET_OTHER, sets[0]);
+
+	current = ws.getNatureDescriptor(NATURE_INVALID);
+	assertTrue("7.0", current != null);
+	assertEquals("7.1", NATURE_INVALID, current.getNatureId());
+	assertEquals("7.2", "", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("7.3", 0, required.length);
+	sets = current.getNatureSetIds();
+	assertEquals("7.4", 0, sets.length);
+
+	current = ws.getNatureDescriptor(NATURE_CYCLE1);
+	assertTrue("8.0", current != null);
+	assertEquals("8.1", NATURE_CYCLE1, current.getNatureId());
+	assertEquals("8.2", "Cycle1", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("8.3", 1, required.length);
+	assertEquals("8.4", NATURE_CYCLE2, required[0]);
+	sets = current.getNatureSetIds();
+	assertEquals("8.5", 0, sets.length);
+
+	current = ws.getNatureDescriptor(NATURE_CYCLE2);
+	assertTrue("5.0", current != null);
+	assertEquals("9.1", NATURE_CYCLE2, current.getNatureId());
+	assertEquals("9.2", "Cycle2", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("9.3", 1, required.length);
+	assertEquals("9.4", NATURE_CYCLE3, required[0]);
+	sets = current.getNatureSetIds();
+	assertEquals("9.5", 0, sets.length);
+
+	current = ws.getNatureDescriptor(NATURE_CYCLE3);
+	assertTrue("10.0", current != null);
+	assertEquals("10.1", NATURE_CYCLE3, current.getNatureId());
+	assertEquals("10.2", "Cycle3", current.getLabel());
+	required = current.getRequiredNatureIds();
+	assertEquals("10.3", 1, required.length);
+	assertEquals("10.4", NATURE_CYCLE1, required[0]);
+	sets = current.getNatureSetIds();
+	assertEquals("10.5", 0, sets.length);
+}
+/**
+ * Performs black box testing of the following method:
  *     IPath getPluginStateLocation(IPluginDescriptor)
  */
 public void testGetPluginStateLocation() throws CoreException {
@@ -546,6 +765,42 @@ public void testMultiDeletion() throws Throwable {
 }
 /**
  * Performs black box testing of the following method:
+ *     String[] sortNatureSet(String[])
+ */
+public void testSortNatureSet() {
+	//NOTE: see static fields for description of available test natures
+	IWorkspace ws = getWorkspace();
+
+	//invalid sets shouldn't fail
+	String[][] invalid = getInvalidNatureSets();
+	for (int i = 0; i < invalid.length; i++) {
+		String[] sorted = ws.sortNatureSet(invalid[i]);
+		assertTrue("0.0", sorted != null);
+		//set may grow if it contained duplicates
+		assertTrue("0.1", sorted.length <= invalid[i].length);
+	}
+	String[] sorted = ws.sortNatureSet(new String[] {});
+	assertEquals("1.0", 0, sorted.length);
+	
+	sorted = ws.sortNatureSet(new String[] {NATURE_SIMPLE});
+	assertEquals("2.0", 1, sorted.length);
+	assertEquals("2.1", NATURE_SIMPLE, sorted[0]);
+	
+	sorted = ws.sortNatureSet(new String[] {NATURE_SNOW, NATURE_WATER});
+	assertEquals("3.0", 2, sorted.length);
+	assertEquals("3.1", NATURE_WATER, sorted[0]);
+	assertEquals("3.2", NATURE_SNOW, sorted[1]);
+
+	sorted = ws.sortNatureSet(new String[] {NATURE_WATER, NATURE_SIMPLE, NATURE_SNOW});
+	assertEquals("4.0", 3, sorted.length);
+	//three valid sorts: water, snow, simple; water, simple, snow; simple, water, snow
+	boolean first = sorted[0].equals(NATURE_WATER) && sorted[1].equals(NATURE_SNOW) && sorted[2].equals(NATURE_SIMPLE);
+	boolean second = sorted[0].equals(NATURE_WATER) && sorted[1].equals(NATURE_SIMPLE) && sorted[2].equals(NATURE_SNOW);
+	boolean third= sorted[0].equals(NATURE_SIMPLE) && sorted[1].equals(NATURE_WATER) && sorted[2].equals(NATURE_SNOW);
+	assertTrue("4.1", first || second || third);
+}
+/**
+ * Performs black box testing of the following method:
  *     IStatus validateName(String, int)
  */
 public void testValidateName() {
@@ -574,6 +829,23 @@ public void testValidateName() {
 	assertTrue("3.5", getWorkspace().validateName("....abc", IResource.FILE).isOK());
 	assertTrue("3.6", getWorkspace().validateName("abc....def", IResource.FILE).isOK());
 	assertTrue("3.7", !(getWorkspace().validateName("abc....", IResource.FILE).isOK()));
+}
+/**
+ * Performs black box testing of the following method:
+ *     IStatus validateNatureSet(String[])
+ */
+public void testValidateNatureSet() {
+	//NOTE: see static fields for description of available test natures
+	IWorkspace ws = getWorkspace();
+	
+	String[][] invalid = getInvalidNatureSets();
+	for (int i = 0; i < invalid.length; i++) {
+		assertTrue("invalid: " + i, !ws.validateNatureSet(invalid[i]).isOK());
+	}
+	String[][] valid = getValidNatureSets();
+	for (int i = 0; i < valid.length; i++) {
+		assertTrue("valid: " + i, ws.validateNatureSet(valid[i]).isOK());
+	}
 }
 /**
  * Performs black box testing of the following method:
