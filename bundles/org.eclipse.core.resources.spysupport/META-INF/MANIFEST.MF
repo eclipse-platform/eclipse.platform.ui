@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-Name: Core Resource Management Spy Support Fragment
+Bundle-SymbolicName: org.eclipse.core.resources.spysupport
+Bundle-Version: 1.0.2.qualifier
+Bundle-Vendor: Eclipse.org
+Fragment-Host: org.eclipse.core.resources;bundle-version="3.0.0"
+Bundle-Localization: plugin
+Provide-Package: org.eclipse.core.internal.properties,
+ org.eclipse.core.internal.resources,
+ org.eclipse.core.internal.dtree
