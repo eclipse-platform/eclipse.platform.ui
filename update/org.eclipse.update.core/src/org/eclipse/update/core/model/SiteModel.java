@@ -89,6 +89,15 @@ public class SiteModel extends ModelObject {
 		return locationURLString;
 	}
 
+	
+	
+	/**
+	 * Gets the locationURL.
+	 * @return Returns a URL
+	 */
+	public URL getLocationURL() {
+		return locationURL;
+	}
 
 	/**
 	 * Sets the locationURLString.
@@ -236,15 +245,6 @@ public class SiteModel extends ModelObject {
 
 		resolveReference(getDescriptionModel(), base, bundle);
 		resolveListReference(getCategoryModels(), base, bundle);
-	}
-	
-	
-	/**
-	 * Gets the locationURL.
-	 * @return Returns a URL
-	 */
-	public URL getLocationURL() {
-		return locationURL;
 	}
 
 	

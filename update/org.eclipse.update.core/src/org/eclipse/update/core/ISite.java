@@ -1,5 +1,4 @@
 package org.eclipse.update.core;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
@@ -8,182 +7,231 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.configuration.*;
-
 
 /**
- * 
+ * Site represents a location containing some number of features (packaged
+ * or installed). Sites are treated purely as an installation and packaging
+ * construct. They do not play a role during Eclipse plug-in execution. 
+ * <p>
+ * Clients may implement this interface. However, in most cases clients should 
+ * directly instantiate or subclass the provided implementation of this 
+ * interface.
+ * </p>
+ * @see org.eclipse.update.core.Site
+ * @since 2.0
  */
-
 public interface ISite {
 
 	/**
+	 * Default type for an installed feature. Different concrete feature
+	 * implementations can be registered together with their corresponding type
+	 * using the <code>org.eclipse.update.core.featureTypes</code> 
+	 * extension point.
 	 * 
 	 * @since 2.0
 	 */
-	public static final String DEFAULT_INSTALLED_FEATURE_TYPE = "org.eclipse.update.core.installed";	 //$NON-NLS-1$		
+	public static final String DEFAULT_INSTALLED_FEATURE_TYPE =
+		"org.eclipse.update.core.installed";
+	//$NON-NLS-1$		
 
 	/**
+	 * Default type for a packaged feature. Different concrete feature
+	 * implementations can be registered together with their corresponding type
+	 * using the <code>org.eclipse.update.core.featureTypes</code> 
+	 * extension point.
 	 * 
 	 * @since 2.0
 	 */
-	public static final String DEFAULT_PACKAGED_FEATURE_TYPE = "org.eclipse.update.core.packaged";	 //$NON-NLS-1$		
+	public static final String DEFAULT_PACKAGED_FEATURE_TYPE =
+		"org.eclipse.update.core.packaged";
+	//$NON-NLS-1$		
 
 	/**
-	 * Returns an array of feature this site contains
+	 * Returns the site URL
 	 * 
-	 * @return the list of features. Returns an empty array
-	 * if there are no feature.
+	 * @return site URL
 	 * @since 2.0 
 	 */
+	public URL getURL();
 
-	IFeatureReference [] getFeatureReferences() ;
-	
 	/**
-	 * Notify listener of installation of the feature
-	 * returns the newly created feature Reference
-	 * @param feature the Feature to install
-	 * @param verifier FIXME
-	 * @param monitor the Progress Monitor
-	 * @since 2.0 
-	 */
-
-	IFeatureReference install(IFeature feature,IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException;
-	
-	/**
+	 * Return the site type. Different concrete site implementations can be
+	 * registered together with their corresponding type using the
+	 * <code>org.eclipse.update.core.siteTypes</code> extension point.
 	 * 
-	 * @param feature the DefaultFeature to remove
-	 * @param monitor the Progress Monitor
+	 * @return site type
 	 * @since 2.0 
 	 */
+	public String getType();
 
-	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
-	
-	
 	/**
+	 * Returns the site description.
 	 * 
-	 * @return teh URL of the site
+	 * @return site description, or <code>null</code>.
 	 * @since 2.0 
 	 */
+	public IURLEntry getDescription();
 
-	URL getURL() ;
-	
 	/**
+	 * Returns an array of categories defined by the site.
 	 * 
-	 * @return the description of the site
+	 * @return array of site categories, or an empty array.
 	 * @since 2.0 
 	 */
+	public ICategory[] getCategories();
 
-	IURLEntry getDescription() ;
-	
-	
 	/**
+	 * Returns the named site category.
 	 * 
-	 * @return teh type of the site
-	 * @since 2.0 
-	 */
-
-	String getType() ;
-	
-
-	/**
-	 * Returns an array of categories for this site
-	 * 
-	 * @return the list of categories. Returns an empty array
-	 * if there are no categories.
-	 * @since 2.0 
-	 */
-
-	ICategory[] getCategories()  ;
-	
-	/**
-	 * returns the associated ICategory
-	 * @return the ICategory associated to teh key or null if none exist
+	 * @param name category name
+	 * @return named category, or <code>null</code> ifit does not exist
 	 * @since 2.0
 	 */
-	public ICategory getCategory(String key);
-	
+	public ICategory getCategory(String name);
 
 	/**
-	 * Returns an array of archives this site contains
+	 * Returns an array of references to features on this site.
 	 * 
-	 * @return the list of archives. Returns an empty array
-	 * if there are no archive.
+	 * @return an array of feature references, or an empty array.
 	 * @since 2.0 
 	 */
-
-	IArchiveReference[] getArchives();
+	public IFeatureReference[] getFeatureReferences();
 
 	/**
-	 * returns the default type for an package feature on this site
-	 * @return String the type
-	 * @since 2.0
-	 */
-	String getDefaultPackagedFeatureType();
-
-	
-	/**
-	 * Returns an array of plug-ins managed by the Site
+	 * Returns a reference to the specified feature on this site.
 	 * 
-	 * @return the accessible plug-ins. Returns an empty array
-	 * if there are no plug-ins.
+	 * @param feature feature
+	 * @return feature reference, or <code>null</code> if this feature
+	 * cannot be located on this site.
 	 */
-	IPluginEntry [] getPluginEntries()  ;
+	public IFeatureReference getFeatureReference(IFeature feature);
 
 	/**
-	 * Returns the number of managed plug-ins
-	 * @return the number of plug-ins
-	 */
-	int getPluginEntryCount() ;
-	
-	/**
-	 * returns the install size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
+	 * Returns an array of plug-in and non-plug-in archives located
+	 * on this site
 	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the install size is unknown and equal to <code>-1</code>.
+	 * @return an array of archive references, or an empty array if there are
+	 * no archives known to this site. Note, that an empty array does not
+	 * necessarily indicate there are no archives accessible on this site.
+	 * It simply indicates the site has no prior knowledge of such archives.
 	 * @since 2.0 
 	 */
-	long getInstallSizeFor(IFeature site);
+	public IArchiveReference[] getArchives();
 
 	/**
-	 * returns the download size
-	 * of the feature to be installed on the site.
-	 * If the site is <code>null</code> returns the maximum size
+	 * Returns the content provider for this site. A content provider
+	 * is an abstraction of each site organization. It allows the 
+	 * content of the site to be accessed in a standard way
+	 * regardless of the organization. All concrete sites
+	 * need to be able to return a content provider.
 	 * 
-	 * If one plug-in entry has an unknown size.
-	 * then the download size is unknown and equal to <code>-1</code>
+	 * @return site content provider
+	 * @exception CoreException
+	 * @since 2.0
+	 */
+	public ISiteContentProvider getSiteContentProvider() throws CoreException;
+
+	/**
+	 * Returns the default type for a packaged feature supported by this site
 	 * 
+	 * @return feature type, as registered in the
+	 * <code>org.eclipse.update.core.featureTypes</code> extension point.
+	 * @since 2.0
+	 */
+	public String getDefaultPackagedFeatureType();
+
+	/**
+	 * Returns an array of entries corresponding to plug-ins installed
+	 * on this site.
+	 * 
+	 * @return array of plug-in entries,or an empty array.
+	 */
+	public IPluginEntry[] getPluginEntries();
+
+	/**
+	 * Returns the number of plug-ins installed on this site
+	 * 
+	 * @return number of installed plug-ins
+	 */
+	public int getPluginEntryCount();
+
+	/**
+	 * Returns an array of entries corresponding to plug-ins that are
+	 * installed on this site and are referenced only by the specified
+	 * feature. These are plug-ins that are not shared with any other
+	 * feature.
+	 * 
+	 * @param feature feature
+	 * @return an array of plug-in entries, or an empty array.
+	 * @exception CoreException
+	 * @since 2.0
+	 */
+	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature)
+		throws CoreException;
+
+	/**
+	 * Returns the size of the files that need to be downloaded in order
+	 * to install the specified feature on this site, if it can be determined.
+	 * This method takes into account any plug-ins that are already
+	 * available on this site.
+	 * 
+	 * @see org.eclipse.update.core.model.ContentEntryModel#UNKNOWN_SIZE
+	 * @param feature candidate feature
+	 * @return download size of the feature in KiloBytes, or an indication 
+	 * the size could not be determined
 	 * @since 2.0 
 	 */
-	long getDownloadSizeFor(IFeature site) ;	
-	
-	/**
-	 * 
-	 * @since 2.0
-	 */
-	IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature) throws CoreException;
-	
-	
-	/**
-	 * Sets the ISiteContentProvider for this feature
-	 * @since 2.0
-	 */
-	void setSiteContentProvider(ISiteContentProvider siteContentProvider);
-	
-	/**
-	 * Returns the ISiteContentProvider for this feature
-	 * @throws CoreException when the content provider is not set
-	 * @since 2.0
-	 */
-	ISiteContentProvider getSiteContentProvider() throws CoreException;
-	
-		
-	/**
-	 * returns the FeatureReference of this Feature inside the Site
-	 * returns null if this site does not manage this feature
-	 */
-	IFeatureReference getFeatureReference(IFeature feature) ;
+	public long getDownloadSizeFor(IFeature feature);
 
-	}
+	/**
+	 * Returns the size of the files that need to be installed
+	 * for the specified feature on this site, if it can be determined.
+	 * This method takes into account any plug-ins that are already
+	 * installed on this site.
+	 * 
+	 * @see org.eclipse.update.core.model.ContentEntryModel#UNKNOWN_SIZE
+	 * @param feature candidate feature
+	 * @return install size of the feature in KiloBytes, or an indication 
+	 * the size could not be determined
+	 * @since 2.0 
+	 */
+	public long getInstallSizeFor(IFeature site);
+
+	/**
+	 * Installs the specified feature on this site.
+	 * 
+	 * @param feature feature to install
+	 * @param verificationListener install verification listener
+	 * @param monitor install monitor, can be <code>null</code>
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public IFeatureReference install(
+		IFeature feature,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws CoreException;
+
+	/**
+	 * Removes (uninstalls) the specified feature from this site. This method
+	 * takes into account plug-in entries referenced by the specified fetaure
+	 * that continue to be required by other features installed on this site.
+	 * 
+	 * @param feature feature to remove
+	 * @param monitor progress monitor
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public void remove(IFeature feature, IProgressMonitor monitor)
+		throws CoreException;
+
+	/**
+	 * Sets the site content provider. This is typically performed
+	 * as part of the site creation operation. Once set, the 
+	 * provider should not be reset.
+	 * 
+	 * @param siteContentProvider site content provider
+	 * @since 2.0
+	 */
+	public void setSiteContentProvider(ISiteContentProvider siteContentProvider);
+}
