@@ -83,7 +83,8 @@ public void execute() throws BuildException {
 		} catch (CoreException e) {
 			throw new BuildException(e);
 		}
-	}
+	} else
+		throw new BuildException(Policy.bind("exception.resourceNotSpecified"));
 }
 /**
  * Refreshes a collection of resources.

@@ -137,7 +137,17 @@ public void init() throws BuildException {
 	// the platform we need to add them here.  
 	addTaskDefinition("ant", EclipseAnt.class);
 	addTaskDefinition("javac", EclipseJavac.class);
+	addTaskDefinition("incremental", IncrementalBuild.class);
+	addTaskDefinition("eclipse.incremental", IncrementalBuild.class);
+	addTaskDefinition("refreshLocal", RefreshLocal.class);
+	addTaskDefinition("eclipse.refreshLocal", RefreshLocal.class);
+	addTaskDefinition("eclipse.createProject", CreateProject.class);
+	addTaskDefinition("eclipse.deleteProject", DeleteProject.class);
+	addTaskDefinition("eclipse.moveProject", MoveProject.class);
+	addTaskDefinition("eclipse.copyProject", CopyProject.class);
+	addTaskDefinition("eclipse.convertPath", ConvertPath.class);
 	addDataTypeDefinition("commapatternset", CommaPatternSet.class);
+	addDataTypeDefinition("command", CommandDataType.class);
 	System.setProperty("ant.regexp.matcherimpl", "org.eclipse.ant.core.XercesRegexpMatcher");
 }
 

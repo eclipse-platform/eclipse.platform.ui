@@ -1,44 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
 <plugin
-  name="%pluginName"
-  id="org.eclipse.ant.core"
-  version="0.9"
-  class="org.eclipse.ant.core.AntPlugin"
-  provider-name="Object Technology International, Inc.">
+   id="org.eclipse.ant.core"
+   name="%pluginName"
+   version="0.9"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.ant.core.AntPlugin">
+<requires>
+   <import plugin="org.eclipse.core.resources"/>
+   <import plugin="org.apache.xerces"/>
+</requires>
 
-  <runtime>
-    <library name="ant.jar">
+<runtime>
+   <library name="ant.jar">
       <export name="*"/>
-    </library>
-    <library name="antsupport.jar">
+   </library>
+   <library name="antsupport.jar">
       <export name="*"/>
-    </library>
-  </runtime>
+   </library>
+   <library name="jakarta-ant-1.3-optional.jar">
+      <export name="*"/>
+   </library>
+</runtime>
 
-  <requires>
-    <import plugin="org.eclipse.core.resources"/>
-    <import plugin="org.apache.xerces"/>
-  </requires>
+<extension-point id="antObjects" name="%objectsName"/>
+<extension-point id="antTasks" name="%tasksName"/>
+<extension-point id="antTypes" name="%typesName"/>
 
-  <extension id="antRunner" point="org.eclipse.core.runtime.applications">
-    <application> 
-      <run class="org.eclipse.ant.core.AntRunner">
+<extension
+      id="antRunner"
+      point="org.eclipse.core.runtime.applications">
+   <application>
+      <run
+            class="org.eclipse.ant.core.AntRunner">
       </run>
-    </application>
-  </extension>
-
-  <extension-point name="%objectsName" id="antObjects"/>
-  <extension-point name="%tasksName" id="antTasks"/>
-  <extension-point name="%typesName" id="antTypes"/>
-
-  <extension point="org.eclipse.ant.core.antTypes">
-    <antType name="commapatternset" class="org.eclipse.ant.core.CommaPatternSet"/>
-  </extension>
-
-  <extension point="org.eclipse.ant.core.antTasks">
-    <antTask name="incremental" class="org.eclipse.ant.core.IncrementalBuild"/>
-    <antTask name="javac" class="org.eclipse.ant.core.EclipseJavac"/>
-    <antTask name="refreshLocal" class="org.eclipse.ant.core.RefreshLocal"/>
-  </extension>
-
+   </application>
+</extension>
+<extension
+      point="org.eclipse.ant.core.antTypes">
+   <antType
+         name="commapatternset"
+         class="org.eclipse.ant.core.CommaPatternSet">
+   </antType>
+   <antType
+         name="command"
+         class="org.eclipse.ant.core.CommandDataType">
+   </antType>
+</extension>
+<extension
+      point="org.eclipse.ant.core.antTasks">
+   <antTask
+         name="incremental"
+         class="org.eclipse.ant.core.IncrementalBuild">
+   </antTask>
+   <antTask
+         name="eclipse.incremental"
+         class="org.eclipse.ant.core.IncrementalBuild">
+   </antTask>
+   <antTask
+         name="javac"
+         class="org.eclipse.ant.core.EclipseJavac">
+   </antTask>
+   <antTask
+         name="refreshLocal"
+         class="org.eclipse.ant.core.RefreshLocal">
+   </antTask>
+   <antTask
+         name="eclipse.refreshLocal"
+         class="org.eclipse.ant.core.RefreshLocal">
+   </antTask>
+   <antTask
+         name="eclipse.createProject"
+         class="org.eclipse.ant.core.CreateProject">
+   </antTask>
+   <antTask
+         name="eclipse.deleteProject"
+         class="org.eclipse.ant.core.DeleteProject">
+   </antTask>
+   <antTask
+         name="eclipse.moveProject"
+         class="org.eclipse.ant.core.MoveProject">
+   </antTask>
+   <antTask
+         name="eclipse.copyProject"
+         class="org.eclipse.ant.core.CopyProject">
+   </antTask>
+   <antTask
+         name="eclipse.convertPath"
+         class="org.eclipse.ant.core.ConvertPath">
+   </antTask>
+</extension>
 </plugin>
