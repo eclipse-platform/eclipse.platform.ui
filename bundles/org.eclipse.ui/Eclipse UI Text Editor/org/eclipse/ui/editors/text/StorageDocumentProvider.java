@@ -14,6 +14,7 @@ import java.io.Reader;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.core.resources.IStorage;
@@ -107,7 +108,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		
 		return null;
 	}
-
+	
 	/*
 	 * @see AbstractDocumentProvider#doSaveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
@@ -115,23 +116,28 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 	}
 	
 	/*
-	 * @see IDocumentProvider#getModificationStamp(Object)
+	 * @see IDocumentProviderExtension#isReadOnly(Object)
 	 */
-	public long getModificationStamp(Object element) {
-		return 0;
+	public boolean isReadOnly(Object element) throws CoreException {
+		if (element instanceof IStorageEditorInput) {
+			IStorageEditorInput input= (IStorageEditorInput) element;
+			IStorage storage= input.getStorage();
+			if (storage != null)
+				return storage.isReadOnly();
+		}
+		return super.isReadOnly(element);	
 	}
 	
 	/*
-	 * @see IDocumentProvider#getSynchronizationStamp(Object)
+	 * @see IDocumentProviderExtension#isModifiable(Object)
 	 */
-	public long getSynchronizationStamp(Object element) {
-		return 0;
-	}
-	
-	/*
-	 * @see IDocumentProvider#isDeleted(Object)
-	 */
-	public boolean isDeleted(Object element) {
-		return false;
+	public boolean isModifiable(Object element) throws CoreException {
+		if (element instanceof IStorageEditorInput) {
+			IStorageEditorInput input= (IStorageEditorInput) element;
+			IStorage storage= input.getStorage();
+			if (storage != null)
+				return !storage.isReadOnly();
+		}
+		return super.isModifiable(element);	
 	}
 }

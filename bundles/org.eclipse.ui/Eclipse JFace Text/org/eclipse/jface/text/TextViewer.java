@@ -333,11 +333,22 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * Internal verify listener.
 	 */
 	class TextVerifyListener implements VerifyListener {
+		
+		private boolean fForward= true;
+		
+		/**
+		 * Tells the listener to forward received events.
+		 */
+		public void forward(boolean forward) {
+			fForward= forward;
+		}
+		
 		/*
 		 * @see VerifyListener#verifyText(VerifyEvent)
 		 */
 		public void verifyText(VerifyEvent e) {
-			handleVerifyEvent(e);
+			if (fForward)
+				handleVerifyEvent(e);
 		}	
 	};
 	
@@ -431,7 +442,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	/** Document listener */
 	private DocumentListener fDocumentListener= new DocumentListener();
 	/** Verify listener */
-	private VerifyListener fVerifyListener= new TextVerifyListener();
+	private TextVerifyListener fVerifyListener= new TextVerifyListener();
 	/** The most recent widget modification as document command */
 	private DocumentCommand fDocumentCommand= new DocumentCommand();
 	/** The viewer's find/replace target */
@@ -543,6 +554,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		// where does the first line start
 		fTopInset= -fTextWidget.computeTrim(0, 0, 0, 0).y;
 		
+		fVerifyListener.forward(true);
 		fTextWidget.addVerifyListener(fVerifyListener);
 		
 		fTextWidget.addSelectionListener(new SelectionListener() {
@@ -1667,13 +1679,13 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		customizeDocumentCommand(fDocumentCommand);
 		if (!fDocumentCommand.fillEvent(e, offset)) {
 			try {
-				fTextWidget.removeVerifyListener(fVerifyListener);
+				fVerifyListener.forward(false);
 				getDocument().replace(fDocumentCommand.offset, fDocumentCommand.length, fDocumentCommand.text);
 			} catch (BadLocationException x) {
 				if (TRACE_ERRORS)
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
 			} finally {
-				fTextWidget.addVerifyListener(fVerifyListener);
+				fVerifyListener.forward(true);
 			}
 		}	
 	}

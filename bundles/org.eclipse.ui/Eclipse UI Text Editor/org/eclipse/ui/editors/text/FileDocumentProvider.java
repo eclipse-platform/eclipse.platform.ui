@@ -7,12 +7,14 @@ package org.eclipse.ui.editors.text;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Document;
+
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.core.resources.IFile;
@@ -187,10 +189,16 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		public FileSynchronizer fFileSynchronizer;
 		/** The time stamp at which this provider changed the file */
 		public long fModificationStamp= IResource.NULL_STAMP;
-				
+		/** The flag representing the cached state whether the file is modifiable */
+		public boolean fIsModifiable;
+		/** The flag representing whether the cached state is invalid */
+		public boolean fComputeModifiable;
+		
 		public FileInfo(IDocument document, IAnnotationModel model, FileSynchronizer fileSynchronizer) {
 			super(document, model);
 			fFileSynchronizer= fileSynchronizer;
+			fIsModifiable= true;
+			fComputeModifiable= false;
 		}
 	};
 	
@@ -214,7 +222,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		return super.setDocumentContent(document, editorInput);
 	}
-		
+	
 	/*
 	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
 	 */
@@ -439,7 +447,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.updateContent")); //$NON-NLS-1$
 		}
 	}
-		
+	
 	/**
 	 * Sends out the notification that the file serving as document input has been moved.
 	 * 
@@ -460,7 +468,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected void handleElementDeleted(IFileEditorInput fileEditorInput) {
 		fireElementDeleted(fileEditorInput);
 	}
-		
+	
 	/**
 	 * Defines the standard procedure to handle CoreExceptions.
 	 *
@@ -478,10 +486,34 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	
 	/*
 	 * @see AbstractDocumentProvider#getElementInfo(Object)
-	 * It's only here to circumvent visibility issues with 
-	 * certain compilers.
+	 * It's only here to circumvent visibility issues with certain compilers.
 	 */
 	protected ElementInfo getElementInfo(Object element) {
 		return super.getElementInfo(element);
+	}
+	
+	/** 
+	 * Computes whether the resource described by the given element
+	 * info is modifiable or not and updates the element info accordingly.
+	 * 
+	 * @param info the element info
+	 */
+	protected void computeModifiable(FileInfo info) {
+		// work in progress
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#isModifiable(Object)
+	 */
+	public boolean isModifiable(Object element) throws CoreException {
+		if (element instanceof IFileEditorInput) {
+			FileInfo info= (FileInfo) getElementInfo(element);
+			if (info != null) {
+				if (info.fComputeModifiable)
+					computeModifiable(info);
+				return info.fIsModifiable;
+			}
+		}
+		return super.isModifiable(element);
 	}
 }

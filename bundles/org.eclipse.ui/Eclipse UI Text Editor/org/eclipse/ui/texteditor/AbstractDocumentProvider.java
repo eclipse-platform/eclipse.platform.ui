@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.util.Assert;
 
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <code>createAnnotationModel</code>, and <code>doSaveDocument</code>.
  * </p>
  */
-public abstract class AbstractDocumentProvider implements IDocumentProvider {
+public abstract class AbstractDocumentProvider implements IDocumentProvider, IDocumentProviderExtension {
 	
 	
 		/**
@@ -471,5 +472,40 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider {
 			IElementStateListener l= (IElementStateListener) e.next();
 			l.elementMoved(originalElement, movedElement);
 		}
+	}
+	
+	/*
+	 * @see IDocumentProvider#getModificationStamp(Object)
+	 */
+	public long getModificationStamp(Object element) {
+		return 0;
+	}
+	
+	/*
+	 * @see IDocumentProvider#getSynchronizationStamp(Object)
+	 */
+	public long getSynchronizationStamp(Object element) {
+		return 0;
+	}
+	
+	/*
+	 * @see IDocumentProvider#isDeleted(Object)
+	 */
+	public boolean isDeleted(Object element) {
+		return false;
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#isReadOnly(Object)
+	 */
+	public boolean isReadOnly(Object element) throws CoreException {
+		return true;
+	}
+	
+	/*
+	 * @see IDocumentProviderExtension#isModifiable(Object)
+	 */
+	public boolean isModifiable(Object element) throws CoreException {
+		return false;
 	}
 }

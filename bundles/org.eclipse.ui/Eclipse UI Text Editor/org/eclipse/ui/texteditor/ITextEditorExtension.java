@@ -18,5 +18,12 @@ public interface ITextEditorExtension {
 	 * @see ITextEditorActionConstants
 	 */
 	void setStatusField(IStatusField field, String category);
+	
+	/**
+	 * Returns whether the editor's input is read-only. The semantics of this method is
+	 * orthogonal to <code>isEditable</code> as it talks about the editor input and
+	 * <b>not</b> about the editor document.
+	 */
+	boolean isEditorInputReadOnly();
 }
 

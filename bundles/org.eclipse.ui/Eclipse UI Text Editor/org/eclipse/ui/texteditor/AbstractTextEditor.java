@@ -110,7 +110,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		private Runnable fRunnable= new Runnable() {
 			public void run() {
-				updateContentDependentActions();
+				if (fSourceViewer != null) {
+					// check whether editor has not been disposed yet
+					updateContentDependentActions();
+				}
 			}
 		};
 		
@@ -519,31 +522,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see ITextEditor#isEditable
 	 */
 	public boolean isEditable() {
-		
-		/*
-		 * 1GEXA6E: ITPVCM:WIN2000 - Repositories: the user can save files in the repositories?
-		 * Checks the editor input whether it is editable. This is a layer breaker, as only the
-		 * concrete document providers know about the various kinds of editor input.
-		 * Should be something like: getDocumentProvider().isEditable(getEditorInput());
-		 */
-		IEditorInput input= getEditorInput();
-		if (input instanceof IStorageEditorInput) {
-			IStorageEditorInput storageInput= (IStorageEditorInput) input;
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IDocumentProviderExtension) {
+			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
 			try {
-				
-				/*
-				 * Change to always allow editing of files even when it is read only. ClearCase request.
-				 */
-				IStorage storage= storageInput.getStorage();
-				return (storage != null && (storageInput instanceof IFileEditorInput || !storage.isReadOnly()));
-			
+				return extension.isModifiable(getEditorInput());
 			} catch (CoreException x) {
 				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
 				log.log(x.getStatus());
 			}
 		}
-		
-		return true;
+		return false;
 	}
 	
 	/*
@@ -697,8 +686,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 				private Runnable fRunnable= new Runnable() {
 					public void run() {
-						updateSelectionDependentActions();
-						handleCursorPositionChanged();
+						// check whether editor has not been disposed yet
+						if (fSourceViewer != null) {
+							updateSelectionDependentActions();
+							handleCursorPositionChanged();
+						}
 					}
 				};
 				
@@ -707,7 +699,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				public void selectionChanged(SelectionChangedEvent event) {
 					if (fDisplay == null)
 						fDisplay= getSite().getShell().getDisplay();
-						
 					fDisplay.asyncExec(fRunnable);	
 				}
 			};
@@ -1090,7 +1081,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		display.asyncExec(new Runnable() {
 			public void run() {
-				getSite().getPage().closeEditor(AbstractTextEditor.this, save);
+				if (fSourceViewer != null) {
+					// check whether editor has not been disposed yet
+					getSite().getPage().closeEditor(AbstractTextEditor.this, save);
+				}
 			}
 		});
 	}
@@ -2075,7 +2069,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 			if (field != null)
-				field.setText(isEditable() ? "Writable" : "Read Only");
+				field.setText(isEditorInputReadOnly() ? "Read Only" : "Writable");
 		
 		} else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category)) {
 			
@@ -2115,5 +2109,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} catch (BadLocationException x) {
 			return "??";
 		}
-	}	
+	}
+	
+	/*
+	 * @see ITextEditorExtension#isEditorInputReadOnly()
+	 */
+	public boolean isEditorInputReadOnly() {
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider instanceof IDocumentProviderExtension) {
+			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+			try {
+				return extension.isReadOnly(getEditorInput());
+			} catch (CoreException x) {
+				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
+				log.log(x.getStatus());
+			}
+		}
+		return true;
+	}
 }
