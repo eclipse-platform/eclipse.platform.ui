@@ -107,6 +107,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		 * @param left the left end point
 		 * @param right the right end point
 		 * @param baseline the font's baseline
+		 * @param lineHeight the height of the line
 		 * @return the array of alternating x and y values which are the corners of the squiggly line
 		 */
 		private int[] computePolyline(Point left, Point right, int baseline, int lineHeight) {
@@ -466,7 +467,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					Decoration decoration= (Decoration)highlightedDecorationsMap.remove(annotation);
 					if (decoration != null) {
 						Position position= decoration.fPosition;
-						if (position != null && !position.isDeleted()) {
+						if (position != null) {
 							highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, position.offset);
 							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
 						}
@@ -865,8 +866,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					continue;
 				}
 	
-				if (p.getOffset() + p.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > p.getOffset())
-					tp.mergeStyleRange(new StyleRange(p.getOffset(), p.getLength(), null, pp.fColor));
+				int regionEnd= region.getOffset() + region.getLength();
+				int pEnd= p.getOffset() + p.getLength();
+				if (pEnd >= region.getOffset() && regionEnd > p.getOffset()) {
+					int start= Math.max(p.getOffset(), region.getOffset());
+					int end= Math.min(regionEnd, pEnd);
+					int length= Math.max(end - start, 0);
+					tp.mergeStyleRange(new StyleRange(start, length, null, pp.fColor));
+				}
 			}
 		}
 	}
@@ -886,29 +893,26 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public synchronized void modelChanged(final AnnotationModelEvent event) {
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			if (fIsSettingModel) {
+			Display d= fTextWidget.getDisplay();
+			if (fIsSettingModel || d == Display.getCurrent()) {
 				// inside the UI thread -> no need for posting
 				updatePainting(event);
-			} else {
-				Display d= fTextWidget.getDisplay();
+			} else if (d != null) {
 				if (DEBUG && event != null && event.isWorldChange()) {
 					System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
 					new Throwable().printStackTrace(System.out);
 				}
-				
 				// TODO posting here is a problem for annotations that are being
 				// removed and the positions of which are not updated to document
 				// changes any more. If the document gets modified between
 				// now and running the posted runnable, the position information
 				// is not accurate any longer.
-				if (d != null) {
-					d.asyncExec(new Runnable() {
-						public void run() {
-							if (fTextWidget != null && !fTextWidget.isDisposed())
-								updatePainting(event);
-						}
-					});
-				}
+				d.asyncExec(new Runnable() {
+					public void run() {
+						if (fTextWidget != null && !fTextWidget.isDisposed())
+							updatePainting(event);
+					}
+				});
 			}
 		}
 	}
