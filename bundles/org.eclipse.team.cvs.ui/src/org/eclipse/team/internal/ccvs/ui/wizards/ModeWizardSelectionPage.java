@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -154,15 +155,17 @@ public class ModeWizardSelectionPage extends WizardPage {
 	
 	private final static class TableSorter extends ViewerSorter implements SelectionListener {
 		
+		private final Collator fCollator;
+		private final TableViewer fViewer;
 		private final TableColumn fFile, fMode, fPath;
 		
 		private int fIndex;
 		private boolean fAscending;
 		
-		private final TableViewer fViewer;
 		
 		public TableSorter(TableViewer viewer, TableColumn fileColumn, TableColumn modeColumn, TableColumn pathColumn) {
 			
+			fCollator= Collator.getInstance();
 			fViewer= viewer;
 			
 			fFile= fileColumn;
@@ -182,26 +185,30 @@ public class ModeWizardSelectionPage extends WizardPage {
 			final ModeChange mc1= (ModeChange)e1;
 			final ModeChange mc2= (ModeChange)e2;
 			
-			final int compare;
+			final String s1, s2;
 			
 			switch (fIndex) {
 			
 			case INDEX_FILE: 
-				compare= mc1.getFile().getName().compareTo(mc2.getFile().getName()); 
+				s1= mc1.getFile().getName();
+				s2= mc2.getFile().getName();
 				break;
 				
-			case INDEX_MODE: 
-				compare= mc1.getNewMode().getLongDisplayText().compareTo(mc2.getNewMode().getLongDisplayText()); 
+			case INDEX_MODE:
+				s1= mc1.getNewMode().getLongDisplayText();
+				s2= mc2.getNewMode().getLongDisplayText(); 
 				break;
 				
 			case INDEX_PATH: 
-				compare= mc1.getFile().getFullPath().toOSString().compareTo(mc2.getFile().getFullPath().toOSString()); 
+				s1= mc1.getFile().getFullPath().toOSString();
+				s2= mc2.getFile().getFullPath().toOSString(); 
 				break;
 				
 			default: 
 				throw new IllegalArgumentException();
 			}
 			
+			final int compare= fCollator.compare(s1, s2);
 			return fAscending ? compare : -compare;
 		}
 		

@@ -570,7 +570,7 @@ public class TagSelectionArea extends DialogArea {
     }
     
     public void refreshTagList() {
-    	tagRefreshArea.refresh();
+    	tagRefreshArea.refresh(true);
     }
 
     /**
