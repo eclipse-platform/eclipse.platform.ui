@@ -42,7 +42,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
     private IDocument document;
 
     private ArrayList regions;
-    private Pattern pattern = Pattern.compile("^.*", Pattern.MULTILINE); //$NON-NLS-1$
+    private Pattern pattern = Pattern.compile("$", Pattern.MULTILINE); //$NON-NLS-1$
     
     public ConsoleDocumentAdapter(IDocument doc, int width) {
         textChangeListeners = new ArrayList();
@@ -288,9 +288,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
         int last = getLineAtOffset(event.fOffset + event.fLength);
         changeEvent.replaceLineCount= last - first;
         
-        int numLines = regions.size();
-        String lastLine = getLine(numLines-1);
-        changeEvent.newLineCount = countLines(lastLine + event.fText);
+        changeEvent.newLineCount = countLines(event.fText) -1;
         
         for (Iterator iter = textChangeListeners.iterator(); iter.hasNext();) {
             TextChangeListener element = (TextChangeListener) iter.next();
