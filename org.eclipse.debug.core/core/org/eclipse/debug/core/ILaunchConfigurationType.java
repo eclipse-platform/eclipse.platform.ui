@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  * attribute was added in the 2.1 release.</li>
  * </ul>
  * </p>
+ * TODO: add new attributes - sourcePathComputerId and sourceLocatorId
  * <p>
  * The <code>category</code> attribute has been added in release 2.1, such that other
  * tools may re-use the launch configuration framework for purposes other than
@@ -175,25 +176,25 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	public String getAttribute(String attributeName);	
 	
 	/**
-	 * Returns the registered source path computer that is associated with 
-	 * this launch configuration type or <code>null</code> if unspecified or
-	 * an invalid id was specified.
-	 * <p>
-	 * This method is yet experimental.
-	 * </p>
-	 * @return the registered source path computer, possibly <code>null</code>
+	 * Returns the source path computer registered with this launch configuration
+	 * type or <code>null</code> if unspecified. A source path computer can be
+	 * registered with a launch configuration type in plug-in XML via the
+	 * <code>sourcePathComputerId</code> attribute.
+	 * 
+	 * @return the source path computer registered with this launch configuration
+	 * type or <code>null</code> if unspecified
 	 * @since 3.0
 	 */
 	public ISourcePathComputer getSourcePathComputer();
 	
 	/**
-	 * Returns the identifier of the persistable source locator to be used with
-	 * launch configurations of this type by default, or <code>null</code> if
-	 * unspecified. Launch configuration types optionally specify this attribue
+	 * Returns the identifier of the persistable source locator registered with
+	 * this launch configurations type, or <code>null</code> if unspecified.
+	 * Launch configuration types optionally specify this attribue
 	 * in their plug-in XML via the <code>sourceLocatorId</code> attribute.  
 	 *  
-	 * @return the identifier of the persistable source locator to be used with
-	 * launch configurations of this type by default, or <code>null</code>
+	 * @return the identifier of the persistable source locator registered with
+	 *  this launch configurations type, or <code>null</code> if unspecified
 	 * @since 3.0
 	 */
 	public String getSourceLocatorId();

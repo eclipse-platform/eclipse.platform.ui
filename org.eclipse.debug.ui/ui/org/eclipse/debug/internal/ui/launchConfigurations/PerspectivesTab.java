@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -193,12 +194,12 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		label.setLayoutData(gd);
 		
 		// init modes
-		String[] modes = DebugPlugin.getDefault().getLaunchManager().getLaunchModes();
+		ILaunchMode[] modes = DebugPlugin.getDefault().getLaunchManager().getLaunchModes();
 		ArrayList supported = new ArrayList();
 		for (int i = 0; i < modes.length; i++) {
-			String string = modes[i];
-			if (getLaunchConfigurationType().supportsMode(string)) {
-				supported.add(string);
+			ILaunchMode mode = modes[i];
+			if (getLaunchConfigurationType().supportsMode(mode.getIdentifier())) {
+				supported.add(mode.getIdentifier());
 			}
 		}
 		fModeIds = (String[])supported.toArray(new String[supported.size()]);
@@ -225,7 +226,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 			gd = new GridData(GridData.BEGINNING);
 			gd.horizontalSpan= 1;
 			label.setLayoutData(gd);
-			String text = DebugPlugin.getDefault().getLaunchManager().getLaunchModeLabel(fModeIds[i]);
+			String text = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fModeIds[i]).getLabel();
 			label.setText(MessageFormat.format(LaunchConfigurationsMessages.getString("PerspectivesTab.2"), new String[]{text})); //$NON-NLS-1$
 			
 			Combo combo = new Combo(composite, SWT.READ_ONLY);

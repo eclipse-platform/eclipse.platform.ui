@@ -15,7 +15,7 @@ import java.util.Map;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
- * A process factory is used to override default process (<code>IProcess)</code>)
+ * A process factory is used to override default process (<code>IProcess</code>)
  * creation by the debug plug-in, and can be contributed via plug-in XML. When a
  * new process is created via <code>DebugPlugin.newProcess(..)</code>, the
  * launch configuration associated with the specified launch is consulted for

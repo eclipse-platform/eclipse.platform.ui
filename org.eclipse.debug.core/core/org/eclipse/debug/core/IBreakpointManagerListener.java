@@ -11,9 +11,9 @@
 package org.eclipse.debug.core;
 
 /**
- * A breakpoint manager listener is notified when a breakpoint manager's
- * enablement changes. When a breakpoint manager is disabled, no breakpoints
- * should be honored. When a breakpoint manager is enabled, breakpoints should
+ * A breakpoint manager listener is notified when the breakpoint manager's
+ * enablement changes. When the breakpoint manager is disabled, no breakpoints
+ * should be honored. When the breakpoint manager is enabled, breakpoints should
  * be honored as usual.
  * <p>
  * Clients are intended to implement this interface.
@@ -27,8 +27,7 @@ public interface IBreakpointManagerListener {
 	 * Notifies the listener that the breakpoint manager's enablement
 	 * has changed.
 	 * 
-	 * @param enabled whether or not the breakpoint manager has been
-	 *  enabled
+	 * @param enabled whether or not the breakpoint manager is enabled
 	 */
 	public void breakpointManagerEnablementChanged(boolean enabled);
 }

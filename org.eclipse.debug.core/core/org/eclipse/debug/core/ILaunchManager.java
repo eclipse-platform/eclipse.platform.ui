@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,8 @@ public interface ILaunchManager {
 	 * Launch configuration attribute name. The value is a boolean value specifying
 	 * whether the environment variables in a launch configuration
 	 * should be appended to the native environment (i.e. when <code>true</code>),
-	 * or if they should replace the environment (i.e. <code>false</code>).
+	 * or if they should replace the environment (i.e. <code>false</code>). The
+	 * default value is <code>true</code>.
 	 * 
 	 * @since 3.0 
 	 */
@@ -327,16 +328,17 @@ public interface ILaunchManager {
 	 * @return all registered launch modes
 	 * @since 3.0
 	 */
-	public String[] getLaunchModes();
+	public ILaunchMode[] getLaunchModes();
 	
 	/**
-	 * Returns the label for the given launch mode.
+	 * Returns the launch mode registered with the given mode identifier,
+	 * or <code>null</code> if none.
 	 * 
 	 * @param mode mode identifier
-	 * @return a label for the given launch mode
+	 * @return launch mode or <code>null</code>
 	 * @since 3.0
 	 */
-	public String getLaunchModeLabel(String mode);	
+	public ILaunchMode getLaunchMode(String mode);	
 	
 	/** 
 	 * Returns an array of environment variables to be used when
@@ -350,16 +352,14 @@ public interface ILaunchManager {
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;
 	
 	/**
-	 * Returns a source path computer that can be used to computer a default source
-	 * lookup path for the given launch configuration, or <code>null</code> if
-	 * unspecified.
-	 * <p>
-	 * THIS METHOD IS EXPERIMENTAL AND SUBJECT TO CHANGE
-	 * </p>
-	 * @param configuration the launch configuration for which a source path computer is
-	 *  required
-	 * @return a source path computer that can be used to compute a default source lookup
-	 *  path for the given launch configration, or <code>null</code> if unspecified
+	 * Returns a source path computer to compute a default source lookup path for
+	 * the given launch configuration, or <code>null</code> if a source path
+	 * computer has not been registered for the associated launch configuration
+	 * type.
+	 *  
+	 * @param configuration a launch configuration
+	 * @return a source path computer registered for the associated launch
+	 *  configurations type, or <code>null</code> if unspecified
 	 * @throws CoreException if an exception occurs while instantiating a source
 	 *  path computer
 	 * @since 3.0

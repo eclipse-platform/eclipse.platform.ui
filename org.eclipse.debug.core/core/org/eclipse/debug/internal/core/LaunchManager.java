@@ -74,6 +74,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -130,13 +131,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	/**
 	 * Registered launch modes, or <code>null</code> if not initialized.
+	 * Keys are mode identifiers, values are <code>ILaunchMode</code>s.
 	 */
-	private String[] fLaunchModes = null;
-	
-	/**
-	 * Map of mode ids to labels
-	 */
-	private HashMap fLaunchModeLabels = null;
+	private Map fLaunchModes = null;
 	
 	/**
 	 * List of contributed launch delegates (delegates contributed for existing
@@ -1521,16 +1518,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			fListener = null;			
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModes()
-	 */
-	public String[] getLaunchModes() {
-		if (fLaunchModes == null) {
-			initializeLaunchModes();
-		}
-		return fLaunchModes;
-	}	
 	
 	/**
 	 * Load comparator extensions.
@@ -1542,37 +1529,17 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		fLaunchModes = new String[infos.length];
-		fLaunchModeLabels = new HashMap(infos.length);
+		fLaunchModes = new HashMap();
 		for (int i= 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
-			String mode = configurationElement.getAttribute("mode"); //$NON-NLS-1$
-			String label = configurationElement.getAttribute("label"); //$NON-NLS-1$
-			if (mode != null && label != null) {
-				fLaunchModes[i]= mode;
-				fLaunchModeLabels.put(mode, label);
-			} else {
-				// invalid launch mode
-				if (mode == null) {
-					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.27"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
-					DebugPlugin.log(s);
-				}
-				if (label == null) {
-					IStatus s = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.28"), new String[] {configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier()}), null); //$NON-NLS-1$
-					DebugPlugin.log(s);					
-				}
+			try {
+				ILaunchMode mode = new LaunchMode(configurationElement);
+				fLaunchModes.put(mode.getIdentifier(), mode);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
 			}
+			
 		}			
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModeLabel(java.lang.String)
-	 */
-	public String getLaunchModeLabel(String mode) {
-		getLaunchModes();
-		return (String)fLaunchModeLabels.get(mode);
 	}
 	
 	/** 
@@ -1766,5 +1733,26 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	public ISourcePathComputer getSourcePathComputer(String id) {
 		initializeSourceContainerTypes();
 		return (ISourcePathComputer) sourcePathComputers.get(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchModes()
+	 */
+	public ILaunchMode[] getLaunchModes() {
+		if (fLaunchModes == null) {
+			initializeLaunchModes();
+		}
+		Collection collection = fLaunchModes.values();
+		return (ILaunchMode[]) collection.toArray(new ILaunchMode[collection.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchMode(java.lang.String)
+	 */
+	public ILaunchMode getLaunchMode(String mode) {
+		if (fLaunchModes == null) {
+			initializeLaunchModes();
+		}
+		return (ILaunchMode) fLaunchModes.get(mode);
 	}
 }
