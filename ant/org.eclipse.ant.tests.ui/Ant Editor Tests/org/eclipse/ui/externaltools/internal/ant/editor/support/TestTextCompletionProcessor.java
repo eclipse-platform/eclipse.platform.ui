@@ -1,5 +1,13 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.support;
 
+/**********************************************************************
+Copyright (c) 2003 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import java.io.File;
 import java.io.IOException;
 
@@ -10,14 +18,6 @@ import org.eclipse.ui.externaltools.internal.ant.editor.PlantyCompletionProcesso
 import org.eclipse.ui.externaltools.internal.ant.editor.test.CodeCompletionTest;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.w3c.dom.Element;
-
-/**********************************************************************
-Copyright (c) 2003 IBM Corp. and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 public class TestTextCompletionProcessor extends PlantyCompletionProcessor {
 	private final CodeCompletionTest TestTextCompletionProcessor;
