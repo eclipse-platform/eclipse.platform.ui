@@ -191,13 +191,6 @@ public class Connection {
 	}
 
 	/**
-	 * Sends the given bytes to the server.
-	 */
-	public void write(byte[] b, int off, int len) throws CVSException {
-		write(b, off, len, false);
-	}
-
-	/**
 	 * Sends the given string and a newline to the server. 
 	 */
 	public void writeLine(String s) throws CVSException {
@@ -205,16 +198,9 @@ public class Connection {
 			write(s.getBytes(getEncoding(fCVSRoot)), true);
 		} catch (UnsupportedEncodingException e) {
 			throw new CVSException (e.getMessage());
-	}
+		}
 	}
 
-	/**
-	 * Sends the given bytes and a newline to the server.
-	 */
-	public void writeLine(byte[] b, int off, int len) throws CVSException {
-		write(b, off, len, true);
-	}
-	
 	void write (byte[] bytes, boolean newLine) throws CVSException {
 		write(bytes, 0, bytes.length, newLine);
 	}

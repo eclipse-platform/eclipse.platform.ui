@@ -455,19 +455,19 @@ public class Session {
 		if (start == -1) {
 			// something is wrong with the entry line so just send it as is
 			// and let the server report the error.
-			connection.writeLine(syncBytes, 0, syncBytes.length);
+			connection.writeLine(new String(syncBytes));
 			return;
 		}
 		int end = Util.getOffsetOfDelimeter(syncBytes, (byte)'/', start + 1, 1);
 		if (end == -1) {
 			// something is wrong with the entry line so just send it as is
 			// and let the server report the error.
-			connection.writeLine(syncBytes, 0, syncBytes.length);
+			connection.writeLine(new String(syncBytes));
 			return;
 		}
-		connection.write(syncBytes, 0, start + 1);
+		connection.write(new String(syncBytes, 0, start + 1));
 		connection.write(serverTimestamp);
-		connection.writeLine(syncBytes, end, syncBytes.length - end);
+		connection.writeLine(new String(syncBytes, end, syncBytes.length - end));
 	}
 
 	/**
