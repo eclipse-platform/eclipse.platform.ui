@@ -267,7 +267,7 @@ public class BuilderUtils {
 		workingCopy.setContainer(getBuilderFolder(project, true));
 		// Before saving, make sure the name is valid
 		String name= workingCopy.getName();
-		name.replace('/', '.');
+		name= name.replace('/', '.');
 		if (name.charAt(0) == ('.')) {
 			name = name.substring(1);
 		}
