@@ -137,7 +137,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 			if (id != null && name != null) {
 				if (fDebugActionGroups.get(id) != null) {
 					//duplicate id..report error and ignore extension
-					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIMessages.getString("DebugActionGroupsManager.Duplicate_action_group_id"), new String[]{id}));
+					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIMessages.getString("DebugActionGroupsManager.Duplicate_action_group_id"), new String[]{id})); //$NON-NLS-1$
 					continue;
 				}
 				DebugActionGroup viewActionSet = new DebugActionGroup(id, name, isVisible);
