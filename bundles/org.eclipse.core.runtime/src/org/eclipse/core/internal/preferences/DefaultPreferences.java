@@ -36,6 +36,9 @@ public class DefaultPreferences extends EclipsePreferences {
 	public static final String PRODUCT_KEY = "preferenceCustomization"; //$NON-NLS-1$
 	private static final String LEGACY_PRODUCT_CUSTOMIZATION_FILENAME = "plugin_customization.ini"; //$NON-NLS-1$
 	private static final String PROPERTIES_FILE_EXTENSION = "properties"; //$NON-NLS-1$
+	private static Properties productCustomization;
+	private static Properties productTranslation;
+	private static Properties commandLineCustomization;
 	private EclipsePreferences loadLevel;
 
 	// cached values
@@ -98,15 +101,19 @@ public class DefaultPreferences extends EclipsePreferences {
 	 * as an argument on the command-line.
 	 */
 	private void applyCommandLineDefaults() {
-		String filename = InternalPlatform.pluginCustomizationFile;
-		if (filename == null) {
+		// prime the cache the first time
+		if (commandLineCustomization == null) {
+			String filename = InternalPlatform.pluginCustomizationFile;
+			if (filename == null) {
+				if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+					Policy.debug("Command-line preferences customization file not specified."); //$NON-NLS-1$
+				return;
+			}
 			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Command-line preferences customization file not specified."); //$NON-NLS-1$
-			return;
+				Policy.debug("Using command-line preference customization file: " + filename); //$NON-NLS-1$
+			commandLineCustomization = loadProperties(filename);
 		}
-		if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-			Policy.debug("Using command-line preference customization file: " + filename); //$NON-NLS-1$
-		applyDefaults(null, loadProperties(filename), null);
+		applyDefaults(null, commandLineCustomization, null);
 	}
 
 	/*
@@ -212,52 +219,58 @@ public class DefaultPreferences extends EclipsePreferences {
 	 * file in the primary feature's plug-in directory.
 	 */
 	private void applyProductDefaults() {
-		IProduct product = Platform.getProduct();
-		if (product == null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Product not available to set product default preference overrides."); //$NON-NLS-1$
-			return;
-		}
-		String id = product.getId();
-		if (id == null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Product ID not available to apply product-level preference defaults."); //$NON-NLS-1$
-			return;
-		}
-		Bundle bundle = product.getDefiningBundle();
-		if (bundle == null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Bundle not available to apply product-level preference defaults for product id: " + id); //$NON-NLS-1$
-			return;
-		}
-		String value = product.getProperty(PRODUCT_KEY);
-		URL url = null;
-		URL transURL = null;
-		if (value == null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Product : " + id + " does not define preference customization file. Using legacy file: plugin_customization.ini"); //$NON-NLS-1$//$NON-NLS-2$
-			value = LEGACY_PRODUCT_CUSTOMIZATION_FILENAME;
-			url = Platform.find(bundle, new Path(LEGACY_PRODUCT_CUSTOMIZATION_FILENAME));
-			transURL = Platform.find(bundle, NL_DIR.append(value).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
-		} else {
-			// try to convert the key to a URL
-			try {
-				url = new URL(value);
-			} catch (MalformedURLException e) {
-				// didn't work so treat it as a filename
-				url = Platform.find(bundle, new Path(value));
-				if (url != null)
-					transURL = Platform.find(bundle, NL_DIR.append(value).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
+		// prime the cache the first time
+		if (productCustomization == null) {
+			IProduct product = Platform.getProduct();
+			if (product == null) {
+				if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+					Policy.debug("Product not available to set product default preference overrides."); //$NON-NLS-1$
+				return;
 			}
+			String id = product.getId();
+			if (id == null) {
+				if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+					Policy.debug("Product ID not available to apply product-level preference defaults."); //$NON-NLS-1$
+				return;
+			}
+			Bundle bundle = product.getDefiningBundle();
+			if (bundle == null) {
+				if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+					Policy.debug("Bundle not available to apply product-level preference defaults for product id: " + id); //$NON-NLS-1$
+				return;
+			}
+			String value = product.getProperty(PRODUCT_KEY);
+			URL url = null;
+			URL transURL = null;
+			if (value == null) {
+				if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+					Policy.debug("Product : " + id + " does not define preference customization file. Using legacy file: plugin_customization.ini"); //$NON-NLS-1$//$NON-NLS-2$
+				value = LEGACY_PRODUCT_CUSTOMIZATION_FILENAME;
+				url = Platform.find(bundle, new Path(LEGACY_PRODUCT_CUSTOMIZATION_FILENAME));
+				transURL = Platform.find(bundle, NL_DIR.append(value).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
+			} else {
+				// try to convert the key to a URL
+				try {
+					url = new URL(value);
+				} catch (MalformedURLException e) {
+					// didn't work so treat it as a filename
+					url = Platform.find(bundle, new Path(value));
+					if (url != null)
+						transURL = Platform.find(bundle, NL_DIR.append(value).removeFileExtension().addFileExtension(PROPERTIES_FILE_EXTENSION));
+				}
+			}
+			if (url == null) {
+				if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+					Policy.debug("Product preference customization file: " + value + " not found for bundle: " + id); //$NON-NLS-1$//$NON-NLS-2$
+				return;
+			}
+			if (transURL == null && InternalPlatform.DEBUG_PREFERENCE_GENERAL)
+				Policy.debug("No preference translations found for product/file: " + bundle.getSymbolicName() + '/' + value); //$NON-NLS-1$
+
+			productCustomization = loadProperties(url);
+			productTranslation = loadProperties(transURL);
 		}
-		if (url == null) {
-			if (InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-				Policy.debug("Product preference customization file: " + value + " not found for bundle: " + id); //$NON-NLS-1$//$NON-NLS-2$
-			return;
-		}
-		if (transURL == null && InternalPlatform.DEBUG_PREFERENCE_GENERAL)
-			Policy.debug("No preference translations found for product/file: " + bundle.getSymbolicName() + '/' + value); //$NON-NLS-1$
-		applyDefaults(null, loadProperties(url), loadProperties(transURL));
+		applyDefaults(null, productCustomization, productTranslation);
 	}
 
 	/* (non-Javadoc)
