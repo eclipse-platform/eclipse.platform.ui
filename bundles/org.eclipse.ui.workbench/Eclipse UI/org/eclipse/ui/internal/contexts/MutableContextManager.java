@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextContextBinding;
+import org.eclipse.ui.contexts.IContextBinding;
 import org.eclipse.ui.contexts.IMutableContextManager;
 import org.eclipse.ui.internal.util.Util;
 
@@ -114,9 +114,9 @@ public final class MutableContextManager extends AbstractContextManager
 
             for (Iterator iterator2 = contextContextBindings.iterator(); iterator2
                     .hasNext();) {
-                IContextContextBinding contextContextBinding = (IContextContextBinding) iterator2
+                IContextBinding contextContextBinding = (IContextBinding) iterator2
                         .next();
-                childContextIds.add(contextContextBinding.getChildContextId());
+                childContextIds.add(contextContextBinding.getContextId());
             }
 
             childContextIds.removeAll(requiredContextIds);
@@ -181,7 +181,7 @@ public final class MutableContextManager extends AbstractContextManager
 
                             if (contextDefinitionsById
                                     .containsKey(childContextId)) {
-                                IContextContextBinding contextContextBinding = new ContextContextBinding(
+                                IContextBinding contextContextBinding = new ContextBinding(
                                         childContextId, parentContextId);
                                 Set contextContextBindings = (Set) contextContextBindingsByParentContextId
                                         .get(parentContextId);

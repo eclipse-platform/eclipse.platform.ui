@@ -12,8 +12,7 @@
 package org.eclipse.ui.contexts;
 
 /**
- * An instance of this interface represents a binding between an context and an
- * context.
+ * An instance of this interface represents a binding to a context.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -21,7 +20,7 @@ package org.eclipse.ui.contexts;
  * @since 3.0
  * @see IContext
  */
-public interface IContextContextBinding extends Comparable {
+public interface IContextBinding extends Comparable {
 
     /**
      * Returns the identifier of the child context represented in this binding.
@@ -29,13 +28,5 @@ public interface IContextContextBinding extends Comparable {
      * @return the identifier of the child context represented in this binding.
      *         Guaranteed not to be <code>null</code>.
      */
-    String getChildContextId();
-
-    /**
-     * Returns the identifier of the parent context represented in this binding.
-     * 
-     * @return the identifier of the parent context represented in this binding.
-     *         Guaranteed not to be <code>null</code>.
-     */
-    String getParentContextId();
+    String getContextId();
 }

@@ -18,7 +18,7 @@ import java.util.Set;
 
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextContextBinding;
+import org.eclipse.ui.contexts.IContextBinding;
 import org.eclipse.ui.contexts.IContextListener;
 import org.eclipse.ui.contexts.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
@@ -28,7 +28,7 @@ final class Context implements IContext {
 	private final static int HASH_INITIAL = Context.class.getName().hashCode();
 	private final static Set strongReferences = new HashSet();
 	private Set contextContextBindings;
-	private transient IContextContextBinding[] contextContextBindingsAsArray;
+	private transient IContextBinding[] contextContextBindingsAsArray;
 	private List contextListeners;
 	private boolean defined;
 	private boolean enabled;
@@ -177,14 +177,14 @@ final class Context implements IContext {
 
 	boolean setContextContextBindings(Set contextContextBindings) {
 		contextContextBindings =
-			Util.safeCopy(contextContextBindings, IContextContextBinding.class);
+			Util.safeCopy(contextContextBindings, IContextBinding.class);
 
 		if (!Util
 			.equals(contextContextBindings, this.contextContextBindings)) {
 			this.contextContextBindings = contextContextBindings;
 			this.contextContextBindingsAsArray =
-				(IContextContextBinding[]) this.contextContextBindings.toArray(
-					new IContextContextBinding[this
+				(IContextBinding[]) this.contextContextBindings.toArray(
+					new IContextBinding[this
 						.contextContextBindings
 						.size()]);
 			hashCodeComputed = false;

@@ -11,20 +11,20 @@
 
 package org.eclipse.ui.internal.contexts;
 
-import org.eclipse.ui.contexts.IContextContextBinding;
+import org.eclipse.ui.contexts.IContextBinding;
 import org.eclipse.ui.internal.util.Util;
 
-final class ContextContextBinding implements IContextContextBinding {
+final class ContextBinding implements IContextBinding {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		ContextContextBinding.class.getName().hashCode();
+		ContextBinding.class.getName().hashCode();
 	private String childContextId;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String parentContextId;
 	private transient String string;
 
-	ContextContextBinding(String childContextId, String parentContextId) {
+	ContextBinding(String childContextId, String parentContextId) {
 		if (childContextId == null || parentContextId == null)
 			throw new NullPointerException();
 
@@ -33,7 +33,7 @@ final class ContextContextBinding implements IContextContextBinding {
 	}
 
 	public int compareTo(Object object) {
-		ContextContextBinding castedObject = (ContextContextBinding) object;
+		ContextBinding castedObject = (ContextBinding) object;
 		int compareTo =
 			Util.compare(childContextId, castedObject.childContextId);
 
@@ -45,17 +45,17 @@ final class ContextContextBinding implements IContextContextBinding {
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof ContextContextBinding))
+		if (!(object instanceof ContextBinding))
 			return false;
 
-		ContextContextBinding castedObject = (ContextContextBinding) object;
+		ContextBinding castedObject = (ContextBinding) object;
 		boolean equals = true;
 		equals &= Util.equals(childContextId, castedObject.childContextId);
 		equals &= Util.equals(parentContextId, castedObject.parentContextId);
 		return equals;
 	}
 
-	public String getChildContextId() {
+	public String getContextId() {
 		return childContextId;
 	}
 

@@ -11,20 +11,19 @@
 package org.eclipse.ui.contexts;
 
 /**
- * Signals that an attempt was made to access the properties of an undefined
- * object.
+ * Signals that an exception occured within the context architecture.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
  */
-public final class NotDefinedException extends ContextException {
+public abstract class ContextException extends Exception {
 
     /**
      * Creates a new instance of this class with no specified detail message.
      */
-    public NotDefinedException() {
+    public ContextException() {
     }
 
     /**
@@ -33,7 +32,30 @@ public final class NotDefinedException extends ContextException {
      * @param s
      *            the detail message.
      */
-    public NotDefinedException(String s) {
+    public ContextException(String s) {
         super(s);
+    }
+
+    /**
+     * Creates a new instance of this class with the specified detail message
+     * and cause.
+     * 
+     * @param message
+     *            the detail message.
+     * @param cause
+     *            the cause.
+     */
+    public ContextException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Creates a new instance of this class with the specified cause.
+     * 
+     * @param cause
+     *            the cause.
+     */
+    public ContextException(Throwable cause) {
+        super(cause);
     }
 }
