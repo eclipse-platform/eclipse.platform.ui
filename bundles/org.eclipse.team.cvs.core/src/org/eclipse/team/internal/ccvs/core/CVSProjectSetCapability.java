@@ -50,6 +50,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 
 /**
  * An object for serializing and deserializing
@@ -277,6 +278,8 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 						return location;
 			}
 		}
+		// No existing location was found so add this location to the list of known repositories
+		KnownRepositories.getInstance().addRepository(newLocation, true);
 		return newLocation;
 	}
 	
