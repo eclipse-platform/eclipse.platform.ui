@@ -234,7 +234,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 					File currentFile = (File) files.get(i);
 					pluginReferences[i] = new ContentReference(null, currentFile.toURL());
 				}
-			};
+			}
 
 			//[20866] we did not preserve executable bit
 			validatePermissions(pluginReferences);

@@ -18,7 +18,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.UpdateUtils;

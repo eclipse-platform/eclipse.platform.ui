@@ -409,7 +409,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				if (result != 0) {
 					if (result == 1) {
 						cPolicy.unconfigure(configuredFeatures[restOfConfiguredFeatures], true, false);
-					};
+					}
 					if (result == 2) {
 						cPolicy.unconfigure(featureToCompare, true, false);
 					}
@@ -469,7 +469,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			}
 		}
 		return 0;
-	};
+	}
 
 	/*
 	 * 

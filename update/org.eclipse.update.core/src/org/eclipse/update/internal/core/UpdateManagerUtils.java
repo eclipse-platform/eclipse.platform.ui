@@ -162,7 +162,7 @@ public class UpdateManagerUtils {
 			result = UpdateCore.getPlugin().getDescriptor().getResourceString(infoURL, bundle);
 		}
 		return result;
-	};
+	}
 
 	/**
 	 * 
@@ -448,7 +448,7 @@ public class UpdateManagerUtils {
 							compareFeature = children[j].getFeature(true,null,null); // compare with the 'real' feature, not the best match
 						} catch (CoreException e) {
 							UpdateCore.warn("", e);
-						};
+						}
 						if (childFeature.equals(compareFeature)) {
 							if (onlyOptional) {
 								if (UpdateManagerUtils.isOptional(children[j])) {
@@ -464,7 +464,7 @@ public class UpdateManagerUtils {
 				}
 			} catch (CoreException e) {
 				UpdateCore.warn("", e);
-			};
+			}
 		}
 
 		IFeatureReference[] parents = new IFeatureReference[0];

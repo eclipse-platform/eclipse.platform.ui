@@ -139,7 +139,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 						result = promptForPassword(resourceUrl, realm);
 					}
 				});
-			};
+			}
 		}
 		return result;
 	}

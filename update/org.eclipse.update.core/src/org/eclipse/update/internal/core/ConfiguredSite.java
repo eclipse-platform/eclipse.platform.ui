@@ -894,7 +894,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (out != null)
 					out.close();
 			} catch (IOException e) {
-			};
+			}
 			if (tryFile != null)
 				tryFile.delete();
 		}

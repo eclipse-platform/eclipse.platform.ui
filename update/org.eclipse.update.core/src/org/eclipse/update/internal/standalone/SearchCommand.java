@@ -49,7 +49,7 @@ public class SearchCommand extends ScriptedCommand {
 				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
-				System.out.println("Connection Error");;
+				System.out.println("Connection Error");
 			}
 			return false;
 		}

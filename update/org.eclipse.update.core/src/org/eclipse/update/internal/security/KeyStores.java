@@ -135,7 +135,7 @@ public class KeyStores {
 		
 		try {
 			URL url = new URL(location);
-			in = UpdateCore.getPlugin().get(url).getInputStream();;
+			in = UpdateCore.getPlugin().get(url).getInputStream();
 			Reader reader = new InputStreamReader(in);
 			int result = reader.read(buff);
 			StringBuffer contentBuff = new StringBuffer();

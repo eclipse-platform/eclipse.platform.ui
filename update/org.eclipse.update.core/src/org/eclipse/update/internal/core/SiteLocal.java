@@ -107,7 +107,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		//attempt to parse the LocalSite.xml	
 		URL resolvedURL = URLEncoder.encode(configXML);
 		try {
-			InputStream in = UpdateCore.getPlugin().get(resolvedURL).getInputStream();;
+			InputStream in = UpdateCore.getPlugin().get(resolvedURL).getInputStream();
 			new SiteLocalParser(in, localSite);
 		} catch (FileNotFoundException exception) {
 			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
@@ -687,7 +687,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		int history = 0;
 		if (configFiles.length > 0) {
 			history = configFiles.length;
-		};
+		}
 
 		if (SiteLocalModel.DEFAULT_HISTORY > history)
 			history = SiteLocalModel.DEFAULT_HISTORY;

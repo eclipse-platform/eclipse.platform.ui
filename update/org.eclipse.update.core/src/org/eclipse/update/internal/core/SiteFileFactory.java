@@ -199,7 +199,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 						result = ref.peek(Feature.FEATURE_XML, null, null);
 					} catch (IOException e) {
 						UpdateCore.warn("Exception retrieving feature.xml in file:" + currentFeatureFile, e);
-					};
+					}
 					if (result == null) {
 						UpdateCore.warn("Unable to find feature.xml in file:" + currentFeatureFile);
 					} else {

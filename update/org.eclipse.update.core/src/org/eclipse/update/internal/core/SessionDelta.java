@@ -221,7 +221,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 			}
 		}
 		return 0;
-	};
+	}
 
 	/**
 	 * @see org.eclipse.update.configuration.ISessionDelta#process(org.eclipse.update.core.IFeatureReference, org.eclipse.core.runtime.IProgressMonitor)

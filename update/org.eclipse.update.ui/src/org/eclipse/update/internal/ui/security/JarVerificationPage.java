@@ -320,7 +320,7 @@ public class JarVerificationPage extends BannerPage {
 	 */
 	public void setTitleAreaDialog(TitleAreaDialog dialog) {
 		_Dialog = dialog;
-	};
+	}
 
 	/*
 	 * 

@@ -64,7 +64,7 @@ public class JarVerifier extends Verifier {
 			while (listOfKeystoreHandles.hasNext()) {
 				try {
 					handle = listOfKeystoreHandles.next();
-					in = UpdateCore.getPlugin().get(handle.getLocation()).getInputStream();;
+					in = UpdateCore.getPlugin().get(handle.getLocation()).getInputStream();
 					try {
 						keystore = KeyStore.getInstance(handle.getType());
 						keystore.load(in, null); // no password

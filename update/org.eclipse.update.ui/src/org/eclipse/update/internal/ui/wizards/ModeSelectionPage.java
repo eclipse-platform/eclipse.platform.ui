@@ -65,7 +65,7 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		composite.setLayout(layout);
 		updatesButton = new Button(composite, SWT.RADIO);
 		updatesButton.setText(UpdateUI.getString("ModeSelectionPage.updates")); //$NON-NLS-1$
-		boolean newFeaturesMode = getSettings().getBoolean(P_NEW_FEATURES_MODE);;
+		boolean newFeaturesMode = getSettings().getBoolean(P_NEW_FEATURES_MODE);
 		updatesButton.setSelection(!newFeaturesMode);
 		updatesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

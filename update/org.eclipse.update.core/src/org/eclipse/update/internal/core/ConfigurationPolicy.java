@@ -397,7 +397,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 					feature = element.getFeature(null);
 				} catch (CoreException e) {
 					UpdateCore.warn(null, e);
-				};
+				}
 				IPluginEntry[] entries = null;
 				if (feature == null) {
 					UpdateCore.warn("Null Feature", new Exception());
