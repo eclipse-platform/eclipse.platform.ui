@@ -667,11 +667,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             if (desc == null)
                 return;
 
-            IContributionItem item = window.findPerspectiveShortcut(oldPersp
-                    .getDesc(), this);
-            if (item == null)
-                return;
-
             // Notify listeners that we are doing a reset.
             window.firePerspectiveChanged(this, desc, CHANGE_RESET);
 
@@ -688,8 +683,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             // Update the perspective list and shortcut
             perspList.swap(oldPersp, newPersp);
 
-            ((PerspectiveBarContributionItem) item).setPerspective(newPersp
-                    .getDesc());
+            IContributionItem item = window.findPerspectiveShortcut(oldPersp
+                    .getDesc(), this);
+            if (item != null) {
+                ((PerspectiveBarContributionItem) item).setPerspective(newPersp
+                        .getDesc());
+            }
 
             // Install new persp.
             setPerspective(newPersp);
