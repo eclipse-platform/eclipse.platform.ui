@@ -179,7 +179,9 @@ public class AnimationItem {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				synchronized (windowLock) {
 					//Clear the window if the parent is not visibile
-					if (!window.getShell().isVisible() || getControl().isDisposed())
+					if (window.getShell() == null 
+							|| !window.getShell().isVisible() 
+							|| getControl().isDisposed())
 						floatingWindow = null;
 					
 					if (floatingWindow == null)
