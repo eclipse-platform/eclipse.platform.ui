@@ -24,10 +24,15 @@ public class UrlUtil {
 			return root;
 		if(root.length() == 0)
 			return end.toString();
+		boolean rootHasTrailing = root.charAt(root.length() - 1) == Path.SEPARATOR;  //has trailing '/'
+		boolean endHasLeading = end.isAbsolute();	// has leading '/'
 			
-		if(root.charAt(root.length() - 1) == Path.SEPARATOR)
-			return root + end.toString();	//already has separator, just concat end
+		if(rootHasTrailing && endHasLeading) //http://mysite/ + /myFolder
+			return root + end.toString().substring(1);	 // we have two seperators, drop one
 			
-		return root + Path.SEPARATOR + end.toString();
+		if(!rootHasTrailing && !endHasLeading) //http://mysite + myFolder
+			return root + Path.SEPARATOR + end.toString();
+				
+		return root + end.toString();	//have one separator between the two, just concat end
 	}
 }
