@@ -1,0 +1,45 @@
+<!doctype html public "-//w3c//dtd html 4.0//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Eclipse Team Core Extension Point: Project Sets</title>
+</head>
+<body link="#0000FF" vlink="#800080">
+
+<center>
+<h1>
+Project Sets</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.team.core.projectSets
+<p><b><i>Description: </i></b>This extension point is used to register
+a handler for creating and reading project sets. Project sets are a lightweight,
+portable method of sharing a particular lineup of team-shared projects in a 
+workspace. A project set file may be used to provide team members with a simple
+way of creating a workspace with a particular lineup of projects from one or
+more team providers.
+<p>Providers may provide an extension for this extension point.
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT projectSets EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST projectSets</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+
+<ul>
+<li><b>id -</b> the nature id of the provider for which this handler creates and reads project sets.</li>
+<li><b>type -</b> the fully-qualified name of a class implementing <code>org.eclipse.team.core.IProjectSetSerializer</code>.</li>
+</ul>
+
+<b><i>Examples:</i></b>
+<p>Following is an example of a projectSets extension:
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.team.core.projectSets"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;projectSets</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.team.cvs.core.cvsnature"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.team.cvs.core.CVSProjectSetSerializer"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/projectSets></tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
+
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
+</body>
+</html>
