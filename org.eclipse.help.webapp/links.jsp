@@ -48,19 +48,17 @@ A {
 	cursor:default;
 }
 
+IMG {
+	border:0px;
+	margin:0px;
+	padding:0px;
+	margin-right:4px;
+}
 
 TABLE {
 	background-color: Window;
 	font: icon;
 	width:100%;
-}
-
-
-.icon {
-	background-image: url("images/topic_obj.gif");
-	background-position:center left;
-	background-repeat:no-repeat;
-	width:16px;
 }
 
 .list {
@@ -127,9 +125,8 @@ if(request.getParameter("contextId")!=null)
 %>
 
 <tr class='list'>
-	<td class='icon'>&nbsp;</td>
 	<td align='left' class='label' nowrap>
-		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=label%>"><%=label%></a>
+		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=label%>"><img src="images/topic_obj.gif"><%=label%></a>
 	</td>
 </tr>
 

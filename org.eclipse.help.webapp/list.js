@@ -21,6 +21,8 @@ function getTRNode(node) {
     return node.parentNode;
   else if (node.tagName == "TR") 
     return node;
+  else if (node.tagName == "IMG")
+  	return node.parentNode.parentNode.parentNode;
   else
   	return null;
 }
@@ -74,9 +76,6 @@ function mouseClickHandler(e) {
    	clickedNode = window.event.srcElement;
   else 
   	return;
-
-  if (isIE && clickedNode)	
-  	clickedNode.blur();
   	
   highlightTopic(clickedNode);
 
