@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The central manager for view descriptors.
@@ -124,6 +129,14 @@ public void mapViewsToCategories() {
 			if (miscCategory == null) {
 				miscCategory = new Category();
 				categories.add(miscCategory);
+			}
+			if (catPath != null) {
+				// If we get here, this view specified a category which
+				// does not exist. Add this view to the 'Other' category
+				// but give out a message (to the log only) indicating 
+				// this has been done.
+				String fmt = "Category {0} not found for view {1}.  This view added to ''{2}'' category."; //$NON-NLS-1$
+				WorkbenchPlugin.log(MessageFormat.format(fmt, new Object[]{catPath[0], desc.getID(), miscCategory.getLabel()}));  //$NON-NLS-1$
 			}
 			miscCategory.addElement(desc);
 		}
