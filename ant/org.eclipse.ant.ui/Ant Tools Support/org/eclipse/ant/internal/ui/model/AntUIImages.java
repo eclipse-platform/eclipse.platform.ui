@@ -48,18 +48,14 @@ public class AntUIImages {
 
 	static {
 		String pathSuffix = "icons/full/"; //$NON-NLS-1$
-			
-		try {
-			ICON_BASE_URL= new URL(AntUIPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
+		ICON_BASE_URL= AntUIPlugin.getDefault().getBundle().getEntry(pathSuffix);
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
 	private final static String LOCALTOOL= "elcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OVR= "ovr16/"; //basic colors - size 7x8 //$NON-NLS-1$
+	private final static String WIZ= "wizban/";
 	
 	/**
 	 * Declare all images
@@ -98,6 +94,8 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_TAB_CLASSPATH, OBJECT + "classpath.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_JAR_FILE, OBJECT + "jar_l_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TYPE, OBJECT + "type.gif"); //$NON-NLS-1$
+		
+		declareRegistryImage(IAntUIConstants.IMG_IMPORT_WIZARD_BANNER, WIZ + "importbuildfile_wiz.gif"); //$NON-NLS-1$
 		
 		// Overlays
 		declareRegistryImage(IAntUIConstants.IMG_OVR_ERROR, OVR + "error_co.gif"); //$NON-NLS-1$
