@@ -340,9 +340,16 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 			IStructuredSelection structured = (IStructuredSelection)selection;
 			Object selected = structured.getFirstElement();
 			if (selected instanceof TeamFile) {
-				((TeamFile)selected).getMergeResource().setLabels(getCompareConfiguration());
+				updateLabels(((TeamFile)selected).getMergeResource());
 			}
 		}
+	}
+	
+	/**
+	 * Subclasses may override to provide different labels for the compare configuration.
+	 */
+	protected void updateLabels(MergeResource resource) {
+		resource.setLabels(getCompareConfiguration());
 	}
 	
 	/**
