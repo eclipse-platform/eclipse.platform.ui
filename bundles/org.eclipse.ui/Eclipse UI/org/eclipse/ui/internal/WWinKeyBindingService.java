@@ -74,7 +74,9 @@ public class WWinKeyBindingService {
 		}
 		if(reinitScopes) {
 			Workbench w = (Workbench)PlatformUI.getWorkbench();
-			w.getActiveAcceleratorConfiguration().initializeScopes();
+			if (w.getActiveAcceleratorConfiguration() != null) {
+				w.getActiveAcceleratorConfiguration().initializeScopes();
+			}
 		}
 	}
 	public long getUpdateNumber() {
