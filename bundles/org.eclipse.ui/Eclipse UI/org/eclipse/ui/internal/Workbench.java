@@ -4,36 +4,34 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.boot.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.DetachedWindow;
-import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.IMarkerHelpRegistry;
-import org.eclipse.ui.part.*;
-import org.eclipse.jface.*;
-import org.eclipse.jface.window.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.preference.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.core.internal.boot.LaunchInfo;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
+
+import org.eclipse.core.boot.IPlatformRunnable;
+import org.eclipse.core.internal.boot.LaunchInfo;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.window.WindowManager;
+import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 
 /**
  * The workbench class represents the top of the ITP user interface.  Its primary
@@ -382,6 +380,16 @@ private void handleExceptionInEventLoop(Throwable e) {
 	// For the status object, use the exception's message, or the exception name if no message.
 	String msg = e.getMessage() == null ? e.toString() : e.getMessage();
 	WorkbenchPlugin.log(WorkbenchMessages.getString("Unhandled_exception"), new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, e)); //$NON-NLS-1$
+
+	// special case for SWTException to handle workaround for bug 6312
+	if (e instanceof SWTException) {
+		Throwable nested = ((SWTException) e).throwable;
+		if (nested != null) {
+			msg = nested.getMessage() == null ? nested.toString() : nested.getMessage();
+			WorkbenchPlugin.log("*** Stack trace of contained exception ***", new Status(IStatus.ERROR, IWorkbenchConstants.PLUGIN_ID, 0, msg, nested)); //$NON-NLS-1$
+		}
+	}
+	
 	if (WorkbenchPlugin.DEBUG) {
 		e.printStackTrace();
 	}

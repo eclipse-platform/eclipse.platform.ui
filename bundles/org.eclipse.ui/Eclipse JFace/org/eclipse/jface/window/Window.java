@@ -7,6 +7,7 @@ package org.eclipse.jface.window;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.events.*;
@@ -415,17 +416,25 @@ public WindowManager getWindowManager() {
  * Handles a runtime exception or error which was caught in runEventLoop().
  */
 private void handleExceptionInEventLoop(Throwable e) {
-	
 	// For the status object, use the exception's message, or 
 	// the exception name if no message.
 	ILog log = Platform.getPlugin(Platform.PI_RUNTIME).getLog();
 	
 	String msg = JFaceResources.getString("Unhandled_exception"); //$NON-NLS-1$
-	log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, e));
-
+	log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
 	msg = e.getMessage() == null ? e.toString() : e.getMessage();
 	log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, e));
 
+	// special case for SWTException to handle workaround for bug 6312
+	if (e instanceof SWTException) {
+		Throwable nested = ((SWTException) e).throwable;
+		if (nested != null) {
+			msg = "*** Stack trace of contained exception ***";
+			log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
+			msg = nested.getMessage() == null ? nested.toString() : nested.getMessage();
+			log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, nested)); //$NON-NLS-1$
+		}
+	}
 	
 	// Open an error dialog, but don't reveal the internal exception name.
 	if (e.getMessage() == null) {
