@@ -104,7 +104,7 @@
 		</objectContribution>
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
-			objectClass="org.eclipse.team.ccvs.core.IRemoteFolder">
+			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder">
 			<action 
 				id="org.eclipse.team.ccvs.ui.addToWorkspace"
 				label="%AddToWorkspaceAction.label"
@@ -113,7 +113,7 @@
 		</objectContribution>
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFileContributions" 
-			objectClass="org.eclipse.team.ccvs.core.IRemoteFile">
+			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFile">
 			<action 
 				id="org.eclipse.team.ccvs.ui.openRemoteFile"
 				label="%OpenRemoteFileAction.label"
@@ -141,7 +141,7 @@
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.RemoteRootContributions"
-			objectClass="org.eclipse.team.ccvs.core.IRemoteRoot">
+			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteRoot">
 			<action
 				id="org.eclipse.team.ccvs.ui.defineTag"
 				label="%DefineTagAction.label"
