@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IStatusListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.StatusListener;
@@ -150,7 +151,11 @@ public class RemoteFolderTreeBuilder {
 	
 	private RemoteFolderTree buildTree(IProgressMonitor monitor) throws CVSException {
 		
+		// Make sure that the cvs commands are not quiet during this operations
+		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 		try {
+			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
+			
 			monitor.beginTask(null, 100);
 	
 			Policy.checkCanceled(monitor);
@@ -187,6 +192,7 @@ public class RemoteFolderTreeBuilder {
 				session.close();
 			}
 		} finally {
+			CVSProviderPlugin.getPlugin().setQuietness(quietness);
 			monitor.done();
 		}
 	}

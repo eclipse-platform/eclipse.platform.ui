@@ -7,22 +7,24 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.ccvs.core.*;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ICVSResource;
+import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.ccvs.core.ICVSRunnable;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -33,6 +35,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IStatusListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.StatusListener;
@@ -101,16 +104,22 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		};
 			
 		// Perform a "cvs status..." with a listener
-		IStatus status = Command.STATUS.execute(session,
-			Command.NO_GLOBAL_OPTIONS,
-			Command.NO_LOCAL_OPTIONS,
-			fileNames,
-			new StatusListener(listener),
-			monitor);
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			throw new CVSServerException(status);
+		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
+		try {
+			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
+			IStatus status = Command.STATUS.execute(session,
+				Command.NO_GLOBAL_OPTIONS,
+				Command.NO_LOCAL_OPTIONS,
+				fileNames,
+				new StatusListener(listener),
+				monitor);
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				throw new CVSServerException(status);
+			}
+		} finally {
+			CVSProviderPlugin.getPlugin().setQuietness(quietness);
 		}
-		
+			
 		if (count[0] != fileNames.length)
 			throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions")); //$NON-NLS-1$
 	}

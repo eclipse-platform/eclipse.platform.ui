@@ -377,7 +377,7 @@ public abstract class Command {
 	
 			/*** initiate command ***/
 			// send global and local options by first merging any command specific defaults
-			Option[] gOptions = makeAndSendOptions(session, globalOptions, getDefaultGlobalOptions(globalOptions, localOptions));
+			Option[] gOptions = makeAndSendOptions(session, globalOptions, getDefaultGlobalOptions(session, globalOptions, localOptions));
 			Option[] lOptions = makeAndSendOptions(session, localOptions, getDefaultLocalOptions(globalOptions, localOptions));
 
 			// send arguments
@@ -761,7 +761,10 @@ public abstract class Command {
 	 * @param globalOptions are the options already specified by the user.
 	 * @return the default global options that will be sent with every command.
 	 */
-	protected GlobalOption[] getDefaultGlobalOptions(GlobalOption[] globalOptions, LocalOption[] localOptions) {
+	protected GlobalOption[] getDefaultGlobalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {
+		if (session.isNoLocalChanges()) {
+			return Command.NO_GLOBAL_OPTIONS;
+		}
 		QuietOption option = CVSProviderPlugin.getPlugin().getQuietness();
 		if (option == null)
 			return Command.NO_GLOBAL_OPTIONS;
