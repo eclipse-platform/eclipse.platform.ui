@@ -64,7 +64,16 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	
 	protected boolean isProjectOpening = false;
 	
-	protected DeferredResourceChangeHandler deferredHandler = new DeferredResourceChangeHandler();
+	protected static DeferredResourceChangeHandler deferredHandler = new DeferredResourceChangeHandler();
+	
+	/**
+	 * This accessor is for use by test cases only.
+	 * 
+	 * @return Returns the deferredHandler.
+	 */
+	public static DeferredResourceChangeHandler getDeferredHandler() {
+		return deferredHandler;
+	}
 	
 	/*
 	 * When a resource changes this method will detect if the changed resources is a meta file that has changed 
@@ -77,9 +86,12 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
 			final Set changedContainers = new HashSet();
+			final Set externalDeletions = new HashSet();
+			
 			setProjectOpening(false);
 			
 			event.getDelta().accept(new IResourceDeltaVisitor() {
+
 				public boolean visit(IResourceDelta delta) throws CoreException {
 					IResource resource = delta.getResource();
 					
@@ -103,8 +115,6 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						(delta.getFlags() & INTERESTING_CHANGES) == 0) {
 							return true;
 					}
-					
-					IResource[] toBeNotified = new IResource[0];
 										
 					if(name.equals(SyncFileWriter.CVS_DIRNAME)) {
 						handleCVSDir((IContainer)resource, kind);
@@ -116,54 +126,33 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						if(isProjectOpening()) return true;
 					}
 					
-					if (EclipseSynchronizer.getInstance().isWithinActiveOperationScope(resource)) {
-						// The resource change will be handled by the EclipseSynchronizer
-						// Still visit the children of non-team-private members so that 
-						// ignore file changes will be past on to the EclipseSynchronizer
-						if (isIgnoreFile(resource)) {
-							deferredHandler.ignoreFileChanged((IFile)resource);
+					if(isMetaFile(resource)) {
+						IResource[] toBeNotified = handleChangedMetaFile(resource, kind);
+						if(toBeNotified.length>0 && isModifiedBy3rdParty(resource)) {
+							for (int i = 0; i < toBeNotified.length; i++) {
+								changedContainers.add(toBeNotified[i]);							
+							}
+							if(Policy.DEBUG_METAFILE_CHANGES) {
+								System.out.println("[cvs] metafile changed by 3rd party: " + resource.getFullPath()); //$NON-NLS-1$
+							}
+							return false; /*don't visit any children we have all the information we need*/
 						}
-						return (!resource.isTeamPrivateMember());
-					} if(isMetaFile(resource)) {
-						toBeNotified = handleChangedMetaFile(resource, kind);
 					} else if(isIgnoreFile(resource)) {
-						toBeNotified = handleChangedIgnoreFile(resource, kind);
+						deferredHandler.ignoreFileChanged((IFile)resource);
 					} else if (isExternalDeletion(resource, kind)) {
-						toBeNotified = handleExternalDeletion(resource);
+						externalDeletions.add(resource);
 					}
-										
-					if(toBeNotified.length>0 && isModifiedBy3rdParty(resource)) {
-						for (int i = 0; i < toBeNotified.length; i++) {
-							changedContainers.add(toBeNotified[i]);							
-						}
-						if(Policy.DEBUG_METAFILE_CHANGES) {
-							System.out.println("[cvs] metafile changed by 3rd party: " + resource.getFullPath()); //$NON-NLS-1$
-						}
-						return false; /*don't visit any children we have all the information we need*/
-					} else {					
-						return true;
-					}
+					return true;
 				}
 			}, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 				
-			if(!changedContainers.isEmpty()) {
-				EclipseSynchronizer.getInstance().syncFilesChanged((IContainer[])changedContainers.toArray(new IContainer[changedContainers.size()]));
+			if(!changedContainers.isEmpty() || !externalDeletions.isEmpty()) {
+				EclipseSynchronizer.getInstance().syncFilesChangedExternally(
+					(IContainer[])changedContainers.toArray(new IContainer[changedContainers.size()]),
+					(IFile[]) externalDeletions.toArray(new IFile[externalDeletions.size()]));
 			}			
 		} catch(CoreException e) {
 			CVSProviderPlugin.log(e);
-		}
-	}
-
-	/**
-	 * @param resource
-	 * @return
-	 */
-	protected IContainer[] handleExternalDeletion(IResource resource) {
-		IContainer changedContainer = resource.getParent();
-		if(changedContainer.exists()) {
-			return new IContainer[] {changedContainer};
-		} else {
-			return new IContainer[0];
 		}
 	}
 
@@ -186,7 +175,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		if (resource.getType() != IResource.FILE) return false;
 		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
 		try {
-			return (!file.isManaged() && file.getParent().isCVSFolder());
+			return (!file.isManaged() && file.getParent().isCVSFolder() && file.getParent().exists());
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 			return false;

@@ -45,6 +45,17 @@ public interface IResourceStateChangeListener extends EventListener{
 	public void resourceSyncInfoChanged(IResource[] changedResources);
 	
 	/**
+	 * Notifies this listener that the resource sync info may have been changed
+	 * by an external tool. It is not always easy to differentiate external
+	 * changes from intenal ones. Therefore, the changed resources may include
+	 * some whose sync info was changed internally. This method is called
+	 * from a POST_CHANGE delta listener so the workspace cannot be modified.
+	 * 
+	 * @param changeResources that have sync info state changes
+	 */
+	public void externalSyncInfoChange(IResource[] changedResources);
+	
+	/**
 	 * Notifies this listener that the resource's have been modified. This
 	 * doesn't necessarily mean that the resource state isModified. The listener
 	 * must check the state.

@@ -24,7 +24,7 @@ public class BatchedTestSetup extends TestSetup {
 	}
 
 	public void setUp() throws CVSException {
-		EclipseSynchronizer.getInstance().beginBatching(ResourcesPlugin.getWorkspace().getRoot());
+		EclipseSynchronizer.getInstance().beginBatching(ResourcesPlugin.getWorkspace().getRoot(), null);
 	}
 	
 	public void tearDown() throws CVSException {

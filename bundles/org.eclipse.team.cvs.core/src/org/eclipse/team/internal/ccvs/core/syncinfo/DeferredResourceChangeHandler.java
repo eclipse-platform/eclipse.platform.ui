@@ -61,7 +61,7 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 		
 		if (!hasUnprocessedEvents()
 			|| changedIgnoreFiles.size() > NOTIFICATION_BATCHING_NUMBER) {
-			EclipseSynchronizer.getInstance().syncFilesChanged(getParents(changedIgnoreFiles));
+			EclipseSynchronizer.getInstance().ignoreFilesChanged(getParents(changedIgnoreFiles));
 			changedIgnoreFiles.clear();
 		}
 	}

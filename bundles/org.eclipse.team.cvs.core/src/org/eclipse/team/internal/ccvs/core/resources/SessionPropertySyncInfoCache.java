@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -141,23 +145,29 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	/**
 	 * Purges the cache recursively for all resources beneath the container.
 	 * There must not be any pending uncommitted changes.
+	 * @return the resources whose sync info was flushed
 	 */
-	/*package*/ void purgeCache(IContainer container, boolean deep) throws CVSException {
-		if (! container.exists()) return;
+	/*package*/ IResource[] purgeCache(IContainer container, boolean deep) throws CVSException {
+		if (! container.exists()) return new IResource[0];
 		try {
+			Set flushed = new HashSet();
 			if (container.getType() != IResource.ROOT) {
 				safeSetSessionProperty(container, IGNORE_SYNC_KEY, null);
 				safeSetSessionProperty(container, FOLDER_SYNC_KEY, null);
 				safeSetSessionProperty(container, RESOURCE_SYNC_CACHED_KEY, null);
+				flushed.add(container);
 			}
 			IResource[] members = container.members();
 			for (int i = 0; i < members.length; i++) {
 				IResource resource = members[i];
 				purgeResourceSyncCache(resource);
+				flushed.add(resource);
 				if (deep && resource.getType() != IResource.FILE) {
-					purgeCache((IContainer) resource, deep);
+					IResource[] flushedChildren = purgeCache((IContainer) resource, deep);
+					flushed.addAll(Arrays.asList(flushedChildren));
 				}
 			}
+			return (IResource[]) flushed.toArray(new IResource[flushed.size()]);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}

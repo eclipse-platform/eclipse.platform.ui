@@ -32,6 +32,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -58,6 +61,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
@@ -700,6 +704,28 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			Thread.sleep(msec);
 		} catch(InterruptedException e) {
 			fail("wait-problem");
+		}
+	}
+	
+	public void waitForIgnoreHandlerCompletion() {
+		Job job = SyncFileChangeListener.getDeferredHandler().getEventHandlerJob();
+		final boolean[] done = new boolean[] { false };
+		job.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				done[0] = true;
+			}
+		});
+		int count = 0;
+		while (job.getState() != Job.NONE && ! done[0]) {
+			try {
+				Thread.sleep(100);
+				count++;
+			} catch (InterruptedException e) {
+				// ignore and keep going;
+			}
+			if (count == 5) {
+				fail("Ignore handling job does not seem to be finishing");
+			}
 		}
 	}
 }

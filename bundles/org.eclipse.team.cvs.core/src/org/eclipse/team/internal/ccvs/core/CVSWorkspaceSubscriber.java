@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
@@ -104,6 +105,32 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#externalSyncInfoChange(org.eclipse.core.resources.IResource[])
+	 */
+	public void externalSyncInfoChange(IResource[] changedResources) {
+		for (int i = 0; i < changedResources.length; i++) {
+			IResource resource = changedResources[i];
+			try {
+				// User may need to Refresh with Remote if there is remote bytes for a
+				// changed file
+				if (resource.getType() == IResource.FILE
+						&& (resource.exists() || resource.isPhantom())) {
+					if (remoteSynchronizer.getSyncBytes(resource) != null) {
+						// TODO: it would be nice to be able to start a refresh job
+						// but this needs refactoring
+						// The following is a temporary measure (see bug 43774)
+						CVSProviderPlugin.log(new CVSStatus(IStatus.WARNING, "The incoming changes of CVS Workspace subscriber in the Synchronize view may be stale. Perform a Refresh with Remote on resource " + resource.getFullPath().toString()));
+					}
+				}
+			} catch (TeamException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}		
+		
+		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources)); 
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
 	 */
 	public void resourceModified(IResource[] changedResources) {
@@ -163,8 +190,8 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 				// We need to do a scheduling rule on the project to
 				// avoid overly desctructive operations from occuring 
 				// while we gather sync info
-				Platform.getJobManager().beginRule(resource);
 				infinite.beginTask(null, 512);
+				Platform.getJobManager().beginRule(resource, Policy.subMonitorFor(infinite, 1));
 				resource.accept(new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
 						try {

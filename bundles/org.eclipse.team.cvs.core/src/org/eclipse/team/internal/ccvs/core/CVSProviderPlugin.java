@@ -479,6 +479,21 @@ public class CVSProviderPlugin extends Plugin {
 		}
 	}
 	
+	public static void broadcastExternalSyncInfoChanges(final IResource[] resources) {
+		for(Iterator it=listeners.iterator(); it.hasNext();) {
+			final IResourceStateChangeListener listener = (IResourceStateChangeListener)it.next();
+			ISafeRunnable code = new ISafeRunnable() {
+				public void run() throws Exception {
+					listener.externalSyncInfoChange(resources);
+				}
+				public void handleException(Throwable e) {
+					// don't log the exception....it is already being logged in Platform#run
+				}
+			};
+			Platform.run(code);
+		}
+	}
+	
 	public static void broadcastDecoratorEnablementChanged(final boolean enabled) {
 		for(Iterator it=decoratorEnablementListeners.iterator(); it.hasNext();) {
 			final ICVSDecoratorEnablementListener listener = (ICVSDecoratorEnablementListener)it.next();

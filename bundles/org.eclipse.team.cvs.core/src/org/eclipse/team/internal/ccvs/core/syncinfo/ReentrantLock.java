@@ -70,11 +70,11 @@ public class ReentrantLock {
 		 * acquire the rule if it is not the workspace root.
 		 * @param resource
 		 */
-		public void pushRule(IResource resource) {
+		public void pushRule(IResource resource, IProgressMonitor monitor) {
 			// The scheduling rule is either the project or the resource's parent
 			ISchedulingRule rule = getRuleForResoure(resource);
 			if (rule != NULL_SCHEDULING_RULE) {
-				Platform.getJobManager().beginRule(rule);
+				Platform.getJobManager().beginRule(rule, monitor);
 			}
 			addRule(rule);
 		}
@@ -88,14 +88,14 @@ public class ReentrantLock {
 		 * @throws CVSException
 		 */
 		public void popRule(IResource resource, IProgressMonitor monitor) throws CVSException {
-			ISchedulingRule rule = removeRule();
-			ISchedulingRule compareRule = getRuleForResoure(resource);
-			Assert.isTrue(rule.equals(compareRule), "end for resource '" + resource + "' does not match stacked rule '" + rule + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			try {
 				if (isFlushRequired()) {
 					flush(monitor);
 				}
 			} finally {
+				ISchedulingRule rule = removeRule();
+				ISchedulingRule compareRule = getRuleForResoure(resource);
+				Assert.isTrue(rule.equals(compareRule), "end for resource '" + resource + "' does not match stacked rule '" + rule + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (rule != NULL_SCHEDULING_RULE) {
 					Platform.getJobManager().endRule(rule);
 				}
@@ -153,16 +153,19 @@ public class ReentrantLock {
 			changedFolders.clear();
 		}
 		private boolean isFlushRequired() {
-			return !isNested() || !isNoneNullRules();
+			return rules.size() == 1 || remainingRulesAreNull();
 		}
-		private boolean isNoneNullRules() {
-			for (Iterator iter = rules.iterator(); iter.hasNext();) {
-				ISchedulingRule rule = (ISchedulingRule) iter.next();
+		/*
+		 * Return true if all but the last rule in the stack is null
+		 */
+		private boolean remainingRulesAreNull() {
+			for (int i = 0; i < rules.size() - 1; i++) {
+				ISchedulingRule rule = (ISchedulingRule) rules.get(i);
 				if (rule != NULL_SCHEDULING_RULE) {
-					return true;
+					return false;
 				}
 			}
-			return false;
+			return true;
 		}
 		private void handleAbortedFlush(Throwable t) {
 			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("ReentrantLock.9"), t)); //$NON-NLS-1$
@@ -192,8 +195,10 @@ public class ReentrantLock {
 	
 	private ThreadInfo getThreadInfo() {
 		Thread thisThread = Thread.currentThread();
-		ThreadInfo info = (ThreadInfo)infos.get(thisThread);
-		return info;
+		synchronized (infos) {
+			ThreadInfo info = (ThreadInfo)infos.get(thisThread);
+			return info;
+		}
 	}
 	
 	private ThreadInfo getThreadInfo(IResource resource) {
@@ -208,7 +213,7 @@ public class ReentrantLock {
 		}
 	}
 	
-	public synchronized void acquire(IResource resource, IFlushOperation operation) {
+	public void acquire(IResource resource, IFlushOperation operation, IProgressMonitor monitor) {
 		ThreadInfo info = getThreadInfo();
 		synchronized (infos) {
 			if (info == null) {
@@ -218,7 +223,7 @@ public class ReentrantLock {
 				if(DEBUG) System.out.println("[" + thisThread.getName() + "] acquired CVS lock on " + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		info.pushRule(resource);
+		info.pushRule(resource, monitor);
 	}
 	
 	/**
@@ -227,7 +232,7 @@ public class ReentrantLock {
 	 * On exit, the scheduling rule is held by the lock until after the runnable
 	 * is run.
 	 */
-	public synchronized void release(IResource resource, IProgressMonitor monitor) throws CVSException {
+	public void release(IResource resource, IProgressMonitor monitor) throws CVSException {
 		ThreadInfo info = getThreadInfo();
 		Assert.isNotNull(info, "Unmatched acquire/release."); //$NON-NLS-1$
 		Assert.isTrue(info.isNested(), "Unmatched acquire/release."); //$NON-NLS-1$

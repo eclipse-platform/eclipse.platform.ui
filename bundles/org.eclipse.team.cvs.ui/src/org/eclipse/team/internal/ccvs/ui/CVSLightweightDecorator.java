@@ -454,14 +454,21 @@ public class CVSLightweightDecorator
 		}
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
 	 */
 	public void resourceSyncInfoChanged(IResource[] changedResources) {
 		resourceStateChanged(changedResources);
 	}
 	
-	/**
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#externalSyncInfoChange(org.eclipse.core.resources.IResource[])
+	 */
+	public void externalSyncInfoChange(IResource[] changedResources) {
+		resourceStateChanged(changedResources);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceModificationStateChanged(org.eclipse.core.resources.IResource[])
 	 */
 	public void resourceModified(IResource[] changedResources) {
