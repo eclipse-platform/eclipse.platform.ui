@@ -407,7 +407,13 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		DebugUIPlugin.getStandardDisplay().syncExec(
 				new Runnable() {
 					public void run() {											
-						DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().closeEditor(editor,false);										
+						IWorkbenchWindow activeWorkbenchWindow = DebugUIPlugin.getActiveWorkbenchWindow();
+						if (activeWorkbenchWindow != null) {
+							IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+							if (activePage != null) {
+								activePage.closeEditor(editor,false);
+							}
+						}										
 					}						
 				});			
 	}
