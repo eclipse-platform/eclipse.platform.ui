@@ -19,7 +19,6 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
-import org.osgi.util.tracker.*;
 
 /**
  * 
@@ -909,14 +908,12 @@ public static class Writer {
 	 */
 	public static FragmentEntry[] getFragments(IPluginDescriptor desc) {
 		
-		ServiceTracker tracker = new ServiceTracker(UpdateCore.getPlugin().getBundleContext(), PackageAdmin.class.getName(), null);
-		tracker.open();
-		PackageAdmin pkgAdmin = (PackageAdmin)tracker.getService();
+		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
 		Bundle[] bundles = pkgAdmin.getBundles(desc.getUniqueIdentifier(), desc.getVersionIdentifier().toString(), Constants.VERSION_MATCH_QUALIFIER);
 		if (bundles == null || bundles.length == 0)
 			return noFragments;
 
-		Bundle[] fragmentBundles = bundles[0].getFragments();
+		Bundle[] fragmentBundles = pkgAdmin.getFragments(bundles[0]);
 		if (fragmentBundles == null) 
 			return noFragments;
 		

@@ -14,6 +14,7 @@ import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.api.operations.*;
 
@@ -41,7 +42,8 @@ public class BatchInstallOperation
 	 */
 	public boolean execute(IProgressMonitor monitor, IOperationListener listener) throws CoreException, InvocationTargetException {
 		int installCount = 0;
-
+		boolean success = false;
+		
 		if (operations == null || operations.length == 0)
 			return false;
 			
@@ -91,16 +93,16 @@ public class BatchInstallOperation
 				//monitor.worked(1);
 				installCount++;
 			}
-			// should we just return true ?
-			return true;
-			//return installCount == operations.length;
+			success = true;
+			return SiteManager.getLocalSite().save();
 		} catch (InstallAbortedException e) {
 			throw new InvocationTargetException(e);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
 			// saves the current configuration
-			UpdateUtils.saveLocalSite();
+			if (!success)
+				SiteManager.getLocalSite().save();
 			OperationsManager.setInProgress(false);
 			monitor.done();
 		}

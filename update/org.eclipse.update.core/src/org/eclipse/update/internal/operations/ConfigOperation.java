@@ -55,14 +55,13 @@ public class ConfigOperation
 				OperationsManager.removePendingOperation(pendingOperation);
 			} else {
 				OperationsManager.addPendingOperation(this);
-				restartNeeded = true;
 			}
 
 			markProcessed();
 			if (listener != null)
 				listener.afterExecute(this, null);
 
-			SiteManager.getLocalSite().save();
+			restartNeeded = restartNeeded && SiteManager.getLocalSite().save();
 
 			// notify the model
 			OperationsManager.fireObjectChanged(feature, null);

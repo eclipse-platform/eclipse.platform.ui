@@ -195,120 +195,16 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	}
 
 	/**
-	 * Saves the site into the config file
+	 * Saves the site into the config file.
+	 * @return true if changes were applied to the current configuration
 	 */
-	public void save() throws CoreException {
+	public boolean save() throws CoreException {
 
 		// Save the current configuration as
 		// the other are already saved
 		// and set runtim info for next startup
-		 ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
-
-//		// save the local site
-//		if ("file".equalsIgnoreCase(getLocationURL().getProtocol())) { //$NON-NLS-1$
-//			File file = null;
-//			try {
-//				URL newURL = UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
-//				file = new File(newURL.getFile());
-//				if (isTransient())
-//					file.deleteOnExit();
-//				UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(file, "UTF-8");
-//				writer.write(this);
-//			} catch (FileNotFoundException e) {
-//				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToSaveStateIn", file.getAbsolutePath()), e);
-//				//$NON-NLS-1$
-//			} catch (UnsupportedEncodingException e) {
-//				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToEncodeConfiguration", file.getAbsolutePath()), e);
-//				//$NON-NLS-1$
-//			} catch (MalformedURLException e) {
-//				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + getLocationURL().toExternalForm() + " : " + SITE_LOCAL_FILE, e);
-//				//$NON-NLS-2$ //$NON-NLS-1$
-//			}
-//		}
+		return ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
 	}
-	/*
-	 * @see IWritable#write(int, PrintWriter)
-	 */
-	public void write(int indent, PrintWriter w) {
-
-		// force the recalculation to avoid reconciliation
-		IPlatformConfiguration platformConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
-		platformConfig.refresh();
-		long changeStamp = platformConfig.getChangeStamp();
-		this.setStamp(changeStamp);
-
-		String gap = ""; //$NON-NLS-1$
-		for (int i = 0; i < indent; i++)
-			gap += " "; //$NON-NLS-1$
-		String increment = ""; //$NON-NLS-1$
-		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " "; //$NON-NLS-1$
-
-//		// SITE 
-//		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
-//		if (getLabel() != null) {
-//			w.print(gap + "label=\"" + UpdateManagerUtils.Writer.xmlSafe(getLabel()) + "\" ");
-//			//$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//		w.print(gap + "history=\"" + getMaximumHistoryCount() + "\" ");
-//		//$NON-NLS-1$ //$NON-NLS-2$
-//		w.print(gap + "stamp=\"" + changeStamp + "\" >"); //$NON-NLS-1$ //$NON-NLS-2$
-//		w.println(""); //$NON-NLS-1$
-//
-//		// CONFIGURATIONS
-//		// the last one is the current configuration
-//		InstallConfigurationModel[] configurations = getConfigurationHistoryModel();
-//		for (int index = 0; index < configurations.length; index++) {
-//			InstallConfigurationModel element = configurations[index];
-//			if (!element.isCurrent()) {
-//				writeConfig(gap + increment, w, element);
-//			}
-//		}
-//		// write current configuration last
-//		writeConfig(gap + increment, w, (InstallConfigurationModel) getCurrentConfiguration());
-//		w.println(""); //$NON-NLS-1$
-//
-//		// PRESERVED CONFIGURATIONS
-//		if (getPreservedConfigurations() != null && getPreservedConfigurations().length != 0) {
-//			// write preserved configurations
-//			w.println(gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
-//			//$NON-NLS-1$ //$NON-NLS-2$
-//
-//			InstallConfigurationModel[] preservedConfig = getPreservedConfigurationsModel();
-//			for (int index = 0; index < preservedConfig.length; index++) {
-//				InstallConfigurationModel element = preservedConfig[index];
-//				writeConfig(gap + increment + increment, w, element);
-//			}
-//			w.println(gap + increment + "</" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
-//			//$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//		// end
-//		w.println(gap + "</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		UpdateCore.warn("Saved change stamp:" + changeStamp); //$NON-NLS-1$
-	}
-
-//	/**
-//	 * @since 2.0
-//	 */
-//	private void writeConfig(String gap, PrintWriter w, InstallConfigurationModel config) {
-//		w.print(gap + "<" + SiteLocalParser.CONFIG + " "); //$NON-NLS-1$ //$NON-NLS-2$
-//
-//		// need to get parent as location points to XML file and not directory
-//		URL locationAsDirectory = UpdateManagerUtils.getParent(getLocationURL());
-//		String URLInfoString = UpdateManagerUtils.getURLAsString(locationAsDirectory, config.getURL());
-//
-//		w.print("url=\"" + UpdateManagerUtils.Writer.xmlSafe(URLInfoString) + "\" ");
-//		//$NON-NLS-1$ //$NON-NLS-2$
-//
-//		if (config.getLabel() != null) {
-//			w.print("label=\"" + UpdateManagerUtils.Writer.xmlSafe(config.getLabel()) + "\"");
-//			//$NON-NLS-1$ //$NON-NLS-2$
-//		}
-//
-//		w.println("/>"); //$NON-NLS-1$
-//	}
-
 	/**
 	 * Method createNewInstallConfiguration.
 	 * @return IInstallConfiguration

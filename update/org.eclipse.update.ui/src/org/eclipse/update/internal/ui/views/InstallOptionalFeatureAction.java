@@ -76,7 +76,7 @@ public class InstallOptionalFeatureAction extends Action {
 			UpdateUI.getString(KEY_OPTIONAL_INSTALL_TITLE));
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
-		if (wizard.isSuccessfulInstall())
+		if (wizard.isRestartNeeded())
 			UpdateUI.requestRestart();
 	}
 	

@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 
@@ -71,8 +72,9 @@ public class NewExtensionLocationAction extends Action {
 			IConfiguredSite csite = config.createLinkedConfiguredSite(dir);
 			config.addConfiguredSite(csite);
 			UpdateUtils.makeConfigurationCurrent(config, null);
-			UpdateUtils.saveLocalSite();
-			UpdateUI.requestRestart();
+			boolean restartNeeded = SiteManager.getLocalSite().save();
+			if (restartNeeded)
+				UpdateUI.requestRestart();
 			return true;
 		} catch (CoreException e) {
 			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$

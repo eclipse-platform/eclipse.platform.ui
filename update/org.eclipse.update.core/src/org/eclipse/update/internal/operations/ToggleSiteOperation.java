@@ -44,9 +44,9 @@ public class ToggleSiteOperation
 			throw new CoreException(status);
 		} else {
 			try {
-				SiteManager.getLocalSite().save();
+				boolean restartNeeded = SiteManager.getLocalSite().save();
 				OperationsManager.fireObjectChanged(site, "");
-				return true; // will restart
+				return restartNeeded; // will restart only if changes could not be applied to current config
 			} catch (CoreException e) {
 				//revert
 				site.setEnabled(oldValue);

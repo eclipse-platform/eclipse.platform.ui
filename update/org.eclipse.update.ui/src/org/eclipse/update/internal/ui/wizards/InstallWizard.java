@@ -42,6 +42,7 @@ public class InstallWizard
 	private SearchRunner searchRunner;
 	private UpdateSearchRequest searchRequest;
 	private ArrayList jobs;
+	private boolean needsRestart;
 	private static boolean isRunning;
 
 	public InstallWizard() {
@@ -63,8 +64,8 @@ public class InstallWizard
 		this.jobs = jobs;
 	}
 
-	public boolean isSuccessfulInstall() {
-		return installCount > 0; // or == selectedJobs.length
+	public boolean isRestartNeeded() {
+		return installCount > 0 && needsRestart; // or == selectedJobs.length
 	}
 
 	public boolean performCancel() {
@@ -136,7 +137,7 @@ public class InstallWizard
 							.createBatchInstallOperation(
 							operations);
 					try {
-						installOperation.execute(monitor, InstallWizard.this);
+						needsRestart = installOperation.execute(monitor, InstallWizard.this);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					} finally {

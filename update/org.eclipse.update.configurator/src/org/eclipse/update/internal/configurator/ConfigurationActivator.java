@@ -49,10 +49,20 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	
 	//Need to store that because it is not provided by the platformConfiguration
 	private long lastTimeStamp;
+	
+	// Singleton
+	public static ConfigurationActivator configurator;
 
+	public ConfigurationActivator() {
+		configurator = this;
+	}
+	
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
+		
+		loadOptions();
 		initialize();
+		
 		//Short cut, if the configuration has not changed
 		String application = configuration.getApplicationIdentifier();
 		
@@ -64,7 +74,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				return;
 			}
 		}
-		loadOptions();
+
 		Utils.debug("Starting update configurator...");
 
 		installBundles();
@@ -90,11 +100,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		try {
 			DataInputStream stream = new DataInputStream(new FileInputStream(configArea + File.separator + LAST_CONFIG_STAMP));
 			lastTimeStamp = stream.readLong();
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			lastTimeStamp = configuration.getChangeStamp() - 1;
-		} catch (IOException e) {
-			lastTimeStamp = configuration.getChangeStamp() - 1;
-		}
+		} 
 	}
 
 
@@ -112,35 +120,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		configurationFactorySR.unregister();
 	}
 
-	private void writePlatformConfigurationTimeStamp() {
-		try {
-			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + File.separator + LAST_CONFIG_STAMP));
-			stream.writeLong(configuration.getChangeStamp());
-		} catch (FileNotFoundException e) {
-			Utils.log(e.getLocalizedMessage());
-		} catch (IOException e) {
-			Utils.log(e.getLocalizedMessage());
-		}
-	}
-
-	private void releasePlatform() {
-		if (platformTracker == null)
-			return;
-		platformTracker.close();
-		platformTracker = null;
-		Utils.setLog(null);
-	}
-	
-	private IPlatform acquirePlatform() {
-		if (platformTracker == null) {
-			platformTracker = new ServiceTracker(context, IPlatform.class.getName(), null);
-			platformTracker.open();
-		}
-		IPlatform result = (IPlatform) platformTracker.getService();
-		return result;
-	}
-
-	private void installBundles() {
+	public boolean installBundles() {
 		Utils.debug("Installing bundles...");
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
 		StartLevel start = null;
@@ -168,7 +148,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			for (int i = 0; i < plugins.length; i++) {
 				String location = plugins[i].toExternalForm();
 				try {
-					location = "reference:" + location.substring(0, location.lastIndexOf('/'));
+					location = "reference:" + location.substring(0, location.lastIndexOf('/')+1);
 					if (!isInstalled(location)) {
 						if (DEBUG)
 							Utils.debug("Installing " + location);
@@ -188,12 +168,13 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
 			if (System.getProperty("eclipse.application") == null)
 				System.setProperty("eclipse.application", configuration.getApplicationIdentifier());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			// keep track of the last config processed
+			
+			// keep track of the last config successfully processed
 			writePlatformConfigurationTimeStamp();
+			return true;
+		} catch (Exception e) {
+			return false;
+		} finally {
 			releasePlatform();
 		}
 	}
@@ -322,6 +303,34 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			}
 		}
 		return false;
+	}
+	
+	private void writePlatformConfigurationTimeStamp() {
+		try {
+			lastTimeStamp = configuration.getChangeStamp();
+			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea + File.separator + LAST_CONFIG_STAMP));
+			stream.writeLong(lastTimeStamp);
+		} catch (Exception e) {
+			Utils.log(e.getLocalizedMessage());
+		}
+	}
+
+	
+	private IPlatform acquirePlatform() {
+		if (platformTracker == null) {
+			platformTracker = new ServiceTracker(context, IPlatform.class.getName(), null);
+			platformTracker.open();
+		}
+		IPlatform result = (IPlatform) platformTracker.getService();
+		return result;
+	}
+	
+	private void releasePlatform() {
+		if (platformTracker == null)
+			return;
+		platformTracker.close();
+		platformTracker = null;
+		Utils.setLog(null);
 	}
 
 	private void loadOptions() {

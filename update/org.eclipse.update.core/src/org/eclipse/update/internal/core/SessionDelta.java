@@ -130,10 +130,6 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		localSite.addConfiguration(config);
 	}
 
-	private void saveLocalSite() throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		localSite.save();
-	}
 
 	/*
 	 * return true if this feature should be configured A feature should be
@@ -282,7 +278,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		}
 
 		delete();
-		saveLocalSite();
+		SiteManager.getLocalSite().save();
 	}
 
 	/*

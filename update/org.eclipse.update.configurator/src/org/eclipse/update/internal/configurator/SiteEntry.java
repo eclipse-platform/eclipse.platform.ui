@@ -30,9 +30,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	private Map featureEntries;
 	private ArrayList pluginEntries;
 	private long changeStamp;
-	private long lastFeaturesChangeStamp;
 	private long featuresChangeStamp;
-	private long lastPluginsChangeStamp;
 	private long pluginsChangeStamp;
 	private String linkFileName;
 	private boolean enabled = true;
@@ -318,7 +316,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	private synchronized long computeFeaturesChangeStamp() {
 		if (featuresChangeStamp > 0)
 			return featuresChangeStamp;
-
+		
 		long start = 0;
 		if (ConfigurationActivator.DEBUG)
 			start = (new Date()).getTime();
@@ -334,7 +332,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		featuresChangeStamp = Math.max(dirStamp, computeStamp(features));
 		if (ConfigurationActivator.DEBUG) {
 			long end = (new Date()).getTime();
-			Utils.debug(resolvedURL.toString() + " feature stamp: " + featuresChangeStamp + ((featuresChangeStamp == lastFeaturesChangeStamp) ? " [no changes]" : " [was " + lastFeaturesChangeStamp + "]") + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			Utils.debug(resolvedURL.toString() + " feature stamp: " + featuresChangeStamp + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
 		return featuresChangeStamp;
 	}
@@ -342,7 +340,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	private synchronized long computePluginsChangeStamp() {
 		if (pluginsChangeStamp > 0)
 			return pluginsChangeStamp;
-
+		
 		long start = 0;
 		if (ConfigurationActivator.DEBUG)
 			start = (new Date()).getTime();
@@ -357,7 +355,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		pluginsChangeStamp = Math.max(dirStamp, computeStamp(plugins));
 		if (ConfigurationActivator.DEBUG) {
 			long end = (new Date()).getTime();
-			Utils.debug(resolvedURL.toString() + " plugin stamp: " + pluginsChangeStamp + ((pluginsChangeStamp == lastPluginsChangeStamp) ? " [no changes]" : " [was " + lastPluginsChangeStamp + "]") + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			Utils.debug(resolvedURL.toString() + " plugin stamp: " + pluginsChangeStamp + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
 		return pluginsChangeStamp;
 	}
@@ -407,8 +405,6 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 
 	public synchronized void refresh() {
 		// reset computed values. Will be updated on next access.
-		lastFeaturesChangeStamp = featuresChangeStamp;
-		lastPluginsChangeStamp = pluginsChangeStamp;
 		featuresChangeStamp = 0;
 		pluginsChangeStamp = 0;
 		changeStamp = 0;
@@ -416,26 +412,6 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		pluginEntries = null;
 	}
 
-//	public void setLastFeaturesChangeStamp(long stamp) {
-//		this.lastFeaturesChangeStamp = stamp;
-//	}
-//	
-//	public void setLastPluginsChangeStamp(long stamp) {
-//		this.lastPluginsChangeStamp = stamp;
-//	}
-//	
-//	public void invalidateFeaturesChangeStamp() {
-//		changeStampIsValid = false;
-//		featuresChangeStampIsValid = false;
-//		parent.invalidateFeaturesChangeStamp();
-//	}
-//	
-//	public void invalidatePluginsChangeStamp() {
-//		changeStampIsValid = false;
-//		pluginsChangeStampIsValid = false;
-//		parent.invalidatePluginsChangeStamp();
-//	}
-//	
 	public void addFeatureEntry(IFeatureEntry feature) {
 		if (featureEntries == null)
 			featureEntries = new HashMap();
@@ -444,10 +420,14 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (existing != null) {
 			VersionedIdentifier existingVersion = new VersionedIdentifier(existing.getFeatureIdentifier(), existing.getFeatureVersion());
 			VersionedIdentifier newVersion = new VersionedIdentifier(feature.getFeatureIdentifier(), feature.getFeatureVersion());
-			if (existingVersion.compareVersion(newVersion) == VersionedIdentifier.LESS_THAN)
+			if (existingVersion.compareVersion(newVersion) == VersionedIdentifier.LESS_THAN) {
 				featureEntries.put(feature.getFeatureIdentifier(), feature);
-		} else
+				pluginsChangeStamp = 0;
+			}
+		} else {
 			featureEntries.put(feature.getFeatureIdentifier(), feature);
+			pluginsChangeStamp = 0;
+		}
 	}
 	
 	public FeatureEntry[] getFeatureEntries() {
@@ -484,9 +464,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		if (getURL().toString() != null)
 			siteElement.setAttribute(CFG_URL, getURL().toString());
-//		siteElement.setAttribute(CFG_STAMP, Long.toString(site.getChangeStamp()));
-//		siteElement.setAttribute(CFG_FEATURE_STAMP, Long.toString(site.getFeaturesChangeStamp()));
-//		siteElement.setAttribute(CFG_PLUGIN_STAMP, Long.toString(site.getPluginsChangeStamp()));
+
 		siteElement.setAttribute(CFG_ENABLED, isEnabled() ? "true" : "false");
 		siteElement.setAttribute(CFG_UPDATEABLE, isUpdateable() ? "true" : "false");
 		if (isExternallyLinkedSite()) 

@@ -124,8 +124,9 @@ public interface ILocalSite extends IAdaptable {
 	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
 	 * (repeatedly) as the API evolves.
 	 * </p>
+	 * @return true if a restart is needed. This return code was added in 3.0.
 	 */
-	public void save() throws CoreException;
+	public boolean save() throws CoreException;
 
 	/**
 	 * Indicates how many configuration histories should be maintained.

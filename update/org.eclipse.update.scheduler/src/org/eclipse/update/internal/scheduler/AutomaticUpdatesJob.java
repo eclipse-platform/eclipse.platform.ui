@@ -182,7 +182,7 @@ public class AutomaticUpdatesJob
 		dialog.getShell().setText("Updates");
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
-		if (wizard.isSuccessfulInstall())
+		if (wizard.isRestartNeeded())
 			UpdateUI.requestRestart();
 	}
 }

@@ -60,12 +60,12 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 		if (listener != null)
 			listener.afterExecute(this, null);
 
-		SiteManager.getLocalSite().save();
+		boolean restartNeeded = SiteManager.getLocalSite().save();
 
 		// notify the model
 		OperationsManager.fireObjectChanged(feature, UNINSTALL);
 		
-		return true;
+		return restartNeeded;
 	}
 
 }

@@ -55,7 +55,7 @@ public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
 		dialog.getShell().setText(UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
 		dialog.getShell().setSize(600, 500);
 		dialog.open();
-		if (wizard.isSuccessfulInstall())
+		if (wizard.isRestartNeeded())
 			UpdateUI.requestRestart();
 	}
 

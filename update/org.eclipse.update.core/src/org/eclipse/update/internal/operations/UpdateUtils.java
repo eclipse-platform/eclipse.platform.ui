@@ -377,11 +377,6 @@ public class UpdateUtils {
 			collectOldFeatures(ifeature, targetSite, result);
 		}
 	}
-	
-	public static void saveLocalSite() throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		localSite.save();
-	}
 
 
 	public static IInstallConfiguration createInstallConfiguration() throws CoreException{

@@ -19,7 +19,8 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
-
+import org.osgi.service.packageadmin.*;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -61,6 +62,7 @@ public class UpdateCore extends Plugin {
 
 	// bundle data
 	private BundleContext context;
+	private ServiceTracker pkgAdminTracker;
 	
 	/**
 	 * The constructor.
@@ -357,9 +359,21 @@ public class UpdateCore extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		this.context = null;
+		if (pkgAdminTracker != null) {
+			pkgAdminTracker.close();
+			pkgAdminTracker = null;
+		}
 	}
 	
 	BundleContext getBundleContext() {
 		return context;
+	}
+	
+	PackageAdmin getPackageAdmin() {
+		if (pkgAdminTracker == null) {
+			pkgAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+			pkgAdminTracker.open();
+		}
+		return (PackageAdmin)pkgAdminTracker.getService();
 	}
 }

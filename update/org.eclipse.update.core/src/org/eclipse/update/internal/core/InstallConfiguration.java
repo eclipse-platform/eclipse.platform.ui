@@ -14,14 +14,15 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.core.VersionedIdentifier;
 
 /**
  * Manages ConfiguredSites
@@ -272,21 +273,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 	}
 
-//	/*
-//	 * write the Configuration.xml file
-//	 */
-//	private void export(File exportFile) throws CoreException {
-//		try {
-//			UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(exportFile, "UTF-8"); //$NON-NLS-1$
-//			writer.write(this);
-//		} catch (FileNotFoundException e) {
-//			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSaveConfiguration", exportFile.getAbsolutePath()), e);
-//			//$NON-NLS-1$
-//		} catch (UnsupportedEncodingException e) {
-//			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToEncodeConfiguration", exportFile.getAbsolutePath()), e);
-//			//$NON-NLS-1$
-//		}
-//	}
 
 	/*
 	 * Deletes the configuration from its URL/location
@@ -300,17 +286,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 	}
 
-	/*
+	/**
 	 * Saves the configuration into its URL/location
 	 * and changes the platform configuration.
-	 * The runtime site entries from platform.cfg are updated as required
+	 * The runtime site entries from platform.xml are updated as required
 	 * (cannot recreate these because must preserve other runtime state) [18520]
+	 * @return true if changes were applied to the current configuration.
 	 */
-	public void save(boolean isTransient) throws CoreException {
-
-		// save the install log
-		// TODO change the method name
-		saveConfigurationFile(isTransient);
+	public boolean save(boolean isTransient) throws CoreException {
+		saveConfigurationLog();
 		
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
@@ -322,6 +306,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			runtimeConfiguration.unconfigureFeatureEntry(configuredFeatureEntries[i]);
 		}
 
+		URL[] oldBundlePaths = runtimeConfiguration.getPluginPath();
+		
 		// [19958] remember sites currently configured by runtime (use
 		// temp configuration object rather than a straight list to ensure
 		// correct lookup)
@@ -369,15 +355,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			}
 		}
 
-// TODO unconfigure disabled sites
 		try {
 			runtimeConfiguration.save();
+			return applyChanges(runtimeConfiguration);
 		} catch (IOException e) {
 			CoreException exc = Utilities.newCoreException(Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e);
 			//$NON-NLS-1$
 			UpdateCore.warn("",exc);
 		}
-
+		return false;
 	}
 
 	/*
@@ -521,7 +507,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	/*
 	 *
 	 */
-	public void saveConfigurationFile(boolean isTransient) throws CoreException {
+	public void saveConfigurationLog() throws CoreException {
 		// save the configuration
 		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
 			// the location points to a file
@@ -530,11 +516,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				//log + 24642 [works for all activities]
 				UpdateCore.log(this);
 			}
-			if (isTransient)
-				file.deleteOnExit();
-			//export(file);
-			// make a backup copy of the current platform.xml
-			// TODO copy to history
 		}
 	}
 
@@ -800,5 +781,36 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return url.substring(siteURL.length());
 		else
 			return url;
+	}
+	
+	/**
+	 * @return true if changes were applied
+	 */
+	private boolean applyChanges(IPlatformConfiguration runtimeConfig) {
+		URL[] newBundlePaths = runtimeConfig.getPluginPath();
+		HashMap newMap = new HashMap();
+		for (int i=0; i<newBundlePaths.length; i++) 
+			newMap.put(newBundlePaths[i].toExternalForm(), newBundlePaths[i]);
+
+		PlatformAdmin platformAdmin = Platform.getPlatformAdmin();
+		State state = platformAdmin.getState();
+		BundleDescription[] oldBundles = state.getBundles();
+		
+		int start = "reference:".length();
+		for (int i=0; i<oldBundles.length; i++) {
+			if (oldBundles[i].getBundleId() == 0)
+				continue; // skip the system bundle)
+			String location = oldBundles[i].getLocation();
+			location = location.substring(start);
+			// If any existing bundle is removed in the new configuration, don't apply the changes.
+			if (!(newMap.get(location) != null || newMap.get(location+'/') != null)) {
+				UpdateCore.debug("Bundle " + location + " has been removed");
+				return false;
+			}
+		}
+			
+		ConfigurationActivator configurator = ConfigurationActivator.configurator;
+		configurator.installBundles();
+		return true;
 	}
 }
