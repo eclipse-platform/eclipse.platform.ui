@@ -994,6 +994,6 @@ public class ProgressManager extends ProgressProvider
 	 * @see org.eclipse.ui.progress.IProgressService#getLongOperationTime()
 	 */
 	public int getLongOperationTime() {
-		return 5000;
+		return 800;
 	}
 }
