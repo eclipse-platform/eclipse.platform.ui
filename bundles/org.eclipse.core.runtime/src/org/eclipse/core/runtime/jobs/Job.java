@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
  * Jobs have a state that indicates what they are currently doing.  When constructed,
  * jobs start with a state value of <code>NONE</code>.  When a job is scheduled
  * to be run, it moves into the <code>WAITING</code> state.  When a job starts
- * running, it moves into the <code>RUNNING</code>.  When execution finishes
+ * running, it moves into the <code>RUNNING</code> state.  When execution finishes
  * (either normally or through cancelation), the state changes back to 
  * <code>NONE</code>.  
  * 
@@ -45,9 +45,9 @@ import org.eclipse.core.runtime.IStatus;
 public abstract class Job extends InternalJob {
 	
 	/**
-	 * The job status return value that is be used to indicate asynchronous
-	 * job completion.
+	 * Job status return value that is used to indicate asynchronous job completion.
 	 * @see Job#run
+	 * @see Job#done
 	 */
 	public static final IStatus ASYNC_FINISH = new Status(IStatus.OK, Platform.PI_RUNTIME, 1, "", null);//$NON-NLS-1$
 
