@@ -58,7 +58,6 @@ public void restoreState(IMemento memento) {
 	}
 	IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryId);
 	if (factory == null) {
-		WorkbenchPlugin.log("Unable to restore mru list - cannot instantiate input factory: " + factoryId);//$NON-NLS-1$
 		return;
 	}
 	IMemento persistableMemento = memento.getChild(IWorkbenchConstants.TAG_PERSISTABLE);
