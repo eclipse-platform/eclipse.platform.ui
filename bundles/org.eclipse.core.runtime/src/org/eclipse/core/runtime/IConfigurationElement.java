@@ -48,13 +48,20 @@ public interface IConfigurationElement {
 	 * Creates and returns a new instance of the executable extension 
 	 * identified by the named attribute of this configuration element.
 	 * The named attribute value must contain a fully qualified name
-	 * of a Java class implementing the executable extension.
+	 * of a Java class. The class can either refer to a class implementing 
+     * the executable extension or to a factory capable of returning the 
+     * executable extension.
 	 * <p>
-	 * The specified class is instantiated using its 0-argument public 
-	 * constructor. If the specified class implements the
-	 * <code>IExecutableExtension</code> interface, the method
-	 * <code>setInitializationData</code> is called, passing to the object
-	 * the configuration information that was used to create it. 
+	 * The specified class is instantiated using its 0-argument public constructor.
+	 * <p>
+	 * Then the following checks are done:<br>
+     * If the specified class implements the {@link IExecutableExtension} 
+     * interface, the method {@link IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)} 
+     * is called, passing to the object the configuration information that was used to create it. 
+	 * <p>
+     * If the specified class implements {@link IExecutableExtensionFactory} 
+     * interface, the method {@link IExecutableExtensionFactory#create()} 
+     * is invoked.
 	 * </p>
 	 * <p>
 	 * Unlike other methods on this object, invoking this method may activate 
@@ -66,25 +73,9 @@ public interface IConfigurationElement {
 	 * @exception CoreException if an instance of the executable extension
 	 *   could not be created for any reason
 	 * @see IExecutableExtension#setInitializationData(IConfigurationElement, String, Object)
+     * @see IExecutableExtensionFactory
 	 */
 	public Object createExecutableExtension(String propertyName) throws CoreException;
-
-    /**
-     * Returns the class object identified by the named attribute of this configuration element.
-     * The named attribute value must contain a fully qualified name of a Java class.
-     * <p>
-     * Unlike other methods on this object, invoking this method may activate 
-     * the plug-in.
-     * </p>
-     *
-     * @param propertyName the name of the property
-     * @return the class object identified by the value of the property
-     * @exception CoreException if an instance of the executable extension
-     *   could not be created for any reason
-     *   THIS API IS EXPERIMENTAL
-     *  @since 3.1
-     */
-    public Class loadExtensionClass(String propertyName) throws CoreException;
     
 	/**
 	 * Returns the named attribute of this configuration element, or

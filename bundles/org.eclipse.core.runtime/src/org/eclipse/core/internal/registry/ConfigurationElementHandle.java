@@ -45,27 +45,13 @@ public class ConfigurationElementHandle extends Handle implements IConfiguration
 
 	public Object createExecutableExtension(String propertyName) throws CoreException {
 		try {
-			return getConfigurationElement().createExecutableExtension(propertyName, true);
+			return getConfigurationElement().createExecutableExtension(propertyName);
 		} catch (InvalidRegistryObjectException e) {
 			Status status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, ConfigurationElement.PLUGIN_ERROR, "Invalid registry object", e); //$NON-NLS-1$
 			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 			throw new CoreException(status);
 		}
 	}
-
-    public Class loadExtensionClass(String propertyName) throws CoreException {
-        try {
-            return getConfigurationElement().loadExtensionClass(propertyName);
-        } catch (InvalidRegistryObjectException e) {
-            Status status = new Status(IStatus.ERROR, Platform.PI_RUNTIME,
-                    ConfigurationElement.PLUGIN_ERROR,
-                    "Invalid registry object", e); //$NON-NLS-1$
-            InternalPlatform.getDefault().getLog(
-                    InternalPlatform.getDefault().getBundleContext()
-                            .getBundle()).log(status);
-            throw new CoreException(status);
-        }
-    }
     
 	public String getAttributeAsIs(String name) {
 		return getConfigurationElement().getAttributeAsIs(name);

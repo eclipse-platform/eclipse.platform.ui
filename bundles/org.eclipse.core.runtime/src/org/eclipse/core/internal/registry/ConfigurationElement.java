@@ -59,7 +59,7 @@ public class ConfigurationElement extends RegistryObject {
 		this.parentType = parentType;
 	}
 
-	Object createExecutableExtension(String attributeName, boolean instantiate) throws CoreException {
+	Object createExecutableExtension(String attributeName) throws CoreException {
 		String prop = null;
 		String executable;
 		String pluginName = null;
@@ -136,10 +136,10 @@ public class ConfigurationElement extends RegistryObject {
 			throw new CoreException(status);
 		}
 
-		return createExecutableExtension(pluginName, className, initData, this, attributeName, instantiate);
+		return createExecutableExtension(pluginName, className, initData, this, attributeName);
 	}
 
-	private Object createExecutableExtension(String pluginName, String className, Object initData, ConfigurationElement cfig, String propertyName, boolean instantiate) throws CoreException {
+	private Object createExecutableExtension(String pluginName, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
 		if(contributingBundle==null) {
 			throwException(NLS.bind(Messages.plugin_loadClassError, "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ 
 		}
@@ -147,12 +147,12 @@ public class ConfigurationElement extends RegistryObject {
 		if (pluginName != null && !pluginName.equals("") && !pluginName.equals(id)) { //$NON-NLS-1$
 			Bundle otherBundle = null;
 			otherBundle = InternalPlatform.getDefault().getBundle(pluginName);
-			return createExecutableExtension(otherBundle, className, initData, cfig, propertyName, instantiate);
+			return createExecutableExtension(otherBundle, className, initData, cfig, propertyName);
 		}
-		return createExecutableExtension(contributingBundle, className, initData, cfig, propertyName, instantiate);
+		return createExecutableExtension(contributingBundle, className, initData, cfig, propertyName);
 	}
 
-	private Object createExecutableExtension(Bundle bundle, String className, Object initData, ConfigurationElement cfig, String propertyName, boolean instantiate) throws CoreException {
+	private Object createExecutableExtension(Bundle bundle, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
 		if(contributingBundle==null) {
 			throwException(NLS.bind(Messages.plugin_loadClassError, "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException());  //$NON-NLS-1$ 
 		}
@@ -165,9 +165,6 @@ public class ConfigurationElement extends RegistryObject {
 		} catch (LinkageError e) {
 			throwException(NLS.bind(Messages.plugin_loadClassError, bundle.getSymbolicName(), className), e); 
 		}
-
-        if (instantiate == false)
-            return classInstance;
         
 		// create a new instance
 		Object result = null;
@@ -176,13 +173,14 @@ public class ConfigurationElement extends RegistryObject {
 		} catch (Exception e) {
 			throwException(NLS.bind(Messages.plugin_instantiateClassError, bundle.getSymbolicName(), className), e);
 		}
-
-		// check if we have extension adapter and initialize
+		
+		// Check if we have extension adapter and initialize
 		if (result instanceof IExecutableExtension) {
 			try {
 				// make the call even if the initialization string is null
 				//TODO Need to change here the access to the registry manager
-				((IExecutableExtension) result).setInitializationData(new ConfigurationElementHandle(((ExtensionRegistry)InternalPlatform.getDefault().getRegistry()).getObjectManager(),cfig.getObjectId()), propertyName, initData);
+                IConfigurationElement cfigHandle = new ConfigurationElementHandle(((ExtensionRegistry)InternalPlatform.getDefault().getRegistry()).getObjectManager(), cfig.getObjectId());
+				((IExecutableExtension) result).setInitializationData(cfigHandle, propertyName, initData);
 			} catch (CoreException ce) {
 				// user code threw exception
 				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(ce.getStatus());
@@ -192,12 +190,14 @@ public class ConfigurationElement extends RegistryObject {
 				throwException(NLS.bind(Messages.plugin_initObjectError, bundle.getSymbolicName(), className), te);
 			}
 		}
+		
+		// Deal with executable extension factories.
+        if (result instanceof IExecutableExtensionFactory) {
+            result = ((IExecutableExtensionFactory) result).create();
+        }
+
 		return result;
 	}
-
-    Class loadExtensionClass(String propertyName) throws CoreException {
-        return (Class) createExecutableExtension(propertyName, false);
-    }
     
 	private void throwException(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, exception);
