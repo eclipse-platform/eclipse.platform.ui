@@ -127,8 +127,11 @@ public class CustomBrowser implements IBrowser {
 		boolean substituted = false;
 		for (int i = 0; i < tokenList.size(); i++) {
 			String token = (String) tokenList.get(i);
-			if ("%1".equals(token) || "\"%1\"".equals(token)) {
+			if ("%1".equals(token)) {
 				tokenList.set(i, url);
+				substituted = true;
+			} else if ("\"%1\"".equals(token)) {
+				tokenList.set(i, "\"" + url + "\"");
 				substituted = true;
 			}
 		}
