@@ -6,8 +6,9 @@ package org.eclipse.ui.internal.misc;
  */
 import org.eclipse.core.runtime.*;
 import java.util.*;
-import java.net.*;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
 
 /**
  * Helper class for locating NL-variants of non-Java resources
@@ -24,26 +25,28 @@ public class PluginFileFinder {
 	 * This method will locate the correct NL variant of the
 	 * named resource in the plugin or one of its fragments.
 	 * It uses the core $nl$ prefix convention for non-Java resources.
+	 * Assumes fragment contributes <library name"$nl$/"/>.
 	 * Argument <code>name</code> is a file name relative to
 	 * the plugin directory. It may contain additional path elements.
 	 */
 	public static URL getResource(IPluginDescriptor desc, String name) {
 		URLClassLoader loader = getLoaderFor(desc);
-		String locale  = Locale.getDefault().toString();
-		String resName;
-		URL res;
-		int index;
-		while (!locale.equals("")) {
-			resName = "nl/" + locale + "/" + name;
-			res = loader.getResource(resName);
-			if (res != null)
-				return res;
-			else {
-				index = locale.lastIndexOf("_");
-				locale = locale.substring(0,index == -1 ? 0 : index);
-			}			
+		URL res = loader.getResource(name);
+		if (res != null) return res;
+		InputStream in = null;
+		try {
+			res = new URL(desc.getInstallURL(), name);
+			//Make sure it exists.
+			in = res.openConnection().getInputStream();
+			in.close();
+			return res;
+		} catch (IOException e) {
+			try {
+				if(in != null)
+					in.close();
+			} catch (IOException ex) {}
+			return null;
 		}
-		return loader.getResource(name);
 	}
 	
 	private static URLClassLoader getLoaderFor(IPluginDescriptor desc) {
@@ -51,14 +54,7 @@ public class PluginFileFinder {
 		if (loader == null) {
 			// create a special resource loader and cache it		
 			URL[] cp = ((URLClassLoader)desc.getPluginClassLoader()).getURLs();
-			URL[] newcp = new URL[cp.length+1];
-			for (int i=0; i<cp.length; i++) newcp[i+1] = cp[i];
-			try {
-				newcp[0] = Platform.resolve(desc.getInstallURL()); // always try to resolve URLs used in loaders
-			} catch(IOException e) {
-				newcp[0] = desc.getInstallURL();
-			}
-			loader = new URLClassLoader(newcp, null);
+			loader = new URLClassLoader(cp, null);
 			loaders.put(desc, loader);			
 		}
 		return loader;
