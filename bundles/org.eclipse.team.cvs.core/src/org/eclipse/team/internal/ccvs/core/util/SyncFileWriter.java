@@ -33,10 +33,12 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
@@ -101,8 +103,14 @@ public class SyncFileWriter {
 		for (int i = 0; i < entries.length; i++) {
 			String line = entries[i];
 			if(!FOLDER_TAG.equals(line) && !"".equals(line)) { //$NON-NLS-1$
-				ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
-				infos.put(info.getName(), info);			
+				try {
+					ResourceSyncInfo info = new ResourceSyncInfo(line, null, null);
+					infos.put(info.getName(), info);
+				} catch (CVSException e) {
+					// There was a problem parsing the entry line.
+					// Log the problem and skip the entry
+					CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, Policy.bind("SyncFileWriter.0", parent.getFullPath().toString()), e)); //$NON-NLS-1$
+				}			
 			}
 		}
 		
@@ -396,7 +404,7 @@ public class SyncFileWriter {
 	/**
 	 * Returns the CVS subdirectory for this folder.
 	 */
-	private static IFolder getCVSSubdirectory(IContainer folder) throws CVSException {
+	private static IFolder getCVSSubdirectory(IContainer folder) {
 		return folder.getFolder(new Path(CVS_DIRNAME));
 	}
 	
@@ -631,7 +639,7 @@ public class SyncFileWriter {
 		}
 	}
 
-	private static IFolder getBaseDirectory(IFile file) throws CVSException {
+	private static IFolder getBaseDirectory(IFile file) {
 		IContainer cvsFolder = getCVSSubdirectory(file.getParent());
 		IFolder baseFolder = cvsFolder.getFolder(new Path(BASE_DIRNAME));
 		return baseFolder;
@@ -653,7 +661,7 @@ public class SyncFileWriter {
 	 * @param resource
 	 * @return boolean
 	 */
-	public static boolean isEdited(IFile file) throws CVSException {
+	public static boolean isEdited(IFile file) {
 		IFolder baseFolder = getBaseDirectory(file);
 		IFile baseFile = baseFolder.getFile(file.getName());
 		return baseFile.exists();
