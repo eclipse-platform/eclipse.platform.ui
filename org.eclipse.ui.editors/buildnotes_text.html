@@ -90,15 +90,23 @@ plug-in org.eclipse.jface.text
 	- renamed CompositeRuler.annotationContextMenuAboutToShow to CompositeRuler.fireAnnotationContextMenuAboutToShow
 	- changed constructor of AnnotationExpandHover to accept CompositeRuler rather than IVerticalRulerInfo and IVerticalRulerListener
 
-- pkg: org.eclipse.jface.text.contentassist (more changes to come)
+- pkg: org.eclipse.jface.text.contentassist
 	- moved AbstractControlContentAssistSubjectAdapter to package org.eclipse.jface.contentassist
 	- moved ComboContentAssistSubjectAdapter to package org.eclipse.jface.contentassist
 	- moved ContentAssistant to package org.eclipse.jface.contentassist
 	- moved IContentAssistProcessorExtension to package org.eclipse.jface.contentassist
+	- renamed IContentAssistProcessorExtension to ISubjectControlContentAssistProcessor.java
 	- moved IContentAssistSubject to package org.eclipse.jface.contentassist
+	- renamed to IContentAssistSubject IContentAssistSubjectControl
 	- moved IContextInformationPresenterExtension to package org.eclipse.jface.contentassist
+	- renamed IContextInformationPresenterExtension to ISubjectControlContextInformationPresenter
 	- moved IContextInformationValidatorExtension to package org.eclipse.jface.contentassist
+	- renamed IContextInformationValidatorExtension to ISubjectControlContextInformationValidator
 	- moved TextContentAssistSubjectAdapter to package org.eclipse.jface.contentassist
+	- added ISubjectControlContentAssistant to package org.eclipse.jface.contentassist
+	- moved IContentAssistantExtension.install(IContentAssistSubjectControl) to ISubjectControlContentAssistant
+	- added SubjectControlContentAssistant to package org.eclipse.jface.contentassist
+	- added SubjectControlContextInformationValidator to package org.eclipse.jface.contentassist
 
 -----------------------------------------------
 
