@@ -318,7 +318,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		int i= 0;
 		for (Iterator iter = refIds.iterator(); iter.hasNext(); i++) {
 			String refId = (String) iter.next();
-			if (refId.toLowerCase().startsWith(prefix)) {
+			if (prefix.length() == 0 || refId.toLowerCase().startsWith(prefix)) {
 				ICompletionProposal proposal = new AntCompletionProposal(refId, cursorPosition - prefix.length(), prefix.length(), refId.length(), null, refId, null, AntCompletionProposal.TASK_PROPOSAL);
 				proposals.add(proposal);
 			}
@@ -392,7 +392,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         	Iterator keys = element.getAttributes().keySet().iterator();
         	while (keys.hasNext()) {
         		String attrName = (String) keys.next();
-        		if (attrName.toLowerCase().startsWith(prefix)) {
+        		if (prefix.length() == 0 || attrName.toLowerCase().startsWith(prefix)) {
         			IAttribute dtdAttributes = (IAttribute) element.getAttributes().get(attrName);
 					String replacementString = attrName+"=\"\""; //$NON-NLS-1$
 					String displayString = attrName;
@@ -460,10 +460,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @param anAttributeName the name of the attribute for that the value
      * shall be completed
      * 
-     * @param aPrefix prefix, that all proposals should start with. The prefix
+     * @param prefix the prefix that all proposals should start with. The prefix
      * may be an empty string.
      */
-    private ICompletionProposal[] getAttributeValueProposals(String aTaskName, String anAttributeName, String aPrefix) {
+    private ICompletionProposal[] getAttributeValueProposals(String aTaskName, String anAttributeName, String prefix) {
         List proposals = new ArrayList();
         IElement taskElement = dtd.getElement(aTaskName);
         if (taskElement != null) {
@@ -474,8 +474,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 					String item;
                     for (int i = 0; i < items.length; i++) {
                         item= items[i];
-                        if(item.toLowerCase().startsWith(aPrefix)) {
-                            ICompletionProposal proposal = new AntCompletionProposal(item, cursorPosition - aPrefix.length(), aPrefix.length(), item.length(), null, item, null, AntCompletionProposal.TASK_PROPOSAL);
+                        if(prefix.length() ==0 || item.toLowerCase().startsWith(prefix)) {
+                            ICompletionProposal proposal = new AntCompletionProposal(item, cursorPosition - prefix.length(), prefix.length(), item.length(), null, item, null, AntCompletionProposal.TASK_PROPOSAL);
                             proposals.add(proposal);
                         }
                     }
@@ -492,7 +492,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * Note that the completion mode must be property mode, otherwise it is not
      * safe to call this method.
      */
-    protected ICompletionProposal[] getPropertyProposals(IDocument document, String aPrefix, int aCursorPosition) {
+    protected ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int aCursorPosition) {
         List proposals = new ArrayList();
         Map displayStringToProposals= new HashMap();
         Map properties = findPropertiesFromDocument(document);
@@ -500,22 +500,22 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 		// Determine replacement length and offset
 	    // String from beginning to the beginning of the prefix
-	   int replacementLength = aPrefix.length();
+	   int replacementLength = prefix.length();
 	   int replacementOffset = 0;
 	   String text= document.get();
-	   String stringToPrefix = text.substring(0, aCursorPosition - aPrefix.length());
+	   String stringToPrefix = text.substring(0, aCursorPosition - prefix.length());
 	   // Property proposal
 	   String lastTwoCharacters = stringToPrefix.substring(stringToPrefix.length()-2, stringToPrefix.length());
 	   boolean appendBraces= true;
 	   if(lastTwoCharacters.equals("${")) { //$NON-NLS-1$
 		   replacementLength += 2;
-		   replacementOffset = aCursorPosition - aPrefix.length() - 2;
+		   replacementOffset = aCursorPosition - prefix.length() - 2;
 	   } else if(lastTwoCharacters.endsWith("$")) { //$NON-NLS-1$
 		   replacementLength += 1;
-		   replacementOffset = aCursorPosition - aPrefix.length() - 1;                
+		   replacementOffset = aCursorPosition - prefix.length() - 1;                
 	   } else {
 			//support for property proposals for the if/unless attributes of targets
-	   		replacementOffset= aCursorPosition - aPrefix.length();
+	   		replacementOffset= aCursorPosition - prefix.length();
 	   		appendBraces= false;
 	   }
 	   
@@ -524,7 +524,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	   }
         for(Iterator i=properties.keySet().iterator(); i.hasNext(); ) {
             propertyName= (String)i.next();
-            if(propertyName.toLowerCase().startsWith(aPrefix)) {
+            if(prefix.length() == 0 || propertyName.toLowerCase().startsWith(prefix)) {
                 String additionalPropertyInfo = (String)properties.get(propertyName);
                 
                 StringBuffer replacementString = new StringBuffer();
@@ -560,17 +560,17 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @param document the entire document 
      * @param parentName name of the parent(surrounding) element or 
      * <code>null</code> if completion should be done for the root element.
-     * @param aPrefix prefix, that all proposals should start with. The prefix
+     * @param prefix the prefix that all proposals should start with. The prefix
      * may be an empty string.
      */
-    protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String aPrefix) {
+    protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String prefix) {
         List proposals = new ArrayList(250);
         if (parentName == null) {
             String rootElementName= "project"; //$NON-NLS-1$
 			IElement rootElement = dtd.getElement(rootElementName);
-			if(rootElement != null && rootElementName.toLowerCase().startsWith(aPrefix)) {
+			if(rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
 				additionalProposalOffset= 0;
-				ICompletionProposal proposal = newCompletionProposal(document, aPrefix, rootElementName);
+				ICompletionProposal proposal = newCompletionProposal(document, prefix, rootElementName);
 				proposals.add(proposal);
 			}
         } //else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
@@ -597,8 +597,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				for (int i = 0; i < accepts.length; i++) {
 					additionalProposalOffset= 0;
 					elementName = accepts[i];
-					if(elementName.toLowerCase().startsWith(aPrefix)) {
-						proposal = newCompletionProposal(document, aPrefix, elementName);
+					if(prefix.length() == 0 || elementName.toLowerCase().startsWith(prefix)) {
+						proposal = newCompletionProposal(document, prefix, elementName);
 						proposals.add(proposal);
 					}
 				}
@@ -643,7 +643,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     private ICompletionProposal[] getClosingTaskProposals(String openElementName, String prefix) {
 		ICompletionProposal[] proposals= null;
         if(openElementName != null) {
-            if(openElementName.toLowerCase().startsWith(prefix)) {
+            if(prefix.length() == 0 || openElementName.toLowerCase().startsWith(prefix)) {
                 String replaceString = openElementName;
                 proposals= new ICompletionProposal[1];
                 proposals[0]= new AntCompletionProposal(replaceString + '>', cursorPosition - prefix.length(), prefix.length(), replaceString.length()+1, null, replaceString, null, AntCompletionProposal.TASK_PROPOSAL);
@@ -973,7 +973,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     		return ""; //$NON-NLS-1$
     	} else if (node instanceof AntTaskNode) {
     		String name= node.getName();
-    		if (offset <= node.getOffset() + name.length()) {
+    		if (offset <= node.getOffset() + name.length() - 1) {
     			//not really the enclosing node as the offset is within the name of the node
     			node= node.getParentNode();
     		} else {
@@ -1000,20 +1000,19 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		/*
 		 * What is implemented here:
 		 * - Retrieve the project from the Ant model
-		 * - Determine the enclosing parent task element
-		 * - Determine the dependency Vector for the parent task element
+		 * - Determine the enclosing target
+		 * - Determine the dependency Vector for the target
 		 * - Work through the dependency Vector and execute the
 		 *   Property relevant tasks.
 		 */
 
     	Project project= antModel.getProjectNode().getProject();
-    	Map properties = project.getProperties();
         
         // Determine the parent
     	String targetName = getEnclosingTargetName(document, lineNumber, columnNumber);
          
         if(targetName == null) {
-        	return properties;
+        	return project.getProperties();
         }
         List sortedTargets = null;
         try {
@@ -1093,8 +1092,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             }
         } while (!curtarget.getName().equals(targetName));
 
-        
-        // Need to reget it since tempTable hasn't been updated with Ant 1.5
         return project.getProperties();
     }
     
