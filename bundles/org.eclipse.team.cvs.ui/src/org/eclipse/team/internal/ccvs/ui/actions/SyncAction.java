@@ -12,6 +12,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
+import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.ui.PartInitException;
 
@@ -31,8 +32,7 @@ public class SyncAction extends CVSAction {
 			} catch (PartInitException e) {
 				CVSUIPlugin.log(e.getStatus());
 			}
-			// What happens when resources from the same project are selected?
-			view.showSync(new CVSSyncCompareInput(resources));
+			view.showSync(getCompareInput(resources));
 		}
 	}
 	protected boolean isEnabled() throws TeamException {
@@ -45,9 +45,12 @@ public class SyncAction extends CVSAction {
 			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 			if (!cvsResource.isManaged()) {
 				// The resource is not managed. See if its parent is managed.
-				if (!cvsResource.getParent().isManaged()) return false;
+				if (!cvsResource.getParent().isCVSFolder()) return false;
 			}
 		}
 		return true;
+	}
+	protected SyncCompareInput getCompareInput(IResource[] resources) {
+		return new CVSSyncCompareInput(resources);
 	}
 }
