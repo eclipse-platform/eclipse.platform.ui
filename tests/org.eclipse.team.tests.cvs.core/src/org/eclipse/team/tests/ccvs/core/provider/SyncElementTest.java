@@ -22,7 +22,7 @@ import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -50,7 +50,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testIncomingChanges"));
+		//return new CVSTestSetup(new SyncElementTest("testGetBase"));
 	}
 	
 	/*
@@ -674,5 +674,24 @@ public class SyncElementTest extends EclipseTest {
 				IRemoteSyncElement.IN_SYNC,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE },
 			IRemoteSyncElement.GRANULARITY_CONTENTS);
+	 }
+	 
+	 public void testGetBase() throws TeamException, CoreException, IOException {
+		// Create a test project (which commits it as well)
+		IProject project = createProject("testIncomingChanges", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		
+		// Checkout and modify a copy
+		IProject copy = checkoutCopy(project, "-copy");
+		
+		// Make some modifications
+		IFile file = project.getFile("folder1/a.txt");
+		file.setContents(getRandomContents(), false, false, null);
+		addResources(project, new String[] { "folder1/add.txt" }, false);
+		deleteResources(project, new String[] {"folder1/b.txt"}, false);
+		
+		// Get the sync tree for the project
+		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertEquals("Base is incorrect", (ICVSResource)tree.getBase(), Client.getManagedResource(copy), false, false);
+
 	 }
 }
