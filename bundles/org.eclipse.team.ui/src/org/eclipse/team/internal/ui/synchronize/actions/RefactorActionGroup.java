@@ -53,7 +53,7 @@ public class RefactorActionGroup extends ActionGroup {
 
 	public void fillContextMenu(IMenuManager parentMenu, String groupId) {
 		IStructuredSelection selection = getSelection();
-
+		if (selection == null) return;
 		boolean anyResourceSelected =
 			!selection.isEmpty()
 				&& allResourcesAreOfType(
