@@ -156,7 +156,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
 	 */
 	protected Widget doFindInputItem(Object element) {
 		if (equals(element, getRoot()))
@@ -165,7 +166,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
 		TableItem[] children = table.getItems();
@@ -180,7 +182,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget, java.lang.Object, boolean)
 	 */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		if (widget instanceof TableItem) {
@@ -341,7 +344,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on Viewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#getControl()
 	 */
 	public Control getControl() {
 		return table;
@@ -383,7 +387,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	protected List getSelectionFromWidget() {
 		Widget[] items = table.getSelection();
@@ -407,7 +412,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ContentViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
 	protected void hookControl(Control control) {
 		super.hookControl(control);
@@ -497,7 +503,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on Viewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
 	protected void inputChanged(Object input, Object oldInput) {
 		getControl().setRedraw(false);
@@ -537,14 +544,16 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
 	 */
 	protected void internalRefresh(Object element) {
 		internalRefresh(element, true);
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object, boolean)
 	 */
 	protected void internalRefresh(Object element, boolean updateLabels) {
 		tableViewerImpl.applyEditorValue();
@@ -706,7 +715,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * Non-Javadoc. Method defined on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
 	 */
 	public void reveal(Object element) {
 		Assert.isNotNull(element);
@@ -763,7 +773,8 @@ public class TableViewer extends StructuredViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StructuredViewer.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List, boolean)
 	 */
 	protected void setSelectionToWidget(List list, boolean reveal) {
 		if (list == null) {
