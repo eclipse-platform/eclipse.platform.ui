@@ -611,7 +611,7 @@ public class ResourceNavigator
 			new NavigatorDragAdapter((ISelectionProvider) viewer));
 		NavigatorDropAdapter adapter = new NavigatorDropAdapter(viewer);
 		adapter.setFeedbackEnabled(false);
-		viewer.addDropSupport(ops, transfers, adapter);
+		viewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, adapter);
 	}
 
 	/**
