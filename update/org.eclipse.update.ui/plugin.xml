@@ -2,15 +2,16 @@
 <!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.update.ui"
-   name="Install/Update UI"
+   name="%name"
    version="2.0.0"
-   provider-name="Object Technology International"
-   class="org.eclipse.update.ui.UpdateUIPlugin">
+   provider-name="%provider-name"
+   class="org.eclipse.update.ui.internal.UpdateUIPlugin">
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
-   <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.eclipse.ui"/>
    <import plugin="org.eclipse.update.core"/>
+   <import plugin="org.eclipse.update.ui.forms"/>
+   <import plugin="org.eclipse.core.resources"/>
 </requires>
 
 <runtime>
@@ -18,4 +19,35 @@
       <export name="*"/>
    </library>
 </runtime>
+
+<extension
+      point="org.eclipse.ui.editors">
+   <editor
+         name="%editors.updateManager.name"
+         icon="icons/basic/obj16/comp_mf_obj.gif"
+         class="org.eclipse.update.ui.internal.manager.UpdateManager"
+         id="org.eclipse.update.ui.updateManager">
+   </editor>
+</extension>
+<extension
+      point="org.eclipse.ui.actionSets">
+   <actionSet
+         label="%actionSets.softwareUpdates.label"
+         visible="true"
+         id="org.eclipse.update.ui.softwareUpdates">
+      <action
+            label="%actionSets.updateManager.label"
+            class="org.eclipse.update.ui.internal.manager.UpdateManagerAction"
+            menubarPath="help/helpEnd"
+            id="org.eclipse.update.ui.updateManager">
+      </action>
+   </actionSet>
+</extension>
+<extension
+      point="org.eclipse.ui.elementFactories">
+   <factory
+         class="org.eclipse.update.ui.internal.manager.UpdateManagerInputFactory"
+         id="org.eclipse.update.ui.internal.manager.UpdateManagerInputFactory">
+   </factory>
+</extension>
 </plugin>
