@@ -231,6 +231,9 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public final boolean isTerminated() {
+		if (getProcesses0().isEmpty() && getDebugTargets0().isEmpty()) {
+			return false;
+		}
 
 		Iterator processes = getProcesses0().iterator();
 		while (processes.hasNext()) {

@@ -416,15 +416,17 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Creates and returns a new process representing the given
 	 * <code>java.lang.Process</code>. A streams proxy is created
-	 * for the I/O streams in the system process.
+	 * for the I/O streams in the system process. The process
+	 * is added to the given launch.
 	 *
+	 * @param launch the launch the process is conatined in
 	 * @param process the system process to wrap
 	 * @param label the label assigned to the process
 	 * @return the process
 	 * @see IProcess
 	 */
-	public static IProcess newProcess(Process process, String label) {
-		return new RuntimeProcess(process, label);
+	public static IProcess newProcess(ILaunch launch, Process process, String label) {
+		return new RuntimeProcess(launch, process, label);
 	}
 	
 	/**

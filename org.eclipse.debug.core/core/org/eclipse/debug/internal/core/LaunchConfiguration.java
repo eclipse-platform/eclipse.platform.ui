@@ -35,6 +35,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.w3c.dom.Document;
@@ -133,10 +134,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * @see ILaunchConfiguration#launch(String, IProgressMonitor)
 	 */
-	public ILaunch launch(String mode, IProgressMonitor montior) throws CoreException {
-		ILaunch launch = getDelegate().launch(this, mode, montior);
-		if (launch != null) {
-			getLaunchManager().addLaunch(launch);
+	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
+		ILaunch launch = new Launch(this, mode, null, null, null);
+		getLaunchManager().addLaunch(launch);
+		getDelegate().launch(this, mode, launch, monitor);
+		if (monitor != null && monitor.isCanceled()) {
+			getLaunchManager().removeLaunch(launch);
+		} else {
 			initializeSourceLocator(launch);
 		}
 		return launch;

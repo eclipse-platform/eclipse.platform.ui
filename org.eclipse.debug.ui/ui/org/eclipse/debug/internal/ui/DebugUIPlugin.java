@@ -620,7 +620,21 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
-	public void launchChanged(ILaunch launch) {	
+	public void launchChanged(final ILaunch launch) {	
+		getStandardDisplay().syncExec(new Runnable () {
+			public void run() {
+				IProcess[] processes= launch.getProcesses();
+				if (processes != null) {
+					for (int i= 0; i < processes.length; i++) {
+						if (getConsoleDocument(processes[i]) == null) {
+							ConsoleDocument doc= new ConsoleDocument(processes[i]);
+							doc.startReading();
+							setConsoleDocument(processes[i], doc);
+						}
+					}
+				}
+			}
+		});		
 	}
 
 	/**

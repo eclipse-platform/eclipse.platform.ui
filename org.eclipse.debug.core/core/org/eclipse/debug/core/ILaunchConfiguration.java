@@ -80,25 +80,27 @@ public interface ILaunchConfiguration extends IAdaptable {
 	/**
 	 * Launches this configuration in the specified mode by delegating to
 	 * this configuration's launch configuration delegate, and returns the
-	 * resulting launch object that describes the launched configuration.
-	 * An appropriate source locator is created and associated with the
-	 * resulting launch based on the values of <code>ATTR_SOURCE_LOCAOTOR_ID</code>
-	 * and <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>. If the launch returned
-	 * from by the delegate already specifies a source locator, that
-	 * source locator is used.
-	 * The resulting launch object is registered with the launch manager.
-	 * Returns <code>null</code> if the launch is not completed.
+	 * resulting launch.
+	 * A new launch object is created and registered with the launch manager
+	 * before passing it to this configuration's delegate for contributions
+	 * (debug targets and processes).
+	 * If the delegate contributes a source locator to the launch, that
+	 * source locator is used. Otherwise an appropriate source locator is
+	 * contributed to the launch  based on the values of
+	 * <code>ATTR_SOURCE_LOCAOTOR_ID</code> and <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>.
+	 * If the launch is cancelled (via the given progress monitor), the
+	 * launch is removed from the launch manager. The launch is returned
+	 * whether cancelled or not.
 	 * Invoking this method causes the underlying launch configuration delegate
 	 * to be instantiated (if not already).
 	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this interface - <code>RUN</code> or <code>DEBUG</code>.
 	 * @param monitor progress monitor, or <code>null</code>
-	 * @return the resulting launch object, or <code>null</code> if the
-	 *  launch is not completed.
+	 * @return the resulting launch.
 	 * @exception CoreException if this method fails. Reasons include:<ul>
 	 * <li>unable to instantiate the underlying launch configuration delegate</li>
-	 * <li>the launch fails</code>
+	 * <li>the launch fails (in the delegate)</code>
 	 * </ul>
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException;

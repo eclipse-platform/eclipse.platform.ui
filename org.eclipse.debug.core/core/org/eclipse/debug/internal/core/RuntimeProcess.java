@@ -35,6 +35,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	private static final int TIME_TO_WAIT_FOR_THREAD_DEATH = 500; // ms
 	
 	/**
+	 * The launch this process is conatined in
+	 */
+	private ILaunch fLaunch;
+	
+	/**
 	 * The system process
 	 */
 	private Process fProcess;
@@ -67,9 +72,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 
 	/**
 	 * Constructs a RuntimeProcess on the given system process
-	 * with the given name.
+	 * with the given name, adding this process to the given
+	 * launch.
 	 */
-	public RuntimeProcess(Process process, String name) {
+	public RuntimeProcess(ILaunch launch, Process process, String name) {
+		setLaunch(launch);
 		fProcess= process;
 		fName= name;
 		fTerminated= true;
@@ -80,6 +87,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		}
 		fStreamsProxy = new StreamsProxy(this);
 		fMonitor = new ProcessMonitor(this);
+		launch.addProcess(this);
 		fireCreationEvent();
 	}
 
@@ -120,12 +128,21 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	public String getLabel() {
 		return fName;
 	}
+	
+	/**
+	 * Sets the launch this process is conatined in
+	 * 
+	 * @param launch the launch this process is contained in
+	 */
+	private void setLaunch(ILaunch launch) {
+		fLaunch = launch;
+	}
 
 	/**
 	 * @see IProcess#getLaunch()
 	 */
 	public ILaunch getLaunch() {
-		return DebugPlugin.getDefault().getLaunchManager().findLaunch(this);
+		return fLaunch;
 	}
 
 	/**

@@ -26,28 +26,19 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 public interface ILaunchConfigurationDelegate {
 	
 	/**
-	 * Launches the given configuration in the specified mode, and
-	 * returns the resulting launch object that describes the launched
-	 * configuration. The resulting launch object is registered with the
-	 * launch manager. Returns <code>null</code> if the launch is not
-	 * completed.
-	 * <p>
-	 * [Issue: this API is being changed. A launch object will be created
-	 *  and registered before this method is called, and will be passed
-	 *  as a parameter to this method. This delegate will add targets and
-	 *  processes to the launch as required. This method will not return
-	 *  a value (i.e. will be 'void').]
-	 * </p>
+	 * Launches the given configuration in the specified mode, contributing
+	 * debug targets and/or processes to the given launch object. The
+	 * launch object has already been registered with the launch manager.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this <code>ILaunchConfiguration</code> -
 	 *  <code>RUN</code> or <code>DEBUG</code>.
 	 * @param monitor progress monitor, or <code>null</code>
-	 * @return the resulting launch object, or <code>null</code> if the
-	 *  launch is not completed.
+	 * @param launch the launch object to contribute processes and debug
+	 *  targets to
 	 * @exception CoreException if launching fails 
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
+	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException;
 	
 }
