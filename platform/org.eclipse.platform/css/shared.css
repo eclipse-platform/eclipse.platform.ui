@@ -1,0 +1,37 @@
+html, body, div, h1, p, a { margin : 0px; padding : 0px; }
+
+body {
+	overflow : auto;
+	background-repeat : no-repeat;
+	background-position : bottom right;
+}
+
+div { overflow : visible; }
+.page-content { overflow : visible; }
+
+h1 {
+	font-size : 13pt;
+	color : #42454A;
+}
+
+h2 {
+	font-size : 14pt;
+	font-weight : normal;
+	color : #7B8694;
+}
+
+a {
+	text-decoration : none;
+	color : #4D4D4D;
+	font-weight : bold;
+ 
+}
+
+a img {
+	border-width : 0;
+	background-repeat : no-repeat;
+}
+
+#presentation-header { background-color : #BCCEE4; }
+h1 #presentation-title {  }
+

@@ -15,7 +15,7 @@
    </requires>
 
 
-<!--
+<!-- -->
    <extension
          point="org.eclipse.ui.intro">
       <intro
@@ -27,7 +27,7 @@
       		productId="org.eclipse.platform"
       		introId="org.eclipse.platform.intro"/>
    </extension>
--->
+<!-- -->
    <extension
          id="intro"
          point="org.eclipse.ui.intro.config">
@@ -37,13 +37,18 @@
          <presentation
                home-page-id="root"
                title="%intro.title">
+        	<implementation 
+        		os="win32" 
+        		style="css/shared.css"
+               	class="org.eclipse.ui.intro.internal.presentations.BrowserIntroPartImplementation">
+         	</implementation>
             <implementation
                   style="css/shared_swt.properties"
-                  os="win32"
                   class="org.eclipse.ui.intro.internal.presentations.FormIntroPartImplementation">
             </implementation>
          </presentation>
          <page
+               style="css/root.css"
                alt-style="css/root_swt.properties"
                id="root">
             <link
@@ -89,7 +94,7 @@
          </page>
          <page
                alt-style="css/overview/swt.properties"
-               style=""
+               style="css/overview/overview.css"
                title="%overview.title"
                id="overview">
             <text>
@@ -113,6 +118,7 @@
             </link>
          </page>
          <page
+               style="css/tutorials/tutorials.css"
                alt-style="css/tutorials/swt.properties"
                title="%tutorials.title"
                id="tutorials">
@@ -121,6 +127,7 @@
             </text>
          </page>
          <page
+               style="css/samples/samples.css"
                alt-style="css/samples/swt.properties"
                title="%samples.title"
                id="samples">
@@ -183,6 +190,7 @@
             </div>
          </page>
          <page
+               style="css/whatsnew/whatsnew.css"
                alt-style="css/whatsnew/swt.properties"
                title="%news.title"
                id="news">
