@@ -54,8 +54,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		}
 	};
 
-	private boolean useDefaults = true;
-
 	// initial value stores
 	private String initialProjectFieldValue;
 
@@ -326,13 +324,18 @@ public class WizardExternalProjectImportPage extends WizardPage {
 					"WizardExternalProjectImportPage.locationError")); //$NON-NLS-1$
 			return false;
 		}
-		if (!useDefaults
-			&& Platform.getLocation().isPrefixOf(new Path(locationFieldContents))) {
-			setErrorMessage(
-				DataTransferMessages.getString(
-					"WizardExternalProjectImportPage.defaultLocationError")); //$NON-NLS-1$
-			return false;
+		if (isPrefixOfRoot(getLocationPath())) {			
+			
+			//If the name does not match the last segment stop it
+			if(!checkDefaultProjectValue(locationFieldContents)){
+				setErrorMessage(
+					DataTransferMessages.getString(
+						"WizardExternalProjectImportPage.defaultLocationError")); //$NON-NLS-1$
+				return false;
+			}
 		}
+		else // Outside of the prefix so this is enabled
+			locationPathField.setEditable(true);
 
 		if (getProjectHandle().exists()) {
 			setErrorMessage(
@@ -352,6 +355,30 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		setErrorMessage(null);
 		setMessage(null);
 		return true;
+	}
+	
+	/**
+	 * Check that the name of the project equals the last segment
+	 * of the location path - i.e. it is the default value.
+	 * If it is disable the name field and return true.
+	 * If not return false
+	 */
+	private boolean checkDefaultProjectValue(String locationFieldContents){
+		IPath locationPath = new Path(locationFieldContents);
+		if(locationPath.lastSegment().equals(getProjectNameFieldValue())){
+			projectNameField.setEditable(false);
+			return true;
+		}
+		projectNameField.setEditable(true);
+		return false;
+	}
+			
+	/**
+	 * Return whether or not the specifed location is a prefix
+	 * of the root.
+	 */
+	private boolean isPrefixOfRoot(IPath locationPath) {
+		return Platform.getLocation().isPrefixOf(locationPath);
 	}
 
 	/**
@@ -407,7 +434,12 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		// get a project descriptor
 		final IProjectDescription description =
 			workspace.newProjectDescription(projectName);
-		description.setLocation(getLocationPath());
+		IPath locationPath = getLocationPath();
+		//If it is under the root use the default location
+		if(isPrefixOfRoot(locationPath))
+			description.setLocation(null);
+		else
+			description.setLocation(locationPath);
 
 		// create the new project operation
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
