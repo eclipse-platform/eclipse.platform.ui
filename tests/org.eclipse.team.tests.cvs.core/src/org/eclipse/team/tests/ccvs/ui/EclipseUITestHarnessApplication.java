@@ -16,12 +16,14 @@ import java.util.List;
 import java.util.Properties;
 
 import junit.framework.Test;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.EclipseTestHarnessApplication;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.Workbench;
 
@@ -96,7 +98,7 @@ public class EclipseUITestHarnessApplication extends EclipseTestHarnessApplicati
 		final Exception[] exception = new Exception[1];
 		Workbench workbench = new Workbench() {
 			/*** this code should be kept in sync with Workbench.runEventLoop() ***/
-			protected void runEventLoop() {
+			protected void runEventLoop(Window.IExceptionHandler handler) {
 				// Dispatch all events.
 				Display display = Display.getCurrent();
 				while (true) {
