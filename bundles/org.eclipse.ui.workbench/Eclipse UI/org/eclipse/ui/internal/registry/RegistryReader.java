@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.Sorter;
 
 /**
  *	Template implementation of a registry reader that creates objects
@@ -33,6 +35,15 @@ import org.eclipse.ui.internal.misc.Sorter;
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
 	protected static Hashtable extensionPoints = new Hashtable();
+
+	private static final Comparator comparer = new Comparator() {
+		public int compare(Object arg0, Object arg1) {
+			String s1 = ((IExtension)arg0).getDeclaringPluginDescriptor().getUniqueIdentifier();
+			String s2 = ((IExtension)arg1).getDeclaringPluginDescriptor().getUniqueIdentifier();
+			return s2.compareToIgnoreCase(s1);
+		}
+	}; 
+
 /**
  * The constructor.
  */
@@ -93,18 +104,9 @@ protected IExtension[] orderExtensions(IExtension[] extensions) {
 	// in ascending order. The order for a plugin providing
 	// more than one extension for an extension point is
 	// dependent in the order listed in the XML file.
-	Sorter sorter = new Sorter() {
-		public boolean compare(Object extension1, Object extension2) {
-			String s1 = ((IExtension)extension1).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			String s2 = ((IExtension)extension2).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			//Return true if elementTwo is 'greater than' elementOne
-			return s2.compareToIgnoreCase(s1) > 0;
-		}
-	};
-
-	Object[] sorted = sorter.sort(extensions);
-	IExtension[] sortedExtension = new IExtension[sorted.length];
-	System.arraycopy(sorted, 0, sortedExtension, 0, sorted.length);
+	IExtension[] sortedExtension = new IExtension[extensions.length];
+	System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
+	Collections.sort(Arrays.asList(sortedExtension), comparer);
 	return sortedExtension;
 }
 /**
