@@ -25,7 +25,8 @@ public class ConsoleTypePropertyTester extends PropertyTester {
      */
     public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
         IOConsole console = (IOConsole) receiver;
-        return console.getType().equals(expectedValue);
+        String type = console.getType();
+        return type != null ? type.equals(expectedValue) : false;
     }
 
 }
