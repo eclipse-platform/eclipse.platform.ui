@@ -168,5 +168,20 @@ public interface ICVSUIConstants {
 	public final int OPTION_AUTOMATIC = 3;	
 	
 	public final String OPTION_NO_PERSPECTIVE= "none"; //$NON-NLS-1$
+	
+	// Command Ids
+	public final String CMD_COMMIT = "org.eclipse.team.cvs.ui.commit"; //$NON-NLS-1$
+	public final String CMD_SYNCHRONIZE = "org.eclipse.team.ui.synchronizeLast"; //$NON-NLS-1$
+	public final String CMD_UPDATE = "org.eclipse.team.cvs.ui.update"; //$NON-NLS-1$
+	public final String CMD_CREATEPATCH = "org.eclipse.team.cvs.ui.GenerateDiff"; //$NON-NLS-1$
+	public final String CMD_TAGASVERSION = "org.eclipse.team.cvs.ui.tag"; //$NON-NLS-1$
+	public final String CMD_BRANCH = "org.eclipse.team.cvs.ui.branch"; //$NON-NLS-1$
+	public final String CMD_MERGE = "org.eclipse.team.cvs.ui.merge"; //$NON-NLS-1$
+	public final String CMD_UPDATESWITCH = "org.eclipse.team.cvs.ui.updateSwitch"; //$NON-NLS-1$
+	public final String CMD_SETFILETYPE = "org.eclipse.team.cvs.ui.setKeywordSubstitution"; //$NON-NLS-1$
+	public final String CMD_ANNOTATE = "org.eclipse.team.cvs.ui.showAnnotation"; //$NON-NLS-1$
+	public final String CMD_HISTORY = "org.eclipse.team.cvs.ui.showHistory"; //$NON-NLS-1$
+	public final String CMD_ADD = "org.eclipse.team.cvs.ui.add"; //$NON-NLS-1$
+	public final String CMD_IGNORE = "org.eclipse.team.cvs.ui.ignore"; //$NON-NLS-1$
 }
 

@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
 
@@ -58,4 +59,11 @@ public class CommitAction extends WorkspaceAction {
 	protected boolean isEnabledForNonExistantResources() {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
+	 */
+	public String getId() {
+		return ICVSUIConstants.CMD_COMMIT;
+}
 }

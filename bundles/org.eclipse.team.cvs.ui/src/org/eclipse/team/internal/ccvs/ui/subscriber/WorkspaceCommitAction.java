@@ -17,6 +17,7 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.CommitWizard;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -27,6 +28,8 @@ public class WorkspaceCommitAction extends CVSParticipantAction {
 
 	public WorkspaceCommitAction(ISynchronizePageConfiguration configuration) {
 		super(configuration);
+		setId(ICVSUIConstants.CMD_COMMIT);
+		setActionDefinitionId(ICVSUIConstants.CMD_COMMIT);
 	}
 
 	public WorkspaceCommitAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {

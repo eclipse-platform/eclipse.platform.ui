@@ -11,10 +11,10 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.ActionDelegateWrapper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IActionDelegate;
 
 /**
  * Superclass of CVS participant action delegates that uses the classname as the key
@@ -22,8 +22,8 @@ import org.eclipse.ui.IActionDelegate;
  */
 public class CVSActionDelegateWrapper extends ActionDelegateWrapper {
 
-	public CVSActionDelegateWrapper(IActionDelegate delegate, ISynchronizePageConfiguration configuration) {
-		super(delegate, configuration);
+	public CVSActionDelegateWrapper(CVSAction delegate, ISynchronizePageConfiguration configuration) {
+		super(delegate, configuration, delegate.getId());
 		Utils.initAction(this, getBundleKeyPrefix(), Policy.getBundle());
 	}
 

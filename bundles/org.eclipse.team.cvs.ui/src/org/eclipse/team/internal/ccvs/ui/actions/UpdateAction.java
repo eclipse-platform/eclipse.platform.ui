@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
 
 /**
@@ -47,4 +48,7 @@ public class UpdateAction extends WorkspaceAction {
 		return true;
 	}
 	
+	public String getId() {
+		return ICVSUIConstants.CMD_UPDATESWITCH;
+	}
 }

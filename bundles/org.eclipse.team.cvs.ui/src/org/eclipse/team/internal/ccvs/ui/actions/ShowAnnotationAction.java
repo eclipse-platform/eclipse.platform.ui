@@ -20,6 +20,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ShowAnnotationOperation;
 
@@ -127,4 +128,8 @@ public class ShowAnnotationAction extends WorkspaceAction {
         }
         return info.getRevision();
     }
+	
+	public String getId() {
+		return ICVSUIConstants.CMD_ANNOTATE;
+	}
 }

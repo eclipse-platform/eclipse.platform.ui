@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
 
@@ -24,6 +25,8 @@ public class WorkspaceUpdateAction extends CVSParticipantAction {
 
 	public WorkspaceUpdateAction(ISynchronizePageConfiguration configuration) {
 		super(configuration);
+		setId(ICVSUIConstants.CMD_UPDATE);
+		setActionDefinitionId(ICVSUIConstants.CMD_UPDATE);
 	}
 
 	public WorkspaceUpdateAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {

@@ -13,14 +13,8 @@ package org.eclipse.team.internal.ui.actions;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
+import java.util.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -36,14 +30,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
@@ -55,7 +42,7 @@ import org.eclipse.ui.actions.ActionDelegate;
  * Team providers may also instantiate or subclass any of the  
  * subclasses of TeamAction provided in this package.
  */
-public abstract class TeamAction extends ActionDelegate implements IObjectActionDelegate, IViewActionDelegate {
+public abstract class TeamAction extends ActionDelegate implements IObjectActionDelegate, IViewActionDelegate, IWorkbenchWindowActionDelegate  {
 	// The current selection
 	protected IStructuredSelection selection;
 	
@@ -68,6 +55,14 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	public final static int PROGRESS_BUSYCURSOR = 2;
 
 	private IWorkbenchPart targetPart;
+	private IWorkbenchWindow window;
+	
+	private ISelectionListener selectionListener = new ISelectionListener() {
+		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+			if(selection instanceof IStructuredSelection)
+				TeamAction.this.selection = (IStructuredSelection)selection; 
+		}
+	};
 
 	/**
 	 * Creates an array of the given class type containing all the
@@ -316,6 +311,10 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * @return IWorkbenchPart
 	 */
 	protected IWorkbenchPart getTargetPart() {
+		if(targetPart == null) {
+			IWorkbenchPage  page = TeamUIPlugin.getActivePage();
+			targetPart = page.getActivePart();
+		}
 		return targetPart;
 	}
 
@@ -348,5 +347,21 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 */
 	public void init(IViewPart view) {
 		targetPart = view;
+	}
+	
+	public void init(IWorkbenchWindow window) {
+		this.window = window;
+		window.getSelectionService().addPostSelectionListener(selectionListener);
+	}
+	
+	public IWorkbenchWindow getWindow() {
+		return window;
+	}
+	
+	public void dispose() {
+		super.dispose();
+		if(window != null) {
+			window.getSelectionService().removePostSelectionListener(selectionListener);
+		}
 	}
 }

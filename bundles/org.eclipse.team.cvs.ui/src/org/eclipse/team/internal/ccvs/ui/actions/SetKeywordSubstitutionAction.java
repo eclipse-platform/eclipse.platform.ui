@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.ResizableWizardDialog;
 import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard;
 
@@ -36,4 +37,7 @@ public class SetKeywordSubstitutionAction extends WorkspaceAction {
 		previousOption = wizard.getKSubstOption();
 	}
 	
+	public String getId() {
+		return ICVSUIConstants.CMD_SETFILETYPE;
+	}
 }

@@ -207,6 +207,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 		IContributionItem group = findGroup(manager, groupId);
 		if (group != null) {
 			manager.appendToGroup(group.getId(), action);
+			configuration.getSite().getActionBars().setGlobalActionHandler(action.getId(), action);
 			return true;
 		}
 		return false;
@@ -247,6 +248,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 * @param action the action to be added
 	 */
 	protected void appendToGroup(String menuId, String groupId, IAction action) {
+		configuration.getSite().getActionBars().setGlobalActionHandler(action.getId(), action);
 		internalAppendToGroup(menuId, groupId, action);
 	}
 	

@@ -16,13 +16,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.IEditorActionDelegate;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 
 /**
  * An Action that wraps IActionDelegates so they can be used programatically
@@ -49,6 +43,12 @@ public class ActionDelegateWrapper extends Action implements ISelectionChangedLi
 			}
 		}
 		initialize(configuration);
+	}
+	
+	public ActionDelegateWrapper(IActionDelegate delegate, ISynchronizePageConfiguration configuration, String id) {
+		this(delegate, configuration);
+		setId(id);
+		setActionDefinitionId(id);
 	}
 
 	/**

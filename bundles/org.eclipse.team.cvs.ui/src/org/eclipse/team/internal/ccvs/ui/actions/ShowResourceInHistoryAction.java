@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -73,4 +74,10 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 		return (!cvsResource.isFolder() && super.isEnabledForCVSResource(cvsResource));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
+	 */
+	public String getId() {
+		return ICVSUIConstants.CMD_HISTORY;
+	}	
 }

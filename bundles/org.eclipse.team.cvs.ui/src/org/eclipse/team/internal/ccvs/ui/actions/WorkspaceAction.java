@@ -300,6 +300,10 @@ public abstract class WorkspaceAction extends CVSAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		
+		// allow the super to decide enablement. if the super doesn't know it will return false.
+		boolean enabled = super.isEnabled();
+		if(enabled) return true;
+		
 		// invoke the inherited method so that overlaps are maintained
 		IResource[] resources = super.getSelectedResources();
 		

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
 
@@ -54,5 +55,11 @@ public class GenerateDiffFileAction extends WorkspaceAction {
 	protected boolean isEnabledForUnmanagedResources() {
 		return true;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
+	 */
+	public String getId() {
+		return ICVSUIConstants.CMD_CREATEPATCH;
+	}
 }

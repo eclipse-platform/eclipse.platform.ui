@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
@@ -67,4 +68,10 @@ public class TagLocalAction extends TagAction {
 		return resources;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getId()
+	 */
+	public String getId() {
+		return ICVSUIConstants.CMD_TAGASVERSION;
+	}
 }

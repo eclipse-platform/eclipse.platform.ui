@@ -23,6 +23,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
@@ -106,5 +107,9 @@ public class SyncAction extends WorkspaceAction {
 	 */
 	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
 		return (super.isEnabledForCVSResource(cvsResource) || (cvsResource.getParent().isCVSFolder() && !cvsResource.isIgnored()));
+	}
+	
+	public String getId() {
+		return ICVSUIConstants.CMD_SYNCHRONIZE;
 	}
 }
