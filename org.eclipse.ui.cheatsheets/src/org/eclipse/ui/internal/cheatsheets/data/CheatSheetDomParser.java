@@ -18,10 +18,10 @@ import javax.xml.parsers.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.swt.widgets.Shell;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
@@ -190,7 +190,7 @@ public class CheatSheetDomParser {
 			//Need to log exception here. 
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
-			org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), null, status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), null, status);
 			return false;
 		}
 
@@ -278,7 +278,7 @@ public class CheatSheetDomParser {
 			if (items == null) {
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_ITEMS), null);
 				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE_TITLE), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_ITEMS), status);
+				org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE_TITLE), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_ITEMS), status);
 				return false;
 			}
 
@@ -288,7 +288,7 @@ public class CheatSheetDomParser {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), null);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 
-			org.eclipse.jface.dialogs.ErrorDialog.openError(new Shell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE_TITLE), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), status);
+			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE_TITLE), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_OPENING_FILE), status);
 			return false;
 		}
 
@@ -465,9 +465,12 @@ public class CheatSheetDomParser {
 			Node n = (Node) sil.get(i);
 			NamedNodeMap nnm = n.getAttributes();
 			try {
-				subItemID = nnm.getNamedItem(IParserTags.ID).getNodeValue();
-				if (subItemID == null) {
-					return null;
+				Node node = nnm.getNamedItem(IParserTags.ID);
+				if(node != null) {
+					subItemID = node.getNodeValue();
+					if (subItemID == null) {
+						return null;
+					}
 				}
 			} catch (Exception e) {
 				return null;
