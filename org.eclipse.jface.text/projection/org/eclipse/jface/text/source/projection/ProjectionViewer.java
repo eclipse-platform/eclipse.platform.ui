@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.source.projection;
 
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -64,29 +65,40 @@ import org.eclipse.jface.text.source.SourceViewer;
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 	
 	/**
-	 * Internal listener to changes of the projection annotation model.
+	 * Internal listener to changes of the annotation model.
 	 */
-	private class ProjectionAnnotationModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
+	private class AnnotationModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
 
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
-			postCatchupRequest(null);
+			processModelChanged(model, null);
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
 		 */
 		public void modelChanged(AnnotationModelEvent event) {
-			postCatchupRequest(event);
+			processModelChanged(event.getAnnotationModel(), event);
+		}
+
+		private void processModelChanged(IAnnotationModel model, AnnotationModelEvent event) {
+			if (model == fProjectionAnnotationModel) {
+				
+				if (fProjectionSummary != null)
+					fProjectionSummary.updateSummaries(new NullProgressMonitor());
+				postCatchupRequest(event);
+				
+			} else if (model == getAnnotationModel() && fProjectionSummary != null)
+				fProjectionSummary.updateSummaries(new NullProgressMonitor());
 		}
 	}
 	
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
-	/** The projection annotation model listener */
-	private IAnnotationModelListener fProjectionAnnotationModelListener= new ProjectionAnnotationModelListener();
+	/** The annotation model listener */
+	private IAnnotationModelListener fAnnotationModelListener= new AnnotationModelListener();
 	/** The projection summary. */
 	private ProjectionSummary fProjectionSummary;
 	/** Indication that an annotation world change has not yet been processed. */
@@ -121,9 +133,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public void setProjectionSummary(ProjectionSummary projectionSummary) {
 		fProjectionSummary= projectionSummary;
-		ProjectionAnnotationModel model= getProjectionAnnotationModel();
-		if (model != null)
-			model.setProjectionSummary(fProjectionSummary);
 	}
 		
 	/**
@@ -135,7 +144,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
 			extension.addAnnotationModel(ProjectionSupport.PROJECTION, fProjectionAnnotationModel);
-			fProjectionAnnotationModel.addAnnotationModelListener(fProjectionAnnotationModelListener);
+			model.addAnnotationModelListener(fAnnotationModelListener);
 		}
 	}
 	
@@ -146,7 +155,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	private void removeProjectionAnnotationModel(IAnnotationModel model) {
 		if (model instanceof IAnnotationModelExtension) {
-			fProjectionAnnotationModel.removeAnnotationModelListener(fProjectionAnnotationModelListener);
+			model.removeAnnotationModelListener(fAnnotationModelListener);
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
 			extension.removeAnnotationModel(ProjectionSupport.PROJECTION);
 		}
@@ -168,7 +177,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	protected IAnnotationModel createVisualAnnotationModel(IAnnotationModel annotationModel) {
 		IAnnotationModel model= super.createVisualAnnotationModel(annotationModel);
-		fProjectionAnnotationModel= new ProjectionAnnotationModel(fProjectionSummary);
+		fProjectionAnnotationModel= new ProjectionAnnotationModel();
 		addProjectionAnnotationModel(model);
 		return model;
 	}
@@ -481,7 +490,6 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		if (widget != null) {
 			Display display= widget.getDisplay();
 			if (display != null) {
-				// check for dead locks
 				display.asyncExec(new Runnable() {
 					public void run() {
 						catchupWithProjectionAnnotationModel(event);

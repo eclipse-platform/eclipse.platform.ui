@@ -13,8 +13,6 @@ package org.eclipse.jface.text.source.projection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -23,66 +21,13 @@ import org.eclipse.jface.text.source.AnnotationModel;
 
 /**
  * A projection annotation model.
- * <p>
- * Internal class. Do not use. Public only for testing purposes.
  * 
  * @since 3.0
  */
 public class ProjectionAnnotationModel extends AnnotationModel {
-	
-	
-	private class Summarizer extends Thread {
-				
-		public Summarizer() {
-			setDaemon(true);
-			start();
-			synchronized (fLock) {
-				fHasStarted= false;
-			}
-		}
 		
-		/*
-		 * @see java.lang.Thread#run()
-		 */
-		public void run() {
-			
-			synchronized (fLock) {
-				fHasStarted= true;
-			}
-			
-			fProjectionSummary.updateSummaries(new NullProgressMonitor());
-			
-			synchronized (fLock) {
-				if (fSummarizer == this)
-					fSummarizer= null;
-			}
-		}
-	}
 	
-	
-	private ProjectionSummary fProjectionSummary;
-	
-	private Object fLock= new Object();
-	private volatile Summarizer fSummarizer;
-	private volatile boolean fHasStarted= false;
-	
-	
-	public ProjectionAnnotationModel(ProjectionSummary summary) {
-		fProjectionSummary= summary;
-	}
-	
-	public void setProjectionSummary(ProjectionSummary summary) {
-		fProjectionSummary= summary;
-	}
-	
-	private void updateSummaries() {
-		if (fProjectionSummary == null)
-			return;
-		
-		synchronized (fLock) {
-			if (fSummarizer == null || fHasStarted)
-				fSummarizer= new Summarizer();
-		}
+	public ProjectionAnnotationModel() {
 	}
 
 	/**
@@ -97,7 +42,6 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 			if (!projection.isCollapsed()) {
 				projection.markCollapsed();
 				modifyAnnotation(projection, true);
-				updateSummaries();
 			}
 		}
 	}
@@ -114,7 +58,6 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 			if (projection.isCollapsed()) {
 				projection.markExpanded();
 				modifyAnnotation(projection, true);
-				updateSummaries();
 			}
 		}
 	}
@@ -135,7 +78,6 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 				projection.markCollapsed();
 	
 			modifyAnnotation(projection, true);
-			updateSummaries();
 		}
 	}
 	
@@ -177,11 +119,8 @@ public class ProjectionAnnotationModel extends AnnotationModel {
 			}
 		}
 		
-		if (expanding) {
-			if (fireModelChanged)
-				fireModelChanged();
-			updateSummaries();
-		}
+		if (expanding && fireModelChanged)
+			fireModelChanged();
 		
 		return expanding;
 	}

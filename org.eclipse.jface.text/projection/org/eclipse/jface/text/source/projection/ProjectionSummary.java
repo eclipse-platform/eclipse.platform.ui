@@ -33,12 +33,49 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
  * 
  * @since 3.0
  */
-public class ProjectionSummary {
+class ProjectionSummary {
 	
+	private class Summarizer extends Thread {
+		
+		public Summarizer(IProgressMonitor monitor) {
+			fProgressMonitor= monitor;
+			
+			setDaemon(true);
+			start();
+			synchronized (fLock) {
+				fHasStarted= false;
+			}
+		}
+		
+		/*
+		 * @see java.lang.Thread#run()
+		 */
+		public void run() {
+			
+			synchronized (fLock) {
+				fHasStarted= true;
+			}
+			
+			internalUpdateSummaries(fProgressMonitor);
+			
+			synchronized (fLock) {
+				if (fSummarizer == this)
+					fSummarizer= null;
+			}
+		}
+	}
+		
+
 	private ProjectionViewer fProjectionViewer;
 	private IAnnotationModel fAnnotationModel;
 	private IAnnotationAccess fAnnotationAccess;
 	private List fConfiguredAnnotationTypes;
+	
+	private Object fLock= new Object();
+	private IProgressMonitor fProgressMonitor;
+	private volatile Summarizer fSummarizer;
+	private volatile boolean fHasStarted= false;
+
 	
 	public ProjectionSummary(ProjectionViewer projectionViewer, IAnnotationAccess annotationAccess) {
 		super();
@@ -63,6 +100,13 @@ public class ProjectionSummary {
 	}
 	
 	public void updateSummaries(IProgressMonitor monitor) {
+		synchronized (fLock) {
+			if (fSummarizer == null || fHasStarted)
+				fSummarizer= new Summarizer(monitor);
+		}
+	}
+	
+	private void internalUpdateSummaries(IProgressMonitor monitor) {
 		
 		Object previousLockObject= null;
 		fAnnotationModel= fProjectionViewer.getVisualAnnotationModel();
