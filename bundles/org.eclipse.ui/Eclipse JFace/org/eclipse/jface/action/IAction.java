@@ -344,6 +344,15 @@ public void setId(String id);
  */
 public void setImageDescriptor(ImageDescriptor newImage);
 /**
+ * Sets the menu creator for this action.
+ * <p>
+ * Note that if this method is called, it overrides the check status.
+ * </p>
+ *
+ * @param creator the menu creator, or <code>null</code> if none
+ */
+public void setMenuCreator(IMenuCreator creator); 
+/**
  * Sets the text for this action.
  * <p>
  * An accelerator specification may follow the actual text, separated from it by
