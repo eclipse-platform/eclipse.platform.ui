@@ -332,26 +332,27 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
 			//remove file:
 			systemId= systemId.substring(index+1, systemId.length());
 		}
-		File relativeFile= null;
+		File resolvedFile= null;
 		IPath filePath= new Path(systemId);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
-		if (file == null) {
+		if (file == null || !file.exists()) {
 			//relative path
 			try {
 				//this call is ok if mainFileContainer is null
-				relativeFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
+				resolvedFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
 			} catch (BuildException be) {
 				return null;
 			}
+		} else {
+			resolvedFile= file.getLocation().toFile();
 		}
-
-		if (relativeFile.exists()) {
+		
+		if (resolvedFile != null && resolvedFile.exists()) {
 			try {
-				return new InputSource(new FileReader(relativeFile));
+				return new InputSource(new FileReader(resolvedFile));
 			} catch (FileNotFoundException e) {
 				return null;
 			}
-		
 		}
 			
 		return super.resolveEntity(publicId, systemId);
