@@ -24,11 +24,11 @@ import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
-import org.eclipse.core.commands.misc.NotDefinedException;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;

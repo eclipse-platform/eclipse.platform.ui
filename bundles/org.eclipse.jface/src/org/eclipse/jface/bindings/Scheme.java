@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.commands.misc.NamedHandleObject;
-import org.eclipse.core.commands.misc.NotDefinedException;
+import org.eclipse.core.commands.common.NamedHandleObject;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.util.Util;
 
 /**

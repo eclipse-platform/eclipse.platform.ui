@@ -48,7 +48,7 @@ public final class NotDefinedException extends CommandException {
      * @since 3.1
      */
     public NotDefinedException(
-            final org.eclipse.core.commands.misc.NotDefinedException e) {
+            final org.eclipse.core.commands.common.NotDefinedException e) {
         super(e.getMessage(), e);
     }
 }

@@ -125,7 +125,7 @@ final class CommandWrapper implements ICommand {
     public final String getDescription() throws NotDefinedException {
         try {
             return command.getDescription();
-        } catch (final org.eclipse.core.commands.misc.NotDefinedException e) {
+        } catch (final org.eclipse.core.commands.common.NotDefinedException e) {
             throw new NotDefinedException(e);
         }
     }
@@ -177,7 +177,7 @@ final class CommandWrapper implements ICommand {
     public final String getName() throws NotDefinedException {
         try {
             return command.getName();
-        } catch (final org.eclipse.core.commands.misc.NotDefinedException e) {
+        } catch (final org.eclipse.core.commands.common.NotDefinedException e) {
             throw new NotDefinedException(e);
         }
     }
