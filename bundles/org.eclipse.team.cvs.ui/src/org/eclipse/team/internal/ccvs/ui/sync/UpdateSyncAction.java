@@ -303,16 +303,16 @@ public class UpdateSyncAction extends MergeAction {
 			}
 			
 			if (updateDeletions.size() > 0) {
-		 		 runUpdateDeletions((ITeamNode[])updateDeletions.toArray(new ITeamNode[updateDeletions.size()]), manager, Policy.subMonitorFor(monitor, 100));
+		 		 runUpdateDeletions((ITeamNode[])updateDeletions.toArray(new ITeamNode[updateDeletions.size()]), manager, Policy.subMonitorFor(monitor, updateDeletions.size() * 100));
 			}			
 			if (updateShallow.size() > 0) {
-				runUpdateShallow((ITeamNode[])updateShallow.toArray(new ITeamNode[updateShallow.size()]), manager, Policy.subMonitorFor(monitor, 100));
+				runUpdateShallow((ITeamNode[])updateShallow.toArray(new ITeamNode[updateShallow.size()]), manager, Policy.subMonitorFor(monitor, updateShallow.size() * 100));
 			}
 			if (updateIgnoreLocalShallow.size() > 0) {
-				runUpdateIgnoreLocalShallow((ITeamNode[])updateIgnoreLocalShallow.toArray(new ITeamNode[updateIgnoreLocalShallow.size()]), manager, Policy.subMonitorFor(monitor, 100));
+				runUpdateIgnoreLocalShallow((ITeamNode[])updateIgnoreLocalShallow.toArray(new ITeamNode[updateIgnoreLocalShallow.size()]), manager, Policy.subMonitorFor(monitor, updateIgnoreLocalShallow.size() * 100));
 			}
 			if (updateDeep.size() > 0) {
-				runUpdateDeep((ITeamNode[])updateDeep.toArray(new ITeamNode[updateDeep.size()]), manager, Policy.subMonitorFor(monitor, 100));
+				runUpdateDeep((ITeamNode[])updateDeep.toArray(new ITeamNode[updateDeep.size()]), manager, Policy.subMonitorFor(monitor, updateDeep.size() * 100));
 			}
 		} catch (final TeamException e) {
 			handle(e);
