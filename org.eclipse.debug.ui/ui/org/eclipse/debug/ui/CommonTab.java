@@ -55,8 +55,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -293,28 +291,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private IContainer getContainer(String path) {
 		Path containerPath = new Path(path);
 		return (IContainer) getWorkspaceRoot().findMember(containerPath);
-	}
-	
-	/**
-	 * Returns the perspective with the given label, or
-	 * <code>null</code> if none is found.
-	 * 
-	 * @param label perspective label
-	 * @return perspective descriptor
-	 */
-	private IPerspectiveDescriptor getPerspectiveWithLabel(String label) {		
-		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithLabel(label);
-	}
-	
-	/**
-	 * Returns the perspective with the given id, or
-	 * <code>null</code> if none is found.
-	 * 
-	 * @param id perspective identifier
-	 * @return perspective descriptor
-	 */
-	private IPerspectiveDescriptor getPerspectiveWithId(String id) {		
-		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
 	}
 	
 	/**
