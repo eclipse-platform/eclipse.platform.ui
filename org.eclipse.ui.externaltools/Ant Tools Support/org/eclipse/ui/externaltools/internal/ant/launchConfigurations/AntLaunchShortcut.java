@@ -214,9 +214,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			StringBuffer buf = new StringBuffer();
 			ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION, buf.toString());
-			workingCopy.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
-			workingCopy.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
-		
+			
 			// set default for common settings
 			CommonTab tab = new CommonTab();
 			tab.setDefaults(workingCopy);

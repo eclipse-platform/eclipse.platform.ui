@@ -269,7 +269,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 	}
 
 	/**
