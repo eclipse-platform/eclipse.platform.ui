@@ -26,10 +26,25 @@ import org.eclipse.swt.widgets.Control;
 public class StatusLineManager extends ContributionManager implements IStatusLineWithProgressManager {
 
 	/**
+	 * Global group marker used to control positioning of contributions
+	 */
+	public static final String BEGIN_GROUP = "BEGIN_GROUP"; //$NON-NLS-1$
+	
+	/**
+	 * Global group marker used to control positioning of contributions
+	 */
+	public static final String MIDDLE_GROUP = "MIDDLE_GROUP"; //$NON-NLS-1$
+	
+	/**
+	 * Global group marker used to control positioning of contributions
+	 */
+	public static final String END_GROUP = "END_GROUP"; //$NON-NLS-1$
+	
+	/**
 	 * The status line control; <code>null</code> before
 	 * creation and after disposal.
 	 */
-	private StatusLine statusLine = null;
+	private Composite statusLine = null;
 	
 	private String lastMessage;
 	private Image lastImage;
@@ -40,6 +55,7 @@ public class StatusLineManager extends ContributionManager implements IStatusLin
  * status line control.
  */
 public StatusLineManager() {
+    // do nothing
 }
 /**
  * Creates and returns this manager's status line control. 
@@ -47,10 +63,14 @@ public StatusLineManager() {
  *
  * @param parent the parent control
  * @return the status line control
+ * @since 3.0 this previously returned a package-private StatusLine control
  */
-public StatusLine createControl(Composite parent) {
+public Control createControl(Composite parent) {
 	if (!statusLineExist() && parent != null) {
 		statusLine= new StatusLine(parent);
+		add(new GroupMarker(BEGIN_GROUP));
+		add(new GroupMarker (MIDDLE_GROUP));
+		add(new GroupMarker(END_GROUP));
 		update(false);
 	}
 	return statusLine;
@@ -72,13 +92,22 @@ public void dispose() {
 	}
 }
 /**
- * Internal -- returns the StatusLine control.
- * <p>
- * This method is not intended to be used outside of the JFace framework.
- * </p>
+ * Returns the control used by this StatusLineManager.
+ * 
+ * @return the control used by this manager
  */
 public Control getControl() {
 	return statusLine;
+}
+/**
+ * Returns the progress monitor delegate. Override this method
+ * to provide your own object used to handle progress.
+ * 
+ * @return the IProgressMonitor delegate
+ * @since 3.0
+ */
+protected IProgressMonitor getProgressMonitorDelegate() {
+	return (IProgressMonitor)getControl();
 }
 /*
  * (non-Javadoc)
@@ -87,18 +116,21 @@ public Control getControl() {
 public IProgressMonitor getProgressMonitor() {
 	
 	return new IProgressMonitor(){
+		
+		IProgressMonitor progressDelegate = getProgressMonitorDelegate();
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 		 */
 		public void beginTask(String name, int totalWork) {
-			statusLine.beginTask(name,totalWork);
+			progressDelegate.beginTask(name,totalWork);
 
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
 		 */
 		public void done() {
-			statusLine.done();
+			progressDelegate.done();
 			clearProgress();
 		}
 		
@@ -106,7 +138,7 @@ public IProgressMonitor getProgressMonitor() {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
 		public void internalWorked(double work) {
-			statusLine.internalWorked(work);
+			progressDelegate.internalWorked(work);
 
 		}
 		
@@ -114,7 +146,7 @@ public IProgressMonitor getProgressMonitor() {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
 		 */
 		public boolean isCanceled() {
-			return statusLine.isCanceled();
+			return progressDelegate.isCanceled();
 		}
 		
 		/* (non-Javadoc)
@@ -124,7 +156,7 @@ public IProgressMonitor getProgressMonitor() {
 			//Don't bother updating for disposed status
 			if(statusLine.isDisposed())
 				return;
-			statusLine.setCanceled(value);
+			progressDelegate.setCanceled(value);
 
 		}
 		
@@ -132,7 +164,7 @@ public IProgressMonitor getProgressMonitor() {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
 		public void setTaskName(String name) {
-			statusLine.setTaskName(name);
+			progressDelegate.setTaskName(name);
 
 		}
 		
@@ -140,7 +172,7 @@ public IProgressMonitor getProgressMonitor() {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
 		public void subTask(String name) {
-			statusLine.subTask(name);
+			progressDelegate.subTask(name);
 
 		}
 		
@@ -148,7 +180,7 @@ public IProgressMonitor getProgressMonitor() {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		public void worked(int work) {
-			statusLine.worked(work);
+			progressDelegate.worked(work);
 		}
 	};
 }
@@ -156,35 +188,35 @@ public IProgressMonitor getProgressMonitor() {
  * Method declared on IStatueLineManager
  */
 public boolean isCancelEnabled() {
-	return statusLineExist() && statusLine.isCancelEnabled();
+	return statusLineExist() && ((StatusLine)statusLine).isCancelEnabled();
 }
 /* (non-Javadoc)
  * Method declared on IStatueLineManager
  */
 public void setCancelEnabled(boolean enabled) {
 	if (statusLineExist())
-		statusLine.setCancelEnabled(enabled);
+		((StatusLine) statusLine).setCancelEnabled(enabled);
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
  */
 public void setErrorMessage(String message) {
 	if (statusLineExist())
-		statusLine.setErrorMessage(message);
+		((StatusLine) statusLine).setErrorMessage(message);
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
  */
 public void setErrorMessage(Image image, String message) {
 	if (statusLineExist())
-		statusLine.setErrorMessage(image, message);
+		((StatusLine) statusLine).setErrorMessage(image, message);
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
  */
 public void setMessage(String message) {
 	if (statusLineExist())
-		statusLine.setMessage(message);
+		((StatusLine) statusLine).setMessage(message);
 	lastMessage = message;
 }
 /* (non-Javadoc)
@@ -192,7 +224,7 @@ public void setMessage(String message) {
  */
 public void setMessage(Image image, String message) {
 	if (statusLineExist())
-		statusLine.setMessage(image, message);
+		((StatusLine) statusLine).setMessage(image, message);
 	lastMessage = message;
 	lastImage = image;
 }
@@ -226,8 +258,8 @@ public void update(boolean force) {
 			
 			Control ws[]= statusLine.getChildren();
 			for (int i= 0; i < ws.length; i++) {
-				Control w= ws[i];
-				Object data= w.getData();
+				Control w = ws[i];
+				Object data = w.getData();
 				if (data instanceof IContributionItem) {
 					w.dispose();
 				}
@@ -260,7 +292,7 @@ public void update(boolean force) {
  * @see org.eclipse.jface.action.IStatusLineWithProgressManager#clearProgress()
  */
 public void clearProgress() {
-	statusLine.setMessage(lastImage,lastMessage);
+	((StatusLine) statusLine).setMessage(lastImage,lastMessage);
 
 }
 
@@ -269,7 +301,7 @@ public void clearProgress() {
  */
 public void setProgressMessage(String message) {
 	if (statusLineExist())
-		statusLine.setMessage(message);
+		((StatusLine) statusLine).setMessage(message);
 }
 
 }
