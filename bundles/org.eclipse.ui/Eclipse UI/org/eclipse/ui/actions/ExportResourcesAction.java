@@ -39,7 +39,14 @@ public class ExportResourcesAction extends SelectionListenerAction {
  *	Create a new instance of this class
  */
 public ExportResourcesAction(IWorkbench aWorkbench) {
-	super(WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
+	this(aWorkbench,WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
+}
+
+/**
+ *	Create a new instance of this class
+ */
+public ExportResourcesAction(IWorkbench aWorkbench, String label) {
+	super(label); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.EXPORT);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
