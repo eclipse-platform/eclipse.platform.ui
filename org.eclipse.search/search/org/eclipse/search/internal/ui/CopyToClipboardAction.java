@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -39,7 +40,7 @@ public class CopyToClipboardAction extends Action {
 		if (shell == null)
 			return;
 
-		SearchResultLabelProvider labelProvider= (SearchResultLabelProvider)fViewer.getLabelProvider();
+		ILabelProvider labelProvider= (ILabelProvider)fViewer.getLabelProvider();
 		String lineDelim= System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buf= new StringBuffer();
 		Iterator iter= getSelection();
