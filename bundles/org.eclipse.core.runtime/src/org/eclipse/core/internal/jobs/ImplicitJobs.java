@@ -238,7 +238,7 @@ class ImplicitJobs {
 			if (!(monitor instanceof IProgressMonitorWithBlocking))
 				return;
 			IStatus reason;
-			if (blockingJob == null || blockingJob instanceof ThreadJob) {
+			if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
 				reason = new Status(IStatus.INFO, IPlatform.PI_RUNTIME, 1, Policy.bind("jobs.blocked0"), null);//$NON-NLS-1$
 			} else {
 				String msg = Policy.bind("jobs.blocked1", blockingJob.getName()); //$NON-NLS-1$
