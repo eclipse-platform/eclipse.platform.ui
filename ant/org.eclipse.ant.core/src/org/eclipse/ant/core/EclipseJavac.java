@@ -34,6 +34,8 @@ public class EclipseJavac extends Javac {
 	
 /**
  * Executes the task.
+ * 
+ * @exception BuildException thrown if a problem occurs during execution
  */
 public void execute() throws BuildException {
 	// first off, make sure that we've got a srcdir

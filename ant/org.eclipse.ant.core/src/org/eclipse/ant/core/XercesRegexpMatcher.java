@@ -26,11 +26,15 @@ import org.apache.tools.ant.BuildException;
 
 public class XercesRegexpMatcher implements RegexpMatcher {
 	private RegularExpression regexp;
+	
 /**
- * Returns a Vector of matched groups found in the argument.
+ * Returns a collection of matched groups found in an argument.
  *
  * <p>Group 0 will be the full match, the rest are the
  * parenthesized subexpressions</p>.
+ * 
+ * @return the collection of matched groups found in the argument.
+ * @param argument the argument
  */
 public Vector getGroups(String argument) {
 	Match match = new Match();
@@ -44,19 +48,30 @@ public Vector getGroups(String argument) {
 	return result;
 }
 /**
- * Get a String representation of the regexp pattern
+ * Returns a string representation of the receiver
+ * 
+ * @return a string representation of the receiver
  */
 public String getPattern() {
 	return regexp.getPattern();
 }
 /**
- * Does the given argument match the pattern?
+ * Returns a <code>boolean</code> indicating whether an argument
+ * matches with the receiver.
+ * 
+ * @return a <code>boolean</code> indicating whether an argument
+ * matches with the receiver.
+ * @param argument the argument to match with the receiver
  */
 public boolean matches(String argument) {
 	return regexp.matches(argument);
 }
+
 /**
- * Set the regexp pattern from the String description.
+ * Sets the receiver's pattern.
+ * 
+ * @param pattern the pattern value
+ * @exception BuildException thrown if a problem occurs setting the pattern
  */
 public void setPattern(String pattern) throws BuildException {
 	if (regexp == null)

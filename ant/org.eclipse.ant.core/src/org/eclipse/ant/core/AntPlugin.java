@@ -66,8 +66,18 @@ public final class AntPlugin extends Plugin {
 	 */
 	public static final String PT_ANTOBJECTS = "antObjects";
 
-	protected static final String CLASS = "class";
-	protected static final String NAME = "name";
+	/**
+	 * Simple identifier constant (value <code>"class"</code>)
+	 * of a tag that appears in Ant extensions.
+	 */
+	public static final String CLASS = "class";
+
+	/**
+	 * Simple identifier constant (value <code>"class"</code>)
+	 * of a tag that appears in Ant extensions.
+	 */
+	public static final String NAME = "name";
+
 	/** 
 	 * Constructs an instance of this plug-in runtime class.
 	 * <p>
@@ -82,9 +92,14 @@ public final class AntPlugin extends Plugin {
 	 */
 	public AntPlugin(IPluginDescriptor pluginDescriptor) {
 		super(pluginDescriptor);
-		plugin= this;
+		plugin = this;
 	}
-	
+
+	/**
+	 * Returns the internal collection of object extensions.
+	 * 
+	 * @return the internal collection of object extensions
+	 */	
 	public Map getObjectExtensions() {
 		return objectExtensions;
 	}
@@ -97,23 +112,37 @@ public final class AntPlugin extends Plugin {
 	public static AntPlugin getPlugin() {
 		return plugin;
 	}
-	
+
+	/**
+	 * Returns the internal collection of task extensions.
+	 * 
+	 * @return the internal collection of task extensions
+	 */	
 	public Map getTaskExtensions() {
 		return taskExtensions;
 	}
 
+	/**
+	 * Returns the internal collection of type extensions.
+	 * 
+	 * @return the internal collection of type extensions
+	 */	
 	public Map getTypeExtensions() {
 		return typeExtensions;
 	}
 
 	/**
 	 * This implementation of the corresponding <code>Plugin</code> method
+	 * 
+	 * @exception CoreException if this method fails to shut down this plug-in
 	 */
 	public void shutdown() throws CoreException {
 	}
 
 	/**
 	 * This implementation of the corresponding <code>Plugin</code> method
+	 * 
+	 * @exception CoreException if this plug-in did not start up properly
 	 */
 	public void startup() throws CoreException {
 		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(PT_ANTTASKS);

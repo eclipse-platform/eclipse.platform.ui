@@ -34,7 +34,11 @@ public class EclipseProject extends Project {
 public EclipseProject() {
 }
 /**
- * Creates a new instance of the identified datatype  
+ * Creates and returns a new instance of the identified data type.
+ * 
+ * @return the new data type instance
+ * @param typeName the name of the type to create
+ * @exception BuildException thrown if a problem occurs during data type creation
  */
 public Object createDataType(String typeName) throws BuildException {
 	// look in the predeclared types.  If found, do the super behavior.
@@ -62,7 +66,11 @@ public Object createDataType(String typeName) throws BuildException {
 	return super.createDataType(typeName);
 }
 /**
- * Creates a new instance of the identified task.  
+ * Creates and returns a new instance of the identified task.
+ * 
+ * @return the new task
+ * @param taskName the name of the task to create
+ * @exception BuildException thrown if a problem occurs during task creation
  */
 public Task createTask(String taskName) throws BuildException {
 	// look in the predeclared tasks.  If found, do the super behavior.
@@ -89,20 +97,39 @@ public Task createTask(String taskName) throws BuildException {
 	}
 	return super.createTask(taskName);
 }
+/**
+ * Sends a build finished notification to all registered listeners along with
+ * the exception that caused the termination.
+ * 
+ * @param exception the exception to include with the notification
+ */
 protected void fireBuildFinished(Throwable exception) {
 	super.fireBuildFinished(exception);
 }
+/**
+ * Sends a build started notification to all registered listeners.
+ */
 protected void fireBuildStarted() {
 	super.fireBuildStarted();
 }
 /**
- * Replaces the File.separatorChar with the Platform's path separator if required.
+ * Returns a string in which all <code>File.separatorChar</code>
+ * characters have been replaced with the platform's path separator
+ * character.
+ * 
+ * @return the result string
+ * @param path the original string
  */
 public static String fixSeparators(String path) {
 	if (File.separatorChar == '/')
 		return path;
 	return path.replace('\\', '/');
 }
+/**
+ * Initializes the receiver.
+ * 
+ * @exception BuildException thrown if a problem occurs during initialization.
+ */
 public void init() throws BuildException {
 	super.init();
 	// add some additional tasks and datatypes.  Normally they would be found

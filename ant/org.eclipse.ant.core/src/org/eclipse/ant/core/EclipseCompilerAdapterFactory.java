@@ -32,6 +32,14 @@ public class EclipseCompilerAdapterFactory {
 
 private EclipseCompilerAdapterFactory() {
 }
+/**
+ * Returns the <code>CompilerAdapter</code> to use given a compiler type and task.
+ * 
+ * @return the compiler adapter to use
+ * @param compilerType the type of compiler
+ * @param task the task
+ * @exception BuildException thrown if a problem occurs while returning the adapter
+ */
 public static CompilerAdapter getCompiler(String compilerType, Task task) throws BuildException {
 	try {
 		return CompilerAdapterFactory.getCompiler(compilerType, task);

@@ -66,7 +66,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Call Ant in a sub-project
+ * Call Ant in a sub-project.
  * This is a bulk copy of the original Ant task.  Unfortunately the original
  * created a new Project in which to run Ant.  This prevents people from
  * providing their own kind of Project and having that propogate into
@@ -85,12 +85,16 @@ public class EclipseAnt extends Ant {
 	private String antFile = null;
 	private String target = null;
 	private String output = null;
-	
 	private final static String DEFAULT_ANTFILE = "build.xml";
+	private Vector properties = new Vector();
+	private Project p1;
 
-	Vector properties=new Vector();
-	Project p1;
-
+	/**
+	 * Creates and returns a new <code>Property</code> for the receiver's
+	 * target project.
+	 * 
+	 * @return the new property
+	 */
 	public Property createProperty() {
 		if (p1 == null) {
 			reinit();
@@ -101,8 +105,11 @@ public class EclipseAnt extends Ant {
 		properties.addElement( p );
 		return p;
 	}
+	
 	/**
-	 * Do the execution.
+	 * Performs the execution.
+	 * 
+	 * @exception BuildException thrown if an execution problem occurs
 	 */
 	public void execute() throws BuildException {
 		try {
@@ -110,7 +117,7 @@ public class EclipseAnt extends Ant {
 				reinit();
 			}
 		
-			if(dir == null) 
+			if (dir == null) 
 				dir = project.getBaseDir();
 
 			initializeProject();
@@ -158,12 +165,20 @@ public class EclipseAnt extends Ant {
 			p1 = null;
 		}
 	}
+	
+	/**
+	 * Initializes the receiver.
+	 */
 	public void init() {
 		p1 = new Project();
 		p1.setJavaVersionProperty();
 		p1.addTaskDefinition("property", 
 							 (Class)project.getTaskDefinitions().get("property"));
 	}
+	
+	/**
+	 * Initializes the target project.
+	 */
 	private void initializeProject() {
 		Vector listeners = project.getBuildListeners();
 		for (int i = 0; i < listeners.size(); i++) {
@@ -209,6 +224,10 @@ public class EclipseAnt extends Ant {
 			p1.setProperty(arg, value);
 		}
 	}
+	
+	/**
+	 * Reinitializes the receiver.
+	 */
 	private void reinit() {
 		init();
 		for (int i=0; i<properties.size(); i++) {
@@ -227,15 +246,39 @@ public class EclipseAnt extends Ant {
 			properties.setElementAt(newP, i);
 		}
 	}
+	
+	/**
+	 * Sets the receiver's target <b>Ant</b> file.
+	 * 
+	 * @param s the <b>Ant</b> file location
+	 */
 	public void setAntfile(String s) {
 		this.antFile = s;
 	}
+	
+	/**
+	 * Sets the receiver's target directory.
+	 * 
+	 * @param s the target directory
+	 */
 	public void setDir(File d) {
 		this.dir = d;
 	}
+
+	/**
+	 * Sets the receiver's output destination.
+	 * 
+	 * @param s the output destination
+	 */
 	public void setOutput(String s) {
 		this.output = s;
 	}
+	
+	/**
+	 * Sets the receiver's <b>Ant</b> target to invoke.
+	 * 
+	 * @param s the <b>Ant</b> target to invoke
+	 */
 	public void setTarget(String s) {
 		this.target = s;
 	}

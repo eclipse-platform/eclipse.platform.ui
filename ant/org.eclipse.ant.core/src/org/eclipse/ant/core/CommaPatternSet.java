@@ -94,23 +94,32 @@ import java.util.Vector;
 public class CommaPatternSet extends PatternSet {
 	private Vector includeList = new Vector();
 	private Vector excludeList = new Vector();
-	
 	private File incl = null;
 	private File excl = null;
 
+	/** 
+	 * Constructs an instance of a <code>CommaPatternSet</code>.
+	 */
 	public CommaPatternSet() {
 		super();
 	}
 	/**
-	 * add a name entry to the given list
+	 * Adds a name entry to the given list.
+	 * 
+	 * @return the new name entry
+	 * @param list the target list
 	 */
 	private NameEntry addPatternToList(Vector list) {
 		NameEntry result = new NameEntry();
 		list.addElement(result);
 		return result;
 	}
+	
 	/**
-	 * Adds the patterns of the other instance to this set.
+	 * Adds the patterns of another <code>PatternSet</code> to the receiver.
+	 * 
+	 * @param other the other <code>PatternSet</code>
+	 * @param p the target project
 	 */
 	public void append(PatternSet other, Project p) {
 		if (isReference()) {
@@ -131,8 +140,11 @@ public class CommaPatternSet extends PatternSet {
 			}
 		}
 	}
+
 	/**
-	 * add a name entry on the exclude list
+	 * Adds a name entry to the receiver's exclude list.
+	 * 
+	 * @return the new name entry
 	 */
 	public NameEntry createExclude() {
 		if (isReference()) {
@@ -140,8 +152,11 @@ public class CommaPatternSet extends PatternSet {
 		}
 		return addPatternToList(excludeList);
 	}
+
 	/**
-	 * add a name entry on the include list
+	 * Adds a name entry to the receiver's include list.
+	 * 
+	 * @return the new name entry
 	 */
 	public NameEntry createInclude() {
 		if (isReference()) {
@@ -149,8 +164,12 @@ public class CommaPatternSet extends PatternSet {
 		}
 		return addPatternToList(includeList);
 	}
+
 	/**
-	 * Returns the filtered include patterns.
+	 * Returns the receiver's filtered exclude patterns.
+	 * 
+	 * @return the receiver's filtered exclude patterns.
+	 * @param the target project
 	 */
 	public String[] getExcludePatterns(Project p) {
 		if (isReference()) {
@@ -160,8 +179,12 @@ public class CommaPatternSet extends PatternSet {
 			return makeArray(excludeList, p);
 		}
 	}
+
 	/**
-	 * Returns the filtered include patterns.
+	 * Returns the receiver's filtered include patterns.
+	 * 
+	 * @return the receiver's filtered include patterns.
+	 * @param the target project
 	 */
 	public String[] getIncludePatterns(Project p) {
 		if (isReference()) {
@@ -171,9 +194,13 @@ public class CommaPatternSet extends PatternSet {
 			return makeArray(includeList, p);
 		}
 	}
+
 	/**
-	 * Performs the check for circular references and returns the
-	 * referenced PatternSet.  
+	 * Performs a check for circular references and returns the
+	 * referenced <code>PatternSet</code>.
+	 * 
+	 * @return the referenced <code>PatternSet</code>
+	 * @param the target project
 	 */
 	private PatternSet getRef(Project p) {
 		if (!checked) {
@@ -188,15 +215,23 @@ public class CommaPatternSet extends PatternSet {
 		else
 			return (PatternSet) o;
 	}
+	
 	/**
-	 * helper for FileSet.
+	 * Returns a boolean indicating whether this instance has any patterns.
+	 * 
+	 * @return a boolean indicating whether this instance has any patterns
 	 */
 	boolean hasPatterns() {
 		return incl != null || excl != null
 			|| includeList.size() > 0 || excludeList.size() > 0;
 	}
+	
 	/**
-	 * Convert a vector of NameEntry elements into an array of Strings.
+	 * Returns a given vector of name entries as an array of strings.
+	 * 
+	 * @return a string array of name entries
+	 * @param list the original vector of name entries
+	 * @param p the target project
 	 */
 	private String[] makeArray(Vector list, Project p) {
 		if (list.size() == 0) return null;
@@ -214,8 +249,11 @@ public class CommaPatternSet extends PatternSet {
 		tmpNames.copyInto(result);
 		return result;
 	}
+	
 	/**
-	 * Read includefile ot excludefile if not already done so.
+	 * Reads includefile and excludefile if not already done.
+	 * 
+	 * @param p the target project
 	 */
 	private void readFiles(Project p) {
 		if (incl != null) {
@@ -227,9 +265,15 @@ public class CommaPatternSet extends PatternSet {
 			excl = null;
 		}
 	}
+	
 	/**
-	 *  Reads path matching patterns from a file and adds them to the
-	 *  includes or excludes list (as appropriate).  
+	 * Reads path matching patterns from a file and adds them to the
+	 * includes or excludes list as appropriate.
+	 * 
+	 * @param patternfile the source file
+	 * @param patternlist the list of patterns
+	 * @param p the target project
+	 * @exception BuildException thrown if the file cannot be read
 	 */
 	private void readPatterns(File patternfile, Vector patternlist, Project p)
 		throws BuildException {
@@ -254,11 +298,12 @@ public class CommaPatternSet extends PatternSet {
 			throw new BuildException(Policy.bind("exception.patternFile",patternfile.toString()),ioe);
 		}
 	}
+	
 	/**
-	 * Sets the set of exclude patterns. Patterns may be separated by a comma
+	 * Sets the receiver's set of exclude patterns. Patterns may be separated by a comma
 	 * or a space.
 	 *
-	 * @param excludes the string containing the exclude patterns
+	 * @param excludes the exclude patterns
 	 */
 	public void setExcludes(String excludes) {
 		if (isReference()) {
@@ -271,25 +316,34 @@ public class CommaPatternSet extends PatternSet {
 			}
 		}
 	}
+
 	/**
 	 * Sets the name of the file containing the excludes patterns.
 	 *
-	 * @param excl The file to fetch the exclude patterns from.  
+	 * @param excl the file to retrieve the exclude patterns from
+	 * @exception BuildException thrown if the file does not exist
 	 */
-	 public void setExcludesfile(File excl) throws BuildException {
+	public void setExcludesfile(File excl) throws BuildException {
 		 if (isReference())
 			 throw tooManyAttributes();
 		 if (!excl.exists())
 			 throw new BuildException(Policy.bind("exception.missingExcludesFile",excl.getAbsolutePath()));
 		 this.excl = excl;
-	 }
-public void setId(String value) {
-}
+	}
+
 	/**
-	 * Sets the set of include patterns. Patterns may be separated by a comma
+	 * Sets the receiver's id.
+	 * 
+	 * @param value the id
+	 */
+	public void setId(String value) {
+	}
+
+	/**
+	 * Sets the receiver's set of include patterns. Patterns may be separated by a comma
 	 * or a space.
 	 *
-	 * @param includes the string containing the include patterns
+	 * @param includes the include patterns
 	 */
 	public void setIncludes(String includes) {
 		if (isReference()) {
@@ -302,24 +356,30 @@ public void setId(String value) {
 			}
 		}
 	}
+
 	/**
 	 * Sets the name of the file containing the includes patterns.
 	 *
-	 * @param incl The file to fetch the include patterns from.  
+	 * @param incl the file to retrieve the include patterns from
+	 * @exception BuildException thrown if the file does not exist
 	 */
-	 public void setIncludesfile(File incl) throws BuildException {
+	public void setIncludesfile(File incl) throws BuildException {
 		 if (isReference())
 			 throw tooManyAttributes();
 		 if (!incl.exists())
 			 throw new BuildException(Policy.bind("exception.missingIncludesFile",incl.getAbsolutePath()));
 		 this.incl = incl;
-	 }
+	}
+
 	/**
-	 * Makes this instance in effect a reference to another PatternSet
+	 * Makes the receiver effectively a reference to another <code>PatternSet</code>
 	 * instance.
 	 *
-	 * <p>You must not set another attribute or nest elements inside
-	 * this element if you make it a reference.</p> 
+	 * <p>Once this element becomes a reference its internal attributes and nested elements
+	 * must not be modified.</p>
+	 * 
+	 * @param r the other <code>PatternSet</code>
+	 * @exception BuildException
 	 */
 	public void setRefid(Reference r) throws BuildException {
 		if (!includeList.isEmpty() || !excludeList.isEmpty()) {

@@ -126,6 +126,11 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	private boolean projectHelp= false;
 	
+	/**
+	 * Adds a logger and all registered build listeners to an ant project.
+	 * 
+	 * @param project the project to add listeners to
+	 */
 	protected void addBuildListeners(Project project) {
 
 		// Add the default listener
@@ -141,8 +146,11 @@ public class AntRunner implements IPlatformRunnable {
 			}
 		}
 	}
+
 	/**
-	 *  Creates the default build logger for sending build events to the ant log.
+	 * Creates and returns the default build logger for logging build events to the ant log.
+	 * 
+	 * @return the default build logger for logging build events to the ant log
 	 */
 	private BuildLogger createLogger() {
 		BuildLogger logger= null;
@@ -167,6 +175,7 @@ public class AntRunner implements IPlatformRunnable {
 
 		return logger;
 	}
+
 	/**
 	 * Search parent directories for the build file.
 	 *
@@ -203,8 +212,13 @@ public class AntRunner implements IPlatformRunnable {
 
 		return file;
 	}
+
 	/**
-	 * Search for the insert position to keep names a sorted list of Strings
+	 * Returns the appropriate insertion index for a given string into a sorted collection.
+	 * 
+	 * @return the insertion index
+	 * @param names the initial collection of sorted strings
+	 * @param name the string whose insertion index into <code>names</code> is to be determined
 	 */
 	private int findTargetPosition(Vector names, String name) {
 		int res= names.size();
@@ -215,6 +229,7 @@ public class AntRunner implements IPlatformRunnable {
 		}
 		return res;
 	}
+
 	/**
 	 * Helper to get the parent file for a given file.
 	 *
@@ -232,22 +247,44 @@ public class AntRunner implements IPlatformRunnable {
 
 		return (filename == null) ? null : new File(filename);
 	}
+
+	/**
+	 * Command-line invocation method.
+	 * 
+	 * @param args the string arguments present on the command line
+	 */
 	public static void main(String[] args) throws Exception {
 		new AntRunner().run(args);
 	}
+
 	/**
-	 * Run this launcher with the arguments specified in the given string.
-	 * This is a short cut method for people running the launcher from
-	 * a scrapbook (i.e., swip-and-doit facility).
+	 * Equivalent to the standard command-line invocation method except
+	 * that command-line arguments are provided in the form of a string
+	 * instead of an array.
+	 * 
+	 * @param argString the string arguments present on the command line
 	 */
 	public static void main(String argString) throws Exception {
 		main(tokenizeArgs(argString));
 	}
+
+	/**
+	 * Returns the output message level that has been requested by the
+	 * client.  This value will be one of <code>Project.MSG_ERR</code>,
+	 * <code>Project.MSG_WARN</code>, <code>Project.MSG_INFO</code>,
+	 * <code>Project.MSG_VERBOSE</code> or <code>Project.MSG_DEBUG</code>.
+	 * 
+	 * @see org.apache.tools.ant.Project
+	 * @return the output message level that has been requested by the client
+	 */
 	public int getOutputMessageLevel() {
 		return msgOutputLevel;
 	}
+	
 	/**
-	 * Prints the message of the Throwable if it's not null.
+	 * Prints the message of the Throwable if it is not null.
+	 * 
+	 * @param t the throwable whose message is to be displayed
 	 */
 	private void printMessage(Throwable t) {
 		String message= t.getMessage();
@@ -255,8 +292,14 @@ public class AntRunner implements IPlatformRunnable {
 			System.err.println(message);
 		}
 	}
+	
 	/**
-	 * Output a formatted list of target names with an optional description
+	 * Logs a message with the client that lists the target names and optional descriptions
+	 * 
+	 * @param names the targets names
+	 * @param descriptions the corresponding descriptions
+	 * @param heading the message heading
+	 * @param maxlen maximum length that can be allocated for a name
 	 */
 	private void printTargets(Vector names, Vector descriptions, String heading, int maxlen) {
 		// now, start printing the targets and their descriptions
@@ -280,8 +323,12 @@ public class AntRunner implements IPlatformRunnable {
 
 		clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
 	}
+
 	/**
-	 * Print out a list of all targets in the current buildfile
+	 * Logs a message with the client that lists the targets
+	 * in a project
+	 * 
+	 * @param project the project to list targets from
 	 */
 	private void printTargets(Project project) {
 		// find the target with the longest name
@@ -316,8 +363,9 @@ public class AntRunner implements IPlatformRunnable {
 		printTargets(topNames, topDescriptions, Policy.bind("label.mainTargets"), maxLength);
 		printTargets(subNames, null, Policy.bind("label.subTargets"), 0);
 	}
+
 	/**
-	 * Prints the usage of how to use this class to the listener's message log
+	 * Logs a message with the client outlining the usage of <b>Ant</b>.
 	 */
 	private void printUsage() {
 		String lSep= System.getProperty("line.separator");
@@ -343,6 +391,11 @@ public class AntRunner implements IPlatformRunnable {
 		
 		clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
 	}
+
+	/**
+	 * Logs a message with the client indicating the version of <b>Ant</b> that this class
+	 * fronts.
+	 */
 	private void printVersion() {
 		try {
 			Properties props= new Properties();
@@ -366,6 +419,13 @@ public class AntRunner implements IPlatformRunnable {
 			System.err.println(Policy.bind("exception.cannotLoadVersionInfo"));
 		}
 	}
+
+	/**
+	 * Processes the command line passed in by the client.
+	 * 
+	 * @execption BuildException occurs if the build file is not properly specified
+	 * @param args the collection of arguments
+	 */
 	protected void processCommandLine(String[] args) throws BuildException {
 
 		String searchForThis= null;
@@ -494,12 +554,13 @@ public class AntRunner implements IPlatformRunnable {
 
 		readyToRun= true;
 	}
+
 	/**
-	 * This method kicks off the building
-	 * of a project object and executes a build using either a given
+	 * Invokes the building of a project object and executes a build using either a given
 	 * target or the default target.
 	 *
-	 * @param args Command line args.
+	 * @param argArray the command line arguments
+	 * @exception execution exceptions
 	 */
 	public Object run(Object argArray) throws Exception {
 		String[] args= (String[]) argArray;
@@ -517,19 +578,24 @@ public class AntRunner implements IPlatformRunnable {
 		}
 		return null;
 	}
+	
 	/**
-	 * This method kicks off the building
-	 * of a project object and executes a build using either a given
+	 * Invokes the building of a project object and executes a build using either a given
 	 * target or the default target.
 	 *
-	 * @param args Command line args.
+	 * @param argArray the command line arguments
+	 * @param listener the client listener
+	 * @exception execution exceptions
 	 */
 	public Object run(Object argArray, AntRunnerListener listener) throws Exception {
 		clientListener = listener;
 		return run(argArray);
 	}
+	
 	/**
 	 * Executes the build.
+	 * 
+	 * @exception BuildException thrown if there is a problem during building.
 	 */
 	private void runBuild() throws BuildException {
 		if (!readyToRun)
@@ -595,10 +661,12 @@ public class AntRunner implements IPlatformRunnable {
 			project.fireBuildFinished(error);
 		}
 	}
+
 	/**
-	 * Run this launcher with the arguments specified in the given string.
-	 * This is a short cut method for people running the launcher from
-	 * a scrapbook (i.e., swip-and-doit facility).
+	 * Returns a tokenized version of a string.
+	 * 
+	 * @return a tokenized version of a string
+	 * @param argString the original argument string
 	 */
 	public static String[] tokenizeArgs(String argString) throws Exception {
 		Vector list = new Vector(5);

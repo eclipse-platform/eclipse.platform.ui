@@ -28,6 +28,27 @@ public class IncrementalBuild extends Task {
 	private int kind= IncrementalProjectBuilder.INCREMENTAL_BUILD;
 	private HashMap args= new HashMap(5);
 
+	/**
+	 * Unique identifier constant (value <code>"KIND_INCR"</code>)
+	 * indicating that an incremental build should be performed.
+	 */
+	public final static String KIND_INCR = "incr";
+	
+	/**
+	 * Unique identifier constant (value <code>"KIND_FULL"</code>)
+	 * indicating that a full build should be performed.
+	 */
+	public final static String KIND_FULL = "full";
+	
+	/**
+	 * Unique identifier constant (value <code>"KIND_AUTO"</code>)
+	 * indicating that an auto build should be performed.
+	 */
+	public final static String KIND_AUTO = "auto";
+	
+	/**
+	 * Inner class that represents a name-value pair.
+	 */
 	public class Argument {
 		private String name;
 
@@ -42,12 +63,25 @@ public class IncrementalBuild extends Task {
 		}
 	}
 
+	/**
+	 * Constructs an <code>IncrementalBuild</code> instance.
+	 */
 	public IncrementalBuild() {
 		super();
 	}
+	/**
+	 * Creates and returns a new <code>Argument</code>.
+	 * 
+	 * @return the new argument
+	 */
 	public Argument createArgument() {
 		return new Argument();
 	}
+	/**
+	 * Executes this task.
+	 * 
+	 * @exception BuildException thrown if a problem occurs during execution
+	 */
 	public void execute() throws BuildException {
 		try {
 			if (project == null) {
@@ -63,17 +97,34 @@ public class IncrementalBuild extends Task {
 			throw new BuildException(e);
 		}
 	}
+	/**
+	 * Sets the name of the receiver's builder.
+	 * 
+	 * @param value the name of the receiver's builder
+	 */
 	public void setBuilder(String value) {
 		builder= value;
 	}
+	/**
+	 * Sets the receiver's kind> attribute.  This value must be one
+	 * of <code>IncrementalBuild.KIND_FULL</code>, <code>IncrementalBuild.KIND_AUTO</code>,
+	 * <code>IncrementalBuild.KIND_INCR</code>.
+	 * 
+	 * @param kind the receiver's kind attribute
+	 */
 	public void setKind(String value) {
-		if ("full".equalsIgnoreCase(value))
+		if (IncrementalBuild.KIND_FULL.equalsIgnoreCase(value))
 			kind= IncrementalProjectBuilder.FULL_BUILD;
-		else if ("auto".equalsIgnoreCase(value))
+		else if (IncrementalBuild.KIND_AUTO.equalsIgnoreCase(value))
 			kind= IncrementalProjectBuilder.AUTO_BUILD;
-		else if ("incr".equalsIgnoreCase(value))
+		else if (IncrementalBuild.KIND_INCR.equalsIgnoreCase(value))
 			kind= IncrementalProjectBuilder.INCREMENTAL_BUILD;
 	}
+	/**
+	 * Sets the receiver's target project.
+	 * 
+	 * @param value the receiver's target project
+	 */
 	public void setProject(String value) {
 		project= value;
 	}
