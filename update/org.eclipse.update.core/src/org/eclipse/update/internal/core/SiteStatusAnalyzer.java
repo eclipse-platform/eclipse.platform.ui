@@ -23,10 +23,7 @@ import org.osgi.service.packageadmin.*;
 
 public class SiteStatusAnalyzer {
 
-	//
-	private static List allRunningPlugins; /*VersionedIdentifier */
 	private static List allConfiguredFeatures; /*VersionedIdentifier */
-
 	private SiteLocal siteLocal;
 
 	/**
@@ -221,9 +218,6 @@ public class SiteStatusAnalyzer {
 		String ambiguousMSG = Policy.bind("SiteLocal.FeatureAmbiguous");
 		IStatus featureStatus = createStatus(IStatus.OK, IFeature.STATUS_HAPPY, "", null);
 		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_AMBIGUOUS, ambiguousMSG, null);
-
-		PluginIdentifier[] ids = getAllRunningPlugins();
-
 		PackageAdmin pkgAdmin = UpdateCore.getPlugin().getPackageAdmin();
 		
 		// is Ambigous if we find a plugin from the feature
@@ -303,45 +297,6 @@ public class SiteStatusAnalyzer {
 		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
 	}
 
-	/*
-	 * returns all the configured plugins from the registry
-	 */
-	private PluginIdentifier[] getAllRunningPlugins() {
-		if (allRunningPlugins == null) {
-			PluginIdentifier pluginIdentifier;
-			allRunningPlugins = new ArrayList();
-			IPluginRegistry reg = Platform.getPluginRegistry();
-			IPluginDescriptor[] desc = reg.getPluginDescriptors();
-			for (int i = 0; i < desc.length; i++) {
-				String id = desc[i].getUniqueIdentifier();
-				String ver = desc[i].getVersionIdentifier().toString();
-				VersionedIdentifier versionID =
-					new VersionedIdentifier(id, ver);
-				pluginIdentifier =
-					new PluginIdentifier(versionID, desc[i].getLabel(), false);
-				allRunningPlugins.add(pluginIdentifier);
-				// check fragments
-				FragmentEntry[] fragments = UpdateManagerUtils.getFragments(desc[i]);
-				for (int j = 0; j < fragments.length; j++) {
-					VersionedIdentifier fragVersionID =
-						new VersionedIdentifier(fragments[j].getPluginIdentifier(), fragments[j].getPluginVersion());
-			
-					pluginIdentifier =
-						new PluginIdentifier(
-							fragVersionID,
-							fragments[j].getName(),
-							true);
-					allRunningPlugins.add(pluginIdentifier);
-				}
-			}
-		}
-
-		PluginIdentifier[] ids = new PluginIdentifier[allRunningPlugins.size()];
-		if (allRunningPlugins.size() > 0) {
-			allRunningPlugins.toArray(ids);
-		}
-		return ids;
-	}
 
 	/*
 	 * returns all the configured fetaures
