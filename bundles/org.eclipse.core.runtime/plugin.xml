@@ -41,5 +41,13 @@
 			default-charset="UTF-8">
 			<describer class="org.eclipse.core.internal.content.XMLContentDescriber"/>
 		</content-type>
+		<!-- temporary - to be contributed by JDT -->			
+		<content-type id="javaProperties" name="%javaPropertiesFileName" 
+			base-type="text"
+			priority="high"				
+			file-extensions="properties"
+			default-charset="ISO-8859-1"/>
+		<!-- temporary - to be contributed by JDT Core -->
+		<file-association content-type="xml" file-names=".classpath"/>		
 	</extension>		 
 </plugin>
