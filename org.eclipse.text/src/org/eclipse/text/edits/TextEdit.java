@@ -244,7 +244,7 @@ public abstract class TextEdit {
 	
 	/**
 	 * Move all offsets in the tree by the given delta. This node must be a
-	 * root node.
+	 * root node. The resulting offsets must be greater or equal to zero.
 	 * 
 	 * @param delta the delta
 	 * @since 3.1

@@ -1168,20 +1168,20 @@ public class TextEditTests extends TestCase {
 		assertEquals(2, e2.getLength());
 	}
 	
-//	public void testMoveTree2() {
-//		TextEdit root= new MultiTextEdit();
-//		TextEdit e1= new ReplaceEdit(3, 1, "");
-//		root.addChild(e1);
-//		TextEdit e2= new ReplaceEdit(5, 2, "");
-//		root.addChild(e2);
-//		root.moveTree(-3);
-//		assertEquals(0, root.getOffset());
-//		assertEquals(4, root.getLength());
-//		assertEquals(0, e1.getOffset());
-//		assertEquals(1, e1.getLength());
-//		assertEquals(2, e2.getOffset());
-//		assertEquals(2, e2.getLength());
-//	}
+	public void testMoveTree2() {
+		TextEdit root= new MultiTextEdit();
+		TextEdit e1= new ReplaceEdit(3, 1, "");
+		root.addChild(e1);
+		TextEdit e2= new ReplaceEdit(5, 2, "");
+		root.addChild(e2);
+		root.moveTree(-3);
+		assertEquals(0, root.getOffset());
+		assertEquals(4, root.getLength());
+		assertEquals(0, e1.getOffset());
+		assertEquals(1, e1.getLength());
+		assertEquals(2, e2.getOffset());
+		assertEquals(2, e2.getLength());
+	}
 	
 	public void testMoveTree3() {
 		boolean exception= false;

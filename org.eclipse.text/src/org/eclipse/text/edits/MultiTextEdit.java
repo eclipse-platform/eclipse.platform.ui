@@ -160,6 +160,24 @@ public class MultiTextEdit extends TextEdit {
 	}
 
 	/*
+	 * @see org.eclipse.text.edits.TextEdit#adjustOffset(int)
+	 * @since 3.1
+	 */
+	/* package */ void adjustOffset(int delta) {
+		if (fDefined)
+			super.adjustOffset(delta);
+	}
+	
+	/*
+	 * @see org.eclipse.text.edits.TextEdit#adjustLength(int)
+	 * @since 3.1
+	 */
+	/* package */ void adjustLength(int delta) {
+		if (fDefined)
+			super.adjustLength(delta);
+	}
+	
+	/*
 	 * @see TextEdit#performConsistencyCheck
 	 */	
 	/* package */ void performConsistencyCheck(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
