@@ -85,7 +85,7 @@ public class PreferencesPageContainer implements IPreferencePageContainer{
 			Font titleFont = JFaceResources.getBannerFont();
 			
 			Label expandImage = new Label(composite,SWT.RIGHT);
-			expandImage.setText("+");
+			expandImage.setText("+");//$NON-NLS-1$
 			expandImage.setFont(titleFont);
 			
 			FormData imageData = new FormData();

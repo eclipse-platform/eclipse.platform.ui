@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.GenericListItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Color;
@@ -19,13 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.GenericListItem;
 
 /**
  * The PreferencesCategoryItem is the item for displaying 
@@ -69,7 +67,7 @@ public class PreferencesCategoryItem extends GenericListItem {
 		control.setBackground(color);
 
 		Image image;
-		ImageDescriptor desc = ((PreferenceNode) node).getSpecifiedImageDescriptor();
+		ImageDescriptor desc = ((WorkbenchPreferenceNode) node).getDescriptor();
 		if (desc == null)
 			image = JFaceResources.getImage(Dialog.DLG_IMG_INFO);
 		else
