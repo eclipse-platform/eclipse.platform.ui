@@ -77,7 +77,13 @@ public class ObjectStore implements Observer {
 	 * Closes the object store.
 	 */
 	public void close() throws ObjectStoreException {
-		commit();
+		try {
+			commit();
+		} catch (ObjectStoreException e) {
+			//make sure the page store file gets closed no matter what
+			pageStore.close(false);
+			throw e;
+		}
 		try {
 			pageStore.close();
 		} catch (Exception e) {

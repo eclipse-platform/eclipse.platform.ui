@@ -110,14 +110,17 @@ protected ResourceName getPropertyKey(IResource target) {
 }
 /**
  * Returns the property store to use when storing a property for the 
- * given resource.
+ * given resource.  
+ * @throws CoreException if the store could not be obtained for any reason.
  */
 protected PropertyStore getPropertyStore(IResource target) throws CoreException {
 	try {
 		Resource host = (Resource) getPropertyHost(target);
 		ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
-		if (info == null)
-			return null;
+		if (info == null) {
+			String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString());
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+		}
 		PropertyStore store = info.getPropertyStore();
 		if (store == null)
 			store = openPropertyStore(host);

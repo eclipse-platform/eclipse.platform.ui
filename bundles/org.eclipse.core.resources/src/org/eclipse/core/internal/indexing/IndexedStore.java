@@ -96,9 +96,20 @@ private static final Map registry = new HashMap();
 	 * Closes the store.  This is required to free the underlying file.
 	 */
 	public synchronized void close() throws IndexedStoreException {
-		commit();
-		objectDirectoryCursor.close();
-		indexDirectoryCursor.close();
+		try {
+			commit();
+			if (objectDirectoryCursor != null)
+				objectDirectoryCursor.close();
+			if (indexDirectoryCursor != null)
+				indexDirectoryCursor.close();
+		} catch (IndexedStoreException e) {
+			//make sure the file gets closed no matter what
+			try {
+				objectStore.close();
+			} catch (ObjectStoreException e2) {
+			}
+			throw e;
+		}
 		try {
 			objectStore.close();
 		} catch (ObjectStoreException e) {

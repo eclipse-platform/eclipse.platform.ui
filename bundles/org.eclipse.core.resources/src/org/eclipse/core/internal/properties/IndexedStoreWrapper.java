@@ -31,7 +31,6 @@ private void open() throws CoreException {
 		store = new IndexedStore();
 		store.open(location.toOSString());
 	} catch (Exception e) {
-		store = null;
 		String message = Policy.bind("indexed.couldNotOpen", location.toOSString());
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 		throw new CoreException(status);
@@ -41,10 +40,19 @@ private void open() throws CoreException {
 private void recreate() throws CoreException {
 	close();
 	// Rename the problematic store for future analysis.
-	location.toFile().renameTo(location.append(".001").toFile());
-	location.toFile().delete();
-	if (!location.toFile().exists())
-		open();
+	java.io.File file = location.toFile();
+	file.renameTo(location.addFileExtension("001").toFile());
+	file.delete();
+	if (!file.exists()) {
+		try {
+			open();
+		} catch (CoreException e) {
+			//failed again, null the store to make sure we
+			//don't attempt to access an invalid store.
+			store = null;
+			throw e;
+		}
+	}
 }
 
 public synchronized void close() {
@@ -56,6 +64,8 @@ public synchronized void close() {
 		String message = Policy.bind("indexed.couldNotClose", location.toOSString());
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
+	} finally {
+		store = null;
 	}
 }
 
