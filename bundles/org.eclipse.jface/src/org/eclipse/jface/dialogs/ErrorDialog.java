@@ -11,7 +11,7 @@ package org.eclipse.jface.dialogs;
  * 		IBM Corporation - initial API and implementation 
  * 		Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should
  * 			be activated and used by other components.
- */
+******************************************************************************/ 
 import java.util.Arrays;
 import java.util.Iterator;
 
