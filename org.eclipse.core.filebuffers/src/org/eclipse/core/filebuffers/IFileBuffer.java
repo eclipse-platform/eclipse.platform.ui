@@ -59,7 +59,7 @@ public interface IFileBuffer {
 	void revert(IProgressMonitor monitor) throws CoreException;
 	
 	/**
-	 * Commits this file buffer by changing the contents of th underlying file to
+	 * Commits this file buffer by changing the contents of the underlying file to
 	 * the contents of this file buffer. After that call, <code>isDirty</code> 
 	 * returns <code>false</code> and <code>isSynchronized</code> returns
 	 * <code>true</code>.
@@ -109,12 +109,12 @@ public interface IFileBuffer {
 	
 	/**
 	 * Resets state validation. If state validation is supported, <code>isStateValidated</code>
-	 * afterwars returns <code>false</code> unti the state is revalidated.
+	 * afterwards returns <code>false</code> until the state is revalidated.
 	 */
 	void resetStateValidation();
 	
 	/**
-	 * Returns the status of this file buffer. This is the result of the last operation peformed on this file buffer or
+	 * Returns the status of this file buffer. This is the result of the last operation performed on this file buffer or
 	 * internally initiated by this file buffer.
 	 * 
 	 * @return the status of this file buffer
