@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.progress;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -118,6 +120,45 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			size.x = 500;
 		getShell().setSize(size);
 		moveShell(getShell());
+		
+		Region oldRegion = getShell().getRegion();
+		Point shellSize = getShell().getSize();
+		Region r = new Region(getShell().getDisplay());
+		Rectangle rect = new Rectangle(0,0, shellSize.x, shellSize.y);
+		r.add(rect);
+		Region cornerRegion = new Region(getShell().getDisplay());
+		
+		//top right corner region
+		cornerRegion.add(new Rectangle(shellSize.x - 5, 0, 5 ,1));
+		cornerRegion.add(new Rectangle(shellSize.x - 3, 1, 3 ,1));
+		cornerRegion.add(new Rectangle(shellSize.x - 2, 2, 2 ,1));
+		cornerRegion.add(new Rectangle(shellSize.x - 1, 3, 1 ,2));
+		
+		//bottom right corner region
+		int y = shellSize.y;
+		cornerRegion.add(new Rectangle(shellSize.x - 5, y - 1, 5 ,1));
+		cornerRegion.add(new Rectangle(shellSize.x - 3, y - 2, 3 ,1));
+		cornerRegion.add(new Rectangle(shellSize.x - 2, y - 3, 2 ,1));
+		cornerRegion.add(new Rectangle(shellSize.x - 1, y - 5, 1 ,2));
+		
+		//top left corner region
+		cornerRegion.add(new Rectangle(0, 0, 5 ,1));
+		cornerRegion.add(new Rectangle(0, 1, 3 ,1));
+		cornerRegion.add(new Rectangle(0, 2, 2 ,1));
+		cornerRegion.add(new Rectangle(0, 3, 1 ,2));
+		
+		//bottom left corner region
+		cornerRegion.add(new Rectangle(0, y - 5, 1 ,2));
+		cornerRegion.add(new Rectangle(0, y - 3, 2 ,1));
+		cornerRegion.add(new Rectangle(0, y - 2, 3 ,1));
+		cornerRegion.add(new Rectangle(0, y - 1, 5 ,1));
+		
+		
+		r.subtract(cornerRegion);
+		getShell().setRegion(r);
+		
+		if(oldRegion != null)
+			oldRegion.dispose();
 
 	}
 
@@ -150,6 +191,19 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		newShell.setBackground(
 			JFaceColors.getSchemeBackground(newShell.getDisplay()));
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		if(getShell() == null)
+			return super.close();
+		Region oldRegion = getShell().getRegion();
+		boolean result =  super.close();
+		if(result && oldRegion != null)
+			oldRegion.dispose();
+		return result;
 	}
 	
 
