@@ -16,9 +16,7 @@ import java.net.InetAddress;
 import java.net.SocketPermission;
 import java.security.Permission;
 import java.util.PropertyPermission;
-
 import org.eclipse.ant.core.AntSecurityException;
-import sun.security.util.SecurityConstants;
 
 /**
  * A security manager that always throws an <code>AntSecurityException</code>
@@ -31,6 +29,9 @@ public class AntSecurityManager extends SecurityManager {
 
 	private SecurityManager fSecurityManager= null;
 	private Thread fRestrictedThread= null;
+	//ensure that the PropertyPermission class is loaded before we 
+	//start checking permissions: bug 85908
+	private static final PropertyPermission fgPropertyPermission= new PropertyPermission("*", "write"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	public AntSecurityManager(SecurityManager securityManager, Thread restrictedThread) {
 		fSecurityManager= securityManager;
@@ -213,11 +214,9 @@ public class AntSecurityManager extends SecurityManager {
 	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
 	 */
 	public void checkPermission(Permission perm) {
-		if (perm.getActions().equals(SecurityConstants.PROPERTY_WRITE_ACTION)) {
-			if (perm instanceof PropertyPermission && fRestrictedThread == Thread.currentThread()) {
-				//attempting to write a system property
-				throw new AntSecurityException();
-			}
+		if (fgPropertyPermission.implies(perm) && fRestrictedThread == Thread.currentThread()) {
+			//attempting to write a system property
+			throw new AntSecurityException();
 		}
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPermission(perm);
@@ -240,6 +239,7 @@ public class AntSecurityManager extends SecurityManager {
 		if (fSecurityManager != null) {
 			fSecurityManager.checkPropertiesAccess();
 		}
+		super.checkPropertiesAccess();
 	}
 
 	/* (non-Javadoc)
