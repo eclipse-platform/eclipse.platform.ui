@@ -115,6 +115,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private Position fHighlightAnnotationRange= new Position(Integer.MAX_VALUE);
 	/**
+	 * The range in which all new highlight annotations can be found.
+	 * @since 3.0
+	 */
+	private Position fNextHighlightAnnotationRange= new Position(Integer.MAX_VALUE);
+	/**
 	 * The text input listener.
 	 * @since 3.0
 	 */
@@ -204,7 +209,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Updates the set of decorations based on the current state of
 	 * the painter's annotation model.
 	 */
-	private synchronized void catchupWithModel() {	
+	private synchronized void catchupWithModel() {
+	    
 		if (fDecorations != null) {
 			fDecorations.clear();
 			fHighlightedDecorations.clear();
@@ -222,7 +228,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						continue;
 					
 					Color color= null;
-					Object annotationType= fAnnotationAccess.getType(annotation);
+					Object annotationType= annotation.getType();
 					boolean isHighlighting=  shouldBeHighlighted(annotationType);
 					boolean isDrawingSquiggles= shouldBeDrawn(annotationType); 
 					if (isDrawingSquiggles || isHighlighting)
@@ -254,11 +260,19 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					}
 				}
 				if (highlightAnnotationRangeStart != Integer.MAX_VALUE) {
-					int end= Math.max(fHighlightAnnotationRange.offset + fHighlightAnnotationRange.length, highlightAnnotationRangeEnd);
-					end= Math.min(end, fSourceViewer.getDocument().getLength());
+				    
+					fNextHighlightAnnotationRange.offset= highlightAnnotationRangeStart;
+					fNextHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
+					
+					if (fHighlightAnnotationRange.offset != Integer.MAX_VALUE) {
+					    highlightAnnotationRangeEnd= Math.max(fHighlightAnnotationRange.offset + fHighlightAnnotationRange.length, highlightAnnotationRangeEnd);
+					}
+
+					highlightAnnotationRangeEnd= Math.min(highlightAnnotationRangeEnd, fSourceViewer.getVisibleRegion().getOffset() + fSourceViewer.getVisibleRegion().getLength());
+					
 					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, highlightAnnotationRangeStart);
-					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, fSourceViewer.getDocument().getLength());
-					fHighlightAnnotationRange.length= end - fHighlightAnnotationRange.offset; 
+					fHighlightAnnotationRange.offset= Math.min(fHighlightAnnotationRange.offset, fSourceViewer.getVisibleRegion().getOffset());
+					fHighlightAnnotationRange.length= highlightAnnotationRangeEnd - fHighlightAnnotationRange.offset;
 				}
 			}
 		}
@@ -374,18 +388,18 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	private void invalidateTextPresentation() {
+	    if (fHighlightAnnotationRange.getOffset() == Integer.MAX_VALUE)
+	        return;
+	    
 		if (fSourceViewer instanceof ITextViewerExtension2) {
-			IRegion r;
-			if (fHighlightAnnotationRange != null && fHighlightAnnotationRange.getOffset() != Integer.MAX_VALUE)
-				r= new Region(fHighlightAnnotationRange.getOffset(), fHighlightAnnotationRange.getLength());
-			else
-				r= fSourceViewer.getVisibleRegion();
-			
+			IRegion r= new Region(fHighlightAnnotationRange.getOffset(), fHighlightAnnotationRange.getLength());
 			((ITextViewerExtension2)fSourceViewer).invalidateTextPresentation(r.getOffset(), r.getLength());
-
 		} else {
 			fSourceViewer.invalidateTextPresentation();
 		}
+		
+		fHighlightAnnotationRange.offset= fNextHighlightAnnotationRange.offset;
+		fHighlightAnnotationRange.length= fNextHighlightAnnotationRange.length;
 	}
 
 	/*
@@ -394,7 +408,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public synchronized void applyTextPresentation(TextPresentation tp) {
 		IRegion region= tp.getExtent();
-
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			
 			for (Iterator iter= fHighlightedDecorations.iterator(); iter.hasNext();) {
