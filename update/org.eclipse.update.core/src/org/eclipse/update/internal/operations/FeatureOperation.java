@@ -105,7 +105,7 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 		throws CoreException {
 		IConfiguredSite site = UpdateUtils.getConfigSite(feature, config);
 		if (site != null) {
-			PatchCleaner2 cleaner = new PatchCleaner2(site, feature);
+			PatchCleaner cleaner = new PatchCleaner(site, feature);
 			boolean result = site.unconfigure(feature);
 			cleaner.dispose();
 			return result;

@@ -20,7 +20,7 @@ import org.eclipse.update.core.*;
  * it tests if it is a patch and cleans up its backup configuration.
  */
 
-public class PatchCleaner2 {
+public class PatchCleaner {
 	private IConfiguredSite csite;
 	private SiteListener listener;
 	class SiteListener implements IConfiguredSiteChangedListener {
@@ -35,7 +35,7 @@ public class PatchCleaner2 {
 			cleanSavedConfigs(feature);
 		}
 	}
-	public PatchCleaner2(IConfiguredSite csite, IFeature root) {
+	public PatchCleaner(IConfiguredSite csite, IFeature root) {
 		this.csite = csite;
 		listener = new SiteListener();
 		csite.addConfiguredSiteChangedListener(listener);

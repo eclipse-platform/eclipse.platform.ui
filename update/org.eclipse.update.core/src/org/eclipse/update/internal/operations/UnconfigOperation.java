@@ -39,7 +39,7 @@ public class UnconfigOperation
 			throw new CoreException(status);
 		}
 
-		PatchCleaner2 cleaner = new PatchCleaner2(targetSite, feature);
+		PatchCleaner cleaner = new PatchCleaner(targetSite, feature);
 		targetSite.unconfigure(feature);
 		cleaner.dispose();
 
