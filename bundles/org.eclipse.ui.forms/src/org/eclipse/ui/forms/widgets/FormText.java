@@ -51,8 +51,8 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * <li><b>vspace </b>- the same as with the <b>p </b> tag</li>
  * <li><b>style </b>- could be 'bullet' (default), 'text' and 'image'</li>
  * <li><b>value </b>- not used for 'bullet'. For text, it is the value of the
- * text to rendered as a bullet. For image, it is the href of the image to be
- * rendered as a bullet.</li>
+ * text that is rendered as a bullet. For image, it is the href of the image to
+ * be rendered as a bullet.</li>
  * <li><b>indent </b>- the number of pixels to indent the text in the list item
  * </li>
  * <li><b>bindent </b>- the number of pixels to indent the bullet itself</li>
@@ -77,11 +77,26 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * key to the Color object set by 'setColor' method. Font is provided using
  * 'font' attribute and is a key to the Font object set by 'setFont' method.
  * </li>
+ * <li><b>control (new in 3.1)</b> - to place a control that is a child of the
+ * text control. Element accepts attribute 'href' that is a key to the Control
+ * object set using 'setControl' method. Optionally, attribute 'fill' can be set to
+ * <code>true</code> to make the control fill the entire width of the text.
+ * Form text is not responsible for creating or disposing controls, it only
+ * places them relative to the surrounding text.
  * </ul>
  * <p>
  * None of the elements can nest. For example, you cannot have <b>b </b> inside
  * a <b>span </b>. This was done to keep everything simple and transparent.
+ * Since 3.1, an exception to this rule has been added to support nesting
+ * images and text inside the hyperlink tag (<b>a</b>). Image enclosed in
+ * the hyperlink tag acts as a hyperlink, can be clicked on and can accept
+ * and render selection focus. When both text and image is enclosed,
+ * selection and rendering will affect both as a single hyperlink.
  * </p>
+ * <p>Since 3.1, it is possible to select text. Text selection
+ * can be programmatically accessed and also copied to 
+ * clipboard. Non-textual objects (images, controls etc.)
+ * in the selection range are ignored.
  * <p>
  * Care should be taken when using this control. Form text is not an HTML
  * browser and should not be treated as such. If you need complex formatting
@@ -89,15 +104,6 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * font/color styles of text segments is all you need, use StyleText widget.
  * Finally, if all you need is to wrap text, use SWT Label widget and create it
  * with SWT.WRAP style.
- * <p>
- * <p>
- * You should be careful not to ask the control to render large quantities of
- * text. It does not have advanced support for dirty regions and will repaint
- * fully each time. Instead, combine the control in a composite with other
- * controls and let SWT take care of the dirty regions.
- * </p>
- * <p>
- * Although the class is not marked final,
  * 
  * @see FormToolkit
  * @see TableWrapLayout
@@ -261,7 +267,7 @@ public final class FormText extends Canvas {
 			int lineHeight = fm.getHeight();
 
 			Paragraph[] paragraphs = model.getParagraphs();
-			IHyperlinkSegment selectedLink = model.getSelectedLink();
+			IHyperlinkSegment selectedLink = getSelectedLink();
 			for (int i = 0; i < paragraphs.length; i++) {
 				Paragraph p = paragraphs[i];
 				if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
@@ -489,10 +495,15 @@ public final class FormText extends Canvas {
 	 *            unique key that matches the value of the <samp>color </samp>
 	 *            attribute.
 	 * @param color
-	 *            an object of a type <samp>Color </samp>.
+	 *            an object of the type <samp>Color </samp> or <samp>null</samp>
+	 *            if the key needs to be cleared.
 	 */
 	public void setColor(String key, Color color) {
-		resourceTable.put("c." + key, color);
+		String fullKey = "c." + key;
+		if (color == null)
+			resourceTable.remove(fullKey);
+		else
+			resourceTable.put(fullKey, color);
 	}
 
 	/**
@@ -506,11 +517,39 @@ public final class FormText extends Canvas {
 	 *            unique key that matches the value of the <samp>font </samp>
 	 *            attribute.
 	 * @param font
-	 *            an object of a type <samp>Font </samp>.
+	 *            an object of the type <samp>Font </samp> or <samp>null</samp>
+	 *            if the key needs to be cleared.
 	 */
 	public void setFont(String key, Font font) {
-		resourceTable.put("f." + key, font);
-		model.clearCache(key);
+		String fullKey = "f." + key;
+		if (font == null)
+			resourceTable.remove(fullKey);
+		else
+			resourceTable.put(fullKey, font);
+		model.clearCache(fullKey);
+	}
+
+	/**
+	 * Registers the control referenced by the provided key.
+	 * <p>
+	 * For <samp>control</samp> tags, an object of a type <samp>Control</samp>
+	 * must be registered using the key equivalent to the value of the
+	 * <samp>control</samp> attribute.
+	 * 
+	 * @param key
+	 *            unique key that matches the value of the <samp>control</samp>
+	 *            attribute.
+	 * @param control
+	 *            an object of the type <samp>Control</samp> or <samp>null</samp>
+	 *            if the key needs to be cleared.
+	 * @since 3.1
+	 */
+	public void setControl(String key, Control control) {
+		String fullKey = "o." + key;
+		if (control == null)
+			resourceTable.remove(fullKey);
+		else
+			resourceTable.put(fullKey, control);
 	}
 
 	/**
@@ -626,12 +665,11 @@ public final class FormText extends Canvas {
 		Menu currentMenu = super.getMenu();
 		if (currentMenu != null && INTERNAL_MENU.equals(currentMenu.getData())) {
 			// internal menu set
-			if (menu!=null) {
+			if (menu != null) {
 				currentMenu.dispose();
 				super.setMenu(menu);
 			}
-		}
-		else
+		} else
 			super.setMenu(menu);
 	}
 
@@ -824,9 +862,14 @@ public final class FormText extends Canvas {
 	 * @since 3.1
 	 */
 	public Object getSelectedLinkHref() {
-		IHyperlinkSegment link = model.getSelectedLink();
-		if (link != null)
-			return link.getHref();
+		IHyperlinkSegment link = getSelectedLink();
+		return link!=null?link.getHref():null;
+	}
+	
+	private IHyperlinkSegment getSelectedLink() {
+		IFocusSelectable segment = model.getSelectedSegment();
+		if (segment != null && segment instanceof IHyperlinkSegment)
+			return (IHyperlinkSegment)segment;
 		return null;
 	}
 
@@ -838,7 +881,7 @@ public final class FormText extends Canvas {
 	 *            the pop-up menu manager
 	 */
 	protected void contextMenuAboutToShow(IMenuManager manager) {
-		IHyperlinkSegment link = model.getSelectedLink();
+		IHyperlinkSegment link = getSelectedLink();
 		if (link != null)
 			contributeLinkActions(manager, link);
 	}
@@ -919,18 +962,18 @@ public final class FormText extends Canvas {
 		}
 		notifySelectionChanged();
 	}
-	
+
 	private void computeSelection() {
 		GC gc = new GC(this);
 		Paragraph[] paragraphs = model.getParagraphs();
-		IHyperlinkSegment selectedLink = model.getSelectedLink();
+		IHyperlinkSegment selectedLink = getSelectedLink();
 		if (getDisplay().getFocusControl() != this)
 			selectedLink = null;
 		for (int i = 0; i < paragraphs.length; i++) {
 			Paragraph p = paragraphs[i];
-			if (i>0) selData.markNewLine();
-			p.computeSelection(gc, resourceTable, selectedLink,
-							selData);
+			if (i > 0)
+				selData.markNewLine();
+			p.computeSelection(gc, resourceTable, selectedLink, selData);
 		}
 		gc.dispose();
 	}
@@ -968,8 +1011,8 @@ public final class FormText extends Canvas {
 			mouseFocus = true;
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 			if (segmentUnder != null) {
-				IHyperlinkSegment oldLink = model.getSelectedLink();
-				if (getDisplay().getFocusControl()!=this) {
+				IHyperlinkSegment oldLink = getSelectedLink();
+				if (getDisplay().getFocusControl() != this) {
 					setFocus();
 				}
 				model.selectLink(segmentUnder);
@@ -989,7 +1032,7 @@ public final class FormText extends Canvas {
 					activateLink(segmentUnder, e.stateMask);
 				}
 			}
-			mouseFocus=false;
+			mouseFocus = false;
 		}
 	}
 
@@ -1046,11 +1089,11 @@ public final class FormText extends Canvas {
 	}
 
 	private boolean advance(boolean next) {
-		IHyperlinkSegment current = model.getSelectedLink();
+		IHyperlinkSegment current = getSelectedLink();
 		if (current != null)
 			exitLink(current, SWT.NULL);
-		boolean valid = model.traverseLinks(next);
-		IHyperlinkSegment newLink = model.getSelectedLink();
+		boolean valid = model.traverseFocusSelectableObjects(next);
+		IHyperlinkSegment newLink = getSelectedLink();
 		if (valid)
 			enterLink(newLink, SWT.NULL);
 		paintFocusTransfer(current, newLink);
@@ -1061,16 +1104,16 @@ public final class FormText extends Canvas {
 
 	private void handleFocusChange() {
 		if (hasFocus) {
-			//if (model.getSelectedLink() == null)
+			// if (model.getSelectedLink() == null)
 			if (!mouseFocus) {
-				if (model.restoreSavedLink()==false)
-					model.traverseLinks(true);
-				enterLink(model.getSelectedLink(), SWT.NULL);
-				paintFocusTransfer(null, model.getSelectedLink());
-			// ensureVisible(model.getSelectedLink());
+				if (model.restoreSavedLink() == false)
+					model.traverseFocusSelectableObjects(true);
+				enterLink(getSelectedLink(), SWT.NULL);
+				paintFocusTransfer(null, getSelectedLink());
+				// ensureVisible(model.getSelectedLink());
 			}
 		} else {
-			paintFocusTransfer(model.getSelectedLink(), null);
+			paintFocusTransfer(getSelectedLink(), null);
 			model.selectLink(null);
 		}
 	}
@@ -1106,18 +1149,18 @@ public final class FormText extends Canvas {
 				.getForeground());
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
-		boolean selected = (link == model.getSelectedLink());
+		boolean selected = (link == getSelectedLink());
 		((ParagraphSegment) link).paint(gc, hover, resourceTable, selected,
 				selData, null);
-		//if (selected) {
-			//link.paintFocus(gc, getBackground(), getForeground(), false, null);
-			//link.paintFocus(gc, getBackground(), getForeground(), true, null);
-		//}
+		// if (selected) {
+		// link.paintFocus(gc, getBackground(), getForeground(), false, null);
+		// link.paintFocus(gc, getBackground(), getForeground(), true, null);
+		// }
 		gc.dispose();
 	}
 
 	private void activateSelectedLink() {
-		IHyperlinkSegment link = model.getSelectedLink();
+		IHyperlinkSegment link = getSelectedLink();
 		if (link != null)
 			activateLink(link, SWT.NULL);
 	}
@@ -1176,7 +1219,7 @@ public final class FormText extends Canvas {
 		Rectangle repaintRegion = new Rectangle(x, y, width, height);
 
 		Paragraph[] paragraphs = model.getParagraphs();
-		IHyperlinkSegment selectedLink = model.getSelectedLink();
+		IHyperlinkSegment selectedLink = getSelectedLink();
 		if (getDisplay().getFocusControl() != this)
 			selectedLink = null;
 		for (int i = 0; i < paragraphs.length; i++) {

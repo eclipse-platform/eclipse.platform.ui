@@ -28,9 +28,9 @@ public class FormTextModel {
 
 	private Vector paragraphs;
 
-	private IHyperlinkSegment[] hyperlinks;
+	private IFocusSelectable[] selectableSegments;
 
-	private int selectedLinkIndex = -1;
+	private int selectedSegmentIndex = -1;
 	
 	private int savedSelectedLinkIndex = -1;
 
@@ -247,6 +247,8 @@ public class FormTextModel {
 							getHyperlinkSettings(), fontId);
 				} else if (name.equalsIgnoreCase("br")) {
 					segment = new BreakSegment();
+				} else if (name.equalsIgnoreCase("control")) {
+					segment = processControlSegment(child);
 				}
 			}
 			if (segment != null) {
@@ -269,17 +271,29 @@ public class FormTextModel {
 
 	private ImageSegment processImageSegment(Node image) {
 		ImageSegment segment = new ImageSegment();
-		processImageSegment(segment, image);
+		processObjectSegment(segment, image, "i.");
 		return segment;
 	}
 
-	private void processImageSegment(ImageSegment segment, Node image) {
-		NamedNodeMap atts = image.getAttributes();
+	private ControlSegment processControlSegment(Node control) {
+		ControlSegment segment = new ControlSegment();
+		processObjectSegment(segment, control, "o.");
+		Node fill = control.getAttributes().getNamedItem("fill");
+		if (fill!=null) {
+			String value = fill.getNodeValue();
+			boolean doFill = value.equalsIgnoreCase("true");
+			segment.setFill(doFill);
+		}
+		return segment;
+	}
+
+	private void processObjectSegment(ObjectSegment segment, Node object, String prefix) {
+		NamedNodeMap atts = object.getAttributes();
 		Node id = atts.getNamedItem("href");
 		Node align = atts.getNamedItem("align");
 		if (id != null) {
 			String value = id.getNodeValue();
-			segment.setObjectId("i." + value);
+			segment.setObjectId(prefix + value);
 		}
 		if (align != null) {
 			String value = align.getNodeValue().toLowerCase();
@@ -376,7 +390,7 @@ public class FormTextModel {
 			Node alt = child.getAttributes().getNamedItem("alt");
 			if (alt!=null)
 				segment.setTooltipText(alt.getNodeValue());
-			processImageSegment(segment, child);
+			processObjectSegment(segment, child, "i.");
 			return segment;
 		}  else if (status instanceof String) {
 			String text = (String) status;
@@ -408,7 +422,7 @@ public class FormTextModel {
 					String name = child.getNodeName();
 					if (name.equalsIgnoreCase("img")) {
 						ImageHyperlinkSegment is = new ImageHyperlinkSegment();
-						processImageSegment(is, child);
+						processObjectSegment(is, child, "i.");
 						Node alt = child.getAttributes().getNamedItem("alt");
 						if (alt!=null)
 							is.setTooltipText(alt.getNodeValue());
@@ -507,33 +521,37 @@ public class FormTextModel {
 		if (paragraphs == null)
 			paragraphs = new Vector();
 		paragraphs.clear();
-		selectedLinkIndex = -1;
+		selectedSegmentIndex = -1;
 		savedSelectedLinkIndex = -1;
-		hyperlinks = null;
+		selectableSegments = null;
 	}
 
-	IHyperlinkSegment[] getHyperlinks() {
-		if (hyperlinks != null || paragraphs == null)
-			return hyperlinks;
+	IFocusSelectable[] getFocusSelectableSegments() {
+		if (selectableSegments != null || paragraphs == null)
+			return selectableSegments;
 		Vector result = new Vector();
 		for (int i = 0; i < paragraphs.size(); i++) {
 			Paragraph p = (Paragraph) paragraphs.get(i);
 			ParagraphSegment[] segments = p.getSegments();
 			for (int j = 0; j < segments.length; j++) {
-				if (segments[j] instanceof IHyperlinkSegment)
+				if (segments[j] instanceof IFocusSelectable)
 					result.add(segments[j]);
 			}
 		}
-		hyperlinks = (IHyperlinkSegment[]) result
-				.toArray(new IHyperlinkSegment[result.size()]);
-		return hyperlinks;
+		selectableSegments = (IFocusSelectable[]) result
+				.toArray(new IFocusSelectable[result.size()]);
+		return selectableSegments;
 	}
 
 	public IHyperlinkSegment findHyperlinkAt(int x, int y) {
-		IHyperlinkSegment[] links = getHyperlinks();
-		for (int i = 0; i < links.length; i++) {
-			if (links[i].contains(x, y))
-				return links[i];
+		IFocusSelectable[] selectables = getFocusSelectableSegments();
+		for (int i = 0; i < selectables.length; i++) {
+			IFocusSelectable segment = selectables[i];
+			if (segment instanceof IHyperlinkSegment) {
+				IHyperlinkSegment link = (IHyperlinkSegment)segment;
+				if (link.contains(x, y))
+					return link;
+			}
 		}
 		return null;
 	}
@@ -555,41 +573,41 @@ public class FormTextModel {
 		}
 	}
 
-	public IHyperlinkSegment getSelectedLink() {
-		if (selectedLinkIndex == -1)
+	public IFocusSelectable getSelectedSegment() {
+		if (selectableSegments==null || selectedSegmentIndex == -1)
 			return null;
-		return hyperlinks[selectedLinkIndex];
+		return selectableSegments[selectedSegmentIndex];
 	}
 	
 	public boolean linkExists(IHyperlinkSegment link) {
-		if (hyperlinks==null)
+		if (selectableSegments==null)
 			return false;
-		for (int i=0; i<hyperlinks.length; i++) {
-			if (hyperlinks[i]==link)
+		for (int i=0; i<selectableSegments.length; i++) {
+			if (selectableSegments[i]==link)
 				return true;
 		}
 		return false;
 	}
 
-	public boolean traverseLinks(boolean next) {
-		IHyperlinkSegment[] links = getHyperlinks();
-		if (links == null)
+	public boolean traverseFocusSelectableObjects(boolean next) {
+		IFocusSelectable[] selectables = getFocusSelectableSegments();
+		if (selectables == null)
 			return false;
-		int size = links.length;
+		int size = selectables.length;
 		if (next) {
-			selectedLinkIndex++;
+			selectedSegmentIndex++;
 		} else
-			selectedLinkIndex--;
+			selectedSegmentIndex--;
 
-		if (selectedLinkIndex < 0 || selectedLinkIndex > size - 1) {
-			selectedLinkIndex = -1;
+		if (selectedSegmentIndex < 0 || selectedSegmentIndex > size - 1) {
+			selectedSegmentIndex = -1;
 		}
-		return selectedLinkIndex != -1;
+		return selectedSegmentIndex != -1;
 	}
 	
 	public boolean restoreSavedLink() {
 		if (savedSelectedLinkIndex!= -1) {
-			selectedLinkIndex = savedSelectedLinkIndex;
+			selectedSegmentIndex = savedSelectedLinkIndex;
 			return true;
 		}
 		else
@@ -598,17 +616,17 @@ public class FormTextModel {
 
 	public void selectLink(IHyperlinkSegment link) {
 		if (link == null) {
-			savedSelectedLinkIndex = selectedLinkIndex;	
-			selectedLinkIndex = -1;
+			savedSelectedLinkIndex = selectedSegmentIndex;	
+			selectedSegmentIndex = -1;
 		}
 		else {
-			IHyperlinkSegment[] links = getHyperlinks();
-			selectedLinkIndex = -1;
-			if (links == null)
+			IFocusSelectable[] selectables = getFocusSelectableSegments();
+			selectedSegmentIndex = -1;
+			if (selectables == null)
 				return;
-			for (int i = 0; i < links.length; i++) {
-				if (links[i].equals(link)) {
-					selectedLinkIndex = i;
+			for (int i = 0; i < selectables.length; i++) {
+				if (selectables[i].equals(link)) {
+					selectedSegmentIndex = i;
 					break;
 				}
 			}
@@ -616,17 +634,17 @@ public class FormTextModel {
 	}
 
 	public boolean hasFocusSegments() {
-		IHyperlinkSegment[] links = getHyperlinks();
-		if (links.length > 0)
+		IFocusSelectable[] segments = getFocusSelectableSegments();
+		if (segments.length > 0)
 			return true;
 		return false;
 	}
 
 	public void dispose() {
 		paragraphs = null;
-		selectedLinkIndex = -1;
+		selectedSegmentIndex = -1;
 		savedSelectedLinkIndex = -1;
-		hyperlinks = null;
+		selectableSegments = null;
 	}
 
 	/**

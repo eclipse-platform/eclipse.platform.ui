@@ -15,6 +15,8 @@ import java.io.InputStream;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
@@ -132,6 +134,7 @@ public class FreeFormPage extends FormPage {
 		});
 		rtext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
 		rtext.setImage("image1", ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_LARGE));
+		createControl(rtext, toolkit);
 		Menu menu = new Menu(rtext);
 		final MenuItem item = new MenuItem(menu, SWT.PUSH);
 		item.setText("&Copy");
@@ -156,5 +159,16 @@ public class FreeFormPage extends FormPage {
 			catch (IOException e) {
 			}
 		}
+	}
+	private void createControl(FormText ftext, FormToolkit toolkit) {
+		Composite comp = toolkit.createComposite(ftext);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		comp.setLayout(layout);
+		toolkit.createLabel(comp, "Sample text:");
+		Text text = toolkit.createText(comp, "");
+		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		Button button = toolkit.createButton(comp, "Browse...", SWT.PUSH);
+		ftext.setControl("control1", comp);
 	}
 }

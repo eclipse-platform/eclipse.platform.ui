@@ -1,41 +1,48 @@
-/*
- * Created on Jan 2, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
+
+import java.util.Hashtable;
 
 import org.eclipse.swt.graphics.*;
 
-/**
- * @author dejan
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class ImageHyperlinkSegment extends ImageSegment implements
 		IHyperlinkSegment {
 	private String href;
+
 	private String tooltipText;
-	
+
 	public ImageHyperlinkSegment() {
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#setHref(java.lang.String)
 	 */
 	public void setHref(String href) {
 		this.href = href;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getHref()
 	 */
 	public String getHref() {
 		return href;
 	}
 
-	public void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion) {
+	public void paintFocus(GC gc, Color bg, Color fg, boolean selected,
+			Rectangle repaintRegion) {
 		Rectangle bounds = getBounds();
 		if (bounds == null)
 			return;
@@ -45,37 +52,57 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 			gc.drawFocus(bounds.x, bounds.y, bounds.width, bounds.height);
 		} else {
 			gc.setForeground(bg);
-			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
+			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1,
+					bounds.height - 1);
 		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#isWordWrapAllowed()
 	 */
 	public boolean isWordWrapAllowed() {
 		return !isNowrap();
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#setWordWrapAllowed(boolean)
 	 */
 	public void setWordWrapAllowed(boolean value) {
 		setNowrap(!value);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getText()
 	 */
 	public String getText() {
 		return "";
 	}
+
 	/**
 	 * @return Returns the tooltipText.
 	 */
 	public String getTooltipText() {
 		return tooltipText;
 	}
+
 	/**
-	 * @param tooltipText The tooltipText to set.
+	 * @param tooltipText
+	 *            The tooltipText to set.
 	 */
 	public void setTooltipText(String tooltipText) {
 		this.tooltipText = tooltipText;
+	}
+
+	public boolean isFocusSelectable(Hashtable resourceTable) {
+		return true;
+	}
+
+	public void setFocus(Hashtable resourceTable) {
 	}
 }
