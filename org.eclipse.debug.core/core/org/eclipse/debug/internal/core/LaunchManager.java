@@ -439,11 +439,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		// persist local index of launch configs
 		List configs = getLocalLaunchConfigurations();
-		IPath path = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex"); //$NON-NLS-1$
+		IPath path= DebugPlugin.getDefault().getStateLocation().append(".launchindex"); //$NON-NLS-1$
 		persistIndex(configs, path);
 		
 		// persist the mapping of file extensions to default config types
-		path = new Path(DebugPlugin.getDefault().getStateLocation() + ".defaultlaunchconfigs"); //$NON-NLS-1$
+		path = DebugPlugin.getDefault().getStateLocation().append(".defaultlaunchconfigs"); //$NON-NLS-1$
 		persistDefaultConfigTypeMap(path);
 		
 		fLaunchConfigurationTypes.clear();
@@ -470,7 +470,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 
 		// restore the user-specified mapping of file extensions to default config types
-		IPath defaultConfigMapPath = new Path(DebugPlugin.getDefault().getStateLocation() + ".defaultlaunchconfigs"); //$NON-NLS-1$
+		IPath defaultConfigMapPath = DebugPlugin.getDefault().getStateLocation().append(".defaultlaunchconfigs"); //$NON-NLS-1$
 		restoreDefaultConfigTypeMap(defaultConfigMapPath);
 		
 		// restore project launch configuration indices
@@ -481,7 +481,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}	
 		// restore local launch configuration index	
-		IPath launchIndexPath = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex"); //$NON-NLS-1$
+		IPath launchIndexPath = DebugPlugin.getDefault().getStateLocation().append(".launchindex"); //$NON-NLS-1$
 		restoreIndex(launchIndexPath);		
 	}
 	
@@ -583,7 +583,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		
 		// read each default configuration 
-		List configs = new ArrayList(4);	
 		NodeList list = root.getChildNodes();
 		int length = list.getLength();
 		for (int i = 0; i < length; ++i) {
