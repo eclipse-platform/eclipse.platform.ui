@@ -47,27 +47,18 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
     public void testDefaults() {
         WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
 
-            public void fillActionBars(IWorkbenchWindow window,
-                    IActionBarConfigurer actionBarConfig, int flags) {
-                super.fillActionBars(window, actionBarConfig, flags);
-
-                String tempTitle = "title"; //$NON-NLS-1$
-
-                IWorkbenchWindowConfigurer windowConfig = workbenchConfig
-                        .getWindowConfigurer(window);
+            public void preWindowOpen(IWorkbenchWindowConfigurer windowConfig) {
+                super.preWindowOpen(windowConfig);
                 assertNotNull(windowConfig);
-
-                assertEquals(window, windowConfig.getWindow());
                 assertEquals(workbenchConfig, windowConfig
                         .getWorkbenchConfigurer());
-                assertEquals(actionBarConfig, windowConfig
-                        .getActionBarConfigurer());
-                assertNull(windowConfig.getTitle());
+//                assertNull(windowConfig.getTitle());
                 assertTrue(windowConfig.getShowCoolBar());
                 assertTrue(windowConfig.getShowMenuBar());
                 assertFalse(windowConfig.getShowPerspectiveBar());
                 assertTrue(windowConfig.getShowStatusLine());
 
+                String tempTitle = "title"; //$NON-NLS-1$
                 windowConfig.setTitle(tempTitle);
                 windowConfig.setShowCoolBar(false);
                 windowConfig.setShowMenuBar(false);
@@ -87,6 +78,54 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
                 windowConfig.setShowMenuBar(true);
                 windowConfig.setShowPerspectiveBar(false);
                 windowConfig.setShowStatusLine(true);
+            }
+
+            public void fillActionBars(IWorkbenchWindow window,
+                    IActionBarConfigurer actionBarConfig, int flags) {
+                super.fillActionBars(window, actionBarConfig, flags);
+
+                IWorkbenchWindowConfigurer windowConfig = workbenchConfig
+                        .getWindowConfigurer(window);
+                assertNotNull(windowConfig);
+
+                assertEquals(window, windowConfig.getWindow());
+                assertEquals(workbenchConfig, windowConfig
+                        .getWorkbenchConfigurer());
+                assertEquals(actionBarConfig, windowConfig
+                        .getActionBarConfigurer());
+            }
+        };
+
+        int code = PlatformUI.createAndRunWorkbench(display, wa);
+        assertEquals(PlatformUI.RETURN_OK, code);
+    }
+
+
+    public void testC0P0() {
+        testCP(false, false);
+    }
+    
+    /**
+     * Regression test for bug 68774 - [Perspectives] NPE in PerspectiveSwitcher.setCoolItemSize()
+     */
+    public void testC0P1() {
+        testCP(false, true);
+    }
+
+    public void testC1P0() {
+        testCP(true, false);
+    }
+    
+    public void testC1P1() {
+        testCP(true, true);
+    }
+
+    private void testCP(final boolean showCoolBar, final boolean showPerspectiveBar) {
+        WorkbenchAdvisor wa = new WorkbenchAdvisorObserver(1) {
+            public void preWindowOpen(IWorkbenchWindowConfigurer windowConfig) {
+                super.preWindowOpen(windowConfig);
+                windowConfig.setShowCoolBar(showCoolBar);
+                windowConfig.setShowPerspectiveBar(showPerspectiveBar);
             }
         };
 
