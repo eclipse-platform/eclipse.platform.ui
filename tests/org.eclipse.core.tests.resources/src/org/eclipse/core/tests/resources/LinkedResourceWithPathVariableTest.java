@@ -63,6 +63,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
+				//ignore
 			}
 			segment = (((long) ++nextLocationCounter) << 32) | (System.currentTimeMillis() & mask);
 			path = parent.append(Long.toString(segment));
