@@ -17,23 +17,23 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import org.eclipse.ui.internal.RectangleAnimation;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
@@ -81,6 +81,27 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
                      * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
                      */
                     public IStatus runInUIThread(IProgressMonitor monitor) {
+                        Display currentDisplay = getDisplay();
+                        if (currentDisplay == null
+                                || currentDisplay.isDisposed())
+                                return Status.CANCEL_STATUS;
+                        //If there is a modal shell open then wait
+                        Shell[] shells = currentDisplay.getShells();
+                        int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
+                                | SWT.PRIMARY_MODAL;
+                        for (int i = 0; i < shells.length; i++) {
+                            //Do not stop for shells that will not block the
+                            // user.
+                            if (shells[i].isVisible()) {
+                                int style = shells[i].getStyle();
+                                if ((style & modal) != 0) {
+                                    //try again in a few seconds
+                                    schedule(1000);
+                                    return Status.CANCEL_STATUS;
+                                }
+                            }
+                        }
+
                         create();
                         ProgressManager.getInstance().progressFor(job)
                                 .addProgressListener(
@@ -354,14 +375,13 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
      * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
     protected void createButtonsForButtonBar(Composite parent) {
-        createDetailsButton(parent);
 
         Button runInWorkspace = createButton(
                 parent,
                 IDialogConstants.CLOSE_ID,
                 ProgressMessages
                         .getString("ProgressMonitorFocusJobDialog.RunInBackgroundButton"), //$NON-NLS-1$
-                false);
+                true);
         runInWorkspace.addSelectionListener(new SelectionAdapter() {
 
             /*
@@ -377,8 +397,8 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
         });
 
         runInWorkspace.setCursor(arrowCursor);
-        createSpacer(parent);
         createCancelButton(parent);
+        createDetailsButton(parent);
     }
 
     /*
@@ -402,17 +422,14 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
                 .getActiveWorkbenchWindow();
         if (currentWindow == null) return;
 
-        IWorkbenchPage page = currentWindow.getActivePage();
-        if (page == null || !(page instanceof WorkbenchPage)) return;
-        WorkbenchPage internalPage = (WorkbenchPage) page;
         WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
-        Composite composite = internalPage.getClientComposite();
-        Rectangle end = internalWindow.getProgressRegion().getControl().getBounds();
+        Rectangle end = internalWindow.getProgressRegion().getControl()
+                .getBounds();
         Point start = internalWindow.getShell().getLocation();
         end.x += start.x;
         end.y += start.y;
-        RectangleAnimation animation = new RectangleAnimation(composite,
-                startPosition, end, 250);
+        RectangleAnimation animation = new RectangleAnimation(internalWindow
+                .getShell(), startPosition, end, 250);
         animation.schedule();
     }
 }

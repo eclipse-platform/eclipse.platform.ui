@@ -122,9 +122,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createDetailsButton(parent);
-		createSpacer(parent);
 		super.createButtonsForButtonBar(parent);
+		createDetailsButton(parent);
 	}
 	/**
 	 * Create a spacer label to get the layout to
@@ -142,9 +141,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
      * @param parent The parent of the new button.
      */
     protected void createDetailsButton(Composite parent) {
-        
-       
-    	
+
         detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
 				ProgressMessages
 						.getString("ProgressMonitorJobsDialog.DetailsTitle"), //$NON-NLS-1$
@@ -181,6 +178,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 		composite.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
+		data.horizontalAlignment = GridData.END;
 		data.grabExcessHorizontalSpace = true;
 		composite.setLayoutData(data);
 		composite.setFont(parent.getFont());
