@@ -281,18 +281,21 @@
          <action
                label="%CheckoutAsAction.label"
                tooltip="%CheckoutAsAction.tooltip"
+               menubarPath="checkoutGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAsAction"
                id="org.eclipse.team.ccvs.ui.checkoutAs">
          </action>
          <action
                label="%AddToWorkspaceAction.label"
                tooltip="%AddToWorkspaceAction.tooltip"
+               menubarPath="checkoutGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"
                id="org.eclipse.team.ccvs.ui.addToWorkspace">
          </action>
 	     <action
 				id="org.eclipse.team.ccvs.ui.configureTagsOnRemoteFolder"
 				label="%ConfigureTags.label"
+               menubarPath="miscGroup"
 				tooltip="%ConfigureTags.label"
 				icon="icons/full/clcl16/newstream_wiz.gif"
 				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"				
@@ -426,6 +429,7 @@
             id="org.eclipse.team.ccvs.ui.RemoteResourceContributions">
          <action
                label="%CompareRemoteResourcesAction.label"
+               menubarPath="miscGroup"
                tooltip="%CompareRemoteResourcesAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"
                enablesFor="2"
@@ -433,12 +437,14 @@
          </action>
          <action
                label="%MoveTagAction.label"
+               menubarPath="tagGroup"
                tooltip="%MoveTagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction"
                id="org.eclipse.team.ccvs.ui.moveTagInRepository">
          </action>
          <action
                label="%TagInRepositoryAction.label"
+               menubarPath="tagGroup"
                tooltip="%TagInRepositoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"
                id="org.eclipse.team.ccvs.ui.tagInRepository">

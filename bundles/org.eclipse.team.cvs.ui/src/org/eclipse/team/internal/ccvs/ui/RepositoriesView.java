@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.Properties;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -174,6 +175,9 @@ public class RepositoriesView extends ViewPart {
 				manager.add(sub);
 				
 				// Misc additions
+				manager.add(new Separator("checkoutGroup")); //$NON-NLS-1$
+				manager.add(new Separator("tagGroup")); //$NON-NLS-1$
+				manager.add(new Separator("miscGroup")); //$NON-NLS-1$
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				
 				manager.add(refreshAction);
