@@ -51,6 +51,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -148,9 +149,20 @@ public class Session {
 	 * However, sessions will be open for nested calls to run and these sessions will not be closed
 	 * until the outer most run finishes.
 	 */
-	public static void run(ICVSRepositoryLocation location, ICVSFolder root, boolean outputToConsole,
-		ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
+	public static void run(final ICVSRepositoryLocation location, final ICVSFolder root, final boolean outputToConsole,
+		final ICVSRunnable runnable, final IProgressMonitor monitor) throws CVSException {
+			
+		// Serialize runnables to allow only one thread to run at a time. 
+		CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()).run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				internalRun(location, root, outputToConsole, runnable, monitor);
+			}
+		}, monitor);
+	}
 		
+	private static void internalRun(ICVSRepositoryLocation location, ICVSFolder root, boolean outputToConsole,
+			ICVSRunnable runnable, IProgressMonitor monitor) throws CVSException {
+
 		// Determine if we are nested or not
 		boolean isOuterRun = false;
 		if (currentOpenSessions == null) {
