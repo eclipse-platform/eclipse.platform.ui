@@ -119,7 +119,7 @@ public abstract class StatusDialog extends Dialog {
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 1;
 		layout.marginHeight= 0;
-		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginWidth= 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 

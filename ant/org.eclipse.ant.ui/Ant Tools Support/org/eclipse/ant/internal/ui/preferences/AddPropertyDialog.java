@@ -53,8 +53,8 @@ public class AddPropertyDialog extends Dialog {
 		Composite comp = new Composite(parent, SWT.NULL);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
-		topLayout.marginHeight= 15;
-		topLayout.marginWidth= 10;
+		topLayout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		topLayout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		comp.setLayout(topLayout);
 		comp.setFont(parent.getFont());
 		GridData gd;
