@@ -164,6 +164,39 @@ protected boolean delete(File root, String filePath, MultiStatus status) {
 	}
 	return !(failedRecursive || failedThis);
 }
+public int getEncoding(File target) throws CoreException{
+	InputStream input = null;
+	try {
+		input = read(target);
+		int first = (input.read() & 0xFF);//converts unsigned byte to int
+		int second = (input.read() & 0xFF);
+		if (first == -1 || second == -1)
+			return IFile.ENCODING_UNKNOWN;
+		//look for the UTF-16 Byte Order Mark (BOM)
+		if (first == 0xFE && second == 0xFF)
+			return IFile.ENCODING_UTF_16BE;
+		if (first == 0xFF && second == 0xFE)
+			return IFile.ENCODING_UTF_16LE;
+		int third = (input.read() & 0xFF);
+		if (third == -1)
+			return IFile.ENCODING_UNKNOWN;	
+		//look for the UTF-8 BOM
+		if (first == 0xEF && second == 0xBB && third == 0xBF)
+			return IFile.ENCODING_UTF_8;
+		return IFile.ENCODING_UNKNOWN;
+	} catch (IOException e) {
+		String message = Policy.bind("localstore.couldNotRead", target.getAbsolutePath()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(target.getAbsolutePath()), message, e);
+	} finally {
+		if (input != null) {
+			try {
+				input.close();
+			} catch (IOException e) {
+				//ignore exceptions on close
+			}
+		}
+	}
+}
 public void move(File source, File destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -323,4 +356,5 @@ public void writeFolder(File target) throws CoreException {
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
 	}
 }
+
 }

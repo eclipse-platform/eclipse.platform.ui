@@ -203,6 +203,16 @@ public InputStream getContents(boolean force) throws CoreException {
 	return getLocalManager().read(this, force, null);
 }
 /**
+ * @see IFile#getEncoding()
+ */
+public int getEncoding() throws CoreException {
+	ResourceInfo info = getResourceInfo(false, false);
+	int flags = getFlags(info);
+	checkAccessible(flags);
+	checkLocal(flags, DEPTH_ZERO);
+	return getLocalManager().getEncoding(this);
+}
+/**
  * @see IFile#getHistory
  */
 public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException {
@@ -293,5 +303,8 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
 	updateFlags |= keepHistory ? IResource.KEEP_HISTORY : IResource.NONE;
 	setContents(source.getContents(), updateFlags, monitor);
 }
+
+
+
 
 }

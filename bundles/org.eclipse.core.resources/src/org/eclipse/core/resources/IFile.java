@@ -34,6 +34,56 @@ import java.io.InputStream;
  * @see Platform#getAdapterManager
  */
 public interface IFile extends IResource, IStorage, IAdaptable {
+	/**
+	 * Character encoding constant (value 0) which identifies
+	 * files that have an unknown character encoding scheme.
+	 * 
+	 * @see IFile#getEncoding
+	 */
+	public int ENCODING_UNKNOWN = 0;
+	/**
+	 * Character encoding constant (value 1) which identifies
+	 * files that are encoded with the US-ASCII character encoding scheme.
+	 * 
+	 * @see IFile#getEncoding
+	 */
+	public int ENCODING_US_ASCII = 1;
+	/**
+	 * Character encoding constant (value 2) which identifies
+	 * files that are encoded with the ISO-8859-1 character encoding scheme,
+	 * also known as ISO-LATIN-1.
+	 * 
+	 * @see IFile#getEncoding
+	 */
+	public int ENCODING_ISO_8859_1 = 2;
+	/**
+	 * Character encoding constant (value 3) which identifies
+	 * files that are encoded with the UTF-8 character encoding scheme.
+	 * 
+	 * @see IFile#getEncoding
+	 */
+	public int ENCODING_UTF_8 = 3;
+	/**
+	 * Character encoding constant (value 4) which identifies
+	 * files that are encoded with the UTF-16BE character encoding scheme.
+	 * 
+	 * @see IFile#getEncoding
+	 */
+	public int ENCODING_UTF_16BE = 4;
+	/**
+	 * Character encoding constant (value 5) which identifies
+	 * files that are encoded with the UTF-16LE character encoding scheme.
+	 * 
+	 * @see IFile#getEncoding
+	 */
+	public int ENCODING_UTF_16LE = 5;
+	/**
+	 * Character encoding constant (value 6) which identifies
+	 * files that are encoded with the UTF-16 character encoding scheme.
+	 * 
+	 * @see IFile#getEncoding
+	 */
+	public int ENCODING_UTF_16 = 6;
 
 /**
  * Appends the entire contents of the given stream to this file.
@@ -319,6 +369,28 @@ public InputStream getContents() throws CoreException;
  */
 public InputStream getContents(boolean force) throws CoreException;
 /**
+ * Returns a constant identifying the character encoding of this file, or 
+ * ENCODING_UNKNOWN if it could not be determined.  The returned constant
+ * will be one of the ENCODING_* constants defined on IFile.
+ * 
+ * This method attempts to guess the file's character encoding by analyzing
+ * the first few bytes of the file.  If no identifying pattern is found at the 
+ * beginning of the file, ENC_UNKNOWN will be returned.  This method will
+ * not attempt any complex analysis of the file to make a guess at the 
+ * encoding that is used.
+ * 
+ * @return The character encoding of this file
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> This resource could not be read.</li>
+ * <li> This resource is not local.</li>
+ * <li> The corresponding location in the local file system
+ *       is occupied by a directory.</li>
+ * </ul>
+ */
+public int getEncoding() throws CoreException;
+/**
  * Returns the full path of this file. 
  * This refinement of the corresponding <code>IStorage</code> and <code>IResource</code>
  * methods links the semantics of resource and storage object paths such that
@@ -357,7 +429,7 @@ public String getName();
 /**
  * Returns whether this file is read-only.
  * This refinement of the corresponding <code>IStorage</code> and <code>IResource</code>
- * methods links the semantics of read-only resourcea and read-only storage objects.
+ * methods links the semantics of read-only resources and read-only storage objects.
  *
  * @see IResource#isReadOnly
  * @see IStorage#isReadOnly

@@ -15,7 +15,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.*;
 /**
  * Manages the synchronization between the workspace's view and the file system.  
@@ -115,6 +119,20 @@ public IPath getDescriptionLocationFor(IProject target) {
 	//can't use IResource#getLocation() because it returns null if it doesn't exist
 	return ((Project)target).getLocalManager().locationFor(target).append(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
+public int getEncoding(File target) throws CoreException {
+	// thread safety: (the location can be null if the project for this file does not exist)
+	IPath location = locationFor(target);
+	if (location == null)
+		 ((Project) target.getProject()).checkExists(NULL_FLAG, true);
+	java.io.File localFile = location.toFile();
+	if (!localFile.exists()) {
+		String message = Policy.bind("localstore.fileNotFound", localFile.getAbsolutePath()); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+	}
+	return getStore().getEncoding(localFile);
+}
+
+
 public HistoryStore getHistoryStore() {
 	return historyStore;
 }
