@@ -13,9 +13,11 @@ package org.eclipse.jface.text;
  
 /**
  * Extension interface for <code>IDocument</code>.  <p>
+ * 
  * It introduces the notion of sequentially rewriting a document. This is to tell a
  * document that a sequence of non-overlapping replace operation is about to be
  * performed.<p>
+ * 
  * Is also introduces the concept of post notification replaces. This is, a document
  * listener who is informed about a document change can cause a derived document
  * change. As the listener is not allowed to directly modify the document, it can

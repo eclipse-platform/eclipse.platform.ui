@@ -13,7 +13,8 @@ package org.eclipse.jface.text;
  
 /**
  * Extension interface for <code>IDocument</code>.  <p>
- * It adds configurability to the mechanism of  post notification replaces.
+ * It adds configurability to the mechanism of  post notification replaces and allows to
+ * postpone document listener notification.
  * 
  * @since 2.1
  */

@@ -48,12 +48,12 @@ package org.eclipse.jface.text;
  * default type. The default type is specified by this interface. If a document change
  * changes the document's partitioning all registered partitioning listeners are
  * informed exactly once.<p>
- *
- * An <code>IDocument</code> uses an <code>ILineTracker</code> to map line numbers and character 
+ * 
+ * An <code>IDocument</code> provides methods to map line numbers and character 
  * positions onto each other based on the document's line delimiters. When moving text 
  * between documents using different line delimiters, the text must be converted to 
  * use the target document's line delimiters. <p>
- *
+ * 
  * <code>IDocument</code> throws <code>BadLocationException</code> if the parameters of
  * queries or manipulation requests are not inside the bounds of the document. The purpose
  * of this style of exception handling is

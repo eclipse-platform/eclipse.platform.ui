@@ -2719,7 +2719,7 @@ public class TextViewer extends Viewer implements
 				if (fTextWidget != null) {
 					int documentCaret= fDocumentCommand.caretOffset;
 					if (documentCaret == -1) {
-					// old behaviour of document command
+						// old behaviour of document command
 						documentCaret= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length());
 					}
 					
@@ -2735,7 +2735,7 @@ public class TextViewer extends Viewer implements
 					
 					if (widgetCaret != -1) {
 						// there is a valid widget caret
-					fTextWidget.setCaretOffset(widgetCaret);
+						fTextWidget.setCaretOffset(widgetCaret);
 					}
 					
 					fTextWidget.showSelection();
