@@ -241,7 +241,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				current.setExportRoot();
 			} else {
 				String[] decoded = EclipsePreferences.decodePath(path);
-				path = decoded[0];
+				path = decoded[0] == null ? EMPTY_STRING : decoded[0];
 				String key = decoded[1];
 				Preferences current = result.node(path);
 				current.put(key, value);
@@ -258,10 +258,12 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		int startIndex = path.indexOf(IPath.SEPARATOR);
 		if (startIndex == -1)
 			return path;
-		int endIndex = path.indexOf(IPath.SEPARATOR, startIndex);
+		if (path.length() == 1)
+			return EMPTY_STRING;
+		int endIndex = path.indexOf(IPath.SEPARATOR, startIndex + 1);
 		if (endIndex == -1)
 			endIndex = path.length();
-		return path.substring(startIndex, endIndex);
+		return path.substring(startIndex + 1, endIndex);
 	}
 
 	/*
@@ -269,33 +271,35 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 */
 	private Properties convertToProperties(IEclipsePreferences preferences, final String[] excludesList) throws BackingStoreException {
 		final Properties result = new Properties();
+		final int baseLength = preferences.absolutePath().length();
 
 		// create a visitor to do the export
 		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
 			public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 				// don't store defaults
-				String path = node.absolutePath();
-				String scope = getScope(path);
+				String absolutePath = node.absolutePath();
+				String scope = getScope(absolutePath);
 				if (DefaultScope.SCOPE.equals(scope))
 					return false;
+				String path = absolutePath.length() <= baseLength ? EMPTY_STRING : EclipsePreferences.makeRelative(absolutePath.substring(baseLength));
 				// check the excludes list to see if this node should be considered
 				for (int i = 0; i < excludesList.length; i++) {
-					if (path.startsWith(excludesList[i]))
+					String exclusion = EclipsePreferences.makeRelative(excludesList[i]);
+					if (path.startsWith(exclusion))
 						return false;
 				}
 				// check the excludes list for each preference
 				String[] keys = node.keys();
 				for (int i = 0; i < keys.length; i++) {
 					String key = keys[i];
-					String fullKeyPath = EclipsePreferences.encodePath(path, key);
 					boolean ignore = false;
 					for (int j = 0; !ignore && j < excludesList.length; j++)
-						if (fullKeyPath.startsWith(excludesList[j]))
+						if (EclipsePreferences.encodePath(path, key).startsWith(EclipsePreferences.makeRelative(excludesList[j])))
 							ignore = true;
 					if (!ignore) {
 						String value = node.get(key, null);
 						if (value != null)
-							result.put(fullKeyPath, value);
+							result.put(EclipsePreferences.encodePath(absolutePath, key), value);
 					}
 				}
 				return true;
@@ -340,6 +344,8 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			excludesList = new String[0];
 		try {
 			properties = convertToProperties(node, excludesList);
+			if (properties.isEmpty())
+				return Status.OK_STATUS;
 			properties.put(VERSION_KEY, Float.toString(EXPORT_VERSION));
 			properties.put(EXPORT_ROOT_PREFIX + node.absolutePath(), EMPTY_STRING);
 		} catch (BackingStoreException e) {
@@ -387,7 +393,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		PluginVersionIdentifier result = null;
 		Bundle bundle = Platform.getBundle(bundleName);
 		if (bundle != null) {
-			Object version = bundle.getHeaders("").get(Constants.BUNDLE_VERSION); //$NON-NLS-1$
+			Object version = bundle.getHeaders(EMPTY_STRING).get(Constants.BUNDLE_VERSION);
 			if (version != null && version instanceof String)
 				result = new PluginVersionIdentifier((String) version);
 		}

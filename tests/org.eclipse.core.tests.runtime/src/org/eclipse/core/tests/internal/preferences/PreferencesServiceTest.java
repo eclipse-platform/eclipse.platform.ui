@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -26,6 +27,70 @@ import org.osgi.service.prefs.Preferences;
 public class PreferencesServiceTest extends RuntimeTest {
 
 	private static Random random = new Random();
+
+	class ExportVerifier {
+
+		private IEclipsePreferences node;
+		private ByteArrayOutputStream output;
+		private Set expected;
+		private String[] excludes;
+
+		public ExportVerifier(IEclipsePreferences node, String[] excludes) {
+			super();
+			this.node = node;
+			this.excludes = excludes;
+			this.expected = new HashSet();
+		}
+
+		void addExpected(String path, String key) {
+			this.expected.add(EclipsePreferences.encodePath(path, key));
+		}
+
+		void addVersion() {
+			expected.add("file_export_version");
+		}
+
+		void setExcludes(String[] excludes) {
+			this.excludes = excludes;
+		}
+
+		void addExportRoot(IEclipsePreferences root) {
+			expected.add('!' + root.absolutePath());
+		}
+
+		void verify() {
+			IPreferencesService service = Platform.getPreferencesService();
+			this.output = new ByteArrayOutputStream();
+			try {
+				service.exportPreferences(node, output, excludes);
+			} catch (CoreException e) {
+				fail("0.0", e);
+			}
+			ByteArrayInputStream input = new ByteArrayInputStream(output.toByteArray());
+			Properties properties = new Properties();
+			try {
+				properties.load(input);
+			} catch (IOException e) {
+				fail("1.0", e);
+			} finally {
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+
+			if (properties.isEmpty()) {
+				assertTrue("2.0", expected.isEmpty());
+				return;
+			}
+			assertEquals("3.0", expected.size(), properties.size());
+			for (Iterator i = expected.iterator(); i.hasNext();) {
+				String key = (String) i.next();
+				assertNotNull("4.0." + key, properties.get(key));
+			}
+		}
+	}
 
 	public PreferencesServiceTest(String name) {
 		super(name);
@@ -522,5 +587,147 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 		InputStream input = new ByteArrayInputStream(output.toByteArray());
 		return input;
+	}
+
+	/*
+	 * - create a child node with some key/value pairs
+	 * - set the excludes to be the child name
+	 * - export the parent
+	 * - don't expect anything to be exported
+	 */
+	public void testExportExcludes1() {
+
+		// add some random key/value pairs
+		String qualifier = getRandomString();
+		String child = "child";
+		IEclipsePreferences node = new TestScope().getNode(qualifier);
+		Preferences childNode = node.node(child);
+		childNode.put("a", "v1");
+		childNode.put("b", "v2");
+		childNode.put("c", "v3");
+
+		// set the excludes list so it doesn't export anything
+		String[] excludes = new String[] {child};
+
+		ExportVerifier verifier = new ExportVerifier(node, excludes);
+		verifier.verify();
+
+		// make the child path absolute and try again
+		verifier.setExcludes(new String[] {'/' + child});
+		verifier.verify();
+	}
+
+	/*
+	 * - basic export
+	 * - set a key/value pair on a node
+	 * - export that node
+	 * - nothing in the excludes list
+	 * - expect that k/v pair to be in the file
+	 */
+	public void testExportExcludes2() {
+		String qualifier = getRandomString();
+		IEclipsePreferences node = new TestScope().getNode(qualifier);
+		String key = getRandomString();
+		String value = getRandomString();
+		node.put(key, value);
+		String[] excludesList = new String[] {};
+
+		ExportVerifier verifier = new ExportVerifier(node, excludesList);
+		verifier.addExpected(node.absolutePath(), key);
+		verifier.addVersion();
+		verifier.addExportRoot(node);
+		verifier.verify();
+	}
+
+	/*
+	 * - add 2 key/value pairs to a node
+	 * - add one of them to the excludes list
+	 * - expect only the other key to exist
+	 */
+	public void testExportExcludes3() {
+		String qualifier = getRandomString();
+		IEclipsePreferences node = new TestScope().getNode(qualifier);
+		String k1 = "a";
+		String k2 = "b";
+		String v1 = "1";
+		String v2 = "2";
+		node.put(k1, v1);
+		node.put(k2, v2);
+		String[] excludesList = new String[] {k1};
+
+		ExportVerifier verifier = new ExportVerifier(node, excludesList);
+		verifier.addExpected(node.absolutePath(), k2);
+		verifier.addVersion();
+		verifier.addExportRoot(node);
+		verifier.verify();
+
+		// make the excludes list absolute paths and try again
+		verifier.setExcludes(new String[] {'/' + k1});
+		verifier.verify();
+	}
+
+	/*
+	 * - add key/value pairs to a node
+	 * - export containing non-matching string
+	 * - expect all k/v pairs
+	 */
+	public void testExportExcludes4() {
+		String qualifier = getRandomString();
+		IEclipsePreferences node = new TestScope().getNode(qualifier);
+		String k1 = "a";
+		String k2 = "b";
+		String v1 = "1";
+		String v2 = "2";
+		node.put(k1, v1);
+		node.put(k2, v2);
+		String[] excludesList = new String[] {"bar"};
+
+		ExportVerifier verifier = new ExportVerifier(node, excludesList);
+		verifier.addVersion();
+		verifier.addExportRoot(node);
+		verifier.addExpected(node.absolutePath(), k1);
+		verifier.addExpected(node.absolutePath(), k2);
+		verifier.verify();
+	}
+
+	/*
+	 * - exporting default values shouldn't do anything
+	 */
+	public void testExportDefaults() {
+		String qualifier = getRandomString();
+		IEclipsePreferences node = new DefaultScope().getNode(qualifier);
+		for (int i = 0; i < 10; i++)
+			node.put(Integer.toString(i), getRandomString());
+
+		ExportVerifier verifier = new ExportVerifier(node, null);
+		verifier.verify();
+	}
+
+	/*
+	 * - create 2 child with 2 key/value pairs each
+	 * - excludes is a single key from one of the children
+	 * - export parent
+	 * - expect all values to be exported but that one
+	 */
+	public void testExportExcludes5() {
+		String qualifier = getRandomString();
+		IEclipsePreferences node = new TestScope().getNode(qualifier);
+		Preferences child1 = node.node("c1");
+		Preferences child2 = node.node("c2");
+		String k1 = "a";
+		String k2 = "b";
+		String v1 = "1";
+		String v2 = "2";
+		child1.put(k1, v1);
+		child1.put(k2, v2);
+		child2.put(k1, v1);
+		child2.put(k2, v2);
+		String[] excludes = new String[] {child1.name() + '/' + k2};
+		ExportVerifier verifier = new ExportVerifier(node, excludes);
+		verifier.addVersion();
+		verifier.addExportRoot(node);
+		verifier.addExpected(child1.absolutePath(), k1);
+		verifier.addExpected(child2.absolutePath(), k1);
+		verifier.addExpected(child2.absolutePath(), k2);
 	}
 }
