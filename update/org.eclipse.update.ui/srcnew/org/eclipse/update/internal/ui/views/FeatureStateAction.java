@@ -3,16 +3,12 @@ package org.eclipse.update.internal.ui.views;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 
 public class FeatureStateAction extends Action {
 	private ConfiguredFeatureAdapter adapter;
-	private IFeature feature;
-	private IConfiguredSite site;
 
 	public void setFeature(ConfiguredFeatureAdapter adapter) {
 		this.adapter = adapter;
@@ -28,15 +24,11 @@ public class FeatureStateAction extends Action {
 			if (adapter == null)
 				return;
 
-			feature = adapter.getFeature(null);
-			site = adapter.getConfiguredSite();
-			boolean isConfigured = adapter.isConfigured();
-
 			boolean restartNeeded =
 				UpdateManager.getOperationsManager().toggleFeatureState(
-					site,
-					feature,
-					isConfigured,
+					adapter.getConfiguredSite(),
+					adapter.getFeature(null),
+					adapter.isConfigured(),
 					adapter);
 
 			if (restartNeeded)
