@@ -613,16 +613,22 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
 		Image proposalImage = AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
 		String proposalInfo = descriptionProvider.getDescriptionForTask(elementName);
-		String replacementString = getTaskProposalReplacementString(elementName);
+		boolean hasNestedElements= hasNestedElements(elementName);
+		String replacementString = getTaskProposalReplacementString(elementName, hasNestedElements);
 		int replacementOffset = cursorPosition - aPrefix.length();
 		int replacementLength = aPrefix.length();
-		if(replacementOffset > 0 && document.get().charAt(replacementOffset-1) == '<') {
+		if (replacementOffset > 0 && document.get().charAt(replacementOffset - 1) == '<') {
 			replacementOffset--;
 			replacementLength++;
 		}
+		int cursorPosition;
+		if (hasNestedElements) {
+			cursorPosition= elementName.length() + 2 + additionalProposalOffset;
+		} else {
+			cursorPosition= elementName.length() + 1 + additionalProposalOffset;
+		}
 		return new AntCompletionProposal(replacementString, replacementOffset, 
-			replacementLength, elementName.length() + 2 + additionalProposalOffset, 
-			proposalImage, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+			replacementLength, cursorPosition, proposalImage, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 	}
 
 	/**
@@ -652,7 +658,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     /**
      * Returns the replacement string for the specified task name.
      */
-    private String getTaskProposalReplacementString(String aTaskName) {
+    private String getTaskProposalReplacementString(String aTaskName, boolean hasNested) {
         StringBuffer replacement = new StringBuffer("<"); //$NON-NLS-1$
         replacement.append(aTaskName); 
         Node attributeNode= descriptionProvider.getAttributesNode(aTaskName);
@@ -664,12 +670,12 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			additionalProposalOffset= 9;
         }
         
-        if (isEmpty(aTaskName)) {
-            replacement.append("/>"); //$NON-NLS-1$
-        } else {
-            replacement.append("></"); //$NON-NLS-1$
+        if (hasNested) {
+        	replacement.append("></"); //$NON-NLS-1$
             replacement.append(aTaskName);
             replacement.append('>');
+        } else {
+        	replacement.append("/>"); //$NON-NLS-1$
         }
         return replacement.toString();               
     }
@@ -696,14 +702,12 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-     * Returns whether the named element is empty, thus may not have any child
-     * elements.
+     * Returns whether the named element supports nested elements.
      */
-    private boolean isEmpty(String aDTDElementName) {
-        IElement element = dtd.getElement(aDTDElementName);
-        return element == null || element.isEmpty();
+    private boolean hasNestedElements(String elementName) {
+        IElement element = dtd.getElement(elementName);
+        return element != null && !element.isEmpty();
     }
-    
     
     /**
      * Finds a direct child element with <code>aChildElementName</code> of 
