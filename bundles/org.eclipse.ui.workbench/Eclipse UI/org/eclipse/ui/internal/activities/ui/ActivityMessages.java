@@ -20,16 +20,11 @@ public class ActivityMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.activities.ui.messages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-
-	/**
-	 * Create the activity messages
-	 */
-	private ActivityMessages() {
-
-	}
+	private static final ResourceBundle RESOURCE_BUNDLE =
+		ResourceBundle.getBundle(BUNDLE_NAME);
 	/**
 	 * Get the value of String.
+	 * 
 	 * @param key
 	 * @return String
 	 */
@@ -39,5 +34,12 @@ public class ActivityMessages {
 		} catch (MissingResourceException e) {
 			return '!' + key + '!';
 		}
+	}
+
+	/**
+	 * Create the activity messages
+	 */
+	private ActivityMessages() {
+
 	}
 }

@@ -20,52 +20,64 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-public final class KeySequenceBindingDefinition implements IKeySequenceBindingDefinition {
+public final class KeySequenceBindingDefinition
+	implements IKeySequenceBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = KeySequenceBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		KeySequenceBindingDefinition.class.getName().hashCode();
 
 	static Map keySequenceBindingDefinitionsByCommandId(Collection keySequenceBindingDefinitions) {
 		if (keySequenceBindingDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = keySequenceBindingDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IKeySequenceBindingDefinition.class);			
-			IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) object;
+			Util.assertInstance(object, IKeySequenceBindingDefinition.class);
+			IKeySequenceBindingDefinition keySequenceBindingDefinition =
+				(IKeySequenceBindingDefinition) object;
 			String commandId = keySequenceBindingDefinition.getCommandId();
-			
+
 			if (commandId != null) {
-				Collection keySequenceBindingDefinitions2 = (Collection) map.get(commandId);
-					
+				Collection keySequenceBindingDefinitions2 =
+					(Collection) map.get(commandId);
+
 				if (keySequenceBindingDefinitions2 == null) {
 					keySequenceBindingDefinitions2 = new ArrayList();
-					map.put(commandId, keySequenceBindingDefinitions2);					
+					map.put(commandId, keySequenceBindingDefinitions2);
 				}
-	
-				keySequenceBindingDefinitions2.add(keySequenceBindingDefinition);		
-			}											
-		}				
-	
+
+				keySequenceBindingDefinitions2.add(
+					keySequenceBindingDefinition);
+			}
+		}
+
 		return map;
-	}	
-	
+	}
+
 	private String activityId;
 	private String commandId;
-	private String keyConfigurationId;
-	private KeySequence keySequence;	
-	private String locale;
-	private String platform;
-	private String pluginId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private String keyConfigurationId;
+	private KeySequence keySequence;
+	private String locale;
+	private String platform;
+	private String pluginId;
 	private transient String string;
 
-	public KeySequenceBindingDefinition(String activityId, String commandId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
+	public KeySequenceBindingDefinition(
+		String activityId,
+		String commandId,
+		String keyConfigurationId,
+		KeySequence keySequence,
+		String locale,
+		String platform,
+		String pluginId) {
 		this.activityId = activityId;
 		this.commandId = commandId;
 		this.keyConfigurationId = keyConfigurationId;
@@ -74,46 +86,57 @@ public final class KeySequenceBindingDefinition implements IKeySequenceBindingDe
 		this.platform = platform;
 		this.pluginId = pluginId;
 	}
-	
-	public int compareTo(Object object) {
-		KeySequenceBindingDefinition castedObject = (KeySequenceBindingDefinition) object;
-		int compareTo = Util.compare(activityId, castedObject.activityId);
-		
-		if (compareTo == 0) {		
-			compareTo = Util.compare(commandId, castedObject.commandId);			
 
-			if (compareTo == 0) {		
-				compareTo = Util.compare(keyConfigurationId, castedObject.keyConfigurationId);			
+	public int compareTo(Object object) {
+		KeySequenceBindingDefinition castedObject =
+			(KeySequenceBindingDefinition) object;
+		int compareTo = Util.compare(activityId, castedObject.activityId);
+
+		if (compareTo == 0) {
+			compareTo = Util.compare(commandId, castedObject.commandId);
+
+			if (compareTo == 0) {
+				compareTo =
+					Util.compare(
+						keyConfigurationId,
+						castedObject.keyConfigurationId);
 
 				if (compareTo == 0) {
-					compareTo = Util.compare(keySequence, castedObject.keySequence);
+					compareTo =
+						Util.compare(keySequence, castedObject.keySequence);
 
-					if (compareTo == 0) {		
-						compareTo = Util.compare(locale, castedObject.locale);			
-	
-						if (compareTo == 0) {		
-							compareTo = Util.compare(platform, castedObject.platform);			
-			
+					if (compareTo == 0) {
+						compareTo = Util.compare(locale, castedObject.locale);
+
+						if (compareTo == 0) {
+							compareTo =
+								Util.compare(platform, castedObject.platform);
+
 							if (compareTo == 0)
-								compareTo = Util.compare(pluginId, castedObject.pluginId);
+								compareTo =
+									Util.compare(
+										pluginId,
+										castedObject.pluginId);
 						}
 					}
 				}
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof KeySequenceBindingDefinition))
 			return false;
 
-		KeySequenceBindingDefinition castedObject = (KeySequenceBindingDefinition) object;	
+		KeySequenceBindingDefinition castedObject =
+			(KeySequenceBindingDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(commandId, castedObject.commandId);
-		equals &= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
+		equals
+			&= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
 		equals &= Util.equals(keySequence, castedObject.keySequence);
 		equals &= Util.equals(locale, castedObject.locale);
 		equals &= Util.equals(platform, castedObject.platform);
@@ -144,7 +167,7 @@ public final class KeySequenceBindingDefinition implements IKeySequenceBindingDe
 	public String getPlatform() {
 		return platform;
 	}
-	
+
 	public String getPluginId() {
 		return pluginId;
 	}
@@ -154,14 +177,15 @@ public final class KeySequenceBindingDefinition implements IKeySequenceBindingDe
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
+			hashCode =
+				hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(platform);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
+
 		return hashCode;
 	}
 
@@ -185,7 +209,7 @@ public final class KeySequenceBindingDefinition implements IKeySequenceBindingDe
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
+
 		return string;
-	}	
+	}
 }

@@ -21,11 +21,11 @@ public final class OldConfigurationElementMemento implements IMemento {
 	public OldConfigurationElementMemento(IConfigurationElement configurationElement) {
 		if (configurationElement == null)
 			throw new NullPointerException();
-		
+
 		this.configurationElement = configurationElement;
 	}
 
-	public IMemento createChild(String type) {	
+	public IMemento createChild(String type) {
 		return null;
 	}
 
@@ -34,38 +34,44 @@ public final class OldConfigurationElementMemento implements IMemento {
 	}
 
 	public IMemento getChild(String type) {
-		IConfigurationElement[] configurationElements = configurationElement.getChildren(type);
-		
+		IConfigurationElement[] configurationElements =
+			configurationElement.getChildren(type);
+
 		if (configurationElements != null && configurationElements.length >= 1)
 			return new OldConfigurationElementMemento(configurationElements[0]);
-		
+
 		return null;
 	}
 
 	public IMemento[] getChildren(String type) {
-		IConfigurationElement[] configurationElements = configurationElement.getChildren(type);
-		
-		if (configurationElements != null && configurationElements.length >= 1) {
-			IMemento mementos[] = new OldConfigurationElementMemento[configurationElements.length];
-			
+		IConfigurationElement[] configurationElements =
+			configurationElement.getChildren(type);
+
+		if (configurationElements != null
+			&& configurationElements.length >= 1) {
+			IMemento mementos[] =
+				new OldConfigurationElementMemento[configurationElements
+					.length];
+
 			for (int i = 0; i < configurationElements.length; i++)
-				mementos[i] = new OldConfigurationElementMemento(configurationElements[i]);
-				
-			return mementos;			
+				mementos[i] =
+					new OldConfigurationElementMemento(configurationElements[i]);
+
+			return mementos;
 		}
-		
+
 		return new IMemento[0];
 	}
 
 	public Float getFloat(String key) {
 		String string = configurationElement.getAttribute(key);
-		
+
 		if (string != null)
 			try {
 				return new Float(string);
 			} catch (NumberFormatException eNumberFormat) {
 			}
-		
+
 		return null;
 	}
 
@@ -75,13 +81,13 @@ public final class OldConfigurationElementMemento implements IMemento {
 
 	public Integer getInteger(String key) {
 		String string = configurationElement.getAttribute(key);
-		
+
 		if (string != null)
 			try {
 				return new Integer(string);
 			} catch (NumberFormatException eNumberFormat) {
 			}
-		
+
 		return null;
 	}
 

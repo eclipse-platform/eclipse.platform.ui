@@ -67,97 +67,112 @@ import java.util.Set;
  */
 public interface IObjectActivityManager {
 
-    //Return the pattern for enabled for all plugins.
-    public static String ENABLED_ALL_PATTERN = "*"; //$NON-NLS-1$
+	//Return the pattern for enabled for all plugins.
+	public static String ENABLED_ALL_PATTERN = "*"; //$NON-NLS-1$
 
-    /**
+	/**
 	 * Adds a binding between object-&gt;activity. If the given activity is not
 	 * defined in the RoleManager registry then no action is taken.
 	 * 
-	 * @param record the contribution record to bind.
-	 * @param activityId the activity ID to bind to.
+	 * @param record
+	 *            the contribution record to bind.
+	 * @param activityId
+	 *            the activity ID to bind to.
 	 * @since 3.0
 	 */
-    public abstract void addActivityBinding(IObjectContributionRecord record, String activityId);
+	public abstract void addActivityBinding(
+		IObjectContributionRecord record,
+		String activityId);
 
-    /**
+	/**
 	 * Add a given id-&gt;object mapping. A given object should be added to the
 	 * reciever only once.
 	 * 
-	 * @param pluginId The plugin id
-	 * @param localId The local id
-	 * @param object The object being added
+	 * @param pluginId
+	 *            The plugin id
+	 * @param localId
+	 *            The local id
+	 * @param object
+	 *            The object being added
 	 * @return the <code>IObjectContributionRecord</code> that was used as a
 	 *         key to store the provided object.
 	 * @since 3.0
 	 */
-    public abstract IObjectContributionRecord addObject(String pluginId, String localId, Object object);
+	public abstract IObjectContributionRecord addObject(
+		String pluginId,
+		String localId,
+		Object object);
 
-    /**
+	/**
 	 * Apply default pattern bindings to all of the objects governed by the
 	 * receiver.
 	 * 
 	 * @since 3.0
 	 */
-    public void applyPatternBindings();
+	public void applyPatternBindings();
 
-    /**
+	/**
 	 * Apply default pattern bindings based on the provided
 	 * ObjectContributionRecord that is governed by the receiver.
 	 * 
-	 * @param record IObjectContributionRecord
+	 * @param record
+	 *            IObjectContributionRecord
 	 * @since 3.0
 	 */
-    public void applyPatternBindings(IObjectContributionRecord record);
+	public void applyPatternBindings(IObjectContributionRecord record);
 
-    /**
+	/**
 	 * Find the IObjectContributionRecords that maps to the given object, or
 	 * null.
 	 * 
-	 * @param objectOfInterest the object to key on.
+	 * @param objectOfInterest
+	 *            the object to key on.
 	 * @return a Collection of IObjectContributionRecord objects that bind to
 	 *         the supplied object. Typically this collection will have either
 	 *         0 or 1 element in it.
 	 * @since 3.0
 	 */
-    public Collection findObjectContributionRecords(Object objectOfInterest);
+	public Collection findObjectContributionRecords(Object objectOfInterest);
 
-    /**
+	/**
 	 * Return a set of objects that are currently valid based on the active
 	 * activities, or all objects if role filtering is currently disabled.
 	 * 
 	 * @return the collection of active objects.
 	 * @since 3.0
 	 */
-    public abstract Collection getActiveObjects();
+	public abstract Collection getActiveObjects();
 
-    /**
+	/**
 	 * Get the Set of IObjectContributionRecord keys from the object store.
 	 * This Set is read only.
 	 * 
-	 * @return the set of keys. 
+	 * @return the set of keys.
 	 * @since 3.0
 	 */
-    public Set getObjectIds();
+	public Set getObjectIds();
 
-    /**
+	/**
 	 * Removes from the collection the object matching the given contribution
 	 * record.
 	 * 
-	 * @param record IObjectContributionRecord the record of the object to
-	 *            remove.
+	 * @param record
+	 *            IObjectContributionRecord the record of the object to remove.
 	 * @since 3.0
 	 */
-    public void removeObject(IObjectContributionRecord record);
+	public void removeObject(IObjectContributionRecord record);
 
-    /**
+	/**
 	 * Set the enablement state for all activities bound to the given objects
 	 * based on key-points in the UI (ie: the New wizard).
 	 * 
-	 * @param objectOfInterest the Object to enable or disable.
-	 * @param enablement the enablment state to grant to all matching
-	 *            activities.
+	 * @param objectOfInterest
+	 *            the Object to enable or disable.
+	 * @param enablement
+	 *            the enablment state to grant to all matching activities.
 	 * @since 3.0
 	 */
-    public abstract void setEnablementFor(Object objectOfInterest, boolean enablement);
+	public abstract void setEnablementFor(
+		Object objectOfInterest,
+		boolean enablement);
 }

@@ -19,13 +19,14 @@ import org.eclipse.ui.internal.util.Util;
 final class PatternBinding implements IPatternBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = PatternBinding.class.getName().hashCode();
-
-	private boolean inclusive;
-	private Pattern pattern;
+	private final static int HASH_INITIAL =
+		PatternBinding.class.getName().hashCode();
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+
+	private boolean inclusive;
+	private Pattern pattern;
 	private transient String string;
 
 	PatternBinding(boolean inclusive, Pattern pattern) {
@@ -41,7 +42,8 @@ final class PatternBinding implements IPatternBinding {
 		int compareTo = Util.compare(inclusive, castedObject.inclusive);
 
 		if (compareTo == 0)
-			compareTo = Util.compare(pattern.pattern(), castedObject.pattern.pattern());
+			compareTo =
+				Util.compare(pattern.pattern(), castedObject.pattern.pattern());
 
 		return compareTo;
 	}
@@ -61,10 +63,6 @@ final class PatternBinding implements IPatternBinding {
 		return pattern;
 	}
 
-	public boolean isInclusive() {
-		return inclusive;
-	}
-
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
@@ -74,6 +72,10 @@ final class PatternBinding implements IPatternBinding {
 		}
 
 		return hashCode;
+	}
+
+	public boolean isInclusive() {
+		return inclusive;
 	}
 
 	public String toString() {

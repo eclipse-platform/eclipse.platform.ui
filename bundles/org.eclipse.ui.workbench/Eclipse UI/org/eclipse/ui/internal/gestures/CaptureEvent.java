@@ -18,7 +18,8 @@ import org.eclipse.ui.internal.util.Util;
 public final class CaptureEvent implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = CaptureEvent.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		CaptureEvent.class.getName().hashCode();
 
 	public static CaptureEvent create(int data, int pen, Point[] points)
 		throws IllegalArgumentException {
@@ -37,13 +38,13 @@ public final class CaptureEvent implements Comparable {
 
 		if (points == null)
 			throw new NullPointerException();
-		
+
 		points = (Point[]) points.clone();
 
 		for (int i = 0; i < points.length; i++)
 			if (points[i] == null)
 				throw new IllegalArgumentException();
-	
+
 		this.points = points;
 	}
 
@@ -66,7 +67,9 @@ public final class CaptureEvent implements Comparable {
 			return false;
 
 		CaptureEvent castedObject = (CaptureEvent) object;
-		return data == castedObject.data && pen == castedObject.pen && Arrays.equals(points, castedObject.points);
+		return data == castedObject.data
+			&& pen == castedObject.pen
+			&& Arrays.equals(points, castedObject.points);
 	}
 
 	public int getData() {
@@ -88,7 +91,7 @@ public final class CaptureEvent implements Comparable {
 
 		for (int i = 0; i < points.length; i++)
 			result = result * HASH_FACTOR + points[i].hashCode();
-		
+
 		return result;
 	}
 }

@@ -40,7 +40,10 @@ public final class ActivityManagerEvent {
 	 * @param definedActivityIdsChanged
 	 * @param enabledActivityIdsChanged
 	 */
-	public ActivityManagerEvent(IActivityManager activityManager, boolean definedActivityIdsChanged, boolean enabledActivityIdsChanged) {
+	public ActivityManagerEvent(
+		IActivityManager activityManager,
+		boolean definedActivityIdsChanged,
+		boolean enabledActivityIdsChanged) {
 		if (activityManager == null)
 			throw new NullPointerException();
 

@@ -14,9 +14,9 @@ package org.eclipse.ui.internal.commands;
 public interface IKeyConfigurationDefinition extends Comparable {
 
 	String getDescription();
-		
+
 	String getId();
-	
+
 	String getName();
 
 	String getParentId();

@@ -31,9 +31,8 @@ public interface XICommand {
 	 * 
 	 * @throws NotDefinedException
 	 * @throws NotHandledException
-	 */	
-	void execute()
-		throws NotDefinedException/*, NotActiveException*/;
+	 */
+	void execute() throws NotDefinedException /* , NotActiveException */;
 
 	/**
 	 * TODO temporary method
@@ -41,46 +40,44 @@ public interface XICommand {
 	 * @param event
 	 * @throws NotDefinedException
 	 * @throws NotHandledException
-	 */	
+	 */
 	void execute(Event event)
-		throws NotDefinedException/*, NotActiveException*/;
+		throws NotDefinedException /* , NotActiveException */;
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @param propertyName
-	 * @return
-	 * @throws NotDefinedException
+	 * @return @throws
+	 *         NotDefinedException
 	 * @throws NotHandledException
-	 */	
+	 */
 	Object getProperty(String propertyName)
-		throws NotDefinedException/*, NotActiveException*/;
+		throws NotDefinedException /* , NotActiveException */;
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
-	 * @throws NotDefinedException
+	 * @return @throws
+	 *         NotDefinedException
 	 * @throws NotHandledException
-	 */	
+	 */
 	String[] getPropertyNames()
-		throws NotDefinedException/*, NotActiveException*/;
+		throws NotDefinedException /* , NotActiveException */;
 
 	/**
 	 * TODO temporary method
-	 *
+	 * 
 	 * @throws NotDefinedException
 	 * @throws NotHandledException
-	 */	
-	boolean isEnabled()
-		throws NotDefinedException/*, NotActiveException*/;
-	
+	 */
+	boolean isEnabled() throws NotDefinedException /* , NotActiveException */;
+
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 */	
-	boolean isHandled()
-		throws NotDefinedException;
+	 * @return @throws
+	 *         NotDefinedException
+	 */
+	boolean isHandled() throws NotDefinedException;
 }

@@ -22,95 +22,104 @@ import org.eclipse.ui.internal.util.Util;
 final class RoleDefinition implements Comparable, IRoleDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = RoleDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		RoleDefinition.class.getName().hashCode();
 
-	static Map roleDefinitionsById(Collection roleDefinitions, boolean allowNullIds) {
+	static Map roleDefinitionsById(
+		Collection roleDefinitions,
+		boolean allowNullIds) {
 		if (roleDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = roleDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IRoleDefinition.class);				
+			Util.assertInstance(object, IRoleDefinition.class);
 			IRoleDefinition roleDefinition = (IRoleDefinition) object;
 			String id = roleDefinition.getId();
-			
+
 			if (allowNullIds || id != null)
-				map.put(id, roleDefinition);		
-		}			
-		
+				map.put(id, roleDefinition);
+		}
+
 		return map;
 	}
 
-	static Map roleDefinitionsByName(Collection roleDefinitions, boolean allowNullNames) {
+	static Map roleDefinitionsByName(
+		Collection roleDefinitions,
+		boolean allowNullNames) {
 		if (roleDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = roleDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IRoleDefinition.class);			
+			Util.assertInstance(object, IRoleDefinition.class);
 			IRoleDefinition roleDefinition = (IRoleDefinition) object;
 			String name = roleDefinition.getName();
-			
+
 			if (allowNullNames || name != null) {
 				Collection roleDefinitions2 = (Collection) map.get(name);
-					
+
 				if (roleDefinitions2 == null) {
 					roleDefinitions2 = new HashSet();
-					map.put(name, roleDefinitions2);					
+					map.put(name, roleDefinitions2);
 				}
-	
-				roleDefinitions2.add(roleDefinition);		
-			}											
-		}				
-	
+
+				roleDefinitions2.add(roleDefinition);
+			}
+		}
+
 		return map;
 	}
 
 	private String description;
-	private String id;
-	private String name;
-	private String pluginId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private String id;
+	private String name;
+	private String pluginId;
 	private transient String string;
-	
-	RoleDefinition(String description, String id, String name, String pluginId) {
+
+	RoleDefinition(
+		String description,
+		String id,
+		String name,
+		String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
 	}
-	
+
 	public int compareTo(Object object) {
 		RoleDefinition castedObject = (RoleDefinition) object;
 		int compareTo = Util.compare(description, castedObject.description);
-		
-		if (compareTo == 0) {		
-			compareTo = Util.compare(id, castedObject.id);			
-		
+
+		if (compareTo == 0) {
+			compareTo = Util.compare(id, castedObject.id);
+
 			if (compareTo == 0) {
 				compareTo = Util.compare(name, castedObject.name);
-				
+
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, castedObject.pluginId);								
+					compareTo = Util.compare(pluginId, castedObject.pluginId);
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof RoleDefinition))
 			return false;
 
-		RoleDefinition castedObject = (RoleDefinition) object;	
+		RoleDefinition castedObject = (RoleDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
@@ -120,16 +129,16 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 	}
 
 	public String getDescription() {
-		return description;	
+		return description;
 	}
-	
+
 	public String getId() {
-		return id;	
+		return id;
 	}
-	
+
 	public String getName() {
 		return name;
-	}	
+	}
 
 	public String getPluginId() {
 		return pluginId;
@@ -144,8 +153,8 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -162,7 +171,7 @@ final class RoleDefinition implements Comparable, IRoleDefinition {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
+
+		return string;
 	}
 }

@@ -16,16 +16,16 @@ import org.eclipse.ui.keys.KeySequence;
 public interface IKeySequenceBindingDefinition extends Comparable {
 
 	String getActivityId();
-	
+
 	String getCommandId();
 
-	String getKeyConfigurationId();	
-	
+	String getKeyConfigurationId();
+
 	KeySequence getKeySequence();
 
 	String getLocale();
-	
+
 	String getPlatform();
-	
+
 	String getPluginId();
 }

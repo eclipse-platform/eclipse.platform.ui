@@ -21,7 +21,9 @@ import org.eclipse.ui.activities.ActivityServiceEvent;
 import org.eclipse.ui.activities.IMutableActivityService;
 import org.eclipse.ui.internal.util.Util;
 
-public final class MutableActivityService extends AbstractActivityService implements IMutableActivityService {
+public final class MutableActivityService
+	extends AbstractActivityService
+	implements IMutableActivityService {
 
 	private Set activeActivityIds = new HashSet();
 

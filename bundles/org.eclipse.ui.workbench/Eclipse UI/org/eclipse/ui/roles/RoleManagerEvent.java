@@ -38,7 +38,9 @@ public final class RoleManagerEvent {
 	 * @param roleManager
 	 * @param definedRoleIdsChanged
 	 */
-	public RoleManagerEvent(IRoleManager roleManager, boolean definedRoleIdsChanged) {
+	public RoleManagerEvent(
+		IRoleManager roleManager,
+		boolean definedRoleIdsChanged) {
 		if (roleManager == null)
 			throw new NullPointerException();
 

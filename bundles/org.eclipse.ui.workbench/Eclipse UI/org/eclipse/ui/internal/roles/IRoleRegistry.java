@@ -20,6 +20,6 @@ public interface IRoleRegistry {
 	List getActivityBindingDefinitions();
 
 	List getRoleDefinitions();
-	
+
 	void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
 }

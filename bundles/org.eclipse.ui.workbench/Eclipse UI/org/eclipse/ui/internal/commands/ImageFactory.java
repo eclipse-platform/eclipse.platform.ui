@@ -21,9 +21,6 @@ import org.eclipse.ui.internal.util.ImageSupport;
 
 final class ImageFactory {
 
-	private static ImageRegistry imageRegistry = new ImageRegistry();
-	private static Map map = new HashMap();
-	
 	static {
 		put("blank", "icons/full/commands/blank.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("change", "icons/full/commands/change.gif"); //$NON-NLS-1$//$NON-NLS-2$
@@ -33,9 +30,8 @@ final class ImageFactory {
 		put("plus", "icons/full/commands/plus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
-	private static void put(String key, String value) {
-		map.put(key, ImageSupport.getImageDescriptor(value));	
-	}
+	private static ImageRegistry imageRegistry = new ImageRegistry();
+	private static Map map = new HashMap();
 
 	static Image getImage(String key) {
 		Image image = (Image) imageRegistry.get(key);
@@ -47,7 +43,7 @@ final class ImageFactory {
 				image = imageDescriptor.createImage(false);
 
 				if (image == null)
-					System.err.println(ImageFactory.class + ": error creating image for " + key); //$NON-NLS-1$
+					System.err.println(ImageFactory.class +": error creating image for " + key); //$NON-NLS-1$
 
 				imageRegistry.put(key, image);
 			}
@@ -60,8 +56,12 @@ final class ImageFactory {
 		ImageDescriptor imageDescriptor = (ImageDescriptor) map.get(key);
 
 		if (imageDescriptor == null)
-			System.err.println(ImageFactory.class + ": no image descriptor for " + key); //$NON-NLS-1$
+			System.err.println(ImageFactory.class +": no image descriptor for " + key); //$NON-NLS-1$
 
 		return imageDescriptor;
+	}
+
+	private static void put(String key, String value) {
+		map.put(key, ImageSupport.getImageDescriptor(value));
 	}
 }

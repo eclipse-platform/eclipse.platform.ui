@@ -46,15 +46,6 @@ public interface IRoleManager {
 	void addRoleManagerListener(IRoleManagerListener roleManagerListener);
 
 	/**
-	 * Returns a handle to an role given an identifier.
-	 * 
-	 * @param roleId
-	 *            an identifier. Must not be <code>null</code>
-	 * @return a handle to an role.
-	 */
-	IRole getRole(String roleId);
-
-	/**
 	 * <p>
 	 * Returns the set of identifiers to defined roles.
 	 * </p>
@@ -68,6 +59,15 @@ public interface IRoleManager {
 	 *         not empty, it is guaranteed to only contain instances of <code>String</code>.
 	 */
 	Set getDefinedRoleIds();
+
+	/**
+	 * Returns a handle to an role given an identifier.
+	 * 
+	 * @param roleId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to an role.
+	 */
+	IRole getRole(String roleId);
 
 	/**
 	 * Unregisters an instance of <code>IRoleManagerListener</code> listening

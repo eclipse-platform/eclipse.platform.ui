@@ -30,6 +30,6 @@ public interface IContextActivationServiceEvent {
 	 * JAVADOC
 	 * 
 	 * @return
-	 */	
+	 */
 	IContextActivationService getContextActivationService();
 }

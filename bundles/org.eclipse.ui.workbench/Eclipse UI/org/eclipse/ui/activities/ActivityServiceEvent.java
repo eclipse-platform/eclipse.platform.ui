@@ -38,7 +38,9 @@ public final class ActivityServiceEvent {
 	 * @param activityService
 	 * @param activeActivityIdsChanged
 	 */
-	public ActivityServiceEvent(IActivityService activityService, boolean activeActivityIdsChanged) {
+	public ActivityServiceEvent(
+		IActivityService activityService,
+		boolean activeActivityIdsChanged) {
 		if (activityService == null)
 			throw new NullPointerException();
 

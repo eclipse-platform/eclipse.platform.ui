@@ -28,19 +28,19 @@ final class Role implements IRole {
 	private final static int HASH_INITIAL = Role.class.getName().hashCode();
 
 	private Set activityBindings;
+	private transient IActivityBinding[] activityBindingsAsArray;
 	private boolean defined;
 	private String description;
+
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
 	private List roleListeners;
 	private RoleManager roleManager;
-
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private transient IActivityBinding[] activityBindingsAsArray;
 	private transient String string;
-	
-	Role(RoleManager roleManager, String id) {	
+
+	Role(RoleManager roleManager, String id) {
 		if (roleManager == null || id == null)
 			throw new NullPointerException();
 
@@ -51,45 +51,48 @@ final class Role implements IRole {
 	public void addRoleListener(IRoleListener roleListener) {
 		if (roleListener == null)
 			throw new NullPointerException();
-		
+
 		if (roleListeners == null)
 			roleListeners = new ArrayList();
-		
+
 		if (!roleListeners.contains(roleListener))
 			roleListeners.add(roleListener);
-		
-		roleManager.getRolesWithListeners().add(this);		
+
+		roleManager.getRolesWithListeners().add(this);
 	}
 
 	public int compareTo(Object object) {
-		Role castedObject = (Role) object;		
-		int compareTo = Util.compare((Comparable[]) activityBindingsAsArray, (Comparable[]) castedObject.activityBindingsAsArray);
-		
+		Role castedObject = (Role) object;
+		int compareTo =
+			Util.compare(
+				(Comparable[]) activityBindingsAsArray,
+				(Comparable[]) castedObject.activityBindingsAsArray);
+
 		if (compareTo == 0) {
 			compareTo = Util.compare(defined, castedObject.defined);
-	
+
 			if (compareTo == 0) {
 				compareTo = Util.compare(description, castedObject.description);
-	
-				if (compareTo == 0) {		
-					compareTo = Util.compare(id, castedObject.id);			
-						
+
+				if (compareTo == 0) {
+					compareTo = Util.compare(id, castedObject.id);
+
 					if (compareTo == 0)
 						compareTo = Util.compare(name, castedObject.name);
 				}
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof Role))
 			return false;
 
-		Role castedObject = (Role) object;	
+		Role castedObject = (Role) object;
 		boolean equals = true;
-		equals &= Util.equals(activityBindings, castedObject.activityBindings);		
+		equals &= Util.equals(activityBindings, castedObject.activityBindings);
 		equals &= Util.equals(defined, castedObject.defined);
 		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
@@ -97,42 +100,49 @@ final class Role implements IRole {
 		return equals;
 	}
 
+	void fireRoleChanged(RoleEvent roleEvent) {
+		if (roleEvent == null)
+			throw new NullPointerException();
+
+		if (roleListeners != null)
+			for (int i = 0; i < roleListeners.size(); i++)
+				 ((IRoleListener) roleListeners.get(i)).roleChanged(roleEvent);
+	}
+
 	public Set getActivityBindings() {
 		return activityBindings;
-	}			
-	
-	public String getDescription()
-		throws NotDefinedException {
+	}
+
+	public String getDescription() throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
-			
-		return description;	
+
+		return description;
 	}
-	
+
 	public String getId() {
-		return id;	
+		return id;
 	}
-	
-	public String getName()
-		throws NotDefinedException {
+
+	public String getName() throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
 
 		return name;
-	}	
-	
+	}
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityBindings);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public boolean isDefined() {
@@ -145,9 +155,63 @@ final class Role implements IRole {
 
 		if (roleListeners != null)
 			roleListeners.remove(roleListener);
-		
+
 		if (roleListeners.isEmpty())
-			roleManager.getRolesWithListeners().remove(this);		
+			roleManager.getRolesWithListeners().remove(this);
+	}
+
+	boolean setActivityBindings(Set activityBindings) {
+		activityBindings =
+			Util.safeCopy(activityBindings, IActivityBinding.class);
+
+		if (!Util.equals(activityBindings, this.activityBindings)) {
+			this.activityBindings = activityBindings;
+			this.activityBindingsAsArray =
+				(IActivityBinding[]) this.activityBindings.toArray(
+					new IActivityBinding[this.activityBindings.size()]);
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setDefined(boolean defined) {
+		if (defined != this.defined) {
+			this.defined = defined;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setDescription(String description) {
+		if (!Util.equals(description, this.description)) {
+			this.description = description;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setName(String name) {
+		if (!Util.equals(name, this.name)) {
+			this.name = name;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
 	}
 
 	public String toString() {
@@ -166,67 +230,7 @@ final class Role implements IRole {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
-	}
-	
-	void fireRoleChanged(RoleEvent roleEvent) {
-		if (roleEvent == null)
-			throw new NullPointerException();
-		
-		if (roleListeners != null)
-			for (int i = 0; i < roleListeners.size(); i++)
-				((IRoleListener) roleListeners.get(i)).roleChanged(roleEvent);
-	}
-	
-	boolean setActivityBindings(Set activityBindings) {
-		activityBindings = Util.safeCopy(activityBindings, IActivityBinding.class);
-		
-		if (!Util.equals(activityBindings, this.activityBindings)) {
-			this.activityBindings = activityBindings;
-			this.activityBindingsAsArray = (IActivityBinding[]) this.activityBindings.toArray(new IActivityBinding[this.activityBindings.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-	
-		return false;
-	}		
-	
-	boolean setDefined(boolean defined) {
-		if (defined != this.defined) {
-			this.defined = defined;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
 
-		return false;
-	}
-
-	boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
-			this.description = description;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
-	}
-
-	boolean setName(String name) {
-		if (!Util.equals(name, this.name)) {
-			this.name = name;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
+		return string;
 	}
 }

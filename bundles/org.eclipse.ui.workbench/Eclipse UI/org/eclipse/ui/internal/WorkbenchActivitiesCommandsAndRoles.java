@@ -37,11 +37,11 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.commands.CommandManagerEvent;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
@@ -228,7 +228,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 	};
 
 	final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
-		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
+		public final void commandManagerChanged(final CommandManagerEvent commandManagerEvent) {
 			updateActiveActivityIds();
 		}
 	};

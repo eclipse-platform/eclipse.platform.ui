@@ -14,7 +14,7 @@ package org.eclipse.ui.roles;
 /**
  * <p>
  * An instance of <code>RoleEvent</code> describes changes to an instance of
- * <code>IRole</code>. 
+ * <code>IRole</code>.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -44,22 +44,27 @@ public final class RoleEvent {
 	 * @param descriptionChanged
 	 * @param nameChanged
 	 */
-	public RoleEvent(IRole role, boolean activityBindingsChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
+	public RoleEvent(
+		IRole role,
+		boolean activityBindingsChanged,
+		boolean definedChanged,
+		boolean descriptionChanged,
+		boolean nameChanged) {
 		if (role == null)
 			throw new NullPointerException();
-		
+
 		this.role = role;
-		this.activityBindingsChanged = activityBindingsChanged;			
+		this.activityBindingsChanged = activityBindingsChanged;
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
 		this.nameChanged = nameChanged;
 	}
-	
+
 	/**
 	 * Returns the instance of <code>IRole</code> that has changed.
-	 *
-	 * @return the instance of <code>IRole</code> that has changed. Guaranteed 
-	 *         not to be <code>null</code>.
+	 * 
+	 * @return the instance of <code>IRole</code> that has changed.
+	 *         Guaranteed not to be <code>null</code>.
 	 */
 	public IRole getRole() {
 		return role;
@@ -67,28 +72,28 @@ public final class RoleEvent {
 
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
-	}	
-	
+	}
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
 
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
-	
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean haveActivityBindingsChanged() {
 		return activityBindingsChanged;
 	}

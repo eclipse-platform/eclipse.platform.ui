@@ -27,20 +27,20 @@ public interface XIPropertyListener {
 	 * JAVADOC
 	 * 
 	 * @param propertyEvent
-	 */	
+	 */
 	void propertyAdded(XPropertyEvent propertyEvent);
-	
+
 	/**
 	 * JAVADOC
 	 * 
 	 * @param propertyEvent
-	 */	
+	 */
 	void propertyChanged(XPropertyEvent propertyEvent);
-	
+
 	/**
 	 * JAVADOC
 	 * 
 	 * @param propertyEvent
-	 */	
+	 */
 	void propertyRemoved(XPropertyEvent propertyEvent);
 }

@@ -30,6 +30,6 @@ public interface IContextActivationServiceListener {
 	 * JAVADOC
 	 * 
 	 * @param contextActivationServiceEvent
-	 */	
+	 */
 	void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent);
 }

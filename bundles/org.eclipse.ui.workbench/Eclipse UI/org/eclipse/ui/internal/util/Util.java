@@ -28,8 +28,10 @@ import java.util.TreeSet;
 
 public final class Util {
 
-	public final static SortedMap EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap());
-	public final static SortedSet EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet());
+	public final static SortedMap EMPTY_SORTED_MAP =
+		Collections.unmodifiableSortedMap(new TreeMap());
+	public final static SortedSet EMPTY_SORTED_SET =
+		Collections.unmodifiableSortedSet(new TreeSet());
 	public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	public static void assertInstance(Object object, Class c) {
@@ -38,20 +40,16 @@ public final class Util {
 		else if (!c.isInstance(object))
 			throw new IllegalArgumentException();
 	}
-	
+
 	public static int compare(boolean left, boolean right) {
-		return left == false ? (right == true ? -1 : 0) : 1;		
+		return left == false ? (right == true ? -1 : 0) : 1;
 	}
 
-	public static int compare(int left, int right) {
-		return left - right;		
-	}	
-	
 	public static int compare(Comparable left, Comparable right) {
 		if (left == null && right == null)
-			return 0;	
+			return 0;
 		else if (left == null)
-			return -1;	
+			return -1;
 		else if (right == null)
 			return 1;
 		else
@@ -60,9 +58,9 @@ public final class Util {
 
 	public static int compare(Comparable[] left, Comparable[] right) {
 		if (left == null && right == null)
-			return 0;	
+			return 0;
 		else if (left == null)
-			return -1;	
+			return -1;
 		else if (right == null)
 			return 1;
 		else {
@@ -84,6 +82,10 @@ public final class Util {
 		}
 	}
 
+	public static int compare(int left, int right) {
+		return left - right;
+	}
+
 	public static int compare(List left, List right) {
 		if (left == null && right == null)
 			return 0;
@@ -99,8 +101,11 @@ public final class Util {
 				return l - r;
 			else {
 				for (int i = 0; i < l; i++) {
-					int compareTo = compare((Comparable) left.get(i), (Comparable) right.get(i)); 
-					
+					int compareTo =
+						compare(
+							(Comparable) left.get(i),
+							(Comparable) right.get(i));
+
 					if (compareTo != 0)
 						return compareTo;
 				}
@@ -110,62 +115,74 @@ public final class Util {
 		}
 	}
 
-	public static void diff(Set left, Set right, Set leftOnly, Set rightOnly) {
-		if (left == null || right == null || leftOnly == null || rightOnly == null)
+	public static void diff(
+		Map left,
+		Map right,
+		Set leftOnly,
+		Set different,
+		Set rightOnly) {
+		if (left == null
+			|| right == null
+			|| leftOnly == null
+			|| different == null
+			|| rightOnly == null)
 			throw new NullPointerException();
-	
-		Iterator iterator = left.iterator();
-			
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-				
-			if (!right.contains(object))
-				leftOnly.add(object);
-		}
-	
-		iterator = right.iterator();
-			
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-				
-			if (!left.contains(object))
-				rightOnly.add(object);		
-		}
-	}
 
-	public static void diff(Map left, Map right, Set leftOnly, Set different, Set rightOnly) {
-		if (left == null || right == null || leftOnly == null || different == null || rightOnly == null)
-			throw new NullPointerException();
-	
 		Iterator iterator = left.keySet().iterator();
-			
+
 		while (iterator.hasNext()) {
 			Object key = iterator.next();
-				
+
 			if (!right.containsKey(key))
 				leftOnly.add(key);
 			else if (!Util.equals(left.get(key), right.get(key)))
-				different.add(key);								
+				different.add(key);
 		}
-	
+
 		iterator = right.keySet().iterator();
-			
+
 		while (iterator.hasNext()) {
 			Object key = iterator.next();
-				
+
 			if (!left.containsKey(key))
-				rightOnly.add(key);		
+				rightOnly.add(key);
+		}
+	}
+
+	public static void diff(Set left, Set right, Set leftOnly, Set rightOnly) {
+		if (left == null
+			|| right == null
+			|| leftOnly == null
+			|| rightOnly == null)
+			throw new NullPointerException();
+
+		Iterator iterator = left.iterator();
+
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+
+			if (!right.contains(object))
+				leftOnly.add(object);
+		}
+
+		iterator = right.iterator();
+
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+
+			if (!left.contains(object))
+				rightOnly.add(object);
 		}
 	}
 
 	public static boolean equals(boolean left, boolean right) {
-		return left == right;		
-	}	
+		return left == right;
+	}
 
 	public static boolean equals(int left, int right) {
-		return left == right;		
-	}	
-	
+		return left == right;
+	}
+
 	public static boolean equals(Object left, Object right) {
 		return left == null ? right == null : left.equals(right);
 	}
@@ -177,18 +194,18 @@ public final class Util {
 	public static int hashCode(int i) {
 		return i;
 	}
-	
+
 	public static int hashCode(Object object) {
-		return object != null ? object.hashCode() : 0;	
+		return object != null ? object.hashCode() : 0;
 	}
-	
+
 	public static List safeCopy(List list, Class c) {
 		if (list == null || c == null)
 			throw new NullPointerException();
-			
+
 		list = Collections.unmodifiableList(new ArrayList(list));
 		Iterator iterator = list.iterator();
-	
+
 		while (iterator.hasNext())
 			assertInstance(iterator.next(), c);
 
@@ -198,77 +215,62 @@ public final class Util {
 	public static Map safeCopy(Map map, Class keyClass, Class valueClass) {
 		if (map == null || keyClass == null || valueClass == null)
 			throw new NullPointerException();
-			
+
 		map = Collections.unmodifiableMap(new HashMap(map));
 		Iterator iterator = map.entrySet().iterator();
-	
+
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			assertInstance(entry.getKey(), keyClass);
 			assertInstance(entry.getValue(), valueClass);
 		}
-		
+
 		return map;
 	}
 
 	public static Set safeCopy(Set set, Class c) {
 		if (set == null || c == null)
 			throw new NullPointerException();
-			
+
 		set = Collections.unmodifiableSet(new HashSet(set));
 		Iterator iterator = set.iterator();
-	
+
 		while (iterator.hasNext())
 			assertInstance(iterator.next(), c);
 
 		return set;
 	}
 
-	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass) {
+	public static SortedMap safeCopy(
+		SortedMap sortedMap,
+		Class keyClass,
+		Class valueClass) {
 		if (sortedMap == null || keyClass == null || valueClass == null)
 			throw new NullPointerException();
-			
+
 		sortedMap = Collections.unmodifiableSortedMap(new TreeMap(sortedMap));
 		Iterator iterator = sortedMap.entrySet().iterator();
-	
+
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			assertInstance(entry.getKey(), keyClass);
 			assertInstance(entry.getValue(), valueClass);
 		}
-		
+
 		return sortedMap;
 	}
-	
+
 	public static SortedSet safeCopy(SortedSet sortedSet, Class c) {
 		if (sortedSet == null || c == null)
 			throw new NullPointerException();
-			
+
 		sortedSet = Collections.unmodifiableSortedSet(new TreeSet(sortedSet));
 		Iterator iterator = sortedSet.iterator();
-	
+
 		while (iterator.hasNext())
 			assertInstance(iterator.next(), c);
 
 		return sortedSet;
-	}	
-
-	public static boolean startsWith(Object[] left, Object[] right, boolean equals) {
-		if (left == null || right == null)
-			return false;
-		else {
-			int l = left.length;
-			int r = right.length;
-
-			if (r > l || !equals && r == l)
-				return false;
-
-			for (int i = 0; i < r; i++)
-				if (!equals(left[i], right[i]))
-					return false;
-
-			return true;
-		}
 	}
 
 	public static boolean startsWith(List left, List right, boolean equals) {
@@ -288,16 +290,44 @@ public final class Util {
 			return true;
 		}
 	}
-	
-	public static String translateString(ResourceBundle resourceBundle, String key) {
+
+	public static boolean startsWith(
+		Object[] left,
+		Object[] right,
+		boolean equals) {
+		if (left == null || right == null)
+			return false;
+		else {
+			int l = left.length;
+			int r = right.length;
+
+			if (r > l || !equals && r == l)
+				return false;
+
+			for (int i = 0; i < r; i++)
+				if (!equals(left[i], right[i]))
+					return false;
+
+			return true;
+		}
+	}
+
+	public static String translateString(
+		ResourceBundle resourceBundle,
+		String key) {
 		return Util.translateString(resourceBundle, key, key, true, true);
 	}
 
-	public static String translateString(ResourceBundle resourceBundle, String key, String string, boolean signal, boolean trim) {
+	public static String translateString(
+		ResourceBundle resourceBundle,
+		String key,
+		String string,
+		boolean signal,
+		boolean trim) {
 		if (resourceBundle != null && key != null)
 			try {
 				final String translatedString = resourceBundle.getString(key);
-				
+
 				if (translatedString != null)
 					return trim ? translatedString.trim() : translatedString;
 			} catch (MissingResourceException eMissingResource) {

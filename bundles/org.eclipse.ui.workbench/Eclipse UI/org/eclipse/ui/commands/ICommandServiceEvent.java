@@ -13,8 +13,8 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * An instance of <code>ICommandServiceEvent</code> describes changes to an 
- * instance of <code>ICommandService</code>. 
+ * An instance of <code>ICommandServiceEvent</code> describes changes to an
+ * instance of <code>ICommandService</code>.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -31,14 +31,14 @@ public interface ICommandServiceEvent {
 
 	/**
 	 * Returns the instance of <code>ICommandService</code> that has changed.
-	 *
-	 * @return the instance of <code>ICommandService</code> that has changed. 
-	 * 		   Guaranteed not to be <code>null</code>.
+	 * 
+	 * @return the instance of <code>ICommandService</code> that has changed.
+	 *         Guaranteed not to be <code>null</code>.
 	 */
 	ICommandService getCommandService();
-	
+
 	/**
 	 * TODO javadoc
-	 */		
-	boolean haveActiveCommandIdsChanged();	
+	 */
+	boolean haveActiveCommandIdsChanged();
 }

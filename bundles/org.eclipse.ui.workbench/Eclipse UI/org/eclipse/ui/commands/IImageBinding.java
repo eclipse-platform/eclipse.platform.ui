@@ -13,8 +13,8 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * An instance of <code>IImageBinding</code> represents a binding between 
- * a command and an image
+ * An instance of <code>IImageBinding</code> represents a binding between a
+ * command and an image
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -30,11 +30,11 @@ public interface IImageBinding extends Comparable {
 
 	/**
 	 * TODO
-	 */	
+	 */
 	String getImageStyle();
 
 	/**
 	 * TODO
-	 */	
+	 */
 	String getImageUri();
 }

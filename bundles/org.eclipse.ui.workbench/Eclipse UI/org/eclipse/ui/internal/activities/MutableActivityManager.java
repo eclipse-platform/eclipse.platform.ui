@@ -32,16 +32,23 @@ import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
-public final class MutableActivityManager extends AbstractActivityManager implements IMutableActivityManager {
+public final class MutableActivityManager
+	extends AbstractActivityManager
+	implements IMutableActivityManager {
 
-	static boolean isActivityDefinitionChildOf(String ancestor, String id, Map activityDefinitionsById) {
+	static boolean isActivityDefinitionChildOf(
+		String ancestor,
+		String id,
+		Map activityDefinitionsById) {
 		Collection visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
-			IActivityDefinition activityDefinition = (IActivityDefinition) activityDefinitionsById.get(id);
+			IActivityDefinition activityDefinition =
+				(IActivityDefinition) activityDefinitionsById.get(id);
 			visited.add(id);
 
-			if (activityDefinition != null && Util.equals(id = activityDefinition.getParentId(), ancestor))
+			if (activityDefinition != null
+				&& Util.equals(id = activityDefinition.getParentId(), ancestor))
 				return true;
 		}
 
@@ -66,13 +73,19 @@ public final class MutableActivityManager extends AbstractActivityManager implem
 
 		this.activityRegistry = activityRegistry;
 
-		this.activityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
+		this
+			.activityRegistry
+			.addActivityRegistryListener(new IActivityRegistryListener() {
 			public void activityRegistryChanged(ActivityRegistryEvent activityRegistryEvent) {
 				readRegistry();
 			}
 		});
 
 		readRegistry();
+	}
+
+	Set getActivitiesWithListeners() {
+		return activitiesWithListeners;
 	}
 
 	public IActivity getActivity(String activityId) {
@@ -127,30 +140,11 @@ public final class MutableActivityManager extends AbstractActivityManager implem
 		return Collections.unmodifiableSet(matches);
 	}
 
-	public void setEnabledActivityIds(Set enabledActivityIds) {
-		enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
-		boolean activityManagerChanged = false;
-		Map activityEventsByActivityId = null;
-
-		if (!this.enabledActivityIds.equals(enabledActivityIds)) {
-			this.enabledActivityIds = enabledActivityIds;
-			activityManagerChanged = true;
-			activityEventsByActivityId = updateActivities(this.definedActivityIds);
-		}
-
-		if (activityManagerChanged)
-			fireActivityManagerChanged(new ActivityManagerEvent(this, false, true));
-
-		if (activityEventsByActivityId != null)
-			notifyActivities(activityEventsByActivityId);
-	}
-
-	Set getActivitiesWithListeners() {
-		return activitiesWithListeners;
-	}
-
 	private void notifyActivities(Map activityEventsByActivityId) {
-		for (Iterator iterator = activityEventsByActivityId.entrySet().iterator(); iterator.hasNext();) {
+		for (Iterator iterator =
+			activityEventsByActivityId.entrySet().iterator();
+			iterator.hasNext();
+			) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String activityId = (String) entry.getKey();
 			ActivityEvent activityEvent = (ActivityEvent) entry.getValue();
@@ -164,43 +158,70 @@ public final class MutableActivityManager extends AbstractActivityManager implem
 	private void readRegistry() {
 		Collection activityDefinitions = new ArrayList();
 		activityDefinitions.addAll(activityRegistry.getActivityDefinitions());
-		Map activityDefinitionsById = new HashMap(ActivityDefinition.activityDefinitionsById(activityDefinitions, false));
+		Map activityDefinitionsById =
+			new HashMap(
+				ActivityDefinition.activityDefinitionsById(
+					activityDefinitions,
+					false));
 
-		for (Iterator iterator = activityDefinitionsById.values().iterator(); iterator.hasNext();) {
-			IActivityDefinition activityDefinition = (IActivityDefinition) iterator.next();
+		for (Iterator iterator = activityDefinitionsById.values().iterator();
+			iterator.hasNext();
+			) {
+			IActivityDefinition activityDefinition =
+				(IActivityDefinition) iterator.next();
 			String name = activityDefinition.getName();
 
 			if (name == null || name.length() == 0)
 				iterator.remove();
 		}
 
-		for (Iterator iterator = activityDefinitionsById.keySet().iterator(); iterator.hasNext();)
-			if (!isActivityDefinitionChildOf(null, (String) iterator.next(), activityDefinitionsById))
+		for (Iterator iterator = activityDefinitionsById.keySet().iterator();
+			iterator.hasNext();
+			)
+			if (!isActivityDefinitionChildOf(null,
+				(String) iterator.next(),
+				activityDefinitionsById))
 				iterator.remove();
 
 		Map patternBindingDefinitionsByActivityId =
-			PatternBindingDefinition.patternBindingDefinitionsByActivityId(activityRegistry.getPatternBindingDefinitions());
+			PatternBindingDefinition.patternBindingDefinitionsByActivityId(
+				activityRegistry.getPatternBindingDefinitions());
 		Map patternBindingsByActivityId = new HashMap();
 
-		for (Iterator iterator = patternBindingDefinitionsByActivityId.entrySet().iterator(); iterator.hasNext();) {
+		for (Iterator iterator =
+			patternBindingDefinitionsByActivityId.entrySet().iterator();
+			iterator.hasNext();
+			) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String activityId = (String) entry.getKey();
 
 			if (activityDefinitionsById.containsKey(activityId)) {
-				Collection patternBindingDefinitions = (Collection) entry.getValue();
+				Collection patternBindingDefinitions =
+					(Collection) entry.getValue();
 
 				if (patternBindingDefinitions != null)
-					for (Iterator iterator2 = patternBindingDefinitions.iterator(); iterator2.hasNext();) {
-						IPatternBindingDefinition patternBindingDefinition = (IPatternBindingDefinition) iterator2.next();
+					for (Iterator iterator2 =
+						patternBindingDefinitions.iterator();
+						iterator2.hasNext();
+						) {
+						IPatternBindingDefinition patternBindingDefinition =
+							(IPatternBindingDefinition) iterator2.next();
 						String pattern = patternBindingDefinition.getPattern();
 
 						if (pattern != null && pattern.length() != 0) {
-							IPatternBinding patternBinding = new PatternBinding(patternBindingDefinition.isInclusive(), Pattern.compile(pattern));
-							List patternBindings = (List) patternBindingsByActivityId.get(activityId);
+							IPatternBinding patternBinding =
+								new PatternBinding(
+									patternBindingDefinition.isInclusive(),
+									Pattern.compile(pattern));
+							List patternBindings =
+								(List) patternBindingsByActivityId.get(
+									activityId);
 
 							if (patternBindings == null) {
 								patternBindings = new ArrayList();
-								patternBindingsByActivityId.put(activityId, patternBindings);
+								patternBindingsByActivityId.put(
+									activityId,
+									patternBindings);
 							}
 
 							patternBindings.add(patternBinding);
@@ -219,36 +240,35 @@ public final class MutableActivityManager extends AbstractActivityManager implem
 			activityManagerChanged = true;
 		}
 
-		Map activityEventsByActivityId = updateActivities(activitiesById.keySet());
+		Map activityEventsByActivityId =
+			updateActivities(activitiesById.keySet());
 
 		if (activityManagerChanged)
-			fireActivityManagerChanged(new ActivityManagerEvent(this, true, false));
+			fireActivityManagerChanged(
+				new ActivityManagerEvent(this, true, false));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);
 	}
 
-	private ActivityEvent updateActivity(Activity activity) {
-		IActivityDefinition activityDefinition = (IActivityDefinition) activityDefinitionsById.get(activity.getId());
-		boolean definedChanged = activity.setDefined(activityDefinition != null);
-		boolean descriptionChanged = activity.setDescription(activityDefinition != null ? activityDefinition.getDescription() : null);
-		boolean enabledChanged = activity.setEnabled(enabledActivityIds.contains(activity.getId()));
-		boolean nameChanged = activity.setName(activityDefinition != null ? activityDefinition.getName() : null);
-		boolean parentIdChanged = activity.setParentId(activityDefinition != null ? activityDefinition.getParentId() : null);
-		List patternBindings = (List) patternBindingsByActivityId.get(activity.getId());
-		boolean patternBindingsChanged = activity.setPatternBindings(patternBindings != null ? patternBindings : Collections.EMPTY_LIST);
+	public void setEnabledActivityIds(Set enabledActivityIds) {
+		enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
+		boolean activityManagerChanged = false;
+		Map activityEventsByActivityId = null;
 
-		if (definedChanged || descriptionChanged || enabledChanged || nameChanged || parentIdChanged || patternBindingsChanged)
-			return new ActivityEvent(
-				activity,
-				definedChanged,
-				descriptionChanged,
-				enabledChanged,
-				nameChanged,
-				parentIdChanged,
-				patternBindingsChanged);
-		else
-			return null;
+		if (!this.enabledActivityIds.equals(enabledActivityIds)) {
+			this.enabledActivityIds = enabledActivityIds;
+			activityManagerChanged = true;
+			activityEventsByActivityId =
+				updateActivities(this.definedActivityIds);
+		}
+
+		if (activityManagerChanged)
+			fireActivityManagerChanged(
+				new ActivityManagerEvent(this, false, true));
+
+		if (activityEventsByActivityId != null)
+			notifyActivities(activityEventsByActivityId);
 	}
 
 	private Map updateActivities(Collection activityIds) {
@@ -267,5 +287,53 @@ public final class MutableActivityManager extends AbstractActivityManager implem
 		}
 
 		return activityEventsByActivityId;
+	}
+
+	private ActivityEvent updateActivity(Activity activity) {
+		IActivityDefinition activityDefinition =
+			(IActivityDefinition) activityDefinitionsById.get(activity.getId());
+		boolean definedChanged =
+			activity.setDefined(activityDefinition != null);
+		boolean descriptionChanged =
+			activity.setDescription(
+				activityDefinition != null
+					? activityDefinition.getDescription()
+					: null);
+		boolean enabledChanged =
+			activity.setEnabled(enabledActivityIds.contains(activity.getId()));
+		boolean nameChanged =
+			activity.setName(
+				activityDefinition != null
+					? activityDefinition.getName()
+					: null);
+		boolean parentIdChanged =
+			activity.setParentId(
+				activityDefinition != null
+					? activityDefinition.getParentId()
+					: null);
+		List patternBindings =
+			(List) patternBindingsByActivityId.get(activity.getId());
+		boolean patternBindingsChanged =
+			activity.setPatternBindings(
+				patternBindings != null
+					? patternBindings
+					: Collections.EMPTY_LIST);
+
+		if (definedChanged
+			|| descriptionChanged
+			|| enabledChanged
+			|| nameChanged
+			|| parentIdChanged
+			|| patternBindingsChanged)
+			return new ActivityEvent(
+				activity,
+				definedChanged,
+				descriptionChanged,
+				enabledChanged,
+				nameChanged,
+				parentIdChanged,
+				patternBindingsChanged);
+		else
+			return null;
 	}
 }

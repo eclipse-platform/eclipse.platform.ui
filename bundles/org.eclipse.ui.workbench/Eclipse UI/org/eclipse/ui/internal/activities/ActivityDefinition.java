@@ -22,9 +22,12 @@ import org.eclipse.ui.internal.util.Util;
 final class ActivityDefinition implements Comparable, IActivityDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ActivityDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		ActivityDefinition.class.getName().hashCode();
 
-	static Map activityDefinitionsById(Collection activityDefinitions, boolean allowNullIds) {
+	static Map activityDefinitionsById(
+		Collection activityDefinitions,
+		boolean allowNullIds) {
 		if (activityDefinitions == null)
 			throw new NullPointerException();
 
@@ -34,7 +37,8 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, IActivityDefinition.class);
-			IActivityDefinition activityDefinition = (IActivityDefinition) object;
+			IActivityDefinition activityDefinition =
+				(IActivityDefinition) object;
 			String id = activityDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -44,7 +48,9 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 		return map;
 	}
 
-	static Map activityDefinitionsByName(Collection activityDefinitions, boolean allowNullNames) {
+	static Map activityDefinitionsByName(
+		Collection activityDefinitions,
+		boolean allowNullNames) {
 		if (activityDefinitions == null)
 			throw new NullPointerException();
 
@@ -54,7 +60,8 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, IActivityDefinition.class);
-			IActivityDefinition activityDefinition = (IActivityDefinition) object;
+			IActivityDefinition activityDefinition =
+				(IActivityDefinition) object;
 			String name = activityDefinition.getName();
 
 			if (allowNullNames || name != null) {
@@ -73,16 +80,21 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 	}
 
 	private String description;
+
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
 	private String parentId;
 	private String pluginId;
-
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	ActivityDefinition(String description, String id, String name, String parentId, String pluginId) {
+	ActivityDefinition(
+		String description,
+		String id,
+		String name,
+		String parentId,
+		String pluginId) {
 		this.description = description;
 		this.id = id;
 		this.name = name;
@@ -104,7 +116,8 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 					compareTo = Util.compare(parentId, castedObject.parentId);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, castedObject.pluginId);
+						compareTo =
+							Util.compare(pluginId, castedObject.pluginId);
 				}
 			}
 		}

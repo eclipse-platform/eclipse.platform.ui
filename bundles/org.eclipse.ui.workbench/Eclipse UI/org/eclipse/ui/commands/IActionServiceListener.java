@@ -30,6 +30,6 @@ public interface IActionServiceListener {
 	 * JAVADOC
 	 * 
 	 * @param actionServiceEvent
-	 */	
+	 */
 	void actionServiceChanged(IActionServiceEvent actionServiceEvent);
 }

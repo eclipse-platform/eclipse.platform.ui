@@ -16,6 +16,6 @@ public interface IActivityBindingDefinition extends Comparable {
 	String getActivityId();
 
 	String getPluginId();
-	
-	String getRoleId();	
+
+	String getRoleId();
 }

@@ -21,7 +21,7 @@ final class ActionServiceEvent implements IActionServiceEvent {
 	ActionServiceEvent(IActionService actionService) {
 		if (actionService == null)
 			throw new NullPointerException();
-		
+
 		this.actionService = actionService;
 	}
 

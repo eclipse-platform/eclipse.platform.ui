@@ -15,8 +15,8 @@ import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
- * An instance of <code>IKeySequenceBinding</code> represents a binding between 
- * a command and a key sequence.
+ * An instance of <code>IKeySequenceBinding</code> represents a binding
+ * between a command and a key sequence.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -34,6 +34,6 @@ public interface IKeySequenceBinding extends Comparable {
 	 * Returns the key sequence represented in this binding.
 	 * 
 	 * @return the key sequence. Guaranteed not to be <code>null</code>.
-	 */	
+	 */
 	KeySequence getKeySequence();
 }

@@ -20,11 +20,11 @@ public interface IMutableCommandRegistry extends ICommandRegistry {
 	void setActivityBindingDefinitions(List activityBindingDefinitions);
 
 	void setCategoryDefinitions(List categoryDefinitions);
-	
+
 	void setCommandDefinitions(List commandDefinitions);
-	
+
 	void setImageBindingDefinitions(List imageBindingDefinitions);
-	
+
 	void setKeyConfigurationDefinitions(List keyConfigurationDefinitions);
 
 	void setKeySequenceBindingDefinitions(List keySequenceBindingDefinitions);

@@ -38,14 +38,6 @@ public abstract class AbstractActivityService implements IActivityService {
 			activityServiceListeners.add(activityServiceListener);
 	}
 
-	public void removeActivityServiceListener(IActivityServiceListener activityServiceListener) {
-		if (activityServiceListener == null)
-			throw new NullPointerException();
-
-		if (activityServiceListeners != null)
-			activityServiceListeners.remove(activityServiceListener);
-	}
-
 	/**
 	 * TODO javadoc
 	 * 
@@ -57,6 +49,17 @@ public abstract class AbstractActivityService implements IActivityService {
 
 		if (activityServiceListeners != null)
 			for (int i = 0; i < activityServiceListeners.size(); i++)
-				 ((IActivityServiceListener) activityServiceListeners.get(i)).activityServiceChanged(activityServiceEvent);
+				(
+					(IActivityServiceListener) activityServiceListeners.get(
+						i)).activityServiceChanged(
+					activityServiceEvent);
+	}
+
+	public void removeActivityServiceListener(IActivityServiceListener activityServiceListener) {
+		if (activityServiceListener == null)
+			throw new NullPointerException();
+
+		if (activityServiceListeners != null)
+			activityServiceListeners.remove(activityServiceListener);
 	}
 }

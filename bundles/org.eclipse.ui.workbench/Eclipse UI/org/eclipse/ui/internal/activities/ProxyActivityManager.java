@@ -28,7 +28,9 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 
 		this.activityManager = activityManager;
 
-		this.activityManager.addActivityManagerListener(new IActivityManagerListener() {
+		this
+			.activityManager
+			.addActivityManagerListener(new IActivityManagerListener() {
 			public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
 				ActivityManagerEvent proxyActivityManagerEvent =
 					new ActivityManagerEvent(
@@ -39,7 +41,7 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 			}
 		});
 	}
-	
+
 	public IActivity getActivity(String activityId) {
 		return activityManager.getActivity(activityId);
 	}
@@ -49,14 +51,14 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 	}
 
 	public Set getEnabledActivityIds() {
-		return activityManager.getEnabledActivityIds();	
+		return activityManager.getEnabledActivityIds();
 	}
 
 	public boolean match(String string, Set activityIds) {
-		return activityManager.match(string, activityIds);	
+		return activityManager.match(string, activityIds);
 	}
 
 	public Set matches(String string, Set activityIds) {
-		return activityManager.matches(string, activityIds);	
+		return activityManager.matches(string, activityIds);
 	}
 }

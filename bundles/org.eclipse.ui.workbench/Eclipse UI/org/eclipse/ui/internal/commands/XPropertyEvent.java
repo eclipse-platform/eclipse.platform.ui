@@ -31,14 +31,13 @@ public class XPropertyEvent {
 	 * JAVADOC
 	 * 
 	 * @param name
-	 */	
-	public XPropertyEvent(String name)
-		throws IllegalArgumentException {		
+	 */
+	public XPropertyEvent(String name) throws IllegalArgumentException {
 		super();
-		
+
 		if (name == null)
 			throw new NullPointerException();
-		
+
 		this.name = name;
 	}
 
@@ -46,7 +45,7 @@ public class XPropertyEvent {
 	 * JAVADOC
 	 * 
 	 * @return
-	 */		
+	 */
 	public String getName() {
 		return name;
 	}

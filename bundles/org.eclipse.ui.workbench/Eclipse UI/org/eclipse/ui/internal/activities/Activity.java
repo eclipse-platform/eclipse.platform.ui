@@ -32,13 +32,13 @@ final class Activity implements IActivity {
 	private boolean defined;
 	private String description;
 	private boolean enabled;
+
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
 	private String parentId;
 	private List patternBindings;
-
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
 	private transient IPatternBinding[] patternBindingsAsArray;
 	private transient String string;
 
@@ -80,10 +80,16 @@ final class Activity implements IActivity {
 						compareTo = Util.compare(name, castedObject.name);
 
 						if (compareTo == 0) {
-							compareTo = Util.compare(parentId, castedObject.parentId);
+							compareTo =
+								Util.compare(parentId, castedObject.parentId);
 
 							if (compareTo == 0)
-								compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) castedObject.patternBindingsAsArray);
+								compareTo =
+									Util.compare(
+										(Comparable[]) patternBindingsAsArray,
+										(
+											Comparable[]) castedObject
+												.patternBindingsAsArray);
 						}
 					}
 				}
@@ -107,6 +113,16 @@ final class Activity implements IActivity {
 		equals &= Util.equals(parentId, castedObject.parentId);
 		equals &= Util.equals(patternBindings, castedObject.patternBindings);
 		return equals;
+	}
+
+	void fireActivityChanged(ActivityEvent activityEvent) {
+		if (activityEvent == null)
+			throw new NullPointerException();
+
+		if (activityListeners != null)
+			for (int i = 0; i < activityListeners.size(); i++)
+				((IActivityListener) activityListeners.get(i)).activityChanged(
+					activityEvent);
 	}
 
 	public String getDescription() throws NotDefinedException {
@@ -166,13 +182,18 @@ final class Activity implements IActivity {
 		boolean match = false;
 
 		if (isDefined())
-			for (Iterator iterator = patternBindings.iterator(); iterator.hasNext();) {
-				IPatternBinding patternBinding = (IPatternBinding) iterator.next();
+			for (Iterator iterator = patternBindings.iterator();
+				iterator.hasNext();
+				) {
+				IPatternBinding patternBinding =
+					(IPatternBinding) iterator.next();
 
 				if (patternBinding.isInclusive() && !match)
-					match = patternBinding.getPattern().matcher(string).matches();
+					match =
+						patternBinding.getPattern().matcher(string).matches();
 				else if (!patternBinding.isInclusive() && match)
-					match = !patternBinding.getPattern().matcher(string).matches();
+					match =
+						!patternBinding.getPattern().matcher(string).matches();
 			}
 
 		return match;
@@ -187,39 +208,6 @@ final class Activity implements IActivity {
 
 		if (activityListeners.isEmpty())
 			activityManager.getActivitiesWithListeners().remove(this);
-	}
-
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(enabled);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
-			stringBuffer.append(',');
-			stringBuffer.append(patternBindings);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
-
-		return string;
-	}
-
-	void fireActivityChanged(ActivityEvent activityEvent) {
-		if (activityEvent == null)
-			throw new NullPointerException();
-
-		if (activityListeners != null)
-			for (int i = 0; i < activityListeners.size(); i++)
-				 ((IActivityListener) activityListeners.get(i)).activityChanged(activityEvent);
 	}
 
 	boolean setDefined(boolean defined) {
@@ -287,7 +275,9 @@ final class Activity implements IActivity {
 
 		if (!Util.equals(patternBindings, this.patternBindings)) {
 			this.patternBindings = patternBindings;
-			this.patternBindingsAsArray = (IPatternBinding[]) this.patternBindings.toArray(new IPatternBinding[this.patternBindings.size()]);
+			this.patternBindingsAsArray =
+				(IPatternBinding[]) this.patternBindings.toArray(
+					new IPatternBinding[this.patternBindings.size()]);
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;
@@ -295,5 +285,29 @@ final class Activity implements IActivity {
 		}
 
 		return false;
+	}
+
+	public String toString() {
+		if (string == null) {
+			final StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append('[');
+			stringBuffer.append(defined);
+			stringBuffer.append(',');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(enabled);
+			stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(parentId);
+			stringBuffer.append(',');
+			stringBuffer.append(patternBindings);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
+
+		return string;
 	}
 }

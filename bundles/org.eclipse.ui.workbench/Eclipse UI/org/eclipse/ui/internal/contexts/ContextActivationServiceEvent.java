@@ -14,14 +14,15 @@ package org.eclipse.ui.internal.contexts;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 
-final class ContextActivationServiceEvent implements IContextActivationServiceEvent {
+final class ContextActivationServiceEvent
+	implements IContextActivationServiceEvent {
 
 	private IContextActivationService contextActivationService;
 
 	ContextActivationServiceEvent(IContextActivationService contextActivationService) {
 		if (contextActivationService == null)
 			throw new NullPointerException();
-		
+
 		this.contextActivationService = contextActivationService;
 	}
 

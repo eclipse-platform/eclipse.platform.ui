@@ -16,10 +16,10 @@ public interface ICommandDefinition extends Comparable {
 	String getCategoryId();
 
 	String getDescription();
-		
+
 	String getId();
-	
+
 	String getName();
-	
+
 	String getPluginId();
 }

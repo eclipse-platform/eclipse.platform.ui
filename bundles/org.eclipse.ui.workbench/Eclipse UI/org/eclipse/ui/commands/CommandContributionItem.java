@@ -49,7 +49,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * 
  * @since 3.0
  */
-public class CommandContributionItem extends ContributionItem implements ICommandListener {
+public class CommandContributionItem
+	extends ContributionItem
+	implements ICommandListener {
 
 	/**
 	 * A cache of images loaded by the command contribution item.
@@ -130,12 +132,14 @@ public class CommandContributionItem extends ContributionItem implements IComman
 			}
 
 			try {
-				ImageDescriptor descriptor = ImageDescriptor.createFromURL(new URL(imageURI));
+				ImageDescriptor descriptor =
+					ImageDescriptor.createFromURL(new URL(imageURI));
 				Entry entry = getEntry(descriptor);
 				if (entry.grayImage == null) {
 					Image image = getImage(imageURI);
 					if (image != null) {
-						entry.grayImage = new Image(null, image, SWT.IMAGE_GRAY);
+						entry.grayImage =
+							new Image(null, image, SWT.IMAGE_GRAY);
 					}
 				}
 
@@ -163,7 +167,8 @@ public class CommandContributionItem extends ContributionItem implements IComman
 			}
 
 			try {
-				ImageDescriptor descriptor = ImageDescriptor.createFromURL(new URL(imageURI));
+				ImageDescriptor descriptor =
+					ImageDescriptor.createFromURL(new URL(imageURI));
 				Entry entry = getEntry(descriptor);
 				if (entry.image == null) {
 					entry.image = descriptor.createImage();
@@ -184,7 +189,8 @@ public class CommandContributionItem extends ContributionItem implements IComman
 		 */
 		Image getMissingImage() {
 			if (missingImage == null) {
-				ImageDescriptor descriptor = ImageDescriptor.getMissingImageDescriptor();
+				ImageDescriptor descriptor =
+					ImageDescriptor.getMissingImageDescriptor();
 				Entry entry = getEntry(descriptor);
 				if (entry.image == null) {
 					entry.image = descriptor.createImage();
@@ -290,7 +296,7 @@ public class CommandContributionItem extends ContributionItem implements IComman
 	 * @param e
 	 *            The triggering event; must not be <code>null</code>.
 	 */
-	public void commandChanged(final ICommandEvent e) {
+	public void commandChanged(final CommandEvent e) {
 		// This code should be removed. Avoid using free asyncExec
 
 		if (isVisible() && widget != null) {
@@ -478,7 +484,9 @@ public class CommandContributionItem extends ContributionItem implements IComman
 						case SWT.Selection :
 							Widget ew = event.widget;
 							if (ew != null) {
-								handleWidgetSelection(event, ((Button) ew).getSelection());
+								handleWidgetSelection(
+									event,
+									((Button) ew).getSelection());
 							}
 							break;
 					}
@@ -544,7 +552,9 @@ public class CommandContributionItem extends ContributionItem implements IComman
 						case SWT.Selection :
 							Widget ew = event.widget;
 							if (ew != null) {
-								handleWidgetSelection(event, ((MenuItem) ew).getSelection());
+								handleWidgetSelection(
+									event,
+									((MenuItem) ew).getSelection());
 							}
 							break;
 					}
@@ -571,7 +581,9 @@ public class CommandContributionItem extends ContributionItem implements IComman
 						case SWT.Selection :
 							Widget ew = event.widget;
 							if (ew != null) {
-								handleWidgetSelection(event, ((ToolItem) ew).getSelection());
+								handleWidgetSelection(
+									event,
+									((ToolItem) ew).getSelection());
 							}
 							break;
 					}
@@ -747,7 +759,7 @@ public class CommandContributionItem extends ContributionItem implements IComman
 	 * method calls <code>update(null)</code>.
 	 */
 	public void update() {
-		update((ICommandEvent) null);
+		update((CommandEvent) null);
 	}
 
 	/**
@@ -758,7 +770,7 @@ public class CommandContributionItem extends ContributionItem implements IComman
 	 *            the command changed). If <code>null</code>, then
 	 *            everything is updated.
 	 */
-	public void update(ICommandEvent event) {
+	public void update(CommandEvent event) {
 		if (widget != null) {
 			ICommand currentCommand = getCommand();
 
@@ -777,7 +789,8 @@ public class CommandContributionItem extends ContributionItem implements IComman
 				// TODO Checked state notification
 				//checkedChanged = event.hasSelectionChanged();
 
-				if ((event.hasDefinedChanged() && !currentCommand.isDefined()) || (event.hasActiveChanged() && !currentCommand.isActive())) {
+				if ((event.hasDefinedChanged() && !currentCommand.isDefined())
+					|| (event.hasActiveChanged() && !currentCommand.isActive())) {
 					// TODO Dispose of the item?
 				}
 			}
@@ -794,7 +807,8 @@ public class CommandContributionItem extends ContributionItem implements IComman
 						ti.setToolTipText(currentCommand.getDescription());
 
 					if (enabledChanged) {
-						boolean shouldBeEnabled = currentCommand.isEnabled() && isEnabledAllowed();
+						boolean shouldBeEnabled =
+							currentCommand.isEnabled() && isEnabledAllowed();
 
 						if (ti.getEnabled() != shouldBeEnabled)
 							ti.setEnabled(shouldBeEnabled);
@@ -820,12 +834,15 @@ public class CommandContributionItem extends ContributionItem implements IComman
 						String acceleratorText = null;
 						String name = null;
 
-						CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
+						CommandResolver.ICallback callback =
+							CommandResolver.getInstance().getCommandResolver();
 						if (callback != null) {
 							String commandId = currentCommand.getId();
 							if (commandId != null) {
-								accelerator = callback.getAccelerator(commandId);
-								acceleratorText = callback.getAcceleratorText(commandId);
+								accelerator =
+									callback.getAccelerator(commandId);
+								acceleratorText =
+									callback.getAcceleratorText(commandId);
 							}
 						}
 
@@ -862,7 +879,8 @@ public class CommandContributionItem extends ContributionItem implements IComman
 						updateImages(false);
 
 					if (enabledChanged) {
-						boolean shouldBeEnabled = currentCommand.isEnabled() && isEnabledAllowed();
+						boolean shouldBeEnabled =
+							currentCommand.isEnabled() && isEnabledAllowed();
 
 						if (mi.getEnabled() != shouldBeEnabled)
 							mi.setEnabled(shouldBeEnabled);
@@ -898,7 +916,8 @@ public class CommandContributionItem extends ContributionItem implements IComman
 						button.setToolTipText(currentCommand.getDescription());
 
 					if (enabledChanged) {
-						boolean shouldBeEnabled = currentCommand.isEnabled() && isEnabledAllowed();
+						boolean shouldBeEnabled =
+							currentCommand.isEnabled() && isEnabledAllowed();
 
 						if (button.getEnabled() != shouldBeEnabled)
 							button.setEnabled(shouldBeEnabled);

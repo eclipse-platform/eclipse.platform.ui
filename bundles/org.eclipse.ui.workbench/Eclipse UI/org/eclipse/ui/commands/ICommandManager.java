@@ -18,10 +18,10 @@ import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
- * An instance of <code>ICommandManager</code> can be used to obtain instances
- * of <code>ICommand</code>, as well as manage whether or not those instances
- * are active or inactive, enabled or disabled.
- * </p> 
+ * An instance of <code>ICommandManager</code> can be used to obtain
+ * instances of <code>ICommand</code>, as well as manage whether or not
+ * those instances are active or inactive, enabled or disabled.
+ * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -37,25 +37,23 @@ import org.eclipse.ui.keys.KeySequence;
 public interface ICommandManager {
 
 	/**
-	 * Registers an instance of <code>ICommandManagerListener</code> to listen 
-	 * for changes to attributes of this instance.
-	 *
-	 * @param commandManagerListener the instance of 
-	 *                               <code>ICommandManagerListener</code> to 
-	 * 						         register. Must not be <code>null</code>. 
-	 *                               If an attempt is made to register an 
-	 *                               instance of 
-	 *                               <code>ICommandManagerListener</code> 
-	 *                               which is already registered with this 
-	 *                               instance, no operation is performed.
-	 */		
+	 * Registers an instance of <code>ICommandManagerListener</code> to
+	 * listen for changes to attributes of this instance.
+	 * 
+	 * @param commandManagerListener
+	 *            the instance of <code>ICommandManagerListener</code> to
+	 *            register. Must not be <code>null</code>. If an attempt is
+	 *            made to register an instance of <code>ICommandManagerListener</code>
+	 *            which is already registered with this instance, no operation
+	 *            is performed.
+	 */
 	void addCommandManagerListener(ICommandManagerListener commandManagerListener);
 
 	/**
 	 * TODO javadoc
 	 */
 	Set getActiveActivityIds();
-	
+
 	/**
 	 * TODO javadoc
 	 */
@@ -65,7 +63,7 @@ public interface ICommandManager {
 	 * TODO javadoc
 	 */
 	String getActiveLocale();
-	
+
 	/**
 	 * TODO javadoc
 	 */
@@ -73,18 +71,20 @@ public interface ICommandManager {
 
 	/**
 	 * Returns a handle to a category given an identifier.
-	 *
-	 * @param categoryId an identifier. Must not be <code>null</code>
-	 * @return           a handle to a category.
-	 */	
-	ICategory getCategory(String categoryId);	
-	
+	 * 
+	 * @param categoryId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to a category.
+	 */
+	ICategory getCategory(String categoryId);
+
 	/**
 	 * Returns a handle to a command given an identifier.
-	 *
-	 * @param commandId an identifier. Must not be <code>null</code>
-	 * @return          a handle to a command.
-	 */	
+	 * 
+	 * @param commandId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to a command.
+	 */
 	ICommand getCommand(String commandId);
 
 	/**
@@ -92,62 +92,63 @@ public interface ICommandManager {
 	 * Returns the set of identifiers to defined categories.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
+	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
-	 *
-	 * @return the set of identifiers to defined categories. This set may be 
-	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
-	 *         is not empty, it is guaranteed to only contain instances of 
+	 * 
+	 * @return the set of identifiers to defined categories. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
-	 */	
-	Set getDefinedCategoryIds();	
-	
+	 */
+	Set getDefinedCategoryIds();
+
 	/**
 	 * <p>
 	 * Returns the set of identifiers to defined commands.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
+	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
-	 *
-	 * @return the set of identifiers to defined commands. This set may be 
-	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
-	 *         is not empty, it is guaranteed to only contain instances of 
+	 * 
+	 * @return the set of identifiers to defined commands. This set may be
+	 *         empty, but is guaranteed not to be <code>null</code>. If this
+	 *         set is not empty, it is guaranteed to only contain instances of
 	 *         <code>String</code>.
-	 */	
+	 */
 	Set getDefinedCommandIds();
-	
+
 	/**
 	 * <p>
 	 * Returns the set of identifiers to defined key configurations.
 	 * </p>
 	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
+	 * Notification is set to all registered listeners if this attribute
 	 * changes.
 	 * </p>
-	 *
-	 * @return the set of identifiers to defined key configurations. This set 
-	 * 		   may be empty, but is guaranteed not to be <code>null</code>. If 
-	 * 		   this set is not empty, it is guaranteed to only contain instances 
-	 * 		   of <code>String</code>.
-	 */	
+	 * 
+	 * @return the set of identifiers to defined key configurations. This set
+	 *         may be empty, but is guaranteed not to be <code>null</code>.
+	 *         If this set is not empty, it is guaranteed to only contain
+	 *         instances of <code>String</code>.
+	 */
 	Set getDefinedKeyConfigurationIds();
-	
+
 	/**
 	 * Returns a handle to a key configuration given an identifier.
-	 *
-	 * @param keyConfigurationId an identifier. Must not be <code>null</code>
-	 * @return          	     a handle to a key configuration.
-	 */	
-	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);	
-		
+	 * 
+	 * @param keyConfigurationId
+	 *            an identifier. Must not be <code>null</code>
+	 * @return a handle to a key configuration.
+	 */
+	IKeyConfiguration getKeyConfiguration(String keyConfigurationId);
+
 	/**
 	 * TODO javadoc
 	 */
 	Map getPartialMatches(KeySequence keySequence);
-	
+
 	/**
 	 * TODO javadoc
 	 */
@@ -157,48 +158,45 @@ public interface ICommandManager {
 	 * TODO javadoc
 	 */
 	boolean isPartialMatch(KeySequence keySequence);
-	
+
 	/**
 	 * TODO javadoc
 	 */
-	boolean isPerfectMatch(KeySequence keySequence);	
-	
+	boolean isPerfectMatch(KeySequence keySequence);
+
 	/**
-	 * Unregisters an instance of <code>ICommandManagerListener</code> 
+	 * Unregisters an instance of <code>ICommandManagerListener</code>
 	 * listening for changes to attributes of this instance.
-	 *
-	 * @param commandManagerListener the instance of 
-	 *                               <code>ICommandManagerListener</code> to 
-	 * 						         unregister. Must not be <code>null</code>. 
-	 *                               If an attempt is made to unregister an 
-	 *                               instance of 
-	 *                               <code>ICommandManagerListener</code> 
-	 *                               which is not already registered with this 
-	 *                               instance, no operation is performed.
+	 * 
+	 * @param commandManagerListener
+	 *            the instance of <code>ICommandManagerListener</code> to
+	 *            unregister. Must not be <code>null</code>. If an attempt
+	 *            is made to unregister an instance of <code>ICommandManagerListener</code>
+	 *            which is not already registered with this instance, no
+	 *            operation is performed.
 	 */
 	void removeCommandManagerListener(ICommandManagerListener commandManagerListener);
 
 	/**
-	 * Sets the set of identifiers to active activities. 
-	 *
-	 * @param activeActivityIds the set of identifiers to active activities. 
-	 *                          This set may be empty, but it must not be 
-	 *                          <code>null</code>. If this set is not empty, it 
-	 *                          must only contain instances of 
-	 *                          <code>String</code>.	
+	 * Sets the set of identifiers to active activities.
+	 * 
+	 * @param activeActivityIds
+	 *            the set of identifiers to active activities. This set may be
+	 *            empty, but it must not be <code>null</code>. If this set
+	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
 	void setActiveActivityIds(Set activeActivityIds);
 
 	/**
 	 * TODO javadoc
 	 */
-	void setActiveKeyConfigurationId(String activeKeyConfigurationId);	
+	void setActiveKeyConfigurationId(String activeKeyConfigurationId);
 
 	/**
 	 * TODO javadoc
 	 */
-	void setActiveLocale(String activeLocale);	
-	
+	void setActiveLocale(String activeLocale);
+
 	/**
 	 * TODO javadoc
 	 */

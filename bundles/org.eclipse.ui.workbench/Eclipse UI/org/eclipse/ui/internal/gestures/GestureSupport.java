@@ -26,7 +26,11 @@ public final class GestureSupport {
 		Shell shell = new Shell(display);
 
 		if (bounds.height >= HEIGHT && bounds.width >= WIDTH)
-			shell.setBounds((bounds.x + bounds.width - WIDTH) / 2, (bounds.y + bounds.height - HEIGHT) / 2, WIDTH, HEIGHT);
+			shell.setBounds(
+				(bounds.x + bounds.width - WIDTH) / 2,
+				(bounds.y + bounds.height - HEIGHT) / 2,
+				WIDTH,
+				HEIGHT);
 
 		shell.setText(GestureSupport.class.getName());
 		shell.open();
@@ -34,11 +38,10 @@ public final class GestureSupport {
 
 		capture.addCaptureListener(new ICaptureListener() {
 			public void capture(CaptureEvent captureEvent) {
-				System.out.println(
-					"Pen: " + captureEvent.getPen() + //$NON-NLS-1$ 
-					" Key Stroke: " + KeySupport.convertAcceleratorToKeyStroke(captureEvent.getData()) + //$NON-NLS-1$ 
-					" Points: " + captureEvent.getPoints().length + //$NON-NLS-1$
-					" Gesture: " + recognize(captureEvent.getPoints(), 20)); //$NON-NLS-1$		
+				System.out.println("Pen: " + captureEvent.getPen() + //$NON-NLS-1$ 
+				" Key Stroke: " + KeySupport.convertAcceleratorToKeyStroke(captureEvent.getData()) + //$NON-NLS-1$ 
+				" Points: " + captureEvent.getPoints().length + //$NON-NLS-1$
+				" Gesture: " + recognize(captureEvent.getPoints(), 20)); //$NON-NLS-1$		
 			}
 		});
 
@@ -89,6 +92,6 @@ public final class GestureSupport {
 		return sequence.toString();
 	}
 
-    private GestureSupport() {
-    }
+	private GestureSupport() {
+	}
 }

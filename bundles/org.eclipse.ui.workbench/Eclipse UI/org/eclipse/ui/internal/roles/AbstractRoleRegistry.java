@@ -17,40 +17,24 @@ import java.util.List;
 
 abstract class AbstractRoleRegistry implements IRoleRegistry {
 
+	protected List activityBindingDefinitions = Collections.EMPTY_LIST;
+	protected List roleDefinitions = Collections.EMPTY_LIST;
+
 	private RoleRegistryEvent roleRegistryEvent;
 	private List roleRegistryListeners;
-	
-	protected List activityBindingDefinitions = Collections.EMPTY_LIST;
-	protected List roleDefinitions = Collections.EMPTY_LIST;	
-	
+
 	protected AbstractRoleRegistry() {
 	}
 
 	public void addRoleRegistryListener(IRoleRegistryListener roleRegistryListener) {
 		if (roleRegistryListener == null)
 			throw new NullPointerException();
-			
+
 		if (roleRegistryListeners == null)
 			roleRegistryListeners = new ArrayList();
-		
+
 		if (!roleRegistryListeners.contains(roleRegistryListener))
 			roleRegistryListeners.add(roleRegistryListener);
-	}
-
-	public List getActivityBindingDefinitions() {
-		return activityBindingDefinitions;
-	}	
-	
-	public List getRoleDefinitions() {
-		return roleDefinitions;
-	}	
-
-	public void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener) {
-		if (roleRegistryListener == null)
-			throw new NullPointerException();
-			
-		if (roleRegistryListeners != null)
-			roleRegistryListeners.remove(roleRegistryListener);
 	}
 
 	protected void fireRoleRegistryChanged() {
@@ -58,9 +42,28 @@ abstract class AbstractRoleRegistry implements IRoleRegistry {
 			for (int i = 0; i < roleRegistryListeners.size(); i++) {
 				if (roleRegistryEvent == null)
 					roleRegistryEvent = new RoleRegistryEvent(this);
-							
-				((IRoleRegistryListener) roleRegistryListeners.get(i)).roleRegistryChanged(roleRegistryEvent);
-			}				
-		}	
+
+				(
+					(IRoleRegistryListener) roleRegistryListeners.get(
+						i)).roleRegistryChanged(
+					roleRegistryEvent);
+			}
+		}
 	}
-}	
+
+	public List getActivityBindingDefinitions() {
+		return activityBindingDefinitions;
+	}
+
+	public List getRoleDefinitions() {
+		return roleDefinitions;
+	}
+
+	public void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener) {
+		if (roleRegistryListener == null)
+			throw new NullPointerException();
+
+		if (roleRegistryListeners != null)
+			roleRegistryListeners.remove(roleRegistryListener);
+	}
+}

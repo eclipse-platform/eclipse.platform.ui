@@ -24,8 +24,8 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class StatusLineContributionItem extends ContributionItem {
 
-	public final static int DEFAULT_CHAR_WIDTH = 40; 
-	
+	public final static int DEFAULT_CHAR_WIDTH = 40;
+
 	private int charWidth;
 	private CLabel label;
 	private String text = Util.ZERO_LENGTH_STRING;
@@ -41,10 +41,10 @@ public class StatusLineContributionItem extends ContributionItem {
 		setVisible(false); // no text to start with
 	}
 
-	public void fill(Composite parent) {	
+	public void fill(Composite parent) {
 		label = new CLabel(parent, SWT.SHADOW_IN);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
-		
+
 		if (widthHint < 0) {
 			GC gc = new GC(parent);
 			gc.setFont(parent.getFont());
@@ -66,15 +66,15 @@ public class StatusLineContributionItem extends ContributionItem {
 			throw new NullPointerException();
 
 		this.text = text;
-		
+
 		if (label != null && !label.isDisposed())
 			label.setText(this.text);
-		
+
 		if (this.text.length() == 0) {
 			if (isVisible()) {
 				setVisible(false);
 				IContributionManager contributionManager = getParent();
-				
+
 				if (contributionManager != null)
 					contributionManager.update(true);
 			}
@@ -82,7 +82,7 @@ public class StatusLineContributionItem extends ContributionItem {
 			if (!isVisible()) {
 				setVisible(true);
 				IContributionManager contributionManager = getParent();
-				
+
 				if (contributionManager != null)
 					contributionManager.update(true);
 			}

@@ -36,9 +36,14 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 		this.extensionRegistry = extensionRegistry;
 
-		this.extensionRegistry.addRegistryChangeListener(new IRegistryChangeListener() {
+		this
+			.extensionRegistry
+			.addRegistryChangeListener(new IRegistryChangeListener() {
 			public void registryChanged(IRegistryChangeEvent registryChangeEvent) {
-				IExtensionDelta[] extensionDeltas = registryChangeEvent.getExtensionDeltas(Persistence.PACKAGE_PREFIX, Persistence.PACKAGE_BASE);
+				IExtensionDelta[] extensionDeltas =
+					registryChangeEvent.getExtensionDeltas(
+						Persistence.PACKAGE_PREFIX,
+						Persistence.PACKAGE_BASE);
 
 				if (extensionDeltas.length != 0)
 					try {
@@ -54,45 +59,6 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		}
 	}
 
-	private void load() throws IOException {
-		if (activityDefinitions == null)
-			activityDefinitions = new ArrayList();
-		else
-			activityDefinitions.clear();
-
-		if (patternBindingDefinitions == null)
-			patternBindingDefinitions = new ArrayList();
-		else
-			patternBindingDefinitions.clear();
-
-		IConfigurationElement[] configurationElements = extensionRegistry.getConfigurationElementsFor(Persistence.PACKAGE_FULL);
-
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement configurationElement = configurationElements[i];
-			String name = configurationElement.getName();
-
-			if (Persistence.TAG_ACTIVITY.equals(name))
-				readActivityDefinition(configurationElement);
-			else if (Persistence.TAG_PATTERN_BINDING.equals(name))
-				readPatternBindingDefinition(configurationElement);
-		}
-
-		boolean activityRegistryChanged = false;
-
-		if (!activityDefinitions.equals(super.activityDefinitions)) {
-			super.activityDefinitions = Collections.unmodifiableList(activityDefinitions);
-			activityRegistryChanged = true;
-		}
-
-		if (!patternBindingDefinitions.equals(super.patternBindingDefinitions)) {
-			super.patternBindingDefinitions = Collections.unmodifiableList(patternBindingDefinitions);
-			activityRegistryChanged = true;
-		}
-
-		if (activityRegistryChanged)
-			fireActivityRegistryChanged();
-	}
-
 	private String getPluginId(IConfigurationElement configurationElement) {
 		String pluginId = null;
 
@@ -106,9 +72,56 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		return pluginId;
 	}
 
+	private void load() throws IOException {
+		if (activityDefinitions == null)
+			activityDefinitions = new ArrayList();
+		else
+			activityDefinitions.clear();
+
+		if (patternBindingDefinitions == null)
+			patternBindingDefinitions = new ArrayList();
+		else
+			patternBindingDefinitions.clear();
+
+		IConfigurationElement[] configurationElements =
+			extensionRegistry.getConfigurationElementsFor(
+				Persistence.PACKAGE_FULL);
+
+		for (int i = 0; i < configurationElements.length; i++) {
+			IConfigurationElement configurationElement =
+				configurationElements[i];
+			String name = configurationElement.getName();
+
+			if (Persistence.TAG_ACTIVITY.equals(name))
+				readActivityDefinition(configurationElement);
+			else if (Persistence.TAG_PATTERN_BINDING.equals(name))
+				readPatternBindingDefinition(configurationElement);
+		}
+
+		boolean activityRegistryChanged = false;
+
+		if (!activityDefinitions.equals(super.activityDefinitions)) {
+			super.activityDefinitions =
+				Collections.unmodifiableList(activityDefinitions);
+			activityRegistryChanged = true;
+		}
+
+		if (!patternBindingDefinitions
+			.equals(super.patternBindingDefinitions)) {
+			super.patternBindingDefinitions =
+				Collections.unmodifiableList(patternBindingDefinitions);
+			activityRegistryChanged = true;
+		}
+
+		if (activityRegistryChanged)
+			fireActivityRegistryChanged();
+	}
+
 	private void readActivityDefinition(IConfigurationElement configurationElement) {
 		IActivityDefinition activityDefinition =
-			Persistence.readActivityDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+			Persistence.readActivityDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
 
 		if (activityDefinition != null)
 			activityDefinitions.add(activityDefinition);
@@ -116,7 +129,9 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
 	private void readPatternBindingDefinition(IConfigurationElement configurationElement) {
 		IPatternBindingDefinition patternBindingDefinition =
-			Persistence.readPatternBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+			Persistence.readPatternBindingDefinition(
+				new ConfigurationElementMemento(configurationElement),
+				getPluginId(configurationElement));
 
 		if (patternBindingDefinition != null)
 			patternBindingDefinitions.add(patternBindingDefinition);

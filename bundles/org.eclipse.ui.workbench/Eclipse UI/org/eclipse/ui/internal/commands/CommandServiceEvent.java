@@ -18,11 +18,13 @@ final class CommandServiceEvent implements ICommandServiceEvent {
 
 	private boolean activeCommandIdsChanged;
 	private ICommandService commandService;
-	
-	CommandServiceEvent(ICommandService commandService, boolean activeCommandIdsChanged) {
+
+	CommandServiceEvent(
+		ICommandService commandService,
+		boolean activeCommandIdsChanged) {
 		if (commandService == null)
 			throw new NullPointerException();
-		
+
 		this.activeCommandIdsChanged = activeCommandIdsChanged;
 		this.commandService = commandService;
 	}
@@ -30,7 +32,7 @@ final class CommandServiceEvent implements ICommandServiceEvent {
 	public ICommandService getCommandService() {
 		return commandService;
 	}
-	
+
 	public boolean haveActiveCommandIdsChanged() {
 		return activeCommandIdsChanged;
 	}

@@ -27,7 +27,7 @@ public interface ICommandRegistry {
 
 	List getImageBindingDefinitions();
 
-	List getKeyConfigurationDefinitions();	
+	List getKeyConfigurationDefinitions();
 
 	List getKeySequenceBindingDefinitions();
 

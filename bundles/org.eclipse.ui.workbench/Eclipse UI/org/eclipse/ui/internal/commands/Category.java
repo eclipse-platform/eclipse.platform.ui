@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.ui.commands.CategoryEvent;
 import org.eclipse.ui.commands.ICategory;
-import org.eclipse.ui.commands.ICategoryEvent;
 import org.eclipse.ui.commands.ICategoryListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.util.Util;
@@ -30,14 +30,14 @@ final class Category implements ICategory {
 	private List categoryListeners;
 	private boolean defined;
 	private String description;
-	private String id;
-	private String name;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private String id;
+	private String name;
 	private transient String string;
-	
-	Category(Set categoriesWithListeners, String id) {	
+
+	Category(Set categoriesWithListeners, String id) {
 		if (categoriesWithListeners == null || id == null)
 			throw new NullPointerException();
 
@@ -48,39 +48,39 @@ final class Category implements ICategory {
 	public void addCategoryListener(ICategoryListener categoryListener) {
 		if (categoryListener == null)
 			throw new NullPointerException();
-		
+
 		if (categoryListeners == null)
 			categoryListeners = new ArrayList();
-		
+
 		if (!categoryListeners.contains(categoryListener))
 			categoryListeners.add(categoryListener);
-		
+
 		categoriesWithListeners.add(this);
 	}
 
 	public int compareTo(Object object) {
 		Category castedObject = (Category) object;
 		int compareTo = Util.compare(defined, castedObject.defined);
-				
+
 		if (compareTo == 0) {
 			compareTo = Util.compare(description, castedObject.description);
-									
-			if (compareTo == 0) {		
-				compareTo = Util.compare(id, castedObject.id);			
-			
+
+			if (compareTo == 0) {
+				compareTo = Util.compare(id, castedObject.id);
+
 				if (compareTo == 0)
 					compareTo = Util.compare(name, castedObject.name);
 			}
 		}
 
-		return compareTo;	
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof Category))
 			return false;
 
-		Category castedObject = (Category) object;	
+		Category castedObject = (Category) object;
 		boolean equals = true;
 		equals &= Util.equals(defined, castedObject.defined);
 		equals &= Util.equals(description, castedObject.description);
@@ -89,39 +89,47 @@ final class Category implements ICategory {
 		return equals;
 	}
 
-	public String getDescription()
-		throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
-			
-		return description;	
-	}
-	
-	public String getId() {
-		return id;	
+	void fireCategoryChanged(CategoryEvent categoryEvent) {
+		if (categoryEvent == null)
+			throw new NullPointerException();
+
+		if (categoryListeners != null)
+			for (int i = 0; i < categoryListeners.size(); i++)
+				((ICategoryListener) categoryListeners.get(i)).categoryChanged(
+					categoryEvent);
 	}
 
-	public String getName()
-		throws NotDefinedException {
+	public String getDescription() throws NotDefinedException {
+		if (!defined)
+			throw new NotDefinedException();
+
+		return description;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getName() throws NotDefinedException {
 		if (!defined)
 			throw new NotDefinedException();
 
 		return name;
-	}	
-	
+	}
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
-	
+
 	public boolean isDefined() {
 		return defined;
 	}
@@ -132,9 +140,45 @@ final class Category implements ICategory {
 
 		if (categoryListeners != null)
 			categoryListeners.remove(categoryListener);
-		
+
 		if (categoryListeners.isEmpty())
 			categoriesWithListeners.remove(this);
+	}
+
+	boolean setDefined(boolean defined) {
+		if (defined != this.defined) {
+			this.defined = defined;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setDescription(String description) {
+		if (!Util.equals(description, this.description)) {
+			this.description = description;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
+	}
+
+	boolean setName(String name) {
+		if (!Util.equals(name, this.name)) {
+			this.name = name;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}
+
+		return false;
 	}
 
 	public String toString() {
@@ -151,52 +195,7 @@ final class Category implements ICategory {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
-	}
-	
-	void fireCategoryChanged(ICategoryEvent categoryEvent) {
-		if (categoryEvent == null)
-			throw new NullPointerException();
-		
-		if (categoryListeners != null)
-			for (int i = 0; i < categoryListeners.size(); i++)
-				((ICategoryListener) categoryListeners.get(i)).categoryChanged(categoryEvent);
-	}
 
-	boolean setDefined(boolean defined) {
-		if (defined != this.defined) {
-			this.defined = defined;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
-	}
-
-	boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
-			this.description = description;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
-	}
-	
-	boolean setName(String name) {
-		if (!Util.equals(name, this.name)) {
-			this.name = name;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
+		return string;
 	}
 }

@@ -18,7 +18,7 @@ final class RoleRegistryEvent {
 	RoleRegistryEvent(IRoleRegistry roleRegistry) {
 		if (roleRegistry == null)
 			throw new NullPointerException();
-		
+
 		this.roleRegistry = roleRegistry;
 	}
 

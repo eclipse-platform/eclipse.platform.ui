@@ -42,14 +42,6 @@ public abstract class AbstractActivityManager implements IActivityManager {
 			activityManagerListeners.add(activityManagerListener);
 	}
 
-	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
-		if (activityManagerListener == null)
-			throw new NullPointerException();
-
-		if (activityManagerListeners != null)
-			activityManagerListeners.remove(activityManagerListener);
-	}
-
 	/**
 	 * TODO javadoc
 	 * 
@@ -61,6 +53,17 @@ public abstract class AbstractActivityManager implements IActivityManager {
 
 		if (activityManagerListeners != null)
 			for (int i = 0; i < activityManagerListeners.size(); i++)
-				 ((IActivityManagerListener) activityManagerListeners.get(i)).activityManagerChanged(activityManagerEvent);
+				(
+					(IActivityManagerListener) activityManagerListeners.get(
+						i)).activityManagerChanged(
+					activityManagerEvent);
+	}
+
+	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
+		if (activityManagerListener == null)
+			throw new NullPointerException();
+
+		if (activityManagerListeners != null)
+			activityManagerListeners.remove(activityManagerListener);
 	}
 }

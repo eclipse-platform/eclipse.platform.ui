@@ -16,23 +16,24 @@ import org.eclipse.ui.commands.IImageBinding;
 final class ImageBinding implements IImageBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ImageBinding.class.getName().hashCode();
-
-	private String imageStyle;
-	private String imageUri;
-	private int match;	
+	private final static int HASH_INITIAL =
+		ImageBinding.class.getName().hashCode();
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+
+	private String imageStyle;
+	private String imageUri;
+	private int match;
 	private transient String string;
-	
-	ImageBinding(String imageStyle, String imageUri, int match) {	
+
+	ImageBinding(String imageStyle, String imageUri, int match) {
 		if (imageStyle == null || imageUri == null)
 			throw new NullPointerException();
 
 		if (match < 0)
 			throw new IllegalArgumentException();
-			
+
 		this.imageStyle = imageStyle;
 		this.imageUri = imageUri;
 		this.match = match;
@@ -40,23 +41,23 @@ final class ImageBinding implements IImageBinding {
 
 	public int compareTo(Object object) {
 		ImageBinding castedObject = (ImageBinding) object;
-		int compareTo = match - castedObject.match;		
+		int compareTo = match - castedObject.match;
 
 		if (compareTo == 0) {
-			compareTo = imageStyle.compareTo(castedObject.imageStyle);	
-		
+			compareTo = imageStyle.compareTo(castedObject.imageStyle);
+
 			if (compareTo == 0)
 				compareTo = imageStyle.compareTo(castedObject.imageUri);
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof ImageBinding))
 			return false;
 
-		ImageBinding castedObject = (ImageBinding) object;	
+		ImageBinding castedObject = (ImageBinding) object;
 		boolean equals = true;
 		equals &= imageStyle.equals(castedObject.imageStyle);
 		equals &= imageUri.equals(castedObject.imageUri);
@@ -71,21 +72,21 @@ final class ImageBinding implements IImageBinding {
 	public String getImageUri() {
 		return imageUri;
 	}
-	
+
 	public int getMatch() {
-		return match;	
-	}	
-	
+		return match;
+	}
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + imageStyle.hashCode();
 			hashCode = hashCode * HASH_FACTOR + imageUri.hashCode();
-			hashCode = hashCode * HASH_FACTOR + match;				
+			hashCode = hashCode * HASH_FACTOR + match;
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -100,7 +101,7 @@ final class ImageBinding implements IImageBinding {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;		
+
+		return string;
 	}
 }

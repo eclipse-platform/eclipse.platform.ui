@@ -25,23 +25,30 @@ import org.eclipse.ui.activities.ICompoundActivityService;
 import org.eclipse.ui.activities.IMutableActivityService;
 import org.eclipse.ui.internal.util.Util;
 
-public final class CompoundActivityService extends AbstractActivityService implements ICompoundActivityService {
+public final class CompoundActivityService
+	extends AbstractActivityService
+	implements ICompoundActivityService {
 
 	private Set activeActivityIds = new HashSet();
-	private final HashSet activityServices = new HashSet();
 
-	private final IActivityServiceListener activityServiceListener = new IActivityServiceListener() {
+	private final IActivityServiceListener activityServiceListener =
+		new IActivityServiceListener() {
 		public void activityServiceChanged(ActivityServiceEvent activityServiceEvent) {
 			Set activeActivityIds = new HashSet();
 
-			for (Iterator iterator = activityServices.iterator(); iterator.hasNext();) {
-				IMutableActivityService mutableActivityService = (IMutableActivityService) iterator.next();
-				activeActivityIds.addAll(mutableActivityService.getActiveActivityIds());
+			for (Iterator iterator = activityServices.iterator();
+				iterator.hasNext();
+				) {
+				IMutableActivityService mutableActivityService =
+					(IMutableActivityService) iterator.next();
+				activeActivityIds.addAll(
+					mutableActivityService.getActiveActivityIds());
 			}
 
 			setActiveActivityIds(activeActivityIds);
 		}
 	};
+	private final HashSet activityServices = new HashSet();
 
 	public CompoundActivityService() {
 	}

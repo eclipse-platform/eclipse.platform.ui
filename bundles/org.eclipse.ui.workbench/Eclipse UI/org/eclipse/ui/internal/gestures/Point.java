@@ -16,12 +16,12 @@ public final class Point implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Point.class.getName().hashCode();
 
-	private int x;
-	private int y;
-
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
+
+	private int x;
+	private int y;
 
 	public Point(int x, int y) {
 		this.x = x;
@@ -46,7 +46,7 @@ public final class Point implements Comparable {
 		boolean equals = true;
 		equals &= x == castedObject.x;
 		equals &= y == castedObject.y;
-		return equals;		
+		return equals;
 	}
 
 	public int getX() {
@@ -61,11 +61,11 @@ public final class Point implements Comparable {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + x;
-			hashCode = hashCode * HASH_FACTOR + y;			
+			hashCode = hashCode * HASH_FACTOR + y;
 			hashCodeComputed = true;
 		}
-			
-		return hashCode;		
+
+		return hashCode;
 	}
 
 	public String toString() {
@@ -78,7 +78,7 @@ public final class Point implements Comparable {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
-		return string;			
+
+		return string;
 	}
 }

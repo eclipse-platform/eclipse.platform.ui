@@ -13,8 +13,8 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * An instance of <code>CategoryEvent</code> describes changes to an instance of 
- * <code>ICategory</code>. 
+ * An instance of <code>CategoryEvent</code> describes changes to an instance
+ * of <code>ICategory</code>.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -27,7 +27,7 @@ package org.eclipse.ui.commands;
  * @see ICategory
  * @see ICategoryListener#categoryChanged
  */
-public final class CategoryEvent implements ICategoryEvent {
+public final class CategoryEvent {
 
 	private ICategory category;
 	private boolean definedChanged;
@@ -42,10 +42,14 @@ public final class CategoryEvent implements ICategoryEvent {
 	 * @param descriptionChanged
 	 * @param nameChanged
 	 */
-	public CategoryEvent(ICategory category, boolean definedChanged, boolean descriptionChanged, boolean nameChanged) {
+	public CategoryEvent(
+		ICategory category,
+		boolean definedChanged,
+		boolean descriptionChanged,
+		boolean nameChanged) {
 		if (category == null)
 			throw new NullPointerException();
-		
+
 		this.category = category;
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
@@ -54,8 +58,8 @@ public final class CategoryEvent implements ICategoryEvent {
 
 	/**
 	 * Returns the instance of <code>ICategory</code> that has changed.
-	 *
-	 * @return the instance of <code>ICategory</code> that has changed. 
+	 * 
+	 * @return the instance of <code>ICategory</code> that has changed.
 	 *         Guaranteed not to be <code>null</code>.
 	 */
 	public ICategory getCategory() {
@@ -64,21 +68,21 @@ public final class CategoryEvent implements ICategoryEvent {
 
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
-	}	
-	
+	}
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
-	
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}

@@ -17,10 +17,10 @@ import java.util.List;
 
 abstract class AbstractActivityRegistry implements IActivityRegistry {
 
+	protected List activityDefinitions = Collections.EMPTY_LIST;
+
 	private ActivityRegistryEvent activityRegistryEvent;
 	private List activityRegistryListeners;
-
-	protected List activityDefinitions = Collections.EMPTY_LIST;
 	protected List patternBindingDefinitions = Collections.EMPTY_LIST;
 
 	protected AbstractActivityRegistry() {
@@ -37,6 +37,20 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 			activityRegistryListeners.add(activityRegistryListener);
 	}
 
+	protected void fireActivityRegistryChanged() {
+		if (activityRegistryListeners != null) {
+			for (int i = 0; i < activityRegistryListeners.size(); i++) {
+				if (activityRegistryEvent == null)
+					activityRegistryEvent = new ActivityRegistryEvent(this);
+
+				(
+					(IActivityRegistryListener) activityRegistryListeners.get(
+						i)).activityRegistryChanged(
+					activityRegistryEvent);
+			}
+		}
+	}
+
 	public List getActivityDefinitions() {
 		return activityDefinitions;
 	}
@@ -51,16 +65,5 @@ abstract class AbstractActivityRegistry implements IActivityRegistry {
 
 		if (activityRegistryListeners != null)
 			activityRegistryListeners.remove(activityRegistryListener);
-	}
-
-	protected void fireActivityRegistryChanged() {
-		if (activityRegistryListeners != null) {
-			for (int i = 0; i < activityRegistryListeners.size(); i++) {
-				if (activityRegistryEvent == null)
-					activityRegistryEvent = new ActivityRegistryEvent(this);
-
-				((IActivityRegistryListener) activityRegistryListeners.get(i)).activityRegistryChanged(activityRegistryEvent);
-			}
-		}
 	}
 }

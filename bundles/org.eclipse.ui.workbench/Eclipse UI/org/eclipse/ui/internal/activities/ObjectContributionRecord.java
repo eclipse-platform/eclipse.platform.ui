@@ -13,53 +13,57 @@ package org.eclipse.ui.internal.activities;
 import org.eclipse.ui.activities.IObjectContributionRecord;
 
 /**
- * Class that represents an extension contribution from a given plugin with a 
- * given localized id value.  Used in ObjectActivityManager and elsewhere for
- * pattern matching.  The toString() value of this Object is used to match
+ * Class that represents an extension contribution from a given plugin with a
+ * given localized id value. Used in ObjectActivityManager and elsewhere for
+ * pattern matching. The toString() value of this Object is used to match
  * against patternBindings and is of the form {pluginId}/{localId}.
  * 
- * This could potentially be extended to include the extension point id from 
+ * This could potentially be extended to include the extension point id from
  * where the contribution has came from as well, although such bindings would
- * be so specific (and limited in quantity) that it'd make more sense to specify
- * the contribution-&gt;activity binding directly rather than add yet another 
- * variable for pattern matching.  Pattern matching is meant as a shortcut for
- * establishing direct bindings, not the binding mechanism itself.
+ * be so specific (and limited in quantity) that it'd make more sense to
+ * specify the contribution-&gt;activity binding directly rather than add yet
+ * another variable for pattern matching. Pattern matching is meant as a
+ * shortcut for establishing direct bindings, not the binding mechanism itself.
  * 
- * This class is immutible for efficiency.  
+ * This class is immutible for efficiency.
  */
 class ObjectContributionRecord implements IObjectContributionRecord {
-    
-    private String pluginId, localId, toString;
-    
-    /**
-     * Create an ObjectContributionRecord with the given plugin and local IDs.
-     * 
-     * @param pluginId
-     * @param localId
-     */
-    public ObjectContributionRecord(String pluginId, String localId) {
-        setPluginId(pluginId);
-        setLocalId(localId);   
-        toString = getPluginId() + '/' + getLocalId(); 
-    }
+
+	private String pluginId, localId, toString;
+
+	/**
+	 * Create an ObjectContributionRecord with the given plugin and local IDs.
+	 * 
+	 * @param pluginId
+	 * @param localId
+	 */
+	public ObjectContributionRecord(String pluginId, String localId) {
+		setPluginId(pluginId);
+		setLocalId(localId);
+		toString = getPluginId() + '/' + getLocalId();
+	}
+
+	/**
+	 * Return true if arg0 is an ObjectContributionRecord and its toString()
+	 * value matches the toString() value of the reciever.
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object arg0) {
+		if (arg0 instanceof IObjectContributionRecord) {
+			return toString().equals(arg0);
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Return the local id of this object contribution
+	 * 
 	 * @return String
 	 */
 	public String getLocalId() {
 		return localId;
-	}
-
-	/**
-	 * Set the local id of this object contribution
-	 * @param newLocalId the local id of this object contribution
-	 */
-	private void setLocalId(String newLocalId) {
-        if (newLocalId == null) {
-            throw new IllegalArgumentException();
-        }
-		localId = newLocalId;
 	}
 
 	/**
@@ -70,47 +74,47 @@ class ObjectContributionRecord implements IObjectContributionRecord {
 	}
 
 	/**
-	 * Set the plugin id of the record.
-	 * @param newPluginId the plugin id of this object contribution
+	 * The hash of the toString() value.
+	 * 
+	 * @see java.lang.Object#hashCode()
 	 */
-	private void setPluginId(String newPluginId) {
-        if (newPluginId == null) {
-            throw new IllegalArgumentException();
-        }
-        
-		pluginId = newPluginId;
-	}    
-
-	/**
-     * Return true if arg0 is an ObjectContributionRecord and its toString() value 
-     * matches the toString() value of the reciever.
-     * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object arg0) {
-        if (arg0 instanceof IObjectContributionRecord) {
-            return toString().equals(arg0);    
-        }
-        else {
-            return false;
-        }		
+	public int hashCode() {
+		return toString().hashCode();
 	}
 
-    /**
-     * The hash of the toString() value.
-     * 
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode() {
-        return toString().hashCode();
-    }
+	/**
+	 * Set the local id of this object contribution
+	 * 
+	 * @param newLocalId
+	 *            the local id of this object contribution
+	 */
+	private void setLocalId(String newLocalId) {
+		if (newLocalId == null) {
+			throw new IllegalArgumentException();
+		}
+		localId = newLocalId;
+	}
 
-    /** 
-     * A composite String of the form {pluginId}/{localId}
-     * 
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return toString;
-    }
+	/**
+	 * Set the plugin id of the record.
+	 * 
+	 * @param newPluginId
+	 *            the plugin id of this object contribution
+	 */
+	private void setPluginId(String newPluginId) {
+		if (newPluginId == null) {
+			throw new IllegalArgumentException();
+		}
+
+		pluginId = newPluginId;
+	}
+
+	/**
+	 * A composite String of the form {pluginId}/{localId}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return toString;
+	}
 }

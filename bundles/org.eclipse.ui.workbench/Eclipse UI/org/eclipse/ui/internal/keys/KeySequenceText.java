@@ -179,8 +179,10 @@ public final class KeySequenceText {
 				 * Get a reasonable facsimile of the stroke that is still
 				 * pressed.
 				 */
-				int key = KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
-				KeyStroke remainingStroke = KeySupport.convertAcceleratorToKeyStroke(key);
+				int key =
+					KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
+				KeyStroke remainingStroke =
+					KeySupport.convertAcceleratorToKeyStroke(key);
 				if (!keyStrokes.isEmpty()) {
 					keyStrokes.remove(keyStrokes.size() - 1);
 				}
@@ -234,8 +236,10 @@ public final class KeySequenceText {
 
 			} else if (hasSelection()) {
 				// There is a selection that needs to be replaced.
-				insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
-				if ((stroke.isComplete()) || (insertionIndex >= keyStrokes.size())) {
+				insertionIndex =
+					deleteSelection(keyStrokes, stroke.isComplete());
+				if ((stroke.isComplete())
+					|| (insertionIndex >= keyStrokes.size())) {
 					insertStrokeAt(keyStrokes, stroke, insertionIndex);
 					clearInsertionIndex();
 				}
@@ -247,7 +251,9 @@ public final class KeySequenceText {
 				}
 
 				// And then add the new stroke.
-				if ((keyStrokes.isEmpty()) || (insertionIndex >= keyStrokes.size()) || (isCursorInLastPosition())) {
+				if ((keyStrokes.isEmpty())
+					|| (insertionIndex >= keyStrokes.size())
+					|| (isCursorInLastPosition())) {
 					insertStrokeAt(keyStrokes, stroke, keyStrokes.size());
 					clearInsertionIndex();
 				} else {
@@ -255,7 +261,8 @@ public final class KeySequenceText {
 					 * I'm just getting the insertionIndex here. No actual
 					 * deletion should occur.
 					 */
-					insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
+					insertionIndex =
+						deleteSelection(keyStrokes, stroke.isComplete());
 					if (stroke.isComplete()) {
 						insertStrokeAt(keyStrokes, stroke, insertionIndex);
 						clearInsertionIndex();
@@ -296,7 +303,8 @@ public final class KeySequenceText {
 				case SWT.TRAVERSE_TAB_PREVIOUS :
 					// Check if modifiers other than just 'Shift' were
 					// down.
-					if ((event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT)) != 0) {
+					if ((event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT))
+						!= 0) {
 						// Modifiers other than shift were down.
 						event.type = SWT.None;
 						event.doit = false;
@@ -310,7 +318,8 @@ public final class KeySequenceText {
 					// Let the traversal happen, but clear the incomplete
 					// stroke
 					if (hasIncompleteStroke()) {
-						List keyStrokes = new ArrayList(getKeySequence().getKeyStrokes());
+						List keyStrokes =
+							new ArrayList(getKeySequence().getKeyStrokes());
 						if (!keyStrokes.isEmpty()) {
 							keyStrokes.remove(keyStrokes.size() - 1);
 						}
@@ -388,7 +397,8 @@ public final class KeySequenceText {
 	static {
 		TreeSet trappedKeys = new TreeSet();
 		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB));
-		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
+		trappedKeys.add(
+			KeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
 		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.BS));
 		List trappedKeyList = new ArrayList(trappedKeys);
 		TRAPPED_KEYS = Collections.unmodifiableList(trappedKeyList);
@@ -425,7 +435,8 @@ public final class KeySequenceText {
 	 * The listener that makes sure that the text widget remains up-to-date
 	 * with regards to external modification of the text (e.g., cut & pasting).
 	 */
-	private final UpdateSequenceListener updateSequenceListener = new UpdateSequenceListener();
+	private final UpdateSequenceListener updateSequenceListener =
+		new UpdateSequenceListener();
 
 	/**
 	 * Constructs an instance of <code>KeySequenceTextField</code> with the
@@ -558,7 +569,8 @@ public final class KeySequenceText {
 		 */
 		if (allowIncomplete) {
 			SortedSet modifierKeys = new TreeSet(startStroke.getModifierKeys());
-			KeyStroke incompleteStroke = KeyStroke.getInstance(modifierKeys, null);
+			KeyStroke incompleteStroke =
+				KeyStroke.getInstance(modifierKeys, null);
 			int incompleteStrokeLength = incompleteStroke.format().length();
 			if ((startTextIndex + incompleteStrokeLength) <= start) {
 				keyStrokes.add(startStrokeIndex, incompleteStroke);
@@ -649,13 +661,19 @@ public final class KeySequenceText {
 	 *            list of key strokes.
 	 */
 	void insertStrokeAt(List keyStrokes, KeyStroke stroke, int index) {
-		KeyStroke currentStroke = (index >= keyStrokes.size()) ? null : (KeyStroke) keyStrokes.get(index);
+		KeyStroke currentStroke =
+			(index >= keyStrokes.size())
+				? null
+				: (KeyStroke) keyStrokes.get(index);
 		if ((currentStroke != null) && (!currentStroke.isComplete())) {
-			SortedSet modifierKeys = new TreeSet(currentStroke.getModifierKeys());
+			SortedSet modifierKeys =
+				new TreeSet(currentStroke.getModifierKeys());
 			NaturalKey naturalKey = stroke.getNaturalKey();
 			modifierKeys.addAll(stroke.getModifierKeys());
 			keyStrokes.remove(index);
-			keyStrokes.add(index, KeyStroke.getInstance(modifierKeys, naturalKey));
+			keyStrokes.add(
+				index,
+				KeyStroke.getInstance(modifierKeys, naturalKey));
 		} else {
 			keyStrokes.add(index, stroke);
 		}

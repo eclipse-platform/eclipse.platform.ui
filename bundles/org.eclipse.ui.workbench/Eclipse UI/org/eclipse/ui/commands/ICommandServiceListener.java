@@ -13,9 +13,8 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * An instance of <code>ICommandServiceListener</code> can be used by clients 
- * to receive notification of changes to one or more instances of 
- * <code>ICommandService</code>.
+ * An instance of <code>ICommandServiceListener</code> can be used by clients
+ * to receive notification of changes to one or more instances of <code>ICommandService</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -32,12 +31,11 @@ package org.eclipse.ui.commands;
 public interface ICommandServiceListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of 
-	 * <code>ICommandService</code> have changed. Specific details are 
-	 * described in the <code>ICommandServiceEvent</code>.
-	 *
-	 * @param commandServiceEvent the command service event. Guaranteed not to 
-	 * 							  be <code>null</code>.
+	 * Notifies that one or more attributes of an instance of <code>ICommandService</code>
+	 * have changed. Specific details are described in the <code>ICommandServiceEvent</code>.
+	 * 
+	 * @param commandServiceEvent
+	 *            the command service event. Guaranteed not to be <code>null</code>.
 	 */
 	void commandServiceChanged(ICommandServiceEvent commandServiceEvent);
 }

@@ -12,8 +12,8 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
- * An instance of <code>KeyConfigurationEvent</code> describes changes to an instance of 
- * <code>IKeyConfiguration</code>. 
+ * An instance of <code>KeyConfigurationEvent</code> describes changes to an
+ * instance of <code>IKeyConfiguration</code>.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -26,12 +26,12 @@ package org.eclipse.ui.commands;
  * @see IKeyConfiguration
  * @see IKeyConfigurationListener#commandChanged
  */
-public final class KeyConfigurationEvent implements IKeyConfigurationEvent {
+public final class KeyConfigurationEvent {
 
 	private boolean activeChanged;
-	private IKeyConfiguration keyConfiguration;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
+	private IKeyConfiguration keyConfiguration;
 	private boolean nameChanged;
 	private boolean parentIdChanged;
 
@@ -45,10 +45,16 @@ public final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 	 * @param nameChanged
 	 * @param parentIdChanged
 	 */
-	public KeyConfigurationEvent(IKeyConfiguration keyConfiguration, boolean activeChanged, boolean definedChanged, boolean descriptionChanged, boolean nameChanged, boolean parentIdChanged) {
+	public KeyConfigurationEvent(
+		IKeyConfiguration keyConfiguration,
+		boolean activeChanged,
+		boolean definedChanged,
+		boolean descriptionChanged,
+		boolean nameChanged,
+		boolean parentIdChanged) {
 		if (keyConfiguration == null)
 			throw new NullPointerException();
-		
+
 		this.keyConfiguration = keyConfiguration;
 		this.activeChanged = activeChanged;
 		this.definedChanged = definedChanged;
@@ -58,10 +64,11 @@ public final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 	}
 
 	/**
-	 * Returns the instance of <code>IKeyConfiguration</code> that has changed.
-	 *
-	 * @return the instance of <code>IKeyConfiguration</code> that has changed. 
-	 *         Guaranteed not to be <code>null</code>.
+	 * Returns the instance of <code>IKeyConfiguration</code> that has
+	 * changed.
+	 * 
+	 * @return the instance of <code>IKeyConfiguration</code> that has
+	 *         changed. Guaranteed not to be <code>null</code>.
 	 */
 	public IKeyConfiguration getKeyConfiguration() {
 		return keyConfiguration;
@@ -69,35 +76,35 @@ public final class KeyConfigurationEvent implements IKeyConfigurationEvent {
 
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasActiveChanged() {
 		return activeChanged;
 	}
-	
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
-	}	
-	
+	}
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
 
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
-	
+
 	/**
 	 * TODO javadoc
-	 */	
+	 */
 	public boolean hasParentIdChanged() {
 		return parentIdChanged;
 	}

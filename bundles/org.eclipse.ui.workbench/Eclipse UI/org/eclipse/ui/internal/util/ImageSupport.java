@@ -11,7 +11,11 @@ public final class ImageSupport {
 
 	public static ImageDescriptor getImageDescriptor(String path) {
 		try {
-			URL url = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
+			URL url =
+				Platform
+					.getPlugin(PlatformUI.PLUGIN_ID)
+					.getDescriptor()
+					.getInstallURL();
 			url = new URL(url, path);
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException eMalformedURL) {
@@ -19,7 +23,7 @@ public final class ImageSupport {
 			return null;
 		}
 	}
-	
+
 	private ImageSupport() {
-	}	
+	}
 }

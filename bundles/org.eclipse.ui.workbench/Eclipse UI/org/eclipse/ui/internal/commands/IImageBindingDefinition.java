@@ -22,6 +22,6 @@ public interface IImageBindingDefinition extends Comparable {
 	String getLocale();
 
 	String getPlatform();
-	
-	String getPluginId();	
+
+	String getPluginId();
 }

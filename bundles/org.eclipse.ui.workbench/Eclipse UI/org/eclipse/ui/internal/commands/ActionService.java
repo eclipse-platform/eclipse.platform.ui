@@ -38,7 +38,7 @@ public final class ActionService implements IActionService {
 
 		if (actionsById == null)
 			actionsById = new TreeMap();
-			
+
 		if (actionsById.get(commandId) != action) {
 			actionsById.put(commandId, action);
 			fireActionServiceChanged();
@@ -48,16 +48,32 @@ public final class ActionService implements IActionService {
 	public void addActionServiceListener(IActionServiceListener actionServiceListener) {
 		if (actionServiceListener == null)
 			throw new NullPointerException();
-			
+
 		if (actionServiceListeners == null)
 			actionServiceListeners = new ArrayList();
-		
+
 		if (!actionServiceListeners.contains(actionServiceListener))
 			actionServiceListeners.add(actionServiceListener);
 	}
 
+	private void fireActionServiceChanged() {
+		if (actionServiceListeners != null) {
+			for (int i = 0; i < actionServiceListeners.size(); i++) {
+				if (actionServiceEvent == null)
+					actionServiceEvent = new ActionServiceEvent(this);
+
+				(
+					(IActionServiceListener) actionServiceListeners.get(
+						i)).actionServiceChanged(
+					actionServiceEvent);
+			}
+		}
+	}
+
 	public SortedMap getActionsById() {
-		return actionsById != null ? Collections.unmodifiableSortedMap(actionsById) : Util.EMPTY_SORTED_MAP;
+		return actionsById != null
+			? Collections.unmodifiableSortedMap(actionsById)
+			: Util.EMPTY_SORTED_MAP;
 	}
 
 	public void removeAction(String commandId) {
@@ -66,30 +82,19 @@ public final class ActionService implements IActionService {
 
 		if (actionsById != null && actionsById.containsKey(commandId)) {
 			actionsById.remove(commandId);
-						
+
 			if (actionsById.isEmpty())
 				actionsById = null;
 
 			fireActionServiceChanged();
-		}			
+		}
 	}
-	
+
 	public void removeActionServiceListener(IActionServiceListener actionServiceListener) {
 		if (actionServiceListener == null)
 			throw new NullPointerException();
-			
+
 		if (actionServiceListeners != null)
 			actionServiceListeners.remove(actionServiceListener);
 	}
-	
-	private void fireActionServiceChanged() {
-		if (actionServiceListeners != null) {
-			for (int i = 0; i < actionServiceListeners.size(); i++) {
-				if (actionServiceEvent == null)
-					actionServiceEvent = new ActionServiceEvent(this);
-							
-				((IActionServiceListener) actionServiceListeners.get(i)).actionServiceChanged(actionServiceEvent);
-			}				
-		}
-	}	
 }

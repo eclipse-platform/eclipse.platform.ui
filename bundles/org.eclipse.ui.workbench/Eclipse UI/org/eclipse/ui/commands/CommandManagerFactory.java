@@ -15,8 +15,7 @@ import org.eclipse.ui.internal.commands.CommandManager;
 
 /**
  * <p>
- * This class allows clients to broker instances of 
- * <code>ICommandManager</code>.
+ * This class allows clients to broker instances of <code>ICommandManager</code>.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -33,19 +32,19 @@ public final class CommandManagerFactory {
 	/**
 	 * Creates a new instance of ICommandManager.
 	 * 
-	 * @return a new instance of ICommandManager. Clients should not make 
-	 *         assumptions about the concrete implementation outside the 
-	 *         contract of <code>ICommandManager</code>. Guaranteed not to be 
-	 *         <code>null</code>.
+	 * @return a new instance of ICommandManager. Clients should not make
+	 *         assumptions about the concrete implementation outside the
+	 *         contract of <code>ICommandManager</code>. Guaranteed not to
+	 *         be <code>null</code>.
 	 */
 	public static ICommandManager getCommandManager() {
 		return new CommandManager();
 	}
 
 	/**
-	 * Private constructor to ensure that <code>CommandManagerFactory</code> 
-	 * can not be instantiated. 
-	 */	
-	private CommandManagerFactory() {		
+	 * Private constructor to ensure that <code>CommandManagerFactory</code>
+	 * can not be instantiated.
+	 */
+	private CommandManagerFactory() {
 	}
 }

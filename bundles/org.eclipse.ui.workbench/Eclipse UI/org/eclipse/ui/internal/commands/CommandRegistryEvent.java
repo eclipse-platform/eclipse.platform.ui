@@ -18,7 +18,7 @@ final class CommandRegistryEvent {
 	CommandRegistryEvent(ICommandRegistry commandRegistry) {
 		if (commandRegistry == null)
 			throw new NullPointerException();
-		
+
 		this.commandRegistry = commandRegistry;
 	}
 

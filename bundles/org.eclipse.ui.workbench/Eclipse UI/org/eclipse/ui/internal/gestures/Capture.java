@@ -22,6 +22,11 @@ import org.eclipse.swt.widgets.Control;
 
 public final class Capture {
 
+	private List captureListeners;
+	private boolean capturing;
+	private Control control;
+	private int data;
+
 	private MouseListener mouseListener = new MouseListener() {
 		public void mouseDoubleClick(MouseEvent mouseEvent) {
 		}
@@ -41,7 +46,11 @@ public final class Capture {
 			if (capturing && mouseEvent.button == pen) {
 				control.removeMouseMoveListener(mouseMoveListener);
 				points.add(new Point(mouseEvent.x, mouseEvent.y));
-				CaptureEvent captureEvent = CaptureEvent.create(data, pen, (Point[]) points.toArray(new Point[points.size()]));
+				CaptureEvent captureEvent =
+					CaptureEvent.create(
+						data,
+						pen,
+						(Point[]) points.toArray(new Point[points.size()]));
 				capturing = false;
 				data = 0;
 				pen = 0;
@@ -59,37 +68,32 @@ public final class Capture {
 			if (capturing)
 				points.add(new Point(mouseEvent.x, mouseEvent.y));
 		}
-	};	
-
-	private List captureListeners;
-	private boolean capturing;
-	private Control control;
-	private int data;
+	};
 	private int pen;
-	private List points = new ArrayList();	
-	
+	private List points = new ArrayList();
+
 	public Capture() {
 	}
 
 	public void addCaptureListener(ICaptureListener captureListener) {
 		if (captureListener == null)
 			throw new NullPointerException();
-			
+
 		if (captureListeners == null)
 			captureListeners = new ArrayList();
-		
+
 		if (!captureListeners.contains(captureListener))
 			captureListeners.add(captureListener);
 	}
-	
+
 	public Control getControl() {
-		return control;	
+		return control;
 	}
 
 	public void removeCaptureListener(ICaptureListener captureListener) {
 		if (captureListener == null)
 			throw new NullPointerException();
-			
+
 		if (captureListeners != null)
 			captureListeners.remove(captureListener);
 	}
@@ -100,7 +104,7 @@ public final class Capture {
 				control.removeMouseMoveListener(mouseMoveListener);
 				control.removeMouseListener(mouseListener);
 			}
-			
+
 			this.control = control;
 			capturing = false;
 			data = 0;

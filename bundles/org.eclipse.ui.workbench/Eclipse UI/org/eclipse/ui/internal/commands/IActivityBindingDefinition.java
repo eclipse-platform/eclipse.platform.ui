@@ -17,5 +17,5 @@ public interface IActivityBindingDefinition extends Comparable {
 
 	String getCommandId();
 
-	String getPluginId();		
+	String getPluginId();
 }

@@ -32,87 +32,121 @@ final class Persistence {
 	final static String TAG_ROLE = "role"; //$NON-NLS-1$	
 	final static String TAG_ROLE_ID = "roleId"; //$NON-NLS-1$	
 
-	static IActivityBindingDefinition readActivityBindingDefinition(IMemento memento, String pluginIdOverride) {
+	static IActivityBindingDefinition readActivityBindingDefinition(
+		IMemento memento,
+		String pluginIdOverride) {
 		if (memento == null)
-			throw new NullPointerException();			
+			throw new NullPointerException();
 
 		String activityId = memento.getString(TAG_ACTIVITY_ID);
-		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
+		String pluginId =
+			pluginIdOverride != null
+				? pluginIdOverride
+				: memento.getString(TAG_PLUGIN_ID);
 		String roleId = memento.getString(TAG_ROLE_ID);
 		return new ActivityBindingDefinition(activityId, pluginId, roleId);
 	}
 
-	static List readActivityBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
+	static List readActivityBindingDefinitions(
+		IMemento memento,
+		String name,
+		String pluginIdOverride) {
 		if (memento == null || name == null)
-			throw new NullPointerException();			
-	
+			throw new NullPointerException();
+
 		IMemento[] mementos = memento.getChildren(name);
-	
+
 		if (mementos == null)
 			throw new NullPointerException();
-	
+
 		List list = new ArrayList(mementos.length);
-	
+
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readActivityBindingDefinition(mementos[i], pluginIdOverride));
-	
-		return list;				
-	}	
-	
-	static IRoleDefinition readRoleDefinition(IMemento memento, String pluginIdOverride) {
+			list.add(
+				readActivityBindingDefinition(mementos[i], pluginIdOverride));
+
+		return list;
+	}
+
+	static IRoleDefinition readRoleDefinition(
+		IMemento memento,
+		String pluginIdOverride) {
 		if (memento == null)
-			throw new NullPointerException();			
+			throw new NullPointerException();
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
-		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
+		String pluginId =
+			pluginIdOverride != null
+				? pluginIdOverride
+				: memento.getString(TAG_PLUGIN_ID);
 		return new RoleDefinition(description, id, name, pluginId);
 	}
 
-	static List readRoleDefinitions(IMemento memento, String name, String pluginIdOverride) {
+	static List readRoleDefinitions(
+		IMemento memento,
+		String name,
+		String pluginIdOverride) {
 		if (memento == null || name == null)
-			throw new NullPointerException();			
-	
+			throw new NullPointerException();
+
 		IMemento[] mementos = memento.getChildren(name);
-	
+
 		if (mementos == null)
 			throw new NullPointerException();
-	
+
 		List list = new ArrayList(mementos.length);
-	
+
 		for (int i = 0; i < mementos.length; i++)
 			list.add(readRoleDefinition(mementos[i], pluginIdOverride));
-	
-		return list;				
-	}	
 
-	static void writeActivityBindingDefinition(IMemento memento, IActivityBindingDefinition activityBindingDefinition) {
+		return list;
+	}
+
+	static void writeActivityBindingDefinition(
+		IMemento memento,
+		IActivityBindingDefinition activityBindingDefinition) {
 		if (memento == null || activityBindingDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_ACTIVITY_ID, activityBindingDefinition.getActivityId());
-		memento.putString(TAG_PLUGIN_ID, activityBindingDefinition.getPluginId());
+		memento.putString(
+			TAG_ACTIVITY_ID,
+			activityBindingDefinition.getActivityId());
+		memento.putString(
+			TAG_PLUGIN_ID,
+			activityBindingDefinition.getPluginId());
 		memento.putString(TAG_ROLE_ID, activityBindingDefinition.getRoleId());
 	}
 
-	static void writeActivityBindingDefinitions(IMemento memento, String name, List activityBindingDefinitions) {
-		if (memento == null || name == null || activityBindingDefinitions == null)
+	static void writeActivityBindingDefinitions(
+		IMemento memento,
+		String name,
+		List activityBindingDefinitions) {
+		if (memento == null
+			|| name == null
+			|| activityBindingDefinitions == null)
 			throw new NullPointerException();
-		
+
 		activityBindingDefinitions = new ArrayList(activityBindingDefinitions);
 		Iterator iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IActivityBindingDefinition.class);
+			Util.assertInstance(
+				iterator.next(),
+				IActivityBindingDefinition.class);
 
 		iterator = activityBindingDefinitions.iterator();
 
-		while (iterator.hasNext()) 
-			writeActivityBindingDefinition(memento.createChild(name), (IActivityBindingDefinition) iterator.next());
-	}	
-	
-	static void writeRoleDefinition(IMemento memento, IRoleDefinition roleDefinition) {
+		while (iterator.hasNext())
+			writeActivityBindingDefinition(
+				memento.createChild(name),
+				(IActivityBindingDefinition) iterator.next());
+	}
+
+	static void writeRoleDefinition(
+		IMemento memento,
+		IRoleDefinition roleDefinition) {
 		if (memento == null || roleDefinition == null)
 			throw new NullPointerException();
 
@@ -122,10 +156,13 @@ final class Persistence {
 		memento.putString(TAG_PLUGIN_ID, roleDefinition.getPluginId());
 	}
 
-	static void writeRoleDefinitions(IMemento memento, String name, List roleDefinitions) {
+	static void writeRoleDefinitions(
+		IMemento memento,
+		String name,
+		List roleDefinitions) {
 		if (memento == null || name == null || roleDefinitions == null)
 			throw new NullPointerException();
-		
+
 		roleDefinitions = new ArrayList(roleDefinitions);
 		Iterator iterator = roleDefinitions.iterator();
 
@@ -134,10 +171,12 @@ final class Persistence {
 
 		iterator = roleDefinitions.iterator();
 
-		while (iterator.hasNext()) 
-			writeRoleDefinition(memento.createChild(name), (IRoleDefinition) iterator.next());
+		while (iterator.hasNext())
+			writeRoleDefinition(
+				memento.createChild(name),
+				(IRoleDefinition) iterator.next());
 	}
 
 	private Persistence() {
-	}	
+	}
 }

@@ -14,10 +14,10 @@ package org.eclipse.ui.internal.roles;
 public interface IRoleDefinition extends Comparable {
 
 	String getDescription();
-		
+
 	String getId();
-	
+
 	String getName();
-	
+
 	String getPluginId();
 }

@@ -22,7 +22,8 @@ import org.eclipse.ui.internal.util.Util;
 final class PatternBindingDefinition implements IPatternBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = PatternBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		PatternBindingDefinition.class.getName().hashCode();
 
 	static Map patternBindingDefinitionsByActivityId(Collection patternBindingDefinitions) {
 		if (patternBindingDefinitions == null)
@@ -34,11 +35,13 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			Util.assertInstance(object, IPatternBindingDefinition.class);
-			IPatternBindingDefinition patternBindingDefinition = (IPatternBindingDefinition) object;
+			IPatternBindingDefinition patternBindingDefinition =
+				(IPatternBindingDefinition) object;
 			String activityId = patternBindingDefinition.getActivityId();
 
 			if (activityId != null) {
-				Collection patternBindingDefinitions2 = (Collection) map.get(activityId);
+				Collection patternBindingDefinitions2 =
+					(Collection) map.get(activityId);
 
 				if (patternBindingDefinitions2 == null) {
 					patternBindingDefinitions2 = new ArrayList();
@@ -53,15 +56,19 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 	}
 
 	private String activityId;
-	private boolean inclusive;
-	private String pattern;
-	private String pluginId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
+	private boolean inclusive;
+	private String pattern;
+	private String pluginId;
 	private transient String string;
 
-	PatternBindingDefinition(String activityId, boolean inclusive, String pattern, String pluginId) {
+	PatternBindingDefinition(
+		String activityId,
+		boolean inclusive,
+		String pattern,
+		String pluginId) {
 		this.activityId = activityId;
 		this.inclusive = inclusive;
 		this.pattern = pattern;
@@ -69,7 +76,8 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 	}
 
 	public int compareTo(Object object) {
-		PatternBindingDefinition castedObject = (PatternBindingDefinition) object;
+		PatternBindingDefinition castedObject =
+			(PatternBindingDefinition) object;
 		int compareTo = Util.compare(activityId, castedObject.activityId);
 
 		if (compareTo == 0) {
@@ -90,7 +98,8 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 		if (!(object instanceof PatternBindingDefinition))
 			return false;
 
-		PatternBindingDefinition castedObject = (PatternBindingDefinition) object;
+		PatternBindingDefinition castedObject =
+			(PatternBindingDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(inclusive, castedObject.inclusive);

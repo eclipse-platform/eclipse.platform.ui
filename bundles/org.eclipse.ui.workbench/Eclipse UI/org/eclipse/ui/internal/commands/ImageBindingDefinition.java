@@ -22,48 +22,57 @@ import org.eclipse.ui.internal.util.Util;
 public final class ImageBindingDefinition implements IImageBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ImageBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL =
+		ImageBindingDefinition.class.getName().hashCode();
 
 	static Map imageBindingDefinitionsByCommandId(Collection imageBindingDefinitions) {
 		if (imageBindingDefinitions == null)
 			throw new NullPointerException();
 
-		Map map = new HashMap();			
+		Map map = new HashMap();
 		Iterator iterator = imageBindingDefinitions.iterator();
-		
+
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IImageBindingDefinition.class);			
-			IImageBindingDefinition imageBindingDefinition = (IImageBindingDefinition) object;
+			Util.assertInstance(object, IImageBindingDefinition.class);
+			IImageBindingDefinition imageBindingDefinition =
+				(IImageBindingDefinition) object;
 			String commandId = imageBindingDefinition.getCommandId();
-			
+
 			if (commandId != null) {
-				Collection imageBindingDefinitions2 = (Collection) map.get(commandId);
-					
+				Collection imageBindingDefinitions2 =
+					(Collection) map.get(commandId);
+
 				if (imageBindingDefinitions2 == null) {
 					imageBindingDefinitions2 = new ArrayList();
-					map.put(commandId, imageBindingDefinitions2);					
+					map.put(commandId, imageBindingDefinitions2);
 				}
-	
-				imageBindingDefinitions2.add(imageBindingDefinition);		
-			}											
-		}				
-	
+
+				imageBindingDefinitions2.add(imageBindingDefinition);
+			}
+		}
+
 		return map;
-	}	
-	
+	}
+
 	private String commandId;
+
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
 	private String imageStyle;
 	private String imageUri;
 	private String locale;
 	private String platform;
 	private String pluginId;
-
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	public ImageBindingDefinition(String commandId, String imageStyle, String imageUri, String locale, String platform, String pluginId) {	
+	public ImageBindingDefinition(
+		String commandId,
+		String imageStyle,
+		String imageUri,
+		String locale,
+		String platform,
+		String pluginId) {
 		this.commandId = commandId;
 		this.imageStyle = imageStyle;
 		this.imageUri = imageUri;
@@ -71,38 +80,40 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 		this.platform = platform;
 		this.pluginId = pluginId;
 	}
-	
+
 	public int compareTo(Object object) {
 		ImageBindingDefinition castedObject = (ImageBindingDefinition) object;
 		int compareTo = Util.compare(commandId, castedObject.commandId);
-		
-		if (compareTo == 0) {		
-			compareTo = Util.compare(imageStyle, castedObject.imageStyle);			
 
-			if (compareTo == 0) {		
-				compareTo = Util.compare(imageUri, castedObject.imageUri);			
+		if (compareTo == 0) {
+			compareTo = Util.compare(imageStyle, castedObject.imageStyle);
 
-				if (compareTo == 0) {		
-					compareTo = Util.compare(locale, castedObject.locale);			
+			if (compareTo == 0) {
+				compareTo = Util.compare(imageUri, castedObject.imageUri);
 
-					if (compareTo == 0) {		
-						compareTo = Util.compare(platform, castedObject.platform);			
-		
+				if (compareTo == 0) {
+					compareTo = Util.compare(locale, castedObject.locale);
+
+					if (compareTo == 0) {
+						compareTo =
+							Util.compare(platform, castedObject.platform);
+
 						if (compareTo == 0)
-							compareTo = Util.compare(pluginId, castedObject.pluginId);								
+							compareTo =
+								Util.compare(pluginId, castedObject.pluginId);
 					}
 				}
 			}
 		}
-		
-		return compareTo;	
+
+		return compareTo;
 	}
-	
+
 	public boolean equals(Object object) {
 		if (!(object instanceof ImageBindingDefinition))
 			return false;
 
-		ImageBindingDefinition castedObject = (ImageBindingDefinition) object;	
+		ImageBindingDefinition castedObject = (ImageBindingDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(commandId, castedObject.commandId);
 		equals &= Util.equals(imageStyle, castedObject.imageStyle);
@@ -132,7 +143,7 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 	public String getPlatform() {
 		return platform;
 	}
-	
+
 	public String getPluginId() {
 		return pluginId;
 	}
@@ -148,7 +159,7 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
-			
+
 		return hashCode;
 	}
 
@@ -170,7 +181,7 @@ public final class ImageBindingDefinition implements IImageBindingDefinition {
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
-	
+
 		return string;
 	}
 }

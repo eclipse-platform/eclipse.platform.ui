@@ -18,7 +18,7 @@ package org.eclipse.ui.commands;
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
- * </p> 
+ * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
@@ -28,18 +28,19 @@ package org.eclipse.ui.commands;
 public final class NotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>NotDefinedException</code> with no specified detail 
-	 * message. 
-	 */	
+	 * Constructs a <code>NotDefinedException</code> with no specified detail
+	 * message.
+	 */
 	public NotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>NotDefinedException</code> with the specified detail 
-	 * message. 
-	 *
-	 * @param s	the detail message.
-	 */	
+	 * Constructs a <code>NotDefinedException</code> with the specified
+	 * detail message.
+	 * 
+	 * @param s
+	 *            the detail message.
+	 */
 	public NotDefinedException(String s) {
 		super(s);
 	}

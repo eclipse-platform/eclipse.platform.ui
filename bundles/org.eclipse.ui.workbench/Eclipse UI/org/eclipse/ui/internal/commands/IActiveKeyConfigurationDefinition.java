@@ -14,6 +14,6 @@ package org.eclipse.ui.internal.commands;
 public interface IActiveKeyConfigurationDefinition extends Comparable {
 
 	String getKeyConfigurationId();
-	
+
 	String getPluginId();
 }
