@@ -199,11 +199,11 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 				}
 				String question;
 				if (resources.length == 1) {
-					question = Policy.bind("CVSUIPlugin.refreshQuestion", status.getMessage(), resources[0].getFullPath().toString());
+					question = Policy.bind("CVSUIPlugin.refreshQuestion", status.getMessage(), resources[0].getFullPath().toString()); //$NON-NLS-1$
 				} else {
-					question = Policy.bind("CVSUIPlugin.refreshMultipleQuestion", status.getMessage());
+					question = Policy.bind("CVSUIPlugin.refreshMultipleQuestion", status.getMessage()); //$NON-NLS-1$
 				}
-				result[0] = MessageDialog.openQuestion(shellToUse, Policy.bind("CVSUIPlugin.refreshTitle"), question);
+				result[0] = MessageDialog.openQuestion(shellToUse, Policy.bind("CVSUIPlugin.refreshTitle"), question); //$NON-NLS-1$
 			}
 		};
 		Display.getDefault().syncExec(runnable);
@@ -312,6 +312,16 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		createImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_MERGED, baseURL);
+		
+		// special
+		createImageDescriptor("glyphs/glyph1.gif", baseURL);  //$NON-NLS-1$
+		createImageDescriptor("glyphs/glyph2.gif", baseURL);  //$NON-NLS-1$
+		createImageDescriptor("glyphs/glyph3.gif", baseURL);  //$NON-NLS-1$
+		createImageDescriptor("glyphs/glyph4.gif", baseURL);  //$NON-NLS-1$
+		createImageDescriptor("glyphs/glyph5.gif", baseURL);  //$NON-NLS-1$
+		createImageDescriptor("glyphs/glyph6.gif", baseURL);  //$NON-NLS-1$
+		createImageDescriptor("glyphs/glyph7.gif", baseURL);  //$NON-NLS-1$
+		createImageDescriptor("glyphs/glyph8.gif", baseURL);  //$NON-NLS-1$
 	}
 	/**
 	 * Convenience method for logging statuses to the plugin log
