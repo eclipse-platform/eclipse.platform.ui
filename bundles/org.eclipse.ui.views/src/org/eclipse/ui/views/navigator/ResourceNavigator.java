@@ -78,6 +78,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ViewsPlugin;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
