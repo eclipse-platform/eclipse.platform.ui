@@ -30,8 +30,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -47,6 +47,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.actions.AddProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunTargetAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.SearchForBuildFilesAction;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
@@ -94,18 +95,13 @@ public class AntView extends ViewPart {
 	 * The tree viewer that displays the users ant projects
 	 */
 	TreeViewer projectViewer;
-	ProjectTreeContentProvider projectContentProvider;
+	AntProjectContentProvider projectContentProvider;
 
 	/**
-	 * The list viewer that displays the users selected targets
+	 * The table viewer that displays the users selected targets
 	 */
-	ListViewer targetViewer;
-	TargetListContentProvider targetContentProvider;
-
-	/**
-	 * The label provider used by viewers in this view
-	 */
-	AntViewLabelProvider labelProvider = new AntViewLabelProvider();
+	TableViewer targetViewer;
+	AntTargetContentProvider targetContentProvider;
 
 	/**
 	 * Collection of <code>IUpdate</code> actions that need to update on
@@ -116,6 +112,7 @@ public class AntView extends ViewPart {
 	AddProjectAction addProjectAction;
 	RemoveProjectAction removeProjectAction;
 	RunActiveTargetsAction runActiveTargetsAction;
+	SearchForBuildFilesAction searchForBuildFilesAction;
 	RunTargetAction runTargetAction;
 	ActivateTargetAction activateTargetAction;
 	DeactivateTargetAction deactivateTargetAction;
@@ -184,6 +181,7 @@ public class AntView extends ViewPart {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 		toolBarMgr.add(runActiveTargetsAction);
 		toolBarMgr.add(addProjectAction);
+		toolBarMgr.add(searchForBuildFilesAction);
 		toolBarMgr.add(removeProjectAction);
 	}
 
@@ -197,6 +195,7 @@ public class AntView extends ViewPart {
 		runTargetAction = new RunTargetAction(this);
 		updateActions.add(runTargetAction);
 		runActiveTargetsAction = new RunActiveTargetsAction(this);
+		searchForBuildFilesAction = new SearchForBuildFilesAction(this);
 		updateActions.add(runActiveTargetsAction);
 		activateTargetAction = new ActivateTargetAction(this);
 		updateActions.add(activateTargetAction);
@@ -211,14 +210,14 @@ public class AntView extends ViewPart {
 	 * Create the viewer which displays the active targets
 	 */
 	private void createTargetViewer() {
-		targetViewer = new ListViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
-		targetContentProvider = new TargetListContentProvider();
+		targetViewer = new TableViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
+		targetContentProvider = new AntTargetContentProvider();
 		targetViewer.setContentProvider(targetContentProvider);
 		Iterator targets = restoredTargets.iterator();
 		while (targets.hasNext()) {
 			targetContentProvider.addTarget((TargetNode) targets.next());
 		}
-		targetViewer.setLabelProvider(labelProvider);
+		targetViewer.setLabelProvider(new AntTargetsLabelProvider());
 		// The content provider doesn't use the input, but it input has to be set to something.
 		targetViewer.setInput(ResourcesPlugin.getWorkspace());
 		targetViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -237,9 +236,9 @@ public class AntView extends ViewPart {
 	 */
 	private void createProjectViewer() {
 		projectViewer = new TreeViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
-		projectContentProvider = new ProjectTreeContentProvider();
+		projectContentProvider = new AntProjectContentProvider();
 		projectViewer.setContentProvider(projectContentProvider);
-		projectViewer.setLabelProvider(labelProvider);
+		projectViewer.setLabelProvider(new AntViewLabelProvider());
 		projectViewer.setInput(restoredRoot);
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -264,9 +263,9 @@ public class AntView extends ViewPart {
 	/**
 	 * Returns the list viewer that displays the active targets in this view
 	 * 
-	 * @return ListViewer this view's active target viewer
+	 * @return TableViewer this view's active target viewer
 	 */
-	public ListViewer getTargetViewer() {
+	public TableViewer getTargetViewer() {
 		return targetViewer;
 	}
 	

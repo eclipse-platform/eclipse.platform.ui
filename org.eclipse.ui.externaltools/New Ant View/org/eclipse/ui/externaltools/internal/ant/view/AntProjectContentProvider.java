@@ -20,7 +20,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 /**
  * Content provider that provides a tree of ant projects.
  */
-public class ProjectTreeContentProvider implements ITreeContentProvider {
+public class AntProjectContentProvider implements ITreeContentProvider {
 
 	/**
 	 * The root node of the project tree

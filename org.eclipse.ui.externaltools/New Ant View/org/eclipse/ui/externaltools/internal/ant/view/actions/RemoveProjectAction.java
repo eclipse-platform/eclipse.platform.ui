@@ -24,7 +24,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public RemoveProjectAction(AntView view) {
-		super("Remove Project", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE));
+		super("Remove Build File", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE));
 		this.view= view;
 		setToolTipText("Remove selected build file");
 	}

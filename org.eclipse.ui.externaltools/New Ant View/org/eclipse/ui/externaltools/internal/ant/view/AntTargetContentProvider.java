@@ -17,7 +17,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 /**
  * Content provider which provides a list of ant targets chosen by the user 
  */
-public class TargetListContentProvider implements IStructuredContentProvider {
+public class AntTargetContentProvider implements IStructuredContentProvider {
 
 	List targets = new ArrayList();
 
