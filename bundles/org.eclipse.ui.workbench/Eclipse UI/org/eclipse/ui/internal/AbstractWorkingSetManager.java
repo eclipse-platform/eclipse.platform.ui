@@ -19,16 +19,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.wizard.IWizard;
-
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -45,12 +42,14 @@ import org.eclipse.ui.internal.dialogs.WorkingSetNewWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 
 
+/**
+ * Abstract implementation of <code>IWorkingSetManager</code>.
+ */
 public abstract class AbstractWorkingSetManager implements IWorkingSetManager, BundleListener  {
 	
     private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
@@ -64,6 +63,7 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
 
     private BundleContext bundleContext;
     private Map/*<String, IWorkingSetUpdater>*/ updaters= new HashMap();
+    
     private static final IWorkingSetUpdater NULL_UPDATER= new IWorkingSetUpdater() {
 		public void add(IWorkingSet workingSet) {
 		}
@@ -76,6 +76,37 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
 		public void dispose() {
 		}
 	};
+    
+    /**
+     * Returns the descriptors for the given editable working set ids. If an id
+     * refers to a missing descriptor, or one that is non-editable, it is
+     * skipped. If <code>null</code> is passed, all editable descriptors are
+     * returned.
+     * 
+     * @param supportedWorkingSetIds
+     *            the ids for the working set descriptors, or <code>null</code>
+     *            for all editable descriptors
+     * @return the descriptors corresponding to the given editable working set
+     *         ids
+     */
+    private static WorkingSetDescriptor[] getSupportedEditableDescriptors(
+            String[] supportedWorkingSetIds) {
+        WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
+                .getWorkingSetRegistry();
+        if (supportedWorkingSetIds == null) {
+            return registry.getNewPageWorkingSetDescriptors();
+        }
+        List result = new ArrayList(supportedWorkingSetIds.length);
+        for (int i = 0; i < supportedWorkingSetIds.length; i++) {
+            WorkingSetDescriptor desc = registry
+                    .getWorkingSetDescriptor(supportedWorkingSetIds[i]);
+            if (desc != null && desc.isEditable()) {
+                result.add(desc);
+            }
+        }
+        return (WorkingSetDescriptor[]) result
+                .toArray(new WorkingSetDescriptor[result.size()]);
+    }
     
     protected AbstractWorkingSetManager(BundleContext context) {
     	bundleContext= context;
@@ -444,14 +475,12 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     /**
 	 * {@inheritDoc}
 	 */
-	public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds) {
-		WorkingSetDescriptor[] descriptors= getSupportedDescriptors(workingSetIds);
-		for (int i= 0; i < descriptors.length; i++) {
-			if (descriptors[i].getPageClassName() != null)
-				return new WorkingSetNewWizard(descriptors);
-		}
-		return null;
-	}
+    public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds) {
+         WorkingSetDescriptor[] descriptors= getSupportedEditableDescriptors(workingSetIds);
+         if (descriptors.length == 0)
+                 return null;
+         return new WorkingSetNewWizard(descriptors);
+}
 
 	public IWizard createWorkingSetNewWizard() {
 		return createWorkingSetNewWizard(null);
@@ -517,28 +546,5 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     	if (updater != null) {
     		updater.remove(workingSet);
     	}
-    }
-	
-	private static WorkingSetDescriptor[] getSupportedDescriptors(String[] supportedWorkingSetIds) {
-		WorkingSetDescriptor[] allDescriptors= WorkbenchPlugin.getDefault().getWorkingSetRegistry().getWorkingSetDescriptors();
-		if (supportedWorkingSetIds == null)
-			return allDescriptors;
-		List result= new ArrayList(allDescriptors.length);
-		for (int i= 0; i < allDescriptors.length; i++) {
-			WorkingSetDescriptor descriptor= allDescriptors[i];
-			if (isSupported(descriptor, supportedWorkingSetIds)) {
-				result.add(descriptor);
-			}
-		}
-		return (WorkingSetDescriptor[])result.toArray(new WorkingSetDescriptor[result.size()]);
-	}
-
-    private static boolean isSupported(WorkingSetDescriptor descriptor, String[] supportedWorkingSetIds) {
-		final String id= descriptor.getId();
-    	for (int i= 0; i < supportedWorkingSetIds.length; i++) {
-			if (supportedWorkingSetIds[i].equals(id))
-				return true;
-		}
-		return false;
-	}	
+    }	
 }

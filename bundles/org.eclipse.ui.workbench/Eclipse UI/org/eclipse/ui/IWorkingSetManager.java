@@ -207,7 +207,7 @@ public interface IWorkingSetManager {
      * </p>
      * 
      * @param workingSetIds a list of working set ids which are valid workings sets
-     *  to be created or <code>null</code> if all currently avaiable working set types
+     *  to be created or <code>null</code> if all currently available working set types
      *  are valid
      * 
      * @return the working set new wizard or <code>null</code>

@@ -42,7 +42,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
     }
 
     protected void doSetUp() throws Exception {
-        fWizard = WorkingSetNewWizard.createTestWizardInstance();
+        fWizard = getWorkbench().getWorkingSetManager().createWorkingSetNewWizard();
         super.doSetUp();
     }
 

@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -57,7 +57,7 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 
     protected WizardDialog fWizardDialog;
 
-    protected Wizard fWizard;
+    protected IWizard fWizard;
 
     protected IProject p1;
 

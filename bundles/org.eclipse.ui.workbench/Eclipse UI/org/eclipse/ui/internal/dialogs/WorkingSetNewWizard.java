@@ -39,13 +39,6 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
     private IWorkingSet workingSet;
     
     private WorkingSetDescriptor[] descriptors;
-
-    /**
-     * Creates a new instance of the receiver for testing purpose.
-     */
-    public static WorkingSetNewWizard createTestWizardInstance() {
-    	return new WorkingSetNewWizard(WorkbenchPlugin.getDefault().getWorkingSetRegistry().getWorkingSetDescriptors());
-    }
     
     /**
      * Creates a new instance of the receiver.
