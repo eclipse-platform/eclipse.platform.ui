@@ -246,12 +246,12 @@ public static void run(IRunnableWithProgress operation, boolean fork, IProgressM
 			monitor.setCanceled(false);
 		// Is the runnable supposed to be execute in the same thread.
 		if (!fork || !runInSeparateThread) {
-			operation.run(monitor);
+			runInCurrentThread(operation, monitor);
 		} else {
 			ModalContextThread t = getCurrentModalContextThread();
 			if (t != null) {
 				Assert.isTrue(canProgressMonitorBeUsed(monitor, t.progressMonitor));
-				operation.run(monitor);
+				runInCurrentThread(operation, monitor);
 			} else {
 				t = new ModalContextThread(operation, monitor, display);
 				t.start();
@@ -282,6 +282,31 @@ public static void run(IRunnableWithProgress operation, boolean fork, IProgressM
 	}
 	finally {
 		modalLevel--;
+	}
+}
+/**
+ * Run a runnable.  Convert all thrown exceptions to 
+ * either InterruptedException or InvocationTargetException
+ */
+private static void runInCurrentThread(IRunnableWithProgress runnable, IProgressMonitor progressMonitor) 
+	throws InterruptedException, InvocationTargetException
+{
+	try {
+		if (runnable != null)
+			runnable.run(progressMonitor);
+	} catch (InvocationTargetException e) {
+		throw e;
+	} catch (InterruptedException e) {
+		throw e;
+	} catch (OperationCanceledException e) {
+		throw new InterruptedException();
+	} catch (ThreadDeath e) {
+		// Make sure to propagate ThreadDeath, or threads will never fully terminate
+		throw e;
+	} catch (RuntimeException e) {
+		throw new InvocationTargetException(e);
+	} catch (Error e) {
+		throw new InvocationTargetException(e);
 	}
 }
 /**

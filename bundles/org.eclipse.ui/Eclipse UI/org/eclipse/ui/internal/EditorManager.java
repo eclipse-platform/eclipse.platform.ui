@@ -576,7 +576,7 @@ private boolean runProgressMonitorOperation(String opName,
 		MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("Error"),  //$NON-NLS-1$
 			title + ':' + targetExc.getMessage());
 	} catch (InterruptedException e) {
-		// Ignore.  We run in current thread.
+		// Ignore.  The user pressed cancel.
 	}
 	return !dlg.getProgressMonitor().isCanceled();
 }
