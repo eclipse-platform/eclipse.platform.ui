@@ -18,7 +18,6 @@ import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -260,7 +259,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private boolean pluginActivationEnter() throws CoreException {
 		if (deactivated) {
 			// had permanent error on startup
-			String errorMsg = Policy.bind("plugin.pluginDisabled", getId()); //$NON-NLS-1$
+			String errorMsg = Messages.bind(Messages.plugin_pluginDisabled, getId());
 			throwException(errorMsg, null);
 		}
 		if (active || activePending) {
@@ -352,7 +351,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			try {
 				bundleOsgi.start();
 			} catch (BundleException e) {
-				throwException(Policy.bind("plugin.startupProblems", e.toString()), e); //$NON-NLS-1$
+				throwException(Messages.bind(Messages.plugin_startupProblems, e), e);
 			}
 		if (pluginObject != null)
 			return;
@@ -397,7 +396,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			else
 				runtimeClass = bundleOsgi.loadClass(pluginClassName);
 		} catch (ClassNotFoundException e) {
-			errorMsg = Policy.bind("plugin.loadClassError", getId(), pluginClassName); //$NON-NLS-1$
+			errorMsg = Messages.bind(Messages.plugin_loadClassError, getId(), pluginClassName);
 			throwException(errorMsg, e);
 		}
 
@@ -406,7 +405,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		try {
 			construct = runtimeClass.getConstructor(new Class[] {IPluginDescriptor.class});
 		} catch (NoSuchMethodException eNoConstructor) {
-			errorMsg = Policy.bind("plugin.instantiateClassError", getId(), pluginClassName); //$NON-NLS-1$
+			errorMsg = Messages.bind(Messages.plugin_instantiateClassError, getId(), pluginClassName);
 			throwException(errorMsg, eNoConstructor);
 		}
 
@@ -414,10 +413,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 		try {
 			pluginObject = (Plugin) construct.newInstance(new Object[] {this});
 		} catch (ClassCastException e) {
-			errorMsg = Policy.bind("plugin.notPluginClass", pluginClassName); //$NON-NLS-1$
+			errorMsg = Messages.bind(Messages.plugin_notPluginClass, pluginClassName);
 			throwException(errorMsg, e);
 		} catch (Exception e) {
-			errorMsg = Policy.bind("plugin.instantiateClassError", getId(), pluginClassName); //$NON-NLS-1$
+			errorMsg = Messages.bind(Messages.plugin_instantiateClassError, getId(), pluginClassName);
 			throwException(errorMsg, e);
 		}
 	}

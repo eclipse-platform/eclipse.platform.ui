@@ -13,8 +13,7 @@ package org.eclipse.core.internal.model;
 
 import java.util.*;
 import javax.xml.parsers.SAXParserFactory;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.osgi.framework.ServiceReference;
@@ -113,7 +112,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 				break;
 			case INITIAL_STATE :
 				// shouldn't get here
-				internalError(Policy.bind("parse.internalStack", elementName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_internalStack, elementName));
 				break;
 			case PLUGIN_STATE :
 			case FRAGMENT_STATE :
@@ -250,7 +249,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 		// We ignore all elements under extension points (if there are any)
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName)); //$NON-NLS-1$
+		internalError(Messages.bind(Messages.parse_unknownElement, EXTENSION_POINT, elementName));
 	}
 
 	public void handleExtensionState(String elementName, Attributes attributes) {
@@ -285,7 +284,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 			parseFragmentAttributes(attributes);
 		} else {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
+			internalError(Messages.bind(Messages.parse_unknownTopElement, elementName));
 		}
 	}
 
@@ -293,7 +292,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 		// All elements ignored.
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", LIBRARY_EXPORT, elementName)); //$NON-NLS-1$
+		internalError(Messages.bind(Messages.parse_unknownElement, LIBRARY_EXPORT, elementName));
 	}
 
 	public void handleLibraryState(String elementName, Attributes attributes) {
@@ -317,7 +316,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 				if (attrName.equals(LIBRARY_EXPORT_MASK))
 					maskValue = attrValue;
 				else
-					internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
+					internalError(Messages.bind(Messages.parse_unknownAttribute, LIBRARY, attrName));
 			}
 
 			// set up mask tables
@@ -347,7 +346,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 		// Any other element is invalid
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", LIBRARY, elementName)); //$NON-NLS-1$
+		internalError(Messages.bind(Messages.parse_unknownElement, LIBRARY, elementName));
 		return;
 	}
 
@@ -404,14 +403,14 @@ public class PluginParser extends DefaultHandler implements IModel {
 		// If we get to this point, the element name is one we don't currently accept.
 		// Set the state to indicate that this element will be ignored
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", PLUGIN + " / " + FRAGMENT, elementName)); //$NON-NLS-1$ //$NON-NLS-2$
+		internalError(Messages.bind(Messages.parse_unknownElement, PLUGIN + " / " + FRAGMENT, elementName)); //$NON-NLS-1$ 
 	}
 
 	public void handleRequiresImportState(String elementName, Attributes attributes) {
 
 		// All elements ignored.
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES_IMPORT, elementName)); //$NON-NLS-1$
+		internalError(Messages.bind(Messages.parse_unknownElement, PLUGIN_REQUIRES_IMPORT, elementName));
 	}
 
 	public void handleRequiresState(String elementName, Attributes attributes) {
@@ -423,7 +422,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		// If we get to this point, the element name is one we don't currently accept.
 		// Set the state to indicate that this element will be ignored
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES, elementName)); //$NON-NLS-1$
+		internalError(Messages.bind(Messages.parse_unknownElement, PLUGIN_REQUIRES, elementName));
 	}
 
 	public void handleRuntimeState(String elementName, Attributes attributes) {
@@ -438,7 +437,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		// If we get to this point, the element name is one we don't currently accept.
 		// Set the state to indicate that this element will be ignored
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-		internalError(Policy.bind("parse.unknownElement", RUNTIME, elementName)); //$NON-NLS-1$
+		internalError(Messages.bind(Messages.parse_unknownElement, RUNTIME, elementName));
 	}
 
 	public void ignoreableWhitespace(char[] ch, int start, int length) {
@@ -455,9 +454,9 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 		String msg;
 		if (name.equals("")) //$NON-NLS-1$
-			msg = Policy.bind("parse.error", ex.getMessage()); //$NON-NLS-1$
+			msg = Messages.bind(Messages.parse_error, ex.getMessage());
 		else
-			msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
+			msg = Messages.bind(Messages.parse_errorNameLineColumn,
 					new String[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 	}
@@ -549,7 +548,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 					targetName = attrValue;
 				currentExtension.setExtensionPoint(targetName);
 			} else
-				internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_unknownAttribute, EXTENSION, attrName));
 		}
 	}
 
@@ -571,7 +570,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 			else if (attrName.equals(EXTENSION_POINT_SCHEMA))
 				currentExtPoint.setSchema(attrValue);
 			else
-				internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_unknownAttribute, EXTENSION_POINT, attrName));
 		}
 		// currentExtPoint contains a pointer to the parent plugin descriptor.
 		PluginModel root = (PluginModel) objectStack.peek();
@@ -614,9 +613,9 @@ public class PluginParser extends DefaultHandler implements IModel {
 				else if (FRAGMENT_PLUGIN_MATCH_GREATER_OR_EQUAL.equals(attrValue))
 					current.setMatch(PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL);
 				else
-					internalError(Policy.bind("parse.validMatch", attrValue)); //$NON-NLS-1$
+					internalError(Messages.bind(Messages.parse_validMatch, attrValue));
 			} else
-				internalError(Policy.bind("parse.unknownAttribute", FRAGMENT, attrName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_unknownAttribute, FRAGMENT, attrName));
 		}
 	}
 
@@ -646,9 +645,9 @@ public class PluginParser extends DefaultHandler implements IModel {
 				if (attrValue.equals(LibraryModel.CODE) || attrValue.equals(LibraryModel.RESOURCE))
 					current.setType(attrValue.toLowerCase());
 				else
-					internalError(Policy.bind("parse.unknownLibraryType", attrValue, current.getName())); //$NON-NLS-1$
+					internalError(Messages.bind(Messages.parse_unknownLibraryType, attrValue, current.getName()));
 			} else
-				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_unknownAttribute, LIBRARY, attrName));
 		}
 	}
 
@@ -675,7 +674,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 			else if (attrName.equals(PLUGIN_CLASS))
 				current.setPluginClass(attrValue);
 			else
-				internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_unknownAttribute, PLUGIN, attrName));
 		}
 	}
 
@@ -705,16 +704,16 @@ public class PluginParser extends DefaultHandler implements IModel {
 				else if (PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL.equals(attrValue))
 					current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL);
 				else
-					internalError(Policy.bind("parse.validMatch", attrValue)); //$NON-NLS-1$
+					internalError(Messages.bind(Messages.parse_validMatch, attrValue));
 			} else if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
 				if (TRUE.equals(attrValue))
 					current.setExport(true);
 				else if (FALSE.equals(attrValue))
 					current.setExport(false);
 				else
-					internalError(Policy.bind("parse.validExport", attrValue)); //$NON-NLS-1$
+					internalError(Messages.bind(Messages.parse_validExport, attrValue));
 			} else
-				internalError(Policy.bind("parse.unknownAttribute", PLUGIN_REQUIRES_IMPORT, attrName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_unknownAttribute, PLUGIN_REQUIRES_IMPORT, attrName));
 
 		}
 		// Populate the vector of prerequisites with this new element
@@ -778,7 +777,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 				break;
 			default :
 				stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-				internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
+				internalError(Messages.bind(Messages.parse_unknownTopElement, elementName));
 		}
 	}
 
