@@ -591,7 +591,7 @@ public class ResourceSyncInfo {
 	public static boolean isBinary(byte[] syncBytes)  throws CVSException {
 		if (syncBytes == null) return false;
 		String mode = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 4, false);
-		return Command.KSUBST_BINARY.equals(mode);
+		return "-kb".equals(mode); //$NON-NLS-1$
 	}
 	
 	/**
