@@ -12,11 +12,32 @@ package org.eclipse.jface.preference;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogMessageArea;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.HelpEvent;
@@ -48,25 +69,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.DialogMessageArea;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 /**
  * A preference dialog is a hierarchical presentation of preference pages. Each
  * page is represented by a node in the tree shown on the left hand side of the
@@ -167,7 +169,6 @@ public class PreferenceDialog extends Dialog
 	 */
 	private IPreferenceStore preferenceStore;
 	private Composite titleArea;
-	private Color titleAreaColor;
 	private Label titleImage;
 	/**
 	 * The tree viewer.
@@ -420,26 +421,19 @@ public class PreferenceDialog extends Dialog
 				.getBounds().height
 				+ (margins * 3);
 		titleArea.setLayoutData(layoutData);
-		titleArea.setBackground(background);
-		final Color borderColor = new Color(titleArea.getDisplay(),
-				ViewForm.borderOutsideRGB);
+		titleArea.setBackground(background);			
+		
 		titleArea.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				e.gc.setForeground(borderColor);
+				e.gc.setForeground(
+						titleArea.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 				Rectangle bounds = titleArea.getClientArea();
 				bounds.height = bounds.height - 2;
 				bounds.width = bounds.width - 1;
 				e.gc.drawRectangle(bounds);
 			}
 		});
-		// Add a dispose listener
-		titleArea.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (titleAreaColor != null)
-					titleAreaColor.dispose();
-				borderColor.dispose();
-			}
-		});
+		
 		// Message label
 		messageArea = new DialogMessageArea();
 		messageArea.createContents(titleArea);
@@ -710,8 +704,7 @@ public class PreferenceDialog extends Dialog
 	protected boolean isCurrentPageValid() {
 		if (currentPage == null)
 			return true;
-		else
-			return currentPage.isValid();
+		return currentPage.isValid();
 	}
 	/**
 	 * @param control
@@ -731,21 +724,60 @@ public class PreferenceDialog extends Dialog
 	 * save any state, and then calls <code>close</code> to close this dialog.
 	 */
 	protected void okPressed() {
-		// Notify all the pages and give them a chance to abort
-		Iterator nodes = preferenceManager.getElements(
-				PreferenceManager.PRE_ORDER).iterator();
-		while (nodes.hasNext()) {
-			IPreferenceNode node = (IPreferenceNode) nodes.next();
-			IPreferencePage page = node.getPage();
-			if (page != null) {
-				if (!page.performOk())
-					return;
+		Platform.run(new SafeRunnable() {
+			private boolean errorOccurred;
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+			 */
+			public void run() {
+				errorOccurred = false;
+				try {
+					// Notify all the pages and give them a chance to abort
+					Iterator nodes = preferenceManager.getElements(
+							PreferenceManager.PRE_ORDER).iterator();
+					while (nodes.hasNext()) {
+						IPreferenceNode node = (IPreferenceNode) nodes.next();
+						IPreferencePage page = node.getPage();
+						if (page != null) {
+							if (!page.performOk())
+								return;
+						}
+					}
+				} catch (Exception e) {
+					handleException(e);
+				} finally {
+					// Give subclasses the choice to save the state of the
+					// preference pages.
+					if (!errorOccurred)
+						handleSave();
+					// Need to restore state
+					close();
+				}
 			}
-		}
-		// Give subclasses the choice to save the state of the
-		// preference pages.
-		handleSave();
-		close();
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+			 */
+			public void handleException(Throwable e) {
+				errorOccurred = true;
+				if (Platform.isRunning()) {
+					String bundle = Platform.PI_RUNTIME;
+					Platform.getLog(Platform.getBundle(bundle)).log(
+							new Status(IStatus.ERROR, bundle, 0, e.toString(),
+									e));
+				} else
+					e.printStackTrace();
+				clearSelectedNode();
+				String message = JFaceResources
+						.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
+				MessageDialog.openError(getShell(), JFaceResources
+						.getString("Error"), message); //$NON-NLS-1$
+
+			}
+		});
 	}
 	/**
 	 * Selects the page determined by <code>lastSuccessfulNode</code> in the
