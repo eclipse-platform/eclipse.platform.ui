@@ -753,13 +753,28 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	protected void updateToolItems() {
 										
 		IMergeViewerContentProvider content= getMergeContentProvider();
+		
 		Object input= getInput();
 		
-		if (fCopyLeftToRightAction != null)
-			fCopyLeftToRightAction.setEnabled(content.isRightEditable(input));
+		if (fCopyLeftToRightAction != null) {
+			boolean enable= content.isRightEditable(input);
+			if (enable && input instanceof ICompareInput) {
+				ITypedElement e= ((ICompareInput) input).getLeft();
+				if (e == null)
+					enable= false;
+			}
+			fCopyLeftToRightAction.setEnabled(enable);
+		}
 		
-		if (fCopyRightToLeftAction != null)
-			fCopyRightToLeftAction.setEnabled(content.isLeftEditable(input));
+		if (fCopyRightToLeftAction != null) {
+			boolean enable= content.isLeftEditable(input);
+			if (enable && input instanceof ICompareInput) {
+				ITypedElement e= ((ICompareInput) input).getRight();
+				if (e == null)
+					enable= false;
+			}
+			fCopyRightToLeftAction.setEnabled(enable);
+		}
 	}
 	
 //	protected void createToolItems(ToolBarManager tbm) {
