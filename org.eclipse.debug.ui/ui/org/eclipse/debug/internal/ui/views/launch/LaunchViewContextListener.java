@@ -414,7 +414,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 				IViewPart stackedView= stackedViews[i];
 				if (view == stackedView) {
 					viewIndex= i;
-				} else if (viewsToShow.contains(stackedView) && i < viewIndex) { //page.isPartVisible(stackedView)) {
+				} else if (viewsToShow.contains(stackedView) && i < viewIndex) {
 					// If this view is below an appropriate view, don't show it
 					activate= false;
 					break;
