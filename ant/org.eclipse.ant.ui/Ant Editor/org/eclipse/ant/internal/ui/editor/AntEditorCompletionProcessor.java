@@ -517,7 +517,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         		} else {
 	        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
 	        		if (helper != null) {
-		        		addAttributeProposals(taskName, prefix, proposals, helper);
+		        		addAttributeProposals(helper, taskName, prefix, proposals);
 	        		}
         		}
         	} else { //nested user defined element
@@ -525,7 +525,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         		if (nestedType != null) {
 	    			IntrospectionHelper helper= getIntrospectionHelper(nestedType);
 	    			if (helper != null) {
-	    				addAttributeProposals(taskName, prefix, proposals, helper);
+	    				addAttributeProposals(helper, taskName, prefix, proposals);
 	    			}
 	    		}
         	}
@@ -533,13 +533,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
     
-    /**
-	 * @param taskName
-	 * @param prefix
-	 * @param proposals
-	 * @param helper
-	 */
-	private void addAttributeProposals(String taskName, String prefix, List proposals, IntrospectionHelper helper) {
+	private void addAttributeProposals(IntrospectionHelper helper, String taskName, String prefix, List proposals) {
 		Enumeration attributes= helper.getAttributes();
 		while (attributes.hasMoreElements()) {
 			String attribute = (String) attributes.nextElement();
@@ -1167,6 +1161,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     protected int determineProposalMode(IDocument document, int aCursorPosition, String aPrefix) {
     	if (currentProposalMode != -1) {
     		return currentProposalMode;
+    	}
+    	if (antModel.getProjectNode() == null) {
+    		return PROPOSAL_MODE_BUILDFILE;
     	}
     	if (document.getLength() == 0 || (document.getLength() == 1 && document.get().equals("<"))) { //$NON-NLS-1$
     		return PROPOSAL_MODE_BUILDFILE;
