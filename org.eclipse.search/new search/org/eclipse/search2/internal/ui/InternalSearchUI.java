@@ -18,14 +18,22 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
@@ -34,12 +42,6 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class InternalSearchUI {
 	private static final int HISTORY_COUNT= 10;
