@@ -38,7 +38,6 @@ public class UpdateUtils {
 	private static final String RESOURCE_BUNDLE =
 		"org.eclipse.update.internal.operations.UpdateManagerResources";
 	private static ResourceBundle bundle;
-	private static UpdateManagerAuthenticator authenticator;
 	
 	private static final String PREFIX = UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier();
 	public static final String P_UPDATE_POLICY_URL = PREFIX + ".updatePolicyURL";
@@ -531,18 +530,6 @@ public class UpdateUtils {
 			}
 		}
 		return false;
-	}
-
-
-	
-	/**
-	 * Gets the authenticator.
-	 * @return Returns a UpdateManagerAuthenticator
-	 */
-	public static UpdateManagerAuthenticator getAuthenticator() {
-		if (authenticator == null)
-			authenticator = new UpdateManagerAuthenticator();
-		return authenticator;
 	}
 
 	public static URL getUpdateMapURL() {
