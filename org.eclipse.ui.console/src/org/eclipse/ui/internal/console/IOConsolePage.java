@@ -47,6 +47,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IConsolePageParticipantDelegate;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.actions.ClearOutputAction;
@@ -75,6 +76,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     private ScrollLockAction scrollLockAction;
     private Menu menu;
     private boolean readOnly;
+    private IConsolePageParticipantDelegate[] delegates;
     
 	// text selection listener, used to update selection dependant actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {
@@ -97,6 +99,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     public IOConsolePage(IOConsole console, IConsoleView view) {
         this.console = console;
         this.consoleView = view;
+        delegates = ConsolePlugin.getDefault().getConsoleManager().getPageParticipants(this.console);
     } 
 
     /*
@@ -112,6 +115,9 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
      * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
      */
     public void init(IPageSite site) throws PartInitException {
+        for (int i = 0; i < delegates.length; i++) {
+            delegates[i].init(site, console);
+        }
         this.site = site;
     }
 
@@ -154,6 +160,9 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
      * @see org.eclipse.ui.part.IPage#dispose()
      */
     public void dispose() {
+        for (int i = 0; i < delegates.length; i++) {
+            delegates[i].dispose();
+        }
         console.removePropertyChangeListener(this);
         JFaceResources.getFontRegistry().removeListener(this);
         
@@ -229,6 +238,8 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		    viewer.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
 		} else if (property.equals(IOConsole.P_CONSOLE_OUTPUT_COMPLETE)) {
 		    viewer.setReadOnly();
+		} else if (property.equals(IOConsole.P_AUTO_SCROLL)) {
+		    setAutoScroll(console.getAutoScroll());
 		}
 	}
 
@@ -316,17 +327,32 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		menu.add(clearOutputAction);
 		menu.add(scrollLockAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		
+		for (int i = 0; i < delegates.length; i++) {
+		    delegates[i].contextMenuAboutToShow(menu);
+        }
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, clearOutputAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, scrollLockAction);
+		for (int i = 0; i < delegates.length; i++) {
+            delegates[i].configureToolBar(mgr);
+        }
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     public Object getAdapter(Class required) {
+        Object adapter = null;
+        for (int i = 0; i < delegates.length && adapter==null; i++) {
+             adapter = delegates[i].getAdapter(required);
+        }
+        
+        if (adapter != null) {
+            return adapter;
+        }
 		if (IFindReplaceTarget.class.equals(required)) {
 			return viewer.getFindReplaceTarget();
 		}

@@ -47,11 +47,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
-import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A console for a system process
@@ -87,14 +85,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		Color color = fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM);
 		in.setColor(color);
 		
-	}
-    
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
-	 */
-	public IPageBookViewPage createPage(IConsoleView view) {
-		return new ProcessConsolePage(view, this);
 	}
 
 	/**

@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
@@ -34,7 +35,12 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     public PatternMatchListenerExtension(IConfigurationElement extension) {
         fConfig = extension;
     }    
-     
+
+    /*
+     * returns the integer value of the flags defined in java.util.regex.Pattern.
+     * Both <code>Pattern.MULTILINE</code> and <code>MULTILINE</code> will return
+     * the same value.
+     */
     public int parseFlags(String flagsElement) {
         int val = 0;
         if (flagsElement == null) {
@@ -66,14 +72,6 @@ public class PatternMatchListenerExtension implements IPluginContribution {
         return evaluationResult == EvaluationResult.TRUE;
     }
     
-    public String getId() {
-    		return fConfig.getAttribute("id"); //$NON-NLS-1$
-    }
-
-    /**
-     * @return
-     * @throws CoreException
-     */
     public IPatternMatchListenerDelegate createDelegate() throws CoreException {
         return (IPatternMatchListenerDelegate) fConfig.createExecutableExtension("class"); //$NON-NLS-1$
     }
@@ -90,8 +88,8 @@ public class PatternMatchListenerExtension implements IPluginContribution {
 		return fEnablementExpression;
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
+    /*
+     * returns the regular expression to be matched.
      */
     public String getPattern() {
         if (fPattern == null) {
@@ -100,8 +98,8 @@ public class PatternMatchListenerExtension implements IPluginContribution {
         return fPattern;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
+    /*
+     * returns the flags to be used by <code>Pattern.compile(pattern, flags)</code>
      */
     public int getCompilerFlags() {
         if(fFlags < 0) {
@@ -115,7 +113,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return getId();
+        return fConfig.getAttribute("id"); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)

@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.ui.console">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.console" id="ConsolePatternMatchListener" name="%ConsolePatternMatchListenerName"/>
+         <meta.schema plugin="org.eclipse.ui.console" id="consolePageParticipant" name="%ConsolePageParticipantName"/>
       </appInfo>
       <documentation>
-         This extension point provides notification when console input or output matches a specified regular expression.
+         This extension point provides a mechanism for contributing a console page participant. The page participant will be able to modify the console&apos;s context menu and tool bar.
       </documentation>
    </annotation>
 
@@ -15,7 +15,7 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="consolePatternMatchListener" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="consolePageParticipant"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -41,7 +41,7 @@
       </complexType>
    </element>
 
-   <element name="consolePatternMatchListener">
+   <element name="consolePageParticipant">
       <complexType>
          <sequence>
             <element ref="enablement"/>
@@ -49,28 +49,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a unique identifier for this Console Pattern Match Listener
+                  specifies a unique identifier for this Console Page Participant
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a fully qualified name of a Java class that implements IPatternMatchListenerDelegate
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="regex" type="string" use="required">
-            <annotation>
-               <documentation>
-                  specifies the regular expression that should be matched
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="flags" type="string">
-            <annotation>
-               <documentation>
-                  specifies flags to be used when matching the pattern. Acceptable flags are defined in java.util.regex.Pattern and should be specified as Strings (eg &quot;Pattern.MULTILINE&quot; or &quot;MULTILINE&quot;)
+                  specifies a fully qualified name of a Java class that implements IConsolePageParticipantDelegate
                </documentation>
             </annotation>
          </attribute>
@@ -91,7 +77,20 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         
+         The following is an example of a console page participant extension point: 
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.console.consolePageParticipant&quot;&gt;
+      &lt;consolePageParticipant
+            class=&quot;com.example.ExamplePageParticipant&quot;
+            id=&quot;com.example.ExamplePageParticipant&quot;&gt;
+         &lt;enablement&gt;
+            &lt;instanceof value=&quot;com.example.ExampleConsole&quot;/&gt;
+         &lt;/enablement&gt;
+      &lt;/consolePageParticipant&gt;
+   &lt;/extension&gt; 
+&lt;/pre&gt;
+In the above example, the contributed console page participant will be used for all consoles of type &quot;com.example.ExampleConsole.&quot;
       </documentation>
    </annotation>
 
@@ -100,16 +99,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.console.IConsolePageParticipantDelegate&lt;/b&gt;.
       </documentation>
    </annotation>
 

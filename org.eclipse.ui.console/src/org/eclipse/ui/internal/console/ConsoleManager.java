@@ -32,6 +32,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IConsolePageParticipantDelegate;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IPatternMatchListener;
@@ -58,6 +59,8 @@ public class ConsoleManager implements IConsoleManager {
 	private final static int REMOVED = 2;
 
     private List fPatternMatchListeners;
+
+    private List fPageParticipants;
 	
 	/**
 	 * Notifies a console listener of additions or removals
@@ -262,9 +265,9 @@ public class ConsoleManager implements IConsoleManager {
     			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENER);
     			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
     			for (int i = 0; i < elements.length; i++) {
-    				IConfigurationElement extension = elements[i];
-    				PatternMatchListenerExtension listener = new PatternMatchListenerExtension(extension);
-    				fPatternMatchListeners.add(listener); //$NON-NLS-1$
+    				IConfigurationElement config = elements[i];
+    				PatternMatchListenerExtension extension = new PatternMatchListenerExtension(config);
+    				fPatternMatchListeners.add(extension); //$NON-NLS-1$
     			}
     		}
     		ArrayList list = new ArrayList();
@@ -280,4 +283,33 @@ public class ConsoleManager implements IConsoleManager {
     		}
         return (PatternMatchListener[])list.toArray(new PatternMatchListener[0]);
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IConsoleManager#getPageParticipants(org.eclipse.ui.console.IConsole)
+     */
+    public IConsolePageParticipantDelegate[] getPageParticipants(IConsole console) {
+        if(fPageParticipants == null) {
+            fPageParticipants = new ArrayList();
+            IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANT);
+            IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
+            for(int i = 0; i < elements.length; i++) {
+                IConfigurationElement config = elements[i];
+                ConsolePageParticipantExtension extension = new ConsolePageParticipantExtension(config);
+                fPageParticipants.add(extension);
+            }
+        }
+        ArrayList list = new ArrayList();
+        for(Iterator i = fPageParticipants.iterator(); i.hasNext(); ) {
+            ConsolePageParticipantExtension extension = (ConsolePageParticipantExtension) i.next();
+            try {
+                if (extension.isEnabledFor(console)) {
+                    list.add(extension.createDelegate());
+                }
+            } catch (CoreException e) {
+                ConsolePlugin.log(e);
+            }
+        }
+        return (IConsolePageParticipantDelegate[]) list.toArray(new IConsolePageParticipantDelegate[0]);
+    }
+    
 }

@@ -75,6 +75,11 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 	 */
 	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_OUTPUT_COMPLETE"; //$NON-NLS-1$
 	
+	/**
+	 * Property constant indicating that the auto scrolling should be turned on (or off)
+	 */
+	public static final String P_AUTO_SCROLL = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_AUTO_SCROLL"; //$NON-NLS-1$
+	
 	/** 
 	 * The font used by this console
 	 */
@@ -106,14 +111,20 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      */
     private int consoleWidth = -1;
     
+    
     private ArrayList patterns = new ArrayList();
-
+    
+    /**
+     * A identifier for the console type (may be null). 
+     */
     private String type;
     
     private HashMap attributes = new HashMap();
+   
+    private boolean autoScroll = true;
 
-    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor) {
-        super(name, imageDescriptor);
+    public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor) {
+        super(title, imageDescriptor);
         type = consoleType;
         inputStream = new IOConsoleInputStream(this);
         partitioner = new IOConsolePartitioner(inputStream, this);
@@ -123,8 +134,8 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         document.addDocumentListener(this);
     }
     
-    public IOConsole(String name, ImageDescriptor imageDescriptor) {
-        this(name, null, imageDescriptor);
+    public IOConsole(String title, ImageDescriptor imageDescriptor) {
+        this(title, null, imageDescriptor);
     }
 
     
@@ -244,6 +255,21 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 		partitioner.setWaterMarks(low, high);
 	}
 	
+	public void setAutoScroll(boolean scroll) {
+	    if (scroll != autoScroll) {
+	        autoScroll = scroll;
+	        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+	            public void run() {
+	                firePropertyChange(IOConsole.this, P_AUTO_SCROLL, new Boolean(!autoScroll), new Boolean(autoScroll));
+	            }
+	        });
+	    }
+	}
+	
+	public boolean getAutoScroll() {
+	    return autoScroll;
+	}
+	
 	/**
 	 * Sets the tab width.
 	 * @param tabSize The tab width 
@@ -290,10 +316,17 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         }
     }
     
+    /**
+     * Should be called to inform the console that output has been completed.
+     */
     public void setFinished() {
         partitioner.consoleFinished();
     }
     
+    /**
+     * Notification from the document partitioner that all pending partitions have been 
+     * processed and the console's lifecycle is complete.
+     */
     public void partitionerFinished() {
         firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
     }

@@ -80,9 +80,18 @@ public interface IConsoleManager {
 	/**
 	 * Returns an array of pattern match listeners which should be enabled for
 	 * the given console.
-	 * @param console The console for which PatternMatchListeners are required
+	 * @param console The console for which IPatternMatchListeners are required
 	 * @return an array of IPatternMatchListner
 	 * @since 3.1
 	 */
 	public IPatternMatchListener[] getPatternMatchListeners(IConsole console);
+	
+	/**
+	 * Returns an array of Page Participants which should be active for the given 
+	 * console 
+	 * @param console the console for which IConsolePageParticipantDelegate are required
+	 * @return an array of IConsolePageParticipantDelegate
+	 * @since 3.1
+	 */
+	public IConsolePageParticipantDelegate[] getPageParticipants(IConsole console);
 }
