@@ -11,13 +11,13 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
 import org.eclipse.ui.internal.activities.ws.FilterableObject;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.Category;
@@ -30,6 +30,12 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
 public class ViewContentProvider
 	extends FilterableObject
 	implements ITreeContentProvider {
+    
+    /**
+     * Child cache.  Map from Object->Object[].  Our hasChildren() method is 
+     * expensive so it's better to cache the results of getChildren().
+     */
+    private Map childMap = new HashMap();
 
 	/**
 	 * Create a new instance of the ViewContentProvider.
@@ -47,6 +53,7 @@ public class ViewContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+	    childMap.clear();	    
 	}
 
 	/*
@@ -55,22 +62,35 @@ public class ViewContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object element) {
-		if (element instanceof IViewRegistry) {
+	    Object [] children = (Object[]) childMap.get(element);
+	    if (children == null) {
+	        children = createChildren(element);
+	    	childMap.put(element, children);
+	    }
+	    return children;
+	}
+
+	/**
+	 * Does the actual work of getChildren.
+	 * 
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+	 */
+    private Object[] createChildren(Object element) {
+        if (element instanceof IViewRegistry) {
 			IViewRegistry reg = (IViewRegistry) element;
 			Category[] categories = reg.getCategories();
 
-			if (getFiltering()) {
-				ArrayList filtered = new ArrayList();
-				for (int i = 0; i < categories.length; i++) {
-                    if (WorkbenchActivityHelper.filterItem(categories[i]))
-						continue;
+			ArrayList filtered = new ArrayList();
+			for (int i = 0; i < categories.length; i++) {
+                if (!hasChildren(categories[i]))
+					continue;
 
-					filtered.add(categories[i]);
-				}
-				categories =
-					(Category[]) filtered.toArray(
-						new Category[filtered.size()]);
+				filtered.add(categories[i]);
 			}
+			categories =
+				(Category[]) filtered.toArray(
+					new Category[filtered.size()]);
+
             
 			// if there is only one category, return it's children directly
 			if (categories.length == 1) {
@@ -89,8 +109,7 @@ public class ViewContentProvider
 						filtered.add(o);
 					}
 					return removeIntroView(filtered).toArray();
-				}
-				
+				}				
 				
 				return removeIntroView(list).toArray();
 			}
@@ -98,9 +117,9 @@ public class ViewContentProvider
 		}
         
 		return new Object[0];
-	}
+    }
 
-	/**
+    /**
 	 * Removes the temporary intro view from the list so that it cannot be activated except through
 	 * the introduction command.
 	 *  
@@ -145,8 +164,10 @@ public class ViewContentProvider
 	public boolean hasChildren(java.lang.Object element) {
 		if (element instanceof IViewRegistry)
 			return true;
-		else if (element instanceof Category)
-			return true;
+		else if (element instanceof Category) {
+		    if (getChildren(element).length > 0)
+		        return true;
+		}
 		return false;
 	}
 
@@ -157,5 +178,6 @@ public class ViewContentProvider
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	    childMap.clear();
 	}
 }

@@ -85,7 +85,7 @@ public Color getForeground(Object element) {
  * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
  */
 public Color getBackground(Object element) {
-    if (WorkbenchActivityHelper.filterItem(element)) {
+    if (element instanceof ViewDescriptor && WorkbenchActivityHelper.filterItem(element)) {
         return WorkbenchActivityHelper.getFilterColor();
     }
     return null;
