@@ -214,38 +214,40 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 					}
 				}
 			}
-				
-			// Build the local options
-			List localOptions = new ArrayList();
-			// Add the option to load into the target project if one was supplied
-			if (project != null) {
-				localOptions.add(Checkout.makeDirectoryNameOption(project.getName()));
-			}
-			// Prune empty directories if pruning enabled
-			if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
-				localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
-			// Add the options related to the CVSTag
-			CVSTag tag = resource.getTag();
-			if (tag == null) {
-				// A null tag in a remote resource indicates HEAD
-				tag = CVSTag.DEFAULT;
-			}
-			localOptions.add(Update.makeTagOption(tag));
 			
-			// Perform the checkout
-			IStatus status = Command.CHECKOUT.execute(session,
-				Command.NO_GLOBAL_OPTIONS,
-				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-				new String[]{getRemoteModuleName(resource)},
-				null,
-				Policy.subMonitorFor(pm, 90));
-			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				// Any created projects will exist but will not be mapped to CVS
-				return status;
-			}
+			try {
+				// Build the local options
+				List localOptions = new ArrayList();
+				// Add the option to load into the target project if one was supplied
+				if (project != null) {
+					localOptions.add(Checkout.makeDirectoryNameOption(project.getName()));
+				}
+				// Prune empty directories if pruning enabled
+				if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) 
+					localOptions.add(Checkout.PRUNE_EMPTY_DIRECTORIES);
+				// Add the options related to the CVSTag
+				CVSTag tag = resource.getTag();
+				if (tag == null) {
+					// A null tag in a remote resource indicates HEAD
+					tag = CVSTag.DEFAULT;
+				}
+				localOptions.add(Update.makeTagOption(tag));
 				
-			// Bring the project into the workspace
-			refreshProjects(targetProjects, Policy.subMonitorFor(pm, 1));
+				// Perform the checkout
+				IStatus status = Command.CHECKOUT.execute(session,
+					Command.NO_GLOBAL_OPTIONS,
+					(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+					new String[]{getRemoteModuleName(resource)},
+					null,
+					Policy.subMonitorFor(pm, 90));
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
+					// Any created projects will exist but will not be mapped to CVS
+					return status;
+				}
+			} finally {
+				// Map the projects if they have CVS meta infomation even if a failure occurred
+				refreshProjects(targetProjects, Policy.subMonitorFor(pm, 1));
+			}
 			
 			return OK;
 		} finally {
@@ -447,7 +449,10 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				// Register the project with Team
 				try {
 					monitor.subTask(Policy.bind("CheckoutOperation.refreshingProject", project.getName())); //$NON-NLS-1$
-					RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project);
+					if (folder.isCVSFolder()) {
+						RepositoryProvider.map(project, CVSProviderPlugin.getTypeId());
+					}
 				} catch (TeamException e) {
 					throw CVSException.wrapException(e);
 				}
