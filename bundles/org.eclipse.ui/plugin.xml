@@ -1182,7 +1182,37 @@
                platform="carbon"
                key="Ctrl+W"
                id="org.eclipse.ui.edit.text.showRulerContextMenu">
+         </accelerator>         
+         <accelerator
+               platform="gtk"
+               key="Shift+Delete"
+               id="org.eclipse.ui.edit.cut">
          </accelerator>
+         <accelerator
+               platform="gtk"
+               key="Ctrl+Insert"
+               id="org.eclipse.ui.edit.copy">
+         </accelerator>
+         <accelerator
+               platform="gtk"
+               key="Shift+Insert"
+               id="org.eclipse.ui.edit.paste">
+         </accelerator>         
+         <accelerator
+               platform="motif"
+               key="Shift+Delete"
+               id="org.eclipse.ui.edit.cut">
+         </accelerator>
+         <accelerator
+               platform="motif"
+               key="Ctrl+Insert"
+               id="org.eclipse.ui.edit.copy">
+         </accelerator>
+         <accelerator
+               platform="motif"
+               key="Shift+Insert"
+               id="org.eclipse.ui.edit.paste">
+         </accelerator>                    
       </acceleratorSet>
       <acceleratorSet
             scopeId="org.eclipse.ui.globalScope"
