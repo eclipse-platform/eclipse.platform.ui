@@ -176,6 +176,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		loadContextToViewExtensions(true);
 		loadOpenedViews();
 		loadViewsToNotOpen();
+		loadAutoManagePerspectives();
 		PlatformUI.getWorkbench().getContextSupport().getContextManager().addContextManagerListener(this);
 	}
 	
@@ -480,7 +481,6 @@ public class LaunchViewContextListener implements IContextManagerListener {
 			}
 		}
 		loadTrackViews();
-		loadAutoManagePerspectives();
 	}
 	
 	/**
