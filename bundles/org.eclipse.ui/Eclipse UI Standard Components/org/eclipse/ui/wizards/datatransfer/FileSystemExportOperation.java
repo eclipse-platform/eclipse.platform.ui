@@ -124,7 +124,7 @@ protected void createLeadupDirectoriesFor(IResource resource) {
 
 	// ie.- create from project+1 level
 	if (resourcePath.segmentCount() > 1) {
-		for (int i = 1; i < resourcePath.segmentCount(); i++) {
+		for (int i = 0; i < resourcePath.segmentCount(); i++) {
 			path = path.append(resourcePath.segment(i));
 			exporter.createFolder(path);
 		}
