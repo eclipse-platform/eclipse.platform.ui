@@ -128,6 +128,8 @@ public class DecorationScheduler {
 			awaitingDecoration.add(element);
 			if (shutdown)
 				return;
+			if(decorationJob.getState() == Job.SLEEPING)
+				decorationJob.wakeUp();
 			decorationJob.schedule();
 		}
 		
