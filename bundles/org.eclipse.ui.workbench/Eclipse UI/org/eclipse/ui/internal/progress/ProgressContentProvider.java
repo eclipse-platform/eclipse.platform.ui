@@ -72,6 +72,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	TreeViewer viewer;
 	Job updateJob;
 	UpdatesInfo currentInfo = new UpdatesInfo();
+	Object updateLock;
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
 		viewer = mainViewer;
@@ -89,7 +90,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if(element == this)
+		if (element == this)
 			return null;
 		else
 			return ((JobTreeElement) element).getParent();
@@ -99,8 +100,8 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-		if(element == this)
-			return  JobProgressManager.getInstance().getJobs().length > 0;
+		if (element == this)
+			return JobProgressManager.getInstance().getJobs().length > 0;
 		else
 			return ((JobTreeElement) element).hasChildren();
 	}
@@ -133,7 +134,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 */
 	void refresh(final JobInfo info) {
 
-		currentInfo.refresh(info);
+		synchronized (updateLock) {
+			currentInfo.refresh(info);
+		}
 		//Add in a 100ms delay so as to keep priority low
 		updateJob.schedule(100);
 	}
@@ -143,7 +146,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @param info
 	 */
 	void refreshAll() {
-		currentInfo.updateAll = true;
+		synchronized (updateLock) {
+			currentInfo.updateAll = true;
+		}
 
 		//Add in a 100ms delay so as to keep priority low
 		updateJob.schedule(100);
@@ -154,8 +159,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @param info
 	 */
 	void add(final JobInfo info) {
-		
-		currentInfo.add(info);
+		synchronized (updateLock) {
+			currentInfo.add(info);
+		}
 		updateJob.schedule(100);
 	}
 
@@ -164,8 +170,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @param info
 	 */
 	void remove(final JobInfo info) {
-		
-		currentInfo.remove(info);
+		synchronized (updateLock) {
+			currentInfo.remove(info);
+		}
 		updateJob.schedule(100);
 	}
 
@@ -174,28 +181,30 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 */
 	private void createUpdateJob() {
 			updateJob = new UIJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
 				if (viewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
+				//Lock update additions while working
+				synchronized (updateLock) {
+					if (currentInfo.updateAll)
+						viewer.refresh(true);
+					else {
+						Object[] updateItems = currentInfo.refreshes.toArray();
+						for (int i = 0; i < updateItems.length; i++) {
+							viewer.refresh(updateItems[i], true);
+						}
+						viewer.add(
+							viewer.getInput(),
+							currentInfo.additions.toArray());
 
-				if (currentInfo.updateAll)
-					viewer.refresh(true);
-				else {
-					Object[] updateItems = currentInfo.refreshes.toArray();
-					for (int i = 0; i < updateItems.length; i++) {
-						viewer.refresh(updateItems[i], true);
+						viewer.remove(currentInfo.deletions.toArray());
 					}
-					viewer.add(
-						viewer.getInput(),
-						currentInfo.additions.toArray());
-
-					viewer.remove(currentInfo.deletions.toArray());
+					currentInfo.reset();
 				}
-				currentInfo.reset();
 				return Status.OK_STATUS;
 
 			}
