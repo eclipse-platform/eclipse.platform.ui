@@ -20,14 +20,16 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
-import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 /**
@@ -69,6 +71,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		if (monitor.isCanceled()) {
 			return;
+		}
+		
+		if (AntRunner.isBuildRunning()) {
+			IStatus status= new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Build_In_Progress"), new String[]{location.toOSString()}), null); //$NON-NLS-1$
+			throw new CoreException(status);
 		}		
 		
 		// resolve working directory
