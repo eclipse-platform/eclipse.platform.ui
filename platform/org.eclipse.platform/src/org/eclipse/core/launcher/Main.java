@@ -14,6 +14,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -1230,10 +1231,12 @@ private static void write(Object obj) throws IOException {
 		log.write(String.valueOf(0));
 		log.write(' ');
 		try {
-				log.write(new SimpleDateFormat().format(new Date()));
-			} catch (Exception e) {
-				// continue if we can't write out the date
-			}
+			DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
+			log.write(formatter.format(new Date()));
+		} catch (Exception e) {
+			// continue if we can't write out the date
+			log.write(Long.toString(System.currentTimeMillis()));
+		}
 		log.newLine();
 		log.write(MESSAGE);
 		log.write(' ');
