@@ -1818,11 +1818,13 @@ public final class Workbench implements IWorkbench {
     };
 
     private void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {
-        IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+        final IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 
         if (workbenchWindow instanceof WorkbenchWindow) {
-            MenuManager menuManager = ((WorkbenchWindow) workbenchWindow)
-                    .getMenuManager();
+            final WorkbenchWindow window = (WorkbenchWindow) workbenchWindow;
+            if (window.isClosing()) { return; }
+
+            final MenuManager menuManager = window.getMenuManager();
 
             if (textOnly)
                 menuManager.update(IAction.TEXT);
