@@ -72,6 +72,8 @@ public IEditorActionBarContributor getActionBarContributor() {
  * The <code>MultiPageEditorSite</code> implementation of this 
  * <code>IWorkbenchPartSite</code> method forwards to the multi-page editor to
  * return the decorator manager.
+ * 
+ * @deprecated use IWorkbench.getDecoratorManager()
  */
 public ILabelDecorator getDecoratorManager() {
 	return getWorkbenchWindow().getWorkbench().getDecoratorManager().getLabelDecorator();
