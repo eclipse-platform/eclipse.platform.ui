@@ -209,6 +209,7 @@ public IProject getNewProject() {
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	super.init(workbench, currentSelection);
+	setNeedsProgressMonitor(true);
 	setWindowTitle(ResourceMessages.getString("NewProject.windowTitle")); //$NON-NLS-1$
 }
 /* (non-Javadoc)
