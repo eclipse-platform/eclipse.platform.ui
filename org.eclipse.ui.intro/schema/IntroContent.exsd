@@ -6,11 +6,16 @@
          <meta.schema plugin="org.eclipse.ui.intro" id="null" name=""/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         
       </documentation>
    </annotation>
 
    <element name="introContent">
+      <annotation>
+         <documentation>
+            The introContent element defines the body of the intro content file.  The content file is made up of pages, shared groups that can be included in multiple pages, and extensions to anchor points defined in other configurations.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="page" minOccurs="1" maxOccurs="unbounded"/>
@@ -23,13 +28,18 @@
    <element name="page">
       <annotation>
          <documentation>
-            This element is used to describe a page to be displayed. A page can be either either dynamic or static.&lt;br/&gt;
+            This element is used to describe a page to be displayed. The intro can display both dynamic and static pages.&lt;br&gt;
+&lt;br&gt;
+Content for dynamic pages is generated from the subelements of the page, described below. The style or alt-style will be applied depending on the presentation. The styles can be further enhanced by referencing the id or class-id.&lt;br&gt;
 &lt;br/&gt;
-Static pages allow for reuse of existing HTML documents within ones introduction. When a static page is used, none of the subelements are utilized. Also note when the SWT presentation is used and a static page is to be displayed an external brower is launched and the current page remains visible.&lt;br/&gt;
+Static pages allow for the reuse of existing HTML documents within one&apos;s introduction, and can be linked to from any static or dynamic page.  Static pages are not defined in a page element, they are simply html files that can be linked to by other pages.&lt;br&gt;
 &lt;br/&gt;
-Dynamic pages do not have a url defined and their contents are generated from the subelements of the page. The style or alt-style will be applied depending on the presentation. The styles can be further enhanced by referencing the id or class-id.&lt;br/&gt;
+The home page, whose id is specified in the presentation element of the intro config extension point, can have a url indicating that it is a static page.  If no url is specified then the home page is assumed to be dynamic.  All other pages described using the page element are dynamic.  
+&lt;br/&gt;
+ Also note that when the SWT presentation is used and a static page is to be displayed, an external brower is launched and the current page remains visible.&lt;br/&gt;
+&lt;br/&gt;
 
-A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply style across the grouped content. A &lt;b&gt;link&lt;/b&gt; subelement defines a link which can be used to link to a page and run an intro action/command.  A link is normally defined at the page level to navigate between main pages verses links within a page. A &lt;b&gt;text&lt;/b&gt; subelement defines textual content for the page level. A &lt;b&gt;head&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for additional html to be added to the HTML &lt;b&gt;head&lt;/b&gt; section. This is useful for adding java srcipts or extra styles sheets. An &lt;b&gt;img&lt;/b&gt; subelement defines image content for the page level. An &lt;b&gt;include&lt;/b&gt; subelement allows for reuse any element other than a page. An &lt;b&gt;html&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for the embedding or inclusion of html into the page&apos;s content. Embedding allows for a fully defined html file to be embeded within an HTML &lt;b&gt;object&lt;/b&gt; by referencing the html file. Inclusion allows for embedding an html snippets directly from html file. A &lt;b&gt;title&lt;/b&gt; subelement defines the title of the page.
+The subelements used in a dynamic page are as follows: A &lt;b&gt;group&lt;/b&gt; subelement is used to group related content and apply style across the grouped content. A &lt;b&gt;link&lt;/b&gt; subelement defines a link which can be used to link to a static or dynamic page and run an intro action/command.  A link is normally defined at the page level to navigate between main pages versus links within a page. A &lt;b&gt;text&lt;/b&gt; subelement defines textual content at the page level. A &lt;b&gt;head&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for additional html to be added to the HTML &lt;b&gt;head&lt;/b&gt; section. This is useful for adding java scripts or extra style sheets. An &lt;b&gt;img&lt;/b&gt; subelement defines image content for the page level. An &lt;b&gt;include&lt;/b&gt; subelement allows for reuse of any element other than a page. An &lt;b&gt;html&lt;/b&gt; subelement is only applicable for the Web based presentation and allows for the embedding or inclusion of html into the page&apos;s content. Embedding allows for a fully defined html file to be embeded within an HTML &lt;b&gt;object&lt;/b&gt; by referencing the html file. Inclusion allows for including an html snippet directly from an html file. A &lt;b&gt;title&lt;/b&gt; subelement defines the title of the page.  An &lt;b&gt;anchor&lt;/b&gt; subelement defines a point where external contributions can be made by an &lt;extensionContent&gt; element.
          </documentation>
       </annotation>
       <complexType>
@@ -47,7 +57,7 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
          <attribute name="url" type="string">
             <annotation>
                <documentation>
-                  The optional relative path to an HTML file. When using the Web based presentation, this HTML file will displayed instead of any content defined for this page.
+                  The optional relative path to an HTML file. When using the Web based presentation, this HTML file will be displayed instead of any content defined for this page.  This attribute is only applicable to the home page, which is identified in the presentation element of the intro config extension point. It is ignored for all other pages.
                </documentation>
             </annotation>
          </attribute>
@@ -75,7 +85,7 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
          <attribute name="filteredFrom">
             <annotation>
                <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
                </documentation>
             </annotation>
             <simpleType>
@@ -90,8 +100,8 @@ A &lt;b&gt;group&lt;/b&gt; subelement is used to group of content and apply styl
          <attribute name="content" type="string">
             <annotation>
                <documentation>
-                  an optional attribute which can define the location of an introContent.xml file that represents the content of this page. When defined all children and attributes in this page element, except id, are ignored. This is because the content of this page is now assumed to reside in the xml files pointed to by the content file. When resolving to the content of this file, the page with a matching is to the id defined in this page is chosen.
-This seperation out of pages can be used when performance is an issue, as the content of a page is now loaded more lazily.
+                  an optional attribute which can define the location of an introContent.xml file that represents the content of this page. When this attribute is defined, all children and attributes in this page element, except id, are ignored. This is because the content of this page is now assumed to reside in the xml file pointed to by the content file attribute. When resolving to the content of this file, the page with an id that matches the id defined in this page element is chosen.
+This seperation of pages can be used when performance is an issue, as the content of a page is now loaded more lazily.
                </documentation>
             </annotation>
          </attribute>
@@ -106,6 +116,11 @@ This seperation out of pages can be used when performance is an issue, as the co
    </element>
 
    <element name="group">
+      <annotation>
+         <documentation>
+            Used to group related content, content that should have similar style applied, or content that will be included together in other pages.
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
@@ -119,14 +134,14 @@ This seperation out of pages can be used when performance is an issue, as the co
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  unique identifier of the division
+                  unique identifier of the group
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  
+                  a label or heading for this group
                </documentation>
             </annotation>
          </attribute>
@@ -140,7 +155,7 @@ This seperation out of pages can be used when performance is an issue, as the co
          <attribute name="filteredFrom">
             <annotation>
                <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
                </documentation>
             </annotation>
             <simpleType>
@@ -156,6 +171,11 @@ This seperation out of pages can be used when performance is an issue, as the co
    </element>
 
    <element name="link">
+      <annotation>
+         <documentation>
+            Can link to a static HTML file, an external web site, or can run an Intro URL action.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="text" minOccurs="0" maxOccurs="1"/>
@@ -171,14 +191,75 @@ This seperation out of pages can be used when performance is an issue, as the co
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  
+                  The text name of this link
                </documentation>
             </annotation>
          </attribute>
          <attribute name="url" type="string" use="required">
             <annotation>
                <documentation>
-                  A valid URL to external web site or an Intro URL that represents an Intro actions. All intro URLs have the following form:  http://org.eclipse.ui.intro/&amp;lt;command&amp;gt&gt;&amp;amp;p1=v1&amp;amp;p2=v2... and will be processed as Eclipse requests.
+                  A valid URL to an external web site, a static html file, or an Intro URL that represents an Intro action. All intro URLs have the following form:  http://org.eclipse.ui.intro/&lt;action name&gt;?param1=value1&amp;param2=value2 and will be processed by the intro framework.
+
+&lt;br&gt;&lt;br&gt;
+The predefined actions will be described using this format:
+&lt;br&gt;
+&lt;p style=&quot;margin-left:15px;&quot;&gt;
+&lt;b&gt;action name&lt;/b&gt; - descripton of action&lt;br&gt;
+&lt;i&gt;action parameter1&lt;/i&gt; - description of parameter&lt;br&gt;
+&lt;i&gt;action parameter2 (optional)&lt;/i&gt; - description of parameter&lt;br&gt;
+&lt;i&gt;action parameter3 (optional) = (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - description of parameter, choice of either true or false and &quot;false&quot; is the default&lt;br&gt;
+&lt;/p&gt;
+
+&lt;br&gt;
+The following predefined actions are included in the intro framework:
+&lt;p style=&quot;margin-left:15px;&quot;&gt;
+&lt;b&gt;close&lt;/b&gt; - closes the intro part&lt;br&gt;
+no parameters required&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;navigate&lt;/b&gt; - navigate through the intro pages in a given direction or return to the home page&lt;br&gt;
+&lt;i&gt;direction = (&quot;backward&quot; | &quot;forward&quot; | &quot;home&quot;)&lt;/i&gt; - specifies the direction to navigate&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;openBrowser&lt;/b&gt; - open the url in an external browser&lt;br&gt;
+&lt;i&gt;url&lt;/i&gt; - a valid URL to an external web site or a static HTML file&lt;br&gt;
+&lt;i&gt;pluginId (optional)&lt;/i&gt; - only required if a static HTML file is specified. This is the id of the plug-in containing the file.&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;runAction&lt;/b&gt; - runs the specified action&lt;br&gt;
+&lt;i&gt;class&lt;/i&gt; - the fully qualified class name of the class that implements one of &lt;code&gt;org.eclipse.ui.intro.config.IIntroAction&lt;/code&gt;,
+               &lt;code&gt;org.eclipse.jface.actino.IAction&lt;/code&gt;, or &lt;code&gt;org.eclipse.ui.IActionDelegate&lt;/code&gt;&lt;br&gt;
+&lt;i&gt;pluginId&lt;/i&gt; - The id of the plug-in which contains the class.&lt;br&gt;
+&lt;i&gt;standby (optional) = (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after executing the action&lt;br&gt;
+additional parameters - any additional parameters are passed to actions that implement &lt;code&gt;org.eclipse.ui.intro.config.IIntroAction&lt;/code&gt;&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;setStandbyMode&lt;/b&gt; - sets the state of the intro part&lt;br&gt;
+&lt;i&gt;standby = (&quot;true&quot; | &quot;false&quot;)&lt;/i&gt; - true to put the intro part in its partially visible standy mode, and false to make it fully visible&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;showHelp&lt;/b&gt; - Open the help system.&lt;br&gt;
+no parameters required&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;showHelpTopic&lt;/b&gt; - Open a help topic.&lt;br&gt;
+&lt;i&gt;id&lt;/i&gt; - the URL of the help resource. (See Javadoc for &lt;code&gt;org.eclipse.ui.help.WorkbenchHelp.displayHelpResource&lt;/code&gt;&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;showMessage&lt;/b&gt; - Displays a message to the user using a standard information dialog.&lt;br&gt;
+&lt;i&gt;message&lt;/i&gt; - the message to show the user&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;showStandby&lt;/b&gt; - Sets the intro part to standby mode and shows the standbyContentPart with the given input&lt;br&gt;
+&lt;i&gt;partId&lt;/i&gt; - the id of the standbyContentPart to show&lt;br&gt;
+&lt;i&gt;input&lt;/i&gt; - the input to set on the standbyContentPart&lt;br&gt;
+&lt;br&gt;
+
+&lt;b&gt;showPage&lt;/b&gt; - show the intro page with the given id&lt;br&gt;
+&lt;i&gt;id&lt;/i&gt; - the id of the intro page to show&lt;br&gt;
+&lt;i&gt;standby (optional) = (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after showing the page&lt;br&gt;
+&lt;/p&gt;
+&lt;br&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -192,7 +273,7 @@ This seperation out of pages can be used when performance is an issue, as the co
          <attribute name="filteredFrom">
             <annotation>
                <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
                </documentation>
             </annotation>
             <simpleType>
@@ -211,7 +292,10 @@ This seperation out of pages can be used when performance is an issue, as the co
       <annotation>
          <documentation>
             direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative swt presentation rendering.
-Embedding allows for a fully defined html file to be embeded within an HTML object by referencing the html file. Inclusion allows for embedding an html snippets directly from html file.
+&lt;br&gt;
+Embedding allows for a fully defined html file to be embedded within the dynamic page&apos;s content.  An HTML &lt;b&gt;object&lt;/b&gt; element is created that references the html file. 
+&lt;br&gt;
+Inclusion allows for including an html snippet directly from a file into the dynamic html page.
          </documentation>
       </annotation>
       <complexType>
@@ -258,7 +342,7 @@ Embedding allows for a fully defined html file to be embeded within an HTML obje
          <attribute name="filteredFrom">
             <annotation>
                <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
                </documentation>
             </annotation>
             <simpleType>
@@ -276,7 +360,7 @@ Embedding allows for a fully defined html file to be embeded within an HTML obje
    <element name="title">
       <annotation>
          <documentation>
-            a snippet of text that can optionally contain escaped HTML tags. It is only used as a Page Title, and so a given page can have a maximun of one Title element.
+            a snippet of text that can optionally contain escaped HTML tags. It is only used as a Page Title, and so a given page can have a maximum of one title element.
          </documentation>
       </annotation>
       <complexType>
@@ -290,14 +374,14 @@ Embedding allows for a fully defined html file to be embeded within an HTML obje
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  
+                  A means to classifiy this element into a given category so that a common style may be applied
                </documentation>
             </annotation>
          </attribute>
          <attribute name="filteredFrom">
             <annotation>
                <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
                </documentation>
             </annotation>
             <simpleType>
@@ -330,14 +414,14 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
          <attribute name="style-id" type="string">
             <annotation>
                <documentation>
-                  
+                  A means to classifiy this element into a given category so that a common style may be applied
                </documentation>
             </annotation>
          </attribute>
          <attribute name="filteredFrom">
             <annotation>
                <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
                </documentation>
             </annotation>
             <simpleType>
@@ -355,7 +439,7 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
    <element name="include">
       <annotation>
          <documentation>
-            expands an element targeted by the given path, and optional configId attributes. Path should uniquely address an element within the specified configuration. It could point to a shared group defined at the configuration level, or any element in a page.
+            expands an element targeted by the given path and optional configId attributes. Path should uniquely address an element within the specified configuration. It could point to a shared group defined at the configuration level, or any element in a page.
          </documentation>
       </annotation>
       <complexType>
@@ -376,7 +460,7 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
          <attribute name="merge-style" type="boolean">
             <annotation>
                <documentation>
-                  if &lt;code&gt;true&lt;/code&gt;, style belonging to the page that owns the included element will be added to list of styles of the including page. If &lt;code&gt;false&lt;/code&gt; (the default), the including page is responsible for controling properties of the included element.
+                  if &lt;code&gt;true&lt;/code&gt;, style belonging to the page that owns the included element will be added to list of styles of the including page. If &lt;code&gt;false&lt;/code&gt; (the default), the including page is responsible for controlling properties of the included element.
                </documentation>
             </annotation>
          </attribute>
@@ -387,7 +471,7 @@ If multiple paragraphs are needed, then the text can be divided into multiple se
       <annotation>
          <documentation>
             Direct HTML to include in a page&apos;s HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java srcipts or extra styles sheets.
-This markup is only to be used with an SWT Based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared head content, it makes sense to just define it in one file).
+This markup is only to be used with an HTML based intro part implementation. It is simply ignored in the case of a UI Forms implementation. A page can have more than one head element. An implementation can have one and only one head element (since it is a shared across all pages).
          </documentation>
       </annotation>
       <complexType>
@@ -404,7 +488,7 @@ This markup is only to be used with an SWT Based intro part implementation. It i
    <element name="img">
       <annotation>
          <documentation>
-            An image that represents intro content and not presentation. (as opposed to decoration images defined in styles).
+            An image that represents intro content and not presentation (as opposed to decoration images defined in styles).
          </documentation>
       </annotation>
       <complexType>
@@ -439,7 +523,7 @@ This markup is only to be used with an SWT Based intro part implementation. It i
          <attribute name="filteredFrom">
             <annotation>
                <documentation>
-                  an optional attribute that allows for filtering a given element out of a specific presentation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt presentation.
+                  an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.
                </documentation>
             </annotation>
             <simpleType>
@@ -514,7 +598,7 @@ This markup is only to be used with an SWT Based intro part implementation. It i
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         
       </documentation>
    </annotation>
 
@@ -523,7 +607,7 @@ This markup is only to be used with an SWT Based intro part implementation. It i
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         
       </documentation>
    </annotation>
 
@@ -532,7 +616,7 @@ This markup is only to be used with an SWT Based intro part implementation. It i
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -541,7 +625,7 @@ This markup is only to be used with an SWT Based intro part implementation. It i
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         
       </documentation>
    </annotation>
 
