@@ -16,6 +16,7 @@ package org.eclipse.ui.externaltools.internal.model;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -128,10 +129,11 @@ public final class ToolUtil {
 			
 			// No more variables found...
 			if (varDef.start == -1) {
-				if (start == 0)
+				if (start == 0) {
 					buffer.append(argument);
-				else
+				} else {
 					buffer.append(argument.substring(start));
+				}
 				break;
 			}
 
@@ -143,8 +145,9 @@ public final class ToolUtil {
 			}
 
 			// Copy text between start and variable.			
-			if (varDef.start > start)
+			if (varDef.start > start) {
 				buffer.append(argument.substring(start, varDef.start));
+			}
 			start = varDef.end;
 			
 			// Lookup the variable if it exist
@@ -183,12 +186,14 @@ public final class ToolUtil {
 	 * 		list maybe <code>null</code> if problems expanding variable(s).
 	 */
 	public static String[] expandArguments(String arguments, ExpandVariableContext context, MultiStatus status) {
-		if (arguments == null || arguments.length() == 0)
+		if (arguments == null || arguments.length() == 0) {
 			return new String[0];
+		}
 
 		String[] argList = parseArgumentsIntoList(arguments);
-		for (int i = 0; i < argList.length; i++)
+		for (int i = 0; i < argList.length; i++) {
 			argList[i] = expandArgument(argList[i], context, status);
+		}
 		
 		return argList;
 	}
@@ -205,8 +210,9 @@ public final class ToolUtil {
 	 * @return the directory location as a string or <code>null</code> if not possible
 	 */
 	public static String expandDirectoryLocation(String dirLocation, ExpandVariableContext context, MultiStatus status) {
-		if (dirLocation == null || dirLocation.length() == 0)
+		if (dirLocation == null || dirLocation.length() == 0) {
 			return ""; //$NON-NLS-1$
+		}
 
 		VariableDefinition varDef = extractVariableTag(dirLocation, 0);
 		// Return if no variable found
@@ -266,8 +272,9 @@ public final class ToolUtil {
 	 * @return the file location as a string or <code>null</code> if not possible
 	 */
 	public static String expandFileLocation(String fileLocation, ExpandVariableContext context, MultiStatus status) {
-		if (fileLocation == null || fileLocation.length() == 0)
+		if (fileLocation == null || fileLocation.length() == 0) {
 			return ""; //$NON-NLS-1$
+		}
 
 		VariableDefinition varDef = extractVariableTag(fileLocation, 0);
 		// Return if no variable found
@@ -329,26 +336,31 @@ public final class ToolUtil {
 		VariableDefinition varDef = new VariableDefinition();
 		
 		varDef.start = text.indexOf(VAR_TAG_START, start);
-		if (varDef.start < 0)
+		if (varDef.start < 0){
 			return varDef;
+		}
 		start = varDef.start + VAR_TAG_START.length();
 		
 		int end = text.indexOf(VAR_TAG_END, start);
-		if (end < 0)
+		if (end < 0) {
 			return varDef;
+		}
 		varDef.end = end + VAR_TAG_END.length();
-		if (end == start)
+		if (end == start) {
 			return varDef;
+		}
 	
 		int mid = text.indexOf(VAR_TAG_SEP, start);
 		if (mid < 0 || mid > end) {
 			varDef.name = text.substring(start, end);
 		} else {
-			if (mid > start)
+			if (mid > start) {
 				varDef.name = text.substring(start, mid);
+			}
 			mid = mid + VAR_TAG_SEP.length();
-			if (mid < end)
+			if (mid < end) {
 				varDef.argument = text.substring(mid, end);
+			}
 		}
 		
 		return varDef;
@@ -368,10 +380,11 @@ public final class ToolUtil {
 	 * @return the array of arguments
 	 */
 	public static String[] parseArgumentsIntoList(String arguments) {
-		if (arguments == null || arguments.length() == 0)
+		if (arguments == null || arguments.length() == 0) {
 			return new String[0];
+		}
 		
-		ArrayList list = new ArrayList(10);
+		List list = new ArrayList(10);
 		boolean inQuotes = false;
 		boolean inVar = false;
 		int start = 0;
@@ -436,8 +449,9 @@ public final class ToolUtil {
 			
 		}
 		
-		if (buffer.length() > 0)
+		if (buffer.length() > 0) {
 			list.add(buffer.toString());
+		}
 			
 		String[] results = new String[list.size()];
 		list.toArray(results);

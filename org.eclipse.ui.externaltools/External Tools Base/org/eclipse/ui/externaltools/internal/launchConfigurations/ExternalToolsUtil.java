@@ -214,7 +214,7 @@ public class ExternalToolsUtil {
 	public static String[] getArguments(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
 		if (args != null) {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Could_not_resolve_an_argument._1"), null); //$NON-NLS-1$
 			String[] expandedArgs = ToolUtil.expandArguments(args, context, status);
 			if (status.isOK()) {
 				return expandedArgs;
