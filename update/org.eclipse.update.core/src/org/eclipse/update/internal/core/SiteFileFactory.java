@@ -121,7 +121,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		// INSTALLED	
 		parseInstalledFeature(directory);
 
-		parseInstalledPlugin(pluginPath);
+		parseInstalledPlugins(pluginPath);
 
 		return site;
 
@@ -223,49 +223,58 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/**
 	 * Method parsePlugins.
 	 * 
-	 * look into each plugin/fragment directory, crack the plugin.xml open (or fragment.xml ???)
-	 * get id and version, calculate URL...	
+	 * look into each plugin/fragment directory, crack the plugin.xml open (or
+	 * fragment.xml ???) get id and version, calculate URL...
 	 * 
 	 * @return VersionedIdentifier
 	 * @throws CoreException
 	 */
-	private void parseInstalledPlugin(File dir) throws CoreException {
-		File pluginFile = null;
-
-		try {
-			if (dir.exists() && dir.isDirectory()) {
-				File[] files = dir.listFiles();
-				DefaultPluginParser parser = new DefaultPluginParser();
-				for (int i = 0; i < files.length; i++) {
-					if (files[i].isDirectory()) {
-
-						if (!(pluginFile = new File(files[i], "plugin.xml")).exists()) { //$NON-NLS-1$
-							pluginFile = new File(files[i], "fragment.xml"); //$NON-NLS-1$
-						}
-
-						if (pluginFile != null && pluginFile.exists() && !pluginFile.isDirectory()) {
-							PluginEntry entry = parser.parse(new FileInputStream(pluginFile));
-							addParsedPlugin(entry,files[i]);
-						}else {
-							BundleManifest bundleManifest = new BundleManifest(new File(files[i], "META-INF/MANIFEST.MF"));
-							PluginEntry entry=bundleManifest.getPluginEntry();
-							if(entry!=null){
-								addParsedPlugin(entry, files[i]);
-							}
-						}
-					} // files[i] is a directory
-				}
-			} // path is a directory
-		} catch (IOException e) {
-			String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", pluginFileString), e);
-			//$NON-NLS-1$
-		} catch (SAXException e) {
-			String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorParsingFile", pluginFileString), e);
-			//$NON-NLS-1$
+	private void parseInstalledPlugins(File pluginsDir) throws CoreException {
+		if (!pluginsDir.exists() || !pluginsDir.isDirectory()) {
+			return;
 		}
-
+		File[] dirs = pluginsDir.listFiles(new FileFilter() {
+			public boolean accept(File f) {
+				return f.isDirectory();
+			}
+		});
+		DefaultPluginParser parser = new DefaultPluginParser();
+		for (int i = 0; i < dirs.length; i++) {
+			File pluginFile = new File(dirs[i], "META-INF/MANIFEST.MF");
+			try {
+				BundleManifest bundleManifest = new BundleManifest(pluginFile);
+				if (bundleManifest.exists()) {
+					PluginEntry entry = bundleManifest.getPluginEntry();
+					addParsedPlugin(entry, dirs[i]);
+				} else {
+					if (!(pluginFile = new File(dirs[i], "plugin.xml"))
+							.exists()) { //$NON-NLS-1$
+						pluginFile = new File(dirs[i], "fragment.xml"); //$NON-NLS-1$
+					}
+					if (pluginFile != null && pluginFile.exists()
+							&& !pluginFile.isDirectory()) {
+						PluginEntry entry = parser.parse(new FileInputStream(
+								pluginFile));
+						addParsedPlugin(entry, dirs[i]);
+					}
+				}
+			} catch (IOException e) {
+				String pluginFileString = (pluginFile == null)
+						? null
+						: pluginFile.getAbsolutePath();
+				throw Utilities.newCoreException(Policy.bind(
+						"SiteFileFactory.ErrorAccessing", pluginFileString), e);
+				//$NON-NLS-1$
+			} catch (SAXException e) {
+				String pluginFileString = (pluginFile == null)
+						? null
+						: pluginFile.getAbsolutePath();
+				throw Utilities.newCoreException(Policy.bind(
+						"SiteFileFactory.ErrorParsingFile", pluginFileString),
+						e);
+				//$NON-NLS-1$
+			}
+		}
 	}
 
 	/**
@@ -306,51 +315,57 @@ public class SiteFileFactory extends BaseSiteFactory {
 	}
 
 	/**
-	 * 
+	 *  
 	 */
 	private void parsePackagedPlugins(File pluginDir) throws CoreException {
-
-		File file = null;
-		String[] dir;
-
-		ContentReference ref = null;
-		String refString = null;
-
-		try {
-			if (pluginDir.exists()) {
-				dir = pluginDir.list(FeaturePackagedContentProvider.filter);
-				for (int i = 0; i < dir.length; i++) {
-					file = new File(pluginDir, dir[i]);
-					JarContentReference jarReference = new JarContentReference(null, file);
-					ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
-					if (ref == null){
-						ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
-					}
-
-					refString = (ref == null) ? null : ref.asURL().toExternalForm();
-
-					if (ref != null) {
-						PluginEntry entry = new DefaultPluginParser().parse(ref.getInputStream());
-						addParsedPlugin(entry,file);
-						return;
-					}
-					
-					ref=jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
-					if (ref != null){
-						BundleManifest manifest=new BundleManifest(ref.getInputStream());
-						if(manifest.exists()){
-							addParsedPlugin(manifest.getPluginEntry(), file);
-						}
+		if (!pluginDir.exists()) {
+			return;
+		}
+		String[] dir = pluginDir.list(FeaturePackagedContentProvider.filter);
+		for (int i = 0; i < dir.length; i++) {
+			ContentReference ref = null;
+			String refString = null;
+			try {
+				File file = new File(pluginDir, dir[i]);
+				JarContentReference jarReference = new JarContentReference(
+						null, file);
+				ref = jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
+				if (ref != null) {
+					BundleManifest manifest = new BundleManifest(ref
+							.getInputStream());
+					if (manifest.exists()) {
+						addParsedPlugin(manifest.getPluginEntry(), file);
+						continue;
 					}
 				}
+				ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
+				if (ref == null) {
+					ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
+				}
+				if (ref != null) {
+					PluginEntry entry = new DefaultPluginParser().parse(ref
+							.getInputStream());
+					addParsedPlugin(entry, file);
+				}
+			} catch (IOException e) {
+				try {
+					refString = (ref == null) ? null : ref.asURL()
+							.toExternalForm();
+				} catch (IOException ioe) {
+				}
+				throw Utilities.newCoreException(Policy.bind(
+						"SiteFileFactory.ErrorAccessing", refString), e);
+				//$NON-NLS-1$
+			} catch (SAXException e) {
+				try {
+					refString = (ref == null) ? null : ref.asURL()
+							.toExternalForm();
+				} catch (IOException ioe) {
+				}
+				throw Utilities.newCoreException(Policy.bind(
+						"SiteFileFactory.ErrorParsingFile", refString), e);
+				//$NON-NLS-1$
 			}
-
-		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorAccessing", refString), e);
-			//$NON-NLS-1$
-		} catch (SAXException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.ErrorParsingFile", refString), e);
-			//$NON-NLS-1$
 		}
 	}
 

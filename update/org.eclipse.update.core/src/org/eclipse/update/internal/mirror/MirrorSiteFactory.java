@@ -110,54 +110,46 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		return site;
 	}
 	/**
-	 * 
+	 *  
 	 */
-	private void parseDownloadedPluginsAndFragments(
-		MirrorSite site,
-		File pluginDir)
-		throws CoreException {
-		File file = null;
-		String[] dir;
-
-		ContentReference ref = null;
-
-		try {
-			if (pluginDir.exists()) {
-				dir = pluginDir.list(FeaturePackagedContentProvider.filter);
-				for (int i = 0; i < dir.length; i++) {
-					file = new File(pluginDir, dir[i]);
-					JarContentReference jarReference =
-						new JarContentReference(null, file);
-					ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
-					if (ref == null){
-						ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
+	private void parseDownloadedPluginsAndFragments(MirrorSite site,
+			File pluginDir) throws CoreException {
+		if (!pluginDir.exists()) {
+			return;
+		}
+		String[] dir = pluginDir.list(FeaturePackagedContentProvider.filter);
+		for (int i = 0; i < dir.length; i++) {
+			try {
+				File file = new File(pluginDir, dir[i]);
+				JarContentReference jarReference = new JarContentReference(
+						null, file);
+				ContentReference ref = jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
+				if (ref != null) {
+					BundleManifest manifest = new BundleManifest(ref
+							.getInputStream());
+					if (manifest.exists()) {
+						site
+								.addDownloadedPluginEntry(manifest
+										.getPluginEntry());
+						continue;
 					}
-
-					if (ref != null) {
-						PluginEntry entry =
-							new DefaultPluginParser().parse(
-								ref.getInputStream());
-						site.addDownloadedPluginEntry(entry);
-						return;
-					}
-					
-					ref=jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
-					if (ref != null){
-						BundleManifest manifest=new BundleManifest(ref.getInputStream());
-						if(manifest.exists()){
-							site.addDownloadedPluginEntry(manifest.getPluginEntry());
-						}
-					}
-
 				}
+				ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
+				if (ref == null) {
+					ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
+				}
+				if (ref != null) {
+					PluginEntry entry = new DefaultPluginParser().parse(ref
+							.getInputStream());
+					site.addDownloadedPluginEntry(entry);
+				}
+			} catch (IOException e) {
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(e);
+			} catch (SAXException e) {
+				StandaloneUpdateApplication.exceptionLogged();
+				UpdateCore.log(e);
 			}
-
-		} catch (IOException e) {
-			StandaloneUpdateApplication.exceptionLogged();
-			UpdateCore.log(e);
-		} catch (SAXException e) {
-			StandaloneUpdateApplication.exceptionLogged();
-			UpdateCore.log(e);
 		}
 	}
 	/**
