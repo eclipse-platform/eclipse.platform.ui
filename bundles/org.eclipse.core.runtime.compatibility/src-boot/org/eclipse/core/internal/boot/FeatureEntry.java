@@ -50,5 +50,13 @@ public class FeatureEntry implements IFeatureEntry {
 	public IPlatformConfiguration.IFeatureEntry getNewFeatureEntry() {
 		return newFeatureEntry;
 	}
-
+	public boolean equals(Object o) {
+		if(o instanceof FeatureEntry) {
+			return newFeatureEntry.equals(((FeatureEntry) o).newFeatureEntry); 
+		}
+		return false;
+	}
+	public int hashCode() {
+		return newFeatureEntry.hashCode();
+	}
 }

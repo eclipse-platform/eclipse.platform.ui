@@ -36,4 +36,13 @@ public class SitePolicy implements ISitePolicy {
 		return newPolicy;
 	}
 
+	public boolean equals(Object o) {
+		if (o instanceof SitePolicy)
+			return newPolicy.equals(((SitePolicy) o).newPolicy);
+		return false;
+	}
+	
+	public int hashCode() {
+		return newPolicy.hashCode();
+	}
 }

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*************O******************************************************************
  * Copyright (c) 2003 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
@@ -66,4 +66,13 @@ public class SiteEntry implements ISiteEntry {
 		return newSiteEntry;
 	}
 
+	public boolean equals(Object o) {
+		if (o instanceof SiteEntry)
+			return newSiteEntry.equals(((SiteEntry) o).newSiteEntry);
+		return false;
+	}
+	
+	public int hashCode() {
+		return newSiteEntry.hashCode();
+	}
 }
