@@ -78,11 +78,16 @@ public abstract class CVSOperation extends TeamOperation {
 	public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		startOperation();
 		try {
-			execute(monitor);
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(getTaskName(), 100);
+			monitor.setTaskName(getTaskName());
+			execute(Policy.subMonitorFor(monitor, 100));
 			endOperation();
 		} catch (CVSException e) {
 			// TODO: errors may not be empty (i.e. endOperation has not been executed)
 			throw new InvocationTargetException(e);
+		} finally {
+			monitor.done();
 		}
 	}
 	
