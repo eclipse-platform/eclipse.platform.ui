@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
@@ -22,7 +21,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public class AntProcess implements IProcess, IProgressMonitor {
 	
@@ -69,10 +67,7 @@ public class AntProcess implements IProcess, IProgressMonitor {
 	 * @see org.eclipse.debug.core.model.IProcess#getStreamsProxy()
 	 */
 	public IStreamsProxy getStreamsProxy() {
-		if ("true".equals(getLaunch().getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT))) { //$NON-NLS-1$
-			return fProxy;
-		}
-		return null;
+		return fProxy;
 	}
 
 	/**

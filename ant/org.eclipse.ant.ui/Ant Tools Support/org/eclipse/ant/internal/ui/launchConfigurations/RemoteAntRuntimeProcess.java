@@ -12,12 +12,9 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.Map;
-
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.RuntimeProcess;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-
 
 public class RemoteAntRuntimeProcess extends RuntimeProcess {
 
@@ -35,9 +32,6 @@ public class RemoteAntRuntimeProcess extends RuntimeProcess {
 	 * @see org.eclipse.debug.core.model.RuntimeProcess#createStreamsProxy()
 	 */
 	protected IStreamsProxy createStreamsProxy() {
-		if ("true".equals(getLaunch().getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT))) { //$NON-NLS-1$
-			return new AntStreamsProxy();
-		}
-		return null;
+		return new AntStreamsProxy();
 	}
 }

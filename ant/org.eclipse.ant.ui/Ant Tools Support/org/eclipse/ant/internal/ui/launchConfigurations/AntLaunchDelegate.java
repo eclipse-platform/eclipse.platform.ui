@@ -56,7 +56,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.osgi.framework.Bundle;
 
@@ -163,7 +162,6 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			return;
 		}
 		boolean captureOutput= ExternalToolsUtil.getCaptureOutput(configuration);
-		launch.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, captureOutput ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		int port= -1;
 		int requestPort= -1;
 		if (vmTypeID != null && captureOutput) {
