@@ -69,7 +69,7 @@ public class TeamSubscriberParticipantLabelProvider extends LabelProvider implem
 		JobStatusHandler.addJobListener(new IJobListener() {
 			public void started(QualifiedName jobType) {
 				working = true;
-				Display.getDefault().syncExec(new Runnable() {
+				Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
 								synchronized (this) {
 									fireLabelProviderChanged(new LabelProviderChangedEvent(TeamSubscriberParticipantLabelProvider.this));
@@ -79,7 +79,7 @@ public class TeamSubscriberParticipantLabelProvider extends LabelProvider implem
 			}
 			public void finished(QualifiedName jobType) {
 				working = false;
-				Display.getDefault().syncExec(new Runnable() {
+				Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
 								synchronized (this) {
 									fireLabelProviderChanged(new LabelProviderChangedEvent(TeamSubscriberParticipantLabelProvider.this));
