@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
@@ -1653,10 +1652,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private Image fNonDefaultCaretImage;
 	/**
-	 * The styled text's default caret.
+	 * The styled text's initial caret.
 	 * @since 3.0
 	 */
-	private Caret fDefaultCaret;
+	private Caret fInitialCaret;
 	
 	/**
 	 * Creates a new text editor. If not explicitly set, this editor uses
@@ -2597,8 +2596,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			extension.elementStateValidationChanged(input, false);
 		}
 		
-		if (fDefaultCaret == null)
-			fDefaultCaret= getSourceViewer().getTextWidget().getCaret();
+		if (fInitialCaret == null)
+			fInitialCaret= getSourceViewer().getTextWidget().getCaret();
 		
 		if (fIsOverwriting)
 			fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
@@ -2786,25 +2785,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		disposeNonDefaultCaret();
-		
-		/* The following code exists to dispose a custom caret set e.g. by the 
-		 * source viewer implementation. Note that StyledText does not set a 
-		 * caret by default, so fDefaultCaret will usually be null.
-		 * 
-		 * A source viewer that sets a custom caret on the widget does not
-		 * need to dispose it, or will run into an error_widget_disposed, 
-		 * respectively. 
-		 */
-		if (fDefaultCaret != null && !fDefaultCaret.isDisposed()) {
-			try {
-				fDefaultCaret.dispose();
-			// XXX: see SWT bug ??? 
-			} catch (SWTException x) {
-				if (x.code != SWT.ERROR_WIDGET_DISPOSED)
-					throw x;
-			}
-		}
-		fDefaultCaret= null;
+		fInitialCaret= null;
 		
 		if (fForegroundColor != null) {
 			fForegroundColor.dispose();
@@ -4624,36 +4605,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.setCaret(null);
 		disposeNonDefaultCaret();
 		
-		if (getPreferenceStore().getBoolean(PREFERENCE_DISABLE_CUSTOM_CARETS))
-			fNonDefaultCaret= createInsertCaret(styledText);
-		else if (fIsOverwriting)
+		if (getPreferenceStore().getBoolean(PREFERENCE_DISABLE_CUSTOM_CARETS)) {
+			Assert.isTrue(fNonDefaultCaret == null);
+		} else if (fIsOverwriting)
 			fNonDefaultCaret= createOverwriteCaret(styledText);
 		else if (SMART_INSERT == mode)
 			fNonDefaultCaret= createInsertCaret(styledText);
 		else if (INSERT == mode)
 			fNonDefaultCaret= createRawInsertModeCaret(styledText);
 
-		styledText.setCaret(fNonDefaultCaret);
-		if (fNonDefaultCaret != null)
+		if (fNonDefaultCaret != null) {
+			styledText.setCaret(fNonDefaultCaret);
 			fNonDefaultCaretImage= fNonDefaultCaret.getImage();
+		} else if (fInitialCaret != styledText.getCaret())
+		    styledText.setCaret(fInitialCaret);
 	}
 	
 	private void disposeNonDefaultCaret() {
-		if (fNonDefaultCaretImage != null && !fNonDefaultCaretImage.isDisposed())
+		if (fNonDefaultCaretImage != null) {
 			fNonDefaultCaretImage.dispose();
-		fNonDefaultCaretImage= null;
+			fNonDefaultCaretImage= null;
+		}
 
-		if (fNonDefaultCaret != null && !fNonDefaultCaret.isDisposed())
-			try {
-				fNonDefaultCaret.dispose();
-			// XXX: see SWT bug ???
-			} catch (SWTException x) {
-				if (x.code != SWT.ERROR_WIDGET_DISPOSED)
-					throw x;
-			}
-		fNonDefaultCaret= null;
+		if (fNonDefaultCaret != null) {
+			fNonDefaultCaret.dispose();
+			fNonDefaultCaret= null;
+		}
 	}
-		
+	
 	/**
 	 * Handles a change of the editor's insert mode.
 	 * Subclasses may extend.
