@@ -20,6 +20,8 @@ import org.eclipse.ui.forms.widgets.*;
 public class SectionPart implements IFormPart {
 	private IManagedForm managedForm;
 	private Section section;
+	private boolean dirty = false;
+	private boolean stale = true;
 	/**
 	 * Creates a new section part based on the provided section.
 	 * 
@@ -70,7 +72,6 @@ public class SectionPart implements IFormPart {
 	public void initialize(IManagedForm form) {
 		this.managedForm = form;
 	}
-	
 	public IManagedForm getForm() {
 		return managedForm;
 	}
@@ -87,6 +88,7 @@ public class SectionPart implements IFormPart {
 	 * @see org.eclipse.ui.forms.IFormPart#commit(boolean)
 	 */
 	public void commit(boolean onSave) {
+		dirty = false;
 	}
 	/*
 	 * (non-Javadoc)
@@ -112,7 +114,27 @@ public class SectionPart implements IFormPart {
 	 */
 	public void refresh() {
 	}
+	protected void markDirty() {
+		dirty = true;
+		managedForm.markDirty();
+	}
 	public boolean isDirty() {
+		return dirty;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IFormPart#isStale()
+	 */
+	public boolean isStale() {
+		// TODO Auto-generated method stub
 		return false;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IFormPart#markStale()
+	 */
+	public void markStale() {
 	}
 }

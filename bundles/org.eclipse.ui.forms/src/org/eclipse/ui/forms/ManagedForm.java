@@ -201,4 +201,6 @@ public class ManagedForm implements IManagedForm {
 		}
 		return false;
 	}
+	public void markDirty() {
+	}
 }

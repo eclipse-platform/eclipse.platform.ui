@@ -51,6 +51,7 @@ public interface IDetailsPage {
  * @return
  */
 	boolean isDirty();
+	boolean isStale();
 /**
  * 
  *

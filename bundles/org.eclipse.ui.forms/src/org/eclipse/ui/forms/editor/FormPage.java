@@ -36,6 +36,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	private int index;
 	private String id;
 	private String title;
+	private boolean stale;
 	
 	public FormPage(FormEditor editor, String id, String title) {
 		this(id, title);
@@ -179,5 +180,8 @@ public class FormPage extends EditorPart implements IFormPage {
 	public void focusOn(Object object) {
 		if (mform!=null)
 			mform.setInput(object);
+	}
+	
+	protected void markStale() {
 	}
 }

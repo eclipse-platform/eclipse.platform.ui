@@ -113,6 +113,10 @@ public class TypeTwoDetailsPage implements IDetailsPage {
 	public boolean isDirty() {
 		return false;
 	}
+	
+	public boolean isStale() {
+		return false;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
 	 */

@@ -56,8 +56,34 @@ public interface IFormPart {
 	 */
 	void setFocus();
 	/**
-	 * Refreshes the part completely from the information freshly obtained from
-	 * the model.
+	 * Tests whether the form part is stale and needs refreshing.
+	 * Parts can receive notification from models that will make
+	 * their content stale, but may need to delay refreshing
+	 * to improve performance (for example, there is no
+	 * need to immediately refresh a part on a form that is
+	 * current on a hidden page).
+	 * <p>It is important to differentiate 'stale' and 'dirty'
+	 * states. Part is 'dirty' if user interacted with
+	 * its editable widgets and changed the values. In contrast,
+	 * part is 'stale' when the data it presents in the widgets
+	 * has been changed in the model without direct user
+	 * interaction.
+	 * @return <code>true</code> if the part needs refreshing, 
+	 * <code>false</code> otherwise.
+	 */
+	boolean isStale();
+	/**
+	 * Marks the part stale. Stale parts are refreshed the next
+	 * time the form is made visible. If the form is already
+	 * visible, it will be refreshed immediately.
+	 */
+	void markStale();
+	/**
+	 * Refreshes the part completely from the information freshly 
+	 * obtained from the model. The method will not be called
+	 * if the part is not stale. Otherwise, the part is
+	 * responsible for clearing the 'stale' flag after refreshing
+	 * itself.
 	 */
 	void refresh();
 }

@@ -84,12 +84,22 @@ public class DetailsPart implements IFormPart, IPartSelectionListener {
 			return page.isDirty();
 		return false;
 	}
+	
+	public boolean isStale() {
+		IDetailsPage page = getCurrentPage();
+		if (page != null)
+			return page.isStale();
+		return false;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.forms.IFormPart#refresh()
 	 */
 	public void refresh() {
+		IDetailsPage page = getCurrentPage();
+		if (page != null)
+			page.refresh();
 	}
 	/*
 	 * (non-Javadoc)
@@ -100,6 +110,9 @@ public class DetailsPart implements IFormPart, IPartSelectionListener {
 		IDetailsPage page = getCurrentPage();
 		if (page != null)
 			page.setFocus();
+	}
+	
+	public void markStale() {
 	}
 	/*
 	 * (non-Javadoc)
@@ -168,6 +181,8 @@ public class DetailsPart implements IFormPart, IPartSelectionListener {
 							Composite parent = pageBook.createPage(key);
 							fpage.createContents(parent);
 						}
+						if (fpage.isStale())
+							fpage.refresh();
 						fpage.inputChanged(currentSelection);
 						pageBook.showPage(key);
 					}
