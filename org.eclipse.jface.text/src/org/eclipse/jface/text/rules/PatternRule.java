@@ -193,11 +193,18 @@ public class PatternRule implements IPredicateRule {
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;
 		char[][] delimiters= scanner.getLegalLineDelimiters();
-		boolean previousWasEscapeCharacter = false;	
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
-				// Skip the escaped character.
-				scanner.read();
+				// Skip escaped character(s)
+				if (fEscapeContinuesLine) {
+					c= scanner.read();
+					for (int i= 0; i < delimiters.length; i++) {
+						if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true))
+							break;
+					}
+				} else
+					scanner.read();
+					
 			} else if (fEndSequence.length > 0 && c == fEndSequence[0]) {
 				// Check if the specified end sequence has been found.
 				if (sequenceDetected(scanner, fEndSequence, true))
@@ -205,13 +212,10 @@ public class PatternRule implements IPredicateRule {
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
 				for (int i= 0; i < delimiters.length; i++) {
-					if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true)) {
-						if (!fEscapeContinuesLine || !previousWasEscapeCharacter)
-							return true;
-					}
+					if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true))
+						return true;
 				}
 			}
-			previousWasEscapeCharacter = (c == fEscapeCharacter);
 		}
 		if (fBreaksOnEOF) return true;
 		scanner.unread();
