@@ -11,6 +11,7 @@ package org.eclipse.core.internal.jobs;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 /**
  * Maintains a pool of worker threads. Threads are constructed lazily as
@@ -80,7 +81,7 @@ class WorkerPool {
 	 * preference.
 	 */
 	protected void computeMaxThreads() {
-		int speed = Platform.getPlugin(IPlatform.PI_RUNTIME).getPluginPreferences().getInt(IPlatform.PREF_PLATFORM_PERFORMANCE);
+		int speed = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(IPlatform.PI_RUNTIME).getInt(IPlatform.PREF_PLATFORM_PERFORMANCE, 3);
 		switch (speed) {
 			case 1 :
 				MAX_THREADS = DEFAULT_MAX_THREADS / 5;
