@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.ui.tests"
    name="Eclipse UI Tests"
-   version="2.1.0"
+   version="3.0.0"
    provider-name="Eclipse.org"
    class="org.eclipse.ui.tests.TestPlugin">
 
@@ -717,7 +717,7 @@
             label="Test Decorator"
             description="The test decorator"
             tooltip="No tip"
-            state="true"
+            state="false"
             class="org.eclipse.ui.tests.navigator.TestDecoratorContributor"
             id="org.eclipse.ui.tests.adaptable.decorator">
       </decorator>
@@ -727,7 +727,7 @@
             label="Null Decorator"
             description="A null test decorator"
             tooltip="No tip"
-            state="true"
+            state="false"
             class="org.eclipse.ui.tests.adaptable.NullLabelDecorator"
             id="org.eclipse.ui.tests.adaptable.nulldecorator">
       </decorator>
@@ -737,7 +737,7 @@
             label="Lightweight Test Decorator"
             description="A lightweight test decorator"
             tooltip="No tip"
-            state="true"
+            state="false"
             class="org.eclipse.ui.tests.navigator.TestLightweightDecoratorContributor"
             id="org.eclipse.ui.tests.navigator.lightweightdecorator">
          <enablement>
@@ -748,7 +748,7 @@
       </decorator>
       <decorator
             adaptable="true"
-            state="true"
+            state="false"
             id="org.eclipse.ui.tests.navigator.declareddecorator"
             lightweight="true"
             quadrant="TOP_LEFT"

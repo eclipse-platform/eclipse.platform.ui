@@ -13,21 +13,9 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.swt.SWT;
-
 import org.eclipse.jface.preference.PreferenceManager;
-
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.util.ArrayUtil;
-import org.eclipse.ui.tests.util.EmptyPerspective;
-import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.*;
+import org.eclipse.ui.tests.util.*;
 
 /**
  * Tests the IWorkbench interface.
@@ -44,9 +32,8 @@ public class IWorkbenchTest extends UITestCase {
 	public void testGetActiveWorkbenchWindow() throws Throwable {
 		IWorkbenchWindow win1, win2;
 
-		// PR 1GkD5O0 - Fails on linux.
-		String platform = SWT.getPlatform();
-		if (platform.equals("motif"))
+		// PR 41400
+		if (PlatformUtil.onLinux())
 			return;
 		
 		// Test initial window.
@@ -138,9 +125,7 @@ public class IWorkbenchTest extends UITestCase {
 					EmptyPerspective.PERSP_ID,
 					ResourcesPlugin.getWorkspace());
 			assertNotNull(win);
-			// PR 1GkD5O0 - Fails on linux.
-			String platform = SWT.getPlatform();
-			if (!platform.equals("motif")) {
+			if (!PlatformUtil.onLinux()) {
 				assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
 			}
 			assertEquals(
@@ -174,9 +159,7 @@ public class IWorkbenchTest extends UITestCase {
 			win = fWorkbench.openWorkbenchWindow(ResourcesPlugin.getWorkspace());
 			assertNotNull(win);
 
-			// PR 1GkD5O0 - Fails on linux.
-			String platform = SWT.getPlatform();
-			if (!platform.equals("motif")) {
+			if (!PlatformUtil.onLinux()) {
 				assertEquals(win, fWorkbench.getActiveWorkbenchWindow());
 			}
 			String defaultID = fWorkbench.getPerspectiveRegistry().getDefaultPerspective();

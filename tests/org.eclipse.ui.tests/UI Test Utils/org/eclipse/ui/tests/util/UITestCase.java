@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 
 
@@ -44,10 +45,18 @@ public abstract class UITestCase extends TestCase
 	 * Tear down.  May be overridden.
 	 */
 	protected void tearDown() throws Exception {
+		processEvents();
 		closeAllTestWindows();
+		processEvents();
 	}
 
-
+	protected void processEvents() {
+		Display display = Display.getDefault();
+		if (display != null)
+				while (display.readAndDispatch())
+					;
+	}
+	
 	/** 
 	 * Open a test window with the empty perspective.
 	 */

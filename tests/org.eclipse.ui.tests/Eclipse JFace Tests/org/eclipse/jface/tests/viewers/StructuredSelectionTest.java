@@ -67,7 +67,7 @@ public class StructuredSelectionTest extends TestCase {
 	    assertTrue(!sel1.equals(sel2));
 	    assertTrue(!sel2.equals(sel1));
 	}
-	public void testEquals6() {	// equality is independent from order
+	public void testEquals6() {	// different selections
 	    List l1 = new ArrayList();
 		l1.add("element 1");
 		l1.add("element 2");
@@ -82,4 +82,15 @@ public class StructuredSelectionTest extends TestCase {
 		assertTrue(!sel1.equals(sel2));
 		assertTrue(!sel2.equals(sel1));
 	}
+	
+	/**
+	 * Empty selections via different constructors.
+	 * Regression test for bug 40245.
+	 */
+	public void testEquals7() { 
+		StructuredSelection empty1= new StructuredSelection();
+		StructuredSelection empty2= new StructuredSelection(new Object[0]);
+		assertTrue(empty1.equals(empty2));
+		assertTrue(empty2.equals(empty1));
+	} 
 }
