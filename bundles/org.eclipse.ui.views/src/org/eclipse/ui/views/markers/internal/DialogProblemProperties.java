@@ -55,20 +55,20 @@ class DialogProblemProperties extends DialogMarkerProperties {
 		severityLabel.setImage(type.getImage(marker));
 		int severity = marker.getAttribute(IMarker.SEVERITY, -1);
 		if (severity == IMarker.SEVERITY_ERROR) {
-			severityLabel.setText(Messages.format("propertiesDialog.severityLabel",
-				new String[] {Messages.getString("propertiesDialog.errorLabel")}));
+			severityLabel.setText(Messages.format("propertiesDialog.severityLabel", //$NON-NLS-1$
+				new String[] {Messages.getString("propertiesDialog.errorLabel")})); //$NON-NLS-1$
 		}
 		else if (severity == IMarker.SEVERITY_WARNING) {
-			severityLabel.setText(Messages.format("propertiesDialog.severityLabel",
-				new String[] {Messages.getString("propertiesDialog.warningLabel")}));
+			severityLabel.setText(Messages.format("propertiesDialog.severityLabel", //$NON-NLS-1$
+				new String[] {Messages.getString("propertiesDialog.warningLabel")})); //$NON-NLS-1$
 		}
 		else if (severity == IMarker.SEVERITY_INFO) {
-			severityLabel.setText(Messages.format("propertiesDialog.severityLabel",
-				new String[] {Messages.getString("propertiesDialog.infoLabel")}));
+			severityLabel.setText(Messages.format("propertiesDialog.severityLabel", //$NON-NLS-1$
+				new String[] {Messages.getString("propertiesDialog.infoLabel")})); //$NON-NLS-1$
 		}
 		else {
-			severityLabel.setText(Messages.format("propertiesDialog.severityLabel",
-				new String[] {Messages.getString("propertiesDialog.noseverityLabel")}));
+			severityLabel.setText(Messages.format("propertiesDialog.severityLabel", //$NON-NLS-1$
+				new String[] {Messages.getString("propertiesDialog.noseverityLabel")})); //$NON-NLS-1$
 		}
 	}
 

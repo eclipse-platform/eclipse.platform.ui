@@ -31,7 +31,7 @@ public class ActionRevealMarker extends SelectionProviderAction {
 	 * @param text
 	 */
 	public ActionRevealMarker(IWorkbenchPart part, ISelectionProvider provider) {
-		super(provider, ""); //	$NON-NLS-1$
+		super(provider, ""); //$NON-NLS-1$
 		this.part = part;
 	}
 	

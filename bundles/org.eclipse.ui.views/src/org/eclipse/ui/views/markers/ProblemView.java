@@ -15,6 +15,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
@@ -23,9 +27,7 @@ import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.IActionBars;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -171,9 +173,8 @@ public class ProblemView extends MarkerView {
 		return VISIBLE_FIELDS;
 	}
 	
-	protected void initActionBars(IActionBars actionBars) {
-		super.initActionBars(actionBars);
-		IMenuManager menu = actionBars.getMenuManager();
+	protected void initMenu(IMenuManager menu ) {
+		super.initMenu(menu);
 		menu.add(new Separator());
 		menu.add(new ActionShowOnBuild());
 	}

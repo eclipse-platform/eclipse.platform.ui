@@ -173,7 +173,7 @@ public abstract class MarkerView extends TableView {
 	 */
 	protected void initToolBar(IToolBarManager tbm) {
 		tbm.add(deleteAction);
-		tbm.add(openAction);
+		tbm.add(getAction(TableView.FILTERS_ACTION_ID));
 		tbm.update(false);
 	}
 
@@ -526,12 +526,12 @@ public abstract class MarkerView extends TableView {
 		int filteredCount = getRegistry().getItemCount();
 		int totalCount = getRegistry().getRawItemCount();
 		if (filteredCount == totalCount) {
-			status = Messages.format("filter.itemsMessage", new Object[] {new Integer(totalCount)});
+			status = Messages.format("filter.itemsMessage", new Object[] {new Integer(totalCount)}); //$NON-NLS-1$
 		}
 		else {
-			status = Messages.format("filter.matchedMessage", new Object[] {new Integer(filteredCount), new Integer(totalCount)});
+			status = Messages.format("filter.matchedMessage", new Object[] {new Integer(filteredCount), new Integer(totalCount)}); //$NON-NLS-1$
 		}
-		String newTitle = Messages.format("view.title", new String[] {viewName, status});
+		String newTitle = Messages.format("view.title", new String[] {viewName, status}); //$NON-NLS-1$
 		if (!newTitle.equals(currentTitle)) {
 			setTitle(newTitle);
 		}

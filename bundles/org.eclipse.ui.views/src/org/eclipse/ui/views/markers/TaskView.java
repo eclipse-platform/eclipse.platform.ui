@@ -88,7 +88,7 @@ public class TaskView extends MarkerView {
 		IMarker.MESSAGE,
 		"", //$NON-NLS-1$
 		"", //$NON-NLS-1$
-		""
+		"" //$NON-NLS-1$
 	}; 
 	
 	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.task"; //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class TaskView extends MarkerView {
 					return new Integer(IMarker.PRIORITY_HIGH - marker.getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL));
 				
 				if (IMarker.MESSAGE.equals(property))
-					return marker.getAttribute(IMarker.MESSAGE, "");
+					return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 			}
 
 			return null;				

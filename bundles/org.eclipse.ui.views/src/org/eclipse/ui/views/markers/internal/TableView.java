@@ -12,6 +12,8 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -52,13 +54,15 @@ public abstract class TableView extends ViewPart {
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 
+	public static final String SORT_ACTION_ID = "sort"; //$NON-NLS-1$
+	public static final String FILTERS_ACTION_ID = "filters"; //$NON-NLS-1$
+	
 	private TableViewer viewer;
 	private Clipboard clipboard;
 	private IMemento memento;
 	protected ColumnLayoutData[] columnLayouts;
 	
-	private IAction sortAction;
-	private IAction filtersAction;
+	private Map actions = new HashMap();
 
 	private TableSorter sorter;
 
@@ -103,7 +107,6 @@ public abstract class TableView extends ViewPart {
 		Menu menu = mgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(mgr, viewer);
-		initToolBar(getViewSite().getActionBars().getToolBarManager());
 		initActionBars(getViewSite().getActionBars());
 		registerGlobalActions(getViewSite().getActionBars());
 		
@@ -140,32 +143,40 @@ public abstract class TableView extends ViewPart {
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
 		table.setHeaderVisible(true);
-		final IField[] PROPERTIES = getVisibleFields();
+		final IField[] fields = getVisibleFields();
 		ColumnLayoutData[] columnWidths = columnLayouts;
 		if (columnWidths == null) {
 			columnWidths = getDefaultColumnLayouts();
 		}
-		for (int i = 0; i < PROPERTIES.length; i++) {
+		for (int i = 0; i < fields.length; i++) {
 			if (columnWidths == null || i >= columnWidths.length || columnWidths[i] == null) {
-				layout.addColumnData(new ColumnPixelData(504 / PROPERTIES.length, true));
+				layout.addColumnData(new ColumnPixelData(504 / fields.length, true));
 			}
 			else {
 				layout.addColumnData(columnWidths[i]);
 			}
 			TableColumn tc = new TableColumn(table, SWT.NONE,i);
-			tc.setText(PROPERTIES[i].getColumnHeaderText());
-			tc.setImage(PROPERTIES[i].getColumnHeaderImage());
+			tc.setText(fields[i].getColumnHeaderText());
+			tc.setImage(fields[i].getColumnHeaderImage());
 			tc.addSelectionListener(headerListener);
 		}
 	}
 	
 	protected void createActions() {
 		if (getSortDialog() != null) {
-			sortAction = new TableSortAction(this, getSortDialog());
+			putAction(SORT_ACTION_ID, new TableSortAction(this, getSortDialog()));
 		}
 		if (getFiltersDialog() != null) {
-			filtersAction = new FiltersAction(this, getFiltersDialog());
+			putAction(FILTERS_ACTION_ID, new FiltersAction(this, getFiltersDialog()));
 		}
+	}
+	
+	protected IAction getAction(String id) {
+		return (IAction) actions.get(id);
+	}
+	
+	protected void putAction(String id, IAction action) {
+		actions.put(id, action);
 	}
 	
 	protected MenuManager initContextMenu() {
@@ -183,13 +194,19 @@ public abstract class TableView extends ViewPart {
 	protected abstract void initToolBar(IToolBarManager tbm);
 	
 	protected void initActionBars(IActionBars actionBars) {
-		IMenuManager menu = actionBars.getMenuManager();
+		initMenu(actionBars.getMenuManager());
+		initToolBar(actionBars.getToolBarManager());
+	}
+	
+	protected void initMenu(IMenuManager menu) {
+		IAction sortAction = getAction(SORT_ACTION_ID);
 		if (sortAction != null)
 			menu.add(sortAction);
+		IAction filtersAction = getAction(FILTERS_ACTION_ID);
 		if (filtersAction != null)
 			menu.add(filtersAction);
 	}
-	
+
 	protected abstract void registerGlobalActions(IActionBars actionBars);
 	
 	protected abstract void fillContextMenu(IMenuManager manager);
@@ -205,7 +222,7 @@ public abstract class TableView extends ViewPart {
 	}
 	
 	protected abstract IFilter getFilter();
-	
+
 	protected TableSorter getSorter() {
 		if (sorter == null) {
 			int[] priorities = new int[getFields().length];
@@ -339,7 +356,11 @@ public abstract class TableView extends ViewPart {
 		columnLayouts = new ColumnLayoutData[getFields().length];
 		for (int i = 0; i < columnLayouts.length; i++) {
 			Integer width = memento.getInteger(TAG_COLUMN_WIDTH + i);
-			if (width != null) {
+			if (width == null) {
+				columnLayouts = null;
+				break;
+			}
+			else {
 				columnLayouts[i] = new ColumnPixelData(width.intValue(), true);
 			}
 		}

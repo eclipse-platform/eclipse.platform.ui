@@ -33,7 +33,7 @@ public class ImageFactory {
 	private static ImageDescriptor create(String path) {
 		try {
 			URL url = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-			url = new URL(url, "icons/full/" + path);
+			url = new URL(url, "icons/full/" + path); //$NON-NLS-1$
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException eMalformedURL) {
 			return null;

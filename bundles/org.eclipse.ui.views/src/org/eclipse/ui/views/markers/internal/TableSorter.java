@@ -34,11 +34,11 @@ public class TableSorter extends ViewerSorter implements Comparator {
 	protected int[] defaultPriorities;
 	protected int[] defaultDirections;
 	
-	private final String TAG_DIALOG_SECTION = "sorter"; //$NON_NLS-1$
-	private final String TAG_PRIORITY = "priority"; //$NON_NLS-1$
-	private final String TAG_DIRECTION = "direction"; //$NON_NLS-1$
-	private final String TAG_DEFAULT_PRIORITY = "defaultPriority"; //$NON_NLS-1$
-	private final String TAG_DEFAULT_DIRECTION = "defaultDirection"; //$NON_NLS-1$
+	private final String TAG_DIALOG_SECTION = "sorter"; //$NON-NLS-1$
+	private final String TAG_PRIORITY = "priority"; //$NON-NLS-1$ 
+	private final String TAG_DIRECTION = "direction"; //$NON-NLS-1$
+	private final String TAG_DEFAULT_PRIORITY = "defaultPriority"; //$NON-NLS-1$
+	private final String TAG_DEFAULT_DIRECTION = "defaultDirection"; //$NON-NLS-1$
 	
 	public TableSorter(TableSorter other) {
 		this(other.getFields(), other.getDefaultPriorities(), other.getDefaultDirections());
