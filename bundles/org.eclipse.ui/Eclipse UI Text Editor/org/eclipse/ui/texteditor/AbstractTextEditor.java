@@ -439,9 +439,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (fSourceViewer instanceof ITextViewerExtension) {
 					ITextViewerExtension e= (ITextViewerExtension) fSourceViewer;
 					e.removeVerifyKeyListener(this);
-				} else {
+				} else if (fSourceViewer != null) {
 					StyledText text= fSourceViewer.getTextWidget();
-					text.removeVerifyKeyListener(fActivationCodeTrigger);
+					if (text != null && !text.isDisposed())
+						text.removeVerifyKeyListener(fActivationCodeTrigger);
 				}
 				
 				fIsInstalled= false;
@@ -1160,10 +1161,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				public void keyPressed(KeyEvent e) {
 					if (e.keyCode != 0) {
 						StyledText styledText= (StyledText) e.widget;
-						int action = styledText.getKeyBinding(e.keyCode | e.stateMask);
-						if (ST.TOGGLE_OVERWRITE == action) {
-							fOverwriting= !fOverwriting;
-							handleInsertModeChanged();
+						if (!styledText.isDisposed()) {
+							int action = styledText.getKeyBinding(e.keyCode | e.stateMask);
+							if (ST.TOGGLE_OVERWRITE == action) {
+								fOverwriting= !fOverwriting;
+								handleInsertModeChanged();
+							}
 						}
 					}
 				}
@@ -1656,6 +1659,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fPropertyChangeListener= null;
 		}
 		
+		if (fActivationCodeTrigger != null) {
+			fActivationCodeTrigger.uninstall();
+			fActivationCodeTrigger= null;
+		}
+		
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider != null) {
 			
@@ -1673,10 +1681,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		if (fSourceViewer != null) {
+			
 			if (fTextListener != null) {
 				fSourceViewer.removeTextListener(fTextListener);
 				fTextListener= null;
 			}
+			
 			fSourceViewer= null;
 		}
 		
@@ -1716,7 +1726,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		if (fActivationCodes != null) {
-			fActivationCodeTrigger= null;
 			fActivationCodes.clear();
 			fActivationCodes= null;
 		}

@@ -426,14 +426,18 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		 * Installs this manager.
 		 */
 		private void install() {
-			getTextWidget().addVerifyKeyListener(this);
+			StyledText textWidget= getTextWidget();
+			if (textWidget != null && !textWidget.isDisposed())
+				textWidget.addVerifyKeyListener(this);
 		}
 		
 		/**
 		 * Uninstalls this manager.
 		 */
 		private void uninstall() {
-			getTextWidget().removeVerifyKeyListener(this);
+			StyledText textWidget= getTextWidget();
+			if (textWidget != null && !textWidget.isDisposed())
+				textWidget.removeVerifyKeyListener(this);
 		}
 	};
 	
@@ -3096,10 +3100,18 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	protected void enabledRedrawing() {
 		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
 			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
-			int topIndex= getTopIndex();			
-			extension.resumeForwardingDocumentChanges();
-			if (topIndex > -1)
-				setTopIndex(topIndex);
+			StyledText textWidget= getTextWidget();
+			if (textWidget != null && !textWidget.isDisposed()) {
+				int topPixel= textWidget.getTopPixel();	
+				extension.resumeForwardingDocumentChanges();
+				if (topPixel > -1) {
+					try {
+						textWidget.setTopPixel(topPixel);
+					} catch (IllegalArgumentException x) {
+						// changes don't allow for the previous top pixel
+					}
+				}
+			}
 		}
 		
 		setSelectedRange(fDocumentSelection.x, fDocumentSelection.y);
