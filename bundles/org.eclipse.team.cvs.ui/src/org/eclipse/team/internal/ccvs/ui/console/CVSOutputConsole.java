@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
@@ -57,10 +56,6 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	 * and <code>dispose()</code>.
 	 */
 	class MyLifecycle implements org.eclipse.ui.console.IConsoleListener {
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
-		 */
 		public void consolesAdded(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
@@ -70,10 +65,6 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 			}
 
 		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
-		 */
 		public void consolesRemoved(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
 				IConsole console = consoles[i];
@@ -85,6 +76,10 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		}
 	}
 	
+	/**
+	 * Constructor initializes preferences and colors but doesn't create the console
+	 * page yet.
+	 */
 	public CVSOutputConsole() {
 		super("CVS", CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE)); //$NON-NLS-1$
 		// setup console showing preferences
@@ -132,16 +127,10 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private void dump() {
 		synchronized(document) {
 			initialized = true;
-			int lines = document.getNumberOfLines();
-			for (int i = 0; i < lines; i++) {
-				try {
-					int offset = document.getLineOffset(i);
-					String line = document.get(offset, document.getLineLength(i) - 1);
-					int type = document.getLineType(i);
-					appendLine(type, line);
-				} catch (BadLocationException e) {
-					continue;
-				}
+			ConsoleDocument.ConsoleLine[] lines = document.getLines();
+			for (int i = 0; i < lines.length; i++) {
+				ConsoleDocument.ConsoleLine line = lines[i];
+				appendLine(line.type, line.line);
 			}
 			document.clear();
 		}
