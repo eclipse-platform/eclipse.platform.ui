@@ -62,7 +62,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals("casesensitive - (true | false | on | off | yes | no)", proposals[0].getDisplayString());
 
         proposals = processor.getAttributeProposals("move", "");
-        assertEquals(16, proposals.length);
+        assertEquals(17, proposals.length);
         ICompletionProposal proposal = proposals[0];
         String displayString = proposal.getDisplayString();
         assertTrue(displayString.equals("id") 
@@ -80,7 +80,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
         || displayString.equals("verbose - (true | false | on | off | yes | no)")
         || displayString.equals("encoding")
         || displayString.equals("outputencoding")
-        || displayString.equals("enablemultiplemapping - (true | false | on | off | yes | no)"));
+        || displayString.equals("enablemultiplemapping - (true | false | on | off | yes | no)")
+		|| displayString.equals("granularity"));
         
         proposals = processor.getAttributeProposals("move", "to");
         assertEquals(2, proposals.length);
@@ -339,8 +340,9 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
-    	assertTrue(proposals.length == 4);
+    	assertTrue(proposals.length == 5);
     	assertContains("description", proposals);
+    	assertContains("implicit - (true | false | on | off | yes | no)", proposals);
     	assertContains("name", proposals);
 	}
 	
