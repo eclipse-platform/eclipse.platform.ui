@@ -836,25 +836,30 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			IProgressService progressService = workbench.getProgressService();
 			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
-					for (int i = 0; i < builds.length; i++) {
+					int buildsCompleted = 0;
+					while (buildsCompleted < builds.length && !monitor.isCanceled()) {
 						try {
-							monitor.subTask(DebugUIMessages.getString("DebugUITools.6") + builds[i].getName()); //$NON-NLS-1$
-							builds[i].join();
+							Thread.sleep(100);
+							for (int i = 0; i < builds.length; i++) {
+								if (builds[i].getState() == Job.NONE) {
+									buildsCompleted++;
+								}
+							}
 						} catch (InterruptedException e) {
 						}
 					}
-
-					try {
-						buildAndLaunch(configuration, mode, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
+					if (!monitor.isCanceled()) {
+						try {
+							buildAndLaunch(configuration, mode, monitor);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
+						}
 					}
 				}		
 			};			
 			try {
 				progressService.busyCursorWhile(runnable);
 			} catch (InterruptedException e) {
-				//cancelled
 			} catch (InvocationTargetException e2) {
 				handleInvocationTargetException(e2, configuration, mode);
 			}
