@@ -7,15 +7,14 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.actions.OpenNewWindowMenu;
 import org.eclipse.ui.actions.OpenNewPageMenu;
 import org.eclipse.jface.action.*;
@@ -56,6 +55,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private boolean updateDisabled = true;
 	private boolean closing = false;
 	private boolean shellActivated = false;
+	private String workspaceLocation;
 	
 	final private String TAG_INPUT = "input";//$NON-NLS-1$
 	final private String TAG_LAYOUT = "layout";//$NON-NLS-1$
@@ -213,6 +213,24 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	actionPresentation = new ActionPresentation(this);
 	builder = new WorkbenchActionBuilder();
 	builder.buildActions(this);
+	
+	// include the workspace location in the title 
+	// if it is NOT the default location and the command line
+	// option -showlocation is specified
+	String[] args = Platform.getCommandLineArgs();
+	boolean show = false;
+	String location = null;
+	for (int i = 0; i < args.length; i++) {
+		if ("-showlocation".equals(args[i])) {
+			show = true;
+		} else if ("-data".equals(args[i])) {
+			location = Platform.getLocation().toOSString();
+		}
+		if (show && location != null) {
+			workspaceLocation = location;
+			break;
+		}
+	}
 }
 /*
  * Adds an listener to the part service.
@@ -1100,8 +1118,11 @@ public void updateActionSets() {
 public void updateTitle() {
 	if(updateDisabled)
 		return;
-		
+
 	String title = workbench.getProductInfo().getName();
+	if (workspaceLocation != null)
+		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {title, workspaceLocation}); //$NON-NLS-1$
+	
 	WorkbenchPage currentPage = getActiveWorkbenchPage();
 	if (currentPage != null) {
 		IPerspectiveDescriptor persp = currentPage.getPerspective();
