@@ -29,6 +29,9 @@ public abstract class FeatureContentProvider
 	private IFeature feature;
 	private File tmpDir; // local work area for each provider
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$	
+	
+	// lock
+	private final static Object lock = new Object();
 
 	/**
 	 * Feature content provider constructor
@@ -88,19 +91,17 @@ public abstract class FeatureContentProvider
 		// check to see if we already have a local file for this reference
 		String key = ref.toString();
 		
-		// need to synch on the local file as another thread my have created it but
+		// need to synch as another thread my have created the file but
 		// is still copying into it
-		File localFile = Utilities.lookupLocalFile(key);
-		if (localFile != null){
-			synchronized(localFile){
+		File localFile=null;
+		synchronized(lock){
+			localFile = Utilities.lookupLocalFile(key);
+			if (localFile != null)
 				return ref.createContentReference(ref.getIdentifier(), localFile);
-			}
-		}
-	
-		// 
-		// download the referenced file into local temporary area
-		localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/);		
-		synchronized(localFile){
+		
+			// 
+			// download the referenced file into local temporary area
+			localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/);		
 			InputStream is = null;
 			OutputStream os = null;
 			try {
@@ -132,7 +133,8 @@ public abstract class FeatureContentProvider
 				if (monitor != null)
 					monitor.restoreState();
 			}
-		}
+		}// end lock
+	
 		return ref.createContentReference(ref.getIdentifier(), localFile);
 	}
 
