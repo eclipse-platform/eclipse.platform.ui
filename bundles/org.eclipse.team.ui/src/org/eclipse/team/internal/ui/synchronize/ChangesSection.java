@@ -339,6 +339,6 @@ public class ChangesSection extends Composite {
 	}
 	
 	protected Color getBackgroundColor() {
-		return getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+		return getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 }
