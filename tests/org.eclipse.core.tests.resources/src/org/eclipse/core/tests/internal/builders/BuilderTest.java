@@ -371,6 +371,72 @@ public void testBuildOrder() {
 	}
 }
 /**
+ * Tests the method IncrementProjectBuilder.forgetLastBuiltState
+ */
+public void testForgetLastBuiltState() {
+	// Create some resource handles
+	IProject project = getWorkspace().getRoot().getProject("PROJECT");
+	
+	try {
+		// Turn auto-building off
+		setAutoBuilding(false);
+		// Create and open a project
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+
+	// Create and set a build spec for the project
+	try {
+		IProjectDescription desc = project.getDescription();
+		ICommand command = desc.newCommand();
+		command.setBuilderName(SortBuilder.BUILDER_NAME);
+		desc.setBuildSpec(new ICommand[] {command});
+		project.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("2.0", e);
+	}
+
+	// Set up a plug-in lifecycle verifier for testing purposes
+	SortBuilder verifier = null;
+
+	//do an initial build
+	try {
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, SortBuilder.BUILDER_NAME, null, getMonitor());
+		verifier = SortBuilder.getInstance();
+	} catch (CoreException e) {
+		fail("3.2", e);
+	}
+	
+	//forget last built state
+	verifier.forgetLastBuiltState();
+
+	// Now do another incremental build.  Delta should be null
+	try {
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, SortBuilder.BUILDER_NAME, null, getMonitor());
+		assertTrue("4.0", verifier.wasDeltaNull());
+	} catch (CoreException e) {
+		fail("4.99", e);
+	}
+
+	// Do another incremental build.  Delta should not be null
+	try {
+		project.touch(getMonitor());
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, SortBuilder.BUILDER_NAME, null, getMonitor());
+		assertTrue("5.0", !verifier.wasDeltaNull());
+	} catch (CoreException e) {
+		fail("5.99", e);
+	}
+
+	// Delete the project
+	try {
+		project.delete(false, getMonitor());
+	} catch (CoreException e) {
+		fail("6.99", e);
+	}
+}
+/**
  * Tests the lifecycle of a builder.
  */
 public void testLifecycleEvents() throws CoreException {
