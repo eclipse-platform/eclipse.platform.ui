@@ -97,16 +97,21 @@ public class ContextHelpDialog implements Runnable {
 		}
 	}
 
+	/**
+	 * Constructor:
+	 * @param context an array of String or an array of IContext
+	 * @param x the x mouse location in the current display
+	 * @param y the y mouse location in the current display
+	 */
 	ContextHelpDialog(Object[] contexts, int x, int y) {
 		this.contexts = contexts;
 		this.x = x;
 		this.y = y;
 
-		backgroundColour =
-			Display.getCurrent().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		foregroundColour =
-			Display.getCurrent().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		linkColour = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
+		Display display = Display.getCurrent();
+		backgroundColour = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		foregroundColour = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		linkColour = display.getSystemColor(SWT.COLOR_BLUE);
 
 		if (imgRegistry == null) {
 			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
@@ -115,7 +120,7 @@ public class ContextHelpDialog implements Runnable {
 				ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("moreImage")));
 		}
 
-		shell = new Shell(Display.getCurrent().getActiveShell(), SWT.NONE);
+		shell = new Shell(display.getActiveShell(), SWT.NONE);
 
 		if (Logger.DEBUG)
 			Logger.logDebugMessage(
@@ -237,7 +242,8 @@ public class ContextHelpDialog implements Runnable {
 		// create the dialog area and button bar
 		createInfoArea(contents);
 		createLinksArea(contents);
-		createMoreButton(contents);
+		if (contexts != null && contexts.length > 1)
+			createMoreButton(contents);
 
 		// if any errors or parsing errors have occurred, display them in a pop-up
 		Util.displayStatus();
@@ -260,20 +266,17 @@ public class ContextHelpDialog implements Runnable {
 		composite.setLayoutData(data);
 		
 		// Create the text field.    
-		InfopopText text =
-			new InfopopText(composite, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
+		String styledText = cmgr.getDescription(contexts);
+		if (styledText == null) 
+			// no description found in context objects.
+			styledText = WorkbenchResources.getString("WW002");
+		StyledText text = new StyledText(composite, SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
+		text.setCaret(null);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
-
-		String styledText = cmgr.getDescription(contexts);
-
-		if (styledText != null) {
-			text.setText(styledText);
-		} else {
-			// no description found in context objects.
-			String msg = WorkbenchResources.getString("WW002");
-			text.setText(msg);
-		}
+		StyledLineWrapper content = new StyledLineWrapper(styledText);
+		text.setContent(content);
+		text.setStyleRanges(content.getStyles());
 
 		data = new GridData();
 		data.horizontalAlignment = data.FILL;
@@ -281,7 +284,9 @@ public class ContextHelpDialog implements Runnable {
 		data.verticalAlignment = data.FILL;
 		data.grabExcessVerticalSpace = true;
 		text.setLayoutData(data);
-
+			
+		text.pack();
+		
 		return composite;
 	}
 	
