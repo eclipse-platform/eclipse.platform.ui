@@ -1,18 +1,36 @@
-<html><head><title>Persistance and deletion</title>
+<html><head><title>Performing a Merge</title>
 <LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
 <meta NAME="keywords" content="">
 <meta NAME="since" content="">
-</head><h2>Persistance and deletion</h2>
-<p>Since: <br>
-Last Modified: $Date: 2004/01/13 18:46:26 $</p><body>
+</head><h2>Performing a Merge</h2>
+<p>Since: M8<br>
+Last Modified: $Date: 2004/02/25 20:34:42 $</p><body>
 
-<ul>
-<li>Select a project and perform a merge.
+<h3>Scenario 1: Merge in Dialog</h3>
+<ol>
+<li>Select a project and perform a Team>Merge.
+<li>Choose the start and end tags in the wizard and finish.
+<li>The merge will run in the background.
+<li>Upon completion, the user is presented with a dialog of the incoming changes.
+<li>Update the incoming changes and ensure they worked.
+</ol>
+
+<p>After updating, reperform the same merge. A no-changes dialog should be 
+presented since the local contents match the end-poimt.
+
+<h3>Scenario 1: Merge in Synchronize view</h3>
+
+<ol>
+<li>Perform the previous scenario except for the last step
+<li>Choose to remember the merge 
 <li>Ensure that the merge appears in the Synchronize View
 <li>Exit and restart eclipse
 <li>The merge should still exist in the Synchronize View
+<li>Update to the incoming changes.
+<li>Optionally release new changes to the merge endpoint and refresh the merge. 
+The new updates should appear.
 <li>Delete the merge from the synchronize view using the remove toolbar button
 <li>The merge subscriber should be removed from the view.
-</ul>
+</ol>
 
 </body></html>

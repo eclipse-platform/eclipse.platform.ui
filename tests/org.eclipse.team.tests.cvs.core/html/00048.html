@@ -1,36 +1,41 @@
-<html><head><title>Refreshing with Remote</title>
+<html><head><title>Performing a Synchronize</title>
 <LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
 <meta NAME="keywords" content="">
 <meta NAME="since" content="">
-</head><h2>Refreshing with Remote</h2>
+</head><h2>Performing a Synchronize</h2>
 <p>Since: M8<br>
-Last Modified: $Date: 2004/03/05 17:12:22 $</p><body>
+Last Modified: $Date: 2004/03/09 20:51:17 $</p><body>
 
 
 <p>
-Synchronizing means ???
+Synchronizing means to compare your local workspace contents with the contents 
+in another location with the goal that the two locations should contain the
+same contents at some point.
 </p>
 
-<h3>After a Synchronize has completed</h3>
-<p>Generally the sync view is shown AFTER the synchronize operation has completed. This way we don't interrupt the user's context. Why do
-people like to be prompted after? For some the synchronize operation can be very long, and they want to be told when they can view the 
-results.</p>
- <ul>
- <li>1st time and no changes, then simply prompt that there are no changes.
- <li>1st time and there are changes in the workspace, then prompt asking about perspective switch next enumerate the types of changes in the workspace, and open sync view.
- <li>other times and no changes, then simply prompt.
- <li>other times and changes, then prompt enumerating the types of changes in the workspace, and open sync view.
- <li>other times and changes and option to not prompt, open sync view.
- </ul>
-
+<h3>Performing a Synchronize operation</h3>
 <p>
-There are a couple of reasons someone may want to synchronize with the remote. There are currently
-two ways of running the refresh operation:
+There are a few ways of launching a synchronize operation. They all open the same dialog but the initial
+selection is affected by where the operation is launched. Here is the list of ways to start a 
+synchronize along with the expected initial selection.
 <ul>
-<li>Directly from the synchronize view
-<li>From Team > Synchronize with Repository
+<li><b>Using the global synchronize action (via toolbar or keybinding)</b>: The 
+selection should be obtained from the active view. If no view is active, all
+prjects should be selected.
+<li><b>Using the Synchronize button in toolbar of the Synchronize view</b>: 
+All projects should be selected.
+<li><b>Selecting Synchronize from the context menu of resources in the synchronize view</b>:
+The selection should match what was selected when the menu was selected.
+<li><b>Selecting Team > Synchronize with Repository from the context menu of any resource based view</b>:
+The selection should match what was selected when the menu was selected.
 </ul>
 </p>
+<p>
+Once launched, a synchronize will run in the background. Currently, the user is prompted to 
+switch perspectives when the synchronize is launched. When a synchronize completes, the user is prompted either with a dialog stating there is no changes
+or one that contains a details area that shows the incoming changes. The user
+is given the option to supress the post-synchronize dialog.
+
 <h3>Notice a file is out-of-sync in another view (e.g. packages explorer, types) and want to see the changes</h3>
 <p>In case you can select a file, it will be refreshed with the server, and if changes are found the compare editor is opened
 that will allow browsing the changes. If no changes are found, you will be prompted.</p>

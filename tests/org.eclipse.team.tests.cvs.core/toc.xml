@@ -23,7 +23,7 @@
                 </topic>
                 <topic label="Sync View modes and working sets" href="html/00016.html">
                 </topic>
-                <topic label="Refreshing with Remote" href="html/00048.html">
+                <topic label="Performing a Synchronize" href="html/00048.html">
                 </topic>
                 <topic label="Decorations" href="html/00049.html">
                 </topic>
@@ -31,7 +31,7 @@
             <topic label="Merging" href="html/00012.html">
                 <topic label="Sync View operations and selection" href="html/00013.html">
                 </topic>
-                <topic label="Persistance and deletion" href="html/00022.html">
+                <topic label="Performing a Merge" href="html/00022.html">
                 </topic>
             </topic>
             <topic label="Resource History" href="html/00014.html">
