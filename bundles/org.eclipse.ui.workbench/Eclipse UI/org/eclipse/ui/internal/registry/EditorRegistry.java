@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
 import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
@@ -75,10 +74,13 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
 	
 	private final static Object [] EMPTY = new Object[0];
 	
-	class RelatedRegistry implements IContentTypeManager.IRelatedRegistry {
+	class RelatedRegistry {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.content.IContentTypeManager.IRelatedRegistry#getRelatedObjects(org.eclipse.core.runtime.content.IContentType)
+		/**
+         * Return the objects related to the type.
+         * 
+         * @param type
+         * @return the objects related to the type
 		 */
 		public Object[] getRelatedObjects(IContentType type) {			
 			Object[] relatedObjects = (Object[]) contentTypeToEditorMappings.get(type);
@@ -87,8 +89,10 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
 			return relatedObjects;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.content.IContentTypeManager.IRelatedRegistry#getRelatedObjects(java.lang.String)
+		/**
+         * Return the objects related to the filename
+         * @param fileName
+         * @return the objects related to the filename
 		 */
 		public Object[] getRelatedObjects(String fileName) {
 			return getEditors(fileName);
@@ -1252,8 +1256,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
 	private IEditorDescriptor getEditorForContentType(String filename,
 			IContentType contentType) {
 		IEditorDescriptor desc = null;
-		Object[] contentTypeResults = Platform.getContentTypeManager()
-				.findRelatedObjects(contentType, filename, relatedRegistry);
+		Object[] contentTypeResults = findRelatedObjects(contentType, filename, relatedRegistry);
 		if (contentTypeResults != null && contentTypeResults.length > 0) {
 			desc = (IEditorDescriptor) contentTypeResults[0];
 		}
@@ -1290,7 +1293,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
 
         ArrayList list = new ArrayList(editors.length);
 		if (contentType != null) {
-			Object [] editorsByForContentType = Platform.getContentTypeManager().findRelatedObjects(contentType, fileName, relatedRegistry);
+			Object [] editorsByForContentType = findRelatedObjects(contentType, fileName, relatedRegistry);
 			if (editorsByForContentType != null && editorsByForContentType.length > 0) 
 				list.addAll(Arrays.asList(editorsByForContentType));
 		}
@@ -1366,4 +1369,40 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         return anImage;
 
 	}
+    
+    /**
+     * Find objects related to the content type.
+     * 
+     * This method is temporary and exists only to back us off of the
+     * soon-to-be-removed IContentTypeManager.IRelatedRegistry API.
+     * 
+     * @param type
+     * @param fileName
+     * @param registry
+     * @return the related objects
+     */
+    private Object[] findRelatedObjects(IContentType type, String fileName, RelatedRegistry registry) {
+        List allRelated = new ArrayList();
+        // first add any objects directly related to the content type
+        Object[] related = registry.getRelatedObjects(type);
+        for (int i = 0; i < related.length; i++)
+            allRelated.add(related[i]);
+        // backward compatibility requested - add any objects related to the file name
+        if (fileName != null) {
+            related = registry.getRelatedObjects(fileName);
+            for (int i = 0; i < related.length; i++)
+                if (!allRelated.contains(related[i]))
+                    // we don't want to return duplicates
+                    allRelated.add(related[i]);
+        }
+        // now add any indirectly related objects, walking up the content type hierarchy 
+        while ((type = type.getBaseType()) != null) {
+            related = registry.getRelatedObjects(type);
+            for (int i = 0; i < related.length; i++)
+                if (!allRelated.contains(related[i]))
+                    // we don't want to return duplicates                   
+                    allRelated.add(related[i]);
+        }
+        return allRelated.toArray();
+    }
 }
