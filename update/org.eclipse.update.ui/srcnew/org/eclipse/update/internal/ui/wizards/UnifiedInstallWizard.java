@@ -53,6 +53,11 @@ public class UnifiedInstallWizard
 		return installCount > 0;
 	}
 
+	public boolean performCancel() {
+		UpdateManager.getOperationsManager().removeUpdateModelChangedListener(this);
+		return super.performCancel();
+	}
+	
 	/**
 	 * @see Wizard#performFinish()
 	 */
@@ -122,6 +127,9 @@ public class UnifiedInstallWizard
 			return false;
 		} catch (InterruptedException e) {
 			return false;
+		}
+		finally {
+			UpdateManager.getOperationsManager().removeUpdateModelChangedListener(this);
 		}
 		return true;
 	}
