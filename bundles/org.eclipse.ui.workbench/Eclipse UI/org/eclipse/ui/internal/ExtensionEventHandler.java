@@ -65,7 +65,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 	private static final String TAG_PART="part";//$NON-NLS-1$
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String TAG_PROVIDER = "imageprovider";//$NON-NLS-1$
-	private static final String TAG_ACTION_SET_PART_ASSOCIATION ="actionSetPartAssociation";
+	private static final String TAG_ACTION_SET_PART_ASSOCIATION ="actionSetPartAssociation"; //$NON-NLS-1$
 
 	IWorkbench workbench;
 	
@@ -117,13 +117,14 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			ext = extDelta.getExtension();
 			asyncAppear(display, extPt, ext);
 		}
-		iter = revokeList.iterator();
-		while(iter.hasNext()) {
-			extDelta = (IExtensionDelta) iter.next();
-			extPt = extDelta.getExtensionPoint();
-			ext = extDelta.getExtension();
-			asyncRevoke(display, extPt, ext);
-		}	
+		// Suspend support for removing a plug-in until this is more stable
+//		iter = revokeList.iterator();
+//		while(iter.hasNext()) {
+//			extDelta = (IExtensionDelta) iter.next();
+//			extPt = extDelta.getExtensionPoint();
+//			ext = extDelta.getExtension();
+//			asyncRevoke(display, extPt, ext);
+//		}	
 	}
 	private void asyncAppear(Display display, final IExtensionPoint extpt, final IExtension ext) {
 		Runnable run = new Runnable() {
@@ -340,7 +341,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		IContributionItem[] items = menuManager.getItems();
 		menuManager = null;
 		for(int i=0; i<items.length; i++)
-			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("&Window")) {
+			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("&Window")) { //$NON-NLS-1$
 				menuManager = (MenuManager)items[i];
 				break;
 			}
@@ -349,7 +350,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		items = menuManager.getItems();
 		menuManager = null;
 		for(int i=0; i<items.length; i++)
-			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("Show &View")) {
+			if (items[i] instanceof MenuManager && ((MenuManager)items[i]).getMenuText().equals("Show &View")) { //$NON-NLS-1$
 				menuManager = (MenuManager)items[i];
 				break;
 			}
