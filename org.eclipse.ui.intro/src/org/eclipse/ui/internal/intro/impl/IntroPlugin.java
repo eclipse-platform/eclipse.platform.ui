@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.plugin.*;
-import org.osgi.framework.*;   
+import org.osgi.framework.*;
 
 /**
  * Intro main plugin.
