@@ -64,8 +64,8 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.search_0005fresults</servlet-name>
-		<servlet-class>jsp.search_0005fresults</servlet-class>
+		<servlet-name>jsp.search_results</servlet-name>
+		<servlet-class>jsp.search_results</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -129,8 +129,8 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>jsp.ns4.search_0005fresults</servlet-name>
-		<servlet-class>jsp.ns4.search_0005fresults</servlet-class>
+		<servlet-name>jsp.ns4.search_results</servlet-name>
+		<servlet-class>jsp.ns4.search_results</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -228,7 +228,7 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.search_0005fresults</servlet-name>
+		<servlet-name>jsp.search_results</servlet-name>
 		<url-pattern>/search_results.jsp</url-pattern>
 	</servlet-mapping>
 
@@ -293,7 +293,7 @@
 	</servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>jsp.ns4.search_0005fresults</servlet-name>
+		<servlet-name>jsp.ns4.search_results</servlet-name>
 		<url-pattern>/ns4/search_results.jsp</url-pattern>
 	</servlet-mapping>
 
