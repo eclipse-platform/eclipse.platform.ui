@@ -231,17 +231,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 	}
 
 	public String getAttribute(String name) {
-		ConfigurationProperty[] list = getProperties();
-		if (list == null)
-			return null;
-
-		ConfigurationProperty found = null;
-		for (int i = 0; i < list.length; i++)
-			if (name.equals(list[i].getName())) {
-				found = list[i];
-				break;
-			}
-		return found == null ? null : found.getValue();
+		return getAttributeAsIs(name);
 	}
 
 	public String getAttributeAsIs(String name) {
