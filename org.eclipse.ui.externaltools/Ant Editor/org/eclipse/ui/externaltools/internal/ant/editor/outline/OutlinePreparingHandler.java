@@ -98,6 +98,11 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     private boolean isTopLevelRootExternal;
 
     /**
+     * Whether the current callbacks are from elements in the DTD.
+     */
+    private boolean isInDTD;
+
+    /**
      * Creates an instance.
      */
     public OutlinePreparingHandler(File mainFileContainer) throws ParserConfigurationException {
@@ -534,12 +539,16 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
 	 */
 	public void endDTD() throws SAXException {
+		isInDTD= false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
 	 */
 	public void endEntity(String name) throws SAXException {
+		if (isInDTD) {
+			return;
+		}
 		XmlElement element= getLastOpenElement();
 		boolean isNestedRootExternal= element == null || element.getParentNode() == null || element.getParentNode().isExternal();
 		if (!isNestedRootExternal) {
@@ -561,6 +570,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void startDTD(String name, String publicId, String systemId) throws SAXException {
+		isInDTD= true;
 	}
 
 	/* (non-Javadoc)
