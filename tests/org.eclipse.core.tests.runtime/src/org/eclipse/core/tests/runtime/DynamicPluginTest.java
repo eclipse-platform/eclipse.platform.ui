@@ -103,9 +103,7 @@ public class DynamicPluginTest extends RuntimeTest {
 
 	public Bundle installBundle(String location) throws BundleException, MalformedURLException, IOException {
 		URL entry = InternalPlatform.getDefault().getBundle(PI_RUNTIME_TESTS).getEntry(PLUGIN_TESTING_ROOT + '/' + location);
-		Bundle installed = InternalPlatform.getDefault().getBundleContext().installBundle(Platform.asLocalURL(entry).toExternalForm());
-		refreshPackages(InternalPlatform.getDefault().getBundleContext(), new Bundle[] {installed});
-		return installed;
+		return InternalPlatform.getDefault().getBundleContext().installBundle(Platform.asLocalURL(entry).toExternalForm());
 	}
 
 	/**
@@ -114,9 +112,10 @@ public class DynamicPluginTest extends RuntimeTest {
 	 * everything is done before returning.
 	 * @param bundles
 	 */
-	private void refreshPackages(BundleContext context, Bundle[] bundles) {
+	public void refreshPackages(Bundle[] bundles) {
 		if (bundles.length == 0)
 			return;
+		BundleContext context =  InternalPlatform.getDefault().getBundleContext();
 		ServiceReference packageAdminRef = context.getServiceReference(PackageAdmin.class.getName());
 		PackageAdmin packageAdmin = null;
 		if (packageAdminRef != null) {

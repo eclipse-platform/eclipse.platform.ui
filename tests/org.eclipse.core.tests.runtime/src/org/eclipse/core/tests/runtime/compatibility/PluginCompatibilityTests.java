@@ -30,6 +30,7 @@ public class PluginCompatibilityTests extends DynamicPluginTest {
 		Bundle installed = null;
 		assertNull("0.0", getBundles("bundle01", "1.0"));
 		installed = installBundle("compatibility/bundle01");
+		refreshPackages(new Bundle[] {installed});
 		try {
 			assertEquals("1.0", "bundle01", installed.getSymbolicName());
 			assertEquals("1.1", "1.0", installed.getHeaders().get(Constants.BUNDLE_VERSION));
@@ -41,6 +42,7 @@ public class PluginCompatibilityTests extends DynamicPluginTest {
 		} finally {
 			// clean-up
 			installed.uninstall();
+			refreshPackages(new Bundle[] {installed});			
 		}
 	}
 
