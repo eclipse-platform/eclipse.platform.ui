@@ -100,14 +100,15 @@ public class PropertyTests extends AbstractAntDebugTest {
 	public void testRuntimeProperties() throws Exception {
 		runtimeProperties(false);		
 	}
-	
+
+    //TODO timing issues with retrieving properties
 //	public void testRuntimePropertiesSepVM() throws Exception {
 //		runtimeProperties(true);		
 //	}
 
 	private void runtimeProperties(boolean sepVM) throws Exception, CoreException {
 		String fileName = "breakpoints";
-		ILineBreakpoint bp = createLineBreakpoint(30, "breakpoints" + ".xml");
+		ILineBreakpoint bp = createLineBreakpoint(30, fileName + ".xml");
 		AntThread thread= null;
 		try {
 			if (sepVM) {
@@ -131,7 +132,7 @@ public class PropertyTests extends AbstractAntDebugTest {
 			frame = assertProperty(thread, "BBB", "bbb");
 			
 			stepOver(frame);
-			frame = assertProperty(thread, "CCC", "ccc");
+			assertProperty(thread, "CCC", "ccc");
 		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
@@ -141,7 +142,7 @@ public class PropertyTests extends AbstractAntDebugTest {
 	private AntStackFrame assertProperty(AntThread thread, String propertyName, String propertyValue) {
 		AntStackFrame frame = (AntStackFrame)thread.getTopStackFrame();
 		AntProperty property= frame.findProperty(propertyName);
-		assertNotNull(property);
+		assertNotNull("Did not find property: " + propertyName, property);
 		AntValue value= (AntValue) property.getValue();
 		assertTrue("Value of property" + propertyName + " incorrect: " + value.getValueString(), propertyValue.equals(value.getValueString()));
 		return frame;
