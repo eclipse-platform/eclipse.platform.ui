@@ -41,6 +41,11 @@ public final class AntPlugin extends Plugin {
 	 * Table of Ant types added through the antTypes extension point
 	 */
 	private Map typeExtensions;
+	
+	/**
+	 * The notification manager for registering build listeners.
+	 */
+	private AntNotificationManager notificationManager = new AntNotificationManager();
 
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
@@ -94,7 +99,13 @@ public AntPlugin(IPluginDescriptor pluginDescriptor) {
 	super(pluginDescriptor);
 	plugin = this;
 }
-
+/**
+ * Gets the notificationManager.
+ * @return Returns the AntNotificationManager
+ */
+public AntNotificationManager getNotificationManager() {
+	return notificationManager;
+}
 /**
  * Returns the internal collection of object extensions.
  * 
