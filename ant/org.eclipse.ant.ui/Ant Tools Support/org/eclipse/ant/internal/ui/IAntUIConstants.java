@@ -37,17 +37,10 @@ public interface IAntUIConstants {
 	 */
 	public static final String IMG_TAB_MAIN = PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
 
-	/**
-	 * Property image
-	 */
 	public static final String IMG_PROPERTY = PLUGIN_ID + ".IMG_PROPERTY"; //$NON-NLS-1$
 	
-	/**
-	 * Ant Targets tab image.
-	 */
 	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
 	public static final String IMG_TAB_CLASSPATH = PLUGIN_ID + ".IMG_TAB_CLASSPATH"; //$NON-NLS-1$;
-	public static final String IMG_JAR_FILE = PLUGIN_ID + ".IMG_JAR_FILE"; //$NON-NLS-1$;
 	
 	//	Label images
 	 public static final String IMG_ANT= PLUGIN_ID + ".ant"; //$NON-NLS-1$

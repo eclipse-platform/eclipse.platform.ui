@@ -94,7 +94,6 @@ public class AntUIImages {
 
 		//ANT objects
 		declareRegistryImage(IAntUIConstants.IMG_TAB_CLASSPATH, OBJECT + "classpath.gif"); //$NON-NLS-1$
-		declareRegistryImage(IAntUIConstants.IMG_JAR_FILE, OBJECT + "jar_l_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TYPE, OBJECT + "type.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TASKDEF, OBJECT + "taskdef_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_MACRODEF, OBJECT + "macrodef_obj.gif"); //$NON-NLS-1$
