@@ -78,7 +78,6 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode {
 				fireContentChanged();
 			}
 			public ITypedElement replace(ITypedElement child, ITypedElement other) {
-				System.out.println("TeamFile.replace");
 				return null;
 			}
 		};
