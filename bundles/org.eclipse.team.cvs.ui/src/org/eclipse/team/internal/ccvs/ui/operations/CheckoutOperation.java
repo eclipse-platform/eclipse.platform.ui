@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -67,4 +68,19 @@ public abstract class CheckoutOperation extends RemoteOperation {
 	public boolean canRunAsJob() {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.ui.TeamOperation#isKeepOneProgressServiceEntry()
+     */
+    public boolean isKeepOneProgressServiceEntry() {
+        // Keep the last repository provider operation in the progress service
+        return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.TeamOperation#getGotoAction()
+     */
+    protected IAction getGotoAction() {
+        return getShowConsoleAction();
+    }
 }

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.ConsoleListeners;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
@@ -255,15 +256,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * @param consoleListener the listener
 	 */
 	public void setConsoleListener(IConsoleListener consoleListener) {
-		this.consoleListener = consoleListener;
-	}
-
-	/**
-	 * Get the console listener for commands.
-	 * @return the consoleListener, or null
-	 */
-	public IConsoleListener getConsoleListener() {
-		return consoleListener;
+	    ConsoleListeners.getInstance().addListener(consoleListener);
 	}
 	
 	/**

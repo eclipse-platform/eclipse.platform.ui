@@ -208,7 +208,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	 */
 	protected void execute(ICVSRepositoryLocation location, ICVSRemoteResource[] remoteResources, IProgressMonitor monitor) throws CVSException {
 		monitor.beginTask(Policy.bind("RemoteLogOperation.0", location.getHost()), 100); //$NON-NLS-1$
-		Session s = new Session(location, CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()));
+		Session s = new Session(location, CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot()), false /* do not output to console */);
 		LogListener listener = new LogListener();
 		
 		ICVSRemoteResource[] remotes = remoteResources;

@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 
 /**
@@ -197,26 +196,18 @@ public abstract class Request {
 				if (handler.isLineAvailable()) {
 					String line = handler.getLine();
 					IStatus status = listener.messageLine(line, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
-					if (status != ICommandOutputListener.OK) session.addError(status);
-					if (session.isOutputToConsole()) {
-						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
-						if (consoleListener != null) consoleListener.messageLineReceived(line);
-					}
+					session.addError(status); // The session ignores OK status
+					ConsoleListeners.getInstance().messageLineReceived(session, line, status);
+
 				}
 			} else if (response.equals("M")) {  //$NON-NLS-1$
 				IStatus status = listener.messageLine(argument, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
-				if (status != ICommandOutputListener.OK) session.addError(status);
-				if (session.isOutputToConsole()) {
-					IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
-					if (consoleListener != null) consoleListener.messageLineReceived(argument);
-				}
+				session.addError(status); // The session ignores OK status
+				ConsoleListeners.getInstance().messageLineReceived(session, argument, status);
 			} else if (response.equals("E")) { //$NON-NLS-1$
 				IStatus status = listener.errorLine(argument, session.getCVSRepositoryLocation(), session.getLocalRoot(), monitor);
-				if (status != ICommandOutputListener.OK) session.addError(status);
-				if (session.isOutputToConsole()) {
-					IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
-					if (consoleListener != null) consoleListener.errorLineReceived(argument);
-				}
+				session.addError(status); // The session ignores OK status
+				ConsoleListeners.getInstance().errorLineReceived(session, argument, status);
 			// handle other responses
 			} else {
 				ResponseHandler handler = session.getResponseHandler(response);

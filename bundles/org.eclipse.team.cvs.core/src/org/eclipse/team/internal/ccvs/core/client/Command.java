@@ -10,28 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 
 /**
  * Abstract base class for command requests.
@@ -325,10 +310,7 @@ public abstract class Command extends Request {
 						commandRootPath = resource.getFullPath();
 					}
 					String line = constructCommandInvocationString(commandRootPath, gOptions, lOptions, arguments);
-					if (session.isOutputToConsole()) {
-						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
-						if (consoleListener != null) consoleListener.commandInvoked(line);
-					}
+					ConsoleListeners.getInstance().commandInvoked(session, line);
 					if (Policy.isDebugProtocol()) Policy.printProtocolLine("CMD> " + line); //$NON-NLS-1$
 				}
 				
@@ -367,10 +349,7 @@ public abstract class Command extends Request {
 	}
 
 	private void notifyConsoleOnCompletion(Session session, IStatus status, Exception exception) {
-		if (session.isOutputToConsole()) {
-			IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
-			if (consoleListener != null) consoleListener.commandCompleted(status, exception);
-		}
+		ConsoleListeners.getInstance().commandCompleted(session, status, exception);
 		if (Policy.isDebugProtocol()) {
 			if (status != null) Policy.printProtocolLine("RESULT> " + status.toString()); //$NON-NLS-1$
 			else Policy.printProtocolLine("RESULT> " + exception.toString()); //$NON-NLS-1$

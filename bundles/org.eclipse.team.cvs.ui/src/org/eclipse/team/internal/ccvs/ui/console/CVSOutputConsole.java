@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.console;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -25,6 +26,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.ui.PlatformUI;
@@ -102,6 +104,7 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
 		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);
+		setAutoScroll(true);
 	}
 	
 	/* (non-Javadoc)
@@ -199,14 +202,9 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 			}
 		}
 	}
-	
-	private void showConsole() {
-		if(showOnMessage) {
-			if(!visible)
-				CVSConsoleFactory.showConsole();
-			else
-				consoleManager.showConsoleView(this);
-		}
+
+    private void showConsole() {
+		show(false);
 	}
 	
 	/* (non-Javadoc)
@@ -243,7 +241,8 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#commandInvoked(java.lang.String)
 	 */
-	public void commandInvoked(String line) {
+	public void commandInvoked(Session session, String line) {
+	    if (!session.isOutputToConsole()) return;
 		commandStarted = System.currentTimeMillis();
 		appendLine(ConsoleDocument.COMMAND, Policy.bind("Console.preExecutionDelimiter")); //$NON-NLS-1$
 		appendLine(ConsoleDocument.COMMAND, line);
@@ -252,21 +251,26 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#messageLineReceived(java.lang.String)
 	 */
-	public void messageLineReceived(String line) {
-		appendLine(ConsoleDocument.MESSAGE, "  " + line); //$NON-NLS-1$
+	public void messageLineReceived(Session session, String line, IStatus status) {
+	    if (session.isOutputToConsole()) {
+	        appendLine(ConsoleDocument.MESSAGE, "  " + line); //$NON-NLS-1$
+	    }
 	}
-	
-	/* (non-Javadoc)
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#errorLineReceived(java.lang.String)
 	 */
-	public void errorLineReceived(String line) {
-		appendLine(ConsoleDocument.ERROR, "  " + line); //$NON-NLS-1$
+	public void errorLineReceived(Session session, String line, IStatus status) {
+	    if (session.isOutputToConsole()) {
+	        appendLine(ConsoleDocument.ERROR, "  " + line); //$NON-NLS-1$
+	    }
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#commandCompleted(org.eclipse.core.runtime.IStatus, java.lang.Exception)
 	 */
-	public void commandCompleted(IStatus status, Exception exception) {
+	public void commandCompleted(Session session, IStatus status, Exception exception) {
+	    if (!session.isOutputToConsole()) return;
 		long commandRuntime = System.currentTimeMillis() - commandStarted;
 		String time;
 		try {
@@ -373,4 +377,18 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 		RGB rgb = PreferenceConverter.getColor(CVSUIPlugin.getPlugin().getPreferenceStore(), preference);
 		return new Color(display, rgb);
 	}
+
+    /**
+     * Show the console.
+     * @param showNoMatterWhat ignore preferences if <code>true</code>
+     */
+    public void show(boolean showNoMatterWhat) {
+		if(showNoMatterWhat || showOnMessage) {
+			if(!visible)
+				CVSConsoleFactory.showConsole();
+			else
+				consoleManager.showConsoleView(this);
+		}
+        
+    }
 }

@@ -823,7 +823,7 @@ public class Session {
 		this.validRequests = " " + validRequests + " "; //$NON-NLS-1$  //$NON-NLS-2$
 	}
 
-	boolean isOutputToConsole() {
+	public boolean isOutputToConsole() {
 		return outputToConsole;
 	}
 
@@ -949,11 +949,12 @@ public class Session {
 
     /**
      * Accumulate the added errors so they can be included in the status returned
-     * when the command execution is finished.
+     * when the command execution is finished. OK status are ignored.
      * @param status the status to be accumulated
      */
     public void addError(IStatus status) {
-        errors.add(status);
+        if (!status.isOK())
+            errors.add(status);
     }
     
     public boolean hasErrors() {

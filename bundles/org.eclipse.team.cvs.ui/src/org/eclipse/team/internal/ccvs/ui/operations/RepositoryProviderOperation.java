@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -193,4 +194,18 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 		}
 	}
 	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.ui.TeamOperation#isKeepOneProgressServiceEntry()
+     */
+    public boolean isKeepOneProgressServiceEntry() {
+        // Keep the last repository provider operation in the progress service
+        return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.TeamOperation#getGotoAction()
+     */
+    protected IAction getGotoAction() {
+        return getShowConsoleAction();
+    }
 }
