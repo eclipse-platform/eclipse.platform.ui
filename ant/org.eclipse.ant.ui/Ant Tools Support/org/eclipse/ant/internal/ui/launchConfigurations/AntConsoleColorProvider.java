@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.core.RuntimeProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsole;
@@ -49,19 +48,16 @@ public class AntConsoleColorProvider extends ConsoleColorProvider {
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.ui.console.IConsole)
 	 */
 	public void connect(IProcess process, IConsole console) {
+		//Both remote and local Ant builds are guaranteed to have
+		//an AntStreamsProxy. The remote Ant builds make use of the
+		// org.eclipse.debug.core.processFactories extension point
+		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
 		if (process instanceof AntProcess) {
-			AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
 			((AntProcess)process).setConsole(console);
-			console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
-			console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
-			console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
-		} else if (process instanceof RuntimeProcess) {
-			((RuntimeProcess)process).setStreamsProxy(new AntStreamsProxy());
-			AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
-			console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
-			console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
-			console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
 		}
+		console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
+		console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
+		console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
 		super.connect(process, console);
 	}
 	
@@ -71,6 +67,5 @@ public class AntConsoleColorProvider extends ConsoleColorProvider {
 	public boolean isReadOnly() {
 		return true;
 	}
-
 }
 
