@@ -13,7 +13,7 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 
 /**
@@ -40,7 +40,7 @@ public class InstallRegistry extends Properties {
 	private InstallRegistry() {
 		super();
 		String configFile =
-			BootLoader
+			ConfiguratorUtils
 				.getCurrentPlatformConfiguration()
 				.getConfigurationLocation()
 				.getFile();

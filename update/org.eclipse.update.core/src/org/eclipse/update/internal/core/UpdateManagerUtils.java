@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
@@ -25,7 +24,14 @@ import org.osgi.service.packageadmin.*;
  */
 public class UpdateManagerUtils {
 
-	private static boolean OS_UNIX = BootLoader.OS_HPUX.equals(BootLoader.getOS()) || BootLoader.OS_AIX.equals(BootLoader.getOS()) || BootLoader.OS_LINUX.equals(BootLoader.getOS()) || BootLoader.OS_SOLARIS.equals(BootLoader.getOS());
+	private static boolean OS_UNIX = org.eclipse.osgi.service.environment.Constants.OS_HPUX
+			.equals(Platform.getOS())
+			|| org.eclipse.osgi.service.environment.Constants.OS_AIX
+					.equals(Platform.getOS())
+			|| org.eclipse.osgi.service.environment.Constants.OS_LINUX
+					.equals(Platform.getOS())
+			|| org.eclipse.osgi.service.environment.Constants.OS_SOLARIS
+					.equals(Platform.getOS());
 	private static FragmentEntry[] noFragments = new FragmentEntry[0];
 	private static Map table;
 

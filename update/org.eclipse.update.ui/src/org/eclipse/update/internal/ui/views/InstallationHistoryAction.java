@@ -13,10 +13,10 @@ package org.eclipse.update.internal.ui.views;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.ui.*;
 
 public class InstallationHistoryAction extends Action {
@@ -33,7 +33,7 @@ public class InstallationHistoryAction extends Action {
 	public InstallationHistoryAction(String text, ImageDescriptor desc) {
 		super(text, desc);
 		String location =
-			BootLoader
+			ConfiguratorUtils
 				.getCurrentPlatformConfiguration()
 				.getConfigurationLocation()
 				.getFile();

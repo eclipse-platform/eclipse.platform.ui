@@ -15,9 +15,9 @@ package org.eclipse.update.internal.operations;
 //import java.nio.channels.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.api.operations.*;
@@ -802,9 +802,9 @@ public class OperationValidator implements IOperationValidator {
 		ArrayList features,
 		ArrayList status) {
 
-		String os = BootLoader.getOS();
-		String ws = BootLoader.getWS();
-		String arch = BootLoader.getOSArch();
+		String os = Platform.getOS();
+		String ws = Platform.getWS();
+		String arch = Platform.getOSArch();
 
 		for (int i = 0; i < features.size(); i++) {
 			IFeature feature = (IFeature) features.get(i);
@@ -853,7 +853,7 @@ public class OperationValidator implements IOperationValidator {
 		ArrayList status) {
 
 		String[] bootstrapPlugins =
-			BootLoader
+			ConfiguratorUtils
 				.getCurrentPlatformConfiguration()
 				.getBootstrapPluginIdentifiers();
 
@@ -886,7 +886,7 @@ public class OperationValidator implements IOperationValidator {
 		ArrayList status) {
 
 		String featureId =
-			BootLoader
+			ConfiguratorUtils
 				.getCurrentPlatformConfiguration()
 				.getPrimaryFeatureIdentifier();
 		

@@ -13,7 +13,6 @@ package org.eclipse.update.core;
 
 import java.net.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
@@ -154,7 +153,7 @@ public class SiteManager {
 	 */
 	public static String getOSArch() {
 		if (arch == null)
-			arch = BootLoader.getOSArch();
+			arch = Platform.getOSArch();
 		return arch;
 	}
 
@@ -177,7 +176,7 @@ public class SiteManager {
 	 */
 	public static String getOS() {
 		if (os == null)
-			os = BootLoader.getOS();
+			os = Platform.getOS();
 		return os;
 	}
 
@@ -198,7 +197,7 @@ public class SiteManager {
 	 */
 	public static String getWS() {
 		if (ws == null)
-			ws = BootLoader.getWS();
+			ws = Platform.getWS();
 		return ws;
 	}
 
@@ -255,7 +254,7 @@ public class SiteManager {
 	 */
 	public static String getNL() {
 		if (nl == null)
-			nl = BootLoader.getNL();
+			nl = Platform.getNL();
 		return nl;
 	}
 
