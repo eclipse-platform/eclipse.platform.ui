@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.ui;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
@@ -199,7 +199,7 @@ public class CVSPropertiesPage extends PropertyPage {
 			info.setPassword(passwordText.getText());
 		}
 		try {
-			provider.setConnectionInfo(project, methodType.getText(), info);
+			provider.setConnectionInfo(project, methodType.getText(), info, new NullProgressMonitor());
 		} catch (TeamException e) {
 			handle(e);
 		}

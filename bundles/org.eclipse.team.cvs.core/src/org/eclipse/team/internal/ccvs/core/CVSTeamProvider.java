@@ -1,7 +1,7 @@
 package org.eclipse.team.ccvs.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -525,7 +525,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public String getConnectionMethod(IResource resource) throws TeamException {
 		checkIsChild(resource);
-		return CVSProvider.getInstance().getRepository(managedProject.getFolderSyncInfo().getRoot()).getMethod().getName();
+		return getRemoteRoot().getMethod().getName();
 	}
 	
 	private String[] getDefaultGlobalOptions() {
@@ -560,6 +560,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				return RemoteFile.getBase((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed);
 		}
 		return null;
+	}
+	
+	/** 
+	 * Return the repository location to which the provider is connected
+	 */
+	public ICVSRepositoryLocation getRemoteRoot() throws CVSException {
+		return CVSProvider.getInstance().getRepository(managedProject.getFolderSyncInfo().getRoot());
 	}
 	
 	public IRemoteSyncElement getRemoteSyncTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
@@ -644,7 +651,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */ 
 	public IUserInfo getUserInfo(IResource resource) throws TeamException {
 		checkIsChild(resource);
-		CVSRepositoryLocation location = (CVSRepositoryLocation)CVSProvider.getInstance().getRepository(managedProject.getFolderSyncInfo().getRoot());
+		// Get the repository location for the receiver
+		CVSRepositoryLocation location = (CVSRepositoryLocation)getRemoteRoot();
+		// Make a copy which is mutable
+		location = CVSRepositoryLocation.fromString(location.getLocation());
 		location.setUserMuteable(true);
 		return location;
 	}
@@ -798,7 +808,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * project. If the conection method name is invalid (i.e.
 	 * no corresponding registered connection method), false is returned.
 	 */
-	public boolean setConnectionInfo(IResource resource, String methodName, IUserInfo userInfo) throws TeamException {
+	public boolean setConnectionInfo(IResource resource, String methodName, IUserInfo userInfo, IProgressMonitor monitor) throws TeamException {
+		
 		checkIsChild(resource);
 		if (!CVSRepositoryLocation.validateConnectionMethod(methodName))
 			return false;
@@ -809,9 +820,22 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.invalidUserInfo"), null));
 		}
 		location.setUserMuteable(false);
-		location.updateCache();
 		location.setMethod(methodName);
+		location.updateCache();
+		setRemoteRoot(location, monitor);
+		return true;
+	}
+	
+	private void setRemoteRoot(ICVSRepositoryLocation location, IProgressMonitor monitor) throws TeamException {
+
+		// XXX We need to do the proper progress monitoring
+		
+		// Check if there is a differnece between the new and old roots	
 		final String root = location.getLocation();
+		if (root.equals(getRemoteRoot().getLocation())) 
+			return;
+		
+		// Visit all the children folders in order to set the root in the folder sync info
 		managedProject.accept(new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {};
 			public void visitFolder(ICVSFolder folder) throws CVSException {
@@ -821,19 +845,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			};
 		});
 		Synchronizer.getInstance().save(new NullProgressMonitor());
-		return true;
-	}
-	
-	/**
-	 * Sets the userinfo (username and password) for the resource's project.
-	 */
-	public void setUserInfo(IResource resource, IUserInfo userinfo) throws TeamException {
-		checkIsChild(resource);
-		try {
-			((CVSRepositoryLocation)userinfo).updateCache();
-		} catch (ClassCastException e) {
-			throw new TeamException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.invalidUserInfo"), null));
-		}
+		return;
 	}
 	
 	/** 
