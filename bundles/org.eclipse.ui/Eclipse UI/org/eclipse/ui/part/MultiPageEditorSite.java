@@ -74,7 +74,7 @@ public IEditorActionBarContributor getActionBarContributor() {
  * return the decorator manager.
  */
 public ILabelDecorator getDecoratorManager() {
-	return getMultiPageEditor().getSite().getDecoratorManager();
+	return getWorkbenchWindow().getWorkbench().getDecoratorManager();
 }
 
 /**

@@ -150,7 +150,7 @@ public class ResourceNavigator
 		viewer.setLabelProvider(
 			new DecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
-				getViewSite().getDecoratorManager()));
+				getPlugin().getWorkbench().getDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
 		if (memento != null)
 			restoreFilters();
@@ -698,7 +698,7 @@ public class ResourceNavigator
 		DecoratingLabelProvider provider =
 			(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
 		if(decorator == null)
-			provider.setLabelDecorator(getViewSite().getDecoratorManager());
+			provider.setLabelDecorator(getPlugin().getWorkbench().getDecoratorManager());
 		else
 			provider.setLabelDecorator(decorator);
 	}
