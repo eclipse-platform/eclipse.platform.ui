@@ -128,7 +128,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * The collection of debug event listeners.
 	 */
-	private ListenerList fEventListeners= new ListenerList(20);
+	private ListenerList fEventListeners;
 	
 	/**
 	 * Event filters, or <code>null</code> if none.
@@ -231,6 +231,9 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void addDebugEventListener(IDebugEventSetListener listener) {
+		if (fEventListeners == null) {
+			fEventListeners = new ListenerList(20);
+		}
 		fEventListeners.add(listener);
 	}	
 	
@@ -245,7 +248,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void fireDebugEventSet(DebugEvent[] events) {
-		if (isShuttingDown() || events == null)
+		if (isShuttingDown() || events == null || fEventListeners == null)
 			return;
 		events = filterEvents(events);
 		if (events == null) {
@@ -389,7 +392,9 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void removeDebugEventListener(IDebugEventSetListener listener) {
-		fEventListeners.remove(listener);
+		if (fEventListeners != null) {
+			fEventListeners.remove(listener);
+		}
 	}	
 
 	/**
@@ -416,7 +421,9 @@ public class DebugPlugin extends Plugin {
 		if (fBreakpointManager != null) {
 			fBreakpointManager.shutdown();
 		}
-		fEventListeners.removeAll();
+		if (fEventListeners != null) {
+			fEventListeners.removeAll();
+		}
 		setDefault(null);
 		ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 	}
