@@ -29,10 +29,6 @@
 
 
 <!-- Workbench extension points -->
-   <extension-point id="acceleratorSets" name="%ExtPoint.acceleratorSets" schema="schema/acceleratorSets.exsd"/>
-   <extension-point id="acceleratorConfigurations" name="%ExtPoint.acceleratorConfigurations" schema="schema/acceleratorConfigurations.exsd"/>
-   <extension-point id="acceleratorScopes" name="%ExtPoint.acceleratorScopes" schema="schema/acceleratorScopes.exsd"/>
-   <extension-point id="actionDefinitions" name="%ExtPoint.actionDefinitions" schema="schema/actionDefinitions.exsd"/>
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
    <extension-point id="capabilities" name="%ExtPoint.capabilities" schema="schema/capabilities.exsd"/>

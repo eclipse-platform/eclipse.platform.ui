@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. Through this extension point, one can also assign key sequences to commands using the &lt;code&gt;keyBinding&lt;/code&gt; element. Key sequences are bound to commands based on key configurations and scopes which are declared here as well, using the &lt;code&gt;keyConfiguration&lt;/code&gt; and &lt;code&gt;scope&lt;/code&gt; elements.
+The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. Through this extension point, one can also assign key sequences to commands using the &lt;code&gt;keyBinding&lt;/code&gt; element. Key sequences are bound to commands based on key configurations and contexts which are declared here as well, using the &lt;code&gt;keyConfiguration&lt;/code&gt; and &lt;code&gt;context&lt;/code&gt; elements.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -19,11 +19,11 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
             <element ref="command"/>
-<!--element ref="gestureConfiguration"/-->
 <!--element ref="gestureBinding"/-->
+<!--element ref="gestureConfiguration"/-->
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
-            <element ref="scope"/>
+            <element ref="context"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -153,38 +153,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-<!--element name="gestureConfiguration">
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element-->
 <!--element name="gestureBinding">
       <complexType>
          <sequence>
@@ -218,7 +186,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="scope" type="string">
+         <attribute name="context" type="string">
             <annotation>
                <documentation>
                   
@@ -226,6 +194,38 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             </annotation>
          </attribute>
          <attribute name="string" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element-->
+<!--element name="gestureConfiguration">
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
             <annotation>
                <documentation>
                   
@@ -254,7 +254,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  The unique identifier of the command to which the key sequence specified by this key binding is assigned. If the value of this attribute is an empty string, the key sequence is assigned to an internal &apos;no operation&apos; command. This is useful for &apos;undefining&apos; key bindings in specific key configurations and scopes which may have been borrowed from their parents.
+                  The unique identifier of the command to which the key sequence specified by this key binding is assigned. If the value of this attribute is an empty string, the key sequence is assigned to an internal &apos;no operation&apos; command. This is useful for &apos;undefining&apos; key bindings in specific key configurations and contexts which may have been borrowed from their parents.
                </documentation>
             </annotation>
          </attribute>
@@ -272,10 +272,10 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="scope" type="string" use="required">
+         <attribute name="context" type="string">
             <annotation>
                <documentation>
-                  The unique id of the scope of this key binding.
+                  The unique id of the context of this key binding.
                </documentation>
             </annotation>
          </attribute>
@@ -283,6 +283,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <annotation>
                <documentation>
                   The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="scope" type="string">
+            <annotation>
+               <documentation>
+                  The unique id of the context of this key binding.
                </documentation>
             </annotation>
          </attribute>
@@ -327,6 +334,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+      </complexType>
+   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -338,45 +352,38 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          </attribute>
       </complexType>
    </element-->
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
-   <element name="scope">
+   <element name="context">
       <annotation>
          <documentation>
-            This element is used to define scopes. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+            This element is used to define contexts. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A translatable short description of this scope for display in the UI.
+                  A translatable short description of this context for display in the UI.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The unique identifier of this scope.
+                  The unique identifier of this context.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The translatable name of this scope for display in the UI. If this scope has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
+                  The translatable name of this context for display in the UI. If this context has a parent, it is not necessary to add &quot;(extends parent)&quot; to the name. This will be automatically added by the UI where necessary.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="parent" type="string">
             <annotation>
                <documentation>
-                  The unique id of the parent scope. If this scope has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own scope.
+                  The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
                </documentation>
             </annotation>
          </attribute>
@@ -411,7 +418,7 @@ The &lt;code&gt;plugin.xml&lt;/code&gt; file in the &lt;code&gt;org.eclipse.ui&l
       </appInfo>
       <documentation>
          &lt;p&gt;
-This is no public API for declaring commands, categories, key bindings, key configurations, or scopes other than this extension point. Public API for querying and setting scopes, as well as registering actions to handle specific commands can be found in &lt;code&gt;org.eclipse.ui.IKeyBindingService&lt;/code&gt;.
+This is no public API for declaring commands, categories, key bindings, key configurations, or contexts other than this extension point. Public API for querying and setting contexts, as well as registering actions to handle specific commands can be found in &lt;code&gt;org.eclipse.ui.IKeyBindingService&lt;/code&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
