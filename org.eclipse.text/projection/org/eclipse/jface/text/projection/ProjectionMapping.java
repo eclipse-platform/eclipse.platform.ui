@@ -346,8 +346,11 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		int imageLength= imageRegion.getLength();
 		
 		if (imageLength == 0) {
-			if (imageOffset == 0 && getImageLength() == 0)
-				return new Region(0, fMasterDocument.getLength());
+			if (imageOffset == 0) {
+				Position[] fragments= getFragments();
+				if (fragments.length == 0 || (fragments.length == 1 && fragments[0].getOffset() == 0 && fragments[0].getLength() == 0))
+					return new Region(0, fMasterDocument.getLength());
+			}
 			return new Region(toOriginOffset(imageOffset), 0);
 		}
 		

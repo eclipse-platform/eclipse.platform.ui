@@ -246,6 +246,22 @@ public class ProjectionMappingTest extends TestCase {
 		}
 	}
 	
+	public void test3f() {
+		// test toOriginRegion 
+		// test empty slave document
+		
+		fMasterDocument.set("abc\n");
+		fSlaveDocument.set("");
+		addProjection(4, 0, 0);
+		
+		try {
+			IRegion origin= fProjectionMapping.toOriginRegion(new Region(0, 0));
+			assertEquals(new Region(4, 0), origin); // fails, origin is (0, 4)
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}		
+	}
+	
 	public void test4() {
 		// test toOriginLines
 		
