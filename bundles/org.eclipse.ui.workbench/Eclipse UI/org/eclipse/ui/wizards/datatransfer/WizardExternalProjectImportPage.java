@@ -51,7 +51,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 	//Keep track of the directory that we browsed to last time
 	//the wizard was invoked.
-	private static String previouslyBrowsedDirectory = "";
+	private static String previouslyBrowsedDirectory = ""; //$NON-NLS-1$
 
 	// widgets
 	private Text projectNameField;
@@ -363,7 +363,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 		if (newDescription == null) {
 			this.description = null;
-			this.projectNameField.setText("");
+			this.projectNameField.setText(""); //$NON-NLS-1$
 		}
 		else{			
 			this.description = newDescription;

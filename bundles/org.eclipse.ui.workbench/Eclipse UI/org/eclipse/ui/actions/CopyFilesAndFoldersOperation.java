@@ -631,7 +631,7 @@ public class CopyFilesAndFoldersOperation {
 	private IPath getNewNameFor(final IPath originalName, final IWorkspace workspace) {
 		final IResource resource = workspace.getRoot().findMember(originalName);
 		final IPath prefix = resource.getFullPath().removeLastSegments(1);
-		final String returnValue[] = { "" };
+		final String returnValue[] = { "" }; //$NON-NLS-1$
 
 		parentShell.getDisplay().syncExec(new Runnable() {
 			public void run() {

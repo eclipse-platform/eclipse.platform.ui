@@ -105,7 +105,7 @@ public WizardNewFileCreationPage(String pageName, IStructuredSelection selection
 protected void createAdvancedControls(Composite parent) {
 	advancedButton = new Button(parent, SWT.PUSH);
 	advancedButton.setFont(parent.getFont());
-	advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed"));
+	advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed")); //$NON-NLS-1$
 	GridData data = setButtonLayoutData(advancedButton);
 	data.horizontalAlignment = GridData.BEGINNING;
 	advancedButton.setLayoutData(data);
@@ -341,12 +341,12 @@ protected void handleAdvancedButtonSelect() {
 	if (linkedResourceGroupVisible) {
 		linkedResourceGroupVisible = false;
 		shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
-		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed"));
+		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed")); //$NON-NLS-1$
 	} else {
 		linkedResourceGroupVisible = true;
 		shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 		composite.layout();
-		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonExpanded"));
+		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonExpanded")); //$NON-NLS-1$
 	}
 }
 /**

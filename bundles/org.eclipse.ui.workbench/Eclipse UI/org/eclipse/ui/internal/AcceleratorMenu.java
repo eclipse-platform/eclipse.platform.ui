@@ -22,7 +22,7 @@ public AcceleratorMenu(Menu parent) {
 	menu = new Menu(parent.getParent(), SWT.DROP_DOWN);
 	if (!parent.isVisible()) {
 		item = new MenuItem(parent, SWT.CASCADE,0);
-		item.setText("");
+		item.setText(""); //$NON-NLS-1$
 		item.setMenu(menu);
 	}
 	
@@ -38,7 +38,7 @@ public AcceleratorMenu(Menu parent) {
 					}
 			}
 			VerifyEvent verifyEvent = new VerifyEvent (event);
-			if (event.text == null) event.text = "";
+			if (event.text == null) event.text = ""; //$NON-NLS-1$
 			verifyListener.verifyText(verifyEvent);
 			event.text = verifyEvent.text;
 			event.doit = verifyEvent.doit;

@@ -39,7 +39,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	private String fEmptyListMessage = WorkbenchMessages.getString("ElementTreeSelectionDialog.nothing_available"); //$NON-NLS-1$	
 
 	private IStatus fCurrStatus =
-		new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", null);
+		new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 	private List fFilters;
 	private Object fInput;
 	private boolean fIsEmpty;
@@ -155,7 +155,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 						IStatus.OK,
 						PlatformUI.PLUGIN_ID,
 						IStatus.OK,
-						"",
+						"", //$NON-NLS-1$
 						null);
 			}
 		} else {

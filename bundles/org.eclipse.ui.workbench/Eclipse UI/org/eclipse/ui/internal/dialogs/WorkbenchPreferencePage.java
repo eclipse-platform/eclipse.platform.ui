@@ -360,7 +360,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 				ResourcesPlugin.getWorkspace().setDescription(description);
 				store.firePropertyChangeEvent(IPreferenceConstants.SAVE_INTERVAL, new Integer((int)oldSaveInterval), new Integer((int)newSaveInterval));
 			} catch (CoreException e) {
-				WorkbenchPlugin.log("Error changing save interval preference", e.getStatus());
+				WorkbenchPlugin.log("Error changing save interval preference", e.getStatus()); //$NON-NLS-1$
 			}
 		}
 

@@ -44,7 +44,7 @@ public class WorkbenchConfigurationInfo {
 	private AboutInfo[] featuresInfo;
 	private AboutInfo[] newFeaturesInfo;
 	
-	private static final String INSTALLED_FEATURES = "installedFeatures";
+	private static final String INSTALLED_FEATURES = "installedFeatures"; //$NON-NLS-1$
 
 
 /**
@@ -200,7 +200,7 @@ private void readFeaturesInfo() {
 		if (version != null)
 			vid = new PluginVersionIdentifier(version);			
 		
-		String versionedId = id + ":" + vid;
+		String versionedId = id + ":" + vid; //$NON-NLS-1$
 		idArray[i] = versionedId;
 
 		try {
@@ -211,7 +211,7 @@ private void readFeaturesInfo() {
 				newAboutInfos.add(info);
 		} catch (RuntimeException e) {
 			if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-				WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
+				WorkbenchPlugin.log("Error parsing version \"" + vid + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// continue
 		}
 	}
@@ -288,7 +288,7 @@ private void openEditor(IEditorInput input, String editorId, String perspectiveI
 			win = getWorkbench().openWorkbenchWindow(perspectiveId, root);
 		} catch (WorkbenchException e) {
 			if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
-				WorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)");
+				WorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)"); //$NON-NLS-1$
 			return;
 		}
 	}

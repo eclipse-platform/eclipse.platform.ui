@@ -362,7 +362,7 @@ private IStatus validateFileType(File linkTargetFile) {
 			IStatus.ERROR,
 			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFolder"));	//$NON-NLS-1$
 	}
-	return createStatus(IStatus.OK, "");
+	return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 }
 /**
  * Validates this page's controls.
@@ -379,7 +379,7 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 	IPath path = new Path(linkTargetName);
 	
 	if (createLink == false)
-		return createStatus(IStatus.OK, "");
+		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 
 	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
 	if (locationStatus.getSeverity() != IStatus.OK) {

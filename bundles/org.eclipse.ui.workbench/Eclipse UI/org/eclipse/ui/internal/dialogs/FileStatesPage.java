@@ -336,7 +336,7 @@ public class FileStatesPage
 		if (maxFileStates > FILE_STATES_MAXIMUM) {
 			setErrorMessage(
 				WorkbenchMessages.format(
-					"FileHistory.aboveMaxEntries",
+					"FileHistory.aboveMaxEntries", //$NON-NLS-1$
 					new String[] { String.valueOf(FILE_STATES_MAXIMUM)}));
 			return FAILED_VALUE;
 		}
@@ -359,7 +359,7 @@ public class FileStatesPage
 		if (maxFileStateSize > STATE_SIZE_MAXIMUM) {
 			setErrorMessage(
 				WorkbenchMessages.format(
-					"FileHistory.aboveMaxFileSize",
+					"FileHistory.aboveMaxFileSize", //$NON-NLS-1$
 					new String[] { String.valueOf(STATE_SIZE_MAXIMUM)}));
 			return FAILED_VALUE;
 		}

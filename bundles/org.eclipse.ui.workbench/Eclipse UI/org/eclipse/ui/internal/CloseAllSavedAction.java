@@ -26,7 +26,7 @@ public CloseAllSavedAction(IWorkbenchWindow aWorkbench) {
 	this.workbench = aWorkbench;
 	setToolTipText(WorkbenchMessages.getString("CloseAllSavedAction.toolTip")); //$NON-NLS-1$
 	//Should create a ID in IWorkbenchActionConstants when it becames API?
-	setId("closeAllSaved");
+	setId("closeAllSaved"); //$NON-NLS-1$
 	updateState();
 	aWorkbench.addPageListener(this);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_SAVED_ACTION);

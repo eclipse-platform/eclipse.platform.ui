@@ -55,11 +55,11 @@ class DecoratorRegistryReader extends RegistryReader {
 	public static final int UNDERLAY = 4;
 
 	//Constants for quadrants
-	private static final String TOP_LEFT_STRING = "TOP_LEFT";
-	private static final String TOP_RIGHT_STRING = "TOP_RIGHT";
-	private static final String BOTTOM_LEFT_STRING = "BOTTOM_LEFT";
-	private static final String BOTTOM_RIGHT_STRING = "BOTTOM_RIGHT";
-	private static final String UNDERLAY_STRING = "UNDERLAY";
+	private static final String TOP_LEFT_STRING = "TOP_LEFT"; //$NON-NLS-1$
+	private static final String TOP_RIGHT_STRING = "TOP_RIGHT"; //$NON-NLS-1$
+	private static final String BOTTOM_LEFT_STRING = "BOTTOM_LEFT"; //$NON-NLS-1$
+	private static final String BOTTOM_RIGHT_STRING = "BOTTOM_RIGHT"; //$NON-NLS-1$
+	private static final String UNDERLAY_STRING = "UNDERLAY"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for DecoratorRegistryReader.

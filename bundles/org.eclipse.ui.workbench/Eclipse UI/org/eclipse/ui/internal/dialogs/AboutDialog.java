@@ -224,7 +224,7 @@ protected Control createDialogArea(Composite parent) {
 			button.setImage(image);
 			String name = infoArray[i].getProviderName();
 			if (name == null)
-				name = "";
+				name = ""; //$NON-NLS-1$
 			button.setToolTipText(name);
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {

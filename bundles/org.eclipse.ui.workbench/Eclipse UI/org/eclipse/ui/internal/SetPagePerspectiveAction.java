@@ -73,7 +73,7 @@ public class SetPagePerspectiveAction extends Action {
 	 */
 	public void update(IPerspectiveDescriptor newDesc) {
 		persp = newDesc;
-		setToolTipText(WorkbenchMessages.format("SetPagePerspectiveAction.toolTip", new Object[] {persp.getLabel()}));
+		setToolTipText(WorkbenchMessages.format("SetPagePerspectiveAction.toolTip", new Object[] {persp.getLabel()})); //$NON-NLS-1$
 		ImageDescriptor image = persp.getImageDescriptor();
 		if (image != null) {
 			setImageDescriptor(image);

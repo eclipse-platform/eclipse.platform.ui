@@ -495,21 +495,21 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		gridLayout.numColumns = 4;
 		editorTabCompressionGroup.setLayout(gridLayout);
 		editorTabCompressionGroup.setLayoutData(new GridData (GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-		editorTabCompressionGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompression"));
+		editorTabCompressionGroup.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompression")); //$NON-NLS-1$
 		editorTabCompressionGroup.setFont(font);
 	
 		/* Create the buttons */
 		editorTabCompressionNone = new Button (editorTabCompressionGroup, SWT.RADIO);
-		editorTabCompressionNone.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionNone"));
+		editorTabCompressionNone.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionNone")); //$NON-NLS-1$
 		editorTabCompressionNone.setFont(font);
 		editorTabCompressionLow = new Button (editorTabCompressionGroup, SWT.RADIO);
-		editorTabCompressionLow.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionLow"));
+		editorTabCompressionLow.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionLow")); //$NON-NLS-1$
 		editorTabCompressionLow.setFont(font);
 		editorTabCompressionMedium = new Button(editorTabCompressionGroup, SWT.RADIO);
-		editorTabCompressionMedium.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionMedium"));
+		editorTabCompressionMedium.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionMedium")); //$NON-NLS-1$
 		editorTabCompressionMedium.setFont(font);
 		editorTabCompressionHigh = new Button (editorTabCompressionGroup, SWT.RADIO);
-		editorTabCompressionHigh.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionHigh"));
+		editorTabCompressionHigh.setText(WorkbenchMessages.getString("WorkbenchPreference.editorTabCompressionHigh")); //$NON-NLS-1$
 		editorTabCompressionHigh.setFont(font);
 	
 		/* Add the listeners */

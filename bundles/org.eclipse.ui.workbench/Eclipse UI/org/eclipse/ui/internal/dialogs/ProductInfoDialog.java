@@ -322,7 +322,7 @@ protected void openLink(final String href) {
 							d.asyncExec(new Runnable() {
 								public void run() {
 									MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-									WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser"));
+									WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
 								}
 							});
 						} finally {
@@ -333,7 +333,7 @@ protected void openLink(final String href) {
 					d.asyncExec(new Runnable() {
 						public void run() {
 							MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-							WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser"));
+							WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
 						}
 					});
 				}

@@ -466,19 +466,19 @@ private void setProductDefaults(String defaultEditors) {
 		int index = extEditor.indexOf(':');
 		if(extEditor.length() < 3 || index <= 0 || index >= (extEditor.length() - 1)) { 
 			//Extension and id must have at least one char.
-			WorkbenchPlugin.log("Error setting default editor. Could not parse '" + extEditor + "'. Default editors should be specified as '*.ext1:editorId1;*.ext2:editorId2'"); //$NON-NLS-1$
+			WorkbenchPlugin.log("Error setting default editor. Could not parse '" + extEditor + "'. Default editors should be specified as '*.ext1:editorId1;*.ext2:editorId2'"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		String ext = extEditor.substring(0,index).trim();
 		String editorId = extEditor.substring(index + 1).trim();
 		FileEditorMapping mapping = getMappingFor(ext);
 		if(mapping == null) {
-			WorkbenchPlugin.log("Error setting default editor. Could not find mapping for '" + ext + "'."); //$NON-NLS-1$
+			WorkbenchPlugin.log("Error setting default editor. Could not find mapping for '" + ext + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 			continue;
 		}
 		EditorDescriptor editor = (EditorDescriptor)findEditor(editorId);
 		if(editor == null) {
-			WorkbenchPlugin.log("Error setting default editor. Could not find editor: '" + editorId + "'."); //$NON-NLS-1$
+			WorkbenchPlugin.log("Error setting default editor. Could not find editor: '" + editorId + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 			continue;
 		}
 		mapping.setDefaultEditor(editor);

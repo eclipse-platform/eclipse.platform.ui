@@ -568,11 +568,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		IPath locationPath = getStateLocation();
 		File newLocation = locationPath.toFile();
-		File oldLocation = new File(newLocation,"..//org.eclipse.ui");
+		File oldLocation = new File(newLocation,"..//org.eclipse.ui"); //$NON-NLS-1$
 		try {
 			oldLocation = oldLocation.getCanonicalFile();
 		} catch (IOException e) {}		
-		String markerFileName = ".copiedStateFiles_Marker";
+		String markerFileName = ".copiedStateFiles_Marker"; //$NON-NLS-1$
 		File markerFile = new File(oldLocation,markerFileName);
 		if(markerFile.exists())
 			return;

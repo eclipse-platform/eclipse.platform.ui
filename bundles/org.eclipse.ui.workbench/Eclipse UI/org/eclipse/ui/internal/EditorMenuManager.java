@@ -101,7 +101,7 @@ public class EditorMenuManager extends SubMenuManager {
 		if (refItem != null) {
 			super.insertAfter(refItem.getId(), item);
 		} else {
-			WorkbenchPlugin.log("Reference item " + id + " not found for action " + item.getId()); //$NON-NLS-1$
+			WorkbenchPlugin.log("Reference item " + id + " not found for action " + item.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	/* (non-Javadoc)

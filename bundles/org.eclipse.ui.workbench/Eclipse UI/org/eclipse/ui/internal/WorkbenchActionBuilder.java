@@ -626,7 +626,7 @@ public class WorkbenchActionBuilder {
 		importResourcesAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_HOVER));
 		importResourcesAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_IMPORT_WIZ_DISABLED));
 
-		exportResourcesAction = new ExportResourcesAction(workbench,WorkbenchMessages.getString("ExportResourcesAction.fileMenuText"));
+		exportResourcesAction = new ExportResourcesAction(workbench,WorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
 		exportResourcesAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
 		exportResourcesAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
 		exportResourcesAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
@@ -899,7 +899,7 @@ public class WorkbenchActionBuilder {
 				try {
 					ResourcesPlugin.getWorkspace().setDescription(description);
 				} catch (CoreException e) {
-					WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus());
+					WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus()); //$NON-NLS-1$
 				}
 									
 				// If auto build is turned on, then do a global incremental

@@ -86,7 +86,7 @@ public String getName() {
 			return name;
 		}
 	}
-	return "";
+	return ""; //$NON-NLS-1$
 }
 
 /**
@@ -103,7 +103,7 @@ public String getToolTipText() {
 			return name;
 		}
 	}
-	return "";
+	return ""; //$NON-NLS-1$
 }
 
 /**
@@ -148,7 +148,7 @@ public String getFactoryId() {
 public IStatus restoreState() {
 	Assert.isTrue(!isRestored());
 
-	Status result = new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	Status result = new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 	IMemento memento = this.memento;
 	this.memento = null;
 	
@@ -218,7 +218,7 @@ public IStatus saveState(IMemento memento) {
 			memento.putString(IWorkbenchConstants.TAG_TOOLTIP, input.getToolTipText());
 		}
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 
 }

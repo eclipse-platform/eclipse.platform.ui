@@ -160,7 +160,7 @@ protected Control createDialogArea(Composite parent) {
 	statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 	statusMessageLabel.setFont(parent.getFont());
 	//Make it two lines.
-	statusMessageLabel.setText(" \n ");
+	statusMessageLabel.setText(" \n "); //$NON-NLS-1$
 
 	return composite;
 }

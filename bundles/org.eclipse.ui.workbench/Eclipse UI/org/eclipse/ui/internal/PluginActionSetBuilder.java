@@ -280,7 +280,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			if (refItem != null) {
 				mgr.insertAfter(refItem.getId(), item);
 			} else {
-				WorkbenchPlugin.log("Reference item " + refId + " not found for action " + item.getId()); //$NON-NLS-1$
+				WorkbenchPlugin.log("Reference item " + refId + " not found for action " + item.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

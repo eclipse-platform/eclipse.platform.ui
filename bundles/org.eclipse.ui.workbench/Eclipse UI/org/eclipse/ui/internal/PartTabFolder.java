@@ -731,7 +731,7 @@ public IStatus restoreState(IMemento memento)
 			}
 		}
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 /**
  * @see IPersistable
@@ -788,7 +788,7 @@ public IStatus saveState(IMemento memento)
 			}
 		}
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 /**
  * Sets the presentation bounds.

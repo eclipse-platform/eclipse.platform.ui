@@ -48,8 +48,8 @@ public final class KeyMachine {
 		keyConfigurationMap = new TreeMap();
 		scopeMap = new TreeMap();
 		keyBindingSet = new TreeSet();		
-		keyConfiguration = "org.eclipse.ui.defaultConfiguration";
-		scopes = new String[] { "org.eclipse.ui.globalScope" };
+		keyConfiguration = "org.eclipse.ui.defaultConfiguration"; //$NON-NLS-1$
+		scopes = new String[] { "org.eclipse.ui.globalScope" }; //$NON-NLS-1$
 		mode = KeySequence.create();	
 	}
 

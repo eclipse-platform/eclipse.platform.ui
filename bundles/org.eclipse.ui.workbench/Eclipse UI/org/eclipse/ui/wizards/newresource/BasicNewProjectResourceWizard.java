@@ -432,7 +432,7 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	preferredPerspIds.add(finalPerspId);
 	String preferred = configElement.getAttribute(PREFERRED_PERSPECTIVES);
 	if (preferred != null) {
-		StringTokenizer tok = new StringTokenizer(preferred, " \t\n\r\f,");
+		StringTokenizer tok = new StringTokenizer(preferred, " \t\n\r\f,"); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			preferredPerspIds.add(tok.nextToken());
 		}

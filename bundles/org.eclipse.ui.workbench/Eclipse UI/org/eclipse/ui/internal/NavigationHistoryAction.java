@@ -40,10 +40,10 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 	public NavigationHistoryAction(IWorkbenchWindow window,boolean forward) {
 		super("",window); //$NON-NLS-1$
 		if(forward) {
-			setText(WorkbenchMessages.getString("NavigationHistoryAction.forward.text"));
+			setText(WorkbenchMessages.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
 		} else {
-			setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text"));
+			setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
 		}
 		// WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
@@ -135,7 +135,7 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 			entries = history.getForwardEntries();
 			if (entries.length > 0) {
 				NavigationHistoryEntry entry = entries[0];
-				String text = WorkbenchMessages.format("NavigationHistoryAction.forward.toolTipName", new String[] {entry.getHistoryText()});
+				String text = WorkbenchMessages.format("NavigationHistoryAction.forward.toolTipName", new String[] {entry.getHistoryText()}); //$NON-NLS-1$
 				setToolTipText(text);
 			} else {
 				setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
@@ -146,7 +146,7 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 			entries = history.getBackwardEntries();
 			if (entries.length > 0) {
 				NavigationHistoryEntry entry = entries[0];
-				String text = WorkbenchMessages.format("NavigationHistoryAction.backward.toolTipName", new String[] {entry.getHistoryText()});
+				String text = WorkbenchMessages.format("NavigationHistoryAction.backward.toolTipName", new String[] {entry.getHistoryText()}); //$NON-NLS-1$
 				setToolTipText(text);
 			} else {
 				setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$

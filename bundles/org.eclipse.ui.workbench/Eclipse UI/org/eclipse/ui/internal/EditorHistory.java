@@ -158,11 +158,11 @@ public class EditorHistory {
 		IMemento[] mementos = memento.getChildren(IWorkbenchConstants.TAG_FILE);
 		for (int i = 0; i < mementos.length; i++) {
 			EditorHistoryItem item = new EditorHistoryItem(mementos[i]);
-			if (!"".equals(item.getName()) || !"".equals(item.getToolTipText())) {
+			if (!"".equals(item.getName()) || !"".equals(item.getToolTipText())) { //$NON-NLS-1$ //$NON-NLS-2$
 				add(item, fifoList.size());
 			}
 		}
-		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 	}
 	
 	/**
@@ -179,6 +179,6 @@ public class EditorHistory {
 				item.saveState(itemMemento);
 			}
 		}
-		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 	}
 }

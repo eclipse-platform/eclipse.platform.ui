@@ -267,7 +267,7 @@ public class WWinKeyBindingService {
 	    	
 	    	// TBD: remove this later
 	    	if (newScopeIds == null || newScopeIds.length == 0)
-	    		newScopeIds = new String[] { "org.eclipse.ui.globalScope" };
+	    		newScopeIds = new String[] { "org.eclipse.ui.globalScope" }; //$NON-NLS-1$
 	    	
 	    	try {
 	    		keyMachine.setScopes(newScopeIds);

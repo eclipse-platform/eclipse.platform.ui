@@ -606,7 +606,7 @@ private void loadCustomPersp(PerspectiveDescriptor persp)
 		// Restore the layout state.
 		MultiStatus status = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.format("Perspective.unableToRestorePerspective",new String[]{persp.getLabel()}),
+			WorkbenchMessages.format("Perspective.unableToRestorePerspective",new String[]{persp.getLabel()}), //$NON-NLS-1$
 			null);
 		status.merge(restoreState(memento));
 		status.merge(restoreState());
@@ -794,7 +794,7 @@ public void removeFastView(IViewReference ref) {
 public IStatus restoreState(IMemento memento) {
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("Perspective.problemsRestoringPerspective"),null);
+		WorkbenchMessages.getString("Perspective.problemsRestoringPerspective"),null); //$NON-NLS-1$
 
 	// Create persp descriptor.
 	descriptor = new PerspectiveDescriptor(null,null,null);
@@ -826,7 +826,7 @@ public IStatus restoreState(IMemento memento) {
 private IStatus createReferences(IMemento views[]) {
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("Perspective.problemsRestoringViews"),null);
+		WorkbenchMessages.getString("Perspective.problemsRestoringViews"),null); //$NON-NLS-1$
 	
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
@@ -834,10 +834,10 @@ private IStatus createReferences(IMemento views[]) {
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 		// Create and open the view.
 		try {
-			if(!"true".equals(childMem.getString(IWorkbenchConstants.TAG_REMOVED)))
+			if(!"true".equals(childMem.getString(IWorkbenchConstants.TAG_REMOVED))) //$NON-NLS-1$
 				viewFactory.createView(viewID);
 		} catch (PartInitException e) {
-			childMem.putString(IWorkbenchConstants.TAG_REMOVED,"true");
+			childMem.putString(IWorkbenchConstants.TAG_REMOVED,"true"); //$NON-NLS-1$
 			result.add(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,e.getMessage(),e));
 		}
 	}
@@ -850,11 +850,11 @@ private IStatus createReferences(IMemento views[]) {
  */
 public IStatus restoreState() {
 	if(this.memento == null)
-		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("Perspective.problemsRestoringPerspective"),null);
+		WorkbenchMessages.getString("Perspective.problemsRestoringPerspective"),null); //$NON-NLS-1$
 				
 	IMemento memento = this.memento;
 	this.memento = null;
@@ -892,7 +892,7 @@ public IStatus restoreState() {
 		// Create and open the view.
 		WorkbenchPartReference ref = (WorkbenchPartReference)viewFactory.getView(viewID);
 		if(ref == null) {
-			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
+			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 			result.add(new Status(
 				Status.ERROR,PlatformUI.PLUGIN_ID,0,
 				WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
@@ -941,7 +941,7 @@ public IStatus restoreState() {
 				
 			IViewReference ref = viewFactory.getView(viewID);
 			if(ref == null) {
-				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
+				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 				result.add(new Status(
 					Status.ERROR,PlatformUI.PLUGIN_ID,0,
 					WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
@@ -1068,7 +1068,7 @@ public void saveDescAs(IPerspectiveDescriptor desc) {
 public IStatus saveState(IMemento memento) {
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null);
+		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null); //$NON-NLS-1$
 		
 	result.merge(saveState(memento, descriptor, true));
 
@@ -1082,7 +1082,7 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 {
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null);
+		WorkbenchMessages.getString("Perspective.problemsSavingPerspective"),null); //$NON-NLS-1$
 
 	if(this.memento != null) {
 		memento.putMemento(this.memento);

@@ -277,14 +277,14 @@ public class CoolBarLayout {
 			IMemento layout = child.createChild(IWorkbenchConstants.TAG_LAYOUT);
 			position.layout.saveState(layout); 
 		}
-		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 	}
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(20);
 		buffer.append("items "); //$NON-NLS-1$
 		for (int i = 0; i < items.size(); i++) {
 			String item = (String)items.get(i);
-			buffer.append(item + " ");
+			buffer.append(item + " "); //$NON-NLS-1$
 		}
 		buffer.append('\n');
 		buffer.append("item wrap indices "); //$NON-NLS-1$

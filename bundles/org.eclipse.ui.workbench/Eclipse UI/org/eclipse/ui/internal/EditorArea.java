@@ -248,7 +248,7 @@ public IStatus restoreState(IMemento memento) {
 		}
 		mapIDtoPart.put(partID, workbook);
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 /**
  * @see IPersistablePart
@@ -270,7 +270,7 @@ public IStatus saveState(IMemento memento) {
 			childMem.putFloat(IWorkbenchConstants.TAG_RATIO, info.ratio);
 		}
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 /**
  * Set the editor workbook which is active.

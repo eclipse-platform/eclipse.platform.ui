@@ -212,7 +212,7 @@ protected abstract void createSourceGroup(Composite parent);
  * @see WizardDataTransferPage.getErrorDialogTitle()
  */
 protected String getErrorDialogTitle(){
-	return WorkbenchMessages.getString("WizardImportPage.errorDialogTitle");
+	return WorkbenchMessages.getString("WizardImportPage.errorDialogTitle"); //$NON-NLS-1$
 }
 
 /**
@@ -496,7 +496,7 @@ protected boolean sourceConflictsWithDestination(IPath sourcePath){
 protected boolean determinePageCompletion() {
 	//Check for valid projects before making the user do anything 
 	if(noOpenProjects()){
-		setErrorMessage(WorkbenchMessages.getString("WizardImportPage.noOpenProjects"));
+		setErrorMessage(WorkbenchMessages.getString("WizardImportPage.noOpenProjects")); //$NON-NLS-1$
 		return false;
 	}
 	return super.determinePageCompletion();

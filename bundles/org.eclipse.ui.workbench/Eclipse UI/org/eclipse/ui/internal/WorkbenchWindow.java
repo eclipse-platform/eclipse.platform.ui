@@ -647,20 +647,20 @@ protected MenuManager createMenuManager() {
 						return null;
 				}
 
-				return "";
+				return ""; //$NON-NLS-1$
 			} 
 
 			String acceleratorText = KeyManager.getInstance().getTextForAction(defId);			
 			
-			if (acceleratorText != null && "carbon".equals(SWT.getPlatform())) {
-				acceleratorText = replaceSubstring(acceleratorText, "Alt", "\u2325");
-				acceleratorText = replaceSubstring(acceleratorText, "Command", "\u2318");
-				acceleratorText = replaceSubstring(acceleratorText, "Ctrl", "\u2303");
-				acceleratorText = replaceSubstring(acceleratorText, "Shift", "\u21E7");
-				acceleratorText = "   " + replaceSubstring(acceleratorText, "+", "");
+			if (acceleratorText != null && "carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+				acceleratorText = replaceSubstring(acceleratorText, "Alt", "\u2325"); //$NON-NLS-1$ //$NON-NLS-2$
+				acceleratorText = replaceSubstring(acceleratorText, "Command", "\u2318"); //$NON-NLS-1$ //$NON-NLS-2$
+				acceleratorText = replaceSubstring(acceleratorText, "Ctrl", "\u2303"); //$NON-NLS-1$ //$NON-NLS-2$
+				acceleratorText = replaceSubstring(acceleratorText, "Shift", "\u21E7"); //$NON-NLS-1$ //$NON-NLS-2$
+				acceleratorText = "   " + replaceSubstring(acceleratorText, "+", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			
-			return (acceleratorText != null ? acceleratorText : "");			
+			return (acceleratorText != null ? acceleratorText : "");			 //$NON-NLS-1$
 		}
 		
 		private /*static*/ String replaceSubstring(String str, String pattern, String replace) {
@@ -1143,10 +1143,10 @@ public void removePerspectiveListener(org.eclipse.ui.IPerspectiveListener l) {
 private IStatus unableToRestorePage(IMemento pageMem) {
 	String pageName = pageMem.getString(IWorkbenchConstants.TAG_LABEL);
 	if(pageName == null)
-		pageName = "";
+		pageName = ""; //$NON-NLS-1$
 	return new Status(
 		IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-		WorkbenchMessages.format("WorkbenchWindow.unableToRestorePerspective",new String[]{pageName}),
+		WorkbenchMessages.format("WorkbenchWindow.unableToRestorePerspective",new String[]{pageName}), //$NON-NLS-1$
 		null);
 }
 /**
@@ -1157,12 +1157,12 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("WorkbenchWindow.problemsRestoringWindow"),null);
+		WorkbenchMessages.getString("WorkbenchWindow.problemsRestoringWindow"),null); //$NON-NLS-1$
 				
 	// Read the bounds.
 	if("true".equals(memento.getString("maximized"))) {//$NON-NLS-2$//$NON-NLS-1$
 		getShell().setMaximized(true);
-	} else if ("true".equals(memento.getString("minimized"))) {
+	} else if ("true".equals(memento.getString("minimized"))) { //$NON-NLS-1$ //$NON-NLS-2$
 		//Do not restore minimized state.
 	} else {
 		Integer bigInt;
@@ -1199,7 +1199,7 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 		}
 		IAdaptable input;
 		try {
-			UIStats.start(UIStats.RESTORE_WORKBENCH,"WorkbenchPageFactory");
+			UIStats.start(UIStats.RESTORE_WORKBENCH,"WorkbenchPageFactory"); //$NON-NLS-1$
 			IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 			if (factory == null) {
 				WorkbenchPlugin.log("Unable to restore pagee - cannot instantiate input factory: " + factoryID);//$NON-NLS-1$
@@ -1215,7 +1215,7 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 				continue;
 			}
 		} finally {
-			UIStats.end(UIStats.RESTORE_WORKBENCH,"WorkbenchPageFactory");
+			UIStats.end(UIStats.RESTORE_WORKBENCH,"WorkbenchPageFactory"); //$NON-NLS-1$
 		}
 		// Open the perspective.
 		WorkbenchPage newPage = null;
@@ -1306,7 +1306,7 @@ public IStatus saveState(IMemento memento) {
 
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("WorkbenchWindow.problemsSavingWindow"),null);
+		WorkbenchMessages.getString("WorkbenchWindow.problemsSavingWindow"),null); //$NON-NLS-1$
 	
 	// Save the bounds.
 	if(getShell().getMaximized()) {

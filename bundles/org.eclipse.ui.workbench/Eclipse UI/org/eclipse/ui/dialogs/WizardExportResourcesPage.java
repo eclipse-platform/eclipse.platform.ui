@@ -287,7 +287,7 @@ public abstract class WizardExportResourcesPage
 	 * @see WizardDataTransferPage.getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
-		return WorkbenchMessages.getString("WizardExportPage.errorDialogTitle");
+		return WorkbenchMessages.getString("WizardExportPage.errorDialogTitle"); //$NON-NLS-1$
 	}
 	/**
 	 * Obsolete method. This was implemented to handle the case where ensureLocal()

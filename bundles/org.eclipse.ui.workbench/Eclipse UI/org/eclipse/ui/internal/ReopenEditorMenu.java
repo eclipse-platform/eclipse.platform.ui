@@ -64,7 +64,7 @@ public class ReopenEditorMenu extends ContributionItem {
 		if (pathName.equals(fileName)) {
 			// tool tip text isn't necessarily a path;
 			// sometimes it's the same as name, so it shouldn't be treated as a path then
-			pathName = "";
+			pathName = ""; //$NON-NLS-1$
 		}
 		IPath path = new Path(pathName);
 		// if last segment in path is the fileName, remove it 
@@ -188,7 +188,7 @@ public class ReopenEditorMenu extends ContributionItem {
 				public void handleException(Throwable e) {
 					// just skip the item if there's an error,
 					// e.g. in the calculation of the shortened name
-					WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e);  // $NON-NLS-1
+					WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e);  // $NON-NLS-1 //$NON-NLS-1$
 				}
 			});
 		}
@@ -222,7 +222,7 @@ public class ReopenEditorMenu extends ContributionItem {
 				IEditorDescriptor desc = item.getDescriptor();
 				if (input == null) {
 					String title = WorkbenchMessages.getString("OpenRecent.errorTitle"); //$NON-NLS-1$
-					MessageDialog.openWarning(fWindow.getShell(), title, "");
+					MessageDialog.openWarning(fWindow.getShell(), title, ""); //$NON-NLS-1$
 					history.remove(item);
 				}
 				else {

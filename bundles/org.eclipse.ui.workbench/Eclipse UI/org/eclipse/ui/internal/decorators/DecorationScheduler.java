@@ -326,7 +326,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 			};
 		};
 
-		decoratorUpdateThread = new Thread(decorationRunnable, "Decoration");
+		decoratorUpdateThread = new Thread(decorationRunnable, "Decoration"); //$NON-NLS-1$
 		decoratorUpdateThread.setPriority(Thread.MIN_PRIORITY);
 	}
 }

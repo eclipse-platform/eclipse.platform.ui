@@ -82,14 +82,14 @@ public IStatus restoreView(final IViewReference ref) {
 }
 public IStatus busyRestoreView(final IViewReference ref) {
 	if(ref.getPart(false) != null)
-		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 		
 	final String viewID = ref.getId();
 	final IMemento stateMem = (IMemento)mementoTable.get(viewID);
 	mementoTable.remove(viewID);
 	
 	final boolean resetPart[] = {true};
-	final IStatus result[] = new IStatus[]{new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null)};
+	final IStatus result[] = new IStatus[]{new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null)}; //$NON-NLS-1$
 	Platform.run(new SafeRunnable() {
 		public void run() {
 			IViewDescriptor desc = viewReg.find(viewID);
@@ -165,7 +165,7 @@ public IStatus busyRestoreView(final IViewReference ref) {
 				pane.createControl(page.getClientComposite());
 				
 			site.getPane().createChildControl();
-			result[0] =  new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+			result[0] =  new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 		}
 		public void handleException(Throwable e) {
 			if(resetPart[0]) {
@@ -186,7 +186,7 @@ public IStatus busyRestoreView(final IViewReference ref) {
 public IStatus saveState(IMemento memento) {
 	final MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("ViewFactory.problemsSavingViews"),null);
+		WorkbenchMessages.getString("ViewFactory.problemsSavingViews"),null); //$NON-NLS-1$
 	
 	final IViewReference refs[] = getViews();
 	for (int i = 0; i < refs.length; i++) {
@@ -202,7 +202,7 @@ public IStatus saveState(IMemento memento) {
 				public void handleException(Throwable e) {
 					result.add(new Status(
 						IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-						WorkbenchMessages.format("ViewFactory.couldNotSave",new String[]{refs[index].getTitle()}),
+						WorkbenchMessages.format("ViewFactory.couldNotSave",new String[]{refs[index].getTitle()}), //$NON-NLS-1$
 						e));
 				}
 			});
@@ -222,7 +222,7 @@ public IStatus restoreState(IMemento memento) {
 		String id = mem[i].getString(IWorkbenchConstants.TAG_ID);
 		mementoTable.put(id,mem[i].getChild(IWorkbenchConstants.TAG_VIEW_STATE));
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 /**
  * Remove a view rec from the manager.

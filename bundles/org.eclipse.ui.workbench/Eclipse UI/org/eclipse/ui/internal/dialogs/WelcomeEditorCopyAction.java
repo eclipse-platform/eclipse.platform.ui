@@ -22,7 +22,7 @@ public class WelcomeEditorCopyAction extends Action {
 	
 	public WelcomeEditorCopyAction(WelcomeEditor editor) {
 		editorPart = editor;
-		setText(WorkbenchMessages.getString("WelcomeEditor.copy.text"));
+		setText(WorkbenchMessages.getString("WelcomeEditor.copy.text")); //$NON-NLS-1$
 	}
 	
 	public void run() {

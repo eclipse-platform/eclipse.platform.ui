@@ -68,7 +68,7 @@ public class DialogUtil {
 	 */
 	public static String removeAccel(String label) {
 
-		int startBracket = label.indexOf("(&");
+		int startBracket = label.indexOf("(&"); //$NON-NLS-1$
 		//Non latin accelerator?
 		if (startBracket >= 0) {
 			int endBracket = label.indexOf(')');

@@ -154,8 +154,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
-		moreButton = createButton(parent, MORE_ID, WorkbenchMessages.getString("AboutFeaturesDialog.moreInfo"), false);
-		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutFeaturesDialog.pluginsInfo"), false);
+		moreButton = createButton(parent, MORE_ID, WorkbenchMessages.getString("AboutFeaturesDialog.moreInfo"), false); //$NON-NLS-1$
+		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutFeaturesDialog.pluginsInfo"), false); //$NON-NLS-1$
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -346,7 +346,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		Map map = getFeaturesMap();
 		if (map == null) 
 			return null;
-		String key = info.getFeatureId() + "_" + info.getVersion();
+		String key = info.getFeatureId() + "_" + info.getVersion(); //$NON-NLS-1$
 		return (IFeature)map.get(key);
 	}
 
@@ -421,7 +421,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			setItem(scan(aboutText));
 		}
 		if (getItem() == null)
-			text.setText(WorkbenchMessages.getString("AboutFeaturesDialog.noInformation"));
+			text.setText(WorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
 		else {
 			text.setText(getItem().getText());	
 			text.setCursor(null);
@@ -471,11 +471,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			String featureName = featuresInfo[i].getFeatureLabel();
 			String version = featuresInfo[i].getVersion();
 			if (provider == null)
-				provider = "";
+				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
-				featureName = "";
+				featureName = ""; //$NON-NLS-1$
 			if (version == null)
-				version = "";
+				version = ""; //$NON-NLS-1$
 			String[] row = { provider, featureName, version };
 			TableItem item = new TableItem(table, SWT.NULL);
 			item.setText(row);
@@ -541,11 +541,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			String featureName = featuresInfo[i].getFeatureLabel();
 			String version = featuresInfo[i].getVersion();
 			if (provider == null)
-				provider = "";
+				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
-				featureName = "";
+				featureName = ""; //$NON-NLS-1$
 			if (version == null)
-				version = "";
+				version = ""; //$NON-NLS-1$
 			String[] row = { provider, featureName, version };
 			items[i].setText(row);
 			items[i].setData(featuresInfo[i]);
@@ -588,16 +588,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					provider1 = i1.getProviderName();
 					name1 = i1.getFeatureLabel();
 					if (provider1 == null)
-						provider1 = "";
+						provider1 = ""; //$NON-NLS-1$
 					if (name1 == null)
-						name1 = "";
+						name1 = ""; //$NON-NLS-1$
 					i2 = (AboutInfo)b;
 					provider2 = i2.getProviderName();
 					name2 = i2.getFeatureLabel();
 					if (provider2 == null)
-						provider2 = "";
+						provider2 = ""; //$NON-NLS-1$
 					if (name2 == null)
-						name2 = "";
+						name2 = ""; //$NON-NLS-1$
 					if (provider1.equals(provider2))
 						return coll.compare(name1, name2);
 					else
@@ -632,9 +632,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					i2 = (AboutInfo)b;
 					name2 = i2.getFeatureLabel();
 					if (name1 == null)
-						name1 = "";
+						name1 = ""; //$NON-NLS-1$
 					if (name2 == null)
-						name2 = "";
+						name2 = ""; //$NON-NLS-1$
 					return coll.compare(name1, name2);
 				}
 			});
@@ -667,16 +667,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					version1 = i1.getVersion();
 					name1 = i1.getFeatureLabel();
 					if (version1 == null)
-						version1 = "";
+						version1 = ""; //$NON-NLS-1$
 					if (name1 == null)
-						name1 = "";
+						name1 = ""; //$NON-NLS-1$
 					i2 = (AboutInfo)b;
 					version2 = i2.getVersion();
 					name2 = i2.getFeatureLabel();
 					if (version2 == null)
-						version2 = "";
+						version2 = ""; //$NON-NLS-1$
 					if (name2 == null)
-						name2 = "";
+						name2 = ""; //$NON-NLS-1$
 					if (version1.equals(version2))
 						return coll.compare(name1, name2);
 					else

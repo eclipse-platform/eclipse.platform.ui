@@ -64,8 +64,8 @@ public void run() {
 	if (welcomeFeatures.size() == 0) {
 		MessageDialog.openInformation(
 			shell, 
-			WorkbenchMessages.getString("QuickStartMessageDialog.title"),
-			WorkbenchMessages.getString("QuickStartMessageDialog.message"));
+			WorkbenchMessages.getString("QuickStartMessageDialog.title"), //$NON-NLS-1$
+			WorkbenchMessages.getString("QuickStartMessageDialog.message")); //$NON-NLS-1$
 		return;
 	}			
 	
@@ -83,9 +83,9 @@ public void run() {
 				i2 = (AboutInfo)b;
 				name2 = i2.getFeatureLabel();
 				if (name1 == null)
-					name1 = "";
+					name1 = ""; //$NON-NLS-1$
 				if (name2 == null)
-					name2 = "";
+					name2 = ""; //$NON-NLS-1$
 				return coll.compare(name1, name2);
 			}
 		});

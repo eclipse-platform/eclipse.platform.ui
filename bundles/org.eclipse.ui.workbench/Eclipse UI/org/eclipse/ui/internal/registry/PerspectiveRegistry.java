@@ -80,7 +80,7 @@ public PerspectiveRegistry() {
 						}
 					}
 				}
-			} else if ((event.getOldValue() == null || event.getOldValue().equals(""))) {
+			} else if ((event.getOldValue() == null || event.getOldValue().equals(""))) { //$NON-NLS-1$
 				
 				/* New perspective is being added, update the perspectiveRegistry to 
 				 * contain the new custom perspective */

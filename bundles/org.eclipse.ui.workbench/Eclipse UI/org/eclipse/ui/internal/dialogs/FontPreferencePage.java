@@ -58,7 +58,7 @@ public class FontPreferencePage
 	private ArrayList dialogFontWidgets = new ArrayList();
 
 	//A token to identify a reset font
-	private String DEFAULT_TOKEN = "DEFAULT";
+	private String DEFAULT_TOKEN = "DEFAULT"; //$NON-NLS-1$
 
 	/**
 	 * The label that displays the selected font, or <code>null</code> if none.

@@ -37,7 +37,7 @@ public final class ComponentSupport {
 	 * @see ComponentSupport
 	 */
 	public static IEditorPart getComponentEditor(IFile input) {
-		if ((SWT.getPlatform().equals("win32"))
+		if ((SWT.getPlatform().equals("win32")) //$NON-NLS-1$
 			&& testForOleEditor(input)) { //$NON-NLS-1$
 			return getOleEditor();
 		}
@@ -50,7 +50,7 @@ public final class ComponentSupport {
 	private static IEditorPart getOleEditor() {
 		try {
 			Class oleEditorClass =
-				Class.forName("org.eclipse.ui.internal.editorsupport.win32.OleEditor");
+				Class.forName("org.eclipse.ui.internal.editorsupport.win32.OleEditor"); //$NON-NLS-1$
 			return (IEditorPart) oleEditorClass.newInstance();
 		} catch (ClassNotFoundException exception) {
 			return null;
@@ -69,9 +69,9 @@ public final class ComponentSupport {
 		if (nDot >= 0) {
 			try {
 				strName = strName.substring(nDot);
-				Class oleClass = Class.forName("org.eclipse.swt.ole.win32.OLE");
+				Class oleClass = Class.forName("org.eclipse.swt.ole.win32.OLE"); //$NON-NLS-1$
 				Method findMethod =
-					oleClass.getDeclaredMethod("findProgramID", new Class[] { String.class });
+					oleClass.getDeclaredMethod("findProgramID", new Class[] { String.class }); //$NON-NLS-1$
 				strName = (String) findMethod.invoke(null, new Object[] { strName });
 				if (strName.length() > 0)
 					return true;

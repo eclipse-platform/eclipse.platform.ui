@@ -174,7 +174,7 @@ public IStatus restoreState(IMemento memento) {
 			//Copy the state from the registred descriptor.	
 			image = descriptor.image;
 	}
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);		
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);		 //$NON-NLS-1$
 }
 /**
  * Revert to the predefined extension template.
@@ -196,6 +196,6 @@ public IStatus saveState(IMemento memento) {
 	childMem.putString(IWorkbenchConstants.TAG_CLASS,className);
 	if (singleton)
 		childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
-	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+	return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 }
 }

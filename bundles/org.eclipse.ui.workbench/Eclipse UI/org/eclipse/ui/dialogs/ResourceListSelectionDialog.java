@@ -88,7 +88,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 				return;
 				 
 			int last;
-			if ((patternString.indexOf('?') == -1) && (patternString.endsWith("*")) && 
+			if ((patternString.indexOf('?') == -1) && (patternString.endsWith("*")) &&  //$NON-NLS-1$
 				(patternString.indexOf('*') == patternString.length() - 1)) {
 				// Use a binary search to get first and last match when the pattern
 				// string ends with "*" and has no other embedded special characters.  
@@ -296,7 +296,7 @@ public ResourceListSelectionDialog(Shell parentShell, IContainer container, int 
  */
 protected String adjustPattern() {
 	String text = pattern.getText().trim();
-	if (!text.equals("") && 
+	if (!text.equals("") &&  //$NON-NLS-1$
 		text.indexOf('*') == -1 && 
 		text.indexOf('?') == -1 &&
 		text.indexOf('<') == -1) {
@@ -413,7 +413,7 @@ private void filterResources() {
 	stringMatcher = new StringMatcher(patternString,true,false);
 	UpdateFilterThread oldThread = updateFilterThread;
 	updateFilterThread = new UpdateFilterThread();
-	if (patternString.equals("")) {
+	if (patternString.equals("")) { //$NON-NLS-1$
 		updateFilterThread.firstMatch = 0;
 		updateFilterThread.lastMatch = -1;
 		updateFilterThread.start();
@@ -421,7 +421,7 @@ private void filterResources() {
 	} 
 	
 	if (oldPattern != null && (oldPattern.length() != 0) && 
-	   	oldPattern.endsWith("*") && patternString.endsWith("*")) {
+	   	oldPattern.endsWith("*") && patternString.endsWith("*")) { //$NON-NLS-1$ //$NON-NLS-2$
 		int matchLength = oldPattern.length() - 1;
 	  	if (patternString.regionMatches(0, oldPattern, 0, matchLength)) {
 			// filter the previous list of items, this is done when the 
@@ -479,14 +479,14 @@ private void gatherResources() {
 	updateGatherThread.stop = true;
 	updateGatherThread = new UpdateGatherThread();
 
-	if (patternString.equals("")) {
+	if (patternString.equals("")) { //$NON-NLS-1$
 		updateGatherThread.start();
 		return;
 	} 
 	stringMatcher = new StringMatcher(patternString,true,false);
 	
 	if (oldPattern != null && (oldPattern.length() != 0) && 
-	   oldPattern.endsWith("*") && patternString.endsWith("*")) {
+	   oldPattern.endsWith("*") && patternString.endsWith("*")) { //$NON-NLS-1$ //$NON-NLS-2$
 		// see if the new pattern is a derivative of the old pattern
 		int matchLength = oldPattern.length() - 1;
 	  	if (patternString.regionMatches(0, oldPattern, 0, matchLength)) {

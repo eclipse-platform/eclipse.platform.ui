@@ -25,11 +25,11 @@ import org.eclipse.ui.PlatformUI;
  * @since 2.1
  */
 public class LinkedResourceDecorator implements ILightweightLabelDecorator {
-	private static final String ICON_NAME = "link_ovr.gif";
+	private static final String ICON_NAME = "link_ovr.gif"; //$NON-NLS-1$
 	private static final ImageDescriptor LINKED;
 
 	static {
-		String fileName = WorkbenchImages.ICONS_PATH + "ovr16/" + ICON_NAME;
+		String fileName = WorkbenchImages.ICONS_PATH + "ovr16/" + ICON_NAME; //$NON-NLS-1$
 
 		LINKED =
 			WorkbenchImages.getImageDescriptorFromPlugin(

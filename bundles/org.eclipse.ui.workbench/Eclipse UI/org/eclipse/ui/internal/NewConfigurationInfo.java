@@ -84,7 +84,7 @@ public abstract class NewConfigurationInfo {
 		// load the ini, properties and mapping files	
 		URL iniURL = null;
 		try {
-			iniURL = desc.find(new Path("$nl$").append(iniFilename));
+			iniURL = desc.find(new Path("$nl$").append(iniFilename)); //$NON-NLS-1$
 			if (iniURL != null)
 				iniURL = Platform.resolve(iniURL);
 		} catch (IOException e) {
@@ -97,7 +97,7 @@ public abstract class NewConfigurationInfo {
 		
 		URL propertiesURL = null;
 		try {
-			propertiesURL = desc.find(new Path("$nl$").append(propertiesFilename));
+			propertiesURL = desc.find(new Path("$nl$").append(propertiesFilename)); //$NON-NLS-1$
 			if (propertiesURL != null)
 				propertiesURL = Platform.resolve(propertiesURL);
 		} catch (IOException e) {
@@ -106,7 +106,7 @@ public abstract class NewConfigurationInfo {
 
 		URL mappingsURL = null;
 		try {
-			mappingsURL = desc.find(new Path("$nl$").append(mappingsFilename));
+			mappingsURL = desc.find(new Path("$nl$").append(mappingsFilename)); //$NON-NLS-1$
 			if (mappingsURL != null)
 				mappingsURL = Platform.resolve(mappingsURL);
 		} catch (IOException e) {

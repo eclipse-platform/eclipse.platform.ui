@@ -69,7 +69,7 @@ public IStatus restoreState(IMemento memento)
 {
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("RootLayoutContainer.problemsRestoringPerspective"),null);
+		WorkbenchMessages.getString("RootLayoutContainer.problemsRestoringPerspective"),null); //$NON-NLS-1$
 	
 	// Read the info elements.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_INFO);
@@ -130,7 +130,7 @@ public IStatus saveState(IMemento memento) {
 
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.getString("RootLayoutContainer.problemsSavingPerspective"),null);
+		WorkbenchMessages.getString("RootLayoutContainer.problemsSavingPerspective"),null); //$NON-NLS-1$
 	
 	// Loop through the relationship array.
 	for (int i = 0; i < relationships.length; i ++) {

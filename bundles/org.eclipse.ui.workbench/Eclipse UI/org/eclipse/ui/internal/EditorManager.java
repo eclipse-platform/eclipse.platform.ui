@@ -700,7 +700,7 @@ public class EditorManager {
 		// Restore the editor area workbooks layout/relationship
 		final MultiStatus result = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("EditorManager.problemsRestoringEditors"),null);
+			WorkbenchMessages.getString("EditorManager.problemsRestoringEditors"),null); //$NON-NLS-1$
 		final String activeWorkbookID[] = new String[1];
 		final ArrayList visibleEditors = new ArrayList(5);
 		final IEditorPart activeEditor[] = new IEditorPart[1];
@@ -721,7 +721,7 @@ public class EditorManager {
 			boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
 			if(visibleEditor) {
 				Editor e = new Editor();
-				e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)));
+				e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED))); //$NON-NLS-1$
 				visibleEditors.add(e);
 				page.addPart(e);
 				result.add(restoreEditor(e,editorMem));
@@ -739,7 +739,7 @@ public class EditorManager {
 				String editorTitle = editorMem.getString(IWorkbenchConstants.TAG_TITLE);
 				String editorName = editorMem.getString(IWorkbenchConstants.TAG_NAME);
 				String editorID = editorMem.getString(IWorkbenchConstants.TAG_ID);
-				boolean pinned = "true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED));
+				boolean pinned = "true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)); //$NON-NLS-1$
 				IMemento inputMem = editorMem.getChild(IWorkbenchConstants.TAG_INPUT);
 				String factoryID = inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 				if (factoryID == null)
@@ -747,7 +747,7 @@ public class EditorManager {
 					
 				if(editorTitle == null) { //backward compatible format of workbench.xml
 					Editor e = new Editor();
-					e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED)));
+					e.setPinned("true".equals(editorMem.getString(IWorkbenchConstants.TAG_PINNED))); //$NON-NLS-1$
 					result.add(restoreEditor(e,editorMem));
 					IEditorPart editor = (IEditorPart)e.getPart(true);
 					if(editor == null) {
@@ -777,7 +777,7 @@ public class EditorManager {
 					ImageDescriptor iDesc = findImage(desc,file);
 					
 					String tooltip = editorMem.getString(IWorkbenchConstants.TAG_TOOLTIP);
-					if(tooltip == null) tooltip = "";
+					if(tooltip == null) tooltip = ""; //$NON-NLS-1$
 										
 					Editor e = new Editor(editorID,editorMem,editorName,editorTitle,tooltip,iDesc,factoryID,pinned);
 					page.addPart(e);
@@ -812,7 +812,7 @@ public class EditorManager {
 				//The exception is already logged.
 				result.add(new Status(
 					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-					WorkbenchMessages.getString("EditorManager.exceptionRestoringEditor"),e));
+					WorkbenchMessages.getString("EditorManager.exceptionRestoringEditor"),e)); //$NON-NLS-1$
 			}
 		});
 		return result;
@@ -899,7 +899,7 @@ public class EditorManager {
 		if(result[0] != null)
 			return result[0];
 		else
-			return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
+			return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 	}
 	/**
 	 *  Returns an error status to be displayed when unable to create an editor.
@@ -908,7 +908,7 @@ public class EditorManager {
 		String name = editorMem.getString(IWorkbenchConstants.TAG_NAME);
 		return new Status(
 			IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-			WorkbenchMessages.format("EditorManager.unableToCreateEditor",new String[]{name}),t);
+			WorkbenchMessages.format("EditorManager.unableToCreateEditor",new String[]{name}),t); //$NON-NLS-1$
 	}
 	/**
 	 * Runs a progress monitor operation.
@@ -1069,7 +1069,7 @@ public class EditorManager {
 
 		final MultiStatus result = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("EditorManager.problemsSavingEditors"),null);
+			WorkbenchMessages.getString("EditorManager.problemsSavingEditors"),null); //$NON-NLS-1$
 
 		// Save the editor area workbooks layout/relationship
 		IMemento editorAreaMem = memento.createChild(IWorkbenchConstants.TAG_AREA);
@@ -1119,7 +1119,7 @@ public class EditorManager {
 						editorMem.putString(IWorkbenchConstants.TAG_TOOLTIP, editor.getTitleToolTip()); //$NON-NLS-1$
 	
 						if(!site.getReuseEditor())
-							editorMem.putString(IWorkbenchConstants.TAG_PINNED,"true");
+							editorMem.putString(IWorkbenchConstants.TAG_PINNED,"true"); //$NON-NLS-1$
 	
 						EditorPane editorPane = (EditorPane) ((EditorSite) editor.getEditorSite()).getPane();
 						editorMem.putString(IWorkbenchConstants.TAG_WORKBOOK, editorPane.getWorkbook().getID());
@@ -1143,7 +1143,7 @@ public class EditorManager {
 					public void handleException(Throwable e) {
 						result.add(new Status(
 							IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-							WorkbenchMessages.format("EditorManager.unableToSaveEditor",new String[]{editor.getTitle()}),
+							WorkbenchMessages.format("EditorManager.unableToSaveEditor",new String[]{editor.getTitle()}), //$NON-NLS-1$
 							e));
 					}
 				});

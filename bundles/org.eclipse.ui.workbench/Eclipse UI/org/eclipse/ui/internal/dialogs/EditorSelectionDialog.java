@@ -51,7 +51,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private static final int TABLE_WIDTH = 200;
 	static {
 		if(SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
-			Executable_Filters = new String[] { "*.exe", "*.bat", "*.*"};//$NON-NLS-1$
+			Executable_Filters = new String[] { "*.exe", "*.bat", "*.*"};//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
 			Executable_Filters = new String[] {"*"};	//$NON-NLS-1$
 		}

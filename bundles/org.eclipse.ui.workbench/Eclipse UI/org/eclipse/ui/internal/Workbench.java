@@ -150,7 +150,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	/**
 	 * The id of the Tasks view.
 	 */
-	private static final String TASK_LIST_ID = WorkbenchPlugin.PI_WORKBENCH + ".views.TaskList";
+	private static final String TASK_LIST_ID = WorkbenchPlugin.PI_WORKBENCH + ".views.TaskList"; //$NON-NLS-1$
 	
 	
 	/**
@@ -184,7 +184,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 										}
 									}
 								} catch (PartInitException e) {
-									WorkbenchPlugin.log("Error bringing Tasks view to front", e.getStatus()); //$NON-NLS$
+									WorkbenchPlugin.log("Error bringing Tasks view to front", e.getStatus()); //$NON-NLS$ //$NON-NLS-1$
 								}
 							}
 						});
@@ -744,7 +744,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			return;
 		//Do not refresh if it was already done by core on startup.
 		for (int i = 0; i < commandLineArgs.length; i++)
-			if (commandLineArgs[i].equalsIgnoreCase("-refresh"))
+			if (commandLineArgs[i].equalsIgnoreCase("-refresh")) //$NON-NLS-1$
 				return;
 		IWorkbenchWindow windows[] = getWorkbenchWindows();
 		Shell shell = windows[windows.length - 1].getShell();
@@ -1030,8 +1030,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				if (restoreResult.getSeverity() == IStatus.ERROR) {
 					ErrorDialog.openError(
 						null,
-						WorkbenchMessages.getString("Workspace.problemsTitle"),
-						WorkbenchMessages.getString("Workbench.problemsRestoringMsg"),
+						WorkbenchMessages.getString("Workspace.problemsTitle"), //$NON-NLS-1$
+						WorkbenchMessages.getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
 						restoreResult);
 				}
 			}
@@ -1111,7 +1111,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		MultiStatus result = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsRestoring"),null);
+			WorkbenchMessages.getString("Workbench.problemsRestoring"),null); //$NON-NLS-1$
 		// Read perspective history.
 		// This must be done before we recreate the windows, because it is
 		// consulted during the recreation.
@@ -1183,8 +1183,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	public IPluginDescriptor[] getEarlyActivatedPlugins() {
 		IPluginRegistry registry = Platform.getPluginRegistry();
-		String pluginId = "org.eclipse.ui";
-		String extensionPoint = "startup";
+		String pluginId = "org.eclipse.ui"; //$NON-NLS-1$
+		String extensionPoint = "startup"; //$NON-NLS-1$
 
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
 		IExtension[] extensions = point.getExtensions();
@@ -1215,7 +1215,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 							}
 						}
 						public void handleException(Throwable exception) {
-							WorkbenchPlugin.log("Unhandled Exception", new Status(IStatus.ERROR, "org.eclipse.ui", 0, "Unhandled Exception", exception));
+							WorkbenchPlugin.log("Unhandled Exception", new Status(IStatus.ERROR, "org.eclipse.ui", 0, "Unhandled Exception", exception)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 					};
 					Platform.run(code);
@@ -1299,7 +1299,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private IStatus saveState(IMemento memento) {
 		MultiStatus result = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.getString("Workbench.problemsSaving"),null);
+			WorkbenchMessages.getString("Workbench.problemsSaving"),null); //$NON-NLS-1$
 
 		// Save the version number.
 		memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);

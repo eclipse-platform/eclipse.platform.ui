@@ -762,7 +762,7 @@ public void gotoMarker(IMarker marker) {
  */
 public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 	if (!(input instanceof WelcomeEditorInput))
-		throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+		throw new PartInitException("Invalid Input: Must be IFileEditorInput"); //$NON-NLS-1$
 	setSite(site);
 	setInput(input);
 }

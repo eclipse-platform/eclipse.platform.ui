@@ -339,9 +339,9 @@ protected boolean validateResourceName() {
         return false;
     }
     
-    if(!(new Path("")).isValidSegment(resourceName)){
+    if(!(new Path("")).isValidSegment(resourceName)){ //$NON-NLS-1$
 		problemType = PROBLEM_NAME_INVALID;
-		problemMessage = WorkbenchMessages.format("ResourceGroup.invalidFilename", new String[] {resourceName});
+		problemMessage = WorkbenchMessages.format("ResourceGroup.invalidFilename", new String[] {resourceName}); //$NON-NLS-1$
 		return false;
 	}
 	

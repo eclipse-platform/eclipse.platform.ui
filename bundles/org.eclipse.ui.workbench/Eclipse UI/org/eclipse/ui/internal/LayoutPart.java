@@ -34,7 +34,7 @@ abstract public class LayoutPart implements IPartDropTarget {
 	private Boolean visible;
 	private ListenerList propertyListeners = new ListenerList(1);
 	
-	public static final String PROP_VISIBILITY = "PROP_VISIBILITY";
+	public static final String PROP_VISIBILITY = "PROP_VISIBILITY"; //$NON-NLS-1$
 	
 /**
  * PresentationPart constructor comment.

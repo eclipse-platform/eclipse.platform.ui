@@ -221,13 +221,13 @@ public abstract class WizardDataTransferPage
 		if (path.getFileExtension() == null || path.segmentCount() < 2)
 			messageString =
 				WorkbenchMessages.format(
-					"WizardDataTransfer.existsQuestion",
+					"WizardDataTransfer.existsQuestion", //$NON-NLS-1$
 					new String[] { pathString });
 
 		else
 			messageString =
 				WorkbenchMessages.format(
-					"WizardDataTransfer.overwriteNameAndPathQuestion",
+					"WizardDataTransfer.overwriteNameAndPathQuestion", //$NON-NLS-1$
 					new String[] {
 						path.lastSegment(),
 						path.removeLastSegments(1).toOSString()});
@@ -395,7 +395,7 @@ public abstract class WizardDataTransferPage
 		if (message == null)
 			message =
 				WorkbenchMessages.format(
-					"WizardDataTransfer.exceptionMessage",
+					"WizardDataTransfer.exceptionMessage", //$NON-NLS-1$
 					new String[] { exception.toString()});
 		displayErrorDialog(message);
 	}
@@ -406,7 +406,7 @@ public abstract class WizardDataTransferPage
 	 */
 	protected String getErrorDialogTitle() {
 		return WorkbenchMessages.getString(
-			"WizardExportPage.internalErrorTitle");
+			"WizardExportPage.internalErrorTitle"); //$NON-NLS-1$
 	}
 
 	

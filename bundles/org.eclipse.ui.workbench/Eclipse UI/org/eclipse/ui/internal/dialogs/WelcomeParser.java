@@ -29,8 +29,8 @@ public class WelcomeParser extends DefaultHandler {
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_HREF = "href"; //$NON-NLS-1$
 	
-	private static final String FORMAT_WRAP = "wrap";
-	private static final String FORMAT_NOWRAP = "nowrap";
+	private static final String FORMAT_WRAP = "wrap"; //$NON-NLS-1$
+	private static final String FORMAT_NOWRAP = "nowrap"; //$NON-NLS-1$
 	private static final char DELIMITER = '\n'; // sax parser replaces crlf with lf
 	
 	private SAXParser parser;
@@ -152,7 +152,7 @@ public class WelcomeParser extends DefaultHandler {
 					for (int j=start; j<start+length; j++) {
 						char ch = text.charAt(j);
 						if (ch == DELIMITER) {
-							text.replace(j,j+1," ");
+							text.replace(j,j+1," "); //$NON-NLS-1$
 						} 
 					}
 				}

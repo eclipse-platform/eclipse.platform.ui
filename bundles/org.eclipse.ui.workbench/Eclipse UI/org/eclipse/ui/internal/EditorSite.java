@@ -77,6 +77,6 @@ public void setReuseEditor(boolean reuse) {
 	reuseEditor = reuse;
 }
 protected String getInitialScopeId() {
-	return "org.eclipse.ui.textEditorScope";
+	return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
 }
 }

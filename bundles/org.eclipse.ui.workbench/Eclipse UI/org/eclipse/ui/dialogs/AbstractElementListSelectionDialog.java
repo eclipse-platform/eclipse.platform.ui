@@ -284,7 +284,7 @@ public abstract class AbstractElementListSelectionDialog
 						IStatus.OK,
 						PlatformUI.PLUGIN_ID,
 						IStatus.OK,
-						"",
+						"", //$NON-NLS-1$
 						null);
 			}
 		} else {

@@ -45,7 +45,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	private final static String TYPE_DELIMITER = WorkbenchMessages.getString("TypesFiltering.typeDelimiter"); //$NON-NLS-1$
 	
 	//Define a title for the filter entry field.
-	private String filterTitle = WorkbenchMessages.getString("TypesFiltering.otherExtensions");
+	private String filterTitle = WorkbenchMessages.getString("TypesFiltering.otherExtensions"); //$NON-NLS-1$
 	
 	
 	Text userDefinedText;
