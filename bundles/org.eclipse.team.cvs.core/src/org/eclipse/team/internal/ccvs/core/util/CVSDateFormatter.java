@@ -19,7 +19,7 @@ import java.util.TimeZone;
 
 /**
  * Utility class for converting timestamps used in Entry file lines. The format
- * required in the Entry file is ISO C asctime() function (Sun Apr  7 01:29:26 1996).
+ * required in the Entry file is ISO C asctime() function (Sun Apr 7 01:29:26 1996).
  * <p>
  * To be compatible with asctime(), the day field in the entryline format is
  * padded with a space and not a zero. Most other CVS clients use string comparison 
@@ -28,9 +28,8 @@ import java.util.TimeZone;
  */
 public class CVSDateFormatter {
 	
-	private static final String ENTRYLINE_FORMAT = "E MMM dd HH:mm:ss yyyy"; //$NON-NLS-1$
+	private static final String ENTRYLINE_FORMAT = "E MMM d HH:mm:ss yyyy"; //$NON-NLS-1$
 	private static final String SERVER_FORMAT = "dd MMM yyyy HH:mm:ss";//$NON-NLS-1$
-	private static final int ENTRYLINE_TENS_DAY_OFFSET = 8;
 	
 	private static final SimpleDateFormat serverFormat = new SimpleDateFormat(SERVER_FORMAT, Locale.US);
 	private static SimpleDateFormat entryLineFormat = new SimpleDateFormat(ENTRYLINE_FORMAT, Locale.US);
@@ -49,26 +48,12 @@ public class CVSDateFormatter {
 		return serverFormat.format(date) + " -0000"; //$NON-NLS-1$
 	}	
 	
-	static synchronized public Date entryLineToDate(String text) throws ParseException {
-		try {
-			if (text.charAt(ENTRYLINE_TENS_DAY_OFFSET) == ' ') {
-				StringBuffer buf = new StringBuffer(text);
-				buf.setCharAt(ENTRYLINE_TENS_DAY_OFFSET, '0');
-				text = buf.toString();
-			}
-		} catch (StringIndexOutOfBoundsException e) {
-			throw new ParseException(e.getMessage(), ENTRYLINE_TENS_DAY_OFFSET);
-		}
+	static public Date entryLineToDate(String text) throws ParseException {
 		return entryLineFormat.parse(text);
 	}
 
-	static synchronized public String dateToEntryLine(Date date) {
-		if (date == null) return ""; //$NON-NLS-1$
-		String passOne = entryLineFormat.format(date);
-		if (passOne.charAt(ENTRYLINE_TENS_DAY_OFFSET) != '0') return passOne;
-		StringBuffer passTwo = new StringBuffer(passOne);
-		passTwo.setCharAt(ENTRYLINE_TENS_DAY_OFFSET, ' ');
-		return passTwo.toString();
+	static public String dateToEntryLine(Date date) {
+		return entryLineFormat.format(date);
 	}
 	
 	static synchronized public String dateToNotifyServer(Date date) {
