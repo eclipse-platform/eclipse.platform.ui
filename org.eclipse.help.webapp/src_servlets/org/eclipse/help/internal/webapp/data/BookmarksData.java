@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
  * This class manages bookmarks.
@@ -19,34 +20,40 @@ import org.eclipse.help.internal.*;
 public class BookmarksData extends RequestData {
 	public final static int NONE = 0;
 	public final static int ADD = 1;
-	public final static int REMOVE =2;
-	
+	public final static int REMOVE = 2;
+
 	public BookmarksData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
 
-		switch(getOperation()) {
-			case ADD:
+		switch (getOperation()) {
+			case ADD :
 				addBookmark();
 				break;
-			case REMOVE:
+			case REMOVE :
 				removeBookmark();
 				break;
-			default:
+			default :
 				break;
 		}
 	}
 
 	public void addBookmark() {
 		String bookmarkURL = request.getParameter("bookmark");
-		if (bookmarkURL != null && bookmarkURL.length() > 0 && !bookmarkURL.equals("about:blank")) {
-			String title = request.getParameter("title");
+		if (bookmarkURL != null
+			&& bookmarkURL.length() > 0
+			&& !bookmarkURL.equals("about:blank")) {
+			String title =
+				UrlUtil.isIE(request)
+					? UrlUtil.unescape(
+						UrlUtil.getRawRequestParameter(request, "title"))
+					: request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
-			
+
 			// separate the url and title by vertical bar
-			
+
 			// check for duplicates
-			if (bookmarks.indexOf(","+bookmarkURL + "|") != -1)
+			if (bookmarks.indexOf("," + bookmarkURL + "|") != -1)
 				return;
 			bookmarks = bookmarks + "," + bookmarkURL + "|" + title;
 			prefs.setValue(HelpSystem.BOOKMARKS, bookmarks);
@@ -56,7 +63,9 @@ public class BookmarksData extends RequestData {
 
 	public void removeBookmark() {
 		String bookmarkURL = request.getParameter("bookmark");
-		if (bookmarkURL != null && bookmarkURL.length() > 0 && !bookmarkURL.equals("about:blank")) {
+		if (bookmarkURL != null
+			&& bookmarkURL.length() > 0
+			&& !bookmarkURL.equals("about:blank")) {
 			String title = request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
@@ -74,7 +83,7 @@ public class BookmarksData extends RequestData {
 
 	public Topic[] getBookmarks() {
 		// sanity test for infocenter, but this could not work anyway...
-		if (HelpSystem.getMode()!=HelpSystem.MODE_INFOCENTER) {
+		if (HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER) {
 			// this is workbench
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
@@ -94,7 +103,7 @@ public class BookmarksData extends RequestData {
 		}
 		return new Topic[0];
 	}
-	
+
 	private int getOperation() {
 		String op = request.getParameter("operation");
 		if ("add".equals(op))
