@@ -265,6 +265,11 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 				Position pos= (Position) fMatchesToPositions.get(match);
 				if (pos != null) {
 					if (pos.isDeleted()) {
+						AbstractTextSearchResult result= (AbstractTextSearchResult) fMatchesToSearchResults.get(match);
+						// might be that the containing element has been removed.
+						if (result != null) {
+							result.removeMatch(match);
+						}
 						untrackPosition(textBuffer, match);
 					} else {
 						match.setOffset(pos.getOffset());
