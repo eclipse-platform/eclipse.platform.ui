@@ -133,8 +133,12 @@ public class EditorHistory {
 
 		while (iterator.hasNext()) {
 			EditorHistoryItem historyItem = (EditorHistoryItem) iterator.next();
-			IMemento itemMemento = memento.createChild(IWorkbenchConstants.TAG_FILE);
-			historyItem.saveState(itemMemento);
+			IEditorInput editorInput = historyItem.getInput();
+			
+			if (editorInput != null && editorInput.getPersistable() != null) {
+				IMemento itemMemento = memento.createChild(IWorkbenchConstants.TAG_FILE);
+				historyItem.saveState(itemMemento);
+			}
 		}
 	}
 }
