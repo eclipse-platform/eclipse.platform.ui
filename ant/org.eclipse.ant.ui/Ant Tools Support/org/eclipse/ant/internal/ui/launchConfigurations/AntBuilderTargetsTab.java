@@ -211,6 +211,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 
     public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
         configuration.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, true);
     }
 
     public void initializeFrom(ILaunchConfiguration configuration) {
@@ -232,7 +233,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         String afterCleanTargets= null;
         String duringCleanTargets= null;
         try {
-			if (!configuration.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false)) {
+			if (!configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, false)) {
 				//not yet migrated to new format
 				configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 			}
@@ -315,6 +316,8 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
         configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, targets);
         targets= (String) fAttributeToTargets.get(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS);
         configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, targets);
+		
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_TARGETS_UPDATED, true);
     }
 
     /* (non-Javadoc)

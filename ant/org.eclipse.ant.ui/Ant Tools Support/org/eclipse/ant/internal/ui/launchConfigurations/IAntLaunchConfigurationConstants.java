@@ -35,6 +35,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * String attribute indicating the Ant targets to execute after a clean (full build) for an Ant builder. Default value is
 	 * <code>null</code> which indicates that the default target is to be
 	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
 	 */
 	public static final String ATTR_ANT_AFTER_CLEAN_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_AFTER_CLEAN_TARGETS"; //$NON-NLS-1$
 	
@@ -42,6 +43,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * String attribute indicating the Ant targets to execute during a manual build for an Ant builder. Default value is
 	 * <code>null</code> which indicates that the default target is to be
 	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
 	 */
 	public static final String ATTR_ANT_MANUAL_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_MANUAL_TARGETS"; //$NON-NLS-1$
 	
@@ -49,6 +51,7 @@ public interface IAntLaunchConfigurationConstants {
 	 * String attribute indicating the Ant targets to execute during an auto build for an Ant builder. Default value is
 	 * <code>null</code> which indicates that the default target is to be
 	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
 	 */
 	public static final String ATTR_ANT_AUTO_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_AUTO_TARGETS"; //$NON-NLS-1$
 	
@@ -56,8 +59,17 @@ public interface IAntLaunchConfigurationConstants {
 	 * String attribute indicating the Ant targets to execute during a clean for an Ant builder. Default value is
 	 * <code>null</code> which indicates that the default target is to be
 	 * executed. Format is a comma separated listing of targets.
+	 * @since 3.1
 	 */
 	public static final String ATTR_ANT_CLEAN_TARGETS = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_CLEAN_TARGETS"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating whether or not target specification for an Ant builder has been updated for
+	 * 3.1 
+	 * 
+	 * @since 3.1
+	 */
+	public static final String ATTR_TARGETS_UPDATED = IAntUIConstants.PLUGIN_ID + ".ATTR_TARGETS_UPDATED"; //$NON-NLS-1$
 	
 	/**
 	 * Map attribute indicating the Ant properties to be defined during the
