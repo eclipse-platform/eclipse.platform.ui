@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,19 @@
 package org.eclipse.jface.text;
 
 
-
-
 /**
- * Standard implementation of <code>ILineTracker</code>.
- * The line tracker considers the three common line 
- * delimiters which are '\n', '\r', '\r\n'.<p>
+ * Standard implementation of {@link org.eclipse.jface.text.ILineTracker}.
+ * <p>
+ * The line tracker considers the three common line delimiters which are '\n',
+ * '\r', '\r\n'.
+ * <p>
  * This class is not intended to be subclassed.
  */
 public class DefaultLineTracker extends AbstractLineTracker {
 	
 	/** The predefined delimiters of this tracker */
 	public final static String[] DELIMITERS= { "\r", "\n", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-1$ //$NON-NLS-2$
-	/** A predefined delimiter info which is always reused as return value */
+	/** A predefined delimiter information which is always reused as return value */
 	private DelimiterInfo fDelimiterInfo= new DelimiterInfo();
 	
 	
@@ -34,14 +34,14 @@ public class DefaultLineTracker extends AbstractLineTracker {
 	}
 	
 	/*
-	 * @see ILineDelimiter@getLegalLineDelimiters()
+	 * @see org.eclipse.jface.text.ILineTracker#getLegalLineDelimiters()
 	 */
 	public String[] getLegalLineDelimiters() {
 		return DELIMITERS;
 	}
 
 	/*
-	 * @see AbstractLineTracker#nextDelimiterInfo(String, int)
+	 * @see org.eclipse.jface.text.AbstractLineTracker#nextDelimiterInfo(java.lang.String, int)
 	 */
 	protected DelimiterInfo nextDelimiterInfo(String text, int offset) {
 		

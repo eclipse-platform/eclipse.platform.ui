@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text;
-
 
 
 /**
@@ -52,14 +51,14 @@ class Line implements IRegion {
 	}
 		
 	/*
-	 * @see IRegion#getOffset()
+	 * @see org.eclipse.jface.text.IRegion#getOffset()
 	 */
 	public int getOffset() {
 		return offset;
 	}
 	
 	/*
-	 * @see IRegion#getLength()
+	 * @see org.eclipse.jface.text.IRegion#getLength()
 	 */
 	public int getLength() {
 		return length;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,15 @@
 package org.eclipse.jface.text;
 
 
-
-
 /**
- * Standard implementation of a generic <code>ILineTracker</code>.
+ * Standard implementation of a generic
+ * {@link org.eclipse.jface.text.ILineTracker}.
+ * <p>
  * The line tracker can be configured with the set of legal line delimiters.
- * Line delimiters are unconstrainted. The line delimiters are used to
- * compute the tracker's line structure. In the case of overlapping line delimiters,
- * the longest line delimiter is given precedence of the shorter ones.<p>
+ * Line delimiters are unconstrained. The line delimiters are used to compute
+ * the tracker's line structure. In the case of overlapping line delimiters, the
+ * longest line delimiter is given precedence of the shorter ones.
+ * <p>
  * This class is not intended to be subclassed.
  */
 public class ConfigurableLineTracker extends AbstractLineTracker {
@@ -26,7 +27,7 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 	
 	/** The strings which are considered being the line delimiter */
 	private String[] fDelimiters;
-	/** A predefined delimiter info which is always reused as return value */
+	/** A predefined delimiter information which is always reused as return value */
 	private DelimiterInfo fDelimiterInfo= new DelimiterInfo(); 
 	
 	
@@ -42,14 +43,14 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 	}
 	
 	/*
-	 * @see ILineDelimiter@getLegalLineDelimiters()
+	 * @see org.eclipse.jface.text.ILineTracker#getLegalLineDelimiters()
 	 */
 	public String[] getLegalLineDelimiters() {
 		return fDelimiters;
 	}
 
 	/*
-	 * @see AbstractLineTracker#nextDelimiterInfo(String, int)
+	 * @see org.eclipse.jface.text.AbstractLineTracker#nextDelimiterInfo(java.lang.String, int)
 	 */
 	protected DelimiterInfo nextDelimiterInfo(String text, int offset) {
 		int[] info= TextUtilities.indexOf(fDelimiters, text, offset);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
+
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -72,7 +72,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#replace(int, int, String)
+	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
 	 */
 	public void replace(int offset, int length, String text) {		
 
@@ -111,7 +111,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 
 	/*
-	 * @see ITextStore#set(String)
+	 * @see org.eclipse.jface.text.ITextStore#set(java.lang.String)
 	 */
 	public void set(String text) {
 		fSource.set(text);
@@ -119,7 +119,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#get(int, int)
+	 * @see org.eclipse.jface.text.ITextStore#get(int, int)
 	 */
 	public String get(int offset, int length) {
 
@@ -181,7 +181,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 
 	/*
-	 * @see ITextStore#get(int)
+	 * @see org.eclipse.jface.text.ITextStore#get(int)
 	 */
 	public char get(int offset) {
 		if (fReplaceList.size() == 0) {
@@ -224,7 +224,7 @@ public class SequentialRewriteTextStore implements ITextStore {
 	}
 
 	/*
-	 * @see ITextStore#getLength()
+	 * @see org.eclipse.jface.text.ITextStore#getLength()
 	 */
 	public int getLength() {
 		if (fReplaceList.size() == 0) {
@@ -270,5 +270,4 @@ public class SequentialRewriteTextStore implements ITextStore {
 		fSource.set(buffer.toString());
 		fReplaceList.clear();
 	}
-
 }

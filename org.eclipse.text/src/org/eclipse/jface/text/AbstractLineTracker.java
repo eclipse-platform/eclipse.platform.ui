@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -35,7 +33,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	
 	
 	/**
-	 * Combines the information of the occurence of a line delimiter.
+	 * Combines the information of the occurrence of a line delimiter.
 	 * <code>delimiterIndex</code> is the index where a line delimiter
 	 * starts, whereas <code>delimiterLength</code>, indicates the length
 	 * of the delimiter. 
@@ -132,7 +130,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineLength(int)
+	 * @see org.eclipse.jface.text.ILineTracker#getLineLength(int)
 	 */
 	public int getLineLength(int line) throws BadLocationException {
 		
@@ -149,7 +147,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 		
 	/*
-	 * @see ILineTracker#getLineNumberOfOffset(int)
+	 * @see org.eclipse.jface.text.ILineTracker#getLineNumberOfOffset(int)
 	 */
 	public int getLineNumberOfOffset(int position) throws BadLocationException {
 				
@@ -170,7 +168,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineInformationOfOffset(int)
+	 * @see org.eclipse.jface.text.ILineTracker#getLineInformationOfOffset(int)
 	 */
 	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {		
 		if (position > fTextLength)
@@ -188,7 +186,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineInformation(int)
+	 * @see org.eclipse.jface.text.ILineTracker#getLineInformation(int)
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
 		
@@ -210,7 +208,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 		
 	/*
-	 * @see ILineTracker#getLineOffset(int)
+	 * @see org.eclipse.jface.text.ILineTracker#getLineOffset(int)
 	 */
 	public int getLineOffset(int line) throws BadLocationException {
 		
@@ -232,7 +230,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 		
 	/*
-	 * @see ILineTracker#getNumberOfLines()
+	 * @see org.eclipse.jface.text.ILineTracker#getNumberOfLines()
 	 */
 	public int getNumberOfLines() {
 		
@@ -246,7 +244,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 		
 	/*
-	 * @see ILineTracker#getNumberOfLines(int, int)
+	 * @see org.eclipse.jface.text.ILineTracker#getNumberOfLines(int, int)
 	 */
 	public int getNumberOfLines(int position, int length) throws BadLocationException {
 		
@@ -260,7 +258,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#computeNumberOfLines(String)
+	 * @see org.eclipse.jface.text.ILineTracker#computeNumberOfLines(java.lang.String)
 	 */
 	public int computeNumberOfLines(String text) {
 		int count= 0;
@@ -279,13 +277,12 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	
 	
 	/**
-	 * Returns the info of the first delimiter found in the given
+	 * Returns the information about the first delimiter found in the given
 	 * text starting at the given offset.
 	 *
 	 * @param text the text to be searched
 	 * @param offset the offset in the given text
-	 * @return the info of the first found delimiter or <code>null</code> if 
-	 *		there is no such info
+	 * @return the information of the first found delimiter or <code>null</code>
 	 */
 	protected abstract DelimiterInfo nextDelimiterInfo(String text, int offset);
 	
@@ -397,8 +394,8 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	 * @param lineNumber the lineNumber at which the deletion starts
 	 * @param offset the offset of the first deleted character
 	 * @param length the number of deleted characters 
-	 * @return whethere the start line of the deletion has been deleted
-	 * @exception BadLocationException if position is unkown to the tracker
+	 * @return <code>true</code> if the start line has been deleted, <code>false</code> otherwise
+	 * @exception BadLocationException if position is unknown to the tracker
 	 */
 	private boolean remove(int lineNumber, int offset, int length) throws BadLocationException {
 		
@@ -455,7 +452,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#replace(int, int, String)
+	 * @see org.eclipse.jface.text.ILineTracker#replace(int, int, java.lang.String)
 	 */
 	public void replace(int position, int length, String text) throws BadLocationException {
 		
@@ -525,7 +522,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#set(String)
+	 * @see org.eclipse.jface.text.ILineTracker#set(java.lang.String)
 	 */
 	public void set(String text) {
 		fLines.clear();
@@ -536,7 +533,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineDelimiter(int)
+	 * @see org.eclipse.jface.text.ILineTracker#getLineDelimiter(int)
 	 */
 	public String getLineDelimiter(int line) throws BadLocationException {
 		

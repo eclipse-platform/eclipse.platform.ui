@@ -114,7 +114,7 @@ public final class Assert {
 	 * @exception Throwable an unspecified unchecked exception if the object
 	 *   is <code>null</code>
 	 */
-	public static void isNotNull(Object object) throws Throwable {
+	public static void isNotNull(Object object) {
 		// succeed as quickly as possible
 		if (object != null) {
 			return;
@@ -141,7 +141,7 @@ public final class Assert {
 	 * @exception Throwable an unspecified unchecked exception if the object
 	 *   is <code>null</code>
 	 */
-	public static void isNotNull(Object object, String message) throws Throwable {
+	public static void isNotNull(Object object, String message) {
 		if (object == null)
 			throw new AssertionFailedException("null argument;" + message);//$NON-NLS-1$
 	}

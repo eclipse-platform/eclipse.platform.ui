@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
 /**
  * A line tracker maps character positions to line numbers and vice versa.
- * Initially the line tracker is informed about its underlying text
- * in order to initialize the mapping information. After that, the line 
- * tracker is informed about all changes of the underlying text allowing 
- * for incremental updates of the mapping information. It is the client's
- * responsibility to actively inform the line tacker about text changes.
- * For example, when using a line tracker in combination with a document
- * the document controls the line tracker.<p>
+ * Initially the line tracker is informed about its underlying text in order to
+ * initialize the mapping information. After that, the line tracker is informed
+ * about all changes of the underlying text allowing for incremental updates of
+ * the mapping information. It is the client's responsibility to actively inform
+ * the line tacker about text changes. For example, when using a line tracker in
+ * combination with a document the document controls the line tracker.
+ * <p>
  * Clients may implement this interface or use the standard implementation
- * <code>DefaultLineTracker</code>.
+ * {@link org.eclipse.jface.text.DefaultLineTracker}or
+ * {@link org.eclipse.jface.text.ConfigurableLineTracker}.
  */
 public interface ILineTracker {
 		

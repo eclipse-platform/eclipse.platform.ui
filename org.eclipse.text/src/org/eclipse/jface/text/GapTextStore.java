@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text;
-
 
 
 
@@ -130,7 +129,7 @@ public class GapTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#get(int)
+	 * @see org.eclipse.jface.text.ITextStore#get(int)
 	 */
 	public char get(int offset) {
 		
@@ -142,7 +141,7 @@ public class GapTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#get(int, int)
+	 * @see org.eclipse.jface.text.ITextStore#get(int, int)
 	 */
 	public String get(int offset, int length) {
 
@@ -166,16 +165,15 @@ public class GapTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#getLength()
+	 * @see org.eclipse.jface.text.ITextStore#getLength()
 	 */
 	public int getLength() {
 		int length= fGapEnd - fGapStart;
 		return (fContent.length - length);
 	}
 	
-	
 	/*
-	 * @see ITextStore#replace(int, int, String)
+	 * @see org.eclipse.jface.text.ITextStore#replace(int, int, java.lang.String)
 	 */
 	public void replace(int offset, int length, String text) {
 		
@@ -214,6 +212,7 @@ public class GapTextStore implements ITextStore {
 	 * Sets the content to <code>text</code> and removes the gap
 	 * since there are no sensible predictions about 
 	 * where the next change will occur.
+	 * 
 	 * @see ITextStore#set(String)
 	 */
 	public void set(String text) {
