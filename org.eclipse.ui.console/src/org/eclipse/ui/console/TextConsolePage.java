@@ -296,7 +296,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		fClearOutputAction = new ClearOutputAction(fConsole);
 		
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.ui.internal.console.ConsoleMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action.", fConsoleView)); //$NON-NLS-1$
+		setGlobalAction(actionBars, ActionFactory.FIND.getId(), new FindReplaceAction(bundle, "find_replace_action_", fConsoleView)); //$NON-NLS-1$
 
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.COPY.getId());
