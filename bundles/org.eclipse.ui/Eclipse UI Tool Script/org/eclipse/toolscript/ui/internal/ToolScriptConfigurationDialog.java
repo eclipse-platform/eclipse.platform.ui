@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -187,7 +188,7 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 	 * actions
 	 */
 	private void hookButtonActions() {
-		newButton.addSelectionListener(new SelectionListener() {
+		newButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ToolScriptEditDialog dialog;
 				dialog = new ToolScriptEditDialog(getShell(), null);
@@ -196,31 +197,25 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				scripts.add(script);
 				listViewer.add(script);
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
 		});
 
-		editButton.addSelectionListener(new SelectionListener() {
+		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ToolScriptEditDialog dialog;
 				dialog = new ToolScriptEditDialog(getShell(), currentSelection);
 				dialog.open();
 				listViewer.update(currentSelection, null);
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
 		});
 
-		removeButton.addSelectionListener(new SelectionListener() {
+		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				scripts.remove(currentSelection);
 				listViewer.remove(currentSelection);
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
 		});
 
-		upButton.addSelectionListener(new SelectionListener() {
+		upButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = scripts.indexOf(currentSelection);
 				if (index < 1)
@@ -231,11 +226,9 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				listViewer.update(script, null);
 				listViewer.update(currentSelection, null);
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
 		});
 
-		downButton.addSelectionListener(new SelectionListener() {
+		downButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = scripts.indexOf(currentSelection);
 				if (index < 0 || index >= scripts.size() - 1)
@@ -245,8 +238,6 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				scripts.set(index, script);
 				listViewer.update(script, null);
 				listViewer.update(currentSelection, null);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
 	}
@@ -271,6 +262,11 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				removeButton.setEnabled(currentSelection != null);
 				upButton.setEnabled(currentSelection != null && selIndex > 0);
 				downButton.setEnabled(currentSelection != null && selIndex < itemCount - 1);
+				
+				if (currentSelection == null)
+					detailText.setText(""); //$NON-NLS-1$
+				else
+					detailText.setText(ToolScriptMessages.format("ToolScriptConfigurationDialog.detailMessage", new Object[] {currentSelection.getLocation(), currentSelection.getArguments(), currentSelection.getWorkingDirectory()})); //$NON-NLS-1$
 			}
 		});
 	}

@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -36,6 +37,11 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	private Text directoryField;
 	private Button refreshCheckBox;
 	private Text refreshField;
+	private Button locationBrowseWorkspace;
+	private Button locationBrowseFileSystem;
+	private Button argumentsBrowseVariable;
+	private Button directoryBrowseWorkspace;
+	private Button directoryBrowseFileSystem;
 	private Button refreshOptionButton;
 	
 	private boolean editMode = false;
@@ -252,7 +258,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		}
 		
 		// Finish setup
-//		hookButtonActions();
+		hookButtonActions();
 		
 		return dialogComp;
 	}
@@ -280,6 +286,22 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	public ToolScript getToolScript() {
 		return script;
 	}
+	
+	/**
+	 * Hooks the action handler for when a button is pressed
+	 */
+	private void hookButtonActions() {
+/*		newButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ToolScriptEditDialog dialog;
+				dialog = new ToolScriptEditDialog(getShell(), null);
+				dialog.open();
+				ToolScript script = dialog.getToolScript();
+				scripts.add(script);
+				listViewer.add(script);
+			}
+		});
+*/	}
 	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
