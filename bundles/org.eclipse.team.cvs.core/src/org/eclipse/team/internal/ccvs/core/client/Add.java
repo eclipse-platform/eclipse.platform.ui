@@ -87,9 +87,9 @@ public class Add extends Command {
                 
                 String serverMessage = getServerMessage(line, location);
                 if (serverMessage != null) {
-                    if (serverMessage.startsWith("use `cvs commit' to add")) //$NON-NLS-1$
+                    if (serverMessage.indexOf("cvs commit") != -1 && serverMessage.indexOf("add") != -1 && serverMessage.indexOf("permanently") != -1) //$NON-NLS-1$
                         return OK;
-                    if (serverMessage.startsWith("scheduling file") && serverMessage.endsWith("for addition")) //$NON-NLS-1$ //$NON-NLS-2$
+                    if (serverMessage.startsWith("scheduling file") && serverMessage.indexOf("for addition") != -1) //$NON-NLS-1$ //$NON-NLS-2$
                         return OK;
                 }
                 return super.errorLine(line, location, commandRoot, monitor);
