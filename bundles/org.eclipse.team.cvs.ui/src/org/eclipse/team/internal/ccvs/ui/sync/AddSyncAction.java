@@ -18,7 +18,6 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -31,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
@@ -88,11 +88,7 @@ public class AddSyncAction extends MergeAction {
 				}
 			}
 		} catch (final TeamException e) {
-			getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					ErrorDialog.openError(getShell(), null, null, e.getStatus());
-				}
-			});
+			handle(e);
 			return null;
 		}
 		
@@ -140,5 +136,8 @@ public class AddSyncAction extends MergeAction {
 	protected String getHelpContextID() {
 		return IHelpContextIds.SYNC_ADD_ACTION;
 	}
-
+	
+	protected String getErrorTitle() {
+		return Policy.bind("AddAction.addFailed"); //$NON-NLS-1$
+	}
 }

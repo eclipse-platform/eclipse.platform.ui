@@ -11,7 +11,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.eclipse.compare.BufferedContent;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
@@ -31,7 +30,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -65,7 +63,6 @@ import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
-import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -109,13 +106,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			try {
 				new ProgressMonitorDialog(shell).run(false, false, runnable);
 			} catch (InvocationTargetException e) {
-				CoreException targetException;
-				if (e.getTargetException() instanceof CoreException) {
-					targetException = (CoreException)e.getTargetException();
-				} else {
-					targetException = new CoreException(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e.getTargetException())); //$NON-NLS-1$
-				}
-				ErrorDialog.openError(CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", resource.getName()), null, targetException.getStatus()); //$NON-NLS-1$
+				CVSUIPlugin.openError(CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(), Policy.bind("TeamFile.saveChanges", resource.getName()), null, e); //$NON-NLS-1$
 			} catch (InterruptedException e) {
 				// Ignore
 			}
@@ -499,24 +490,6 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		}
 	}
 	private void handle(Exception e) {
-		// create a status
-		Throwable t = e;
-		// unwrap the invocation target exception
-		if (t instanceof InvocationTargetException) {
-			t = ((InvocationTargetException)t).getTargetException();
-		}
-		IStatus error;
-		if (t instanceof CoreException) {
-			error = ((CoreException)t).getStatus();
-		} else if (t instanceof TeamException) {
-			error = ((TeamException)t).getStatus();
-		} else {
-			error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t); //$NON-NLS-1$
-		}
-		setMessage(error.getMessage());
-		ErrorDialog.openError(shell, null, null, error);
-		if (!(t instanceof TeamException)) {
-			CVSUIPlugin.log(error);
-		}
+		setMessage(CVSUIPlugin.openError(shell, null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS).getMessage());
 	}
 }

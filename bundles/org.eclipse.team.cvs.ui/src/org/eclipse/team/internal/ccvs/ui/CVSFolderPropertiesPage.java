@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -167,7 +166,7 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 			try {
 				cvsFolder.unmanage(null);
 			} catch (CVSException e) {
-				ErrorDialog.openError(getShell(), null, null, e.getStatus());
+				CVSUIPlugin.openError(getShell(), null, null, e);
 				return false;
 			}
 			return true;

@@ -5,11 +5,11 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -123,7 +122,7 @@ abstract class MergeAction extends Action {
 			}
 		};
 		try {
-			run(op, Policy.bind("MergeAction.problemsDuringSync")); //$NON-NLS-1$
+			run(op);
 		} catch (InterruptedException e) {
 		}
 		if (result[0] != null) {
@@ -213,20 +212,12 @@ abstract class MergeAction extends Action {
 	/**
 	 * Helper method to run a runnable in a progress monitor dialog, and display any errors.
 	 */
-	protected void run(IRunnableWithProgress op, String problemMessage) throws InterruptedException {
+	protected void run(IRunnableWithProgress op) throws InterruptedException {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 		try {
 			dialog.run(true, true, op);
 		} catch (InvocationTargetException e) {
-			Throwable throwable = e.getTargetException();
-			IStatus error = null;
-			if (throwable instanceof CoreException) {
-				error = ((CoreException)throwable).getStatus();
-			} else {
-				error = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("simpleInternal") , throwable); //$NON-NLS-1$
-			}
-			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
-			CVSUIPlugin.log(error);
+			handle(e);
 		}
 	}
 	
@@ -358,5 +349,15 @@ abstract class MergeAction extends Action {
 				((ChangedTeamContainer)next).setKind(IRemoteSyncElement.IN_SYNC);
 			}
 		}
+	}
+	
+	/**
+	 * Sycn actions seem to need to be sync-execed to work	 * @param t	 */
+	protected void handle(Throwable t) {
+		CVSUIPlugin.openError(getShell(), getErrorTitle(), null, t, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
+	}
+	
+	protected String getErrorTitle() {
+		return null;
 	}
 }

@@ -15,13 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -355,7 +351,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			if (fetch != provider.getFetchAbsentDirectories())
 				provider.setFetchAbsentDirectories(fetch);
 		} catch (CVSException e) {
-			handle(e.getStatus());
+			handle(e);
 		}
 		if (newLocation == null) {
 			return true;
@@ -371,16 +367,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 				}
 			});
 		} catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof TeamException) {
-				handle((TeamException)t);
-			} else if (t instanceof CoreException) {
-				handle(((CoreException)t).getStatus());
-			} else {
-				IStatus status = new Status(IStatus.ERROR, CVSUIPlugin.ID, 1, Policy.bind("internal"), t); //$NON-NLS-1$
-				handle(status);
-				CVSUIPlugin.log(status);
-			}
+			handle(e);
 		} catch (InterruptedException e) {
 			return false;
 		}
@@ -390,21 +377,8 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	/**
 	 * Shows the given errors to the user.
 	 */
-	protected void handle(TeamException e) {
-		handle(e.getStatus());
-	}
-	
-	protected void handle(IStatus status) {
-		if (!status.isOK()) {
-			IStatus toShow = status;
-			if (status.isMultiStatus()) {
-				IStatus[] children = status.getChildren();
-				if (children.length == 1) {
-					toShow = children[0];
-				}
-			}
-			ErrorDialog.openError(getShell(), status.getMessage(), null, toShow);
-		}
+	protected void handle(Throwable t) {
+		CVSUIPlugin.openError(getShell(), null, null, t);
 	}
 }
 

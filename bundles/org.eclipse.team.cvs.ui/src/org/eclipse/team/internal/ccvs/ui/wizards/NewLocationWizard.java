@@ -11,7 +11,6 @@ import java.util.Properties;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -89,20 +88,20 @@ public class NewLocationWizard extends Wizard {
 			}
 			provider.addRepository(root[0]);
 		} catch (TeamException e) {
-			IStatus error = e.getStatus();
 			if (root[0] == null) {
 				// Exception creating the root, we cannot continue
-				ErrorDialog.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.exception"), null, error); //$NON-NLS-1$
+				CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.exception"), null, e); //$NON-NLS-1$
 				return false;
 			} else {
 				// Exception validating. We can continue if the user wishes.
+				IStatus error = e.getStatus();
 				if (error.isMultiStatus() && error.getChildren().length == 1) {
 					error = error.getChildren()[0];
 				}
 					
 				boolean keep = false;
 				if (error.isMultiStatus()) {
-					ErrorDialog.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.validationFailedTitle"), null, error); //$NON-NLS-1$
+					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("NewLocationWizard.validationFailedTitle"), null, e); //$NON-NLS-1$
 				} else {
 					keep = MessageDialog.openQuestion(getContainer().getShell(),
 						Policy.bind("NewLocationWizard.validationFailedTitle"), //$NON-NLS-1$
@@ -115,7 +114,7 @@ public class NewLocationWizard extends Wizard {
 						provider.disposeRepository(root[0]);
 					}
 				} catch (TeamException e1) {
-					ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus()); //$NON-NLS-1$
+					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("exception"), null, e1); //$NON-NLS-1$
 					return false;
 				}
 				return keep;

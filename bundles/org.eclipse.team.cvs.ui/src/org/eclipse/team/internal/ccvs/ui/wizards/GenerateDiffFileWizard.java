@@ -19,7 +19,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -545,23 +544,11 @@ public class GenerateDiffFileWizard extends Wizard {
 		} catch (InterruptedException e1) {
 			return true;
 		} catch(CoreException e) {
-			ErrorDialog.openError(getShell(), Policy.bind("GenerateCVSDiff.error"), null, e.getStatus()); //$NON-NLS-1$
+			CVSUIPlugin.openError(getShell(), Policy.bind("GenerateCVSDiff.error"), null, e); //$NON-NLS-1$
 			return false;
 		} catch (InvocationTargetException e2) {
-			if (e2.getTargetException() instanceof CoreException) {
-				CoreException e = (CoreException) e2.getTargetException();
-				ErrorDialog.openError(getShell(), Policy.bind("GenerateCVSDiff.error"), null, e.getStatus()); //$NON-NLS-1$
-				return false;
-			} else {
-				Throwable target = e2.getTargetException();
-				if (target instanceof RuntimeException) {
-					throw (RuntimeException) target;
-				}
-				if (target instanceof Error) {
-					throw (Error) target;
-				}
-			}
-			return true;
+			CVSUIPlugin.openError(getShell(), Policy.bind("GenerateCVSDiff.error"), null, e2); //$NON-NLS-1$
+			return false;
 		}
 	}
 }

@@ -12,13 +12,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -76,17 +74,7 @@ public class UpdateWizard extends Wizard {
 		} catch (InterruptedException e) {
 			return true;
 		} catch (InvocationTargetException e) {
-			Throwable target = e.getTargetException();
-			if (target instanceof CVSException) {
-				ErrorDialog.openError(getShell(), null, null, ((CVSException)target).getStatus());
-				return false;
-			}
-			if (target instanceof RuntimeException) {
-				throw (RuntimeException)target;
-			}
-			if (target instanceof Error) {
-				throw (Error)target;
-			}
+			CVSUIPlugin.openError(getShell(), null, null, e);
 		}
 		return result[0];
 	}

@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -29,6 +28,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
@@ -262,26 +262,14 @@ public class KSubstWizard extends Wizard {
 				} else {
 					title = Policy.bind("KSubstWizard.warningTitle"); //$NON-NLS-1$
 				}
-				ErrorDialog.openError(getShell(), title, message, statusToDisplay);
+				CVSUIPlugin.openError(getShell(), title, message, new CVSException(statusToDisplay));
 			}
 			return true;
 		} catch (InterruptedException e1) {
 			return true;
 		} catch (InvocationTargetException e2) {
-			if (e2.getTargetException() instanceof CoreException) {
-				CoreException e = (CoreException) e2.getTargetException();
-				ErrorDialog.openError(getShell(), Policy.bind("KSubstWizard.problemsMessage"), null, e.getStatus()); //$NON-NLS-1$
-				return false;
-			} else {
-				Throwable target = e2.getTargetException();
-				if (target instanceof RuntimeException) {
-					throw (RuntimeException) target;
-				}
-				if (target instanceof Error) {
-					throw (Error) target;
-				}
-			}
-			return true;
+			CVSUIPlugin.openError(getShell(), Policy.bind("KSubstWizard.problemsMessage"), null, e2); //$NON-NLS-1$
+			return false;
 		}
 	}
 
@@ -368,7 +356,7 @@ public class KSubstWizard extends Wizard {
 					}
 				}, depth, false);
 			} catch (CoreException e) {
-				ErrorDialog.openError(getShell(), Policy.bind("KSubstWizard.problemsMessage"), null, e.getStatus()); //$NON-NLS-1$
+				CVSUIPlugin.openError(getShell(), Policy.bind("KSubstWizard.problemsMessage"), null, e); //$NON-NLS-1$
 			}
 		}
 	}

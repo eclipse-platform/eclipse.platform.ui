@@ -11,10 +11,10 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.Hashtable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Hashtable;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -38,18 +38,19 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
@@ -297,7 +298,123 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	public static void log(CVSException e) {
 		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));; //$NON-NLS-1$
 	}
+
+	// flags to tailor error reporting
+	public static final int PERFORM_SYNC_EXEC = 1;
+	public static final int LOG_TEAM_EXCEPTIONS = 2;
+	public static final int LOG_CORE_EXCEPTIONS = 4;
+	public static final int LOG_OTHER_EXCEPTIONS = 8;
+	public static final int LOG_NONTEAM_EXCEPTIONS = LOG_CORE_EXCEPTIONS | LOG_OTHER_EXCEPTIONS;
+	
+	/**
+	 * Convenience method for showing an error dialog 	 * @param shell a valid shell or null	 * @param exception the exception to be report	 * @param title the title to be displayed
+	 * @return IStatus the status that was displayed to the user	 */
+	public static IStatus openError(Shell shell, String title, String message, Throwable exception) {
+		return openError(shell, title, message, exception, LOG_OTHER_EXCEPTIONS);
+	}
+	
+	/**
+	 * Convenience method for showing an error dialog 
+	 * @param shell a valid shell or null
+	 * @param exception the exception to be report
+	 * @param title the title to be displayed
+	 * @param flags customizing attributes for the error handling
+	 * @return IStatus the status that was displayed to the user
+	 */
+	public static IStatus openError(Shell providedShell, String title, String message, Throwable exception, int flags) {
+		// Unwrap InvocationTargetExceptions
+		if (exception instanceof InvocationTargetException) {
+			Throwable target = ((InvocationTargetException)exception).getTargetException();
+			// re-throw any runtime exceptions or errors so they can be handled by the workbench
+			if (target instanceof RuntimeException) {
+				throw (RuntimeException)target;
+			}
+			if (target instanceof Error) {
+				throw (Error)target;
+			} 
+			return openError(providedShell, title, message, target, flags);
+		}
 		
+		// Determine the status to be displayed (and possibly logged)
+		IStatus status = null;
+		boolean log = false;
+		if (exception instanceof CoreException) {
+			status = ((CoreException)exception).getStatus();
+			log = ((flags & LOG_CORE_EXCEPTIONS) > 0);
+		} else if (exception instanceof TeamException) {
+			status = ((TeamException)exception).getStatus();
+			log = ((flags & LOG_TEAM_EXCEPTIONS) > 0);
+		} else if (exception instanceof InterruptedException) {
+			return new CVSStatus(IStatus.OK, Policy.bind("ok"));
+		} else if (exception != null) {
+			status = new CVSStatus(IStatus.ERROR, Policy.bind("internal"), exception); //$NON-NLS-1$
+			log = ((flags & LOG_OTHER_EXCEPTIONS) > 0);
+			if (title == null) title = Policy.bind("SimpleInternal"); //$NON-NLS-1$
+		}
+		// Check for multi-status with only one child
+		if (status.isMultiStatus() && status.getChildren().length == 1) {
+			status = status.getChildren()[0];
+		}
+		if (status.isOK()) return status;
+		
+		// Log if the user requested it
+		if (log) CVSUIPlugin.log(status);
+		
+		// If no shell was provided, try to get one from the active window
+		if (providedShell == null) {
+			IWorkbenchWindow window = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow();
+			if (window != null) {
+				providedShell = window.getShell();
+				// sync-exec when we do this just in case
+				flags = flags | PERFORM_SYNC_EXEC;
+			}
+		}
+		
+		// Create a runnable that will display the error status
+		final Shell shell = providedShell;
+		final String displayTitle = title;
+		final String displayMessage = message;
+		final IStatus displayStatus = status;
+		Runnable runnable = new Runnable() {
+			public void run() {
+				Shell displayShell;
+				if (shell == null) {
+					Display display = Display.getCurrent();
+					displayShell = new Shell(display);
+				} else {
+					displayShell = shell;
+				}
+				if (displayStatus.getSeverity() == IStatus.INFO && !displayStatus.isMultiStatus()) {
+					MessageDialog.openInformation(displayShell, Policy.bind("information"), displayStatus.getMessage()); //$NON-NLS-1$
+				} else {
+					ErrorDialog.openError(displayShell, displayTitle, displayMessage, displayStatus);
+				}
+				if (shell == null) {
+					displayShell.dispose();
+				}
+			}
+		};
+		
+		// Execute the above runnable as determined by the parameters
+		if (shell == null || (flags & PERFORM_SYNC_EXEC) > 0) {
+			Display display;
+			if (shell == null) {
+				display = Display.getCurrent();
+				if (display == null) {
+					display = Display.getDefault();
+				}
+			} else {
+				display = shell.getDisplay();
+			}
+			display.syncExec(runnable);
+		} else {
+			runnable.run();
+		}
+		
+		// return the status we display
+		return status;
+	}
+	
 	/**
 	 * Initializes the preferences for this plugin if necessary.
 	 */

@@ -16,14 +16,12 @@ import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -70,7 +68,6 @@ import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.internal.ui.sync.TeamFile;
-import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -434,7 +431,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 							teamFile.merged();
 						}
 					} catch(TeamException e) {
-						ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+						CVSUIPlugin.openError(getControl().getShell(), null, null, e);
 					}
 				}
 				refresh();
@@ -516,7 +513,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				}
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFileRevision", new Object[] {name, revision, author[0]})); //$NON-NLS-1$
 			} catch (TeamException e) {
-				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+				CVSUIPlugin.openError(getControl().getShell(), null, null, e);
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.repositoryFile", name)); //$NON-NLS-1$
 			}
 		} else {
@@ -529,7 +526,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				String revision = ((ICVSRemoteFile)base).getRevision();
 				config.setAncestorLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", new Object[] {name, revision} )); //$NON-NLS-1$
 			} catch (TeamException e) {
-				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+				CVSUIPlugin.openError(getControl().getShell(), null, null, e);
 				config.setRightLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$
 			}
 		} else {
@@ -559,7 +556,7 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 						config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$
 					}
 				} catch (CVSException e) {
-					ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+					CVSUIPlugin.openError(getControl().getShell(), null, null, e);
 					config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$				
 				}
 			}

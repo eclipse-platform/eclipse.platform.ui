@@ -5,14 +5,12 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
-import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -25,7 +23,6 @@ import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
-import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
@@ -64,7 +61,7 @@ public class IgnoreAction extends Action {
 				String pattern = dialog.getIgnorePatternFor(resource);
 				cvsResource.setIgnoredAs(pattern);
 			} catch (CVSException e) {
-				ErrorDialog.openError(shell, null, null, e.getStatus());
+				CVSUIPlugin.openError(shell, null, null, e);
 				return;
 			}
 			removeNodes(new SyncSet(selection).getChangedNodes());

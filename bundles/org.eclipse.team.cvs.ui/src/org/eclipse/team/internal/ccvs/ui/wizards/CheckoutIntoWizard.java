@@ -15,10 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.TeamException;
@@ -92,7 +89,7 @@ public class CheckoutIntoWizard extends Wizard {
 				}
 			});
 		} catch (InvocationTargetException e) {
-			handle(e, Policy.bind("CheckoutIntoWizard.error")); //$NON-NLS-1$
+			handle(e); 
 			return false;
 		} catch (InterruptedException e) {
 			return false;
@@ -100,21 +97,8 @@ public class CheckoutIntoWizard extends Wizard {
 		return true;
 	}
 	
-	private void handle(Throwable e, String title) {
-		if (e instanceof InvocationTargetException) {
-			handle(((InvocationTargetException)e).getTargetException(), title);
-			return;
-		}
-		IStatus status = null;
-		String message = null;
-		if (e instanceof CoreException) {
-			status = ((CoreException)e).getStatus();
-		} else if (e instanceof TeamException) {
-			status = ((TeamException)e).getStatus();
-		} else {
-			message = Policy.bind("internal"); //$NON-NLS-1$
-		}
-		ErrorDialog.openError(getShell(), title, null, status);
+	private void handle(Throwable e) {
+		CVSUIPlugin.openError(getShell(), Policy.bind("CheckoutIntoWizard.error"), null, e); //$NON-NLS-1$
 	}
 
 	protected IPromptCondition getOverwriteLocalAndFileSystemPrompt() {

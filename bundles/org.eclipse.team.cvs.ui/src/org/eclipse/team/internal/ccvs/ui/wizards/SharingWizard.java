@@ -16,20 +16,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -204,7 +200,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 												CVSProviderPlugin.getPlugin().disposeRepository(location);
 											}
 										} catch (TeamException e1) {
-											ErrorDialog.openError(getContainer().getShell(), Policy.bind("exception"), null, e1.getStatus()); //$NON-NLS-1$
+											CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("exception"), null, e1); //$NON-NLS-1$
 										}
 										result[0] = false;
 										return;
@@ -240,7 +236,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 									return;
 								}
 							} catch (TeamException e) {
-								ErrorDialog.openError(getShell(), null, null, e.getStatus());
+								CVSUIPlugin.openError(getShell(), null, null, e);
 								if (!isKnown && location != null) location.flushUserInfo();
 								result[0] = false;
 								doSync[0] = false;
@@ -307,15 +303,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		} catch (InterruptedException e) {
 			return true;
 		} catch (InvocationTargetException e) {
-			Throwable target = e.getTargetException();
-			if (target instanceof RuntimeException) {
-				throw (RuntimeException)target;
-			}
-			if (target instanceof Error) {
-				throw (Error)target;
-			} else if (target instanceof TeamException) {
-				ErrorDialog.openError(getContainer().getShell(), null, null, ((TeamException)target).getStatus());
-			}
+			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
 		}
 
 		return result[0];
@@ -385,28 +373,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				}
 			}, null);
 		} catch (InvocationTargetException e) {
-			final IStatus[] status = new IStatus[] { null };
-			if (e.getTargetException() instanceof CoreException) {
-				status[0] = ((CoreException)e.getTargetException()).getStatus();
-			} else if (e.getTargetException() instanceof TeamException) {
-				status[0] = ((TeamException)e.getTargetException()).getStatus();
-			} else {
-				status[0] = new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, e.getTargetException().getMessage(), e.getTargetException());
-			}
-			Runnable runnable = new Runnable() {
-				public void run() {
-					Shell shell = null;
-					if (getContainer() != null) {
-						shell = getContainer().getShell();
-					}
-					ErrorDialog.openError(shell, null, null, status[0]);
-				}
-			};
-			if (shell == null) {
-				Display.getDefault().syncExec(runnable);
-			} else {
-				runnable.run();
-			}
+			CVSUIPlugin.openError(shell, null, null, e);
 		} catch (InterruptedException e) {
 		}
 		return isCVSFolder[0];

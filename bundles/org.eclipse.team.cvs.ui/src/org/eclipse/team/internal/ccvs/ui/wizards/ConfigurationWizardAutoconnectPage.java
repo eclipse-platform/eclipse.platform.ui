@@ -6,17 +6,14 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  */
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -24,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -112,14 +110,12 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 			info = folder.getFolderSyncInfo();
 			if (info == null) {
 				// This should never happen
-				ErrorDialog.openError(getContainer().getShell(), Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null); //$NON-NLS-1$ //$NON-NLS-2$
+				CVSUIPlugin.openError(null, Policy.bind("ConfigurationWizardAutoconnectPage.noSyncInfo"), Policy.bind("ConfigurationWizardAutoconnectPage.noCVSDirectory"), null); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			location = CVSRepositoryLocation.fromString(info.getRoot());
 		} catch (TeamException e) {
-			Shell shell = new Shell(Display.getDefault());
-			ErrorDialog.openError(shell, null, null, e.getStatus());
-			shell.dispose();
+			CVSUIPlugin.openError(null, null, null, e);
 		}
 	}
 	
@@ -128,9 +124,7 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 		try {
 			this. location = CVSRepositoryLocation.fromString(info.getRoot());
 		} catch (CVSException e) {
-			Shell shell = new Shell(Display.getDefault());
-			ErrorDialog.openError(shell, null, null, e.getStatus());
-			shell.dispose();
+			CVSUIPlugin.openError(null, null, null, e);
 		}
 	}
 	

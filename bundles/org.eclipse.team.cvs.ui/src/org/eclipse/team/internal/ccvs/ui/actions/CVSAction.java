@@ -12,22 +12,16 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -47,7 +41,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
 import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -229,7 +222,7 @@ abstract public class CVSAction extends TeamAction {
 		} else {
 			title = getWarningTitle();
 		}
-		ErrorDialog.openError(getShell(), title, message, statusToDisplay);
+		CVSUIPlugin.openError(getShell(), title, message, new CVSException(statusToDisplay));
 	}
 
 	/**
@@ -475,4 +468,11 @@ abstract public class CVSAction extends TeamAction {
 		} 
 		return okToContinue[0];
 	}
+	/**
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#handle(java.lang.Exception, java.lang.String, java.lang.String)
+	 */
+	protected void handle(Exception exception, String title, String message) {
+		CVSUIPlugin.openError(getShell(), title, message, exception, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
+	}
+
 }

@@ -15,19 +15,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -50,7 +46,6 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
-import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.TeamFile;
@@ -323,19 +318,10 @@ public class UpdateSyncAction extends MergeAction {
 				runUpdateDeep((ITeamNode[])updateDeep.toArray(new ITeamNode[updateDeep.size()]), manager, Policy.subMonitorFor(monitor, 100));
 			}
 		} catch (final TeamException e) {
-			getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					ErrorDialog.openError(getShell(), null, null, e.getStatus());
-				}
-			});
+			handle(e);
 			return null;
 		} catch (final CoreException e) {
-			getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			});
-			CVSUIPlugin.log(e.getStatus());
+			handle(e);
 			return null;
 		} finally {
 			monitor.done();
@@ -427,4 +413,7 @@ public class UpdateSyncAction extends MergeAction {
 		return IHelpContextIds.SYNC_UPDATE_ACTION;
 	}
 
+	protected String getErrorTitle() {
+		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
+	}
 }

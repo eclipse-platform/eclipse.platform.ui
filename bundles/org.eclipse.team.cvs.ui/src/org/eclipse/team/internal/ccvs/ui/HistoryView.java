@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -27,7 +26,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -468,10 +466,7 @@ public class HistoryView extends ViewPart {
 				} catch (InterruptedException e) { // ignore cancellation
 					result[0] = new Object[0];
 				} catch (InvocationTargetException e) {
-					Throwable t = e.getTargetException();
-					if (t instanceof TeamException) {
-						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException) t).getStatus());
-					}
+					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 					result[0] = new Object[0];
 				}
 				return result[0];				
@@ -690,7 +685,7 @@ public class HistoryView extends ViewPart {
 					tableViewer.setInput(remoteFile);
 					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
 				} catch (TeamException e) {
-					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
+					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 				}				
 			}
 			return;
@@ -735,16 +730,7 @@ public class HistoryView extends ViewPart {
 						}
 					});
 				} catch (InvocationTargetException e) {
-					Throwable t = e.getTargetException();
-					if (t instanceof TeamException) {
-						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException)t).getStatus());
-					} else if (t instanceof CoreException) {
-						IStatus status = ((CoreException)t).getStatus();
-						ErrorDialog.openError(getViewSite().getShell(), null, null, status);
-						CVSUIPlugin.log(status);
-					} else {
-						// To do
-					}
+					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
 				} catch (InterruptedException e) {
 					// Do nothing
 				}

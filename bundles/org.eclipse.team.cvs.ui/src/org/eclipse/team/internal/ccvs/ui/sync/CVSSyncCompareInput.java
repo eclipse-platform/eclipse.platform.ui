@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -243,8 +242,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 					}, IResource.DEPTH_INFINITE, true);
 				}
 			} catch (CoreException e) {
-				ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
-				CVSUIPlugin.log(e.getStatus());
+				CVSUIPlugin.openError(getShell(), null, null, e, CVSUIPlugin.LOG_CORE_EXCEPTIONS);
 				return new IRemoteSyncElement[0];
 			}
 			

@@ -8,10 +8,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
@@ -150,12 +147,7 @@ public class CVSRemoteFilePropertySource implements IPropertySource {
 			});
 		} catch (InterruptedException e) { // ignore cancellation
 		} catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof TeamException) {
-				Shell shell = new Shell(Display.getDefault());
-				ErrorDialog.openError(shell, null, null, ((TeamException) t).getStatus());
-				shell.dispose();
-			}
+			CVSUIPlugin.openError(null, null, null, e);
 		}
 	}
 }
