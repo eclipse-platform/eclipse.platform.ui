@@ -534,17 +534,20 @@ public void remove(LayoutPart child) {
 	
 	// Show new editor
 	if (visibleEditor == child) {
+		EditorPane nextEditor = null;
 		int maxIndex = editors.size() - 1;
 		if (maxIndex >= 0) {
 			tabIndex = Math.min(tabIndex, maxIndex);
-			setVisibleEditor((EditorPane)editors.get(tabIndex));
-		} else {
-			setVisibleEditor(null);
+			nextEditor = (EditorPane)editors.get(tabIndex);
 		}
-	}
-
-	// Dispose old editor.
-	if (tabFolder != null) {
+		if (tabFolder != null) {
+			// Dispose old editor.
+			removeTab(getTab(child));
+			child.setContainer(null);
+		}
+		setVisibleEditor(nextEditor);
+	} else if (tabFolder != null) {
+		// Dispose old editor.
 		removeTab(getTab(child));
 		child.setContainer(null);
 	}
@@ -759,6 +762,13 @@ public void setVisibleEditor(EditorPane comp) {
 		visibleEditor = comp;
 		return;
 	}
+	
+	if(comp != null) {
+		//Make sure the EditorPart is created.
+		Object part = comp.getPartReference().getPart(true);
+		if(part == null)
+			comp = null;
+	}
 
 	// Hide old part. Be sure that it is not in the middle of closing
 	if (visibleEditor != null && visibleEditor != comp && visibleEditor.getControl()!= null){
@@ -776,10 +786,8 @@ public void setVisibleEditor(EditorPane comp) {
 		setControlSize(visibleEditor);
 		if(visibleEditor.getControl() != null)
 			visibleEditor.getControl().setVisible(true);
-
+			
 		becomeActiveWorkbook(activeState == ACTIVE_FOCUS);
-		//Make sure the EditorPart is created.
-		visibleEditor.getPartReference().getPart(true);
 	}
 }
 public void tabFocusHide() {
