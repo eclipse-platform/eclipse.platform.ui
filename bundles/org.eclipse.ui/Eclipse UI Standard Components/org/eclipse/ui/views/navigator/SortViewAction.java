@@ -18,7 +18,7 @@ public class SortViewAction extends ResourceNavigatorAction {
  * @param navigator the resource navigator
  * @param sortByType <code>true</code> for sort by type, <code>false</code> for sort by name
  */
-public SortViewAction(IResourceNavigatorPart navigator, boolean sortByType) {
+public SortViewAction(IResourceNavigator navigator, boolean sortByType) {
 	super(navigator, sortByType ? ResourceNavigatorMessages.getString("SortView.byType") : ResourceNavigatorMessages.getString("SortView.byName")); //$NON-NLS-2$ //$NON-NLS-1$
 	if (sortByType) {
 		setToolTipText(ResourceNavigatorMessages.getString("SortView.toolTipByType")); //$NON-NLS-1$
@@ -31,8 +31,8 @@ public SortViewAction(IResourceNavigatorPart navigator, boolean sortByType) {
 }
 public void run() {
 	if (sort)
-		getNavigator().setResourceSorter(new ResourceSorter(ResourceSorter.TYPE));
+		getNavigator().setSorter(new ResourceSorter(ResourceSorter.TYPE));
 	else
-		getNavigator().setResourceSorter(new ResourceSorter(ResourceSorter.NAME));
+		getNavigator().setSorter(new ResourceSorter(ResourceSorter.NAME));
 }
 }

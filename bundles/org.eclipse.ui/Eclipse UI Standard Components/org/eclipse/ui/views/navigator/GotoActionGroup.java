@@ -1,5 +1,15 @@
 package org.eclipse.ui.views.navigator;
 
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.action.*;
@@ -7,27 +17,24 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.views.framelist.*;
 
 /**
  * This is the action group for the goto actions.
  */
-public class GotoActionGroup extends ActionGroup {
+public class GotoActionGroup extends ResourceNavigatorActionGroup {
 
-	private IResourceNavigatorPart navigator;
 	private BackAction backAction;
 	private ForwardAction forwardAction;
 	private GoIntoAction goIntoAction;
 	private UpAction upAction;
 	private GotoResourceAction gotoResourceAction;
 
-	public GotoActionGroup(IResourceNavigatorPart navigator) {
-		this.navigator = navigator;
-		makeActions();
+	public GotoActionGroup(IResourceNavigator navigator) {
+		super(navigator);
 	}
 
-	private void makeActions() {
+	protected void makeActions() {
 		FrameList frameList = navigator.getFrameList();
 		goIntoAction = new GoIntoAction(frameList);
 		backAction = new BackAction(frameList);

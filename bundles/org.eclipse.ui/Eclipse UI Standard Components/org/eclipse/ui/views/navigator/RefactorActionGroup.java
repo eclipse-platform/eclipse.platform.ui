@@ -1,20 +1,30 @@
 package org.eclipse.ui.views.navigator;
 
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.actions.DeleteResourceAction;
+import org.eclipse.ui.actions.TextActionHandler;
 
 /**
  * This is the action group for refactor actions,
@@ -22,9 +32,7 @@ import org.eclipse.ui.actions.*;
  * 
  * @since 2.0
  */
-public class RefactorActionGroup extends ActionGroup {
-	private IResourceNavigatorPart navigator;
-
+public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 	private Clipboard clipboard;
 
 	private CopyAction copyAction;
@@ -34,13 +42,12 @@ public class RefactorActionGroup extends ActionGroup {
 	private ResourceNavigatorMoveAction moveAction;
 	private TextActionHandler textActionHandler;
 	
-	public RefactorActionGroup(IResourceNavigatorPart navigator) {
-		this.navigator = navigator;
-		makeActions();
+	public RefactorActionGroup(IResourceNavigator navigator) {
+		super(navigator);
 	}
 
-	private void makeActions() {
-		TreeViewer treeViewer = (TreeViewer) navigator.getResourceViewer();
+	protected void makeActions() {
+		TreeViewer treeViewer = (TreeViewer) navigator.getViewer();
 		Shell shell = navigator.getSite().getShell();
 		clipboard = new Clipboard(shell.getDisplay());
 		pasteAction = new PasteAction(shell, clipboard);
@@ -118,5 +125,6 @@ public class RefactorActionGroup extends ActionGroup {
 			clipboard.dispose();
 			clipboard = null;
 		}
+		super.dispose();
 	}
 }

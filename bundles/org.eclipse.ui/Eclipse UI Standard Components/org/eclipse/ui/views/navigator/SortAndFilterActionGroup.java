@@ -1,28 +1,34 @@
 package org.eclipse.ui.views.navigator;
 
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.actions.ActionGroup;
 
 /**
  * This is the action group for the sort and filter actions.
  */
-public class SortAndFilterActionGroup extends ActionGroup {
+public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
 
-	private IResourceNavigatorPart navigator;
 	private SortViewAction sortByTypeAction;
 	private SortViewAction sortByNameAction;
 	private FilterSelectionAction filterAction;
 
-	public SortAndFilterActionGroup(IResourceNavigatorPart navigator) {
-		this.navigator = navigator;
-		makeActions();
+	public SortAndFilterActionGroup(IResourceNavigator navigator) {
+		super(navigator);
 	}
 
-	private void makeActions() {
+	protected void makeActions() {
 		sortByNameAction = new SortViewAction(navigator, false);
 		sortByTypeAction = new SortViewAction(navigator, true);
 		filterAction =
@@ -42,7 +48,7 @@ public class SortAndFilterActionGroup extends ActionGroup {
 	}
 
 	public void updateActionBars() {
-		int criteria = navigator.getResourceSorter().getCriteria();
+		int criteria = navigator.getSorter().getCriteria();
 		sortByNameAction.setChecked(criteria == ResourceSorter.NAME);
 		sortByTypeAction.setChecked(criteria == ResourceSorter.TYPE);
 	}

@@ -1,12 +1,20 @@
 package org.eclipse.ui.views.navigator;
 
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
+import org.eclipse.core.resources.*;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
@@ -20,21 +28,19 @@ import org.eclipse.ui.actions.*;
  * This is the action group for workspace actions such as Build, Refresh Local,
  * and Open/Close Project.
  */
-public class WorkspaceActionGroup extends ActionGroup {
+public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 
-	private IResourceNavigatorPart navigator;
 	private BuildAction buildAction;
 	private BuildAction rebuildAction;
 	private OpenResourceAction openProjectAction;
 	private CloseResourceAction closeProjectAction;
 	private RefreshAction refreshAction;
 
-	public WorkspaceActionGroup(IResourceNavigatorPart navigator) {
-		this.navigator = navigator;
-		makeActions();
+	public WorkspaceActionGroup(IResourceNavigator navigator) {
+		super(navigator);
 	}
 
-	private void makeActions() {
+	protected void makeActions() {
 		Shell shell = navigator.getSite().getShell();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		openProjectAction = new OpenResourceAction(shell);
@@ -119,5 +125,6 @@ public class WorkspaceActionGroup extends ActionGroup {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(openProjectAction);
 		workspace.removeResourceChangeListener(closeProjectAction);
+		super.dispose();
 	}
 }

@@ -1,5 +1,15 @@
 package org.eclipse.ui.views.navigator;
 
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 import org.eclipse.core.resources.*;
 
 import org.eclipse.jface.action.IMenuManager;
@@ -12,9 +22,8 @@ import org.eclipse.ui.actions.*;
 /**
  * This is the action group for the open actions.
  */
-public class OpenActionGroup extends ActionGroup {
+public class OpenActionGroup extends ResourceNavigatorActionGroup {
 
-	private IResourceNavigatorPart navigator;
 	private OpenFileAction openFileAction;
 
 	/**
@@ -22,12 +31,11 @@ public class OpenActionGroup extends ActionGroup {
 	 */
 	public static final String OPEN_WITH_ID = PlatformUI.PLUGIN_ID + ".OpenWithSubMenu"; //$NON-NLS-1$
 
-	public OpenActionGroup(IResourceNavigatorPart navigator) {
-		this.navigator = navigator;
-		makeActions();
+	public OpenActionGroup(IResourceNavigator navigator) {
+		super(navigator);
 	}
 
-	private void makeActions() {
+	protected void makeActions() {
 		openFileAction = new OpenFileAction(navigator.getSite().getPage());
 	}
 

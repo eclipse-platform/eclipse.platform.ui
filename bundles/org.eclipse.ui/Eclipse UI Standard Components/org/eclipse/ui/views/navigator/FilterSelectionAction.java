@@ -27,7 +27,7 @@ public class FilterSelectionAction extends ResourceNavigatorAction {
  * @param navigator the resource navigator
  * @param label the label for the action
  */
-public FilterSelectionAction(IResourceNavigatorPart navigator, String label) {
+public FilterSelectionAction(IResourceNavigator navigator, String label) {
 	super(navigator, label);
 	setToolTipText(FILTER_TOOL_TIP);
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.FILTER_SELECTION_ACTION);
@@ -38,7 +38,7 @@ public FilterSelectionAction(IResourceNavigatorPart navigator, String label) {
  * Implementation of method defined on <code>IAction</code>.
  */
 public void run() {
-	IResourceNavigatorPart navigator = getNavigator();
+	IResourceNavigator navigator = getNavigator();
 	ResourcePatternFilter filter = navigator.getPatternFilter();
 	FiltersContentProvider contentProvider = new FiltersContentProvider(filter);
 	IWorkingSet workingSet = navigator.getWorkingSet();
@@ -46,7 +46,7 @@ public void run() {
 	FilterDialog dialog =
 		new FilterDialog(
 			getShell(),
-			getResourceViewer(),
+			getViewer(),
 			contentProvider,
 			new LabelProvider(),
 			FILTER_SELECTION_MESSAGE);
@@ -69,7 +69,7 @@ public void run() {
 		}
 
 		navigator.setFiltersPreference(selectedPatterns);
-		Viewer viewer = getResourceViewer();
+		Viewer viewer = getViewer();
 		viewer.getControl().setRedraw(false);
 		viewer.refresh();
 		viewer.getControl().setRedraw(true);

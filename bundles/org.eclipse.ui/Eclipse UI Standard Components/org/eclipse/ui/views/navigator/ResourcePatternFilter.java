@@ -1,9 +1,15 @@
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -17,15 +23,16 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * The ResourcePatternFilter is the filter used to determine whether resources are
- * to be shown or not.
+ * Filter used to determine whether resources are to be shown or not.
+ * 
+ * @since 2.0
  */
-/* package */ class ResourcePatternFilter extends ViewerFilter {
+public class ResourcePatternFilter extends ViewerFilter {
 	private String[] patterns;
 	private StringMatcher[] matchers;
 	
-	static String COMMA_SEPARATOR = ",";//$NON-NLS-1$
-	static String FILTERS_TAG = "resourceFilters";//$NON-NLS-1$
+	static final String COMMA_SEPARATOR = ",";//$NON-NLS-1$
+	static final String FILTERS_TAG = "resourceFilters";//$NON-NLS-1$
 /**
  * Creates a new resource pattern filter.
  */

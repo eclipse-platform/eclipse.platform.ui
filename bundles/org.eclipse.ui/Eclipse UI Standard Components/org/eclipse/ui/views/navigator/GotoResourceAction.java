@@ -20,7 +20,7 @@ public class GotoResourceAction extends ResourceNavigatorAction {
  * Creates a new instance of the class.
  * @since 2.0
  */
-public GotoResourceAction(IResourceNavigatorPart navigator, String label) {
+public GotoResourceAction(IResourceNavigator navigator, String label) {
 	super(navigator, label);
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.GOTO_RESOURCE_ACTION);
 }
@@ -33,7 +33,7 @@ private void collectAllResources(IContainer container,ArrayList resources,Resour
 		IResource members[] = container.members();
 		for (int i = 0; i < members.length; i++){
 			IResource r = members[i];
-			if(filter.select(getNavigator().getResourceViewer(),null,r))
+			if(filter.select(getNavigator().getViewer(),null,r))
 				resources.add(r);
 			if(r.getType() != IResource.FILE)
 				collectAllResources((IContainer)r,resources,filter);
@@ -47,7 +47,7 @@ private void collectAllResources(IContainer container,ArrayList resources,Resour
  * the navigator.
  */
 public void run() {
-	IContainer cont = (IContainer)getResourceViewer().getInput();
+	IContainer cont = (IContainer)getViewer().getInput();
 	ArrayList resources = new ArrayList();
 	collectAllResources(cont,resources,getNavigator().getPatternFilter());
 	IResource resourcesArray[] = new IResource[resources.size()];
@@ -57,6 +57,6 @@ public void run() {
 	IResource selection = dialog.getSelection();
 	if(selection == null)
 		return;
-	getResourceViewer().setSelection(new StructuredSelection(selection),true);
+	getViewer().setSelection(new StructuredSelection(selection),true);
 }
 }
