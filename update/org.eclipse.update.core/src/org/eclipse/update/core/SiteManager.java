@@ -1,8 +1,16 @@
 package org.eclipse.update.core;
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at http://www.eclipse.
+ * org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ * Laurent Fournier (laurent@fourrier.nom.fr) - HTTP Proxy code and NetAccess
+ * Plugin
+ * ********************************************************************/
 
 import java.net.URL;
 
@@ -34,6 +42,7 @@ public class SiteManager {
 	
 	private static final String P_HTTP_HOST = "http.proxyHost";
 	private static final String P_HTTP_PORT = "http.proxyPort";	
+	private static final String P_HTTP_PROXY = "http.proxySet";
 
 	private SiteManager() {
 	}
@@ -279,6 +288,7 @@ public class SiteManager {
 		if (!enable || httpProxyServer == null || httpProxyPort == null) {
 			System.getProperties().remove(P_HTTP_HOST);
 			System.getProperties().remove(P_HTTP_PORT);
+			System.getProperties().remove(P_HTTP_PROXY);
 			//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
 			UpdateCore.warn("Remove proxy server info");
 			UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, isHttpProxyEnable());
@@ -286,6 +296,11 @@ public class SiteManager {
 			return;
 		}
 		
+		//System.getProperties().put("proxySet", "true");
+		//System.getProperties().put("proxyHost", proxyHost);
+		//System.getProperties().put("proxyPort", proxyPort);
+		
+		System.getProperties().setProperty(P_HTTP_PROXY, enable?"true":"false");
 		System.getProperties().setProperty(P_HTTP_HOST, httpProxyServer);
 		System.getProperties().setProperty(P_HTTP_PORT, httpProxyPort);
 		//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)

@@ -27,9 +27,9 @@ public interface IURLEntry extends IAdaptable {
 	public static final int WEB_SITE = 1;	
 
 	/** 
-	 * Returns the URL annotation.
+	 * Returns the URL annotation or <code>null</code> if none
 	 * 
-	 * @return url annotation
+	 * @return url annotation or <code>null</code> if none
 	 * @since 2.0 
 	 */
 	public String getAnnotation();
@@ -37,7 +37,7 @@ public interface IURLEntry extends IAdaptable {
 	/**
 	 * Returns the actual URL.
 	 * 
-	 * @return url
+	 * @return url.
 	 * @since 2.0 
 	 */
 	public URL getURL();
