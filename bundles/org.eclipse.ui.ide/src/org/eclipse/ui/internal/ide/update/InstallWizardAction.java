@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.update;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.update.ui.UpdateManagerUI;
 
 /**
@@ -22,7 +24,7 @@ import org.eclipse.update.ui.UpdateManagerUI;
  * 
  * @since 3.0
  */
-public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
+public class InstallWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow window;
 
@@ -30,7 +32,15 @@ public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
 	    // do nothing
 	}
 
+	public void run() {
+	    openInstaller(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+	}
+
 	public void run(IAction action) {
+	    openInstaller(window);
+	}
+	
+	private void openInstaller(final IWorkbenchWindow window) {
 		BusyIndicator
 			.showWhile(window.getShell().getDisplay(), new Runnable() {
 			public void run() {
