@@ -939,7 +939,7 @@
       <keyBinding
       		commandId="org.eclipse.ui.window.showKeyAssist"
       		contextId="org.eclipse.ui.contexts.dialogAndWindow"
-      		keySequence="Ctrl+Shift+L"
+      		keySequence="M1+M2+L"
       		keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
