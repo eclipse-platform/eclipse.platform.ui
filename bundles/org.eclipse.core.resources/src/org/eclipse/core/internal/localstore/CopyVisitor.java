@@ -130,7 +130,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		}
 		if (!force && !wasSynchronized) {
 			IPath path = node.getResource().getFullPath();
-			String message = Policy.bind("resourceWasOutOfSync", path.toString());
+			String message = Policy.bind("localstore.resourceWasOutOfSync", path.toString());
 			status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, path, message, null));
 			return true;
 		}

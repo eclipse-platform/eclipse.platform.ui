@@ -74,7 +74,7 @@ public static long getStat(String fileName) {
 }
 private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 	String libName = System.mapLibraryName(LIBRARY_NAME);
-	String message = Policy.bind("couldNotLoadLibrary", libName);
+	String message = Policy.bind("localstore.couldNotLoadLibrary", libName);
 	ResourceStatus status = new ResourceStatus(IResourceStatus.WARNING, null, message, e);
 	ResourcesPlugin.getPlugin().getLog().log(status);
 }

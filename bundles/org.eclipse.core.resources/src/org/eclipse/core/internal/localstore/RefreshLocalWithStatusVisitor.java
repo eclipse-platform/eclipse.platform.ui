@@ -20,7 +20,7 @@ public RefreshLocalWithStatusVisitor(String multiStatusTitle, IProgressMonitor m
 	affectedResources = new ArrayList(20);
 }
 protected void changed(Resource target) {
-	String message = Policy.bind("resourceWasOutOfSync", target.getFullPath().toString());
+	String message = Policy.bind("localstore.resourceWasOutOfSync", target.getFullPath().toString());
 	status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
 	affectedResources.add(target);
 }

@@ -42,11 +42,11 @@ public void copy(IResource target, IResource destination, boolean force, IProgre
 	monitor = Policy.monitorFor(monitor);
 	try {
 		int totalWork = ((Resource) target).countResources(IResource.DEPTH_INFINITE, false);
-		String title = Policy.bind("copying", target.getFullPath().toString());
+		String title = Policy.bind("localstore.copying", target.getFullPath().toString());
 		monitor.beginTask(title, totalWork);
 		// use locationFor() instead of getLocation() to avoid null 
 		if (locationFor(destination).toFile().exists()) {
-			String message = Policy.bind("resourceExists", destination.getFullPath().toString());
+			String message = Policy.bind("localstore.resourceExists", destination.getFullPath().toString());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
 		}
 		CopyVisitor visitor = new CopyVisitor(target, destination, force, monitor);
@@ -65,9 +65,9 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 		Resource resource = (Resource) target;
 		int totalWork = resource.countResources(IResource.DEPTH_INFINITE, false);
 		totalWork *= 2;
-		String title = Policy.bind("deleting", resource.getFullPath().toString());
+		String title = Policy.bind("localstore.deleting", resource.getFullPath().toString());
 		monitor.beginTask(title, totalWork);
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem"), null);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("localstore.deleteProblem"), null);
 		List skipList = null;
 		UnifiedTree tree = null;
 		if (target.getType() == IResource.PROJECT)
@@ -77,7 +77,7 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 		if (!force) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
 			sub.beginTask("", 10000);
-			RefreshLocalWithStatusVisitor refreshVisitor = new RefreshLocalWithStatusVisitor(Policy.bind("deleteProblem"), sub);
+			RefreshLocalWithStatusVisitor refreshVisitor = new RefreshLocalWithStatusVisitor(Policy.bind("localstore.deleteProblem"), sub);
 			tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
 			status.merge(refreshVisitor.getStatus());
 			skipList = refreshVisitor.getAffectedResources();
@@ -131,7 +131,7 @@ public IPath locationFor(IResource target) {
 public void move(IResource target, IPath destination, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("moving", target.getFullPath().toString()), Policy.totalWork);
+		monitor.beginTask(Policy.bind("localstore.moving", target.getFullPath().toString()), Policy.totalWork);
 		IResource resource = null;
 		switch (target.getType()) {
 			case IResource.PROJECT :
@@ -153,7 +153,7 @@ public void move(IResource target, IPath destination, boolean keepHistory, IProg
 				for (int i = 0; i < children.length; i++)
 					move(children[i], destination.append(children[i].getName()), keepHistory, Policy.subMonitorFor(monitor, work));
 				if (!sourceLocation.toFile().delete()) {
-					String message = Policy.bind("couldnotDelete", sourceLocation.toString());
+					String message = Policy.bind("localstore.couldnotDelete", sourceLocation.toString());
 					throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, sourceLocation, message, null);
 				}
 			} else {
@@ -174,7 +174,7 @@ public InputStream read(IFile target, boolean force, IProgressMonitor monitor) t
 		 ((Project) target.getProject()).checkExists(NULL_FLAG, true);
 	java.io.File localFile = location.toFile();
 	if (!localFile.exists()) {
-		String message = Policy.bind("fileNotFound", localFile.getAbsolutePath());
+		String message = Policy.bind("localstore.fileNotFound", localFile.getAbsolutePath());
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 	}
 	if (!force) {
@@ -182,7 +182,7 @@ public InputStream read(IFile target, boolean force, IProgressMonitor monitor) t
 		int flags = ((Resource) target).getFlags(info);
 		((Resource) target).checkExists(flags, true);
 		if (CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath()) != info.getLocalSyncInfo()) {
-			String message = Policy.bind("resourceIsOutOfSync", target.getFullPath().toString());
+			String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString());
 			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 		}
 	}
@@ -203,7 +203,7 @@ public boolean refresh(IResource target, int depth, IProgressMonitor monitor) th
 protected boolean refreshProject(IProject project, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	int totalWork = ((Project) project).countResources(depth, false) + 5000;
-	String title = Policy.bind("refreshing", project.getFullPath().toString());
+	String title = Policy.bind("localstore.refreshing", project.getFullPath().toString());
 	try {
 		monitor.beginTask(title, totalWork);
 		if (!project.isAccessible())
@@ -219,7 +219,7 @@ protected boolean refreshProject(IProject project, int depth, IProgressMonitor m
 protected boolean refreshResource(IResource target, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	int totalWork = ((Resource) target).countResources(depth, false) + 5000;
-	String title = Policy.bind("refreshing", target.getFullPath().toString());
+	String title = Policy.bind("localstore.refreshing", target.getFullPath().toString());
 	try {
 		monitor.beginTask(title, totalWork);
 		RefreshLocalVisitor visitor = new RefreshLocalVisitor(monitor);
@@ -240,7 +240,7 @@ protected boolean refreshRoot(IWorkspaceRoot target, int depth, IProgressMonitor
 	monitor = Policy.monitorFor(monitor);
 	IProject[] projects = target.getProjects();
 	int totalWork = projects.length;
-	String title = Policy.bind("refreshing", target.getFullPath().toString());
+	String title = Policy.bind("localstore.refreshing", target.getFullPath().toString());
 	try {
 		monitor.beginTask(title, totalWork);
 		// if doing depth zero, there is nothing to do (can't refresh the root).  
@@ -343,13 +343,13 @@ public void write(IFile target, InputStream content, boolean force, boolean keep
 				ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 				if (lastModified != info.getLocalSyncInfo()) {
 					refresh(target, IResource.DEPTH_ZERO, monitor);
-					String message = Policy.bind("resourceWasOutOfSync", target.getFullPath().toString());
+					String message = Policy.bind("localstore.resourceWasOutOfSync", target.getFullPath().toString());
 					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 				}
 			} else
 				if (localFile.exists()) {
 					refresh(target, IResource.DEPTH_ZERO, monitor);
-					String message = Policy.bind("resourceExists", target.getFullPath().toString());
+					String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString());
 					throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 				}
 		}
@@ -376,11 +376,11 @@ public void write(IFolder target, boolean force, IProgressMonitor monitor) throw
 	java.io.File file = locationFor(target).toFile();
 	if (!force)
 		if (file.isDirectory()) {
-			String message = Policy.bind("resourceExists", target.getFullPath().toString());
+			String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString());
 			throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 		} else {
 			if (file.exists()) {
-				String message = Policy.bind("fileExists", target.getFullPath().toString());
+				String message = Policy.bind("localstore.fileExists", target.getFullPath().toString());
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
 		}
