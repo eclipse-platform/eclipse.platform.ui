@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.internal.runtime.CompatibilityHelper;
-import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -156,6 +155,9 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 		fullyLoaded = value;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor() {
 		return CompatibilityHelper.getPluginDescriptor(((Namespace) getParent()).getName());
 	}

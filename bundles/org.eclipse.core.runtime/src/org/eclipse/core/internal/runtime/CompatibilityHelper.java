@@ -11,12 +11,16 @@
 package org.eclipse.core.internal.runtime;
 
 import java.lang.reflect.Method;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
-//This class isolates calls to the backward compatibility layer.
-//It uses reflection so it can be loaded with success even in the absence of the compatibility plugin.
+/**
+ * This class isolates calls to the backward compatibility layer.
+ * It uses reflection so it can be loaded with success even in the absence of
+ * the compatibility plugin.
+ * 
+ * @deprecated Marked as deprecated to suppress deprecation warnings.
+ */
 public class CompatibilityHelper {
 
 	public static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$

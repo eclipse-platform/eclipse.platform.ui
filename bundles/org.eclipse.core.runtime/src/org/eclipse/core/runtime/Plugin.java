@@ -106,7 +106,9 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	private boolean debug = false;
 
-	/** The plug-in descriptor.  */
+	/** The plug-in descriptor.
+	 * @deprecated Marked as deprecated to suppress deprecation warnings.
+	 */
 	private IPluginDescriptor descriptor;
 
 	/**
@@ -628,6 +630,13 @@ public abstract class Plugin implements BundleActivator {
 			this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
 		}
 		
+		initializeDescriptor(symbolicName);
+	}
+
+	/**
+	 * @deprecated Marked as deprecated to suppress deprecation warnings.
+	 */
+	private void initializeDescriptor(String symbolicName) {
 		if (CompatibilityHelper.getCompatibility() == null)
 			return;
 		

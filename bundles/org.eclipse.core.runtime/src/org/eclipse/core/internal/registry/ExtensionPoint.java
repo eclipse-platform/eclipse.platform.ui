@@ -13,7 +13,7 @@ package org.eclipse.core.internal.registry;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.eclipse.core.internal.runtime.CompatibilityHelper;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -109,6 +109,9 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 		return value;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor() {
 		return CompatibilityHelper.getPluginDescriptor(getNamespace());
 	}
