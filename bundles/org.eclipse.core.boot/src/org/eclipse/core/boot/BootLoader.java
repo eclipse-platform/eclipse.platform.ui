@@ -105,6 +105,7 @@ public final class BootLoader {
 	 * machine running an unknown windowing system.
 	 */
 	public static final String WS_UNKNOWN = "unknown";
+
 /**
  * Private constructor to block instance creation.
  */
@@ -183,6 +184,18 @@ public static String getNL() {
  */
 public static String getOS() {
 	return InternalBootLoader.getOS();
+}
+/**
+ * Returns the string name of the current system architecture.  
+ * The value is a user-defined string if the architecture is 
+ * specified on the command line, otherwise it is the value 
+ * returned by <code>java.lang.System.getProperty("os.arch")</code>.
+ * 
+ * @return the string name of the current system architecture
+ * @since 2.0
+ */
+public static String getOSArch() {
+	return InternalBootLoader.getOSArch();
 }
 /**
  * Returns a platform configuration object, optionally initialized with previously saved

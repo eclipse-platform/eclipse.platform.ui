@@ -5,13 +5,13 @@ package org.eclipse.core.internal.boot;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.boot.*;
-import org.eclipse.core.internal.boot.*;
 import java.io.*;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.*;
-import java.util.zip.ZipFile;
 import java.util.*;
+
+import org.eclipse.core.boot.*;
 
 /**
  * Special boot loader class for the Eclipse Platform. This class cannot
@@ -47,10 +47,11 @@ public final class InternalBootLoader {
 	private static boolean inDevelopmentMode = false;	
 	private static PlatformConfiguration currentPlatformConfiguration = null;
 
-	// state for tracking the Platform context (e.g., the OS, Window system, locale, ...)
+	// state for tracking the Platform context (e.g., the OS, Window system, locale, architecture, ...)
 	private static String nl = null;
 	private static String ws = null;
 	private static String os = null;
+	private static String arch = null;
 	private static final String[] OS_LIST = { BootLoader.OS_WIN32, BootLoader.OS_LINUX, BootLoader.OS_AIX, BootLoader.OS_SOLARIS, BootLoader.OS_HPUX, BootLoader.OS_QNX };
 	
 	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform";
@@ -102,6 +103,7 @@ public final class InternalBootLoader {
 	private static final String CONFIGURATION = "-configuration";
 	private static final String DEV = "-dev";
 	private static final String WS = "-ws";
+	private static final String ARCH = "-arch";
 	private static final String USAGE = "-?";
 	// temporary declarations in support of 2.0 startup command line argument. These will
 	// be removed once the startup support is fully transitioned to the R2.0 configuration
@@ -275,6 +277,12 @@ private static String[] getListOption(String option) {
 	while (tokenizer.hasMoreTokens())
 		result.add(tokenizer.nextToken());
 	return (String[]) result.toArray(new String[result.size()]);
+}
+/**
+ * @see BootLoader
+ */
+public static String getOSArch() {
+	return arch;
 }
 /**
  * @see BootLoader
@@ -785,6 +793,12 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			ws = arg;
 		}
 
+		// look for the system architecture
+		if (args[i - 1].equalsIgnoreCase(ARCH)) {
+			found = true;
+			arch = arg;
+		}
+
 		// done checking for args.  Remember where an arg was found 
 		if (found) {
 			configArgs[configArgIndex++] = i - 1;
@@ -920,6 +934,8 @@ private static void setupSystemContext() {
 				ws = BootLoader.WS_MOTIF;
 			else
 				ws = BootLoader.WS_UNKNOWN;
+	if (arch == null)
+		arch = System.getProperty("os.arch");		
 }
 /**
  * @see BootLoader
