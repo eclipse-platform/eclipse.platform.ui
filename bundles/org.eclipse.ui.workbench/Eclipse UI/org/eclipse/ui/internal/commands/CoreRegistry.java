@@ -271,12 +271,14 @@ public final class CoreRegistry extends AbstractRegistry {
 						platform = Persistence.ZERO_LENGTH_STRING;
 		
 					String plugin = getPlugin(element);		
+					String rankString = element.getAttribute(Persistence.TAG_RANK);
 					int rank = 0;
-				
-					try {
-						rank = Integer.valueOf(element.getAttribute(Persistence.TAG_RANK)).intValue();		
-					} catch (NumberFormatException eNumberFormat) {
-					}
+
+					if (rankString != null)
+						try {
+							rank = Integer.parseInt(rankString);		
+						} catch (NumberFormatException eNumberFormat) {
+						}
 					
 					Iterator iterator = keySequences.iterator();
 				
