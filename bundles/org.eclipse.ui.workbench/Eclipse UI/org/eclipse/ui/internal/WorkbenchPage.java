@@ -2288,50 +2288,47 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Reactivate active part.
 	if (oldActivePart != null) {
+		String id = oldActivePart.getSite().getId();
+		oldPersp.setOldPartID(id);
 		if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
 			activate(oldActivePart);
 		} else if (oldActivePart instanceof IViewPart) {
-			IEditorPart ed = editorMgr.getVisibleEditor();	
-			if (ed != null) 
-				actionSwitcher.updateTopEditor(ed);	
-			String id = oldActivePart.getSite().getId();
-			oldPersp.setOldPartID(id);
-
+			IEditorPart ed = editorMgr.getVisibleEditor();
+			if (ed != null)
+				actionSwitcher.updateTopEditor(ed);
 			if (findView(id) != null) {
 				activate(oldActivePart);
-			} else { //part not found in new perspective
-				String oldID = newPersp.getOldPartID();
-				if (oldID != null) { 
-					IWorkbenchPart prevOldPart = findView(oldID);
-					if (prevOldPart != null) {
-						activate(prevOldPart);
-					} else { //previously active part not found
-						IWorkbenchPartReference[] refs = getSortedParts();
-						if (refs.length != 0)
-							activate(refs[0].getPart(false));
-					}
-				} else { //no previously active part defined
-					IWorkbenchPartReference[] refs = getSortedParts();
-					if (refs.length != 0)
-						activate(refs[0].getPart(false));
-				}
-			}				
-		}
-	} else {  //no active part
-		IEditorPart ed = editorMgr.getVisibleEditor();	
-		if (ed != null) {
-			actionSwitcher.updateTopEditor(ed);	
+			} else {
+				activateOldPart(newPersp);
+			}
 		} else {
-			IWorkbenchPartReference[] refs = getSortedParts();
-			if (refs.length != 0)
-				activate(refs[0].getPart(false));
+			activateOldPart(newPersp);
 		}
-			
+	} else { //no active part
+		IEditorPart ed = editorMgr.getVisibleEditor();
+		if (ed != null) {
+			actionSwitcher.updateTopEditor(ed);
+		}  else  {
+			activateOldPart(newPersp);
+		}
 	}
+	
 	
 	// Update the Coolbar layout.  Do this after the part is activated,
 	// since the layout may contain items associated to the part.
 	setToolBarLayout();
+}
+private void activateOldPart(Perspective newPersp) {
+	if (newPersp != null) {
+		String oldID = newPersp.getOldPartID();
+		IWorkbenchPart prevOldPart = null;
+		if (oldID != null)
+			prevOldPart = findView(oldID);
+		if (prevOldPart != null)
+			activate(prevOldPart);
+		else if (isEditorAreaVisible())
+			activate(getActiveEditor()); 
+	}
 }
 /**
  * Sets the perspective.  
