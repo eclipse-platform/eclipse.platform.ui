@@ -61,7 +61,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (element instanceof IDebugElement) {
 			// Group elements into debug elements and non-debug elements
 			// to reduce the number of instanceof checks performed
-			if (element instanceof IStackFrame) {
+			if (element instanceof IVariable) {
+				return IDebugUIConstants.IMG_OBJS_VARIABLE;
+			} else if (element instanceof IStackFrame) {
 				if (((IStackFrame)element).getThread().isSuspended()) {
 					return IDebugUIConstants.IMG_OBJS_STACKFRAME;
 				} else {

@@ -314,7 +314,14 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String IMG_OBJS_EXPRESSION= "IMG_OBJS_EXPRESSION"; //$NON-NLS-1$
-		
+	
+	/**
+	 * Generic variable image identifier.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String IMG_OBJS_VARIABLE= "IMG_OBJS_VARIABLE"; //$NON-NLS-1$
+
 	// wizard banners
 	/** Debug wizard banner image identifier. */
 	public static final String IMG_WIZBAN_DEBUG= "IMG_WIZBAN_DEBUG"; //$NON-NLS-1$
