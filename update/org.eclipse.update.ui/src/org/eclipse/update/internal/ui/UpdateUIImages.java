@@ -86,6 +86,8 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_VREMOVABLE_OBJ = create(PATH_OBJ, "vremovable_obj.gif");
 	public static final ImageDescriptor DESC_NOTINST_FEATURE_OBJ = create(PATH_OBJ, "notinstalled_feature_obj.gif");	
 	public static final ImageDescriptor DESC_SHOW_SEARCH = create(PATH_OBJ, "tsearch_obj.gif");
+	public static final ImageDescriptor DESC_ERR_ST_OBJ = create(PATH_OBJ, "error_st_obj.gif");
+	public static final ImageDescriptor DESC_OK_ST_OBJ = create(PATH_OBJ, "ok_st_obj.gif");
 
 	
 	/**

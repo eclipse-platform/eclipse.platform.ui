@@ -54,8 +54,8 @@ public class NewConfigurationView
 		"ConfigurationView.showSites";
 	private static final String STATE_SHOW_NESTED_FEATURES =
 		"ConfigurationView.showNestedFeatures";
-	private static final String KEY_PRESERVE =
-		"ConfigurationView.Popup.preserve";
+	//private static final String KEY_PRESERVE =
+		//"ConfigurationView.Popup.preserve";
 	private static final String KEY_MISSING_FEATURE =
 		"ConfigurationView.missingFeature";
 
@@ -67,7 +67,7 @@ public class NewConfigurationView
 	private InstallOptionalFeatureAction installOptFeatureAction;
 	private Action showUnconfFeaturesAction;
 	private RevertConfigurationAction revertAction;
-	private SaveConfigurationAction preserveAction;
+	//private SaveConfigurationAction preserveAction;
 	private Action propertiesAction;
 	private SiteStateAction2 siteStateAction;
 	private SashForm splitter;
@@ -440,11 +440,11 @@ public class NewConfigurationView
 
 		siteStateAction = new SiteStateAction2();
 
-		preserveAction =
+		/*preserveAction =
 			new SaveConfigurationAction(UpdateUI.getString(KEY_PRESERVE));
 		WorkbenchHelp.setHelp(
 			preserveAction,
-			"org.eclipse.update.ui.CofigurationView_preserveAction");
+			"org.eclipse.update.ui.CofigurationView_preserveAction");*/
 
 		revertAction = new RevertConfigurationAction("Revert...");
 		WorkbenchHelp.setHelp(
@@ -564,7 +564,7 @@ public class NewConfigurationView
 
 		if (obj instanceof ILocalSite) {
 			manager.add(revertAction);
-			manager.add(preserveAction);
+			//manager.add(preserveAction);
 			manager.add(new Separator());
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(siteStateAction);
@@ -832,10 +832,6 @@ public class NewConfigurationView
 		return code;
 	}
 	
-	protected void handleSelectionChanged(SelectionChangedEvent e) {
-		handleSelectionChanged((IStructuredSelection)e.getSelection());
-	}
-	
 	protected void handleSelectionChanged(IStructuredSelection ssel) {
 		Object obj = ssel.getFirstElement();
 		if (obj instanceof IFeatureAdapter) {
@@ -863,16 +859,22 @@ public class NewConfigurationView
 		} else {
 			propertiesAction.setEnabled(false);
 		}
-		if (obj instanceof ILocalSite) {
+		/*if (obj instanceof ILocalSite) {
 			preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
 			preserveAction.setEnabled(true);
-		} else if (obj instanceof IConfiguredSiteAdapter) {
+		} else*/
+		if (obj instanceof IConfiguredSiteAdapter) {
 			siteStateAction.setSite(((IConfiguredSiteAdapter) obj).getConfiguredSite());
 			siteStateAction.setEnabled(true);
 		}
 		preview.setSelection(ssel);
 	}
+	
+	protected void handleSelectionChanged(SelectionChangedEvent e) {
+		handleSelectionChanged(((IStructuredSelection)e.getSelection()));
+	}
 
+	
 	private void makePreviewTasks() {
 		previewTasks = new Hashtable();
 		Class key;
@@ -880,7 +882,7 @@ public class NewConfigurationView
 		// local site tasks
 		key = ILocalSite.class;
 		array.add(new PreviewTask("Revert to Previous", "You can revert to one of the previous configurations if you are having problems with the current one.", revertAction));
-		array.add(new PreviewTask("Save", "As new configurations are added, the old ones eventually get deleted. Use this task to save a good configuration you can always revert to.", preserveAction));
+		//array.add(new PreviewTask("Save", "As new configurations are added, the old ones eventually get deleted. Use this task to save a good configuration you can always revert to.", preserveAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
 		// configured site tasks

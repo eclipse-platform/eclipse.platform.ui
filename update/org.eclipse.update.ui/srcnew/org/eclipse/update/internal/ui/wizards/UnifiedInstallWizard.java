@@ -26,8 +26,6 @@ import org.eclipse.update.internal.ui.security.*;
 public class UnifiedInstallWizard
 	extends Wizard
 	implements IUpdateModelChangedListener {
-	private static final String KEY_INSTALLING =
-		"MultiInstallWizard.installing";
 	private UnifiedModeSelectionPage modePage;
 	private UnifiedSitePage sitePage;
 	private UnifiedReviewPage reviewPage;

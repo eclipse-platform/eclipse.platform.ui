@@ -364,12 +364,13 @@ public class UnifiedReviewPage extends UnifiedBannerPage {
 				});
 			}
 		});
-		tableViewer
-			.addSelectionChangedListener(new ISelectionChangedListener() {
+		
+		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				jobSelected((IStructuredSelection) e.getSelection());
 			}
 		});
+		
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				handleProperties();
