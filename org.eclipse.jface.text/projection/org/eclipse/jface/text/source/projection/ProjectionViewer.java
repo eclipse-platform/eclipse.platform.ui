@@ -91,7 +91,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				
 				if (fProjectionSummary != null)
 					fProjectionSummary.updateSummaries(new NullProgressMonitor());
-				postCatchupRequest(event);
+				processCatchupRequest(event);
 				
 			} else if (model == getAnnotationModel() && fProjectionSummary != null)
 				fProjectionSummary.updateSummaries(new NullProgressMonitor());
@@ -110,6 +110,10 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private boolean fHandleProjectionChanges= true;
 	/** The list of projection listeners. */
 	private List fProjectionListeners;
+	/** Internal lock for protecting the list of pending requests */
+	private Object fLock= new Object();
+	/** The list of pending requests */
+	private List fPendingRequests= new ArrayList();
 	
 	/**
 	 * Creates a new projection source viewer.
@@ -482,6 +486,27 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			}
 		}
 	}
+		
+	/**
+	 * Processes the request for catch up with the annotation model in the UI thread. If the current
+	 * thread is not the UI thread or there are pending catch up requests, a new request is posted.
+	 * 
+	 * @param event the annotation model event
+	 */
+	protected final void processCatchupRequest(AnnotationModelEvent event) {
+		if (Display.getCurrent() != null) {
+			boolean run= false;
+			synchronized (fLock) {
+				run= fPendingRequests.isEmpty();
+			}
+			if (run)
+				catchupWithProjectionAnnotationModel(event);
+			else
+				postCatchupRequest(event);
+		} else {
+			postCatchupRequest(event);
+		}
+	}
 	
 	/**
 	 * Posts the request for catch up with the annotation model into the UI thread.
@@ -489,17 +514,33 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @param event the annotation model event
 	 */
 	protected final void postCatchupRequest(final AnnotationModelEvent event) {
-		StyledText widget= getTextWidget();
-		if (widget != null) {
-			Display display= widget.getDisplay();
-			if (display != null) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						catchupWithProjectionAnnotationModel(event);
+		synchronized (fLock) {
+			fPendingRequests.add(event);
+			if (fPendingRequests.size() == 1) {
+				StyledText widget= getTextWidget();
+				if (widget != null) {
+					Display display= widget.getDisplay();
+					if (display != null) {
+						display.asyncExec(new Runnable() {
+							public void run() {
+								Iterator e= fPendingRequests.iterator();
+								while (true) {
+									AnnotationModelEvent event= null;
+									synchronized (fLock) {
+										if (e.hasNext()) {
+											event= (AnnotationModelEvent) e.next();
+										} else {
+											fPendingRequests.clear();
+											return;
+										}
+									}
+									catchupWithProjectionAnnotationModel(event);
+								}
+							}
+						});
 					}
-				});
-			}	
-
+				}
+			}
 		}
 	}
 
