@@ -22,6 +22,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.PixelConverter;
@@ -36,6 +37,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -163,6 +165,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * mode, this specifies the selection that is initially shown in the dialog.
 	 */
 	private IStructuredSelection fInitialSelection;
+	
+	/**
+	 * The status to open the dialog on, or <code>null</code> if none.
+	 */
+	private IStatus fInitialStatus;
 		
 	private ProgressMonitorPart fProgressMonitorPart;
 	private Cursor waitCursor;
@@ -350,6 +357,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void initializeContent() {
 		initializeWorkingSet();
 		doInitialTreeSelection();
+		IStatus status = getInitialStatus();
+		if (status != null) {
+			handleStatus(status);
+		}
 	}
 	
 
@@ -1231,7 +1242,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		
 		// liftoff
-		ILaunch launch = launchWithProgress(config);
+		ILaunch launch = null;
+		try {
+			launch = launchWithProgress(config);
+		} catch (CoreException e) {
+			handleStatus(e.getStatus());
+			return CANCEL;
+		}
 		
 		// If the launch was cancelled, get out.  Otherwise, notify the tabs of the successful launch.
 		if (cancelButtonPressed()) {
@@ -1882,5 +1899,54 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setActiveTab(int index) {
 		getTabViewer().setActiveTab(index);
 	}
+	
+	/**
+	 * Sets the status to open the dialog on.
+	 * 
+	 * @param status
+	 */
+	public void setInitialStatus(IStatus status) {
+		fInitialStatus = status;
+	}
+	
+	/**
+	 * Returns the status the dialog was opened on or <code>null</code> if none.
+	 * 
+	 * @return IStatus
+	 */
+	protected IStatus getInitialStatus() {
+		return fInitialStatus;
+	}
 
+	/**
+	 * Consult a status handler for the given status, if any. The status handler
+	 * is passed this launch config dialog as an argument.
+	 * 
+	 * @param status
+	 */
+	public void handleStatus(IStatus status) {		
+		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+		if (handler != null) {
+			try {
+				handler.handleStatus(status, this);
+				return;
+			} catch (CoreException e) {
+				status = e.getStatus();
+			} 
+		}
+		// if no hanlder, or handler failed, display error/wanring dialog
+		String title = null;
+		switch (status.getSeverity()) {
+			case IStatus.ERROR:
+				title = LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.Error_1"); //$NON-NLS-1$
+				break;
+			case IStatus.WARNING:
+				title = LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.Warning_2"); //$NON-NLS-1$
+				break;
+			default:
+				title = LaunchConfigurationsMessages.getString("LaunchConfigurationsDialog.Information_3"); //$NON-NLS-1$
+				break;
+		}
+		ErrorDialog.openError(getShell(), title, null, status);
+	}
 }

@@ -19,14 +19,17 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
@@ -40,6 +43,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -305,7 +309,42 @@ public class DebugUITools {
 	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
 	 * @since 2.1
 	 */
-	public static int openLaunchConfigurationDialogOnGroup(final Shell shell, final IStructuredSelection selection, final String groupIdentifier) {
+	public static int openLaunchConfigurationDialogOnGroup(Shell shell, IStructuredSelection selection, String groupIdentifier) {
+		return openLaunchConfigurationDialogOnGroup(shell, selection, groupIdentifier, null);
+	}
+	
+	/**
+	 * Open the launch configuration dialog with the specified initial selection.
+	 * The selection may be <code>null</code>, or contain any mix of 
+	 * <code>ILaunchConfiguration</code> or <code>ILaunchConfigurationType</code>
+	 * elements.
+	 * <p>
+	 * Before opening a new dialog, this method checks if there is an existing open
+	 * launch configuration dialog.  If there is, this dialog is used with the
+	 * specified selection.  If there is no existing dialog, a new one is created.
+	 * </p>
+	 * <p>
+	 * Note that if an existing dialog is reused, the <code>mode</code> argument is ignored
+	 * and the existing dialog keeps its original mode.
+	 * </p>
+	 * If a status is specified, a status handler is consulted to handle the
+	 * status. The status handler is passed the instance of the launch
+	 * configuration dialog that is opened. This gives the status handler an
+	 * opportunity to perform error handling/initialization as required.
+	 * <p>
+	 * </p>
+	 * @param shell the parent shell for the launch configuration dialog
+	 * @param selection the initial selection for the dialog
+	 * @param groupIdentifier the identifier of the launch group to display (corresponds to
+	 * the identifier of a lanuch group extension)
+	 * @param status the status to display in the dialog, or <code>null</code>
+	 * if none
+	 * @return the return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 * @see org.eclipse.debug.core.IStatusHandler
+	 * @since 2.1
+	 */
+	public static int openLaunchConfigurationDialogOnGroup(final Shell shell, final IStructuredSelection selection, final String groupIdentifier, final IStatus status) {
 		final int[] result = new int[1];
 		Runnable r = new Runnable() {
 			/**
@@ -316,11 +355,15 @@ public class DebugUITools {
 				if (dialog != null) {
 					dialog.setInitialSelection(selection);
 					dialog.doInitialTreeSelection();
+					if (status != null) {
+						dialog.handleStatus(status); 
+					}
 					result[0] = Window.OK;
 				} else {
 					dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
 					dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
 					dialog.setInitialSelection(selection);
+					dialog.setInitialStatus(status);
 					result[0] = dialog.open();			
 				}
 			}
@@ -328,7 +371,7 @@ public class DebugUITools {
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
 		return result[0];
 	}
-	
+		
 	/**
 	 * Open the launch configuration properties dialog on the specified launch
 	 * configuration.
@@ -402,7 +445,18 @@ public class DebugUITools {
 				if (targetException instanceof CoreException) {
 					t = targetException;
 				}
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Error", "Exception occurred during launch", t);
+				if (t instanceof CoreException) {
+					CoreException ce = (CoreException)t;
+					IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
+					if (handler != null) {
+						LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+						if (group != null) {
+							openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
+							return;
+						}
+					}
+				}
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), t); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (InterruptedException e) {
 				// cancelled
 			}
