@@ -583,6 +583,7 @@ public void restoreState(IMemento memento) {
 
 		// Create and open the view.
 		ViewPane pane = restoreView(childMem,viewID);
+		page.addPart(pane.getPart());
 		if(pane != null) 
 			pres.replacePlaceholderWithPart(pane);
 		else
@@ -603,6 +604,7 @@ public void restoreState(IMemento memento) {
 				
 			// Create and open the view.
 			ViewPane pane = restoreView(childMem,viewID);
+			page.addPart(pane.getPart());
 			if(pane != null) 
 				fastViews.add(pane.getPart());
 			else

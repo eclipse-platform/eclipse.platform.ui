@@ -221,7 +221,6 @@ private void busyResetPerspective() {
 	// Deactivate active part.
 	IWorkbenchPart oldActivePart = activePart;
 	setActivePart(null);
-	activationList = new ActivationList();
 	
 	// Install new persp.
 	setPerspective(newPersp);
@@ -483,8 +482,8 @@ public void cycleEditors(boolean forward) {
 /**
  * Add a editor to the activation list.
  */
-protected void addEditor(IEditorPart editor) {
-	activationList.add(editor);
+protected void addPart(IWorkbenchPart part) {
+	activationList.add(part);
 }
 /**
  * Deactivate the last known active editor to force its
@@ -567,6 +566,7 @@ private void disposePerspective(Perspective persp) {
 		boolean exists = viewFactory.hasView(view.getSite().getId());
 		if (!exists) {
 			firePartClosed(view);
+			activationList.remove(view);
 			view.dispose();
 		}
 	}
@@ -1497,39 +1497,79 @@ public IEditorPart[] getSortedEditors() {
 	IEditorPart[] result = new IEditorPart[editors.size()];
 	return (IEditorPart[])editors.toArray(result);
 }
+/*
+ * Returns the parts in activation order (oldest first).
+ */
+public IWorkbenchPart[] getSortedParts() {
+	return activationList.getParts();
+}
 
 class ActivationList {
+	//List of parts in the activation order (oldest first)
 	List parts = new ArrayList();
+	/*
+	 * Add/Move the active part to end of the list;
+	 */
 	void setActive(IWorkbenchPart part) {
-		if((part instanceof IViewPart) && isFastView((IViewPart)part))
-			return;
-		if(part == getActive())
+		if(parts.size() > 0 && part == parts.get(parts.size() - 1))
 			return;
 		parts.remove(part);
 		parts.add(part);
 	}
+	/*
+	 * Add the active part to the beginning of the list.
+	 */
 	void add(IWorkbenchPart part) {
-		if((part instanceof IViewPart) && isFastView((IViewPart)part))
-			return;
 		if(parts.indexOf(part) >= 0)
 			return;
 		parts.add(0,part);
 	}
+	/*
+	 * Return the active part. Filter fast views.
+	 */
 	IWorkbenchPart getActive() {
 		if(parts.isEmpty())
 			return null;
-		return (IWorkbenchPart)parts.get(parts.size() - 1);
+		return getActive(parts.size() - 1);	
 	}
+	/*
+	 * Return the previously active part. Filter fast views.
+	 */
 	IWorkbenchPart getPreviouslyActive() {
 		if(parts.size() < 2) 
 			return null;
-		return (IWorkbenchPart)parts.get(parts.size() - 2);	
+		return getActive(parts.size() - 2);	
+	} 
+	/*
+	 * Find a part in the list starting from the end and
+	 * filter fast views.
+	 */	
+	IWorkbenchPart getActive(int start) {
+		IViewPart[] views = getViews();
+		for (int i = start; i >= 0; i--) {
+			IWorkbenchPart part = (IWorkbenchPart)parts.get(i);
+			if(part instanceof IViewPart) {
+				if(!isFastView((IViewPart)part)) {
+					for (int j = 0; j < views.length; j++) {
+						if(views[j] == part) {
+							return part;
+						}
+					}
+				}
+			} else {
+				return part;
+			}
+		}
+		return null;
 	}
+	/*
+	 * Remove a part from the list
+	 */
 	boolean remove(Object part) {
 		return parts.remove(part);
 	}
 
-	/**
+	/*
 	 * Returns the editors in activation order (oldest first).
 	 */
 	private ArrayList getEditors() {
@@ -1542,8 +1582,29 @@ class ActivationList {
 		}
 		return editors;
 	}
-	
-	/** 
+	/*
+	 * Return a list with all parts (editors and views).
+	 */
+	private IWorkbenchPart[] getParts() {
+		IViewPart[] views = getViews();
+		ArrayList resultList = new ArrayList(parts.size());
+		for (Iterator iterator = parts.iterator(); iterator.hasNext();) {
+			IWorkbenchPart part = (IWorkbenchPart)iterator.next();
+			if(part instanceof IViewPart) {
+				for (int i = 0; i < views.length; i++) {
+					if(views[i] == part) {
+						resultList.add(part);
+						break;
+					}
+				}
+			} else {
+				resultList.add(part);	
+			}	
+		}
+		IWorkbenchPart[] result = new IWorkbenchPart[resultList.size()];
+		return (IWorkbenchPart[])resultList.toArray(result);
+	}
+	/*
 	 * Cycles the editors forward or backward, returning the editor to activate,
 	 * or null if none.
 	 * 
@@ -1571,7 +1632,7 @@ class ActivationList {
 		return null;
 	}
 	
-	/** 
+	/*
 	 * Returns the topmost editor on the stack, or null if none.
 	 */
 	IEditorPart getTopEditor() {

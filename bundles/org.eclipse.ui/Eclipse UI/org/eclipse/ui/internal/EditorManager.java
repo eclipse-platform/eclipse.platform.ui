@@ -587,7 +587,7 @@ public void restoreState(IMemento memento) {
 						part = openEditor((IFileEditorInput)editorInput,false);
 					} else {
 						part = openInternalEditor(desc, editorInput,false);
-						((WorkbenchPage)part.getEditorSite().getPage()).addEditor(part);
+						((WorkbenchPage)part.getEditorSite().getPage()).addPart(part);
 					}	
 					String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
 					if ("true".equals(strFocus))//$NON-NLS-1$
