@@ -337,7 +337,7 @@ public class EditorManager {
 		if (desc.isInternal()) {
 			result = reuseInternalEditor(desc, input);
 			if (result == null)
-				openInternalEditor(desc, input, true);
+				result = openInternalEditor(desc, input, true);
 		} else if (desc.isOpenInPlace()) {
 			result = ComponentSupport.getComponentEditor();
 			if (result == null)
