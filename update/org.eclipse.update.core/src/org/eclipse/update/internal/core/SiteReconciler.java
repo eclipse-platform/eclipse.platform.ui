@@ -203,13 +203,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		// add the configuration as the currentConfig
 		siteLocal.addConfiguration(newDefaultConfiguration);
 		siteLocal.save();
-	
-		if (getFeatureReferences().length != 0) {
-			saveNewFeatures();
-			return true;
-		}
-	
-		return false;
+
+		return saveNewFeatures();	
 	}
 
 	/**
@@ -524,8 +519,27 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	/*
 	 * 
 	 */
-	private void saveNewFeatures() throws CoreException {
+	private boolean saveNewFeatures() throws CoreException {
 
+		if (getFeatureReferences().length==0){
+			UpdateManagerPlugin.warn("No new features found");
+			return false;
+		}
+		
+		// recompute list of new features to only keep root features [16496]
+		IFeatureReference[] refs = getFeatureReferences();
+		newFoundFeatures = new ArrayList();
+		for (int i = 0; i < refs.length; i++) {
+			IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(refs[i],refs);
+			if (parents.length==0)
+				newFoundFeatures.add(refs[i]);
+		}
+
+		if (getFeatureReferences().length==0){
+			UpdateManagerPlugin.warn("No root feature found when saving new features");
+			return false;
+		}
+		
 		date = new Date();
 		String fileName =
 			UpdateManagerUtils.getLocalRandomIdentifier(
@@ -538,6 +552,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		try {
 			Writer writer = new Writer(file, "UTF8");
 			writer.write(this);
+			return true;
 		} catch (UnsupportedEncodingException e) {
 			throw Utilities.newCoreException(
 				Policy.bind(
