@@ -27,6 +27,7 @@ import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
+import org.eclipse.ui.tests.leaks.LeakTests;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
@@ -79,6 +80,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new MenusTestSuite());
         addTest(new EncodingTestSuite());
         addTest(new PresentationsTestSuite());
-        
+        addTest(new TestSuite(LeakTests.class));
     }
 }
