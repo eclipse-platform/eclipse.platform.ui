@@ -28,13 +28,10 @@ import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.contexts.registry.ContextDefinition;
-import org.eclipse.ui.internal.contexts.registry.IContextDefinition;
-import org.eclipse.ui.internal.contexts.registry.IContextRegistry;
-import org.eclipse.ui.internal.contexts.registry.IContextRegistryEvent;
-import org.eclipse.ui.internal.contexts.registry.IContextRegistryListener;
-import org.eclipse.ui.internal.contexts.registry.PluginContextRegistry;
-import org.eclipse.ui.internal.contexts.registry.PreferenceContextRegistry;
+import org.eclipse.ui.internal.contexts.api.IContextDefinition;
+import org.eclipse.ui.internal.contexts.api.IContextRegistry;
+import org.eclipse.ui.internal.contexts.api.IContextRegistryEvent;
+import org.eclipse.ui.internal.contexts.api.IContextRegistryListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ContextManager implements IContextManager {

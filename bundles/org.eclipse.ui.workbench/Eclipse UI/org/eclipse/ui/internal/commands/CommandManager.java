@@ -39,21 +39,16 @@ import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.registry.CategoryDefinition;
-import org.eclipse.ui.internal.commands.registry.CommandDefinition;
-import org.eclipse.ui.internal.commands.registry.IActiveKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.registry.ICategoryDefinition;
-import org.eclipse.ui.internal.commands.registry.ICommandDefinition;
-import org.eclipse.ui.internal.commands.registry.ICommandRegistry;
-import org.eclipse.ui.internal.commands.registry.ICommandRegistryEvent;
-import org.eclipse.ui.internal.commands.registry.ICommandRegistryListener;
-import org.eclipse.ui.internal.commands.registry.IContextBindingDefinition;
-import org.eclipse.ui.internal.commands.registry.IImageBindingDefinition;
-import org.eclipse.ui.internal.commands.registry.IKeyBindingDefinition;
-import org.eclipse.ui.internal.commands.registry.IKeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.registry.KeyConfigurationDefinition;
-import org.eclipse.ui.internal.commands.registry.PluginCommandRegistry;
-import org.eclipse.ui.internal.commands.registry.PreferenceCommandRegistry;
+import org.eclipse.ui.internal.commands.api.IActiveKeyConfigurationDefinition;
+import org.eclipse.ui.internal.commands.api.ICategoryDefinition;
+import org.eclipse.ui.internal.commands.api.ICommandDefinition;
+import org.eclipse.ui.internal.commands.api.ICommandRegistry;
+import org.eclipse.ui.internal.commands.api.ICommandRegistryEvent;
+import org.eclipse.ui.internal.commands.api.ICommandRegistryListener;
+import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
+import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
+import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
+import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
@@ -354,8 +349,8 @@ public final class CommandManager implements ICommandManager {
 		}
 		*/
 
-		Map keyBindingsByCommandIdForMode = getKeyBindingsByCommandIdForMode();				
-		SortedSet keyBindings = (SortedSet) keyBindingsByCommandIdForMode.get(commandId);
+		Map keyBindingsByCommandId = getKeyBindingsByCommandId();				
+		SortedSet keyBindings = (SortedSet) keyBindingsByCommandId.get(commandId);
 		
 		if (keyBindings != null) {
 			IKeyBinding keyBinding = (IKeyBinding) keyBindings.first();

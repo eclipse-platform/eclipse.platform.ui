@@ -20,7 +20,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.ui.internal.commands.registry.IKeyBindingDefinition;
+import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 

@@ -836,9 +836,9 @@ public class WorkbenchWindow
 					if (accelerator != 0) {
 						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
 						KeySequence keySequence = KeySequence.getInstance(keyStroke);
-						Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
+						Map matchesByKeySequence = commandManager.getMatchesByKeySequence();
 
-						if (matchesByKeySequenceForMode.get(keySequence) == null)
+						if (matchesByKeySequence.get(keySequence) == null)
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$ 		
@@ -876,9 +876,9 @@ public class WorkbenchWindow
 					if (accelerator != 0) {
 						KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(accelerator);
 						KeySequence keySequence = KeySequence.getInstance(keyStroke);
-						Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
+						Map matchesByKeySequence = commandManager.getMatchesByKeySequence();
 
-						if (matchesByKeySequenceForMode.get(keySequence) == null)
+						if (matchesByKeySequence.get(keySequence) == null)
 							return null;
 					}
 				} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
@@ -929,8 +929,8 @@ public class WorkbenchWindow
 				List keyStrokes = new ArrayList(mode.getKeyStrokes());
 				keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(SWT.ALT | altChar));
 				KeySequence childMode = KeySequence.getInstance(keyStrokes);
-				Map matchesByKeySequenceForMode = commandManager.getMatchesByKeySequenceForMode();
-				Match match = (Match) matchesByKeySequenceForMode.get(childMode);
+				Map matchesByKeySequence = commandManager.getMatchesByKeySequence();
+				Match match = (Match) matchesByKeySequence.get(childMode);
 
 				if (match == null || match.getCommandId() == null)
 					return text;

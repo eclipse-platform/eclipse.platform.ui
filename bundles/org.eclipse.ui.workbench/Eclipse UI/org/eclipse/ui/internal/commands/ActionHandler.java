@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.internal.commands.api.*;
 
 public class ActionHandler implements org.eclipse.ui.commands.IAction {
 
@@ -26,7 +27,7 @@ public class ActionHandler implements org.eclipse.ui.commands.IAction {
 		return action;
 	}
 
-	public void addPropertyListener(XPropertyListener propertyListener) {
+	public void addPropertyListener(XIPropertyListener propertyListener) {
 	}
 
 	public void execute() {	
@@ -50,6 +51,6 @@ public class ActionHandler implements org.eclipse.ui.commands.IAction {
 		return action.isEnabled();
 	}
 	
-	public void removePropertyListener(XPropertyListener propertyListener) {	
+	public void removePropertyListener(XIPropertyListener propertyListener) {	
 	}
 }

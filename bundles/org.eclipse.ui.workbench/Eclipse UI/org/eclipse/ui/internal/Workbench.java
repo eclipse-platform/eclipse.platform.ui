@@ -390,40 +390,53 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 		final Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
 		commandManager.setMode(modeAfterKeyStroke);
 		final Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
-		boolean handled = false;
+		boolean consumeKeyStroke = false;
 
 		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {			
+			// this key stroke is part of one or more possible completions: increase the mode and consume the keystroke
 			commandManager.setMode(modeAfterKeyStroke);
 			modeContributionItem.setText(commandManager.getMode().format());							
-			handled = true;
-		} else {
+			consumeKeyStroke = true;	
+		} else {		
+			// there are no possible longer multi-stroke sequences, allow a completion now if possible
 			final Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
 			
 			if (match != null) {
+				// a completion was found. increase mode before execution (allows ui to show proper mode during execution of a long blocking action)
 				commandManager.setMode(modeAfterKeyStroke);
 				modeContributionItem.setText(commandManager.getMode().format());				
 				final String commandId = match.getCommandId();
 				final Map actionsById = commandManager.getActionsById();
 				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
 	
-				if (action != null && action.isEnabled()) {
-					try {
-						action.execute(event);
-					} catch (final Exception e) {
-						// TODO 						
+				if (action != null) {
+					// an action was found corresponding to the completion
+
+					if (action.isEnabled()) {
+						try {
+							action.execute(event);
+						} catch (final Exception e) {
+							// TODO 						
+						}
 					}
-				}					
 
-				handled = true;
-			} 
+					// consume the keystroke
+					consumeKeyStroke = true;
+				}
+			}
 
+			// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
+			if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
+				consumeKeyStroke = true;			
+
+			// clear mode
 			commandManager.setMode(KeySequence.getInstance());	
 			modeContributionItem.setText(commandManager.getMode().format());				
 		}
 
 		// TODO is this necessary?		
 		updateActiveContextIds();
-		return handled;
+		return consumeKeyStroke;
 	}
 
 	public void updateActiveContextIds() {
