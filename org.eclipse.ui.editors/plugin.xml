@@ -153,6 +153,48 @@
             keySequence="M1+Numpad_Subtract"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.textEditorScope"
+            platform="win32"
+            keySequence="M1+X"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.textEditorScope"
+            platform="win32"
+            keySequence="M1+C"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.paste"
+            contextId="org.eclipse.ui.textEditorScope"
+            platform="win32"
+            keySequence="M1+V"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.textEditorScope"
+            platform="win32"
+            keySequence="Shift+Del"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.textEditorScope"
+            platform="win32"
+            keySequence="Ctrl+Insert"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.paste"
+            contextId="org.eclipse.ui.textEditorScope"
+            platform="win32"
+            keySequence="Shift+Insert"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    
    <extension
