@@ -11,19 +11,33 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
  
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointsListener;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -35,22 +49,111 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 public class BreakpointsView extends AbstractDebugView {
 
 	private BreakpointsViewEventHandler fEventHandler;
+	private ICheckStateListener fCheckListener= new ICheckStateListener() {
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			handleCheckStateChanged(event);
+		}
+	};
+	private IBreakpointsListener fBreakpointListener= new IBreakpointsListener() {
+		public void breakpointsAdded(IBreakpoint[] breakpoints) {
+		}
+		public void breakpointsRemoved(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+		}
+		public void breakpointsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+			CheckboxTableViewer viewer= getCheckboxViewer();
+			for (int i = 0; i < breakpoints.length; i++) {
+				IBreakpoint breakpoint = breakpoints[i];
+				try {
+					viewer.setChecked(breakpoint, breakpoint.isEnabled());
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+		}
+	};
 	
+	/**
+	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		if (getViewer() != null) {
+			initializeCheckedState();
+		}
+	}
+
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		StructuredViewer viewer = new TableViewer(parent, SWT.MULTI| SWT.H_SCROLL | SWT.V_SCROLL);
+		CheckboxTableViewer viewer = CheckboxTableViewer.newCheckList(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new BreakpointsViewContentProvider());
 		viewer.setLabelProvider(new DelegatingModelPresentation());
 		viewer.setSorter(new BreakpointsSorter());
-		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());		
+		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());
+		viewer.addCheckStateListener(fCheckListener);
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
 		setEventHandler(new BreakpointsViewEventHandler(this));
 		return viewer;
 	}	
 	
+	/**
+	 * Sets the initial checked state of the items in the viewer and hooks
+	 * up the listener to maintain future state.
+	 */
+	private void initializeCheckedState() {
+		IBreakpointManager manager= DebugPlugin.getDefault().getBreakpointManager();
+		final CheckboxTableViewer viewer= getCheckboxViewer();
+		List breakpoints= Arrays.asList((IBreakpoint[]) ((IStructuredContentProvider) viewer.getContentProvider()).getElements(manager));
+		ListIterator iterator= breakpoints.listIterator();
+		while (iterator.hasNext()) {
+			try {
+				if (!((IBreakpoint) iterator.next()).isEnabled()) {
+					iterator.remove();
+				}
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
+		}
+		viewer.setCheckedElements(breakpoints.toArray());
+		manager.addBreakpointListener(fBreakpointListener);
+	}
+	
+	/**
+	 * Returns this view's viewer as a checkbox table viewer.
+	 * 
+	 * @return
+	 */
+	private CheckboxTableViewer getCheckboxViewer() {
+		return (CheckboxTableViewer) getViewer();
+	}
+
+	/**
+	 * Responds to the user checking and unchecking breakpoints by enabling
+	 * and disabling them.
+	 * 
+	 * @param event the check state change event
+	 */
+	private void handleCheckStateChanged(CheckStateChangedEvent event) {
+		Object source= event.getElement();
+		if (!(source instanceof IBreakpoint)) {
+			return;
+		}
+		IBreakpoint breakpoint= (IBreakpoint) source;
+		boolean enable= event.getChecked();
+		try {
+			breakpoint.setEnabled(enable);
+		} catch (CoreException e) {
+			String titleState= enable ? DebugUIViewsMessages.getString("BreakpointsView.6") : DebugUIViewsMessages.getString("BreakpointsView.7"); //$NON-NLS-1$ //$NON-NLS-2$
+			String messageState= enable ? DebugUIViewsMessages.getString("BreakpointsView.8") : DebugUIViewsMessages.getString("BreakpointsView.9");  //$NON-NLS-1$ //$NON-NLS-2$
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.10"), new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.getString("BreakpointsView.11"), new String[] { messageState }), e); //$NON-NLS-1$ //$NON-NLS-2$
+			// If the breakpoint fails to update, reset its check state.
+			getCheckboxViewer().removeCheckStateListener(fCheckListener);
+			event.getCheckable().setChecked(source, !event.getChecked());
+			getCheckboxViewer().addCheckStateListener(fCheckListener);
+		}
+	}
 	/**
 	 * @see AbstractDebugView#getHelpContextId()
 	 */
@@ -62,6 +165,8 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(fBreakpointListener);
+		getCheckboxViewer().removeCheckStateListener(fCheckListener);
 		IAction action= getAction("ShowBreakpointsForModel"); //$NON-NLS-1$
 		if (action != null) {
 			((ShowSupportedBreakpointsAction)action).dispose(); 
