@@ -1128,7 +1128,7 @@
                helpContextId="remove_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
                menubarPath="breakpointGroup"
-               enabledFor="1+"
+               enablesFor="1+"
                id="org.eclipse.debug.ui.breakpointsView.toolbar.remove">
          </action>
          <action
