@@ -26,8 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -343,6 +341,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
     private PresentationLabelProvider labelProvider;
 
+    private CascadingTheme cascadingTheme;
+
 	/**
 	 * Create a new instance of the receiver. 
 	 */
@@ -627,16 +627,20 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         
         colorRegistry.dispose();
         fontRegistry.dispose();
+        
     }
 
 	/**
      * Clear all previews.
      */
     private void clearPreviews() {
+        if (cascadingTheme != null)
+            cascadingTheme.dispose();
+
         for (Iterator i = previewSet.iterator(); i.hasNext();) {
             IPresentationPreview preview = (IPresentationPreview) i.next();
             try {
-                preview.dispose();
+                preview.dispose();               
             }
             catch (RuntimeException e) {
                 WorkbenchPlugin.log(RESOURCE_BUNDLE.getString("errorDisposePreviewLog"), StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e)); //$NON-NLS-1$
@@ -1425,54 +1429,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	                    previewControl = new Composite(previewComposite, SWT.NONE);
 	                    previewControl.setLayout(new FillLayout());
 	                    myApplyDialogFont(previewControl);
-	                    ITheme theme = new ITheme() {
-
-                            public void addPropertyChangeListener(IPropertyChangeListener listener) {
-                                // TODO confirm
-                                currentTheme.addPropertyChangeListener(listener);
-                            }
-
-                            public void removePropertyChangeListener(IPropertyChangeListener listener) {
-                                // TODO confirm
-                                currentTheme.removePropertyChangeListener(listener);
-                            }
-
-                            public String getId() {
-                                return currentTheme.getId();
-                            }
-
-                            public String getLabel() {
-                                return currentTheme.getLabel();
-                            }
-
-                            public ColorRegistry getColorRegistry() {
-                                return colorRegistry;
-                            }
-
-                            public FontRegistry getFontRegistry() {
-                                return fontRegistry;
-                            }
-
-                            public void dispose() {
-                                // TODO: confirm                                
-                            }
-
-                            public String getString(String themeKey) {
-                                return currentTheme.getString(themeKey);
-                            }
-
-                            public Set keySet() {
-                                return currentTheme.keySet();
-                            }
-
-                            public int getInt(String themeKey) {
-                                return currentTheme.getInt(themeKey);
-                            }
-
-                            public boolean getBoolean(String themeKey) {
-                                return currentTheme.getBoolean(themeKey);
-                            }
-	                    };
+	                    ITheme theme = getCascadingTheme();
 	                    preview.createControl(previewControl, theme);
 	                    previewSet.add(preview);
                     }
@@ -1495,6 +1452,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	}
 
 	/**
+     * @return
+     */
+    private ITheme getCascadingTheme() {
+        if (cascadingTheme == null)
+            cascadingTheme = new CascadingTheme(currentTheme, colorRegistry, fontRegistry);
+        return cascadingTheme;
+    }
+
+    /**
 	 * Update the color controls based on the supplied definition.
 	 * 
 	 * @param definition The currently selected <code>ColorDefinition</code>.
