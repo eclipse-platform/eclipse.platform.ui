@@ -41,7 +41,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IDocumentProvider {
 	
 	/**
-	 * Connects the given element to this document provider.
+	 * Connects the given element to this document provider. This tells the provider
+	 * that caller of this method is interested to work with the document provided for
+	 * the given domain model element. By counting the invokations of this method and 
+	 * <code>disconnect(Object)</code> this provider can assume to know the
+	 * correct number of clients working with the document provided for that 
+	 * domain model element. <p>
 	 * The given element must not be <code>null</code>.
 	 *
 	 * @param element the element
@@ -51,7 +56,12 @@ public interface IDocumentProvider {
 	void connect(Object element) throws CoreException;
 	
 	/**
-	 * Disconnects the given element from this document provider.
+	 * Disconnects the given element from this document provider. This tells the provider
+	 * that the caller of this method is no longer interested in working with the document
+	 * provided for the given domain model element. By counting the invokations of 
+	 * <code>connect(Object)</code> and of this method this provider can assume to
+	 * know the correct number of clients working with the document provided for that 
+	 * domain model element. <p>
 	 * The given element must not be <code>null</code>.
 	 *
 	 * @param element the element
