@@ -1035,8 +1035,8 @@ public class PreferenceDialog
 	private void showPageFlippingAbortDialog() {
 		MessageDialog.openError(
 			getShell(),
-			JFaceResources.getString("AbortPageFlippingDialog.title"),
-			JFaceResources.getString("AbortPageFlippingDialog.message"));
+			JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
+			JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
 	}
 	/**
 	 * Updates this dialog's controls to reflect the current page.

@@ -362,7 +362,7 @@ public void setErrorMessage(String newErrorMessage) {
 		
 		//Add in a space for layout purposes but do not
 		//change the instance variable
-		String displayedErrorMessage = " " + errorMessage;
+		String displayedErrorMessage = " " + errorMessage; //$NON-NLS-1$
 		updateMessage(displayedErrorMessage);
 		messageLabel.setToolTipText(errorMessage);
 		if (!showingError) {
@@ -542,7 +542,7 @@ private void updateMessage(String newMessage) {
 	
 	//Be sure there are always 2 lines for layout purposes
 	if(newMessage != null && newMessage.indexOf('\n') == -1)
-		newMessage = newMessage + "\n ";
+		newMessage = newMessage + "\n "; //$NON-NLS-1$
 		
 	messageLabel.setText(newMessage);
 }

@@ -77,7 +77,7 @@ public interface IPreferenceStore {
 	/**
 	 * The default-default value for String preferences (<code>""</code>).
 	 */
-	public static final String STRING_DEFAULT_DEFAULT = "";
+	public static final String STRING_DEFAULT_DEFAULT = ""; //$NON-NLS-1$
 
 	/**
 	 * The string representation used for <code>true</code> (<code>"true"</code>).

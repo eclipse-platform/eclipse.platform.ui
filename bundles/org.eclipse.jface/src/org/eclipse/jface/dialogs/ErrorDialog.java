@@ -270,7 +270,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 			}
 
 		});
-		copyItem.setText(JFaceResources.getString("copy"));
+		copyItem.setText(JFaceResources.getString("copy")); //$NON-NLS-1$
 		list.setMenu(copyMenu);
 
 		listCreated = true;
@@ -445,7 +445,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 			buffer.append(NESTING_INDENT); //$NON-NLS-1$
 		}
 		buffer.append(status.getMessage());
-		buffer.append("\n");
+		buffer.append("\n"); //$NON-NLS-1$
 
 		IStatus[] children = status.getChildren();
 		for (int i = 0; i < children.length; i++) {

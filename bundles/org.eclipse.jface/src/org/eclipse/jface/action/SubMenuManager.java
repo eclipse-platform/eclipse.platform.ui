@@ -238,7 +238,7 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 	 * Method declared on IMenuManager.
 	 */
 	public void setRemoveAllWhenShown(boolean removeAll) {
-		Assert.isTrue(false, "Should not be called on submenu manager");
+		Assert.isTrue(false, "Should not be called on submenu manager"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * Method declared on SubContributionManager.

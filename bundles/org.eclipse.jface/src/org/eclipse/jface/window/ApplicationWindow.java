@@ -249,7 +249,7 @@ protected void configureShell(Shell shell) {
 	// we need a special layout
 	shell.setLayout(new ApplicationWindowLayout());
 
-	if (! "carbon".equals(SWT.getPlatform()))
+	if (! "carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
 		 new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
 	createToolBarControl(shell);

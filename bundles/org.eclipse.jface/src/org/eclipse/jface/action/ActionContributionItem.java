@@ -443,13 +443,13 @@ private void handleWidgetSelection(Event e) {
 		// Ensure action is enabled first.
 		// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be executed while disabled.
 		if (action.isEnabled()) {
-			boolean trace = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/actions"));
+			boolean trace = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
 			long ms = System.currentTimeMillis();
 			if(trace)
-				System.out.println("Running action: " + action.getText());
+				System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
 			action.runWithEvent(e);
 			if(trace)
-				System.out.println((System.currentTimeMillis() - ms) + " ms to run action: "  + action.getText());
+				System.out.println((System.currentTimeMillis() - ms) + " ms to run action: "  + action.getText()); //$NON-NLS-1$
 		}
 	}
 }

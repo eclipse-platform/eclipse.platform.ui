@@ -350,7 +350,7 @@ private class HashEnumerator implements Enumeration {
 	 * @return		the string representation of this Hashtable
 	 */
 	public String toString() {
-		if (size() == 0) return "{}";
+		if (size() == 0) return "{}"; //$NON-NLS-1$
 	
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('{');
@@ -360,7 +360,7 @@ private class HashEnumerator implements Enumeration {
 				buffer.append(entry.key);
 				buffer.append('=');
 				buffer.append(entry.value);
-				buffer.append(", ");
+				buffer.append(", "); //$NON-NLS-1$
 				entry = entry.next;
 			}
 		}
