@@ -5,7 +5,7 @@
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.ltk.ui.refactoring" />
-		<property name="version"  value="_3.0.0" />
+		<property name="version"  value="_3.1.0" />
 		<property name="dest"  value="${destdir}/${plugin}${version}" />
 	</target>
 
