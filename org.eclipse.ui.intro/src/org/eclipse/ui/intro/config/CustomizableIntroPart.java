@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.intro.impl.presentations;
+package org.eclipse.ui.intro.config;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.widgets.*;
@@ -24,22 +25,50 @@ import org.eclipse.ui.intro.*;
 import org.eclipse.ui.part.*;
 
 /**
- *  
+ * A re-usable intro part that the Eclipse platform uses for its Out of the Box
+ * Experience. It is a customizable intro part where both its presentation, and
+ * its content can be customized based on a configuration. Both are contributed
+ * using the org.eclipse.ui.intro.intro.config extension point. There are two
+ * two presentation: an SWT brwoser based presentatin, and a UI forms
+ * presentation. Based on the configuration, one is chosen on startup. If a
+ * Brwoser based prsentation is selected, and the intro is being loaded on a
+ * platform that does not support the SWT Brwoser control, the default behavior
+ * is to degrade to UI forms prsentation. Content displayed in this intro part
+ * can be static or dynamic. Static is html files, dynamic is markup in content
+ * files. Again, both of whch can be specified using the above extension point.
+ * 
+ * Note: This class was made public on for re-use as-is as a valid class for the
+ * org.eclipse.ui.intro extension point.
  */
-public class CustomizableIntroPart extends IntroPart {
+public final class CustomizableIntroPart extends IntroPart {
 
     private IntroModelRoot model;
-
     private IntroPartPresentation presentation;
-
     private StandbyPart standbyPart;
-
     private Composite container;
 
-    /**
-     *  
-     */
     public CustomizableIntroPart() {
+
+        // register adapter to hide standbypart.
+        IAdapterFactory factory = new IAdapterFactory() {
+
+            public Class[] getAdapterList() {
+                return new Class[] { StandbyPart.class};
+            }
+
+            public Object getAdapter(Object adaptableObject, Class adapterType) {
+                if (!(adaptableObject instanceof CustomizableIntroPart))
+                    return null;
+
+                if (adapterType.equals(StandbyPart.class)) {
+                    return getStandbyPart();
+                } else
+                    return null;
+            }
+        };
+        Platform.getAdapterManager().registerAdapters(factory,
+                CustomizableIntroPart.class);
+
         // model can not be loaded here because the configElement of this part
         // is still not loaded here.
     }
@@ -168,14 +197,10 @@ public class CustomizableIntroPart extends IntroPart {
         IntroPlugin.getDefault().getExtensionPointManager().clear();
     }
 
-    public void setStandbyInput(Object input) {
-        standbyPart.setInput(input);
-    }
-
     /**
      * @return Returns the standbyPart.
      */
-    public StandbyPart getStandbyPart() {
+    private StandbyPart getStandbyPart() {
         return standbyPart;
 
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,15 +20,15 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.viewer.*;
-import org.eclipse.ui.internal.intro.impl.presentations.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
+import org.eclipse.ui.intro.config.*;
 
 /**
  * UI Implementation class that represents a Presentation Part. This class is
  * instantiated from plugin markup and so we need a default constructor,
- * including in subclasses. It has some utility methods, including maintaining
- * a history of navigation locations.
+ * including in subclasses. It has some utility methods, including maintaining a
+ * history of navigation locations.
  *  
  */
 public abstract class AbstractIntroPartImplementation {
@@ -99,8 +99,8 @@ public abstract class AbstractIntroPartImplementation {
 
     /**
      * Updates the UI navigation history with either a real URL, or a page ID.
-     * If the navigation state is true, it is assumed that we need no updates
-     * to the history, and so a call to this method does nothing.
+     * If the navigation state is true, it is assumed that we need no updates to
+     * the history, and so a call to this method does nothing.
      * 
      * @param pageId
      */
@@ -114,8 +114,8 @@ public abstract class AbstractIntroPartImplementation {
 
         // quick exit.
         if (!history.isEmpty() && getCurrentLocation().equals(location))
-        // resetting the same location is useless.
-                return;
+            // resetting the same location is useless.
+            return;
 
         doUpdateHistory(location);
     }
@@ -162,21 +162,20 @@ public abstract class AbstractIntroPartImplementation {
 
     protected void navigateBackward() {
         if (badNavigationLocation(navigationLocation - 1))
-        // do nothing. We are at the begining.
-                return;
+            // do nothing. We are at the begining.
+            return;
         --navigationLocation;
     }
 
     /**
-     * Navigate forward in the history. Returns true if you can navigate
-     * forward
+     * Navigate forward in the history. Returns true if you can navigate forward
      * 
      * @return
      */
     protected void navigateForward() {
         if (badNavigationLocation(navigationLocation + 1))
-        // do nothing. We are at the begining.
-                return;
+            // do nothing. We are at the begining.
+            return;
         ++navigationLocation;
     }
 
@@ -204,8 +203,8 @@ public abstract class AbstractIntroPartImplementation {
     }
 
     /**
-     * Returns true if the current location in the navigation history
-     * represents a URL. False if the location is an Intro Page id.
+     * Returns true if the current location in the navigation history represents
+     * a URL. False if the location is an Intro Page id.
      * 
      * @return Returns the locationIsURL.
      */
@@ -214,8 +213,8 @@ public abstract class AbstractIntroPartImplementation {
     }
 
     /**
-     * Returns true if the current location in the navigation history
-     * represents a URL. False if the location is an Intro Page id.
+     * Returns true if the current location in the navigation history represents
+     * a URL. False if the location is an Intro Page id.
      * 
      * @return Returns the locationIsURL.
      */

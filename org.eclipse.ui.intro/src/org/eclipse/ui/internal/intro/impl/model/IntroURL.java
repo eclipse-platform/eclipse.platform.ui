@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.model.loader.*;
 import org.eclipse.ui.internal.intro.impl.parts.*;
-import org.eclipse.ui.internal.intro.impl.presentations.*;
 import org.eclipse.ui.internal.intro.impl.util.*;
 import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.config.*;
@@ -160,7 +159,8 @@ public class IntroURL implements IIntroURL {
         CustomizableIntroPart introPart = getCustomizableIntroPart(true);
         PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart,
                 true);
-        StandbyPart standbyPart = introPart.getStandbyPart();
+        StandbyPart standbyPart = (StandbyPart) introPart
+                .getAdapter(StandbyPart.class);
 
         // Get the IntroStandbyPart that maps to the given partId.
         IntroStandbyPart standbyPartContent = ExtensionPointManager.getInst()
