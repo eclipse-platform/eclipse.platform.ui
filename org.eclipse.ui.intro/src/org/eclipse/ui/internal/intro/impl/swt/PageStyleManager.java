@@ -10,6 +10,8 @@ package org.eclipse.ui.internal.intro.impl.swt;
 
 import java.util.*;
 
+import org.eclipse.swt.graphics.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.model.*;
 import org.osgi.framework.*;
 
@@ -306,6 +308,25 @@ public class PageStyleManager extends SharedStyleManager {
         return value.toLowerCase().equals("true"); //$NON-NLS-1$
     }
 
+
+    public Color getColor(FormToolkit toolkit, AbstractBaseIntroElement element) {
+        StringBuffer buff = createPathKey(element);
+        if (buff == null)
+            return null;
+        String key = buff.append(".font.fg").toString(); //$NON-NLS-1$
+        return getColor(toolkit, key);
+    }
+
+    public boolean isBold(IntroText text) {
+        StringBuffer buff = createPathKey(text);
+        if (buff == null)
+            return false;
+        String key = buff.append(".font.bold").toString();
+        String value = getProperty(key);
+        if (value == null)
+            value = "false"; //$NON-NLS-1$
+        return value.toLowerCase().equals("true"); //$NON-NLS-1$
+    }
 
 }
 

@@ -98,7 +98,8 @@ public class PageWidgetFactory {
             String imageText = ((IntroImage) element).getAlt();
             if (imageText == null)
                 break;
-            c = createText(parent, imageText);
+            // create text with default fg.
+            c = createText(parent, imageText, null);
             updateLayoutData(c, element);
             break;
         case AbstractIntroElement.HTML:
@@ -142,6 +143,7 @@ public class PageWidgetFactory {
                 section.setText(label);
             if (description != null)
                 section.setDescription(description);
+            colorControl(section, group);
             client = toolkit.createComposite(section, SWT.WRAP);
             section.setClient(client);
             control = section;
@@ -211,6 +213,7 @@ public class PageWidgetFactory {
         }
         linkControl.setText(link.getLabel());
         linkControl.setFont(IIntroConstants.DEFAULT_FONT);
+        colorControl(linkControl, link);
         linkControl.setHref(link.getUrl());
         linkControl.addHyperlinkListener(hyperlinkAdapter);
         //Util.highlight(linkControl, SWT.COLOR_DARK_YELLOW);
@@ -224,19 +227,44 @@ public class PageWidgetFactory {
      * @param link
      */
     protected Control createText(Composite parent, IntroText text) {
-        if (text.isFormatted()) {
-            FormText formText = toolkit.createFormText(parent, true);
-            formText.addHyperlinkListener(hyperlinkAdapter);
-            formText.setText(generateFormText(text.getText()), true, true);
-            return formText;
-        } else
-            return createText(parent, text.getText());
+        Color fg = styleManager.getColor(toolkit, text);
+        boolean isBold = styleManager.isBold(text);
+        // formatted case. If text is alredy formatted, the bold property is
+        // ignored.
+        if (text.isFormatted())
+            return createFormText(parent, generateFormText(text.getText()), fg);
+
+        // non formatted case.
+        if (isBold)
+            return createFormText(parent, generateBoldFormText(text.getText()),
+                    fg);
+        else
+            return createText(parent, text.getText(), fg);
+
+    }
+
+    private Control createFormText(Composite parent, String text, Color fg) {
+        FormText formText = toolkit.createFormText(parent, true);
+        formText.addHyperlinkListener(hyperlinkAdapter);
+        formText.setText(text, true, true);
+        if (fg != null)
+            formText.setForeground(fg);
+        return formText;
     }
 
 
-    private Control createText(Composite parent, String text) {
+    private Control createText(Composite parent, String text, Color fg) {
         Label label = toolkit.createLabel(parent, text, SWT.WRAP);
+        if (fg != null)
+            label.setForeground(fg);
         return label;
+    }
+
+    private void colorControl(Control elementControl,
+            AbstractBaseIntroElement element) {
+        Color fg = styleManager.getColor(toolkit, element);
+        if (fg != null)
+            elementControl.setForeground(fg);
     }
 
 
@@ -244,6 +272,18 @@ public class PageWidgetFactory {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append("<form>"); //$NON-NLS-1$
         sbuf.append(text);
+        sbuf.append("</form>"); //$NON-NLS-1$
+        return sbuf.toString();
+    }
+
+    private String generateBoldFormText(String text) {
+        StringBuffer sbuf = new StringBuffer();
+        sbuf.append("<form>"); //$NON-NLS-1$
+        sbuf.append("<p>");
+        sbuf.append("<b>");
+        sbuf.append(text);
+        sbuf.append("</b>");
+        sbuf.append("</p>");
         sbuf.append("</form>"); //$NON-NLS-1$
         return sbuf.toString();
     }

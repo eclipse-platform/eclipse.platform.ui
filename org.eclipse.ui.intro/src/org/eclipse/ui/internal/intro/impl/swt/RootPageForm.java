@@ -281,7 +281,9 @@ public class RootPageForm implements IIntroConstants {
      */
     private Label createHoverLabel(Composite body) {
         Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
-        Color fg = rootPageStyleManager.getColor(toolkit, "hover-text.fg"); //$NON-NLS-1$
+        String key = StringUtil.concat(rootPage.getId(), ".", "hover-text.fg")
+                .toString();
+        Color fg = rootPageStyleManager.getColor(toolkit, key);
         if (fg == null)
             fg = toolkit.getColors().getColor(FormColors.TITLE);
         label.setForeground(fg);

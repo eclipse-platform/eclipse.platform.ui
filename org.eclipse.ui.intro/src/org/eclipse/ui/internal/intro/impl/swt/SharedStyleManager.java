@@ -108,7 +108,6 @@ public class SharedStyleManager {
     }
 
 
-
     /**
      * 
      * 
@@ -116,9 +115,8 @@ public class SharedStyleManager {
      * @param key
      * @return color. May return null.
      */
-    public Color getColor(FormToolkit toolkit, String qualifier) {
+    public Color getColor(FormToolkit toolkit, String key) {
         FormColors colors = toolkit.getColors();
-        String key = createColorKey(page, qualifier);
         Color color = colors.getColor(key);
         if (color == null) {
             RGB rgb = getRGB(key);
@@ -128,11 +126,6 @@ public class SharedStyleManager {
         return color;
     }
 
-    private String createColorKey(AbstractIntroPage page, String qualifier) {
-        if (page != null)
-            return StringUtil.concat(page.getId(), ".", qualifier).toString(); //$NON-NLS-1$
-        return qualifier;
-    }
 
     /**
      * Retrieves an image for a link in a page. If not found, uses the page's

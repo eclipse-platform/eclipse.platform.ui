@@ -32,12 +32,15 @@ public class IntroText extends AbstractBaseIntroElement {
         super(element, bundle);
         Node textNode = element.getFirstChild();
         if (textNode == null)
-                return;
+            return;
         if (textNode.getNodeType() == Node.TEXT_NODE) {
             text = textNode.getNodeValue();
-            if (text.equals(" ")) //$NON-NLS-1$
-                    // we may have CDATA nodes, use first one.
-                    text = ((Text) element.getChildNodes().item(1)).getData();
+            if (text.equals(" ")) {
+                // we may have CDATA nodes, use first one.
+                Text childText = (Text) element.getChildNodes().item(1);
+                if (childText != null)
+                    text = childText.getData();
+            }
             isFormatted = checkIfFormatted();
         }
     }
