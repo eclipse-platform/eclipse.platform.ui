@@ -121,18 +121,29 @@ public class PreferenceManager {
      * @return the node, or <code>null</code> if none
      */
     public IPreferenceNode find(String path) {
-        Assert.isNotNull(path);
-        StringTokenizer stok = new StringTokenizer(path, separator);
-        IPreferenceNode node = root;
-        while (stok.hasMoreTokens()) {
-            String id = stok.nextToken();
-            node = node.findSubNode(id);
-            if (node == null)
-                return null;
-        }
-        if (node == root)
-            return null;
-        return node;
+       return find(path,root);
+    }
+    
+    /**
+     * Finds and returns the contribution node directly
+     * below top at the given path.
+     *
+     * @param path the path
+     * @return the node, or <code>null</code> if none
+     */
+    protected IPreferenceNode find(String path,IPreferenceNode top){
+    	 Assert.isNotNull(path);
+         StringTokenizer stok = new StringTokenizer(path, separator);
+         IPreferenceNode node = top;
+         while (stok.hasMoreTokens()) {
+             String id = stok.nextToken();
+             node = node.findSubNode(id);
+             if (node == null)
+                 return null;
+         }
+         if (node == top)
+             return null;
+         return node;
     }
 
     /**

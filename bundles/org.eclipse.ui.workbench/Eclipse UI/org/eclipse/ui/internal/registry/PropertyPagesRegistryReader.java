@@ -149,6 +149,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
      */
     private void registerContributor(RegistryPageContributor contributor, String objectClassName) {
         manager.registerContributor(contributor, objectClassName);
+        pages.add(contributor);
     }
 
     /**
