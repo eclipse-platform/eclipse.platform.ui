@@ -33,7 +33,7 @@ public class SynchronizeViewerAdvisor extends TreeViewerAdvisor {
 	private TeamParticipantRefreshAction refreshSelectionAction;
 
 	public SynchronizeViewerAdvisor(ISynchronizeView view, SubscriberParticipant participant) {
-		super(participant.getId(), participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
+		super(participant.getId(), view.getViewSite(), participant.getSubscriberSyncInfoCollector().getSyncInfoTree());
 		this.view = view;
 		this.participant = participant;
 	}

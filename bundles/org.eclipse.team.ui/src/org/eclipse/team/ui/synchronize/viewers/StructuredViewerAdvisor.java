@@ -14,6 +14,7 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.PluginAction;
@@ -76,6 +78,7 @@ public abstract class StructuredViewerAdvisor {
 	private SynchronizeModelProvider modelProvider;
 	private ListenerList listeners;
 	private String targetID;
+	private IWorkbenchPartSite site;
 
 	private SyncInfoSet set;
 	private StructuredViewer viewer;
@@ -86,11 +89,14 @@ public abstract class StructuredViewerAdvisor {
 	 * to call {@link #dispose()} when finished with an advisor.
 	 * 
 	 * @param targetID the targetID defined in the viewer contributions in a plugin.xml file.
+	 * @param site the workbench site with which to register the menuId. Can be <code>null</code> in which
+	 * case a site will be found using the default workbench page.
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
-	public StructuredViewerAdvisor(String targetID, SyncInfoSet set) {
+	public StructuredViewerAdvisor(String targetID, IWorkbenchPartSite site, SyncInfoSet set) {
 		this.set = set;
 		this.targetID = targetID;
+		this.site = site;
 	}
 
 	/**
@@ -100,7 +106,7 @@ public abstract class StructuredViewerAdvisor {
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
 	public StructuredViewerAdvisor(SyncInfoSet set) {
-		this(null, set);
+		this(null, null, set);
 	}
 		
 	/**
@@ -371,12 +377,15 @@ public abstract class StructuredViewerAdvisor {
 		});
 		viewer.getControl().setMenu(menu);
 		if (allowParticipantMenuContributions()) {
-			IWorkbenchPartSite site = Utils.findSite(viewer.getControl());
-			if (site == null) {
-				site = Utils.findSite();
-			}
-			if (site != null) {
-				site.registerContextMenu(getTargetID(), menuMgr, viewer);
+			IWorkbenchPartSite ws = getWorkbenchPartSite();
+			if(ws == null)
+				Utils.findSite(viewer.getControl());
+			if (ws == null) 
+				ws = Utils.findSite();
+			if (ws != null) {
+				ws.registerContextMenu(getTargetID(), menuMgr, viewer);
+			} else {
+				TeamUIPlugin.log(IStatus.ERROR, "Cannot add menu contributions because the site cannot be found: " + getTargetID(), null);
 			}
 		}
 	}
@@ -397,5 +406,13 @@ public abstract class StructuredViewerAdvisor {
 			}
 		});
 		viewer.setInput(modelProvider.getModelRoot());
+	}
+	
+	/**
+	 * Returns the part site in which to register the context menu viewer contributions for this
+	 * advisor.
+	 */
+	protected IWorkbenchPartSite getWorkbenchPartSite() {
+		return this.site;
 	}
 }

@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dialogs.ContainerCheckedTreeViewer;
 
 /**
@@ -107,10 +108,12 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	 * to call {@link #dispose()} when finished with an advisor.
 	 * 
 	 * @param targetID the targetID defined in the viewer contributions in a plugin.xml file.
+	 * @param site the workbench site with which to register the menuId. Can be <code>null</code> in which
+	 * case a site will be found using the default workbench page.
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
-	public TreeViewerAdvisor(String menuId, SyncInfoTree set) {
-		super(menuId, set);
+	public TreeViewerAdvisor(String menuId, IWorkbenchPartSite site, SyncInfoTree set) {
+		super(menuId,site, set);
 		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
 	}
 	
@@ -122,7 +125,7 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor implements IPrope
 	 * @param set the set of <code>SyncInfo</code> objects that are to be shown to the user.
 	 */
 	public TreeViewerAdvisor(SyncInfoTree set) {
-		this(null, set);
+		this(null, null, set);
 	}
 	
 	/* (non-Javadoc)

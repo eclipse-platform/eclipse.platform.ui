@@ -123,7 +123,7 @@ public class RefreshCompleteDialog extends DetailsDialog {
 	protected Composite createDropDownDialogArea(Composite parent) {
 		try {
 			CompareConfiguration compareConfig = new CompareConfiguration();
-			TreeViewerAdvisor viewerAdvisor = new TreeViewerAdvisor(participant.getId(), syncInfoSet);
+			TreeViewerAdvisor viewerAdvisor = new TreeViewerAdvisor(participant.getId(), null, syncInfoSet);
 			compareEditorInput = new SynchronizeCompareInput(compareConfig, viewerAdvisor) {
 
 				public String getTitle() {

@@ -58,7 +58,7 @@ public class CVSLocalCompareConfiguration extends TreeViewerAdvisor {
 	}
 	
 	private CVSLocalCompareConfiguration(CVSCompareSubscriber subscriber, SubscriberSyncInfoCollector collector) {
-		super("org.eclipse.team.cvs.ui.compare-participant", collector.getSyncInfoTree()); //$NON-NLS-1$
+		super("org.eclipse.team.cvs.ui.compare-participant", null, collector.getSyncInfoTree()); //$NON-NLS-1$
 		this.subscriber = subscriber;
 		this.collector = collector;
 	}
