@@ -149,7 +149,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	/** Width of birds eye view */
 	private static final int BIRDS_EYE_VIEW_INSET= 1;
 	/** */
-	private static final int RESOLVE_SIZE= 8;
+	private static final int RESOLVE_SIZE= 5;
 
 	/** line width of change borders */
 	private static final int LW= 1;
@@ -1031,10 +1031,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2; 
 				if (my >= cy && my < cy+RESOLVE_SIZE && mx >= cx && mx < cx+RESOLVE_SIZE) {
 					if (r != null) {
-						r.x= cx-5;
-						r.y= cy-5;
-						r.width= RESOLVE_SIZE+10;
-						r.height= RESOLVE_SIZE+10;
+						r.x= cx+RESOLVE_SIZE/2-10;
+						r.y= cy+RESOLVE_SIZE/2-10;
+						r.width= 20;
+						r.height= 20;
 					}
 					return diff;
 				}
@@ -1197,7 +1197,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						public void mouseMove(MouseEvent e) {
 							Rectangle r= new Rectangle(0, 0, 0, 0);
 							Diff diff= getDiffUnderMouse(canvas, e.x, e.y, r);
-							if (diff != null) {
+							setCurrentDiff(diff, false);
+							if (diff != null && !diff.isResolved()) {
 								fCenterButton.setBounds(r);
 								fCenterButton.setVisible(true);
 							} else {
@@ -1211,6 +1212,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				fCenterButton.setText("<");
 				fCenterButton.pack();
 				fCenterButton.setVisible(false);
+				fCenterButton.addSelectionListener(
+					new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							fCenterButton.setVisible(false);
+							copyDiffRightToLeft();
+						}
+					}
+				);
 				
 				fCenterMenuManager= new MenuManager();
 				fCenterMenuManager.setRemoveAllWhenShown(true);
