@@ -57,8 +57,8 @@ public class ProgressRegion {
 		viewer = new ProgressViewer(region, SWT.NO_FOCUS, 1, 36);
 		viewer.setUseHashlookup(true);
 		Control viewerControl = viewer.getControl();
-		int widthPreference = AnimationManager.getInstance()
-				.getPreferredWidth();
+		//int widthPreference = AnimationManager.getInstance().getPreferredWidth();
+		int widthPreference = AnimationManager.getInstance().getPreferredWidth() + 10;	// Andre temporary
 		Point preferredSize = viewer.getSizeHints();
 		int margin = 2;
 		FormData labelData = new FormData();
@@ -69,7 +69,8 @@ public class ProgressRegion {
 		itemData.right = new FormAttachment(100, (-1 * margin));
 		itemData.top = new FormAttachment(viewerControl, margin, SWT.TOP);
 		itemData.width = widthPreference + (margin * 2);
-		itemData.height = preferredSize.y;
+		//itemData.height = preferredSize.y;
+		itemData.height = preferredSize.y + 5;	// Andre temporary
 		itemControl.setLayoutData(itemData);
 		FormData viewerData = new FormData();
 		viewerData.left = new FormAttachment(seperator, margin);
