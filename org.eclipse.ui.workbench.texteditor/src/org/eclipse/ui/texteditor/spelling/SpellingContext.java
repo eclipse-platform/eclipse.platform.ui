@@ -32,7 +32,7 @@ public class SpellingContext {
 	private IContentType fContentType;
 	
 	/**
-	 * Creates a new, uninitialized spelling context.
+	 * Creates a new, un-initialized spelling context.
 	 */
 	public SpellingContext() {
 	}
