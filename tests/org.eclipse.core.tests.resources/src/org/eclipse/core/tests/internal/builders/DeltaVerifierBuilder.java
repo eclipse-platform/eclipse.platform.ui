@@ -203,6 +203,7 @@ public void requestDeltas(IProject[] projects) {
 	receivedDeltas.clear();
 	emptyDeltas.clear();
 }
+
 /*
  * @see TestBuilder#reset()
  */

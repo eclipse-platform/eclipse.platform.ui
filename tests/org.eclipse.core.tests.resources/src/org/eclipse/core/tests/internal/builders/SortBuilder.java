@@ -44,6 +44,12 @@ public class SortBuilder extends TestBuilder {
 	 * Whether the last build provided a null delta.
 	 */
 	private boolean wasDeltaNull = false;
+	/**
+	 * List of the resources that were in the last delta, if any.
+	 */
+	protected final ArrayList changedResources = new ArrayList();
+
+	private boolean requestForgetState = false;
 
 	/**
 	 * Build command parameters.
@@ -60,10 +66,6 @@ public class SortBuilder extends TestBuilder {
 	public static String DEFAULT_SORTED_FOLDER = "SortedFolder";
 	public static String DEFAULT_UNSORTED_FOLDER = "UnsortedFolder";
 	
-	/**
-	 * List of the resources that were in the last delta, if any.
-	 */
-	protected final ArrayList changedResources = new ArrayList();
 	
 public SortBuilder() {
 	singleton = this;
@@ -97,6 +99,11 @@ protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws 
 		} catch (Exception e) {
 			throw new CoreException(new Status(IStatus.ERROR, "tests", IResourceStatus.BUILD_FAILED, "Incremental build failed due to internal error", e));
 		}
+	}
+	//forget last built state if requested to do so
+	if (requestForgetState) {
+		requestForgetState = false;
+		forgetLastBuiltState();
 	}
 	String project = (String)arguments.get(INTERESTING_PROJECT);
 	if (project != null) {
@@ -273,7 +280,6 @@ private IFolder getSortedFolder() {
 	String sortedFolder = (String) arguments.get(SORTED_FOLDER);
 	if (sortedFolder == null)
 		sortedFolder = DEFAULT_SORTED_FOLDER;
-	forgetLastBuiltState();
 	return getProject().getFolder(sortedFolder);
 }
 /**
@@ -356,6 +362,13 @@ private void recordChangedResources(IResourceDelta delta) throws CoreException {
 			return true;
 		}
 	});
+}
+/**
+ * Requests that the next invocation of build() will call
+ * forgetLastBuiltState().
+ */
+public void requestForgetLastBuildState() {
+	requestForgetState = true;
 }
 /**
  * Sorts the specified bytes in either ascending or descending order.

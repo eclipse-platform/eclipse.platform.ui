@@ -420,7 +420,8 @@ public void testForgetLastBuiltState() {
 		fail("4.99", e);
 	}
 
-	// Do another incremental build.  Delta should not be null
+	// Do another incremental build, requesting a null build state.  Delta should not be null
+	verifier.requestForgetLastBuildState();
 	try {
 		project.touch(getMonitor());
 		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, SortBuilder.BUILDER_NAME, null, getMonitor());
@@ -428,12 +429,19 @@ public void testForgetLastBuiltState() {
 	} catch (CoreException e) {
 		fail("5.99", e);
 	}
+	// Do another incremental build.  Delta should be null
+	try {
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, SortBuilder.BUILDER_NAME, null, getMonitor());
+		assertTrue("6.0", verifier.wasDeltaNull());
+	} catch (CoreException e) {
+		fail("6.99", e);
+	}
 
 	// Delete the project
 	try {
 		project.delete(false, getMonitor());
 	} catch (CoreException e) {
-		fail("6.99", e);
+		fail("99.99", e);
 	}
 }
 /**
