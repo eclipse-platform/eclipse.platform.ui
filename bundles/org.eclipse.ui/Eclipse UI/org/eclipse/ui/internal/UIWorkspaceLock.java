@@ -19,8 +19,18 @@ public UIWorkspaceLock(IWorkspace workspace, Display display) throws CoreExcepti
 }
 public boolean acquire() throws InterruptedException {
 	if (isUI()) {
-		if (getCurrentOperationThread() != null && display.getSyncThread() == getCurrentOperationThread()) {
-			throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
+		Thread currentOperation = getCurrentOperationThread();
+		if (currentOperation != null) {
+			if (display.getSyncThread() == currentOperation && isTreeLocked())
+				throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification"));
+			// If a syncExec was executed from the current operation, it
+			// has already acquired the lock. So, just return true.
+			if (pendingWork != null && pendingWork.getOperationThread() == currentOperation) {
+				if (isTreeLocked())
+					throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification"));
+				else
+					return true; // we are a nested operation
+			}
 		}
 		ui = Thread.currentThread();
 		doPendingWork();
@@ -34,14 +44,13 @@ void addPendingWork(Semaphore work) {
  * Should always be called from the UI thread.
  */
 void doPendingWork() {
-	Semaphore temp = pendingWork;
-	if (temp == null)
+	if (pendingWork == null)
 		return;
 	try {
-		temp.getRunnable().run();
+		pendingWork.getRunnable().run();
 	} finally {
-		// null pending work BEFORE releasing temp
-		// to prevent race conditions
+		// only null it after running
+		Semaphore temp = pendingWork;
 		pendingWork = null;
 		temp.release();
 	}

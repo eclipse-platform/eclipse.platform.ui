@@ -7,8 +7,11 @@ package org.eclipse.ui.internal;
 public class Semaphore {
 	protected long notifications;
 	protected Runnable runnable;
+	protected Thread operation;
 public Semaphore(Runnable runnable) {
-	reset(runnable);
+	this.runnable = runnable;
+	notifications = 0;
+	operation = null;
 }
 public synchronized void acquire() throws InterruptedException {
 	if (Thread.interrupted())
@@ -30,12 +33,14 @@ public synchronized void release() {
 	notifications++;
 	notifyAll();
 }
-public void reset(Runnable runnable) {
-	this.runnable = runnable;
-	notifications = 0;
-}
 // for debug only
 public String toString() {
 	return runnable.toString();
+}
+public void setOperationThread(Thread operation) {
+	this.operation = operation;
+}
+public Thread getOperationThread() {
+	return operation;
 }
 }

@@ -24,6 +24,7 @@ public void syncExec(Runnable runnable) {
 		}
 	};
 	Semaphore work = new Semaphore(runnable);
+	work.setOperationThread(Thread.currentThread());
 	uiLock.addPendingWork(work);
 	if (!uiLock.isUIWaiting())
 		asyncExec(runOnce);
