@@ -61,6 +61,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 public class AntLaunchShortcut implements ILaunchShortcut {
 
 	private boolean fShowDialog= false;
+	private static final int MAX_TARGET_APPEND_LENGTH = 30;
 
 	/**
 	 * Constructor for AntLaunchShortcut.
@@ -188,7 +189,12 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		// ensure that the targets are selected in the launch configuration
 		try {
 			if (targetAttribute != null && ! targetAttribute.equals(configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""))) { //$NON-NLS-1$
-				String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());		        
+				String projectName= null;
+				try {
+					projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+				} catch (CoreException e) {
+				}
+				String newName= getNewLaunchConfigurationName(file.getFullPath(), projectName, targetAttribute);        
 				configuration= configuration.copy(newName);
 				((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targetAttribute);
 				if (fShowDialog) {
@@ -210,6 +216,41 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		} else {
 			DebugUITools.launch(configuration, mode);
 		}
+	}
+	
+	/**
+	 * Returns a unique name for a copy of the given launch configuration with the given
+	 * targets. The name seed is the same as the name for a new launch configuration with
+	 *   " [targetList]" appended to the end.
+	 * @param config
+	 * @param targetAttribute
+	 * @return
+	 */
+	public static String getNewLaunchConfigurationName(IPath filePath, String projectName, String targetAttribute) {
+		StringBuffer buffer = new StringBuffer();
+		if (projectName != null) {
+			buffer.append(projectName);
+			buffer.append(' ');
+			buffer.append(filePath.lastSegment());
+		} else {
+			buffer.append(filePath.toOSString());
+		}
+		
+		if (targetAttribute != null) {
+			buffer.append(" ["); //$NON-NLS-1$
+			if (targetAttribute.length() > MAX_TARGET_APPEND_LENGTH + 3) {
+				// The target attribute can potentially be a long, comma-separated list
+				// of target. Make sure the generated name isn't extremely long.
+				buffer.append(targetAttribute.substring(0, MAX_TARGET_APPEND_LENGTH));
+				buffer.append("..."); //$NON-NLS-1$
+			} else {
+				buffer.append(targetAttribute);
+			}
+			buffer.append(']');
+		}
+		
+		String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(buffer.toString());
+		return name.toString();
 	}
 	
 	/**
@@ -246,7 +287,12 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		// ensure that the targets are selected in the launch configuration
 		try {
 			if (targetAttribute != null && ! targetAttribute.equals(configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""))) { //$NON-NLS-1$
-				String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());		        
+				String projectName= null;
+				try {
+					projectName= configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
+				} catch (CoreException e) {
+				}
+				String newName= getNewLaunchConfigurationName(filePath, projectName, targetAttribute);		        
 				configuration= configuration.copy(newName);
 				((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targetAttribute);
 				if (fShowDialog) {
@@ -329,17 +375,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	public static ILaunchConfiguration createDefaultLaunchConfiguration(IPath filePath, IProject project) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
-		StringBuffer buffer = new StringBuffer();
-		if (project != null) {
-			buffer.append(project.getName());
-			buffer.append(' ');
-			buffer.append(filePath.lastSegment());
-		} else {
-			buffer.append(filePath.toOSString());
-		}
-		
-		String name = buffer.toString().trim();
-		name= manager.generateUniqueLaunchConfigurationNameFrom(name);
+				
+		String projectName= project != null ? project.getName() : null;
+		String name = getNewLaunchConfigurationName(filePath, projectName, null);
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 			if (project != null) {
