@@ -30,7 +30,11 @@ public class SiteExplorerViewLabelProvider extends WorkbenchLabelProvider implem
 				return super.getText(element);
 			case 1 :
 				if(element instanceof RemoteResourceElement) {
-					int size = ((RemoteResourceElement)element).getSize();
+					RemoteResourceElement remote = ((RemoteResourceElement)element);
+					if(remote.getRemoteResource().isContainer()) {
+						return ""; //$NON-NLS-1$
+					}
+					int size = remote.getSize();
 					int sizeKb = size / 1000;
 					if(sizeKb == 0 && size % 1000 > 0) {
 						sizeKb = 1;

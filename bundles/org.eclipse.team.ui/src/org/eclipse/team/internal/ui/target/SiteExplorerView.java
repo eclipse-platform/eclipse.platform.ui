@@ -241,8 +241,8 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		
 		folderTree.setSorter(new ViewerSorter() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				String name1 = "";
-				String name2 = "";
+				String name1 = ""; //$NON-NLS-1$
+				String name2 = ""; //$NON-NLS-1$
 				if(e1 instanceof RemoteResourceElement) {
 					name1 = ((RemoteResourceElement)e1).getRemoteResource().getName();
 				} else if(e1 instanceof SiteElement) {
@@ -269,31 +269,29 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		});
 		
 		Table table = new Table(sash, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		TableLayout layout = new TableLayout();
+		table.setLayout(layout);
+		table.setHeaderVisible(true);
 		
 		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(Policy.bind("SiteExplorerView.Name_1")); //$NON-NLS-1$
 		tableColumn.addSelectionListener(getColumnListener());
+		layout.addColumnData(new ColumnWeightData(30, true));
 
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(Policy.bind("SiteExplorerView.Size_2")); //$NON-NLS-1$
 		tableColumn.setAlignment(SWT.RIGHT);
 		tableColumn.addSelectionListener(getColumnListener());
+		layout.addColumnData(new ColumnWeightData(10, true));
 
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(Policy.bind("SiteExplorerView.Modified_3")); //$NON-NLS-1$
 		tableColumn.addSelectionListener(getColumnListener());
+		layout.addColumnData(new ColumnWeightData(30, true));
 
 		tableColumn = new TableColumn(table, SWT.NULL);
 		tableColumn.setText(Policy.bind("SiteExplorerView.URL_4")); //$NON-NLS-1$
-
-		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(30, true));
-		layout.addColumnData(new ColumnWeightData(10, true));
-		layout.addColumnData(new ColumnWeightData(30, true));
-		layout.addColumnData(new ColumnWeightData(30, true));
-
-		table.setLayout(layout);
-		table.setHeaderVisible(true);
 
 		folderContentsTable = new TableViewer(table);
 		folderContentsTable.setContentProvider(new SiteLazyContentProvider());
@@ -410,7 +408,7 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 						selectedFolder = (RemoteResourceElement)folderContentsTable.getInput();
 					}
 										
-					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder.getRemoteResource(), Policy.bind("CreateNewFolderAction.newFolderName"));
+					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder.getRemoteResource(), Policy.bind("CreateNewFolderAction.newFolderName")); //$NON-NLS-1$
 					if (newFolder == null)
 						return;
 

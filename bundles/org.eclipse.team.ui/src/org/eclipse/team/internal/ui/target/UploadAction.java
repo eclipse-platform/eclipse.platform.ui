@@ -11,14 +11,12 @@
 package org.eclipse.team.internal.ui.target;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -32,10 +30,9 @@ import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.PromptingDialog;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-public class UploadAction extends TeamAction {
+public class UploadAction extends TargetAction {
 
 	/**
 	 * @see TeamAction#isEnabled()
@@ -74,33 +71,17 @@ public class UploadAction extends TeamAction {
 					while (iterator.hasNext()) {					
 						IProgressMonitor subMonitor = new InfiniteSubProgressMonitor(monitor, 1024);
 						final TargetProvider provider = (TargetProvider)iterator.next();
-						monitor.setTaskName(Policy.bind("UploadAction.working", provider.getURL().toExternalForm()));  //$NON-NLS-1$
+						subMonitor.setTaskName(Policy.bind("UploadAction.working", provider.getURL().toExternalForm()));  //$NON-NLS-1$
 						
-						// Collect the dirty resource
-						List list = (List)table.get(provider);
-						final List dirtyResources = new ArrayList();
-						for (Iterator iter = list.iterator(); iter.hasNext();) {
-							IResource resource = (IResource) iter.next();
-							resource.accept(new IResourceVisitor() {
-								public boolean visit(IResource resource) throws CoreException {
-									if (resource.getType() == IResource.FILE) {
-										if (provider.isDirty(resource)) {
-											dirtyResources.add(resource);
-										}
-									} else {
-										// Check for outgoing folder deletions?
-									}
-									return true;
-								}
-							}, IResource.DEPTH_INFINITE, true /* include phantoms */);
-						}
-						if (dirtyResources.isEmpty()) {
+						IResource[] providerResources = (IResource[])((List)table.get(provider)).toArray(new IResource[0]);
+						IResource[] outgoingChanges = findResourcesWithOutgoingChanges(providerResources);
+						if (outgoingChanges.length == 0) {
 							getShell().getDisplay().syncExec(
 								new Runnable() {
 									public void run() {
 										MessageDialog.openInformation(getShell(), 
-											Policy.bind("UploadAction.noDirtyTitle"), 
-											Policy.bind("UploadAction.noDirtyMessage"));
+											Policy.bind("UploadAction.noDirtyTitle"),  //$NON-NLS-1$
+											Policy.bind("UploadAction.noDirtyMessage")); //$NON-NLS-1$
 									}
 								});
 							return;
@@ -109,13 +90,13 @@ public class UploadAction extends TeamAction {
 						// Prompt for any outgoing deletions
 						PromptingDialog prompt = new PromptingDialog(
 							getShell(), 
-							(IResource[])dirtyResources.toArray(new IResource[list.size()]),
+							outgoingChanges,
 							new IPromptCondition() {
 								public boolean needsPrompt(IResource resource) {
 									return ! resource.exists();
 								}
 								public String promptMessage(IResource resource) {
-									return Policy.bind("UploadAction.confirmFileDeletionMessage", resource.getFullPath().toString());
+									return Policy.bind("UploadAction.confirmFileDeletionMessage", resource.getFullPath().toString()); //$NON-NLS-1$
 								}
 							}, 
 							Policy.bind("UploadAction.confirmDeletionTitle"));//$NON-NLS-1$
@@ -133,5 +114,4 @@ public class UploadAction extends TeamAction {
 			}
 		}, Policy.bind("UploadAction.problemMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
-
 }

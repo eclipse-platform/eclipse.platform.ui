@@ -45,16 +45,15 @@ public class GetSyncAction extends TargetSyncAction {
 	 */
 	protected boolean isEnabled(ITeamNode node) {
 		// Get action is enabled for any changed nodes.
-		return new SyncSet(new StructuredSelection(node)).getChangedNodes().length > 0;
+		SyncSet set = new SyncSet(new StructuredSelection(node));
+		return set.hasIncomingChanges() || set.hasConflicts();
 	}
 
 	/**
 	 * @see TargetSyncAction#removeNonApplicableNodes(SyncSet, int)
 	 */
 	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
-		if (syncMode == SyncView.SYNC_INCOMING) {
-			set.removeOutgoingNodes();
-		}
+		set.removeOutgoingNodes();
 	}
 
 	/**

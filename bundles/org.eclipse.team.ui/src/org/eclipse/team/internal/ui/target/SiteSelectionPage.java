@@ -100,6 +100,9 @@ public class SiteSelectionPage extends TargetWizardPage {
 				SiteElement siteElement = (SiteElement)((IStructuredSelection)table.getSelection()).getFirstElement();
 				if(siteElement != null) {
 					site = siteElement.getSite();
+					setPageComplete(true);
+				} else {
+					setPageComplete(false);
 				}
 			}
 		});
@@ -120,12 +123,19 @@ public class SiteSelectionPage extends TargetWizardPage {
 			}
 		});
 		
+		useNewRepo.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				SiteSelectionPage.this.setPageComplete(! useNewRepo.getSelection());
+			}
+		});
+		
 		
 		if(currentProvider != null ) {
 			disconnectTarget = createRadioButton(composite, Policy.bind("SiteSelectionPage.disconnectTarget"), 2); //$NON-NLS-1$
 			disconnectTarget.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					disconnect = disconnectTarget.getSelection();
+					SiteSelectionPage.this.setPageComplete(true);
 				}
 			});
 		}
@@ -158,5 +168,16 @@ public class SiteSelectionPage extends TargetWizardPage {
 	
 	public boolean isDisconnect() {
 		return disconnect;
+	}
+	
+	/**
+	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
+	 */
+	public boolean canFlipToNextPage() {
+		if(isDisconnect()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

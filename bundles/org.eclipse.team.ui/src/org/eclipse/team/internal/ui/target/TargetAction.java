@@ -12,11 +12,17 @@ package org.eclipse.team.internal.ui.target;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.Site;
+import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
@@ -70,5 +76,27 @@ public abstract class TargetAction extends TeamAction {
 			}
 		}
 		return (Site[])sites.toArray(new Site[sites.size()]);
+	}
+	
+	protected IResource[] findResourcesWithOutgoingChanges(IResource[] resources) throws TeamException, CoreException {
+		// Collect the dirty resource		
+		final List dirtyResources = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			final TargetProvider provider = TargetManager.getProvider(resource.getProject());
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+					if (resource.getType() == IResource.FILE) {
+						if (provider.isDirty(resource)) {
+							dirtyResources.add(resource);
+						}
+					} else {
+						// Check for outgoing folder deletions?
+					}
+					return true;
+				}
+			}, IResource.DEPTH_INFINITE, true /* include phantoms */);		
+		}
+		return (IResource[]) dirtyResources.toArray(new IResource[dirtyResources.size()]);
 	}
 }
