@@ -109,11 +109,11 @@ setTimeout('refresh()', 2000);
 	}
 %>
 </table>
+
 <%
 	if(disabledSearchResults){
 %>
 	<div class="sectiontitle"><%=ServletResources.getLabel("disabledResults", request)%></div>
-
 <table id='list2'  cellspacing='0' >
 <%		for (int topic = 0; topic < data.getResultsCount(); topic++) 
 		{
@@ -136,12 +136,10 @@ setTimeout('refresh()', 2000);
 
 <%
 		}
-	}
 %>
-
 </table>
-
 <%
+	}
 
 }
 

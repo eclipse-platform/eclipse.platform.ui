@@ -73,12 +73,14 @@ if (data.isProgressRequest()) {
 %>
 
 <table border="0" cellpadding="0" cellspacing="0">
-
 <%
-			for (int topic = 0; topic < data.getResultsCount(); topic++) 
-			{
+			boolean disabledSearchResults = false;
+			for (int topic = 0; topic < data.getResultsCount(); topic++){
+				if(!data.isEnabled(topic)){
+					disabledSearchResults = true;
+					continue;
+				}
 %>
-
 <tr>
 	<td align='right'><%=data.getTopicScore(topic)%></td>
 	<td align='left' nowrap>
@@ -90,14 +92,39 @@ if (data.isProgressRequest()) {
 		</a>
 	</td>
 </tr>
-
 <%
 			}
 %>	
-
-	</table>
+</table>
 
 <%
+			if(disabledSearchResults){
+%>
+<br><b><%=ServletResources.getLabel("disabledResults", request)%></b>
+<table border="0" cellpadding="0" cellspacing="0">
+<%
+				for (int topic = 0; topic < data.getResultsCount(); topic++){
+					if(data.isEnabled(topic)){
+						continue;
+					}
+%>
+<tr>
+	<td align='right'><%=data.getTopicScore(topic)%></td>
+	<td align='left' nowrap>
+		&nbsp;
+		<a <%=("a"+topic).equals(data.getSelectedTopicId())?" name=\"selectedItem\" ":""%>
+			href='<%=data.getTopicHref(topic)%>' 
+			title="<%=data.getTopicTocLabel(topic)%>">
+			<%=data.getTopicLabel(topic)%>
+		</a>
+	</td>
+</tr>
+<%
+				}
+%>	
+</table>
+<%
+			}
 	   	}
 	}
 }
