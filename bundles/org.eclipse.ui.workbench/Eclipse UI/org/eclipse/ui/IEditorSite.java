@@ -39,6 +39,7 @@ public interface IEditorSite extends IWorkbenchPartSite {
 	 * by the <code>IEditorActionBarContributor</code>.
 	 *
 	 * @return the action bars
+	 * @since 2.1
 	 */
 	public IActionBars getActionBars();
 }
