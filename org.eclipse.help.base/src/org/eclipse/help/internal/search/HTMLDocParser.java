@@ -368,7 +368,7 @@ public class HTMLDocParser {
 		StringTokenizer t = new StringTokenizer(contentValue, ";");
 		while (t.hasMoreTokens()) {
 			String parameter = t.nextToken().trim();
-			if (parameter.startsWith("charset=")) {
+			if (parameter.toLowerCase().startsWith("charset=")) {
 				String charset =
 					parameter.substring("charset=".length()).trim();
 				if (charset.length() > 0) {
