@@ -526,7 +526,7 @@ public class Session {
 			connection.writeLine(info.getPermissions());
 		} else {
 			// for new resources send the default permissions
-			connection.writeLine(new MutableResourceSyncInfo(filename, null /*new revision*/).getPermissions());
+			connection.writeLine(ResourceSyncInfo.getDefaultPermissions());
 		}
 		sendFile(file, isBinary, monitor);
 	}

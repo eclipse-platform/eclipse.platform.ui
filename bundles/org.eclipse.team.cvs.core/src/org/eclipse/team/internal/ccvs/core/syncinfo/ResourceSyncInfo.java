@@ -300,6 +300,13 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
+	 * Answers the default permissions string.
+	 */
+	public static String getDefaultPermissions() {
+		return DEFAULT_PERMISSIONS;
+	}
+	
+	/**
 	 * Name equality between resource sync info objects.
 	 */
 	public boolean equals(Object other) {
