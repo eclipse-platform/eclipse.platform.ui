@@ -753,9 +753,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @return whether a launch should wait for a build to finish before proceeding
 	 */
 	private static boolean waitForBuild(final int buildState, final boolean buildBeforeLaunch) {
-		if (buildState == Job.RUNNING && buildBeforeLaunch) {
-			return true;
-		}
 		String waitPreference= DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (AlwaysNeverDialog.ALWAYS.equals(waitPreference)) {
 			return true;
