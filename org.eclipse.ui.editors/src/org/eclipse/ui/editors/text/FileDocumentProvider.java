@@ -198,7 +198,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				if (delta != null && fIsInstalled)
 					delta.accept(this);
 			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.resourceChanged")); //$NON-NLS-1$
+				handleCoreException(x, "FileDocumentProvider.resourceChanged"); //$NON-NLS-1$
 			}
 		}
 		
