@@ -373,7 +373,7 @@ public static String readString(InputStream is) throws IOException {
 	for (int i = 0; i < buffer.length; i++) {
 		int next = is.read();
 		if (next == -1) {
-			throw new IOException(Policy.bind("stream"));
+			throw new IOException(Policy.bind("stream")); //$NON-NLS-1$
 		} else {
 			buffer[i] = (byte)next;
 		}

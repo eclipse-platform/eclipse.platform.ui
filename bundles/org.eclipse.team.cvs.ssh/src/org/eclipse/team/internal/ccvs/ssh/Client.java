@@ -206,11 +206,11 @@ public class Client {
 			
 			// Log the description provided by the server
 			if (description == null) {
-				description = Policy.bind("Client.noDisconnectDescription");
+				description = Policy.bind("Client.noDisconnectDescription"); //$NON-NLS-1$
 			}
 			
 			// Throw an IOException with the proper text
-			throw new IOException(Policy.bind("Client.disconnectDescription", new Object[] {description}));
+			throw new IOException(Policy.bind("Client.disconnectDescription", new Object[] {description}));//$NON-NLS-1$
 		}
 	}
 
