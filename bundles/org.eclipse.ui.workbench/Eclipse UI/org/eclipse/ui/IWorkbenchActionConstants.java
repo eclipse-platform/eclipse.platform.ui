@@ -413,7 +413,7 @@ public interface IWorkbenchActionConstants {
 	/**
 	 * Edit menu: name of group for extra Find-like actions (value <code>"find.ext"</code>).
 	 */
-	public static final String FIND_EXT = "cut.ext";			// Group. //$NON-NLS-1$
+	public static final String FIND_EXT = "find.ext";			// Group. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Select All global action
