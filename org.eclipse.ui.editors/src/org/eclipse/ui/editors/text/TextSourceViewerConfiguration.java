@@ -36,7 +36,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	
 	/** The preference store used to initialize this configuration. */
-	private IPreferenceStore fPreferenceStore;
+	protected IPreferenceStore fPreferenceStore;
 
 	/**
 	 * A no-op implementation of <code>IAnnotationHover</code> that will trigger the text editor
