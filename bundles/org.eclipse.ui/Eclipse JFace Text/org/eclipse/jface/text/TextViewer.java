@@ -2962,7 +2962,7 @@ public class TextViewer extends Viewer implements
 	 */
 	protected void print() {
 		
-		final PrintDialog dialog= new PrintDialog(fTextWidget.getShell(), SWT.NULL);
+		final PrintDialog dialog= new PrintDialog(fTextWidget.getShell(), SWT.PRIMARY_MODAL);
 		final PrinterData data= dialog.open();
 		
 		if (data != null) {
