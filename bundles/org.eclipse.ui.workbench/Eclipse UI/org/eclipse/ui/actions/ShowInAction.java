@@ -267,8 +267,8 @@ public class ShowInAction extends Action {
 			return;
 		}
 		ListDialog dialog = new ListDialog(getWindow().getShell());
-		dialog.setTitle(WorkbenchMessages.getString("ShowInDialog.title")); // $NON-NLS-1$
-		dialog.setMessage(WorkbenchMessages.getString("ShowInDialog.message")); // $NON-NLS-1$
+		dialog.setTitle(WorkbenchMessages.getString("ShowInDialog.title")); //$NON-NLS-1$
+		dialog.setMessage(WorkbenchMessages.getString("ShowInDialog.message")); //$NON-NLS-1$
 		dialog.setContentProvider(new ArrayContentProvider());
 		dialog.setLabelProvider(new ViewLabelProvider());
 		dialog.setInput(viewDescs);
@@ -299,7 +299,7 @@ public class ShowInAction extends Action {
 				((WorkbenchPage) page).performedShowIn(targetId);  // TODO: move back up
 			}
 			catch (PartInitException e) {
-				WorkbenchPlugin.log("Error showing view in ShowInAction.run", e.getStatus());  // $NON-NLS-1$
+				WorkbenchPlugin.log("Error showing view in ShowInAction.run", e.getStatus()); //$NON-NLS-1$
 			}
 		}
 	}

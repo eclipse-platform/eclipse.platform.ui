@@ -165,6 +165,6 @@ public final class KeyConfiguration implements Comparable {
 	}
 	
 	public String toString() {
-		return name + " (" + id + ')';	
+		return name + " (" + id + ')';	 //$NON-NLS-1$
 	}
 }

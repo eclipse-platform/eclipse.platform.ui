@@ -59,7 +59,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	 * Creates a new instance of the receiver.
 	 */
 	public ResourceWorkingSetPage() {
-		super("resourceWorkingSetPage", WorkbenchMessages.getString("ResourceWorkingSetPage.title"), WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ));	//$NON-NLS-1$ $NON-NLS-2$
+		super("resourceWorkingSetPage", WorkbenchMessages.getString("ResourceWorkingSetPage.title"), WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_RESOURCEWORKINGSET_WIZ)); //$NON-NLS-1$ //$NON-NLS-2$
 		setDescription(WorkbenchMessages.getString("ResourceWorkingSetPage.description")); //$NON-NLS-1$
 	}
 	/**

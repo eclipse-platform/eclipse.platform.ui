@@ -25,7 +25,7 @@ public AboutAction(IWorkbenchWindow window) {
 	AboutInfo aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getConfigurationInfo().getAboutInfo();
 	String productName = aboutInfo.getProductName();
 	if (productName == null) {
-		productName = ""; //$NON-NLS$
+		productName = ""; //$NON-NLS-1$
 	}
 	setText(WorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$

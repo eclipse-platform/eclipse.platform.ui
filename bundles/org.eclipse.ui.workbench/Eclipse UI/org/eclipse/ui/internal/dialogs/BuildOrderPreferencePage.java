@@ -376,8 +376,7 @@ public class BuildOrderPreferencePage
 		maxItersComposite.setLayoutData(gd);
 		maxItersComposite.setFont(composite.getFont());
 
-		String label = "&Max iterations when building with cycles:";
-		maxItersField = new IntegerFieldEditor("", label, maxItersComposite) {
+		maxItersField = new IntegerFieldEditor("", WorkbenchMessages.getString("BuildOrderPreference.maxIterationsLabel"), maxItersComposite) {
 			protected void doLoad() {
 				Text text = getTextControl();
 				if (text != null) {

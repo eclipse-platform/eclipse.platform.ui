@@ -114,7 +114,7 @@ public void create() {
 protected void createAdvancedControls(Composite parent) {
 	advancedButton = new Button(parent, SWT.PUSH);
 	advancedButton.setFont(parent.getFont());
-	advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed"));
+	advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed")); //$NON-NLS-1$
 	setButtonLayoutData(advancedButton);
 	GridData data = (GridData) advancedButton.getLayoutData();
 	data.horizontalAlignment = GridData.BEGINNING;
@@ -261,16 +261,16 @@ protected void handleAdvancedButtonSelect() {
 		linkedResourceComposite = linkedResourceGroup.createContents(composite);
 		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		shell.setSize(shellSize);
-		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded"));
+		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded")); //$NON-NLS-1$
 	} else if (linkedResourceComposite.getVisible()) {
 		linkedResourceComposite.setVisible(false);
 		shell.setSize(shellSize.x, basicShellHeight);
-		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed"));
+		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonCollapsed")); //$NON-NLS-1$
 	} else {
 		linkedResourceComposite.setVisible(true);
 		shellSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		shell.setSize(shellSize);
-		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded"));
+		advancedButton.setText(WorkbenchMessages.getString("NewFolderDialog.advancedButtonExpanded")); //$NON-NLS-1$
 	}
 }
 /**
@@ -339,7 +339,7 @@ private boolean validateFolderName() {
 	IWorkspace workspace = container.getWorkspace();
 	IStatus nameStatus = workspace.validateName(name, IResource.FOLDER);
 
-	if ("".equals(name)) {
+	if ("".equals(name)) { //$NON-NLS-1$
 		updateStatus(IStatus.ERROR, WorkbenchMessages.getString("NewFolderDialog.folderNameEmpty"));	//$NON-NLS-1$
 		return false;
 	}

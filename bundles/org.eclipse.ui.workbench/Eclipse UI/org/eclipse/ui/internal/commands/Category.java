@@ -153,6 +153,6 @@ public final class Category implements Comparable {
 	}
 	
 	public String toString() {
-		return name + " (" + id + ')';	
+		return name + " (" + id + ')';	 //$NON-NLS-1$
 	}
 }
