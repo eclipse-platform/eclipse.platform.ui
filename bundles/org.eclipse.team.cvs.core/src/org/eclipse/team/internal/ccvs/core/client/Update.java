@@ -13,12 +13,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 
@@ -111,11 +110,13 @@ public class Update extends Command {
 	/**
 	 * On successful finish, prune empty directories if the -P or -D option was specified.
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+	protected IStatus commandFinished(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
-		boolean succeeded) throws CVSException {
+		IStatus status) throws CVSException {
 		// If we didn't succeed, don't do any post processing
-		if (! succeeded) return;
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
+			return status;
+		}
 
 		// If we are pruning (-P) or getting a sticky copy using -D, then prune empty directories
 		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
@@ -125,6 +126,7 @@ public class Update extends Command {
 			
 		}
 		session.handleCaseCollisions();
+		return status;
 	}
 	
 	protected LocalOption[] filterLocalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {

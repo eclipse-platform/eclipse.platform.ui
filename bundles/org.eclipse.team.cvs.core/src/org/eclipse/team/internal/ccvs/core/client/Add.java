@@ -6,13 +6,12 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -46,28 +45,29 @@ public class Add extends Command {
 	 * If the add succeeded then folders have to be initialized with the 
 	 * sync info
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+	protected IStatus commandFinished(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
-		boolean succeeded) throws CVSException {
-				
-		ICVSFolder mFolder;
-		ICVSResource[] mWorkResources;
+		IStatus status) throws CVSException {
 		
-		if (! succeeded) {
-			return;
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
+			return status;
 		}
 				
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].isFolder()) {
-				mFolder = (ICVSFolder) resources[i];
+				ICVSFolder mFolder = (ICVSFolder) resources[i];
 				FolderSyncInfo info = mFolder.getParent().getFolderSyncInfo();
-				if (info == null)
-					throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("Add.invalidParent", mFolder.getRelativePath(session.getLocalRoot())))); //$NON-NLS-1$
-				String repository = info.getRepository() + "/" + mFolder.getName();	 //$NON-NLS-1$	
-				mFolder.setFolderSyncInfo(new FolderSyncInfo(repository, info.getRoot(), info.getTag(), info.getIsStatic()));
+				if (info == null) {
+					status = mergeStatus(status, new CVSStatus(CVSStatus.ERROR, Policy.bind("Add.invalidParent", mFolder.getRelativePath(session.getLocalRoot())))); //$NON-NLS-1$
+				} else {
+					String repository = info.getRepository() + "/" + mFolder.getName();	 //$NON-NLS-1$	
+					mFolder.setFolderSyncInfo(new FolderSyncInfo(repository, info.getRoot(), info.getTag(), info.getIsStatic()));
+				}
 			}
 		}
+		return status;
 	}	
+
 	/**
 	 * Since the arguments of the add are probably not managed, find a parent of at least
 	 * one argument that is a CVS folder.

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
@@ -183,11 +184,14 @@ public abstract class Command extends Request {
 	 * @param localOptions the local options for the command
 	 * @param resources the resource arguments for the command
 	 * @param monitor the progress monitor
-	 * @param serverError true iff the server returned the "ok" response
+	 * @param status the status accumulated so far. If the code == CVSStatus.SERVER_ERROR
+	 *    then the command failed
+	 * @return status the status past in plus any additional status accumulated during the finish
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+	protected IStatus commandFinished(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
-		boolean serverError) throws CVSException {
+		IStatus status) throws CVSException {
+			return status;
 	}
 
 	/**
@@ -398,8 +402,8 @@ public abstract class Command extends Request {
 			IStatus status = executeRequest(session, listener, Policy.subMonitorFor(monitor, 70));
 
 			// Finished adds last 5% of work.
-			commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 5),
-				status.getCode() != CVSStatus.SERVER_ERROR);
+			status = commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 5),
+				status);
 			return status;
 		} finally {			
 			monitor.done();
@@ -735,5 +739,24 @@ public abstract class Command extends Request {
 			stringArguments.add(arguments[i].getRelativePath(openSession.getLocalRoot()));
 		}
 		return (String[]) stringArguments.toArray(new String[stringArguments.size()]);
+	}
+	
+	/**
+	 * Method mergeStatus.
+	 * @param status
+	 * @param cVSStatus
+	 * @return IStatus
+	 */
+	protected IStatus mergeStatus(IStatus accumulatedStatus, IStatus newStatus) {
+		if (accumulatedStatus.isMultiStatus()) {
+			((MultiStatus)accumulatedStatus).merge(newStatus);
+			return accumulatedStatus;
+		}
+		if (accumulatedStatus.isOK()) return newStatus;
+		if (newStatus.isOK()) return accumulatedStatus;
+		MultiStatus result = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
+				new IStatus[] {accumulatedStatus, newStatus},
+				Policy.bind("Command.warnings", Policy.bind("Command." + getRequestId())), null);
+		return result;
 	}
 }

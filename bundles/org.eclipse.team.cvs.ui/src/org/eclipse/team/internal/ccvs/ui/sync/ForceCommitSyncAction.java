@@ -242,25 +242,6 @@ public class ForceCommitSyncAction extends MergeAction {
 			}
 			manager.commit((IResource[])commits.toArray(new IResource[commits.size()]), comment, monitor);
 			
-			// Reset the timestamps for any files that were not committed
-			// because their contents match that of the server
-			for (Iterator iter = commits.iterator(); iter.hasNext(); ) {
-				IResource resource = (IResource)iter.next();
-				if (resource.getType() == IResource.FILE) {
-					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-					// If the file is still modified after the commit, it probably is a pseudo change
-					if (cvsFile.exists() && cvsFile.isModified()) {
-						ResourceSyncInfo info = cvsFile.getSyncInfo();
-						if (info == null) {
-							// There should be sync info. Throw an exception indicating the problem
-							throw new CVSException(new Status(IStatus.WARNING, CVSUIPlugin.ID, 0, Policy.bind("ForceCommitSyncAction.syncInfoMissing", resource.getFullPath().toString()), null));
-						} else {
-							cvsFile.setTimeStamp(info.getTimeStamp());
-						}
-					}
-				}
-			}
-			
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {

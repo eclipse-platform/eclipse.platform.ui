@@ -5,15 +5,21 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class Commit extends Command {
 	/*** Local options: specific to commit ***/
@@ -55,16 +61,39 @@ public class Commit extends Command {
 	/**
 	 * On successful finish, prune empty directories if the -P or -D option was specified.
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+	protected IStatus commandFinished(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
-		boolean succeeded) throws CVSException {
+		IStatus status) throws CVSException {
 		// If we didn't succeed, don't do any post processing
-		if (! succeeded) return;
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
+			return status;
+		}
 
 		// If pruning is enable, prune empty directories after a commit
 		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) { //$NON-NLS-1$
 			new PruneFolderVisitor().visit(session, resources);
 		}
+		
+		// Reset the timestamps of any committed files that are still dirty
+		if (CVSProviderPlugin.getPlugin().getResetTimestampOfFalseChange()) {
+			for (int i = 0; i < resources.length; i++) {
+				ICVSResource resource = resources[i];
+				if (!resource.isFolder()) {
+					ICVSFile cvsFile = (ICVSFile)resources[i];
+					if (cvsFile.exists() && cvsFile.isModified()) {
+						ResourceSyncInfo info = cvsFile.getSyncInfo();
+						if (info == null) {
+							// There should be sync info. Log the problem
+							status = mergeStatus(status, new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("Commit.syncInfoMissing", cvsFile.getIResource().getFullPath().toString()), null)); //$NON-NLS-1$
+						} else {
+							status = mergeStatus(status, new Status(IStatus.INFO, CVSProviderPlugin.ID, 0, Policy.bind("Commit.timestampReset", cvsFile.getIResource().getFullPath().toString()), null)); //$NON-NLS-1$
+							cvsFile.setTimeStamp(info.getTimeStamp());
+						}
+					}
+				}
+			}
+		}
+		return status;
 	}
 	
 	/**

@@ -413,20 +413,47 @@ public class Console extends ViewPart {
 			long commandRuntime = System.currentTimeMillis() - commandStarted;
 			String time = TIME_FORMAT.format(new Date(commandRuntime));
 			String statusText;
-			if (status != null && status.getCode() == CVSStatus.SERVER_ERROR) {
-				statusText = Policy.bind("Console.resultServerError", status.getMessage(), time); //$NON-NLS-1$
+			if (status != null) {
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
+					statusText = Policy.bind("Console.resultServerError", status.getMessage(), time); //$NON-NLS-1$
+				} else {
+					statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
+				}
+				appendConsoleLine(ConsoleDocument.STATUS, statusText);
+				IStatus[] children = status.getChildren();
+				if (children.length == 0) {
+					appendConsoleLine(ConsoleDocument.STATUS, messageLineForStatus(status));
+				} else {
+					for (int i = 0; i < children.length; i++) {
+						appendConsoleLine(ConsoleDocument.STATUS, messageLineForStatus(children[i]));
+					}
+				}
 			} else if (exception != null) {
 				if (exception instanceof OperationCanceledException) {
 					statusText = Policy.bind("Console.resultAborted", time); //$NON-NLS-1$
 				} else {
 					statusText = Policy.bind("Console.resultException", time); //$NON-NLS-1$
 				}
+				appendConsoleLine(ConsoleDocument.STATUS, statusText);
 			} else {
 				statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
 			}
-			appendConsoleLine(ConsoleDocument.STATUS, statusText);
 			appendConsoleLine(ConsoleDocument.DELIMITER, Policy.bind("Console.postExecutionDelimiter")); //$NON-NLS-1$
 			appendConsoleLine(ConsoleDocument.DELIMITER, ""); //$NON-NLS-1$
+		}
+		/**
+		 * Method messageLineForStatus.
+		 * @param status
+		 */
+		private String messageLineForStatus(IStatus status) {
+			if (status.getSeverity() == IStatus.ERROR) {
+				return Policy.bind("Console.error", status.getMessage());
+			} else if (status.getSeverity() == IStatus.WARNING) {
+				return Policy.bind("Console.warning", status.getMessage());
+			} else if (status.getSeverity() == IStatus.INFO) {
+				return Policy.bind("Console.info", status.getMessage());
+			}
+			return status.getMessage();
 		}
 	}
 }

@@ -109,14 +109,16 @@ public class Checkout extends Command {
 	 * On sucessful finish, prune empty directories if 
 	 * the -P option was specified (or is implied by -D or -r)
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
+	protected IStatus commandFinished(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
-		boolean succeeded) throws CVSException {
+		IStatus status) throws CVSException {
 		// If we didn't succeed, don't do any post processing
-		if (! succeeded) return;
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
+			return status;
+		}
 	
 		// If we are retrieving the modules file, ignore other options
-		if (FETCH_MODULE_ALIASES.isElementOf(localOptions)) return;
+		if (FETCH_MODULE_ALIASES.isElementOf(localOptions)) return status;
 
 		// If we are pruning (-P) or getting a sticky copy (-D or -r), then prune empty directories
 		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
@@ -128,6 +130,7 @@ public class Checkout extends Command {
 		}
 		
 		session.handleCaseCollisions();
+		return status;
 	}
 	
 	/**

@@ -831,5 +831,12 @@ public class CVSProviderPlugin extends Plugin {
 		((CVSRepositoryLocation)location).setRemoteCVSProgramName(programName);
 		saveState();
 	}
-
+	
+	/**
+	 * Method getResetTimestampOfFalseChange.
+	 * @return boolean
+	 */
+	public boolean getResetTimestampOfFalseChange() {
+		return true;
+	}
 }
