@@ -51,7 +51,7 @@
          <attribute name="resolver" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a Java class which implements &lt;samp&gt;org.eclipse.core.variables.IDynamicVariableResolver&lt;/samp&gt;, which is used to determine the value of the variable
+                  specifies a Java class which implements &lt;code&gt;org.eclipse.core.variables.IDynamicVariableResolver&lt;/code&gt;, which is used to determine the value of the variable
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.variables.IDynamicVariableResolver"/>
@@ -63,6 +63,9 @@
                <documentation>
                   specifies a human-readable description of this variable
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="supportsArgument" type="boolean">

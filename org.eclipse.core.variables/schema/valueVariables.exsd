@@ -51,14 +51,14 @@
          <attribute name="initialValue" type="string">
             <annotation>
                <documentation>
-                  specifies the initial value for this variable. When specified, an &lt;samp&gt;initializerClass&lt;/samp&gt; attribute must not be specified.
+                  specifies the initial value for this variable. When specified, an &lt;code&gt;initializerClass&lt;/code&gt; attribute must not be specified.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="initializerClass" type="string">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.core.variables.IValueVariableInitializer&lt;/samp&gt;. When specified, an &lt;samp&gt;initialValue&lt;/samp&gt; attribute must not be specified.
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.core.variables.IValueVariableInitializer&lt;/code&gt;. When specified, an &lt;code&gt;initialValue&lt;/code&gt; attribute must not be specified.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.variables.IValueVariableInitializer"/>
@@ -70,6 +70,9 @@
                <documentation>
                   specifies a human-readable description of this variable.
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
