@@ -140,12 +140,15 @@ protected void fixMovesAndMarkers(ElementTree oldTree) {
 				IPath oldPath = (IPath) nodeIDMap.getOldPath(newInfo.getNodeId());
 				if (oldPath != null && !oldPath.equals(path)) {
 					//get the old info from the old tree
-					ResourceInfo actualOldInfo = (ResourceInfo)oldTree.getElementData(oldPath);
+					ResourceInfo actualOldInfo = (ResourceInfo) oldTree.getElementData(oldPath);
 					// Replace change flags by comparing old info with new info,
 					// Note that we want to retain the kind flag, but replace all other flags
 					// This is done only for MOVED_FROM, not MOVED_TO, since a resource may be both.
 					status = (status & KIND_MASK) | (deltaInfo.getComparator().compare(actualOldInfo, newInfo) & ~KIND_MASK);
 					status |= MOVED_FROM;
+					//our API states that MOVED_FROM must be in conjunction with ADDED | (CHANGED + REPLACED)
+					if (kind == CHANGED)
+						status = status | REPLACED | CONTENT;
 				}
 		}
 		switch (kind) {
@@ -154,17 +157,20 @@ protected void fixMovesAndMarkers(ElementTree oldTree) {
 				IPath newPath = (IPath) nodeIDMap.getNewPath(oldInfo.getNodeId());
 				if (newPath != null && !newPath.equals(path)) {
 					status |= MOVED_TO;
+					//our API states that MOVED_TO must be in conjunction with REMOVED | (CHANGED + REPLACED)
+					if (kind == CHANGED)
+						status = status | REPLACED | CONTENT;
 				}
 		}
 	}
-	
+
 	//check for marker deltas -- this is affected by move computation
 	//so must happen afterwards
 	checkForMarkerDeltas();
-	
+
 	//recurse on children
 	for (int i = 0; i < children.length; i++) {
-		((ResourceDelta)children[i]).fixMovesAndMarkers(oldTree);
+		((ResourceDelta) children[i]).fixMovesAndMarkers(oldTree);
 	}
 }
 /**
