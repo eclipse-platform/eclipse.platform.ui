@@ -38,13 +38,10 @@ import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class NewFolderDialog extends SelectionDialog {
-	private static final int SIZING_TEXT_FIELD_WIDTH = 300;
-
+public class NewFolderDialog extends SelectionStatusDialog {
 	// widgets
 	private Text folderNameField;
 	private CreateLinkedResourceGroup linkedResourceGroup;
-	private MessageLine statusLine;	
 
 	private IContainer container;
 	private boolean firstLinkCheck = true;
@@ -67,6 +64,8 @@ public NewFolderDialog(Shell parentShell, IContainer container) {
 			}
 		});
 	setTitle(WorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
+	setShellStyle(getShellStyle() | SWT.RESIZE);
+	setStatusLineAboveButtons(true);
 }
 /* (non-Javadoc)
  * Method declared in Window.
@@ -95,12 +94,6 @@ protected Control createDialogArea(Composite parent) {
 
 	createFolderNameGroup(composite);
 	linkedResourceGroup.createContents(composite);
-	statusLine = new MessageLine(composite);
-	statusLine.setAlignment(SWT.LEFT);
-	statusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	statusLine.setErrorStatus(null);
-	statusLine.setFont(font);
-	
 	return composite;
 }
 /**
@@ -125,7 +118,7 @@ private void createFolderNameGroup(Composite parent) {
 	// new project name entry field
 	folderNameField = new Text(folderGroup, SWT.BORDER);
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
-	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
+	data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 	folderNameField.setLayoutData(data);
 	folderNameField.setFont(font);
 	folderNameField.addListener(SWT.Modify, new Listener() {
@@ -210,35 +203,32 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
  * by the user.
  * Sets the dialog result to the created folder.  
  */
-protected void okPressed() {
+protected void computeResult() {
 	String linkTarget = linkedResourceGroup.getLinkTarget();
 	IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
 	if(folder == null)
 		return;
 			
 	setSelectionResult(new IFolder[] {folder});
-	super.okPressed();
 }
 /**
  * Update the dialog's status line to reflect the given status. It is safe to call
  * this method before the dialog has been opened.
  */
-private void updateStatus(IStatus status) {
-	if (statusLine != null && statusLine.isDisposed() == false) {
-		if (firstLinkCheck && status != null) {
-			// don't show the first validation result as an error.
-			// fixes bug 29659
-			Status newStatus = new Status(
-				IStatus.OK, 
-				status.getPlugin(), 
-				status.getCode(), 
-				status.getMessage(), 
-				status.getException());
-			statusLine.setErrorStatus(newStatus);
-		}
-		else {
-			statusLine.setErrorStatus(status);
-		}
+protected void updateStatus(IStatus status) {
+	if (firstLinkCheck && status != null) {
+		// don't show the first validation result as an error.
+		// fixes bug 29659
+		Status newStatus = new Status(
+			IStatus.OK, 
+			status.getPlugin(), 
+			status.getCode(), 
+			status.getMessage(), 
+			status.getException());
+		super.updateStatus(newStatus);
+	}
+	else {
+		super.updateStatus(status);
 	}
 }
 /**
@@ -300,7 +290,7 @@ private boolean validateFolderName() {
 		updateStatus(IStatus.ERROR, WorkbenchMessages.format("NewFolderDialog.alreadyExists", new Object[] { name }));	//$NON-NLS-1$
 		return false;
 	}
-	updateStatus(null);
+	updateStatus(IStatus.OK, "");	//$NON-NLS-1$
 	return true;
 }
 }

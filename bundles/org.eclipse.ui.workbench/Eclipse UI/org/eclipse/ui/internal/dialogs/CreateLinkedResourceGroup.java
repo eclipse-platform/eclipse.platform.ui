@@ -128,6 +128,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	// link target location entry field
 	linkTargetField = new Text(linkTargetGroup, SWT.BORDER);
 	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 	linkTargetField.setLayoutData(data);
 	linkTargetField.setFont(font);
 	linkTargetField.setEnabled(enabled);
