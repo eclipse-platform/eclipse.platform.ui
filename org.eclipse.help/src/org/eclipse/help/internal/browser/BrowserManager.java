@@ -6,9 +6,10 @@ package org.eclipse.help.internal.browser;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.util.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * Creates browser by delegating
@@ -36,8 +37,10 @@ public class BrowserManager {
 			// No default browser in properties!
 			// Set default browser to prefered implementation
 			if (System.getProperty("os.name").startsWith("Win")) {
-				// TODO need to fix the default browser on Windows.
-				setDefaultBrowserID("org.eclipse.help.ui.iexplorer");
+				if (Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.help.ui") != null)
+					setDefaultBrowserID("org.eclipse.help.ui.iexplorer");
+				else
+					setDefaultBrowserID("org.eclipse.help.simplebrowser");
 			} else if (System.getProperty("os.name").startsWith("Linux")) {
 				setDefaultBrowserID("org.eclipse.help.mozillaLinux");
 			} else if (System.getProperty("os.name").startsWith("SunOS")) {
