@@ -29,70 +29,15 @@ public class ServletFacade implements IPlatformRunnable {
 		} catch (CoreException e) {
 		}
 	}
-	private void fillContent(String url, OutputStream out) {
+	private URLConnection openConnection(String urlStr) {
 		try {
-			Logger.logInfo("url =" + url);
-			// Is it search url?
-			if (url != null && url.length() != 0) {
-				if (url.startsWith("/search")) {
-					if (url.length() > "/search".length()) {
-						URL searchURL = new URL("search:" + url.substring("/search".length()));
-						InputStream stream = searchURL.openStream();
-						byte[] buf = new byte[8192];
-						int n = stream.read(buf);
-						while (n > -1) {
-							if (n > 0)
-								out.write(buf, 0, n);
-							n = stream.read(buf);
-						}
-					}
-					return;
-				}
-			}
-			HelpURL helpURL = HelpURLFactory.createHelpURL(url);
-			Logger.logInfo("helpURL: " + helpURL.getClass());
-			InputStream stream = helpURL.openStream();
-			if (stream != null)
-				HelpContentManager.fillInResponse(helpURL, stream, out);
-			else if (!helpURL.toString().endsWith(".class")) {
-				// this is needed when the class loader
-				// wants to load a property file and queries
-				// for doc_en_us.class
-				HelpURL errorURL =
-					HelpURLFactory.createHelpURL(
-						"/org.eclipse.help/" + Resources.getString("notopic.html"));
-				stream = errorURL.openStream();
-				HelpContentManager.fillInResponse(errorURL, stream, out);
-			}
-		} catch (IOException e) {
-			Logger.logError("", e);
-		}
-	}
-	private URLConnection openConnection(String url) {
-		try {
-			Logger.logInfo("url =" + url);
-			// Is it search url?
-			if (url != null && url.length() != 0) {
-				if (url.startsWith("/search")) {
-					if (url.length() > "/search".length()) {
-						URL searchURL = new URL("search:" + url.substring("/search".length()));
-						return searchURL.openConnection();
-					}
-					return null;
-				}
-				if (url.startsWith("/help")) {
-					if (url.length() > "/help".length()) {
-						URL searchURL = new URL("help:" + url.substring("/help".length()));
-						return searchURL.openConnection();
-					}
-					return null;
-				}
-				if (url.startsWith("/temp")) {
-					if (url.length() > "/temp".length()) {
-						URL searchURL = new URL("help:/temp" + url.substring("/temp".length()));
-						return searchURL.openConnection();
-					}
-					return null;
+			Logger.logInfo("url =" + urlStr);
+			if (urlStr != null && urlStr.length() > 1 && urlStr.charAt(0)=='/') {
+				int pathIx = urlStr.indexOf('/', 1);
+				if (pathIx>-1) {
+					String protocol=urlStr.substring(1,pathIx);
+					URL url = new URL(protocol+':' + urlStr.substring(pathIx));
+					return url.openConnection();
 				}
 			}			
 		} catch (IOException e) {
@@ -145,18 +90,13 @@ public class ServletFacade implements IPlatformRunnable {
 			|| argsArray[0] == null)
 			return null;
 		String command = (String) argsArray[0];
-		if (command == "fillContent") { //(String url, OutpuString)
-			if (argsArray.length == 3)
-				if (argsArray[1] instanceof String && argsArray[2] instanceof OutputStream)
-					fillContent((String) argsArray[1], (OutputStream) argsArray[2]);
-			return this;
-		} else if (command == "openConnection") { //(String url)
+		if (command == "openConnection") { //(String url)
 			if (argsArray.length == 2)
 				if (argsArray[1] instanceof String)
 					return openConnection((String) argsArray[1]);
 			return null;
 		}
-		return this;
+		return null;
 	}
 	/**
 	 * Shuts down this plug-in and discards all plug-in state.
