@@ -73,21 +73,22 @@ function onloadHandler() {
 }
 
 function sizeButtons() {
-	var minWidth=50;
-	if(document.getElementById("ok").width < minWidth){
-		document.getElementById("ok").width = minWidth;
+	var minWidth=60;
+
+	if(document.getElementById("ok").offsetWidth < minWidth){
+		document.getElementById("ok").style.width = minWidth+"px";
 	}
-	if(document.getElementById("cancel").width < minWidth){
-		document.getElementById("cancel").width = minWidth;
+	if(document.getElementById("cancel").offsetWidth < minWidth){
+		document.getElementById("cancel").style.width = minWidth+"px";
 	}
-	if(document.getElementById("edit").width < minWidth){
-		document.getElementById("edit").width = minWidth;
+	if(document.getElementById("edit").offsetWidth < minWidth){
+		document.getElementById("edit").style.width = minWidth+"px";
 	}
-	if(document.getElementById("remove").width < minWidth){
-		document.getElementById("remove").width = minWidth;
+	if(document.getElementById("remove").offsetWidth < minWidth){
+		document.getElementById("remove").style.width = minWidth+"px";
 	}
-	if(document.getElementById("new").width < minWidth){
-		document.getElementById("new").width = minWidth;
+	if(document.getElementById("new").offsetWidth < minWidth){
+		document.getElementById("new").style.width = minWidth+"px";
 	}
 }
 
@@ -213,14 +214,14 @@ for (int i=0; i<wsets.length; i++)
 		<tr id="actionsTable" valign="bottom"><td>
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
-					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input class='button'  type="button" onclick="newWorkingSet()" value='<%=ServletResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=ServletResources.getString("NewWorkingSetButton", request)%>'>
+					<td>
+						<input type="button" onclick="newWorkingSet()" value='<%=ServletResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=ServletResources.getString("NewWorkingSetButton", request)%>'>
 					</td>
-					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="editWorkingSet()" value='<%=ServletResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("EditWorkingSetButton", request)%>'>
+					<td>
+					  	<input type="button" onclick="editWorkingSet()" value='<%=ServletResources.getString("EditWorkingSetButton", request)%>...'  id="edit" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("EditWorkingSetButton", request)%>'>
 					</td>
-					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="removeWorkingSet()" value='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'>
+					<td>
+					  	<input type="button" onclick="removeWorkingSet()" value='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'  id="remove" disabled='<%=data.getWorkingSet() == null ?"true":"false"%>' alt='<%=ServletResources.getString("RemoveWorkingSetButton", request)%>'>
 					</td>
 				</tr>
   			</table>
@@ -232,11 +233,11 @@ for (int i=0; i<wsets.length; i++)
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="right">
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
-					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input class='button' type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+					<td>
+						<input type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
-					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
+					<td>
+					  	<input type="button" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>
