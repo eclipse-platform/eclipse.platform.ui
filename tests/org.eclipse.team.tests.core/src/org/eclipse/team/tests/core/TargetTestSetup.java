@@ -21,6 +21,8 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.core.target.IRemoteTargetResource;
 import org.eclipse.team.internal.core.target.ISiteFactory;
 import org.eclipse.team.internal.core.target.Site;
 import org.eclipse.team.internal.core.target.TargetManager;
@@ -77,6 +79,7 @@ public class TargetTestSetup extends TestSetup {
 		}
 	}
 	/**
+	 * This method runs before starting the entire test suite.
 	 * @see TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
@@ -91,6 +94,14 @@ public class TargetTestSetup extends TestSetup {
 			TargetManager.addSite(l);
 		}
 		location = getSite();
+		
+		//clean up the directory:
+		IRemoteTargetResource remote=location.getRemoteResource().getFolder(properties.getProperty("test_dir"));
+		IRemoteResource[] children=remote.members(null);
+		for (int i = 0; i < children.length; i++) {
+			((IRemoteTargetResource)children[i]).delete(null);
+		}
+		
 		TargetProvider target = location.newProvider(new Path(properties.getProperty("test_dir")));
 		assertNotNull(target);
 	}
