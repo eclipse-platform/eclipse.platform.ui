@@ -404,16 +404,15 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		IProcess process = getProcess();
 		if (process == null) {
 			return null;
+		} 
+		IDebugTarget target = (IDebugTarget)process.getAdapter(IDebugTarget.class);
+		ISelection selection = null;
+		if (target == null) {
+			selection = new StructuredSelection(process);
 		} else {
-			IDebugTarget target = (IDebugTarget)process.getAdapter(IDebugTarget.class);
-			ISelection selection = null;
-			if (target == null) {
-				selection = new StructuredSelection(process);
-			} else {
-				selection = new StructuredSelection(target);
-			}
-			return new ShowInContext(null, selection);
+			selection = new StructuredSelection(target);
 		}
+		return new ShowInContext(null, selection);
 	}
 	
 	/* (non-Javadoc)

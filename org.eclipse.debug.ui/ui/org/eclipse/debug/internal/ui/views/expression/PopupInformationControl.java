@@ -180,15 +180,14 @@ public abstract class PopupInformationControl implements IInformationControl, II
 		Point persistedSize = getInitialSize();
 		if (persistedSize != null) {
 			return persistedSize;
-		} else {
-			Point computedSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-			
-			if (maxWidth > 0 && computedSize.x > maxWidth)
-				computedSize.x = maxWidth;
-			if (maxHeight > 0 && computedSize.y > maxHeight)
-				computedSize.y = maxHeight;
-			return computedSize;
 		}
+		
+		Point computedSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		if (maxWidth > 0 && computedSize.x > maxWidth)
+			computedSize.x = maxWidth;
+		if (maxHeight > 0 && computedSize.y > maxHeight)
+			computedSize.y = maxHeight;
+		return computedSize;
 	}
 	
 	/* (non-Javadoc)

@@ -505,9 +505,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		Shell shell = getShell();
 		if (shell != null) {
 			return shell.getDisplay();
-		} else {
-			return Display.getDefault();
-		}
+		} 
+		return Display.getDefault();
 	}
 		
 	/**
@@ -951,9 +950,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	public ILaunchConfigurationTab[] getTabs() {
  		if (getTabGroup() == null) {
  			return null;
- 		} else {
- 			return getTabGroup().getTabs();
- 		}
+ 		} 
+ 		return getTabGroup().getTabs();
  	} 	
  	
 	/**
@@ -963,9 +961,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private boolean canDiscardCurrentConfig() {				
 		if (getTabViewer().isDirty()) {
 			return showUnsavedChangesDialog();
-		} else {
-			return true;
 		}
+		return true;
 	}
 	
 	/**
@@ -977,9 +974,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private boolean showUnsavedChangesDialog() {
 		if (getTabViewer().canSave()) {
 			return showSaveChangesDialog();
-		} else {
-			return showDiscardChangesDialog();
 		}
+		return showDiscardChangesDialog();
 	}
 	
 	/**

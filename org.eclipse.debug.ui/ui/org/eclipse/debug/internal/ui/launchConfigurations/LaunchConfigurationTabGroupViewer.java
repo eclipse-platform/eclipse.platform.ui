@@ -389,9 +389,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	public ISelection getSelection() {
 		if (getActiveTab() == null) {
 			return new StructuredSelection();
-		} else {
-			return new StructuredSelection(getActiveTab());
-		}
+		} 
+		return new StructuredSelection(getActiveTab());
 	}
 
 	/**
@@ -446,9 +445,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (input == null) {
 			if (fInput == null) {
 				return;
-			} else {
-				inputChanged(input);
 			}
+			inputChanged(input);
 		} else {
 			if (!input.equals(fInput)) {
 				inputChanged(input);
@@ -966,9 +964,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		ILaunchConfigurationTab activeTab = getActiveTab();
 		if (activeTab == null) {
 			return null;
-		} else {
-			message = activeTab.getErrorMessage();
-		}
+		} 
+		message = activeTab.getErrorMessage();
 		if (message != null) {
 			return message;
 		}

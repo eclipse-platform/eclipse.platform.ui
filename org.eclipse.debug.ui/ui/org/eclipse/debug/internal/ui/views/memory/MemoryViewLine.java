@@ -56,11 +56,11 @@ public class MemoryViewLine extends Object {
 		if (fBytes == null)
 			return null;
 		
-		if (offset < fBytes.length)
+		if (offset < fBytes.length) {
 			return fBytes[offset];
-		else
-			return null;	
-			
+		}
+		
+		return null;		
 	}
 	
 	public MemoryByte[] getBytes(int start, int end)
@@ -244,10 +244,10 @@ public class MemoryViewLine extends Object {
 			return false;
 		
 		// if the string representation is not the same, this line has changed
-		if (oldData.getRawMemoryString().equals(getRawMemoryString()))
+		if (oldData.getRawMemoryString().equals(getRawMemoryString())) {
 			return false;
-		else
-			return true;
+		}
+		return true;
 	}
 	
 	/**
@@ -264,10 +264,10 @@ public class MemoryViewLine extends Object {
 			ret |= fBytes[i].flags;
 		}
 		
-		if ((ret&MemoryByte.CHANGED) == MemoryByte.CHANGED)
+		if ((ret&MemoryByte.CHANGED) == MemoryByte.CHANGED) {
 			return true;
-		else
-			return false;
+		}
+		return false;
 	}
 	
 	public void unmarkDeltas()

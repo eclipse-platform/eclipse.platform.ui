@@ -100,17 +100,14 @@ public class SynchronizeInfo
 		public boolean isValidProperty(String property){
 			if (fFilters == null)
 				return true;
-			else
+			for (int i=0; i<fFilters.length; i++)
 			{
-				for (int i=0; i<fFilters.length; i++)
+				if (fFilters[i].equals(property))
 				{
-					if (fFilters[i].equals(property))
-					{
-						return true;
-					}
+					return true;
 				}
-				return false;
-			}		
+			}
+			return false;
 		}
 
 		/**

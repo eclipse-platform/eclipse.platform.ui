@@ -30,9 +30,8 @@ public class WorkingSetComparator implements Comparator {
 		if (one == null || two == null) {
 			if (one == two) {
 				return 0;
-			} else {
-				return -1;
 			}
+			return -1;
 		}
 		if (one.startsWith("${working_set:") && two.startsWith("${working_set:")) {		  //$NON-NLS-1$//$NON-NLS-2$
 			IWorkingSet workingSet1 = RefreshTab.getWorkingSet(one);
@@ -40,16 +39,14 @@ public class WorkingSetComparator implements Comparator {
 			if (workingSet1 == null || workingSet2 == null) {
 				if (workingSet1 == workingSet2) {
 					return 0;
-				} else {
-					return -1;
 				}
+				return -1;
 			}
 			if (workingSet1.equals(workingSet2)) {
 				return 0;
 			}
 			return -1;
-		} else {
-			return one.compareTo(two);
-		}
+		} 
+		return one.compareTo(two);
 	}
 }

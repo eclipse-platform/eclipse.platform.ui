@@ -85,10 +85,9 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 		ILaunchConfiguration config = getLaunchConfiguration();
 		if (config == null) {
 			return false;
-		} else {
-			if (DebugUITools.isPrivate(config)) {
+		} 
+		if (DebugUITools.isPrivate(config)) {
 				return false;
-			}
 		}
 		
 		if (getGroup() != null) {

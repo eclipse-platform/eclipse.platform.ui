@@ -570,9 +570,8 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		List list = (List)fLaunchShortcutsByPerspective.get(perpsective); 
 		if (list == null) {
 			return new ArrayList();
-		} else {
-			return filterShortcuts(list, category);
-		}
+		} 
+		return filterShortcuts(list, category);
 	}
 	
 	/**
@@ -663,9 +662,8 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	public LaunchGroupExtension getDefaultLanuchGroup(String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
-		} else {
-			return getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 		}
+		return getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
 	}
 	
 	/**

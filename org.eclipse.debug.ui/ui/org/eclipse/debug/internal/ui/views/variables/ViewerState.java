@@ -70,9 +70,8 @@ public class ViewerState extends AbstractViewerState {
 			}
 			if (variable == null) {
 				return null;
-			} else {
-				parent = variable;
-			}
+			} 
+			parent = variable;
 		}
 		return variable;
 	}

@@ -370,10 +370,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				if (fav) {
 					addFavorite(configuration);
 					return true;
-				} else {
-					removeFavorite(configuration);
-					return false;
-				}
+				} 
+				removeFavorite(configuration);
+				return false;
 			} else if (favoriteGroups.contains(getLaunchGroup().getIdentifier())) {
 				addFavorite(configuration);
 				return true;

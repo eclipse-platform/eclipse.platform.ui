@@ -606,10 +606,10 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			newBaseAddress = new BigInteger("0"); //$NON-NLS-1$
 		}
 		
-		if (newBaseAddress.compareTo(fBaseAddress) != 0)
+		if (newBaseAddress.compareTo(fBaseAddress) != 0) {
 			return true;
-		else
-			return false;			
+		}
+		return false;			
 	}
 	
 	public void forceRefresh()
@@ -789,14 +789,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			{
 				return false;
 			}
-			else
-			{
-				return true;
-			}
-		}
-		else
-		{
 			return true;
 		}
+		return true;
 	}
 }

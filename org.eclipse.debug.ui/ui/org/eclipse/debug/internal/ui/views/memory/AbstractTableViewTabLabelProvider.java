@@ -73,10 +73,10 @@ abstract public class AbstractTableViewTabLabelProvider extends LabelProvider im
 			// if memory in the range has changed, return delta icon
 			int startOffset = (columnIndex-1)*fViewTab.getColumnSize();
 			int endOffset = startOffset + fViewTab.getColumnSize() - 1;
-			if (((MemoryViewLine)element).isRangeChange(startOffset, endOffset))
+			if (((MemoryViewLine)element).isRangeChange(startOffset, endOffset)) {
 				return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY_CHANGED);
-			else
-				return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);	
+			}
+			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);	
 		}
 	}
 	

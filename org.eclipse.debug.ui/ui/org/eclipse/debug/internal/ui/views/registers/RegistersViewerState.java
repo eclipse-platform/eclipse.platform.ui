@@ -78,9 +78,7 @@ public class RegistersViewerState extends AbstractViewerState {
 			if ( element == null ) {
 				return null;
 			} 
-			else {
-				parent = element;
-			}
+			parent = element;
 		}
 		return element;
 	}

@@ -66,11 +66,8 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 		{
 			return;
 		}
-		else
-		{
-			SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(key);
-			info.removeSynchronizedView(view);				
-		}
+		SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(key);
+		info.removeSynchronizedView(view);				
 	}
 
 

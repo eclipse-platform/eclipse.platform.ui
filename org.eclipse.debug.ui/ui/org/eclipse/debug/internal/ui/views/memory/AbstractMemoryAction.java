@@ -86,12 +86,9 @@ abstract public class AbstractMemoryAction extends Action
 				
 				return topTap;
 			}
-			else
-			{
-				return null;
-			}
-		}
-		else
 			return null;
+		}
+		
+		return null;
 	}
 }

@@ -61,10 +61,11 @@ public class MemoryViewUtil {
 		if (debugTarget.isTerminated() && debugTarget.isDisconnected())
 			return false;
 		
-		if (memRetrieval.supportsStorageRetrieval())
+		if (memRetrieval.supportsStorageRetrieval()) {
 			return true;
-		else
-			return false;
+		}
+		
+		return false;
 	}	
 
 	

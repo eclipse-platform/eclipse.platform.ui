@@ -249,10 +249,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			{
 				return ((IMemoryBlockModelPresentation)presentation).getTabLabel(blk, getRenderingId()); 
 			}
-			else
-			{
-				return null;
-			}
+			return null;
 		}
 
 		/* (non-Javadoc)
@@ -266,10 +263,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			{
 				return ((IMemoryBlockModelPresentation)presentation).getColumnLabels(blk, bytesPerLine, columnSize); 
 			}
-			else
-			{
-				return new String[0];
-			}
+			return new String[0];
 		}
 
 		/* (non-Javadoc)
@@ -283,10 +277,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			{
 				return ((IMemoryBlockModelPresentation)presentation).getAddressPresentation(blk, address); 
 			}
-			else
-			{
-				return null;
-			}
+			return null;
 		}
 	}
 
@@ -1180,10 +1171,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			
 			return bigInt;
 		}
-		else
-		{
-			return BigInteger.valueOf(0);
-		}
+		return BigInteger.valueOf(0);
 	}
 
 	/**
@@ -1721,10 +1709,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		if(fTextViewer == null)
 			return false;
 		
-		if (fTabItem.getControl() == fTextViewer.getControl())
+		if (fTabItem.getControl() == fTextViewer.getControl()) {
 			return true;
-		else
-			return false;
+		}
+		return false;
 	}
 	
 	public void displayTable()
@@ -2051,10 +2039,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	public String getTabLabel()
 	{
-		if (fTabItem != null)
+		if (fTabItem != null) {
 			return fTabItem.getText();
-		else
-			return null;	
+		}
+		return null;	
 	}
 	
 	/* (non-Javadoc)
@@ -2278,10 +2266,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 
 	/**
@@ -2471,10 +2456,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			
 			return false;
 		}
-		else
-		{
-			return false;
-		}
+		
+		return false;
 	}
 	
 	private Object getSynchronizedProperty(String propertyId)

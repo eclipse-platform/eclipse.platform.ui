@@ -107,9 +107,8 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	public boolean hasChildren(Object element) {
 		if (element instanceof ILaunchConfiguration) {
 			return false;
-		} else {
-			return getChildren(element).length > 0;
-		}
+		} 
+		return getChildren(element).length > 0;
 	}
 
 	/**

@@ -113,18 +113,15 @@ public class ExpressionInformationControl extends PopupInformationControl {
 		VariablesView expressionsView = (VariablesView)page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
 		if (expressionsView != null && expressionsView.isVisible()) {
 			return expressionsView;
-		} else {
-			VariablesView variablesView = (VariablesView)page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
-			if (variablesView != null && variablesView.isVisible()) {
-				return variablesView;
-			} else {
-				if (expressionsView != null) {
-					return expressionsView;
-				} else {
-					return variablesView;
-				}
-			}
 		}
+		VariablesView variablesView = (VariablesView)page.findView(IDebugUIConstants.ID_VARIABLE_VIEW);
+		if (variablesView != null && variablesView.isVisible()) {
+			return variablesView;
+		}
+		if (expressionsView != null) {
+			return expressionsView;
+		} 
+		return variablesView;
 	}
 
 	/*

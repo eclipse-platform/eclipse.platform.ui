@@ -321,20 +321,19 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	public ITypedRegion[] computePartitioning(int offset, int length) {
 		if (offset == 0 && length == fDocument.getLength()) {
 			return (ITypedRegion[])fPartitions.toArray(new ITypedRegion[fPartitions.size()]);
-		} else {
-			int end = offset + length;
-			List list = new ArrayList();
-			for (int i = 0; i < fPartitions.size(); i++) {
-				ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
-				int partitionStart = partition.getOffset();
-				int partitionEnd = partitionStart + partition.getLength();
-				if ((offset >= partitionStart && offset <= partitionEnd) ||
-					(offset < partitionStart && end >= partitionStart)) {
-						list.add(partition);
-				} 
-			}
-			return (ITypedRegion[])list.toArray(new ITypedRegion[list.size()]);
+		} 
+		int end = offset + length;
+		List list = new ArrayList();
+		for (int i = 0; i < fPartitions.size(); i++) {
+			ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
+			int partitionStart = partition.getOffset();
+			int partitionEnd = partitionStart + partition.getLength();
+			if ((offset >= partitionStart && offset <= partitionEnd) ||
+				(offset < partitionStart && end >= partitionStart)) {
+					list.add(partition);
+			} 
 		}
+		return (ITypedRegion[])list.toArray(new ITypedRegion[list.size()]);
 	}
 
 	/**

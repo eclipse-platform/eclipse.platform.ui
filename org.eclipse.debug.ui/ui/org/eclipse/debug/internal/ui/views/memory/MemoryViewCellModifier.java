@@ -63,26 +63,23 @@ public class MemoryViewCellModifier implements ICellModifier
 			}
 			
 			MemoryViewLine line = (MemoryViewLine)element;
-			if (MemoryViewLine.P_ADDRESS.equals(property))
+			if (MemoryViewLine.P_ADDRESS.equals(property)) {
 			   return false;
-			else
-			{
-				int offset = Integer.valueOf(property, 16).intValue();
-				int end = offset + fViewTab.getColumnSize();
-				
+			}
+			int offset = Integer.valueOf(property, 16).intValue();
+			int end = offset + fViewTab.getColumnSize();
 			
-				for (int i=offset; i<end; i++)
+			for (int i=offset; i<end; i++)
+			{
+				MemoryByte oneByte = line.getByte(i);
+//				if (((oneByte.flags & MemoryByte.VALID) != MemoryByte.VALID) || 
+//					((oneByte.flags & MemoryByte.READONLY) == MemoryByte.READONLY))
+				if ((oneByte.flags & MemoryByte.READONLY) == MemoryByte.READONLY)
 				{
-					MemoryByte oneByte = line.getByte(i);
-//					if (((oneByte.flags & MemoryByte.VALID) != MemoryByte.VALID) || 
-//						((oneByte.flags & MemoryByte.READONLY) == MemoryByte.READONLY))
-					if ((oneByte.flags & MemoryByte.READONLY) == MemoryByte.READONLY)
-					{
-						canModify = false;
-					}
+					canModify = false;
 				}
-				return canModify;
-			}	
+			}
+			return canModify;
 		}
 		catch (NumberFormatException e)
 		{
@@ -106,39 +103,34 @@ public class MemoryViewCellModifier implements ICellModifier
 		{
 			if (MemoryViewLine.P_ADDRESS.equals(property))
 			   return line.getAddress();
-			else
+			
+			int offset = Integer.valueOf(property, 16).intValue();
+			int end = offset + fViewTab.getColumnSize();
+			
+
+			//Ask for label provider
+			MemoryByte[] memory = line.getBytes(offset, end);
+
+			IBaseLabelProvider labelProvider = ((MemoryViewTab)fViewTab).getTableViewer().getLabelProvider();
+			if(labelProvider instanceof AbstractTableViewTabLabelProvider)
 			{	
-				int offset = Integer.valueOf(property, 16).intValue();
-				int end = offset + fViewTab.getColumnSize();
 				
-
-				//Ask for label provider
-				MemoryByte[] memory = line.getBytes(offset, end);
-
-				IBaseLabelProvider labelProvider = ((MemoryViewTab)fViewTab).getTableViewer().getLabelProvider();
-				if(labelProvider instanceof AbstractTableViewTabLabelProvider)
-				{	
+				if (line.isAvailable(offset, end))
+				{
+					// ask the renderer for a string representation of the bytes
+					offset  = Integer.valueOf(property, 16).intValue();
+					AbstractMemoryRenderer renderer = ((AbstractTableViewTabLabelProvider)labelProvider).getRenderer();
 					
-					if (line.isAvailable(offset, end))
-					{
-						// ask the renderer for a string representation of the bytes
-						offset  = Integer.valueOf(property, 16).intValue();
-						AbstractMemoryRenderer renderer = ((AbstractTableViewTabLabelProvider)labelProvider).getRenderer();
-						
-						BigInteger address = new BigInteger(((MemoryViewLine)element).getAddress(), 16);
-						address = address.add(BigInteger.valueOf(offset)); 
-						
-						return renderer.getString(fViewTab.getRenderingId(), address, memory, line.getPaddedString());
-					}
-					else
-					{
-						// if the range is not available, just return padded string
-						return line.getPaddedString(offset, end);
-					}
+					BigInteger address = new BigInteger(((MemoryViewLine)element).getAddress(), 16);
+					address = address.add(BigInteger.valueOf(offset)); 
+					
+					return renderer.getString(fViewTab.getRenderingId(), address, memory, line.getPaddedString());
 				}
-				
-				return ""; //$NON-NLS-1$
+				// if the range is not available, just return padded string
+				return line.getPaddedString(offset, end);
 			}
+				
+			return ""; //$NON-NLS-1$
 		}
 		catch (NumberFormatException e)
 		{

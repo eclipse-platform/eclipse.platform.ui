@@ -246,9 +246,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 			ISelection s= getView().getViewSite().getSelectionProvider().getSelection();
 			if (s instanceof IStructuredSelection) {
 				return (IStructuredSelection)s;
-			} else {
-				return StructuredSelection.EMPTY;
-			}
+			} 
+			return StructuredSelection.EMPTY;
 		}
 		return fSelection;
 	}

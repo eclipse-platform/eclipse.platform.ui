@@ -46,8 +46,7 @@ public class AddContainerAction extends SourceContainerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if(selection == null || selection.isEmpty()) {
 			return true;
-		} else {
-			return getViewer().getTree().getSelection()[0].getParentItem()==null;
-		}
+		} 
+		return getViewer().getTree().getSelection()[0].getParentItem()==null;
 	}
 }

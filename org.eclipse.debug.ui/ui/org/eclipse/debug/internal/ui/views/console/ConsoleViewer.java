@@ -475,10 +475,9 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			if (link != null) {
 				if (link.equals(fHyperLink)) {
 					return;
-				} else {
-					linkEntered(link);
-					return;
-				}
+				} 
+				linkEntered(link);
+				return;
 			}
 		}
 		if (fHyperLink != null) {

@@ -105,9 +105,8 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 		
 		if (process.isTerminated()) {
 			return MessageFormat.format(ConsoleMessages.getString("ProcessConsole.0"), new String[]{label}); //$NON-NLS-1$
-		} else {
-			return label;
-		}
+		} 
+		return label;
 	}
 
 	/**

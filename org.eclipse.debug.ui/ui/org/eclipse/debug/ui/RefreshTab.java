@@ -467,26 +467,24 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null) {
 				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.getString("RefreshTab.38"), new String[]{pathString}), null)); //$NON-NLS-1$
-			} else {
-				return new IResource[]{resource};
-			}
+			} 
+			return new IResource[]{resource};
 		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
 			IWorkingSet workingSet =  getWorkingSet(scope);
 			if (workingSet == null) {
 				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, StringSubstitutionMessages.getString("RefreshTab.39"), null)); //$NON-NLS-1$
-			} else {
-				IAdaptable[] elements = workingSet.getElements();
-				IResource[] resources = new IResource[elements.length];
-				for (int i = 0; i < elements.length; i++) {
-					IAdaptable adaptable = elements[i];
-					if (adaptable instanceof IResource) {
-						resources[i] = (IResource) adaptable;
-					} else {
-						resources[i] = (IResource) adaptable.getAdapter(IResource.class);
-					}
+			} 
+			IAdaptable[] elements = workingSet.getElements();
+			IResource[] resources = new IResource[elements.length];
+			for (int i = 0; i < elements.length; i++) {
+				IAdaptable adaptable = elements[i];
+				if (adaptable instanceof IResource) {
+					resources[i] = (IResource) adaptable;
+				} else {
+					resources[i] = (IResource) adaptable.getAdapter(IResource.class);
 				}
-				return resources;				
 			}
+			return resources;				
 		} else if(scope.equals("${workspace}")) { //$NON-NLS-1$
 			return new IResource[]{ResourcesPlugin.getWorkspace().getRoot()};
 		} else {
