@@ -12,9 +12,10 @@ package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -143,12 +144,8 @@ public class BasicStackPresentation extends StackPresentation {
 		 */
 		public void handleEvent(Event event) {
 			Point pos = new Point(event.x, event.y);
-			CTabItem item = tabFolder.getItem(pos);
-			IPresentablePart part = null;
-			if (item != null) {
-				part = getPartForTab(item);
-			}
-			showSystemMenu(part, pos);
+
+			showSystemMenu(pos);
 		}
 	};
 	
@@ -209,6 +206,9 @@ public class BasicStackPresentation extends StackPresentation {
 	public BasicStackPresentation(CTabFolder control, IStackPresentationSite stackSite) {
 	    super(stackSite);
 		tabFolder = control;
+		
+		tabFolder.setMinimizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MINIMIZED));
+		tabFolder.setMaximizeVisible(stackSite.supportsState(IStackPresentationSite.STATE_MAXIMIZED));
 		
 		layout = new TabFolderLayout(tabFolder);
 
@@ -301,6 +301,34 @@ public class BasicStackPresentation extends StackPresentation {
 			tabHeight = 20;
 		}
 		tabFolder.setTabHeight(tabHeight);
+		
+		populateSystemMenu(systemMenuManager);		
+	}
+
+	/**
+	 * @param systemMenuManager2
+	 */
+	private void populateSystemMenu(IMenuManager systemMenuManager) {
+
+		systemMenuManager.add(new GroupMarker("misc"));
+		systemMenuManager.add(new GroupMarker("restore"));
+		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuRestore(getSite())));
+		
+
+		systemMenuManager.add(new SystemMenuMove(getSite(), getPaneName()));
+		systemMenuManager.add(new GroupMarker("size"));
+		systemMenuManager.add(new GroupMarker("state"));
+		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMinimize(getSite())));
+		
+		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMaximize(getSite())));
+		systemMenuManager.add(new Separator("close"));
+		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuClose(getSite())));
+		
+		getSite().addSystemActions(systemMenuManager);
+	}
+	
+	protected String getPaneName() {
+		return "&Pane";
 	}
 
 	/**
@@ -376,24 +404,19 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		CTabItem tab = getTab(part);
 		initTab(tab, part);
-		FontRegistry registry = 
-		    PlatformUI.getWorkbench().
-		    	getThemeManager().getCurrentTheme().
-		    		getFontRegistry();
 		
 		switch (property) {
 		 case IPresentablePart.PROP_BUSY:
-			
-			if(part.isBusy())
-				tab.setFont(registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-			else{
-				tab.setFont(registry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-			}			
 			break;
 	     case IPresentablePart.PROP_HIGHLIGHT_IF_BACK:
-	         if(!getCurrent().equals(part))//Set bold if it does currently have focus
+	     	FontRegistry registry = 
+			    PlatformUI.getWorkbench().
+			    	getThemeManager().getCurrentTheme().
+			    		getFontRegistry();
+	     	
+	       	if(!getCurrent().equals(part))//Set bold if it does currently have focus
 				tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-	     
+	        break;
 		 case IPresentablePart.PROP_TOOLBAR:
 		 case IPresentablePart.PROP_PANE_MENU:
 		 case IPresentablePart.PROP_TITLE:
@@ -567,6 +590,7 @@ public class BasicStackPresentation extends StackPresentation {
 		PresentationUtil.removeDragListener(tabFolder, dragListener);
 		
 		systemMenuManager.dispose();
+		systemMenuManager.removeAll();
 		tabFolder.dispose();
 		tabFolder = null;
 		
@@ -617,6 +641,18 @@ public class BasicStackPresentation extends StackPresentation {
 		tabItem.setText(part.getName());
 		
 		tabItem.setImage(part.getTitleImage());
+		
+		FontRegistry registry = 
+		    PlatformUI.getWorkbench().
+		    	getThemeManager().getCurrentTheme().
+		    		getFontRegistry();
+		
+		if(part.isBusy())
+			tabItem.setFont(registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+		else{
+			tabItem.setFont(registry.get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+		}			
+
 	}
 	
 	/* (non-Javadoc)
@@ -714,9 +750,9 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @param part
 	 * @param point
 	 */
-	protected void showSystemMenu(IPresentablePart part, Point point) {
-		systemMenuManager.update(false);
+	protected void showSystemMenu(Point point) {
 		Menu aMenu = systemMenuManager.createContextMenu(tabFolder.getParent());
+		systemMenuManager.update(true);
 		aMenu.setLocation(point.x, point.y);
 		aMenu.setVisible(true);
 	}
@@ -835,7 +871,7 @@ public class BasicStackPresentation extends StackPresentation {
 			}
 			
 			Point location = new Point(bounds.x, bounds.y + tabFolder.getTabHeight());
-			showSystemMenu(part, location);
+			showSystemMenu(location);
 		}
 	}
 
@@ -856,4 +892,5 @@ public class BasicStackPresentation extends StackPresentation {
 		}
 		return (Control[]) list.toArray(new Control[list.size()]);
 	}
+
 }
