@@ -1822,6 +1822,7 @@
     <extension
          point="org.eclipse.ui.encodings">
       <encoding name="Blorf"/>
+      <encoding name=""/>
    </extension>
     <extension
           point="org.eclipse.ui.views">
