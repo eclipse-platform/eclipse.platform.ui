@@ -24,63 +24,101 @@
     
     <xsd:element name="intro">
         <xsd:complexType>
-            <xsd:simpleContent>
-                <xsd:extension base="string">
-                    <xsd:attribute name="href" type="xsd:string" use="optional"/>
-                </xsd:extension>
-            </xsd:simpleContent>
+            <xsd:sequence>
+                <xsd:element ref="description" minOccurs="1" maxOccurs="1"/>
+            </xsd:sequence>
+            <xsd:attribute name="contextId" type="xsd:string" use="optional"/>
+            <xsd:attribute name="href" type="xsd:string" use="optional"/>
         </xsd:complexType>
     </xsd:element>
       
-	<xsd:simpleType name="ActionKind">
-	  <xsd:restriction base="xsd:string">
-	    <xsd:enumeration value="action"/>
-	    <xsd:enumeration value="manual"/>
-	    <xsd:enumeration value="both"/>
-	  </xsd:restriction>
-	</xsd:simpleType>
+    <xsd:element name="description">
+        <xsd:complexType>
+            <xsd:simpleContent>
+                <xsd:extension base="string"/>
+            </xsd:simpleContent>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="item">
         <xsd:complexType mixed="true">
-            <xsd:choice maxOccurs="unbounded" minOccurs="0">
-                <xsd:element ref="subitem"/>
+            <xsd:choice maxOccurs="1" minOccurs="1">
+	            <xsd:sequence>
+	                <xsd:element ref="description"/>
+		            <xsd:choice minOccurs="0" maxOccurs="1">
+		                <xsd:element ref="action"/>
+		                <xsd:element ref="perform-when"/>
+		            </xsd:choice>
+	            </xsd:sequence>
+	            <xsd:choice maxOccurs="unbounded" minOccurs="0">
+	                <xsd:element ref="subitem"/>
+	                <xsd:element ref="conditional-subitem"/>
+	                <xsd:element ref="repeated-subitem"/>
+	            </xsd:choice>
             </xsd:choice>
             <xsd:attribute name="title" type="xsd:string" use="required"/>
-            <xsd:attribute name="kind" type="ActionKind" use="required"/>
             <xsd:attribute name="skip" type="xsd:boolean" use="optional" default="false"/>
-            <xsd:attribute name="class" type="xsd:string" use="optional"/>
-            <xsd:attribute name="pluginId" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam0" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam1" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam2" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam3" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam4" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam5" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam6" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam7" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam8" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam9" type="xsd:string" use="optional"/>
+            <xsd:attribute name="contextId" type="xsd:string" use="optional"/>
             <xsd:attribute name="href" type="xsd:string" use="optional"/>
         </xsd:complexType>
     </xsd:element>
     
     <xsd:element name="subitem">
         <xsd:complexType>
+            <xsd:choice minOccurs="0" maxOccurs="1">
+                <xsd:element ref="action"/>
+                <xsd:element ref="perform-when"/>
+            </xsd:choice>
             <xsd:attribute name="label" type="xsd:string" use="required"/>
             <xsd:attribute name="kind" type="ActionKind" use="required"/>
             <xsd:attribute name="skip" type="xsd:boolean" use="optional" default="false"/>
-            <xsd:attribute name="class" type="xsd:string" use="optional"/>
-            <xsd:attribute name="pluginId" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam0" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam1" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam2" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam3" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam4" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam5" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam6" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam7" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam8" type="xsd:string" use="optional"/>
-            <xsd:attribute name="actionparam9" type="xsd:string" use="optional"/>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:element name="conditional-subitem">
+        <xsd:complexType>
+           <xsd:sequence>
+                <xsd:element ref="subitem" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:choice>
+            <xsd:attribute name="condition" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="repeated-subitem">
+        <xsd:complexType>
+           <xsd:sequence>
+                <xsd:element ref="subitem" minOccurs="1" maxOccurs="1"/>
+            </xsd:choice>
+            <xsd:attribute name="values" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="action">
+        <xsd:complexType>
+            <xsd:attribute name="when" type="xsd:string" use="required"/>
+            <xsd:attribute name="confirm" type="xsd:boolean" use="optional" default="false"/>
+            <xsd:attribute name="class" type="xsd:string" use="optional"/>
+            <xsd:attribute name="pluginId" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param1" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param2" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param3" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param4" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param5" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param6" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param7" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param8" type="xsd:string" use="optional"/>
+            <xsd:attribute name="param9" type="xsd:string" use="optional"/>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="perform-when">
+        <xsd:complexType>
+           <xsd:sequence>
+                <xsd:element ref="action" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:choice>
+            <xsd:attribute name="condition" type="xsd:string" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
 </xsd:schema>
+

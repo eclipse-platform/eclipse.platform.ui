@@ -2,7 +2,6 @@
 <html>
 
 <head>
-
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
@@ -12,196 +11,316 @@
 <body>
 
 <h1>Cheat Sheet Content File XML Format</h1>
-
 <p>Version 3.0</p>
-
-<p>This
-document describes the cheat sheet content file structure as a series of
+<p>This document describes the cheat sheet content file structure as a series of
 DTD fragments (machine readable <a href="contentFile.xsd">XML schema</a>).</p>
-
-<h2><code>cheatsheet</code>  element</h2>
+<h2><code>cheatsheet</code></h2>
 <pre>&lt;!ELEMENT cheatsheet (intro, item+)&gt;&nbsp;
 &lt;!ATTLIST cheatsheet&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
 &gt;</pre>
-
-<p>The
-&lt;cheatsheet&gt; element defines the body of the cheat sheet content file.
-&lt;cheatsheet&gt; attributes are as follows:</p>
+<p>The &lt;cheatsheet&gt; element defines the body of the cheat sheet content
+file. &lt;cheatsheet&gt; attributes are as follows:</p>
 <ul type="disc">
-  <li><b>title</b>
-    - the title of the cheat sheet
+  <li><b>title</b> - the title of the cheat sheet
 </ul>
-<pre>&lt;!ELEMENT intro EMPTY&gt;&nbsp;
+<h2><code>intro</code></h2>
+<pre>&lt;!ELEMENT intro (description)&gt;
 &lt;!ATTLIST intro&nbsp;
+&nbsp; contextId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &gt;</pre>
-
-<h2><code>intro</code>  element</h2>
-
-<p>The &lt;intro&gt; element is used to describe the cheat sheet introduction to be displayed.
-The text between the &lt;intro&gt; and &lt;/intro&gt; tags is the introduction.
-&lt;intro&gt; attributes are as follows:</p>
+<p>The &lt;intro&gt; element is used to describe the cheat sheet introduction to
+be displayed. The &lt;description&gt; subelement contains the body of the
+introduction. &lt;intro&gt; attributes are as follows:</p>
 <ul>
-  <li><b>href</b>
-    - the cheat sheet's optional concept topic; when the user clicks the introduction's help link, this document is shown in the help
-    browser
-  </li>
+  <li><b>contextId</b> - The optional help context id of the documentation for
+    this cheat sheet. If supplied, context help for the given id is shown to the
+    user (typically in a small pop-up window) when they clicks the
+    introduction's help link. If this attribute is supplied, the <b>href</b>
+    attribute should not be supplied (<b>href</b> will be ignored if both are
+    present).</li>
+  <li><b>href</b> - The optional help document describing this cheat sheet. If
+    supplied, this help document is shown to the user (typically in a help
+    browser shown in a separate window) when they clicks the introduction's help
+    link. If this attribute is supplied, the <b>contextId</b> attribute should
+    not be supplied (<b>href</b> will be ignored if both are present).</li>
 </ul>
-
-<h3>Text formatting and line breaks</h3>
-<p>In the cheat sheet content file, you should keep all text on the same line as the &lt;intro&gt; or &lt;item&gt; tag.
-At execution time, the cheat sheet automatically wraps the text to make it show up correctly in
-UI. A line break in the text in the cheat sheet content file is interpreted as a line break in the displayed cheat sheet.</p>
-
-<p>[TODO (lorne)&nbsp; - Many editors do not well with arbitrary length lines.
-It would be better to have a more HTML-like convention where line breaks are not
-significant, and there embedded tags (like &lt;br&gt;) are used to indicate line
-breaks.]</p>
-
-<h2><code>item</code>  element</h2>
-<pre>&lt;!ELEMENT item (subitem*)&gt;&nbsp;
+<h2><code>description</code></h2>
+<pre>&lt;!ELEMENT description ()&gt;&nbsp;
+&lt;!ATTLIST description&nbsp;
+&gt;</pre>
+<p>The &lt;description&gt; element holds the description of a cheat sheet or of
+a cheat sheet item. The description consists of text interspersed with simple
+formatting tags. The cheat sheet automatically formats and lays out the text to
+make it show up reasonably in the UI. Within the text, balanced <b>&lt;b&gt;</b>...<b>&lt;/b&gt;</b>
+tags cause the enclosed text to be rendered in a bold font, and the <b>&lt;br/&gt;</b>
+element can be used to force a line break. These are the only formatting tags
+supported at this time (however, more may be added in the future). Certain
+characters in the text have special significance for XML parsers; in particular,
+to write &quot;&lt;&quot;, &quot;&gt;&quot;, and &quot;&amp;&quot; instead write
+&quot;&amp;lt;&quot;, &quot;&amp;gt;&quot;, and &quot;&amp;amp&quot;,
+respectively.</p>
+<h2><code>item</code></h2>
+<pre>&lt;!ELEMENT item (description [action|perform-when] | (subitem|repeated-subitem|conditional-subitem)*)&gt;&nbsp;
 &lt;!ATTLIST item&nbsp;
 &nbsp; title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-&nbsp; kind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    (&quot;action&quot; | &quot;manual&quot; | &quot;both&quot;)
 &nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
-&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; actionparam0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; actionparam1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; ...
-&nbsp; actionparam9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; contextId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED&nbsp;
 &nbsp; href &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &gt;</pre>
-
-<p>Each &lt;item&gt; element describes
-one top-level item (or step) in a cheat sheet. The &lt;item&gt; is either
-simple, in which case the text between the &lt;item&gt; and &lt;/item&gt; tags is displayed
-in the UI as the item's description, or is complex, in which case the &lt;subitem&gt;
-elements between the the &lt;item&gt; and &lt;/item&gt; tags break the step down
-into sub-steps. &lt;item&gt; attributes are as follows:</p>
+<p>Each &lt;item&gt; element describes one top-level step in a cheat sheet. The
+&lt;item&gt; is either simple or composite. &lt;item&gt; attributes are as
+follows:</p>
 <ul type="disc">
-  <li><b>title</b>
-    - title of the cheat sheet item
-  <li><b>kind</b> - the kind of step
-    <ul type="disc">
-      <li><b>&quot;action&quot;</b> - the step has an accompanying
-    computed-provided action (&quot;class&quot; and &quot;pluginId&quot;
-        attributes); the UI generally shows a button that the user can
-    press to invoke that action</li>
-      <li><b>&quot;manual&quot;</b> - the step involves the user doing
-    something on their own; the UI generally shows a button that the user can
-    press to indicate that they have done whatever they were supposed to do</li>
-      <li><b>&quot;both&quot;</b> - the step has both a computer-provided action
-        but also requires the user to manually perform some steps and confirm
-        that they have done so</li>
-    </ul>
-  </li>
-  <li><b>skip</b>
-    - skip=&quot;true&quot; means that the step can be skipped; the UI generally
-    shows a button that the user can press to indicate that they are skipping
-    this step
-  <li><b>class</b>
-    - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
-    or its superinterface <code>org.eclipse.jface.action.IAction</code>; the
-    pluginId attribute must be present whenever this attribute is present</li>
-  <li><b>pluginId
-    </b>- the id of the plug-in which contains the Java class of the action
-    class; this attribute must be present whenever the class
-    attribute is present</li>
-  <li><b>actionparam<i>N</i></b>
-    - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
-    the string values of these attributes are passed to the action when it is invoked.
-    You can pass up to 10 parameters to a cheat sheet item's action
-    (actionParam0, actionParam1, etc.) [TODO - need to complete spec for variables determined at cheat sheet execution
-    time; e.g., actionParam0=&quot;${var1}&quot;]</li>
-  <li><b>href</b>
-    - the cheat sheet item's optional task documentation link; when the user clicks the
-    item's help link, this document is shown in the help browser</li>
+  <li><b>title</b> - The title of the cheat sheet item.
+  <li><b>skip</b> - skip=&quot;true&quot; means that the whole step can be
+    skipped; the UI generally shows a button that the user can press to indicate
+    that they are skipping this step</li>
+  <li><b>contextId</b> - The optional help context id of the documentation for
+    this cheat sheet step. If supplied, context help for the given id is shown
+    to the user (typically in a small pop-up window) when they clicks the step's
+    help link. If this attribute is supplied, the <b>href</b> attribute should
+    not be supplied (<b>href</b> will be ignored if both are present).</li>
+  <li><b>href</b> - The optional help document describing this cheat sheet step.
+    If supplied, this help document is shown to the user (typically in a help
+    browser shown in a separate window) when they clicks the step's help link.
+    If this attribute is supplied, the <b>contextId</b> attribute should not be
+    supplied (<b>href</b> will be ignored if both are present).</li>
 </ul>
-
-<p>The org.eclipse.ui.cheatsheets.cheatSheetItemExtension allows additional custom controls
-for the item to be displayed in the UI. Contributions to this extension point
-declare the names of additional, string-valued attributes that may appear on &lt;item&gt; elements.</p>
-
-<h2><code>subitem</code>  element</h2>
-<pre>&lt;!ELEMENT subitem EMPTY&gt;&nbsp;
+<p>The org.eclipse.ui.cheatsheets.cheatSheetItemExtension allows additional
+custom controls for the item to be displayed in the UI. Contributions to this
+extension point declare the names of additional, string-valued attributes that
+may appear on &lt;item&gt; elements.</p>
+<p>Simple items have a description and an optional action. In the typical
+presentation, the titles of cheat sheet items are shown to the user most of the
+time. An item's description is only shown while the step is in the process of
+being executed. The presence of an &lt;action&gt; (or &lt;perform-when&gt;)
+element is typically associated with a button that the user can press to perform
+the step's action. If no action is present, the step is one that the user must
+carry out manually and then overtly indicate that they have successfully
+completed the step.</p>
+<p>Composite steps are broken down into sub-steps as specified by the &lt;subitem&gt;
+subelements. Unlike items, which the user must follow in strict sequence, the
+sub-items of a given item can be performed in any order. All sub-items within an
+item have to be attempted (or skipped) before progressing to the next item.
+(Which means actions that must be performed in a required sequence cannot be
+represented as sub-items.)</p>
+<p>A &lt;conditional-subitem&gt; subelement allow a step to tailor the
+presentation of a sub-step based on cheat sheet variables whose values are
+acquired in earlier steps. A &lt;repeated-subitem&gt; subelement allows a step
+to include a set of similar sub-steps. Again, the exact set of sub-steps may be
+based on cheat sheet variables whose value are acquired in earlier steps.</p>
+<h2><code>subitem</code></h2>
+<pre>&lt;!ELEMENT subitem ( [action|perform-when] )&gt;&nbsp;
 &lt;!ATTLIST subitem&nbsp;
 &nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
-&nbsp; kind&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;    (&quot;action&quot; | &quot;manual&quot; | &quot;both&quot;)
 &nbsp; skip   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
-&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; actionparam0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; actionparam1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
-&nbsp; ...
-&nbsp; actionparam9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; when    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
 &gt;</pre>
-
-<p>Each &lt;subitem&gt; element describes
-a sub-item (or sub-step) in a cheat sheet. A &lt;subitem&gt; carries a simple
-text label, but has neither a lengthy description nor further sub-items. There
-should be a least 2 sub-items within the item. Each sub-item has its own action
-buttons.</p>
-<p>Note
-that help and extension items buttons are generally presented only on items, not
-sub-items.</p>
-<p>Unlike
-items, which must be followed in strict sequence, the sub-items of a given item
-can be performed in any order. 
-All sub-items within an item have to be attempted (or skipped) before progressing to the next item. (Which means actions that
-must be performed in a required sequence should not be represented as sub-items.)</p>
-<p>&lt;subitem&gt;
-attributes are as follows (the semantics of the kind, class, pluginId, and
-actionparamN are the same as &lt;item&gt;):</p>
+<p>Each &lt;subitem&gt; element describes a sub-step in a cheat sheet. A &lt;subitem&gt;
+carries a simple text label, but has neither a lengthy description nor further
+sub-items. &lt;subitem&gt; attributes are as follows:</p>
 <ul type="disc">
-  <li><b>label</b>
-    - title of the cheat sheet sub-item
-  <li><b>kind</b>
-    - the kind of step
-    <ul type="disc">
-      <li><b>&quot;action&quot;</b> - the step has an accompanying
-    computed-provided action (&quot;class&quot; and &quot;pluginId&quot;
-        attributes); the UI generally shows a button that the user can
-    press to invoke that action</li>
-      <li><b>&quot;manual&quot;</b> - the step involves the user doing
-    something on their own; the UI generally shows a button that the user can
-    press to indicate that they have done whatever they were supposed to do</li>
-      <li><b>&quot;both&quot;</b> - the step has both a computer-provided action
-        but also requires the user to manually perform some steps and confirm
-        that they have done so</li>
-    </ul>
-  </li>
-  <li><b>class</b>
-    - the fully-qualified name of the Java class implementing <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
-    or its superinterface <code>org.eclipse.jface.action.IAction</code>; the
-    pluginId attribute must also be present whenever this attribute is present</li>
-  <li><b>pluginId
-    </b>- the id of the plug-in which contains the Java class of the action
-    class; this attribute must be present whenever the class
-    attribute is present</li>
-  <li><b>actionparam<i>N</i></b>
-    - for action classes that implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
-    the string values of these attributes are passed to the action when it is invoked.
-    You can pass up to 10 parameters to a cheat sheet item's action
-    (actionParam0, actionParam1, etc.) [TODO - need to complete spec for variables determined at cheat sheet execution
-    time; e.g., actionParam0=&quot;${var1}&quot;]</li>
+  <li><b>label</b> - The title of the cheat sheet sub-item. If the string
+    contains substring occurrences of the form &quot;${<i>var</i>}&quot;, they
+    are considered references to cheat sheet variables. All such occurrences in
+    the string value will be replaced by the value of the corresponding variable
+    in the context of the execution of the cheat sheet, or the empty string for
+    variables that are unbound. The values of the variables are as of the
+    beginning of the execution of the main step (when the &lt;item&gt; element
+    is elaborated), rather than when the individual sub-step are run.
+  <li><b>skip</b> - skip=&quot;true&quot; means that the sub-step can be
+    skipped. The UI generally shows a button that the user can press to indicate
+    that they are skipping this sub-step.</li>
+  <li><b>when</b> - Indicates this subitem is to be used if and only if the
+    value of the condition attribute of the containing &lt;conditional-subitem&gt;
+    element matches this string value. This attribute is ignored if the &lt;subitem&gt;
+    element is not a child of&nbsp; a &lt;conditional-subitem&gt; element.</li>
 </ul>
-
+<p>Sub-items have an optional action. The presence of an &lt;action&gt; (or
+&lt;perform-when&gt;) element is typically associated with a button that the
+user can press to perform the sub-step's action. If no action is present, the
+sub-step is one that the user must carry out manually and then overtly indicate
+that they have successfully completed the step.</p>
+<p>Unlike items, which must be followed in strict sequence, the sub-items of a
+given item can be performed in any order. All sub-items within an item have to
+be attempted (or skipped) before progressing to the next item. (Which means
+actions that must be performed in a required sequence should not be represented
+as sub-items.)</p>
+<h2><code>conditional-subitem</code></h2>
+<pre>&lt;!ELEMENT conditional-subitem (subitem+)&gt;&nbsp;
+&lt;!ATTLIST conditional-subitem&nbsp;
+&nbsp; condition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+&gt;</pre>
+<p>Each &lt;conditional-subitem&gt; element describes a single sub-step whose
+form can differ based on a condition known at the time the item is expanded.
+&lt;conditional-subitem&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>condition</b> - Arbitrary string value used to select which child &lt;subitem&gt;
+    will be used. If the attribute string has the form &quot;${<i>var</i>}&quot;,
+    it is considered a reference to a cheat sheet variable <i>var</i>, and value
+    of the condition will be the value of the variable for the cheat sheet at
+    the start of execution of the containing &lt;item&gt; element (or the empty
+    string if the variable is unbound at that time).</li>
+</ul>
+<p>The <b>condition</b> attribute on the &lt;conditional-subitem&gt; element
+provides a string value (invariably this value comes from a cheat sheet
+variable). Each of the &lt;subitem&gt; children must carry a <b>when</b>
+attribute with a distinct string value. When the item is expanded, the
+&lt;conditional-subitem&gt; element is replaced by the &lt;subitem&gt; element
+with the matching value. It is considered an error if there is no &lt;subitem&gt;
+element with a matching value.</p>
+<p>For example, if the cheat sheet variable named &quot;v1&quot; has the value
+&quot;b&quot; when the following item is expanded</p>
+<pre>&lt;item ...&gt;&nbsp;
+  &lt;conditional-subitem condition=&quot;${v1}&quot;&gt;
+     &lt;subitem when=&quot;a&quot; label=&quot;Step for A.&quot; /&gt;
+     &lt;subitem when=&quot;b&quot; label=&quot;Step for B.&quot; /&gt;
+  &lt;/conditional-subitem&gt;
+&lt;/item&gt;</pre>
+then the second sub-item is selected and the item expands to something
+equivalent to
+<pre>&lt;item ...&gt;&nbsp;
+  &lt;subitem label=&quot;Step for B.&quot;/&gt;
+&lt;/item&gt;</pre>
+<h2><code>repeated-subitem</code></h2>
+<pre>&lt;!ELEMENT repeated-subitem (subitem)&gt;&nbsp;
+&lt;!ATTLIST repeated-subitem&nbsp;
+&nbsp; values&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+&gt;</pre>
+<p>Each &lt;repeated-subitem&gt; element describes a sub-item that expands into
+0, 1, or more similar sub-steps. &lt;repeated-subitem&gt; attributes are as
+follows:</p>
+<ul type="disc">
+  <li><b>values</b> - A string containing a comma-separated list of values. If
+    the attribute string has the form &quot;${<i>var</i>}&quot;, it is
+    considered a reference to a cheat sheet variable <i>var</i>, and value of
+    the condition will be the value of the variable for the cheat sheet at the
+    start of execution of the containing &lt;item&gt; element (or the empty
+    string if the variable is unbound at that time).</li>
+</ul>
+<p>The <b>values</b> attribute provides a list of comma-separated strings; the
+&lt;subitem&gt; child provide the template. When the item is expanded, the
+&lt;repeated-subitem&gt; element is replaced by copies of the &lt;subitem&gt;
+element with occurrences of the variable &quot;this&quot; replaced by the
+corresponding string value.</p>
+<p>For example, if the cheat sheet variable named &quot;v1&quot; has the value
+&quot;1,b,three&quot; when the following item is expanded</p>
+<pre>&lt;item ...&gt;&nbsp;
+  &lt;repeated-subitem values=&quot;${v1}&quot;&gt;
+     &lt;subitem label=&quot;Step ${this}.&quot;&gt;
+        &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;${this}&quot;/&gt;
+     &lt;/subitem&gt;
+  &lt;/repeated-subitem&gt;
+&lt;/item&gt;</pre>
+then the item expands to something equivalent to:
+<pre>&lt;item ...&gt;&nbsp;
+  &lt;subitem label=&quot;Step 1.&quot;&gt;
+     &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;1&quot;/&gt;
+  &lt;/subitem&gt;
+  &lt;subitem label=&quot;Step b.&quot;&gt;
+     &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;b&quot;/&gt;
+  &lt;/subitem&gt;
+  &lt;subitem label=&quot;Step three.&quot;&gt;
+     &lt;action class=com.xyz.myaction pluginId=com.xyz param0=&quot;three&quot;/&gt;
+  &lt;/subitem&gt;
+&lt;/item&gt;</pre>
+<h2><code>action</code></h2>
+<pre>&lt;!ELEMENT action EMPTY&gt;&nbsp;
+&lt;!ATTLIST action&nbsp;
+&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+&nbsp; pluginId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+&nbsp; param1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       CDATA #IMPLIED
+&nbsp; ...
+&nbsp; param9      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&nbsp; confirm  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&quot;true&quot; | &quot;false&quot;) &quot;false&quot;
+&nbsp; when    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED
+&gt;</pre>
+<p>Each &lt;action&gt; element describes an action in a cheat sheet.
+&lt;action&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>class</b> - The fully-qualified name of the Java class implementing <code>org.eclipse.jface.action.IAction</code>.
+    If this action also implements <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>
+    it will be invoked via its run(String[],ICheatSheetManager) method and be
+    passed the cheat sheet manager and action parameters. The pluginId attribute
+    must be present whenever this attribute is present</li>
+  <li><b>pluginId </b>- The id of the plug-in which contains the Java class of
+    the action class. This attribute must be present whenever the class
+    attribute is present.</li>
+  <li><b>param<i>N</i></b> - For action classes that also implement <code>org.eclipse.ui.cheatsheets.ICheatSheetAction</code>,
+    the string values of these attributes are passed to the action when it is
+    invoked. You can pass up to 9 parameters to a cheat sheet action (<b>param1</b>,
+    <b>param2</b>, etc.). The parameters supplied must start with parameter 1
+    and be contiguous; that is, it is illegal to specify <b>param2</b> without <b>param1</b>
+    also being present. If the attribute string has the form &quot;${<i>var</i>}&quot;,
+    it is considered a reference to a cheat sheet variable <i>var</i>, and value
+    of the condition will be the value of the variable for the cheat sheet at
+    the start of execution of the containing &lt;item&gt; element (or the empty
+    string if the variable is unbound at that time).</li>
+  <li><b>confirm</b> - &quot;true&quot; indicates this step (or sub-step)
+    requires the user to manually confirm that the action has been completed.</li>
+  <li><b>when</b> - Indicates this action is to be used if and only if the value
+    of the condition attribute of the containing &lt;perform-when&gt; element
+    matches this string value. This attribute is ignored if the &lt;action&gt;
+    element is not a child of&nbsp; a &lt;perform-when&gt; element.</li>
+</ul>
+<h2><code>perform-when</code></h2>
+<pre>&lt;!ELEMENT perform-when (action+)&gt;&nbsp;
+&lt;!ATTLIST perform-when&nbsp;
+&nbsp; condition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+&gt;</pre>
+<p>Each &lt;perform-when&gt; element describes an action in a cheat sheet.
+&lt;perform-when&gt; attributes are as follows:</p>
+<ul type="disc">
+  <li><b>condition</b> - Arbitrary string value used to select which child
+    &lt;action&gt; will be performed. If the attribute string has the form
+    &quot;${<i>var</i>}&quot;, it is considered a reference to a cheat sheet
+    variable <i>var</i>, and value of the condition will be the value of the
+    variable for the cheat sheet at the start of execution of the containing
+    &lt;item&gt; element (or the empty string if the variable is unbound at that
+    time).</li>
+</ul>
+<p>The <b>condition</b> attribute on the &lt;conditional-subitem&gt; element
+provides a string value (invariably this value comes from a cheat sheet
+variable). Each of the &lt;subitem&gt; children must carry a <b>when</b>
+attribute with a distinct string value. When the item is expanded, the
+&lt;conditional-subitem&gt; element is replaced by the &lt;subitem&gt; element
+with the matching value. It is considered an error if there is no &lt;subitem&gt;
+element with a matching value.</p>
+<p>For example, if the cheat sheet variable named &quot;v1&quot; has the value
+&quot;b&quot; when the following item is expanded</p>
+<pre>&lt;item ...&gt;
+  &lt;subitem label=&quot;Main step&quot;&gt;
+     &lt;perform-when condition=&quot;${v1}&quot;&gt;
+        &lt;action when=&quot;a&quot; class=com.xyz.action1 pluginId=com.xyz /&gt;
+        &lt;action when=&quot;b&quot; class=com.xyz.action2 pluginId=com.xyz /&gt;
+     &lt;/conditional-subitem&gt;
+  &lt;/subitem&gt;
+&lt;/item&gt;</pre>
+then the second action is selected and the item expands to something equivalent
+to
+<pre>&lt;item ...&gt;&nbsp;
+  &lt;subitem label=&quot;Main step&quot;&gt;
+     &lt;action class=com.xyz.action2 pluginId=com.xyz /&gt;
+  &lt;/subitem&gt;
+&lt;/item&gt;</pre>
 <h2>Example</h2>
-
-<p>The following is a very simple example of a cheat sheet content file: 
-</p>
-
+<p>The following is a very simple example of a cheat sheet content file:</p>
 <pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;cheatSheet title=&quot;Two-step program&quot;&gt;
-&nbsp; 
-  &lt;intro&gt;Welcome to the 2-step program.&lt;/intro&gt;
-
-  &lt;item title=&quot;Step 1&quot; kind=&quot;manual&quot;&gt;Press the button to proceed to step 2.&lt;/item&gt;
-  &lt;item title=&quot;Step 2&quot; kind=&quot;manual&quot;&gt;Press the button to complete the 2-step program.&lt;/item&gt;
-&lt;/cheatSheet&gt;
+&lt;cheatsheet title=&quot;Two-step program&quot;&gt;
+  &lt;intro&gt;
+    &lt;description&gt;Welcome to the 2-step program.&lt;/description&gt;
+  &lt;/intro&gt;
+  &lt;item title=&quot;Step 1&quot; kind=&quot;manual&quot;&gt;
+     &lt;description&gt;Press the button to proceed to step 2.&lt;/description&gt;
+  &lt;/item&gt;
+  &lt;item title=&quot;Step 2&quot; kind=&quot;manual&quot;&gt;
+     &lt;description&gt;Press the button to complete the 2-step program.&lt;/description&gt;
+  &lt;/item&gt;
+&lt;/cheatsheet&gt;
 </pre>
 
 </body>
+
 </html>
