@@ -195,10 +195,10 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 
 		// Finally, ensure the base resources are equal
 		IRemoteResource base1 = null;
-		if (node1.getRight() != null)
+		if (node1.getAncestor() != null)
 			base1 = ((RemoteResourceTypedElement)node1.getAncestor()).getRemote();
 		IRemoteResource base2 = null;
-		if (node2.getRight() != null)
+		if (node2.getAncestor() != null)
 			base2 = ((RemoteResourceTypedElement)node2.getAncestor()).getRemote();
 		if (!equalObjects(base1, base2)) return false;
 		
