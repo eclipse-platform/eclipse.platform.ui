@@ -22012,5 +22012,193 @@ Note If you set this to false (the default), the host you connect to must be lis
 		</attributes>
 	</structure>
   </task>
+
+<task name="sshexec">  
+    <description>
+	Runs a command on a remote machine running SSH daemon. 
+Note: This task depends on external libraries not included in the Ant distribution. This task has been tested with jsch-0.1.7 to jsch-0.1.9 and won't work with versions of jsch earlier than 0.1.7.
+		Since Ant 1.6.
+	</description>
+	<structure>
+		<attributes>
+			<attribute name="host" required="yes">
+				<description>The hostname or IP address of the remote host to which you wish to connect.</description>
+			</attribute>
+			<attribute name="username" required="yes">
+				<description>The username on the remote host to which you are connecting.</description>
+			</attribute>
+		    <attribute name="command" required="yes">
+				<description>The command to run on the remote host.</description>
+			</attribute>
+			<attribute name="port" required="no">
+				<description>The port to connect to on the remote host. Defaults to 22</description>
+			</attribute>
+			<attribute name="trust" required="no">
+				<description>This trusts all unknown hosts if set to yes/true.
+Note If you set this to false (the default), the host you connect to must be listed in your knownhosts file, this also implies that the file exists.</description>
+			</attribute>
+			<attribute name="knownhosts" required="no">
+				<description>This sets the known hosts file to use to validate the identity of the remote host. This must be a SSH2 format file. SSH1 format is not supported. Defaults to ${user.home}/.ssh/known_hosts.</description>
+			</attribute>
+			<attribute name="failonerror" required="no">
+				<description>Whether to halt the build if the command does not complete successfully. Defaults to true</description>
+			</attribute>
+			<attribute name="password" required="no">
+				<description>The password.</description>
+			</attribute>
+			<attribute name="keyfile" required="no">
+				<description>Location of the file holding the private key.</description>
+			</attribute>
+			<attribute name="passphrase" required="no">
+				<description>Passphrase for your private key. Defaults to the empty string</description>
+			</attribute>
+			<attribute name="output" required="no">
+				<description>Name of a file to which to write the output.</description>
+			</attribute>
+			<attribute name="append" required="no">
+				<description>Whether output file should be appended to or overwritten. Defaults to false, meaning overwrite any existing file.</description>
+			</attribute>
+			<attribute name="outputproperty" required="no">
+				<description>The name of a property in which the output of the command should be stored.</description>
+			</attribute>
+			<attribute name="timeout" required="no">
+				<description>Stop the command if it doesn't finish within the specified time (given in milliseconds). Defaults to 0 which means &quot;wait forever&quot;.</description>
+			</attribute>
+		</attributes>
+	</structure>
+  </task>
+
+
+<task name="jjdoc">  
+    <description>
+	Invokes the JJDoc preprocessor for the JavaCC compiler compiler. It takes a JavaCC parser specification and produces documentation for the BNF grammar. It can operate in three modes, determined by command line options. 
+
+To use the jjdoc task, set the target attribute to the name of the JavaCC grammar file to process. You also need to specify the directory containing the JavaCC installation using the javacchome attribute, so that ant can find the JavaCC classes. Optionally, you can also set the outputfile to write the generated BNF documentation file to a specific (directory and) file. Otherwise jjdoc writes the generated BNF documentation file as the JavaCC grammar file with a suffix .txt or .html.
+
+This task only invokes JJDoc if the grammar file is newer than the generated BNF documentation file.
+
+		Since Ant 1.6.
+	</description>
+	<structure>
+		<attributes>
+			<attribute name="target" required="yes">
+				<description>The javacc grammar file to process.</description>
+			</attribute>
+			<attribute name="javacchome" required="yes">
+				<description>The directory containing the JavaCC distribution.</description>
+			</attribute>
+		    <attribute name="outputfile" required="no">
+				<description>The file to write the generated BNF documentation file to. If not set, the file is written with the same name as the JavaCC grammar file but with a the suffix .html or .txt.</description>
+			</attribute>
+			<attribute name="text" required="no">
+				<description>Sets the TEXT BNF documentation option. This is a boolean option.</description>
+			</attribute>
+			<attribute name="onetable" required="no">
+				<description>Sets the ONE_TABLE BNF documentation option. This is a boolean option.</description>
+			</attribute>
+		</attributes>
+	</structure>
+  </task>
+
+<task name="chgrp">  
+    <description>
+	Changes the group of a file or all files inside specified directories. Right now it has effect only under Unix. The group atribute is equivalent to the coresponding argument for the chgrp command.
+
+FileSets, DirSets or FileLists can be specified using nested &amp;lt;fileset&amp;gt;, &amp;lt;dirset&amp;gt; and &amp;lt;filelist&amp;gt; elements.
+
+		Since Ant 1.6.
+	</description>
+	<structure>
+		<attributes>
+			<attribute name="file" required="yes">
+				<description>The file or directory of which the group must be changed. Required if nested &amp;lt;fileset/list&amp;gt; elements not provided</description>
+			</attribute>
+			<attribute name="group" required="yes">
+				<description>The new group.</description>
+			</attribute>
+		    <attribute name="parallel" required="no">
+				<description>Process all specified files using a single chgrp command. Defaults to true.</description>
+			</attribute>
+			<attribute name="type" required="no">
+				<description>One of file, dir or both. If set to file, only the group of plain files are going to be changed. If set to dir, only the directories are considered.
+Note: The type attribute does not apply to nested dirsets - dirsets always implicitly assume type to be dir. Defaults to file</description>
+			</attribute>
+			<attribute name="maxparallel" required="no">
+				<description>Limit the amount of parallelism by passing at most this many sourcefiles at once. Set it to &amp;lt;= 0 for unlimited. Defaults to unlimited.</description>
+			</attribute>
+			<attribute name="verbose" required="no">
+				<description>Whether to print a summary after execution or not. Defaults to false.</description>
+			</attribute>
+		</attributes>
+	</structure>
+  </task>
+
+	<task name="chown">  
+    <description>
+	Changes the owner of a file or all files inside specified directories. Right now it has effect only under Unix. The owner atribute is equivalent to the coresponding argument for the chown command.
+
+FileSets, DirSets or FileLists can be specified using nested &amp;lt;fileset&amp;gt;, &amp;lt;dirset&amp;gt; and &amp;lt;filelist&amp;gt; elements.
+
+		Since Ant 1.6.
+	</description>
+	<structure>
+		<attributes>
+			<attribute name="file" required="yes">
+				<description>The file or directory of which the owner must be changed. Required if nested &amp;lt;fileset/list&amp;gt; elements not provided</description>
+			</attribute>
+			<attribute name="owner" required="yes">
+				<description>The new owner.</description>
+			</attribute>
+		    <attribute name="parallel" required="no">
+				<description>Process all specified files using a single chgrp command. Defaults to true.</description>
+			</attribute>
+			<attribute name="type" required="no">
+				<description>One of file, dir or both. If set to file, only the group of plain files are going to be changed. If set to dir, only the directories are considered.
+Note: The type attribute does not apply to nested dirsets - dirsets always implicitly assume type to be dir. Defaults to file</description>
+			</attribute>
+			<attribute name="maxparallel" required="no">
+				<description>Limit the amount of parallelism by passing at most this many sourcefiles at once. Set it to &amp;lt;= 0 for unlimited. Defaults to unlimited.</description>
+			</attribute>
+			<attribute name="verbose" required="no">
+				<description>Whether to print a summary after execution or not. Defaults to false.</description>
+			</attribute>
+		</attributes>
+	</structure>
+  </task>
+<task name="attrib">  
+    <description>
+	Changes the attributes of a file or all files inside specified directories. Right now it has effect only under Windows. Each of the 4 possible permissions has its own attribute, matching the arguments for the attrib command.
+
+FileSets, DirSets or FileLists can be specified using nested &amp;lt;fileset&amp;gt;, &amp;lt;dirset&amp;gt; and &amp;lt;filelist&amp;gt; elements.
+
+		Since Ant 1.6.
+	</description>
+	<structure>
+		<attributes>
+			<attribute name="file" required="yes">
+				<description>The file or directory of which the owner must be changed. Required if nested &amp;lt;fileset/list&amp;gt; elements not provided</description>
+			</attribute>
+			<attribute name="readonly" required="yes">
+				<description>The readonly permission</description>
+			</attribute>
+		    <attribute name="archive" required="no">
+				<description>The archive permission.</description>
+			</attribute>
+		    <attribute name="system" required="no">
+				<description>The system permission.</description>
+			</attribute>
+			<attribute name="hidden" required="no">
+				<description>The hidden permission.</description>
+			</attribute>
+			<attribute name="type" required="no">
+				<description>One of file, dir or both. If set to file, only the group of plain files are going to be changed. If set to dir, only the directories are considered.
+Note: The type attribute does not apply to nested dirsets - dirsets always implicitly assume type to be dir. Defaults to file</description>
+			</attribute>
+			<attribute name="verbose" required="no">
+				<description>Whether to print a summary after execution or not. Defaults to false.</description>
+			</attribute>
+		</attributes>
+	</structure>
+  </task>
  
 </tasks>

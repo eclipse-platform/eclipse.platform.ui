@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!ENTITY % boolean "(true|false|on|off|yes|no)">
-<!ENTITY % tasks "propertyfile | ccmkdir | importtypelib | vsscheckin | sql | cvspass | p4reopen | csc | dirname | wlrun | p4label | p4revert | replaceregexp | get | jjtree | sleep | jarlib-display | dependset | zip | patch | jspc | style | test | tstamp | unwar | vsshistory | icontract | cvschangelog | p4submit | ccmcheckin | p4change | bzip2 | sync | p4delete | vssadd | javadoc | p4integrate | translate | signjar | cclock | chown | vajload | jarlib-available | rexec | WsdlToDotnet | buildnumber | jpcovmerge | ejbjar | war | stlist | rename | sequential | serverdeploy | property | subant | move | ildasm | copydir | cccheckin | ccunlock | wljspc | fixcrlf | telnet | sosget | pathconvert | record | p4sync | exec | ccmklabel | p4edit | manifest | maudit | antlr | netrexxc | ftp | jpcovreport | execon | ccmcheckout | ant | xmlvalidate | xslt | p4resolve | iplanet-ejbc | ccmcheckintask | gzip | native2ascii | ccrmtype | starteam | ear | input | presetdef | rmic | checksum | mail | loadfile | vsscheckout | stylebook | soscheckin | mimemail | stlabel | gunzip | concat | cab | touch | parallel | splash | antcall | ccmkbl | cccheckout | typedef | p4have | filter | xmlproperty | import | copy | jsharpc | symlink | antstructure | script | ccmcreatetask | rpm | delete | replace | mmetrics | attrib | waitfor | untar | loadproperties | available | echoproperties | stcheckin | chgrp | vajexport | stcheckout | bunzip2 | whichresource | copyfile | p4labelsync | vsscreate | macrodef | ejbc | unjar | vbc | wsdltodotnet | mkdir | cvs | condition | tempfile | junitreport | ccmkattr | taskdef | echo | ccupdate | java | vsslabel | renameext | basename | javadoc2 | tar | vsscp | vajimport | p4fstat | setproxy | p4counter | wlstop | ilasm | soscheckout | apply | ccuncheckout | jarlib-resolve | jlink | cvstagdiff | javacc | chmod | pvcs | jarlib-manifest | jar | ccmklbtype | sound | scriptdef | defaultexcludes | mparse | blgenclient | uptodate | jjdoc | genkey | javah | ccmkelem | ccmreconfigure | fail | unzip | javac | p4add | jpcoverage | soslabel | depend | vssget | deltree | ddcreator | junit">
+<!ENTITY % tasks "propertyfile | ccmkdir | importtypelib | vsscheckin | sql | cvspass | p4reopen | csc | dirname | wlrun | p4label | p4revert | replaceregexp | get | jjtree | sleep | jarlib-display | dependset | zip | patch | jspc | style | test | tstamp | unwar | vsshistory | icontract | cvschangelog | p4submit | ccmcheckin | p4change | bzip2 | sync | p4delete | vssadd | javadoc | p4integrate | translate | signjar | cclock | chown | vajload | jarlib-available | rexec | WsdlToDotnet | buildnumber | jpcovmerge | ejbjar | war | stlist | rename | sequential | serverdeploy | property | subant | move | ildasm | copydir | cccheckin | ccunlock | wljspc | fixcrlf | telnet | sosget | pathconvert | record | p4sync | exec | ccmklabel | p4edit | manifest | maudit | antlr | netrexxc | ftp | jpcovreport | execon | ccmcheckout | ant | xmlvalidate | xslt | p4resolve | iplanet-ejbc | ccmcheckintask | gzip | native2ascii | ccrmtype | starteam | ear | input | presetdef | rmic | checksum | mail | loadfile | vsscheckout | stylebook | soscheckin | mimemail | stlabel | gunzip | concat | cab | touch | parallel | splash | antcall | ccmkbl | cccheckout | typedef | p4have | filter | xmlproperty | import | copy | jsharpc | symlink | antstructure | script | ccmcreatetask | rpm | delete | replace | mmetrics | attrib | waitfor | untar | loadproperties | available | echoproperties | stcheckin | chgrp | vajexport | stcheckout | bunzip2 | whichresource | copyfile | p4labelsync | vsscreate | macrodef | ejbc | unjar | vbc | wsdltodotnet | mkdir | cvs | condition | tempfile | junitreport | ccmkattr | taskdef | echo | ccupdate | java | vsslabel | renameext | basename | javadoc2 | tar | vsscp | vajimport | p4fstat | setproxy | p4counter | wlstop | ilasm | soscheckout | apply | ccuncheckout | jarlib-resolve | jlink | cvstagdiff | javacc | chmod | pvcs | jarlib-manifest | jar | ccmklbtype | sound | scriptdef | defaultexcludes | mparse | blgenclient | uptodate | jjdoc | genkey | javah | ccmkelem | ccmreconfigure | fail | unzip | javac | p4add | jpcoverage | soslabel | depend | vssget | deltree | ddcreator | junit | sshexec | scp">
 <!ENTITY % types "patternset | assertions | propertyset | filterset | libfileset | mergemapper | identitymapper | filterreader | unpackagemapper | scriptfilter | concatfilter | extension | fileset | dirset | globmapper | filelist | filterchain | path | compositemapper | classfileset | regexpmapper | selector | xmlcatalog | flattenmapper | description | chainedmapper | packagemapper | mapper | zipfileset | substitution | extensionSet | redirector | regexp">
 
 <!ELEMENT project (target | %tasks; | %types;)*>
@@ -1899,44 +1899,6 @@
           nusers CDATA #IMPLIED
           obsolete %boolean; #IMPLIED>
 
-<!ELEMENT chown (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
-<!ATTLIST chown
-          id ID #IMPLIED
-          resultproperty CDATA #IMPLIED
-          owner CDATA #IMPLIED
-          skipemptyfilesets %boolean; #IMPLIED
-          failifexecutionfails %boolean; #IMPLIED
-          type (file | dir | both) #IMPLIED
-          command CDATA #IMPLIED
-          maxparallel CDATA #IMPLIED
-          executable CDATA #IMPLIED
-          os CDATA #IMPLIED
-          errorproperty CDATA #IMPLIED
-          output CDATA #IMPLIED
-          timeout CDATA #IMPLIED
-          dest CDATA #IMPLIED
-          spawn %boolean; #IMPLIED
-          input CDATA #IMPLIED
-          inputstring CDATA #IMPLIED
-          addsourcefile %boolean; #IMPLIED
-          verbose %boolean; #IMPLIED
-          logerror %boolean; #IMPLIED
-          dir CDATA #IMPLIED
-          forwardslash %boolean; #IMPLIED
-          error CDATA #IMPLIED
-          description CDATA #IMPLIED
-          outputproperty CDATA #IMPLIED
-          resolveexecutable %boolean; #IMPLIED
-          append %boolean; #IMPLIED
-          failonerror %boolean; #IMPLIED
-          taskname CDATA #IMPLIED
-          ignoremissing %boolean; #IMPLIED
-          vmlauncher %boolean; #IMPLIED
-          newenvironment %boolean; #IMPLIED
-          file CDATA #IMPLIED
-          relative %boolean; #IMPLIED
-          parallel %boolean; #IMPLIED>
-
 <!ELEMENT srcfile EMPTY>
 <!ATTLIST srcfile
           id ID #IMPLIED>
@@ -3703,47 +3665,6 @@
           home CDATA #IMPLIED
           granularity (compilation-units | files | methods | types | packages) #IMPLIED>
 
-<!ELEMENT attrib (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
-<!ATTLIST attrib
-          id ID #IMPLIED
-          addsourcefile %boolean; #IMPLIED
-          verbose %boolean; #IMPLIED
-          parallel %boolean; #IMPLIED
-          input CDATA #IMPLIED
-          executable CDATA #IMPLIED
-          inputstring CDATA #IMPLIED
-          readonly %boolean; #IMPLIED
-          relative %boolean; #IMPLIED
-          skipemptyfilesets %boolean; #IMPLIED
-          command CDATA #IMPLIED
-          forwardslash %boolean; #IMPLIED
-          spawn %boolean; #IMPLIED
-          hidden %boolean; #IMPLIED
-          description CDATA #IMPLIED
-          vmlauncher %boolean; #IMPLIED
-          file CDATA #IMPLIED
-          logerror %boolean; #IMPLIED
-          errorproperty CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
-          output CDATA #IMPLIED
-          error CDATA #IMPLIED
-          os CDATA #IMPLIED
-          dest CDATA #IMPLIED
-          resolveexecutable %boolean; #IMPLIED
-          taskname CDATA #IMPLIED
-          resultproperty CDATA #IMPLIED
-          ignoremissing %boolean; #IMPLIED
-          failifexecutionfails %boolean; #IMPLIED
-          append %boolean; #IMPLIED
-          timeout CDATA #IMPLIED
-          maxparallel CDATA #IMPLIED
-          system %boolean; #IMPLIED
-          outputproperty CDATA #IMPLIED
-          archive %boolean; #IMPLIED
-          dir CDATA #IMPLIED
-          newenvironment %boolean; #IMPLIED
-          type (file | dir | both) #IMPLIED>
-
 <!ELEMENT waitfor (isfalse | isreference | equals | available | not | contains | os | or | and | filesmatch | checksum | istrue | isset | socket | http | uptodate)*>
 <!ATTLIST waitfor
           id ID #IMPLIED
@@ -3889,44 +3810,6 @@
           srcfile CDATA #IMPLIED
           failonerror %boolean; #IMPLIED
           destfile CDATA #IMPLIED>
-
-<!ELEMENT chgrp (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
-<!ATTLIST chgrp
-          id ID #IMPLIED
-          resultproperty CDATA #IMPLIED
-          skipemptyfilesets %boolean; #IMPLIED
-          failifexecutionfails %boolean; #IMPLIED
-          type (file | dir | both) #IMPLIED
-          command CDATA #IMPLIED
-          maxparallel CDATA #IMPLIED
-          executable CDATA #IMPLIED
-          os CDATA #IMPLIED
-          errorproperty CDATA #IMPLIED
-          group CDATA #IMPLIED
-          output CDATA #IMPLIED
-          timeout CDATA #IMPLIED
-          dest CDATA #IMPLIED
-          spawn %boolean; #IMPLIED
-          input CDATA #IMPLIED
-          inputstring CDATA #IMPLIED
-          addsourcefile %boolean; #IMPLIED
-          verbose %boolean; #IMPLIED
-          logerror %boolean; #IMPLIED
-          dir CDATA #IMPLIED
-          forwardslash %boolean; #IMPLIED
-          error CDATA #IMPLIED
-          description CDATA #IMPLIED
-          outputproperty CDATA #IMPLIED
-          resolveexecutable %boolean; #IMPLIED
-          append %boolean; #IMPLIED
-          failonerror %boolean; #IMPLIED
-          taskname CDATA #IMPLIED
-          ignoremissing %boolean; #IMPLIED
-          vmlauncher %boolean; #IMPLIED
-          newenvironment %boolean; #IMPLIED
-          file CDATA #IMPLIED
-          relative %boolean; #IMPLIED
-          parallel %boolean; #IMPLIED>
 
 <!ELEMENT vajexport (include | exclude)*>
 <!ATTLIST vajexport
@@ -4916,7 +4799,7 @@
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           javacchome CDATA #IMPLIED
-          target CDATA #IMPLIED
+          target CDATA #REQUIRED
           text %boolean; #IMPLIED
           onetable %boolean; #IMPLIED>
 
@@ -5238,3 +5121,52 @@
           keyfile CDATA #IMPLIED
           passphrase CDATA #IMPLIED
           verbose %boolean; #IMPLIED>
+          
+<!ELEMENT sshexec EMPTY>
+<!ATTLIST sshexec
+          id ID #IMPLIED
+          host CDATA #REQUIRED
+          username CDATA #IMPLIED
+          command CDATA #IMPLIED
+          port CDATA #IMPLIED
+          trust %boolean; #IMPLIED
+          knownhosts CDATA #IMPLIED
+          failonerror %boolean; #IMPLIED
+          password CDATA #IMPLIED
+          keyfile CDATA #IMPLIED
+          passphrase CDATA #IMPLIED
+          output CDATA #IMPLIED
+          append CDATA #IMPLIED
+          outputproperty CDATA #IMPLIED
+          timeout CDATA #IMPLIED>
+          
+<!ELEMENT attrib (fileset | dirset | filelist)*>
+<!ATTLIST attrib
+          id ID #IMPLIED
+          file CDATA #REQUIRED
+          readonly CDATA #IMPLIED
+          archive CDATA #IMPLIED
+          system CDATA #IMPLIED
+          hidden CDATA #IMPLIED
+          verbose %boolean; #IMPLIED>
+          
+<!ELEMENT chgrp (fileset | dirset | filelist)*>
+<!ATTLIST chgrp
+          id ID #IMPLIED
+          file CDATA #REQUIRED
+          group CDATA #REQUIRED
+          parallel %boolean; #IMPLIED
+          type (file | dir) #IMPLIED
+          maxparallel CDATA #IMPLIED
+          verbose %boolean; #IMPLIED>
+          
+<!ELEMENT chown (fileset | dirset | filelist)*>
+<!ATTLIST chown
+          id ID #IMPLIED
+          file CDATA #REQUIRED
+          owner CDATA #REQUIRED
+          parallel %boolean; #IMPLIED
+          type (file | dir) #IMPLIED
+          maxparallel CDATA #IMPLIED
+          verbose %boolean; #IMPLIED>
+     
