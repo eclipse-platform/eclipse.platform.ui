@@ -155,21 +155,7 @@ public class CompatibilityDragTarget implements IDragOverListener {
 		if (inner.contains(p)) {
 			return SWT.CENTER;
 		} else {
-			// normalize to center
-			p.x -= e.x / 2;
-			p.y -= e.y / 2;
-
-			// now determine quadrant
-			double a = Math.atan2(p.y * e.x, p.x * e.y) * (180 / Math.PI);
-
-			if (a >= -135 && a < -45)
-				return SWT.TOP;
-			else if (a > -45 && a < 45)
-				return SWT.RIGHT;
-			else if (a > 45 && a < 135)
-				return SWT.BOTTOM;
-			else
-				return SWT.LEFT;
+			return Geometry.getClosestSide(inner, p);
 		}
 	}
 	
