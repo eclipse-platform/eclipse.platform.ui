@@ -1,12 +1,19 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
 <H1><CENTER>Source Locators</CENTER></H1>
 <b><i>Identifier: </i></b>org.eclipse.debug.core.sourceLocators<p>
 <b><i>Description: </i></b>This extension point provides a mechanism specifying a source locator to be used with a launch configuration.<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension (sourceLocator*)&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.sourceLocator">sourceLocator</a>*)&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -17,7 +24,7 @@
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT sourceLocator EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.sourceLocator">sourceLocator</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST sourceLocator</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
@@ -43,7 +50,12 @@
 </p><p>
 <b><i>API Information: </i></b>Value of the attribute <b>class</b> must be a fully qualified name of a Java class that implements the interface <b>org.eclipse.debug.core.model.IPersistableSourceLocator</b>.<p>
 <font size="-1" color="#336699">
-<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195></a><p>
+<p>
+<a href="hglegal.htm">
+ <img SRC="ngibmcpy.gif"
+   ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
+   BORDER=0 height=14 width=324></a>
+</p><p>
 </font>
 </BODY>
 </HTML>

@@ -161,7 +161,12 @@ The launch configuration is applicable to .txt and .gif files, and is the defaul
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;a href=&quot;hglegal.htm&quot;&gt;&lt;img SRC=&quot;ngibmcpy.gif&quot; ALT=&quot;Copyright IBM Corp. 2000, 2003.  All Rights Reserved.&quot; BORDER=0 height=12 width=195&gt;&lt;/a&gt;
+         &lt;p&gt;
+&lt;a href="hglegal.htm"&gt;
+ &lt;img SRC="ngibmcpy.gif"
+   ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 

@@ -1,5 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
@@ -7,7 +14,7 @@
 <b><i>Identifier: </i></b>org.eclipse.debug.ui.launchGroups<p>
 <b><i>Since: </i></b>2.1<p>
 <b><i>Description: </i></b>This extension point provides support for defining a group of launch configurations to be viewed together in the launch configuration dialog, and support a launch history (recent and favorite launches).<p><b><i>Configuration Markup:</i></b><p>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT extension EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
@@ -18,7 +25,7 @@
 <li><b>id</b> - an optional identifier of the extension instance</li>
 <li><b>name</b> - an optional name of the extension instance</li>
 </ul>
-<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT launchGroup EMPTY&gt;</font></samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.launchGroup">launchGroup</a> EMPTY&gt;</font></samp>
 <br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST launchGroup</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
@@ -53,7 +60,12 @@
 </p>
 In the above example, the launch group will consist of all launch configurations with no category that support run mode.<p>
 <font size="-1" color="#336699">
-<a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195></a><p>
+<p>
+<a href="hglegal.htm">
+ <img SRC="ngibmcpy.gif"
+   ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
+   BORDER=0 height=14 width=324></a>
+</p><p>
 </font>
 </BODY>
 </HTML>
