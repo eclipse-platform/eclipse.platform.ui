@@ -14,19 +14,26 @@ package org.eclipse.ui.internal.ide;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.util.Assert;
+
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorInputTransfer;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 
@@ -76,16 +83,10 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 			 * the corresponding editorId */
 			Assert.isTrue(event.data instanceof EditorInputTransfer.EditorInputData[]);
 			EditorInputTransfer.EditorInputData[] editorInputs = (EditorInputTransfer.EditorInputData []) event.data;
-
-			try { //open all the markers
-				for (int i = 0; i < editorInputs.length; i++) {
-					String editorId = editorInputs[i].editorId;
-					IEditorInput editorInput = editorInputs[i].input;
-					// @issue old implementation did not allow an external editor to open
-					page.openEditor(editorInput, editorId);
-				}
-			} catch (PartInitException e) {
-				// @issue need to handle this better
+			for (int i = 0; i < editorInputs.length; i++) {
+				IEditorInput editorInput = editorInputs[i].input;
+				String editorId = editorInputs[i].editorId;
+				openNonExternalEditor(page, editorInput, editorId);
 			}
 		}
 			
@@ -93,13 +94,8 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 		else if (MarkerTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			Assert.isTrue(event.data instanceof IMarker[]);
 			IMarker[] markers = (IMarker[]) event.data;
-			try { //open all the markers
-				for (int i = 0; i < markers.length; i++) {
-					IDE.openEditor(page, markers[i], true);
-				}
-			} catch (PartInitException e) {
-				// do nothing, user may have been trying to drag a marker with no associated file
-				// @issue need to handle this better
+			for (int i = 0; i < markers.length; i++) {
+				openNonExternalEditor(page, markers[i]);
 			}
 		}
 
@@ -107,18 +103,154 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
 		else if (ResourceTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			Assert.isTrue(event.data instanceof IResource[]);
 			IResource[] files = (IResource[]) event.data;
-			try { //open all the files
-				for (int i = 0; i < files.length; i++) {
-					if (files[i] instanceof IFile) {
-						IDE.openEditor(page, (IFile) files[i], true);
-					}
+			for (int i = 0; i < files.length; i++) {
+				if (files[i] instanceof IFile) {
+					IFile file = (IFile) files[i];
+					openNonExternalEditor(page, file);
 				}
-			} catch (PartInitException e) {
-				//do nothing, user may have been trying to drag a folder
-				// @issue need to handle this better
 			}
 		}
 			
 	}
-}
+	
+	/**
+	 * Opens an editor for the given file on the given workbench page in response
+	 * to a drop on the workbench editor area. In contrast to other ways of opening
+	 * an editor, we never open an external editor in this case (since external
+	 * editors appear in their own window and not in the editor area).
+	 * The operation fails silently if there is no suitable editor to open.
+	 * 
+	 * @param page the workbench page
+	 * @param file the file to open
+	 * @return the editor part that was opened, or <code>null</code> if no editor
+	 * was opened
+	 */
+	private IEditorPart openNonExternalEditor(IWorkbenchPage page, IFile file) {
+		IEditorPart result;
+		try {
+			// find out which editor we would normal open
+			IEditorDescriptor defaultEditorDesc = IDE.getDefaultEditor(file);
+			if (defaultEditorDesc != null && !defaultEditorDesc.isOpenExternal()) {
+				// open an internal or in-place editor
+				result = IDE.openEditor(page, file, true);
+			} else {
+				// never open an external editor in response to a drop
+				// check the OS for in-place editor (OLE on Win32)
+				IEditorRegistry editorReg =
+					PlatformUI.getWorkbench().getEditorRegistry();
+				IEditorDescriptor editorDesc = null;
+				if (editorReg.isSystemInPlaceEditorAvailable(file.getName())) {
+					editorDesc =
+						editorReg.findEditor(
+							IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+				}
 
+				// next lookup the default text editor
+				if (editorDesc == null) {
+					editorDesc =
+						editorReg.findEditor(
+							IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+				}
+
+				// if no valid editor found, bail out
+				if (editorDesc == null) {
+					throw new PartInitException(IDEWorkbenchMessages.getString("IDE.noFileEditorFound")); //$NON-NLS-1$
+				}
+
+				// open the editor on the file
+				result = page.openEditor(
+					new FileEditorInput(file),
+					editorDesc.getId(),
+					true);
+			}
+		} catch (PartInitException e) {
+			// silently ignore problems opening the editor
+			result = null;
+		}
+		return result;
+	}
+
+	/**
+	 * Opens an editor for the given marker on the given workbench page in response
+	 * to a drop on the workbench editor area. In contrast to other ways of opening
+	 * an editor, we never open an external editor in this case (since external
+	 * editors appear in their own window and not in the editor area).
+	 * The operation fails silently if there is no suitable editor to open.
+	 * 
+	 * @param page the workbench page
+	 * @param marker the marker to open
+	 * @return the editor part that was opened, or <code>null</code> if no editor
+	 * was opened
+	 */
+	private IEditorPart openNonExternalEditor(IWorkbenchPage page, IMarker marker) {
+		IEditorPart result;
+		try {
+			// get the marker resource file
+			if (!(marker.getResource() instanceof IFile)) {
+				return null;
+			}
+			IFile file = (IFile) marker.getResource();
+
+			// get the preferred editor id from the marker
+			IEditorDescriptor editorDesc = null;
+			try {
+				String editorID = (String) marker.getAttribute(IDE.EDITOR_ID_ATTR);
+				if (editorID != null) {
+					IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
+					editorDesc = editorReg.findEditor(editorID);
+				}
+			} catch (CoreException e) {
+				// ignore problems with getting the marker
+			}
+
+			// open the editor on the marker resource file
+			if (editorDesc != null && !editorDesc.isOpenExternal()) {
+				result = page.openEditor(new FileEditorInput(file), editorDesc.getId(), true);
+			} else {
+				result = openNonExternalEditor(page, file);
+			}
+			
+			// get the editor to update its position based on the marker
+			if (result != null) {
+				IDE.gotoMarker(result, marker);
+			}
+			
+		} catch (PartInitException e) {
+			// silently ignore problems opening the editor
+			result = null;
+		}
+		return result;
+	}
+
+	/**
+	 * Opens an editor for the given editor input and editor id combination on the
+	 * given workbench page in response to a drop on the workbench editor area.
+	 * In contrast to other ways of opening an editor, we never open an external
+	 * editor in this case (since external editors appear in their own window and
+	 * not in the editor area). The operation fails silently if the editor
+	 * cannot be opened.
+	 * 
+	 * @param page the workbench page
+	 * @param editorInput the editor input
+	 * @param editorId the editor id
+	 * @return the editor part that was opened, or <code>null</code> if no editor
+	 * was opened
+	 */
+	private IEditorPart openNonExternalEditor(IWorkbenchPage page, IEditorInput editorInput, String editorId) {
+		IEditorPart result;
+		try {
+			IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
+			IEditorDescriptor editorDesc = editorReg.findEditor(editorId);
+			if (editorDesc != null && !editorDesc.isOpenExternal()) {
+				result = page.openEditor(editorInput, editorId);
+			} else {
+				result = null;
+			}
+		} catch (PartInitException e) {
+			// silently ignore problems opening the editor
+			result = null;
+		}
+		return result;
+	}
+
+}
