@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -255,6 +256,7 @@ protected void setTitle(String title) {
  * @param titleImage the title image, or <code>null</code> to clear
  */
 protected void setTitleImage(Image titleImage) {
+    Assert.isTrue(titleImage == null || !titleImage.isDisposed());
 	this.titleImage = titleImage;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
