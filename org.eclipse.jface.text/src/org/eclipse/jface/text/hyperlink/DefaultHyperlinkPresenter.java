@@ -76,13 +76,15 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	private Cursor fCursor;
 	/** The link color. */
 	private Color fColor;
+	/** The link color specification. May be <code>null</code>. */
+	private RGB fRGB;
 	/** Tells whether to dispose the color on uninstall. */
 	private boolean fDisposeColor;
 	/** The currently active region. */
 	private IRegion fActiveRegion;
 	/** The currently active style range as position. */
 	private Position fRememberedPosition;
-	/** The optional preference store */
+	/** The optional preference store. May be <code>null</code>. */
 	private IPreferenceStore fPreferenceStore;
 
 
@@ -105,6 +107,16 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	public DefaultHyperlinkPresenter(Color color) {
 		fDisposeColor= false;
 		fColor= color;
+	}
+	
+	/**
+	 * Creates a new default hyperlink presenter.
+	 * 
+	 * @param color the hyperlink color, to be disposed by the caller
+	 */
+	public DefaultHyperlinkPresenter(RGB color) {
+		fRGB= color;
+		fDisposeColor= true;
 	}
 	
 	/*
@@ -146,6 +158,8 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 			text.addPaintListener(this);
 			if (fPreferenceStore != null)
 				fColor= createColor(fPreferenceStore, HYPERLINK_COLOR, text.getDisplay());
+			else if (fRGB != null)
+				fColor= new Color(text.getDisplay(), fRGB);
 		}
 		
 		if (fPreferenceStore != null)
@@ -339,7 +353,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 			gc.setForeground(fColor);
 		else if (fColor == null && !(offset < 0 && offset >= text.getCharCount())) {
 			StyleRange style= text.getStyleRangeAtOffset(offset);
-			if (style != null)
+			if (style != null && style.foreground != null)
 				gc.setForeground(style.foreground);
 		}
 		gc.drawLine(x1, y, x2, y);
