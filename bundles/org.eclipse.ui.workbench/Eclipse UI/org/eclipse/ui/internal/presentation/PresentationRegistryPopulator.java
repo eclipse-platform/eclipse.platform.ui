@@ -55,8 +55,10 @@ public final class PresentationRegistryPopulator {
 		        defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), PreferenceConverter.FONTDATA_DEFAULT_DEFAULT)};
 		else if (definition.getDefaultsTo() != null)
 		    defaultFont = registry.getFontData(definition.getDefaultsTo());
-		else
-		    defaultFont = PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT;
+		else {
+		    // values pushed in from jface property files.  Very ugly.
+		    defaultFont = registry.getFontData(id);
+		}
 		    
 		
 		if (prefFont == null || prefFont == PreferenceConverter.FONTDATA_ARRAY_DEFAULT_DEFAULT) {
