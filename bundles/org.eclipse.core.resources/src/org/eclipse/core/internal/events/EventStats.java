@@ -198,6 +198,7 @@ public class EventStats {
 					stats.put(id, result);
 				}
 			} catch (CoreException e) {
+				//ignore if projects are not accessible
 			}
 		}
 		return result;
@@ -218,9 +219,11 @@ public class EventStats {
 					if (stats != null)
 						result.addAll(stats.values());
 				} catch (CoreException e) {
+					//ignore for non-existent projects
 				}
 			}
 		} catch (CoreException e) {
+			//ignore if projects are not accessible
 		}
 		return (EventStats[]) result.toArray(new EventStats[result.size()]);
 	}
@@ -241,9 +244,11 @@ public class EventStats {
 						for (Iterator iter = stats.values().iterator(); iter.hasNext();)
 							((EventStats) iter.next()).reset();
 				} catch (CoreException e) {
+					//ignore for non-existent projects
 				}
 			}
 		} catch (CoreException e) {
+			//ignore if projects are not accessible
 		}
 	}
 

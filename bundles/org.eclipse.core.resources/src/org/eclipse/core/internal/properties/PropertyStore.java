@@ -467,6 +467,7 @@ public class PropertyStore {
 	}
 
 	public void startup(IProgressMonitor monitor) {
+		//do nothing
 	}
 
 	protected void visitPropertyAt(IndexCursor cursor, IVisitor visitor) throws CoreException {
