@@ -5,6 +5,8 @@ package org.eclipse.ui.dialogs;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -104,6 +106,13 @@ public class MarkerResolutionSelectionDialog extends SelectionDialog {
 			public void selectionChanged(SelectionChangedEvent event) {
 				// Update OK button enablement
 				getOkButton().setEnabled(!event.getSelection().isEmpty());
+			}
+		});
+		
+		// Add double-click listener
+		listViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				okPressed();
 			}
 		});
 		return composite;
