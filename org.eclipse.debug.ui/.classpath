@@ -9,6 +9,6 @@
     <classpathentry kind="lib"
         path="/org.eclipse.core.runtime/runtime.jar" sourcepath="/org.eclipse.core.runtime/runtimesrc.zip"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
-    <classpathentry kind="lib" path="/org.eclipse.swt/swt.jar" sourcepath="/org.eclipse.swt/swtsrc.zip"/>
+    <classpathentry kind="lib" path="/org.eclipse.swt/ws/win32/swt.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
