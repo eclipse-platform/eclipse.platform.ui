@@ -20,8 +20,10 @@ public class Property {
 
 	private String name;
 	private String value;
+	private String className;
 	private IAntPropertyValueProvider valueProvider;
 	private String pluginLabel;
+	private ClassLoader loader;
 
 	public Property(String name, String value) {
 		this.name= name;
@@ -30,6 +32,7 @@ public class Property {
 
 	public Property() {
 	}
+	
 	/**
 	 * Gets the name
 	 * @return Returns a String
@@ -68,11 +71,32 @@ public class Property {
 	 * @return String
 	 */
 	public String getValue() {
-		if (valueProvider != null) {
-			return valueProvider.getAntPropertyValue(name);
+		if (className != null) {
+			Class cls = null;
+			try {
+				cls = loader.loadClass(className);
+			} catch (ClassNotFoundException e) {
+				AntCorePlugin.log(e);
+				return null;
+			}
+			try {
+				valueProvider = (IAntPropertyValueProvider)cls.newInstance();
+			} catch (InstantiationException e) {
+				AntCorePlugin.log(e);
+				return null;
+			} catch (IllegalAccessException ex) {
+				AntCorePlugin.log(ex);
+				return null;
+			}
+			loader= null;
+			className= null;
 		}
 		
-		return value;
+		if (valueProvider != null) {
+			return valueProvider.getAntPropertyValue(name);
+		} else {
+			return value;
+		}
 	}
 
 	/**
@@ -117,14 +141,18 @@ public class Property {
 	}
 	
 	/**
-	 * Sets the <code>IAntPropertyValueProvider</code> to be used to dynamically provide a 
+	 * Sets the name of the class that is an <code>IAntPropertyValueProvider</code> to be used to dynamically provide a 
+	 * value for this property.
+	 * Sets the class loader to load the <code>IAntPropertyValueProvider</code> to be used to dynamically provide a 
 	 * value for this property.
 	 * 
-	 * @param valueProvider The value provider to use to resolve the value of this property
+	 * @param className The name of the value provider class to use to resolve the value of this property
+	 * @param loader The class loader to use to load the value provider class to use to resolve the value of this property
 	 * @since 3.0
 	 */
-	public void setValueProvider(IAntPropertyValueProvider valueProvider) {
-		this.valueProvider= valueProvider;
+	public void setValueProvider(String className, ClassLoader loader) {
+		this.className= className;
+		this.loader= loader;
 	}
 
 	/**

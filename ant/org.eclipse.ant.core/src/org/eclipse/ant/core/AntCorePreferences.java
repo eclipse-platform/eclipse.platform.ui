@@ -453,35 +453,17 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			}
 			String value = element.getAttribute(AntCorePlugin.VALUE);
 			if (value != null) {
-				Property property = new Property();
+				Property property = new Property(name, value);
 				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
 				property.setPluginLabel(descriptor.getLabel());
-				property.setName(name);
-				property.setValue(value);
 				defaultProperties.add(property);
 			} else {
-				String className = element.getAttribute(AntCorePlugin.CLASS);
 				Property property = new Property();
 				property.setName(name);
 				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
 				property.setPluginLabel(descriptor.getLabel());
-				ClassLoader loader= descriptor.getPluginClassLoader();
-				Class cls = null;
-				try {
-					cls = loader.loadClass(className);
-				} catch (ClassNotFoundException e) {
-					AntCorePlugin.log(e);
-					continue;
-				}
-				IAntPropertyValueProvider valueProvider= null;
-				try {
-					valueProvider = (IAntPropertyValueProvider)cls.newInstance();
-				} catch (InstantiationException e) {
-					AntCorePlugin.log(e);
-				} catch (IllegalAccessException ex) {
-					AntCorePlugin.log(ex);
-				}
-				property.setValueProvider(valueProvider);
+				String className = element.getAttribute(AntCorePlugin.CLASS);
+				property.setValueProvider(className, descriptor.getPluginClassLoader());
 				defaultProperties.add(property);
 			}
 		}
