@@ -39,6 +39,8 @@ public class PluginParser extends DefaultHandler implements IModel {
 	// model parser
 	private static SAXParser parser;
 	
+	Locator locator = null;
+	
 	static {
 		initializeParser();
 	}
@@ -81,6 +83,21 @@ private static void initializeParser() {
 	} catch (SAXException e) {
 		// In case support for this feature is removed
 	}
+}
+
+/**
+     * Receive a Locator object for document events.
+     *
+     * <p>By default, do nothing.  Application writers may override this
+     * method in a subclass if they wish to store the locator for use
+     * with other document events.</p>
+     *
+     * @param locator A locator for all SAX document events.
+     * @see org.xml.sax.ContentHandler#setDocumentLocator
+     * @see org.xml.sax.Locator
+     */
+public void setDocumentLocator (Locator locator) {
+	this.locator = locator;
 }
 
 public void characters(char[] ch, int start, int length) {
@@ -428,6 +445,8 @@ synchronized public PluginModel parsePlugin(InputSource in) throws Exception {
 public void parseConfigurationElementAttributes(Attributes attributes) {
 
 	ConfigurationElementModel parentConfigurationElement = (ConfigurationElementModel) objectStack.peek();
+	parentConfigurationElement.setStartLine(locator.getLineNumber());
+
 	Vector propVector = null;
 
 	// process attributes
@@ -452,6 +471,7 @@ public void parseExtensionAttributes(Attributes attributes) {
 
 	PluginModel parent = (PluginModel) objectStack.peek();
 	ExtensionModel currentExtension = factory.createExtension();
+	currentExtension.setStartLine(locator.getLineNumber());
 	objectStack.push(currentExtension);
 
 	// Process Attributes
@@ -483,6 +503,7 @@ public void parseExtensionAttributes(Attributes attributes) {
 public void parseExtensionPointAttributes(Attributes attributes) {
 
 	ExtensionPointModel currentExtPoint = factory.createExtensionPoint();
+	currentExtPoint.setStartLine(locator.getLineNumber());
 
 	// Process Attributes
 	int len = (attributes != null) ? attributes.getLength() : 0;
@@ -511,6 +532,7 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 
 public void parseFragmentAttributes(Attributes attributes) {
 	PluginFragmentModel current = factory.createPluginFragment();
+	current.setStartLine(locator.getLineNumber());
 	objectStack.push(current);
 
 	// process attributes
@@ -552,6 +574,7 @@ public void parseLibraryAttributes(Attributes attributes) {
 	// Push a vector to hold the export mask 
 	objectStack.push (new Vector());
 	LibraryModel current = factory.createLibrary();
+	current.setStartLine(locator.getLineNumber());
 	objectStack.push(current);
 	
 	// Now the objectStack should contain the following:
@@ -583,6 +606,7 @@ public void parseLibraryAttributes(Attributes attributes) {
 public void parsePluginAttributes(Attributes attributes) {
 
 	PluginDescriptorModel current = factory.createPluginDescriptor();
+	current.setStartLine(locator.getLineNumber());
 	objectStack.push(current);
 
 	// process attributes
@@ -612,6 +636,7 @@ public void parsePluginAttributes(Attributes attributes) {
 
 public void parsePluginRequiresImport(Attributes attributes) {
 	PluginPrerequisiteModel current = factory.createPluginPrerequisite();
+	current.setStartLine(locator.getLineNumber());
 
 	// process attributes
 	int len = (attributes != null) ? attributes.getLength() : 0;

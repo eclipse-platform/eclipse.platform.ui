@@ -26,7 +26,15 @@ public abstract class PluginModelObject {
 	private String name = null;
 
 	// transient properties (not included in plug-in manifest)
-	private boolean readOnly = false;
+	private int flags = 0;
+	// the last bit is a read-only flag
+	// IMPORTANT: One bit in the "flags" integer is used to store the 
+	// read-only flag and the other bits are used to store an integer value
+	// which can be from -1 to (2**31) - 1. To help with the bit masking, the integer
+	// value stored in this variable is (value + 1). This means that a "flags" value
+	// of 0 will NOT be marked as read-only and will return -1 for the start line value.
+	static final int M_READ_ONLY = 0xF0000000;
+
 /**
  * Checks that this model object is writeable.  A runtime exception
  * is thrown if it is not.
@@ -50,7 +58,7 @@ public String getName() {
  * @see #markReadOnly
  */
 public boolean isReadOnly() {
-	return readOnly;
+	return (flags & M_READ_ONLY) == M_READ_ONLY;
 }
 /**
  * Sets this model object and all of its descendents to be read-only.
@@ -59,7 +67,7 @@ public boolean isReadOnly() {
  * @see #isReadOnly
  */
 public void markReadOnly() {
-	readOnly = true;
+	flags |= M_READ_ONLY;
 }
 /**
  * Sets the name of this element.
@@ -69,5 +77,25 @@ public void markReadOnly() {
 public void setName(String value) {
 	assertIsWriteable();
 	name = value;
+}
+/**
+ * Return the line number for the start tag for this plug-in object. This
+ * is the line number of the element declaration from the plug-in manifest file.
+ * 
+ * @return the line number of the start tag for this object
+ */
+public int getStartLine() {
+	return (flags & ~M_READ_ONLY) - 1;
+}
+/**
+ * Set the line number for the start tag for this plug-in object. This is the
+ * line number for the element declaration from the plug-in manifest file.
+ * This value can only be set once, subsequent calls to this method will be
+ * ignored.
+ * 
+ * @param lineNumber the line number of this object's declaration in the file */
+public void setStartLine(int lineNumber) {
+	if (getStartLine() == -1)
+		flags = (lineNumber + 1) | (flags & M_READ_ONLY);
 }
 }

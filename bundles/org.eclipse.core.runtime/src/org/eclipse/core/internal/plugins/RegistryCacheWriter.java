@@ -90,6 +90,9 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, D
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(configElement.isReadOnly());
 
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(configElement.getStartLine());
+
 		if ((outString = configElement.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);
 			out.writeUTF(outString);
@@ -145,6 +148,9 @@ public void writeConfigurationProperty(ConfigurationPropertyModel configProperty
 
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(configProperty.isReadOnly());
+		
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(configProperty.getStartLine());
 
 		if ((outString = configProperty.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);
@@ -182,6 +188,9 @@ public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(extension.isReadOnly());
+
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(extension.getStartLine());
 
 		if ((outString = extension.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);
@@ -253,6 +262,9 @@ public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream o
 
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(extPoint.isReadOnly());
+
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(extPoint.getStartLine());
 
 		if ((outString = extPoint.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);
@@ -341,6 +353,9 @@ public void writeLibrary(LibraryModel library, DataOutputStream out) {
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(library.isReadOnly());
 
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(library.getStartLine());
+
 		if ((outString = library.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);
 			out.writeUTF(outString);
@@ -386,8 +401,13 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 		String outString;
 
 		writeLabel(RegistryCacheReader.PLUGIN_LABEL, out);
+
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(plugin.isReadOnly());
+		
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(plugin.getStartLine());
+
 		if ((outString = plugin.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);
 			out.writeUTF(outString);
@@ -489,8 +509,13 @@ public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream o
 		byte outByte;
 
 		writeLabel(RegistryCacheReader.FRAGMENT_LABEL, out);
+		
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(fragment.isReadOnly());
+
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(fragment.getStartLine());
+
 		if ((outString = fragment.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);
 			out.writeUTF(outString);
@@ -590,6 +615,9 @@ public void writePluginPrerequisite(PluginPrerequisiteModel requires, DataOutput
 
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
 		out.writeBoolean(requires.isReadOnly());
+
+		writeLabel(RegistryCacheReader.START_LINE, out);
+		out.writeInt(requires.getStartLine());
 
 		if ((outString = requires.getName()) != null) {
 			writeLabel(RegistryCacheReader.NAME_LABEL, out);

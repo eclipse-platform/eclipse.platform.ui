@@ -31,7 +31,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 8;
+	public static final byte REGISTRY_CACHE_VERSION = 9;
 
 	public static final byte NONLABEL = 0;
 
@@ -67,7 +67,8 @@ public class RegistryCacheReader {
 	public static final byte LIBRARY_EXPORTS_LENGTH_LABEL = 18;
 	public static final byte NAME_LABEL = 19;
 	public static final byte LIBRARY_INDEX_LABEL = 57;
-
+	public static final byte START_LINE = 59;
+	
 	public static final byte PLUGIN_CLASS_LABEL = 20;
 	public static final byte PLUGIN_ENABLED_LABEL = 21;
 	public static final byte PLUGIN_END_LABEL = 22;
@@ -101,7 +102,7 @@ public class RegistryCacheReader {
 	public static final byte VERSION_LABEL = 44;
 	
 	// So it's easier to add a new label ...
-	public static final byte LARGEST_LABEL = 58;
+	public static final byte LARGEST_LABEL = 59;
 	
 	// String constants for those byte values in the cache that
 	// do not translate directly to strings found in manifest xml
@@ -385,6 +386,9 @@ public ConfigurationElementModel readConfigurationElement(DataInputStream in, bo
 				case READONLY_LABEL :
 					in.readBoolean();
 					break;
+				case START_LINE :
+					configurationElement.setStartLine(in.readInt());
+					break;
 				case NAME_LABEL :
 					configurationElement.setName(in.readUTF());
 					break;
@@ -500,6 +504,9 @@ public ConfigurationPropertyModel readConfigurationProperty(DataInputStream in, 
 				case READONLY_LABEL :
 					in.readBoolean();
 					break;
+				case START_LINE :
+					configurationProperty.setStartLine(in.readInt());
+					break;
 				case NAME_LABEL :
 					configurationProperty.setName(in.readUTF());
 					break;
@@ -547,6 +554,9 @@ public ExtensionModel readExtension(DataInputStream in, boolean debugFlag) {
 			switch (inByte) {
 				case READONLY_LABEL :
 					in.readBoolean();
+					break;
+				case START_LINE :
+					extension.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
 					extension.setName(in.readUTF());
@@ -696,6 +706,9 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 				case READONLY_LABEL :
 					in.readBoolean();
 					break;
+				case START_LINE :
+					extPoint.setStartLine(in.readInt());
+					break;
 				case NAME_LABEL :
 					extPoint.setName(in.readUTF());
 					break;
@@ -794,6 +807,9 @@ public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 				case READONLY_LABEL :
 					in.readBoolean();
 					break;
+				case START_LINE :
+					library.setStartLine(in.readInt());
+					break;
 				case NAME_LABEL :
 					library.setName(in.readUTF());
 					break;
@@ -863,6 +879,9 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 			switch (inByte) {
 				case READONLY_LABEL :
 					in.readBoolean();
+					break;
+				case START_LINE :
+					plugin.setStartLine(in.readInt());
 					break;
 				case NAME_LABEL :
 					plugin.setName(in.readUTF());
@@ -1154,6 +1173,9 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 				case READONLY_LABEL :
 					in.readBoolean();
 					break;
+				case START_LINE :
+					fragment.setStartLine(in.readInt());
+					break;
 				case NAME_LABEL :
 					fragment.setName(in.readUTF());
 					break;
@@ -1402,6 +1424,9 @@ public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolea
 				case READONLY_LABEL :
 					in.readBoolean();
 					break;
+				case START_LINE :
+					requires.setStartLine(in.readInt());
+					break;
 				case NAME_LABEL :
 					requires.setName(in.readUTF());
 					break;
@@ -1476,14 +1501,12 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 				case REGISTRY_LABEL:
 					break;
 				case READONLY_LABEL :
-					if (in.readBoolean()) {
+					if (in.readBoolean())
 						setReadOnlyFlag = true;
-					}
 					break;
 				case REGISTRY_RESOLVED_LABEL :
-					if (in.readBoolean()) {
+					if (in.readBoolean())
 						cachedRegistry.markResolved();
-					}
 					break;
 				case PLUGIN_LABEL :
 					PluginDescriptorModel plugin = null;
