@@ -1,17 +1,20 @@
 package org.eclipse.ui.externaltools.internal.ant.view.actions;
+
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -36,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
-import org.eclipse.ui.externaltools.model.*;
+import org.eclipse.ui.externaltools.model.StringMatcher;
 
 /**
  * This dialog allows the user to search for Ant build files whose names match a
@@ -95,12 +98,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Creates a new dialog to search for build files.
 	 */
 	public SearchForBuildFilesDialog() {
-		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "&Input a build file name (* = any string, ? = any character):",
+		super(Display.getCurrent().getActiveShell(), AntViewActionMessages.getString("SearchForBuildFilesDialog.Search_for_Build_Files_1"), AntViewActionMessages.getString("SearchForBuildFilesDialog.&Input"), //$NON-NLS-1$ //$NON-NLS-2$
 				settings.get(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
 			public String isValid(String newText) {
 				String trimmedText = newText.trim();
 				if (trimmedText.length() == 0) {
-					return "Build name cannot be empty";
+					return AntViewActionMessages.getString("SearchForBuildFilesDialog.Build_name_cannot_be_empty_3"); //$NON-NLS-1$
 				}
 				return null;
 			}
@@ -112,7 +115,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
-		getOkButton().setText("&Search");
+		getOkButton().setText(AntViewActionMessages.getString("SearchForBuildFilesDialog.&Search_4")); //$NON-NLS-1$
 
 		String workingSetName= settings.get(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE);
 		if (workingSetName.length() > 0) {
@@ -138,7 +141,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	
 	private void createScopeGroup(Composite composite, Font font) {
 		Group scope= new Group(composite, SWT.NONE);
-		scope.setText("Scope");
+		scope.setText(AntViewActionMessages.getString("SearchForBuildFilesDialog.Scope_5")); //$NON-NLS-1$
 		GridData data= new GridData(GridData.FILL_BOTH);
 		scope.setLayoutData(data);
 		GridLayout layout= new GridLayout(3, false);
@@ -159,12 +162,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 
 		workspaceScopeButton= new Button(radioComposite, SWT.RADIO);
 		workspaceScopeButton.setFont(font);
-		workspaceScopeButton.setText("&Workspace");
+		workspaceScopeButton.setText(AntViewActionMessages.getString("SearchForBuildFilesDialog.&Workspace_6")); //$NON-NLS-1$
 		workspaceScopeButton.addSelectionListener(selectionListener);
 
 		workingSetScopeButton=new Button(radioComposite, SWT.RADIO);
 		workingSetScopeButton.setFont(font);
-		workingSetScopeButton.setText("Wor&king Set:");
+		workingSetScopeButton.setText(AntViewActionMessages.getString("SearchForBuildFilesDialog.Wor&king_Set__7")); //$NON-NLS-1$
 		workingSetScopeButton.addSelectionListener(selectionListener);
 		
 		selectRadioButton(workspaceScopeButton);
@@ -179,7 +182,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		data= new GridData(GridData.VERTICAL_ALIGN_END);
 		chooseButton.setLayoutData(data);
 		chooseButton.setFont(font);
-		chooseButton.setText("&Choose...");
+		chooseButton.setText(AntViewActionMessages.getString("SearchForBuildFilesDialog.&Choose..._8")); //$NON-NLS-1$
 		chooseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleChooseButtonPressed();
@@ -234,7 +237,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	private void createIncludeErrorResultButton(Composite composite, Font font) {
 		includeErrorResultButton= new Button(composite, SWT.CHECK);
 		includeErrorResultButton.setFont(font);
-		includeErrorResultButton.setText("Include &build files that contain errors");
+		includeErrorResultButton.setText(AntViewActionMessages.getString("SearchForBuildFilesDialog.Include_errors")); //$NON-NLS-1$
 		includeErrorResultButton.setSelection(settings.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS));
 	}
 	
@@ -246,9 +249,9 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		if (workingSetScopeButton.getSelection()) {
 			String error= null;
 			if (searchScopes == null) {
-				error= "Must select a working set";
+				error= AntViewActionMessages.getString("SearchForBuildFilesDialog.Must_select_a_working_set_10"); //$NON-NLS-1$
 			} else if (searchScopes.isEmpty()) {
-				error= "No searchable resources found in the selected working set";
+				error= AntViewActionMessages.getString("SearchForBuildFilesDialog.No_searchable"); //$NON-NLS-1$
 			}
 			if (error != null) {
 				getErrorMessageLabel().setText(error);
@@ -346,43 +349,43 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		settings.put(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, getWorkingSetName());
 		settings.put(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE, workingSetScopeButton.getSelection());
 		results = new ArrayList(); // Clear previous results
-		StringMatcher matcher= new StringMatcher(input, true, false);
+		ResourceProxyVisitor visitor= new ResourceProxyVisitor();
 		if (searchScopes == null || searchScopes.isEmpty()) {
-			searchForBuildFiles(matcher, ResourcesPlugin.getWorkspace().getRoot());
+			try {
+				ResourcesPlugin.getWorkspace().getRoot().accept(visitor, IResource.NONE);
+			} catch (CoreException ce) {
+				//Closed project...don't want build files from there
+			}
 		} else {
 			Iterator iter= searchScopes.iterator();
 			while(iter.hasNext()) {
-				searchForBuildFiles(matcher, (IResource) iter.next());
+				try {
+					((IResource) iter.next()).accept(visitor, IResource.NONE);
+				} catch (CoreException ce) {
+					//Closed project...don't want build files from there
+				}
 			}
 		}
 		super.okPressed();
 	}
-
+	
 	/**
-	 * Searches for files whose name matches the given regular expression in the
-	 * given container.
-	 * 
-	 * @param matcher the string matcher used to determine which files should
-	 * be added to the results
-	 * @param resource the resource to search
+	 * Searches for files whose name matches the given regular expression.
 	 */
-	private void searchForBuildFiles(StringMatcher matcher, IResource resource) {
-		if (resource instanceof IContainer) {
-			IContainer container= (IContainer) resource;
-			IResource[] members = null;
-			try {
-				members = container.members();
-			} catch (CoreException e) {
-				return;
+	class ResourceProxyVisitor implements IResourceProxyVisitor {
+		StringMatcher matcher= new StringMatcher(getInput(), true, false);
+
+		/**
+		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
+		 */
+		public boolean visit(IResourceProxy proxy) throws CoreException {
+			if (proxy.getType() == IResource.FILE) {
+				if (matcher.match(proxy.getName())) {
+					results.add(proxy.requestResource());
+				}
+				return false;
 			}
-			for (int i = 0; i < members.length; i++) {
-				searchForBuildFiles(matcher, members[i]);
-			}
-		} else if (resource instanceof IFile) {
-			if (matcher.match(((IFile) resource).getName())) {
-				results.add(resource);
-			}
+			return true;
 		}
 	}
-
 }
