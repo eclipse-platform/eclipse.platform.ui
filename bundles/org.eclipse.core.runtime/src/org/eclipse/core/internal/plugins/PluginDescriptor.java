@@ -31,7 +31,7 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 
 	private DelegatingURLClassLoader loader = null; // plugin loader
 	private boolean active = false; // plugin is active
-	private boolean activePending = false; // being activated
+	private volatile boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
 	protected Plugin pluginObject = null; // plugin object
 	private boolean usePlatformURLs = true;
@@ -744,6 +744,13 @@ private void internalDoPluginActivation() throws CoreException {
 	}
 	if (!multiStatus.isOK())
 		throw new CoreException(multiStatus);
+}
+/**
+ * Returns true if the plugin is currently in the process of being 
+ * activated, and false otherwse.
+ */
+public boolean isActivationInProgress() {
+	return activePending;
 }
 /**
  * @see IPluginDescriptor

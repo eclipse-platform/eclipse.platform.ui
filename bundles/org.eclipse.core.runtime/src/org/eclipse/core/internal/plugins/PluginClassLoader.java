@@ -161,7 +161,7 @@ protected Class internalFindClassParentsSelf(final String name, boolean resolve,
 		// more work.  Note that the order of the tests is important, since 
 		//descriptor.isPluginActivated() blocks while activation in progress,
 		//thus creating a potential deadlock situation.
-		if (pluginActivationInProgress || descriptor.isPluginActivated()) {
+		if (pluginActivationInProgress || descriptor.isActivationInProgress() || descriptor.isPluginActivated()) {
 			try {
 				result = super.findClass(name);
 			} catch (ClassNotFoundException e) {
