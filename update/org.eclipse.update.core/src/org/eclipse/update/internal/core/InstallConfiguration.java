@@ -85,7 +85,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @see IInstallConfiguration#addConfigurationSite(IConfigurationSite)
 	 */
 	public void addConfigurationSite(IConfigurationSite site) {
-		if (!isCurrent() || isReadOnly() )
+		if (!isCurrent() && isReadOnly() )
 			return;
 			
 		//Start UOW ?
