@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
@@ -31,15 +30,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
-
 import org.eclipse.ui.internal.WorkbenchWindow;
-
 /**
- * The AnimationItem is the class that manages the animation
- * for the progress.
+ * The AnimationItem is the class that manages the animation for the progress.
  */
 public class AnimationItem {
 	WorkbenchWindow window;
@@ -68,8 +63,10 @@ public class AnimationItem {
 		final AnimationManager manager = AnimationManager.getInstance();
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
-		imageCanvas.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		imageCanvas.setToolTipText(ProgressMessages.getString("AnimationItem.HoverHelp")); //$NON-NLS-1$
+		imageCanvas.setBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+		imageCanvas.setToolTipText(ProgressMessages
+				.getString("AnimationItem.HoverHelp")); //$NON-NLS-1$
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				paintImage(event, manager.getImage(), manager.getImageData()[0]);
@@ -88,7 +85,8 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				AnimationManager.getInstance().toggleFloatingWindow();
+				if (isActiveWorkbenchItem())
+					AnimationManager.getInstance().toggleFloatingWindow();
 			}
 			/*
 			 * (non-Javadoc)
@@ -107,19 +105,24 @@ public class AnimationItem {
 				//Do nothing
 			}
 		});
-		imageCanvas.getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.AccessibleControlEvent)
-			 */
-			public void getValue(AccessibleControlEvent arg0) {
-				if (manager.isAnimated())
-					arg0.result = ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
-				else
-					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
-			}
-		});
+		imageCanvas.getAccessible().addAccessibleControlListener(
+				new AccessibleControlAdapter() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.A
+					 * 
+					 * ccessibleControlEvent)
+					 */
+					public void getValue(AccessibleControlEvent arg0) {
+						if (manager.isAnimated())
+							arg0.result = ProgressMessages
+									.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
+						else
+							arg0.result = ProgressMessages
+									.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
+					}
+				});
 		imageCanvas.addHelpListener(new HelpListener() {
 			/*
 			 * (non-Javadoc)
@@ -146,8 +149,8 @@ public class AnimationItem {
 		Image paintImage = image;
 		int w = imageData.width;
 		int h = imageData.height;
-		event.gc.drawImage(paintImage, 0, 0, imageData.width, imageData.height, imageData.x,
-				imageData.y, w, h);
+		event.gc.drawImage(paintImage, 0, 0, imageData.width, imageData.height,
+				imageData.x, imageData.y, w, h);
 	}
 	/**
 	 * Get the SWT control for the receiver.
@@ -171,8 +174,7 @@ public class AnimationItem {
 	 * @param event
 	 */
 	void openFloatingWindow() {
-		
-		synchronized(windowLock){	
+		synchronized (windowLock) {
 			//Do we already have one?
 			if (floatingWindow != null)
 				return;
@@ -181,9 +183,9 @@ public class AnimationItem {
 				return;
 			floatingWindow = new ProgressFloatingWindow(window, imageCanvas);
 		}
-		
 		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages
-				.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
+				.getString("AnimationItem.openFloatingWindowJob")) {
+			//$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -192,26 +194,26 @@ public class AnimationItem {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				synchronized (windowLock) {
 					//Clear the window if the parent is not visibile
-					if (window.getShell() == null 
-							|| !window.getShell().isVisible() 
-							|| getControl().isDisposed()){
+					if (window.getShell() == null
+							|| !window.getShell().isVisible()
+							|| getControl().isDisposed()) {
 						closeAndClearFloatingWindow();
 					}
-
-					
 					if (floatingWindow == null)
 						return Status.CANCEL_STATUS;
 					floatingWindow.open();
 					return Status.OK_STATUS;
 				}
 			}
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 			 */
 			public boolean shouldRun() {
 				if (AnimationManager.getInstance().isAnimated())
 					return true;
-				synchronized(windowLock){
+				synchronized (windowLock) {
 					closeWindowInUI();
 					return false;
 				}
@@ -224,8 +226,14 @@ public class AnimationItem {
 	 * The animation has begun.
 	 */
 	void animationStart() {
-		if (AnimationManager.getInstance().showingDetails())
-			openFloatingWindow();
+		if (AnimationManager.getInstance().showingDetails() && isActiveWorkbenchItem())
+				openFloatingWindow();
+	}
+	/**
+	 * Check to see if this workbench is the main workbench.
+	 */
+	private boolean isActiveWorkbenchItem() {
+		return (window == window.getWorkbench().getActiveWorkbenchWindow());
 	}
 	/**
 	 * The animation has ended.
@@ -239,15 +247,17 @@ public class AnimationItem {
 	void closeFloatingWindow() {
 		synchronized (windowLock) {
 			closeWindowInUI();
-			
 		}
 	}
 	/**
 	 * Close the window the UI Thread.
 	 */
 	private void closeWindowInUI() {
-		UIJob closeJob = new UIJob(ProgressMessages.getString("AnimationItem.CloseWindowJob")){ //$NON-NLS-1$
-			/* (non-Javadoc)
+		UIJob closeJob = new UIJob(ProgressMessages
+				.getString("AnimationItem.CloseWindowJob")) { //$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -255,7 +265,6 @@ public class AnimationItem {
 				return Status.OK_STATUS;
 			}
 		};
-		
 		closeJob.setSystem(true);
 		closeJob.schedule();
 	}
@@ -267,14 +276,12 @@ public class AnimationItem {
 	public int getPreferredWidth() {
 		return AnimationManager.getInstance().getPreferredWidth() + 5;
 	}
-	
 	/**
-	 * Close the floating window if it exists and clear the
-	 * variable.
+	 * Close the floating window if it exists and clear the variable.
 	 */
 	private void closeAndClearFloatingWindow() {
 		//If there is no window than do not run
-		if(floatingWindow != null)
+		if (floatingWindow != null)
 			floatingWindow.close();
 		floatingWindow = null;
 	}
