@@ -109,6 +109,7 @@ class ActivityPersistanceHelper {
 
 			store.setValue(createPreferenceKey(activity.getId()), activity.isEnabled());
 		}
+		WorkbenchPlugin.getDefault().savePluginPreferences();
 	}
 
 	/**
