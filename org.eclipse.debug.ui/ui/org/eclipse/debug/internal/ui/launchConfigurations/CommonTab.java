@@ -127,7 +127,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		radioComp.setLayout(radioLayout);
 		
 		setLocalSharedLabel(new Label(radioComp, SWT.NONE));
-		getLocalSharedLabel().setText("Type of launch configuration");
+		getLocalSharedLabel().setText("Type of launch configuration:");
 		
 		setLocalRadioButton(new Button(radioComp, SWT.RADIO));
 		getLocalRadioButton().setText("Local");
@@ -149,7 +149,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		locationComp.setLayoutData(gd);
 		
 		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
-		getSharedLocationLabel().setText("Location of shared configuration");
+		getSharedLocationLabel().setText("Location of shared configuration:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getSharedLocationLabel().setLayoutData(gd);
@@ -421,8 +421,8 @@ public class CommonTab implements ILaunchConfigurationTab {
 			IPath path = (IPath)results[0];
 			IContainer container = (IContainer) getWorkspaceRoot().findMember(path);
 			String containerName = path.toString();
-			getSharedLocationText().setText(containerName);
 			getSharedLocationText().setData(SHARED_LOCATION_CONTAINER_KEY, container);
+			getSharedLocationText().setText(containerName);
 		}		
 	}
 	

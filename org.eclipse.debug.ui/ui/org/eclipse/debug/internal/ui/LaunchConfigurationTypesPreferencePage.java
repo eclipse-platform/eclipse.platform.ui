@@ -434,7 +434,7 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		while (iterator.hasNext()) {
 			String fileExtension = (String) iterator.next();
 			ILaunchConfigurationType configType = (ILaunchConfigurationType) getDefaultConfigsMap().get(fileExtension);
-			launchManager.setDefaultLaunchConfigurationType(fileExtension, configType);
+			launchManager.setDefaultLaunchConfigurationType(fileExtension, configType.getIdentifier());
 		}
 	}
 	

@@ -280,20 +280,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	/**
-	 * @see ILaunchManager#getDefaultLaunchConfigurationType(IProject)
-	 */
-	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IProject project) throws CoreException {
-		ILaunchConfigurationType type = null;
-		if ((project != null) && project.isOpen()) {
-			String typeID = project.getPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCH_CONFIGURATION_TYPE));
-			if (typeID != null) {
-				type= getLaunchConfigurationType(typeID);
-			}
-		}
-		return type;
-	}	
-	
-	/**
 	 * @see ILaunchManager#getDefaultLaunchConfigurationType(IResource)
 	 */
 	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource, boolean considerResourceOnly) {
@@ -301,12 +287,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		try {
 			// First check on the resource itself
 			String defaultConfigTypeID = resource.getPersistentProperty(fgQualNameDefaultConfigType);
-			if (considerResourceOnly) {
-				if (defaultConfigTypeID != null) {
-					return getLaunchConfigurationType(defaultConfigTypeID);
-				} else {
-					return null;
-				}
+			if (defaultConfigTypeID != null) {
+				return getLaunchConfigurationType(defaultConfigTypeID);
+			} else  if (considerResourceOnly) {
+				return null;
 			}
 			
 			// Next work up the resource's containment chain looking for a resource that
@@ -447,35 +431,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	/**
-	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IProject, ILaunchConfigurationType)
+	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IResource, String)
 	 */
-	public void setDefaultLaunchConfigurationType(IProject resource, ILaunchConfigurationType type) throws CoreException {
-		String id = null;
-		if (type != null) {
-			id = type.getIdentifier();
-		}
-		resource.setPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCH_CONFIGURATION_TYPE), id);
-	}	
-	
-	/**
-	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IResource, ILaunchConfigurationType)
-	 */
-	public void setDefaultLaunchConfigurationType(IResource resource, ILaunchConfigurationType configType) {		
-		String configTypeID = null;
-		if (configType != null) {
-			configTypeID = configType.getIdentifier();
-		}
-		try {
-			resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
-		} catch (CoreException ce) {
+	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID) {		
+		if (configTypeID != null) {
+			try {
+				resource.setPersistentProperty(fgQualNameDefaultConfigType, configTypeID);
+			} catch (CoreException ce) {
+			}
 		}
 	}
 	
 	/**
-	 * @see ILaunchManager#setDefaultLaunchConfigurationType(String, ILaunchConfigurationType)
+	 * @see ILaunchManager#setDefaultLaunchConfigurationType(String, String)
 	 */
-	public void setDefaultLaunchConfigurationType(String fileExtension, ILaunchConfigurationType configType) {
-		fDefaultLaunchConfigurationTypes.put(fileExtension, configType);
+	public void setDefaultLaunchConfigurationType(String fileExtension, String configTypeID) {
+		fDefaultLaunchConfigurationTypes.put(fileExtension, getLaunchConfigurationType(configTypeID));
 	}
 	
 	/**
@@ -488,6 +459,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			String xmlString = info.getAsXML();
 			String configTypeID = launchConfig.getType().getIdentifier();
 			resource.setPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION_TYPE, configTypeID), xmlString);
+			setDefaultLaunchConfigurationType(resource, configTypeID);
 		} catch (CoreException ce) {
 			return false;
 		} catch (IOException ioe) {

@@ -617,7 +617,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		GridData gd;
 		
 		Label nameLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
-		nameLabel.setText("Name");
+		nameLabel.setText("Name:");
 		gd = new GridData(GridData.BEGINNING);
 		nameLabel.setLayoutData(gd);
 		
@@ -1405,7 +1405,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 				type = (ILaunchConfigurationType)obj;
 			}
 			setChangesAreUserChanges(false);
-			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
+			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
 			Object workbenchSelection = getWorkbenchSelection();
 			if (workbenchSelection != null) {
 				wc.initializeDefaults(workbenchSelection);

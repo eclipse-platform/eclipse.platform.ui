@@ -102,7 +102,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 		ILaunchConfigurationType configType = null;
 		if (selectedIndex > -1) {
 			configType = getConfigTypes()[selectedIndex];
-			getLaunchManager().setDefaultLaunchConfigurationType(getResource(), configType);
+			getLaunchManager().setDefaultLaunchConfigurationType(getResource(), configType.getIdentifier());
 		}
 		return true;
 	}

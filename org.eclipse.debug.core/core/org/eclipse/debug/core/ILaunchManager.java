@@ -249,37 +249,6 @@ public interface ILaunchManager {
 	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);	
 	
 	/**
-	 * Returns the default launch configuration type for the given project,
-	 * or <code>null</code> if unspecified.
-	 * The default launch configuration is stored as a persistent property
-	 * with a project.
-	 *
-	 * @param project the project for which to retrieve a default launch
-	 *  configuration type
-	 * @return the default launch configuration type, or <code>null</code> 
-	 *  unspecified
-	 * @exception CoreException if an error occurs accessing the
-	 *   persistent property
-	 * @since 2.0
-	 */
-	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IProject project) throws CoreException;	
-	
-	/**
-	 * Sets the default launch configuration type for the specified project.
-	 * The default launch configuration is stored as a persistent property
-	 * with a project.
-	 *
-	 * @param project the project for which to set a default launch
-	 *  configuration type
-	 * @param type the default launch configuration type for the specified
-	 *  project, or <code>null</code> if unspecified
-	 * @exception CoreException if an error occurs setting the
-	 *   persistent property
-	 * @since 2.0
-	 */
-	public void setDefaultLaunchConfigurationType(IProject project, ILaunchConfigurationType type) throws CoreException;	
-
-	/**
 	 * Returns the default launch configuration type for the specified resource, 
 	 * or <code>null</code> if there is none.  If boolean parameter is <code>true</code>, 
 	 * only the specified resource will be considered when looking for a default launch
@@ -328,22 +297,22 @@ public interface ILaunchManager {
 	 * launch configuration type, or until the containment chain is exhausted.
 	 * 
 	 * @param resource the workbench resource whose default launch configuration type is being set
-	 * @param configType the launch configuration type that is being set as the default for 
+	 * @param configTypeID ID String of the launch configuration type that is being set as the default for 
 	 *  the specified resource
 	 * @since 2.0
 	 */
-	public void setDefaultLaunchConfigurationType(IResource resource, ILaunchConfigurationType configType);
+	public void setDefaultLaunchConfigurationType(IResource resource, String configTypeID);
 
 	/**
 	 * Set the specified launch configuration type as the default for resources with the specified
 	 * file extension.
 	 * 
 	 * @param fileExtension the file extension whose default launch configuration type is being set
-	 * @param configType the launch configuration type that is being set as the default for 
+	 * @param configType the String ID of the launch configuration type that is being set as the default for 
 	 *  resources with the specified file extension
 	 * @since 2.0
 	 */
-	public void setDefaultLaunchConfigurationType(String fileExtension, ILaunchConfigurationType configType);
+	public void setDefaultLaunchConfigurationType(String fileExtension, String configTypeID);
 	
 	/**
 	 * Return <code>true</code> if there is a launch configuration with the specified name, 
