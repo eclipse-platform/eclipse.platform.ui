@@ -15,10 +15,11 @@ import java.util.ResourceBundle;
 import org.eclipse.jface.action.*;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.*; 
 
 
 public class CompareEditorContributor extends EditorActionBarContributor {
@@ -94,8 +95,8 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 			CompareEditor editor= (CompareEditor) targetEditor;
 			editor.setActionBars(actionBars);
 		
-			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.NEXT, fNext);
-			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, fPrevious);
+			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fNext);
+			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPrevious);
 
 			CompareConfiguration cc= editor.getCompareConfiguration();
 			fIgnoreWhitespace.setCompareConfiguration(cc);

@@ -49,8 +49,8 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.compare.*;
@@ -120,14 +120,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final boolean DEBUG= false;
 	
 	private static final String[] GLOBAL_ACTIONS= {
-		IWorkbenchActionConstants.UNDO,
-		IWorkbenchActionConstants.REDO,
-		IWorkbenchActionConstants.CUT,
-		IWorkbenchActionConstants.COPY,
-		IWorkbenchActionConstants.PASTE,
-		IWorkbenchActionConstants.DELETE,
-		IWorkbenchActionConstants.SELECT_ALL,
-		IWorkbenchActionConstants.SAVE
+		ActionFactory.UNDO.getId(),
+		ActionFactory.REDO.getId(),
+		ActionFactory.CUT.getId(),
+		ActionFactory.COPY.getId(),
+		ActionFactory.PASTE.getId(),
+		ActionFactory.DELETE.getId(),
+		ActionFactory.SELECT_ALL.getId(),
+		ActionFactory.SAVE.getId()
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
