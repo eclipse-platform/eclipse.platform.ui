@@ -30,6 +30,7 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		IFeature remoteFeature = remoteFeatureReference[0].getFeature();
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		assertNotNull(remoteFeature);
+		remove(remoteFeature,localSite);		
 		localSite.install(remoteFeature,null,null);
 		
 		// verify

@@ -11,8 +11,13 @@ import java.net.*;
 import java.util.*;
 
 import junit.framework.TestCase;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.core.*;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
@@ -123,4 +128,28 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		return UpdateTestsPlugin.getWebAppServerPort();
 	}
 
+	protected void remove(IFeature feature, IConfiguredSite configSite) throws CoreException{
+		ISite site = configSite.getSite();
+		remove(feature,site);
+	}
+
+	protected void remove(IFeature feature, ISite site) throws CoreException{
+		IFeatureReference ref = site.getFeatureReference(feature);
+			// remove the plugins and features dir
+			String sitePath = site.getURL().getFile();
+			File file = null;
+						
+			String featureName = feature.getVersionedIdentifier().getIdentifier().toString()+"_"+feature.getVersionedIdentifier().getVersion().toString();
+			file = new File(sitePath,"features"+File.separator+featureName);
+System.out.println("****************************************Removing :"+file);				
+				UpdateManagerUtils.removeFromFileSystem(file);		
+			
+			IPluginEntry[] entries = feature.getPluginEntries();
+			for (int i = 0; i < entries.length; i++) {
+				String name = entries[i].getVersionedIdentifier().getIdentifier().toString()+"_"+entries[i].getVersionedIdentifier().getVersion().toString()+File.separator;
+				file = new File(sitePath,"plugins"+File.separator+name);
+System.out.println("****************************************Removing :"+file);				
+				UpdateManagerUtils.removeFromFileSystem(file);
+			}
+	}
 }

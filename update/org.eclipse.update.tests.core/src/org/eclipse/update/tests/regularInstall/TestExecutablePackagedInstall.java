@@ -42,6 +42,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 	
 		for (int i = 0; i < featuresRef.length; i++) {
 			remoteFeature = featuresRef[i].getFeature();
+			remove(remoteFeature,localSite);			
 			localSite.install(remoteFeature, null,null);
 			
 			if (remoteFeature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider) packFeature = true;
@@ -106,24 +107,25 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 				}				
 			}
 			if (remoteFeature!=null){
-			localSite.install(remoteFeature,null, null);
-			
-			if (remoteFeature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider) packFeature = true;
-			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
-
-			// verify
-			String site = localSite.getURL().getFile();
-			IPluginEntry[] entries = remoteFeature.getPluginEntries();
-			assertTrue("no plugins entry", (entries != null && entries.length != 0));
-			String pluginName = entries[0].getVersionedIdentifier().toString();
-			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
-			assertTrue("plugin files not installed locally:"+pluginFile, pluginFile.exists());
-
-			File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
-			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
-
-			File featureFileXML = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString() + File.separator + "feature.xml");
-			assertTrue("feature info not installed locally: no feature.xml", featureFileXML.exists());
+				remove(remoteFeature,localSite);
+				localSite.install(remoteFeature,null, null);
+				
+				if (remoteFeature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider) packFeature = true;
+				if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
+	
+				// verify
+				String site = localSite.getURL().getFile();
+				IPluginEntry[] entries = remoteFeature.getPluginEntries();
+				assertTrue("no plugins entry", (entries != null && entries.length != 0));
+				String pluginName = entries[0].getVersionedIdentifier().toString();
+				File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
+				assertTrue("plugin files not installed locally:"+pluginFile, pluginFile.exists());
+	
+				File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
+				assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
+	
+				File featureFileXML = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString() + File.separator + "feature.xml");
+				assertTrue("feature info not installed locally: no feature.xml", featureFileXML.exists());
 			}
 		}
 

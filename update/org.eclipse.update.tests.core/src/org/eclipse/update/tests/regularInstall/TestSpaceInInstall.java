@@ -44,6 +44,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 	
 		for (int i = 0; i < featuresRef.length; i++) {
 			remoteFeature = featuresRef[i].getFeature();
+			remove(remoteFeature,localSite); 
 			localSite.install(remoteFeature, null,null);
 			
 			if (remoteFeature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider) packFeature = true;

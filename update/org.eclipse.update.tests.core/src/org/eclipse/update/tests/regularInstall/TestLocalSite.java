@@ -104,7 +104,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		site.addConfiguration(newConfig);	
 		assertNotNull(feature);	
 
-		((ConfiguredSite)configSite).isUpdatable(true);				
+		((ConfiguredSite)configSite).isUpdatable(true);
+		remove(feature,configSite);				
 		configSite.install(feature,null,null);
 				
 		// teh current one points to a real fature
@@ -185,7 +186,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		site.addConfiguration(newConfig);
 		assertNotNull(feature);			
 		
-		((ConfiguredSite)configSite).isUpdatable(true);			
+		((ConfiguredSite)configSite).isUpdatable(true);
+		remove(feature,configSite);			
 		configSite.install(feature,null,null);
 		site.save();
 		
