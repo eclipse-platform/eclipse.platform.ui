@@ -24,6 +24,11 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	protected List elements = new ArrayList();
 	protected TableViewer viewer;
 
+	public void add(Object o) {
+		elements.add(o);
+		viewer.add(o);
+	}
+	
 	public void addAll(List list) {
 		elements.addAll(list);
 		viewer.add(list.toArray());
@@ -47,17 +52,16 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 			elements.addAll(Arrays.asList((Object[]) newInput));
 		}
 	}
-
+	
 	/**
 	 * Removes the given target from the list of targets. Has no effect if the
-	 * given index is invalid.
+	 * given target does not exist in the list.
 	 * 
-	 * @param index the index of the the target to remove
+	 * @param target the target to remove
 	 */
-	public void removeTarget(int index) {
-		if (elements.size() > index && index >= 0) {
-			elements.remove(index);
-		}
+	public void removeTarget(Object target) {
+		elements.remove(target);
+		viewer.remove(target);
 	}
 
 	/**
