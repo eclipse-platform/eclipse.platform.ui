@@ -335,7 +335,7 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 				// workaround for PR 1FV62BT
 				// assumption: elements are equal but not identical
 				// -> remove from map but don't touch children
-				unmapElement(data);
+				unmapElement(data, item);
 				item.setData(element);
 				mapElement(element, item);
 			} else {
@@ -1228,13 +1228,15 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		Object oldElement = item.getData();
 		if (oldElement != null) {
 			Object newElement = elementChildren[i];
-			if (newElement.equals(oldElement)) {
-				// update the data to be the new element, since although the elements 
-				// may be equal, they may still have different labels or children
-				item.setData(newElement);
-				mapElement(newElement, item);
-			} else {
-				disassociate(item);
+			if (newElement != oldElement) {
+				if (newElement.equals(oldElement)) {
+					// update the data to be the new element, since although the elements 
+					// may be equal, they may still have different labels or children
+					item.setData(newElement);
+					mapElement(newElement, item);
+				} else {
+					disassociate(item);
+				}
 			}
 		}
 	}

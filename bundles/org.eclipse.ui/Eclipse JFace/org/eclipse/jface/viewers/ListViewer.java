@@ -307,7 +307,7 @@ private void internalRemove(final Object[] elements) {
 		if (ix >= 0) {
 			list.remove(ix);
 			listMap.remove(ix);
-			unmapElement(elements[i]);
+			unmapElement(elements[i], list);
 		}
 	}
 }

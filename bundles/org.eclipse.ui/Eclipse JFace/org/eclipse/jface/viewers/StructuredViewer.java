@@ -141,11 +141,14 @@ public void addFilter(ViewerFilter filter) {
  */
 protected void associate(Object element, Item item) {
 	Object data = item.getData();
-	if (data == element)
-		return;
-	if (data != null)
-		disassociate(item);
-	item.setData(element);
+	if (data != element) {
+		if (data != null)
+			disassociate(item);
+		item.setData(element);
+	}
+	// Always map the element, even if data == element,
+	// since unmapAllElements() can leave the map inconsistent
+	// See bug 2741 for details.
 	mapElement(element, item);
 }
 /**
@@ -159,9 +162,7 @@ protected void disassociate(Item item) {
 	Object element = item.getData();
 	Assert.isNotNull(element);
 	item.setData(null);
-	// double-check that the element actually maps to the given item before unmapping it
-	if (elementMap != null && elementMap.get(element) == item)
-		unmapElement(element);
+	unmapElement(element, item);
 }
 /**
  * Returns the widget in this viewer's control which 
@@ -851,6 +852,26 @@ protected void unmapElement(Object element) {
 		elementMap.remove(element);
 	}
 }
+/**
+ * Removes the given association from the internal element to widget map.
+ * Does nothing if mapping is disabled, or if the given element does not map
+ * to the given item.
+ * <p>
+ * This method is internal to the framework; subclassers should not call
+ * this method.
+ * </p>
+ *
+ * @param element the element
+ * @since 2.0
+ */
+protected void unmapElement(Object element, Widget item) {
+	// double-check that the element actually maps to the given item before unmapping it
+	if (elementMap != null && elementMap.get(element) == item) {
+		// call unmapElement for backwards compatibility
+		unmapElement(element);
+	}
+}
+
 /**
  * Updates the given elements' presentation when one or more of their properties change.
  * Only the given elements are updated.
