@@ -5,182 +5,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" href="style.css" charset="ISO-8859-1" type="text/css">
 <title>Intro Content File XML Format</title>
-<style>
-P.Code {
-	display: block;
-	text-align: left;
-	text-indent: 0.00pt;
-	margin-top: 0.000000pt;
-	margin-bottom: 0.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 15pt;
-	font-size: 10.000000pt;
-	font-weight: medium;
-	font-style: Regular;
-	color: #4444CC;
-	text-decoration: none;
-	vertical-align: baseline;
-	text-transform: none;
-	font-family: "Courier New";
-}
-H6.CaptionFigColumn {
-	display: block;
-	text-align: left;
-	text-indent: 0.000000pt;
-	margin-top: 3.000000pt;
-	margin-bottom: 11.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 0.000000pt;
-	font-size: 9.000000pt;
-	font-weight: medium;
-	font-style: Italic;
-	color: #000000;
-	text-decoration: none;
-	vertical-align: baseline;
-	text-transform: none;
-	font-family: "Arial";
-}
-P.Note {
-	display: block;
-	text-align: left;
-	text-indent: 0pt;
-	margin-top: 19.500000pt;
-	margin-bottom: 19.500000pt;
-	margin-right: 0.000000pt;
-	margin-left: 30pt;
-	font-size: 11.000000pt;
-	font-weight: medium;
-	font-style: Italic;
-	color: #000000;
-	text-decoration: none;
-	vertical-align: baseline;
-	text-transform: none;
-	font-family: "Arial";
-}
-EM.UILabel {
-	font-weight: Bold;
-	font-style: Regular;
-	text-decoration: none;
-	vertical-align: baseline;
-	text-transform: none;
-}
-EM.CodeName {
-	font-weight: Bold;
-	font-style: Regular;
-	text-decoration: none;
-	vertical-align: baseline;
-	text-transform: none;
-	font-family:"Courier New";
-}
-
-
-
-
-/* following font face declarations need to be removed for DBCS */
-
-body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: Arial, Helvetica, sans-serif; color: #000000}
-pre				{ font-family: Courier, monospace}
-
-/* end font face declarations */
-
-/* following font size declarations should be OK for DBCS */
-body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-size: 10pt; }
-pre				{ font-size: 10pt}
-
-/* end font size declarations */
-
-body	     { background: #FFFFFF}
-h1           { font-size: 18pt; margin-top: 5; margin-bottom: 1 }	
-h2           { font-size: 14pt; margin-top: 25; margin-bottom: 3 }
-h3           { font-size: 11pt; margin-top: 20; margin-bottom: 3 }
-h4           { font-size: 10pt; margin-top: 20; margin-bottom: 3; font-style: italic }
-p            { margin-top: 10px; margin-bottom: 10px }
-pre	     { margin-left: 6; font-size: 9pt }
-a:link	     { color: #0000FF }
-a:hover	     { color: #000080 }
-a:visited    { text-decoration: underline }
-ul	     { margin-top: 0; margin-bottom: 10 }
-li	     { margin-top: 0; margin-bottom: 0 } 
-li p	     { margin-top: 0; margin-bottom: 0 } 
-ol	     { margin-top: 0; margin-bottom: 10 }
-dl	     { margin-top: 0; margin-bottom: 10 }
-dt	     { margin-top: 0; margin-bottom: 0; font-weight: bold }
-dd	     { margin-top: 0; margin-bottom: 0 }
-strong	     { font-weight: bold}
-em	     { font-style: italic}
-var	     { font-style: italic}
-div.revision { border-left-style: solid; border-left-width: thin; 
-				   border-left-color: #7B68EE; padding-left:5 }
-th	     { font-weight: bold }
-
-H6.CaptionFigColumn#header {
-	font-size:16px; 
-	display:inline
-}
-
-P.Note#copyright {
-	font-size: smaller; 
-	font-style: normal;
-	color: #336699; 
-	display:inline;
-	margin-top: 3.000000pt;
-	margin-bottom: 11.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 0.000000pt;
-}
-
-P.Code#dtd {
-	color: #800000; 
-	margin-top: 0.000000pt;
-	margin-bottom: 0.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 10.000000pt;
-}
-
-P.Code#dtdAttlist {
-	color: #800000; 
-	margin-top: 0.000000pt;
-	margin-bottom: 0.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 20.000000pt;
-}
-
-P.Code#tag {
-	color: #000080; 
-	display:inline;
-	margin-top: 0.000000pt;
-	margin-bottom: 0.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 0.000000pt;
-}
-
-P.Code#cstring {
-	color: #008000; 
-	display:inline;
-	margin-top: 0.000000pt;
-	margin-bottom: 0.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 0.000000pt;	
-}
-
-.ConfigMarkup#elementDesc {
-	color: black;
-	margin-top: 0.000000pt;
-	margin-bottom: 0.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 10.000000pt;
-}
-
-.ConfigMarkup#attlistDesc {
-	color: black;
-	margin-top: 0.000000pt;
-	margin-bottom: 0.000000pt;
-	margin-right: 0.000000pt;
-	margin-left: 32.000000pt;
-}
-
-</style>
 </head>
 
 <body>
@@ -204,15 +31,15 @@ The introContent element defines the body of the intro content file.  The conten
 This element is used to describe a page to be displayed. The intro can display both dynamic and static pages.<br>
 <br>
 Content for dynamic pages is generated from the subelements of the page, described below. The style or alt-style will be applied depending on the presentation. The styles can be further enhanced by referencing the id or class-id.<br>
-<br/>
+<br>>
 Static pages allow for the reuse of existing HTML documents within one's introduction, and can be linked to from any static or dynamic page.  Static pages are not defined in a page element, they are simply html files that can be linked to by other pages.<br>
-<br/>
+<br>
 The home page, whose id is specified in the presentation element of the intro config extension point, can have a url indicating that it is a static page.  If no url is specified then the home page is assumed to be dynamic.  All other pages described using the page element are dynamic.  
-<br/>
- Also note that when the SWT presentation is used and a static page is to be displayed, an external brower is launched and the current page remains visible.<br/>
-<br/>
+<br>
+ Also note that when the SWT presentation is used and a static page is to be displayed, an external brower is launched and the current page remains visible.<br>
+<br>
 
-The subelements used in a dynamic page are as follows: A <b>group</b> subelement is used to group related content and apply style across the grouped content. A <b>link</b> subelement defines a link which can be used to link to a static or dynamic page and run an intro action/command.  A link is normally defined at the page level to navigate between main pages versus links within a page. A <b>text</b> subelement defines textual content at the page level. A <b>head</b> subelement is only applicable for the Web based presentation and allows for additional html to be added to the HTML <b>head</b> section. This is useful for adding java scripts or extra style sheets. An <b>img</b> subelement defines image content for the page level. An <b>include</b> subelement allows for reuse of any element other than a page. An <b>html</b> subelement is only applicable for the Web based presentation and allows for the embedding or inclusion of html into the page's content. Embedding allows for a fully defined html file to be embeded within an HTML <b>object</b> by referencing the html file. Inclusion allows for including an html snippet directly from an html file. A <b>title</b> subelement defines the title of the page.  An <b>anchor</b> subelement defines a point where external contributions can be made by an <extensionContent> element.</p>
+The subelements used in a dynamic page are as follows: A <b>group</b> subelement is used to group related content and apply style across the grouped content. A <b>link</b> subelement defines a link which can be used to link to a static or dynamic page and run an intro action/command.  A link is normally defined at the page level to navigate between main pages versus links within a page. A <b>text</b> subelement defines textual content at the page level. A <b>head</b> subelement is only applicable for the Web based presentation and allows for additional html to be added to the HTML <b>head</b> section. This is useful for adding java scripts or extra style sheets. An <b>img</b> subelement defines image content for the page level. An <b>include</b> subelement allows for reuse of any element other than a page. An <b>html</b> subelement is only applicable for the Web based presentation and allows for the embedding or inclusion of html into the page's content. Embedding allows for a fully defined html file to be embeded within an HTML <b>object</b> by referencing the html file. Inclusion allows for including an html snippet directly from an html file. A <b>title</b> subelement defines the title of the page.  An <b>anchor</b> subelement defines a point where external contributions can be made by an &lt;extensionContent&gt; element.</p>
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>url</b> - The optional relative path to an HTML file. When using the Web based presentation, this HTML file will be displayed instead of any content defined for this page.  This attribute is only applicable to the home page, which is identified in the presentation element of the intro config extension point. It is ignored for all other pages.</li>
@@ -249,7 +76,8 @@ Can link to a static HTML file, an external web site, or can run an Intro URL ac
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>id</b> - A unique id that can be used to identify this link</li>
 <li><b>label</b> - The text name of this link</li>
-<li><b>url</b> - A valid URL to an external web site, a static html file, or an Intro URL that represents an Intro action. All intro URLs have the following form:  http://org.eclipse.ui.intro/<action name>?param1=value1&param2=value2 and will be processed by the intro framework.
+<li><b>url</b> - A valid URL to an external web site, a static html file, or an Intro URL that represents an Intro action. All intro URLs have the following form:  http://org.eclipse.ui.intro/&lt;action name&gt;?param1=value1&amp;param2=value2 and will be processed by the intro framework.
+</ul>
 
 <br><br>
 The predefined actions will be described using this format:

@@ -187,7 +187,7 @@ The content file is parsed at run time by the intro framework. Based on the sett
          &lt;/implementation&gt;
          &lt;implementation
             style=&quot;css/shared_swt.properties&quot;
-            kind=&quot;swt&quot;
+            kind=&quot;swt&quot;&gt;
          &lt;/implementation&gt;
       &lt;/presentation&gt;
    &lt;/config&gt;
