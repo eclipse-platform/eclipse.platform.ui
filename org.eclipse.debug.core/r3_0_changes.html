@@ -81,6 +81,13 @@
   org.eclipse.debug.core.DebugPlugin</code>) is consulted to create a new process. 
   A launch configuration can reference a process factory to use when creating 
   a process, via the launch configuration attribute <code>DebugPlugin.ATTR_PROCESS_FACTORY_ID</code>.</p>
+<h3>Automatic Array Partitioning</h3>
+<p>The debug plug-in now supports automatic array patitioning in the variables, 
+  which paritiontions large arrays into subranges in the variables view. This 
+  is supported with the introduction of a new interface in the debug model representing 
+  an indexed value - <code>org.eclipse.core.debug.model.IIndexedValue</code>. 
+  If a value implements this interface, the variables view will automatically 
+  paritition its elements as required, into subranges.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
