@@ -51,7 +51,7 @@ public class InstallLogParser {
 	
 	public InstallLogParser(){
 		String loc = ConfiguratorUtils.getCurrentPlatformConfiguration().getConfigurationLocation().getFile();
-		logPath = new Path(loc).removeLastSegments(1).append(ConfigurationActivator.NAME_SPACE).append("install.log"); 
+		logPath = new Path(loc).removeLastSegments(1).append("install.log"); 
 		installConfigMap = new HashMap();
 		try {
 			InstallConfiguration[] configs = (InstallConfiguration[])SiteManager.getLocalSite().getConfigurationHistory();

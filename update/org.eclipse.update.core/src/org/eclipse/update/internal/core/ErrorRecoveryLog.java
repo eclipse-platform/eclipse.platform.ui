@@ -17,7 +17,6 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.*;
 
 
 /**
@@ -109,7 +108,7 @@ public class ErrorRecoveryLog {
 		String locationString = location.getFile();
 		File platformConfiguration = new File(locationString);
 		if (!platformConfiguration.isDirectory()) platformConfiguration = platformConfiguration.getParentFile();
-		return new File(platformConfiguration, ConfigurationActivator.NAME_SPACE + File.separator + ERROR_RECOVERY_LOG);
+		return new File(platformConfiguration, ERROR_RECOVERY_LOG);
 	}
 
 

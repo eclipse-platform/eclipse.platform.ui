@@ -15,7 +15,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.core.*;
 
 /**
@@ -234,7 +233,7 @@ public class SiteLocalModel extends ModelObject {
 	 */
 	private void processHistory() {
 		try {
-			URL historyURL = new URL(getLocationURL(), ConfigurationActivator.NAME_SPACE + '/' + "history");
+			URL historyURL = new URL(getLocationURL(), "history");
 			historyURL = Platform.asLocalURL(historyURL);
 			File historyDir = new File(historyURL.getFile());
 			if (historyDir.exists()) {

@@ -103,7 +103,6 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_INSTALL_BANNER  = create(PATH_WIZBAN, "def_wizban.jpg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_FORMS, "def_provider.jpg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ITEM = create(PATH_FORMS, "topic.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_NEW_SEARCH  = create(PATH_WIZBAN, "new_search_wiz.gif"); //$NON-NLS-1$
 
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));

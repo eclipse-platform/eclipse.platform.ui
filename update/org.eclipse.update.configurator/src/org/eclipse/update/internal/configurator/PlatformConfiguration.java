@@ -481,25 +481,30 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		} else {
 			// file protocol - do safe i/o
 			File cfigFile = new File(url.getFile().replace('/', File.separatorChar));
-			if (!cfigFile.getName().equals(CONFIG_NAME))
+			if (!cfigFile.getName().equals(CONFIG_NAME)) {
+				if (cfigFile.exists() && cfigFile.isFile()) {
+					Utils.log("Either specify the configuration directory or a file named platform.xml, not " + cfigFile.getName());
+					cfigFile = cfigFile.getParentFile();
+				}
+				cfigFile = new File(cfigFile, ConfigurationActivator.NAME_SPACE);
 				cfigFile = new File(cfigFile, CONFIG_NAME);
-			File cfigDir = cfigFile.getParentFile();
-			if (cfigDir != null && !cfigDir.exists())
-				cfigDir.mkdirs();
+			}
+			File workingDir = cfigFile.getParentFile();
+			if (workingDir != null && !workingDir.exists())
+				workingDir.mkdirs();
 
 			// Backup old file
-			File oldConfigFile = new File(cfigDir, CONFIG_NAME);
-			if (oldConfigFile.exists()){
-				File backupDir = new File(cfigDir, ConfigurationActivator.NAME_SPACE + File.separator+ CONFIG_HISTORY);
+			if (cfigFile.exists()){
+				File backupDir = new File(workingDir, CONFIG_HISTORY);
 				if (!backupDir.exists())
 					backupDir.mkdir();
-				File preservedFile = new File(backupDir, String.valueOf(oldConfigFile.lastModified())+".xml");
-				copy(oldConfigFile, preservedFile);
-				preservedFile.setLastModified(oldConfigFile.lastModified());
+				File preservedFile = new File(backupDir, String.valueOf(cfigFile.lastModified())+".xml");
+				copy(cfigFile, preservedFile);
+				preservedFile.setLastModified(cfigFile.lastModified());
 			}
 			
-			// If config.ini does not exist, generate it
-			writeConfigIni(cfigDir);
+			// If config.ini does not exist, generate it in the configuration area
+			writeConfigIni(workingDir.getParentFile());
 			
 			// first save the file as temp
 			File cfigTmp = new File(cfigFile.getAbsolutePath() + CONFIG_FILE_TEMP_SUFFIX);
@@ -624,7 +629,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// a new configuration is created. In either case the resulting
 		// configuration is written into the specified configuration area.
 
-		URL configFileURL = new URL(platformConfigLocation.getURL(),CONFIG_NAME);
+		URL configFileURL = new URL(platformConfigLocation.getURL(), ConfigurationActivator.NAME_SPACE + "/" + CONFIG_NAME);
 		try {	
 			// check concurrent use lock
 			// FIXME: might not need this method call.
@@ -641,7 +646,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					if (parentLocation == null)
 						throw new IOException(); // no platform.xml found, need to create default site
 					
-					URL sharedConfigFileURL = new URL(parentLocation.getURL(), CONFIG_NAME);
+					URL sharedConfigFileURL = new URL(parentLocation.getURL(), ConfigurationActivator.NAME_SPACE + "/" + CONFIG_NAME);
 
 					config = loadConfig(sharedConfigFileURL);
 					
@@ -964,7 +969,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			props.store(new FileOutputStream(configIni), "Linked configuration");
 			
 			config = new Configuration(new Date());
-			config.setURL(new URL(newConfigLocation.getURL(), CONFIG_NAME));
+			config.setURL(new URL(newConfigLocation.getURL(), ConfigurationActivator.NAME_SPACE + "/" + CONFIG_NAME));
 			config.setLinkedConfig(sharedConfig);
 			config.setDirty(true);
 		} catch (IOException e) {

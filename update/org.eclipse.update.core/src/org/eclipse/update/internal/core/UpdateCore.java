@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
 import org.osgi.util.tracker.ServiceTracker;
@@ -193,7 +192,7 @@ public class UpdateCore extends Plugin {
 			// ensure path exists. Handle transient configurations
 			ArrayList list = new ArrayList();
 			File path = new File(configLocation.getFile());
-			updateStateLocation = new File(path.getParentFile(), ConfigurationActivator.NAME_SPACE + File.separator + LOG_FILE);
+			updateStateLocation = new File(path.getParentFile(), LOG_FILE);
 			while (path != null) { // walk up to first dir that exists
 				if (!path.exists()) {
 					list.add(path);
