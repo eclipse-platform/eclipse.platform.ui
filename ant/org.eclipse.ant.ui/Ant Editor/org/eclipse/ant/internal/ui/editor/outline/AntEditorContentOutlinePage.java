@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
@@ -480,19 +481,31 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private void addOpenWithMenu(IMenuManager menuManager) {
 		AntElementNode element= getSelectedNode();
-		String path = element.getFilePath();
-		if (path != null) {
-			IFile file= AntUtil.getFileForLocation(path, null);
-			if (file != null) {
-				menuManager.add(new Separator("group.open")); //$NON-NLS-1$
-				IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
-				openWithMenu.setFile(file);
-				submenu.add(openWithMenu);
-				menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
-			}
+		IFile file = getFileForNavigation(element);
+		if (file != null) {
+			menuManager.add(new Separator("group.open")); //$NON-NLS-1$
+			IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
+			openWithMenu.setFile(file);
+			submenu.add(openWithMenu);
+			menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
 		}
 	}
 	
+	private IFile getFileForNavigation(AntElementNode node) {
+		IFile file;
+		if (node.isExternal()) {
+			String filePath= node.getFilePath();
+			file= AntUtil.getFileForLocation(filePath, null);
+		} else if (node instanceof AntImportNode) {
+			String path= ((AntImportNode)node).getFile();
+			file= AntUtil.getFileForLocation(path, fModel.getEditedFile().getParentFile());
+		} else {
+			LocationProvider locationProvider= fModel.getLocationProvider();
+			file= locationProvider.getFile();
+		}
+		return file;
+	}
+
 	private void addRunTargetMenu(IMenuManager menuManager) {
 		menuManager.add(this.runTargetImmediately);
 		menuManager.add(this.runAnt);                   
@@ -514,7 +527,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				if (path != null && path.length() > 0) {
 					return true;
 				}
-			}	
+			} else if (node instanceof AntImportNode) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -549,13 +564,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		IFile file= null;
 		if (fModel != null) {
 			AntElementNode node= getSelectedNode();
-			if (node.isExternal()) {
-				String filePath= node.getFilePath();
-				file= AntUtil.getFileForLocation(filePath, null);
-			} else {
-				LocationProvider locationProvider= fModel.getLocationProvider();
-				file= locationProvider.getFile();
-			}
+			file= getFileForNavigation(node);
 		}
 		if (file != null) {
 			ISelection selection= new StructuredSelection(file);
