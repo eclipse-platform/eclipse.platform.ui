@@ -132,13 +132,13 @@ public class BranchWizardPage extends CVSWizardPage {
 		} else {
 			IStatus status = CVSTag.validateTagName(branch);
 			if (!status.isOK()) {
-				setMessage(status.getMessage(), WARNING_MESSAGE);
+				setMessage(Policy.bind("BranchWizard.branchNameWarning", status.getMessage()), WARNING_MESSAGE); //$NON-NLS-1$
 				complete = false;
 			} else {
 				if(versionText!=null) {
 					status = CVSTag.validateTagName(versionText.getText());
 					if (!status.isOK()) {
-						setMessage(status.getMessage(), WARNING_MESSAGE);
+						setMessage(Policy.bind("BranchWizard.versionNameWarning", status.getMessage()), WARNING_MESSAGE); //$NON-NLS-1$
 						complete = false;
 					} else {
 						if(versionText.getText().equals(branch)) {
