@@ -40,9 +40,9 @@ public interface IExtensionPoint {
 	 */
 	public IExtension[] getExtensions();
 	/** 
-	 * Returns the identifier of the parent that declares this extension.
+	 * Returns the identifier of the parent that declares this extension point.
 	 *
-	 * @return the name of the parent that declares this extension
+	 * @return the name of the parent that declares this extension point
 	 */
 	public String getParentIdentifier();
 	/**
