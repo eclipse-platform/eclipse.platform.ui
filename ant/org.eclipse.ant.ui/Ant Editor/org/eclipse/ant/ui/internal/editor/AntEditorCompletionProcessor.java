@@ -491,7 +491,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 }
                  
                 String replacementString = new StringBuffer("${").append(propertyName).append('}').toString();  //$NON-NLS-1$
-                Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY_PROPOSAL);
+                Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
                 
                 ICompletionProposal proposal = 
                     new CompletionProposal(

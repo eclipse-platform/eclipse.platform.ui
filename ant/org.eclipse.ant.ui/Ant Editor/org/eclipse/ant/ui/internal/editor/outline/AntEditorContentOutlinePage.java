@@ -192,7 +192,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 			
 			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
-				return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY_PROPOSAL);
+				return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 			}
 			
 			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
