@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * This interface is not intended to be implemented by clients.
  * </p>
  * @see IJobChangeListener
+ * @since 3.0
  */
 public interface IJobChangeEvent {
 	/**
