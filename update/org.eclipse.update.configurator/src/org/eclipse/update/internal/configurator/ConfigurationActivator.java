@@ -29,7 +29,9 @@ public class ConfigurationActivator implements BundleActivator {
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
 	// debug values
 	public static boolean DEBUG = false;
-
+	// os
+	private static boolean isWindows = System.getProperty("os.name").startsWith("Win");
+	
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
 	private ServiceRegistration configurationFactorySR;
@@ -294,8 +296,21 @@ public class ConfigurationActivator implements BundleActivator {
 		Bundle[] installed = context.getBundles();
 		for (int i = 0; i < installed.length; i++) {
 			Bundle bundle = installed[i];
-			if (location.equalsIgnoreCase(bundle.getLocation()))
-				return true;
+			String bundleLocation = bundle.getLocation();
+			// On Windows, do case insensitive test
+			if (isWindows) {
+				if (location.equalsIgnoreCase(bundleLocation))
+					return true;
+				// may need to add a trailing slash to the location
+				if ((location+'/').equalsIgnoreCase(bundleLocation))
+					return true;
+			} else {
+				if (location.equals(bundleLocation))
+					return true;
+				// may need to add a trailing slash to the location
+				if ((location+'/').equals(bundleLocation))
+					return true;
+			}
 		}
 		return false;
 	}
