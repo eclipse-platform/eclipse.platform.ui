@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.IEditorReference;
@@ -42,6 +43,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
@@ -61,10 +63,13 @@ public class CyclePartAction extends PageEventAction {
 
 	/**
 	 * Creates a CyclePartAction.
+	 * @param window The workbench window on which the dialog should be created.
+	 * @param next Whether the action is to move to the next part (as opposed
+	 * to the previous).
 	 */
-	public CyclePartAction(IWorkbenchWindow window, boolean forward) {
+	public CyclePartAction(IWorkbenchWindow window, boolean next) {
 		super("", window); //$NON-NLS-1$
-		this.forward = forward;
+		forward = next;
 		setText();
 		updateState();
 	}
@@ -394,12 +399,11 @@ public class CyclePartAction extends PageEventAction {
 			}
 		});
 
-		// TODO Bold cast to Workbench
-		final Workbench workbench = (Workbench) page.getWorkbenchWindow().getWorkbench();
+		final IWorkbenchContextSupport contextSupport = page.getWorkbenchWindow().getWorkbench().getContextSupport();
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
-			workbench.getCommandSupport().setKeyFilterEnabled(false);
+			contextSupport.registerShell(dialog, IWorkbenchContextSupport.TYPE_NONE);
 			addKeyListener(table, dialog);
 			addTraverseListener(table);
 
@@ -409,7 +413,7 @@ public class CyclePartAction extends PageEventAction {
 		} finally {
 			if (!dialog.isDisposed())
 				cancel(dialog);
-			workbench.getCommandSupport().setKeyFilterEnabled(true);
+			contextSupport.unregisterShell(dialog);
 		}
 	}
 

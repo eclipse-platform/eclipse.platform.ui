@@ -23,11 +23,6 @@ import org.eclipse.swt.widgets.Listener;
 public class OutOfOrderListener implements Listener {
 
 	/**
-	 * Whether the incoming key event should be allowed to only match keyboard 
-	 * shortcuts intended for dialogs.
-	 */
-	private final boolean dialog; 
-	/**
 	 * The keyboard interface to which the event should be passed if it is not
 	 * eaten.
 	 */
@@ -41,13 +36,9 @@ public class OutOfOrderListener implements Listener {
 	 * @param workbenchKeyboard
 	 *            The keyboard interface for the workbench capable of
 	 *            processing key bindings; must not be <code>null</code>.
-	 * @param dialogOnly
-	 *            Whether the keyboard shortcuts should only be allowed to
-	 *            match on dialog key bindings.
 	 */
-	public OutOfOrderListener(WorkbenchKeyboard workbenchKeyboard, boolean dialogOnly) {
+	public OutOfOrderListener(WorkbenchKeyboard workbenchKeyboard) {
 		keyboard = workbenchKeyboard;
-		dialog = dialogOnly;
 	}
 
 	/**
@@ -69,7 +60,7 @@ public class OutOfOrderListener implements Listener {
 		 */
 		if (event.doit) {
 			List keyStrokes = WorkbenchKeyboard.generatePossibleKeyStrokes(event);
-			keyboard.processKeyEvent(keyStrokes, event, dialog);
+			keyboard.processKeyEvent(keyStrokes, event);
 		}
 	}
 }

@@ -18,18 +18,22 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IAction;
+
 import org.eclipse.swt.widgets.Event;
+
+import org.eclipse.jface.action.IAction;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 
 /**
  * Tests Bug 43321
@@ -80,9 +84,9 @@ public class Bug43321Test extends UITestCase {
         keyStrokes.add(KeyStroke.getInstance("CTRL+C")); //$NON-NLS-1$
         Event event = new Event();
         Workbench workbench = ((Workbench) window.getWorkbench());
-        WorkbenchCommandSupport support = (WorkbenchCommandSupport) workbench
-                .getCommandSupport();
-        support.getKeyboard().press(keyStrokes, event, false);
+        WorkbenchContextSupport support = (WorkbenchContextSupport) workbench
+                .getContextSupport();
+        support.getKeyboard().press(keyStrokes, event);
 
         // Get the menu item we've just selected.
         IAction action = editor.getEditorSite().getActionBars()

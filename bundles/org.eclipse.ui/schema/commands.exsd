@@ -287,6 +287,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          </attribute>
       </complexType>
    </element>
+
 <!--element name="sequence">
       <complexType>
          <sequence>
@@ -344,6 +345,45 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <annotation>
                <documentation>
                   The unique id of the parent context. If this context has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own context.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="handler">
+      <annotation>
+         <documentation>
+            &lt;p&gt;
+This element declares a handler for a command.  This handler is then associated with the command with the given restrictions.  This association is done at start-up.  Associating a handler does not mean that this handler will always be the one chosen by the workbench; the actual choice is done by examining the workbench state and comparing with the various handler submissions.
+&lt;/p&gt;
+&lt;p&gt;
+This particular API should still be considered experimental.  While you may use it, you must be willing to accept that this API may change radically or be removed entirely at some point in the future.  We appreciate feedback on this API to &lt;a href=&quot;mailto:platform-ui-dev@eclipse.org&quot;&gt;platform-ui-dev@eclipse.org&lt;/a&gt;.
+&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="commandId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The identifier of the command to which this handler should be associated.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the class of the handler.  If the class is an implementation of IExecutableExtension, then it is possible to pass data into the object.  This handler will be proxied until the handler is queried for information -- at which point the class will be loaded, and an instance created.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="java.lang.Object"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  The priority of this handler.  In the event of all other conditions being equal between two possible handlers, a comparison of the priorities will be done.  If the handler with the higher priority will become the active handler.  If the comparison is still a tie, both will be inactive.  The default value is 4.
                </documentation>
             </annotation>
          </attribute>

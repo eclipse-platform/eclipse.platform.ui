@@ -94,7 +94,7 @@ public final class KeySequence implements Comparable {
 	 * Gets an instance of <code>KeySequence</code> given a key sequence and
 	 * a key stroke.
 	 * 
-	 * @param KeySequence
+	 * @param keySequence
 	 *            a key sequence. Must not be <code>null</code>.
 	 * @param keyStroke
 	 *            a key stroke. Must not be <code>null</code>.
@@ -206,13 +206,13 @@ public final class KeySequence implements Comparable {
 	 * Constructs an instance of <code>KeySequence</code> given a list of key
 	 * strokes.
 	 * 
-	 * @param keyStrokes
+	 * @param newKeyStrokes
 	 *            the list of key strokes. This list may be empty, but it must
 	 *            not be <code>null</code>. If this list is not empty, it
 	 *            must only contain instances of <code>KeyStroke</code>.
 	 */
-	private KeySequence(List keyStrokes) {
-		this.keyStrokes = Util.safeCopy(keyStrokes, KeyStroke.class);
+	private KeySequence(List newKeyStrokes) {
+		this.keyStrokes = Util.safeCopy(newKeyStrokes, KeyStroke.class);
 
 		for (int i = 0; i < this.keyStrokes.size() - 1; i++) {
 			KeyStroke keyStroke = (KeyStroke) this.keyStrokes.get(i);

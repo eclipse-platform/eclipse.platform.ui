@@ -24,11 +24,13 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 
 	private CommandRegistryEvent commandRegistryEvent;
 	private List commandRegistryListeners;
+	protected List handlers = Collections.EMPTY_LIST;
 	protected List imageBindingDefinitions = Collections.EMPTY_LIST;
 	protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;
 	protected List keySequenceBindingDefinitions = Collections.EMPTY_LIST;
 
 	protected AbstractCommandRegistry() {
+	    // Do nothing
 	}
 
 	public void addCommandRegistryListener(ICommandRegistryListener commandRegistryListener) {
@@ -71,6 +73,16 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 	public List getCommandDefinitions() {
 		return commandDefinitions;
 	}
+
+    /**
+     * An accessor for the handlers read into this registry.
+     * 
+     * @return The list of handlers; this value may be empty, but it is never
+     *         <code>null</code>.
+     */
+    public List getHandlers() {
+        return handlers;
+    }
 
 	public List getImageBindingDefinitions() {
 		return imageBindingDefinitions;

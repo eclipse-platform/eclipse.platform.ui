@@ -22,7 +22,10 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.commands.IHandler;
+
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
@@ -32,6 +35,13 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	private List categoryDefinitions;
 	private List commandDefinitions;
 	private IExtensionRegistry extensionRegistry;
+	/**
+	 * The valid handlers read from XML.  This list is <code>null</code> until
+	 * the first call to <code>load</code>.  After this, it will contain a list
+	 * of all the handlers read during the most recent call to 
+	 * <code>load</code>.
+	 */
+	private List handlers;
 	private List imageBindingDefinitions;
 	private List keyConfigurationDefinitions;
 	private List keySequenceBindingDefinitions;
@@ -55,6 +65,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 					try {
 						load();
 					} catch (IOException eIO) {
+					    // Do nothing
 					}
 			}
 		});
@@ -62,6 +73,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		try {
 			load();
 		} catch (IOException eIO) {
+		    // Do nothing
 		}
 	}
 
@@ -98,6 +110,12 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 			commandDefinitions = new ArrayList();
 		else
 			commandDefinitions.clear();
+		
+		if (handlers == null) {
+		    handlers = new ArrayList();
+		} else {
+		    handlers.clear();
+		}
 
 		if (imageBindingDefinitions == null)
 			imageBindingDefinitions = new ArrayList();
@@ -197,7 +215,9 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 				readCategoryDefinition(configurationElement);
 			else if (Persistence.TAG_COMMAND.equals(name))
 				readCommandDefinition(configurationElement);
-			else if (Persistence.TAG_IMAGE_BINDING.equals(name))
+			else if (Persistence.TAG_HANDLER.equals(name)) {
+			    readHandlerDefinition(configurationElement);
+			} else if (Persistence.TAG_IMAGE_BINDING.equals(name))
 				readImageBindingDefinition(configurationElement);
 			else if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
 				readKeyConfigurationDefinition(configurationElement);
@@ -230,6 +250,11 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		if (!commandDefinitions.equals(super.commandDefinitions)) {
 			super.commandDefinitions =
 				Collections.unmodifiableList(commandDefinitions);
+			commandRegistryChanged = true;
+		}
+
+		if (!handlers.equals(super.handlers)) {
+			super.handlers = Collections.unmodifiableList(handlers);
 			commandRegistryChanged = true;
 		}
 
@@ -296,6 +321,22 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 		if (commandDefinition != null)
 			commandDefinitions.add(commandDefinition);
+	}
+
+	/**
+	 * Reads the handler definition from XML -- creating a proxy to submit to
+	 * the workbench command support.  If the handler definition is valid, then
+	 * it will be added to <code>handlers</code> to be picked up later.
+	 * 
+	 * @param configurationElement The configuration element from which to read;
+	 * must not be <code>null</code>.
+	 */
+	private final void readHandlerDefinition(final IConfigurationElement configurationElement) {
+	    final IHandler handler =
+			Persistence.readHandlerDefinition(configurationElement);
+
+		if (handler != null)
+			handlers.add(handler);
 	}
 
 	private void readImageBindingDefinition(IConfigurationElement configurationElement) {

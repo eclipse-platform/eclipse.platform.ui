@@ -59,6 +59,7 @@
       <context
             name="%context.editingText.name"
             description="%context.editingText.description"
+            parentId="org.eclipse.ui.contexts.window"
             id="org.eclipse.ui.textEditorScope">
       </context>
       <context
@@ -67,6 +68,36 @@
             parentId="org.eclipse.ui.textEditorScope"
             id="org.eclipse.jdt.ui.javaEditorScope">
       </context>
+      <!-- This is the root context.  Basically, all key bindings should have
+           this context as their parent.  Key bindings in this context will
+           apply to both windows and dialogs.
+        -->
+      <context
+            name="%context.dialogAndWindow.name"
+            description="%context.dialogAndWindow.description"
+            id="org.eclipse.ui.contexts.dialogAndWindow">
+      </context>
+      <!-- This is the root context for key bindings that should apply in
+           windows (e.g., IWorkbenchWindow).  Key bindings in this context
+           will only apply to windows (not dialogs).
+        -->
+      <context
+            name="%context.window.name"
+            description="%context.window.description"
+            parentId="org.eclipse.ui.contexts.dialogAndWindow"
+            id="org.eclipse.ui.contexts.window">
+      </context>
+      <!-- This is the root context for key bindings that should apply in
+           dialogs (e.g., shells without parents).  Key bindings in this
+           context will only apply to dialogs (not windows).
+        -->
+      <context
+            name="%context.dialog.name"
+            description="%context.dialog.description"
+            parentId="org.eclipse.ui.contexts.dialogAndWindow"
+            id="org.eclipse.ui.contexts.dialog">
+      </context>
+      
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -451,6 +482,18 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.savePerspective">
       </command>
+      <handler
+            commandId="org.eclipse.ui.edit.copy"
+            class="org.eclipse.ui.handlers.WidgetMethodHandler:copy" />
+      <handler
+            commandId="org.eclipse.ui.edit.cut"
+            class="org.eclipse.ui.handlers.WidgetMethodHandler:cut" />
+      <handler
+            commandId="org.eclipse.ui.edit.paste"
+            class="org.eclipse.ui.handlers.WidgetMethodHandler:paste" />
+      <handler
+            commandId="org.eclipse.ui.edit.selectAll"
+            class="org.eclipse.ui.handlers.WidgetMethodHandler:selectAll" />
       <keyBinding
             commandId="org.eclipse.ui.newWizard"
             keySequence="Ctrl+N"
@@ -508,22 +551,26 @@
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.cut"
-            keySequence="Ctrl+X"
+            keySequence="M1+X"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.copy"
-            keySequence="Ctrl+C"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            keySequence="M1+C"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.paste"
-            keySequence="Ctrl+V"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            keySequence="M1+V"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.selectAll"
-            keySequence="Ctrl+A"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            keySequence="M1+A"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
@@ -758,30 +805,6 @@
       </keyBinding>
       <keyBinding
             platform="carbon"
-            commandId="org.eclipse.ui.edit.cut"
-            keySequence="Command+X"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            commandId="org.eclipse.ui.edit.copy"
-            keySequence="Command+C"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            commandId="org.eclipse.ui.edit.paste"
-            keySequence="Command+V"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            commandId="org.eclipse.ui.edit.selectAll"
-            keySequence="Command+A"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.edit.findReplace"
             keySequence="Command+F"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -843,36 +866,42 @@
       <keyBinding
             platform="gtk"
             commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Shift+Del"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="gtk"
             commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Ctrl+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="gtk"
             commandId="org.eclipse.ui.edit.paste"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Shift+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="motif"
             commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Shift+Del"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="motif"
             commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Ctrl+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="motif"
             commandId="org.eclipse.ui.edit.paste"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Shift+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -928,41 +957,49 @@
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Ctrl+W"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Shift+Del"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Alt+W"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Esc W"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.copy"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Ctrl+Ins"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.paste"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Ctrl+Y"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.paste"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Shift+Ins"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.selectAll"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Ctrl+X H"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>

@@ -33,6 +33,17 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CommandResolver;
 import org.eclipse.jface.action.IAction;
@@ -50,15 +61,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -89,6 +92,13 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.SWTKeySupport;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.themes.IThemeManager;
+
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
@@ -106,12 +116,7 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
-import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.SWTKeySupport;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.themes.IThemeManager;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -519,7 +524,7 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create(); // must be created before adding to window manager
 		windowManager.add(newWindow);
-		getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
+		getContextSupport().registerShell(newWindow.getShell(), IWorkbenchContextSupport.TYPE_WINDOW);
 
 		// Create the initial page.
 		try {
@@ -917,10 +922,7 @@ public final class Workbench implements IWorkbench {
 		forceOpenPerspective();
 
 		isStarting = false;
-		
-		workbenchCommandSupport.setProcessingHandlerSubmissions(true);
-		workbenchContextSupport.setProcessingEnabledSubmissions(true);
-		
+				
 		return true;
 	}
 
@@ -1074,7 +1076,7 @@ public final class Workbench implements IWorkbench {
 		WorkbenchWindow newWindow = newWorkbenchWindow();
 		newWindow.create();
 		windowManager.add(newWindow);
-		getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
+		getContextSupport().registerShell(newWindow.getShell(), IWorkbenchContextSupport.TYPE_WINDOW);
 
 		// Create the initial page.
 		try {
@@ -1249,7 +1251,7 @@ public final class Workbench implements IWorkbench {
 			childMem = children[x];
 			WorkbenchWindow newWindow = newWorkbenchWindow();
 			newWindow.create();
-			getCommandSupport().registerForKeyBindings(newWindow.getShell(), false);
+			getContextSupport().registerShell(newWindow.getShell(), IWorkbenchContextSupport.TYPE_WINDOW);
 
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective
@@ -1384,13 +1386,15 @@ public final class Workbench implements IWorkbench {
 				event.doit = close();
 			}
 		};
+		
+		// Initialize an exception handler.
+		Window.IExceptionHandler handler = new ExceptionHandler();
 
 		try {
 			// react to display close event by closing workbench nicely
 			display.addListener(SWT.Close, closeListener);
 
 			// install backstop to catch exceptions thrown out of event loop
-			Window.IExceptionHandler handler = new ExceptionHandler();
 			Window.setExceptionHandler(handler);
 
 			// initialize workbench and restore or open one window
@@ -1427,6 +1431,12 @@ public final class Workbench implements IWorkbench {
 
 			// shutdown in an orderly way after event loop finishes
 			shutdown();
+			
+		} catch (final Exception e) {
+		    if (!display.isDisposed()) {
+		        handler.handleException(e);
+		    }
+	        
 		} finally {
 			// mandatory clean up
 			if (!display.isDisposed()) {

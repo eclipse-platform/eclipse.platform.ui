@@ -17,32 +17,110 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.ContextManagerFactory;
 import org.eclipse.ui.contexts.EnabledSubmission;
+import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IMutableContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.NotDefinedException;
+
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.contexts.ProxyContextManager;
+import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 
+/**
+ * Provides support for contexts within the workbench -- including key bindings,
+ * and some default contexts for shell types.
+ * 
+ * @since 3.0
+ */
 public class WorkbenchContextSupport implements IWorkbenchContextSupport {
+
+    /**
+     * Whether the workbench context support should kick into debugging mode.
+     * This causes the list of context identifier to the be reported before
+     * every call to change the context identifiers.
+     */
+    private static final boolean DEBUG = Policy.DEBUG_CONTEXTS;
+
+    /**
+     * Whether the workbench context support should kick into verbose debugging
+     * mode. This causes each context change to print out a bit of the current
+     * stack -- letting you know what caused the context change to occur.
+     */
+    private static final boolean DEBUG_VERBOSE = Policy.DEBUG_CONTEXTS_VERBOSE;
+
+    /**
+     * The number of stack trace elements to show when the contexts have
+     * changed. This is used for debugging purposes to show what caused a
+     * context switch to occur.
+     */
+    private static final int DEBUG_STACK_LENGTH_TO_SHOW = 5;
+
+    /**
+     * Listens for shell activation events, and updates the list of enabled
+     * contexts appropriately. This is used to keep the enabled contexts
+     * synchronized with respect to the <code>activeShell</code> condition.
+     */
+    private Listener activationListener = new Listener() {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+         */
+        public void handleEvent(Event event) {
+            checkWindowType(event.display.getActiveShell());
+        }
+    };
+
+    /**
+     * The currently active shell. This value is never <code>null</code>.
+     */
+    private Shell activeShell;
 
     private IWorkbenchSite activeWorkbenchSite;
 
+    /**
+     * The workbench window on which the listeners are currently attached.
+     */
     private IWorkbenchWindow activeWorkbenchWindow;
 
     private Map enabledSubmissionsByContextId = new HashMap();
+
+    /**
+     * The key binding support for the contexts. In the workbench, key bindings
+     * are intimately tied to the context mechanism.
+     */
+    private final WorkbenchKeyboard keyboard;
+
+    /**
+     * Whether the key binding service is currently active. That is, whether it
+     * is currently listening for (and possibly eating) key events on the
+     * display.
+     */
+    private volatile boolean keyFilterEnabled;
 
     private IMutableContextManager mutableContextManager;
 
@@ -97,37 +175,46 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         }
     };
 
-    private boolean processingEnabledSubmissions;
-
     private ProxyContextManager proxyContextManager;
 
-    private IWindowListener windowListener = new IWindowListener() {
-
-        public void windowActivated(IWorkbenchWindow window) {
-            processEnabledSubmissions(false);
-        }
-
-        public void windowClosed(IWorkbenchWindow window) {
-            processEnabledSubmissions(false);
-        }
-
-        public void windowDeactivated(IWorkbenchWindow window) {
-            processEnabledSubmissions(false);
-        }
-
-        public void windowOpened(IWorkbenchWindow window) {
-            processEnabledSubmissions(false);
-        }
-    };
+    /**
+     * This is a map of shell to a list of submissions. When a shell is
+     * registered, it is added to this map with the list of submissions that
+     * should be submitted when the shell is active. When the shell is
+     * deactivated, this same list should be withdrawn. A shell is removed from
+     * this map using the {@link #unregisterShell(Shell)}method. This value may
+     * be empty, but is never <code>null</code>. The <code>null</code> key
+     * is reserved for active shells that have not been registered but have a
+     * parent (i.e., default dialog service).
+     */
+    private final Map registeredWindows = new WeakHashMap();
 
     private Workbench workbench;
 
-    public WorkbenchContextSupport(Workbench workbench) {
-        this.workbench = workbench;
+    /**
+     * Constructs a new instance of <code>WorkbenchCommandSupport</code>.
+     * This attaches the key binding support, and adds a global shell activation
+     * filter.
+     * 
+     * @param workbenchToSupport
+     *            The workbench that needs to be supported by this instance;
+     *            must not be <code>null</code>.
+     */
+    public WorkbenchContextSupport(final Workbench workbenchToSupport) {
+        workbench = workbenchToSupport;
         mutableContextManager = ContextManagerFactory
                 .getMutableContextManager();
         proxyContextManager = new ProxyContextManager(mutableContextManager);
-        workbench.addWindowListener(windowListener);
+
+        // Hook up the key binding support.
+        keyboard = new WorkbenchKeyboard(workbench, workbench
+                .getActivitySupport().getActivityManager(), workbench
+                .getCommandSupport().getCommandManager());
+        setKeyFilterEnabled(true);
+
+        // And hook up a shell activation filter.
+        workbenchToSupport.getDisplay().addFilter(SWT.Activate,
+                activationListener);
     }
 
     public void addEnabledSubmissions(List enabledSubmissions) {
@@ -154,85 +241,169 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         processEnabledSubmissions(true);
     }
 
+    /**
+     * Checks whether the new active shell is registered. If it is already
+     * registered, then it does no work. If it is not registered, then it checks
+     * what type of contexts the shell should have by default. This is
+     * determined by parenting. A shell with no parent receives no contexts. A
+     * shell with a parent, receives the dialog contexts.
+     * 
+     * @param newShell
+     *            The newly active shell; may be <code>null</code> or
+     *            disposed.
+     */
+    private final void checkWindowType(final Shell newShell) {
+        boolean submissionsProcessed = false;
+        final Shell oldShell = activeShell;
+
+        /*
+         * If the previous active shell was recognized as a dialog by default,
+         * then remove its submissions.
+         */
+        List oldSubmissions = (List) registeredWindows.get(oldShell);
+        if (oldSubmissions == null) {
+            /*
+             * The old shell wasn't registered. So, we need to check if it was
+             * considered a dialog by default.
+             */
+            oldSubmissions = (List) registeredWindows.get(null);
+            if (oldSubmissions != null) {
+                removeEnabledSubmissions(oldSubmissions);
+                submissionsProcessed = true;
+            }
+        }
+
+        /*
+         * If the new active shell is recognized as a dialog by default, then
+         * create some submissions, remember them, and submit them for
+         * processing.
+         */
+        if ((newShell != null) && (!newShell.isDisposed())
+                && (newShell.getParent() != null)) {
+            List newSubmissions = new ArrayList();
+            newSubmissions.add(new EnabledSubmission(newShell, null,
+                    CONTEXT_ID_DIALOG_AND_WINDOW));
+            newSubmissions.add(new EnabledSubmission(newShell, null,
+                    CONTEXT_ID_DIALOG));
+            addEnabledSubmissions(newSubmissions);
+            registeredWindows.put(newShell, newSubmissions);
+            submissionsProcessed = true;
+        }
+
+        // If we still haven't reprocessed the submissions, then do it now.
+        if (!submissionsProcessed) {
+            processEnabledSubmissions(false, newShell);
+        }
+    }
+
     public IContextManager getContextManager() {
         return proxyContextManager;
     }
 
-    public final boolean isProcessingEnabledSubmissions() {
-        return processingEnabledSubmissions;
+    /**
+     * An accessor for the underlying key binding support. This method is
+     * internal, and is not intended to be used by clients. It is currently only
+     * used for testing purposes.
+     * 
+     * @return A reference to the key binding support; never <code>null</code>.
+     */
+    public final WorkbenchKeyboard getKeyboard() {
+        return keyboard;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#isKeyFilterEnabled()
+     */
+    public boolean isKeyFilterEnabled() {
+        synchronized (keyboard) {
+            return keyFilterEnabled;
+        }
     }
 
     private void processEnabledSubmissions(boolean force) {
-        IPerspectiveDescriptor activePerspectiveDescriptor = null;
-        IWorkbenchSite activeWorkbenchSite = null;
-        IWorkbenchWindow activeWorkbenchWindow = workbench
+        processEnabledSubmissions(force, workbench.getDisplay()
+                .getActiveShell());
+    }
+
+    private void processEnabledSubmissions(boolean force,
+            final Shell newActiveShell) {
+        IWorkbenchSite newActiveWorkbenchSite = null;
+        final IWorkbenchWindow newActiveWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
+        boolean update = false;
 
-        if (this.activeWorkbenchWindow != activeWorkbenchWindow) {
-            if (this.activeWorkbenchWindow != null) {
-                this.activeWorkbenchWindow.removePageListener(pageListener);
-                this.activeWorkbenchWindow
-                        .removePerspectiveListener(perspectiveListener);
-                this.activeWorkbenchWindow.getPartService().removePartListener(
-                        partListener);
-            }
-
-            this.activeWorkbenchWindow = activeWorkbenchWindow;
-
-            if (this.activeWorkbenchWindow != null) {
-                this.activeWorkbenchWindow.addPageListener(pageListener);
-                this.activeWorkbenchWindow
-                        .addPerspectiveListener(perspectiveListener);
-                this.activeWorkbenchWindow.getPartService().addPartListener(
-                        partListener);
-            }
+        // Update the active shell, and swap the listener.
+        if (activeShell != newActiveShell) {
+            activeShell = newActiveShell;
+            update = true;
         }
 
-        if (activeWorkbenchWindow != null) {
-            IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow
+        // Update the active workbench window, and swap the listeners.
+        if (activeWorkbenchWindow != newActiveWorkbenchWindow) {
+            if (activeWorkbenchWindow != null) {
+                activeWorkbenchWindow.removePageListener(pageListener);
+                activeWorkbenchWindow
+                        .removePerspectiveListener(perspectiveListener);
+                activeWorkbenchWindow.getPartService().removePartListener(
+                        partListener);
+            }
+
+            if (newActiveWorkbenchWindow != null) {
+                newActiveWorkbenchWindow.addPageListener(pageListener);
+                newActiveWorkbenchWindow
+                        .addPerspectiveListener(perspectiveListener);
+                newActiveWorkbenchWindow.getPartService().addPartListener(
+                        partListener);
+            }
+
+            activeWorkbenchWindow = newActiveWorkbenchWindow;
+            update = true;
+        }
+
+        /*
+         * Get a reference to the active workbench site on the new active
+         * workbench window.
+         */
+        if (newActiveWorkbenchWindow != null) {
+            IWorkbenchPage activeWorkbenchPage = newActiveWorkbenchWindow
                     .getActivePage();
 
             if (activeWorkbenchPage != null) {
-                activePerspectiveDescriptor = activeWorkbenchPage
-                        .getPerspective();
-
                 IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
                         .getActivePart();
 
                 if (activeWorkbenchPart != null)
-                        activeWorkbenchSite = activeWorkbenchPart.getSite();
+                        newActiveWorkbenchSite = activeWorkbenchPart.getSite();
             }
         }
 
-        if (force
-                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)
-                || !Util.equals(this.activeWorkbenchWindow,
-                        activeWorkbenchWindow)) {
-            this.activeWorkbenchSite = activeWorkbenchSite;
-            this.activeWorkbenchWindow = activeWorkbenchWindow;
-            Set enabledContextIds = new HashSet();
+        if (force || update
+                || !Util.equals(activeWorkbenchSite, newActiveWorkbenchSite)) {
+            activeWorkbenchSite = newActiveWorkbenchSite;
+            final Set enabledContextIds = new HashSet();
 
             for (Iterator iterator = enabledSubmissionsByContextId.entrySet()
                     .iterator(); iterator.hasNext();) {
-                Map.Entry entry = (Map.Entry) iterator.next();
-                String contextId = (String) entry.getKey();
-                List enabledSubmissions = (List) entry.getValue();
+                final Map.Entry entry = (Map.Entry) iterator.next();
+                final String contextId = (String) entry.getKey();
+                final List enabledSubmissions = (List) entry.getValue();
 
                 for (int i = 0; i < enabledSubmissions.size(); i++) {
                     EnabledSubmission enabledSubmission = (EnabledSubmission) enabledSubmissions
                             .get(i);
+
+                    Shell activeShell2 = enabledSubmission.getActiveShell();
+
+                    if (activeShell2 != null && activeShell2 != newActiveShell)
+                            continue;
+
                     IWorkbenchSite activeWorkbenchSite2 = enabledSubmission
                             .getActiveWorkbenchSite();
 
                     if (activeWorkbenchSite2 != null
-                            && activeWorkbenchSite2 != activeWorkbenchSite)
-                            continue;
-
-                    IWorkbenchWindow activeWorkbenchWindow2 = enabledSubmission
-                            .getActiveWorkbenchWindow();
-
-                    if (activeWorkbenchWindow2 != null
-                            && activeWorkbenchWindow2 != activeWorkbenchWindow)
+                            && activeWorkbenchSite2 != newActiveWorkbenchSite)
                             continue;
 
                     enabledContextIds.add(contextId);
@@ -240,8 +411,146 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 }
             }
 
+            // Check to see whether a dialog or window is active.
+            Iterator contextIdItr = enabledContextIds.iterator();
+            boolean dialog = false;
+            boolean window = false;
+            while (contextIdItr.hasNext()) {
+                final String contextId = (String) contextIdItr.next();
+                if (CONTEXT_ID_DIALOG.equals(contextId)) {
+                    dialog = true;
+                    continue;
+                }
+                if (CONTEXT_ID_WINDOW.equals(contextId)) {
+                    window = true;
+                    continue;
+                }
+            }
+
+            /*
+             * Remove all context identifiers for contexts whose parents are
+             * dialog or window, and the corresponding dialog or window context
+             * is not active.
+             */
+            try {
+                contextIdItr = enabledContextIds.iterator();
+                while (contextIdItr.hasNext()) {
+                    String contextId = (String) contextIdItr.next();
+                    IContext context = mutableContextManager
+                            .getContext(contextId);
+                    String parentId = context.getParentId();
+                    while (parentId != null) {
+                        if (CONTEXT_ID_DIALOG.equals(parentId)) {
+                            if (!dialog) {
+                                contextIdItr.remove();
+                            }
+                            break;
+                        }
+                        if (CONTEXT_ID_WINDOW.equals(parentId)) {
+                            if (!window) {
+                                contextIdItr.remove();
+                            }
+                            break;
+                        }
+
+                        context = mutableContextManager.getContext(parentId);
+                        parentId = context.getParentId();
+                    }
+                }
+            } catch (NotDefinedException e) {
+                if (DEBUG) {
+                    System.out.println("CONTEXTS >>> NotDefinedException('" //$NON-NLS-1$
+                            + e.getMessage()
+                            + "') while filtering dialog/window contexts`"); //$NON-NLS-1$
+                }
+            }
+
+            if ((DEBUG)
+                    && (!mutableContextManager.getEnabledContextIds().equals(
+                            enabledContextIds))) {
+                System.out.println("CONTEXTS >>> " + enabledContextIds); //$NON-NLS-1$
+                if (DEBUG_VERBOSE) {
+                    final Exception exception = new Exception();
+                    exception.fillInStackTrace();
+                    final StackTraceElement[] stackTrace = exception
+                            .getStackTrace();
+                    final int elementsToShow = (stackTrace.length < DEBUG_STACK_LENGTH_TO_SHOW) ? stackTrace.length
+                            : DEBUG_STACK_LENGTH_TO_SHOW;
+                    for (int i = 0; i < elementsToShow; i++) {
+                        final StackTraceElement element = stackTrace[i];
+                        System.out.println("CONTEXTS >>>     " //$NON-NLS-1$
+                                + element.toString());
+                    }
+                }
+            }
+
+            // Set the list of enabled identifiers to be the stripped list.
             mutableContextManager.setEnabledContextIds(enabledContextIds);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#registerShell(org.eclipse.swt.widgets.Shell,
+     *      int)
+     */
+    public boolean registerShell(final Shell shell, final int type)
+            throws IllegalArgumentException, NullPointerException {
+        // We do not allow null shell registration. It is reserved.
+        if (shell == null) { throw new NullPointerException(
+                "The shell was null"); //$NON-NLS-1$
+        }
+
+        // Build the list of submissions.
+        final List submissions = new ArrayList();
+        switch (type) {
+        case TYPE_DIALOG:
+            submissions.add(new EnabledSubmission(shell, null,
+                    CONTEXT_ID_DIALOG_AND_WINDOW));
+            submissions.add(new EnabledSubmission(shell, null,
+                    CONTEXT_ID_DIALOG));
+            break;
+        case TYPE_NONE:
+            break;
+        case TYPE_WINDOW:
+            submissions.add(new EnabledSubmission(shell, null,
+                    CONTEXT_ID_DIALOG_AND_WINDOW));
+            submissions.add(new EnabledSubmission(shell, null,
+                    CONTEXT_ID_WINDOW));
+            break;
+        default:
+            throw new IllegalArgumentException("The type is not recognized: " //$NON-NLS-1$
+                    + type);
+        }
+
+        // Check to see if the submissions are already present.
+        boolean returnValue = false;
+        List previousSubmissions = (List) registeredWindows.get(shell);
+        if (previousSubmissions != null) {
+            returnValue = true;
+            removeEnabledSubmissions(previousSubmissions);
+        }
+
+        // Add the new submissions, and force some reprocessing to occur.
+        registeredWindows.put(shell, submissions);
+        addEnabledSubmissions(submissions);
+
+        // Make sure the submissions will be removed in event of disposal.
+        shell.addDisposeListener(new DisposeListener() {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+             */
+            public void widgetDisposed(DisposeEvent e) {
+                registeredWindows.remove(shell);
+                removeEnabledSubmissions(submissions);
+            }
+        });
+
+        return returnValue;
     }
 
     public void removeEnabledSubmissions(List enabledSubmissions) {
@@ -267,11 +576,44 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         processEnabledSubmissions(true);
     }
 
-    public final void setProcessingEnabledSubmissions(
-            boolean processingEnabledSubmissions) {
-        if (this.processingEnabledSubmissions != processingEnabledSubmissions) {
-            this.processingEnabledSubmissions = processingEnabledSubmissions;
-            processEnabledSubmissions(true);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#setKeyFilterEnabled(boolean)
+     */
+    public void setKeyFilterEnabled(boolean enabled) {
+        synchronized (keyboard) {
+            Display currentDisplay = Display.getCurrent();
+            Listener keyFilter = keyboard.getKeyDownFilter();
+
+            if (enabled) {
+                currentDisplay.addFilter(SWT.KeyDown, keyFilter);
+                currentDisplay.addFilter(SWT.Traverse, keyFilter);
+            } else {
+                currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
+                currentDisplay.removeFilter(SWT.Traverse, keyFilter);
+            }
+
+            keyFilterEnabled = enabled;
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#unregisterShell(org.eclipse.swt.widgets.Shell)
+     */
+    public boolean unregisterShell(Shell shell) {
+        // Don't allow this method to play with the special null slot.
+        if (shell == null) { return false; }
+
+        List previousSubmissions = (List) registeredWindows.get(shell);
+        if (previousSubmissions != null) {
+            registeredWindows.remove(shell);
+            removeEnabledSubmissions(previousSubmissions);
+            return true;
+        }
+
+        return false;
     }
 }

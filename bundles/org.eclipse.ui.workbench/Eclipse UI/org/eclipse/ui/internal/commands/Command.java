@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
@@ -26,9 +27,21 @@ import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
+
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {
+
+    /**
+     * Whether commands should print out information about handler changes.
+     */
+    private static final boolean DEBUG_HANDLERS = Policy.DEBUG_HANDLERS && Policy.DEBUG_HANDLERS_VERBOSE;
+
+    /**
+     * Which command should print out debugging information.
+     */
+    private static final String DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
 
     private final static int HASH_FACTOR = 89;
 
@@ -260,8 +273,7 @@ final class Command implements ICommand {
     }
 
     boolean setContextBindings(List contextBindings) {
-        contextBindings = Util.safeCopy(contextBindings,
-                IContextBinding.class);
+        contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);
 
         if (!Util.equals(contextBindings, this.contextBindings)) {
             this.contextBindings = contextBindings;
@@ -318,6 +330,27 @@ final class Command implements ICommand {
             hashCodeComputed = false;
             hashCode = 0;
             string = null;
+
+            // If people are curious, let them know that I've changed handlers.
+            if ((DEBUG_HANDLERS)
+                    && ((DEBUG_HANDLERS_COMMAND_ID == null) || (DEBUG_HANDLERS_COMMAND_ID
+                            .equals(id)))) {
+                System.out.print("HANDLERS >> Command('" + id //$NON-NLS-1$
+                        + "' has changed to "); //$NON-NLS-1$
+                if (handler == null) {
+                    System.out.println("no handler"); //$NON-NLS-1$
+                } else {
+                    System.out.print("'"); //$NON-NLS-1$
+                    if (handler instanceof ActionHandler) {
+                        final ActionHandler actionHandler = (ActionHandler) handler;
+                        System.out.print(actionHandler.getAction().getClass()
+                                .getName());
+                    } else {
+                        System.out.print(handler.getClass().getName());
+                    }
+                    System.out.println("' as its handler"); //$NON-NLS-1$
+                }
+            }
             return true;
         }
 

@@ -179,6 +179,7 @@ public final class CommandManager implements ICommandManager {
 	private Set commandsWithListeners = new HashSet();
 	private Set definedCategoryIds = new HashSet();
 	private Set definedCommandIds = new HashSet();
+	private Set definedHandlers = new HashSet();
 	private Set definedKeyConfigurationIds = new HashSet();
 	private Map imageBindingsByCommandId = new HashMap();
 	private Map keyConfigurationDefinitionsById = new HashMap();
@@ -257,8 +258,10 @@ public final class CommandManager implements ICommandManager {
 			&& !list.contains("org.eclipse.ui.textEditorScope"))
 			list.add("org.eclipse.ui.textEditorScope");
 
+		// TODO Remove -- debuggging println
 		String[] activeContextIds =
 			extend((String[]) list.toArray(new String[list.size()]));
+		
 		String[] activeKeyConfigurationIds =
 			extend(getKeyConfigurationIds(activeKeyConfigurationId));
 		String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
@@ -345,6 +348,15 @@ public final class CommandManager implements ICommandManager {
 
 	public Set getDefinedCommandIds() {
 		return Collections.unmodifiableSet(definedCommandIds);
+	}
+	
+	/**
+	 * An accessor for those handlers that have been defined in XML.
+	 * @return The handlers defined in XML; never <code>null</code>, but may be
+	 * empty.
+	 */
+	public Set getDefinedHandlers() {
+	    return Collections.unmodifiableSet(definedHandlers);
 	}
 
 	public Set getDefinedKeyConfigurationIds() {
@@ -516,6 +528,8 @@ public final class CommandManager implements ICommandManager {
 				CategoryDefinition.categoryDefinitionsById(
 					categoryDefinitions,
 					false));
+		
+		definedHandlers.addAll(commandRegistry.getHandlers());
 
 		for (Iterator iterator = categoryDefinitionsById.values().iterator();
 			iterator.hasNext();

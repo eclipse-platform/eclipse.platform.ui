@@ -24,6 +24,8 @@ public interface ICommandRegistry {
 	List getCategoryDefinitions();
 
 	List getCommandDefinitions();
+	
+	List getHandlers();
 
 	List getImageBindingDefinitions();
 

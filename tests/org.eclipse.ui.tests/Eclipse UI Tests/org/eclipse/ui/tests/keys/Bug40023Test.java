@@ -15,17 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
+
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 
 /**
  * Tests Bug 40023
@@ -94,9 +96,9 @@ public class Bug40023Test extends UITestCase {
         List keyStrokes = new ArrayList();
         keyStrokes.add(KeyStroke.getInstance(keySequenceText));
         Event event = new Event();
-        WorkbenchCommandSupport support = (WorkbenchCommandSupport) workbench
-                .getCommandSupport();
-        support.getKeyboard().press(keyStrokes, event, false);
+        WorkbenchContextSupport support = (WorkbenchContextSupport) workbench
+                .getContextSupport();
+        support.getKeyboard().press(keyStrokes, event);
 
         // Check that the "Lock Toolbars" menu item is now checked.
         Shell shell = window.getShell();
@@ -104,7 +106,7 @@ public class Bug40023Test extends UITestCase {
                 "&Window"); //$NON-NLS-1$
         MenuItem lockToolBarsMenuItem = getMenuItem(windowMenu.getMenu()
                 .getItems(), "Lock the &Toolbars"); //$NON-NLS-1$
-        assertTrue("Checkbox menu item is not checked.", lockToolBarsMenuItem
-                .getSelection()); //$NON-NLS-1$
+        assertTrue("Checkbox menu item is not checked.", lockToolBarsMenuItem //$NON-NLS-1$
+                .getSelection());
     }
 }

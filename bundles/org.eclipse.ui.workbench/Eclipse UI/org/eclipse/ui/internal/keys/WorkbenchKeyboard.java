@@ -15,13 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
-import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,7 +27,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -40,6 +36,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -50,16 +50,18 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.NoSuchAttributeException;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.keys.SWTKeySupport;
+
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.ParseException;
-import org.eclipse.ui.keys.SWTKeySupport;
 
 /**
  * <p>
@@ -258,14 +260,6 @@ public final class WorkbenchKeyboard {
     };
 
     /**
-     * The shells managed by the global key binding architecture. The keys are
-     * the shells themselves, and the values are a Boolean indicating whether
-     * the shell should only get dialog key bindings. As the shells are
-     * destroyed, they should be automagically cleared from this map.
-     */
-    private final WeakHashMap managedShells = new WeakHashMap();
-
-    /**
      * The <code>Shell</code> displayed to the user to assist them in
      * completing a multi-stroke keyboard shortcut.
      */
@@ -340,6 +334,9 @@ public final class WorkbenchKeyboard {
      * @param associatedWorkbench
      *            The workbench with which this keyboard interface should work;
      *            must not be <code>null</code>.
+     * @param associatedActivityManager
+     *            The activity manager to be used by this keyboard interface;
+     *            must not be <code>null</code>.
      * @param associatedCommandManager
      *            The command manager to be used by this keyboard interface;
      *            must not be <code>null</code>.
@@ -378,23 +375,11 @@ public final class WorkbenchKeyboard {
     private void closeMultiKeyAssistShell() {
         if ((multiKeyAssistShell != null)
                 && (!multiKeyAssistShell.isDisposed())) {
-            deregister(multiKeyAssistShell);
+        	workbench.getContextSupport().unregisterShell(multiKeyAssistShell);
             multiKeyAssistShell.close();
             multiKeyAssistShell.dispose();
             multiKeyAssistShell = null;
         }
-    }
-
-    /**
-     * Deregisters the given <code>shell</code> from this keyboard shortcut
-     * manager. This is not stictly necessary, as the internal storage is a
-     * weak hash map. However, it is good practice.
-     * 
-     * @param shell
-     *            The shell to deregister from key bindings; may be <code>null</code>.
-     */
-    public void deregister(Shell shell) {
-        managedShells.remove(shell);
     }
 
     /**
@@ -504,39 +489,6 @@ public final class WorkbenchKeyboard {
          */
         if ((event.keyCode & SWT.MODIFIER_MASK) != 0) return;
 
-        /*
-         * There are three classes of shells: fully-managed, partially-managed,
-         * and unmanaged. An unmanaged shell is a shell with no parent that has
-         * not registered; it gets no key bindings. A partially-managed shell
-         * is either a shell with a parent, or it is a shell with no parent
-         * that has registered for partial service; it gets dialog key
-         * bindings. A fully-managed shell has no parent and has registered for
-         * full service; they get all key bindings.
-         */
-        boolean dialogOnly = false;
-        if (event.widget instanceof Control) {
-            Shell shell = ((Control) event.widget).getShell();
-            Boolean dialog = (Boolean) managedShells.get(shell);
-            if (dialog == null) {
-                // The shell has not been registered.
-                if ((shell != null) && (shell.getParent() != null)) {
-                    // There is a parent shell. Partially-managed.
-                    dialogOnly = true;
-                } else {
-                    // There is no parent shell. The shell is unmanaged.
-                    return;
-                }
-
-            } else if (dialog.booleanValue()) {
-                // The window is managed, but requested partial management.
-                dialogOnly = true;
-
-            } else {
-                // The window is fully-managed; leave dialogOnly=false.
-
-            }
-        }
-
         // Allow special key out-of-order processing.
         List keyStrokes = generatePossibleKeyStrokes(event);
         if (isOutOfOrderKey(keyStrokes)) {
@@ -551,10 +503,9 @@ public final class WorkbenchKeyboard {
                      */
                     ((StyledText) widget)
                             .addVerifyKeyListener(new OutOfOrderVerifyListener(
-                                    new OutOfOrderListener(this, dialogOnly)));
+                                    new OutOfOrderListener(this)));
                 } else {
-                    widget.addListener(SWT.KeyDown, new OutOfOrderListener(
-                            this, dialogOnly));
+                    widget.addListener(SWT.KeyDown, new OutOfOrderListener(this));
                 }
             }
 
@@ -565,7 +516,7 @@ public final class WorkbenchKeyboard {
              */
 
         } else {
-            processKeyEvent(keyStrokes, event, dialogOnly);
+            processKeyEvent(keyStrokes, event);
 
         }
     }
@@ -839,7 +790,7 @@ public final class WorkbenchKeyboard {
         });
 
         // Open the shell.
-        register(multiKeyAssistShell, false);
+        workbench.getContextSupport().registerShell(multiKeyAssistShell, IWorkbenchContextSupport.TYPE_NONE);
         multiKeyAssistShell.open();
     }
 
@@ -853,9 +804,6 @@ public final class WorkbenchKeyboard {
      *            priority; must not be <code>null</code>.
      * @param event
      *            The event to pass to the action; may be <code>null</code>.
-     * @param dialogOnly
-     *            Whether the key sequence should only be allowed to match on
-     *            dialog commands.
      * @return <code>true</code> if a command is executed; <code>false</code>
      *         otherwise.
      * @throws CommandException
@@ -864,18 +812,13 @@ public final class WorkbenchKeyboard {
      *             log the message, display a dialog, or ignore this exception
      *             entirely.
      */
-    public boolean press(List potentialKeyStrokes, Event event,
-            boolean dialogOnly) throws CommandException {
+    public boolean press(List potentialKeyStrokes, Event event) throws CommandException {
         // TODO remove event parameter once key-modified actions are removed
         if (DEBUG && DEBUG_VERBOSE) {
             System.out
                     .println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
-                            + potentialKeyStrokes + ", dialogOnly = " //$NON-NLS-1$
-                            + dialogOnly + ")"); //$NON-NLS-1$
+                            + potentialKeyStrokes + ")"); //$NON-NLS-1$
         }
-
-        // TODO Add proper dialog support
-        if (dialogOnly) { return false; }
 
         KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
         for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
@@ -923,16 +866,13 @@ public final class WorkbenchKeyboard {
      *            <code>null</code>.
      * @param event
      *            The event to process; must not be <code>null</code>.
-     * @param dialogOnly
-     *            Whether the key bindings should only be allowed to match on
-     *            dialog commands
      */
-    void processKeyEvent(List keyStrokes, Event event, boolean dialogOnly) {
+    void processKeyEvent(List keyStrokes, Event event) {
         // Dispatch the keyboard shortcut, if any.
         boolean eatKey = false;
         if (!keyStrokes.isEmpty()) {
             try {
-                eatKey = press(keyStrokes, event, dialogOnly);
+                eatKey = press(keyStrokes, event);
             } catch (CommandException e) {
                 logException(e);
                 eatKey = true;
@@ -952,22 +892,6 @@ public final class WorkbenchKeyboard {
             }
             event.type = SWT.NONE;
         }
-    }
-
-    /**
-     * Registers the given <code>shell</code> with this keyboard shortcut
-     * manager -- indicating whether it should receive dialog key bindings or
-     * the full set of key bindings. Deregistration is handled automatically by
-     * the use of a weak hash map.
-     * 
-     * @param shell
-     *            The shell to register for key bindings; may be <code>null</code>.
-     * @param dialogOnly
-     *            Whether the shell should only receive key bindings particular
-     *            to a dialog.
-     */
-    public void register(Shell shell, boolean dialogOnly) {
-        managedShells.put(shell, dialogOnly ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**

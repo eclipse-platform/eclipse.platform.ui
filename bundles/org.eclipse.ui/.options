@@ -39,3 +39,18 @@ org.eclipse.ui/trace/keyBindings.verbose=false
 # Report when a tool bar contribution item is asked its visibility after being
 # disposed.  TODO Remove this option?  Bug 51000
 org.eclipse.jface/trace/toolbarDisposal=false
+
+# Report every change in the list of contexts.
+org.eclipse.ui/trace/contexts=false
+
+# Report a bit of stack around every change in the list of contexts.
+org.eclipse.ui/trace/contexts.verbose=false
+
+# Report handler conflicts within the workbench
+org.eclipse.ui/trace/handlers=false
+
+# Report verbose information about changing handlers in the system.
+org.eclipse.ui/trace/handlers.verbose=false
+
+# Restrict the verbose information to a particular command
+org.eclipse.ui/trace/handlers.verbose.commandId=

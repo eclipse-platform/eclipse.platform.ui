@@ -15,18 +15,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
@@ -35,25 +34,71 @@ import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
-import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.commands.NoSuchAttributeException;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.handlers.HandlerProxy;
 import org.eclipse.ui.keys.KeyFormatterFactory;
 import org.eclipse.ui.keys.SWTKeySupport;
 
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.util.Util;
+
+/**
+ * Provides command support in terms of the workbench.
+ * 
+ * @since 3.0
+ */
 public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
+
+    /**
+     * Whether the workbench command support should kick into debugging mode.
+     * This causes the unresolvable handler conflicts to be printed to the
+     * console.
+     */
+    private static final boolean DEBUG = Policy.DEBUG_HANDLERS;
+
+    /**
+     * Whether the workbench command support should kick into verbose debugging
+     * mode. This causes the resolvable handler conflicts to be printed to the
+     * console.
+     */
+    private static final boolean DEBUG_VERBOSE = Policy.DEBUG_HANDLERS
+            && Policy.DEBUG_HANDLERS_VERBOSE;
+
+    /**
+     * The command identifier to which the verbose output should be restricted.
+     */
+    private static final String DEBUG_VERBOSE_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
+
+    /**
+     * Listens for shell activation events, and updates the list of enabled
+     * handlers appropriately. This is used to keep the enabled handlers
+     * synchronized with respect to the <code>activeShell</code> condition.
+     */
+    private Listener activationListener = new Listener() {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+         */
+        public void handleEvent(Event event) {
+            processHandlerSubmissions(false, event.display.getActiveShell());
+        }
+    };
+
+    /**
+     * The currently active shell. This value is never <code>null</code>.
+     */
+    private Shell activeShell;
 
     private IWorkbenchSite activeWorkbenchSite;
 
     private IWorkbenchWindow activeWorkbenchWindow;
 
     private Map handlerSubmissionsByCommandId = new HashMap();
-
-    private WorkbenchKeyboard keyboard;
-
-    private volatile boolean keyFilterEnabled;
 
     private ICommandManager mutableCommandManager;
 
@@ -108,40 +153,56 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     };
 
-    private boolean processingHandlerSubmissions;
-
-    private IWindowListener windowListener = new IWindowListener() {
-
-        public void windowActivated(IWorkbenchWindow window) {
-            processHandlerSubmissions(false);
-        }
-
-        public void windowClosed(IWorkbenchWindow window) {
-            processHandlerSubmissions(false);
-        }
-
-        public void windowDeactivated(IWorkbenchWindow window) {
-            processHandlerSubmissions(false);
-        }
-
-        public void windowOpened(IWorkbenchWindow window) {
-            processHandlerSubmissions(false);
-        }
-    };
-
     private Workbench workbench;
 
-    public WorkbenchCommandSupport(Workbench workbench) {
-        this.workbench = workbench;
+    /**
+     * Constructs a new instance of <code>WorkbenchCommandSupport</code>
+     * 
+     * @param workbenchToSupport
+     *            The workbench for which the support should be created; must
+     *            not be <code>null</code>.
+     */
+    public WorkbenchCommandSupport(final Workbench workbenchToSupport) {
+        workbench = workbenchToSupport;
         mutableCommandManager = CommandManagerFactory.getCommandManager();
         KeyFormatterFactory.setDefault(SWTKeySupport
                 .getKeyFormatterForPlatform());
-        keyboard = new WorkbenchKeyboard(workbench, workbench
-                .getActivitySupport().getActivityManager(), getCommandManager());
-        setKeyFilterEnabled(true);
-        workbench.addWindowListener(windowListener);
+
+        // Attach a hook to latch on to the first workbench window to open.
+        workbenchToSupport.getDisplay().addFilter(SWT.Activate,
+                activationListener);
+        
+        // Add submissions for the defined handlers.
+        if (mutableCommandManager instanceof CommandManager) {
+            final List submissions = new ArrayList();
+            final CommandManager commandManager = (CommandManager) mutableCommandManager;
+            final Set handlers = commandManager.getDefinedHandlers();
+            final Iterator handlerItr = handlers.iterator();
+            
+            while (handlerItr.hasNext()) {
+                final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
+                try {
+                    final String commandId = (String) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_ID);
+                    final Integer priority = (Integer) proxy.getAttributeValue(HandlerProxy.ATTRIBUTE_PRIORITY);
+                    final HandlerSubmission submission = new HandlerSubmission(null, null, commandId, proxy, priority.intValue());
+                    submissions.add(submission);
+                } catch (final NoSuchAttributeException e) {
+                    // This submission can't be created.  Nothing to do.
+                }
+            }
+            
+            if (!submissions.isEmpty()) {
+                addHandlerSubmissions(submissions);
+            }
+        }
+        // TODO Should these be removed at shutdown?  Is life cycle important?
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#addHandlerSubmissions(java.util.List)
+     */
     public void addHandlerSubmissions(List handlerSubmissions) {
         handlerSubmissions = Util.safeCopy(handlerSubmissions,
                 HandlerSubmission.class);
@@ -166,83 +227,96 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         processHandlerSubmissions(true);
     }
 
+    // TODO Remove this method -- deprecated.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#deregisterFromKeyBindings(org.eclipse.swt.widgets.Shell)
+     */
     public void deregisterFromKeyBindings(Shell shell) {
-        if (keyboard != null)
-            keyboard.deregister(shell);
-        else {
-            String message = "deregisterFromKeyBindings: Global key bindings are not available."; //$NON-NLS-1$
-            WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
-                    WorkbenchPlugin.PI_WORKBENCH, 0, message, new Exception()));
-        }
+        IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+        contextSupport.unregisterShell(shell);
     }
 
+    /**
+     * An accessor for the underlying command manager.
+     * 
+     * @return The command manager used by this support class.
+     */
     public ICommandManager getCommandManager() {
         // TODO need to proxy this to prevent casts to IMutableCommandManager
         return mutableCommandManager;
     }
 
-    public WorkbenchKeyboard getKeyboard() {
-        return keyboard;
-    }
-
+    // TODO Remove this method -- deprecated.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#isKeyFilterEnabled()
+     */
     public final boolean isKeyFilterEnabled() {
-        synchronized (keyboard) {
-            return keyFilterEnabled;
-        }
-    }
-
-    public final boolean isProcessingHandlerSubmissions() {
-        return processingHandlerSubmissions;
+        return workbench.getContextSupport().isKeyFilterEnabled();
     }
 
     private void processHandlerSubmissions(boolean force) {
-        IPerspectiveDescriptor activePerspectiveDescriptor = null;
-        IWorkbenchSite activeWorkbenchSite = null;
-        IWorkbenchWindow activeWorkbenchWindow = workbench
+        processHandlerSubmissions(force, workbench.getDisplay()
+                .getActiveShell());
+    }
+
+    private void processHandlerSubmissions(boolean force,
+            final Shell newActiveShell) {
+        IWorkbenchSite newWorkbenchSite = null;
+        IWorkbenchWindow newWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
+        boolean update = false;
 
-        if (this.activeWorkbenchWindow != activeWorkbenchWindow) {
-            if (this.activeWorkbenchWindow != null) {
-                this.activeWorkbenchWindow.removePageListener(pageListener);
-                this.activeWorkbenchWindow
-                        .removePerspectiveListener(perspectiveListener);
-                this.activeWorkbenchWindow.getPartService().removePartListener(
-                        partListener);
-            }
-
-            this.activeWorkbenchWindow = activeWorkbenchWindow;
-
-            if (this.activeWorkbenchWindow != null) {
-                this.activeWorkbenchWindow.addPageListener(pageListener);
-                this.activeWorkbenchWindow
-                        .addPerspectiveListener(perspectiveListener);
-                this.activeWorkbenchWindow.getPartService().addPartListener(
-                        partListener);
-            }
+        // Update the active shell, and swap the listener.
+        if (activeShell != newActiveShell) {
+            activeShell = newActiveShell;
+            update = true;
         }
 
-        if (activeWorkbenchWindow != null) {
-            IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow
+        if (activeWorkbenchWindow != newWorkbenchWindow) {
+            if (activeWorkbenchWindow != null) {
+                activeWorkbenchWindow.removePageListener(pageListener);
+                activeWorkbenchWindow
+                        .removePerspectiveListener(perspectiveListener);
+                activeWorkbenchWindow.getPartService().removePartListener(
+                        partListener);
+            }
+
+            if (activeWorkbenchWindow != null) {
+                activeWorkbenchWindow.addPageListener(pageListener);
+                activeWorkbenchWindow
+                        .addPerspectiveListener(perspectiveListener);
+                activeWorkbenchWindow.getPartService().addPartListener(
+                        partListener);
+            }
+
+            activeWorkbenchWindow = newWorkbenchWindow;
+
+            update = true;
+        }
+
+        if ((newWorkbenchWindow != null) && (newWorkbenchWindow.getShell().equals(newActiveShell))) {
+            IWorkbenchPage activeWorkbenchPage = newWorkbenchWindow
                     .getActivePage();
 
             if (activeWorkbenchPage != null) {
-                activePerspectiveDescriptor = activeWorkbenchPage
-                        .getPerspective();
-
                 IWorkbenchPart activeWorkbenchPart = activeWorkbenchPage
                         .getActivePart();
 
-                if (activeWorkbenchPart != null)
-                        activeWorkbenchSite = activeWorkbenchPart.getSite();
+                if (activeWorkbenchPart != null) {
+                        newWorkbenchSite = activeWorkbenchPart.getSite();
+                }
             }
+        } else {
+            newWorkbenchSite = null;
         }
 
-        if (force
-                || !Util.equals(this.activeWorkbenchSite, activeWorkbenchSite)
-                || !Util.equals(this.activeWorkbenchWindow,
-                        activeWorkbenchWindow)) {
-            this.activeWorkbenchSite = activeWorkbenchSite;
-            this.activeWorkbenchWindow = activeWorkbenchWindow;
+        if (force || update
+                || !Util.equals(activeWorkbenchSite, newWorkbenchSite)) {
+            activeWorkbenchSite = newWorkbenchSite;
             Map handlersByCommandId = new HashMap();
 
             for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
@@ -250,25 +324,26 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String commandId = (String) entry.getKey();
                 List handlerSubmissions = (List) entry.getValue();
+                Iterator submissionItr = handlerSubmissions.iterator();
                 HandlerSubmission bestHandlerSubmission = null;
                 boolean conflict = false;
 
-                for (int i = 0; i < handlerSubmissions.size(); i++) {
-                    HandlerSubmission handlerSubmission = (HandlerSubmission) handlerSubmissions
-                            .get(i);
+                while (submissionItr.hasNext()) {
+                    HandlerSubmission handlerSubmission = (HandlerSubmission) submissionItr
+                            .next();
                     IWorkbenchSite activeWorkbenchSite2 = handlerSubmission
                             .getActiveWorkbenchSite();
 
                     if (activeWorkbenchSite2 != null
-                            && activeWorkbenchSite2 != activeWorkbenchSite)
+                            && activeWorkbenchSite2 != newWorkbenchSite)
                             continue;
 
                     IWorkbenchWindow activeWorkbenchWindow2 = handlerSubmission
                             .getActiveWorkbenchWindow();
 
                     if (activeWorkbenchWindow2 != null
-                            && activeWorkbenchWindow2 != activeWorkbenchWindow)
-                            continue;
+                            && ((activeWorkbenchWindow2 != newWorkbenchWindow) || activeWorkbenchWindow2
+                                    .getShell() != activeShell)) continue;
 
                     if (bestHandlerSubmission == null)
                         bestHandlerSubmission = handlerSubmission;
@@ -289,9 +364,31 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                         }
 
                         if (compareTo > 0) {
+                            if ((DEBUG_VERBOSE)
+                                    && ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
+                                            .equals(commandId)))) {
+                                System.out
+                                        .println("HANDLERS >>> Resolved conflict detected for " //$NON-NLS-1$
+                                                + bestHandlerSubmission);
+                            }
                             conflict = false;
                             bestHandlerSubmission = handlerSubmission;
-                        } else if (compareTo == 0) conflict = true;
+                        } else if ((compareTo == 0)
+                                && (bestHandlerSubmission.getHandler() != handlerSubmission
+                                        .getHandler())) {
+                            if (DEBUG) {
+                                System.out
+                                        .println("HANDLERS >>> Unresolved conflict detected for " //$NON-NLS-1$
+                                                + commandId);
+                            }
+                            conflict = true;
+                        } else if ((DEBUG_VERBOSE)
+                                && ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
+                                        .equals(commandId)))) {
+                            System.out
+                                    .println("HANDLERS >>> Resolved conflict detected for " //$NON-NLS-1$
+                                            + bestHandlerSubmission);
+                        }
                     }
                 }
 
@@ -305,16 +402,28 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     }
 
+    // TODO Remove this method -- deprecated
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#registerForKeyBindings(org.eclipse.swt.widgets.Shell,boolean)
+     */
     public void registerForKeyBindings(Shell shell, boolean dialogOnly) {
-        if (keyboard != null)
-            keyboard.register(shell, dialogOnly);
-        else {
-            String message = "registerForKeyBindings: Global key bindings are not available."; //$NON-NLS-1$
-            WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
-                    WorkbenchPlugin.PI_WORKBENCH, 0, message, new Exception()));
+        IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
+        if (dialogOnly) {
+            contextSupport.registerShell(shell,
+                    IWorkbenchContextSupport.TYPE_DIALOG);
+        } else {
+            contextSupport.registerShell(shell,
+                    IWorkbenchContextSupport.TYPE_WINDOW);
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#removeHandlerSubmissions(java.util.List)
+     */
     public void removeHandlerSubmissions(List handlerSubmissions) {
         handlerSubmissions = Util.safeCopy(handlerSubmissions,
                 HandlerSubmission.class);
@@ -338,28 +447,13 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         processHandlerSubmissions(true);
     }
 
+    // TODO Remove this method -- deprecated
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#setKeyFilterEnabled(boolean)
+     */
     public final void setKeyFilterEnabled(boolean keyFilterEnabled) {
-        synchronized (keyboard) {
-            Display currentDisplay = Display.getCurrent();
-            Listener keyFilter = keyboard.getKeyDownFilter();
-
-            if (keyFilterEnabled) {
-                currentDisplay.addFilter(SWT.KeyDown, keyFilter);
-                currentDisplay.addFilter(SWT.Traverse, keyFilter);
-            } else {
-                currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
-                currentDisplay.removeFilter(SWT.Traverse, keyFilter);
-            }
-
-            this.keyFilterEnabled = keyFilterEnabled;
-        }
-    }
-
-    public final void setProcessingHandlerSubmissions(
-            boolean processingHandlerSubmissions) {
-        if (this.processingHandlerSubmissions != processingHandlerSubmissions) {
-            this.processingHandlerSubmissions = processingHandlerSubmissions;
-            processHandlerSubmissions(true);
-        }
+        workbench.getContextSupport().setKeyFilterEnabled(keyFilterEnabled);
     }
 }

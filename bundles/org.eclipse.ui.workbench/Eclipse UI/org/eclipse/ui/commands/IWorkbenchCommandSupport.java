@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * 
  * @since 3.0
- * @see IWorkbench#getAdaptable
  */
 public interface IWorkbenchCommandSupport {
 
@@ -44,6 +43,8 @@ public interface IWorkbenchCommandSupport {
      * 
      * @param shell
      *            The shell to deregister; may be <code>null</code>.
+     * @deprecated Use the equivalent methods on IWorkbenchContextSupport
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#unregisterShell(Shell)
      */
     void deregisterFromKeyBindings(Shell shell);
 
@@ -58,8 +59,10 @@ public interface IWorkbenchCommandSupport {
     /**
      * Tests whether the global key binding architecture is currently active.
      * 
-     * @return <code>true</code> if the key bindings are active; <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if the key bindings are active;
+     *         <code>false</code> otherwise.
+     * @deprecated Please use the equivalent method on IWorkbenchContextSupport
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#isKeyFilterEnabled()
      */
     boolean isKeyFilterEnabled();
 
@@ -70,12 +73,16 @@ public interface IWorkbenchCommandSupport {
      * shell.
      * 
      * @param shell
-     *            The shell to register for key bindings; may be <code>null</code>.
+     *            The shell to register for key bindings; may be
+     *            <code>null</code>.
      * @param dialogOnly
      *            Whether the shell only wants the restricted set of key
      *            bindings normally used in dialogs (e.g., text editing
      *            commands). All workbench windows say <code>false</code>
      *            here.
+     * @deprecated Use the equivalent methods on IWorkbenchContextSupport
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#registerShell(Shell,
+     *      int)
      */
     void registerForKeyBindings(Shell shell, boolean dialogOnly);
 
@@ -87,17 +94,23 @@ public interface IWorkbenchCommandSupport {
     void removeHandlerSubmissions(List handlerSubmissions);
 
     /**
-     * Enables or disables the global key binding architecture. The
-     * architecture should be enabled by default.
+     * Enables or disables the global key binding architecture. The architecture
+     * should be enabled by default.
      * 
      * When enabled, keyboard shortcuts are active, and that key events can
-     * trigger commands. This also means that widgets may not see all key
-     * events (as they might be trapped as a keyboard shortcut).
+     * trigger commands. This also means that widgets may not see all key events
+     * (as they might be trapped as a keyboard shortcut).
      * 
-     * When disabled, no key events will trapped as keyboard shortcuts, and
-     * that no commands can be triggered by keyboard events. (Exception: it is
+     * When disabled, no key events will trapped as keyboard shortcuts, and that
+     * no commands can be triggered by keyboard events. (Exception: it is
      * possible that someone listening for key events on a widget could trigger
      * a command.)
+     * 
+     * @param enabled
+     *            Whether the key filter should be enabled.
+     * 
+     * @deprecated Please use the equivalent method on IWorkbenchContextSupport
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#setKeyFilterEnabled(boolean)
      */
     void setKeyFilterEnabled(boolean enabled);
 }
