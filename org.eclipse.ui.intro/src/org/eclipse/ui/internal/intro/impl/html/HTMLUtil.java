@@ -160,15 +160,13 @@ public final class HTMLUtil {
 	 */
 	public static String getResolvedBundleLocation(Bundle bundle) {
 		try {
-			String location = bundle.getLocation();
-			if (location == null)
+			URL url = bundle.getEntry("");
+			if (url == null)
 				return null;
-			URL url = new URL(location); 
-			url = Platform.resolve(url);
 			url = Platform.asLocalURL(url);
 			return url.toExternalForm();
 		} catch (IOException e) {
-			Log.error("Failed to resolve plugin path for "
+			Log.error("Failed to resolve path for "
 					+ bundle.getSymbolicName(), e);
 			return null;
 		}
