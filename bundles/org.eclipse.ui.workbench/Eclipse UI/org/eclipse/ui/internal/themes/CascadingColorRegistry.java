@@ -38,6 +38,7 @@ public class CascadingColorRegistry extends ColorRegistry {
      * @param parent
      */
     public CascadingColorRegistry(ColorRegistry parent) {
+    	super(Display.getCurrent(), false);
         this.parent = parent;
         parent.addListener(listener);
     }

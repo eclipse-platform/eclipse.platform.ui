@@ -201,9 +201,7 @@ public class FontRegistry extends ResourceRegistry {
      * </p>
      */
     public FontRegistry() {
-        Display display = Display.getCurrent();
-        Assert.isNotNull(display);
-        hookDisplayDispose(display);
+    	this(Display.getCurrent(), true);
     }
 
     /**
@@ -326,8 +324,20 @@ public class FontRegistry extends ResourceRegistry {
      * @param display the Display
      */
     public FontRegistry(Display display) {
-        Assert.isNotNull(display);
-        hookDisplayDispose(display);
+        this(display, true);
+    }
+    
+    /**
+     * Creates an empty font registry.
+     * 
+     * @param display the Display
+     * @param addDisposeHook whether a dispose listener should be added to the Display
+     * @since 3.1
+     */
+    public FontRegistry(Display display, boolean addDisposeHook) {
+    	Assert.isNotNull(display);
+    	if (addDisposeHook)
+    		hookDisplayDispose(display);
     }
 
     /**

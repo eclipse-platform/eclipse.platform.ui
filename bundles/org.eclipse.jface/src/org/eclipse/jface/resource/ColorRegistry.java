@@ -85,7 +85,7 @@ public class ColorRegistry extends ResourceRegistry {
      * @see org.eclipse.swt.widgets.Display#getCurrent()
      */
     public ColorRegistry() {
-        this(Display.getCurrent());
+        this(Display.getCurrent(), true);
     }
 
     /**
@@ -94,9 +94,21 @@ public class ColorRegistry extends ResourceRegistry {
      * @param display the <code>Display</code> to hook into.
      */
     public ColorRegistry(Display display) {
+    	this (display, true);
+    }
+
+    /**
+     * Create a new instance of the receiver.
+     * 
+     * @param display the <code>Display</code> to hook into
+     * @param addDisposeHook whether a dispose listener should be added to the <code>Display</code>
+     * @since 3.1
+     */
+    public ColorRegistry(Display display, boolean addDisposeHook) {
         Assert.isNotNull(display);
         this.display = display;
-        hookDisplayDispose();
+        if (addDisposeHook)
+        	hookDisplayDispose();
     }
 
     /**

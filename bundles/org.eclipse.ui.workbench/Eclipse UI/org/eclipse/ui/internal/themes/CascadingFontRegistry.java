@@ -38,6 +38,7 @@ public class CascadingFontRegistry extends FontRegistry {
      * 
      */
     public CascadingFontRegistry(FontRegistry parent) {
+    	super(Display.getCurrent(), false);
         this.parent = parent;
         parent.addListener(listener);
     }
