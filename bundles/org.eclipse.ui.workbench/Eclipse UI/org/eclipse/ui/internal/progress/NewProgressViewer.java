@@ -263,7 +263,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		
 		boolean hasFocus;
 		String text= ""; //$NON-NLS-1$
-		boolean underlined;
+		boolean linkEnabled;
 		IAction gotoAction;
 		IStatus result;
 		Color lColor= linkColor;
@@ -309,7 +309,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			case SWT.FocusIn :
 				hasFocus = true;
 			case SWT.MouseEnter :
-				if (underlined) {
+				if (linkEnabled) {
 					setForeground(lColor2);
 					redraw();
 				}
@@ -317,7 +317,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			case SWT.FocusOut :
 				hasFocus = false;
 			case SWT.MouseExit :
-				if (underlined) {
+				if (linkEnabled) {
 					setForeground(lColor);
 					redraw();
 				}
@@ -326,11 +326,11 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				handleActivate();
 				break;
 			case SWT.MouseDown :
-				if (!underlined)
+				if (!linkEnabled)
 					select((JobItem) getParent(), e);
 				break;
 			case SWT.MouseUp :
-				if (underlined) {
+				if (linkEnabled) {
 					Point size= getSize();
 					if (e.button != 1 || e.x < 0 || e.y < 0 || e.x >= size.x || e.y >= size.y)
 						return;
@@ -374,21 +374,32 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		void setAction(IAction action) {
 			if (action == gotoAction)
 				return;
-			if (gotoAction != null) {
+			if (gotoAction != null)
 				gotoAction.removePropertyChangeListener(this);
-			}
 			gotoAction= action;
-			if (gotoAction != null) {
+			if (gotoAction != null)
 				gotoAction.addPropertyChangeListener(this);
+			setLinkEnable(action != null && action.isEnabled());
+		}
+		private void setLinkEnable(boolean enable) {
+			if (enable != linkEnabled) {
+				linkEnabled= enable;
+				setForeground(linkEnabled ? lColor : taskColor);
+				if (linkEnabled)
+					setCursor(handCursor);
+				redraw();	
 			}
-			underlined= action != null;
-			setForeground(underlined ? lColor : taskColor);
-			if (underlined)
-				setCursor(handCursor);
-			redraw();
 		}
 		public void propertyChange(PropertyChangeEvent event) {
 		    if (DEBUG) System.err.println("action changed: " + gotoAction); //$NON-NLS-1$
+		    if (gotoAction != null) {	    	
+		    	getDisplay().asyncExec(new Runnable() {
+		    		public void run() {
+		    			if (!isDisposed())
+		    				setLinkEnable(gotoAction.isEnabled());
+		    		}
+		    	});
+		    }
 		}
 		public Point computeSize(int wHint, int hHint, boolean changed) {
 			checkWidget();
@@ -413,7 +424,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			String t= shortenText(bufferGC, clientArea.height, text);
 			bufferGC.drawText(t, MARGINWIDTH, MARGINHEIGHT, true);
 			int sw= bufferGC.stringExtent(t).x;
-			if (underlined) {
+			if (linkEnabled) {
 				FontMetrics fm= bufferGC.getFontMetrics();
 				int lineY= clientArea.height - MARGINHEIGHT - fm.getDescent() + 1;
 				bufferGC.drawLine(MARGINWIDTH, lineY, MARGINWIDTH + sw, lineY);
@@ -425,7 +436,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			buffer.dispose();
 		}
 		protected void handleActivate() {
-			if (underlined && gotoAction != null && gotoAction.isEnabled())
+			if (linkEnabled && gotoAction != null && gotoAction.isEnabled())
 				gotoAction.run();
 		}
 		public boolean refresh() {
