@@ -1,10 +1,6 @@
 package org.eclipse.update.tests.api;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.internal.core.FileSite;
-import org.eclipse.update.internal.core.URLSite;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestSiteAPI extends UpdateManagerTestCase {

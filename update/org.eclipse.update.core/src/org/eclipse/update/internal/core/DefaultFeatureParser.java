@@ -2,28 +2,14 @@ package org.eclipse.update.internal.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
+
 import org.apache.xerces.parsers.SAXParser;
-import org.eclipse.update.core.AbstractFeature;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.core.Assert;
-import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IInfo;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.UpdateManagerPlugin;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 
@@ -66,13 +52,13 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 
 		try {
-			ClassLoader l = new URLClassLoader(new URL[]{feature.getRootURL()},null);
+			ClassLoader l = new URLClassLoader(new URL[]{((AbstractFeature)feature).getRootURL()},null);
 			bundle = ResourceBundle.getBundle("feature",Locale.getDefault(),l);
 		} catch (MissingResourceException e){
 			//ok, there is no bundle, keep it as null
 			//DEBUG:
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
-				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()+":"+feature.getRootURL().toExternalForm());
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage()+":"+((AbstractFeature)feature).getRootURL().toExternalForm());
 			}
 		}
 		

@@ -1,19 +1,14 @@
-package org.eclipse.update.core;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import java.io.OutputStream;
+package org.eclipse.update.internal.core;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.internal.core.DefaultSiteParser;
-
+import org.eclipse.update.core.*;
+import org.xml.sax.SAXException;
 
 public abstract class AbstractSite implements ISite {
 
@@ -140,6 +135,11 @@ public abstract class AbstractSite implements ISite {
 	 * 
 	 */
 	public abstract AbstractFeature createExecutableFeature(IFeature sourceFeature);
+
+	/**
+	 * store Feature files/ Fetaures info into the Site
+	 */
+	protected abstract void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream);
 
 	/**
 	 *

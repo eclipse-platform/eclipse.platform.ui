@@ -1,13 +1,8 @@
 package org.eclipse.update.tests.regularInstall;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-import junit.framework.TestCase;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -93,9 +88,10 @@ public class TestInstall extends UpdateManagerTestCase {
 		String site = localSite.getURL().getFile();
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry",(entries!=null && entries.length!=0));
+		
 		String pluginName= entries[0].getIdentifier().toString();
 		File pluginFile = new File(site,AbstractSite.DEFAULT_PLUGIN_PATH+pluginName);
-		assertTrue("feature info not installed locally",pluginFile.exists());
+		assertTrue("plugin info not installed locally",pluginFile.exists());
 
 		File featureFile = new File(site,FileSite.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier().toString());
 		assertTrue("feature info not installed locally",featureFile.exists());

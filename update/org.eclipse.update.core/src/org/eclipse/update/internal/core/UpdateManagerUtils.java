@@ -1,18 +1,12 @@
 package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.core.Assert;
+
 import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.UpdateManagerPlugin;
 
 public class UpdateManagerUtils {
 
@@ -69,6 +63,17 @@ public class UpdateManagerUtils {
 		return result;
 	};
 
+/**
+	 * Resolve a URL as a local file URL
+	 * if the URL is not a file URL, transfer the stream to teh temp directory 
+	 * and return the new URL
+	 */
+	public static URL resolveAsLocal(URL remoteURL)
+	throws MalformedURLException, IOException {
+		return resolveAsLocal(remoteURL,null);
+	}
+
+
 	/**
 	 * Resolve a URL as a local file URL
 	 * if the URL is not a file URL, transfer the stream to teh temp directory 
@@ -91,7 +96,7 @@ public class UpdateManagerUtils {
 
 				}
 
-				result = resolveAsLocal(sourceContentReferenceStream, newFile);
+				result = copyToLocal(sourceContentReferenceStream, newFile);
 			} else {
 				throw new IOException("Couldn\'t find the file: " + remoteURL.toExternalForm());
 			}
@@ -110,24 +115,28 @@ public class UpdateManagerUtils {
 	}
 
 	/**
-	 * Resolve a URL as a local file URL
-	 * if the URL is not a file URL, transfer the stream to teh temp directory 
-	 * and return the new URL
+	 * 
 	 */
-	public static URL resolveAsLocal(InputStream sourceContentReferenceStream,String localFile)
+	public static URL copyToLocal(InputStream sourceContentReferenceStream,String localName)
 		throws MalformedURLException, IOException {
 		URL result = null;
 
 		// create the Dir is they do not exist
-		File dir = new File(localFile);
-		if (!dir.exists()) dir.mkdirs();
+		// get the path from the File to resolve File.separator..
+		// do not use the String as it may contain URL like separator
+		File localFile = new File(localName);
+		int index = localFile.getPath().lastIndexOf(File.separator);
+		if (index!=-1){
+			File dir = new File(localFile.getPath().substring(0,index));
+			if (!dir.exists()) dir.mkdirs();
+		}
 
 		// transfer teh content of the File
-		if (!dir.isDirectory()){		
+		if (!localFile.isDirectory()){		
 			FileOutputStream localContentReferenceStream = new FileOutputStream(localFile);
 			transferStreams(sourceContentReferenceStream, localContentReferenceStream);
 		}
-		result = new URL("file", null, localFile);
+		result = new URL("file", null, localFile.getPath());
 
 		return result;
 	}
@@ -137,9 +146,12 @@ public class UpdateManagerUtils {
 	 */
 	private static String getLocalRandomIdentifier(String remotePath) {
 		int dotIndex = remotePath.lastIndexOf(".");
-		String ext = (dotIndex != -1) ? "." + remotePath.substring(dotIndex) : "";
-
 		int fileIndex = remotePath.lastIndexOf(File.separator);
+
+		// if there is a separator after the dot
+		// do not consider it as an extension
+		// FIXME: LINUX ???
+		String ext = (dotIndex != -1 && fileIndex<dotIndex) ? "." + remotePath.substring(dotIndex) : "";
 		String name =
 			(fileIndex != -1 && fileIndex < dotIndex)
 				? remotePath.substring(fileIndex, dotIndex)

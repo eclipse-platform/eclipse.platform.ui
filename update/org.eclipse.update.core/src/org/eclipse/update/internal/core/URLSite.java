@@ -1,22 +1,12 @@
 package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.AbstractFeature;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.ISiteChangedListener;
-import org.eclipse.update.core.VersionedIdentifier;
+
+import org.eclipse.update.core.*;
 
 public class URLSite extends AbstractSite {
 

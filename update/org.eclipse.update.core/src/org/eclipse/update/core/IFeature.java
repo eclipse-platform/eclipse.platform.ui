@@ -19,7 +19,6 @@ public interface IFeature extends IPluginContainer {
 	 * The URL that points at the Feature 
 	 */
 	URL getURL();
-	URL getRootURL();
 	IInfo getUpdateInfo();
 	IInfo [] getDiscoveryInfos();
 	String getProvider();

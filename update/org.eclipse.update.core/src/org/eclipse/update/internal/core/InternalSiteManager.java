@@ -6,23 +6,19 @@ package org.eclipse.update.internal.core;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.ILocalSite;
 import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.UpdateManagerPlugin;
+
+/**
+ * 
+ */
 
 public class InternalSiteManager {
 
@@ -57,7 +53,7 @@ public class InternalSiteManager {
 		// should not be releasaed in final product	
 		if (localSite==null){
 			try {
-			URL installURL = ResourcesPlugin.getPlugin().getDescriptor().getInstallURL();
+			URL installURL = UpdateManagerPlugin.getPlugin().getDescriptor().getInstallURL();
 			URL resolvedURL = Platform.resolve(installURL);
 			String externalForm = resolvedURL.getPath();
 			int index = externalForm.lastIndexOf("/");

@@ -1,17 +1,10 @@
 package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.eclipse.update.core.AbstractFeature;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.VersionedIdentifier; 
+
+import org.eclipse.update.core.*; 
 
 public class DefaultExecutableFeature extends AbstractFeature {
 

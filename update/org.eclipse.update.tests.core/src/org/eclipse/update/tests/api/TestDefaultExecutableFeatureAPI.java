@@ -3,13 +3,8 @@ package org.eclipse.update.tests.api;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.update.core.AbstractFeature;
-import org.eclipse.update.core.IInfo;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.update.internal.core.DefaultExecutableFeature;
-import org.eclipse.update.internal.core.FileSite;
-import org.eclipse.update.internal.core.Info;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 

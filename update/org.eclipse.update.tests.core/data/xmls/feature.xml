@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE feature SYSTEM "file://localhost/C:/oti/reference/feature.dtd" [
-]>
 
 
 <feature id="org.eclipse.update.core.tests.feature1" image="feature1.bmp" label="Feature One" nl="us,fr,de" os="OS_WIN32,OS_LINUX" provider-name="Object Technology International" version="1.0.4" ws="WS_WIN32,WS_MOTIF,WS_GTK">

@@ -1,19 +1,9 @@
 package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
-import java.util.StringTokenizer;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.update.core.AbstractFeature;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.ISiteChangedListener;
-import org.eclipse.update.core.VersionedIdentifier;
+
+import org.eclipse.update.core.*;
 
 public class FileSite extends URLSite {
 
@@ -25,19 +15,6 @@ public class FileSite extends URLSite {
 	 */
 	public FileSite(URL siteReference) {
 		super(siteReference);
-	}
-
-	/**
-	 * @deprecated
-	 */
-	private String getPath() {
-		org.eclipse.update.core.Assert.isTrue(false,"SHOULD NOT BE CALLED");
-		if (path == null) {
-			path = getURL().getPath();
-			if (path.startsWith(File.separator))
-				path = path.substring(1);
-		}
-		return path;
 	}
 
 	/**
@@ -75,7 +52,7 @@ public class FileSite extends URLSite {
 			
 			
 
-			UpdateManagerUtils.resolveAsLocal(inStream, pluginPath + File.separator + contentKey);
+			UpdateManagerUtils.copyToLocal(inStream, pluginPath + File.separator + contentKey);
 
 
 		} catch (IOException e) {
@@ -113,7 +90,7 @@ public class FileSite extends URLSite {
 			}
 
 			String featurePath = getURL().getPath() + INSTALL_FEATURE_PATH + featureIdentifier.toString();
-			UpdateManagerUtils.resolveAsLocal(inStream, featurePath + File.separator + contentKey);
+			UpdateManagerUtils.copyToLocal(inStream, featurePath + File.separator + contentKey);
 
 		} catch (IOException e) {
 			//FIXME: 

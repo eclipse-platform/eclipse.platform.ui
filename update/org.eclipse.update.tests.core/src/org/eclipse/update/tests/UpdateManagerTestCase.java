@@ -7,10 +7,10 @@ package org.eclipse.update.tests;
 
 import java.io.File;
 import java.net.URL;
-import junit.framework.*;
+
+import junit.framework.TestCase;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.update.core.UpdateManagerPlugin;
 /**
  * All Help System Test cases must subclass this base Testcase.
  * See SampleTestCase.java for a template.

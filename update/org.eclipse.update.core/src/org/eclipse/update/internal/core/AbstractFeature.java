@@ -1,18 +1,13 @@
-package org.eclipse.update.core;
+package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.eclipse.update.internal.core.DefaultFeatureParser;
-import org.eclipse.update.internal.core.PluginEntry;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
+import java.util.*;
+
+import org.eclipse.update.core.*;
+import org.xml.sax.SAXException;
 /**
  * Abstract Class that implements most of the behavior of a feature
  * A feature ALWAYS belongs to an ISite
@@ -275,7 +270,7 @@ public abstract class AbstractFeature implements IFeature {
 		if (ws == null && !isInitialized)init();		
 		return ws;
 	}
-
+	
 	/**
 	 * Sets the site
 	 * @param site The site to set
@@ -512,9 +507,11 @@ public abstract class AbstractFeature implements IFeature {
 				InputStream inStream = null;
 				for (int i = 0; i < pluginsToInstall.length; i++) {
 					String[] names = getStorageUnitNames(pluginsToInstall[i]);
-					for (int j = 0; j < names.length; j++) {
-						if ((inStream = getInputStreamFor(pluginsToInstall[i], names[j])) != null)
-							targetFeature.store(pluginsToInstall[i], names[j], inStream);
+					if (names!=null){
+						for (int j = 0; j < names.length; j++) {
+							if ((inStream = getInputStreamFor(pluginsToInstall[i], names[j])) != null)
+								targetFeature.store(pluginsToInstall[i], names[j], inStream);
+						}
 					}
 				}
 			}
@@ -525,7 +522,7 @@ public abstract class AbstractFeature implements IFeature {
 			if (names!=null){
 				for (int j = 0; j < names.length; j++) {
 					if ((inStream = getInputStreamFor(names[j])) != null)
-						targetFeature.getSite().storeFeatureInfo(getIdentifier(), names[j], inStream);
+					((AbstractSite)targetFeature.getSite()).storeFeatureInfo(getIdentifier(), names[j], inStream);
 				}
 			}
 

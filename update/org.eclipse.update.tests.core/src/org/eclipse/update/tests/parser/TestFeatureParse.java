@@ -1,14 +1,11 @@
 package org.eclipse.update.tests.parser;
 
-import java.io.File;
 import java.net.URL;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-import junit.framework.TestCase;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
+
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.core.DefaultExecutableFeature;
+import org.eclipse.update.internal.core.URLSite;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestFeatureParse extends UpdateManagerTestCase {

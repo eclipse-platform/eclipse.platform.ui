@@ -22,9 +22,4 @@ public interface ISite extends IPluginContainer {
 	ICategory[] getCategories();
 	IInfo[] getArchives();
 	
-	//
-	/**
-	 * store Feature files/ Fetaures info into the Site
-	 */
-	void storeFeatureInfo(VersionedIdentifier featureIdentifier,String contentKey,InputStream inStream);
 }

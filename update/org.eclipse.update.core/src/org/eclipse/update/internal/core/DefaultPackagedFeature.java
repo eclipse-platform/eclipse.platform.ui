@@ -1,25 +1,15 @@
 package org.eclipse.update.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
-
-import org.eclipse.update.core.AbstractFeature;
-import org.eclipse.update.core.AbstractSite;
-import org.eclipse.update.core.Assert;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.ISite;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.UpdateManagerPlugin;
-import org.eclipse.update.core.VersionedIdentifier;
+
+import org.eclipse.update.core.*;
 
 public class DefaultPackagedFeature extends AbstractFeature {
 
@@ -143,15 +133,24 @@ public class DefaultPackagedFeature extends AbstractFeature {
 					new URL(siteURL.getProtocol(),siteURL.getHost(),siteURL.getPath()+AbstractSite.DEFAULT_PLUGIN_PATH + getArchiveID(pluginEntry));
 			}
 			jarFile = new JarFile(jarURL.getPath());
-			result = new String[jarFile.size()];
+			List list = new ArrayList();
 			Enumeration enum = jarFile.entries();
 			int loop = 0;
+			String currentName=null;
 			while (enum.hasMoreElements()) {
 				ZipEntry nextEntry = (ZipEntry) enum.nextElement();
-				result[loop] = (String) nextEntry.getName();
-				loop++;
+				if (!nextEntry.isDirectory()){
+					list.add(nextEntry.getName());
+					loop++;
+				}
 			}
 			jarFile.close();
+			
+			if (loop>0 && !list.isEmpty()){
+				result = new String[loop];
+				list.toArray(result);				
+			}
+			
 		} catch (MalformedURLException e) {
 			//FIXME:
 			e.printStackTrace();
@@ -188,7 +187,7 @@ public class DefaultPackagedFeature extends AbstractFeature {
 
 		// DEBUG:
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){
-			System.out.println("the feature on TEMP file is :"+newFile);					
+			System.out.println("the feature on TEMP file is :"+resolvedURL.toExternalForm());					
 		}
 	}
 
@@ -286,15 +285,23 @@ public class DefaultPackagedFeature extends AbstractFeature {
 						AbstractSite.DEFAULT_FEATURE_PATH + getIdentifier().toString() + JAR_EXTENSION);
 			}
 			jarFile = new JarFile(jarURL.getPath());
-			result = new String[jarFile.size()];
+			List list = new ArrayList();
 			Enumeration enum = jarFile.entries();
 			int loop = 0;
 			while (enum.hasMoreElements()) {
 				ZipEntry nextEntry = (ZipEntry) enum.nextElement();
-				result[loop] = (String) nextEntry.getName();
-				loop++;
+				if (!nextEntry.isDirectory()){
+					list.add(nextEntry.getName());
+					loop++;
+				}
 			}
+			
 			jarFile.close();
+			
+			if (loop>0 && !list.isEmpty()){
+				result = new String[loop];
+				list.toArray(result);
+			}
 		} catch (MalformedURLException e) {
 			//FIXME:
 			e.printStackTrace();

@@ -5,10 +5,9 @@
    name="%name"
    version="2.0.0"
    provider-name="%provider-name"
-   class="org.eclipse.update.core.UpdateManagerPlugin">
+   class="org.eclipse.update.internal.core.UpdateManagerPlugin">
 <requires>
    <import plugin="org.eclipse.core.runtime"/>
-   <import plugin="org.eclipse.core.resources"/>
    <import plugin="org.apache.xerces"/>
 </requires>
 

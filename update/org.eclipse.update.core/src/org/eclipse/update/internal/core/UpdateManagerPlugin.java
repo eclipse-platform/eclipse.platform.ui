@@ -1,11 +1,10 @@
-package org.eclipse.update.core;
-
+package org.eclipse.update.internal.core;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.resources.*;
 import java.util.*;
-
+
 /**
  * The main plugin class to be used in the desktop.
  */
@@ -34,21 +33,14 @@ public class UpdateManagerPlugin extends Plugin {
 			resourceBundle = null;
 		}
 	}
-
+
 	/**
 	 * Returns the shared instance.
 	 */
 	public static UpdateManagerPlugin getPlugin() {
 		return plugin;
 	}
-
-	/**
-	 * Returns the workspace instance.
-	 */
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-
+
 	/**
 	 * Returns the string from the plugin's resource bundle,
 	 * or 'key' if not found.
@@ -61,7 +53,7 @@ public class UpdateManagerPlugin extends Plugin {
 			return key;
 		}
 	}
-
+
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
@@ -73,12 +65,12 @@ public class UpdateManagerPlugin extends Plugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-
+
 		String result = null;
 		result = Platform.getDebugOption("org.eclipse.update.core/debug");
 		if (result != null) {
 			DEBUG = result.trim().equalsIgnoreCase("true");
-
+
 			if (DEBUG) {
 				result = Platform.getDebugOption("org.eclipse.update.core/debug/warnings");
 				DEBUG_SHOW_WARNINGS = result.trim().equalsIgnoreCase("true");
@@ -91,11 +83,12 @@ public class UpdateManagerPlugin extends Plugin {
 			}
 		}
 	}
-
+
 	/**
 	 * dumps a String in the trace
 	 */
 	public void debug(String s){
 		System.out.println(toString()+"^"+Integer.toHexString(Thread.currentThread().hashCode())+" "+s);
-	}
+	}
+
 }
