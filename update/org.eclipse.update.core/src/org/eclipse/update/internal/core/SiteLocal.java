@@ -1,6 +1,6 @@
 package org.eclipse.update.internal.core;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved. 
  */
 import java.io.*;
@@ -26,10 +26,9 @@ import org.xml.sax.SAXException;
 public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private static IPluginEntry[] allRunningPluginEntry;
-	private static SiteLocal localSite;
 	private ListenersList listeners = new ListenersList();
 	private boolean isTransient = false;
-	
+
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
 	/**
@@ -39,9 +38,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * is shared between the workspaces.
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
-		
-		if (localSite!=null) return localSite;
-		
+
 		URL configXML = null;
 		SiteLocal localSite = new SiteLocal();
 
@@ -86,7 +83,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			localSite.save();
 
 		} catch (SAXException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState",localSite.getLocationURLString()), exception); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState", localSite.getLocationURLString()), exception); //$NON-NLS-1$
 		} catch (MalformedURLException exception) {
 			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + SITE_LOCAL_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException exception) {
@@ -176,7 +173,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			try {
 				URL newURL = UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
 				file = new File(newURL.getFile());
-				if (isTransient()) file.deleteOnExit();
+				if (isTransient())
+					file.deleteOnExit();
 				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
 				Writer writer = new Writer();
 				writer.writeSite(this, fileWriter);
@@ -200,16 +198,18 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		for (int i = 0; i < IWritable.INDENT; i++)
 			increment += " "; //$NON-NLS-1$
 
+		long changeStamp = BootLoader.getCurrentPlatformConfiguration().getChangeStamp();
+
 		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
 			w.print("label=\"" + Writer.xmlSafe(getLabel()) + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		w.print("history=\"" + getMaximumHistoryCount() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-		w.print("stamp=\"" + BootLoader.getCurrentPlatformConfiguration().getChangeStamp() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.print("stamp=\"" + changeStamp + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
 		w.println(""); //$NON-NLS-1$
 
-		// teh last one is teh current configuration
+		// the last one is the current configuration
 		InstallConfigurationModel[] configurations = getConfigurationHistoryModel();
 		for (int index = 0; index < configurations.length; index++) {
 			InstallConfigurationModel element = configurations[index];
@@ -235,6 +235,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		}
 		// end
 		w.println("</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+			UpdateManagerPlugin.getPlugin().debug("Saved change stamp:" + changeStamp); //$NON-NLS-1$
+		}
+
 	}
 
 	/**
@@ -520,7 +525,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		try {
 			resolvedURL = Platform.resolve(newSiteEntry.getURL());
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToResolve",newSiteEntry.getURL().toExternalForm()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToResolve", newSiteEntry.getURL().toExternalForm()), e); //$NON-NLS-1$
 		}
 		return resolvedURL;
 	}
@@ -690,8 +695,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// sites from the platform			
 		for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
-			URL resolvedURL =resolveSiteEntry(siteEntries[siteIndex]);
-			
+			URL resolvedURL = resolveSiteEntry(siteEntries[siteIndex]);
+
 			boolean found = false;
 			for (int index = 0; index < configured.length && !found; index++) {
 
@@ -707,19 +712,19 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		}
 
 	}
-	
+
 	/*
 	 * Get update state location relative to platform configuration
 	 */
-	 private static URL getUpdateStateLocation(IPlatformConfiguration config) throws IOException {
-	 	// Create a directory location for update state files. This
-	 	// directory name is constructed by adding a well-known suffix
+	private static URL getUpdateStateLocation(IPlatformConfiguration config) throws IOException {
+		// Create a directory location for update state files. This
+		// directory name is constructed by adding a well-known suffix
 		// to the name of the corresponding platform  configuration. This
 		// way, we can have multiple platform configuration files in
 		// the same directory without ending up with update state conflicts.
 		// For example: platform configuration file:C:/platform.cfg results
 		// in update state location file:C:/platform.cfg.update/
-	 	URL configLocation = Platform.resolve(config.getConfigurationLocation());
+		URL configLocation = Platform.resolve(config.getConfigurationLocation());
 		String temp = configLocation.toExternalForm();
 		temp += UPDATE_STATE_SUFFIX + "/";
 		URL updateLocation = new URL(temp);
@@ -734,15 +739,15 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				} else
 					path = null;
 			}
-			for (int i=list.size()-1; i>=0; i--) { // walk down to create missing dirs
+			for (int i = list.size() - 1; i >= 0; i--) { // walk down to create missing dirs
 				path = (File) list.get(i);
 				path.mkdir();
 				if (config.isTransient())
 					path.deleteOnExit();
-			}	
+			}
 		}
 		return updateLocation;
-	 }
+	}
 
 	/**
 	 * Gets the isTransient.

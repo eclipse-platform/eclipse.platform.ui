@@ -9,7 +9,6 @@
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.update.core</project>
 		<project>org.eclipse.update.ui.forms</project>
-		<project>org.eclipse.webdav</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
