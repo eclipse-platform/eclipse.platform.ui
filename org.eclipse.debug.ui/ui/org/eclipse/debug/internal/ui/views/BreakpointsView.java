@@ -21,7 +21,6 @@ import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction;
 import org.eclipse.debug.internal.ui.actions.ShowBreakpointsForModelAction;
-import org.eclipse.debug.internal.ui.actions.ShowQualifiedAction;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -193,10 +192,6 @@ public class BreakpointsView extends AbstractDebugView {
 		action.setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
 		setAction("RemoveAll", action); //$NON-NLS-1$
 		
-		action = new ShowQualifiedAction(getStructuredViewer());
-		action.setChecked(true);
-		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
-		
 		action = new OpenBreakpointMarkerAction(getViewer());
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
@@ -223,7 +218,6 @@ public class BreakpointsView extends AbstractDebugView {
 		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		menu.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -262,7 +256,7 @@ public class BreakpointsView extends AbstractDebugView {
 		tbm.add(getAction(REMOVE_ACTION));
 		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
 		tbm.add(getAction("GotoMarker")); //$NON-NLS-1$
-		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
+		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}
 
 	/**

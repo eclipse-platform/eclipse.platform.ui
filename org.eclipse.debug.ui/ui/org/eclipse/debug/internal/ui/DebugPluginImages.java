@@ -82,7 +82,6 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_STEPRETURN, LOCALTOOL + "stepreturn_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_CLEAR, LOCALTOOL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED, LOCALTOOL + "rem_all_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES, LOCALTOOL + "qnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_TYPE_NAMES, LOCALTOOL + "tnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE, LOCALTOOL + "rem_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_ALL, LOCALTOOL + "rem_all_co.gif"); //$NON-NLS-1$
@@ -102,7 +101,6 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_STEPRETURN, DLCL + "stepreturn_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_CLEAR, DLCL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_TERMINATED, DLCL + "rem_all_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES, DLCL + "qnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES, DLCL + "tnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE, DLCL + "rem_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL, DLCL + "rem_all_co.gif"); //$NON-NLS-1$
@@ -122,7 +120,6 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STEPRETURN, ELCL + "stepreturn_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_CLEAR, ELCL + "clear_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_TERMINATED, ELCL + "rem_all_co.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES, ELCL + "qnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES, ELCL + "tnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE, ELCL + "rem_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL, ELCL + "rem_all_co.gif"); //$NON-NLS-1$

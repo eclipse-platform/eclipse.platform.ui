@@ -29,7 +29,6 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_STEPRETURN= "IMG_DLCL_STEPRETURN"; //$NON-NLS-1$
 	public static final String IMG_DLCL_CLEAR= "IMG_DLCL_CLEAR"; //$NON-NLS-1$
 	public static final String IMG_DLCL_REMOVE_TERMINATED= "IMG_DLCL_REMOVE_TERMINATED"; //$NON-NLS-1$
-	public static final String IMG_DLCL_QUALIFIED_NAMES= "IMG_DLCL_QUALIFIED_NAMES"; //$NON-NLS-1$
 	public static final String IMG_DLCL_TYPE_NAMES= "IMG_DLCL_TYPE_NAMES"; //$NON-NLS-1$
 	public static final String IMG_DLCL_REMOVE= "IMG_DLCL_REMOVE"; //$NON-NLS-1$
 	public static final String IMG_DLCL_REMOVE_ALL= "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
@@ -49,7 +48,6 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_STEPRETURN= "IMG_ELCL_STEPRETURN"; //$NON-NLS-1$
 	public static final String IMG_ELCL_CLEAR= "IMG_ELCL_CLEAR"; //$NON-NLS-1$
 	public static final String IMG_ELCL_REMOVE_TERMINATED= "IMG_ELCL_REMOVE_TERMINATED"; //$NON-NLS-1$
-	public static final String IMG_ELCL_QUALIFIED_NAMES= "IMG_ELCL_QUALIFIED_NAMES"; //$NON-NLS-1$
 	public static final String IMG_ELCL_TYPE_NAMES= "IMG_ELCL_TYPE_NAMES"; //$NON-NLS-1$
 	public static final String IMG_ELCL_REMOVE= "IMG_ELCL_REMOVE"; //$NON-NLS-1$
 	public static final String IMG_ELCL_REMOVE_ALL= "IMG_ELCL_REMOVE_ALL"; //$NON-NLS-1$

@@ -26,7 +26,6 @@ import org.eclipse.debug.internal.ui.actions.ControlAction;
 import org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate;
 import org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate;
 import org.eclipse.debug.internal.ui.actions.RemoveTerminatedAction;
-import org.eclipse.debug.internal.ui.actions.ShowQualifiedAction;
 import org.eclipse.debug.internal.ui.actions.TerminateAllAction;
 import org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -115,11 +114,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setAction("TerminateAll", new TerminateAllAction()); //$NON-NLS-1$
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
 		
-		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));
- //$NON-NLS-1$
-		IAction qAction = new ShowQualifiedAction(viewer);
-		qAction.setChecked(false);
-		setAction("ShowQualifiedNames", qAction);	 //$NON-NLS-1$
+		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));//$NON-NLS-1$
 				
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the
@@ -212,7 +207,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		tbm.add(getAction("RemoveAll"));
 		tbm.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		tbm.add(getAction("ShowQualifiedNames"));
 	}	
 
 	/**
@@ -527,7 +521,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(getAction("Relaunch")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.PROPERTY_GROUP));
 		PropertyDialogAction action = (PropertyDialogAction)getAction("Properties"); //$NON-NLS-1$
 		action.setEnabled(action.isApplicableForSelection());

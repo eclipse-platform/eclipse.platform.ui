@@ -242,9 +242,6 @@ public interface IDebugUIConstants {
 	/** Remove all terminated action image identifier. */
 	public static final String IMG_LCL_REMOVE_TERMINATED= "IMG_LCL_REMOVE_TERMINATED"; //$NON-NLS-1$
 	
-	/** Display qualififed names action image identifier. */
-	public static final String IMG_LCL_QUALIFIED_NAMES= "IMG_LCL_QUALIFIED_NAMES"; //$NON-NLS-1$
-	
 	/** Display variable type names action image identifier. */
 	public static final String IMG_LCL_TYPE_NAMES= "IMG_LCL_TYPE_NAMES"; //$NON-NLS-1$
 	

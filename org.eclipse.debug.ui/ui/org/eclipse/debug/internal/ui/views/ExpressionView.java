@@ -87,8 +87,8 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(this.getClass().getName()));
+		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
-		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));		
 		tbm.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 		tbm.add(getAction(REMOVE_ACTION));
@@ -114,7 +114,6 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$
-		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}	
 }

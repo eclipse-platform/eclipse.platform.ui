@@ -424,13 +424,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 		show= show == null ? new Boolean(false) : show;
 		return show.booleanValue();
 	}
-	
-	protected boolean showQualifiedNames() {
-		Boolean show= (Boolean) fAttributes.get(DISPLAY_QUALIFIED_NAMES);
-		show= show == null ? new Boolean(false) : show;
-		return show.booleanValue();
-	}
-	
+		
 	protected HashMap getAttributes() {
 		return fAttributes;
 	}

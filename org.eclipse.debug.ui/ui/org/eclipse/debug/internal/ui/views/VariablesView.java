@@ -27,7 +27,6 @@ import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.ControlAction;
 import org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate;
-import org.eclipse.debug.internal.ui.actions.ShowQualifiedAction;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.ShowVariableDetailPaneAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
@@ -380,11 +379,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		IAction action = new ShowTypesAction(getStructuredViewer());
 		action.setChecked(false);
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
-		
-		action = new ShowQualifiedAction(getStructuredViewer());
-		action.setChecked(false);
-		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
-		
+				
 		action = new ChangeVariableValueAction(getViewer());
 		action.setEnabled(false);
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
@@ -424,8 +419,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(this.getClass().getName()));
+		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
-		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
 		tbm.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 	}
@@ -445,7 +440,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$
-		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
