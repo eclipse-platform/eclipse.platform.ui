@@ -112,14 +112,11 @@ public class SearchManager implements ITocsChangedListener{
 			configurationLocked = index.tryLock();
 		}
 		try {
-			if(useLock && !configurationLocked){
-				if (useLock && !configurationLocked) {
-					pm.beginTask("", 1);
-					pm.worked(1);
-					pm.done();
-					return;
-				}
-				
+			if (useLock && !configurationLocked) {
+				pm.beginTask("", 1);
+				pm.worked(1);
+				pm.done();
+				return;
 			}
 			// Only one index update occurs in VM at a time,
 			// but progress SearchProgressMonitor for other locales
