@@ -1788,7 +1788,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 	String message;
 	IContainer parent = resource.getParent();
 	if (parent == null || parent.getType() != IResource.PROJECT) {
-		message = Policy.bind("links.parentNotProject", resource.getFullPath().toString());//$NON-NLS-1$
+		message = Policy.bind("links.parentNotProject", resource.getName());//$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 	if (!parent.isAccessible()) {
