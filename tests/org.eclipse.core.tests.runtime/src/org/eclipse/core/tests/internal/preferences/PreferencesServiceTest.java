@@ -730,4 +730,85 @@ public class PreferencesServiceTest extends RuntimeTest {
 		verifier.addExpected(child2.absolutePath(), k1);
 		verifier.addExpected(child2.absolutePath(), k2);
 	}
+
+	private IPath getRandomLocation() {
+		return new Path(System.getProperty("java.io.tmpdir")).append(Long.toString(System.currentTimeMillis()));
+	}
+
+	public void testValidateVersions() {
+		final char BUNDLE_VERSION_PREFIX = '@';
+
+		// no errors if the file doesn't exist
+		IPath path = getRandomLocation();
+		IStatus result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
+		assertTrue("1.0", result.isOK());
+
+		// no errors for an empty file
+		Properties properties = new Properties();
+		OutputStream output = null;
+		try {
+			output = new FileOutputStream(path.toFile());
+			properties.store(output, null);
+		} catch (IOException e) {
+			fail("2.0", e);
+		} finally {
+			if (output != null)
+				try {
+					output.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
+		assertTrue("2.0", result.isOK());
+
+		// no errors for a file which we write out right now
+		try {
+			org.eclipse.core.runtime.Preferences.exportPreferences(path);
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
+		assertTrue("3.1", result.isOK());
+
+		// warning for old versions
+		properties = new Properties();
+		InputStream input = null;
+		try {
+			input = new FileInputStream(path.toFile());
+			properties.load(input);
+		} catch (IOException e) {
+			fail("4.0", e);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		// change all version numbers to "0" so the validation will fail
+		for (Enumeration e = properties.keys(); e.hasMoreElements();) {
+			String key = (String) e.nextElement();
+			if (key.charAt(0) == BUNDLE_VERSION_PREFIX)
+				properties.put(key, "0");
+		}
+		output = null;
+		try {
+			output = new FileOutputStream(path.toFile());
+			properties.store(output, null);
+		} catch (IOException e) {
+			fail("4.1", e);
+		} finally {
+			if (output != null)
+				try {
+					output.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		result = org.eclipse.core.runtime.Preferences.validatePreferenceVersions(path);
+		assertTrue("4.2", !result.isOK());
+
+	}
 }

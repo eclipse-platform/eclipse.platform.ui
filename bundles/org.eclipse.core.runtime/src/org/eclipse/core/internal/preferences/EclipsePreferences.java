@@ -185,16 +185,22 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (root == null)
 			return EMPTY_STRING_ARRAY;
 		IPath dir = root.append(DEFAULT_PREFERENCES_DIRNAME);
+		final ArrayList result = new ArrayList();
+		final String extension = '.' + PREFS_FILE_EXTENSION;
 		File file = dir.toFile();
 		FilenameFilter filter = new FilenameFilter() {
 			public boolean accept(File directory, String child) {
 				if (new File(directory, child).isDirectory())
 					return false;
-				return child.endsWith('.' + PREFS_FILE_EXTENSION);
+				if (child.endsWith(extension)) {
+					String shortName = child.substring(0, child.length() - extension.length());
+					result.add(shortName);
+				}
+				return false;
 			}
 		};
-		String[] result = file.list(filter);
-		return result == null ? EMPTY_STRING_ARRAY : result;
+		file.list(filter);
+		return (String[]) result.toArray(EMPTY_STRING_ARRAY);
 	}
 
 	protected IPath computeLocation(IPath root, String qualifier) {

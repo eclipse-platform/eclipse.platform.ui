@@ -33,6 +33,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			ConfigurationScope.SCOPE, //
 			DefaultScope.SCOPE};
 	private static final char EXPORT_ROOT_PREFIX = '!';
+	private static final char BUNDLE_VERSION_PREFIX = '@';
 	private static final float EXPORT_VERSION = 3;
 	private static final String VERSION_KEY = "file_export_version"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
@@ -214,9 +215,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			String value = properties.getProperty(key);
 			if (value != null) {
 				int index = key.indexOf(IPath.SEPARATOR);
-				if (index == -1)
+				if (index == -1) {
+					result.put(BUNDLE_VERSION_PREFIX + key, value);
 					result.put(EXPORT_ROOT_PREFIX + prefix + key, EMPTY_STRING);
-				else {
+				} else {
 					String path = key.substring(0, index);
 					key = key.substring(index + 1);
 					result.put(EclipsePreferences.encodePath(prefix + path, key), value);
@@ -236,14 +238,16 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			String path = (String) i.next();
 			String value = properties.getProperty(path);
 			if (path.charAt(0) == EXPORT_ROOT_PREFIX) {
-				path = path.substring(1, path.length());
-				ExportedPreferences current = (ExportedPreferences) result.node(path);
+				ExportedPreferences current = (ExportedPreferences) result.node(path.substring(1));
 				current.setExportRoot();
+			} else if (path.charAt(0) == BUNDLE_VERSION_PREFIX) {
+				ExportedPreferences current = (ExportedPreferences) result.node(InstanceScope.SCOPE).node(path.substring(1));
+				current.setVersion(value);
 			} else {
 				String[] decoded = EclipsePreferences.decodePath(path);
 				path = decoded[0] == null ? EMPTY_STRING : decoded[0];
+				ExportedPreferences current = (ExportedPreferences) result.node(path);
 				String key = decoded[1];
-				Preferences current = result.node(path);
 				current.put(key, value);
 			}
 		}
@@ -252,6 +256,10 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 		return result;
 	}
 
+	/*
+	 * Return the string which is the scope for the given path.
+	 * Return the empty string if it cannot be determined.
+	 */
 	String getScope(String path) {
 		if (path == null || path.length() == 0)
 			return EMPTY_STRING;
@@ -288,6 +296,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 					if (path.startsWith(exclusion))
 						return false;
 				}
+				boolean needToAddVersion = InstanceScope.SCOPE.equals(scope);
 				// check the excludes list for each preference
 				String[] keys = node.keys();
 				for (int i = 0; i < keys.length; i++) {
@@ -298,8 +307,18 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 							ignore = true;
 					if (!ignore) {
 						String value = node.get(key, null);
-						if (value != null)
+						if (value != null) {
+							if (needToAddVersion) {
+								String bundle = getBundleName(absolutePath);
+								if (bundle != null) {
+									String version = getBundleVersion(bundle);
+									if (version != null)
+										result.put(BUNDLE_VERSION_PREFIX + bundle, version);
+								}
+								needToAddVersion = false;
+							}
 							result.put(EclipsePreferences.encodePath(absolutePath, key), value);
+						}
 					}
 				}
 				return true;
@@ -389,15 +408,30 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * Return the version for the bundle with the given name. Return null if it
 	 * is not known or there is a problem.
 	 */
-	private PluginVersionIdentifier getBundleVersion(String bundleName) {
-		PluginVersionIdentifier result = null;
+	String getBundleVersion(String bundleName) {
 		Bundle bundle = Platform.getBundle(bundleName);
 		if (bundle != null) {
 			Object version = bundle.getHeaders(EMPTY_STRING).get(Constants.BUNDLE_VERSION);
 			if (version != null && version instanceof String)
-				result = new PluginVersionIdentifier((String) version);
+				return (String) version;
 		}
-		return result;
+		return null;
+	}
+
+	/*
+	 * Return the name of the bundle from the given path.
+	 * It is assumed that that path is:
+	 * - absolute
+	 * - in the instance scope
+	 */
+	String getBundleName(String path) {
+		if (path.length() == 0 || path.charAt(0) != IPath.SEPARATOR)
+			return null;
+		int first = path.indexOf(IPath.SEPARATOR, 1);
+		if (first == -1)
+			return null;
+		int second = path.indexOf(IPath.SEPARATOR, first + 1);
+		return second == -1 ? path.substring(first + 1) : path.substring(first + 1, second);
 	}
 
 	/*
@@ -632,5 +666,81 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			LookupOrder obj = new LookupOrder(qualifier, key, order);
 			defaultsRegistry.put(registryKey, obj);
 		}
+	}
+
+	public IStatus validateVersions(IPath path) {
+		String message = Policy.bind("preferences.validate"); //$NON-NLS-1$
+		final MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.INFO, message, null);
+		IPreferenceNodeVisitor visitor = new IPreferenceNodeVisitor() {
+			public boolean visit(IEclipsePreferences node) {
+				if (!(node instanceof ExportedPreferences))
+					return false;
+
+				// calculate the version in the file
+				ExportedPreferences realNode = (ExportedPreferences) node;
+				String version = realNode.getVersion();
+				if (version == null || !PluginVersionIdentifier.validateVersion(version).isOK())
+					return true;
+				PluginVersionIdentifier versionInFile = new PluginVersionIdentifier(version);
+
+				// calculate the version of the installed bundle
+				String bundleName = getBundleName(node.absolutePath());
+				if (bundleName == null)
+					return true;
+				String stringVersion = getBundleVersion(bundleName);
+				if (stringVersion == null || !PluginVersionIdentifier.validateVersion(stringVersion).isOK())
+					return true;
+				PluginVersionIdentifier versionInMemory = new PluginVersionIdentifier(stringVersion);
+
+				// verify the versions based on the matching rules
+				IStatus verification = validatePluginVersions(bundleName, versionInFile, versionInMemory);
+				if (verification != null)
+					result.add(verification);
+
+				return true;
+			}
+		};
+
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(path.toFile()));
+			IExportedPreferences prefs = readPreferences(input);
+			prefs.accept(visitor);
+		} catch (FileNotFoundException e) {
+			// ignore...if the file does not exist then all is OK
+		} catch (CoreException e) {
+			message = "Exception validating preference bundle versions.";
+			result.add(createStatusError(message, e));
+		} catch (BackingStoreException e) {
+			message = "Exception validating preference bundle versions.";
+			result.add(createStatusError(message, e));
+		}
+		return result;
+	}
+
+	/**
+	 * Compares two plugin version identifiers to see if their preferences
+	 * are compatible.  If they are not compatible, a warning message is 
+	 * added to the given multistatus, according to the following rules:
+	 * 
+	 * - plugins that differ in service number: no status
+	 * - plugins that differ in minor version: WARNING status
+	 * - plugins that differ in major version:
+	 * 	- where installed plugin is newer: WARNING status
+	 * 	- where installed plugin is older: ERROR status
+	 * @param bundle the name of the bundle
+	 * @param pref The version identifer of the preferences to be loaded
+	 * @param installed The version identifier of the installed plugin
+	 */
+	IStatus validatePluginVersions(String bundle, PluginVersionIdentifier pref, PluginVersionIdentifier installed) {
+		if (installed.getMajorComponent() == pref.getMajorComponent() && installed.getMinorComponent() == pref.getMinorComponent())
+			return null;
+		int severity;
+		if (installed.getMajorComponent() < pref.getMajorComponent())
+			severity = IStatus.ERROR;
+		else
+			severity = IStatus.WARNING;
+		String msg = Policy.bind("preferences.incompatible", new String[] {pref.toString(), bundle, installed.toString()}); //$NON-NLS-1$
+		return new Status(severity, Platform.PI_RUNTIME, 1, msg, null);
 	}
 }

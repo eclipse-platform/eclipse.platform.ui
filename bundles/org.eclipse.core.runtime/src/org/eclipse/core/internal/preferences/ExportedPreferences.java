@@ -21,6 +21,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class ExportedPreferences extends EclipsePreferences implements IExportedPreferences {
 
 	private boolean isExportRoot = false;
+	private String version;
 
 	ExportedPreferences(IEclipsePreferences parent, String name) {
 		super(parent, name);
@@ -38,6 +39,22 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 	 */
 	public void setExportRoot() {
 		isExportRoot = true;
+	}
+
+	/*
+	 * Internal method called only by the import/export mechanism to
+	 * validate bundle versions.
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/*
+	 * Internal method called only by the import/export mechanism to
+	 * validate bundle versions.
+	 */
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 	/*
@@ -73,6 +90,8 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 		if (isExportRoot)
 			buffer.append("* "); //$NON-NLS-1$
 		buffer.append(absolutePath());
+		if (version != null)
+			buffer.append(" (" + version + ')'); //$NON-NLS-1$
 		return buffer.toString();
 	}
 }
