@@ -18,7 +18,6 @@ import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -38,11 +37,7 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 			DebugEvent event = events[i];
 			Object source = event.getSource();
 			if (event.getKind() == DebugEvent.TERMINATE && (source instanceof IDebugTarget || source instanceof IProcess)) {
-				DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-					public void run() {
-						update();
-					}
-				});
+				update();
 			}
 		}
 		

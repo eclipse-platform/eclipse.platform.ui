@@ -21,11 +21,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugView;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
  
 /**
@@ -39,30 +34,11 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	 */	
 	protected void doHandleDebugEvent(DebugEvent event) {	
 		if (event.getKind() == DebugEvent.TERMINATE) {
-			Object source= event.getSource();
-			if (source instanceof IDebugTarget) {
-				ILaunch launch= ((IDebugTarget)source).getLaunch();
-				if (launch.isTerminated() && launchIsRegistered(launch)) {
-					getAction().setEnabled(true);
-				}
-			} else if (source instanceof IProcess) {
-				ILaunch launch= ((IProcess)source).getLaunch();
-				if (launch.isTerminated() && launchIsRegistered(launch)) {
-					getAction().setEnabled(true);
-				}
+			Object source = event.getSource();
+			if (event.getKind() == DebugEvent.TERMINATE && (source instanceof IDebugTarget || source instanceof IProcess)) {
+				update();
 			}
 		}
-	}
-
-	private boolean launchIsRegistered(ILaunch iLaunch) {
-		ILaunch[] launches= DebugPlugin.getDefault().getLaunchManager().getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
-			if (launch.equals(iLaunch)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/** 
@@ -70,15 +46,12 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	 * least one launch is terminated and relative to the current perspective.
 	 */
 	protected void update() {
-		Object[] elements = getElements();
-		if (elements != null) {
-			for (int i= 0; i < elements.length; i++) {
-				if (elements[i] instanceof ILaunch) {
-					ILaunch launch= (ILaunch)elements[i];
-					if (launch.isTerminated()) {
-						getAction().setEnabled(true);
-						return;
-					}
+		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		if (launches != null) {
+			for (int i= 0; i < launches.length; i++) {
+				if (launches[i].isTerminated()) {
+					getAction().setEnabled(true);
+					return;
 				}
 			}
 		}
@@ -86,38 +59,16 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	}
 
 	protected void doAction() {
-		Object[] elements = getElements();
-		removeTerminatedLaunches(elements);
-	}
-	
-	/**
-	 * Returns the top level elements in the active debug
-	 * view, or <code>null</code> if none.
-	 * 
-	 * @return array of object
-	 */
-	public Object[] getElements() {
-		IDebugView view = getDebugView();
-		if (view != null) {
-			Viewer viewer = view.getViewer();
-			if (viewer instanceof StructuredViewer) {
-				IStructuredContentProvider cp = (IStructuredContentProvider)((StructuredViewer)viewer).getContentProvider();
-				if (cp != null) {
-					return cp.getElements(viewer.getInput());
-				}
-			}
-		}
-		return null;
+		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		removeTerminatedLaunches(launches);
 	}
 
-	public static void removeTerminatedLaunches(Object[] elements) {
+	public static void removeTerminatedLaunches(ILaunch[] elements) {
 		List removed = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof ILaunch) {
-				ILaunch launch = (ILaunch)elements[i];
-				if (launch.isTerminated()) {
-					removed.add(launch);
-				}
+			ILaunch launch = elements[i];
+			if (launch.isTerminated()) {
+				removed.add(launch);
 			}
 		}
 		if (!removed.isEmpty()) {
@@ -126,10 +77,6 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 		}				
 	}
 	
-	protected IDebugView getDebugView() {
-		return (IDebugView)getView().getAdapter(IDebugView.class);
-	}
-
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */
@@ -165,11 +112,7 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	 */
 	public void launchesRemoved(ILaunch[] launches) {
 		if (getAction().isEnabled()) {
-			DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-				public void run() {
-					update();
-				}
-			});
+			update();
 		}
 	}
 }

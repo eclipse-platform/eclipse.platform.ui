@@ -2351,7 +2351,7 @@ M4 = Platform-specific fourth key
                 label="%RemoveAllTerminatedAction.label"
                 tooltip="%RemoveAllTerminatedAction.tooltip"
                 icon="icons/full/elcl16/rem_all_co.gif"
-                class="org.eclipse.debug.internal.ui.views.console.ConsoleRemoveAllTerminatedActionDelegate"
+                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
                 menubarPath="additions"
                 id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"/>
           <action
