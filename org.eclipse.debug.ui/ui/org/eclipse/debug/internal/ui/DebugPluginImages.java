@@ -189,7 +189,8 @@ public class DebugPluginImages {
 			
 		// Overlays
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_ERROR, OVR + "error.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$		
+		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$
+        declareRegistryImage(IDebugUIConstants.IMG_OVR_SKIP_BREAKPOINT, OVR + "skip_breakpoint_ov.gif"); //$NON-NLS-1$
 				
 		//source location
 		declareRegistryImage(IInternalDebugUIConstants.IMG_SRC_LOOKUP_MENU, ELCL + "edtsrclkup_co.gif"); //$NON-NLS-1$

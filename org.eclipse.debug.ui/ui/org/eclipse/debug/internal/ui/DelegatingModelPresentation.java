@@ -21,19 +21,15 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingType;
-import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -156,40 +152,15 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	}
 	
 	/**
-	 * @see IDebugModelPresentation#getText(Object)
-	 */
-	public String getText(Object item) {
-		if (!(item instanceof IndexedVariablePartition)) {
-			// Attempt to delegate
-			IDebugModelPresentation lp= getConfiguredPresentation(item);
-			if (lp != null) {
-				String label= lp.getText(item);
-				if (label != null) {
-					return label;
-				}
-			}
-		}
-		// If no delegate returned a text label, use the default
-		if (showVariableTypeNames()) {
-			try {
-				if (item instanceof IExpression) {
-					StringBuffer buf = new StringBuffer();
-					IValue value = ((IExpression)item).getValue();
-					if (value != null) {
-						buf.append(value.getReferenceTypeName());
-						buf.append(' ');
-					}
-					buf.append(getDefaultText(item));
-					return buf.toString(); 
-				} else if (item instanceof IVariable) {
-					return new StringBuffer(((IVariable)item).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(item)).toString();
-				}
-			} catch (DebugException de) {
-				DebugUIPlugin.log(de);
-			}
-		}
-		return getDefaultText(item);
-	}
+     * @see IDebugModelPresentation#getText(Object)
+     */
+    public String getText(Object item) {
+    	IDebugModelPresentation lp= getConfiguredPresentation(item);
+    	if (lp != null) {
+    		return lp.getText(item);
+    	}
+    	return getDefaultText(item);
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)

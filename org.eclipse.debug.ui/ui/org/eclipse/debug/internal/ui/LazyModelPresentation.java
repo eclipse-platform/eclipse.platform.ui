@@ -18,13 +18,19 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockModelPresentation;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryRenderingType;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
@@ -99,16 +105,93 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object element) {
-		return getPresentation().getImage(element);
+		Image image = getPresentation().getImage(element);
+        if (image == null) {
+            image = getDefaultImage(element);
+        }
+        if (image != null) {
+            int flags= computeAdornmentFlags(element);
+            if (flags > 0) {
+                CompositeDebugImageDescriptor descriptor= new CompositeDebugImageDescriptor(image, flags);
+                return DebugUIPlugin.getImageDescriptorRegistry().get(descriptor);
+            }
+        }
+        return image;
 	}
 
 	/**
+     * Computes and return common adornment flags for the given element.
+     * 
+     * @param element
+     * @return adornment flags defined in CompositeDebugImageDescriptor
+     */
+    private int computeAdornmentFlags(Object element) {
+        if (element instanceof IBreakpoint) {
+            if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+                return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Returns a default text label for the debug element
+     */
+    protected String getDefaultText(Object element) {
+        return DebugUIPlugin.getDefaultLabelProvider().getText(element);
+    }
+
+    /**
+     * Returns a default image for the debug element
+     */
+    protected Image getDefaultImage(Object element) {
+        return DebugUIPlugin.getDefaultLabelProvider().getImage(element);
+    }
+    
+    /**
 	 * @see IDebugModelPresentation#getText(Object)
 	 */
 	public String getText(Object element) {
-		return getPresentation().getText(element);
+        if (!(element instanceof IndexedVariablePartition)) {
+            // Attempt to delegate        
+            String text = getPresentation().getText(element);
+            if (text != null) {
+                return text;
+            }
+        }
+        // If no delegate returned a text label, use the default
+        if (showVariableTypeNames()) {
+            try {
+                if (element instanceof IExpression) {
+                    StringBuffer buf = new StringBuffer();
+                    IValue value = ((IExpression)element).getValue();
+                    if (value != null) {
+                        buf.append(value.getReferenceTypeName());
+                        buf.append(' ');
+                    }
+                    buf.append(getDefaultText(element));
+                    return buf.toString(); 
+                } else if (element instanceof IVariable) {
+                    return new StringBuffer(((IVariable)element).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(element)).toString();
+                }
+            } catch (DebugException de) {
+                DebugUIPlugin.log(de);
+            }
+        }
+        return getDefaultText(element);
 	}
 	
+    /**
+     * Whether or not to show variable type names.
+     * This option is configured per model presentation.
+     * This allows this option to be set per view, for example.
+     */
+    protected boolean showVariableTypeNames() {
+        Boolean show= (Boolean) fAttributes.get(DISPLAY_VARIABLE_TYPE_NAMES);
+        show= show == null ? Boolean.FALSE : show;
+        return show.booleanValue();
+    }
+    
 	/**
 	 * @see IDebugModelPresentation#computeDetail(IValue, IValueDetailListener)
 	 */

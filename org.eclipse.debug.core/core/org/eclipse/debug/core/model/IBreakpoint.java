@@ -120,8 +120,22 @@ public interface IBreakpoint extends IAdaptable {
 	 * Breakpoint group marker attribute (value <code>"org.eclipse.debug.core.group"</code>).
 	 * The attribute is a <code>String</code> corresponding to the group
 	 * name.
+     * 
+     * @since 3.1
 	 */
 	public static final String GROUP= "org.eclipse.debug.core.group"; //$NON-NLS-1$
+    
+    /**
+     * Breakpoint skip attribute (value <code>"org.eclipse.debug.core.skip"</code>).
+     * The attribute is a <code>boolean</code> corresponding to whether the breakpoint
+     * should be skipped.
+     * <p>
+     * This attribute is not intended to be modified by clients. The breakpoint manager
+     * toggles this attribute as it is enabled/disabled.
+     * </p>
+     * @since 3.1
+     */
+    public static final String SKIP= "org.eclipse.debug.core.skip"; //$NON-NLS-1$    
 	
 	/**
 	 * Deletes this breakpoint's underlying marker, and removes
@@ -246,6 +260,16 @@ public interface IBreakpoint extends IAdaptable {
 	 * @since 3.1
 	 */
 	public void setGroup(String groupName) throws CoreException;
+    
+    /**
+     * Returns whether this breakpoint should be skipped, based on breakpoint
+     * manager enablement.
+     * 
+     * @return whether this breakpoint should be skipped, based on breakpoint
+     *   manager enablement
+     * @since 3.1
+     */
+    public boolean isSkipped();
 }
 
 

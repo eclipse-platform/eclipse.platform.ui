@@ -50,14 +50,11 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener2;
@@ -127,7 +124,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	                    expandToLevel(iter.next(), ALL_LEVELS);
 	                }
 	                initializeCheckedState(this, fContentProvider);
-	                updateViewerBackground(this);
 		    	} finally {
 		    		getControl().setRedraw(true);
 		    	}
@@ -638,42 +634,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 				if (action != null) {
 					((SkipAllBreakpointsAction) action).updateActionCheckedState();
 				}
-				updateViewerBackground(getCheckboxViewer());
 			}
 		});
-	}
-
-	/**
-	 * Updates the background color of the viewer based
-	 * on the breakpoint manager enablement.
-	 */
-	protected void updateViewerBackground(TreeViewer viewer) {
-		Color color= null;
-		boolean enabled = true;
-		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-			color= DebugUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-			enabled = false;
-		}
-		Tree tree = viewer.getTree();
-		updateTreeItems(tree.getItems(), color, !enabled);
-		tree.setBackground(color);
-		if (enabled) {
-			setContentDescription(""); //$NON-NLS-1$
-		} else {
-			setContentDescription(DebugUIViewsMessages.getString("BreakpointsView.19")); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Recursively sets the color and grayed state of the given tree items
-	 */
-	private void updateTreeItems(TreeItem[] items, Color color, boolean gray) {
-	    for (int i = 0; i < items.length; i++) {
-            TreeItem item = items[i];
-            item.setBackground(color);
-            item.setGrayed(gray);
-            updateTreeItems(item.getItems(), color, gray);
-        }
 	}
 	
 	/* (non-Javadoc)

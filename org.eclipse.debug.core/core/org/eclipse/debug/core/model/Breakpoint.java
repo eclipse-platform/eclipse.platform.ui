@@ -248,7 +248,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, getMarkerRule(), 0, null);
+		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, getMarkerRule(), 0, null);
+		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
 
 	/**
@@ -353,5 +353,12 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
     	} catch (CoreException e) {
     		throw new DebugException(e.getStatus());
     	}			
-    }    
+    }  
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.core.model.IBreakpoint#isSkipped()
+     */
+    public boolean isSkipped() {
+        return !DebugPlugin.getDefault().getBreakpointManager().isEnabled();
+    }
 }

@@ -152,6 +152,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	
 	private MemoryBlockViewSynchronizer fMemBlkViewSynchronizer = null;
+    
+    /**
+     * Image descriptor registry used for images with common overlays.
+     * 
+     * @since 3.1
+     */
+    private ImageDescriptorRegistry fImageDescriptorRegistry;
 	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
@@ -323,6 +330,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fMemBlkViewSynchronizer != null){
 				fMemBlkViewSynchronizer.shutdown();
 			}
+            
+            if (fImageDescriptorRegistry != null) {
+                fImageDescriptorRegistry.dispose();
+            }
 			
 			MemoryRenderingManager.pluginShutdown();
 			
@@ -970,5 +981,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
         return title;
     }
 
+    /**
+     * Returns the image descriptor registry used for this plugin.
+     * 
+     * @since 3.1
+     */
+    public static ImageDescriptorRegistry getImageDescriptorRegistry() {
+        if (getDefault().fImageDescriptorRegistry == null) {
+            getDefault().fImageDescriptorRegistry = new ImageDescriptorRegistry();
+        }
+        return getDefault().fImageDescriptorRegistry;
+    }
 }
 

@@ -546,6 +546,12 @@ public interface IDebugUIConstants {
 	/** Error overlay image identifier. */
 	public static final String IMG_OVR_ERROR = "IMG_OVR_ERROR";  //$NON-NLS-1$
 
+    /**
+     * Skip breakpoint image overlay identifier.
+     * @since 3.1
+     */
+    public static final String IMG_OVR_SKIP_BREAKPOINT = "IMG_OVR_SKIP_BREAKPOINT"; //$NON-NLS-1$
+    
 	/**
 	 * Debug action set identifier (value <code>"org.eclipse.debug.ui.debugActionSet"</code>).
 	 */
