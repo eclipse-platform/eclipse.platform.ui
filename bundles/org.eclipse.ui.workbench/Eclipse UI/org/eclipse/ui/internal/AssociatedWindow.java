@@ -93,6 +93,13 @@ public class AssociatedWindow extends Window {
 			currentRect.y = location.y;
 			shellToMove.setBounds(getConstrainedShellBounds(currentRect));
 		}
+		
+		Region oldRegion = shellToMove.getRegion();
+		//Reset the region
+		Region outerRegion = getRoundCorners(shellToMove.getClientArea(),shellToMove);
+		shellToMove.setRegion(outerRegion);
+		if(oldRegion != null)
+			oldRegion.dispose();
 	}
 	/**
 	 * Get the location depending on the track style.
@@ -226,7 +233,7 @@ public class AssociatedWindow extends Window {
 					return;
 				Rectangle outerShellSize = paintShell.getClientArea();
 				GC gc = event.gc;
-				gc.setClipping(getRegion(outerShellSize,paintShell));
+				gc.setClipping(getBorderRegion(outerShellSize,paintShell));
 				gc.setBackground(paintShell.getDisplay().getSystemColor(
 						SWT.COLOR_BLACK));
 				gc.fillRoundRectangle(0, 0, outerShellSize.width,
@@ -239,7 +246,7 @@ public class AssociatedWindow extends Window {
 			 * @param outerShellSize
 			 * @return
 			 */
-			private Region getRegion(Rectangle outerShellSize, Shell newShell) {
+			private Region getBorderRegion(Rectangle outerShellSize, Shell newShell) {
 				if (roundRegion != null)
 					return roundRegion;
 				
@@ -247,12 +254,20 @@ public class AssociatedWindow extends Window {
 						borderSize, outerShellSize.width - 2 * borderSize,
 						outerShellSize.height - 2 * borderSize);
 				roundRegion = new Region(getShell().getDisplay());
-				Region outerRegion = getRoundCorners(outerShellSize,newShell);
+				Region outerRegion = newShell.getRegion();
+				boolean tempRegion = false;
+				if(outerRegion == null){
+					outerRegion = getRoundCorners(outerShellSize,newShell);
+					tempRegion = true;
+				}
+				
 				Region innerRegion = getRoundCorners(innerShellSize,newShell);
-				newShell.setRegion(outerRegion);
 				roundRegion.add(outerRegion);
 				roundRegion.subtract(innerRegion);
-				outerRegion.dispose();
+				
+				//Only dispose the outer region if it is temporary
+				if(tempRegion)
+					outerRegion.dispose();
 				innerRegion.dispose();
 				return roundRegion;
 			}
@@ -365,6 +380,7 @@ public class AssociatedWindow extends Window {
 		}
 		
 		Region shellRegion = getShell().getRegion();
+		getShell().setRegion(null);
 		if(shellRegion != null)
 			shellRegion.dispose();
 		return super.close();
