@@ -23,6 +23,9 @@
 
   <extension point="org.eclipse.core.tests.harness.tests">
 
+    <test id="resources.AutomatedTests">
+      <run class="org.eclipse.core.tests.resources.AutomatedTests"/>
+    </test>
     <test id="resources.AllTests">
       <run class="org.eclipse.core.tests.resources.AllTests"/>
     </test>
