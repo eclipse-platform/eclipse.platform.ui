@@ -12,18 +12,39 @@ package org.eclipse.team.ui.synchronize.viewers;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IContentChangeListener;
+import org.eclipse.compare.IContentChangeNotifier;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * A {@link SyncInfo} editor input used as input to a two-way or three-way 
@@ -41,17 +62,31 @@ import org.eclipse.team.ui.ISharedImages;
  * @see SyncInfoModelElement
  * @since 3.0
  */
-public class SyncInfoCompareInput extends CompareEditorInput {
+public final class SyncInfoCompareInput extends CompareEditorInput implements IResourceChangeListener {
 
 	private SyncInfoModelElement node;
+	private String description;
+	private IResource resource;
+	private IEditorPart editor;
 
-	public SyncInfoCompareInput(SyncInfo sync) {
+	/**
+	 * Creates a compare editor input based on an existing <code>SyncInfo</code>.
+	 * 
+	 * @param description a description of the context of this sync info. This
+	 * is displayed to the user.
+	 * @param sync the <code>SyncInfo</code> used as the base for the compare input.
+	 */
+	public SyncInfoCompareInput(String description, SyncInfo sync) {
 		super(new CompareConfiguration());
 		Assert.isNotNull(sync);
+		Assert.isNotNull(description);
+		this.description = description;
+		this.resource = sync.getLocal();
 		this.node = new SyncInfoModelElement(null, sync);
 		initializeContentChangeListeners();
+		initializeResourceChangeListeners();
 	}
-
+	
 	private void initializeContentChangeListeners() {
 		ITypedElement te = node.getLeft();
 		if (te instanceof IContentChangeNotifier) {
@@ -65,10 +100,62 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 			});
 		}
 	}
+	
+	private void initializeResourceChangeListeners() {
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+	}	
+	
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta = event.getDelta();
+		if (delta != null) {
+			IResourceDelta resourceDelta = delta.findMember(resource.getFullPath());
+			if (resourceDelta != null) {
+				if (resourceDelta.getKind() == IResourceDelta.CHANGED) {
+					if (editor != null && editor instanceof IReusableEditor) {
+						UIJob job = new UIJob("") {
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								CompareUI.reuseCompareEditor(SyncInfoCompareInput.this, (IReusableEditor) editor);
+								return Status.OK_STATUS;
+							}
+						};
+						job.setSystem(true);
+						job.schedule();						
+					}
+				}
+			}
+		}
+	}
 
+	public void setCompareEditor(IEditorPart editor) {
+		Assert.isNotNull(editor);
+		this.editor = editor;
+		editor.getSite().getPage().addPartListener(new IPartListener() {
+			public void partActivated(IWorkbenchPart part) {
+			}
+			public void partBroughtToTop(IWorkbenchPart part) {
+			}
+			public void partClosed(IWorkbenchPart part) {
+				getCompareEditor().getSite().getPage().removePartListener(this);
+				dispose();
+				SyncInfoCompareInput.this.editor = null;
+			}
+			public void partDeactivated(IWorkbenchPart part) {
+			}
+			public void partOpened(IWorkbenchPart part) {
+			}
+		});
+	}
+	
+	public IEditorPart getCompareEditor() {
+		return this.editor;
+	}
+	
+	protected void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+	}
+	
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.compare.CompareEditorInput#getTitleImage()
 	 */
 	public Image getTitleImage() {
@@ -83,7 +170,6 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.compare.CompareEditorInput#prepareInput(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -101,7 +187,6 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
 	 */
 	public String getTitle() {
@@ -110,7 +195,6 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
@@ -119,17 +203,14 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return "";
-		//return Policy.bind("SyncInfoCompareInput.tooltip", participant.getName(), node.getName()); //$NON-NLS-1$
+		return Policy.bind("SyncInfoCompareInput.tooltip", description, node.getResource().getFullPath().toString()); //$NON-NLS-1$
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {
@@ -143,7 +224,6 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {

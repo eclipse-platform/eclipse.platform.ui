@@ -74,6 +74,11 @@ public class OpenInCompareAction extends Action {
 				}
 			} else {
 				CompareUI.openCompareEditor(input);
+				editor = page.getSite().getPage().getActiveEditor();
+			}
+			
+			if(editor != null) {
+				input.setCompareEditor(editor);
 			}
 			
 			if(keepFocus) {
@@ -89,7 +94,7 @@ public class OpenInCompareAction extends Action {
 	 */
 	private static SyncInfoCompareInput getCompareInput(ISynchronizeParticipant participant, SyncInfo info) {
 		if (info != null && info.getLocal() instanceof IFile) {
-			return new SyncInfoCompareInput(info);
+			return new SyncInfoCompareInput(participant.getName(), info);
 		}
 		return null;
 	}				

@@ -111,6 +111,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		} else {
 			setTitle(Policy.bind("SynchronizeView.2") + page.getName()); //$NON-NLS-1$
 		}
+		setTitle("This is a big bad boy...");
 	}
 
 	/* (non-Javadoc)
@@ -238,6 +239,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		super();
 		fParticipantToPart = new HashMap();
 		fPartToPage = new HashMap();
+		updateTitle();
 	}
 	
 	/**
@@ -308,6 +310,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		halfBusyCursor = new JobBusyCursor(parent);
 		updateForExistingParticipants();
 		getViewSite().getActionBars().updateActionBars();
+		updateTitle();
 	}
 	
 	/**
