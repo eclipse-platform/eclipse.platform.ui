@@ -111,7 +111,6 @@ public class CompatibilityMessages extends NLS {
 	public static String history_copyToSelf;
 	public static String history_problemsPurging;
 	public static String history_problemCopying;
-	public static String history_conversionTransitional;
 	public static String history_conversionSucceeded;
 	// history store
 	public static String history_conversionFailed;
