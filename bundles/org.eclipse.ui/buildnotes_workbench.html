@@ -11,6 +11,318 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse SDK Build 207 - November 1, 2001
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<h3>
+Other highlights</h3>
+Added navigation accelerators:
+<ul>
+<li>
+CTRL+F6 to cycle between editors (+ SHIFT to go the other way) -- (has
+known problem whereby order is not persisted between sessions)</li>
+
+<li>
+ESC to activate editor</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+The following PRs were fixed by the UI team (includes PRs from builds 202
+- 206):
+<p><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5107">Bug 5107</a>&nbsp;
+Duplicate mnemonic in Perspective menu: Open and Close all
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=4938">Bug 4938</a>&nbsp;
+Deleting Project with Read-only files will cause non-readonly files to
+be erased if user said to NOT erase them (1GLG2WT)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2968">Bug 2968</a>&nbsp;
+TaskListMarker violates API (1GL2XHA)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2794">Bug 2794</a>&nbsp;
+[UI] org.eclipse.ui.actionSets doc wrong (1GJNBT8)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2694">Bug 2694</a>&nbsp;
+Editor Selection Dialog: UI suggestions (1GI6RPE)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2682">Bug 2682</a>&nbsp;
+[UI] EC: Can't contribute submenu items (1GI3XO6)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2672">Bug 2672</a>&nbsp;
+[UI] EC: Action delegate's concrete action should have same ID (1GHUJUZ)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2627">Bug 2627</a>&nbsp;
+[UI] Dragging view border near scroll bar detaches view (1GHDIIU)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2601">Bug 2601</a>&nbsp;
+[UI] Finish button still grayed out even though file name is pasted (1GGYVYG)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2558">Bug 2558</a>&nbsp;
+[UI] Unzoom can cause view to move tab folder (1GFOGFE)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2318">Bug 2318</a>&nbsp;
+[UI] Type Hierarchy View resize (1GENYR4)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2304">Bug 2304</a>&nbsp;
+Action Set Actions appear in reverse order (1GENP9K)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2240">Bug 2240</a>&nbsp;
+[UI] Unzoom occurs if you select file in navigator (1GEASOF)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2178">Bug 2178</a>&nbsp;
+[JFace] Cannot select root of hierarchy view (1GE92IL)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=1911">Bug 1911</a>&nbsp;
+[UI] Popup Menu Extension produces duplicate results in static menu (1GC2RTS)
+<br>1GL4ZQA: ITPUI:WINNT - Workbench crash
+<br>1GKKR4V: ITPUI:ALL - Referencing the wrong perspective icon in plugin.xml
+<br>1GKESDP: ITPUI:WIN2000 - WizardDialog comment wrong
+<br>1GKEPV7: ITPUI:ALL - English: Missing punctuation
+<br>1GKEPJH: ITPUI:WINNT - Outline View should wrap text
+<br>1GKDG0C: ITPUI:WINNT - Reset does not work on deleted perspective
+<br>1GKD8FV: ITPUI:WIN98 - Japanese - default text font can not display
+japanese characters
+<br>1GKCX6Y: ITPUI:WIN2000 - ActionSetLabelProvider assumes &amp; is first
+char
+<br>1GKCX37: ITPUI:WIN2000 - PerspectiveDescriptor.restoreState should
+use ATT_SINGLETON
+<br>1GKAYD6: ITPUI:WINNT - AboutDialog.createDialogArea is using wrong
+GridData constant
+<br>1GKA7RL: ITPUI:WIN2000 - Compare: last line on right clipped
+<br>1GK9IOA: ITPUI:ALL - IEditorActionDelegate is not initialized correctly
+<br>1GK7EJV: ITPUI:WINNT - Startup should fail if missing product.ini or
+platform.ini
+<br>1GJZYYB: ITPUI:ALL - Phantom resources
+<br>1GJYMG4: ITPUI:WINNT - no context help for some menus/dialogs
+<br>1GJWMGJ: ITPUI:WIN98 - Next &amp; Previous perspective labels changed?
+<br>1GJWAJ9: ITPUI:WIN2000 - Netscape reference in shipped doc
+<br>1GJUNL6: ITPUI:ALL - EC: PropertySheetViewer.setInput() does not save
+editor value.
+<br>1GJUH0A: ITPUI:Linux - Critical: Full Crash on Linux: While Printing
+<br>1GJUAO7: ITPUI:WINNT - NPE on shutdown
+<br>1GJP153: ITPUI:EC: root property sheet entry does not do a dispose
+<br>1GJNB52: ITPUI:ALL - ToolItems in EditorToolBarManager can get out
+of synch with the state of the IAction
+<br>1GJ8HCU: ITPUI:ALL - XML example in org.eclipse.ui.viewActions doc
+wrong
+<br>1GIV8TL: ITPUI:WIN2000 - Can't open files in Notepad or Wordpad
+<br>1GITIG6: ITPUI:ALL - H-shell: OK button still grayed out in Save As
+dialog even though file name is pasted
+<br>1GIEH2I: ITPUI:WINNT - TaskListContentProvider should cache markers
+<br>1GI7HBZ: ITPUI:ALL - Cancel saving a file causes error
+<br>1GI58G1: ITPUI:WINNT - Collator is not a singleton
+<br>1GHUA5I: ITPUI:ALL - Error in ProductInfo.readConfigurationPreferences
+<br>1GHQHGH: ITPUI:WINNT - Should cache the alternateMask in OpenPerspectiveMenu
+<br>1GHOHW6: ITPUI:WINNT - PageBookView not disposing default page
+<br>1GHHIO2: ITPUI:ALL - Goto Resource dialog resizing needs rework
+<br>1GHC26Y: ITPUI:WINNT - Effeciency issues
+<br>1GH2VTG: ITPUI:WIN98 - Properties view: enabling categories collapses
+list
+<br>1GGZ208: ITPUI:WIN2000 - ActionSetLabelProvider trims everything before
+&amp;
+<br>1GFOF1F: ITPUI:WIN2000 - Move by drag-and-drop uses multiple workspace
+operations
+<br>1GFMFIE: ITPUI:WINNT - Replace perspective with no perspective open
+is a no op
+<br>1GFBKRR: ITPUI:WIN2000 - minor: PreferencePage's javadoc comment has
+a typo error
+<br>1GFBJ9K: ITPUI:WIN2000 - Yes to All no longer works for DND import
+<br>1GF9LG3: ITPUI:ALL - File->New menu &amp; New Wizard tool button diff...why?
+<br>1GF7NAD: ITPUI:ALL - Export to zip has .jar in the list of names
+<br>1GF68L0: ITPUI:ALL - Should hide closed project when selecting folder.
+<br>1GF66A4: ITPUI:WIN98 - Outline has no help
+<br>1GF5VPX: ITPUI:ALL - File MRU List is enabled when no perspectives
+open.
+<br>1GEZB8G: ITPUI:WIN2000 - Menu: delete is enabled with no resource
+<br>1GEYPZU: ITPUI:ALL - Perspective windows should remember size of window
+<br>1GEV72H: ITPUI:ALL - Goto resource should not be updated when arrow
+or shift is pressed.
+<br>1GEUXQL: ITPUI:WINNT - WorkbenchWindow#getMenuBarManager change comment
+<br>1GEUW49: ITPUI:ALL - Last files opened menu items does nothing when
+perps close
+<br>1GET7WN: ITPUI:ALL - Add Bookmark is enabled when nothing is selected
+<br>1GEPLQO: ITPUI:WIN98 - Close All enabled when no pages exist
+<br>1GEPKMG: ITPUI:WIN98 - Cannot drag editor tab to correct location
+<br>1GENVF4: ITPUI:ALL - The tasklist combo cell editor does not work correctly
+<br>1GENTWQ: ITPUI:WIN98 - Import dialog should expand top folder
+<br>1GENK55: ITPUI:WIN2000 - File Listbox: displays wrong icon for certain
+file name
+<br>1GEIC67: ITPUI:WINNT - Getting a focus callback before part creation
+<br>1GE8OSQ: ITPUI:ALL - Inconsistent English in the status for the Task
+Bar
+<br>1GE8OFD: ITPUI:WIN2000 - Message in outline should have margins
+<br>1GE6UQC: ITPUI:ALL - Drag out of folder leaves single tab
+<br>1GDCVPF: ITPJUI:WINNT - cannot cancel build
+<br>1GD7JX5: ITPUI:ALL - Menu items in nav popup New sub menu
+<br>1GD0BN5: ITPUI:ALL - Set focus to container name (when empty) in folder
+wizard
+<br>1GCT3F5: ITPUI:WINNT - Poor details when moving fails
+<br>1GCROF1: ITPUI:WINNT - Wizard banner misalignment
+<p>The following PRs were closed with no action by the UI team (includes
+PRs from builds 202 - 206):
+<p><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5403">Bug 5403</a>&nbsp;
+NPE on closing embedded netscape
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5259">Bug 5259</a>&nbsp;
+EC: Project delete removes files on disk even when "no" selected
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2791">Bug 2791</a>&nbsp;
+[UI] EC - SaveAll does not work right (1GJJG1M)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2294">Bug 2294</a>&nbsp;
+Fast View can be resized only once (1GELX93)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2293">Bug 2293</a>&nbsp;
+NPE during build (1GELWYX)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2204">Bug 2204</a>&nbsp;
+Opening PDF files. (1GEAHMI)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=2061">Bug 2061</a>&nbsp;
+Usability: "Close All" is rude (1GDY6HE)
+<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=1914">Bug 1914</a>&nbsp;
+F2 should invoke rename? (1GC2UNE)
+<br>1GFDB1N: ITPUI:WINNT - DCR: Print from default text editor
+<br>1GEYEH3: ITPUI:WIN2000 - Copy shortcut not responding in Navigator
+on startup
+<br>1GEV2DL: ITPUI:ALL - Open Persp modifier keys different on win32 &amp;
+linux
+<br>1GEUWWH: ITPUI:WIN2000 - Welcome: too tied to CVS?
+<br>1GEUW7K: ITPUI:WIN2000 - Welcome: Creating Java project does not show
+Java perspective
+<br>1GETC1F: ITPUI:ALL - View left stranded in folder
+<br>1GET01H: ITPUI:ALL - Why is the welcome page an editor?
+<br>1GEJN27: ITPJUI:WINNT - new project wizard should have selected "All
+Projects" if you open it
+<br>1GEI1GR: ITPJUI:WINNT - button in import wizzard should not be enabled
+before selecting a destination project/folder
+<br>1GEAOJK: ITPUI:WIN98 - Shift-select doesn't always work in Navigator
+<br>1GEAMVM: ITPUI:WIN98 - Wrong view shown when tab order changes
+<br>1GEAD4H: ITPUI:ALL - Text font should be set on one preference page
+<br>1GDIP42: ITPJUI:WINNT - Smoke 105: Finish isn't default in Create Project
+wizard
+<br>1GD0BXF: ITPUI:ALL - File save as dialog banner area empty
+<br>1FW3H9W: ITPUI:ALL - ExternalEditor::open may fail if path includes
+spaces
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
+Eclipse SDK Build 201 - September 21, 2001
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+The following PRs were fixed by the UI team:
+<p>1GK7H21: ITPUI:WIN2000 - Default text editor comes up black
+<br>1GK0388: ITPJCORE:WIN2000 - replace with local history: selecting (workspace)
+deletes source
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
+Eclipse SDK Build 200 - September 19, 2001
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+The following PRs were fixed by the UI team:
+<p>1GIV495: ITPUI:ALL - TextMergeViewer doesn't reveal token diffs horizontally
+<br>1GIUS6L: ITPUI:ALL - TextMergeViewer uses deprecated Thread.stop()
+<br>1GIIBHM: ITPUI:WIN2000 - Problems when comparing zip files
+<br>1GI5DN9: ITPUI:WIN2000 - Conflicting token deletions don't show up
+in text compare viewer
+<br>1GI3KUR: ITPJUI:WIN2000 - Compare: double-click in versions list closes
+view
+<br>1GHBPA1: ITPVCM:WINNT - Compare - next change arrow switches to wrong
+file
+<br>1GGZ8DO: ITPJUI:WIN - MergeViewer invalid selection range
+<br>1GGQQH3: ITPJUI:WINNT - Compare hightlights a non-change instead of
+the change
+<br>1GGNX9W: ITPVCM:Linux - Internal error comparing out of sync resource
+<br>1GGNKHN: ITPJUI:ALL - No progress during replace with local history
+<br>1GG0ELM: ITPVCM:ALL - Local history displayed some of Today's items
+as Yesterday
+<br>1GFMLFB: ITPUI:WIN2000 - files that are out of sync with the file system
+appear as empty
+<br>1GFFR4B: ITPUI:WIN98 - local history is misleading
+<br>1GEUX0D: ITPJUI:ALL - not state aware toolbar button in compare
+<br>1GBM0IL: ITPUI:WINNT - CompareEditorInput#save should throw CoreException
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
+Eclipse SDK Build 138 - October 24, 2001
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+The following PRs were fixed by the UI team:
+<p>Bug 4938&nbsp; Deleting Project with Read-only files will cause non-readonly
+files to be erased if user said to NOT erase them (1GLG2WT)
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
+Eclipse SDK Build 137 - September 26, 2001
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<h3>
+Other highlights</h3>
+Changed About Plugins dialog to look for about.html instead of plugin.html.
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+The following PRs were fixed by the UI team:
+<p>1GJZYYB: ITPUI:ALL - Phantom resources
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse SDK Build 136 - September 19, 2001
 <h2>
 What's new in this drop</h2>
