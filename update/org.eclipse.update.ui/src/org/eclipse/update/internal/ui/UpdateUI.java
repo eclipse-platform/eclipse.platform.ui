@@ -29,7 +29,6 @@ import org.eclipse.ui.plugin.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.ConfigurationActivator;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -315,7 +314,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	private void readInfo() {
 		// determine the identifier of the "dominant" application 
 		IPlatformConfiguration conf =
-			ConfigurationActivator.getCurrentPlatformConfiguration();
+			ConfiguratorUtils.getCurrentPlatformConfiguration();
 		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
 
 		if (versionedFeatureId == null) {

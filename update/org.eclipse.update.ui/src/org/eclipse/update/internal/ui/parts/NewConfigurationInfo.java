@@ -17,7 +17,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.configurator.*;
 
 /**
@@ -114,7 +113,7 @@ public abstract class NewConfigurationInfo {
 	 */
 	public IPluginDescriptor getDescriptor() {
 		if(desc == null) {
-			IPlatformConfiguration platformConfiguration = ConfigurationActivator.getCurrentPlatformConfiguration();
+			IPlatformConfiguration platformConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
 			IPlatformConfiguration.IFeatureEntry feature = platformConfiguration.findConfiguredFeatureEntry(featureId);
 			if(feature == null)
 				return null;
