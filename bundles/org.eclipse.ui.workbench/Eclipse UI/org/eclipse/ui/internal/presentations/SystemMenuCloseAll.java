@@ -10,40 +10,38 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
+import java.util.List;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.internal.EditorPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.presentations.IPresentablePart;
 
-public class SystemMenuCloseOtherEditors extends Action implements ISelfUpdatingAction {
 
-    private EditorPane editorPane;
+public class SystemMenuCloseAll extends Action implements ISelfUpdatingAction {
 
-    public SystemMenuCloseOtherEditors(EditorPane editorPane) {
-        this.editorPane = editorPane;
-        setText(WorkbenchMessages.getString("PartPane.closeOthers")); //$NON-NLS-1$
+    private BasicStackPresentation presentation;
+
+    public SystemMenuCloseAll(BasicStackPresentation presentation) {
+        this.presentation = presentation;
+        setText(WorkbenchMessages.getString("PartPane.closeAll")); //$NON-NLS-1$
     }
-
+        
     public void dispose() {
-        editorPane = null;
+        presentation = null;
     }
-    
+
     public void run() {
-        editorPane.doHideOthers();
+    	List parts = presentation.getPresentableParts();
+    	presentation.close((IPresentablePart[]) parts.toArray(new IPresentablePart[parts.size()]));
     }
     
     public void update() {
-    	if (editorPane == null) {
-    		setEnabled(false);
-    		return;
-    	}
-    	setEnabled(editorPane.getPage().getEditorReferences().length > 1);
+    	List parts = presentation.getPresentableParts();
+    	setEnabled(parts.size() != 0);
     }
     
     public boolean shouldBeVisible() {
     	return true;
     }
-    
-    public void setPane(EditorPane pane) {
-    	editorPane = pane;
-    }
+
 }
