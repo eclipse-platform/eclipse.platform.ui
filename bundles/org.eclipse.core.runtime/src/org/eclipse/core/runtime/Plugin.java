@@ -400,7 +400,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 * Note that the plug-in's debug flag is initialized when the 
 	 * plug-in is started. The result of calling this method before the plug-in
-	 * is unspecified.
+	 * has started is unspecified.
 	 * </p>
 	 *
 	 * @return whether this plug-in is in debug mode
@@ -452,7 +452,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 * Note that the plug-in's debug flag is initialized when the 
 	 * plug-in is started. The result of calling this method before the plug-in
-	 * is unspecified.
+	 * has started is unspecified.
 	 * </p>
 	 *
 	 * @param value whether or not this plug-in is in debug mode
