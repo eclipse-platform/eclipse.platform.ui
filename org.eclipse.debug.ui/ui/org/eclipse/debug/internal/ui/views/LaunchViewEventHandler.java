@@ -22,9 +22,12 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -161,6 +164,7 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 			doHandleSuspendThreadEvent((IThread)element);
 		}
 		updateButtons();
+		getView().showMarkerForCurrentSelection();
 	}
 	
 	// This method exists to provide some optimization for refreshing suspended
@@ -204,6 +208,9 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		// the parent handles this
 		getView().autoExpand(thread, refreshNeeded, refreshNeeded);
 		if (refreshNeeded) {
+			// Update the stack frame count for the thread
+			oldStackFrameCountObject = new Integer(currentStackFrameCount);
+			fStackFrameCountByThread.put(thread, oldStackFrameCountObject);
 			return;
 		} else {
 			labelChanged(thread);
@@ -255,7 +262,13 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 	 * Helper method to update the buttons of the viewer - must be called in UI thread
 	 */
 	protected void updateButtons() {
-		getView().updateActions();
+		IWorkbenchPage page = getView().getSite().getPage();
+		if (!page.getActivePart().equals(getView())) {
+			page.activate(getView());
+		}
+		// fire a selection change such that the debug menu can
+		// update
+		getView().getSite().getSelectionProvider().setSelection(getViewer().getSelection());
 	}
 
 	/**
@@ -265,13 +278,6 @@ public class LaunchViewEventHandler implements IDebugEventListener, ILaunchListe
 		if (getViewer() != null) {
 			 getViewer().refresh(element);
 		}
-	}
-	
-	/**
-	 * Helper method to update the selection of the viewer - must be called in UI thread
-	 */
-	protected void updateMarkerForSelection() {
-		getView().showMarkerForCurrentSelection();
 	}
 
 	/**

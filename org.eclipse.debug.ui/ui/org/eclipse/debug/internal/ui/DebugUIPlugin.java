@@ -27,7 +27,6 @@ import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
@@ -45,9 +44,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -58,7 +55,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
-import org.eclipse.debug.internal.ui.views.LaunchView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIEventFilter;
@@ -78,9 +74,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -88,7 +81,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -100,8 +92,7 @@ import org.xml.sax.SAXException;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListener, 
-															   ISelectionListener, 
+public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListener, 
 															   IDocumentListener, 
 															   ILaunchListener,
 															   IResourceChangeListener {
@@ -161,11 +152,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	protected static ResourceDeletedVisitor fgDeletedVisitor;
 	
 	/**
-	 * Context used to decide whether to show/switch to the 
-	 * debug view / debug perspective on a launch or suspend event
-	 */
-	protected SwitchContext fSwitchContext= new SwitchContext();
-	/**
 	 * Visitor for handling resource deltas
 	 */
 	class ResourceDeletedVisitor implements IResourceDeltaVisitor {
@@ -187,217 +173,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	}
 
 	/**
-	 * Tracks the debugger page and perspective for
-	 * the DebugUIPlugin
-	 */
-	class SwitchContext implements IPartListener, IPageListener {
-		protected IWorkbenchWindow fWindow;
-		protected IWorkbenchPage fPage;
-		protected IPerspectiveDescriptor fPerspective;
-		protected IDebugViewAdapter fDebuggerView;
-		protected boolean fPageCreated;
-		protected boolean fContextChanged= true;
-		protected String fMode;
-		
-		protected void init(String mode) {
-			fMode= mode;
-			fPageCreated= false;
-			if (fPage != null) {
-				fPage.removePartListener(this);
-			}
-			fPage= null;
-			fDebuggerView= null;
-			if (fWindow != null) {
-				fWindow.removePageListener(this);
-			}
-			fWindow= getActiveWorkbenchWindow();
-			fWindow.addPageListener(this);
-			fContextChanged= false;
-		}
-		
-		protected void shutdown() {
-			if (fWindow == null) {
-				return;
-			}
-			Shell shell= fWindow.getShell();
-			if (shell == null || shell.isDisposed()) {
-				return;
-			}
-			if (fPage != null) {
-				fPage.removePartListener(this);
-			}
-			if (fWindow != null) {
-				fWindow.removePageListener(this);
-			}
-		}
-		
-		/**
-		 * Returns whether the world has changed in a way that will
-		 * require switching to the debug perspective.
-		 */
-		protected boolean contextChanged(String mode) {
-			if (!fContextChanged) {
-				if (fMode == null || !fMode.equals(mode)) {
-					return true;
-				}
-			}
-			boolean changed=  fContextChanged || 
-				!fWindow.equals(getActiveWorkbenchWindow()) ||
-				!fWindow.getActivePage().equals(fPage) ||
-				!fWindow.getActivePage().getPerspective().equals(fPerspective);
-			
-			return changed;
-		}
-		
-		/**
-		 * Returns whether the DebugUIPlugin has recently caused
-		 * a debugger page to be created.
-		 */
-		protected boolean wasPageCreated() {
-			return fPageCreated;
-		}
-		
-		/**
-		 * Sets whether the DebugUIPlugin has recently caused
-		 * a debugger page to be created.
-		 */
-		protected void setPageCreated(boolean created) {
-			fPageCreated= created;
-		}
-		
-		protected IWorkbenchPage getPage() {
-			return fPage;
-		}
-		
-		protected void setPage(IWorkbenchPage page) {
-			if (fPage != null) {
-				fPage.removePartListener(this);
-			}
-			fPage = page;
-			fPage.addPartListener(this);
-			fPerspective= page.getPerspective();
-		}
-	
-		protected IWorkbenchWindow getWindow() {
-			return fWindow;
-		}
-		
-		protected void setWindow(IWorkbenchWindow window) {
-			fWindow.removePageListener(this);
-			fWindow = window;
-			fWindow.addPageListener(this);
-		}
-		
-		protected IDebugViewAdapter getDebuggerView() {
-			return fDebuggerView;
-		}
-		
-		protected void setDebuggerView(IDebugViewAdapter debuggerView) {
-			fDebuggerView = debuggerView;
-		}
-		/**
-		 * @see IPartListener#partActivated(IWorkbenchPart)
-		 */
-		public void partActivated(IWorkbenchPart part) {
-			if (part == fDebuggerView) {
-				fContextChanged= false;
-			}
-		}
-		/**
-		 * @see IPartListener#partBroughtToTop(IWorkbenchPart)
-		 */
-		public void partBroughtToTop(IWorkbenchPart arg0) {
-		}
-
-		/**
-		 * @see IPartListener#partClosed(IWorkbenchPart)
-		 */
-		public void partClosed(IWorkbenchPart part) {
-			if (part == fDebuggerView) {
-				fContextChanged= true;
-			}
-		}
-
-		/**
-		 * @see IPartListener#partDeactivated(IWorkbenchPart)
-		 */
-		public void partDeactivated(IWorkbenchPart part) {
-			if (part == fDebuggerView) {
-				fContextChanged= true;
-			}
-		}
-
-		/**
-		 * @see IPartListener#partOpened(IWorkbenchPart)
-		 */
-		public void partOpened(IWorkbenchPart arg0) {
-		}
-		
-		/**
-		 * @see IPageListener#pageActivated(IWorkbenchPage)
-		 */
-		public void pageActivated(IWorkbenchPage arg0) {
-		}
-
-		/**
-		 * @see IPageListener#pageClosed(IWorkbenchPage)
-		 */
-		public void pageClosed(IWorkbenchPage page) {
-			if (page.equals(fPage)) {
-				init(null);
-				fContextChanged= true;
-			}
-		}
-
-		/**
-		 * @see IPageListener#pageOpened(IWorkbenchPage)
-		 */
-		public void pageOpened(IWorkbenchPage arg0) {
-		}
-	}
-
-	/**
 	 * Constructs the debug UI plugin
 	 */
 	public DebugUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		fgDebugUIPlugin= this;
-	}
-
-	/**
-	 * On a SUSPEND event, show the debug view or if no debug view is open,
-	 * switch to the perspective specified by the launcher.
-	 *
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
-	 */
-	public void handleDebugEvent(final DebugEvent event) {
-		// open the debugger if this is a suspend event and the debug view is not yet open
-		// and the preferences are set to switch
-		if (true) {
-			return;
-		}
-		if (event.getKind() == DebugEvent.SUSPEND) {
-			getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (fSwitchContext.contextChanged(ILaunchManager.DEBUG_MODE)) {
-						if (showSuspendEvent(event)) {				
-							if (event.getDetail() == event.BREAKPOINT || getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW)) {
-								switchToDebugPerspective(event.getSource(), ILaunchManager.DEBUG_MODE);
-							}
-						} 
-					}
-					if (fSwitchContext.wasPageCreated()) {
-						fSwitchContext.setPageCreated(false);
-						IViewPart view= fSwitchContext.getDebuggerView();
-						if (view != null) {
-							((LaunchView)view).autoExpand(event.getSource(), true, true);
-						}
-					}
-				}
-			});
-		}
-	}
-
+	}
 	/**
 	 * Poll the filters to determine if the event should be shown
 	 */
@@ -433,27 +214,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		}
 		return true;
 	}
-
-	/** 
-	 * Opens the a workbench page with the layout specified by the launcher 
-	 * if it had not already been opened in any workbench window.
-	 * 
-	 * A switch only occurs if a debug view is not present in any workbench window.
-	 */
-	protected void switchToDebugPerspective(Object source, String mode) {
-		fSwitchContext.init(mode);
-		String layoutId= getLauncherPerspective(source);
-		findDebugPresentation(fSwitchContext, mode, layoutId);
-		activateDebugLayoutPage(fSwitchContext, layoutId);
-		// bring debug to the front
-		activateDebuggerPart(fSwitchContext, mode);
-		if (fSwitchContext.wasPageCreated()) {
-			IViewPart view2= fSwitchContext.getDebuggerView();
-			if (view2 != null) {
-				((LaunchView)view2).autoExpand(source, true, true);
-			}
-		}
-	}
 	
 	/**
 	 * Debug ui thread safe access to a display
@@ -463,105 +223,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		//prereq the base eclipse ui plugin.
 		return Display.getDefault();
 	}
-	
-	/**
-	 * Activates (may include creates) a debugger part based on the mode
-	 * in the specified switch context.
-	 * Must be called in the UI thread.
-	 */
-	protected void activateDebuggerPart(SwitchContext switchContext, String mode) {
-		String viewId= IDebugUIConstants.ID_DEBUG_VIEW;
 		
-		IViewPart debugPart= switchContext.getPage().findView(viewId);							
-		
-		if (debugPart == null) {
-			switchContext.setPageCreated(true);
-		}
-		
-		if (debugPart == null) {
-			try {
-				debugPart= switchContext.getPage().showView(viewId);							
-			} catch (PartInitException pie) {
-				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), DebugException.INTERNAL_ERROR, pie.getMessage(), pie);
-				errorDialog(getActiveWorkbenchWindow().getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_1"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._2"), status); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		} else {
-			switchContext.getPage().activate(debugPart);
-		}
-		
-		switchContext.setDebuggerView((IDebugViewAdapter)debugPart);
-	}
-	
-	/**
-	 * Checks all active pages for a debugger view.  
-	 * If no debugger view is found, looks for a page in any window
-	 * that has the specified debugger layout id.
-	 * Must be called in UI thread.
-	 */
-	protected void findDebugPresentation(SwitchContext switchContext, String mode, String layoutId) {
-		
-		IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
-		IWorkbenchWindow activeWindow= getActiveWorkbenchWindow();
-		
-		//check the pages of the active window for
-		//debug view
-		IViewPart part= findDebugPart(activeWindow, mode, true);
-		if (part != null) {
-			switchContext.setWindow(activeWindow);
-			switchContext.setPage(part.getSite().getPage());
-			return;
-		}
-		//check the pages of all windows for debug view
-		int i;
-		for (i= 0; i < windows.length; i++) {
-			IWorkbenchWindow window= windows[i];
-			IViewPart lPart= findDebugPart(window, mode, true);
-			if (lPart != null) {
-				switchContext.setWindow(window);
-				switchContext.setPage(lPart.getSite().getPage());
-				return;
-			}
-		}
-		
-		//check the pages for the debugger layout.
-		//check the pages of the active window first
-		IWorkbenchPage page= null;
-		IWorkbenchPage[] pages= activeWindow.getPages();
-		for (i= 0; i < pages.length; i++) {
-			if (pages[i].getPerspective().getId().equals(layoutId)) {
-				page= pages[i];
-				break;
-			}
-		}
-		if (page != null) {
-			switchContext.setWindow(activeWindow);
-			switchContext.setPage(page);
-			return;
-		}
-
-		i= 0;
-		i: for (i= 0; i < windows.length; i++) {	
-			IWorkbenchWindow window= windows[i];
-			if (window.equals(activeWindow)) {
-				continue;
-			}
-			pages= window.getPages();
-			
-			j: for (int j= 0; j < pages.length; j++) {
-				if (pages[j].getPerspective().getId().equals(layoutId)) {
-					page= pages[j];
-					break i;
-				}
-			}
-		} 
-				
-		if (page != null) {
-			switchContext.setWindow(windows[i]);
-			switchContext.setPage(page);
-			return;
-		} 
-	}
-	
 	/**
 	 * Returns a launches view if the specified window contains the debugger part for the
 	 * specified debug mode.
@@ -593,34 +255,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		}
 		return debugPart;
 	}
-	
-	/**
-	 * Activates (may include creates) a debugger page with the
-	 * specified layout within the switch context.
-	 */
-	protected void activateDebugLayoutPage(SwitchContext switchContext, String layoutId) {
-		IWorkbenchPage page= switchContext.getPage();
-		IWorkbenchWindow window= switchContext.getWindow();
-		if (page == null) {
-			try {
-				IContainer root= ResourcesPlugin.getWorkspace().getRoot();	
-				IWorkbench wb = window.getWorkbench();
-				page= wb.openPage(layoutId, root, 0);
-			} catch (WorkbenchException e) {
-				IStatus status= new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), DebugException.INTERNAL_ERROR, e.getMessage(), e);
-				errorDialog(window.getShell(), DebugUIMessages.getString("DebugUIPlugin.Problem_Switching_to_the_Debug_Perspective_3"), DebugUIMessages.getString("DebugUIPlugin.Exceptions_occurred_switching_to_the_specified_debug_layout._4"), status); //$NON-NLS-1$ //$NON-NLS-2$
-				return;
-			}
-			switchContext.setPageCreated(true);
-			switchContext.setPage(page);
-			switchContext.setWindow(window);
-		} else {
-			window.getShell().moveAbove(null);
-			window.getShell().setFocus();
-			window.setActivePage(page);
-		}
-	}
-	
+		
 	/**
 	 * Returns the launcher perspective specified in the launcher
 	 * associated with the source of a <code>DebugEvent</code>
@@ -730,7 +365,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		if (window != null) {
 			window.getSelectionService().removeSelectionListener(this);
 		}
-		DebugPlugin.getDefault().removeDebugEventListener(this);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -741,7 +375,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 			doc.removeDocumentListener(this);
 			doc.close();
 		}
-		fSwitchContext.shutdown();
 		try {
 			persistLaunchHistory();
 		} catch (IOException e) {
@@ -755,7 +388,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		DebugPlugin.getDefault().addDebugEventListener(this);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
 		getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);		
@@ -1026,7 +658,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	 * @return the currently selected debug context, or <code>null</code>
 	 */
 	public IDebugElement getDebugContext() {
-		IDebugViewAdapter view = fSwitchContext.getDebuggerView();
+		IWorkbenchWindow window = getActiveWorkbenchWindow() ;
+		if (window == null) {
+			return null;
+		}
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return null;
+		}
+		IWorkbenchPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+		if (part == null) {
+			return null;
+		}
+		IDebugViewAdapter view = (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
 		if (view == null) {
 			return null;
 		}
@@ -1147,25 +791,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		}
 		setCurrentProcess(newProcess);
 		setConsoleInput(newProcess);
-	}
-	
-	/**
-	 * In a thread safe manner, switches the workbench to the debug perspective  
-	 * if the user preferences specify to do so.
-	 */
-	protected void switchToDebugPerspectiveIfPreferred(final ILaunch launch) {
-		getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				String mode= launch.getLaunchMode();
-				if (fSwitchContext.contextChanged(mode)) {	
-					boolean isDebug= mode.equals(ILaunchManager.DEBUG_MODE);
-					boolean doSwitch= userPreferenceToSwitchPerspective(isDebug);
-					if (doSwitch && showLaunch(launch)) {
-						switchToDebugPerspective(launch, mode);
-					}
-				} 
-			}
-		});
 	}
 	
 	/**
