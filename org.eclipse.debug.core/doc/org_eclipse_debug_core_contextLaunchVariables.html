@@ -33,7 +33,7 @@ div.dtd-fragment {
 <br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
 <li><b>name</b> - specifies a unique name for this variable.</li>
-<li><b>expanderClass</b> - specifies a class which implements <samp></samp>, which is used to determine the value of the variable</li>
+<li><b>expanderClass</b> - specifies a Java class which implements <samp>org.eclipse.debug.core.variables.IVariableExpander</samp>, which is used to determine the value of the variable</li>
 <li><b>description</b> - specifies the human-readable description of this variable</li>
 </ul>
 <b><i>Examples: </i></b>The following is a definition of a context launch variable that expands to the name of the selected resource:
@@ -42,7 +42,7 @@ div.dtd-fragment {
    <font color="#000080">&lt;variable 
       name=<font color="#008000">&quot;resource_name&quot;</font>
       expanderClass=<font color="#008000">&quot;com.example.ResourceNameExpander&quot;</font>
-      description=<font color="#008000">&quot;The name of the selected resource&quot;</font>
+      description=<font color="#008000">&quot;The name of the selected resource&quot;</font>&gt;</font>
    <font color="#000080">&lt;/variable&gt;</font>
  <font color="#000080">&lt;/extension&gt;</font>
 </pre><p>

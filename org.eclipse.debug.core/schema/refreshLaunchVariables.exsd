@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="contextLaunchVariables" name="Context Launch Variables"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="refreshLaunchVariables" name="Refresh Launch Variables"/>
       </appInfo>
       <documentation>
-         This extension point defines a mechanism for defining refresh launch variables. Refresh launch variables are context launch variables that expand to a set of resources. These resources are intended to be refreshed when a launch configuration is exectured.
+         This extension point defines a mechanism for defining refresh launch variables. Refresh launch variables are context launch variables that expand to a set of resources. These resources are intended to be refreshed when a launch configuration is executed.
       </documentation>
    </annotation>
 
@@ -51,8 +51,11 @@
          <attribute name="expanderClass" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a class which implements &lt;samp&gt;&lt;/samp&gt;, which is used to determine the value of the variable
+                  specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.variables.IVariableExpander&lt;/samp&gt;, which is used to determine the value of the variable
                </documentation>
+                <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.IVariableExpander"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string" use="required">
@@ -82,10 +85,10 @@
 The following is a definition of a refresh launch variable that expands to  the selected resource:
 &lt;pre&gt;
  &lt;extension point="org.eclipse.debug.core.refreshLaunchVariables"&gt;
-   &lt;variable 
+   &lt;variable
       name="resource"
       expanderClass="com.example.RefreshResourceExpander"
-      description="The selected resource"
+      description="The selected resource"&gt;
    &lt;/variable&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;

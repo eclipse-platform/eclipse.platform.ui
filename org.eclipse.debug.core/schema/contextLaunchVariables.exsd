@@ -51,8 +51,11 @@
          <attribute name="expanderClass" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies a class which implements &lt;samp&gt;&lt;/samp&gt;, which is used to determine the value of the variable
+                  specifies a Java class which implements &lt;samp&gt;org.eclipse.debug.core.variables.IVariableExpander&lt;/samp&gt;, which is used to determine the value of the variable
                </documentation>
+                <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.IVariableExpander"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string" use="required">
@@ -85,7 +88,7 @@ The following is a definition of a context launch variable that expands to the n
    &lt;variable 
       name="resource_name"
       expanderClass="com.example.ResourceNameExpander"
-      description="The name of the selected resource"
+      description="The name of the selected resource"&gt;
    &lt;/variable&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;

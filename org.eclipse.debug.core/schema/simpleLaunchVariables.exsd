@@ -13,7 +13,7 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="simpleLaunchVariables" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="variable" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -39,7 +39,7 @@
       </complexType>
    </element>
 
-   <element name="simpleLaunchVariable">
+   <element name="variable">
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -58,8 +58,11 @@
          <attribute name="initializerClass" type="string">
             <annotation>
                <documentation>
-                  specifies the fully qualified name of the java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.ILaunchVariableInitializer&lt;/samp&gt;.
+                  specifies the fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.debug.core.variables.ILaunchVariableInitializer&lt;/samp&gt;.
                </documentation>
+                <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.variables.ILaunchVariableInitializer"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -93,8 +96,8 @@
  &lt;extension point=&quot;org.eclipse.debug.core.simpleLaunchVariables&quot;&gt;
   &lt;variable
    name=&quot;FOO_HOME&quot;
-   initialValue=&quot;/usr/local/foo&quot;
-  &lt;/breakpoint&gt;
+   initialValue=&quot;/usr/local/foo&quot;&gt;
+  &lt;/variable&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -108,7 +111,7 @@ In the example above, the specified variable is created with the initial value &
   &lt;variable
    name=&quot;FOO_HOME&quot;
    initializerClass=&quot;com.example.FooLocator&quot;&gt;
-  &lt;/breakpoint&gt;
+  &lt;/variable&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
