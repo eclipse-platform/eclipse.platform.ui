@@ -93,7 +93,7 @@ function saveNavigation()
 		temp = tocView.document.documentElement.innerHTML;
 }
 
-function restoreNavigation()
+function restoreNavigation(errorMessage)
 {	
 	// switch to saved view
 	showView(tempView);
@@ -101,21 +101,22 @@ function restoreNavigation()
 	/**** HARD CODED VIEW NAME *********/	
 	var tocView = ViewsFrame.toc.ViewFrame;
 
-	if (temp && (isIE || isMozilla10)){
+	if (temp && (isIE || isMozilla10)) {
 		// Restore old navigation
-		if (isIE)
+		if (isIE) {
 			tocView.document.body.innerHTML = temp;
-		else if (isMozilla10)
-			tocView.document.getElementById("toc").contentDocument.documentElement.innerHTML = temp;
-		
-		if (tempActiveId)
+		} else if (isMozilla10) {
+			tocView.document.documentElement.innerHTML = temp;
+		}
+		if (tempActiveId){
 			tocView.selectTopicById(tempActiveId);
-	}else {
+		}
+	} else {
 		// fail back case
 		tocView.location.replace("tocView.jsp");
 	}
+	window.status=errorMessage;	
 }
-
 </script>
 </head>
 
