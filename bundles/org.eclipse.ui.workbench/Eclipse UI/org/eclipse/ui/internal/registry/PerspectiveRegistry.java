@@ -551,4 +551,8 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 	}
 	public void postChangeProcessing() {
 	}
+	public void dispose() {
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+	}
+
 }

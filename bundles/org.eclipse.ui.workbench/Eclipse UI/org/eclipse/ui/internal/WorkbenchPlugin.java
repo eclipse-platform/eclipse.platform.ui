@@ -151,8 +151,14 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		workingSetRegistry = null;	
 
 		preferenceManager = null;
-		viewRegistry = null;
-		perspRegistry = null;
+		if (viewRegistry != null) {
+			viewRegistry.dispose();
+			viewRegistry = null;
+		}
+		if (perspRegistry != null) {
+			perspRegistry.dispose();
+			perspRegistry = null;
+		}
 		actionSetRegistry = null;
 		sharedImages = null;
 

@@ -395,4 +395,8 @@ private void buildSticky() {
 public void postChangeProcessing() {
 	mapViewsToCategories();
 }
+
+public void dispose() {
+	Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+}
 }
