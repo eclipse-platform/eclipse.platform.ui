@@ -107,6 +107,7 @@ class FindReplaceDialog extends Dialog {
 
 			fGlobalRadioButton.setSelection(true);
 			fSelectedRangeRadioButton.setSelection(false);
+			fUseSelectedLines= false;
 
 			if (fTarget != null && (fTarget instanceof IFindReplaceTargetExtension))
 				((IFindReplaceTargetExtension) fTarget).setScope(null);
@@ -200,6 +201,12 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private boolean fIsTargetSupportingRegEx;
+	/**
+	 * Tells whether fUseSelectedLines radio is checked.
+	 * 
+	 * @since 3.0
+	 */
+	private boolean fUseSelectedLines;
 
 	/**
 	 * Creates a new dialog with the given shell as parent.
@@ -477,9 +484,9 @@ class FindReplaceDialog extends Dialog {
 		fGlobalRadioButton.setSelection(fGlobalInit);
 		fGlobalRadioButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				if (!fGlobalRadioButton.getSelection())
+				if (!fGlobalRadioButton.getSelection() || !fUseSelectedLines)
 					return;
-				
+				fUseSelectedLines= false;
 				useSelectedLines(false);
 			}
 
@@ -491,11 +498,12 @@ class FindReplaceDialog extends Dialog {
 		fSelectedRangeRadioButton.setText(EditorMessages.getString("FindReplace.SelectedRangeRadioButton.label")); //$NON-NLS-1$
 		setGridData(fSelectedRangeRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
 		fSelectedRangeRadioButton.setSelection(!fGlobalInit);
+		fUseSelectedLines= !fGlobalInit;
 		fSelectedRangeRadioButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				if (!fSelectedRangeRadioButton.getSelection())
+				if (!fSelectedRangeRadioButton.getSelection() || fUseSelectedLines)
 					return;
-
+				fUseSelectedLines= true;
 				useSelectedLines(true);
 			}
 			
@@ -962,6 +970,7 @@ class FindReplaceDialog extends Dialog {
 					useSelectedLines(true);
 					fGlobalRadioButton.setSelection(false);
 					fSelectedRangeRadioButton.setSelection(true);
+					fUseSelectedLines= true;
 				}
 			} else {
 				if ("".equals(fFindField.getText())) { //$NON-NLS-1$
@@ -1485,6 +1494,7 @@ class FindReplaceDialog extends Dialog {
 				fGlobalInit= true;
 				fGlobalRadioButton.setSelection(fGlobalInit);
 				fSelectedRangeRadioButton.setSelection(!fGlobalInit);
+				fUseSelectedLines= !fGlobalInit;
 			}
 		}
 
