@@ -11,14 +11,16 @@
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
 
-import java.io.File;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.core.Property;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
@@ -176,8 +178,11 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			runInSeparateVM(configuration, launch, monitor, idStamp, commandLine);
 			return;
 		}
+		Map attributes= new HashMap();
+		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntUIConstants.ID_ANT_PROCESS_TYPE);
+		attributes.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 				
-		final AntProcess process = new AntProcess(location.toOSString(), launch, new HashMap());
+		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
 		setProcessAttributes(process, idStamp, commandLine);
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
@@ -234,10 +239,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 
 	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, boolean separateVM) {
 		StringBuffer commandLine= new StringBuffer();
-		if (antHome != null) {
-			commandLine.append(antHome);
-			commandLine.append(File.separator);
-		}
+
 		if (!separateVM) {
 			commandLine.append("ant"); //$NON-NLS-1$
 		}
@@ -249,6 +251,16 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 				commandLine.append(arg);
 			}
 		}
+		
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		//global 
+		String[] files= prefs.getCustomPropertyFiles();
+		for (int i = 0; i < files.length; i++) {
+			String path = files[i];
+			commandLine.append(" -propertyfile "); //$NON-NLS-1$
+			commandLine.append(path);
+		}
+		//"local" configuration 
 		if (propertyFiles != null) {
 			for (int i = 0; i < propertyFiles.length; i++) {
 				String path = propertyFiles[i];
@@ -256,16 +268,30 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 				commandLine.append(path);
 			}
 		}
+		//"local" configuration
 		if (userProperties != null) {
 			Iterator keys = userProperties.keySet().iterator();
+			String key;
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
-				commandLine.append(" -D"); //$NON-NLS-1$
-				commandLine.append(key);
-				commandLine.append('='); 
-				String value = (String)userProperties.get(key);
-				commandLine.append(value);
+				key= (String)keys.next();
+				appendProperty(commandLine, key, (String)userProperties.get(key));
 			}
+		}
+		
+		//global
+		Property[] properties= prefs.getCustomProperties();
+		String key;
+		for (int i = 0; i < properties.length; i++) {
+			Property property = properties[i];
+			key= property.getName();
+			if (userProperties == null || userProperties.get(key) == null) {
+				appendProperty(commandLine, key, property.getValue());
+			}
+		}
+		
+		if (antHome != null) {
+			commandLine.append(" -Dant.home=");
+			commandLine.append(antHome);
 		}
 		
 		if (!separateVM) {
@@ -285,6 +311,13 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 		}
 		return commandLine;
+	}
+	
+	private void appendProperty(StringBuffer commandLine, String name, String value){
+		commandLine.append(" -D"); //$NON-NLS-1$
+		commandLine.append(name);
+		commandLine.append('='); 
+		commandLine.append(value);
 	}
 	
 	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, StringBuffer commandLine) throws CoreException {

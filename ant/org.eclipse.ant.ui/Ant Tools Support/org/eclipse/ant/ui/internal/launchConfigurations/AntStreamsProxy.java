@@ -16,7 +16,6 @@ import java.io.IOException;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
-;
 
 /**
  * 

@@ -57,6 +57,8 @@ public interface IAntUIConstants {
 	 * Ant Targets tab image.
 	 */
 	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
+	public static final String IMG_TAB_CLASSPATH = PLUGIN_ID + ".IMG_TAB_CLASSPATH"; //$NON-NLS-1$;
+	public static final String IMG_JAR_FILE = PLUGIN_ID + ".IMG_JAR_FILE"; //$NON-NLS-1$;
 	
 	//	Label images
 	 public static final String IMG_ANT_PROJECT= PLUGIN_ID + ".antProject"; //$NON-NLS-1$

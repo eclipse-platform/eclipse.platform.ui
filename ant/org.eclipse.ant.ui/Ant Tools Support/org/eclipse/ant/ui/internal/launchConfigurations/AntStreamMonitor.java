@@ -16,7 +16,7 @@ import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 import org.eclipse.debug.internal.core.ListenerList;
 
 /**
- * Stream monitor implementation for an ant build process.
+ * Stream monitor implementation for an Ant build process.
  */
 public class AntStreamMonitor implements IFlushableStreamMonitor {
 
@@ -80,6 +80,5 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 	public void setBuffered(boolean buffer) {
 		fBuffered = buffer;
 	}
-
 }
 
