@@ -347,6 +347,7 @@ public class InternalAntRunner {
 	 */
 	public List getTargets() {
 		try {
+		    setJavaClassPath();
 			Project antProject;
 		
 			if (isVersionCompatible("1.6")) { //$NON-NLS-1$

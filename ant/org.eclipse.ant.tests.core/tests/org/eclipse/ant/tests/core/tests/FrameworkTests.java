@@ -17,8 +17,10 @@ import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
@@ -218,5 +220,34 @@ public class FrameworkTests extends AbstractAntTest {
 		} finally {
 			restorePreferenceDefaults();
 		}	
+	}
+	
+	/**
+	 * Tests retrieving target info using AntRunner
+     * Covers bug 73602 at the same time
+	 */
+	public void testGetTargets() throws CoreException {
+	  
+			AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+			
+			String path= getProject().getFolder("resources").getLocation().toFile().getAbsolutePath();
+			IAntClasspathEntry entry= new AntClasspathEntry(path);
+			
+			
+			IAntClasspathEntry entries[] = prefs.getAdditionalClasspathEntries();
+			IAntClasspathEntry newEntries[] = new IAntClasspathEntry[entries.length + 1];
+			System.arraycopy(entries, 0, newEntries, 0, entries.length);
+			newEntries[entries.length] = entry;
+			prefs.setAdditionalClasspathEntries(newEntries);
+			
+			prefs.updatePluginPreferences();
+			
+			AntRunner runner= new AntRunner();
+			IFile buildFile= getBuildFile("Bug73602.xml");
+			if (buildFile != null) {
+				runner.setBuildFileLocation(buildFile.getLocation().toFile().toString());
+			}
+			TargetInfo[] infos= runner.getAvailableTargets();
+			assertTrue("incorrect number of targets retrieved", infos != null && infos.length == 3);
 	}
 }
