@@ -139,9 +139,20 @@
 		category="org.eclipse.team.ui"
 		class="org.eclipse.team.internal.ui.sync.SyncView">
 	</view>
+	
+	<category 
+		id="org.eclipse.team.ui.target"
+		name="Deployment">
+	</category>
+	<view
+            name="%SiteExplorerView.name"
+            icon="icons/full/cview16/site_view.gif"
+            category="org.eclipse.team.ui.target"
+       		fastViewWidthRatio="0.5"
+            class="org.eclipse.team.internal.ui.target.SiteExplorerView"
+            id="org.eclipse.team.ui.target.SiteExplorerView">
+      </view>
 </extension>	
-
-
 
 <!-- ****************** Import Wizards ********************* -->
    <extension

@@ -17,5 +17,8 @@ public interface ISharedImages {
 	public final String IMG_DIRTY_OVR = "ovr/dirty_ov.gif"; //$NON-NLS-1$
 	public final String IMG_CHECKEDIN_OVR = "ovr/checkedin_ov.gif"; //$NON-NLS-1$
 	public final String IMG_CHECKEDOUT_OVR = "ovr/checkedout_ov.gif"; //$NON-NLS-1$
+	
+	public final String IMG_SITE_VIEW = "cview16/site_view.gif"; //$NON-NLS-1$
+	public final String IMG_SITE_ELEMENT = "clcl16/site_element.gif"; //$NON-NLS-1$
 }
 

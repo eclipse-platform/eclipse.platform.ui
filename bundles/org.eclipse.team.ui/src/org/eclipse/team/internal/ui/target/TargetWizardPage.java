@@ -48,6 +48,15 @@ public abstract class TargetWizardPage extends WizardPage {
 		super(pageName, title, titleImage);
 	}
 	
+	protected Button createRadioButton(Composite parent, String label, int span) {
+		Button button = new Button(parent, SWT.RADIO);
+		button.setText(label);
+		GridData data = new GridData();
+		data.horizontalSpan = span;
+		button.setLayoutData(data);
+		return button;
+	}
+	
 	/*
 	 * Creates a new checkbox instance and sets the default layout data.
 	 *

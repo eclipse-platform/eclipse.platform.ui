@@ -23,11 +23,11 @@ import org.eclipse.ui.internal.model.AdaptableList;
  * The wizard for associating projects with team providers
  */
 public class ConfigureProjectWizard extends Wizard implements IConfigurationWizard {
-	private IWorkbench workbench;
-	private IProject project;
-	private IConfigurationWizard wizard;
+	protected IWorkbench workbench;
+	protected IProject project;
+	protected IConfigurationWizard wizard;
 	
-	private ConfigureProjectWizardMainPage mainPage;
+	protected ConfigureProjectWizardMainPage mainPage;
 	private String pluginId = UIConstants.PLUGIN_ID;
 	
 	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
@@ -39,11 +39,23 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	
 	public ConfigureProjectWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Policy.bind("ConfigureProjectWizard.title")); //$NON-NLS-1$
+		setWindowTitle(getWizardWindowTitle()); //$NON-NLS-1$
 	}
 	
 	protected String getExtensionPoint() {
 		return UIConstants.PT_CONFIGURATION;
+	}
+	
+	protected String getWizardWindowTitle() {
+		return Policy.bind("ConfigureProjectWizard.title"); //$NON-NLS-1$
+	}
+	
+	protected String getWizardLabel() {
+		return Policy.bind("ConfigureProjectWizard.configureProject"); //$NON-NLS-1$
+	}
+	
+	protected String getWizardDescription() {
+		return Policy.bind("ConfigureProjectWizard.description"); //$NON-NLS-1$
 	}
 	
 	/*
@@ -72,8 +84,8 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 				return;
 			}
 		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", Policy.bind("ConfigureProjectWizard.configureProject"), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$ //$NON-NLS-2$
-		mainPage.setDescription(Policy.bind("ConfigureProjectWizard.description")); //$NON-NLS-1$
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamImages.getImageDescriptor(UIConstants.IMG_WIZBAN_SHARE), wizards); //$NON-NLS-1$
+		mainPage.setDescription(getWizardDescription());
 		mainPage.setProject(project);
 		mainPage.setWorkbench(workbench);
 		addPage(mainPage);
@@ -111,7 +123,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * 
 	 * @return the available wizards
 	 */
-	AdaptableList getAvailableWizards() {
+	protected AdaptableList getAvailableWizards() {
 		AdaptableList result = new AdaptableList();
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, getExtensionPoint());

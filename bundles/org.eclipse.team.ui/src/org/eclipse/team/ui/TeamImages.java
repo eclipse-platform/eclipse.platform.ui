@@ -99,6 +99,11 @@ public class TeamImages {
 		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
 		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
 		
+		// Target Management Icons
+		createImageDescriptor(ISharedImages.IMG_SITE_VIEW, baseURL);
+		createImageDescriptor(ISharedImages.IMG_SITE_ELEMENT, baseURL);
+		
+		// Sync View Icons
 		createImageDescriptor(UIConstants.IMG_DLG_SYNC_INCOMING, baseURL);
 		createImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING, baseURL);
 		createImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING, baseURL);

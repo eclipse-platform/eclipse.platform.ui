@@ -49,6 +49,7 @@ public class TargetManager {
 
 	private static Map factories = new Hashtable();
 	private static List sites = new ArrayList();
+	private static List listeners = new ArrayList();
 
 	public static void startup() {
 		ResourcesPlugin.getWorkspace().getSynchronizer().add(TARGET_MAPPINGS);
@@ -63,6 +64,10 @@ public class TargetManager {
 	public static void addSite(Site site) {
 		sites.add(site);
 		save();
+		for (Iterator it = listeners.iterator(); it.hasNext();) {
+			ISiteListener element = (ISiteListener) it.next();
+			element.siteAdded(site);
+		}
 	}
 
    /**
@@ -159,6 +164,14 @@ public class TargetManager {
 		return null;
 	}
 
+	public static void addSiteListener(ISiteListener listener) {
+		listeners.add(listener);
+	} 
+	
+	public static void removeSiteListener(ISiteListener listener) {
+		listeners.remove(listener);
+	}
+
 	private static void readLocations() {
 		// read saved locations list from disk, only if the file exists
 		IPath pluginStateLocation =
@@ -217,8 +230,8 @@ public class TargetManager {
 		}
 	}
 
-	private static void writeLocations(DataOutputStream dos)
-		throws IOException {
+	private static void writeLocations(DataOutputStream dos)	
+																	throws IOException {
 		dos.writeInt(sites.size());
 		Iterator iter = sites.iterator();
 		while (iter.hasNext()) {
@@ -226,6 +239,8 @@ public class TargetManager {
 			dos.writeUTF(site.getType());
 			site.writeObject(new ObjectOutputStream(dos));
 		}
+		dos.flush();
+		dos.close();
 	}
 
 	public static ISiteFactory getSiteFactory(String id) {

@@ -41,6 +41,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	private AdaptableList wizards;
 	private IWorkbench workbench;
 	private IProject project;
+	private boolean creationMode = true;
 	
 	private IConfigurationWizard selectedWizard;
 	
@@ -55,6 +56,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards) {
 		super(pageName, title, titleImage);
 		this.wizards = wizards;
+		this.creationMode = creationMode;
 	}
 	public IConfigurationWizard getSelectedWizard() {
 		return selectedWizard;
@@ -107,8 +109,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 				try {
 					selectedWizard = (IConfigurationWizard)selectedElement.createExecutableExtension();
 					selectedWizard.init(workbench, project);
-				} catch (CoreException e) {
-					System.out.println(Policy.bind("ConfigurationWizard.exceptionCreatingWizard")); //$NON-NLS-1$
+				} catch (CoreException e) {					
 					return;
 				}
 				selectedWizard.addPages();
