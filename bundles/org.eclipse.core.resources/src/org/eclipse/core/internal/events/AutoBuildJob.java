@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.jobs.*;
+import org.osgi.framework.Bundle;
 
 /**
  * The job for performing workspace auto-builds, and pre- and post- autobuild
@@ -37,6 +38,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private long lastBuild = 0L;
 	private Workspace workspace;
 	private final IJobManager jobManager = Platform.getJobManager();
+	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi");
 
 	AutoBuildJob(Workspace workspace) {
 		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
@@ -203,6 +205,9 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			if (monitor.isCanceled())
 				return canceled();
 		}
+		//if the system is shutting down, don't build
+		if (systemBundle.getState() == Bundle.STOPPING) //$NON-NLS-1$
+			return Status.OK_STATUS;
 		try {
 			doBuild(monitor);
 			lastBuild = System.currentTimeMillis();

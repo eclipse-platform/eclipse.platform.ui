@@ -19,6 +19,7 @@ import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.osgi.framework.Bundle;
 
 public class BuildManager implements ICoreConstants, IManager, ILifecycleListener {
 
@@ -110,6 +111,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	//used for the build cycle looping mechanism
 	protected boolean rebuildRequested = false;
 
+	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+	
 	//used for debug/trace timing
 	private long timeStamp = -1;
 	protected Workspace workspace;
@@ -367,6 +370,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Cancel the build if the user has canceled or if an auto-build has been interrupted.
 	 */
 	private void checkCanceled(int trigger, IProgressMonitor monitor) {
+		//if the system is shutting down, don't build
+		if (systemBundle.getState() == Bundle.STOPPING)
+			throw new OperationCanceledException();
 		Policy.checkCanceled(monitor);
 		//check for auto-cancel only if we are auto-building
 		if (trigger != IncrementalProjectBuilder.AUTO_BUILD)
