@@ -4,6 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved. 
  */
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -78,6 +79,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					"Old Site :" + oldConfiguredSites[i].getSite().getURL());
 			}
 		}
+	
+		// 16215
+		isOptimistic = platformBaseChanged(oldConfiguredSites);	
 	
 		// check if sites from the platform are new sites or modified sites
 		// if they are new add them, if they are modified, compare them with the old
@@ -733,4 +737,64 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 		return (file1.equals(file2));
 	}
+	
+	/*
+	 * return true if the platformBase URL is not the same
+	 * we thought it is. In this case we should reconcile in an optimistic way 
+	 */
+	 private boolean platformBaseChanged(IConfiguredSite[] oldConfiguredSites){
+	 	
+	 	if (oldConfiguredSites==null){
+			UpdateManagerPlugin.warn("No previous configured sites. Optimistic reconciliation.");	 		
+	 		return true;
+	 	}
+	 	
+	 	String platformString = "platform:/base/";
+	 	URL platformURL = null;
+	 	try {
+	 		platformURL = new URL(platformString);
+	 	} catch (MalformedURLException e){
+	 		UpdateManagerPlugin.warn("unable to resolve platform:/base/. Check you are running a Platform",e);
+	 		return true;
+	 	}
+	 	URL resolvedCurrentBaseURL=null;
+	 	try {
+	 	 	resolvedCurrentBaseURL = Platform.resolve(platformURL);
+	 	} catch (IOException e){
+	 		UpdateManagerPlugin.warn("Error while resolving platform:/base/. Check you are running a Platform",e);
+	 		return true;	 		
+	 	}
+	 	
+	 	// find the 'platform:/base/' configuredSite
+	 	int index = 0;
+	 	boolean found = false;
+	 	ConfiguredSite cSite = null;
+	 	while(!found && index<oldConfiguredSites.length){
+	 		if (oldConfiguredSites[index] instanceof ConfiguredSite){
+	 			cSite = (ConfiguredSite) oldConfiguredSites[index];
+	 			if(platformString.equalsIgnoreCase(cSite.getPlatformURLString())){
+	 				found = true;
+	 			}
+	 		}
+	 		index++;
+	 	}
+
+		if (!found){
+			UpdateManagerPlugin.warn("Unable to find an old consifured site with platform:/base/ as a platform URL");
+			return true;
+		}
+		
+		if(cSite==null){
+			UpdateManagerPlugin.warn("The configuredSite that contains the platform is null");
+			return true;
+		}			
+		
+		if (sameURL(resolvedCurrentBaseURL,cSite.getSite().getURL())){
+		UpdateManagerPlugin.warn("Platform URL found are the same:"+resolvedCurrentBaseURL+" : "+cSite.getSite().getURL());				 				
+			return false;
+		}
+				 	
+		UpdateManagerPlugin.warn("Platform URL found is different than the one previously saved. Reconcile optimistically:"+resolvedCurrentBaseURL+" : "+cSite.getSite().getURL());				 	
+	 	return true;
+	 }
 }
