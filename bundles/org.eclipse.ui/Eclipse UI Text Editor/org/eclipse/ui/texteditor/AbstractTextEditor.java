@@ -121,8 +121,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					selectAndReveal(offset, length);
 				} catch (IllegalArgumentException x) {
 					/*
-					 * Catching IllegalArgumentException because of
-					 * 1GEUUH3 and 1GDXEKW.
+					 * Catching IllegalArgumentException because of 1GEUUH3 and 1GDXEKW.
 					 */
 				}
 			}
@@ -1038,7 +1037,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodeTrigger= null;
 			fActivationCodes.clear();
 			fActivationCodes= null;
-		}		
+		}
+		
+		super.setInput(null);		
 		
 		super.dispose();
 	}

@@ -37,7 +37,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.tasklist.TaskList;
 
 
-
 /**
  * A ruler action which can select the range covered by markers 
  * which have a visual  representation in the ruler.
@@ -90,17 +89,13 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	public void run() {
 		
 		IMarker marker= chooseMarker(fMarkers);
-		
-		/*
-		 * Jumpy behaviour when adding/removing breakpoints (1GKZKJN) 
-		 *  fTextEditor.gotoMarker(marker);
-		 */
-		
-		IWorkbenchPage page= fTextEditor.getSite().getPage();
-		IViewPart view= view= page.findView("org.eclipse.ui.views.TaskList"); //$NON-NLS-1$
-		if (view instanceof TaskList) {
-			StructuredSelection ss= new StructuredSelection(marker);
-			((TaskList) view).setSelection(ss, true);
+		if (MarkerUtilities.isMarkerType(marker, IMarker.TASK) || MarkerUtilities.isMarkerType(marker, IMarker.PROBLEM)) {
+			IWorkbenchPage page= fTextEditor.getSite().getPage();
+			IViewPart view= view= page.findView("org.eclipse.ui.views.TaskList"); //$NON-NLS-1$
+			if (view instanceof TaskList) {
+				StructuredSelection ss= new StructuredSelection(marker);
+				((TaskList) view).setSelection(ss, true);
+			}
 		}
 	}
 

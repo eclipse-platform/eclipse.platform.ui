@@ -150,7 +150,9 @@ public interface IDocument {
 	/**
 	 * Registers the document listener with the document. After registration
 	 * the IDocumentListener is informed about each change of this document.
-	 * If the listener is already registered nothing happens.
+	 * If the listener is already registered nothing happens.<p>
+	 * An <code>IDocumentListener</code> may call back to this method
+	 * when being inside a document notification. 
 	 *
 	 * @param listener the listener to be registered
 	 */
@@ -158,7 +160,9 @@ public interface IDocument {
 	
 	/**
 	 * Removes the listener from the document's list of document listeners.
-	 * If the listener is not registered with the document nothing happens.
+	 * If the listener is not registered with the document nothing happens.<p>
+	 * An <code>IDocumentListener</code> may call back to this method
+	 * when being inside a document notification. 
 	 *
 	 * @param listener the listener to be removed
 	 */
@@ -180,7 +184,7 @@ public interface IDocument {
 	void addPrenotifiedDocumentListener(IDocumentListener documentAdapter);
 	
 	/**
-	 * Removes the given document listener from teh document's list of
+	 * Removes the given document listener from the document's list of
 	 * prenotified document listeners. If the listener is not registered
 	 * with the document nothing happens. <p>
 	 * 
@@ -310,7 +314,9 @@ public interface IDocument {
 		
 	/**
 	 * Appends a new position updater to the document's list of position updaters.
-	 * Position updaters may be added multiple times.
+	 * Position updaters may be added multiple times.<p>
+	 * An <code>IPositionUpdater</code> may call back to this method
+	 * when being inside a document notification. 
 	 *
 	 * @param updater the updater to be added
 	 */
@@ -320,7 +326,9 @@ public interface IDocument {
 	 * Removes the position updater from the document's list of position updaters.
 	 * If the position updater has multiple occurences only the first occurence is
 	 * removed. If the position updater is not registered with this document, nothing
-	 * happens.
+	 * happens.<p>
+	 * An <code>IPositionUpdater</code> may call back to this method
+	 * when being inside a document notification. 
 	 *
 	 * @param updater the updater to be removed
 	 */
@@ -328,7 +336,9 @@ public interface IDocument {
 	
 	/**
 	 * Inserts the position updater at the specified index in the document's 
-	 * list of position updaters. Positions updaters may be inserted multiple times.
+	 * list of position updaters. Positions updaters may be inserted multiple times.<p>
+	 * An <code>IPositionUpdater</code> may call back to this method
+	 * when being inside a document notification. 
 	 *
 	 * @param updater the updater to be inserted
 	 * @param index the index in the document's updater list
@@ -398,7 +408,9 @@ public interface IDocument {
 	 * <li>listener.documentPartitioningChanged();
 	 * <li>listener.documentChanged(DocumentEvent);
 	 * </ul>
-	 * If the listener is already registered nothing happens.
+	 * If the listener is already registered nothing happens.<p>
+	 * An <code>IDocumentPartitioningListener</code> may call back to this method
+	 * when being inside a document notification. 
 	 *
 	 * @param listener the listener to be added
 	 */
@@ -407,7 +419,9 @@ public interface IDocument {
 	/**
 	 * Removes the listener from this document's list of document partitioning
 	 * listeners. If the listener is not registered with the document nothing
-	 * happens.
+	 * happens.<p>
+	 * An <code>IDocumentPartitioningListener</code> may call back to this method
+	 * when being inside a document notification. 
 	 *
 	 * @param listener the listener to be removed
 	 */

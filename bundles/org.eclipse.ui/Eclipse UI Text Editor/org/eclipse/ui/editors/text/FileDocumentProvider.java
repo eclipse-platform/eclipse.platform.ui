@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -199,6 +200,19 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	public FileDocumentProvider() {
 		super();
+	}
+	
+	/*
+	 * @see StorageDocumentProvider#setDocumentContent(IDocument, IEditorInput)
+	 */
+	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
+		if (editorInput instanceof IFileEditorInput) {
+			IFile file= ((IFileEditorInput) editorInput).getFile();
+			setDocumentContent(document, file.getContents(false));
+			return true;
+		}
+		
+		return super.setDocumentContent(document, editorInput);
 	}
 		
 	/*
@@ -388,10 +402,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		FileInfo info= (FileInfo) getElementInfo(fileEditorInput);
 		try {
 			
-			IFile file= fileEditorInput.getFile();
-			
 			IDocument document= new Document();
-			setDocumentContent(document, file.getContents(false));
+			setDocumentContent(document, fileEditorInput);
 			String newContent= document.get();
 			
 			if ( !newContent.equals(info.fDocument.get())) {
@@ -404,7 +416,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				info.fDocument.removeDocumentListener(info);
 				info.fDocument.set(newContent);
 				info.fCanBeSaved= false;
-				info.fModificationStamp= computeModificationStamp(file);
+				info.fModificationStamp= computeModificationStamp(fileEditorInput.getFile());
 				
 				addUnchangedElementListeners(fileEditorInput, info);
 				
@@ -416,7 +428,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				
 				// fires only the dirty state related event
 				info.fCanBeSaved= false;
-				info.fModificationStamp= computeModificationStamp(file);
+				info.fModificationStamp= computeModificationStamp(fileEditorInput.getFile());
 				
 				addUnchangedElementListeners(fileEditorInput, info);
 				

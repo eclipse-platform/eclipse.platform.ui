@@ -27,13 +27,10 @@ public final class ChildDocument extends AbstractDocument {
 		 * @see ITextStore#set
 		 */
 		public void set(String txt) {
-			update(true);
 			try {
 				fParentDocument.replace(fRange.getOffset(), fRange.getLength(), txt);
 			} catch (BadLocationException x) {
 				// cannot happen
-			} finally {
-				update(false);
 			}
 		}
 		
@@ -41,13 +38,10 @@ public final class ChildDocument extends AbstractDocument {
 		 * @see ITextStore#replace
 		 */
 		public void replace(int offset, int length, String txt) {
-			update(true);
 			try {
 				fParentDocument.replace(fRange.getOffset() + offset, length, txt);
 			} catch (BadLocationException x) {
 				// ignored as surrounding document should have handled this
-			} finally {
-				update(false);
 			}
 		}
 		
@@ -87,6 +81,9 @@ public final class ChildDocument extends AbstractDocument {
 	
 	/** The parent document */
 	private IDocument fParentDocument;
+	/** The parent document as document extension */
+	private IDocumentExtension fExtension;
+	
 	/** The section inside the parent document */
 	private Position fRange;
 	/** The document event issued by the parent document */
@@ -106,6 +103,9 @@ public final class ChildDocument extends AbstractDocument {
 		super();
 		
 		fParentDocument= parentDocument;
+		if (fParentDocument instanceof IDocumentExtension) 
+			fExtension= (IDocumentExtension) fParentDocument;
+			
 		fRange= range;
 		
 		ITextStore s= new TextStore();
@@ -152,17 +152,7 @@ public final class ChildDocument extends AbstractDocument {
 	public Position getParentDocumentRange() {
 		return fRange;
 	}
-	
-	/**
-	 * Marks whether a parent document update has been initialized
-	 * by this child document or not.
-	 *
-	 * @param updating the mark
-	 */
-	private void update(boolean updating) {
-		fIsUpdating= updating;
-	}
-	
+		
 	/**
 	 * Transforms a document event of the parent document into a child document
 	 * based document event.
@@ -239,5 +229,50 @@ public final class ChildDocument extends AbstractDocument {
 	 */
 	protected void fireDocumentChanged(DocumentEvent event) {
 		super.fireDocumentChanged(fEvent);
+	}
+	
+	/*
+	 * @see IDocument#replace(int, int, String)
+	 */
+	public void replace(int offset, int length, String text) throws BadLocationException {
+		try {
+			fIsUpdating= true;
+			if (fExtension != null)
+				fExtension.stopPostNotificationProcessing();
+				
+			super.replace(offset, length, text);
+			
+		} finally {
+			fIsUpdating= false;
+			if (fExtension != null)
+				fExtension.resumePostNotificationProcessing();
+		}
+	}
+	
+	/*
+	 * @see IDocument#set(String)
+	 */
+	public void set(String text) {
+		try {
+			fIsUpdating= true;
+			if (fExtension != null)
+				fExtension.stopPostNotificationProcessing();
+				
+			super.set(text);
+		
+		} finally {
+			fIsUpdating= false;
+			if (fExtension != null)
+				fExtension.resumePostNotificationProcessing();
+		}
+	}
+	
+	/*
+	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IReplace)
+	 */
+	public void registerPostNotificationReplace(IDocumentListener owner, IReplace replace) {
+		if (!fIsUpdating)
+			throw new UnsupportedOperationException();
+		super.registerPostNotificationReplace(owner, replace);
 	}
 }
