@@ -24,16 +24,15 @@ import org.eclipse.help.internal.webapp.data.*;
 import org.eclipse.help.internal.workingset.*;
 
 /**
- * Returns search results.
- * Each hits contains a prameter "resultsof" that is the url encoded query
- * string.
+ * Returns search results. Each hits contains a prameter "resultsof" that is
+ * the url encoded query string.
  */
 public class SearchServlet extends HttpServlet {
 	private String locale;
 
 	/**
-	 * Called by the server (via the <code>service</code> method) to
-	 * allow a servlet to handle a GET request. 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a GET request.
 	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
@@ -51,12 +50,12 @@ public class SearchServlet extends HttpServlet {
 		resultsWriter.close();
 	}
 	/**
-	 *
-	 * Called by the server (via the <code>service</code> method)
-	 * to allow a servlet to handle a POST request.
-	 *
+	 * 
+	 * Called by the server (via the <code>service</code> method) to allow a
+	 * servlet to handle a POST request.
+	 * 
 	 * Handle the search requests,
-	 *
+	 *  
 	 */
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 		throws ServletException, IOException {
@@ -65,9 +64,9 @@ public class SearchServlet extends HttpServlet {
 	}
 
 	/**
-				* Call the search engine, and get results or the percentage of 
-				* indexed documents.
-				*/
+	 * Call the search engine, and get results or the percentage of indexed
+	 * documents.
+	 */
 	private SearchHit[] loadSearchResults(
 		HttpServletRequest request,
 		HttpServletResponse response) {
@@ -88,8 +87,8 @@ public class SearchServlet extends HttpServlet {
 		} finally {
 			if (hits == null)
 				hits = new SearchHit[0];
-			return hits;
 		}
+		return hits;
 	}
 
 	private ISearchQuery createSearchQuery(HttpServletRequest request) {
@@ -166,7 +165,8 @@ public class SearchServlet extends HttpServlet {
 		HttpServletResponse response) {
 		String[] scopes = request.getParameterValues("scope");
 		if (scopes == null) {
-			// it is possible that filtering is used, but all books are deselected
+			// it is possible that filtering is used, but all books are
+			// deselected
 			return new WorkingSet[0];
 		}
 		if (scopes.length
@@ -196,17 +196,17 @@ public class SearchServlet extends HttpServlet {
 	 */
 	private static class ResultsWriter extends XMLGenerator {
 		/**
-		 * @param writer java.io.Writer
+		 * @param writer
+		 *           java.io.Writer
 		 */
 		public ResultsWriter(Writer writer) {
 			super(writer);
 		}
 
-		/** XML representation of search results.
-		* &lt;pre&gt;
-		* 	&lt;			hits&gt; 		&lt;topic label=".." score="..."
-		* toc=".." toclabel=".."/&gt;  .....
-		*/
+		/**
+		 * XML representation of search results. &lt;pre&gt; &lt; hits&gt;
+		 * &lt;topic label=".." score="..." toc=".." toclabel=".."/&gt; .....
+		 */
 		public void generate(SearchHit[] hits, HttpServletResponse resp) {
 
 			println("<hits>");
