@@ -107,7 +107,7 @@ public boolean isApplicationMenu(String menuId);
  * <b>Note:</b> Since release 2.0, a window is limited to contain at most
  * one page. If a page exist in the window when this method is used, then
  * another window is created for the new page.  Callers are strongly
- * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+ * recommended to use the <code>IWorkbench.showPerspective</code> APIs to
  * programmatically show a perspective.
  * </p>
  * 
@@ -117,7 +117,7 @@ public boolean isApplicationMenu(String menuId);
  * @return the new workbench page
  * @exception WorkbenchException if a page could not be opened
  * 
- * @see IWorkbench#openPerspective
+ * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
  */
 public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
 	throws WorkbenchException;
@@ -128,7 +128,7 @@ public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
  * <b>Note:</b> Since release 2.0, a window is limited to contain at most
  * one page. If a page exist in the window when this method is used, then
  * another window is created for the new page.  Callers are strongly
- * recommended to use the <code>IWorkbench.openPerspective</code> APIs to
+ * recommended to use the <code>IWorkbench.showPerspective</code> APIs to
  * programmatically show a perspective.
  * </p>
  * 
@@ -137,7 +137,7 @@ public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
  * @return the new workbench window
  * @exception WorkbenchException if a page could not be opened
  * 
- * @see IWorkbench#openPerspective
+ * @see IWorkbench#showPerspective(String, IWorkbenchWindow, IAdaptable)
  */
 public IWorkbenchPage openPage(IAdaptable input)
 	throws WorkbenchException;
