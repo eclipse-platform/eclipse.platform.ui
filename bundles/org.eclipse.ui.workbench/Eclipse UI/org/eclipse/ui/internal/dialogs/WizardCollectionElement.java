@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;

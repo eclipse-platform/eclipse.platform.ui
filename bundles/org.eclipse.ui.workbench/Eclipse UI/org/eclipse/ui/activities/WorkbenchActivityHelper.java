@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.activities.ws;
+package org.eclipse.ui.activities;
 
+import org.eclipse.ui.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IIdentifier;
 
 /**
  * A utility class that contains helpful methods for interacting with the

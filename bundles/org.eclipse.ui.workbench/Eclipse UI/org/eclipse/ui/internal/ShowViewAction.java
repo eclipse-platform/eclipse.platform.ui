@@ -13,10 +13,10 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 

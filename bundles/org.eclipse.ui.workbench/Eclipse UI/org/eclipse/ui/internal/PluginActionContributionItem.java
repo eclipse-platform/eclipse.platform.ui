@@ -14,7 +14,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.ActionContributionItem;
 
 import org.eclipse.ui.IActionDelegate2;
-import org.eclipse.ui.activities.ws.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
  * Contribution item for actions provided by plugins via workbench action

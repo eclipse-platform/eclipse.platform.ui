@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.ui.activities.ws.FilterableObject;
-import org.eclipse.ui.activities.ws.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.activities.ws.FilterableObject;
 
 /**
  * Provider used by the new format NewWizardNewPage.

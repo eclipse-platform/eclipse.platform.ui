@@ -34,11 +34,11 @@ import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.INullSelectionListener;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**

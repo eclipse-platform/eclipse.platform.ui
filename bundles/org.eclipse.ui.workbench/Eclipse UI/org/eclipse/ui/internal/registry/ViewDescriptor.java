@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 

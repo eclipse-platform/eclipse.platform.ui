@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.activities.ws;
+package org.eclipse.ui;
 
 /**
  * An interface that descriptor classes may implement in addition to their

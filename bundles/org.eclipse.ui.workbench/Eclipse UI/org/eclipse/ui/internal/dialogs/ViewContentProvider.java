@@ -16,8 +16,8 @@ import java.util.Iterator;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.ui.activities.ws.FilterableObject;
-import org.eclipse.ui.activities.ws.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.activities.ws.FilterableObject;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 

@@ -1,6 +1,5 @@
-package org.eclipse.ui.contexts.ws;
+package org.eclipse.ui.contexts;
 
-import org.eclipse.ui.contexts.IContextManager;
 
 public interface IWorkbenchContextSupport {
 

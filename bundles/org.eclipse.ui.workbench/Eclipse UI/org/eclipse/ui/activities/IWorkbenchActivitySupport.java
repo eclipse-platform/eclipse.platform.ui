@@ -1,6 +1,5 @@
-package org.eclipse.ui.activities.ws;
+package org.eclipse.ui.activities;
 
-import org.eclipse.ui.activities.IActivityManager;
 
 public interface IWorkbenchActivitySupport {
 

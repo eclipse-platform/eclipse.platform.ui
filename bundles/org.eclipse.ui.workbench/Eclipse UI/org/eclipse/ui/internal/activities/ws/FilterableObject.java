@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.activities.ws;
+package org.eclipse.ui.internal.activities.ws;
 
 /**
  * Abstract baseclass for objects that wish to respond to filtering states.

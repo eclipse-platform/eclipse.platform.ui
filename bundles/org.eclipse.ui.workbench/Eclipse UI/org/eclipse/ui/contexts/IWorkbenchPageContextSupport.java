@@ -1,4 +1,4 @@
-package org.eclipse.ui.contexts.ws;
+package org.eclipse.ui.contexts;
 
 public interface IWorkbenchPageContextSupport {
 
