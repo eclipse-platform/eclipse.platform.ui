@@ -1053,6 +1053,20 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 													 status.getMessage(),
 													 null));
 			}
+			
+			// See if name contains any characters that we deem illegal.
+			// '@' and '&' are disallowed because they corrupt menu items.
+			char[] disallowedChars = new char[] { '@', '&' };
+			for (int i = 0; i < disallowedChars.length; i++) {
+				char c = disallowedChars[i];
+				if (currentName.indexOf(c) > -1) {
+					throw new CoreException(new Status(IStatus.ERROR,
+														DebugUIPlugin.getUniqueIdentifier(),
+														0,
+														MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationTabGroupViewer.0"), new String[] { new String(new char[] {c}), currentName }), //$NON-NLS-1$
+														null));
+				}
+			}
 	
 			// Otherwise, if there's already a config with the same name, complain
 			if (!getOriginal().getName().equals(currentName)) {
