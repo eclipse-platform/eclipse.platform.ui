@@ -790,11 +790,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Returns the difference between the baseline of the widget and the
 	 * baseline as specified by the font for <code>gc</code>. When drawing
-	 * line numbers, the returned bias should be added to obtain text line up on
-	 * the correct base line of the text widget.
+	 * line numbers, the returned bias should be added to obtain text lined up
+	 * on the correct base line of the text widget.
 	 * 
 	 * @param gc the <code>GC</code> to get the font metrics from
-	 * @return the baseline bias to use when drawing text that is line up with
+	 * @return the baseline bias to use when drawing text that is lined up with
 	 *         <code>fCachedTextWidget</code>
 	 */
 	private int getBaselineBias(GC gc) {
