@@ -429,8 +429,12 @@ protected void savePreferenceStore() {
 
 /**
  * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
- * method refreshes the plugin actions.  Subclasses may extend this method,
+ * method refreshes the plug-in actions.  Subclasses may extend this method,
  * but must send super first.
+ * <p>
+ * WARNING: Plug-ins may not be started in the UI thread.
+ * The <code>startup()</code> method should not assume that its code runs in
+ * the UI thread, otherwise SWT thread exceptions may occur on startup.
  */
 public void startup() throws CoreException {
 	refreshPluginActions();
