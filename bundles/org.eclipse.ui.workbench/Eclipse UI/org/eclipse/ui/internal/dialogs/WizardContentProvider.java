@@ -33,6 +33,12 @@ public class WizardContentProvider
 	public WizardContentProvider(boolean filtering) {
 		super(filtering);
 	}
+	
+	/**
+	 */
+	public WizardContentProvider() {
+	    super(false);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -40,6 +46,7 @@ public class WizardContentProvider
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
+	    //no-op
 	}
 
 	/*
@@ -145,5 +152,6 @@ public class WizardContentProvider
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	    //no-op
 	}
 }
