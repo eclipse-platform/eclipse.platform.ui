@@ -450,7 +450,7 @@ public class DecoratorManager
 		  for(int i = 0; i < elements.length; i ++){
 			  Object adapted = getResourceAdapter(elements[i]);
 			  //Force an update in case full decorators are the only ones enabled
-			  scheduler.queueForDecoration(elements[i],adapted,true);
+			  scheduler.queueForDecoration(elements[i],adapted,true,null);
 		  }
 		}			
 	}

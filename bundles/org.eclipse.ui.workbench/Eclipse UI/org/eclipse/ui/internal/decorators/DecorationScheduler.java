@@ -88,7 +88,7 @@ public class DecorationScheduler {
 			(DecorationResult) resultCache.get(element);
 
 		if (decoration == null) {
-			queueForDecoration(element, adaptedElement, false);
+			queueForDecoration(element, adaptedElement, false,text);
 			return text;
 		} else
 			return decoration.decorateWithText(text);
@@ -101,17 +101,21 @@ public class DecorationScheduler {
 	 * @param adaptedElement. The adapted value of element. May be null.
 	 * @param forceUpdate. If true then a labelProviderChanged is fired
 	 * 	whether decoration occured or not.
+	 * @param String undecoratedText - the String that we are starting 
+	 * 	decoration with.
 	 */
 
 	synchronized void queueForDecoration(
 		Object element,
 		Object adaptedElement,
-		boolean forceUpdate) {
+		boolean forceUpdate,
+		String undecoratedText) {
 
 		if (!awaitingDecorationValues.containsKey(element)) {
 			DecorationReference reference =
 				new DecorationReference(element, adaptedElement);
 			reference.setForceUpdate(forceUpdate);
+			reference.setUndecoratedText(undecoratedText);
 			awaitingDecorationValues.put(element, reference);
 			awaitingDecoration.add(element);
 			if (shutdown)
@@ -143,7 +147,7 @@ public class DecorationScheduler {
 			(DecorationResult) resultCache.get(element);
 
 		if (decoration == null) {
-			queueForDecoration(element, adaptedElement, false);
+			queueForDecoration(element, adaptedElement, false,null);
 			return image;
 		} else
 			return decoration.decorateWithOverlays(
@@ -216,7 +220,7 @@ public class DecorationScheduler {
 					
 					DecorationBuilder cacheResult = new DecorationBuilder();
 
-					monitor.subTask(WorkbenchMessages.format("DecorationScheduler.DecoratingSubtask", new Object[] {reference.getElement().toString()})); //$NON-NLS-1$
+					monitor.subTask(reference.getSubTask()); //$NON-NLS-1$
 					//Don't decorate if there is already a pending result
 					Object element = reference.getElement();
 					Object adapted = reference.getAdaptedElement();
