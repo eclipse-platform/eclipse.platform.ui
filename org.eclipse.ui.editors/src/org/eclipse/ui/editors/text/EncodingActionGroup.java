@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 
@@ -203,7 +204,7 @@ public class EncodingActionGroup extends ActionGroup {
 			};
 			
 			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, "", inputValidator); //$NON-NLS-1$
-			if (d.open() == d.OK) {
+			if (d.open() == Dialog.OK) {
 				IEncodingSupport s= (IEncodingSupport) editor.getAdapter(IEncodingSupport.class);
 				if (s != null)
 					s.setEncoding(d.getValue());
