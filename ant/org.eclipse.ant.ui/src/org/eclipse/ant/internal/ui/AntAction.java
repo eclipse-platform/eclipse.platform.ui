@@ -41,21 +41,16 @@ public AntAction(IFile file) {
 public void run() {
 	if (file == null)
 		return;
-	
+
 	// save the modified files if required by the user
 	if (AntUIPlugin.getPlugin().getPreferenceStore().getBoolean(IAntPreferenceConstants.AUTO_SAVE)) {
-		IEditorPart[] editors = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditors();
-		for (int i=0; i<editors.length; i++) {
-			if (editors[i].isDirty()) {
-				editors[i].getSite().getPage().saveEditor(editors[i],false);
-			}
-		}
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().saveAllEditors(false);
 	}
-	
+
 	Project project = extractProject(file);
 	if (project == null)
 		return;
-		
+
 	AntLaunchWizard wizard = new AntLaunchWizard(project,file);
 	wizard.setNeedsProgressMonitor(true);
 	WizardDialog dialog = new WizardDialog(AntUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell(),wizard);
