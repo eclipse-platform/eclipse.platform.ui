@@ -478,7 +478,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		IStructuredSelection ss= (IStructuredSelection)selection;
 		Object o= ss.getFirstElement();
-		if (o instanceof IStackFrame) {
+		if (o == null || o instanceof IStackFrame) {
 			return;
 		} 
 		TreeViewer tViewer= (TreeViewer)getViewer();
