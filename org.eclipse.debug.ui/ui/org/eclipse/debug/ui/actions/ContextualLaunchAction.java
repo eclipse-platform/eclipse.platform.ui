@@ -191,8 +191,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 					filteredShortCuts.add(ext);
 				}
 			} catch (CoreException e) {
-				// bogus XML Expression Language provided.
-				DebugUIPlugin.log(e.getStatus());
+				// not supported
 			}
 		}
 		iter = filteredShortCuts.iterator();

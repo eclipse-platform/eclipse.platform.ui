@@ -1818,13 +1818,6 @@
             class="org.eclipse.debug.internal.ui.ResourceExtender"
             id="org.eclipse.debug.ui.IResourceExtender">
       </propertyTester>
-      <propertyTester
-      		namespace="org.eclipse.debug.ui"
-            properties="instanceof"
-            type="java.lang.Object"
-            class="org.eclipse.debug.internal.ui.ResourceExtender"
-            id="org.eclipse.debug.ui.ObjectExtender">
-      </propertyTester>      
 	  <propertyTester
 			namespace="org.eclipse.debug.ui"
 			properties="launchable"
