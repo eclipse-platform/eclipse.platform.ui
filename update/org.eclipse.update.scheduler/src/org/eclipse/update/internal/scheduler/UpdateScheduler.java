@@ -333,7 +333,6 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 					|| target_h == current_h
 					&& current_m > 0))
 				delta_d += 7;
-			int delta_h = target_h - current_h;
 
 			delay =
 				(((delta_d * 24 + target_h - current_h) * 60 - current_m) * 60 - current_s)* 1000 - current_ms;

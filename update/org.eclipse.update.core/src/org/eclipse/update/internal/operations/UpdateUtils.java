@@ -680,22 +680,15 @@ public class UpdateUtils {
 		INonPluginEntry[] nonPluginsToInstall = feature.getNonPluginEntries();
 
 		// Download feature archive(s)
-		ContentReference[] references =
-			provider.getFeatureEntryArchiveReferences(monitor);
+		provider.getFeatureEntryArchiveReferences(monitor);
 		// Download plugin archives
 		for (int i = 0; i < pluginsToInstall.length; i++) {
-			ContentReference[] plugin_references =
-				provider.getPluginEntryArchiveReferences(
-					pluginsToInstall[i],
-					monitor);
+			provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
 		}
 
 		// Download non-plugin archives. Verification handled by optional install handler
 		for (int i = 0; i < nonPluginsToInstall.length; i++) {
-			references =
-				provider.getNonPluginEntryArchiveReferences(
-					nonPluginsToInstall[i],
-					monitor);
+			provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
 		}
 
 		// Download child features
