@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,6 +27,8 @@ import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.ui.actions.TeamAction;
 
@@ -81,6 +84,11 @@ public class TagAction extends TeamAction {
 			ITeamProvider provider = manager.getProvider(resources[i].getProject());
 			if (provider == null) return false;
 			if (!((CVSTeamProvider)provider).isManaged(resources[i])) return false;
+			// If resource is a file and does not exist remotely yet, disable tag.
+			if (resources[i] instanceof IFile) {
+				ICVSResource cvsResource = new LocalFile(resources[i].getLocation().toFile());
+				if (cvsResource.getSyncInfo().isAdded()) return false;
+			}
 		}
 		return true;
 	}

@@ -22,6 +22,9 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -47,8 +50,15 @@ public class ShowResourceInHistoryAction extends TeamAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
+		// Show Resource In History is enabled for resources which have been committed.
 		IResource[] resources = getSelectedResources();
-		return resources.length == 1;
+		if (resources.length != 1) return false;
+		IResource resource = resources[0];
+		if (!(resource instanceof IFile)) return false;
+		ICVSResource cvsResource = new LocalFile(resource.getLocation().toFile());
+		if (!cvsResource.isManaged()) return false;
+		if (cvsResource.getSyncInfo().isAdded()) return false;
+		return true;
 	}
 	/** (Non-javadoc)
 	 * Method declared on IActionDelegate.
