@@ -531,7 +531,7 @@ public class FilteredList extends Composite {
 		
 			
 			//How many we are going to do this time.
-			int iterations = Math.min(50, fCount - currentIndex);
+			int iterations = Math.min(10, fCount - currentIndex);
 			
 			for (int i  = 0; i < iterations; i++) {
 				
