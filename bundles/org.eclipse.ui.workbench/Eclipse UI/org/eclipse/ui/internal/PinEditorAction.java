@@ -22,7 +22,7 @@ public class PinEditorAction extends ActiveEditorAction {
 	private IPropertyListener propListener = new IPropertyListener() {
 		public void propertyChanged(Object source, int propId) {
 			if (propId == EditorSite.PROP_REUSE_EDITOR) {
-				EditorSite site = (EditorSite) ((IEditorPart) source).getEditorSite();
+				EditorSite site = (EditorSite) source;
 				setChecked(!site.getReuseEditor());
 			}
 		}
@@ -83,7 +83,7 @@ public class PinEditorAction extends ActiveEditorAction {
 	protected void editorActivated(IEditorPart part) {
 		super.editorActivated(part);
 		if (part != null) {
-			part.addPropertyListener(propListener);
+			((EditorSite)part.getEditorSite()).addPropertyListener(propListener);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class PinEditorAction extends ActiveEditorAction {
 	protected void editorDeactivated(IEditorPart part) {
 		super.editorDeactivated(part);
 		if (part != null) {
-			part.removePropertyListener(propListener);
+			((EditorSite)part.getEditorSite()).removePropertyListener(propListener);
 		}
 	}
 	
@@ -101,6 +101,7 @@ public class PinEditorAction extends ActiveEditorAction {
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
 	 */
 	public void dispose() {
+		// deactivate current editor now before super dispose because active editor will be null after call
 		editorDeactivated(getActiveEditor());
 		super.dispose();
 	}
