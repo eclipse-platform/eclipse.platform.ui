@@ -11,14 +11,11 @@
 
 package org.eclipse.ui.tests.keys;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.tests.util.AutomationUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -42,7 +39,7 @@ public class Bug43610Test extends UITestCase {
      * Tests that if "Shift+Alt+" is pressed, then the key code should
      * represent the "Alt+" key press.
      */
-    public void testShiftAlt() throws AWTException {
+    public void testShiftAlt() {
         // Set up a working environment.
         Display display = Display.getCurrent();
         Listener listener = new Listener() {
@@ -54,15 +51,14 @@ public class Bug43610Test extends UITestCase {
             }
         };
         display.addFilter(SWT.KeyDown, listener);
-
-        // Test.
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_SHIFT);
-        robot.keyPress(KeyEvent.VK_ALT);
-        robot.keyRelease(KeyEvent.VK_ALT);
-        robot.keyRelease(KeyEvent.VK_SHIFT);
-        robot.keyPress(KeyEvent.VK_ESCAPE);
-        robot.keyRelease(KeyEvent.VK_ESCAPE);
+        
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.SHIFT);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.ALT);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.ALT);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.SHIFT);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.ESC);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.ESC);
+	
         while (display.readAndDispatch())
             ;
 

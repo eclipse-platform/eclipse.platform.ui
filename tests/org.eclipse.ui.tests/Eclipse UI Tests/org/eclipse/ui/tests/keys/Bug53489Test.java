@@ -11,9 +11,6 @@
 
 package org.eclipse.ui.tests.keys;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,11 +21,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.tests.util.AutomationUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -62,7 +60,7 @@ public class Bug53489Test extends UITestCase {
      * @throws IOException
      *             If the file cannot be read.
      */
-    public void testDoubleDelete() throws AWTException, CommandException,
+    public void testDoubleDelete() throws CommandException,
             CoreException, IOException {
         IWorkbenchWindow window = openTestWindow();
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -75,7 +73,7 @@ public class Bug53489Test extends UITestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(
                 originalContents.getBytes());
         textFile.create(inputStream, true, null);
-        IEditorPart editor = IDE.openEditor(window.getActivePage(), textFile,
+        IDE.openEditor(window.getActivePage(), textFile,
                 true);
 
         // Allow the editor to finish opening.
@@ -83,15 +81,13 @@ public class Bug53489Test extends UITestCase {
         while (display.readAndDispatch())
             ;
 
-        // Press Delete
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_DELETE);
-        robot.keyRelease(KeyEvent.VK_DELETE);
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_S);
-        robot.keyRelease(KeyEvent.VK_S);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
-
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.DEL);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.DEL);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.CTRL);
+        AutomationUtil.performCharacterEvent(display, SWT.KeyDown,'S');
+        AutomationUtil.performCharacterEvent(display, SWT.KeyUp,'S');
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.CTRL);
+      
         // Spin the event loop.
         while (display.readAndDispatch())
             ;

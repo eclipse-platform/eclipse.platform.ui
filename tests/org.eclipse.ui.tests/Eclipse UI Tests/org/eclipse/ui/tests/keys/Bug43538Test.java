@@ -11,14 +11,12 @@
 
 package org.eclipse.ui.tests.keys;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
-
+import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.tests.util.AutomationUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -42,7 +40,7 @@ public class Bug43538Test extends UITestCase {
      * Tests that if "Shift+Alt+" is pressed, then the key code should
      * represent the "Alt+" key press.
      */
-    public void testShiftAlt() throws AWTException {
+    public void testShiftAlt() {
         // Set up a working environment.
         Display display = Display.getCurrent();
         Listener listener = new Listener() {
@@ -57,12 +55,11 @@ public class Bug43538Test extends UITestCase {
         };
         display.addFilter(SWT.KeyDown, listener);
 
-        // Test.
-        Robot robot = new Robot();
-        robot.keyPress(KeyEvent.VK_CONTROL);
-        robot.keyPress(KeyEvent.VK_SPACE);
-        robot.keyRelease(KeyEvent.VK_SPACE);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, SWT.CONTROL);
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyDown, Action.findKeyCode("SPACE")); //$NON-NLS-1$
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, Action.findKeyCode("SPACE")); //$NON-NLS-1$
+        AutomationUtil.performKeyCodeEvent(display, SWT.KeyUp, SWT.CONTROL);
+        
         while (display.readAndDispatch())
             ;
 
