@@ -108,9 +108,8 @@ class JobInfo extends JobTreeElement {
 	/**
 	 * Clear the collection of subtasks an the task info.
 	 */
-	void clear() {
+	void clearChildren() {
 		children.clear();
-		this.taskInfo = null;
 	}
 
 	/* (non-Javadoc)

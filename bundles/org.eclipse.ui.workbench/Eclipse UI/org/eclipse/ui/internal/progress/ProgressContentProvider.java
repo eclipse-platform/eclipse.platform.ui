@@ -168,7 +168,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 		} else
 			info.taskInfo.setTaskName(taskName);
 
-		info.clear();
+		info.clearChildren();
 		refreshViewer(info);
 	}
 
@@ -184,7 +184,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			return;
 		JobInfo info = getJobInfo(job);
 
-		info.clear();
+		info.clearChildren();
 		info.addSubTask(name);
 		refreshViewer(info);
 
