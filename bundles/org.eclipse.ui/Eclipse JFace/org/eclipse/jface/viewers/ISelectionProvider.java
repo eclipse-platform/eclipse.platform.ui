@@ -34,7 +34,7 @@ public ISelection getSelection();
  */
 public void removeSelectionChangedListener(ISelectionChangedListener listener);
 /**
- * Sets the selection current selection for this selection provider.
+ * Sets the current selection for this selection provider.
  *
  * @param selection the new selection
  */
