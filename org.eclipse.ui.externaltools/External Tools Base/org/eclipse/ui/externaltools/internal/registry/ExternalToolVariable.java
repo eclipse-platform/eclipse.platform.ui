@@ -20,17 +20,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.externaltools.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
+import org.eclipse.ui.externaltools.variable.DefaultVariableExpander;
 import org.eclipse.ui.externaltools.variable.IVariableComponent;
+import org.eclipse.ui.externaltools.variable.IVariableExpander;
 
 /**
  * Abtract representation of the different variables.
  */
-public abstract class ExternalToolVariable {
+public class ExternalToolVariable {
 	private static final IVariableComponent defaultComponent = new DefaultVariableComponent(false);
 	
 	private String tag;
 	private String description;
 	private IConfigurationElement element;
+	private IVariableExpander expander;
 
 	/**
 	 * Creates an variable definition
@@ -44,6 +47,22 @@ public abstract class ExternalToolVariable {
 		this.tag = tag;
 		this.description = description;
 		this.element = element;
+	}
+	
+	/**
+	 * Returns the object that can expand the variable
+	 */
+	public IVariableExpander getExpander() {
+		if (expander == null) {
+			try {
+				expander = (IVariableExpander) createObject(ExternalToolVariableRegistry.TAG_EXPANDER_CLASS);
+			} catch (ClassCastException exception) {
+			}
+			if (expander == null) {
+				return DefaultVariableExpander.getDefault();
+			}
+		}
+		return expander;
 	}
 	
 	/**

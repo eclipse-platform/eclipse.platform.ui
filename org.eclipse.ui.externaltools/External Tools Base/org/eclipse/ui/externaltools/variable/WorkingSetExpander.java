@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
  * This class is not intended to be extended by clients.
  * </p>
  */
-public class WorkingSetExpander implements IVariableResourceExpander {
+public class WorkingSetExpander extends DefaultVariableExpander {
 
 	/**
 	 * Create an instance

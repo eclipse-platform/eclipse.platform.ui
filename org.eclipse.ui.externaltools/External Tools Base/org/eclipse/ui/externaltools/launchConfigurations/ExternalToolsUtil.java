@@ -27,7 +27,7 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
-import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariable;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
@@ -223,7 +223,7 @@ public class ExternalToolsUtil {
 		}
 
 		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
-		RefreshScopeVariable variable = registry.getRefreshVariable(varDef.name);
+		ExternalToolVariable variable = registry.getVariable(varDef.name);
 		if (variable == null) {
 			String msg = MessageFormat.format(ToolMessages.getString("DefaultRunnerContext.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
 			abort(msg, null, 0);

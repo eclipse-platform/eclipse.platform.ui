@@ -22,7 +22,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 /**
  * General registry reader for external tool variables.
  */
-public abstract class ExternalToolVariableRegistry {
+public class ExternalToolVariableRegistry {
 	// Format of the variable extension points
 	// <extension point="org.eclipse.ui.externalTools.***Variables>
 	//		<variable
@@ -53,24 +53,18 @@ public abstract class ExternalToolVariableRegistry {
 	/**
 	 * The extension point id to read the variables from
 	 */
-	private String extensionPointId;
+	protected String extensionPointId;
 	
-	/**
-	 * The 
-	/**
-	 * Creates a new registry and loads the variables.
-	 */
-	public ExternalToolVariableRegistry(String extensionPointId) {
-		super();
-		this.extensionPointId = extensionPointId;
-		loadVariables();
+	public ExternalToolVariableRegistry() {
+		this(IExternalToolConstants.EXTENSION_POINT_TOOL_VARIABLES);
 	}
 	
 	/**
-	 * Returns the variables in the registry
+	 * Creates a new registry and loads the variables.
 	 */
-	protected final void copyVariables(Object[] results) {
-		variables.values().toArray(results);
+	protected ExternalToolVariableRegistry(String extensionPointId) {
+		this.extensionPointId = extensionPointId;
+		loadVariables();
 	}
 
 	/**
@@ -86,6 +80,23 @@ public abstract class ExternalToolVariableRegistry {
 	 */
 	public final int getVariableCount() {
 		return variables.size();
+	}
+	
+	
+	/**
+	 * Returns the variable for the given tag or <code>null</code> if none.
+	 */
+	public ExternalToolVariable getVariable(String tag) {
+		return findVariable(tag);
+	}
+	
+	/**
+	 * Returns the list of argument variables in the registry.
+	 */
+	public ExternalToolVariable[] getVariables() {
+		ExternalToolVariable[] results = new ExternalToolVariable[getVariableCount()];
+		variables.values().toArray(results);
+		return results;
 	}
 	
 	/**
@@ -131,5 +142,8 @@ public abstract class ExternalToolVariableRegistry {
 	/**
 	 * Creates a new variable from the specified information.
 	 */
-	protected abstract ExternalToolVariable newVariable(String tag, String description, IConfigurationElement element);
+	protected ExternalToolVariable newVariable(String tag, String description, IConfigurationElement element) {
+		return new ExternalToolVariable(tag, description, element);
+	}
+	
 }

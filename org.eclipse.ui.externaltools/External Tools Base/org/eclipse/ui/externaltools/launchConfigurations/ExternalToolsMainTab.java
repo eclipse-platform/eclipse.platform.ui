@@ -44,8 +44,8 @@ import org.eclipse.ui.externaltools.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.registry.ArgumentVariableRegistry;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.externaltools.model.ToolUtil.VariableDefinition;
@@ -436,8 +436,8 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			if (variable.name == null || variable.name.length() == 0) {
 				return "Invalid variable format. No variable specified";
 			}
-			ArgumentVariableRegistry registry = ExternalToolsPlugin.getDefault().getArgumentVariableRegistry();
-			if (registry.getArgumentVariable(variable.name) == null) {
+			ExternalToolVariableRegistry registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
+			if (registry.getVariable(variable.name) == null) {
 				return MessageFormat.format("Unknown variable: {0}", new String[] {variable.name});
 			}
 			start= variable.end;
@@ -576,7 +576,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		protected Control createDialogArea(Composite parent) {
 			// Create the dialog area
 			Composite composite= (Composite)super.createDialogArea(parent);
-			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getArgumentVariableRegistry().getArgumentVariables();
+			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getToolVariableRegistry().getVariables();
 			form= new ExternalToolVariableForm(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Choose_a_variable__11"), variables); //$NON-NLS-1$
 			form.createContents(composite, new IGroupDialogPage() {
 				public GridData setButtonGridData(Button button) {

@@ -18,10 +18,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
-import org.eclipse.ui.externaltools.internal.registry.ArgumentVariable;
-import org.eclipse.ui.externaltools.internal.registry.ArgumentVariableRegistry;
-import org.eclipse.ui.externaltools.internal.registry.PathLocationVariable;
-import org.eclipse.ui.externaltools.internal.registry.PathLocationVariableRegistry;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
 /**
@@ -120,9 +118,9 @@ public final class ToolUtil {
 			start = varDef.end;
 			
 			// Lookup the variable if it exist
-			ArgumentVariableRegistry registry;
-			registry = ExternalToolsPlugin.getDefault().getArgumentVariableRegistry();
-			ArgumentVariable variable = registry.getArgumentVariable(varDef.name);
+			ExternalToolVariableRegistry registry;
+			registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
+			ExternalToolVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
 				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.argumentVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
@@ -199,9 +197,9 @@ public final class ToolUtil {
 			buffer.append(dirLocation.substring(start, varDef.start));
 			
 			// Lookup the variable if it exist
-			PathLocationVariableRegistry registry;
-			registry = ExternalToolsPlugin.getDefault().getDirectoryLocationVariableRegistry();
-			PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
+			ExternalToolVariableRegistry registry;
+			registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
+			ExternalToolVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
 				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.dirLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
@@ -259,9 +257,9 @@ public final class ToolUtil {
 			buffer.append(fileLocation.substring(start, varDef.start));
 		
 			// Lookup the variable if it exist
-			PathLocationVariableRegistry registry;
-			registry = ExternalToolsPlugin.getDefault().getFileLocationVariableRegistry();
-			PathLocationVariable variable = registry.getPathLocationVariable(varDef.name);
+			ExternalToolVariableRegistry registry;
+			registry = ExternalToolsPlugin.getDefault().getToolVariableRegistry();
+			ExternalToolVariable variable = registry.getVariable(varDef.name);
 			if (variable == null) {
 				String msg = MessageFormat.format(ToolMessages.getString("ToolUtil.fileLocVarMissing"), new Object[] {varDef.name}); //$NON-NLS-1$
 				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));

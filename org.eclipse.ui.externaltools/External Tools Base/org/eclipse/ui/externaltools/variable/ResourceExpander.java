@@ -22,7 +22,7 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
  * This class is not intended to be extended by clients.
  * </p>
  */
-public class ResourceExpander implements IVariableLocationExpander, IVariableResourceExpander, IVariableTextExpander {
+public class ResourceExpander implements IVariableExpander {
 
 	/**
 	 * Expands the variable to a resource.

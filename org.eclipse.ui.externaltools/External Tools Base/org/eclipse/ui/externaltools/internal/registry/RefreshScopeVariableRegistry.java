@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
@@ -23,28 +22,5 @@ public class RefreshScopeVariableRegistry extends ExternalToolVariableRegistry {
 	public RefreshScopeVariableRegistry() {
 		super(IExternalToolConstants.EXTENSION_POINT_REFRESH_VARIABLES);
 	}
-
-	/**
-	 * Returns the refresh scope variable for the given tag
-	 * or <code>null</code> if none.
-	 */
-	public RefreshScopeVariable getRefreshVariable(String tag) {
-		return (RefreshScopeVariable) findVariable(tag);
-	}
 	
-	/**
-	 * Returns the list of refresh scope variables in the registry.
-	 */
-	public RefreshScopeVariable[] getRefreshVariables() {
-		RefreshScopeVariable[] results = new RefreshScopeVariable[getVariableCount()];
-		copyVariables(results);
-		return results;
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on ExternalToolVariableRegistry.
-	 */
-	protected ExternalToolVariable newVariable(String tag, String description, IConfigurationElement element) {
-		return new RefreshScopeVariable(tag, description, element);
-	}
 }

@@ -101,7 +101,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 */
 	protected void createScopeComponent(Composite parent) {
 		String label = ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Choose_scope_v&ariable___2"); //$NON-NLS-1$
-		ExternalToolVariable[] vars = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry().getRefreshVariables();
+		ExternalToolVariable[] vars = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry().getVariables();
 		variableForm = new ExternalToolVariableForm(label, vars);
 		variableForm.createContents(parent, this);
 	}

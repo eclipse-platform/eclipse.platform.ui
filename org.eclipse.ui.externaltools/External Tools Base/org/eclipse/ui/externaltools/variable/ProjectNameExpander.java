@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * Extracts the project name from a variable context */
-public class ProjectNameExpander implements IVariableTextExpander {
+public class ProjectNameExpander extends DefaultVariableExpander {
 
 	/**
 	 * Returns the name of the project in the given context or
