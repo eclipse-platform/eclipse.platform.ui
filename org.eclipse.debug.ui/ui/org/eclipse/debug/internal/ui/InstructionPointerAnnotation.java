@@ -46,7 +46,7 @@ public class InstructionPointerAnnotation extends DefaultAnnotation {
 	 * 
 	 * @see org.eclipse.jface.text.source.Annotation
 	 */
-	private static final int INSTRUCTION_POINTER_ANNOTATION_LAYER = 0;
+	private static final int INSTRUCTION_POINTER_ANNOTATION_LAYER = 6;
 
 	/**
 	 * Construct an instruction pointer annotation for the given stack frame.
