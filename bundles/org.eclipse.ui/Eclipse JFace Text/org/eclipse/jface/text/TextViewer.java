@@ -814,14 +814,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * @see IWidgetTokenOwner#requestWidgetToken(Object)
 	 */
 	public synchronized boolean requestWidgetToken(Object tokenRequester) {
-		if (fTextWidget != null) {
-			if (fWidgetTokenKeeper == null) {
-				fWidgetTokenKeeper= tokenRequester;
-				return true;
-			}
-			return (fWidgetTokenKeeper == tokenRequester);
-		}
-		return false;
+		return true;
+//		if (fTextWidget != null) {
+//			if (fWidgetTokenKeeper == null) {
+//				fWidgetTokenKeeper= tokenRequester;
+//				return true;
+//			}
+//			return (fWidgetTokenKeeper == tokenRequester);
+//		}
+//		return false;
 	}
 	
 	/*
