@@ -80,18 +80,15 @@ final class ActivityDefinition implements Comparable {
 	private transient boolean hashCodeComputed;
 	private String id;
 	private String name;
-	private String parentId;
 	private String pluginId;
 	private transient String string;
 
 	ActivityDefinition(
 		String id,
 		String name,
-		String parentId,
 		String pluginId) {
 		this.id = id;
 		this.name = name;
-		this.parentId = parentId;
 		this.pluginId = pluginId;
 	}
 
@@ -102,12 +99,8 @@ final class ActivityDefinition implements Comparable {
 		if (compareTo == 0) {
 			compareTo = Util.compare(name, castedObject.name);
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(parentId, castedObject.parentId);
-
-				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, castedObject.pluginId);
-			}
+			if (compareTo == 0)
+				compareTo = Util.compare(pluginId, castedObject.pluginId);
 		}
 
 		return compareTo;
@@ -121,7 +114,6 @@ final class ActivityDefinition implements Comparable {
 		boolean equals = true;
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(parentId, castedObject.parentId);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
 	}
@@ -134,10 +126,6 @@ final class ActivityDefinition implements Comparable {
 		return name;
 	}
 
-	public String getParentId() {
-		return parentId;
-	}
-
 	public String getPluginId() {
 		return pluginId;
 	}
@@ -147,7 +135,6 @@ final class ActivityDefinition implements Comparable {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
 			hashCodeComputed = true;
 		}
@@ -162,8 +149,6 @@ final class ActivityDefinition implements Comparable {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
 			stringBuffer.append(',');
 			stringBuffer.append(pluginId);
 			stringBuffer.append(']');

@@ -30,7 +30,6 @@ public final class ActivityEvent {
 	private boolean definedChanged;
 	private boolean enabledChanged;
 	private boolean nameChanged;
-	private boolean parentIdChanged;
 
 	/**
 	 * Creates a new instance of this class.
@@ -47,8 +46,6 @@ public final class ActivityEvent {
 	 *            true, iff the enabled property changed.
 	 * @param nameChanged
 	 *            true, iff the name property changed.
-	 * @param parentIdChanged
-	 *            true, iff the parentId property changed.
 	 */
 	public ActivityEvent(
 		IActivity activity,
@@ -56,8 +53,7 @@ public final class ActivityEvent {
 		boolean activityPatternBindingsChanged,
 		boolean definedChanged,
 		boolean enabledChanged,
-		boolean nameChanged,
-		boolean parentIdChanged) {
+		boolean nameChanged) {
 		if (activity == null)
 			throw new NullPointerException();
 
@@ -67,7 +63,6 @@ public final class ActivityEvent {
 		this.definedChanged = definedChanged;
 		this.enabledChanged = enabledChanged;
 		this.nameChanged = nameChanged;
-		this.parentIdChanged = parentIdChanged;
 	}
 
 	/**
@@ -105,15 +100,6 @@ public final class ActivityEvent {
 	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
-	}
-
-	/**
-	 * Returns whether or not the parentId property changed.
-	 * 
-	 * @return true, iff the parentId property changed.
-	 */
-	public boolean hasParentIdChanged() {
-		return parentIdChanged;
 	}
 
 	/**

@@ -73,13 +73,6 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="parentId" type="string">
-            <annotation>
-               <documentation>
-                  The unique identifier of the parent of this activity. This is an experimental attribute only, and will likely be removed for 3.0.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
