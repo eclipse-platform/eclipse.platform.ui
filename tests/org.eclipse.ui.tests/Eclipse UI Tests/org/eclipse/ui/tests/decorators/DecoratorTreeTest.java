@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * The DecoratorTreeTest tests the font and color support on 
@@ -44,9 +43,7 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	 */
 	protected void backgroundCheck(IViewPart view) {
 		TreeItem first = ((DecoratorTreeView) view).viewer.getTree().getItems()[0];
-		Assert.isTrue(first.getBackground().getRGB()
-				.equals(BackgroundColorDecorator.color.getRGB()));
-
+		assertEquals(BackgroundColorDecorator.color.getRGB(), first.getBackground().getRGB());
 	}
 
 	/* (non-Javadoc)
@@ -55,8 +52,7 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	protected void foregroundCheck(IViewPart view) {
 
 		TreeItem first = ((DecoratorTreeView) view).viewer.getTree().getItems()[0];
-		Assert.isTrue(first.getForeground().getRGB()
-				.equals(ForegroundColorDecorator.color.getRGB()));
+		assertEquals(ForegroundColorDecorator.color.getRGB(), first.getForeground().getRGB());
 
 	}
 
@@ -74,7 +70,6 @@ public class DecoratorTreeTest extends DecoratorViewerTest {
 	 */
 	protected void fontCheck(IViewPart view) {
 		TreeItem first = ((DecoratorTreeView) view).viewer.getTree().getItems()[0];
-		Assert.isTrue(first.getFont().getFontData()[0].equals(FontDecorator.font.getFontData()[0]));
+		assertEquals(FontDecorator.font.getFontData()[0], first.getFont().getFontData()[0]);
 	}
-
 }
