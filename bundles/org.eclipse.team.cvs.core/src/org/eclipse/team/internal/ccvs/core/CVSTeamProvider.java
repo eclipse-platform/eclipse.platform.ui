@@ -34,6 +34,8 @@ import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -1191,7 +1193,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * 
 	 * @see CVSTeamProvider#edit
 	 */
-	public void unedit(IResource[] resources, boolean recurse, boolean notifyServer, IProgressMonitor progress) throws TeamException {
+	public void unedit(IResource[] resources, boolean recurse, boolean notifyServer, IProgressMonitor progress) throws CVSException {
 		notifyEditUnedit(resources, recurse, notifyServer, new ICVSResourceVisitor() {
 			public void visitFile(ICVSFile file) throws CVSException {
 				if (!file.isReadOnly())
@@ -1206,33 +1208,55 @@ public class CVSTeamProvider extends RepositoryProvider {
 	/*
 	 * This method captures the common behavior between the edit and unedit methods.
 	 */
-	private void notifyEditUnedit(IResource[] resources, boolean recurse, boolean notifyServer, ICVSResourceVisitor editUneditVisitor, IProgressMonitor progress) throws CVSException {
-		progress = Policy.monitorFor(progress);
-		final ICVSResource[] cvsResources = getCVSArguments(resources);
-		
-		// mark the files locally as being checked out
-		for (int i = 0; i < cvsResources.length; i++) {
-			cvsResources[i].accept(editUneditVisitor, recurse);
-		}
-		
-		// send the noop command to the server in order to deliver the notifications
-		if (notifyServer) {
-			final boolean[] connected = new boolean[] { false };
-			try {
-				Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true, new ICVSRunnable() {
-					public void run(IProgressMonitor monitor) throws CVSException {
-						connected[0] = true;
-						Command.NOOP.execute(Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS, 
-						cvsResources, null, monitor);
+	private void notifyEditUnedit(final IResource[] resources, final boolean recurse, final boolean notifyServer, final ICVSResourceVisitor editUneditVisitor, IProgressMonitor monitor) throws CVSException {
+		final IProgressMonitor progress = Policy.monitorFor(monitor);
+		final CVSException[] exception = new CVSException[] { null };
+		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor pm) throws CoreException {
+				final ICVSResource[] cvsResources = getCVSArguments(resources);
+				
+				// mark the files locally as being checked out
+				try {
+					for (int i = 0; i < cvsResources.length; i++) {
+						cvsResources[i].accept(editUneditVisitor, recurse);
 					}
-				}, progress);
-			} catch (CVSException e) {
-				// Only report the exception if we were able to connect.
-				// If we couldn't connect, the notification will be sent the next time we do.
-				if (connected[0]) throw e;
-			} finally {
-				progress.done();
+				} catch (CVSException e) {
+					exception[0] = e;
+					return;
+				}
+				
+				// send the noop command to the server in order to deliver the notifications
+				if (notifyServer) {
+					final boolean[] connected = new boolean[] { false };
+					try {
+						Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true, new ICVSRunnable() {
+							public void run(IProgressMonitor monitor) throws CVSException {
+								connected[0] = true;
+								Command.NOOP.execute(Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS, 
+								cvsResources, null, monitor);
+							}
+						}, progress);
+					} catch (CVSException e) {
+						// Only report the exception if we were able to connect.
+						// If we couldn't connect, the notification will be sent the next time we do.
+						if (connected[0]) exception[0] = e;
+					} finally {
+						progress.done();
+					}
+				}
 			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run(workspaceRunnable, monitor);
+		} catch (CoreException e) {
+			if (exception[0] == null) {
+				throw CVSException.wrapException(e);
+			} else {
+				CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+			}
+		}
+		if (exception[0] != null) {
+			throw exception[0];
 		}
 	}
 	

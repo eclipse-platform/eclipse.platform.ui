@@ -10,11 +10,13 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +26,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -33,6 +37,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -45,6 +50,10 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public abstract class WorkspaceAction extends CVSAction {
 
+	public interface IProviderAction {
+		public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException;
+	}
+	
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#beginExecution(IAction)
 	 */
@@ -395,4 +404,27 @@ public abstract class WorkspaceAction extends CVSAction {
 		return getNonOverlapping(super.getSelectedResources());
 	}
 
+	protected void executeProviderAction(IProviderAction action, IResource[] resources, IProgressMonitor monitor) throws InvocationTargetException {
+		Hashtable table = getProviderMapping(resources);
+		Set keySet = table.keySet();
+		monitor.beginTask(null, keySet.size() * 1000);
+		Iterator iterator = keySet.iterator();
+
+		while (iterator.hasNext()) {
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+			List list = (List)table.get(provider);
+			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+			try {
+				addStatus(action.execute(provider, providerResources, subMonitor));
+			} catch (CVSException e) {
+				throw new InvocationTargetException(e);
+			}
+
+		}
+	}
+	
+	protected void executeProviderAction(IProviderAction action, IProgressMonitor monitor) throws InvocationTargetException {
+		executeProviderAction(action, getSelectedResources(), monitor);
+	}
 }

@@ -144,6 +144,22 @@
                helpContextId="org.eclipse.team.cvs.ui.replace_with_revision_action_context"
                id="org.eclipse.team.ccvs.ui.replaceWithRevision">
          </action>
+         <action
+               label="%EditAction.label"
+               tooltip="%EditAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.EditAction"
+               menubarPath="team.main/group4"
+               helpContextId="org.eclipse.team.cvs.ui.team_edit_action_context"
+               id="org.eclipse.team.ccvs.ui.edit">
+         </action>
+         <action
+               label="%UneditAction.label"
+               tooltip="%UneditAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.UneditAction"
+               menubarPath="team.main/group4"
+               helpContextId="org.eclipse.team.cvs.ui.team_unedit_action_context"
+               id="org.eclipse.team.ccvs.ui.unedit">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IResource"

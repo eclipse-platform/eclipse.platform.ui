@@ -1,0 +1,62 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
+package org.eclipse.team.internal.ccvs.ui.actions;
+
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.team.core.Team;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
+
+public class EditAction extends WorkspaceAction {
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
+	 */
+	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		run(new WorkspaceModifyOperation() {
+			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				executeProviderAction(new IProviderAction() {
+					public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException {
+						provider.edit(resources, false /* recurse */, true /* notify server */, ICVSFile.NO_NOTIFICATION, monitor);
+						return Team.OK_STATUS;
+					}
+				}, monitor);
+			}
+		}, true /* cancelable */, PROGRESS_DIALOG);
+	}
+
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForAddedResources()
+	 */
+	protected boolean isEnabledForAddedResources() {
+		return false;
+	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
+	 */
+	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
+		if (cvsResource.isFolder()) return false;
+		if (super.isEnabledForCVSResource(cvsResource)) {
+			return ((ICVSFile)cvsResource).isReadOnly();
+		} else {
+			return false;
+		}
+	}
+
+}
