@@ -72,34 +72,6 @@ public class Manager {
 		return text != null ? text : Util.ZERO_LENGTH_STRING;
 	}
 
-	public static boolean validateSequence(Sequence sequence) {
-		List strokes = sequence.getStrokes();
-		int size = strokes.size();
-			
-		if (size == 0)
-			return false;
-		else 
-			for (int i = 0; i < size; i++) {
-				Stroke stroke = (Stroke) strokes.get(i);	
-
-				if (stroke.getValue() == 0)
-					return false;
-			}
-			
-		return true;
-	}
-
-	public static void validateSequenceBindings(Collection sequenceBindings) {
-		Iterator iterator = sequenceBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
-			
-			if (!validateSequence(sequenceBinding.getSequence()))
-				iterator.remove();
-		}
-	}
-
 	public void reset() {
 		CoreRegistry coreRegistry = CoreRegistry.getInstance();		
 		LocalRegistry localRegistry = LocalRegistry.getInstance();
@@ -185,5 +157,33 @@ public class Manager {
 		keyMachine.setConfigurationMap(Collections.unmodifiableSortedMap(keyConfigurationMap));
 		keyMachine.setScopeMap(Collections.unmodifiableSortedMap(scopeMap));
 		keyMachine.setBindingSet(Collections.unmodifiableSortedSet(keyBindingSet));
+	}
+
+	static boolean validateSequence(Sequence sequence) {
+		List strokes = sequence.getStrokes();
+		int size = strokes.size();
+			
+		if (size == 0)
+			return false;
+		else 
+			for (int i = 0; i < size; i++) {
+				Stroke stroke = (Stroke) strokes.get(i);	
+
+				if (stroke.getValue() == 0)
+					return false;
+			}
+			
+		return true;
+	}
+
+	static void validateSequenceBindings(Collection sequenceBindings) {
+		Iterator iterator = sequenceBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
+			
+			if (!validateSequence(sequenceBinding.getSequence()))
+				iterator.remove();
+		}
 	}
 }
