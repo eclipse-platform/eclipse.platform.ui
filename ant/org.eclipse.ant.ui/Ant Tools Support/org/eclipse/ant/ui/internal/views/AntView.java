@@ -197,12 +197,13 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			menu.add(addBuildFileAction);
 			menu.add(new Separator());
 			menu.add(runTargetAction);
-			menu.add(editConfigAction);
 			menu.add(refreshBuildFilesAction);
 			addOpenWithMenu(menu);
 			menu.add(new Separator());
 			menu.add(removeProjectAction);
 			menu.add(removeAllAction);
+			menu.add(new Separator());
+			menu.add(editConfigAction);
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
