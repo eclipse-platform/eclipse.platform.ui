@@ -9,6 +9,7 @@
    <runtime>
       <library name="externaltools.jar">
          <export name="*"/>
+         <packages prefixes="org.eclipse.ui.externaltools"/>
       </library>
    </runtime>
    <requires>
