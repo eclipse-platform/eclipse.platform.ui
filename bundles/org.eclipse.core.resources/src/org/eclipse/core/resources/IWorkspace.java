@@ -14,7 +14,7 @@ import java.util.*;
  * of this workspace.
  * <p>
  * A workspace corresponds closely to discreet areas in the local file system.
- * Each projects in a workspace maps onto a specific area of the file system.
+ * Each project in a workspace maps onto a specific area of the file system.
  * The folders and files within a project map directly onto the corresponding
  * directories and files in the file system.  
  * One subdirectory, the workspace metadata area, contains internal 
