@@ -60,12 +60,10 @@ public class ViewContentProvider implements ITreeContentProvider {
 							.getIdentifier(
 							WorkbenchActivityHelper.createUnifiedId(
 								categories[i]));
-					if (identifier.isEnabled()) {
-						filtered.add(categories[i]);
-					}
-				} else {
-					filtered.add(categories[i]);
-				}
+					if (!identifier.isEnabled()) 
+						continue;
+				} 
+                filtered.add(categories[i]);
 			}
 			categories =
 				(Category[]) filtered.toArray(new Category[filtered.size()]);
@@ -94,16 +92,11 @@ public class ViewContentProvider implements ITreeContentProvider {
 									.getIdentifier(
 									WorkbenchActivityHelper.createUnifiedId(
 										contribution));
-							if (identifier.isEnabled()) {
-								filtered.add(o);
-							}
-						} else {
-							filtered.add(o);
-						}
-
-					} else {
-						filtered.add(o);
-					}
+							if (!identifier.isEnabled())
+                                continue;
+						} 
+                    }
+                    filtered.add(o);
 
 				}
 				return filtered.toArray();

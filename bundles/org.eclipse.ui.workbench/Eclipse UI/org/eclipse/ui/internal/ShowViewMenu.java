@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -30,14 +32,15 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Menu;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
@@ -119,14 +122,9 @@ public class ShowViewMenu extends ContributionItem {
 		if (page.getPerspective() == null)
 			return;
 
-		// Get visible actions. (copy, we're going to be modifying it)
-		List viewIds = new ArrayList(((WorkbenchPage) page).getShowViewActionIds());
+		// Get visible actions. 
+		List viewIds = ((WorkbenchPage) page).getShowViewActionIds();
         
-        IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, false);
-        if (objectManager != null) {
-            // prune off all filtered views
-            viewIds.retainAll(objectManager.getEnabledObjects());
-        }
         // add all open views
         viewIds = addOpenedViews(page, viewIds);
 
@@ -135,6 +133,14 @@ public class ShowViewMenu extends ContributionItem {
 			String id = (String) i.next();
 			IAction action = getAction(id);
 			if (action != null) {
+                if (action instanceof IPluginContribution) {
+                	IPluginContribution contribution = (IPluginContribution) action;
+                    if (contribution.fromPlugin()) {
+                    	IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
+                        if (!identifier.isEnabled())
+                            continue;
+                    }
+                }
 				actions.add(action);
 			}
 		}

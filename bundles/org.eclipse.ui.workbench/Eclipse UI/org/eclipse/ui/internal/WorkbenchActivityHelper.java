@@ -16,30 +16,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-
-import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceManager;
 
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.internal.activities.IObjectActivityManager;
-import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
-import org.eclipse.ui.internal.dialogs.RegistryPageContributor;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IPluginContribution;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
-import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
 /**
  * Utility class that manages the preservation of active activities as well as
@@ -138,11 +125,7 @@ public class WorkbenchActivityHelper {
             activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
         }
 
-        createPreferenceMappings();
         createNewWizardMappings();
-        createPerspectiveMappings();
-        createViewMappings();
-        createPropertyContributionMappings();
     }
     
     /**
@@ -192,112 +175,7 @@ public class WorkbenchActivityHelper {
         }
         manager.applyPatternBindings();
     }
-
-    /**
-	 * Create the mappings for the perspective object activity manager. Objects
-	 * of interest in this manager are Strings (perspective IDs).
-	 */
-    private void createPerspectiveMappings() {
-        IPerspectiveRegistry registry = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-        IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
-        IObjectActivityManager manager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, true);
-        for (int i = 0; i < descriptors.length; i++) {
-            String localId = descriptors[i].getId();
-            if (!(descriptors[i] instanceof PerspectiveDescriptor)) {
-                // this situation doesn't currently occur.
-                // All of our IPerspectiveDescriptors are
-				// PerspectiveDescriptors
-                // give it a plugin ID of * to represent internal "plugins"
-				// (custom perspectives)
-                // These objects will always be "active".
-                manager.addObject("*", localId, localId); //$NON-NLS-1$
-                continue;
-            }
-            IConfigurationElement element = ((PerspectiveDescriptor) descriptors[i]).getConfigElement();
-            if (element == null) {
-                // Custom perspective
-                // Give it a plugin ID of * to represent internal "plugins"
-				// (custom perspectives)
-                // These objects will always be "active".
-                manager.addObject("*", localId, localId); //$NON-NLS-1$
-                continue;
-            }
-            String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-            manager.addObject(pluginId, localId, localId);
-        }
-        manager.applyPatternBindings();
-    }
-
-    /**
-	 * Create the mappings for the preference page object activity manager.
-	 * Objects of interest in this manager are WorkbenchPreferenceNodes.
-	 */
-    private void createPreferenceMappings() {
-        PreferenceManager preferenceManager = WorkbenchPlugin.getDefault().getPreferenceManager();
-        //add all WorkbenchPreferenceNodes to the manager
-        IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PREFERENCES, true);
-        for (Iterator i = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator(); i.hasNext();) {
-            IPreferenceNode node = (IPreferenceNode) i.next();
-            if (node instanceof WorkbenchPreferenceNode) {
-                WorkbenchPreferenceNode workbenchNode = ((WorkbenchPreferenceNode) node);
-                objectManager.addObject(workbenchNode.getPluginId(), workbenchNode.getExtensionLocalId(), node);
-            }
-        }
-        // and then apply the default bindings
-        objectManager.applyPatternBindings();
-    }
     
-    /**
-     * Create the mappings for the property page object activity manager.
-     * Objects of interest in this manager are RegistryPageContributor.
-     */
-    private void createPropertyContributionMappings() {
-    	Collection contributors = PropertyPageContributorManager.getManager().getContributors();
-    	IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_PROPERTY_PAGES, true);
-    	for (Iterator i = contributors.iterator(); i.hasNext();) {
-    		for (Iterator j = ((Collection) i.next()).iterator(); j.hasNext();) {
-    			RegistryPageContributor pageContributor = (RegistryPageContributor) j.next();
-    			objectManager.addObject(pageContributor.getPluginId(), pageContributor.getPageId(), pageContributor);                
-    		}                        
-    	}
-    	// and then apply the default bindings
-    	objectManager.applyPatternBindings();        
-    }    
-
-    /**
-	 * Create the mappings for the perspective object activity manager. Objects
-	 * of interest in this manager are Strings (view IDs as well as view
-	 * category IDs (in the form "{ID}*").
-	 */
-    private void createViewMappings() {
-        IViewRegistry viewRegistry = WorkbenchPlugin.getDefault().getViewRegistry();
-        IObjectActivityManager objectManager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_VIEWS, true);
-
-        IViewDescriptor[] viewDescriptors = viewRegistry.getViews();
-        for (int i = 0; i < viewDescriptors.length; i++) {
-            IConfigurationElement element = viewDescriptors[i].getConfigurationElement();
-            objectManager.addObject(
-                element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(),
-                viewDescriptors[i].getId(),
-                viewDescriptors[i].getId());
-        }
-        
-        // this is a temporary hack until we decide whether categories warrent their own
-        // object manager.  
-        Category[] categories = viewRegistry.getCategories();
-        for (int i = 0; i < categories.length; i++) {
-            IConfigurationElement element = (IConfigurationElement) categories[i].getAdapter(IConfigurationElement.class);
-            if (element != null) {
-                String categoryId = createViewCategoryIdKey(categories[i].getId());
-                objectManager.addObject(element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), categoryId, categoryId);
-            }
-        }
-
-        // and then apply the default bindings
-        objectManager.applyPatternBindings();
-    }
-
-
     /**
      * Utility method to create a String containing the plugin and local ids of 
      * a contribution.

@@ -16,8 +16,8 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeySequenceText;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -86,7 +86,7 @@ public class Bug42024Test extends UITestCase {
 	public void testInfiniteStrokes() throws ParseException {
 		String keySequenceText = "A B C D E F"; //$NON-NLS-1$
 		KeySequence keySequence = KeySequence.getInstance(keySequenceText);
-		text.setMaxStrokes(KeySequenceText.INFINITE);
+		text.setKeyStrokeLimit(KeySequenceText.INFINITE);
 		text.setKeySequence(keySequence);
 		assertEquals("Infinite limit but sequence changed.", keySequence, text.getKeySequence()); //$NON-NLS-1$
 	}
@@ -101,7 +101,7 @@ public class Bug42024Test extends UITestCase {
 	 */
 	public void testTruncation() throws ParseException {
 		final int length = 4;
-		text.setMaxStrokes(length);
+		text.setKeyStrokeLimit(length);
 
 		// Test matching length.
 		String matchingKeySequenceText = "1 2 3 4"; //$NON-NLS-1$
@@ -125,12 +125,12 @@ public class Bug42024Test extends UITestCase {
 		KeySequence zeroStrokeSequence = KeySequence.getInstance();
 
 		// Test with a limit of four.
-		text.setMaxStrokes(4);
+		text.setKeyStrokeLimit(4);
 		text.setKeySequence(zeroStrokeSequence);
 		assertEquals("Limit of four changed zero stroke sequence.", zeroStrokeSequence, text.getKeySequence()); //$NON-NLS-1$
 
 		// Test with an infinite limit.
-		text.setMaxStrokes(KeySequenceText.INFINITE);
+		text.setKeyStrokeLimit(KeySequenceText.INFINITE);
 		text.setKeySequence(zeroStrokeSequence);
 		assertEquals("Infinite limit changed zero stroke sequence.", zeroStrokeSequence, text.getKeySequence()); //$NON-NLS-1$
 	}

@@ -64,15 +64,11 @@ public class PerspContentProvider implements IStructuredContentProvider {
 							.getIdentifier(
 							WorkbenchActivityHelper.createUnifiedId(
 								contribution));
-					if (identifier.isEnabled()) {
-						filtered.add(descriptors[i]);
-					}
-				} else {
-					filtered.add(descriptors[i]);
-				}
-			} else {
-				filtered.add(descriptors[i]);
-			}
+					if (!identifier.isEnabled()) 
+                        continue;
+				} 
+            }
+			filtered.add(descriptors[i]);
 		}
 
 		return (IPerspectiveDescriptor[]) filtered.toArray(

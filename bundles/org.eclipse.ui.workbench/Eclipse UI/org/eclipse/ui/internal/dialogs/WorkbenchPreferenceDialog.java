@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,14 +18,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,12 +27,22 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 
 
 
@@ -264,23 +266,22 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	
 	/** 
 	 * Checks whether the given preference node is contributed via the registry 
-	 * and if so filters it based on the currently enabled pages (as specified 
-     * by the preference page ObjectActivityManager).  Note that if a given node
-     * is filtered out of the view, then its subnodes are filtered out as well.
+	 * and if so filters it based on the currently activities.  Note that if a 
+     * given node is filtered out of the view, then its subnodes are filtered 
+     * as well.
 	 * 
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget, org.eclipse.jface.preference.IPreferenceNode)
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-        IObjectActivityManager prefManager =
-        (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench())
-        		.getObjectActivityManager(
-        			IWorkbenchConstants.PL_PREFERENCES, false);
-        if (prefManager != null) {
-            Collection activePages = prefManager.getEnabledObjects();            
-            if (node instanceof WorkbenchPreferenceNode && !activePages.contains(node)) {
-                return;
+		if (node instanceof IPluginContribution) {
+			IPluginContribution contribution = (IPluginContribution) node;
+            if (contribution.fromPlugin()) {
+            	IIdentifier identifier = PlatformUI.getWorkbench().getActivityManager().getIdentifier(WorkbenchActivityHelper.createUnifiedId(contribution));
+                if (!identifier.isEnabled())
+                    return;
             }
         }
+        
         super.createTreeItemFor(parent, node);
 	}    
 }

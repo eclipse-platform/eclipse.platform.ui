@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.keys;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.internal.keys.KeySupport;
+import org.eclipse.ui.keys.KeySupport;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**

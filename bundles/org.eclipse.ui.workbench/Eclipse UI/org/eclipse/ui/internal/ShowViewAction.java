@@ -14,12 +14,13 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 /**
  * Show a View.
  */
-public class ShowViewAction extends Action {
+public class ShowViewAction extends Action implements IPluginContribution {
 	private IWorkbenchWindow window;
 	private IViewDescriptor desc;
 /**
@@ -49,5 +50,26 @@ public void run() {
 				e.getMessage(),e.getStatus());
 		}
 	}
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+ */
+public boolean fromPlugin() {
+	return desc instanceof IPluginContribution && ((IPluginContribution)desc).fromPlugin();
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+ */
+public String getLocalId() {	
+	return desc.getId();
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+ */
+public String getPluginId() {	
+	return desc instanceof IPluginContribution ? ((IPluginContribution)desc).getPluginId() : null;
 }
 }

@@ -19,13 +19,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * Property page node allows us to achive presence in the property page dialog
  * without loading the page itself, thus loading the contributing plugin.
  * Only when the user selects the page will it be loaded.
  */
-public class PropertyPageNode extends PreferenceNode {
+public class PropertyPageNode extends PreferenceNode implements IPluginContribution {
     private RegistryPageContributor contributor;
     private IWorkbenchPropertyPage page;
     private Image icon;
@@ -95,10 +96,24 @@ public class PropertyPageNode extends PreferenceNode {
         return contributor.getPageName();
     }
 
-    /**
-	 * @return Returns the contributor used to construct this node.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
 	 */
-    public RegistryPageContributor getContributor() {
-        return contributor;
-    }
+	public boolean fromPlugin() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return contributor.getPluginId();
+	}
 }
