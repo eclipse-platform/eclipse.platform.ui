@@ -40,7 +40,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	private DialogCustomize dialogCustomize;
 	private HashMap nameToConfigurationMap;
 	private Combo comboConfiguration;
-	//private List listConfiguration;
 	private String activeConfigurationName;
 
 	protected Control createContents(Composite parent) {
@@ -59,7 +58,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		comboConfiguration = new Combo(composite, SWT.READ_ONLY);				
 		GridData gridData = new GridData();
 		gridData.widthHint = 150;
-		//gridData.heightHint = 150;
 		comboConfiguration.setLayoutData(gridData);
 
 		if (nameToConfigurationMap.size() > 0) { 
@@ -72,30 +70,11 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		} else
 			comboConfiguration.setEnabled(false);		
 		
-		/*
-		listConfiguration = new List(composite, SWT.BORDER | SWT.SINGLE);				
-		GridData gridData = new GridData();
-		gridData.widthHint = 150;
-		gridData.heightHint = 150;
-		listConfiguration.setLayoutData(gridData);
-
-		if (nameToConfigurationMap.size() > 0) { 
-			String[] listItems = (String[]) nameToConfigurationMap.keySet().toArray(new String[nameToConfigurationMap.size()]);
-			Arrays.sort(listItems, Collator.getInstance());
-			listConfiguration.setItems(listItems);
-		
-			if (activeConfigurationName != null)
-				listConfiguration.select(listConfiguration.indexOf(activeConfigurationName));
-		} else
-			listConfiguration.setEnabled(false);
-		*/
-
 		Composite compositeCustomize = new Composite(composite, SWT.NONE);		
 		GridLayout gridLayoutCompositeCustomize = new GridLayout();
 		gridLayoutCompositeCustomize.marginWidth = 0;
 		compositeCustomize.setLayout(gridLayoutCompositeCustomize);
 
-		/*
 		buttonCustomize = new Button(compositeCustomize, SWT.LEFT | SWT.PUSH);
 		buttonCustomize.setText("Customize Key Bindings...");
 		setButtonLayoutData(buttonCustomize);
@@ -108,14 +87,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				dialogCustomize.open();
 			}	
 		});
-		*/
 
-		//Tree tree = new Tree(composite, SWT.NULL);
-		/*
-		validCheck();		
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_EDITOR_PREFERENCE_PAGE);
-		*/
-
+		//WorkbenchHelp.setHelp(parent, IHelpContextIds.WORKBENCH_KEYBINDINGS_PREFERENCE_PAGE);
 		return composite;	
 	}
 	
@@ -145,19 +118,13 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		Configuration configuration = (Configuration) configurations.get(id);
 		
 		if (configuration == null)
-			configuration = 
-				(Configuration) configurations.get(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID); 
+			configuration = (Configuration) configurations.get(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID); 
 
 		if (configuration != null) { 
 			String name = configuration.getName();
 
 			if (name != null && comboConfiguration != null)
 				comboConfiguration.select(comboConfiguration.indexOf(name));
-
-			/*
-			if (name != null && listConfiguration != null)
-				listConfiguration.select(listConfiguration.indexOf(name));
-			*/
 		}
 	}	
 
@@ -177,22 +144,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				}
 			}
 		}
-
-		/*
-		if (listConfiguration != null) {
-			String[] configNames = listConfiguration.getSelection();
-			
-			if (configNames != null && configNames.length >= 1) {				
-				Configuration config = (Configuration) nameToConfigurationMap.get(configNames[0]);
-				
-				if (config != null) {
-					Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-					workbench.setActiveAcceleratorConfiguration(config);
-					preferenceStore.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
-				}
-			}
-		}
-		*/
 		
 		return super.performOk();
 	}
