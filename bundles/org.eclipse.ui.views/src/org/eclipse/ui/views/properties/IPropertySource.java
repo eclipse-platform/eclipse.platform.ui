@@ -12,8 +12,8 @@ package org.eclipse.ui.views.properties;
 
 
 /**
- * Interface to an object capable of supplying properties for display by the
- * standard property sheet page implementation (<code>PropertySheetPage</code>).
+ * Interface to an object which is capable of supplying properties for display by
+ * the standard property sheet page implementation (<code>PropertySheetPage</code>).
  * <p>
  * This interface should be implemented by clients.
  * <code>PropertySheetPage</code> discovers the properties to display from 
@@ -88,9 +88,8 @@ public Object getEditableValue();
 public IPropertyDescriptor[] getPropertyDescriptors();
 /**
  * Returns the value of the property with the given id if it has one.
- * Returns <code>null</code> if this source if the property's value is
- * <code>null</code> value or if this source does not have the specified
- * property.
+ * Returns <code>null</code> if the property's value is <code>null</code> 
+ * value or if this source does not have the specified property.
  *
  * @see #setPropertyValue
  *
@@ -124,14 +123,14 @@ public void resetPropertyValue(Object id);
  * specified property.
  * <p>
  * In general, a property source should not directly reference the value
- * parameter unless it is an atomic object that can be shared such as a 
+ * parameter unless it is an atomic object that can be shared, such as a 
  * string.
  * </p>
  * <p>
  * An important reason for this is that several property sources with 
  * compatible descriptors could be appearing in the property sheet at 
  * the same time. An editor produces a single edited value which is passed
- * at the value parameter of this message to all the property sources.
+ * as the value parameter of this message to all the property sources.
  * Thus to avoid a situation where all of the property sources reference
  * the same value they should use the value parameter to create a
  * new instance of the real value for the given property.
@@ -139,7 +138,7 @@ public void resetPropertyValue(Object id);
  * <p>
  * There is another reason why a level of indirection is useful. The real
  * value of property may be a type that cannot be edited with a standard cell
- * editor. However instead of of returning the real value in <code>getPropertyValue</code>,
+ * editor. However instead of returning the real value in <code>getPropertyValue</code>,
  * the value could be converted to a <code>String</code> which could be edited
  * with a standard cell editor. The edited value will be passed to this method
  * which can then turn it back into the real property value.
@@ -147,10 +146,9 @@ public void resetPropertyValue(Object id);
  * <p>Another variation on returning a value other than the real property value in 
  * <code>getPropertyValue</code> is to return a value which is an
  * <code>IPropertySource</code> (or for which the property sheet can obtain an
- * <code>IPropertySource</code>). This allows the property sheet to properties
- * for the value itself. In this case the value to edit is obtained from the
+ * <code>IPropertySource</code>). In this case the value to edit is obtained from the
  * child property source using <code>getEditableValue</code>. It is this editable value
- * that will be passed back via this method when the it has been edited
+ * that will be passed back via this method when it has been editted
  * </p>
  *
  * @see #getPropertyValue
