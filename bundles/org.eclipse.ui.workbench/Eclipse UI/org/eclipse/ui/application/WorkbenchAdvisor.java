@@ -490,24 +490,6 @@ public abstract class WorkbenchAdvisor {
 	 * 
 	 * @return the default input for a new workbench window page, or
 	 * <code>null</code> if none
-	 * @deprecated This method has been renamed getDefaultPageInput.
-	 * It has been marked final as advanced wiarning, and
-	 * will be removed entirely by M7.
-	 */
-	public final IAdaptable getDefaultWindowInput() {
-		// default: no input
-		return null;
-	}
-	
-	/**
-	 * Returns the default input for newly created workbench pages.
-	 * <p>
-	 * The default implementation returns <code>null</code>.
-	 * Subclasses may override.
-	 * </p>
-	 * 
-	 * @return the default input for a new workbench window page, or
-	 * <code>null</code> if none
 	 */
 	public IAdaptable getDefaultPageInput() {
 		// default: no input
