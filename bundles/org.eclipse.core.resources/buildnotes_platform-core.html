@@ -12,6 +12,62 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Core</h1>
+Eclipse SDK Build 20020430
+<h2>
+What's new in this drop</h2>
+
+<h3>
+API changes</h3>
+
+<ul>
+<li>
+Added a new constant (PREF_ENCODING) and API (ResourcesPlugin.getEncoding()) to
+help with persistence of the encoding type to use when reading text files. See
+org.eclipse.core.resources.ResourcesPlugin and the Platform/UI build notes for
+details.</li>
+<li>
+Added new API IWorkspace.loadProjectDescription(IPath) which loads a project
+description file from a .project file on disk. The resulting description file
+can be used to create the project via the IProject.create APIs. This method is
+useful for discovering the name of a project from a .project file. See
+IWorkspace.loadProjectDescription for more details.</li>
+<li>
+Added API for IPluginDescriptor.find to match the API Plugin.find. These methods
+are functionally equivalent except the method on IPluginDescriptor does not
+require the plugin to be activated. Also note that the resulting URL is NEVER a
+platform: URL and thus does not need to be resolved via Platform.resolve.
+(although calling #resolve will be a no-op and not cause any harm) See
+IPluginDescriptor for more details.</li>
+<li>
+Added new API IResource.isSynchronized(int) which will return a boolean value
+indicating whether or not the given resource is considered to be synchronized
+with the local file system to the given depth. See IResource.isSychronized for
+more information.</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<ul>
+<li>
+None.</li>
+</ul>
+
+<h3>
+Resolved Bugs</h3>
+
+<ul>
+<li>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfield=bug_status&amp;chfieldfrom=2002%2F04%2F25&amp;chfieldto=2002%2F04%2F30&amp;chfieldvalue=&amp;product=Platform&amp;version=2.0&amp;component=Core&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;namedcmd=ant&amp;newqueryname=&amp;order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+since the last integration build.</li>
+</ul>
+
+<hr WIDTH="100%">
+
+<h1>
+Eclipse Platform Build Notes<br>
+Core</h1>
 Eclipse SDK Build 20020425
 <h2>
 What's new in this drop</h2>
