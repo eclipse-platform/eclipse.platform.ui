@@ -11,6 +11,7 @@
 package org.eclipse.ui;
 
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -149,7 +150,14 @@ public class WorkbenchEncoding {
 		definedEncodings.toArray(encodings);
 		for (int i = 0; i < encodings.length; i++) {
 			String string = encodings[i];
-			if (!Charset.isSupported(string))
+			
+			boolean isSupported;
+			try {
+				isSupported = Charset.isSupported(string);
+			} catch (IllegalCharsetNameException e) {
+				isSupported = false;
+			}
+			if (!isSupported)
 				invalid.add(string);
 		}
 

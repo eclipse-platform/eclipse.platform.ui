@@ -11,6 +11,7 @@
 package org.eclipse.ui.ide.dialogs;
 
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -289,7 +290,13 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * @return boolean
 	 */
 	private boolean isValidEncoding(String enc) {
-		return Charset.isSupported(enc);
+		try {
+			return Charset.isSupported(enc);
+		} catch (IllegalCharsetNameException e) {
+			//This is a valid exception
+			return false;
+		}
+		
 	}
 
 	/**

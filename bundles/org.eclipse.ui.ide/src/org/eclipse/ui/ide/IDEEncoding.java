@@ -11,6 +11,7 @@
 package org.eclipse.ui.ide;
 
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -204,7 +205,13 @@ public class IDEEncoding {
 		//Drop any encodings that are not valid
 		for (int i = 0; i < preferenceEncodings.length; i++) {
 			String string = preferenceEncodings[i];
-			if (Charset.isSupported(string))
+			boolean isSupported;
+			try {
+				isSupported = Charset.isSupported(string);
+			} catch (IllegalCharsetNameException e) {
+				isSupported = false;
+			}
+			if (isSupported)
 				result.add(string);
 			else{
 				WorkbenchPlugin.log(WorkbenchMessages.format("WorkbenchEncoding.invalidCharset", //$NON-NLS-1$
