@@ -65,6 +65,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -116,7 +118,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * The launch configuration edit area.
 	 */
-	private Control fEditArea;
+	private Composite fEditArea;
 	
 	/**
 	 * The 'New/Copy button to create a new configuration
@@ -150,6 +152,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Text fNameText;
 	
 	private String fLastSavedName = null;
+	
+	/**
+	 * Container for the edit area <code>TabFolder</code>
+	 */
+	private Composite fTabComposite;
 	
 	/**
 	 * The tab folder
@@ -383,6 +390,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
 		getLaunchManager().addLaunchConfigurationListener(this);
+		initializeBounds();
 		displayFirstConfig();
 		return contents;
 	}
@@ -510,6 +518,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		GridData gd;
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
 		Composite topComp = new Composite(dialogComp, SWT.NONE);
+		gd = new GridData(GridData.FILL_BOTH);
+		topComp.setLayoutData(gd);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 2;
 		topLayout.marginHeight = 5;
@@ -826,9 +836,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 		
-		TabFolder tabFolder = new TabFolder(comp, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fTabComposite = new Composite(comp, SWT.NONE);
+		GridLayout outerTabCompositeLayout = new GridLayout();
+		outerTabCompositeLayout.marginHeight = 0;
+		outerTabCompositeLayout.marginWidth = 0;
+		fTabComposite.setLayout(outerTabCompositeLayout);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
+		fTabComposite.setLayoutData(gd);		
+		
+		TabFolder tabFolder = new TabFolder(fTabComposite, SWT.NONE);
+		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 375;
 		gd.widthHint = 375;
 		tabFolder.setLayoutData(gd);
@@ -1272,7 +1290,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			return;
  		}
  		
+ 		// Create the Control for each tab, and determine the maximum tab dimensions
  		ILaunchConfigurationTab[] tabs = group.getTabs();
+ 		Point contentSize = new Point(0, 0);
  		for (int i = 0; i < tabs.length; i++) {
  			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
  			String name = tabs[i].getName();
@@ -1284,13 +1304,54 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			Control control = tabs[i].getControl();
  			if (control != null) {
 	 			tab.setControl(control);
+	 			Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+	 			if (size.x > contentSize.x) {
+	 				contentSize.x = size.x;
+	 			}
+	 			if (size.y > contentSize.y) {
+	 				contentSize.y = size.y;
+	 			}
  			}
  		}
- 		setTabGroup(group);	
+ 		
+ 		// Adjust the maximum tab dimensions to account for the extra space required for the tab folder
+ 		Rectangle tabFolderBoundingBox = getTabFolder().computeTrim(0, 0, contentSize.x, contentSize.y);
+		contentSize.x = tabFolderBoundingBox.width;
+		contentSize.y = tabFolderBoundingBox.height;
+
+ 		// Force recalculation of sizes	
+		getTabFolder().layout(true);
+		
+		// Calculate difference between required space for tab folder and current size,
+		// then increase size of Shell by this amount
+ 		Rectangle rect = fTabComposite.getClientArea();
+		Point containerSize= new Point(rect.width, rect.height);
+		int hdiff= contentSize.x - containerSize.x;
+		int vdiff= contentSize.y - containerSize.y;
+		if (hdiff > 0 || vdiff > 0) {
+			hdiff= Math.max(0, hdiff);
+			vdiff= Math.max(0, vdiff);
+			Shell shell= getShell();
+			Point shellSize= shell.getSize();
+			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
+		} else if (hdiff < 0 || vdiff < 0) {
+			getTabFolder().setSize(containerSize);
+		}
+
+ 		setTabGroup(group);
  		setTabType(configType);
  		getEditArea().setVisible(true);
  	}
  	
+ 	/**
+ 	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
+ 	 * Do not increase the size of the Shell beyond the bounds of the Display.
+ 	 */
+	private void setShellSize(int width, int height) {
+		Rectangle bounds = getShell().getDisplay().getBounds();
+		getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
+	}
+
  	protected void disposeExistingTabs() {
 		TabItem[] oldTabs = getTabFolder().getItems();
 		if (getTabGroup() != null) {
@@ -2410,7 +2471,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @return control
 	 */
-	protected Control getEditArea() {
+	protected Composite getEditArea() {
 		return fEditArea;
 	}
 
@@ -2419,7 +2480,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @param editArea control
 	 */
-	private void setEditArea(Control editArea) {
+	private void setEditArea(Composite editArea) {
 		fEditArea = editArea;
 	}
 
