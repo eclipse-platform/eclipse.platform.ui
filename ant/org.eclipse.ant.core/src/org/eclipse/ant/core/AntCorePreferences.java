@@ -1014,7 +1014,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * Returns the custom property files specified for Ant builds performing any required 
 	 * string substition if indicated.
 	 * 
-	 * @param preformStringSubstition whether or not to perform the string subsitution on the property file strings
+	 * @param performStringSubstition whether or not to perform the string subsitution on the property file strings
 	 * @return the property files defined for Ant builds.
 	 * @since 3.0
 	 */
