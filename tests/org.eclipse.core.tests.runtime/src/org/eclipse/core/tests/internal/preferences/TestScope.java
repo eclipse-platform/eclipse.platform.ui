@@ -31,7 +31,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		this(null, null);
 	}
 
-	private TestScope(IEclipsePreferences parent, String key) {
+	private TestScope(EclipsePreferences parent, String key) {
 		super(parent, key);
 		// cache the segment count
 		IPath path = new Path(absolutePath());
@@ -76,7 +76,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(qualifier);
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new TestScope(nodeParent, nodeName);
 	}
 

@@ -50,12 +50,12 @@ public class DefaultPreferences extends EclipsePreferences {
 		this(null, null);
 	}
 
-	private DefaultPreferences(IEclipsePreferences parent, String name, Plugin context) {
+	private DefaultPreferences(EclipsePreferences parent, String name, Plugin context) {
 		this(parent, name);
 		this.plugin = context;
 	}
 
-	private DefaultPreferences(IEclipsePreferences parent, String name) {
+	private DefaultPreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
 
 		if (parent instanceof DefaultPreferences)
@@ -279,7 +279,7 @@ public class DefaultPreferences extends EclipsePreferences {
 		return loadLevel;
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new DefaultPreferences(nodeParent, nodeName, context);
 	}
 

@@ -45,7 +45,7 @@ public class ConfigurationPreferences extends EclipsePreferences {
 		this(null, null);
 	}
 
-	private ConfigurationPreferences(IEclipsePreferences parent, String name) {
+	private ConfigurationPreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
 
 		initializeChildren();
@@ -112,7 +112,7 @@ public class ConfigurationPreferences extends EclipsePreferences {
 		}
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new ConfigurationPreferences(nodeParent, nodeName);
 	}
 }

@@ -53,7 +53,7 @@ public class InstancePreferences extends EclipsePreferences {
 		this(null, null);
 	}
 
-	private InstancePreferences(IEclipsePreferences parent, String name) {
+	private InstancePreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
 
 		initializeChildren();
@@ -205,7 +205,7 @@ public class InstancePreferences extends EclipsePreferences {
 		}
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new InstancePreferences(nodeParent, nodeName);
 	}
 }

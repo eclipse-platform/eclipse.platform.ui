@@ -12,7 +12,6 @@ package org.eclipse.core.internal.preferences;
 
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -24,7 +23,11 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 	private boolean isExportRoot = false;
 	private String version;
 
-	ExportedPreferences(IEclipsePreferences parent, String name) {
+	public static IExportedPreferences newRoot() {
+		return new ExportedPreferences(null, ""); //$NON-NLS-1$
+	}
+
+	private ExportedPreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
 	}
 
@@ -58,13 +61,8 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 		this.version = version;
 	}
 
-	/*
-	 * @see org.eclipse.core.runtime.preferences.IScope#create(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.lang.String)
-	 */
-	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
-		IEclipsePreferences result = new ExportedPreferences(nodeParent, nodeName);
-		addChild(nodeName, result);
-		return result;
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
+		return new ExportedPreferences(nodeParent, nodeName);
 	}
 
 	/*

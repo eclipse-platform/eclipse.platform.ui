@@ -233,7 +233,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 * importing.
 	 */
 	private IExportedPreferences convertFromProperties(Properties properties) {
-		IExportedPreferences result = new ExportedPreferences(null, EMPTY_STRING);
+		IExportedPreferences result = ExportedPreferences.newRoot();
 		for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
 			String path = (String) i.next();
 			String value = properties.getProperty(path);

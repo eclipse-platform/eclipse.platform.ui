@@ -51,7 +51,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected boolean loading = false;
 	protected final String name;
 	protected ListenerList nodeListeners;
-	protected final IEclipsePreferences parent;
+	// the parent of an EclipsePreference node is always an EclipsePreference node. (or null)
+	protected final EclipsePreferences parent;
 	protected ListenerList preferenceListeners;
 	protected Properties properties;
 	protected boolean removed = false;
@@ -60,7 +61,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		this(null, null);
 	}
 
-	protected EclipsePreferences(IEclipsePreferences parent, String name) {
+	protected EclipsePreferences(EclipsePreferences parent, String name) {
 		super();
 		this.parent = parent;
 		this.name = name;
@@ -268,12 +269,12 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.eclipse.core.runtime.preferences.IScope#create(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 	 */
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
-		return create(nodeParent, nodeName, null);
+		return create((EclipsePreferences)nodeParent, nodeName, null);
 	}
 
-	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+	public IEclipsePreferences create(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		EclipsePreferences result = internalCreate(nodeParent, nodeName, context);
-		((EclipsePreferences) nodeParent).addChild(nodeName, result);
+		nodeParent.addChild(nodeName, result);
 		IEclipsePreferences loadLevel = result.getLoadLevel();
 
 		// if this node or a parent node is not the load level then return
@@ -475,7 +476,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return result;
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new EclipsePreferences(nodeParent, nodeName);
 	}
 
@@ -860,13 +861,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// parent but remove all its children
 		if (parent != null && !(parent instanceof RootPreferences)) {
 			// remove the node from the parent's collection and notify listeners
-			if (parent instanceof EclipsePreferences) {
-				removed = true;
-				((EclipsePreferences) parent).removeNode(this);
-			} else {
-				String message = Policy.bind("preferences.invalidParentClass", absolutePath(), parent.getClass().getName()); //$NON-NLS-1$
-				throw new BackingStoreException(message);
-			}
+			removed = true;
+			parent.removeNode(this);
 		}
 		IEclipsePreferences[] childNodes = getChildren(false);
 		for (int i = 0; i < childNodes.length; i++)
