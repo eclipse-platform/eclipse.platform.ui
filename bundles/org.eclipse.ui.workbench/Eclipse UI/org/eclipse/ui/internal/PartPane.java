@@ -60,15 +60,22 @@ public abstract class PartPane extends LayoutPart
 		 * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
 		 */
 		public void keyTraversed(TraverseEvent e) {
-			ILayoutContainer container = getContainer();
-			if (container != null && container instanceof LayoutPart) {
-				LayoutPart parent = (LayoutPart)container;
-				Control parentControl = parent.getControl();
-				if (parentControl != null && !parentControl.isDisposed()) {
-					parentControl.traverse(e.detail);
-					e.doit = false;				
-				}
-			}
+			// Hack: Currently, SWT sets focus whenever we call Control.traverse. This doesn't
+			// cause too much of a problem for ctrl-pgup and ctrl-pgdn, but it is seriously unexpected
+			// for other traversal events. When (and if) it becomes possible to call traverse() without
+			// forcing a focus change, this if statement should be removed and ALL events should be
+			// forwarded to the container.
+			if (e.detail == SWT.TRAVERSE_PAGE_NEXT || e.detail == SWT.TRAVERSE_PAGE_PREVIOUS) {
+				ILayoutContainer container = getContainer();
+				if (container != null && container instanceof LayoutPart) {
+					LayoutPart parent = (LayoutPart)container;
+					Control parentControl = parent.getControl();
+					if (parentControl != null && !parentControl.isDisposed()) {
+						parentControl.traverse(e.detail);
+						e.doit = false;				
+					}
+				}	
+			}			
 		}
 		
 	};
