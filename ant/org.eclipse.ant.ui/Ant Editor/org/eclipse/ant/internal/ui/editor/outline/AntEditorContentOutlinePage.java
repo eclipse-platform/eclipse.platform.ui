@@ -205,9 +205,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			if (tempParentElement.hasChildren()) {
 				List children= tempParentElement.getChildNodes();
 				return children.toArray();
-			} else {
-				return EMPTY_ARRAY;
-			}
+			} 
+			return EMPTY_ARRAY;
 		}
 
 		/* (non-Javadoc)
@@ -687,9 +686,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		if (file != null) {
 			ISelection selection= new StructuredSelection(file);
 			return new ShowInContext(null, selection);
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 	
 	public void select(AntElementNode node) {
