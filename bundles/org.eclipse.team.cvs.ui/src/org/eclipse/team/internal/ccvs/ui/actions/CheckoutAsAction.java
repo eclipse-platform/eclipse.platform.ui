@@ -52,19 +52,21 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		final ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 		if (folders.length != 1) return;
 		final String name = folders[0].getName();
+		// make a copy of the folder so that we will not effect the original folder when we refetch the members
+		final ICVSRemoteFolder folder = folders[0].forTag(folders[0].getTag());
 		
 		// Fetch the members of the folder to see if they contain a .project file.
 		final boolean[] hasProjectMetaFile = new boolean[] { false };
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					folders[0].members(monitor);
+					folder.members(monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 				// Check for the existance of the .project file
 				try {
-					folders[0].getFile(".project"); //$NON-NLS-1$
+					folder.getFile(".project"); //$NON-NLS-1$
 					hasProjectMetaFile[0] = true;
 				} catch (TeamException e) {
 					// We couldn't retrieve the meta file so assume it doesn't exist
@@ -73,7 +75,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 				// If the above failed, look for the old .vcm_meta file
 				if (! hasProjectMetaFile[0]) {
 					try {
-						folders[0].getFile(".vcm_meta"); //$NON-NLS-1$
+						folder.getFile(".vcm_meta"); //$NON-NLS-1$
 						hasProjectMetaFile[0] = true;
 					} catch (TeamException e) {
 						// We couldn't retrieve the meta file so assume it doesn't exist
@@ -175,6 +177,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 		// Ensure that the project only has a single member which is the .project file
 		IProject project = listener.getNewProject();
+		if (project == null) return null;
 		try {
 			IResource[] members = project.members();
 			if ((members.length == 0) 
