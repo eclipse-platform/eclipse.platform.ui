@@ -72,7 +72,7 @@ public class ContainerGenerator {
 	public IContainer generateContainer(IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("creating container", 1000 * fContainerFullPath.segmentCount());
+				monitor.beginTask(FileBuffersMessages.getString("ContainerGenerator.task.creatingContainer"), 1000 * fContainerFullPath.segmentCount()); //$NON-NLS-1$
 				if (fContainer != null)
 					return;
 		

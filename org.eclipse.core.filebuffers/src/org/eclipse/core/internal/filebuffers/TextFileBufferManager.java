@@ -65,7 +65,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			
 			fileBuffer= createFileBuffer(location);
 			if (fileBuffer == null)
-				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, "Cannot create file buffer.", null));
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 0, FileBuffersMessages.getString("FileBufferManager.error.canNotCreateFilebuffer"), null)); //$NON-NLS-1$
 			
 			fileBuffer.create(location, monitor);
 			fileBuffer.connect();

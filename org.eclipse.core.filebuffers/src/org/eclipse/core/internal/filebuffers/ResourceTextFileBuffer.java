@@ -72,11 +72,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	/**
 	 * Constant for representing the ok status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "OK", null);
+	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.status.ok"), null); //$NON-NLS-1$
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, "Error", null);
+	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.getString("FileBuffer.status.error"), null); //$NON-NLS-1$
 
 	
 	
@@ -407,7 +407,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	private void checkSynchronizationState() throws CoreException {
 		if (!fFile.isSynchronized(IFile.DEPTH_ZERO)) {
-			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, "out of sync", null); 
+			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.getString("FileBuffer.error.outOfSync"), null);  //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}

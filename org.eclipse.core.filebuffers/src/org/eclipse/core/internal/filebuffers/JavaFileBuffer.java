@@ -74,7 +74,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		File file= getFileAtLocation(location);
 		if (file == null)
-			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "File does not exist", null));
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.error.fileDoesNotExist"), null)); //$NON-NLS-1$
 		
 		fLocation= location;
 		fFile= file;
