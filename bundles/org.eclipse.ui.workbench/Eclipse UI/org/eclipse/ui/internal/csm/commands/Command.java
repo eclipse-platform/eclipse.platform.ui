@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.csm.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.internal.csm.commands.api.CommandNotDefinedException;
+import org.eclipse.ui.internal.csm.commands.api.NotDefinedException;
 import org.eclipse.ui.internal.csm.commands.api.ICommand;
 import org.eclipse.ui.internal.csm.commands.api.ICommandEvent;
 import org.eclipse.ui.internal.csm.commands.api.ICommandListener;
@@ -115,17 +115,17 @@ final class Command implements ICommand {
 	}
 
 	public String getCategoryId()
-		throws CommandNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new CommandNotDefinedException();
+			throw new NotDefinedException();
 
 		return categoryId;
 	}
 
 	public String getDescription()
-		throws CommandNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new CommandNotDefinedException();
+			throw new NotDefinedException();
 			
 		return description;	
 	}
@@ -139,9 +139,9 @@ final class Command implements ICommand {
 	}
 
 	public String getName()
-		throws CommandNotDefinedException {
+		throws NotDefinedException {
 		if (!defined)
-			throw new CommandNotDefinedException();
+			throw new NotDefinedException();
 
 		return name;
 	}	
