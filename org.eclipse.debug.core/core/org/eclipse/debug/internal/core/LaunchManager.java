@@ -5,23 +5,45 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Manages registered launches.
@@ -29,6 +51,25 @@ import org.eclipse.debug.core.model.IProcess;
  * @see ILaunchManager
  */
 public class LaunchManager implements ILaunchManager  {
+	
+	/**
+	 * Collection of defined launch configuration type
+	 * extensions.
+	 */
+	private List fLaunchConfigurationTypes = new ArrayList(5);
+	
+	/**
+	 * Launch configuration cache. Keys are <code>IPath</code>,
+	 * values are <code>LaunchConfigurationInfo</code>.
+	 */
+	private HashMap fLaunchConfigurations = new HashMap(10);
+	
+	/**
+	 * Index of known lanuch configurations in the workspace,
+	 * grouped by project. Keys are <code>IProject</code>, and
+	 * values are <code>List</code> of <code>ILanuchConfiguratin</code>.
+	 */
+	private HashMap fLaunchConfigurationIndex = new HashMap(10);
 	
 	/**
 	 * Constant for use as local name part of <code>QualifiedName</code>
@@ -235,6 +276,7 @@ public class LaunchManager implements ILaunchManager  {
 
 	/**
 	 * Terminates/Disconnects any active debug targets/processes.
+	 * Clears launch configuration types.
 	 */
 	public void shutdown() {
 		fListeners.removeAll();
@@ -247,5 +289,154 @@ public class LaunchManager implements ILaunchManager  {
 				DebugCoreUtils.logError(e);
 			}
 		}
+		fLaunchConfigurationTypes.clear();
+	}
+	
+	/**
+	 * Creates lanuch configuration types for each defined extension.
+	 * 
+	 * @exception CoreException if an exception occurrs processing
+	 *  the extensions
+	 */
+	public void startup() throws CoreException {
+		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		for (int i= 0; i < infos.length; i++) {
+			fLaunchConfigurationTypes.add(new LaunchConfigurationType(infos[i]));
+		}		
+	}
+	
+	/**
+	 * Returns the info object for the specified launch configuration.
+	 * If the configuration exists, but is not yet in the cache,
+	 * an info object is built and added to the cache.
+	 * 
+	 * @exception CoreException if an exception occurrs building
+	 *  the info object
+	 * @exception DebugException if the config does not exist
+	 */
+	protected LaunchConfigurationInfo getInfo(ILaunchConfiguration config) throws CoreException {
+		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config.getLocation());
+		if (info == null) {
+			if (config.exists()) {
+				InputStream stream = null;
+				try {
+					if (config.isLocal()) {
+						IPath path = config.getLocation();
+						File file = path.toFile();				
+						stream = new FileInputStream(file);
+					} else {
+						IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(config.getLocation());
+						stream = file.getContents();
+					}
+					Element root = null;
+					DocumentBuilder parser =
+						DocumentBuilderFactory.newInstance().newDocumentBuilder();
+					root = parser.parse(new InputSource(stream)).getDocumentElement();
+					info = new LaunchConfigurationInfo();
+					info.initializeFromXML(root);
+				} catch (FileNotFoundException e) {
+					throw new DebugException(
+						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+					);					
+				} catch (SAXException e) {
+					throw new DebugException(
+						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+					);
+				} catch (ParserConfigurationException e) {
+					throw new DebugException(
+						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+					);		
+				} catch (IOException e) {
+					throw new DebugException(
+						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+					);										
+				} finally {
+					if (stream != null) {
+						try {
+							stream.close();
+						} catch (IOException e) {
+							throw new DebugException(
+								new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+								 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration file.", new String[]{e.toString()}), e)
+							);																	
+						}
+					}
+				}
+		
+			} else {
+				throw new DebugException(
+					new Status(
+					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					 DebugException.REQUEST_FAILED, "Launch configuration does not exist.", null
+					)
+				);
+			}
+		}
+		return info;
+	}	
+	
+	/**
+	 * Removes the given launch configuration from the cache of configurations.
+	 * When a local configuration is deleted, this method is called, as there will
+	 * be no resource delta generated to auto-update the cache.
+	 * 
+	 * @param configuration the configuration to remove
+	 */
+	protected void removeInfo(ILaunchConfiguration configuration) {
+		fLaunchConfigurations.remove(configuration);
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurations(IProject)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(IProject project) {
+		List list = (List)fLaunchConfigurationIndex.get(project);
+		if (list == null) {
+			return new ILaunchConfiguration[0];
+		} else {
+			return (ILaunchConfiguration[])list.toArray(new ILaunchConfiguration[list.size()]);
+		}
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfiguration(IFile)
+	 */
+	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
+		return new LaunchConfiguration(file.getLocation());
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfiguration(String)
+	 */
+	public ILaunchConfiguration getLaunchConfiguration(String memento) {
+		Path path = new Path(memento);
+		return new LaunchConfiguration(path);
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurationTypes()
+	 */
+	public ILaunchConfigurationType[] getLaunchConfigurationTypes() {
+		return (ILaunchConfigurationType[])fLaunchConfigurationTypes.toArray(new ILaunchConfigurationType[fLaunchConfigurationTypes.size()]);
+	}
+	
+	/**
+	 * @see ILaunchManager#getLaunchConfigurationType(String)
+	 */
+	public ILaunchConfigurationType getLaunchConfigurationType(String id) {
+		Iterator iter = fLaunchConfigurationTypes.iterator();
+		while (iter.hasNext()) {
+			ILaunchConfigurationType type = (ILaunchConfigurationType)iter.next();
+			if (type.getIdentifier().equals(id)) {
+				return type;
+			}
+		}
+		return null;
 	}	
 }

@@ -7,6 +7,7 @@ package org.eclipse.debug.core;
  
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -143,6 +144,54 @@ public interface ILaunchManager {
 	 * @exception CoreException if an error occurs setting the persistent property
 	 */
 	public void setDefaultLauncher(IProject project, ILauncher launcher) throws CoreException;
+	
+	/**
+	 * Returns all launch configurations defined by the specified
+	 * project.
+	 * 
+	 * @param project a project
+	 * @return all launch configurations defined by the specified
+	 *  project
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(IProject project);
+	
+	/**
+	 * Returns a handle to the launch configuration contained
+	 * in the specified file. The file is not verified to exist
+	 * or contain a launch configuration.
+	 * 
+	 * @param file launch configuration file
+	 * @return a handle to the launch configuration contained
+	 *  in the specified file
+	 */
+	public ILaunchConfiguration getLaunchConfiguration(IFile file);
+	
+	/**
+	 * Returns a handle to the launch configuration specified by
+	 * the given memento. The configuration may not exist.
+	 * 
+	 * @return a handle to the launch configuration specified by
+	 *  the given memento
+	 * @see ILaunchConfiguration#getMemento()
+	 */
+	public ILaunchConfiguration getLaunchConfiguration(String memento);
+	
+	/**
+	 * Returns all defined launch configuration type extensions
+	 * 
+	 * @return all defined launch configuration type extensions
+	 */
+	public ILaunchConfigurationType[] getLaunchConfigurationTypes();
+	
+	/**
+	 * Returns the lanuch configuration type extension with the specified
+	 * id, or <code>null</code> if it does not exist.
+	 * 
+	 * @param id unique identifier for a launch configuration type extension
+	 * @return the lanuch configuration type extension with the specified
+	 * id, or <code>null</code> if it does not exist
+	 */
+	public ILaunchConfigurationType getLaunchConfigurationType(String id);
 }
 
 

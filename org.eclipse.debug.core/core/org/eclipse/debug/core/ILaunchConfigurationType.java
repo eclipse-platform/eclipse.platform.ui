@@ -1,0 +1,108 @@
+package org.eclipse.debug.core;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+
+/**
+ * Note: This interface is yet experimental.
+ * <p>
+ * Describes and creates instances of a specific type of
+ * launch configuration. A launch configuration type is like
+ * a Java class is to an instance of that class. Launch
+ * configuration types are defined by extensions.
+ * </p>
+ * <p>
+ * A launch configuration type extension is defined in <code>plugin.xml</code>.
+ * Following is an example definition of a launch configuration
+ * type extension.
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.core.launchConfigurationTypes"&gt;
+ *   &lt;launchConfigurationType 
+ *      id="com.example.ExampleIdentifier"
+ *      delegate="com.example.ExampleLaunchConfigurationDelegate"
+ *      modes="run, debug"
+ *      name="Example Application"
+ *   &lt;/launchConfigurationType&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * The attributes are specified as follows:
+ * <ul>
+ * <li><code>id</code> specifies a unique identifier for this launch configuration
+ *  type.</li>
+ * <li><code>delegate</code> specifies the fully qualified name of the java class
+ *   that implements <code>ILaunchConfigurationDelegate</code>. Launch configuration
+ *   instances of this type will delegate to instances of this class as required
+ *   to perform launching.</li>
+ * <li><code>modes</code> specifies a comma separated list of the modes this
+ *    type of launch configuration suports - <code>"run"</code> and/or <code>"debug</code>.</li>
+ * <li><code>name</code> specifies a human readable name for this kind
+ *    of launch configuration.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients. Clients
+ * that define a launch configuration delegate extension implement the
+ * <code>ILaunchConfigurationDelegate</code> interface.
+ * </p>
+ * <p>
+ * <b>NOTE:</b> This class/interface is part of an interim API that is still under development and expected to 
+ * change significantly before reaching stability. It is being made available at this early stage to solicit feedback 
+ * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+ * (repeatedly) as the API evolves.
+ * </p>
+ * @see ILaunchConfiguration
+ */
+public interface ILaunchConfigurationType {
+		
+	/**
+	 * Returns whether this type of launch configuration supports
+	 * the specified mode.
+	 * 
+	 * @param mode a mode in which a configuration can be launched, one of
+	 *  the mode constants defined by this interface - <code>RUN</code> or
+	 *  <code>DEBUG</code>.
+	 * @return whether this kind of launch configuration supports the
+	 *  specified mode
+	 */
+	public boolean supportsMode(String mode);
+	
+	/**
+	 * Returns the name of this type of launch configuration.
+	 * 
+	 * @return the name of this type of launch configuration
+	 */
+	public String getName();
+	
+	/**
+	 * Returns the unique identifier for this type of launch configuration
+	 * 
+	 * @return the unique identifier for this type of launch configuration
+	 */
+	public String getIdentifier();
+	
+	/**
+	 * Returns a new launch configuration working copy of this type,
+	 * that resides in the specified project, with the given name.
+	 * When <code>local</code> is </code>true</code>, the configuration
+	 * will reside locally in the metadata area, otherwise the configuration
+	 * will be created in the ".launches" folder of the specified project.
+	 * Note: a working copy is not actually created until saved.
+	 * 
+	 * @param project the project in which the new configuration will
+	 *  reside
+	 * @param name name for the launch configuration
+	 * @param local whether the configuration should be stored locally
+	 *  with metadata or as a resource
+	 * @return a new launch configuration instance of this type
+	 * @exception CoreException if an instance of this type
+	 *  of lanuch configuration could not be created for any
+	 *  reason
+	 */
+	public ILaunchConfigurationWorkingCopy newInstance(IProject project, String name, boolean local) throws CoreException;
+		
+}

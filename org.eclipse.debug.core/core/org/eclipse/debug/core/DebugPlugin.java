@@ -51,6 +51,12 @@ public class DebugPlugin extends Plugin {
 	public static final String EXTENSION_POINT_LAUNCHER= "launchers"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration types extension point identifier
+	 * (value <code>"launchConfigurationTypes"</code>).
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES= "launchConfigurationTypes"; //$NON-NLS-1$	
+	
+	/**
 	 * Breakpoint extension point identifier
 	 * (value <code>"breakpoints"</code>).
 	 */
@@ -243,6 +249,7 @@ public class DebugPlugin extends Plugin {
 		fBreakpointManager= new BreakpointManager();
 		createLaunchers();	
 		fBreakpointManager.startup();
+		fLaunchManager.startup();
 	}
 	
 	/**

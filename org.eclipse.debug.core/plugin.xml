@@ -22,6 +22,7 @@
 <!-- Extension points -->
 <extension-point id="launchers" name="%launcherExtensionPointName"/>
 <extension-point id="breakpoints" name="%breakpointExtensionPointName"/>
+<extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeName"/>
 
 <!-- Extensions -->
 <extension
