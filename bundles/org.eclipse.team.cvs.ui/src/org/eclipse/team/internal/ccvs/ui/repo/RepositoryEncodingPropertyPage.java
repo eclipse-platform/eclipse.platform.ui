@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -24,6 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -375,6 +377,11 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		if (!KnownRepositories.getInstance().isKnownRepository(location.getLocation())) {
+			// The location may have been replaced by the main properties page
+			MessageDialog.openInformation(getShell(), "Cannot Change Encoding", "Location {0} no longer exists." + location.getLocation());
+			return true;
+		}
 		encoding.store();
 		try {
 			((CVSRepositoryLocation)location).getPreferences().flush();
