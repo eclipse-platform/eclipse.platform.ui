@@ -73,6 +73,12 @@ public class CompareParticipant extends SubscriberParticipant {
 		getSubscriberSyncInfoCollector().setFilter(contentComparison);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#isPersistent()
+	 */
+	public boolean isPersistent() {
+		return false;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#createSynchronizeViewerAdvisor(org.eclipse.team.ui.synchronize.ISynchronizeView)
