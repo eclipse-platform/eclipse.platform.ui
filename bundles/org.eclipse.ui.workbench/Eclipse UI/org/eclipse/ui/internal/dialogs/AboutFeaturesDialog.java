@@ -115,6 +115,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 */
 	public AboutFeaturesDialog(Shell parentShell) {
 		super(parentShell);
+		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
 		Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 		aboutInfo = workbench.getConfigurationInfo().getAboutInfo();
 		featuresInfo = workbench.getConfigurationInfo().getFeaturesInfo();

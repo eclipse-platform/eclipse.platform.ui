@@ -97,6 +97,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	 */
 	public AboutPluginsDialog(Shell parentShell, IPluginDescriptor[] descriptors, String title, String msg, String helpContextId) {
 		super(parentShell);
+		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
 		info = descriptors;
 		this.title = title;
 		message = msg;
