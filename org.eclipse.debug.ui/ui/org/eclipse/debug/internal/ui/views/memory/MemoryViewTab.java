@@ -1773,43 +1773,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			fEditors[i] = new TextCellEditor(table);
 		}
 		
-		// combine the listener/validator interfaces so we can handle
-		// "editing" an address, which really skips the table to that address
-//		class CellValidatorListener implements  ICellEditorValidator {
-//			TextCellEditor textEditor;
-//			boolean isAddressValidator;
-//
-//			public CellValidatorListener(CellEditor cellEditor, boolean isAddress) {
-//				textEditor = (TextCellEditor)cellEditor;
-//				isAddressValidator = isAddress;
-//			}
-//
-//			public String isValid(Object value) {
-//				if ((value instanceof String)) {
-//					if (((String)value).length() == 0)
-//						return null;  //allow empty strings so hitting "delete" doesn't immediately pop up an error
-//
-//					// make sure the character is 0-9ABCDEF only
-//					try {
-//						if (!isAddressValidator) {	// don't validate address to allow input of variable in the address field
-//							BigInteger bigInt = new BigInteger((String)value, 16);
-//						}
-//					} catch (NumberFormatException ne) {
-//						return "not valid";
-//					}
-//				}
-//				return null;
-//			}
-//
-//		}
-//
-//		//"editing" an address skips the table to that address
-//		
-//		for (int i=0; i<fEditors.length; i++)
-//		{
-//			fEditors[i].setValidator(new CellValidatorListener(fEditors[i], true));
-//		}
-		
 		return fEditors;
 	}	
 

@@ -213,13 +213,13 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 		MemoryByte[] memoryBuffer = null;
 		
 		// required number of bytes
-		long reqNumBytes = fViewTab.getBytesPerLine() * numberOfLines;
 		String paddedString = DEFAULT_PADDED_STR;
-		
+		long reqNumBytes = 0;
 		try
 		{
 			if (fMemoryBlock instanceof IMemoryBlockExtension)
 			{
+				reqNumBytes = fViewTab.getBytesPerLine() * numberOfLines;
 				// get memory from memory block
 				extMemoryBlock = (IMemoryBlockExtension) fMemoryBlock;
 				
@@ -254,7 +254,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 					throw e;					
 				}
 				
-				int numBytes = 0;
+				int prefillNumBytes = 0;
 				
 				// number of bytes need to prefill
 				if (!startingAddress.toString(16).endsWith("0")) //$NON-NLS-1$
@@ -262,23 +262,34 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 					adjustedAddress = startingAddress.toString(16).substring(0, adjustedAddress.length() - 1);
 					adjustedAddress += "0"; //$NON-NLS-1$
 					BigInteger adjustedStart = new BigInteger(adjustedAddress, 16);
-					numBytes = startingAddress.subtract(adjustedStart).intValue();
+					prefillNumBytes = startingAddress.subtract(adjustedStart).intValue();
 					startingAddress = adjustedStart;
 				}
+				reqNumBytes = memory.length + prefillNumBytes;
+				
+				// figure out number of dummy bytes to append
+				while (reqNumBytes % fViewTab.getBytesPerLine() != 0)
+				{
+					reqNumBytes ++;
+				}
+				
+				numberOfLines = reqNumBytes / fViewTab.getBytesPerLine();
 				
 				// create memory byte for IMemoryBlock
-				memoryBuffer = new MemoryByte[memory.length + numBytes];
+				memoryBuffer = new MemoryByte[(int)reqNumBytes];
 				
-				for (int i=0; i<numBytes; i++)
+				// prefill buffer to ensure double-word alignment
+				for (int i=0; i<prefillNumBytes; i++)
 				{
 					MByte tmp = new MByte();
 					tmp.setValue((byte)0);
 					tmp.setReadonly(true);
+					tmp.setValid(false);
 					memoryBuffer[i] = tmp;
 				}
 				
-				// prefill buffer to ensure double-word alignment
-				int j = numBytes; 							// counter for memoryBuffer
+				// fill buffer with memory returned by debug adapter
+				int j = prefillNumBytes; 							// counter for memoryBuffer
 				for (int i=0; i<memory.length; i++)
 				{
 					MByte tmp = new MByte();
@@ -286,6 +297,16 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 					tmp.setValid(true);
 					memoryBuffer[j] = tmp;
 					j++;
+				}
+				
+				// append to buffer to fill up the entire line
+				for (int i=j; i<memoryBuffer.length; i++)
+				{
+					MByte tmp = new MByte();
+					tmp.setValue((byte)0);
+					tmp.setReadonly(true);
+					tmp.setValid(false);
+					memoryBuffer[i] = tmp;
 				}
 				
 				paddedString = DEFAULT_PADDED_STR;

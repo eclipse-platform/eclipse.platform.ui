@@ -221,12 +221,6 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 					length = IInternalDebugUIConstants.BYTES_PER_LINE;
 				}
 				
-				// make sure length is divisible by 16 so that the entire row is filled
-				while (length % IInternalDebugUIConstants.BYTES_PER_LINE != 0)
-				{
-					length++;
-				}
-				
 				// get standard memory block
 				IMemoryBlock memBlock = standardMemRetrieval.getMemoryBlock(longAddress, length);
 				

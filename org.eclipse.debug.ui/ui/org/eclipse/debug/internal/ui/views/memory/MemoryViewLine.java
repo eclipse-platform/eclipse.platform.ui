@@ -101,8 +101,8 @@ public class MemoryViewLine extends Object {
 							paddedString = paddedString.substring(0, MemoryViewLine.numCharPerByteForHex);
 					}
 					buffer.replace(bufferCounter, bufferCounter+MemoryViewLine.numCharPerByteForHex, paddedString);		
-					bufferCounter += MemoryViewLine.numCharPerByteForHex;
 				}
+				bufferCounter += MemoryViewLine.numCharPerByteForHex;
 			}
 			
 			fStrRep = buffer.toString();
