@@ -46,9 +46,6 @@ import org.eclipse.ui.internal.about.AboutFeaturesButtonManager;
 
 /**
  * Displays information about the product.
- *
- * PRIVATE  
- * 	this class is internal to the ide
  */
 public class AboutDialog extends ProductInfoDialog {
 	private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
