@@ -116,6 +116,7 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 	public void createControl(Composite parent) {
 		fViewer = new MessageConsoleViewer(parent);
 		fViewer.setDocument(getConsole().getDocument());
+		fViewer.getTextWidget().setTabs(getConsole().getTabWidth());
 		
 		MenuManager manager= new MenuManager("#MessageConsole", "#MessageConsole"); //$NON-NLS-1$ //$NON-NLS-2$
 		manager.setRemoveAllWhenShown(true);
@@ -151,6 +152,11 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 			MessageConsoleStream stream = (MessageConsoleStream)source;
 			if (stream.getConsole().equals(getConsole())) {
 				getViewer().getTextWidget().redraw();
+			}
+		} else if (source.equals(getConsole()) && property.equals(MessageConsole.P_TAB_SIZE)) {
+			if (fViewer != null) {
+				fViewer.getTextWidget().setTabs(getConsole().getTabWidth());
+				fViewer.getTextWidget().redraw();
 			}
 		}
 	}

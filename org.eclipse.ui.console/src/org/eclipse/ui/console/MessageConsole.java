@@ -45,9 +45,22 @@ public class MessageConsole extends AbstractConsole {
 	 */
 	public static final String P_STREAM_COLOR = ConsolePlugin.getUniqueIdentifier()  + ".P_STREAM_COLOR";	 //$NON-NLS-1$
 	
+	/**
+	 * Property constant indicating tab size has changed 
+	 */
+	public static final String P_TAB_SIZE = ConsolePlugin.getUniqueIdentifier()  + ".P_TAB_SIZE";	 //$NON-NLS-1$
+	
+	/**
+	 * The default tab size
+	 */
+	public static final int DEFAULT_TAB_SIZE = 8;
+	
 	// document partitioner
 	private MessageConsolePartitioner fPartitioner = null;
-		
+
+	// current tab size
+	private int tabWidth = DEFAULT_TAB_SIZE;
+
 
 	/** 
 	 * Constructs a new message console.
@@ -164,5 +177,23 @@ public class MessageConsole extends AbstractConsole {
 	 */
 	public IDocument getDocument() {
 		return fPartitioner.getDocument();
+	}
+	
+	/**
+	 * Sets the tab width.
+	 * @param tabSize The tab width 
+	 */
+	public void setTabWidth(int tabWidth) {
+		int old = this.tabWidth;
+		this.tabWidth = tabWidth;
+		firePropertyChange(this, P_TAB_SIZE, new Integer(old), new Integer(tabWidth));
+	}
+	
+	/**
+	 * Returns the tab width.
+	 * @return tab width
+	 */
+	public int getTabWidth() {
+		return tabWidth;
 	}
 }
