@@ -12,10 +12,6 @@
          <packages prefixes="org.eclipse.ant"/>
       </library>
    </runtime>
-   <requires>
-      <import plugin="org.apache.xerces"/>
-   </requires>
-
 
    <extension-point id="extraClasspathEntries" name="%classpathName" schema="schema/extraClasspathEntries.exsd"/>
    <extension-point id="antTasks" name="%tasksName" schema="schema/antTasks.exsd"/>
