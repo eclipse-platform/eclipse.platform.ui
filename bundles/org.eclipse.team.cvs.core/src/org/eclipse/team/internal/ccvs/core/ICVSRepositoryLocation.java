@@ -87,6 +87,11 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	public IUserInfo getUserInfo(boolean allowModificationOfUsername);	
 	
 	/**
+	 * Flush any cahced user information related to the repository location
+	 */
+	public void flushUserInfo() throws CVSException;
+	
+	/**
 	 * Validate that the receiver can be used to connect to a repository.
 	 * An exception is thrown if connection fails
 	 * 

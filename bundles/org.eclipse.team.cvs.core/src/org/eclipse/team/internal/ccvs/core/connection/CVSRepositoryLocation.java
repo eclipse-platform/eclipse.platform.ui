@@ -809,4 +809,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		// fromString(String, boolean) will always throw an exception).
 		return new CVSStatus(IStatus.OK, Policy.bind("ok"));//$NON-NLS-1$ 
 	}
+	/**
+	 * @see ICVSRepositoryLocation#flushUserInfo()
+	 */
+	public void flushUserInfo() throws CVSException {
+		flushCache();
+	}
+
 }
