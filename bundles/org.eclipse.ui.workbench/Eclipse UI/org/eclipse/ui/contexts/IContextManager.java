@@ -13,6 +13,9 @@ package org.eclipse.ui.contexts;
 
 import java.util.Set;
 
+import org.eclipse.ui.internal.contexts.*;
+import org.eclipse.ui.internal.contexts.ws.*;
+
 
 /**
  * An instance of this interface allows clients to manage contexts, as defined

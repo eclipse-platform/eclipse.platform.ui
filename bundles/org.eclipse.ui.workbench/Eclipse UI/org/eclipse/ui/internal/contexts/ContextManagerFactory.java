@@ -9,9 +9,9 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.contexts;
+package org.eclipse.ui.internal.contexts;
 
-import org.eclipse.ui.internal.contexts.MutableContextManager;
+import org.eclipse.ui.contexts.IMutableContextManager;
 
 /**
  * This class allows clients to broker instances of <code>IContextManager</code>.
