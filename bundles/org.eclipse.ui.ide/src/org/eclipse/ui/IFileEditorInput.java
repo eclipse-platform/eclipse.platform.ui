@@ -15,6 +15,11 @@ import org.eclipse.core.resources.IFile;
 /**
  * This interface defines a file-oriented input to an editor.
  * <p>
+ * Clients implementing this editor input interface should override
+ * <code>Object.equals(Object)</code> to answer true for two inputs
+ * that are the same. The <code>IWorbenchPage.openEditor</code> APIs
+ * are dependent on this to find an editor with the same input.
+ * </p><p>
  * File-oriented editors should support this as a valid input type, and allow
  * full read-write editing of its content.
  * </p><p>
