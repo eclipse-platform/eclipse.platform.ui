@@ -50,12 +50,16 @@ import java.util.ArrayList;
  * <p>
  * [Issue: Review not complete - class still in flux.]
  * </p>
+ * 
+ * @deprecated Use the class <code>MultiPageEditorPart</code> instead
  */
 public abstract class MultiPageEditor extends EditorPart {
 	private List syncVector;
 	private TabFolder tabFolder;
 /**
  * Creates a new multi-page editor.
+ * 
+ * @deprecated Use the class <code>MultiPageEditorPart</code> instead
  */
 public MultiPageEditor() {
 	super();
