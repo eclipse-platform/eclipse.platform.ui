@@ -1274,6 +1274,8 @@
             label="%BreakpointMarkerPreference.label"
             textPreferenceValue="false"
             textPreferenceKey="breakpointIndication"
+            verticalRulerPreferenceKey="breakpointVerticalRuler"
+            verticalRulerPreferenceValue="true"
             markerSeverity="0"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler">
       </specification>
