@@ -736,7 +736,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -763,7 +763,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -789,7 +789,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -815,7 +815,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -840,7 +840,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -866,7 +866,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -912,7 +912,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -944,7 +944,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -975,7 +975,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1006,7 +1006,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1036,7 +1036,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1066,7 +1066,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1117,7 +1117,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1149,7 +1149,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1180,7 +1180,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1211,7 +1211,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1241,7 +1241,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1272,7 +1272,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1397,7 +1397,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1434,7 +1434,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = ALWAYS
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1470,7 +1470,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1506,7 +1506,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = NEVER
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1541,7 +1541,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = TRUE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -1577,7 +1577,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			 * Force = FALSE
 			 * Delete content = DEFAULT
 			 * =======================================================================*/
-			projectLocation = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			projectLocation = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(projectLocation);
 			description.setLocation(projectLocation);
 			ensureExistsInWorkspace(project, description);
@@ -2339,7 +2339,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 				fail("1.0", e);
 			}
 			IPath oldPath = project.getLocation();
-			IPath newPath = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+			IPath newPath = getTempDir().append(Long.toString(System.currentTimeMillis()));
 			pathsToDelete.add(newPath);
 			destination.setLocation(newPath);
 			try {

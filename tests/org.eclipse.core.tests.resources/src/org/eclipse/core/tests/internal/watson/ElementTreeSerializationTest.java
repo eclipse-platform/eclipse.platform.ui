@@ -18,7 +18,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 
 	protected ElementTree fTree;
 
-	String root = System.getProperty("user.dir");
+	String root = System.getProperty("java.io.tmpdir");
 	protected File tempFile = new File(root + "/temp/TestFlattening");
 
 	class WriterThread implements Runnable {

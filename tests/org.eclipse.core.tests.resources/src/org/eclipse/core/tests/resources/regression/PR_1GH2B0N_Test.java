@@ -42,7 +42,7 @@ public class PR_1GH2B0N_Test extends EclipseWorkspaceTest {
 	}
 
 	public void test_1GH2B0N() {
-		IPath path = new Path("c:/temp");
+		IPath path = getTempDir().append("1GH2B0N");
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IProjectDescription description = getWorkspace().newProjectDescription("MyProject");
 		IPath projectLocation = path.append(project.getName());
