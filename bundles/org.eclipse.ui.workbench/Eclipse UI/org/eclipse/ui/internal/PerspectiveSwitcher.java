@@ -444,7 +444,7 @@ public class PerspectiveSwitcher {
             return;
 
         int rowHeight = 0;
-        ToolItem[] toolItems = perspectiveBar.getControl().getItems();
+        ToolItem[] toolItems = toolbar.getItems();
         for (int i = 0; i < toolItems.length; i++) {
             rowHeight = Math.max(rowHeight, toolItems[i].getBounds().height);
         }
