@@ -259,7 +259,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		if (isViewVisible()) {
 			return;
 		}
-		doHandleDebugEvents(events, null);
+		doHandleDebugEvents(events, data);
 	}
 	
 	/**
