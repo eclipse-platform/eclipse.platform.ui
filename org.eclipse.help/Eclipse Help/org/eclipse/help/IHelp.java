@@ -76,6 +76,27 @@ public interface IHelp {
 	 */
 	public void displayHelp(String infoSet);
 	/**
+	 * This method is an extension to the 
+	 * <a href="#displayHelp(java.lang.String)">displayHelp(String infoSet)</a>
+	 * method, providing the ability to open the specified help topic.
+	 * <p>
+	 * <code>topicURL</code> should be a valid help topic url contained in
+	 * the specified <code>infoSet</code> and have the following format: 
+	 * <em>/pluginID/path_to_document</em>
+	 * <br>where
+	 * <dl>
+	 * <dt> <em>pluginID</em> is the unique identifier of the plugin containing the help topic, 
+	 * </dt>
+	 * <dt> <em>path_to_document</em> is the help topic path, relative to the plugin directory
+	 * </dt>
+	 * </dl>
+	 * </p>
+	 * @param infoSet the information set id
+	 * @param topicURL the help topic url.
+	 * @see #displayHelp(java.lang.String)
+	 */
+	public void displayHelp(String infoSet, String topicURL);
+	/**
 	 * Computes and returns context information for the given context id.
 	 * 
 	 * @param contextId the context id

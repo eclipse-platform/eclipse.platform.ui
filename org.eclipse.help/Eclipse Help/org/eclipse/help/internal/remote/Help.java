@@ -48,9 +48,15 @@ public class Help implements IHelp {
 		// NOT CURRENTLY SUPPORTED  
 	}
 	/**
-		 * Display help.
-		 */
-	public void displayHelp(String url) {
+	 * Display help.
+	 */
+	public void displayHelp(String infoset) {
+		// NOT CURRENTLY SUPPORTED
+	}
+	/**
+	 * Display help.
+	 */
+	public void displayHelp(String infoset, String topicURL) {
 		// NOT CURRENTLY SUPPORTED
 	}
 	/**

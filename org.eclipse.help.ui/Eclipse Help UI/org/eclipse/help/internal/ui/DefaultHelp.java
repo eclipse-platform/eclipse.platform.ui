@@ -96,10 +96,18 @@ public class DefaultHelp implements IHelp {
 
 		//activateHelpPage();
 	}
+	
 	/**
-	  * Display help.
-	  */
+	 * Display help.
+	 */
 	public void displayHelp(String infosetId) {
+		displayHelp(infosetId, null);
+	}
+		
+	/**
+	 * Display help and selected specified topic.
+	 */
+	public void displayHelp(String infosetId, String topicURL) {
 		// get the new infoset
 		InfoSet infoset = HelpSystem.getNavigationManager().getInfoSet(infosetId);
 		if (infoset != null)
@@ -126,13 +134,14 @@ public class DefaultHelp implements IHelp {
 			// not found, so open the help in the help perspective
 			helpView = getHelpViewInHelpPerspective();
 		}
+		
 		if (helpView == null)
 			return;
 		else
 		{
 			activateHelpPage();
 			// switch to infoset
-			helpView.displayHelp(infoset, null);
+			helpView.displayHelp(infoset, topicURL);
 		}
 	}
 	/**
