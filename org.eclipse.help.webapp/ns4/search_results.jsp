@@ -139,7 +139,7 @@ setTimeout('refresh()', 2000);
 <tr class='list'>
 	<td class='score' align='right'><%=scoreString%>&nbsp;</td>
 	<td align='left' class='label' nowrap>
-		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=tocLabel%>")'><%=label%></a>
+		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")'><%=label%></a>
 	</td>
 </tr>
 
