@@ -11,8 +11,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
-import org.eclipse.team.internal.ui.sync.SyncView;
+import org.eclipse.team.ui.sync.CatchupReleaseViewer;
+import org.eclipse.team.ui.sync.SyncView;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions

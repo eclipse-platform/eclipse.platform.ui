@@ -21,12 +21,12 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
-import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
-import org.eclipse.team.internal.ui.sync.ITeamNode;
-import org.eclipse.team.internal.ui.sync.SyncCompareInput;
-import org.eclipse.team.internal.ui.sync.SyncSet;
-import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
+import org.eclipse.team.ui.sync.CatchupReleaseViewer;
+import org.eclipse.team.ui.sync.ChangedTeamContainer;
+import org.eclipse.team.ui.sync.ITeamNode;
+import org.eclipse.team.ui.sync.SyncCompareInput;
+import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.ui.sync.UnchangedTeamContainer;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSSyncCompareInput extends SyncCompareInput {
