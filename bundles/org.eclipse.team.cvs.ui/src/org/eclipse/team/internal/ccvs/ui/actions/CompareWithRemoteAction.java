@@ -13,13 +13,17 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -34,13 +38,21 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 		final IResource[] resources = getSelectedResources();		
 		// Show the 3-way comparison in a model dialog
 		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
-		ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
-		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { 
-				ISynchronizePageConfiguration.NAVIGATE_GROUP, 
-				ISynchronizePageConfiguration.MODE_GROUP, 
-				ISynchronizePageConfiguration.LAYOUT_GROUP });
-		configuration.setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet("", resources)); //$NON-NLS-1$
-		participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), Policy.bind("Participant.comparingDetail", participant.getName(), Utils.stripAmpersand(calculateActionTagValue())), configuration, null); //$NON-NLS-1$ //$NON-NLS-2$
+		String taskName = Policy.bind("Participant.comparingDetail", participant.getName(), Utils.stripAmpersand(calculateActionTagValue()));
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		boolean showInSyncView = store.getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW);
+		if(showInSyncView) {
+			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+			participant.refresh(resources, Policy.bind("Participant.comparing"), taskName, null); //$NON-NLS-1$
+		} else {
+			ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
+			configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { 
+					ISynchronizePageConfiguration.NAVIGATE_GROUP, 
+					ISynchronizePageConfiguration.MODE_GROUP, 
+					ISynchronizePageConfiguration.LAYOUT_GROUP });
+			configuration.setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet("", resources)); //$NON-NLS-1$
+			participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), taskName, configuration, null); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 	
 	/*

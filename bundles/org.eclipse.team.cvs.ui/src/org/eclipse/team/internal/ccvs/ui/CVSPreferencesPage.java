@@ -11,34 +11,21 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -73,6 +60,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Button determineVersionEnabled;
 	private Button confirmMoveTag;
 	private Button debugProtocol;
+	private Button showCompareMergeInSyncView;
 	
 	private Button never;
 	private Button prompt;
@@ -186,6 +174,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		confirmMoveTag = createCheckBox(composite, Policy.bind("CVSPreferencePage.confirmMoveTag")); //$NON-NLS-1$
 		debugProtocol = createCheckBox(composite, Policy.bind("CVSPreferencePage.debugProtocol")); //$NON-NLS-1$
 		usePlatformLineend = createCheckBox(composite, Policy.bind("CVSPreferencePage.lineend")); //$NON-NLS-1$
+		showCompareMergeInSyncView = createCheckBox(composite, Policy.bind("CVSPreferencePage.showCompareMergeInSync")); //$NON-NLS-1$
 			
 		createLabel(composite, ""); createLabel(composite, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
@@ -293,6 +282,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private void initializeValues() {
 		IPreferenceStore store = getPreferenceStore();
 		pruneEmptyDirectoriesField.setSelection(store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
+		showCompareMergeInSyncView.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW));
 		timeoutValue.setText(new Integer(store.getInt(ICVSUIConstants.PREF_TIMEOUT)).toString());
 		repositoriesAreBinary.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		quietnessCombo.add(Policy.bind("CVSPreferencePage.notquiet")); //$NON-NLS-1$
@@ -358,6 +348,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION, determineVersionEnabled.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, confirmMoveTag.getSelection());
 		store.setValue(ICVSUIConstants.PREF_DEBUG_PROTOCOL, debugProtocol.getSelection());
+		store.setValue(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW, showCompareMergeInSyncView.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
 			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
@@ -409,6 +400,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 		confirmMoveTag.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		debugProtocol.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
+		showCompareMergeInSyncView.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW));
 	}
 
    private void createSaveCombo(Composite composite) {

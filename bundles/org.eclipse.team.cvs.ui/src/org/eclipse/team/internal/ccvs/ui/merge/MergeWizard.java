@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
@@ -20,7 +21,9 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.*;
 
 public class MergeWizard extends Wizard {
@@ -60,14 +63,20 @@ public class MergeWizard extends Wizard {
 		
 		CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
 		MergeSynchronizeParticipant participant = new MergeSynchronizeParticipant(s);
-		
-		ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
-		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { 
-				ISynchronizePageConfiguration.NAVIGATE_GROUP, 
-				ISynchronizePageConfiguration.MODE_GROUP, 
-				ISynchronizePageConfiguration.LAYOUT_GROUP });
-		configuration.setProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID, CVSMergeSubscriber.ID_MODAL);	
-		participant.refreshInDialog(Utils.findShell(), s.roots(), Policy.bind("Participant.merging"), Policy.bind("Participant.mergingDetail", participant.getName()), configuration, null); //$NON-NLS-1$ //$NON-NLS-2$
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		boolean showInSyncView = store.getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW);
+		if(showInSyncView) {
+			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
+			participant.refresh(resources, Policy.bind("Participant.merging"), Policy.bind("Participant.mergingDetail", participant.getName()), null); //$NON-NLS-1$
+		} else {
+			ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
+			configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { 
+					ISynchronizePageConfiguration.NAVIGATE_GROUP, 
+					ISynchronizePageConfiguration.MODE_GROUP, 
+					ISynchronizePageConfiguration.LAYOUT_GROUP });
+			configuration.setProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID, CVSMergeSubscriber.ID_MODAL);	
+			participant.refreshInDialog(Utils.findShell(), s.roots(), Policy.bind("Participant.merging"), Policy.bind("Participant.mergingDetail", participant.getName()), configuration, null); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		return true;
 	}
 	
