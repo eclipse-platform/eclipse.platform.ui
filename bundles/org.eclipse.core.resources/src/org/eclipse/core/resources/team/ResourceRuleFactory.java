@@ -11,6 +11,7 @@ package org.eclipse.core.resources.team;
 
 import java.util.HashSet;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
@@ -105,8 +106,9 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 
 	/**
 	 * Default implementation of <code>IResourceRuleFactory#modifyRule</code>.
-	 * This default implementation always returns the resource being modified. Note
-	 * that this must encompass any rule required by the <code>validateSave</code> hook.
+	 * This default implementation returns the resource being modified, or the
+	 * parent resource if modifying a project description file.
+	 * Note that this must encompass any rule required by the <code>validateSave</code> hook.
 	 * <p>
 	 * Subclasses may override this method. The rule provided by an overriding 
 	 * method must at least contain the rule from this default implementation.
@@ -114,8 +116,13 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 * @see org.eclipse.core.resources.IResourceRuleFactory#modifyRule(IResource)
 	 * @see IFileModificationValidator#validateSave(IFile)
+	 * @see IProjectDescription#DESCRIPTION_FILE_NAME
 	 */
 	public ISchedulingRule modifyRule(IResource resource) {
+		IPath path = resource.getFullPath();
+		//modifying the project description may cause linked resources to be created or deleted
+		if (path.segmentCount() == 2 && path.segment(1).equals(IProjectDescription.DESCRIPTION_FILE_NAME))
+			return parent(resource);
 		return resource;
 	}
 

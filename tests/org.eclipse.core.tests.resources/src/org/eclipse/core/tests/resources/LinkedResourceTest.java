@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import java.io.IOException;
+import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.*;
-import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Tests the following API methods:
@@ -157,7 +155,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 
 		//try to create with local path that can never exist
-		if (BootLoader.getOS().equals(Constants.OS_WIN32))
+		if (Platform.getOS().equals(Platform.OS_WIN32))
 			location = new Path("b:\\does\\not\\exist");
 		else
 			location = new Path("/dev/null/does/not/exist");
@@ -608,6 +606,43 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		} finally {
 			Workspace.clear(resolvePath(fileLocation).toFile());
 		}
+	}
+
+	/**
+	 * Tests creating a linked resource by modifying the .project file directly.
+	 * This is a regression test for bug 63331.
+	 */
+	public void testCreateLinkInDotProject() {
+		final IFile dotProject = existingProject.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		IFile link = nonExistingFileInExistingProject;
+		byte[] oldContents = null;
+		try {
+			//create a linked file
+			link.createLink(localFile, IResource.NONE, getMonitor());
+			//copy the .project file contents
+			oldContents = getFileContents(dotProject);
+			//delete linked file
+			link.delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		final byte[] finalContents = oldContents;
+		try {
+			//recreate the link in a workspace runnable with create scheduling rule
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					dotProject.setContents(new ByteArrayInputStream(finalContents), IResource.NONE, getMonitor());
+				}
+			}, getWorkspace().getRuleFactory().modifyRule(dotProject), IResource.NONE, getMonitor());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+	}
+
+	private byte[] getFileContents(IFile file) throws CoreException {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		transferData(new BufferedInputStream(file.getContents()), bout);
+		return bout.toByteArray();
 	}
 
 	public void testDeepMoveProjectWithLinks() {
