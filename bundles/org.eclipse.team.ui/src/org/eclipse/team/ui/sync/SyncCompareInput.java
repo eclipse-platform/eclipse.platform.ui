@@ -1,7 +1,7 @@
 package org.eclipse.team.ui.sync;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -11,6 +11,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.DiffContainer;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -156,7 +157,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 			return false;
 		}
 		SyncSet set = new SyncSet(new StructuredSelection(diffRoot.getChildren()), 0);
-		return set.hasIncomingChanges();
+		return set.hasIncomingChanges() || set.hasConflicts();
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package org.eclipse.team.ui.sync;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -148,12 +148,24 @@ public class SyncSet {
 	
 	/**
 	 * Returns true if this sync set has incoming changes.
-	 * Note that conflicts are considered to have incoming changes.
+	 * Note that conflicts are not considered to be incoming changes.
 	 */
 	public boolean hasIncomingChanges() {
 		for (Iterator it = set.iterator(); it.hasNext();) {
-			int dir = ((ITeamNode)it.next()).getChangeDirection();
-			if (dir == IRemoteSyncElement.INCOMING || dir == IRemoteSyncElement.CONFLICTING) {
+			if (((ITeamNode)it.next()).getChangeDirection() == IRemoteSyncElement.INCOMING) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if this sync set has outgoing changes.
+	 * Note that conflicts are not considered to be outgoing changes.
+	 */
+	public boolean hasOutgoingChanges() {
+		for (Iterator it = set.iterator(); it.hasNext();) {
+			if (((ITeamNode)it.next()).getChangeDirection() == IRemoteSyncElement.OUTGOING) {
 				return true;
 			}
 		}
@@ -200,7 +212,10 @@ public class SyncSet {
 			ITeamNode node = (ITeamNode)it.next();
 			int nodeDirection = node.getKind() & IRemoteSyncElement.DIRECTION_MASK;
 			if ((nodeDirection != IRemoteSyncElement.CONFLICTING) && (nodeDirection != direction)) {
-				it.remove();
+				// Deletions always belong in the set.
+				if ((node.getKind() & IRemoteSyncElement.CHANGE_MASK) != Differencer.DELETION) {
+					it.remove();
+				}
 			}
 		}
 	}

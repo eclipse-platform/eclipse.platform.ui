@@ -43,7 +43,7 @@ public class GetMergeAction extends MergeAction {
 
 	protected SyncSet run(SyncSet syncSet, IProgressMonitor monitor) {
 		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
-		if (syncSet.hasConflicts()) {
+		if (syncSet.hasConflicts() || syncSet.hasOutgoingChanges()) {
 			String[] buttons = new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
 			String question = Policy.bind("GetMergeAction.questionCatchup");
 			String title = Policy.bind("GetMergeAction.titleCatchup");
@@ -74,12 +74,16 @@ public class GetMergeAction extends MergeAction {
 			}	
 		}
 		ITeamNode[] changed = syncSet.getChangedNodes();
+		if (changed.length == 0) {
+			return syncSet;
+		}
 		List changedResources = new ArrayList();
 		List addedResources = new ArrayList();
 		// A list of diff elements in the sync set which are incoming folder additions
 		List parentCreationElements = new ArrayList();
 		// A list of diff elements in the sync set which are folder conflicts
 		List parentConflictElements = new ArrayList();
+		
 		for (int i = 0; i < changed.length; i++) {
 			IDiffContainer parent = changed[i].getParent();
 			if (parent != null) {
