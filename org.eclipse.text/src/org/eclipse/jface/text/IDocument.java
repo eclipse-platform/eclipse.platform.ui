@@ -44,7 +44,7 @@ package org.eclipse.jface.text;
  * updated on every document manipulation and ensured to be up-to-date when the document
  * listeners are informed. A document uses an <code>IDocumentPartitioner</code> to 
  * manage its partitions. A document may be unpartitioned which happens when there is no
- * partitioner. In this case, the document is considered as one singloe partition of a
+ * partitioner. In this case, the document is considered as one single partition of a
  * default type. The default type is specified by this interface. If a document change
  * changes the document's partitioning all registered partitioning listeners are
  * informed exactly once.<p>

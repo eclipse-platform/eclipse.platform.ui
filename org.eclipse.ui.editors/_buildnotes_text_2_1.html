@@ -1,0 +1,267 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="Author" content="IBM">
+   <title>Eclipse Platform Release Notes - Desktop</title>
+</head>
+<body>
+
+<h1>
+Eclipse Platform Build Notes</h1>
+
+<h1>
+Platform Text</h1>
+
+<p><br>Eclipse SDK Build 20030205
+<h2>
+What's new</h2>
+
+<ul>
+<li>
+Added new layout anchor option "GLOBAL" to the AbstractInformationControlManager.
+Information controls that are opened using this anchor are placed in the
+middle of the subject control.</li>
+
+<li>
+Changed all internal usages of SWT defined modifiers to the generic modifiers
+MOD?</li>
+
+<li>
+Moved "Go to Line" action into the Navigate menu</li>
+
+<li>
+The default text editor now supports:</li>
+
+<ul>
+<li>
+line numbers</li>
+
+<li>
+cursor line highlighting</li>
+
+<li>
+overview ruler</li>
+
+<li>
+error annotations</li>
+</ul>
+
+<li>
+The overview ruler can now be configured to show an header. The header
+shows the presence of annotations of a certain type.</li>
+</ul>
+
+<h2>
+Problem reports closed</h2>
+
+<blockquote>See bugzilla.</blockquote>
+
+<hr>
+<p>Eclipse SDK Build 20030128
+<h2>
+What's new</h2>
+
+<ul>
+<li>
+Introduced painter infrastructure at text viewer level. The following predefined
+painters are available:</li>
+
+<ul>
+<li>
+AnnotationPainter</li>
+
+<ul>
+<li>
+represents annotations given in the viewer's annotation model as squiggly
+lines in the text widget</li>
+
+<li>
+can be configured along annotation types and colors</li>
+</ul>
+
+<li>
+CursorLinePainter</li>
+
+<ul>
+<li>
+highlights the background of the current line (i.e. the line in which the
+cursor resides)</li>
+
+<li>
+color can be configured</li>
+</ul>
+
+<li>
+MargingPainter</li>
+
+<ul>
+<li>
+draws a vertical line at a certain column</li>
+
+<li>
+color and column can be configured</li>
+</ul>
+
+<li>
+MatchingCharacterPainter</li>
+
+<ul>
+<li>
+highlights the character matching the character close to the current cursor
+position by drawing a bounding box around the character</li>
+
+<li>
+must be configured with a strategy for finding the matching character (ICharacterPairMatcher)</li>
+
+<li>
+color can be configured</li>
+</ul>
+</ul>
+
+<li>
+Painters can dynamically be attached to a source viewer. API is defined
+in&nbsp; the interface ITextViewerExtension2. The TextViewer manages its
+painters using a PaintManager.</li>
+
+<li>
+Introduced the concept of an overview ruler at the source viewer level.
+The API is defined in the interface ISourceViewerExtension.</li>
+
+<li>
+Introduced a helper class SourceViewerDecorationSupport at the text editor
+framework that can be used by editors to manage and configure painters.
+This includes the initialization of painters from preferences and the reaction
+on preference changes.</li>
+
+<li>
+Changed validateEdit behavior for&nbsp; the find/replace case. validateEdit
+is now called directly in front of the first text replace operation.</li>
+
+<li>
+Global action definition ids have been introduced for computing content
+completion proposals and computing content context information.</li>
+
+<li>
+ITextViewerExtension2 now offers API to remove all registered text hovers
+for a given content type</li>
+</ul>
+
+<h2>
+Problem reports closed</h2>
+
+<blockquote>See bugzilla.</blockquote>
+
+<h1>
+
+<hr></h1>
+Eclipse SDK Build 20030107
+<h2>
+What's new</h2>
+
+<ul>
+<li>
+New attribute&nbsp;<span style="font-weight: bold;">symbolicFontName</span>
+has been added to <tt>org.eclipse.ui.editors</tt> extension point. See
+the extension point documentation for more details. If the attribute is
+provided then the text editors use it as primary source for setting the
+text editor font.</li>
+</ul>
+
+<h2>
+Problem reports closed</h2>
+
+<blockquote>See bugzilla.</blockquote>
+
+<hr>
+<h1>
+Eclipse Platform Build Notes</h1>
+
+<h1>
+Platform Text</h1>
+Eclipse SDK Build 20021203
+<h2>
+What's new</h2>
+
+<ul>
+<li>
+Introduced goto to last edit position</li>
+</ul>
+
+<h2>
+Problem reports closed</h2>
+
+<blockquote>See bugzilla.</blockquote>
+
+<hr>
+<p>Eclipse SDK Build 20021008
+<h2>
+What's new</h2>
+
+<ul>
+<li>
+Introduced smart behavior for Home/End key</li>
+
+<li>
+Infrastructure for eating code assist including visual indication of text
+to be replaced</li>
+</ul>
+
+<h2>
+Problem reports closed</h2>
+
+<blockquote>See bugzilla.</blockquote>
+
+<hr>
+<p>Eclipse SDK Build 20021001
+<h2>
+What's new</h2>
+
+<ul>
+<li>
+Applied patch for incremental search to behave more like Emacs</li>
+
+<li>
+Applied patch for delete line to copy to clipboard (Emacs behaviour)</li>
+</ul>
+
+<h2>
+Problem reports closed</h2>
+
+<blockquote>See bugzilla.</blockquote>
+
+<hr>
+<p>Eclipse SDK Build 20020903
+<h2>
+What's new</h2>
+
+<ul>
+<li>
+Adaptable line number ruler width</li>
+
+<li>
+Resizable content assist proposal popup</li>
+
+<li>
+Pre 2.0 build notes have been moved to buildnotes_text_2_0.html</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<ul>
+<li>
+Size of content assist proposal popup is not persisted over session boundaries</li>
+
+<li>
+Size of content assist proposal popup is not editor type specific</li>
+</ul>
+
+<h2>
+Problem reports closed</h2>
+
+<blockquote>See bugzilla.</blockquote>
+
+</body>
+</html>

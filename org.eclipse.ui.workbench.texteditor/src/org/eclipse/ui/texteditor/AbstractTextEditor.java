@@ -3688,6 +3688,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_END, true);
+		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE, true);
+		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, true);
+		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_END, true);
 		
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', -1, SWT.NONE);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', -1, SWT.SHIFT);
