@@ -8,7 +8,6 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
