@@ -56,7 +56,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
 		assertNotNull(reg);
 	}
-
+	
 	public void testGetPrefereneManager() throws Throwable {
 		PreferenceManager mgr = fWorkbench.getPreferenceManager();
 		assertNotNull(mgr);
@@ -69,7 +69,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 
 	public void testGetWorkbenchWindows() throws Throwable {
 		IWorkbenchWindow[] wins = fWorkbench.getWorkbenchWindows();
-		assert(Tool.check(wins));
+		assertEquals(Tool.check(wins), true);
 		int oldTotal = wins.length;
 		int num = 3;
 
@@ -81,11 +81,11 @@ public class IWorkbenchTest extends AbstractTestCase {
 		for (int i = 0; i < num; i++)
 			assert(Tool.arrayHas(wins, newWins[i]));
 
-		assert(wins.length == oldTotal + num);
+		assertEquals(wins.length, oldTotal + num);
 
 		closeAllTestWindows();
 		wins = fWorkbench.getWorkbenchWindows();
-		assert(wins.length == oldTotal);
+		assertEquals(wins.length, oldTotal);
 	}
 
 	/**
@@ -118,8 +118,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 			exceptionOccured = true;
 		}
 
-		assert(exceptionOccured);
-
+		assertEquals(exceptionOccured, true);
 	}
 
 	/**
@@ -143,10 +142,10 @@ public class IWorkbenchTest extends AbstractTestCase {
 		}
 	}
 
-	/* 
-		close() couldn't be tested because if we call close(), it would lead to early termination 
-		to entire test suites		
-	*/
+	/**
+	 * close() couldn't be tested because calling close() would lead to early termination 
+	 * to entire test suites		
+	 */
 	public void testClose() {
 	}
 }

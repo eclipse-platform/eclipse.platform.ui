@@ -2,12 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.*;
 
 public class IWorkbenchWindowTest extends AbstractTestCase {
 
@@ -25,25 +20,28 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 		}
 	}
 
-	public void testClose() throws Throwable {
-		IWorkbenchWindow win = openTestWindow();
-		assert(win.close() == true);
+	public void testClose() throws Throwable {		
+		assertEquals(fWin.close(), true);
+		assertEquals(Tool.arrayHas(fWorkbench.getWorkbenchWindows(), fWin), false);
 	}
 
 	public void testGetActivePage() throws Throwable {
-		IWorkbenchPage page = openTestPage(fWin);
-		assertNotNull(fWin.getActivePage());
-		assertEquals(fWin.getActivePage(), page);
+		IWorkbenchPage page1, page2;
+		page1 = openTestPage(fWin);
+		assertEquals(fWin.getActivePage(), page1);
 
-		openTestPage(fWin);
-		assert(page != fWin.getActivePage());
+		page2 = openTestPage(fWin);
+		assertEquals(fWin.getActivePage(), page2);
 
-		//close all pages of the window
-		IWorkbenchPage[] pages = fWin.getPages();
-		for (int i = 0; i < pages.length; i++)
-			pages[i].close();
-		page = fWin.getActivePage();
-		assertNull(page);
+		fWin.setActivePage(page1);
+		assertEquals(fWin.getActivePage(), page1);
+
+		fWin.setActivePage(page2);
+		assertEquals(fWin.getActivePage(), page2);
+
+		//no pages
+		closeAllPages(fWin);
+		assertNull(fWin.getActivePage());
 	}
 
 	public void testSetActivePage() throws Throwable {
@@ -54,6 +52,9 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 			fWin.setActivePage(pages[i]);
 			assertEquals(pages[i], fWin.getActivePage());
 		}
+		
+		fWin.setActivePage( null );
+		assertNull( fWin.getActivePage() );
 	}
 
 	public void testGetPages() throws Throwable {
@@ -63,29 +64,28 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 		totalBefore = fWin.getPages().length;
 		int num = 5;
 		pages = openTestPage(fWin, num);
-		assert(fWin.getPages().length == totalBefore + num);
+		assertEquals(fWin.getPages().length, totalBefore + num);
 
 		domainPages = fWin.getPages();
 		for (int i = 0; i < pages.length; i++)
-			assert(Tool.arrayHas(domainPages, pages[i]));
-	
-		closeAllTestPages();
-		assert(fWin.getPages().length == totalBefore );
+			assertEquals(Tool.arrayHas(domainPages, pages[i]), true);
+
+		closeAllPages(fWin);
+		assertEquals(fWin.getPages().length, 0);
 	}
 
 	public void testGetShell() {
 		Shell sh = fWin.getShell();
 		assertNotNull(sh);
 	}
-
+	
 	public void testGetWorkbench() {
 		IWorkbenchWindow win = fWorkbench.getActiveWorkbenchWindow();
-
 		assertEquals(win.getWorkbench(), fWorkbench);
 	}
 
 	/**
-	 * openPage(String)
+	 * tests openPage(String)
 	 */
 	public void testOpenPage() throws Throwable {
 		IWorkbenchPage page = null;
@@ -100,7 +100,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 	}
 
 	/**
-	 * openPage(String, IAdaptable)
+	 * tests openPage(String, IAdaptable)
 	 */
 	public void testOpenPage2() throws Throwable {
 		IWorkbenchPage page = null;
@@ -126,11 +126,24 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 		page.close();
 	}
 
-	public void testIsApplicationMenu() throws Throwable {
-		assert(fWin.isApplicationMenu(Tool.FakeID) == false);
-		/*
-				somemagic
-				assert( fWin.isApplicationMenu( goodID ) == true );
-		*/
+	public void testIsApplicationMenu() {
+		String[] ids = {
+			IWorkbenchActionConstants.M_FILE,
+			IWorkbenchActionConstants.M_VIEW,
+			IWorkbenchActionConstants.M_VIEW,
+			IWorkbenchActionConstants.M_WORKBENCH,
+		};
+
+		for( int i = 0; i < ids.length; i ++ )
+			assertEquals( fWin.isApplicationMenu( ids[ i ] ), true );
+		
+		ids = new String[] {
+			IWorkbenchActionConstants.M_EDIT,
+			IWorkbenchActionConstants.M_HELP,
+			IWorkbenchActionConstants.M_LAUNCH
+		};
+
+		for( int i = 0; i < ids.length; i ++ )
+			assertEquals( fWin.isApplicationMenu( ids[ i ] ), false );
 	}
 }
