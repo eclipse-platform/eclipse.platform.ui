@@ -242,8 +242,8 @@ public class OptionTests extends AbstractAntTest {
 	 * Tests specifying the -buildfile
 	 */
 	public void testBuildFile() throws CoreException {
-		String buildFileName= getProject().getFolder("scripts").getFile("echoing.xml").getLocation().toFile().getAbsolutePath();
-		run("TestForEcho.xml", new String[]{"-buildfile", buildFileName}, false, "scripts");
+		String buildFileName= getProject().getFolder("buildfiles").getFile("echoing.xml").getLocation().toFile().getAbsolutePath();
+		run("TestForEcho.xml", new String[]{"-buildfile", buildFileName}, false, "buildfiles");
 		
 		assertTrue("Should have been 1 tasks, was: " + AntTestChecker.getDefault().getTaskStartedCount(), AntTestChecker.getDefault().getTaskStartedCount() == 1);
 	}

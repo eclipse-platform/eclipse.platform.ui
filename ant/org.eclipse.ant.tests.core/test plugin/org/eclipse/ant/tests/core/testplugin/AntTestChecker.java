@@ -39,12 +39,6 @@ public class AntTestChecker {
 	
 	private List projects= new ArrayList();
 	
-	private String currentProject;
-	
-	private String currentTask;
-	
-	private String currentTarget;
-	
 	private Hashtable userProperties;
 	
 	private List nameOfListeners= new ArrayList();
@@ -81,7 +75,6 @@ public class AntTestChecker {
 	public void buildStarted(String projectName) {
 		buildsStartedCount++;
 		projects.add(projectName);
-		currentProject= projectName;
 	}
 
 	
@@ -187,9 +180,6 @@ public class AntTestChecker {
 		targets= new ArrayList();
 		projects= new ArrayList();
 		userProperties= null;
-		currentProject= null;
-		currentTarget= null;
-		currentTask= null;
 		nameOfListeners= new ArrayList();
 	}
 	

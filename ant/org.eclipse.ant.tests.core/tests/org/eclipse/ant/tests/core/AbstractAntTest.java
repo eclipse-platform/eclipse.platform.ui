@@ -52,7 +52,7 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	protected IFile getBuildFile(String buildFileName) {
-		IFile file = getProject().getFolder("scripts").getFile(buildFileName);
+		IFile file = getProject().getFolder("buildfiles").getFile(buildFileName);
 		assertTrue("Could not find script file named: " + buildFileName, file.exists());
 		return file;
 	}
@@ -65,7 +65,7 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected IFile checkFileExists(String fileName) throws CoreException {
 		getProject().refreshLocal(IProject.DEPTH_INFINITE, null);
-		IFile file = getProject().getFolder("scripts").getFile(fileName);
+		IFile file = getProject().getFolder("buildfiles").getFile(fileName);
 		assertTrue("Could not find file named: " + fileName, file.exists());
 		return file;
 	}
