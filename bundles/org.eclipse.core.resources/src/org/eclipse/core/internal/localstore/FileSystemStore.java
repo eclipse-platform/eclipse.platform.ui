@@ -40,7 +40,7 @@ protected void copyDirectory(File source, File destination, int depth, IProgress
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String[] children = source.list();
-		if(children == null){
+		if(children == null) {
 			children = new String[0];
 		}
 
@@ -256,14 +256,12 @@ public void transferStreams(InputStream source, OutputStream destination, IProgr
  */
 public void write(File target, InputStream content, boolean append, IProgressMonitor monitor) throws CoreException {
 	try {
-		try {
-			writeFolder(new File(target.getParent()));
-			FileOutputStream output = new FileOutputStream(target.getAbsolutePath(), append);
-			transferStreams(content, output, monitor);
-		} finally {
-			content.close();
-		}
+		writeFolder(new File(target.getParent()));
+		FileOutputStream output = new FileOutputStream(target.getAbsolutePath(), append);
+		transferStreams(content, output, monitor);
 	} catch (IOException e) {
+		//if we failed to write, try to cleanup the half written file
+		target.delete();
 		String message = null;
 		if (CoreFileSystemLibrary.isReadOnly(target.getAbsolutePath()))
 			message = Policy.bind("localstore.couldNotWriteReadOnly", target.getAbsolutePath());
