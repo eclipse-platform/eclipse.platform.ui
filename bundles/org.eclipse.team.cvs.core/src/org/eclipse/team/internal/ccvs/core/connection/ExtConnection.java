@@ -82,7 +82,7 @@ public class ExtConnection implements IServerConnection {
 		
 		String CVS_RSH = CVSProviderPlugin.getPlugin().getCvsRshCommand();
 		String CVS_SERVER = CVSProviderPlugin.getPlugin().getCvsServer();
-		String[] command = new String[] {CVS_RSH, "-l", username, hostname, CVS_SERVER, INVOKE_SVR_CMD}; //$NON-NLS-1$
+		String[] command = new String[] {CVS_RSH, hostname, "-l", username, CVS_SERVER, INVOKE_SVR_CMD}; //$NON-NLS-1$
 		
 		int port = location.getPort();
 		if (port == location.USE_DEFAULT_PORT)

@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -39,7 +40,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayoutData(new GridData());
 		
 		Label intro = new Label(composite, SWT.LEFT);
-		intro.setText("These variables define the external connection program to use with the 'ext' connection method.\nThese values should be the same as the 'ext' CVS command-line environment variable settings.");
+		intro.setText(Policy.bind("ExtMethodPreferencePage_message")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 3;
 		data.horizontalAlignment = GridData.FILL;
@@ -47,17 +48,17 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		
 		new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); // spacer
 		
-		new Label(composite, SWT.LEFT).setText("CVS_RSH:");
+		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_RSH")); //$NON-NLS-1$
 		cvsRsh = new Text(composite, SWT.BORDER);
 		cvsRsh.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		final Button b = new Button(composite, SWT.NONE);
-		b.setText("Browse...");
+		b.setText(Policy.bind("ExtMethodPreferencePage_Browse")); //$NON-NLS-1$
 		b.setLayoutData(new GridData());
 		b.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent (Event event) {
 				FileDialog d = new FileDialog(getShell());
-				d.setText("Select a program or script");
+				d.setText(Policy.bind("ExtMethodPreferencePage_Details")); //$NON-NLS-1$
 				String file = d.open();
 				if(file!=null) {
 					setCvsRshText(file);
@@ -67,11 +68,11 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		
 		
 		Label l = new Label(composite, SWT.LEFT | SWT.BOLD);
-		l.setText("Note:");
+		l.setText(Policy.bind("ExtMethodPreferencePage_Note__5")); //$NON-NLS-1$
 		l.setFont(JFaceResources.getBannerFont());
 		
 		l = new Label(composite, SWT.LEFT);
-		l.setText("The RSH command must fit the following calling pattern:\n<CVS_RSH> -l <USERNAME> <HOST> <CVS_SERVER>\nThis program will be called to connect to the remote CVS server.");
+		l.setText(Policy.bind("ExtMethodPreferencePage_note_CVS_RSH")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
@@ -79,7 +80,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		
 		new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); new Label(composite, SWT.NULL); // spacer
 		
-		new Label(composite, SWT.LEFT).setText("CVS_SERVER:");
+		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_SERVER__7")); //$NON-NLS-1$
 		cvsServer = new Text(composite, SWT.BORDER);
 		data = new GridData();
 		data.horizontalSpan = 2;
@@ -87,11 +88,11 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		cvsServer.setLayoutData(data);
 
 		l = new Label(composite, SWT.LEFT | SWT.BOLD);
-		l.setText("Note:");
+		l.setText(Policy.bind("ExtMethodPreferencePage_Note__8")); //$NON-NLS-1$
 		l.setFont(JFaceResources.getBannerFont());
 		
 		l = new Label(composite, SWT.LEFT);
-		l.setText("This is the name of the remote CVS server program.\nChange this setting only if the remote CVS server name\nis different than the default.");
+		l.setText(Policy.bind("ExtMethodPreferencePage_NoteForCVS_SERVER")); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
@@ -139,5 +140,4 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 	protected IPreferenceStore doGetPreferenceStore() {
 		return CVSUIPlugin.getPlugin().getPreferenceStore();
 	}
-
 }

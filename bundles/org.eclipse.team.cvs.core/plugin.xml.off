@@ -30,6 +30,14 @@
 			</run>
 		</adapter>
 	</extension>
+	
+	<extension id="ext" point="org.eclipse.team.cvs.core.connectionmethods">
+		<adapter>
+			<run class="org.eclipse.team.internal.ccvs.core.connection.ExtConnectionMethod">
+				<parameter name="trace" value="false" /> 
+			</run>
+		</adapter>
+	</extension>
 
 	<!-- *************** Team Provider **************** -->
 	<extension id="CVSProvider" point="org.eclipse.team.core.providers">
