@@ -72,7 +72,8 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
         PlantyCompletionProcessor tempProcessor = new PlantyCompletionProcessor(); 
         assistant.setContentAssistProcessor(tempProcessor, IDocument.DEFAULT_CONTENT_TYPE);
         assistant.setContentAssistProcessor(tempProcessor, PlantyPartitionScanner.XML_TAG);
-
+		assistant.enableAutoActivation(true);
+		
         IInformationControlCreator creator = getInformationControlCreator(true);
         assistant.setInformationControlCreator(creator);
 

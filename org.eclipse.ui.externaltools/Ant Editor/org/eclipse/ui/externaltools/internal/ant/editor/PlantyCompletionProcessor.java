@@ -79,7 +79,6 @@ import org.xml.sax.SAXParseException;
  * The text completion processor for Planty.
  * 
  * @author Alf Schiefelbein
- * @version 24.09.01
  */
 public class PlantyCompletionProcessor implements IContentAssistProcessor {
 
@@ -105,7 +104,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
     protected class CompletionSet extends TreeSet {
         
         
-        private HashMap hashMap = new HashMap();
+        private Map displayStringToProposal = new HashMap();
 
 
         /**
@@ -125,16 +124,16 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 
         /**
          * Adds the specified <code>ICompletionProposal</code> only if another
-         * proposal with the same display string is not contained allready.
+         * proposal with the same display string is not contained already.
          * 
          * @param o must be instanceof <code>ICompletionProposal</code>
          */
         public boolean add(Object o) {
             ICompletionProposal tempProposal = (ICompletionProposal)o;
-            if(!hashMap.containsKey(tempProposal.getDisplayString())) {
+            if(!displayStringToProposal.containsKey(tempProposal.getDisplayString())) {
                 boolean tempResult = super.add(o);
                 if(tempResult) {
-                    hashMap.put(tempProposal.getDisplayString(), tempProposal);
+                    displayStringToProposal.put(tempProposal.getDisplayString(), tempProposal);
                 }
                 return tempResult;
             }
@@ -150,7 +149,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
          */
         public boolean contains(Object o) {
             ICompletionProposal tempProposal = (ICompletionProposal)o;
-            if(!hashMap.containsKey(tempProposal.getDisplayString())) {
+            if(!displayStringToProposal.containsKey(tempProposal.getDisplayString())) {
                 return true;
             }
             return false;
@@ -166,7 +165,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
             ICompletionProposal tempProposal = (ICompletionProposal)o;
             boolean tempResult = super.remove(o);
             if(tempResult) {
-                Object tempObject = hashMap.remove(tempProposal.getDisplayString());
+                Object tempObject = displayStringToProposal.remove(tempProposal.getDisplayString());
                 if(tempObject == null) {
                     throw new NoSuchElementException(AntEditorMessages.getString("PlantyCompletionProcessor.Serious_Error")); //$NON-NLS-1$
                 }
@@ -219,13 +218,8 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
      * The text viewer.
      */
 	protected ITextViewer viewer;
-    
-	static class WordToken {
-		
-		public String word = null;
-		int index = 0;
 	
-	}
+	private char[] autoActivationChars= new char[]{'<', '$', '{' };
 	
     
     /**
@@ -242,9 +236,9 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 		super();
 		if(dtd == null) {
 	        try {
-	     	  dtd = parseDtd();
+	     	  	dtd = parseDtd();
 	        } catch (IOException e) {
-	          ExternalToolsPlugin.getDefault().log(e);
+	        	ExternalToolsPlugin.getDefault().log(e);
 	        } catch (ParseError e) {
 				ExternalToolsPlugin.getDefault().log(e);
 			}
@@ -282,15 +276,14 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
 	 */
 	public char[] getCompletionProposalAutoActivationCharacters() {
-        char [] tempChars = {'<', '$', '{' };
-        return tempChars;
+        return autoActivationChars;
 	}
 
 	/**
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
 	 */
 	public char[] getContextInformationAutoActivationCharacters() {
-        return new char[0];
+        return null;
 	}
 
 	/**
