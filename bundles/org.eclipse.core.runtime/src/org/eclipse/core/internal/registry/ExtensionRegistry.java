@@ -185,12 +185,21 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	 * point. If none is found, there is nothing to do. Otherwise, link them.
 	 */
 	private void addExtensionPoint(IExtensionPoint extPoint) {
-		IExtension[] existingExtensions = (IExtension[]) orphanExtensions.remove(extPoint.getUniqueIdentifier());
-		if (existingExtensions == null)
+		IExtension[] orphans = (IExtension[]) orphanExtensions.remove(extPoint.getUniqueIdentifier());
+		if (orphans == null)
 			return;
 		// otherwise, link them
-		link(extPoint, existingExtensions);
-		recordChange(extPoint, existingExtensions, IExtensionDelta.ADDED);
+		IExtension[] newExtensions;
+		IExtension[] existingExtensions = extPoint.getExtensions();
+		if (existingExtensions.length == 0)
+			newExtensions = orphans;
+		else {
+			newExtensions = new IExtension[existingExtensions.length + orphans.length];
+			System.arraycopy(existingExtensions, 0, newExtensions, 0, existingExtensions.length);
+			System.arraycopy(orphans, 0, newExtensions, existingExtensions.length, orphans.length);
+		}
+		link(extPoint, newExtensions);
+		recordChange(extPoint, orphans, IExtensionDelta.ADDED);
 	}
 
 	private void addExtensionsAndExtensionPoints(Namespace element) {

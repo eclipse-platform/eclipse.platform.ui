@@ -267,6 +267,50 @@ public class IRegistryChangeEventTest extends TestCase {
 		}
 	}
 
+	public void testBug71826() {
+		ExtensionRegistry registry = new ExtensionRegistry();
+
+		// plugin A provides an extension point
+		final Namespace pluginA = new Namespace();
+		pluginA.setUniqueIdentifier("a");
+		final ExtensionPoint xp1 = new ExtensionPoint();
+		xp1.setSimpleIdentifier("xp1");
+		pluginA.setExtensionPoints(new ExtensionPoint[] {xp1});
+		xp1.setParent(pluginA);
+
+		// plugin B provides an extension to A's extension point
+		final Namespace pluginB = new Namespace();
+		pluginB.setUniqueIdentifier("b");
+		final Extension ext1 = new Extension();
+		ext1.setExtensionPointIdentifier("a.xp1");
+		ext1.setSimpleIdentifier("ext1");
+		pluginB.setExtensions(new Extension[] {ext1});
+		ext1.setParent(pluginB);
+
+		// fragment C has plugin A as host and also contributes an extension to its extension point
+		final Namespace fragmentC = new Namespace();
+		fragmentC.setUniqueIdentifier("c");
+		final Extension ext2 = new Extension();
+		ext2.setExtensionPointIdentifier("a.xp1");
+		ext2.setSimpleIdentifier("ext2");
+		fragmentC.setExtensions(new Extension[] {ext2});
+		ext2.setParent(fragmentC);
+		fragmentC.setHostIdentifier(pluginA.getUniqueIdentifier());
+
+		// if B and C were added to the registry before A, C's extension point would get lost.
+		registry.add(fragmentC);
+		registry.add(pluginB);
+		registry.add(pluginA);
+
+		// ensure all extensions are there
+		IExtensionPoint xp = registry.getExtensionPoint(xp1.getUniqueIdentifier());
+		assertNotNull("1.0", xp);
+		IExtension[] exts = xp.getExtensions();
+		assertEquals("1.1", 2, exts.length);
+		assertEquals("1.2", ext1, xp.getExtension(ext1.getUniqueIdentifier()));
+		assertEquals("1.3", ext2, xp.getExtension(ext2.getUniqueIdentifier()));
+	}
+
 	public static Test suite() {
 		return new TestSuite(IRegistryChangeEventTest.class);
 	}
