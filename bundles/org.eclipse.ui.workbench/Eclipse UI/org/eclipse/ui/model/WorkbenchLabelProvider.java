@@ -40,20 +40,22 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 	/**
 	 * The cache of images that have been dispensed by this provider.
 	 * Maps ImageDescriptor->Image.
+	 * Caches are all static to avoid creating extra system
+	 * resources for very common images, font and colors.
 	 */
-	private Map imageTable;
+	private static Map imageTable = new Hashtable(40);
 	
 	/**
 	 * The cache of colors that have been dispensed by this provider.
 	 * Maps RGB->Color.
 	 */
-	private Map colorTable;
+	private static Map colorTable = new Hashtable(7);
 	
 	/**
 	 * The cache of fonts that have been dispensed by this provider.
 	 * Maps FontData->Font.
 	 */
-	private Map fontTable;	
+	private static Map fontTable = new Hashtable(7);;	
 
 	/**
 	 * Returns a workbench label provider that is hooked up to the decorator
@@ -101,9 +103,10 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 	}
 	
 	/**
-	 * Disposes of all allocated images, colors and fonts.
+	 * Disposes of all allocated images, colors and fonts
+	 * when shutting down the plug-in.
 	 */
-	public final void dispose() {
+	public static final void shutdown() {
 		if (imageTable != null) {
 			for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
 				((Image) i.next()).dispose();
@@ -166,10 +169,6 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 		//add any annotations to the image descriptor
 		descriptor = decorateImage(descriptor, element);
 
-		//obtain the cached image corresponding to the descriptor
-		if (imageTable == null) {
-			imageTable = new Hashtable(40);
-		}
 		Image image = (Image) imageTable.get(descriptor);
 		if (image == null) {
 			image = descriptor.createImage();
@@ -220,10 +219,6 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 			return null;
 		}
 
-		//obtain the cached font corresponding to the descriptor
-		if (fontTable == null) {
-			fontTable = new Hashtable(7);
-		}
 		Font font = (Font) fontTable.get(descriptor);
 		if (font == null) {
 			font = new Font(Display.getCurrent(), descriptor);
@@ -245,10 +240,6 @@ public class WorkbenchLabelProvider extends LabelProvider implements IColorProvi
 			return null;
 		}
 
-		//obtain the cached color corresponding to the descriptor
-		if (colorTable == null) {
-			colorTable = new Hashtable(7);
-		}
 		Color color = (Color) colorTable.get(descriptor);
 		if (color == null) {
 			color = new Color(Display.getCurrent(), descriptor);

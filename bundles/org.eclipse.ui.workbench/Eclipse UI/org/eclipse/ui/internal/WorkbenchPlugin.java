@@ -50,6 +50,7 @@ import org.eclipse.ui.internal.themes.IThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.osgi.framework.Bundle;
@@ -674,4 +675,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			productInfo = new ProductInfo(Platform.getProduct());
 		return productInfo;
  	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		WorkbenchLabelProvider.shutdown();
+	}
 }
