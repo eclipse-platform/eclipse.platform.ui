@@ -139,6 +139,7 @@ protected Button getChangeControl(Composite parent) {
 		gc.dispose();
 		
 		colorButton.setImage(image);
+		colorButton.setFont(parent.getFont());
 		colorButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				ColorDialog colorDialog= new ColorDialog(colorButton.getShell());
@@ -167,6 +168,8 @@ protected Button getChangeControl(Composite parent) {
 	} else {
 		checkParent(colorButton, parent);
 	}	
+	
+	setButtonLayoutData(colorButton);
 	return colorButton;
 }
 /* (non-Javadoc)
