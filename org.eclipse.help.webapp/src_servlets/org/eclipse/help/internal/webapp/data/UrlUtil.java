@@ -162,6 +162,17 @@ public class UrlUtil {
 		return agent.indexOf("opera") >= 0;
 	}
 
+	public static Locale getLocaleObj(HttpServletRequest request) {
+		String localeStr = getLocale(request);
+		if (localeStr.length() >= 5) {
+			return new Locale(
+				localeStr.substring(0, 2),
+				localeStr.substring(3, 5));
+		} else {
+			return new Locale(localeStr.substring(0, 2), "");
+
+		}
+	}
 	public static String getLocale(HttpServletRequest request) {
 		if (defaultLocale == null) {
 			initializeLocales();

@@ -126,7 +126,7 @@ public class SearchData extends RequestData {
 		try {
 			float score = hits[i].getScore();
 			NumberFormat percentFormat =
-				NumberFormat.getPercentInstance(request.getLocale());
+				NumberFormat.getPercentInstance(UrlUtil.getLocaleObj(request));
 			return percentFormat.format(score);
 		} catch (NumberFormatException nfe) {
 			// will display original score string

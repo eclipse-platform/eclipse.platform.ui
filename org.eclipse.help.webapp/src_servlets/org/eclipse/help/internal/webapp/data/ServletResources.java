@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
- 
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.webapp.WebappResources;
-
 
 /**
  * Uses a resource bundle to load images and strings from
@@ -36,7 +33,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getString(String name, HttpServletRequest request) {
-		String property = WebappResources.getString(name, request.getLocale());
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request));
 		if (property == null || property.length() <= 0) {
 			return property;
 		}
@@ -54,7 +51,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getString(String name, String replace0, HttpServletRequest request) {
-		String property = WebappResources.getString(name, request.getLocale(), replace0);
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request), replace0);
 		if (property == null || property.length() <= 0) {
 			return property;
 		}
@@ -73,7 +70,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getLabel(String name, HttpServletRequest request) {
-		String property = WebappResources.getString(name, request.getLocale());
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request));
 		if (property == null || property.length() <= 0) {
 			return property;
 		}
@@ -94,7 +91,7 @@ public class ServletResources {
 	 * @param request HttpServletRequest or null; default locale will be used if null passed
 	 */
 	public static String getAccessKey(String name, HttpServletRequest request) {
-		String property = WebappResources.getString(name, request.getLocale());
+		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(request));
 		if (property == null || property.length() <= 0) {
 			return null;
 		}
