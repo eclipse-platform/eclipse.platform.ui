@@ -34,15 +34,11 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.FileEditorInput;
@@ -245,14 +241,14 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			if (runnable instanceof SafeChange)
 				fireElementStateChanging(fFileEditorInput);
 			
-			IWorkbench workbench= PlatformUI.getWorkbench();
-			IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-			if (windows != null && windows.length > 0) {
-				Display display= windows[0].getShell().getDisplay();
-				display.asyncExec(runnable);
-			} else {
+//			IWorkbench workbench= PlatformUI.getWorkbench();
+//			IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+//			if (windows != null && windows.length > 0) {
+//				Display display= windows[0].getShell().getDisplay();
+//				display.asyncExec(runnable);
+//			} else {
 				runnable.run();
-			}
+//			}
 		}
 	}
 	
