@@ -1,0 +1,14 @@
+Legacy: 
+ true
+Bundle-Version: 
+ 3.0.0
+Export-Package-Split: 
+ org.eclipse.jface.text
+Bundle-Name: 
+ org.eclipse.text
+DynamicImport-Package: 
+ *
+Bundle-ClassPath: 
+ text.jar
+Bundle-Activator: 
+ org.eclipse.core.runtime.compatibility.PluginActivator
