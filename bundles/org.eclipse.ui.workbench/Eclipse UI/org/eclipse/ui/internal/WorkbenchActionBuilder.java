@@ -357,7 +357,8 @@ public class WorkbenchActionBuilder {
 	 * Fills the status line with the workbench contributions.
 	 */
 	private void fillStatusLine(IStatusLineManager statusLine) {
-		statusLine.add(statusLineItem);
+		if(statusLine != null)
+			statusLine.add(statusLineItem);
 	}
 	
 	/**
