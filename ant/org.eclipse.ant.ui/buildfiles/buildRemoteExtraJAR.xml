@@ -4,6 +4,8 @@
 	<target name="build" description="Cleans, builds and refreshes" depends="clean, lib/remoteAntLib.jar"/>
 
 	<target name="init" depends="properties">
+		<property name="version.suffix" value="_3.0.0"/>
+		<property name="ant_version.suffix" value="_1.6.1"/>
 		<property name="bootclasspath" value=""/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
@@ -18,9 +20,10 @@
 		<delete dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<!-- compile the source code -->
-		<javac target="1.3" source="1.3" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="no"
+		<javac target="1.4" source="1.4" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="no"
 			 	bootclasspath="${bootclasspath}" 
-			 	classpath="${basedir}/../org.apache.ant/lib/ant.jar;">
+			 	classpath="${basedir}/../org.apache.ant/lib/ant.jar;
+			 	${eclipse.home}/plugins/org.apache.ant${ant_version.suffix}/lib/ant.jar;">
 			<src path="Remote Ant Support/"/>
 		</javac>
 		<!-- copy necessary resources -->
