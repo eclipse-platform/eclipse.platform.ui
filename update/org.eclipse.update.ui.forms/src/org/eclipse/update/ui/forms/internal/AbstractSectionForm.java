@@ -145,21 +145,21 @@ public abstract class AbstractSectionForm extends AbstractForm {
 	}
 
 	public static void ensureVisible(ScrolledComposite scomp, Point controlOrigin, Point controlSize) {
-		Rectangle area = scomp.getClientArea();
+		Point area = scomp.getContent().getSize();
 		Point scompOrigin = scomp.getOrigin();
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
 
-		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
-			x = controlOrigin.x + controlSize.x - area.width;
+		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.x) {
+			x = controlOrigin.x + controlSize.x - area.x;
 		}		
 		if (controlOrigin.x < x ) {
 			 x = controlOrigin.x;
 		 }         
 		
-		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.height) {
-			y = controlOrigin.y + controlSize.y - area.height;
+		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.y) {
+			y = controlOrigin.y + controlSize.y - area.y;
 		}
 		if (controlOrigin.y < y ) {
 			 y = controlOrigin.y;
