@@ -13,9 +13,12 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -53,6 +56,7 @@ public class CommitWizard extends ResizableWizard {
         private Map fModesForNamesForOneTime;
         
         private IResource[] fNewResources;
+		private IJobChangeListener jobListener;
         
         private AddAndCommitOperation(IWorkbenchPart part, IResource[] allResources, String comment) {
             super(part);
@@ -94,6 +98,32 @@ public class CommitWizard extends ResizableWizard {
         protected String getTaskName() {
             return Policy.bind("CommitWizard.1"); //$NON-NLS-1$
         }
+
+        /*
+         * Set the job listener. It will only recieve scheduled and done
+         * events as these are what are used by a sync model operation
+         * to show busy state in the sync view.
+         */
+		protected void setJobChangeListener(IJobChangeListener jobListener) {
+			this.jobListener = jobListener;
+		}
+		
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void done(IJobChangeEvent event) {
+			super.done(event);
+			jobListener.done(event);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+		 */
+		public void scheduled(IJobChangeEvent event) {
+			super.scheduled(event);
+			jobListener.scheduled(event);
+		}
     }
     
     private final IResource[] fResources;
@@ -103,6 +133,7 @@ public class CommitWizard extends ResizableWizard {
     
     private CommitWizardFileTypePage fFileTypePage;
     private CommitWizardCommitPage fCommitPage;
+	private IJobChangeListener jobListener;
     
     public CommitWizard(SyncInfoSet infos) throws CVSException {
         this(infos.getResources());
@@ -122,6 +153,11 @@ public class CommitWizard extends ResizableWizard {
         fOutOfSyncInfos= new SyncInfoSet(infos.getNodes(new FastSyncInfoFilter.SyncInfoDirectionFilter(new int [] { SyncInfo.OUTGOING, SyncInfo.CONFLICTING })));
         fUnaddedInfos= getUnaddedInfos(fOutOfSyncInfos);
     }
+
+	public CommitWizard(SyncInfoSet infos, IJobChangeListener jobListener) throws CVSException {
+		this(infos);
+		this.jobListener = jobListener;
+	}
 
 	private SyncInfoSet getAllOutOfSync() throws CVSException {
 		final SubscriberSyncInfoCollector syncInfoCollector = fParticipant.getSubscriberSyncInfoCollector();
@@ -182,6 +218,8 @@ public class CommitWizard extends ResizableWizard {
         }
         
         final AddAndCommitOperation operation= new AddAndCommitOperation(getPart(), infos.getResources(), comment);
+        if (jobListener != null)
+        	operation.setJobChangeListener(jobListener);
         
         if (fFileTypePage != null) {
             final Map extensionsToSave= new HashMap();
@@ -244,9 +282,9 @@ public class CommitWizard extends ResizableWizard {
 		}
     }
     
-    public static void run(Shell shell, SyncInfoSet infos) throws CVSException {
+    public static void run(Shell shell, SyncInfoSet infos, IJobChangeListener jobListener) throws CVSException {
         try {
-			run(shell, new CommitWizard(infos));
+			run(shell, new CommitWizard(infos, jobListener));
 		} catch (OperationCanceledException e) {
 			// Ignore
 		}

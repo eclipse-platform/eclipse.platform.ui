@@ -54,7 +54,9 @@ public class WorkspaceCommitAction extends CVSParticipantAction {
         final SyncInfoSet set = getSyncInfoSet();
         final Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
         try {
-            CommitWizard.run(shell, set);
+        	// Include the subscriber operation as a job listener so that the busy feedback for the 
+        	// commit will appear in the synchronize view
+            CommitWizard.run(shell, set, getSubscriberOperation(getConfiguration(), getFilteredDiffElements()));
         } catch (CVSException e) {
             CVSUIPlugin.log(e);
         }
