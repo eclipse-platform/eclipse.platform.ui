@@ -1010,8 +1010,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		x+= rightTextWidth;
 			
 		if (fSynchronizedScrolling) {
-			if (fRightCanvas != null)	// canvas is to the right of the text
+			if (fRightCanvas != null) {	// canvas is to the right of the text
 				fRightCanvas.setBounds(x, y, fMarginWidth, height-scrollbarHeight);
+				x+= fMarginWidth;
+			}
 			if (fScrollCanvas != null)
 				fScrollCanvas.setBounds(x, y, scrollbarWidth, height-scrollbarHeight);
 		}
