@@ -23,8 +23,10 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -35,6 +37,11 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * the UI to not refresh during fast evaluations and steps.
 	 */
 	private ThreadTimer fThreadTimer= new ThreadTimer();
+	
+	/**
+	 * Cache of the last top stack frame
+	 */
+	private IStackFrame fLastStackFrame = null;
 	
 	/**
 	 * Constructs an event handler for the given launch view.
@@ -189,10 +196,29 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		if (!thread.isSuspended()) {
 			return;
 		}
+
+		// if the top frame is the same, only update labels, and re-select
+		// the frame to display source
+		try {
+			IStackFrame frame = thread.getTopStackFrame();
+			if (frame != null && frame.equals(fLastStackFrame)) {
+				getLaunchViewer().update(new Object[]{thread, frame}, new String[] {IBasicPropertyConstants.P_IMAGE, IBasicPropertyConstants.P_TEXT});
+				getLaunchViewer().setSelection(new StructuredSelection(frame));
+				return;
+			}
+		} catch (DebugException e) {
+		}
+		
 		// Auto-expand the thread. Only select the thread if this wasn't the end
-		// of an evaluation
+		// of an evaluation		
 		boolean evaluationEvent = event.isEvaluation();
 		getLaunchView().autoExpand(thread, true, !evaluationEvent);
+		
+		try {
+			fLastStackFrame = thread.getTopStackFrame();
+		} catch (DebugException e) {
+			fLastStackFrame = null;
+		}
 	}
 	
 	/**
