@@ -57,11 +57,7 @@ public interface IPathVariableManager {
 	 * currently defined and the given value is <code>null</code>, or if it is
 	 * defined but the given value is equal to its current value.
 	 * </li>
-	 * 
-	 * <li>a <code>CoreException</code> will be thrown, if this method fails.
-	 * </li>
 	 * </ul>
-	 * </p>
 	 * <p>If a variable is effectively changed, created or removed by a call to
 	 * this method, notification will be sent to all registered listeners.</p>
 	 * 
@@ -114,13 +110,13 @@ public interface IPathVariableManager {
 
 	/**
 	 * Resolves a relative <code>IPath</code> object potentially containing a
-	 * variable   reference as its first segment, replacing the variable
-	 * reference (if any) with the variable's value (which is a concrete
-	 * absolute path). If the given path is absolute or has a non-
-	 * <code>null</code> device then no variable substitution is done and that
-	 * path is returned as is.  If the given path is relative and has a
-	 * <code>null</code> device, but the first segment does not correspond to a
-	 * defined variable, then the path is returned as is.
+	 * variable reference as its first segment, replacing the variable reference
+	 * (if any) with the variable's value (which is a concrete absolute path).
+	 * If the given path is absolute or has a non- <code>null</code> device then
+	 * no variable substitution is done and that path is returned as is.  If the
+	 * given path is relative and has a <code>null</code> device, but the first
+	 * segment does not correspond to a defined variable, then the path is
+	 * returned as is.
 	 * <p>
 	 * If the given path is <code>null</code> then <code>null</code> will be
 	 * returned.  In all other cases the result will be non-<code>null</code>.
@@ -171,5 +167,4 @@ public interface IPathVariableManager {
 	 * @see IStatus#OK
 	 */
 	public IStatus validateName(String name);
-
 }

@@ -75,14 +75,13 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 			createVariable(varName, newValue);
 	}
 	/**
-	 * Throws a runtime exception if the given name is not valid as a path
-	 * variable value.
+	 * Throws an exception if the given path is not valid as a path variable
+	 * value.
 	 */
 	private void checkIsValidValue(IPath newValue) throws CoreException {
 		if (newValue == null || newValue.isAbsolute())
 			return;
-		IStatus status = new ResourceStatus(ResourceStatus.INVALID_VALUE, Policy.bind("pathvar.invalidValue")); //$NON-NLS-1$
-		throw new CoreException(status);
+		throw new ResourceException(ResourceStatus.INVALID_VALUE, null, Policy.bind("pathvar.invalidValue"), null); //$NON-NLS-1$
 	}
 	/**
 	 * Return a key to use in the Preferences.
