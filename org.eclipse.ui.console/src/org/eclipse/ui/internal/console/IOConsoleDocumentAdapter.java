@@ -283,7 +283,12 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
         Matcher matcher = pattern.matcher(string);
         int count = 0;
         while(matcher.find()) {
-            count++;
+            if (consoleWidth > 0) {
+                String line = matcher.group();
+                count += (line.length() / consoleWidth) + 1;
+            } else {
+                count++;
+            }
         }
         return count;
     }
