@@ -60,13 +60,13 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 				// we will create the correct property descriptor
 				for (Iterator iter = attributesWithoutDescriptors.iterator(); iter.hasNext();) {
 					String name = (String) iter.next();
-					Object value = marker.getAttribute(name);
 					PropertyDescriptor desc = new PropertyDescriptor(name, name);
 					desc.setCategory("undeclared attributes");
 					descriptorList.add(desc);
 				}
 			}
 		} catch (CoreException e) {
+			// ignore
 		}
 	}
 
@@ -77,6 +77,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 				descriptorList.add(persistentDescriptor);
 			}
 		} catch (CoreException e) {
+			// ignore
 		}
 		for (Iterator iter = anInfo.declaredAttributes.iterator(); iter.hasNext();) {
 			String attr = (String) iter.next();
