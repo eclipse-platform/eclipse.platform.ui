@@ -59,7 +59,7 @@
       </perspectiveExtension>
    </extension>
    <extension
-         point="org.eclipse.ui.importWizards">
+         point="org.eclipse.ui.ide.importWizards">
       <wizard
             name="%ImportWizards.FileSystem"
             icon="icons/full/ctool16/importdir_wiz.gif"
@@ -95,7 +95,7 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.ui.exportWizards">
+         point="org.eclipse.ui.ide.exportWizards">
       <wizard
             name="%ExportWizards.FileSystem"
             icon="icons/full/ctool16/exportdir_wiz.gif"
@@ -122,7 +122,7 @@
       </wizard>
    </extension>
    <extension
-         point="org.eclipse.ui.markerImageProviders">
+         point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             markertype="org.eclipse.core.resources.taskmarker"
             icon="icons/full/cview16/tasks_tsk.gif"
@@ -135,7 +135,7 @@
       </imageprovider>
    </extension>
    <extension
-         point="org.eclipse.ui.newWizards">
+         point="org.eclipse.ui.ide.newWizards">
       <category
             name="%NewWizards.Category.Examples"
             id="org.eclipse.ui.Examples">
