@@ -25,7 +25,7 @@ public abstract class InternalWorkspaceJob extends Job {
 		super(name);
 		this.workspace = (Workspace) ResourcesPlugin.getWorkspace();
 	}
-	public IStatus run(IProgressMonitor monitor) {
+	public final IStatus run(IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(null, Policy.totalWork);
