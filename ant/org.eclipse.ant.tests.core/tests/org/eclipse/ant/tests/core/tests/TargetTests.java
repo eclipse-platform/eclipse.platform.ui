@@ -67,7 +67,7 @@ public class TargetTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Runs an Ant script and ensure that the build file location is logged
+	 * Runs an Ant build and ensure that the build file location is logged
 	 */
 	public void testRunScript() throws CoreException {
 		run("TestForEcho.xml");

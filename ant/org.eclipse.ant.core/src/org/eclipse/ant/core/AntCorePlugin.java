@@ -37,7 +37,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	private AntCorePreferences preferences;
 	
 	/**
-	 * The cached class loader to use when executing Ant scripts	 */
+	 * The cached class loader to use when executing Ant builds	 */
 	private ClassLoader classLoader;
 
 	/**
@@ -177,7 +177,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	}
 	
 	/**
-	 * Returns the cached class loader to use when executing Ant scripts.
+	 * Returns the cached class loader to use when executing Ant builds.
 	 * 	 * @return the cached class loader	 */
 	protected ClassLoader getClassLoader() {
 		if (classLoader == null) {
@@ -188,7 +188,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	}
 	
 	/**
-	 * Returns a new class loader to use when executing Ant scripts.
+	 * Returns a new class loader to use when executing Ant builds.
 	 * 
 	 * @return the new class loader
 	 */

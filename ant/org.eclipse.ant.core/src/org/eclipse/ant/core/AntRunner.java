@@ -21,7 +21,7 @@ import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
 
 /**
- * Entry point for running Ant scripts inside Eclipse.
+ * Entry point for running Ant builds inside Eclipse.
  */
 public class AntRunner implements IPlatformRunnable {
 
