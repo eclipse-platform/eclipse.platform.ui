@@ -139,8 +139,11 @@ public class WWinPluginAction extends PluginAction
 	 */
 	public void dispose() {
 		removeFromActionList(this);
-		if (retargetAction != null)
+		if (retargetAction != null) {
 			window.getPartService().removePartListener(retargetAction);
+			retargetAction.dispose();
+			retargetAction = null;
+		}
 		window.getSelectionService().removeSelectionListener(this);
 		if (getDelegate() instanceof IWorkbenchWindowActionDelegate) {
 			IWorkbenchWindowActionDelegate winDelegate =

@@ -18,6 +18,13 @@ import org.eclipse.swt.widgets.Event;
  * handler for the ID the enable state of the RetargetAction is determined
  * from the enable state of the handler.  If the active part does not 
  * provide an action handler then this action is disabled.
+ * </p>
+ * <p>
+ * Note: instances of this class add themselves as listeners to their
+ * action handler. It is important for the creator of a retarget action to call
+ * dispose when the action is no longer needed. This will ensure that the 
+ * listener is removed.
+ * </p>
  * <p>
  * This class may be instantiated. It is not intented to be subclassed.
  * </p>
@@ -60,6 +67,18 @@ public RetargetAction(String actionID, String label) {
 		}
 	});
 }
+/**
+ * Disposes of the action and any resources held.
+ * 
+ * @since 2.0
+ */
+public void dispose() {
+	if (handler != null) {
+		handler.removePropertyChangeListener(propertyChangeListener);
+		handler = null;
+	}
+}
+
 /**
  * Enables the accelerator for this action. 
  *
