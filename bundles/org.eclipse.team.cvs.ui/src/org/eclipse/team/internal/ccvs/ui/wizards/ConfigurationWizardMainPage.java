@@ -550,7 +550,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	}
 	
 	public static final int REQUIRED_FIELD = 1;
-	public static final int INVALID_FIELD_CONTENTS = 1;
+	public static final int INVALID_FIELD_CONTENTS = 2;
 	public static final IStatus validateUserName(String user) {
 		if (user.length() == 0) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.1"), null); //$NON-NLS-1$
@@ -568,6 +568,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (host.indexOf(':') != -1) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
 					Policy.bind("ConfigurationWizardMainPage.invalidHostName"), null); //$NON-NLS-1$
+		}
+		if (host.startsWith(" ") || host.endsWith(" ")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
+					Policy.bind("ConfigurationWizardMainPage.0"), null); //$NON-NLS-1$
 		}
 		return Status.OK_STATUS;
 	}
