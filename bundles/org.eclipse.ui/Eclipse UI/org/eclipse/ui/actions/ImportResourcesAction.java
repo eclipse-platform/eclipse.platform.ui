@@ -59,31 +59,13 @@ protected boolean updateSelection(IStructuredSelection selection) {
 		return selection.size() == 0;
 	} 
 	
-	Iterator iterator = getSelectedResources().iterator();
-	boolean hasFile = false;
-	List projects = new ArrayList();
+	//We know there is only one selection
+	IResource resource = (IResource) getSelectedResources().get(0);
 	
-	while(iterator.hasNext()){
-		IResource resource = (IResource) iterator.next();
-		if(resource.getType() == IResource.PROJECT){
-			projects.add(resource);
-			break;
-		}
+	if(resource.getType() == IResource.FILE)
+		return false;
 		
-		if(resource.getType() == IResource.FOLDER)
-			break;
-		hasFile = true;
-	}
-	
-	if(hasFile)
-		return false;
-	 
-	if (projects.isEmpty()) {
-		return false;
-	}
-
-	IProject project = (IProject)projects.get(0);
-	return(project.isOpen());
+	return(resource.getProject().isOpen());
 }
 
 

@@ -13,6 +13,8 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -214,6 +216,21 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			}
 			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			}
+		});
+		
+		//Listen for the selection changing and update the
+		//actions that are interested
+		window.getSelectionService().addSelectionListener(new ISelectionListener(){
+			/*
+			 * @see ISelectionListener.selectionChanges
+			 */
+			public void selectionChanged(IWorkbenchPart part, ISelection selection){
+				if(selection instanceof IStructuredSelection){
+					IStructuredSelection structured = (IStructuredSelection) selection;
+					importResourcesAction.selectionChanged(structured);
+					exportResourcesAction.selectionChanged(structured);
+				}				
+			}				
 		});
 	}
 
