@@ -66,6 +66,7 @@ public class ConfigurationView
 	private SiteStateAction siteStateAction;
 	private Action installationHistoryAction;
 	private Action newExtensionLocationAction;
+	private Action detectedChangesAction;
 	private FindUpdatesAction findUpdatesAction;
 	private SashForm splitter;
 	private ConfigurationPreview preview;
@@ -478,6 +479,9 @@ public class ConfigurationView
 			new NewExtensionLocationAction(
 				UpdateUI.getString("ConfigurationView.extLocation"), //$NON-NLS-1$
 				UpdateUIImages.DESC_ESITE_OBJ);
+
+		detectedChangesAction = new DetectedChangesAction(UpdateUI.getString("ConfigurationView.detectedChanges")); //$NON-NLS-1$
+		
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUI.getActiveWorkbenchShell(),
@@ -599,6 +603,7 @@ public class ConfigurationView
 		if (obj instanceof ILocalSite) {
 			manager.add(revertAction);
 			manager.add(findUpdatesAction);
+			manager.add(detectedChangesAction);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(siteStateAction);
 		}
@@ -967,6 +972,7 @@ public class ConfigurationView
 			propertiesAction.setEnabled(true);
 			findUpdatesAction.setEnabled(true);
 			findUpdatesAction.setFeature(null);
+			detectedChangesAction.setEnabled(UpdateUtils.getSessionDeltas().length > 0);
 			ILocalSite site = getLocalSite();
 			revertAction.setEnabled(site != null && site.getConfigurationHistory().length > 1);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
@@ -997,6 +1003,11 @@ public class ConfigurationView
 				UpdateUI.getString("ConfigurationView.updateLabel"), //$NON-NLS-1$
 				UpdateUI.getString("ConfigurationView.updateDesc"), //$NON-NLS-1$
 				findUpdatesAction));
+		array.add(
+			new PreviewTask(
+				UpdateUI.getString("ConfigurationView.detectedLabel"), //$NON-NLS-1$
+				UpdateUI.getString("ConfigurationView.detectedDesc"), //$NON-NLS-1$
+				detectedChangesAction));
 		array.add(
 			new PreviewTask(
 				UpdateUI.getString("ConfigurationView.linkLabel"), //$NON-NLS-1$

@@ -40,19 +40,17 @@
             <separator
                   name="group1">
             </separator>
-            <separator
-                  name="group2">
-            </separator>
          </menu>
          <action
-               label="%actionSets.pendingChanges.label"
-               helpContextId="org.eclipse.update.ui.pendingChanges"
-               class="org.eclipse.update.internal.ui.DeltaWizardAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
-               id="org.eclipse.update.ui.pendingChanges">
+               label="%actionSets.configManager.label"
+               icon="icons/full/eview16/configs.gif"
+               helpContextId="org.eclipse.update.ui.newUpdates"
+               class="org.eclipse.update.internal.ui.ConfigurationManagerAction"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
+               id="org.eclipse.update.ui.configManager">
          </action>
          <action
-               label="%actionSets.unifiedUpdates.label"
+               label="%actionSets.updates.label"
                icon="icons/full/obj16/usearch_obj.gif"
                helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.update.internal.ui.InstallWizardAction"
@@ -60,19 +58,11 @@
                id="org.eclipse.update.ui.newUpdates">
          </action>
          <action
-               label="%actionSets.configManager.label"
-               icon="icons/full/eview16/configs.gif"
-               helpContextId="org.eclipse.update.ui.newUpdates"
-               class="org.eclipse.update.internal.ui.ConfigurationManagerAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
-               id="org.eclipse.update.ui.configManager">
-         </action>
-         <action
                label="%actionSets.webSites.label"
                style="pulldown"
                icon="icons/full/obj16/web_bkmrk_obj.gif"
                class="org.eclipse.update.internal.ui.UpdateWebSitesAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
                id="org.eclipse.update.ui.updateWebSites">
          </action>
       </actionSet>
