@@ -26,8 +26,8 @@
 # spread out over the entire source repository.
 
 # Block access to CVS hogs
-world		-a denied___checkout_of_world_takes_too_long
-.		-a denied___checkout_of_world_takes_too_long
+#world		-a denied___checkout_of_world_takes_too_long
+#.		-a denied___checkout_of_world_takes_too_long
 
 # self referencing modules
 project1 project1
@@ -60,3 +60,6 @@ project6 &project6-dirA &project6-dirB
 project7-common -a project7/common
 project7-pc -a project7-common project7/pc
 project7-linux -a project7-common project7/linux
+
+# simple use of module alias
+project8-alias -a project8 common

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 
 /**
@@ -103,8 +104,8 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 		} else {
 			mode = "";
 		}
-		sendFile(mFile,false,mode);
-		
+		boolean binary = mode != null && mode.indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
+		session.sendModified(mFile, binary, monitor);
 	}
 
 	/**

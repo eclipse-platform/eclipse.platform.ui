@@ -31,6 +31,7 @@ public interface ICVSUIConstants {
 	public final String PREF_PRUNE_EMPTY_DIRECTORIES = "pref_prune_empty_directories";	
 	public final String PREF_TIMEOUT = "pref_timeout";	
 	public final String PREF_QUIETNESS = "pref_quietness";
+	public final String PREF_SHOW_MODULES = "pref_show_modules";
 	
 	// decorator preferences
 	public final String PREF_FILETEXT_DECORATION = "pref_filetext_decoration";

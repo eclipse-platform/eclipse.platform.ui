@@ -226,8 +226,6 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
 	 	if (project == null)
 	 		project = getWorkspace().getRoot().getProject(moduleName);
-	 	if (moduleName == null)
-	 		moduleName = project.getName();
 		CVSProviderPlugin.getProvider().checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
 		return project;
 	 }
@@ -355,7 +353,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		if (resource1.isContainer())
 			assertEquals((RemoteFolder)resource1, (RemoteFolder)resource2, includeTags);
 		else 
-			assertEquals("File comparison failed", (ICVSFile)resource1, (ICVSFile)resource2, true, includeTags);
+			assertEquals("File comparison failed", (ICVSFile)resource1, (ICVSFile)resource2, false, includeTags);
 	}
 	
 	

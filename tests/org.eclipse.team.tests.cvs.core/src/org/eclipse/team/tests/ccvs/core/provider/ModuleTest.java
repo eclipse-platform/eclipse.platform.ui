@@ -47,7 +47,7 @@ public class ModuleTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ModuleTest.class);
 		//return new CVSTestSetup(suite);
-		return new CVSTestSetup(new ModuleTest("testSelfReferencingModule"));
+		return new CVSTestSetup(new ModuleTest("testSimpleAlias"));
 	}
 	
 	private static boolean isSetUp = false;
@@ -80,7 +80,7 @@ public class ModuleTest extends EclipseTest {
 		
 		uploadProject("common");
 		
-		remoteModules = getRemoteModules();
+		remoteModules = RemoteModule.getRemoteModules(getRepository(), null, DEFAULT_MONITOR);
 		
 		isSetUp = true;
 	}
@@ -110,13 +110,16 @@ public class ModuleTest extends EclipseTest {
 		}
 	}
 	
-	// Commit the project on checkout to ensure that the .vcm_meta is created
-	// XXX Temporary measure!!!
-	protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
-		project = super.checkoutProject(project, moduleName, tag);
-		getProvider(project).add(new IResource[] {project.getFile(".vcm_meta")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		waitMsec(1000);
-		commitProject(project);
+	// XXX Temporary method of checkout (i.e. with vcm_meta
+	protected IProject checkoutProject(String projectName, CVSTag tag) throws TeamException {
+		IProject project = super.checkoutProject(getWorkspace().getRoot().getProject(projectName), null, tag);
+		ICVSFolder parent = (ICVSFolder)Session.getManagedResource(project);
+		ICVSResource vcmmeta = Session.getManagedResource(project.getFile(".vcm_meta"));
+		if ( ! vcmmeta.isManaged() && ! parent.getFolderSyncInfo().getIsStatic()) {
+			getProvider(project).add(new IResource[] {project.getFile(".vcm_meta")}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+			waitMsec(1000);
+			commitProject(project);
+		}
 		return project;
 	}
 	
@@ -139,7 +142,7 @@ public class ModuleTest extends EclipseTest {
 	 */
 	public void testSelfReferencingModule() throws TeamException, CoreException, IOException {
 		uploadProject("project1");
-		IProject project1 = checkoutProject(null, "project1", null);
+		IProject project1 = checkoutProject("project1", null);
 		IRemoteSyncElement tree = getProvider(project1).getRemoteSyncTree(project1, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertEquals("Local does not match remote", Session.getManagedResource(project1), (ICVSResource)tree.getRemote(), false, false);
 		RemoteModule module = getRemoteModule("project1");
@@ -155,18 +158,17 @@ public class ModuleTest extends EclipseTest {
 	 */
 	public void testFlattenedStructure() throws TeamException, CoreException, IOException {
 		
-		IProject docs = checkoutProject(null, "docs", null);
+		IProject docs = checkoutProject("docs", null);
 		IRemoteSyncElement tree = getProvider(docs).getRemoteSyncTree(docs, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertEquals("Local does not match remote", Session.getManagedResource(docs), (ICVSResource)tree.getRemote(), false, false);
 		RemoteModule module = getRemoteModule("docs");
-		assertEquals("Local does not match module", Session.getManagedResource(docs), module, false, false);
-
+		assertEquals((RemoteFolder)tree.getRemote(), module, false);
 		
-		IProject macros = checkoutProject(null, "macros", null);
+		IProject macros = checkoutProject("macros", null);
 		tree = getProvider(macros).getRemoteSyncTree(macros, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertEquals("Local does not match remote", Session.getManagedResource(macros), (ICVSResource)tree.getRemote(), false, false);
 		module = getRemoteModule("macros");
-		assertEquals("Local does not match module", Session.getManagedResource(macros), module, false, false);
+		assertEquals((RemoteFolder)tree.getRemote(), module, false);
 
 	}
 	
@@ -180,19 +182,19 @@ public class ModuleTest extends EclipseTest {
 	 */
 	public void testIncludeAndExcludeDocs() throws TeamException, CoreException, IOException {
 		uploadProject("project2");
-		IProject project2 = checkoutProject(null, "project2", null);
+		IProject project2 = checkoutProject("project2", null);
 		IRemoteSyncElement tree = getProvider(project2).getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertEquals("Local does not match remote", Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
 
 		RemoteModule module = getRemoteModule("project2");
-		assertEquals("Local does not match module", Session.getManagedResource(project2), module, false, false);
+		assertEquals((RemoteFolder)tree.getRemote(), module, false);
 
-		project2 = checkoutProject(null, "project2-only", null);
+		project2 = checkoutProject("project2-only", null);
 		tree = getProvider(project2).getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertEquals("Local does not match remote", Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
 
 		module = getRemoteModule("project2-only");
-		assertEquals("Local does not match module", Session.getManagedResource(project2), module, false, false);
+		assertEquals((RemoteFolder)tree.getRemote(), module, false);
 
 	}
 	
@@ -206,15 +208,15 @@ public class ModuleTest extends EclipseTest {
 	 */
 	public void testAliasForFiles() throws TeamException, CoreException, IOException {
 		uploadProject("project3");
-		IProject project3 = checkoutProject(null, "project3-sub", null);
+		IProject project3 = checkoutProject("project3-sub", null);
 		IRemoteSyncElement tree = getProvider(project3).getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
 
-		project3 = checkoutProject(null, "project3-src", null);
+		project3 = checkoutProject("project3-src", null);
 		tree = getProvider(project3).getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
 
-		project3 = checkoutProject(null, "project3-src_file", null);
+		project3 = checkoutProject("project3-src_file", null);
 		tree = getProvider(project3).getRemoteSyncTree(project3, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project3), (ICVSResource)tree.getRemote(), false, false);
 	}
@@ -229,31 +231,33 @@ public class ModuleTest extends EclipseTest {
 	 */
 	public void testAliases() throws TeamException, CoreException, IOException {
 		uploadProject("project7");
-		IProject project7 = checkoutProject(null, "project7-common", null);
+		IProject project7 = checkoutProject("project7-common", null);
 		IRemoteSyncElement tree = getProvider(project7).getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
 
-		project7 = checkoutProject(null, "project7-pc", null);
+		project7 = checkoutProject("project7-pc", null);
 		tree = getProvider(project7).getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
 
-		project7 = checkoutProject(null, "project7-linux", null);
+		project7 = checkoutProject("project7-linux", null);
 		tree = getProvider(project7).getRemoteSyncTree(project7, CVSTag.DEFAULT, DEFAULT_MONITOR);
 //		assertEquals("Local does not match remote", Session.getManagedResource(project7), (ICVSResource)tree.getRemote(), false, false);
 	}
 	
-	public RemoteModule[] getRemoteModules() throws TeamException {
+
+	/*
+	 * Test the following definition
+	 * 
+	 * # simple use of module alias
+	 * project8-alias -a project8 common
+	 */
+	public void testSimpleAlias() throws TeamException, CoreException, IOException {
+		uploadProject("project8");
 		
-		RemoteModule[] modules;
-		Session s = new Session(getRepository(), (ICVSFolder)Session.getManagedResource(ResourcesPlugin.getWorkspace().getRoot()));
-		s.open(DEFAULT_MONITOR);
-		try {
-			modules = Command.CHECKOUT.getRemoteModules(s, null, DEFAULT_MONITOR);
-		} finally {
-			s.close();
-		}
+		// XXX Module checkout will not work yet
+		// IProject project8 = checkoutProject("project8-alias", null);
 		
-		return modules;
+		RemoteModule module = getRemoteModule("project8-alias");
 	}
 	
 	public RemoteModule getRemoteModule(String moduleName) {

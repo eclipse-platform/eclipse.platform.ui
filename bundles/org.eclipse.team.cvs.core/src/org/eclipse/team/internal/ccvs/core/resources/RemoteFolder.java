@@ -354,6 +354,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 
 	}
 
+	public LocalOption[] getLocalOptions() {
+		return Command.NO_LOCAL_OPTIONS;
+	}
+	
 	protected String getLocalPath() {
 		throw new UnsupportedOperationException();
 	}

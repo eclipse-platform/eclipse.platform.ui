@@ -153,6 +153,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_MODULES, false);
 		
 		store.setDefault(ICVSUIConstants.PREF_FILETEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FILETEXTFORMAT);
 		store.setDefault(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION, CVSDecoratorConfiguration.DEFAULT_FOLDERTEXTFORMAT);
@@ -174,6 +175,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setQuietness(CVSPreferencesPage.getQuietnessOptionFor(store.getInt(ICVSUIConstants.PREF_QUIETNESS)));
 	}
 
+	public boolean isModulesEnabled() {
+		return getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_MODULES);
+	}
 	/**
 	 * @see Plugin#startup()
 	 */

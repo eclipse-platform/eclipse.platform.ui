@@ -56,7 +56,7 @@ public class BranchTag extends CVSModelElement implements IAdaptable {
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 			public void run() {
 				try {
-					result[0] = root.members(tag, new NullProgressMonitor());
+					result[0] = root.members(tag, CVSUIPlugin.getPlugin().isModulesEnabled(), new NullProgressMonitor());
 				} catch (TeamException e) {
 					handle(e);
 				}

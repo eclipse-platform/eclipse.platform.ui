@@ -94,11 +94,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	public RemoteFile(RemoteFolder parent, String name, String revision, CVSTag tag) {
-		this(parent, new ResourceSyncInfo(name, revision, "dummy", CVSProvider.isText(name)?"":"-kb", tag, "u=rw,g=rw,o=rw"));
-		// XXX the keyword type of this remote file must be set correctly or else the 
-		// getContents may mangle the file.
-		// XXX Will leaving the keyword mode blank result in the proper behavior when getting the contents
-		// of a binary file?
+		this(parent, new ResourceSyncInfo(name, revision, "dummy", "", tag, "u=rw,g=rw,o=rw"));
+		// A blank keyword mode will use the type provided by the server to transfer the file contents
 	}
 	
 	public RemoteFile(RemoteFolder parent, ResourceSyncInfo info) {

@@ -5,8 +5,7 @@ package org.eclipse.team.ccvs.core;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
  /**
   * This interface represents a remote folder in a repository. It provides
@@ -29,4 +28,13 @@ public interface ICVSRemoteFolder extends ICVSRemoteResource {
 	 * version tag.
 	 */
 	public CVSTag getTag();
+	
+	/**
+	 * Return the local options that are used to determine how memebers are retrieved.
+	 * 
+	 * Interesting options are:
+	 *     Checkout.ALIAS
+	 *     Command.DO_NOT_RECURSE
+	 */
+	public LocalOption[] getLocalOptions();
 }

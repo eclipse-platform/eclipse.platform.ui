@@ -51,7 +51,7 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
 			public void run() {
 				try {
-					ICVSRemoteResource[] resources = repository.members(CVSTag.DEFAULT, new NullProgressMonitor());
+					ICVSRemoteResource[] resources = repository.members(CVSTag.DEFAULT, CVSUIPlugin.getPlugin().isModulesEnabled(), new NullProgressMonitor());
 					Object[] modules = new Object[resources.length];
 					for (int i = 0; i < resources.length; i++) {
 						modules[i] = new RemoteModule((ICVSRemoteFolder)resources[i], VersionCategory.this);

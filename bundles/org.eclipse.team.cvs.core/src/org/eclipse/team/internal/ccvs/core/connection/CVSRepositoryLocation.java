@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 
 /**
  * This class manages a CVS repository location.
@@ -179,10 +180,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/*
 	 * @see ICVSRepositoryLocation#getRemoteFolder(IPath, String)
 	 */
-	public ICVSRemoteResource[] members(CVSTag tag, IProgressMonitor progress) throws CVSException {		
+	public ICVSRemoteResource[] members(CVSTag tag, boolean modules, IProgressMonitor progress) throws CVSException {		
 		try {
-			RemoteFolder root = new RemoteFolder(null, this, Path.EMPTY, tag);
-			return (ICVSRemoteResource[])root.members(progress);
+			if (modules) {
+				return RemoteModule.getRemoteModules(this, tag, progress);
+			} else {
+				RemoteFolder root = new RemoteFolder(null, this, Path.EMPTY, tag);
+				return (ICVSRemoteResource[])root.members(progress);
+			}
 		} catch(TeamException e) {
 			throw new CVSException(e.getStatus());
 		}

@@ -58,9 +58,12 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * Returns the immediate children of this location. If tag is <code>null</code> the
 	 * HEAD branch is assumed.
 	 * 
+	 * If modules is true, then the module definitions from the CVSROOT/modules file are returned.
+	 * Otherwise, the root level projects are returned.
+	 * 
 	 * @param tag the context in which to return the members (e.g. branch or version).
 	 */
-	public ICVSRemoteResource[] members(CVSTag tag, IProgressMonitor progress)  throws CVSException;
+	public ICVSRemoteResource[] members(CVSTag tag, boolean modules, IProgressMonitor progress)  throws CVSException;
 	
 	/**
 	 * Returns a handle to a remote folder at this repository location using the given tag as the
