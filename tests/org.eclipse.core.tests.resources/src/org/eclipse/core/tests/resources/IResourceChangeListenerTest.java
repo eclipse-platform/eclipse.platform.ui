@@ -454,6 +454,75 @@ public void testMoveFile() {
 		handleCoreException(e);
 	}
 }
+public void testModifyMoveFile() {
+	try {
+		verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, file3.getFullPath());
+		verifier.addExpectedChange(file3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM | IResourceDelta.CONTENT, file1.getFullPath());
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor m) throws CoreException {
+				m.beginTask("Creating and moving", 100);
+				try {
+					folder2.create(true, true, new SubProgressMonitor(m, 50));
+					file1.setContents(getRandomContents(), IResource.NONE, getMonitor());
+					file1.move(file3.getFullPath(), true, new SubProgressMonitor(m, 50));
+				} finally {
+					m.done();
+				}
+			}
+		}
+		, getMonitor());
+		assertDelta();
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+}
+public void testMoveFileAddMarker() {
+	try {
+		verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, file3.getFullPath());
+		verifier.addExpectedChange(file3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM | IResourceDelta.MARKERS, file1.getFullPath());
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor m) throws CoreException {
+				m.beginTask("Creating and moving", 100);
+				try {
+					folder2.create(true, true, new SubProgressMonitor(m, 50));
+					file1.move(file3.getFullPath(), true, new SubProgressMonitor(m, 50));
+					file3.createMarker(IMarker.TASK);
+				} finally {
+					m.done();
+				}
+			}
+		}
+		, getMonitor());
+		assertDelta();
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+}
+public void testMoveModifyFile() {
+	try {
+		verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(file1, IResourceDelta.REMOVED, IResourceDelta.MOVED_TO, file3.getFullPath());
+		verifier.addExpectedChange(file3, IResourceDelta.ADDED, IResourceDelta.MOVED_FROM | IResourceDelta.CONTENT, file1.getFullPath());
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor m) throws CoreException {
+				m.beginTask("Creating and moving", 100);
+				try {
+					folder2.create(true, true, new SubProgressMonitor(m, 50));
+					file1.move(file3.getFullPath(), true, new SubProgressMonitor(m, 50));
+					file3.setContents(getRandomContents(), IResource.NONE, getMonitor());
+				} finally {
+					m.done();
+				}
+			}
+		}
+		, getMonitor());
+		assertDelta();
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+}
 public void testRemoveFile() {
 	try {
 		verifier.addExpectedChange(file1, IResourceDelta.REMOVED, 0);
