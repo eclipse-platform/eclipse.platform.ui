@@ -212,11 +212,9 @@ public class SyncFileWriter {
 	/**
 	 * Adds a .cvsignore entry to the folder for the specified file.
 	 */
-	public static void addCVSIgnoreEntry(ICVSFolder folder, String pattern) throws CVSException {
+	public static void addCVSIgnoreEntries(ICVSFolder folder, String[] patterns) throws CVSException {
 		ICVSFile ignoreFile = folder.getFile(IGNORE_FILE);
-		if (ignoreFile != null) {
-			appendLines(ignoreFile, new String[] { pattern });
-		}
+		writeLines(ignoreFile, patterns);
 	}	
 
 	/**

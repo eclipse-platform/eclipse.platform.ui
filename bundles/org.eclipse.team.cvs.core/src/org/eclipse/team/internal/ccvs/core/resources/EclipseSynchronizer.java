@@ -147,22 +147,30 @@ public class EclipseSynchronizer {
 	}
 	
 	public void setIgnored(IContainer resource, String pattern) throws CVSException {
+		String[] ignores = getIgnored(resource);
+		String[] newIgnores = new String[ignores.length+1];
+		System.arraycopy(ignores, 0, newIgnores, 0, ignores.length);
+		newIgnores[ignores.length] = pattern;
+		setCachedFolderIgnores(resource, newIgnores);
+		SyncFileWriter.addCVSIgnoreEntries(CVSWorkspaceRoot.getCVSFolderFor(resource), newIgnores);
+		// broadcast changes to unmanaged children - they are the only candidates for being ignored
+		List possibleIgnores = new ArrayList();
+		accumulateNonManagedChildren(resource, possibleIgnores);
+		TeamPlugin.getManager().broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
+	}
+	
+	private void accumulateNonManagedChildren(IContainer folder, List possibleIgnores) throws CVSException {
 		try {
-			SyncFileWriter.addCVSIgnoreEntry(CVSWorkspaceRoot.getCVSFolderFor(resource), pattern);
-			String[] ignores = getIgnored(resource);
-			String[] newIgnores = new String[ignores.length+1];
-			System.arraycopy(ignores, 0, newIgnores, 0, ignores.length);
-			newIgnores[ignores.length] = pattern;
-			setCachedFolderIgnores(resource, newIgnores);
-			// broadcast changes to unmanaged children - they are the only candidates for being ignored
-			IResource[] children = resource.members();
-			List possibleIgnores = new ArrayList();
+			IResource[] children = folder.members();
 			for (int i = 0; i < children.length; i++) {
-				if(getCachedResourceSync(children[i])==null) {
-					possibleIgnores.add(children[i]);
+				IResource child = children[i];
+				if(getCachedResourceSync(child)==null) {
+					possibleIgnores.add(child);
+				}
+				if(child.getType()!=IResource.FILE) {
+					accumulateNonManagedChildren((IContainer)child, possibleIgnores);
 				}
 			}
-			TeamPlugin.getManager().broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
 		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
 		}

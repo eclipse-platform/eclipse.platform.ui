@@ -98,9 +98,6 @@ public class CVSDecorationRunnable implements Runnable {
 				continue;
 			}
 			
-			ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-			if (cvsResource.isIgnored()) continue;
-		
 			// determine a if resource has outgoing changes (e.g. is dirty).
 			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 			boolean isDirty = false;
@@ -109,7 +106,7 @@ public class CVSDecorationRunnable implements Runnable {
 			if(type == IResource.FILE || computeDeepDirtyCheck) {
 				isDirty = isDirty(resource);
 			}
-			
+
 			// compute decorations						
 			CVSDecoration decoration = computeTextLabelFor(resource, isDirty, provider);
 			decoration.setOverlays(computeLabelOverlaysFor(resource, isDirty, provider));
@@ -239,7 +236,11 @@ public class CVSDecorationRunnable implements Runnable {
 	private boolean isDirty(ICVSFile cvsFile) {
 		try {
 			// file is dirty or file has been merged by an update
-			return cvsFile.isModified();
+			if(!cvsFile.isIgnored()) {
+				return cvsFile.isModified();
+			} else {
+				return false;
+			} 
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty
 			CVSUIPlugin.log(e.getStatus());

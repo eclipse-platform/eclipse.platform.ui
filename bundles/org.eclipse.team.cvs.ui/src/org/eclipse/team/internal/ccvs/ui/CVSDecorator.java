@@ -8,13 +8,13 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -35,6 +34,7 @@ import org.eclipse.team.core.IResourceStateChangeListener;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 
@@ -57,8 +57,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 	private static CVSDecorator theDecorator = null;
 	
-	// Resources that need an icon and text computed for display to the user, sorted by canonical path
-	private List decoratorNeedsUpdating = new Vector();
+	// Resources that need an icon and text computed for display to the user
+	private List decoratorNeedsUpdating = new ArrayList();
 
 	// When decorations are computed they are added to this cache via decorated() method
 	private Map cache = Collections.synchronizedMap(new HashMap());
@@ -216,12 +216,17 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		for (int i = 0; i < changedResources.length; i++) {
 			// ignore subtrees that aren't associated with a provider, this can happen on import
 			// of a new project to CVS.
-			if (getCVSProviderFor(changedResources[i]) == null) {
-				noProviderResources.add(changedResources[i]);
+			IResource resource = changedResources[i];
+			if (getCVSProviderFor(resource) == null) {
+				// post a changed event but forget any cached information about this resource
+				noProviderResources.add(resource);
 			}
-			resources.addAll(computeParents(changedResources[i]));
+			resources.addAll(computeParents(resource));
 		}
+		
 		addResourcesToBeDecorated((IResource[]) resources.toArray(new IResource[resources.size()]));
+		
+		// post label events for resources that cannot or should not be decorated by CVS
 		if(!noProviderResources.isEmpty()) {
 			List events = new ArrayList();
 			for (Iterator it = resources.iterator(); it.hasNext();) {
@@ -273,8 +278,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				//System.out.println("\t to update: " + resource.getFullPath());
-				//Often we get two requests in a row for the same resource.  See if we've just queue'd it and don't add it second time.
-				if(decoratorNeedsUpdating.isEmpty() || decoratorNeedsUpdating.get(decoratorNeedsUpdating.size() - 1) != resource) {
+				if(!decoratorNeedsUpdating.contains(resource)) {
 					//System.out.println("\t adding: " + resource.getFullPath());
 					decoratorNeedsUpdating.add(resource);
 				}
