@@ -68,10 +68,6 @@ public class ProgressManager extends ProgressProvider
 	//The property for whether or not the job is running in the
 	//dialog.
 	private static final String IN_DIALOG = "inDialog"; //$NON-NLS-1$
-	
-	/**
-	 * A property to determine if the job was run in the dialog.
-	 */
 	public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
 			IProgressConstants.PROPERTY_PREFIX, IN_DIALOG);
 	private static ProgressManager singleton;
@@ -94,26 +90,20 @@ public class ProgressManager extends ProgressProvider
 	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
+	private static final String BUSY_OVERLAY = "progressspin.gif"; //$NON-NLS-1$
+	private static final String MAXIMIZE = "maximize.gif"; //$NON-NLS-1$
+	private static final String MINIMIZE = "minimize.gif"; //$NON-NLS-1$
 	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
 	private static final String PROGRESS_40_KEY = "PROGRESS_40"; //$NON-NLS-1$
 	private static final String PROGRESS_60_KEY = "PROGRESS_60"; //$NON-NLS-1$
 	private static final String PROGRESS_80_KEY = "PROGRESS_80"; //$NON-NLS-1$
 	private static final String PROGRESS_100_KEY = "PROGRESS_100"; //$NON-NLS-1$
-	
-	/**
-	 * The key for the sleeping job icon.
-	 */
 	public static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
-	/**
-	 * The key for the waiting job icon.
-	 */
 	public static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
-	
-	/**
-	 * The key for the locked job icon.
-	 */
 	public static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
-	
+	public static final String BUSY_OVERLAY_KEY = "BUSY_OVERLAY"; //$NON-NLS-1$
+	public static final String MINIMIZE_KEY = "MINIMIZE_FLOATING"; //$NON-NLS-1$
+	public static final String MAXIMIZE_KEY = "MAXIMIZE_FLOATING"; //$NON-NLS-1$
 	//A list of keys for looking up the images in the image registry
 	final static String[] keys = new String[]{PROGRESS_20_KEY, PROGRESS_40_KEY,
 			PROGRESS_60_KEY, PROGRESS_80_KEY, PROGRESS_100_KEY};
@@ -322,6 +312,9 @@ public class ProgressManager extends ProgressProvider
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
+			setUpImage(iconsRoot, BUSY_OVERLAY, BUSY_OVERLAY_KEY);
+			setUpImage(iconsRoot, MAXIMIZE, MAXIMIZE_KEY);
+			setUpImage(iconsRoot, MINIMIZE, MINIMIZE_KEY);
 			//Let the error manager set up its own icons
 			errorManager.setUpImages(iconsRoot);
 		} catch (MalformedURLException e) {
@@ -329,7 +322,9 @@ public class ProgressManager extends ProgressProvider
 		}
 	}
 	/**
-	 * Create the IJobChangeListener registered with the Job manager.
+	 * Return the IJobChangeListener registered with the Job manager.
+	 * 
+	 * @return IJobChangeListener
 	 */
 	private void createChangeListener() {
 		changeListener = new JobChangeAdapter() {
@@ -466,17 +461,13 @@ public class ProgressManager extends ProgressProvider
 	 * @return IProgressMonitor
 	 */
 	public JobMonitor progressFor(Job job) {
-		
-		synchronized (listenerKey){
-			if (runnableMonitors.containsKey(job)) {
-				return (JobMonitor) runnableMonitors.get(job);
-			}
-			
+		if (runnableMonitors.containsKey(job)) {
+			return (JobMonitor) runnableMonitors.get(job);
+		} else {
 			JobMonitor monitor = new JobMonitor(job);
 			runnableMonitors.put(job, monitor);
 			return monitor;
-		}	
-		
+		}
 	}
 	/**
 	 * Add an IJobProgressManagerListener to listen to the changes.
@@ -550,6 +541,8 @@ public class ProgressManager extends ProgressProvider
 	/**
 	 * Refresh all the IJobProgressManagerListener as a result of a change in
 	 * the whole model.
+	 * 
+	 * @param info
 	 */
 	public void refreshAll() {
 		synchronized (listenerKey) {
@@ -648,7 +641,8 @@ public class ProgressManager extends ProgressProvider
 			return true;
 		if (debug) //Always display in debug mode
 			return false;
-		return job.isSystem() || job.getState() == Job.SLEEPING;
+		else
+			return job.isSystem() || job.getState() == Job.SLEEPING;
 	}
 	/**
 	 * Return whether or not this job is ever displayable.
@@ -824,7 +818,6 @@ public class ProgressManager extends ProgressProvider
 	}
 	/**
 	 * Schedule the job that will open the progress monitor dialog
-	 * @param dialog the dialog to open
 	 */
 	private void scheduleProgressMonitorJob(
 			final ProgressMonitorJobsDialog dialog) {
@@ -899,6 +892,8 @@ public class ProgressManager extends ProgressProvider
 	}
 	/**
 	 * Remove the listener from all families.
+	 * 
+	 * @param family
 	 * @param listener
 	 */
 	void removeListener(IJobBusyListener listener) {
@@ -957,7 +952,15 @@ public class ProgressManager extends ProgressProvider
 				shell);
 		dialog.show(job);
 	}
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IProgressService#showInDialog(org.eclipse.swt.widgets.Shell,
+	 *      org.eclipse.core.runtime.jobs.Job, boolean)
+	 */
+	public void showInDialog(Shell shell, Job job, boolean runImmediately) {
+		showInDialog(shell, job);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
