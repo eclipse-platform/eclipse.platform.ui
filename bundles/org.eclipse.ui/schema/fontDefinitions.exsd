@@ -8,7 +8,7 @@
       <documentation>
          This extension point is used to register fonts with the JFace FontRegistry and with the workbench preference store for use by the Fonts preference page.
 
-This extension point has been deprecated in 3.0  You should now add fontDefinition elements to org.eclipse.ui.themes.
+This extension point has been deprecated in 3.0.  You should now add fontDefinition elements to org.eclipse.ui.themes.
       </documentation>
    </annotation>
 
