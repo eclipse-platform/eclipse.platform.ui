@@ -166,7 +166,13 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 */
 	private void expandVariable(ToolUtil.VariableDefinition varDef, StringBuffer buf) {
 		if (tool.VAR_WORKSPACE_LOC.equals(varDef.name)) {
-			buf.append(Platform.getLocation().toString());
+			String location = null;
+			if (varDef.argument != null && varDef.argument.length() > 0)
+				location = ToolUtil.getLocationFromFullPath(varDef.argument);
+			else
+				location = Platform.getLocation().toString();
+			if (location != null)
+				buf.append(location);
 			return;
 		}
 		
@@ -187,9 +193,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 		if (tool.VAR_RESOURCE_LOC.equals(varDef.name)) {
 			String location = null;
 			if (varDef.argument != null && varDef.argument.length() > 0) {
-				IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(varDef.argument);
-				if (member != null)
-					location = member.getLocation().toString();
+				location = ToolUtil.getLocationFromFullPath(varDef.argument);
 			} else {
 				if (selectedResource != null)
 					location = selectedResource.getLocation().toString();

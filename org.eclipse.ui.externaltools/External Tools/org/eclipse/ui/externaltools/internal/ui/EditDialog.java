@@ -359,8 +359,9 @@ public class EditDialog extends TitleAreaDialog {
 				if (results == null || results.length < 1)
 					return;
 				IResource resource = (IResource)results[0];
-				String var = ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, null);
-				locationField.setText(var + resource.getFullPath());
+				StringBuffer buf = new StringBuffer();
+				ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, resource.getFullPath().toString(), buf);
+				locationField.setText(buf.toString());
 			}
 		});
 		
@@ -402,8 +403,7 @@ public class EditDialog extends TitleAreaDialog {
 				Object[] result = dialog.getResult();
 				if (result != null && result.length == 1) {
 					StringBuffer buf = new StringBuffer();
-					ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, null, buf);
-					buf.append(result[0].toString());
+					ToolUtil.buildVariableTag(ExternalTool.VAR_WORKSPACE_LOC, result[0].toString(), buf);
 					directoryField.setText(buf.toString());
 				}
 			}
@@ -478,16 +478,32 @@ public class EditDialog extends TitleAreaDialog {
 
 		getButton(IDialogConstants.OK_ID).setEnabled(true);
 		
+		// Translate field contents to the actual file location so we
+		// can check to ensure the file actually exists.
+		value = ToolUtil.getLocationFromText(value);
+		
+		if (value == null) { // The resource could not be found.
+			setMessage(ToolMessages.getString("EditDialog.missingToolLocation"), IMessageProvider.WARNING); //$NON-NLS-1$
+			return;			
+		}
 		File file = new File(value);
-		if (!file.exists()) {
+		if (!file.exists()) { // The file does not exist.
 			setMessage(ToolMessages.getString("EditDialog.missingToolLocation"), IMessageProvider.WARNING); //$NON-NLS-1$
 			return;
 		}
 		
 		value = directoryField.getText().trim();
 		if (value.length() > 0) {
+			// Translate field contents to the actual directory location so we
+			// can check to ensure the directory actually exists.
+			value = ToolUtil.getLocationFromText(value);
+			
+			if (value == null) { // The resource could not be found.
+				setMessage(ToolMessages.getString("EditDialog.missingToolDirectory"), IMessageProvider.WARNING); //$NON-NLS-1$
+				return;			
+			}			
 			file = new File(value);
-			if (!file.exists()) {
+			if (!file.exists()) { // The directory does not exist.
 				setMessage(ToolMessages.getString("EditDialog.missingToolDirectory"), IMessageProvider.WARNING); //$NON-NLS-1$
 				return;
 			}
@@ -504,7 +520,8 @@ public class EditDialog extends TitleAreaDialog {
 	 */
 	protected void okPressed() {
 		String command = locationField.getText().trim();
-		if (command.endsWith(".xml")) //$NON-NLS-1$
+		String value = ToolUtil.getLocationFromText(command);
+		if (value != null && value.endsWith(".xml")) //$NON-NLS-1$
 			tool.setType(tool.TOOL_TYPE_ANT);
 		else
 			tool.setType(tool.TOOL_TYPE_PROGRAM);
@@ -639,16 +656,13 @@ public class EditDialog extends TitleAreaDialog {
 			list.add(ToolMessages.getString("EditDialog.varResourceDirLabel")); //$NON-NLS-1$
 			list.add(ToolMessages.getString("EditDialog.varResourceXDirLabel")); //$NON-NLS-1$	
 			
-			location = locationField.getText().trim();
-			Path path = null;
-			VariableDefinition varDef = ToolUtil.extractVariableTag(location, 0);
-			if (varDef.start >= 0 && ExternalTool.VAR_WORKSPACE_LOC.equals(varDef.name))
-				location = Platform.getLocation().toString() + location.substring(varDef.end);
-			path = new Path(location);
-			AntTargetList targetList = AntUtil.getTargetList(path);
-			if (targetList != null)
-				list.add(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
-			
+			location = ToolUtil.getLocationFromText(locationField.getText().trim());
+			if (location != null) {
+				Path path = new Path(location);
+				AntTargetList targetList = AntUtil.getTargetList(path);
+				if (targetList != null) // The file is a valid Ant file.
+					list.add(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
+			}		
 			return dialogArea;
 		}
 		

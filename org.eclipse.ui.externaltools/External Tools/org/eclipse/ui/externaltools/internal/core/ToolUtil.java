@@ -11,12 +11,11 @@ Contributors:
 **********************************************************************/
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
-import org.eclipse.ui.externaltools.internal.ui.LogConsoleView;
+import org.eclipse.ui.*;
+import org.eclipse.ui.externaltools.internal.ui.*;
 
 /**
  * General utility class dealing with external tools
@@ -172,6 +171,43 @@ public final class ToolUtil {
 	 */
 	public static void clearLogDocument() {
 		LogConsoleDocument.getInstance().clearOutput();
+	}
+
+	/**
+	 * Returns the physical location of a resource, given a string of the form
+	 * VAR_TAG_START + ExternalTool.VAR_WORKSPACE_LOC + VAR_TAG_SEP + 
+	 * full path of a resource + VAR_TAG_END, or a string that is already
+	 * a resource location.
+	 * 
+	 * @param contents the contents of a EditDialog location field.
+	 * @return the location of the resource, or null if the resource
+	 * is not found.
+	 */
+	public static String getLocationFromText(String contents) {
+		VariableDefinition varDef = extractVariableTag(contents, 0);
+		if (varDef.start >= 0 && ExternalTool.VAR_WORKSPACE_LOC.equals(varDef.name))
+			if (varDef.argument != null && varDef.argument.length() > 0) {
+				return getLocationFromFullPath(varDef.argument);			
+			} else {
+				return Platform.getLocation().toString() + contents.substring(varDef.end);
+			}
+		else
+			return contents;
+	}
+	
+	/**
+	 * Returns the physical location of a resource, given the full path of the
+	 * resource (with respect to the workspace).
+	 * 
+	 * @param fullPath the full path of the resource.
+	 * @return the location of the resource, or null if the resource is not found.
+	 */
+	public static String getLocationFromFullPath(String fullPath) {
+		IResource member = ResourcesPlugin.getWorkspace().getRoot().findMember(fullPath);
+		if (member != null)
+			return member.getLocation().toOSString();
+		else
+			return null;
 	}
 	
 	/**
