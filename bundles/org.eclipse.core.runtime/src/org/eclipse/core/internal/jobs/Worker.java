@@ -50,6 +50,7 @@ public class Worker extends Thread {
 		}
 	}
 	public void run() {
+		setPriority(Thread.NORM_PRIORITY);
 		try {
 			while ((currentJob = pool.startJob(this)) != null) {
 				//if job is null we've been shutdown
