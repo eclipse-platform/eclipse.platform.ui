@@ -4,7 +4,9 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.*;
 import java.io.File;
+import java.util.*;
 import java.util.Iterator;
 import java.util.List;
 
@@ -531,6 +533,57 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			this.decoratorManager.restoreListeners();
 		}
 		return decoratorManager;
+	}
+
+	public void startup() throws CoreException {
+		/* The plugin org.eclipse.ui has being separed in
+		   several plugins. Copy the state files from 
+		   org.eclipse.ui to org.eclipse.ui.workbench */
+		
+		IPath locationPath = getStateLocation();
+		File newLocation = locationPath.toFile();
+		File oldLocation = new File(newLocation,"..//org.eclipse.ui");
+		try {
+			oldLocation = oldLocation.getCanonicalFile();
+		} catch (IOException e) {}		
+		String markerFileName = ".copiedStateFiles_Marker";
+		File markerFile = new File(oldLocation,markerFileName);
+		if(markerFile.exists())
+			return;
+			
+		try {
+			String list[] = newLocation.list();
+			if(list != null && list.length != 0)
+				return;
+
+			String oldList[] = oldLocation.list();
+			if(oldList == null || oldList.length == 0)
+				return;
+
+			byte b[] = new byte[1024];
+			for (int i = 0; i < oldList.length; i++) {
+				String string = oldList[i];
+				try {
+					File oldFile = new File(oldLocation,string);
+					FileInputStream in = new FileInputStream(oldFile);
+					FileOutputStream out = new FileOutputStream(new File(newLocation,string));
+					int read = in.read(b);
+					while(read >= 0) {
+						out.write(b,0,read);
+						read = in.read(b);
+					}
+					in.close();
+					out.close();
+					oldFile.delete();
+				} catch (IOException e) {
+					new File(newLocation,string).delete();
+				}
+			}
+		} finally {
+			try { 
+				new FileOutputStream(markerFile).close(); 
+			} catch (IOException e) {}
+		}
 	}
 	
 	/*
