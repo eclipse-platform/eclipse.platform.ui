@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -484,7 +485,7 @@ private void removeTab(CTabItem tab) {
  * then move the tab before it, otherwise place it
  * as the last tab.
  */
-public void reorderTab(ViewPane pane, int x, int y) {
+public void reorderTab(ViewPane pane, int x, int y,boolean wasActive) {
 	CTabItem sourceTab = getTab(pane);
 	if (sourceTab == null)
 		return;
@@ -505,7 +506,7 @@ public void reorderTab(ViewPane pane, int x, int y) {
 	if (targetTab == null) {
 		// do nothing if already at the end
 		if (tabFolder.indexOf(sourceTab) != tabFolder.getItemCount() - 1)
-			reorderTab(pane, sourceTab, -1);
+			reorderTab(pane, sourceTab, -1,wasActive);
 		
 		return;
 	}
@@ -520,14 +521,12 @@ public void reorderTab(ViewPane pane, int x, int y) {
 	if (sourceIndex == targetIndex - 1)
 		return;
 
-	reorderTab(pane, sourceTab, targetIndex);
+	reorderTab(pane, sourceTab, targetIndex,wasActive);
 }
 /**
  * Reorder the tab representing the specified pane.
  */
-private void reorderTab(ViewPane pane, CTabItem sourceTab, int newIndex) {
-	// remember if the source tab was the visible one
-	boolean wasVisible = (tabFolder.getSelection() == sourceTab);
+private void reorderTab(ViewPane pane, CTabItem sourceTab, int newIndex,boolean wasActive) {
 
 	// create the new tab at the specified index
 	CTabItem newTab;
@@ -552,7 +551,7 @@ private void reorderTab(ViewPane pane, CTabItem sourceTab, int newIndex) {
 
 	// update the new tab's title and visibility
 	newTab.setText(sourceLabel);
-	if (wasVisible) {
+	if (wasActive) {
 		tabFolder.setSelection(newTab);
 		setSelection(pane);
 		pane.setFocus();
@@ -672,6 +671,11 @@ public void restoreState(IMemento memento)
 			IMemento childMem = children[i];
 			String partID = childMem.getString(IWorkbenchConstants.TAG_CONTENT);
 			String tabText = childMem.getString(IWorkbenchConstants.TAG_LABEL);
+
+			IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
+				getViewRegistry().find(partID);
+			if(descriptor != null)
+				tabText = descriptor.getLabel();
 
 			// Create the part.
 			LayoutPart part = new PartPlaceholder(partID);
