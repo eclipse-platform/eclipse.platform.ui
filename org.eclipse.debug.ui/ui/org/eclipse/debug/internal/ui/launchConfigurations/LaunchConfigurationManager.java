@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -152,8 +151,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	public static ILaunchConfiguration[] filterConfigs(ILaunchConfiguration[] configurations) {
 		List filteredConfigs= new ArrayList();
 		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
-		HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
-		disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration= configurations[i];
 			ILaunchConfigurationType type= null;
@@ -162,8 +159,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e.getStatus());
 			}
-			if (type != null && !activityManager.isMatch(type.getIdentifier(), disabledActivityIds)) {
-				// Don't add config types that match disabled activities.
+			if (type != null && !activityManager.getIdentifier(type.getIdentifier()).isEnabled()) {
 				filteredConfigs.add(configuration);
 			}
 		}

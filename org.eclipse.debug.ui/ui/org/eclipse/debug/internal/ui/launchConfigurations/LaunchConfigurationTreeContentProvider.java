@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -135,12 +134,9 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		List filteredTypes= new ArrayList();
 		String mode = getMode();
 		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
-		HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
-		disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
 		for (int i = 0; i < allTypes.length; i++) {
 			ILaunchConfigurationType type = allTypes[i];
-			if (isVisible(type, mode) && !activityManager.isMatch(type.getIdentifier(), disabledActivityIds)) {
-				// Don't add config types that match disabled activities.
+			if (isVisible(type, mode) && activityManager.getIdentifier(type.getIdentifier()).isEnabled()) {
 				filteredTypes.add(type);
 			}
 		}

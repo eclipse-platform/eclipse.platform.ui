@@ -32,13 +32,10 @@ public class BreakpointsViewContentProvider
 	public Object[] getElements(Object parent) {
 		List filteredBreakpoints= new ArrayList();
 		IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
-		HashSet disabledActivityIds= new HashSet(activityManager.getDefinedActivityIds());
-		disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
 		IBreakpoint[] breakpoints= ((IBreakpointManager) parent).getBreakpoints();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint= breakpoints[i];
-			if (!activityManager.isMatch(breakpoint.getModelIdentifier(), disabledActivityIds)) {
-				// Don't add config types that match disabled activities.
+			if (activityManager.getIdentifier(breakpoint.getModelIdentifier()).isEnabled()) {
 				filteredBreakpoints.add(breakpoint);
 			}
 		}
