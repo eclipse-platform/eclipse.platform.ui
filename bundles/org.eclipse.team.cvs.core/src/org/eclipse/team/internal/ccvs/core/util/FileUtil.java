@@ -9,11 +9,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.zip.CRC32;
+
+import javax.swing.plaf.FileChooserUI;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 public class FileUtil {
 
 	public static final String PLATFORM_NEWLINE = System.getProperty("line.separator");
+	
+	
 	public static void writeLines(File file, String[] content) throws CVSException {
 		
 		BufferedWriter fileWriter;
@@ -30,13 +35,7 @@ public class FileUtil {
 		}
 	}
 	
-	/**
-	 * load file in lines to String[]
-	 * 
-	 * @param file has to be non-null and file.exists() == true
-	 */
 	public static String[] readLines(File file) throws CVSException {
-
 		BufferedReader fileReader;
 		List fileContentStore = new ArrayList();
 		String line;
@@ -64,4 +63,3 @@ public class FileUtil {
 		resource.delete();
 	}
 }
-

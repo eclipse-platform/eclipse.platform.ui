@@ -44,9 +44,11 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.DiffErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.DiffMessageHandler;
@@ -289,44 +291,38 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			throw eHolder[0];
 	
 		// It looks like we need to add folders first, followed by files!
-		try {
-			if (!folders.isEmpty())
-				Client.execute(
-					Client.ADD,
-					new String[0],
-					new String[0],
-					(String[])folders.toArray(new String[folders.size()]),
-					managedProject,
-					progress,
-					getPrintStream());
-			if (!textfiles.isEmpty())
-				Client.execute(
-					Client.ADD,
-					new String[0],
-					new String[0],
-					(String[])textfiles.toArray(new String[textfiles.size()]),
-					managedProject,
-					progress,
-					getPrintStream());
-			if (!binaryfiles.isEmpty()) {
-				// Build the local options
-				List localOptions = new ArrayList();
-				localOptions.add(Client.KB_OPTION);
-				// We should check if files are text or not!
-				Client.execute(
-					Client.ADD,
-					new String[0],
-					(String[])localOptions.toArray(new String[localOptions.size()]),
-					(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
-					managedProject,
-					progress,
-					getPrintStream());
+		if (!folders.isEmpty())
+			Client.execute(
+				Client.ADD,
+				new String[0],
+				new String[0],
+				(String[])folders.toArray(new String[folders.size()]),
+				managedProject,
+				progress,
+				getPrintStream());
+		if (!textfiles.isEmpty())
+			Client.execute(
+				Client.ADD,
+				new String[0],
+				new String[0],
+				(String[])textfiles.toArray(new String[textfiles.size()]),
+				managedProject,
+				progress,
+				getPrintStream());
+		if (!binaryfiles.isEmpty()) {
+			// Build the local options
+			List localOptions = new ArrayList();
+			localOptions.add(Client.KB_OPTION);
+			// We should check if files are text or not!
+			Client.execute(
+				Client.ADD,
+				new String[0],
+				(String[])localOptions.toArray(new String[localOptions.size()]),
+				(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
+				managedProject,
+				progress,
+				getPrintStream());
 			}
-		} catch (CVSException e) {
-			// Refresh and throw the exception again
-			refreshResources(resources, depth, e, progress);
-		}
-		refreshResources(resources, depth, null, progress);
 	}
 
 	/**
@@ -348,19 +344,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			localOptions.add(Client.LOCAL_OPTION);
 			
 		// Commit the resources
-		try {
-			Client.execute(
-				Client.COMMIT,
-				DEFAULT_GLOBAL_OPTIONS,
-				(String[])localOptions.toArray(new String[localOptions.size()]),
-				arguments,
-				managedProject,
-				progress,
-				getPrintStream());
-		} catch(CVSException e) {
-			refreshResources(resources, depth, e, progress);
-		}
-		refreshResources(resources, depth, null, progress);
+		Client.execute(
+			Client.COMMIT,
+			DEFAULT_GLOBAL_OPTIONS,
+			(String[])localOptions.toArray(new String[localOptions.size()]),
+			arguments,
+			managedProject,
+			progress,
+			getPrintStream());
 	}
 
 	/**
@@ -436,19 +427,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			throw eHolder[0];
 		
 		// Remove the files remotely
-		try {
-			Client.execute(
-				Client.REMOVE,
-				new String[0],
-				new String[0],
-				(String[])files.toArray(new String[files.size()]),
-				managedProject,
-				progress,
-				getPrintStream());
-		} catch(CVSException e) {
-			refreshResources((IResource[])parents.toArray(new IResource[parents.size()]), IResource.DEPTH_INFINITE, e, progress);
-		}
-		refreshResources((IResource[])parents.toArray(new IResource[parents.size()]), IResource.DEPTH_INFINITE, null, progress);
+		Client.execute(
+			Client.REMOVE,
+			new String[0],
+			new String[0],
+			(String[])files.toArray(new String[files.size()]),
+			managedProject,
+			progress,
+			getPrintStream());
 	}
 	
 	/** 
@@ -618,19 +604,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// If depth = zero or 1, use -l
 			localOptions.add(Client.LOCAL_OPTION);
 			
-		try {
-			Client.execute(
-				Client.UPDATE,
-				new String[0],
-				(String[])localOptions.toArray(new String[localOptions.size()]),
-				arguments,
-				managedProject,
-				progress,
-				getPrintStream());
-		} catch(CVSException e) {
-			refreshResources(resources, depth, e, progress);
-		}
-		refreshResources(resources, depth, null, progress);
+		Client.execute(
+			Client.UPDATE,
+			new String[0],
+			(String[])localOptions.toArray(new String[localOptions.size()]),
+			arguments,
+			managedProject,
+			progress,
+			getPrintStream());
 	}
 	
 	/*
@@ -890,36 +871,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 	}
 	
-	/**
-	 * @see ITeamProvider#refreshState(IResource[], int, IProgressMonitor)
-	 */
-	public void refreshState(
-		IResource[] resources,
-		int depth,
-		IProgressMonitor progress)
-		throws TeamException {
-			
-			// How does this translate to CVS?
-			// NIK: maybe an simple update ?
-	}
-	
-	/*
-	 * Refresh the affected resources after a CVSException occured.
-	 * Initially we'll ignore any CoreException and throw the CVSException 
-	 * after the refresh
-	 */
-	private void refreshResources(IResource[] resources, int depth, CVSException e, IProgressMonitor progress) throws CVSException {
-		CVSException newException = e;
-		try {
-			refreshResources(resources, depth, progress);
-		} catch (CoreException coreException) {
-			// Only use the new exception if there was no old one
-			if (newException == null)
-				newException = new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.refreshError", new Object[] {project.getFullPath().toString()}), coreException));
-		}
-		if (newException != null)
-			throw newException;
-	}
 	private IResource[] allChildrenOf(IResource[] resources, int depth, IProgressMonitor progress) throws CoreException {
 		final List allResources = new ArrayList();
 		for (int i=0;i<resources.length;i++) {
@@ -932,17 +883,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 		return (IResource[])allResources.toArray(new IResource[allResources.size()]);
 	}
-	private void refreshResources(IResource[] resources, int depth, IProgressMonitor progress) throws CoreException {
-		// NOTE: We may not catch all resources changes in this way
-		for (int i = 0; i < resources.length; i++) {
-			IResource r = resources[i];
-			r.refreshLocal(depth, progress);
-		}
-		// NOTE: We need to refresh based on the depth
-		// We should try to be smart by getting the results from the command								
-		TeamPlugin.getManager().broadcastResourceStateChanges(resources);
-	}
-	
 	/** 
 	 * Tag the resources in the CVS repository with the given tag.
 	 */
@@ -1010,19 +950,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, depth, progress);
 			
-		try {
-			Client.execute(
-				Client.UPDATE,
-				DEFAULT_GLOBAL_OPTIONS,
-				localOptions,
-				arguments,
-				managedProject,
-				progress,
-				getPrintStream());
-		} catch(CVSException e) {
-			refreshResources(resources, depth, e, progress);
-		}
-		refreshResources(resources, depth, null, progress);
+		Client.execute(
+			Client.UPDATE,
+			DEFAULT_GLOBAL_OPTIONS,
+			localOptions,
+			arguments,
+			managedProject,
+			progress,
+			getPrintStream());
 	}
 
 	private static TeamException wrapException(CoreException e) {
@@ -1091,4 +1026,31 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public IStatus validateSave(IFile file) {
 		return new CVSStatus(IStatus.OK, "OK");
 	}
+	
+	/**
+	 * Call this method to refresh both the local CVS sync information (e.g. the files in the CVS subdirectories) and the
+	 * contents of the files. This is useful when a command line client is invoked outside of the workbench and the user
+	 * would like to continue working in the workbench with the modified state.
+	 * 
+	 * @param resources to be refreshed deep
+	 * @param progress a progress monitor to indicate the duration of the operation, or <code>null</code> if 
+	 * progress reporting is not required.
+	 */
+	public void refreshFromLocal(IResource[] resources, IProgressMonitor monitor) throws CVSException {
+		for (int i = 0; i < resources.length; i++) {
+			Synchronizer.getInstance().reload(new LocalFolder(resources[i].getLocation().toFile()),monitor);
+			try {
+				resources[i].refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			} catch(CoreException e) {
+				throw new CVSException("Problems encountered refreshing from the local file system", e);
+			}
+		}
+	}
+	/*
+	 * @see ITeamProvider#refreshState(IResource[], int, IProgressMonitor)
+	 */
+	public void refreshState(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+		// XXX this will likely be removed from the API. Nothing to do here...keep on moving...
+	}
+
 }

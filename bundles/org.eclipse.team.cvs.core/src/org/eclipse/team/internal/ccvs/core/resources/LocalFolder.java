@@ -109,7 +109,8 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 		if(child.exists()) {
 			isDirectory = child.isDirectory();
 		} else {
-			ResourceSyncInfo info = Synchronizer.getInstance().getSyncInfo(child);
+			LocalFile localFile = new LocalFile(child);
+			ResourceSyncInfo info = localFile.getSyncInfo();
 			if (info == null)
 				throw new CVSFileNotFoundException(Policy.bind("LocalFolder.invalidChild", child.getAbsolutePath()));
 			isDirectory = info.isDirectory();			

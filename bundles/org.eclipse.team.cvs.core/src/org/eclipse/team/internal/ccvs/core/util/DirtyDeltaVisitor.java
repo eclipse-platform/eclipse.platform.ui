@@ -47,7 +47,6 @@ public class DirtyDeltaVisitor extends ResourceDeltaVisitor {
 			Assert.isTrue(false);
 		}
 		
-		System.out.println(resource.getName() + " cleared");
+		//System.out.println(resource.getName() + " cleared");
 	}
 }
-

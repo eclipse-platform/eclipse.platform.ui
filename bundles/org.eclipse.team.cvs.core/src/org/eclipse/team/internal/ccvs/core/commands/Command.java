@@ -14,6 +14,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -78,6 +79,8 @@ abstract class Command implements ICommand {
 			monitor.beginTask(Policy.bind("Command.server"), 100);			
 			Policy.checkCanceled(monitor);
 			
+			Synchronizer.getInstance().reload(mRoot, monitor);
+			
 			// Send the options to the server (the command itself has to care
 			// about the arguments)
 			// It is questionable if this is going to stay here, because
@@ -104,6 +107,11 @@ abstract class Command implements ICommand {
 			}
 			// Finished adds last 10% of work.
 			finished(true);
+					
+			// This will automatically persist any changes that were made to the
+			// sync info while running a command.
+			Synchronizer.getInstance().save();
+
 			monitor.worked(10);
 		} finally {
 			monitor.done();

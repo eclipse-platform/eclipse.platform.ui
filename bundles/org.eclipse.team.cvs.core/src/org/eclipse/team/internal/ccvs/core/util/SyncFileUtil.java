@@ -18,13 +18,13 @@ public class SyncFileUtil {
 
 	// All possible files available in the CVS subdir
 	
-	private static final String REPOSITORY = "Repository";
-	private static final String ROOT = "Root";
-	private static final String STATIC = "Entries.Static";	
-	private static final String TAG = "Tag";	
-	private static final String ENTRIES = "Entries";
-	private static final String PERMISSIONS = "Permissions";
-	private static final String ENTRIES_LOG="Entries.Log";
+	public static final String REPOSITORY = "Repository";
+	public static final String ROOT = "Root";
+	public static final String STATIC = "Entries.Static";	
+	public static final String TAG = "Tag";	
+	public static final String ENTRIES = "Entries";
+	public static final String PERMISSIONS = "Permissions";
+	public static final String ENTRIES_LOG="Entries.Log";
 
 	// Some older CVS clients may of added a line to the entries file consisting
 	// of only a 'D'. It is safe to ingnore these entries.	
@@ -70,11 +70,7 @@ public class SyncFileUtil {
 		return (ResourceSyncInfo[])infos.values().toArray(new ResourceSyncInfo[infos.size()]);
 	}
 	
-	public static void writeEntriesFile(File parent, ResourceSyncInfo[] infos) throws CVSException {
-		
-		if(!getCVSSubdirectory(parent).exists()) {
-			getCVSSubdirectory(parent).mkdir();
-		}
+	public static void writeEntriesFile(File entryFile, ResourceSyncInfo[] infos) throws CVSException {
 		
 		String[] entries = new String[infos.length];
 		List permissions = new ArrayList(infos.length);
@@ -85,8 +81,8 @@ public class SyncFileUtil {
 				permissions.add(infos[i].getPermissionLine());
 			}
 		}		
-		setContents(parent, ENTRIES, entries);
-		setContents(parent, PERMISSIONS, (String[])permissions.toArray(new String[permissions.size()]));
+		FileUtil.writeLines(entryFile, entries);
+		FileUtil.writeLines(new File(entryFile.getParentFile(),PERMISSIONS), (String[])permissions.toArray(new String[permissions.size()]));
 	}
 	
 	public static FolderSyncInfo readFolderConfig(File parent) throws CVSException {
@@ -105,6 +101,16 @@ public class SyncFileUtil {
 			isStatic = true;
 			
 		return new FolderSyncInfo(repo, root, tag, isStatic);		
+	}
+	
+	public static File[] getEntrySyncFiles(File folder) {
+		File cvsSubDir = getCVSSubdirectory(folder);
+		return new File[] { new File(cvsSubDir, ENTRIES), new File(cvsSubDir, PERMISSIONS) };
+	}
+	
+	public static File[] getFolderSyncFiles(File folder) {
+		File cvsSubDir = getCVSSubdirectory(folder);
+		return new File[] { new File(cvsSubDir, ROOT), new File(cvsSubDir, REPOSITORY), new File(cvsSubDir, STATIC), new File(cvsSubDir, TAG) };
 	}
 	
 	public static void writeFolderConfig(File parent, FolderSyncInfo info) throws CVSException {

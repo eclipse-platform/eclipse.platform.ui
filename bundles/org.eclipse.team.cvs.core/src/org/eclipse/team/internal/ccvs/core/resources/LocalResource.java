@@ -155,7 +155,7 @@ public abstract class LocalResource implements ICVSResource {
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
-		Synchronizer.getInstance().flushSyncInfo(ioResource, IResource.DEPTH_INFINITE);
+		Synchronizer.getInstance().deleteSyncInfo(ioResource);
 	}			
 	
 	/*
@@ -170,5 +170,9 @@ public abstract class LocalResource implements ICVSResource {
 	 */
 	public String toString() {
 		return getPath();
+	}
+	
+	public File getLocalFile() {
+		return ioResource;
 	}
 }
