@@ -51,10 +51,6 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		super();
 		this.plugin = plugin;
 		this.pluginID = pluginID;
-		getPluginPreferences().addPreferenceChangeListener(this);
-		// TODO see bug 59975.
-		// access the /default/<pluginID> node which primes it with the default values
-		getDefaultPreferences();
 		pluginRoot.addNodeChangeListener(this);
 	}
 
@@ -62,7 +58,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
 	public void added(IEclipsePreferences.NodeChangeEvent event) {
-		if (pluginID.equals(event.getChild().name()))
+		if (listeners.size() > 0 && pluginID.equals(event.getChild().name()))
 			getPluginPreferences().addPreferenceChangeListener(this);
 	}
 
@@ -81,6 +77,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @param listener a property change listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		getPluginPreferences().addPreferenceChangeListener(this);
 		listeners.add(listener);
 	}
 
@@ -88,7 +85,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
 	public void preferenceChange(IEclipsePreferences.PreferenceChangeEvent event) {
-		// if we are the ones making this change, the don't broadcast
+		// if we are the ones making this change, then don't broadcast
 		if (!notify)
 			return;
 		Object oldValue = event.getOldValue();
