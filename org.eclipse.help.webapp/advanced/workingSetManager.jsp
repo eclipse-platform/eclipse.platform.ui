@@ -150,7 +150,6 @@ for (int i=0; i<wsets.length; i++)
 		   href='#' 
 		   onclick="document.getElementById('selectws').checked = true;"
    		   ondblclick="selectWorkingSet()"
-		   onkeydown="if (event.keyCode == 13) selectWorkingSet();"
 		   title="<%=wsets[i]%>">
 		   <%=wsets[i]%>
 		 </a>
