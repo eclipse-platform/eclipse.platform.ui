@@ -34,54 +34,50 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * A synchronize participant that displays synchronization information for local
- * resources that are managed via a {@link Subscriber}.
- * 
- * Participant:
- * 1. maintains a collection of all out-of-sync resources for a subscriber
- * 2. synchronize schedule
- * 3. APIs for creating specific: sync page, sync wizard, sync advisor (control ui pieces)
- * 4. allows refreshing the participant synchronization state
- *
+ * A synchronize participant that displays synchronization information for local resources that are 
+ * managed via a {@link Subscriber}. It maintains a dynamic collection of all out-of-sync resources
+ * by listening to workspace resource changes and remote changes.
+ * <p>
+ * The subscriber can be configured to be synchronized in the background based on a schedule. This
+ * effectively refreshes the subscriber and updates the dynamic sync set.
+ * </p><p>
+ * Subclasses will typically want to override the following methods:
+ * <ul>
+ * <li>initializeConfiguration: participants can add toolbar actions, configure the context menu, decorator.
+ * <li>saveState and init: persist settings between sessions.
+ * </ul>
+ * This class is intended to be subclassed. 
+ * </p>
  * @since 3.0
  */
 public abstract class SubscriberParticipant extends AbstractSynchronizeParticipant implements IPropertyChangeListener {
 	
-	/**
+	/*
 	 * Collects and maintains set of all out-of-sync resources of the subscriber
 	 */
 	private SubscriberSyncInfoCollector collector;
 	
+	/*
+	 * Controls the automatic synchronization of this participant
+	 */
 	private SubscriberRefreshSchedule refreshSchedule;
 	
-	/**
+	/*
 	 * Key for settings in memento
 	 */
 	private static final String CTX_SUBSCRIBER_PARTICIPANT_SETTINGS = TeamUIPlugin.ID + ".TEAMSUBSRCIBERSETTINGS"; //$NON-NLS-1$
 	
-	/**
+	/*
 	 * Key for schedule in memento
 	 */
 	private static final String CTX_SUBSCRIBER_SCHEDULE_SETTINGS = TeamUIPlugin.ID + ".TEAMSUBSRCIBER_REFRESHSCHEDULE"; //$NON-NLS-1$
 	
 	/**
-	 * Property constant indicating the schedule of a page has changed. 
+	 * Constructor initializes the schedule. Subclasses must call this method.
 	 */
-	public static final String P_SYNCVIEWPAGE_SCHEDULE = TeamUIPlugin.ID  + ".P_SYNCVIEWPAGE_SCHEDULE";	 //$NON-NLS-1$
-	
 	public SubscriberParticipant() {
 		super();
 		refreshSchedule = new SubscriberRefreshSchedule(this);
-	}
-	
-	/**
-	 * Initialize the particpant sync info set in the configuration.
-	 * Subclasses may override but must invoke the inherited method.
-	 * @param configuration the page configuration
-	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
-	 */
-	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
-		configuration.setProperty(SynchronizePageConfiguration.P_PARTICIPANT_SYNC_INFO_SET, collector.getSyncInfoSet());
 	}
 	
 	/* (non-Javadoc)
@@ -90,6 +86,145 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	public final IPageBookViewPage createPage(ISynchronizePageConfiguration configuration) {
 		validateConfiguration(configuration);
 		return new SubscriberParticipantPage(configuration, getSubscriberSyncInfoCollector());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#createRefreshPage()
+	 */
+	public IWizard createSynchronizeWizard() {
+		return new SubscriberRefreshWizard(this);
+	}
+	
+	/**
+	 * Returns the resources supervised by this participant.
+	 * 
+	 * @return the resources supervised by this participant.
+	 */
+	public IResource[] getResources() {
+		return collector.getSubscriber().roots();
+	}
+	
+	/**
+	 * Refresh this participants synchronization state and displays the result in a model dialog. 
+	 * @param resources
+	 * @param taskName
+	 * @param site
+	 */
+	public final void refreshInDialog(Shell shell, IResource[] resources, String taskName, ISynchronizePageConfiguration configuration, IWorkbenchSite site) {
+		IRefreshSubscriberListener listener =  new RefreshUserNotificationPolicyInModalDialog(shell, configuration, this);
+		internalRefresh(resources, listener, taskName, site);
+	}
+	
+	/**
+	 * Will refresh a participant in the background.
+	 * 
+	 * @param resources the resources to be refreshed.
+	 */
+	public final void refresh(IResource[] resources, String taskName, IWorkbenchSite site) {
+		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
+		internalRefresh(resources, listener, taskName, site);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.sync.AbstractSynchronizeViewPage#dispose()
+	 */
+	public void dispose() {
+		refreshSchedule.dispose();				
+		TeamUI.removePropertyChangeListener(this);
+		collector.dispose();
+	}
+	
+	/**
+	 * Returns the <code>SyncInfoTree</code> for this participant. This set
+	 * contains the out-of-sync resources supervised by this participant. 
+	 * 
+	 * @return the sync info set that contains the out-of-sync resources
+	 * for this participant.
+	 */
+	public SyncInfoTree getSyncInfoSet() {
+		return getSubscriberSyncInfoCollector().getSyncInfoSet();
+	}
+	
+	/**
+	 * Return the <code>Subscriber</code> associated with this this participant. This
+	 * method will only return <code>null</code> if the participant has not been initialized
+	 * yet. 
+	 * 
+	 * @return the <code>Subscriber</code> associated with this this participant.
+	 */
+	public Subscriber getSubscriber() {
+		if (collector == null) return null;
+		return collector.getSubscriber();
+	}
+		
+	/* (non-Javadoc)
+	 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
+			collector.reset();
+		}	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
+	 */
+	public void init(String secondaryId, IMemento memento) throws PartInitException {
+		super.init(secondaryId, memento);
+		if(memento != null) {
+			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
+			if(settings != null) {
+				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS), this);
+				setRefreshSchedule(schedule);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		IMemento settings = memento.createChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
+		refreshSchedule.saveState(settings.createChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS));
+	}
+
+	/**
+	 * Reset the sync set of the particpant by repopulating it from scratch.
+	 */
+	public void reset() {
+		getSubscriberSyncInfoCollector().reset();
+	}
+	
+	/* (non-Javadoc)
+	 * Return the <code>SubscriberSyncInfoCollector</code> for the participant.
+	 * This collector maintains the set of all out-of-sync resources for the subscriber.
+	 * 
+	 * @return the <code>SubscriberSyncInfoCollector</code> for this participant
+	 */
+	public SubscriberSyncInfoCollector getSubscriberSyncInfoCollector() {
+		return collector;
+	}
+	
+	/*(non-Javadoc)
+	 * Not to be called by clients.
+	 */
+	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
+		this.refreshSchedule = schedule;
+	}
+	
+	/* (non-Javadoc)
+	 * Not to be called by clients.
+	 */
+	public SubscriberRefreshSchedule getRefreshSchedule() {
+		return refreshSchedule;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+	 */
+	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
+		configuration.setProperty(SynchronizePageConfiguration.P_PARTICIPANT_SYNC_INFO_SET, collector.getSyncInfoSet());
 	}
 	
 	/**
@@ -105,23 +240,48 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		// Do nothing by default
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#createRefreshPage()
+	/**
+	 * Subclasses must call this method to initialize the participant. Typically this
+	 * method is called in {@link #init(String, IMemento)}. This method will initialize
+	 * the sync info collector.
+	 * 
+	 * @param subscriber the subscriner to associate with this participant.
 	 */
-	public IWizard createSynchronizeWizard() {
-		return new SubscriberRefreshWizard(this);
+	protected void setSubscriber(Subscriber subscriber) {
+		collector = new SubscriberSyncInfoCollector(subscriber);
+		
+		// listen for global ignore changes
+		TeamUI.addPropertyChangeListener(this);
+		
+		// Start collecting changes
+		collector.start();
+		
+		// Start the refresh now that a subscriber has been added
+		SubscriberRefreshSchedule schedule = getRefreshSchedule();
+		if(schedule.isEnabled()) {
+			getRefreshSchedule().startJob();
+		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getResources()
+	/**
+	 * Provide a filter that is used to filter the contents of the
+	 * sync info set for the participant. Normally, all out-of-sync
+	 * resources from the subscriber will be included in the 
+	 * participant's set. However, a filter can be used to exclude
+	 * some of these out-of-sync resources, if desired.
+	 * <p>
+	 * Subsclasses can invoke this method any time after 
+	 * <code>setSubscriber</code> has been invoked.
+	 * @param filter a sync info filter
 	 */
-	public IResource[] getResources() {
-		return collector.getSubscriber().roots();
+	protected void setSyncInfoFilter(SyncInfoFilter filter) {
+		collector.setFilter(filter);
 	}
 	
 	private void internalRefresh(IResource[] resources, final IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
 		final IWorkbenchAction[] gotoAction = new IWorkbenchAction[] {null};
 		final RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
+		
 		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
 		group.beginTask(taskName + " " + getName(), 100);
 		job.setProgressGroup(group, 80);
@@ -205,134 +365,5 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 			RefreshSubscriberJob.addRefreshListener(autoListener);
 		}	
 		Utils.schedule(job, site);
-	}
-	
-	/**
-	 * Refresh this participants synchronization state and displays the result in a model dialog. 
-	 * @param resources
-	 * @param taskName
-	 * @param site
-	 */
-	public final void refreshInDialog(Shell shell, IResource[] resources, String taskName, ISynchronizePageConfiguration configuration, IWorkbenchSite site) {
-		IRefreshSubscriberListener listener =  new RefreshUserNotificationPolicyInModalDialog(shell, configuration, this);
-		internalRefresh(resources, listener, taskName, site);
-	}
-	
-	/**
-	 * Will refresh a participant in the background.
-	 * 
-	 * @param resources the resources to be refreshed.
-	 */
-	public final void refresh(IResource[] resources, String taskName, IWorkbenchSite site) {
-		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
-		internalRefresh(resources, listener, taskName, site);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.AbstractSynchronizeViewPage#dispose()
-	 */
-	public void dispose() {
-		refreshSchedule.dispose();				
-		TeamUI.removePropertyChangeListener(this);
-		collector.dispose();
-	}
-	
-	public SyncInfoTree getSyncInfoSet() {
-		return getSubscriberSyncInfoCollector().getSyncInfoSet();
-	}
-	
-	protected void setSubscriber(Subscriber subscriber) {
-		collector = new SubscriberSyncInfoCollector(subscriber);
-		
-		// listen for global ignore changes
-		TeamUI.addPropertyChangeListener(this);
-		
-		// Start collecting changes
-		collector.start();
-		
-		// Start the refresh now that a subscriber has been added
-		SubscriberRefreshSchedule schedule = getRefreshSchedule();
-		if(schedule.isEnabled()) {
-			getRefreshSchedule().startJob();
-		}
-	}
-	
-	/**
-	 * Get the <code>Subscriber</code> for this participant
-	 * @return a <code>TamSubscriber</code>
-	 */
-	public Subscriber getSubscriber() {
-		if (collector == null) return null;
-		return collector.getSubscriber();
-	}
-		
-	/* (non-Javadoc)
-	 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
-			collector.reset();
-		}	
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
-	 */
-	public void init(String secondaryId, IMemento memento) throws PartInitException {
-		if(memento != null) {
-			IMemento settings = memento.getChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
-			if(settings != null) {
-				SubscriberRefreshSchedule schedule = SubscriberRefreshSchedule.init(settings.getChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS), this);
-				setRefreshSchedule(schedule);
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#saveState(org.eclipse.ui.IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		IMemento settings = memento.createChild(CTX_SUBSCRIBER_PARTICIPANT_SETTINGS);
-		refreshSchedule.saveState(settings.createChild(CTX_SUBSCRIBER_SCHEDULE_SETTINGS));
-	}
-
-	/*
-	 * Reset the sync set of the particpant by repopulating it from scratch.
-	 */
-	public void reset() {
-		getSubscriberSyncInfoCollector().reset();
-	}
-	
-	/*
-	 * Return the <code>SubscriberSyncInfoCollector</code> for the participant.
-	 * This collector maintains the set of all out-of-sync resources for the subscriber.
-	 * @return the <code>SubscriberSyncInfoCollector</code> for this participant
-	 */
-	public SubscriberSyncInfoCollector getSubscriberSyncInfoCollector() {
-		return collector;
-	}
-	
-	public void setRefreshSchedule(SubscriberRefreshSchedule schedule) {
-		this.refreshSchedule = schedule;
-		firePropertyChange(this, P_SYNCVIEWPAGE_SCHEDULE, null, schedule);
-	}
-	
-	public SubscriberRefreshSchedule getRefreshSchedule() {
-		return refreshSchedule;
-	}
-	
-	/**
-	 * Provide a filter that is used to filter the contents of the
-	 * sync info set for the participant. Normally, all out-of-sync
-	 * resources from the subscriber will be included in the 
-	 * participant's set. However, a filter can be used to exclude
-	 * some of these out-of-sync resources, if desired.
-	 * <p>
-	 * Subsclasses can invoke this method any time after 
-	 * <code>setSubscriber</code> has been invoked.
-	 * @param filter a sync info filter
-	 */
-	protected void setSyncInfoFilter(SyncInfoFilter filter) {
-		collector.setFilter(filter);
 	}
 }
