@@ -34,6 +34,7 @@ public class FindUnusedMethodsAction implements IObjectActionDelegate {
 	}
 
 	public void run(IAction action) {
+		unusedCount = 0;
 		FileDialog dialog = new FileDialog(part.getSite().getShell(), SWT.SAVE);
 		String outFileName = dialog.open();
 		if (outFileName == null)
@@ -41,26 +42,22 @@ public class FindUnusedMethodsAction implements IObjectActionDelegate {
 		File outputFile = new File(outFileName);
 		if (outputFile.exists())
 			outputFile.delete();
+		FileWriter writer = null;
 		try {
-			FileWriter writer = new FileWriter(outputFile);
-			for (Iterator it = selection.iterator(); it.hasNext();) {
-				Object element = it.next();
-				if (element instanceof IJavaElement)
-					traverse((IJavaElement)element, writer);
+			try {
+				writer = new FileWriter(outputFile);
+				for (Iterator it = selection.iterator(); it.hasNext();) {
+					Object element = it.next();
+					if (element instanceof IJavaElement)
+						traverse((IJavaElement)element, writer);
+				}
+			} finally {
+				String summary = "\n\nSearch complete.  Found " + unusedCount + " unreferenced methods."; //$NON-NLS-1$ //$NON-NLS-2$
+				writer.write(summary);
+				writer.close();
+				MessageDialog.openInformation(part.getSite().getShell(), "Search Complete", summary);   //$NON-NLS-1$
 			}
-			String summary = "\n\nSearch complete.  Found " + unusedCount + " unreferenced methods."; //$NON-NLS-1$ //$NON-NLS-2$
-			writer.write(summary);
-			writer.close();
-			MessageDialog.openInformation(part.getSite().getShell(), "Search Complete", summary);   //$NON-NLS-1$
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			//ignore
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
