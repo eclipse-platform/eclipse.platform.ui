@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core;
  */
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -71,7 +72,15 @@ public class CVSException extends TeamException {
 	 * Static helper methods for creating exceptions
 	 */
 	public static CVSException wrapException(Exception e) {
-		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, e.getMessage() != null ? e.getMessage() : "",	e)); //$NON-NLS-1$
+		Throwable t = e;
+		if (e instanceof InvocationTargetException) {
+			Throwable target = ((InvocationTargetException) e).getTargetException();
+			if (target instanceof CVSException) {
+				return (CVSException) target;
+			}
+			t = target;
+		}
+		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, t.getMessage() != null ? t.getMessage() : "",	t)); //$NON-NLS-1$
 	}
 	
 	public static CVSException wrapException(CoreException e) {
