@@ -103,8 +103,14 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	 * Cleans up the actions when this part is disposed
 	 */
 	protected void cleanupActions() {
+		if (fBreakpointListenerActions == null) {
+			return;
+		}
+		DebugPlugin dp= DebugPlugin.getDefault();
+		IBreakpointManager bm= dp.getBreakpointManager();
+		
 		for (int i=0; i < fBreakpointListenerActions.size(); i++) {
-			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener((IBreakpointListener)fBreakpointListenerActions.get(i));
+			bm.removeBreakpointListener((IBreakpointListener)fBreakpointListenerActions.get(i));
 		} 
 	}
 
