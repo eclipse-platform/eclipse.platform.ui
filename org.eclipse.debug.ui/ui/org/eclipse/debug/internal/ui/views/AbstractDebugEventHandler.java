@@ -97,7 +97,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	protected void insert(Object element) {
 		if (isAvailable()) {
-			final Object parent= ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
+			Object parent= ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
 			// a parent can be null for a debug target or process that has not yet been associated
 			// with a launch
 			if (parent != null) {
