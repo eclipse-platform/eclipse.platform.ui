@@ -99,6 +99,8 @@ public class UserValidationDialog extends Dialog {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
 		passwordField.setLayoutData(data);
+		// TODO Need to use SWT.PASSWORD style for the fied
+		// instead of setting the echo char.
 		passwordField.setEchoChar('*');
 
 		new Label(parent, SWT.NONE); //spacer

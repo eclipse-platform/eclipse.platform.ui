@@ -38,6 +38,7 @@ public class MainPreferencePage
 	private Button checkSignatureCheckbox;
 	private Button equivalentButton;
 	private Button compatibleButton;
+	private Text updatePolicyText;
 	private Label httpProxyHostLabel;
 	private Label httpProxyPortLabel;
 	private Text httpProxyHostText;
