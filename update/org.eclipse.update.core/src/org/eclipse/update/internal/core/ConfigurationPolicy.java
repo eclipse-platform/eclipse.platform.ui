@@ -308,13 +308,13 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 			configuredFeatures = (IFeatureReference[]) subtract(configuredFeatures, patched);
 			String[] configuredPlugins = getPluginString(site, configuredFeatures);
 			if (isEnabled())
-				pluginsToWrite = (String[]) subtract(configuredPlugins, unconfiguredPlugins);
+				pluginsToWrite = (String[]) subtract(unconfiguredPlugins, configuredPlugins);
 			else
 				pluginsToWrite = (String[]) union(configuredPlugins, unconfiguredPlugins);
 		} else {
 			// INCLUDE: return configured plugins
 			if (isEnabled()) {
-				configuredFeatures = (IFeatureReference[]) subtract(patched, configuredFeatures);
+				configuredFeatures = (IFeatureReference[]) subtract(configuredFeatures, patched);
 				pluginsToWrite = getPluginString(site, configuredFeatures);
 			} else
 				pluginsToWrite = new String[0];
