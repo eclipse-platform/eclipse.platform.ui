@@ -52,11 +52,12 @@ public class WorkbenchTestable extends TestableObject {
         this.display = display;
         this.workbench = workbench;
         if (getTestHarness() != null) {
-            new Thread(new Runnable() {
+            Runnable runnable = new Runnable() {
                 public void run() {
                     getTestHarness().runTests();
                 }
-            }).start();
+            };
+            new Thread(runnable, "WorkbenchTestable").start(); //$NON-NLS-1$
         }
     }
 
