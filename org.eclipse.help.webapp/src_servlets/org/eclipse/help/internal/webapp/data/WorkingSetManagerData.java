@@ -23,32 +23,42 @@ public class WorkingSetManagerData extends RequestData {
 	private final static int ADD = 1;
 	private final static int REMOVE = 2;
 	private final static int EDIT = 3;
-	
+
 	private static boolean workingSetsSynchronized = false;
-	
+
+	private String name;
+
 	private WorkingSetManager wsmgr =
 		HelpSystem.getWorkingSetManager(getLocale());
 
-	public WorkingSetManagerData(ServletContext context, HttpServletRequest request) {
+	public WorkingSetManagerData(
+		ServletContext context,
+		HttpServletRequest request) {
 		super(context, request);
-	
+
+		name =
+			UrlUtil.isIE(request)
+				? UrlUtil.unescape(
+					UrlUtil.getRawRequestParameter(request, "workingSet"))
+				: request.getParameter("workingSet");
+
 		if (!workingSetsSynchronized && getMode() == MODE_WORKBENCH) {
 			// upon startup in workbench mode, make sure working sets are in synch with those from UI
 			workingSetsSynchronized = true;
 			wsmgr.synchronizeWorkingSets();
 		}
 
-		switch(getOperation()) {
-			case ADD:
+		switch (getOperation()) {
+			case ADD :
 				addWorkingSet();
 				break;
-			case REMOVE:
+			case REMOVE :
 				removeWorkingSet();
 				break;
-			case EDIT:
+			case EDIT :
 				editWorkingSet();
 				break;
-			default:
+			default :
 				break;
 		}
 	}
@@ -56,14 +66,13 @@ public class WorkingSetManagerData extends RequestData {
 	public void addWorkingSet() {
 		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
 			return;
-		String name = UrlUtil.isIE(request) ? UrlUtil.unescape(UrlUtil.getRawRequestParameter(request, "workingSet")) :
-																 request.getParameter("workingSet");
+
 		if (name != null && name.length() > 0) {
 
 			String[] hrefs = request.getParameterValues("hrefs");
 			if (hrefs == null)
 				hrefs = new String[0];
-			
+
 			ArrayList selectedElements = new ArrayList(hrefs.length);
 			for (int i = 0; i < hrefs.length; i++) {
 				AdaptableHelpResource res = getAdaptableHelpResource(hrefs[i]);
@@ -71,7 +80,8 @@ public class WorkingSetManagerData extends RequestData {
 					selectedElements.add(res);
 			}
 
-			AdaptableHelpResource[] elements = new AdaptableHelpResource[selectedElements.size()];
+			AdaptableHelpResource[] elements =
+				new AdaptableHelpResource[selectedElements.size()];
 			selectedElements.toArray(elements);
 			WorkingSet ws = wsmgr.createWorkingSet(name, elements);
 			wsmgr.addWorkingSet(ws);
@@ -81,7 +91,7 @@ public class WorkingSetManagerData extends RequestData {
 	public void removeWorkingSet() {
 		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
 			return;
-		String name = request.getParameter("workingSet");
+
 		if (name != null && name.length() > 0) {
 
 			WorkingSet ws = wsmgr.getWorkingSet(name);
@@ -93,7 +103,7 @@ public class WorkingSetManagerData extends RequestData {
 	public void editWorkingSet() {
 		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
 			return;
-		String name = request.getParameter("workingSet");
+
 		if (name != null && name.length() > 0) {
 
 			String oldName = request.getParameter("oldName");
@@ -104,21 +114,23 @@ public class WorkingSetManagerData extends RequestData {
 				String[] hrefs = request.getParameterValues("hrefs");
 				if (hrefs == null)
 					hrefs = new String[0];
-				
+
 				ArrayList selectedElements = new ArrayList(hrefs.length);
 				for (int i = 0; i < hrefs.length; i++) {
-					AdaptableHelpResource res = getAdaptableHelpResource(hrefs[i]);
+					AdaptableHelpResource res =
+						getAdaptableHelpResource(hrefs[i]);
 					if (res != null)
 						selectedElements.add(res);
 				}
 
-				AdaptableHelpResource[] elements = new AdaptableHelpResource[selectedElements.size()];
+				AdaptableHelpResource[] elements =
+					new AdaptableHelpResource[selectedElements.size()];
 				selectedElements.toArray(elements);
-				
+
 				ws.setElements(elements);
 				ws.setName(name);
 				// should also change the name....
-				
+
 				// We send this notification, so that the manager fires to its listeners
 				wsmgr.workingSetChanged(ws);
 			}
@@ -140,18 +152,20 @@ public class WorkingSetManagerData extends RequestData {
 	}
 
 	public String getWorkingSetName() {
-		String name = request.getParameter("workingSet");
 		if (name == null || name.length() == 0) {
 			// See if anything is set in the preferences
-			name = HelpPlugin.getDefault().getPluginPreferences().getString(HelpSystem.WORKING_SET);
-			if (name == null || name.length() == 0 || wsmgr.getWorkingSet(name) == null)
+			name =
+				HelpPlugin.getDefault().getPluginPreferences().getString(
+					HelpSystem.WORKING_SET);
+			if (name == null
+				|| name.length() == 0
+				|| wsmgr.getWorkingSet(name) == null)
 				name = ServletResources.getString("All", request);
 		}
 		return name;
 	}
 
 	public WorkingSet getWorkingSet() {
-		String name = request.getParameter("workingSet");
 		if (name != null && name.length() > 0)
 			return wsmgr.getWorkingSet(name);
 		else
@@ -160,7 +174,7 @@ public class WorkingSetManagerData extends RequestData {
 
 	public boolean isCurrentWorkingSet(int i) {
 		WorkingSet[] workingSets = wsmgr.getWorkingSets();
-		return workingSets[i].getName().equals(request.getParameter("workingSet"));
+		return workingSets[i].getName().equals(name);
 	}
 
 	private int getOperation() {
@@ -174,7 +188,7 @@ public class WorkingSetManagerData extends RequestData {
 		else
 			return NONE;
 	}
-	
+
 	private AdaptableHelpResource getAdaptableHelpResource(String internalId) {
 		AdaptableHelpResource res = wsmgr.getAdaptableToc(internalId);
 		if (res == null)
