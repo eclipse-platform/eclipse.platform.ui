@@ -609,6 +609,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 
 			// clear the builders for the destination project
 			((ProjectInfo) destProject.getResourceInfo(false, true)).setBuilders(null);
+			((ProjectInfo) destProject.getResourceInfo(false, true)).clearNatures();
 
 			// refresh local
 			monitor.subTask(Policy.bind("resources.updating"));
