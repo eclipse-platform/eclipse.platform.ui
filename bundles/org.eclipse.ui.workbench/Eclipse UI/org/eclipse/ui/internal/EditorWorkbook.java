@@ -219,6 +219,7 @@ public void dispose() {
 	//Reset the visible editor so that no references are made to it.
 	setVisibleEditor(null);
 
+	header.dispose();
 	workbookForm.dispose();
 	workbookForm = null;
 }

@@ -40,6 +40,7 @@ public class EditorCoolBar {
 	private int style;
 	
 	private EditorShortcut[] selection;
+	private IEditorShortcutListener shortcutListener;
 	
 	private boolean onBottom;
 	private boolean firstResize = true; // infw cheezy workaround
@@ -64,8 +65,7 @@ public class EditorCoolBar {
 		this.onBottom = (SWT.BOTTOM != 0);
 		this.editorList = new EditorList(window, workbook);
 		this.shortcutList = new ShortcutList();
-		EditorShortcutManager man = getManager();
-		man.addListener(new IEditorShortcutListener() {
+		shortcutListener = new IEditorShortcutListener() {
 			public void shortcutRemoved(EditorShortcut shortcut) {
 				updateBookMarks();
 			}
@@ -75,7 +75,8 @@ public class EditorCoolBar {
 			public void shortcutRenamed(EditorShortcut shortcut) {
 				updateBookMarks();
 			}
-		});
+		};
+		getManager().addListener(shortcutListener);
 	}
 
 	/**
@@ -115,6 +116,7 @@ public class EditorCoolBar {
 		for (int i = shortcuts.length; i < items.length; i++) {
 			items[i].dispose();
 		}
+		items = bookMarkToolBar.getItems();
 		for (int i = 0; i < items.length; i++) {
 			ToolItem item = items[i];
 			EditorShortcut shortcut = shortcuts[i];
@@ -463,7 +465,8 @@ public class EditorCoolBar {
 		return coolBar;
 	}
 	
-	public void destroyControl() {
+	public void dispose() {
+		getManager().removeListener(shortcutListener);
 		coolBar.dispose();
 		coolBar = null;
 	}
@@ -833,8 +836,8 @@ public class EditorCoolBar {
 			}
 
 			//String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$			
-			String title = "Rename Shortcut"; //$NON-NLS-1$
-			String message = "Enter new name"; //$NON-NLS-1$
+			String title = "Rename Shortcut";
+			String message = "Enter new name";
 			IInputValidator inputValidator = new IInputValidator() {
 				public String isValid(String newText) {
 					return  (newText == null || newText.length() == 0) ? " " : null;  //$NON-NLS-1$
