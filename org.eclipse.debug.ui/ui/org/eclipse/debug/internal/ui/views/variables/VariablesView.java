@@ -41,7 +41,6 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
-import org.eclipse.debug.internal.ui.views.ViewerState;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IRootVariablesContentProvider;
@@ -292,7 +291,14 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * re-selection of the same stack frame. The cache is cleared on
 	 * a frame by frame basis when a thread/target is terminated.
 	 */
-	private HashMap fExpandedVariables = new HashMap(10);
+	private HashMap fSelectionStates = new HashMap(10);
+	
+	/**
+	 * The last known viewer state. Used to init the expansion/selection
+	 * in the variables view when there is no state to go on for the
+	 * current stack frame being displayed.
+	 */
+	private ViewerState fLastState = null;
 	
 	/**
 	 * Remembers which viewer (tree viewer or details viewer) had focus, so we
@@ -357,8 +363,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		if (current != null) {
 			// save state
-			ViewerState state = new ViewerState(getVariablesViewer());
-			fExpandedVariables.put(current, state);
+			fLastState = new ViewerState(getVariablesViewer());
+			fSelectionStates.put(current, fLastState);
 		}		
 		
 		if (frame != null) {
@@ -369,7 +375,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// restore state
 		if (frame != null) {
-			ViewerState state = (ViewerState)fExpandedVariables.get(frame);
+			ViewerState state = (ViewerState)fSelectionStates.get(frame);
+			if (state == null) {
+				// attempt to restore selection/expansion based on last frame
+				state = fLastState;
+			} 
 			if (state != null) {
 				state.restoreState(getVariablesViewer());
 			}
@@ -398,7 +408,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			Iterator frames = list.iterator();
 			while (frames.hasNext()) {
 				Object frame = frames.next();
-				fExpandedVariables.remove(frame);
+				fSelectionStates.remove(frame);
 			}
 		}
 	}
@@ -412,7 +422,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected List getCachedFrames(IThread thread) {
 		List list = null;
-		Iterator frames = fExpandedVariables.keySet().iterator();
+		Iterator frames = fSelectionStates.keySet().iterator();
 		while (frames.hasNext()) {
 			IStackFrame frame = (IStackFrame)frames.next();
 			if (frame.getThread().equals(thread)) {
@@ -434,7 +444,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected List getCachedFrames(IDebugTarget target) {
 		List list = null;
-		Iterator frames = fExpandedVariables.keySet().iterator();
+		Iterator frames = fSelectionStates.keySet().iterator();
 		while (frames.hasNext()) {
 			IStackFrame frame = (IStackFrame)frames.next();
 			if (frame.getDebugTarget().equals(target)) {

@@ -74,6 +74,8 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 		if (!event.isStepStart() && !event.isEvaluation()) {
 			// Clear existing variables from the view
 			getVariablesView().setViewerInput(StructuredSelection.EMPTY);
+			// clear variable expansion state
+			getVariablesView().clearExpandedVariables(event.getSource());
 		}
 	}
 
