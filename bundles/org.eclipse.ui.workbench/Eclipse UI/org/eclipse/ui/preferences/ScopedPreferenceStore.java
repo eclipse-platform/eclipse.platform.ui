@@ -85,6 +85,27 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	String nodeQualifier;
 
 	/**
+	 * The defaultQualifier is the string used to look up the default node.
+	 */
+	String defaultQualifier;
+
+	/**
+	 * Create a new instance of the receiver. Store the values in context in the
+	 * node looked up by qualifier.
+	 * 
+	 * @param context
+	 *            the scope to store to
+	 * @param qualifier
+	 *            the qualifier used to look up the preference node
+	 * @param defaultQualifierPath
+	 *            the qualifier used when looking up the defaults
+	 */
+	public ScopedPreferenceStore(IScopeContext context, String qualifier, String defaultQualifierPath) {
+		this(context, qualifier);
+		this.defaultQualifier = defaultQualifierPath;
+	}
+
+	/**
 	 * Create a new instance of the receiver. Store the values in context in the
 	 * node looked up by qualifier.
 	 * 
@@ -95,7 +116,8 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 */
 	public ScopedPreferenceStore(IScopeContext context, String qualifier) {
 		storeContext = context;
-		nodeQualifier = qualifier;
+		this.nodeQualifier = qualifier;
+		this.defaultQualifier = qualifier;
 
 		preferencesListener = new IEclipsePreferences.IPreferenceChangeListener() {
 			/*
@@ -201,7 +223,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 * @return this store's default preference node
 	 */
 	private IEclipsePreferences getDefaultPreferences() {
-		return defaultContext.getNode(nodeQualifier);
+		return defaultContext.getNode(defaultQualifier);
 	}
 
 	/*
@@ -232,21 +254,19 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		// this store was created on. (and optionally the default)
 		if (searchContexts == null) {
 			if (includeDefault)
-				return new IEclipsePreferences[] {
-						storeContext.getNode(nodeQualifier),
-						defaultContext.getNode(nodeQualifier) };
-			return new IEclipsePreferences[] { storeContext
-					.getNode(nodeQualifier) };
+				return new IEclipsePreferences[] {getStorePreferences(), getDefaultPreferences()};
+			return new IEclipsePreferences[] {getStorePreferences()};
 		}
 		// otherwise the user specified a search order so return the appropriate
-		// nodes
-		// based on it
-		int end = searchContexts.length;
-		if (!includeDefault)
-			end = searchContexts.length - 1;
-		IEclipsePreferences[] preferences = new IEclipsePreferences[end];
-		for (int i = 0; i < end; i++)
+		// nodes based on it
+		int length = searchContexts.length;
+		if (includeDefault)
+			length++;
+		IEclipsePreferences[] preferences = new IEclipsePreferences[length];
+		for (int i = 0; i < searchContexts.length; i++)
 			preferences[i] = searchContexts[i].getNode(nodeQualifier);
+		if (includeDefault)
+			preferences[length - 1] = getDefaultPreferences();
 		return preferences;
 	}
 
@@ -269,9 +289,9 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 	 *            <code>null</code>
 	 */
 	public void setSearchContexts(IScopeContext[] scopes) {
-		// Clear the search scopes if requested by the user.
+		this.searchContexts = scopes;
 		if (scopes == null)
-			this.searchContexts = null;
+			return;
 
 		// Assert that the default was not included (we automatically add it to
 		// the end)
@@ -280,12 +300,6 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 				Assert.isTrue(false, WorkbenchMessages
 						.getString("ScopedPreferenceStore.DefaultAddedError")); //$NON-NLS-1$
 		}
-
-		// Add the default to the search contexts
-		IScopeContext[] newScopes = new IScopeContext[scopes.length + 1];
-		System.arraycopy(scopes, 0, newScopes, 0, scopes.length);
-		newScopes[scopes.length] = defaultContext;
-		searchContexts = newScopes;
 	}
 
 	/*
