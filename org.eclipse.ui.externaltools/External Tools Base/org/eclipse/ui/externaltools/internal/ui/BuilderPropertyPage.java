@@ -403,7 +403,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		if (element instanceof ILaunchConfiguration) {
 			enableLaunchConfiguration((ILaunchConfiguration) element, event.getChecked());
 		} else if (element instanceof ICommand) {
-			enableCommand((ICommand)element, event.getChecked());
+			if (MessageDialog.openConfirm(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.6"), ExternalToolsUIMessages.getString("BuilderPropertyPage.7"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				enableCommand((ICommand)element, event.getChecked());
+			} else {
+				viewer.removeCheckStateListener(this);
+				viewer.setChecked(element, true);
+				viewer.addCheckStateListener(this);
+			}
 		}
 	}
 
