@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.editor.model;
 
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -63,6 +64,6 @@ public class AntProjectNode extends AntElementNode {
 	public void reset() {
 		super.reset();
 		fProject.getTargets().clear();
-		setIsErrorNode(false);
+		setProblemSeverity(XMLProblem.NO_PROBLEM);
 	}
 }

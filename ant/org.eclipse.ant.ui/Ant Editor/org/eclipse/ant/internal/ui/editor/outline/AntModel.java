@@ -324,7 +324,7 @@ public class AntModel {
 				nodes.removeAll(fIncrementalTarget.getDescendents());
 			}
 			
-			markHierarchy(node, false);
+			markHierarchy(node, XMLProblem.NO_PROBLEM);
 			
 			StringBuffer temp = createIncrementalContents(project);			
 			fIncrementalTarget.reset();
@@ -443,7 +443,7 @@ public class AntModel {
 	public void handleBuildException(BuildException e, AntElementNode node, int severity) {
 		try {
 			if (node != null) {
-				markHierarchy(node, true);
+				markHierarchy(node, severity);
 			}
 			Location location= e.getLocation();
 			int line= 0;
@@ -459,8 +459,8 @@ public class AntModel {
 					if (getProjectNode() != null) {
 						length= getProjectNode().getSelectionLength();
 						nonWhitespaceOffset= getProjectNode().getOffset();
-						if (severity == XMLProblem.SEVERTITY_ERROR) {
-						getProjectNode().setIsErrorNode(true);
+						if (severity == XMLProblem.SEVERITY_ERROR) {
+							getProjectNode().setProblemSeverity(XMLProblem.NO_PROBLEM);
 						}
 					} else {
 						return;
@@ -481,7 +481,7 @@ public class AntModel {
 	}
 
 	public void handleBuildException(BuildException e, AntElementNode node) {
-		handleBuildException(e, node, XMLProblem.SEVERTITY_ERROR);
+		handleBuildException(e, node, XMLProblem.SEVERITY_ERROR);
 	}
 
 	protected File getEditedFile() {
@@ -491,9 +491,9 @@ public class AntModel {
 		return fEditedFile;
     }
 
-	private void markHierarchy(AntElementNode openElement, boolean isError) {
+	private void markHierarchy(AntElementNode openElement, int severity) {
 		while (openElement != null) {
-			openElement.setIsErrorNode(isError);
+			openElement.setProblemSeverity(severity);
 			openElement= openElement.getParentNode();
 		}
 	}
@@ -802,7 +802,7 @@ public class AntModel {
 	}
 
 	public void warning(Exception exception) {
-		notifyProblemRequestor(exception, (AntElementNode)fStillOpenElements.pop(), XMLProblem.SEVERTITY_WARNING);
+		notifyProblemRequestor(exception, (AntElementNode)fStillOpenElements.pop(), XMLProblem.SEVERITY_WARNING);
 	}
 	
 	public void error(Exception exception) {
@@ -813,16 +813,16 @@ public class AntModel {
 			}
 		} else {
 			node= (AntElementNode)fStillOpenElements.peek();
-			markHierarchy(node, true);
+			markHierarchy(node, XMLProblem.SEVERITY_ERROR);
 		}
 	
-		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
+		notifyProblemRequestor(exception, node, XMLProblem.SEVERITY_ERROR);
 	}
 	
 	public void errorFromElementText(Exception exception, int start, int count) {
 		computeEndLocationForErrorNode(fLastNode, start, count);
-		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
-		markHierarchy(fLastNode, true);
+		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERITY_ERROR);
+		markHierarchy(fLastNode, XMLProblem.SEVERITY_ERROR);
 	}
 	
 	public void errorFromElement(Exception exception, AntElementNode node, int lineNumber, int column) {
@@ -834,8 +834,8 @@ public class AntModel {
 			}
 		}
 		computeEndLocationForErrorNode(node, lineNumber, column);
-		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
-		markHierarchy(node, true);
+		notifyProblemRequestor(exception, node, XMLProblem.SEVERITY_ERROR);
+		markHierarchy(node, XMLProblem.SEVERITY_ERROR);
 	}
 
 	private AntElementNode createProblemElement(SAXParseException exception) {
@@ -847,8 +847,7 @@ public class AntModel {
 
 		AntElementNode errorNode= new AntElementNode(message.toString());
 		errorNode.setFilePath(exception.getSystemId());
-		//errorNode.setExternal(isExternal());
-		errorNode.setIsErrorNode(true);
+		errorNode.setProblemSeverity(XMLProblem.SEVERITY_ERROR);
 		computeErrorLocation(errorNode, exception);
 		return errorNode;
 	}
@@ -915,7 +914,7 @@ public class AntModel {
 			return;
 		}
 		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
-		markHierarchy(node, true);
+		markHierarchy(node, XMLProblem.SEVERITY_ERROR);
 		
 		if (exception instanceof SAXParseException) {
 			SAXParseException parseException= (SAXParseException)exception;
@@ -931,7 +930,7 @@ public class AntModel {
 					AntElementNode childNode= node.getNode(getNonWhitespaceOffset(lineNumber, columnNumber) + 1);
 					if (childNode != null && childNode != node) {
 						node= childNode;
-						node.setIsErrorNode(true);
+						node.setProblemSeverity(XMLProblem.SEVERITY_ERROR);
 					} else {
 						node= createProblemElement(parseException);
 					}
@@ -941,7 +940,7 @@ public class AntModel {
 			}
 		}
 		
-		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_FATAL_ERROR);
+		notifyProblemRequestor(exception, node, XMLProblem.SEVERITY_FATAL_ERROR);
 		
 		while (node.getParentNode() != null) {
 			AntElementNode parentNode= node.getParentNode();

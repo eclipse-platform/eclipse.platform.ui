@@ -15,9 +15,10 @@ import org.eclipse.jface.text.Region;
 
 public class XMLProblem extends Region implements IProblem {
 	
-	public static final int SEVERTITY_WARNING= 0;
-	public static final int SEVERTITY_ERROR= 1;
-	public static final int SEVERTITY_FATAL_ERROR= 2;
+	public static final int NO_PROBLEM= -1;
+	public static final int SEVERITY_WARNING= 0;
+	public static final int SEVERITY_ERROR= 1;
+	public static final int SEVERITY_FATAL_ERROR= 2;
 	
 	private String fMessage;
 	private int fSeverity;
@@ -42,14 +43,14 @@ public class XMLProblem extends Region implements IProblem {
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#isError()
 	 */
 	public boolean isError() {
-		return fSeverity == SEVERTITY_ERROR || fSeverity == SEVERTITY_FATAL_ERROR;
+		return fSeverity == SEVERITY_ERROR || fSeverity == SEVERITY_FATAL_ERROR;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#isWarning()
 	 */
 	public boolean isWarning() {
-		return fSeverity == SEVERTITY_WARNING;
+		return fSeverity == SEVERITY_WARNING;
 	}
 	
 	/* (non-Javadoc)

@@ -80,6 +80,7 @@ public interface IAntUIConstants {
 	 
 	//	Overlays
 	public static final String IMG_OVR_ERROR = PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
+	public static final String IMG_OVR_WARNING = PLUGIN_ID + ".ovrWarning";  //$NON-NLS-1$
 	public static final String IMG_OVR_IMPORT = PLUGIN_ID + ".ovrImport"; //$NON-NLS-1$
 	
 	public static final String IMG_ANT_TYPE= PLUGIN_ID + ".type"; //$NON-NLS-1$

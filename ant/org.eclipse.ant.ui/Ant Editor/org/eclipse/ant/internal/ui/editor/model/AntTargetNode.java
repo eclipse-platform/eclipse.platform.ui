@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.editor.model;
 import java.util.Map;
 
 import org.apache.tools.ant.Target;
+import org.eclipse.ant.internal.ui.editor.outline.XMLProblem;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -34,7 +35,7 @@ public class AntTargetNode extends AntElementNode {
 		String targetName= fTarget.getName();
 		if (targetName == null) {
 			targetName= "target"; //$NON-NLS-1$
-			setIsErrorNode(true);
+			setProblemSeverity(XMLProblem.SEVERITY_ERROR);
 		}
 		
 		StringBuffer displayName= new StringBuffer(targetName);

@@ -28,6 +28,9 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render an imported adornment */
 	public final static int IMPORTED= 0x0002;
 	
+	/** Flag to render an warning adornment */
+	public final static int HAS_WARNINGS= 0x0004;
+	
 	private ImageDescriptor fBaseImage;
 	private int fFlags;
 	private Point fSize;
@@ -100,6 +103,11 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 		if ((flags & HAS_ERRORS) != 0) {
 			y= getSize().y;
 			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_ERROR).getImageData();
+			y -= data.height;
+			drawImage(data, 0, y);
+		} else if ((flags & HAS_WARNINGS) != 0) {
+			y= getSize().y;
+			data= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_OVR_WARNING).getImageData();
 			y -= data.height;
 			drawImage(data, 0, y);
 		}

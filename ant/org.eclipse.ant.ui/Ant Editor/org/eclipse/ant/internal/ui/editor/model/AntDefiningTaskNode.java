@@ -41,7 +41,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 			configured= true;
 			return false;
 		} catch (BuildException be) {
-			getAntModel().handleBuildException(be, this, XMLProblem.SEVERTITY_WARNING);
+			getAntModel().handleBuildException(be, this, XMLProblem.SEVERITY_WARNING);
 		}
 		return false;
 	}

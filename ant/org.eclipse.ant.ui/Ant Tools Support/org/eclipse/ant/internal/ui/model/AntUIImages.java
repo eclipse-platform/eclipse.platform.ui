@@ -100,6 +100,7 @@ public class AntUIImages {
 		
 		// Overlays
 		declareRegistryImage(IAntUIConstants.IMG_OVR_ERROR, OVR + "error_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_OVR_WARNING, OVR + "warning_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_OVR_IMPORT, OVR + "import_co.gif"); //$NON-NLS-1$
 	}
 

@@ -78,9 +78,13 @@ public class AntElementNode {
 
 	/**
 	 * Whether this element has been generated as part of an element hierarchy
-	 * this is not complete as a result of an error.
+	 * this has problems. This is the severity of the problem.
+	 * @see XMLProblem#NO_PROBLEM
+	 * @see XMLProblem#SEVERITY_ERROR
+	 * @see XMLProblem#SEVERITY_WARNING
+	 * @see XMLProblem#SEVERITY_FATAL_ERROR
 	 */
-	private boolean isErrorNode;
+	private int problemSeverity= XMLProblem.NO_PROBLEM;
 	
 	/**
 	 * The absolute file system path of the file this element is
@@ -285,16 +289,25 @@ public class AntElementNode {
 	 * hierarchy this is not complete as a result of an error.
 	 */
 	public boolean isErrorNode() {
-		return isErrorNode;
+		return problemSeverity == XMLProblem.SEVERITY_ERROR || problemSeverity == XMLProblem.SEVERITY_FATAL_ERROR;
+	}
+	
+	/**
+	 * Returns whether this element has been generated as part of an element
+	 * hierarchy that has warning(s) associated with it
+	 */
+	public boolean isWarningNode() {
+		return problemSeverity == XMLProblem.SEVERITY_WARNING;
 	}
 	
 	/**
 	 * Sets whether this element has been generated as part of an element
-	 * hierarchy this is not complete as a result of an error.
+	 * hierarchy that has problems. The severity of the problem is provided.
 	 */
-	public void setIsErrorNode(boolean isErrorNode) {
-		this.isErrorNode= isErrorNode;
+	public void setProblemSeverity(int severity) {
+		this.problemSeverity= severity;
 	}
+	
 	/**
 	 * Returns whether this xml element is defined in an external entity.
 	 * 
@@ -446,6 +459,8 @@ public class AntElementNode {
 		
 		if (isErrorNode()) {
 			flags = flags | AntImageDescriptor.HAS_ERRORS;
+		} else if (isWarningNode()) {
+			flags = flags | AntImageDescriptor.HAS_WARNINGS;
 		}
 		if(importNode != null || isExternal()){
 			flags = flags | AntImageDescriptor.IMPORTED;
