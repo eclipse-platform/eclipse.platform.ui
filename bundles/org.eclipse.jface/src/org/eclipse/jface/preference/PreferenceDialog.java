@@ -467,7 +467,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 		// Message label
 		messageArea = new DialogMessageArea();
-		messageArea.createContents(titleArea, SWT.LEFT);
+		messageArea.createContents(titleArea);
 
 		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
