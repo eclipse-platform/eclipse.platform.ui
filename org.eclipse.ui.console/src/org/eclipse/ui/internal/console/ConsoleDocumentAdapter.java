@@ -300,8 +300,20 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
      * @return The number of lines necessary to display the string in the viewer.
      */
     private int countLines(String string) {
-        Matcher matcher = pattern.matcher(string);
         int count = 0;
+        if (lineEndsWithDelimeter(string)) {
+            count++;
+        }
+        
+//        work around to http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4994840
+//        see bug 84641
+        if (string.endsWith("\r")) { //$NON-NLS-1$
+            int len = string.length();
+            int index = len >= 2 ? len-2 : 0;
+            string = string.substring(0, index);
+        }
+        
+        Matcher matcher = pattern.matcher(string);
         while (matcher.find()) {
             count++;
             if (consoleWidth > 0) {
@@ -310,9 +322,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
             } 
         }
         
-        if (lineEndsWithDelimeter(string)) {
-            count++;
-        }
+
         
         return count;
     }
