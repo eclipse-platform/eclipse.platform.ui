@@ -23,6 +23,13 @@ public final class JFacePreferences {
 	public static final String HYPERLINK_COLOR = "HYPERLINK_COLOR"; //$NON-NLS-1$
 	//Identifier for the Active Hyperlink Colour
 	public static final String ACTIVE_HYPERLINK_COLOR = "ACTIVE_HYPERLINK_COLOR"; //$NON-NLS-1$
+	//Do we use the System theme?
+	public static final String USE_DEFAULT_THEME = "USE_DEFAULT_THEME"; //$NON-NLS-1$
+	
+	//Identifier for the Color Scheme Inactive Tab Foreground Colour
+	public static final String SCHEME_INACTIVE_TAB_FOREGROUND = "SCHEME_INACTIVE_TAB_FOREGROUND";
+	//Identifier for the Color Scheme Inactive Tab Background Colour
+	public static final String SCHEME_INACTIVE_TAB_BACKGROUND = "SCHEME_INACTIVE_TAB_BACKGROUND";
 	//Identifier for the Color Scheme Background Colour
 	public static final String SCHEME_PARENT_BACKGROUND_COLOR = "SCHEME_PARENT_BACKGROUND_COLOR"; //$NON-NLS-1$
 	public static final String SCHEME_BACKGROUND_COLOR = "SCHEME_BACKGROUND_COLOR"; //$NON-NLS-1$
@@ -35,7 +42,6 @@ public final class JFacePreferences {
 	public static final String SCHEME_SELECTION_FOREGROUND_COLOR = "SCHEME_SELECTION_FOREGROUND_COLOR"; //$NON-NLS-1$
 	
 	private static IPreferenceStore preferenceStore;
-	
 	/**
 	 * Prevent construction.
 	 */
