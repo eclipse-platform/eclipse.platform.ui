@@ -113,30 +113,39 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	}
 		
 	private IStatus edit(final IFile[] files, final Shell shell) {
-		try {
-			if (shell != null && !promptToEditFiles(files, shell)) {
-				// The user didn't want to edit.
-				// OK is returned but the file remains read-only
-				throw new InterruptedException();
-			}
-			
-			// Run the edit in a runnable in order to get a busy cursor.
-			// This runnable is syncExeced in order to get a busy cursor
-			CVSUIPlugin.runWithProgress(shell, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						edit(files, monitor);
-					} catch (CVSException e) {
-						new InvocationTargetException(e);
-					}
+		if (isPerformEdit()) {
+			try {
+				if (shell != null && !promptToEditFiles(files, shell)) {
+					// The user didn't want to edit.
+					// OK is returned but the file remains read-only
+					throw new InterruptedException();
 				}
-			}, CVSUIPlugin.PERFORM_SYNC_EXEC);
-		} catch (InvocationTargetException e) {
-			return getStatus(e);
-		} catch (InterruptedException e) {
-			// Must return an error to indicate that it is not OK to edit the files
-			return new Status(IStatus.CANCEL, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$;
+				
+				// Run the edit in a runnable in order to get a busy cursor.
+				// This runnable is syncExeced in order to get a busy cursor
+				CVSUIPlugin.runWithProgress(shell, false, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							edit(files, monitor);
+						} catch (CVSException e) {
+							new InvocationTargetException(e);
+						}
+					}
+				}, CVSUIPlugin.PERFORM_SYNC_EXEC);
+			} catch (InvocationTargetException e) {
+				return getStatus(e);
+			} catch (InterruptedException e) {
+				// Must return an error to indicate that it is not OK to edit the files
+				return new Status(IStatus.CANCEL, CVSUIPlugin.ID, 0, Policy.bind("FileModificationValidator.vetoMessage"), null); //$NON-NLS-1$;
+			}
+		} else {
+			// Allow the files to be edited without notifying the server
+			for (int i = 0; i < files.length; i++) {
+				IFile file = files[i];
+				file.setReadOnly(false);
+			}
 		}
+
 		return OK;
 		
 	}
@@ -145,28 +154,18 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		if (files.length == 0)
 			return true;		
 
-		if (isPerformEdit() ) {
-			if(isNeverPrompt())	
-				return true;
+		if(isNeverPrompt())	
+			return true;
 
-			// Contact the server to see if anyone else is editing the files
-			EditorsAction editors = fetchEditors(files, shell);
-			if (editors.isEmpty()) {
-				if (isAlwaysPrompt()) 
-					return (promptEdit(shell));
-				return true;
-			} else {
-				return (editors.promptToEdit(shell));
-			}
+		// Contact the server to see if anyone else is editing the files
+		EditorsAction editors = fetchEditors(files, shell);
+		if (editors.isEmpty()) {
+			if (isAlwaysPrompt()) 
+				return (promptEdit(shell));
+			return true;
 		} else {
-			// Allow the files to be edited without notifying the server
-			for (int i = 0; i < files.length; i++) {
-				IFile file = files[i];
-				file.setReadOnly(false);
-			}
-			return false;
+			return (editors.promptToEdit(shell));
 		}
-
 	}
 	
 	private boolean promptEdit(Shell shell) {
