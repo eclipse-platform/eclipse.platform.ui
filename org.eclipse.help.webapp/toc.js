@@ -3,10 +3,6 @@
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
-
-// parse the arguments passed to the page
-var args = parent.parent.parseQueryString ();
-
 /**
  * Returns the node with specified tag
  */
