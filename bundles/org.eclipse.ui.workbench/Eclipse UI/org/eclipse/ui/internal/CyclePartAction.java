@@ -53,11 +53,24 @@ import org.eclipse.ui.keys.SWTKeySupport;
  * Implements a action to enable the user switch between parts using keyboard.
  */
 public class CyclePartAction extends PageEventAction {
+	
+	/**
+	 * The list of key bindings for the backward command when it is open.  
+	 * This value is <code>null</code> if the dialog is not open.
+	 */
+	private List backwardKeySequenceBindings = null;
+	
 	private String commandBackward = null;
 
 	private String commandForward = null;
 
 	protected boolean forward;
+	
+	/**
+	 * The list of key bindings for the forward command when it is open.  
+	 * This value is <code>null</code> if the dialog is not open.
+	 */
+	private List forwardKeySequenceBindings = null;
 
 	private Object selection;
 
@@ -137,11 +150,8 @@ public class CyclePartAction extends PageEventAction {
 				ICommandManager commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
 
 				if (commandForward != null) {
-					ICommand command = commandManager.getCommand(commandForward);
-
-					if (command.isDefined()) {
-						List keySequenceBindings = command.getKeySequenceBindings();
-						Iterator iterator = keySequenceBindings.iterator();
+				    if (forwardKeySequenceBindings != null) {
+				        Iterator iterator = forwardKeySequenceBindings.iterator();
 
 						while (iterator.hasNext()) {
 							IKeySequenceBinding keySequenceBinding =
@@ -159,11 +169,8 @@ public class CyclePartAction extends PageEventAction {
 				}
 
 				if (commandBackward != null) {
-					ICommand command = commandManager.getCommand(commandBackward);
-
-					if (command.isDefined()) {
-						List keySequenceBindings = command.getKeySequenceBindings();
-						Iterator iterator = keySequenceBindings.iterator();
+				    if (backwardKeySequenceBindings != null) {
+				        Iterator iterator = backwardKeySequenceBindings.iterator();
 
 						while (iterator.hasNext()) {
 							IKeySequenceBinding keySequenceBinding =
@@ -398,6 +405,19 @@ public class CyclePartAction extends PageEventAction {
 				// Do nothing
 			}
 		});
+		
+		/* Fetch the key bindings for the forward and backward commands.  They will not
+		 * change while the dialog is open, but the context will.  Bug 55581.
+		 */
+		final ICommandManager commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+		final ICommand forwardCommand = commandManager.getCommand(commandForward);
+		if (forwardCommand.isDefined()) {
+			forwardKeySequenceBindings = forwardCommand.getKeySequenceBindings();
+		}
+		final ICommand backwardCommand = commandManager.getCommand(commandBackward);
+		if (backwardCommand.isDefined()) {
+			backwardKeySequenceBindings = backwardCommand.getKeySequenceBindings();
+		}
 
 		final IWorkbenchContextSupport contextSupport = page.getWorkbenchWindow().getWorkbench().getContextSupport();
 		try {
@@ -414,6 +434,8 @@ public class CyclePartAction extends PageEventAction {
 			if (!dialog.isDisposed())
 				cancel(dialog);
 			contextSupport.unregisterShell(dialog);
+			forwardKeySequenceBindings = null;
+			backwardKeySequenceBindings = null;
 		}
 	}
 
