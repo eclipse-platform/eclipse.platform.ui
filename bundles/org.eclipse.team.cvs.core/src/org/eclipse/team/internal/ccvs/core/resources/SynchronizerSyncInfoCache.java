@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -17,21 +21,23 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This cache uses session properties to hold the bytes representing the sync
  * info
  */
 /*package*/ class SynchronizerSyncInfoCache extends SyncInfoCache {
+	
+	// ap of sync bytes that were set without a scheduling rule
+	Map pendingCacheWrites = new HashMap();
+	private static final Object BYTES_REMOVED = new byte[0];
 
 	public SynchronizerSyncInfoCache() {
 		getWorkspaceSynchronizer().add(FOLDER_SYNC_KEY);
@@ -103,7 +109,15 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 	 */
 	byte[] getCachedSyncBytes(IResource resource) throws CVSException {
 		try {
-			byte[] bytes = getWorkspaceSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, resource);
+			byte[] bytes;
+			if (pendingCacheWrites.containsKey(resource)) {
+				bytes = (byte[])pendingCacheWrites.get(resource);
+				if (bytes == BYTES_REMOVED) {
+					bytes = null;
+				}
+			} else {
+				bytes = getWorkspaceSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, resource);
+			}
 			if (bytes != null && resource.getType() == IResource.FILE) {
 				if (ResourceSyncInfo.isAddition(bytes)) {
 					// The local file has been deleted but was an addition
@@ -128,8 +142,12 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 		try {
 			if (syncBytes == null) {
 				if (oldBytes != null && (resource.exists() || resource.isPhantom())) {
-					checkCanModifyWorkspace(resource, canModifyWorkspace);
-					getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
+					if (canModifyWorkspace) {
+						getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
+						pendingCacheWrites.remove(resource);
+					} else {
+						pendingCacheWrites.put(resource, BYTES_REMOVED);
+					}
 				}
 			} else {
 				// ensure that the sync info is not already set to the same thing.
@@ -140,8 +158,12 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 						|| !Util.equals(
 								ResourceSyncInfo.convertToDeletion(syncBytes), 
 								ResourceSyncInfo.convertToDeletion(oldBytes))) {
-					checkCanModifyWorkspace(resource, canModifyWorkspace);
-					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
+					if (canModifyWorkspace) {
+						getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
+						pendingCacheWrites.remove(resource);
+					} else {
+						pendingCacheWrites.put(resource, syncBytes);
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -149,17 +171,6 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 		}
 	}
 
-	/*
-	 * If we are not able to modify the workspace, throw an exception indicating this
-	 * condition. The client requesting the cache should read the individual sync info
-	 * directly.
-	 */
-	private void checkCanModifyWorkspace(IResource resource, boolean canModifyWorkspace) throws CVSException {
-		if (!canModifyWorkspace) {
-			throw new CVSException(IStatus.WARNING, CVSStatus.FAILED_TO_CACHE_SYNC_INFO, Policy.bind("SynchronizerSyncInfoCache.0", resource.getFullPath().toString())); //$NON-NLS-1$
-		}
-		
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#getDirtyIndicator(org.eclipse.core.resources.IResource)
 	 */
@@ -183,6 +194,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 	}
 		
 	/*package*/ void flushDirtyCache(IResource container) throws CVSException {
+		// Dirty state is not cached
 	}
 	
 	/*package*/ boolean isSyncInfoLoaded(IContainer parent) throws CVSException {
@@ -256,6 +268,17 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 			}
 			if (root.exists() || root.isPhantom()) {
 				getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, root, depth);
+			}
+			if (deep) {
+				IPath fullPath = root.getFullPath();
+				for (Iterator iter = pendingCacheWrites.keySet().iterator(); iter.hasNext();) {
+					IResource resource = (IResource) iter.next();
+					if (fullPath.isPrefixOf(resource.getFullPath())) {
+						iter.remove();
+					}
+				}
+			} else {
+				pendingCacheWrites.remove(root);
 			}
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
