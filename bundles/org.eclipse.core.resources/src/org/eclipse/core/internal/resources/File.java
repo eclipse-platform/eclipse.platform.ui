@@ -14,6 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 public class File extends Resource implements IFile {
+
 protected File(IPath path, Workspace container) {
 	super(path, container);
 }
@@ -32,6 +33,11 @@ public void appendContents(InputStream content, boolean force, boolean keepHisto
 			checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
+			if (Workspace.shouldValidate) {
+				workspace.validateSave(this);
+				info = getResourceInfo(false, false);
+				checkAccessible(getFlags(info));
+			}
 			internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, true, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -196,6 +202,11 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
 			checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
+			if (Workspace.shouldValidate) {
+				workspace.validateSave(this);
+				info = getResourceInfo(false, false);
+				checkAccessible(getFlags(info));
+			}				
 			internalSetContents(content, getLocalManager().locationFor(this), force, keepHistory, false, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
@@ -214,4 +225,6 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	setContents(source.getContents(), force, keepHistory, monitor);
 }
+
+
 }

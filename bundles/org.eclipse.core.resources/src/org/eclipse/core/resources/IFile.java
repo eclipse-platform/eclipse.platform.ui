@@ -53,6 +53,12 @@ public interface IFile extends IResource, IStorage, IAdaptable {
  * the local history.
  * </p>
  * <p>
+ * Prior to modifying the contents of this file, the file modification validator (if provided 
+ * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
+ * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
+ * If the validation fails, then this operation will fail.
+ * </p>
+ * <p>
  * This method changes resources; these changes will be reported
  * in a subsequent resource change event, including an indication 
  * that this file's content have been changed.
@@ -78,6 +84,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
  * </ul>
  */
 public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -311,6 +318,12 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  * Properties are not recorded in the local history.
  * </p>
  * <p>
+ * Prior to modifying the contents of this file, the file modification validator (if provided 
+ * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
+ * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
+ * If the validation fails, then this operation will fail.
+ * </p>
+ * <p>
  * This method changes resources; these changes will be reported
  * in a subsequent resource change event, including an indication 
  * that this file's content have been changed.
@@ -336,6 +349,7 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
  * </ul>
  */
 public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -358,6 +372,12 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  * The <code>keepHistory</code> parameter indicates whether or not a copy of
  * this resource should be stored in the workspace's local history. 
  * Properties are not recorded in the local history.
+ * </p>
+ * <p>
+ * Prior to modifying the contents of this file, the file modification validator (if provided 
+ * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
+ * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
+ * If the validation fails, then this operation will fail.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -386,6 +406,7 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
  * </ul>
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;

@@ -48,6 +48,12 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PT_MARKERS = "markers";
 
 	/**
+	 * Simple identifier constant (value <code>"fileModificationValidator"</code>)
+	 * for the file modification validator extension point.
+	 */
+	public static final String PT_FILE_MODIFICATION_VALIDATOR = "fileModificationValidator";
+
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static ResourcesPlugin plugin;

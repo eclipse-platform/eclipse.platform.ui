@@ -790,7 +790,13 @@ public void setDescription(IWorkspaceDescription description) throws CoreExcepti
  * @param lock the lock to install on this workspace.
  */
 public void setWorkspaceLock(WorkspaceLock lock);
-
+/**
+ * Method validateEdit.
+ * @param files
+ * @param context
+ * @return IStatus
+ */
+public IStatus validateEdit(IFile[] files, Object context);
 /**
  * Validates the given string as the name of a resource
  * valid for one of the given types.

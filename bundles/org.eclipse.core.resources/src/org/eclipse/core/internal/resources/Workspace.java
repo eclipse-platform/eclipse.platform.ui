@@ -37,6 +37,17 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
 
 	protected static final String REFRESH_ON_STARTUP = "-refresh";
+	
+	/**
+	 * File modification validation.  If it is true and validator is null, we try/initialize 
+	 * validator first time through.  If false, there is no validator.
+	 */
+	protected static boolean shouldValidate = true;
+	/**
+	 * The currently installed file modification validator.
+	 */
+	protected static IFileModificationValidator validator = null;
+
 	// whether the resources plugin is in debug mode.
 	public static boolean DEBUG = false;
 
@@ -726,6 +737,37 @@ private static List findRootNodes(HashMap counts) {
 	return result;
 }
 /**
+ * A file modification validator hasn't been initialized. Check the extension point and 
+ * try to create a new validator if a user has one defined as an extension.
+ */
+protected static void initializeValidator() {
+	shouldValidate = false;
+	IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
+	// no-one is plugged into the extension point so disable validation
+	if (configs == null || configs.length == 0) {
+		return;
+	}
+	// can only have one defined at a time. log a warning, disable validation, but continue with
+	// the #setContents (e.g. don't throw an exception)
+	if (configs.length > 1) {
+		//XXX: shoud provide a meaningful status code
+		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneValidator"), null);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		return;
+	}
+	// otherwise we have exactly one validator extension. Try to create a new instance 
+	// from the user-specified class.
+	try {
+		IConfigurationElement config = configs[0];
+		validator = (IFileModificationValidator) config.createExecutableExtension("class");
+		shouldValidate = true;
+	} catch (CoreException e) {
+		//XXX: shoud provide a meaningful status code
+		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+}
+/**
  * Flush the build order cache for the workspace.  Only needed if the
  * description does not already have a build order.  That is, if this
  * is really a cache.
@@ -868,6 +910,7 @@ public WorkManager getWorkManager() throws CoreException {
 protected IWorkspace getWorkspace() {
 	return this;
 }
+
 public WorkspaceDescription internalGetDescription() {
 	return description;
 }
@@ -1320,6 +1363,33 @@ public String toDebugString() {
 public void updateModificationStamp(ResourceInfo info) {
 	info.setModificationStamp(nextModificationStamp());
 }
+/* (non-javadoc)
+ * Method declared on IWorkspace.
+ */
+public IStatus validateEdit(final IFile[] files, final Object context) {
+	// if validation is turned off then just return
+	if (!shouldValidate)
+		return ResourceStatus.OK_STATUS;
+	// first time through the validator hasn't been initialized so try and create it
+	if (validator == null) 
+		initializeValidator();
+	// we were unable to initialize the validator. Validation has been turned off and 
+	// a warning has already been logged so just return.
+	if (validator == null)
+		return ResourceStatus.OK_STATUS;
+	// otherwise call the API and throw an exception if appropriate
+	final IStatus[] status = new IStatus[1];
+	ISafeRunnable body = new ISafeRunnable() {
+		public void run() throws Exception {
+			status[0] = validator.validateEdit(files, context);
+		}
+		public void handleException(Throwable exception) {
+			status[0]  = new ResourceStatus(IResourceStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception);
+		}
+	};
+	Platform.run(body);
+	return status[0];
+}
 /**
  * @see IWorkspace#validateName
  */
@@ -1467,5 +1537,40 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 	}
 	message = Policy.bind("resources.validLocation");
 	return new ResourceStatus(IResourceStatus.OK, message);
+}
+/**
+ * Internal method. To be called only from the following methods:
+ * <ul>
+ * <li><code>IFile#appendContents</code></li>
+ * <li><code>IFile#setContents(InputStream, boolean, boolean, IProgressMonitor)</code></li>
+ * <li><code>IFile#setContents(IFileState, boolean, boolean, IProgressMonitor)</code></li>
+ * </ul>
+ * 
+ * @see IFileModificationValidator#validateSave
+ */
+protected void validateSave(final IFile file) throws CoreException {
+	// if validation is turned off then just return
+	if (!shouldValidate)
+		return;
+	// first time through the validator hasn't been initialized so try and create it
+	if (validator == null) 
+		initializeValidator();
+	// we were unable to initialize the validator. Validation has been turned off and 
+	// a warning has already been logged so just return.
+	if (validator == null)
+		return;
+	// otherwise call the API and throw an exception if appropriate
+	final IStatus[] status = new IStatus[1];
+	ISafeRunnable body = new ISafeRunnable() {
+		public void run() throws Exception {
+			status[0] = validator.validateSave(file);
+		}
+		public void handleException(Throwable exception) {
+			status[0]  = new ResourceStatus(IResourceStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception);
+		}
+	};
+	Platform.run(body);
+	if (!status[0].isOK())
+		throw new ResourceException(status[0]);
 }
 }
