@@ -10,8 +10,7 @@
  **********************************************************************/
 package org.eclipse.ui.externaltools.internal.ui;
 
-import java.util.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Object which stores the index and the length of the output for a given
