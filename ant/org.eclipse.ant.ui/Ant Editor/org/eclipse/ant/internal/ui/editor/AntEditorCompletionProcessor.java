@@ -67,7 +67,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -1544,7 +1543,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createProposal(org.eclipse.jface.text.templates.Template, org.eclipse.jface.text.templates.TemplateContext, org.eclipse.jface.text.Region, int)
 	 */
-	protected ICompletionProposal createProposal(Template template,TemplateContext context, Region region, int relevance) {
+	protected ICompletionProposal createProposal(Template template,TemplateContext context, IRegion region, int relevance) {
 		return new AntTemplateProposal(template, context, region, getImage(template), relevance);
 	}
 
