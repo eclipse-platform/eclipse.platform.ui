@@ -764,6 +764,7 @@ public class DebugPlugin extends Plugin {
 	class EventDispatcher implements ISafeRunnable {
 		
 		private DebugEvent[] fEvents;
+		private IDebugEventSetListener fListener;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -777,25 +778,27 @@ public class DebugPlugin extends Plugin {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			try {
-				setDispatching(true);
-				Object[] listeners= getEventListeners();
-				for (int i= 0; i < listeners.length; i++) {
-					((IDebugEventSetListener)listeners[i]).handleDebugEvents(fEvents);
-				}
-			} finally {
-				setDispatching(false);
-			}			
+			fListener.handleDebugEvents(fEvents);
 		}
 		
 		/**
-		 * Dispatch the given events.
+		 * Dispatch the given events. If an exception occurrs in one listener,
+		 * events are still fired to subsequent listeners.
 		 * 
 		 * @param events debug events
 		 */
 		public void dispatch(DebugEvent[] events) {
 			fEvents = events;
-			Platform.run(this);
+			try {
+				setDispatching(true);
+				Object[] listeners= getEventListeners();
+				for (int i= 0; i < listeners.length; i++) {
+					fListener = (IDebugEventSetListener)listeners[i]; 
+					Platform.run(this);
+				}
+			} finally {
+				setDispatching(false);
+			}				
 		}
 
 	}
@@ -818,6 +821,7 @@ public class DebugPlugin extends Plugin {
 	class EventFilter implements ISafeRunnable {
 		
 		private DebugEvent[] fEvents;
+		private IDebugEventFilter fFilter;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -831,17 +835,13 @@ public class DebugPlugin extends Plugin {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
-			Object[] filters = fEventFilters.getListeners();
-			for (int i = 0; i < filters.length; i++) {
-				fEvents = ((IDebugEventFilter)filters[i]).filterDebugEvents(fEvents);
-				if (fEvents == null || fEvents.length == 0) {
-					break;
-				}
-			}		
+			fEvents = fFilter.filterDebugEvents(fEvents);
 		}
 		
 		/**
-		 * Returns the remaining debug events after applying all filters.
+		 * Returns the remaining debug events after applying all filters. If an
+		 * exception occurrs in one filter, subsequent filters are still
+		 * applied.
 		 * 
 		 * @param events raw debug events
 		 * @return filtered debug events
@@ -849,7 +849,14 @@ public class DebugPlugin extends Plugin {
 		public DebugEvent[] filter(DebugEvent[] events) {
 			fEvents = events;
 			if (hasEventFilters()) {
-				Platform.run(this);
+				Object[] filters = fEventFilters.getListeners();
+				for (int i = 0; i < filters.length; i++) {
+					fFilter = (IDebugEventFilter)filters[i];
+					Platform.run(this);
+					if (fEvents == null || fEvents.length == 0) {
+						break;
+					}
+				}	
 			}
 			return fEvents;
 		}
