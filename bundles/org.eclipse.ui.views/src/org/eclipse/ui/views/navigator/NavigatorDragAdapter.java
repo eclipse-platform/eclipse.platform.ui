@@ -29,10 +29,12 @@ import org.eclipse.ui.part.ResourceTransfer;
  * @since 2.0
  */
 public class NavigatorDragAdapter extends DragSourceAdapter {
+	private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages.getString("DragAdapter.title"); //$NON-NLS-1$
+	private static final String CHECK_DELETE_MESSAGE = ResourceNavigatorMessages.getString("DragAdapter.checkDeleteMessage"); //$NON-NLS-1$
+
 	ISelectionProvider selectionProvider;
 
-	private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages.getString("DragAdapter.title"); //$NON-NLS-1$
-	private static final String CHECK_DELETE_MESSAGE = ResourceNavigatorMessages.getString("DragAdapter.checkDeleteMessage"); //$NON-NLS-1$	
+	private TransferData lastDataType; 	
 
 	/**
 	 * Constructs a new drag adapter.
@@ -46,11 +48,16 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	public void dragFinished(DragSourceEvent event) {
 		LocalSelectionTransfer.getInstance().setSelection(null);
 
-		if (event.doit == false) {
+		if (event.doit == false)
 			return;
-		}
+
 		final int typeMask = IResource.FOLDER | IResource.FILE;
 		if (event.detail == DND.DROP_MOVE) {
+			//never delete resources when dragging outside Eclipse. 
+			//workaround for bug 30543.
+			if (lastDataType != null && FileTransfer.getInstance().isSupportedType(lastDataType))
+				return;
+			
 			IResource[] resources = getSelectedResources(typeMask);	
 			DragSource dragSource = (DragSource) event.widget;
 			Control control = dragSource.getControl();
@@ -96,6 +103,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		if (resources == null || resources.length == 0)
 			return;
 
+		lastDataType = event.dataType;
 		//use local selection transfer if possible
 		if (LocalSelectionTransfer.getInstance().isSupportedType(event.dataType)) {
 			event.data = LocalSelectionTransfer.getInstance().getSelection();
@@ -136,6 +144,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 	 * @see DragSourceListener#dragStart
 	 */
 	public void dragStart(DragSourceEvent event) {
+		lastDataType = null;
 		// Workaround for 1GEUS9V
 		DragSource dragSource = (DragSource) event.widget;
 		Control control = dragSource.getControl();
