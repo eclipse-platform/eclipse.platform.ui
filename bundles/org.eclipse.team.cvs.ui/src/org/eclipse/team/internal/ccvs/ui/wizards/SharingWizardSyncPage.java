@@ -166,7 +166,9 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
-		collector.dispose();
+		if (collector != null) {
+			collector.dispose();
+		}
 	}
 	
 	/* (non-Javadoc)
