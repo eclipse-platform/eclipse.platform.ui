@@ -38,24 +38,38 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 	}
 
 	/**
-	 * An abstract class whoich contains a set of <code>FastSyncInfoFilter</code> instances.
+	 * An abstract class which contains a set of <code>FastSyncInfoFilter</code> instances.
 	 * Subclasses must provide the <code>select(SyncInfo)</code> method for determining
 	 * matches. 
 	 */
 	public static abstract class CompoundSyncInfoFilter extends FastSyncInfoFilter {
+		/**
+		 * Instance variable which contains all the child filters for ths compound filter.
+		 */
 		protected FastSyncInfoFilter[] filters;
+		/**
+		 * Create a compund filter that contains the provided filters.
+		 * @param filters the child filters
+		 */
 		protected CompoundSyncInfoFilter(FastSyncInfoFilter[] filters) {
 			this.filters = filters;
 		}
 	}
 	
 	/**
-	 * Selects SyncInfo which match all child filters.
+	 * Selects <code>SyncInfo</code> which match all child filters.
 	 */
 	public static class AndSyncInfoFilter extends CompoundSyncInfoFilter {
+		/**
+		 * Create an AND filter from the given filters
+		 * @param filters the filters to be ANDed
+		 */
 		public AndSyncInfoFilter(FastSyncInfoFilter[] filters) {
 			super(filters);
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.core.synchronize.FastSyncInfoFilter#select(org.eclipse.team.core.synchronize.SyncInfo)
+		 */
 		public boolean select(SyncInfo info) {
 			for (int i = 0; i < filters.length; i++) {
 				FastSyncInfoFilter filter = filters[i];
@@ -65,13 +79,15 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 			}
 			return true;
 		}
-
 	}
 
 	/**
 	 * Selects <code>SyncInfo</code> instances that are auto-mergable.
 	 */
 	public static class AutomergableFilter extends FastSyncInfoFilter {
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.core.synchronize.FastSyncInfoFilter#select(org.eclipse.team.core.synchronize.SyncInfo)
+		 */
 		public boolean select(SyncInfo info) {
 			return (info.getKind() & SyncInfo.AUTOMERGE_CONFLICT) != 0;
 		}
@@ -80,8 +96,10 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 	/**
 	 * Selects <code>SyncInfo</code> instances that are pseudo-conflicts.
 	 */
-
 	public static class PseudoConflictFilter extends FastSyncInfoFilter {
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.core.synchronize.FastSyncInfoFilter#select(org.eclipse.team.core.synchronize.SyncInfo)
+		 */
 		public boolean select(SyncInfo info) {
 			return info.getKind() != 0 && (info.getKind() & SyncInfo.PSEUDO_CONFLICT) == 0;
 		}
@@ -91,9 +109,16 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 	 * Selects <code>SyncInfo</code> that match any of the child filters.
 	 */
 	public static class OrSyncInfoFilter extends CompoundSyncInfoFilter {
+		/**
+		 * Create an OR filter from the given filters
+		 * @param filters the filters to be ORed
+		 */
 		public OrSyncInfoFilter(FastSyncInfoFilter[] filters) {
 			super(filters);
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.core.synchronize.FastSyncInfoFilter#select(org.eclipse.team.core.synchronize.SyncInfo)
+		 */
 		public boolean select(SyncInfo info) {
 			for (int i = 0; i < filters.length; i++) {
 				FastSyncInfoFilter filter = filters[i];
@@ -128,6 +153,9 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 		public SyncInfoChangeTypeFilter(int change) {
 			this(new int[]{change});
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.core.synchronize.FastSyncInfoFilter#select(org.eclipse.team.core.synchronize.SyncInfo)
+		 */
 		public boolean select(SyncInfo info) {
 			int syncKind = info.getKind();
 			for (int i = 0; i < changeFilters.length; i++) {
@@ -138,6 +166,7 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 			return false;
 		}
 	}
+
 	/**
 	 * Selects <code>SyncInfo</code> whose change direction match those of the filter. 
 	 */	
@@ -161,6 +190,9 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 		public SyncInfoDirectionFilter(int direction) {
 			this(new int[] { direction });
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.core.synchronize.FastSyncInfoFilter#select(org.eclipse.team.core.synchronize.SyncInfo)
+		 */
 		public boolean select(SyncInfo info) {
 			int syncKind = info.getKind();
 			for (int i = 0; i < directionFilters.length; i++) {
@@ -173,7 +205,7 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 	}
 
 	/**
-	 * Return true if the provided <code>SyncInfo</code> matches the filter. The default
+	 * Return whether the provided <code>SyncInfo</code> matches the filter. The default
 	 * behavior it to include resources whose syncKind is non-zero.
 	 * 
 	 * @param info the <code>SyncInfo</code> being tested

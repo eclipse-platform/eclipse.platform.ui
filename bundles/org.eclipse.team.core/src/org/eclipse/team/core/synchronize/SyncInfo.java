@@ -18,21 +18,42 @@ import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
 /**
- * Describes the relative synchronization of a <b>remote</b>
- * resource and a <b>local</b> resource using a <b>base</b>
- * resource for comparison.
+ * Describes the synchronization of a <b>local</b> resource 
+ * relative to a <b>remote</b> resource variant. There are two
+ * types of comparison: two-way and three-way. 
+ * The {@link IResourceVariantComparator} is used to decide which 
+ * comparison type to use. 
+ * </p>
  * <p>
- * Differences between the base and local resources
+ * For two-way comparisons, a <code>SyncInfo</code> node has a change
+ * type. This will be one of IN-SYNC, ADDITION, DELETION or CHANGE determined
+ * in the following manner.
+ * <ul>
+ * <li>A resource is considered an ADDITION if it exists locally and there is no remote.
+ * <li>A resource is considered an DELETION if it does not exists locally and there is remote.
+ * <li>A resource is considered a CHANGE if both the local and remote exist but the 
+ * comparator indicates that they differ. The comparator may be comparing contents or
+ * timestamps or some other resource state.
+ * <li>I resource is considered IN_SYNC in all other cases.
+ * </ul>
+ * </p>
+ * For three-way comparisons, the sync info node has a direction as well as a change
+ * type. The direction is one of INCOMING, OUTGOING or CONFLICTING. The comparison
+ * of the local and remote resources with a <b>base</b> resource is used to determine
+ * the direction of the change.
+ * <ul>
+ * <li>Differences between the base and local resources
  * are classified as <b>outgoing changes</b>; if there is
  * a difference, the local resource is considered the
  * <b>outgoing resource</b>.
- * </p>
- * <p>
- * Differences between the base and remote resources
+ * <li>Differences between the base and remote resources
  * are classified as <b>incoming changes</b>; if there is
  * a difference, the remote resource is considered the
  * <b>incoming resource</b>.
- * </p>
+ * <li>If there are both incoming and outgoing changes, the resource 
+ * is considered a <b>conflicting change</b>.
+ * Again, the comparison of resources is done using the comparator of the
+ * node.
  * 
  * @since 3.0
  */
@@ -125,9 +146,13 @@ public class SyncInfo implements IAdaptable {
 	 
 	 private int syncKind;
 	
-	/**
-	 * Construct a sync info object.
-	 */
+	 /**
+	  * Construct a sync info object.
+	  * @param local the local resource. Must be non-null but may not exist.
+	  * @param base the base resource variant or <code>null</code>
+	  * @param remote the remote resource variant or <code>null</code>
+	  * @param comparator the comparator used to determine if resources differ
+	  */
 	public SyncInfo(IResource local, IResourceVariant base, IResourceVariant remote, IResourceVariantComparator comparator) {
 		Assert.isNotNull(local);
 		Assert.isNotNull(comparator);
@@ -245,6 +270,13 @@ public class SyncInfo implements IAdaptable {
 			return equalNodes(this, (SyncInfo)other);
 		}
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getLocal().hashCode();
 	}
 	
 	private boolean equalNodes(SyncInfo node1, SyncInfo node2) {		

@@ -24,6 +24,8 @@ import org.eclipse.team.internal.core.Policy;
  * their resource's hierarchical relationships.
  * <p>
  * Events fired from a <code>SyncInfoTree</code> will be instances of <code>ISyncInfoTreeChangeEvent</code>.
+ * 
+ * @since 3.0
  */
 public class SyncInfoTree extends SyncInfoSet {
 
@@ -119,7 +121,7 @@ public class SyncInfoTree extends SyncInfoSet {
 	 */
 	private synchronized SyncInfo[] internalGetDeepSyncInfo(IContainer resource) {
 		List infos = new ArrayList();
-		IResource[] children = internalGetOutOfSyncDescendants((IContainer)resource);
+		IResource[] children = internalGetOutOfSyncDescendants(resource);
 		for (int i = 0; i < children.length; i++) {
 			IResource child = children[i];
 			SyncInfo info = getSyncInfo(child);
@@ -132,22 +134,16 @@ public class SyncInfoTree extends SyncInfoSet {
 		return (SyncInfo[]) infos.toArray(new SyncInfo[infos.size()]);
 	}
 
+	/**
+	 * Overrides inherited method to provide an instance of
+	 * <code>ISyncInfoTreeChangeEvent</code>.
+	 */
 	protected SyncSetChangedEvent createEmptyChangeEvent() {
 		return new SyncInfoTreeChangeEvent(this);
 	}
 
-	/**
-	 * Add the given <code>SyncInfo</code> to the set. A change event will
-	 * be generated unless the call to this method is nested in between calls
-	 * to <code>beginInput()</code> and <code>endInput(IProgressMonitor)</code>
-	 * in which case the event for this addition and any other sync set
-	 * change will be fired in a batched event when <code>endInput</code>
-	 * is invoked.
-	 * Invoking this method outside of the above mentioned block will result
-	 * in the <code>endInput(IProgressMonitor)</code> being invoked with a null
-	 * progress monitor. If responsiveness is required, the client should always
-	 * nest sync set modifications.
-	 * @param info
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.SyncInfoSet#add(org.eclipse.team.core.synchronize.SyncInfo)
 	 */
 	public void add(SyncInfo info) {
 		try {
@@ -163,9 +159,8 @@ public class SyncInfoTree extends SyncInfoSet {
 		}
 	}
 
-	/**
-	 * Remove the <code>SyncInfo</code> for the given resource from this set.
-	 * @param resource the resource to be removed
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.SyncInfoSet#remove(org.eclipse.core.resources.IResource)
 	 */
 	public void remove(IResource resource) {
 		try {
@@ -178,8 +173,8 @@ public class SyncInfoTree extends SyncInfoSet {
 	
 	}
 
-	/**
-	 * Reset the sync set so it is empty.
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.SyncInfoSet#clear()
 	 */
 	public void clear() {
 		try {
@@ -290,6 +285,10 @@ public class SyncInfoTree extends SyncInfoSet {
 		}
 	}
 
+	/**
+	 * This is an internal method and is not intended to be invoked or
+	 * overriden by clients.
+	 */
 	protected synchronized IResource[] internalGetOutOfSyncDescendants(IContainer resource) {
 		// The parent map contains a set of all out-of-sync children
 		Set allChildren = (Set)parents.get(resource.getFullPath());

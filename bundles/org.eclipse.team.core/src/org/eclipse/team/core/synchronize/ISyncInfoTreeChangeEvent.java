@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
  * that contain the out-of-sync resources. It is the event type 
  * provided by {@link SyncInfoTree} when it notifies listeners
  * of changes.
+ * @since 3.0
  */
 public interface ISyncInfoTreeChangeEvent extends ISyncInfoSetChangeEvent {
 	

@@ -26,9 +26,10 @@ import org.eclipse.team.internal.core.subscribers.SyncSetChangedEvent;
 /**
  * A dynamic collection of {@link SyncInfo} objects that provides
  * change notification to registered listeners. Batching of change notifications
- * can be accomplished using the <code>beginInput/endInput</code> methods or
- * the <code>run</code> method. 
+ * can be accomplished using the <code>beginInput/endInput</code> methods. 
  * @see SyncInfoTree
+ * @see SyncInfo
+ * @see ISyncInfoSetChangeListener
  * @since 3.0
  */
 public class SyncInfoSet {
@@ -65,9 +66,6 @@ public class SyncInfoSet {
 	
 	/**
 	 * Return an array of <code>SyncInfo</code> for all out-of-sync resources that are contained by the set.
-	 * This call is equivalent in function to 
-	 * <code>getSyncInfos(ResourcesPlugin.getWorkspace().getRoot(), IResource.DEPTH_INFINITE)</code>
-	 * but is optimized to retrieve all contained <code>SyncInfo</code>.
 	 * @return an array of <code>SyncInfo</code>
 	 */
 	public synchronized SyncInfo[] getSyncInfos() {
@@ -192,7 +190,7 @@ public class SyncInfoSet {
 	}
 	
 	/**
-	 * Reset the sync set so it is empty.
+	 * Reset the sync set so it is empty. Listeners are notified of the change.
 	 */
 	public void clear() {
 		try {
@@ -280,7 +278,7 @@ public class SyncInfoSet {
 	 * Invoking this method outside of the above mentioned block will result
 	 * in the <code>endInput(IProgressMonitor)</code> being invoked with a null
 	 * progress monitor. If responsiveness is required, the client should always
-	 * nest sync set modifications.
+	 * nest sync set modifications within <code>beginInput/endInput</code>.
 	 * @param info
 	 */
 	public void add(SyncInfo info) {
@@ -315,7 +313,7 @@ public class SyncInfoSet {
 	}
 
 	/**
-	 * Remove the given local resource from the set
+	 * Remove the given local resource from the set.
 	 * @param resource the local resource to remove
 	 */
 	public synchronized void remove(IResource resource) {
@@ -490,6 +488,12 @@ public class SyncInfoSet {
 		}
 	}
 
+	/**
+	 * Reset the changes accumulated so far by this set.
+	 * This method is not intended to be invoked or
+	 * implemented by clients.
+	 *
+	 */
 	protected void resetChanges() {
 		changes = createEmptyChangeEvent();
 	}
