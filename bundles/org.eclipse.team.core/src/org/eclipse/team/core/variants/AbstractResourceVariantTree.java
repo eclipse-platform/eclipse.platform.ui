@@ -98,7 +98,7 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 			IProgressMonitor sub = Policy.infiniteSubMonitorFor(monitor, 30);
 			try {
 				sub.beginTask(null, 64);
-				changedResources = collectChanges(resource, tree, depth, sub);
+				changedResources = collectChanges(resource, tree, depth, Policy.subMonitorFor(sub, 64));
 			} finally {
 				sub.done();	 
 			}

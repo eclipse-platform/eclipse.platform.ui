@@ -184,16 +184,16 @@ public class RemoteFolderTreeBuilder {
 			monitor.beginTask(null, 100);
 
 			// 1st Connection: Use local state to determine delta with server
-			if (!fetchDelta(resources, Policy.subMonitorFor(monitor, 50))) {
+			if (!fetchDelta(resources, Policy.subMonitorFor(monitor, 75))) {
 				return null;
 			}
 			
 			// 2nd Connection: Build remote tree from above delta using 2nd connection to fetch unknown directories
 			// NOTE: Multiple commands may be issued over this connection.
-			fetchNewDirectories(Policy.subMonitorFor(monitor, 20));
+			fetchNewDirectories(Policy.subMonitorFor(monitor, 10));
 
 			//	3rd+ Connection: Used to fetch file status in groups of 1024
-			fetchFileRevisions(Policy.subMonitorFor(monitor, 30));
+			fetchFileRevisions(Policy.subMonitorFor(monitor, 15));
 			
 			return remoteRoot;
 			

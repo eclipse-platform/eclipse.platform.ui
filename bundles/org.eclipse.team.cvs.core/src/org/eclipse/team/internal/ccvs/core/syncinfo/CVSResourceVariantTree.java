@@ -295,12 +295,12 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 		}
 		ISchedulingRule rule = getSchedulingRule(resource);
 		try {
-			Platform.getJobManager().beginRule(rule, monitor);
+			Platform.getJobManager().beginRule(rule, Policy.subMonitorFor(monitor, 1));
 			if (!resource.getProject().isAccessible()) {
 				// The project is closed so silently skip it
 				return new IResource[0];
 			}
-			changedResources = super.refresh(resource, depth, monitor);
+			changedResources = super.refresh(resource, depth, Policy.subMonitorFor(monitor, 99));
 		} finally {
 			Platform.getJobManager().endRule(rule);
 			monitor.done();
