@@ -41,11 +41,11 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2 {
 	
-	private IEditorPart activePart = null;
-	private IRunToLineTarget partTarget = null;
-	private IAction action = null;
-	private ISelectionListener selectionListener = new DebugSelectionListener();
-	private ISuspendResume targetElement = null;
+	private IEditorPart fActivePart = null;
+	private IRunToLineTarget fPartTarget = null;
+	private IAction fAction = null;
+	private ISelectionListener fSelectionListener = new DebugSelectionListener();
+	private ISuspendResume fTargetElement = null;
 	
 	class DebugSelectionListener implements ISelectionListener {
 
@@ -53,13 +53,13 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 		 */
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-			targetElement = null;
+			fTargetElement = null;
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if (ss.size() == 1) {
 					Object object = ss.getFirstElement();
 					if (object instanceof ISuspendResume) {
-						targetElement = (ISuspendResume) object;
+						fTargetElement = (ISuspendResume) object;
 					}
 				}
 			}
@@ -72,20 +72,20 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
-		activePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
-		activePart = null;
-		partTarget = null;
+		fActivePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
+		fActivePart = null;
+		fPartTarget = null;
 		
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if (partTarget != null && targetElement != null) {
+		if (fPartTarget != null && fTargetElement != null) {
 			try {
-				partTarget.runToLine(activePart, activePart.getSite().getSelectionProvider().getSelection(), targetElement);
+				fPartTarget.runToLine(fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(activePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString("RunToLineAction.0"), ActionMessages.getString("RunToLineAction.1"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(fActivePart.getSite().getWorkbenchWindow().getShell(), ActionMessages.getString("RunToLineAction.0"), ActionMessages.getString("RunToLineAction.1"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		this.action = action;
+		this.fAction = action;
 		update();
 	}
 	
@@ -101,14 +101,14 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
-		if (action == null) {
+		if (fAction == null) {
 			return;
 		}
-		if (partTarget != null && targetElement != null) {
-			action.setEnabled(targetElement.isSuspended() &&
-				partTarget.canRunToLine(activePart, activePart.getSite().getSelectionProvider().getSelection(), targetElement));
+		if (fPartTarget != null && fTargetElement != null) {
+			fAction.setEnabled(fTargetElement.isSuspended() &&
+				fPartTarget.canRunToLine(fActivePart, fActivePart.getSite().getSelectionProvider().getSelection(), fTargetElement));
 		} else {
-			action.setEnabled(false);
+			fAction.setEnabled(false);
 		}
 	}
 		
@@ -116,7 +116,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
-		this.action = action; 
+		this.fAction = action; 
 		if (action != null) {
 			action.setText(ActionMessages.getString("RunToLineActionDelegate.4")); //$NON-NLS-1$
 			action.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_RUN_TO_LINE));
@@ -134,19 +134,19 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		init(action);
-		if (activePart != null && !activePart.equals(targetEditor)) {
-			activePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
+		if (fActivePart != null && !fActivePart.equals(targetEditor)) {
+			fActivePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
 		}
-		partTarget = null;
-		activePart = targetEditor;
+		fPartTarget = null;
+		fActivePart = targetEditor;
 		if (targetEditor != null) {
-			targetEditor.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, selectionListener);
-			partTarget  = (IRunToLineTarget) targetEditor.getAdapter(IRunToLineTarget.class);
-			if (partTarget == null) {
+			targetEditor.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
+			fPartTarget  = (IRunToLineTarget) targetEditor.getAdapter(IRunToLineTarget.class);
+			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on
 				if (adapterManager.hasAdapter(targetEditor, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget")) { //$NON-NLS-1$
-					partTarget = (IRunToLineTarget) adapterManager.loadAdapter(targetEditor, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget"); //$NON-NLS-1$
+					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(targetEditor, "org.eclipse.debug.internal.ui.actions.IRunToLineTarget"); //$NON-NLS-1$
 				}
 			}
 		}
