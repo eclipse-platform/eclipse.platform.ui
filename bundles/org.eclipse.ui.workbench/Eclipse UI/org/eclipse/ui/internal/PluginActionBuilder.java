@@ -22,10 +22,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -215,27 +213,8 @@ public abstract class PluginActionBuilder extends RegistryReader {
                 IToolBarManager toolbar, boolean toolAppendIfMissing) {
             if (menus != null && menu != null) {
                 for (int i = 0; i < menus.size(); i++) {
-                    final IConfigurationElement menuElement = (IConfigurationElement) menus
+                    IConfigurationElement menuElement = (IConfigurationElement) menus
                             .get(i);
-                    IPluginContribution pc = new IPluginContribution() {
-
-                        /* (non-Javadoc)
-                         * @see org.eclipse.ui.IPluginContribution#getLocalId()
-                         */
-                        public String getLocalId() {
-                            return menuElement.getAttribute(ATT_ID);
-                        }
-
-                        /* (non-Javadoc)
-                         * @see org.eclipse.ui.IPluginContribution#getPluginId()
-                         */
-                        public String getPluginId() {
-                            return menuElement.getDeclaringExtension()
-                                    .getNamespace();
-                        }
-                    };
-                    if (WorkbenchActivityHelper.filterItem(pc))
-                        continue;
                     contributeMenu(menuElement, menu, menuAppendIfMissing);
                 }
             }
@@ -243,8 +222,6 @@ public abstract class PluginActionBuilder extends RegistryReader {
             if (actions != null) {
                 for (int i = 0; i < actions.size(); i++) {
                     ActionDescriptor ad = (ActionDescriptor) actions.get(i);
-                    if (WorkbenchActivityHelper.filterItem(ad))
-                        continue;
                     if (menu != null)
                         contributeMenuAction(ad, menu, menuAppendIfMissing);
                     if (toolbar != null)
