@@ -10,6 +10,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.internal.ViewPane;
+import java.util.*;
 
 /**
  * An editor container manages the services for an editor.
@@ -17,11 +18,12 @@ import org.eclipse.ui.internal.ViewPane;
 public class ViewSite extends PartSite
 	implements IViewSite
 {
+	
 /**
  * ViewSite constructor comment.
  */
-public ViewSite(IViewPart view, WorkbenchPage persp, IViewDescriptor desc) {
-	super(view, persp);
+public ViewSite(IViewPart view, WorkbenchPage persp, IViewDescriptor desc,IMemento mem) {
+	super(view, persp,mem);
 	setConfigurationElement(desc.getConfigurationElement());
 }
 /**
@@ -30,4 +32,5 @@ public ViewSite(IViewPart view, WorkbenchPage persp, IViewDescriptor desc) {
 public IViewPart getViewPart() {
 	return (IViewPart)getPart();
 }
+
 }

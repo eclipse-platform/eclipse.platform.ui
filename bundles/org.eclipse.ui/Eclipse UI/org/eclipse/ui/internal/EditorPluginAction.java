@@ -12,19 +12,32 @@ import org.eclipse.ui.*;
  */
 public final class EditorPluginAction extends PartPluginAction {
 	private IEditorPart currentEditor;
+	private String actionID;
 /**
  * This class adds the requirement that action delegates
  * loaded on demand implement IViewActionDelegate
  */
-public EditorPluginAction(IConfigurationElement actionElement, String runAttribute) {
-	this(actionElement, runAttribute, null);
+public EditorPluginAction() {
+	super();
+}
+/**
+ * Runs the action.
+ */
+public void run() {
+	// this message dialog is problematic.
+	if (getDelegate() == null) {
+		setDelegate(createDelegate());
+		editorChanged(currentEditor);
+	}
+	super.run();
 }
 /**
  * This class adds the requirement that action delegates
  * loaded on demand implement IViewActionDelegate
  */
-public EditorPluginAction(IConfigurationElement actionElement, String runAttribute, IEditorPart part) {
-	super(actionElement, runAttribute);
+public void init(IConfigurationElement actionElement, String runAttribute, IEditorPart part) {
+	super.init(actionElement, runAttribute);
+	actionID = actionElement.getAttribute("id");
 	if (part != null) 
 		editorChanged(part);
 }
@@ -37,9 +50,7 @@ protected IActionDelegate createDelegate() {
 	IActionDelegate delegate = super.createDelegate();
 	if (delegate == null)
 		return null;
-	if (delegate instanceof IEditorActionDelegate) {
-		IEditorActionDelegate editorDelegate = (IEditorActionDelegate) delegate;
-	} else {
+	if (!(delegate instanceof IEditorActionDelegate)) {
 		WorkbenchPlugin.log("Action should implement IEditorActionDelegate: " + getText());//$NON-NLS-1$
 		return null;
 	}
@@ -61,8 +72,32 @@ public void editorChanged(IEditorPart part) {
 	}
 	if (getDelegate() != null) {
 		IEditorActionDelegate editorDelegate = (IEditorActionDelegate)getDelegate();
+		if(editorDelegate instanceof IPersistableAction) {
+			PartSite site = (PartSite)currentEditor.getSite();
+			if(site.getPersistableAction(actionID) == null) {
+				IPersistableAction persistable = (IPersistableAction)editorDelegate;
+				IMemento mem = site.getMemento(actionID);
+		   		if(mem != null)
+			   		((IPersistableAction)editorDelegate).restoreState(this,part,mem);
+		   		site.addPersistableAction(actionID,persistable);
+			}
+		}
 		editorDelegate.setActiveEditor(this, part);
 	}
 	registerSelectionListener(part);
+}
+/**
+ * Returns true if the view has been set
+ * The view may be null after the constructor is called and
+ * before the view is stored.  We cannot create the delegate
+ * at that time.
+ */
+public boolean isOkToCreateDelegate() {
+	if(currentEditor == null)
+		return false;
+	if(super.isOkToCreateDelegate())
+		return true;
+	PartSite site = (PartSite)currentEditor.getSite();
+	return site.getMemento(actionID) != null;
 }
 }

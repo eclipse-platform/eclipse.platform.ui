@@ -46,13 +46,18 @@ public class PartSite implements IWorkbenchPartSite {
 	private ISelectionProvider selectionProvider;
 	private List menuHandlers;
 	private SubActionBars actionBars;
+	
+	private IMemento memento;
+	private Map persistableActions = new HashMap();
+
 /**
  * EditorContainer constructor comment.
  */
-public PartSite(IWorkbenchPart part, IWorkbenchPage page) 
+public PartSite(IWorkbenchPart part, IWorkbenchPage page, IMemento mem) 
 {
 	this.part = part;
 	this.page = page;
+	memento = mem;
 	extensionID = "org.eclipse.ui.UnknownID";//$NON-NLS-1$
 	extensionName = "Unknown Name";//$NON-NLS-1$
 }
@@ -199,4 +204,36 @@ public void setPart(IWorkbenchPart newPart) {
 public void setSelectionProvider(ISelectionProvider provider) {
 	selectionProvider = provider;
 }
+
+public IMemento getMemento(String id) {
+	if(memento == null)
+		return null;
+	IMemento children[] = memento.getChildren(IWorkbenchConstants.TAG_CONTRIBUTION);
+	for(int i=0;i<children.length;i++) {
+		String childID = children[i].getString(IWorkbenchConstants.TAG_ID);
+		if(id.equals(childID))
+			return children[i].getChild(IWorkbenchConstants.TAG_STATE);
+	}
+	return null;
+}
+
+public void addPersistableAction(String id,IPersistableAction persistable) {
+	persistableActions.put(id,persistable);
+}
+
+public IPersistableAction getPersistableAction(String id) {
+	return (IPersistableAction)persistableActions.get(id);
+}
+
+public void saveState(IMemento memento) {
+	Iterator iterator = persistableActions.keySet().iterator();
+	while(iterator.hasNext()) {
+		String id = (String)iterator.next();
+		IPersistableAction persistable = (IPersistableAction)persistableActions.get(id);
+		IMemento contributionMem = memento.createChild(IWorkbenchConstants.TAG_CONTRIBUTION);
+		contributionMem.putString(IWorkbenchConstants.TAG_ID,id);
+		persistable.saveState(getPart(),contributionMem.createChild(IWorkbenchConstants.TAG_STATE));
+	}
+}
+
 }

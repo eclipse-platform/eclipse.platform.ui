@@ -23,9 +23,9 @@ public class EditorSite extends PartSite
  * may be omitted for an OLE editor.
  */
 public EditorSite(IEditorPart editor, WorkbenchPage persp, 
-	EditorDescriptor desc) 
+	EditorDescriptor desc,IMemento memento) 
 {
-	super(editor, persp);
+	super(editor, persp,memento);
 	if (desc != null) {
 		this.desc = desc;
 		setConfigurationElement(desc.getConfigurationElement());

@@ -275,7 +275,7 @@ private IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 	// Try to open an OLE editor.
 	IEditorPart componentEditor = ComponentSupport.getComponentEditor(file);
 	if (componentEditor != null) {
-		openInternalEditor(componentEditor, null, input,setVisible);
+		openInternalEditor(componentEditor, null, input,setVisible,null);
 		return componentEditor;
 	}
 
@@ -296,14 +296,14 @@ private IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
 	throws PartInitException {
 	if (desc.isInternal()) {
-		return openInternalEditor(desc, input, true);
+		return openInternalEditor(desc, input, true,null);
 	} else
 		if (desc.isOpenInPlace()) {
 			IEditorPart editor = ComponentSupport.getComponentEditor();
 			if (editor == null)
 				return null;
 			else {
-				openInternalEditor(editor, desc, input, true);
+				openInternalEditor(editor, desc, input, true,null);
 				return editor;
 			}
 		} else
@@ -364,7 +364,7 @@ private void openExternalEditor(final EditorDescriptor desc, final Object input)
  * Opens an editor part.
  */
 private void openInternalEditor(final IEditorPart part, final EditorDescriptor desc,
-	final IEditorInput input,final boolean setVisible) throws PartInitException
+	final IEditorInput input,final boolean setVisible,final IMemento memento) throws PartInitException
 {
 	//Must catch PartInitException inside the runnable because
 	//the Runnable.run() does not throw exceptions.
@@ -375,7 +375,7 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 		public void run() {
 			try {
 				// Create the site, action bars, pane, etc.
-				EditorSite site = new EditorSite(part, page, desc);
+				EditorSite site = new EditorSite(part, page, desc,memento);
 				part.init(site, input);
 				if (part.getSite() != site)
 					throw new PartInitException(WorkbenchMessages.format("EditorManager.siteIncorrect", new Object[] { desc.getId()})); //$NON-NLS-1$
@@ -403,7 +403,7 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
  * Open an internal editor on an file.  Throw up an error dialog if
  * an exception occurs.
  */
-private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput input,boolean setVisible) 
+private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput input,boolean setVisible,IMemento memento) 
 	throws PartInitException
 {
 	// Create an editor instance.
@@ -423,7 +423,7 @@ private IEditorPart openInternalEditor(final EditorDescriptor desc, IEditorInput
 		throw new PartInitException(WorkbenchMessages.format("EditorManager.unableToInstantiate", new Object[] {desc.getId(),ex[0]})); //$NON-NLS-1$
 	 
 	// Open the instance.
-	openInternalEditor(editor[0], desc, input,setVisible);
+	openInternalEditor(editor[0], desc, input,setVisible,memento);
 	return editor[0];
 }
 /**
@@ -514,7 +514,7 @@ public void restoreState(IMemento memento) {
 					if(desc == null) 
 						part = openEditor((IFileEditorInput)editorInput,false);
 					else
-						part = openInternalEditor(desc, editorInput,false);
+						part = openInternalEditor(desc, editorInput,false,editorMem);
 						
 					String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
 					if ("true".equals(strFocus))//$NON-NLS-1$
@@ -757,6 +757,8 @@ public void saveState(final IMemento memento) {
 				IMemento inputMem = editorMem.createChild(IWorkbenchConstants.TAG_INPUT);
 				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
 				persistable.saveState(inputMem);
+				((EditorSite)editor.getEditorSite()).saveState(editorMem);
+				
 			}
 			public void handleException(Throwable e) {
 				errors[0]++;

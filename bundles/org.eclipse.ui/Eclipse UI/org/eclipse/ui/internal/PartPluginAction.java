@@ -19,9 +19,11 @@ public class PartPluginAction extends PluginAction {
  * PartPluginAction constructor.
  *
  */
-public PartPluginAction(IConfigurationElement actionElement, String runAttribute) {
-	super(actionElement, runAttribute);
+
+public PartPluginAction() {
+	super();
 }
+
 /**
  * Handles the provided selection. We are interested
  * only in structured selections.

@@ -114,4 +114,6 @@ public interface IWorkbenchConstants {
 	public static final String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$
+	public static final String TAG_CONTRIBUTION = "contribution"; //$NON-NLS-1$
+	public static final String TAG_STATE = "state"; //$NON-NLS-1$
 }

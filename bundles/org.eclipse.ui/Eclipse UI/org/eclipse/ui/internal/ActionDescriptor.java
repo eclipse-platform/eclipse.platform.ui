@@ -102,7 +102,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	toolbarGroup = tgroup;
 
 	// Create action.
-	action = createAction(targetType, actionElement, target);
+	action = createAction(targetType);
 	action.setText(label);
 	if (tooltip != null)
 		action.setToolTipText(tooltip);
@@ -127,26 +127,54 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	if (disabledIcon != null) {
 		action.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), disabledIcon));
 	}
+	initAction(targetType, actionElement, target);
 }
 /**
  * Creates an instance of PluginAction. Depending on the target part,
  * subclasses of this class may be created.
  */
-private PluginAction createAction(int targetType, IConfigurationElement actionElement, Object target) {
+private PluginAction createAction(int targetType) {
 	switch (targetType) {
 		case T_VIEW:
-			return new ViewPluginAction(actionElement, ATT_CLASS, (IViewPart)target);
+			return new ViewPluginAction();
 		case T_EDITOR:
-			return new EditorPluginAction(actionElement, ATT_CLASS, (IEditorPart)target);
+			return new EditorPluginAction();
 		case T_WORKBENCH:
-			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target);
+			return new WWinPluginAction();
 		case T_WORKBENCH_PULLDOWN:
-			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target);
+			return new WWinPluginPulldown();
 		case T_POPUP:
-			return new ObjectPluginAction(actionElement, ATT_CLASS);
+			return new ObjectPluginAction();
 		default:
 			WorkbenchPlugin.log("Unknown Action Type: " + targetType);//$NON-NLS-1$
 			return null;
+	}
+}
+
+/**
+ * Creates an instance of PluginAction. Depending on the target part,
+ * subclasses of this class may be created.
+ */
+private void initAction(int targetType, IConfigurationElement actionElement, Object target) {
+	switch (targetType) {
+		case T_VIEW:
+			((ViewPluginAction)action).init(actionElement, ATT_CLASS, (IViewPart)target);
+			return;
+		case T_EDITOR:
+			((EditorPluginAction)action).init(actionElement, ATT_CLASS, (IEditorPart)target);
+			return;
+		case T_WORKBENCH:
+			((WWinPluginAction)action).init(actionElement, ATT_CLASS, (IWorkbenchWindow)target);
+			return;
+		case T_WORKBENCH_PULLDOWN:
+			((WWinPluginPulldown)action).init(actionElement, ATT_CLASS, (IWorkbenchWindow)target);
+			return;
+		case T_POPUP:
+			((ObjectPluginAction)action).init(actionElement, ATT_CLASS);
+			return;
+		default:
+			WorkbenchPlugin.log("Unknown Action Type: " + targetType);//$NON-NLS-1$
+			return;
 	}
 }
 /**

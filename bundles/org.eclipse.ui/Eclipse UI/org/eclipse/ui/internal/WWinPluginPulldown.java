@@ -37,9 +37,13 @@ public class WWinPluginPulldown extends WWinPluginAction {
  * @param runAttribute java.lang.String
  * @param window org.eclipse.ui.IWorkbenchWindow
  */
-public WWinPluginPulldown(IConfigurationElement actionElement, String runAttribute, 
+public WWinPluginPulldown() {
+	super();
+}
+
+public void init (IConfigurationElement actionElement, String runAttribute, 
 	IWorkbenchWindow window) {
-	super(actionElement, runAttribute, window);
+	super.init(actionElement, runAttribute, window);
 	menuProxy = new MenuProxy();
 	setMenuCreator(menuProxy);
 }

@@ -23,8 +23,12 @@ public class WWinPluginAction extends PluginAction
 /**
  * Constructs a new WWinPluginAction object..
  */
-public WWinPluginAction(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window) {
-	super(actionElement, runAttribute);
+public WWinPluginAction() {
+	super();
+}
+
+public void init(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window) {
+	super.init(actionElement, runAttribute);
 	this.window = window;
 	window.getSelectionService().addSelectionListener(this);
 }

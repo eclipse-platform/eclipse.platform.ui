@@ -15,9 +15,10 @@ public class ObjectPluginAction extends PluginAction {
 /**
  * Constructs a new ObjectPluginAction.
  */
-public ObjectPluginAction(IConfigurationElement actionElement, String runAttribute) {
-	super(actionElement, runAttribute);
+public ObjectPluginAction() {
+	super();
 }
+
 /**
  * Creates an instance of the delegate class.
  * At this point in time the delegate class must implement

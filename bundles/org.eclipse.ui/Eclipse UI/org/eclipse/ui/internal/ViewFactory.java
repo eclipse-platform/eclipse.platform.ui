@@ -116,8 +116,11 @@ private IViewPart createView(IViewDescriptor desc,IMemento memento)
 	}
 	
 	// Create site
-	ViewSite site = new ViewSite(view, page, desc);
-	view.init(site,memento);
+	ViewSite site = new ViewSite(view, page, desc,memento);
+	IMemento stateMem = null;
+	if(memento != null)
+		stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
+	view.init(site,stateMem);
 	if (view.getSite() != site)
 		throw new PartInitException(WorkbenchMessages.format("ViewFactory.siteException", new Object[] {desc.getID()})); //$NON-NLS-1$
 

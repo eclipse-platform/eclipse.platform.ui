@@ -41,9 +41,12 @@ public class PluginAction extends Action
 /**
  * PluginAction constructor.
  */
-public PluginAction(IConfigurationElement actionElement, String runAttribute) {
-	super();
 
+public PluginAction() {
+	super();
+}
+
+public void init(IConfigurationElement actionElement, String runAttribute) {
 	// Create unique action id.
 	setId("PluginAction." + Integer.toString(actionCount));//$NON-NLS-1$
 	++ actionCount;
