@@ -125,7 +125,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		String buildScope= null;
 		try {
 			buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""); //$NON-NLS-1$
-			buildScope= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
+			buildScope= configuration.getAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
 		} catch (CoreException e) {
 		}
 		
@@ -174,9 +174,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		
 		if (workingSetButton.getSelection()) {
 			String variableTag= VariableUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
-			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, variableTag);
+			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, variableTag);
 		} else {
-			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
+			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
 		}
 	}
 

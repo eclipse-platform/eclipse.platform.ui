@@ -170,6 +170,14 @@ public interface IExternalToolConstants {
 	public static final String ATTR_REFRESH_SCOPE = PLUGIN_ID + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
 	
 	/**
+	 * String attribute identifying the scope of resources that should trigger an 
+	 * external tool to run. Default value is <code>null</code>
+	 * indicating that the builder will be triggered for all changes.
+	 */
+	public static final String ATTR_BUILD_SCOPE = PLUGIN_ID + ".ATTR_BUILD_SCOPE"; //$NON-NLS-1$
+		
+	
+	/**
 	 * String attribute containing an array of build kinds for which an
 	 * external tool builder should be run.
 	 */

@@ -258,7 +258,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if an exception occurrs while refreshing resources
 	 */
 	public static void refreshResources(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
-		IResource[] resources= getResourcesForScope(configuration, context, monitor);
+		IResource[] resources= getResourcesForRefreshScope(configuration, context, monitor);
 		if (resources == null || resources.length == 0){
 			return;
 		}
@@ -294,19 +294,41 @@ public class ExternalToolsUtil {
 	}
 	
 	/**
-	 * Returns the collection of resources as specified by the given launch configuration.
+	 * Returns the collection of resources for the refresh scope as specified by the given launch configuration.
 	 * 
 	 * @param configuration launch configuration
 	 * @param context context used to expand variables
 	 * @param monitor progress monitor
 	 * @throws CoreException if an exception occurs while refreshing resources
 	 */
-	public static IResource[] getResourcesForScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
+	public static IResource[] getResourcesForRefreshScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
 		String scope = getRefreshScope(configuration);
 		if (scope == null) {
 			return null;
 		}
 
+		return getResourcesForScope(configuration, context, monitor, scope);
+	}
+
+	/**
+	 * Returns the collection of resources for the build scope as specified by the given launch configuration.
+	 * 
+	 * @param configuration launch configuration
+	 * @param context context used to expand variables
+	 * @param monitor progress monitor
+	 * @throws CoreException if an exception occurs while refreshing resources
+	 */
+	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor) throws CoreException {
+		String scope = configuration.getAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String) null);
+		if (scope == null) {
+			return null;
+		}
+
+		return getResourcesForScope(configuration, context, monitor, scope);
+	
+	}
+	
+	private static IResource[] getResourcesForScope(ILaunchConfiguration configuration, ExpandVariableContext context, IProgressMonitor monitor, String scope) throws CoreException {
 		VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableTag(scope, 0);
 		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
 			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$

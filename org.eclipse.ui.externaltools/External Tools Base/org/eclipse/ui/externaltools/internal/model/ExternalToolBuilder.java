@@ -64,7 +64,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			return null;
 		}
 		
-		IResource[] resources= ExternalToolsUtil.getResourcesForScope(config, ExternalToolsUtil.getVariableContext(), monitor);
+		IResource[] resources= ExternalToolsUtil.getResourcesForBuildScope(config, ExternalToolsUtil.getVariableContext(), monitor);
 		boolean buildForChange= true;
 		if (resources != null && resources.length > 0) {
 			buildForChange= buildScopeIndicatesBuild(resources);
