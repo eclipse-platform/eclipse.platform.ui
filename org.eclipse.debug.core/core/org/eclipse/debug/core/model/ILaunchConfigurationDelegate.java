@@ -5,6 +5,7 @@ package org.eclipse.debug.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -36,28 +37,31 @@ public interface ILaunchConfigurationDelegate {
 	 * returns the resulting launch object that describes the launched
 	 * configuration. The resulting launch object is registered with the
 	 * launch manager. Returns <code>null</code> if the launch is not
-	 * completed or the launch does not succeed.
+	 * completed.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this <code>ILaunchConfiguration</code> -
 	 *  <code>RUN</code> or <code>DEBUG</code>.
 	 * @return the resuling launch object, or <code>null</code> if the
-	 *  launch is not completed, or does not succeed.
+	 *  launch is not completed.
+	 * @exception CoreException if launching fails 
 	 */
-	public ILaunch launch(ILaunchConfiguration configuration, String mode);
+	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException;
 	
 	/**
-	 * Returns whether the given configuration can be launched in the
-	 * specified mode with its current attribute settings.
+	 * Verifies the given launch configuration can be launched in the
+	 * specified mode. If the configuration is not valid (not able to
+	 * be launched with its current attribute set), an exception is
+	 * thrown describing why the configuration is invalid.
 	 * 
+	 * @param configuration the candidate configuration to be launch
 	 * @param mode a mode in which a configuration can be launched, one of
 	 *  the mode constants defined by this <code>ILaunchConfiguration</code>
 	 *  - <code>RUN</code> or <code>DEBUG</code>.
-	 * @return whether the given configuration can be launched in the specified
-	 *  mode with its current attribute settings
+	 * @exception CoreException if the configuration cannot be launched
 	 */
-	public boolean canLaunch(ILaunchConfiguration configuration, String mode);
+	public void verify(ILaunchConfiguration configuration, String mode) throws CoreException;
 	
 	/**
 	 * Initializes the given configuration's attributes to default settings

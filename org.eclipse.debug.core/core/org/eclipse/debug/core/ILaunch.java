@@ -46,9 +46,12 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 */
 	public Object getElement();
 	/**
-	 * Returns the launcher that was used to launch. Cannot return <code>null</code>.
+	 * Returns the launcher that was used to launch.
+	 * Returns <code>null</code> if this launch was 
+	 * the result of a launch configuration being
+	 * launched.
 	 *
-	 * @return the launcher
+	 * @return the launcher, or <code>null</code>
 	 */
 	public ILauncher getLauncher();
 	/**
@@ -74,5 +77,13 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @see ILaunchManager
 	 */
 	public String getLaunchMode();
+	
+	/**
+	 * Returns the configuration that was launched, or <code>null</code>
+	 * if no configration was launched.
+	 * 
+	 * @return the launched configuration or <code>null</code>
+	 */
+	public ILaunchConfiguration getLaunchConfiguration();
 
 }

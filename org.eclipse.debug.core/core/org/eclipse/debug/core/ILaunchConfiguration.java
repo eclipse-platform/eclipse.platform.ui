@@ -67,36 +67,37 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * this configuration's launch configuration delegate, and returns the
 	 * resulting launch object that describes the launched configuration.
 	 * The resulting launch object is registered with the launch manager.
-	 * Returns <code>null</code> if the launch is not completed or the
-	 * launch does not succeed.
+	 * Returns <code>null</code> if the launch is not completed.
 	 * This causes the underlying launch configuration delegate
 	 * to be instantiated (if not already).
 	 * 
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by this interface - <code>RUN</code> or <code>DEBUG</code>.
 	 * @return the resuling launch object, or <code>null</code> if the
-	 *  launch is not completed, or does not succeed.
-	 * @exception CoreException if unable to instantiate the underlying
-	 *  launch configuration delegate
+	 *  launch is not completed.
+	 * @exception CoreException if this method fails. Reasons include:<ul>
+	 * <li>unable to instantiate the underlying launch configuration delegate</li>
+	 * <li>the lanuch fails</code>
+	 * </ul>
 	 */
 	public ILaunch launch(String mode) throws CoreException;
 	
 	/**
-	 * Returns whether this configuration can be launched in the specified
-	 * mode with this configuration's current attribute settings, by querying
-	 * the underlying launch configuration delegate.
-	 * This causes the underlying launch configuration delegate
-	 * to be instantiated (if not already).
+	 * Verifies this configuration can be launched in the
+	 * specified mode. If this configuration is not valid (not able to
+	 * be launched with its current attribute set), an exception is
+	 * thrown describing why this configuration is invalid.
+	 * Delegates to the underlying launch configuration delegate,
+	 * which causes the delegate to be instantiated (if not already).
 	 * 
 	 * @param mode a mode in which a configuration can be launched, one of
-	 *  the mode constants defined by this interface - <code>RUN</code> or
-	 *  <code>DEBUG</code>.
-	 * @return whether this configuration can be launched in the specified
-	 *  mode with this configuration's current attribute settings
-	 * @exception CoreException if unable to instantiate the underlying
-	 *  launch configuration delegate
+	 *  the mode constants defined by this <code>ILaunchConfiguration</code>
+	 *  - <code>RUN</code> or <code>DEBUG</code>.
+	 * @exception CoreException if this configuration cannot be launched
+	 *  in the specified mode.
 	 */
-	public boolean canLaunch(String mode) throws CoreException;
+	public void verify(String mode) throws CoreException;
+
 	
 	/**
 	 * Returns whether this launch configuration supports the
