@@ -8,12 +8,14 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
@@ -47,11 +49,16 @@ public class UpdateMergeAction extends UpdateSyncAction {
 	 */
 	protected void runUpdateDeep(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {		
 		ITeamNode[] incoming = removeOutgoing(nodes);
-		for (int i = 0; i < incoming.length; i++) {
-			CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(incoming[i]);
-			if(element!=null) {
-				makeRemoteLocal(element);
+		monitor.beginTask(null, 1000 * incoming.length);
+		try {
+			for (int i = 0; i < incoming.length; i++) {
+				CVSRemoteSyncElement element = CVSSyncCompareInput.getSyncElementFrom(incoming[i]);
+				if(element!=null) {
+					makeRemoteLocal(element, new SubProgressMonitor(monitor, 1000));
+				}
 			}
+		} finally {
+			monitor.done();
 		}
 	}
 		
@@ -101,23 +108,36 @@ public class UpdateMergeAction extends UpdateSyncAction {
 		return (ITeamNode[])incomingNodes.toArray(new ITeamNode[incomingNodes.size()]);
 	}
 	
-	private void makeRemoteLocal(CVSRemoteSyncElement element) throws CVSException {
+	private void makeRemoteLocal(CVSRemoteSyncElement element, IProgressMonitor monitor) throws CVSException {
 		IRemoteResource remote = element.getRemote();
 		IResource local = element.getLocal();
 		try {
 			if(remote==null) {
-				local.delete(false, null);
+				local.delete(false, monitor);
 			} else {
 				if(remote.isContainer()) {
 					if(!local.exists()) {
-						((IFolder)local).create(false /*don't force*/, true /*local*/, null);
+						((IFolder)local).create(false /*don't force*/, true /*local*/, monitor);
 					}
 				} else {
-					IFile localFile = (IFile)local;
-					if(local.exists()) {
-						localFile.setContents(remote.getContents(new NullProgressMonitor()), false /*don't force*/, true /*keep history*/, null);
-					} else {
-						localFile.create(remote.getContents(new NullProgressMonitor()), false /*don't force*/, null);
+					monitor.beginTask(null, 200);
+					try {
+						IFile localFile = (IFile)local;
+						if(local.exists()) {
+							localFile.setContents(remote.getContents(Policy.subMonitorFor(monitor, 100)), false /*don't force*/, true /*keep history*/, Policy.subMonitorFor(monitor, 100));
+						} else {
+							if (!localFile.getParent().exists()) {
+								IContainer parent = localFile.getParent();
+								while (!parent.exists()) {
+									IFolder folder = (IFolder)parent;
+									folder.create(false, true, null);
+									parent = parent.getParent();
+								}
+							}
+							localFile.create(remote.getContents(Policy.subMonitorFor(monitor, 100)), false /*don't force*/, Policy.subMonitorFor(monitor, 100));
+						}
+					} finally {
+						monitor.done();
 					}
 				}
 			}

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -211,6 +212,10 @@ public class ForceUpdateSyncAction extends MergeAction {
 			}
 		}
 		try {
+			// Calculate the total amount of work needed
+			int work = (makeIncoming.size() + (deletions.size() * 2) + updateShallow.size() + updateIgnoreLocalShallow.size() + updateDeep.size()) * 100;
+			monitor.beginTask(null, work);
+			
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 			if (parentCreationElements.size() > 0) {
 				// If a node has a parent that is an incoming folder creation, we have to 
@@ -238,10 +243,10 @@ public class ForceUpdateSyncAction extends MergeAction {
 				ITeamNode node = (ITeamNode)it.next();
 				if (node instanceof TeamFile) {
 					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
+					element.makeIncoming(Policy.subMonitorFor(monitor, 100));
 				} else if (node instanceof ChangedTeamContainer) {
 					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
+					element.makeIncoming(Policy.subMonitorFor(monitor, 100));
 				}
 			}
 			// Outgoing additions must be unmanaged (if necessary) and locally deleted.
@@ -250,23 +255,23 @@ public class ForceUpdateSyncAction extends MergeAction {
 				ITeamNode node = (ITeamNode)it.next();
 				if (node instanceof TeamFile) {
 					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
-					element.getLocal().delete(true, monitor);
+					element.makeIncoming(Policy.subMonitorFor(monitor, 100));
+					element.getLocal().delete(true, Policy.subMonitorFor(monitor, 100));
 				} else if (node instanceof ChangedTeamContainer) {
 					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
-					element.getLocal().delete(true, monitor);
+					element.makeIncoming(Policy.subMonitorFor(monitor, 100));
+					element.getLocal().delete(true, Policy.subMonitorFor(monitor, 100));
 				}
 			}
 			
 			if (updateShallow.size() > 0) {
-				manager.update((IResource[])updateShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Command.DO_NOT_RECURSE }), false, monitor);
+				manager.update((IResource[])updateShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Command.DO_NOT_RECURSE }), false, Policy.subMonitorFor(monitor, 100));
 			}
 			if (updateIgnoreLocalShallow.size() > 0) {
-				manager.update((IResource[])updateIgnoreLocalShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE }), false, monitor);
+				manager.update((IResource[])updateIgnoreLocalShallow.toArray(new IResource[0]), getLocalOptions(new Command.LocalOption[] { Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE }), false, Policy.subMonitorFor(monitor, 100));
 			}
 			if (updateDeep.size() > 0) {
-				manager.update((IResource[])updateDeep.toArray(new IResource[0]), getLocalOptions(Command.NO_LOCAL_OPTIONS), false, monitor);
+				manager.update((IResource[])updateDeep.toArray(new IResource[0]), getLocalOptions(Command.NO_LOCAL_OPTIONS), false, Policy.subMonitorFor(monitor, 100));
 			}
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
@@ -283,6 +288,8 @@ public class ForceUpdateSyncAction extends MergeAction {
 			});
 			CVSUIPlugin.log(e.getStatus());
 			return null;
+		} finally {
+			monitor.done();
 		}
 		return syncSet;
 	}
