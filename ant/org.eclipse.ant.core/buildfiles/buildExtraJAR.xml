@@ -32,7 +32,7 @@
 					${basedir}/../org.eclipse.core.variables/bin;
 					${eclipse.home}/plugins/org.eclipse.core.variables${3.0.version.suffix}/variables.jar;
 					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/osgi.jar;
+					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/core.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
 		</javac>
