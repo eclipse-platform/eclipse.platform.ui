@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 
@@ -99,8 +101,17 @@ public class SyncFileUtil {
 		boolean isStatic = false;
 		if (staticDir != null)
 			isStatic = true;
+		
+		if(root == null || repo == null) {
+			return null;
+		}
+		
+		CVSTag cvsTag = null;
+		if(tag != null) {
+			cvsTag = new CVSEntryLineTag(tag);
+		}
 			
-		return new FolderSyncInfo(repo, root, tag, isStatic);		
+		return new FolderSyncInfo(repo, root, cvsTag, isStatic);		
 	}
 	
 	public static File[] getEntrySyncFiles(File folder) {

@@ -50,19 +50,6 @@ public class FolderSyncInfo {
 		}
 	}
 	
-	/**
-	 * Construct a folder sync object.
-	 * 
-	 * @param repo the relative path of this folder in the repository, cannot be <code>null</code>.
-	 * @param root the location of the repository, cannot be <code>null</code>.
-	 * @param tag the entry line format of the tag. The first character is a single character indicating the type of 
-	 * tag: T, N, or D, for branch tag, nonbranch tag, or date. The rest of the line is the tag or the date itself. 
-	 * @param isStatic to indicate is only part of the folder was fetched from the server.
-	 */
-	public FolderSyncInfo(String repo, String root, String entryLineTag, boolean isStatic) {
-		this(repo, root, entryLineTag!=null ? new CVSEntryLineTag(entryLineTag) : null, isStatic);
-	}		
-	
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if (!(other instanceof FolderSyncInfo)) return false;
