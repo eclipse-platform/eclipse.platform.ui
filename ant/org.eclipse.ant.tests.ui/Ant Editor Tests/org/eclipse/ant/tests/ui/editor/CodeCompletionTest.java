@@ -294,8 +294,9 @@ public class CodeCompletionTest extends AbstractAntUITest {
 //        assertEquals(5, proposals.length); // is choice and already used with classpath
         
         proposals = processor.getTaskProposals("          ", "project", "");
-        //all tasks and types legal for outside of a target in 1.6.0
-        assertEquals(214, proposals.length);
+        //all tasks and types legal for outside of a target in 1.6.*
+        //also now includes the eclipse defined tasks/types
+        assertEquals(232, proposals.length);
 
         proposals = processor.getTaskProposals("          ", null, "");
         assertEquals(1, proposals.length);

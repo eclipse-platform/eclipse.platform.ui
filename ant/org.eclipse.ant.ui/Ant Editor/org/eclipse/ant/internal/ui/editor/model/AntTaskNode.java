@@ -64,11 +64,6 @@ public class AntTaskNode extends AntElementNode {
 	}
 	
 	protected ImageDescriptor getBaseImageDescriptor() {
-		if("macrodef".equalsIgnoreCase(getName()) //$NON-NLS-1$
-				|| "presetdef".equalsIgnoreCase(getName())) {  //$NON-NLS-1$
-			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_MACRODEF);
-		}
-		
 		if (fId != null) {
 			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TYPE);
 		}
@@ -104,10 +99,7 @@ public class AntTaskNode extends AntElementNode {
 			configured= true;
 			return true;
 		} catch (BuildException be) {
-			//TODO Currently we hide this exception as a user may have defined a property nested element
-			//that has a different syntax than the built in property task
-			//see bug 52040. All back to having a classloader for parsing/resolving the buildfile
-			//getAntModel().handleBuildException(be, this);
+			getAntModel().handleBuildException(be, this);
 		}
 		return false;
 	}

@@ -22,14 +22,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.Type;
+import org.eclipse.ant.internal.ui.editor.model.AntDefiningTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
@@ -173,7 +178,6 @@ public class AntModel {
 			fStillOpenElements= new Stack();
 			fTaskToNode= new HashMap();
 			fProperties= null;
-			fProjectNode= null;
 			fNodeBeingResolved= null;
 		}
 		//removeProblems();
@@ -204,11 +208,12 @@ public class AntModel {
 				if (fProjectNode == null) {
 					project = new Project();
 					projectHelper= prepareForFullParse(project);
+					textToParse= input.get(); //the entire document
 				} else {
 					project= fProjectNode.getProject();
 					projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
+					textToParse= prepareForFullIncremental(input);
 				}
-				textToParse= input.get(); //the entire document
 			} else { //incremental
 				project= fProjectNode.getProject();
 				textToParse= prepareForIncrementalParse(project, region, input);
@@ -378,48 +383,40 @@ public class AntModel {
 	}
 
 	private void initializeProject(Project project) {
-		//ClassLoader loader= getClassLoader();
+		ClassLoader loader= getClassLoader();
 		if (fValidateFully) {
     		project.setCoreLoader(getClassLoader());
     	}
 		project.init();
-		//setTasks(project, loader);
-		//setTypes(project, loader);
+		setTasks(project, loader);
+		setTypes(project, loader);
 	}
-//	TODO Bug 50302	
-//	private void setTasks(Project project, ClassLoader loader) {
-//		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
-//		
-//		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
-//			org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
-//			try {
-//				Class taskClass = loader.loadClass(task.getClassName());
-//				try {
-//					project.checkTaskClass(taskClass);
-//				} catch (BuildException e) {
-//					continue;
-//				}
-//				project.addTaskDefinition(task.getTaskName(), taskClass);
-//			} catch (ClassNotFoundException e) {
-//			} catch (NoClassDefFoundError e) {
-//			}
-//		}
-//	}
 	
-//TODO Bug 50302
-	
-//	private void setTypes(Project project, ClassLoader loader) {
-//		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
-//		
-//		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
-//			Type type = (Type) iterator.next();
-//			try {
-//				Class typeClass = loader.loadClass(type.getClassName());
-//				project.addDataTypeDefinition(type.getTypeName(), typeClass);
-//			} catch (ClassNotFoundException e) {
-//			}
-//		}
-//	}
+	private void setTasks(Project project, ClassLoader loader) {
+		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
+		for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
+			org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
+			AntTypeDefinition def= new AntTypeDefinition();
+			def.setName(task.getTaskName());
+            def.setClassName(task.getClassName());
+            def.setClassLoader(loader);
+            def.setAdaptToClass(Task.class);
+            def.setAdapterClass(TaskAdapter.class);
+            ComponentHelper.getComponentHelper(project).addDataTypeDefinition(def);
+		}
+	}
+		
+	private void setTypes(Project project, ClassLoader loader) {
+		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
+		for (Iterator iterator = types.iterator(); iterator.hasNext();) {
+			Type type = (Type) iterator.next();
+			 AntTypeDefinition def = new AntTypeDefinition();
+             def.setName(type.getTypeName());
+             def.setClassName(type.getClassName());
+             def.setClassLoader(loader);
+             ComponentHelper.getComponentHelper(project).addDataTypeDefinition(def);
+		}
+	}
 
 	private void resolveBuildfile() {	
 		resolveProperties();
@@ -576,9 +573,11 @@ public class AntModel {
 		} else if (taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
 			newNode= new AntImportNode(newTask, attributes);
 		} else if (taskName.equalsIgnoreCase("macrodef")  //$NON-NLS-1$
-        		|| taskName.equalsIgnoreCase("presetdef")) { //$NON-NLS-1$
+        		|| taskName.equalsIgnoreCase("presetdef") //$NON-NLS-1$
+				|| taskName.equalsIgnoreCase("typedef") //$NON-NLS-1$
+				|| taskName.equalsIgnoreCase("taskdef")) { //$NON-NLS-1$
                     String name = attributes.getValue(IAntModelConstants.ATTR_NAME);
-                    newNode= new AntTaskNode(newTask, name);
+                    newNode= new AntDefiningTaskNode(newTask, name);
 		} else if(taskName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
             newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_TARGET));
         } else if(taskName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$

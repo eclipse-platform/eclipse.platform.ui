@@ -121,4 +121,15 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 	protected char getPreviousChar() {
 		return '?';
 	}
+	
+	 /**
+     * Returns whether the specified task name is known.
+     */
+    protected boolean isTaskKnown(String taskName) {
+    	if (antModel != null) {
+    		return super.isTaskKnown(taskName);
+    	} else {
+    		return dtd.getElement(taskName) != null ;
+    	}
+    }
 }

@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
@@ -126,7 +127,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     /**
      * The dtd.
      */
-	private static ISchema dtd;
+	protected static ISchema dtd;
 
     /**
      * Cursor position, counted from the beginning of the document.
@@ -153,7 +154,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	
 	private String errorMessage;
 	
-	private AntModel antModel;
+	protected AntModel antModel;
 	
 	/**
 	 * Constructor for AntEditorCompletionProcessor.
@@ -426,21 +427,20 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                     addAttributeProposal(taskName, prefix, proposals, attrName, replacementString, displayString);
                 }       
             }
-        } //else {
-        //	Class taskClass= getTaskClass(taskName);
-        //	if (taskClass != null) {
-        //		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
-        //		Enumeration attributes= helper.getAttributes();
-	      //  	while (attributes.hasMoreElements()) {
-		//			String attribute = (String) attributes.nextElement();
-		//			if (attribute.toLowerCase().startsWith(prefix)) {
-		//				String replacementString = attribute + "=\"\""; //$NON-NLS-1$
-		//				addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute);
-		//			}
-		//		}
-        //	}
-        	
-       // }
+        } else { //possibly a user defined task or type
+        	Class taskClass= getTaskClass(taskName);
+        	if (taskClass != null) {
+        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+        		Enumeration attributes= helper.getAttributes();
+	        	while (attributes.hasMoreElements()) {
+					String attribute = (String) attributes.nextElement();
+					if (prefix.length() == 0 || attribute.toLowerCase().startsWith(prefix)) {
+						String replacementString = attribute + "=\"\""; //$NON-NLS-1$
+						addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute);
+					}
+				}
+        	}
+        }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
@@ -570,7 +570,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * not known.
      * 
      * @param document the entire document 
-     * @param parentName name of the parent(surrounding) element or 
+     * @param parentName name of the parent (surrounding) element or 
      * <code>null</code> if completion should be done for the root element.
      * @param prefix the prefix that all proposals should start with. The prefix
      * may be an empty string.
@@ -585,13 +585,16 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				proposal = newCompletionProposal(document, prefix, rootElementName);
 				proposals.add(proposal);
 			}
-       // } else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
+       } else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
         	//use the definitions in the project as that includes more than what is defined in the DTD
-			//Project project= antModel.getProjectNode().getProject();
-			//Map tasks= project.getTaskDefinitions();
-			//createProposals(document, prefix, proposals, tasks);
-			//Map types= project.getDataTypeDefinitions();
-			//createProposals(document, prefix, proposals, types);
+			Project project= antModel.getProjectNode().getProject();
+			Map tasks= project.getTaskDefinitions();
+			createProposals(document, prefix, proposals, tasks);
+			Map types= project.getDataTypeDefinitions();
+			createProposals(document, prefix, proposals, types);
+			if (parentName.equals("project")) { //$NON-NLS-1$
+				proposals.add(newCompletionProposal(document, prefix, "target")); //$NON-NLS-1$
+			}
 		} else {
 			IElement parent = dtd.getElement(parentName);
 			if (parent != null) {
@@ -605,6 +608,21 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 						proposals.add(proposal);
 					}
 				}
+			} else {
+				//a nested element of a user defined task/type?
+				Class taskClass= getTaskClass(parentName);
+	        	if (taskClass != null) {
+	        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+	        		Enumeration nested= helper.getNestedElements();
+	        		String nestedElement;
+		        	while (nested.hasMoreElements()) {
+						nestedElement = (String) nested.nextElement();
+						if (prefix.length() == 0 || nestedElement.toLowerCase().startsWith(prefix)) {
+							proposal = newCompletionProposal(document, prefix, nestedElement);
+							proposals.add(proposal);
+						}
+					}
+	        	}
 			}
         }
         
@@ -616,17 +634,17 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
        return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
    }
 
-//    private void createProposals(IDocument document, String prefix, List proposals, Map tasks) {
-//		Iterator keys= tasks.keySet().iterator();
-//		ICompletionProposal proposal;
-//		while (keys.hasNext()) {
-//			String key = (String) keys.next();
-//			if (prefix.length() == 0 || key.toLowerCase().startsWith(prefix)) {
-//				proposal = newCompletionProposal(document, prefix, key);
-//				proposals.add(proposal);
-//			}
-//		}
-//	}
+    private void createProposals(IDocument document, String prefix, List proposals, Map tasks) {
+		Iterator keys= tasks.keySet().iterator();
+		ICompletionProposal proposal;
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			if (prefix.length() == 0 || key.toLowerCase().startsWith(prefix)) {
+				proposal = newCompletionProposal(document, prefix, key);
+				proposals.add(proposal);
+			}
+		}
+	}
 
 	private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
 		additionalProposalOffset= 0;
@@ -753,7 +771,17 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      */
     private boolean hasNestedElements(String elementName) {
         IElement element = dtd.getElement(elementName);
-        return element != null && !element.isEmpty();
+        if (element != null) {
+        	return !element.isEmpty();
+        } else {
+        	Class taskClass= getTaskClass(elementName);
+        	if (taskClass != null) {
+        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+        		Enumeration nested= helper.getNestedElements();
+        		return nested.hasMoreElements();
+        	}
+        }
+        return false;
     }
     
     /**
@@ -860,14 +888,14 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             // Attribute proposal
             if(lastChar != '>' && lastChar != '<') {
                 String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
-                if(taskString != null && isNamedTaskKnown(taskString)) {
+                if(taskString != null && isTaskKnown(taskString)) {
                     return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
                 }
             }                
         } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"' || trimmedString.charAt(trimmedString.length()-1) == ',') {
 			// Attribute value proposal
             String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
-            if(taskString != null && isNamedTaskKnown(taskString)) {
+            if(taskString != null && isTaskKnown(taskString)) {
                 return PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL;
             }
         } else {  // Possibly a Task proposal
@@ -980,19 +1008,18 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     /**
      * Returns whether the specified task name is known according to the DTD.
      */
-    private boolean isNamedTaskKnown(String taskName) {
-        return dtd.getElement(taskName) != null ;
-    	//return getTaskClass(taskName) != null;
+    protected boolean isTaskKnown(String taskName) {
+    	return getTaskClass(taskName) != null;
     }
 
-   // private Class getTaskClass(String taskName) {
-   // 	AntProjectNode node= antModel.getProjectNode();
-   // 	if (node != null) {
-   // 		Project antProject= node.getProject();
-   // 		return (Class)antProject.getTaskDefinitions().get(taskName);
-   // 	}
-   // 	return null;
-   // }
+    private Class getTaskClass(String taskName) {
+    	AntProjectNode node= antModel.getProjectNode();
+    	if (node != null) {
+    		Project antProject= node.getProject();
+    		return (Class)antProject.getTaskDefinitions().get(taskName);
+    	}
+    	return null;
+    }
 
     /**
      * Finds the parent task element in respect to the cursor position.
