@@ -82,9 +82,13 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	private Properties properties = null;
 	
 	// The previously created repository.
-	// It is recorded whan asked for and
+	// It is recorded when asked for and
 	// nulled when the page is changed.
 	private ICVSRepositoryLocation location;
+	
+	// The previously created repository.
+	// It is recorded when fields are changed
+	private ICVSRepositoryLocation oldLocation;
 	
 	// Dialog store id constants
 	private static final String STORE_USERNAME_ID =
@@ -160,7 +164,10 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
-				location = null;
+				if (location != null) {
+					oldLocation = location;
+					location = null;
+				}
 				updateWidgetEnablements();
 			}
 		};
@@ -325,7 +332,11 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (location == null) {
 			if (!isPageComplete()) return null;
 			location = CVSRepositoryLocation.fromProperties(createProperties());
+			if (location.equals(oldLocation)) {
+				location = oldLocation;
+			}
 			location.setAllowCaching(allowCaching);
+			oldLocation = null;
 			saveWidgetValues();
 		}
 		return location;
@@ -492,7 +503,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 
 		try {
 			CVSRepositoryLocation l = CVSRepositoryLocation.fromProperties(createProperties());
-			if (KnownRepositories.getInstance().isKnownRepository(l.getLocation())) {
+			if (!l.equals(oldLocation) && KnownRepositories.getInstance().isKnownRepository(l.getLocation())) {
 				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.0")); //$NON-NLS-1$
 				setPageComplete(false);
 				return;
@@ -537,7 +548,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (user.length() == 0) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.1"), null); //$NON-NLS-1$
 		}
-		if ((user.indexOf(':') != -1)) {
+		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
 					Policy.bind("ConfigurationWizardMainPage.invalidUserName"), null); //$NON-NLS-1$
 		}
@@ -547,7 +558,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (host.length() == 0) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.2"), null); //$NON-NLS-1$
 		}
-		if ((host.indexOf(':') != -1) || (host.indexOf('@') != -1)) {
+		if (host.indexOf(':') != -1) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
 					Policy.bind("ConfigurationWizardMainPage.invalidHostName"), null); //$NON-NLS-1$
 		}
