@@ -56,7 +56,8 @@ public final class InternalPlatform {
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
-	public static boolean DEBUG_LOG_PERF_FAILURE = false;
+	public static boolean DEBUG_TRACE = false;
+	public static boolean DEBUG_TRACE_LOG = false;
 	public static boolean DEBUG_PREFERENCE_GENERAL = false;
 	public static boolean DEBUG_PREFERENCE_GET = false;
 	public static boolean DEBUG_PREFERENCE_SET = false;
@@ -88,16 +89,6 @@ public final class InternalPlatform {
 	private static final String NO_REGISTRY_CACHE = "-noregistrycache"; //$NON-NLS-1$	
 	private static final String NO_UPDATE = "-noUpdate"; //$NON-NLS-1$
 
-	// execution options
-	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_LOG_PERF_FAILURE = Platform.PI_RUNTIME + "/trace/logfailure"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCE_GENERAL = Platform.PI_RUNTIME + "/preferences/general"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCE_GET = Platform.PI_RUNTIME + "/preferences/get"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCE_SET = Platform.PI_RUNTIME + "/preferences/set"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_REGISTRY = Platform.PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_REGISTRY_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_MESSAGE_BUNDLES = Platform.PI_RUNTIME + "/messagebundles"; //$NON-NLS-1$
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 	static PackageAdmin packageAdmin;
 	private static String password = ""; //$NON-NLS-1$
@@ -725,16 +716,17 @@ public final class InternalPlatform {
 	 */
 	void initializeDebugFlags() {
 		// load runtime options
-		DEBUG = getBooleanOption(OPTION_DEBUG, false);
+		DEBUG = getBooleanOption(Platform.PI_RUNTIME + "/debug", false); //$NON-NLS-1$
 		if (DEBUG) {
-			DEBUG_CONTEXT = getBooleanOption(OPTION_DEBUG_SYSTEM_CONTEXT, false);
-			DEBUG_LOG_PERF_FAILURE = getBooleanOption(OPTION_DEBUG_LOG_PERF_FAILURE, false);
-			DEBUG_REGISTRY = getBooleanOption(OPTION_DEBUG_REGISTRY, false);
-			DEBUG_REGISTRY_DUMP = getOption(OPTION_DEBUG_REGISTRY_DUMP);
-			DEBUG_PREFERENCE_GENERAL = getBooleanOption(OPTION_DEBUG_PREFERENCE_GENERAL, false);
-			DEBUG_PREFERENCE_GET = getBooleanOption(OPTION_DEBUG_PREFERENCE_GET, false);
-			DEBUG_PREFERENCE_SET = getBooleanOption(OPTION_DEBUG_PREFERENCE_SET, false);
-			DEBUG_MESSAGE_BUNDLES = getBooleanOption(OPTION_DEBUG_MESSAGE_BUNDLES, false);
+			DEBUG_CONTEXT = getBooleanOption(Platform.PI_RUNTIME + "/debug/context", false); //$NON-NLS-1$
+			DEBUG_TRACE = getBooleanOption(Platform.PI_RUNTIME + "/trace", false);//$NON-NLS-1$
+			DEBUG_TRACE_LOG = getBooleanOption(Platform.PI_RUNTIME + "/trace/logfailure", false); //$NON-NLS-1$
+			DEBUG_REGISTRY = getBooleanOption(Platform.PI_RUNTIME + "/registry/debug", false); //$NON-NLS-1$
+			DEBUG_REGISTRY_DUMP = getOption(Platform.PI_RUNTIME + "/registry/debug/dump"); //$NON-NLS-1$
+			DEBUG_PREFERENCE_GENERAL = getBooleanOption(Platform.PI_RUNTIME + "/preferences/general", false); //$NON-NLS-1$
+			DEBUG_PREFERENCE_GET = getBooleanOption(Platform.PI_RUNTIME + "/preferences/get", false); //$NON-NLS-1$
+			DEBUG_PREFERENCE_SET = getBooleanOption(Platform.PI_RUNTIME + "/preferences/set", false); //$NON-NLS-1$
+			DEBUG_MESSAGE_BUNDLES = getBooleanOption(Platform.PI_RUNTIME + "/messagebundles", false); //$NON-NLS-1$
 		}
 	}
 
