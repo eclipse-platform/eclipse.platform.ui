@@ -469,9 +469,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			return fResolved;
 		}
 		
-		private boolean isUnresolvedIncoming() {
-			if (fResolved)
-				return false;
+		private boolean isIncoming() {
 			switch (fDirection) {
 			case RangeDifference.RIGHT:
 				if (fLeftIsLocal)
@@ -483,6 +481,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				break;
 			}
 			return false;
+		}
+		
+		private boolean isUnresolvedIncoming() {
+			if (fResolved)
+				return false;
+			return isIncoming();
 		}
 		
 		private boolean isUnresolvedIncomingOrConflicting() {
@@ -2536,22 +2540,27 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private void updateResolveStatus() {
 		Color c= null;
 		if (showResolveUI()) {
+			boolean hasIncoming= false;	// we only show red or gree if there is at least one incoming change
 			boolean unresolved= false;
 			if (fChangeDiffs != null) {
 				Iterator e= fChangeDiffs.iterator();
 				while (e.hasNext()) {
 					Diff d= (Diff) e.next();
-					if (d.isUnresolvedIncoming()) {
-						unresolved= true;
+					if (d.isIncoming()) {
+						hasIncoming= true;
+						if (!d.fResolved)
+							unresolved= true;
 						break;
 					}
 				}
 			}
-			Display d= fSummaryLabel.getDisplay();
-			if (unresolved)
-				c= d.getSystemColor(SWT.COLOR_RED);
-			else
-				c= d.getSystemColor(SWT.COLOR_GREEN);
+			//if (hasIncoming) {
+				Display d= fSummaryLabel.getDisplay();
+				if (unresolved)
+					c= d.getSystemColor(SWT.COLOR_RED);
+				else
+					c= d.getSystemColor(SWT.COLOR_GREEN);
+			//}
 		}
 		fSummaryLabel.setBackground(c);
 	}
