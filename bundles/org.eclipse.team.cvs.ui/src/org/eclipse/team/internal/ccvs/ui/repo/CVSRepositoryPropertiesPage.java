@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -62,6 +63,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	boolean passwordChanged;
 	boolean connectionInfoChanged;
 	boolean programNameChanged;
+	boolean labelChanged;
 
 	IUserInfo info;
 
@@ -69,6 +71,10 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	private Text programNameText;
 	private Button useDefaultProgramName;
 	private Button useCustomProgramName;
+	// Label
+	private Button useLocationAsLabel;
+	private Button useCustomLabel;
+	private Text labelText;
 			
 	/*
 	 * @see PreferencesPage#createContents
@@ -81,6 +87,32 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		composite.setLayout(layout);
+
+		// Repository Label
+		// create a composite to ensure the radio buttons come in the correct order
+		Composite labelGroup = new Composite(composite, SWT.NONE);
+		GridData data = new GridData();
+		data.horizontalSpan = 3;
+		labelGroup.setLayoutData(data);
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		labelGroup.setLayout(layout);
+		Listener labelListener = new Listener() {
+			public void handleEvent(Event event) {
+				labelChanged = true;
+				updateWidgetEnablements();
+			}
+		};
+		useLocationAsLabel = createRadioButton(labelGroup, Policy.bind("CVSRepositoryPropertiesPage.useLocationAsLabel"), 3); //$NON-NLS-1$
+		useCustomLabel = createRadioButton(labelGroup, Policy.bind("CVSRepositoryPropertiesPage.useCustomLabel"), 1); //$NON-NLS-1$
+		useCustomLabel.addListener(SWT.Selection, labelListener);
+		labelText = createTextField(labelGroup);
+		labelText.addListener(SWT.Modify, labelListener);
+		
+		// Add some extra space
+		createLabel(composite, "", 3); //$NON-NLS-1$
 		
 		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1); //$NON-NLS-1$
 		methodType = createCombo(composite);
@@ -107,7 +139,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		// Remote CVS program name
 		// create a composite to ensure the radio buttons come in the correct order
 		Composite programNameGroup = new Composite(composite, SWT.NONE);
-		GridData data = new GridData();
+		data = new GridData();
 		data.horizontalSpan = 3;
 		programNameGroup.setLayoutData(data);
 		layout = new GridLayout();
@@ -115,7 +147,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		programNameGroup.setLayout(layout);
-		Listener listener = new Listener() {
+		Listener programNameListener = new Listener() {
 			public void handleEvent(Event event) {
 				programNameChanged = true;
 				updateWidgetEnablements();
@@ -123,9 +155,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		};
 		useDefaultProgramName = createRadioButton(programNameGroup, Policy.bind("CVSRepositoryPropertiesPage.useDefaultProgramName"), 3); //$NON-NLS-1$
 		useCustomProgramName = createRadioButton(programNameGroup, Policy.bind("CVSRepositoryPropertiesPage.useProgramName"), 1); //$NON-NLS-1$
-		useCustomProgramName.addListener(SWT.Selection, listener);
+		useCustomProgramName.addListener(SWT.Selection, programNameListener);
 		programNameText = createTextField(programNameGroup);
-		programNameText.addListener(SWT.Modify, listener);
+		programNameText.addListener(SWT.Modify, programNameListener);
 				
 		initializeValues();
 		updateWidgetEnablements();
@@ -248,10 +280,27 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			portLabel.setText("" + port); //$NON-NLS-1$
 		}
 		pathLabel.setText(location.getRootDirectory());
+		
+		// get the program name
 		String programName = ((CVSRepositoryLocation)location).getRemoteCVSProgramName();
 		programNameText.setText(programName);
 		useDefaultProgramName.setSelection(programName == CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME);
 		useCustomProgramName.setSelection(!useDefaultProgramName.getSelection());
+		
+		// get the repository label
+		String label = null;
+		try {
+			RepositoryRoot root = CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(location);
+			label = root.getName();
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e);
+		}
+		useLocationAsLabel.setSelection(label == null);
+		useCustomLabel.setSelection(!useLocationAsLabel.getSelection());
+		if (label == null) {
+			label = location.getLocation();
+		}
+		labelText.setText(label);
 	}
 	
 	/*
@@ -261,6 +310,9 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		if (!connectionInfoChanged && !passwordChanged) {
 			if (programNameChanged) {
 				recordNewProgramName((CVSRepositoryLocation)location);
+			}
+			if (labelChanged) {
+				recordNewLabel((CVSRepositoryLocation)location);
 			}
 			return true;
 		}
@@ -333,7 +385,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 							}
 							
 							// Dispose the old repository location
-							CVSProviderPlugin.getPlugin().disposeRepository(location);
+							CVSUIPlugin.getPlugin().getRepositoryManager().replaceRepositoryLocation(location, newLocation);
+							
 						} finally {
 							// Even if we failed, ensure that the new location appears in the repo view.
 							newLocation = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(newLocation.getLocation());
@@ -347,7 +400,10 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 						if (programNameChanged) {
 							recordNewProgramName((CVSRepositoryLocation)location);
 						}
-							
+						if (labelChanged) {
+							recordNewLabel((CVSRepositoryLocation)location);
+						}
+			
 						connectionInfoChanged = false;
 						passwordChanged = false;
 						programNameChanged = false;
@@ -380,6 +436,11 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		} else {
 			programNameText.setEnabled(true);
 		}
+		if (useLocationAsLabel.getSelection()) {
+			labelText.setEnabled(false);
+		} else {
+			labelText.setEnabled(true);
+		}
 		validateFields();
 	}
 	
@@ -390,6 +451,13 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				return;
 			}
 		}
+		if (labelText.isEnabled()) {
+			if (labelText.getText().length() == 0) {
+				setValid(false);
+				return;
+			}
+		}
+		setValid(true);
 	}
 	
 	private void recordNewProgramName(CVSRepositoryLocation location) {
@@ -402,6 +470,21 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		}
 		if (!location.getRemoteCVSProgramName().equals(newProgramName)) {
 			CVSProviderPlugin.getPlugin().setCVSProgramName(location, newProgramName);
+		}
+	}
+	
+	private void recordNewLabel(CVSRepositoryLocation location) {
+		String label = null;
+		if (useCustomLabel.getSelection()) {
+			label = labelText.getText();
+			if (label.equals(location.getLocation())) {
+				label = null;
+			}
+		}
+		try {
+			CVSUIPlugin.getPlugin().getRepositoryManager().setLabel(location, label);
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e);
 		}
 	}
 }

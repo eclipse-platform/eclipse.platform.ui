@@ -415,4 +415,12 @@ public class RepositoryRoot extends PlatformObject {
 		modulesCache = null;
 	}
 
+	/**
+	 * Sets the root.
+	 * @param root The root to set
+	 */
+	void setRepositoryLocation(ICVSRepositoryLocation root) {
+		this.root = root;
+	}
+
 }

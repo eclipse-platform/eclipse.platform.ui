@@ -872,4 +872,57 @@ public class RepositoryManager {
 			root.clearCache();
 		}
 	}
+	/**
+	 * Method setLabel.
+	 * @param location
+	 * @param label
+	 */
+	public void setLabel(CVSRepositoryLocation location, String label) throws CVSException {
+		RepositoryRoot root = getRepositoryRootFor(location);
+		String oldLabel = root.getName();
+		if (oldLabel == null) {
+			if (label == null) return;
+			root.setName(label);
+		} else if (label == null) {
+			root.setName(label);
+		} else if (label.equals(oldLabel)) {
+			return;
+		} else {
+			root.setName(label);
+		}
+		broadcastRepositoryChange(root);	
+	}
+	
+	/**
+	 * Replace the old repository location with the new one assuming that they
+	 * are the same location with different authentication informations
+	 * @param location
+	 * @param newLocation
+	 */
+	public void replaceRepositoryLocation(
+			final ICVSRepositoryLocation oldLocation,
+			final CVSRepositoryLocation newLocation) throws CVSException {
+		
+		try {
+			run(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						RepositoryRoot root = getRepositoryRootFor(oldLocation);
+						// Disposing of the old location will result in the deletion of the
+						// cached root through a listener callback
+						CVSProviderPlugin.getPlugin().disposeRepository(oldLocation);
+						
+						newLocation.updateCache();
+						root.setRepositoryLocation(newLocation);
+						add(root);
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			}, Policy.monitorFor(null));
+		} catch (InvocationTargetException e) {
+			CVSException.wrapException(e);
+		} catch (InterruptedException e) {
+		}
+	}
 }
