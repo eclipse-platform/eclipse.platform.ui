@@ -28,8 +28,8 @@
    </requires>
 
 
-<!-- extension point definitions -->
-   <extension-point id="configurationDuplicationMaps" name="%ExtPoint.configurationDuplicationMaps"/>
+<!-- For internal use only. Not to be extended. -->
+   <extension-point id="configurationDuplicationMaps" name="%ExtPoint.configurationDuplicationMaps"  schema="schema/configurationDuplicationMaps.exsd"/>
 
 <!-- UI extensions -->
 <!-- Extensions -->
@@ -136,8 +136,8 @@
    <extension
          point="org.eclipse.ui.externaltools.configurationDuplicationMaps">
       <configurationMap
-            builderType="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"
-            sourceType="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType">
+            sourceType="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+            builderType="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType">
       </configurationMap>
    </extension>
    <extension

@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.externaltools">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui.externaltools" id="configurationDuplicationMaps" name="Configuration Duplication Maps"/>
+      </appInfo>
+      <documentation>
+This is an internal extension point to declare the launch configuration type that
+should be created when duplicating an existing configuration as a project builder.
+
+Clients are not intended to use this extension point.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="configurationMap" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   
+   <element name="configurationMap">
+      <complexType>
+         <attribute name="sourceType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the identifier of the launch configuration type for which this mapping is provided
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="builderType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the identifier of the launch configuration type which should be created when a configuration of type "sourceType" is imported to be a project builder
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+The following example specifies that when the user chooses to import a launch configuration
+of the type &quot;org.eclipse.ui.externaltools.ProgramLaunchConfigurationType&quot;, a new launch
+configuration of the type&quot;org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType&quot;
+should be created.
+
+&lt;extension
+      point=&quot;org.eclipse.ui.externaltools.configurationDuplicationMaps&quot;&gt;
+   &lt;configurationMap
+         sourceType=&quot;org.eclipse.ui.externaltools.ProgramLaunchConfigurationType&quot;
+         builderType=&quot;org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType&quot;&gt;
+   &lt;/configurationMap&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+   
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+      
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2003, 2004 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>
