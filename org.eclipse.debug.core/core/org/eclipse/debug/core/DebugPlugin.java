@@ -8,11 +8,6 @@ package org.eclipse.debug.core;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -132,12 +127,7 @@ public class DebugPlugin extends Plugin {
 	 * down.
 	 */
 	private boolean fShuttingDown= false;
-	
-	/**
-	 * This plug-in's save participant
-	 */
-	private ISaveParticipant fSaveParticipant = null;	
-	
+		
 	/**
 	 * Table of status handlers. Keys are {plug-in identifier, status code}
 	 * pairs, and values are associated <code>IConfigurationElement</code>s.
@@ -338,31 +328,7 @@ public class DebugPlugin extends Plugin {
 		createLaunchers();	
 		fBreakpointManager.startup();
 		fLaunchManager.startup();
-		//recoverState();
 		initializeStatusHandlers();
-	}
-	
-	/**
-	 * Processes resource deltas that may have been missed
-	 * while this plug-in was not active.
-	 * 
-	 * @exception CoreException if unable to restore state
-	 */
-	private void recoverState() throws CoreException {
-		// restore launch manager's launch configuration indicies
-		fSaveParticipant = new DebugPluginSaveParticipant();
-		ISavedState savedState = ResourcesPlugin.getWorkspace().addSaveParticipant(this, fSaveParticipant);
-		boolean restored = false;
-		if (savedState != null) {
-			DebugSavedStateResourceChangedListener listener = new DebugSavedStateResourceChangedListener();
-			savedState.processResourceChangeEvents(listener);
-			if (listener.receivedNotification()) {
-				restored = true;
-			}
-		}
-		if (!restored) {
-			fLaunchManager.rebuildLaunchConfigIndex();
-		}		
 	}
 	
 	/**
@@ -480,74 +446,6 @@ public class DebugPlugin extends Plugin {
 	 */
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
-	}
-	
-	/**
-	 * A save participant that requests a resource delta
-	 * on the next startup.
-	 */
-	class DebugPluginSaveParticipant implements ISaveParticipant {
-		/**
-		 * @see ISaveParticipant#doneSaving(ISaveContext)
-		 */
-		public void doneSaving(ISaveContext context) {
-		}
-
-		/**
-		 * @see ISaveParticipant#prepareToSave(ISaveContext)
-		 */
-		public void prepareToSave(ISaveContext context) throws CoreException {
-		}
-
-		/**
-		 * @see ISaveParticipant#rollback(ISaveContext)
-		 */
-		public void rollback(ISaveContext context) {
-		}
-
-		/**
-		 * @see ISaveParticipant#saving(ISaveContext)
-		 */
-		public void saving(ISaveContext context) throws CoreException {
-			context.needDelta();
-		}
-
-	}
-	
-	/**
-	 * Dispatches any resource delta since this plug-in was
-	 * last shutdown and started to interested handlers:
-	 * <ul>
-	 * <li>The launch manager</li>
-	 * </ul>
-	 */ 
-	class DebugSavedStateResourceChangedListener implements IResourceChangeListener {
-		
-		/**
-		 * Whether a resource change notification was
-		 * received by this listener.
-		 */
-		private boolean fReceivedNotification = false;
-		
-		/**
-		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-		 */
-		public void resourceChanged(IResourceChangeEvent event) {
-			fReceivedNotification = true;
-			fLaunchManager.resourceChanged(event);
-		}
-		
-		/**
-		 * Returns whether a change notification was received
-		 * by this listener
-		 * 
-		 * @return whether a change notification was received
-		 *  by this listener
-		 */
-		protected boolean receivedNotification() {
-			return fReceivedNotification;
-		}
-
 	}
 	
 	/**

@@ -168,9 +168,10 @@ public interface ILaunchManager {
 	 * Returns all launch configurations defined in the workspace.
 	 * 
 	 * @return all launch configurations defined in the workspace
+	 * @exception CoreException if an exception occurrs retrieving configurations
 	 * @since 2.0
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations();
+	public ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;
 	
 	/**
 	 * Returns all launch configurations defined in the workspace
@@ -322,9 +323,10 @@ public interface ILaunchManager {
 	 * <code>false</code> otherwise.
 	 * 
 	 * @param name the name of the launch configuration whose existence is being checked
+	 * @exception CoreException if unable to retrieve existing launch configuration names
 	 * @since 2.0
 	 */
-	public boolean isExistingLaunchConfigurationName(String name);
+	public boolean isExistingLaunchConfigurationName(String name) throws CoreException;
 
 	/**
 	 * Set the specified launch configuration the default launch configuration

@@ -439,7 +439,13 @@ public abstract class LaunchHistoryPreferenceTab {
 		 * @see IStructuredContentProvider#getElements(Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			ILaunchConfiguration[] all = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+			ILaunchConfiguration[] all = null;
+			try {
+				all = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e.getStatus());
+				return new ILaunchConfiguration[0];
+			}
 			List list = new ArrayList(all.length);
 			String mode = (String)inputElement;
 			for (int i = 0; i < all.length; i++) {

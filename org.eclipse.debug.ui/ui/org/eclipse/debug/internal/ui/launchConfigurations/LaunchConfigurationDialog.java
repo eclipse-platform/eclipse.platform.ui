@@ -1590,13 +1590,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			}
 		} 
 		String newName = baseName;
-		while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
-			StringBuffer buffer = new StringBuffer(baseName);
-			buffer.append('_');
-			buffer.append(String.valueOf(index));
-			index++;
-			newName = buffer.toString();		
-		}		
+		try {
+			while (getLaunchManager().isExistingLaunchConfigurationName(newName)) {
+				StringBuffer buffer = new StringBuffer(baseName);
+				buffer.append('_');
+				buffer.append(String.valueOf(index));
+				index++;
+				newName = buffer.toString();		
+			}		
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e.getStatus());
+		}
 		return newName;
 	}
 	
