@@ -94,7 +94,7 @@ public class LogListener extends CommandOutputListener {
 						currentFile = null;
 						currentFileEntries = new ArrayList();
 					} else {
-						if (!currentFile.getRepositoryRelativePath().equals(fileName)) {
+						if (currentFile == null || !currentFile.getRepositoryRelativePath().equals(fileName)) {
 							// We are starting another file
 							currentFile = RemoteFile.create(fileName, location);
 							currentFileEntries = (List)entries.get(currentFile.getRepositoryRelativePath());
