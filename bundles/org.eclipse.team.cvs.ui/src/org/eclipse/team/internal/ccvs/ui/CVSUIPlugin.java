@@ -43,8 +43,6 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.*;
-import org.eclipse.ui.console.ConsolePlugin;
-import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -668,7 +666,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
 		
 		console = new CVSOutputConsole();
-		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {console});
 		
 		IPreferenceStore store = getPreferenceStore();
 		if (store.getBoolean(ICVSUIConstants.PREF_FIRST_STARTUP)) {

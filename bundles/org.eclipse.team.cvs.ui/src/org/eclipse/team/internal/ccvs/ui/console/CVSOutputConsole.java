@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
@@ -16,24 +17,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.console.MessageConsole;
-import org.eclipse.ui.console.MessageConsoleStream;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.ui.console.*;
 
 /**
  * Console that shows the output of CVS commands. It is shown as a page in the generic 
  * console view. It supports coloring for message, command, and error lines in addition
  * the font can be configured.
+ * 
  * @since 3.0 
  */
 public class CVSOutputConsole extends MessageConsole implements IConsoleListener, IPropertyChangeListener {
-
-	// handle to the console view showing this console
-	private IConsoleView consoleView;
-	
 	// created colors for each line type - must be disposed at shutdown
 	private Color commandColor;
 	private Color messageColor;
@@ -51,15 +45,52 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	private boolean showOnError;
 	private boolean showOnMessage;
 	
+	private ConsoleDocument document;
+	
 	// format for timings printed to console
 	private static final DateFormat TIME_FORMAT = new SimpleDateFormat(Policy.bind("Console.resultTimeFormat")); //$NON-NLS-1$
+
+	private boolean initialized = false;
 	
 	/**
-	 * Create fonts and streams for each message type. Colors have to be disposed
-	 * on shutdown.
+	 * Used to notify this console of lifecycle methods <code>init()</code>
+	 * and <code>dispose()</code>.
 	 */
+	class MyLifecycle implements org.eclipse.ui.console.IConsoleListener {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
+		 */
+		public void consolesAdded(IConsole[] consoles) {
+			for (int i = 0; i < consoles.length; i++) {
+				IConsole console = consoles[i];
+				if (console == CVSOutputConsole.this) {
+					init();
+				}
+			}
+
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
+		 */
+		public void consolesRemoved(IConsole[] consoles) {
+			for (int i = 0; i < consoles.length; i++) {
+				IConsole console = consoles[i];
+				if (console == CVSOutputConsole.this) {
+					ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
+					dispose();
+				}
+			}
+		}
+	}
+	
 	public CVSOutputConsole() {
 		super("CVS", CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_CVS_CONSOLE)); //$NON-NLS-1$
+		// setup console showing preferences
+		showOnMessage = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
+		showOnError = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);	
+		document = new ConsoleDocument();
 		
 		// Ensure that initialization occurs in the ui thread
 		CVSUIPlugin.getStandardDisplay().syncExec(new Runnable() {
@@ -76,25 +107,105 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 				errorStream.setColor(errorColor);
 				// install font
 				setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
+				CVSProviderPlugin.getPlugin().setConsoleListener(CVSOutputConsole.this);
+				CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(CVSOutputConsole.this);
 			}
 		});
+		showConsole();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.AbstractConsole#init()
+	 */
+	protected void init() {
+		// Called when console is added to the console view
+		super.init();	
+		//	Ensure that initialization occurs in the ui thread
+		CVSUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {
+				JFaceResources.getFontRegistry().addListener(CVSOutputConsole.this);	
+				dump();
+			}
+		});
+	}
+	
+	private void dump() {
+		synchronized(document) {
+			initialized = true;
+			int lines = document.getNumberOfLines();
+			for (int i = 0; i < lines; i++) {
+				try {
+					int offset = document.getLineOffset(i);
+					String line = document.get(offset, document.getLineLength(i) - 1);
+					int type = document.getLineType(i);
+					appendLine(type, line);
+				} catch (BadLocationException e) {
+					continue;
+				}
+			}
+			document.clear();
+		}
+	}
+	
+	private void appendLine(int type, String line) {
+		synchronized(document) {
+			if(initialized) {
+				switch(type) {
+					case ConsoleDocument.COMMAND:
+						commandStream.println(line);
+						break;
+					case ConsoleDocument.MESSAGE:
+						messageStream.println("  " + line); //$NON-NLS-1$
+						break;
+					case ConsoleDocument.ERROR:
+						errorStream.println("  " + line); //$NON-NLS-1$
+						break;
+				}
+			} else {
+				document.appendConsoleLine(type, line);
+			}
+		}
+	}
+	
+	private void showConsole() {
+		if(showOnMessage) {
+			IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+			if(! initialized) {
+				manager.addConsoles(new IConsole[] {this});
+			}
+			manager.showConsoleView(this);
+		} 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.MessageConsole#dispose()
+	 */
+	protected void dispose() {
+		// Here we can't call super.dispose() because we actually want the partitioner to remain
+		// connected, but we won't show lines until the console is added to the console manager
+		// again.
 		
-		// setup console showing preferences
-		showOnMessage = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE);
-		showOnError = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_ERROR);
-		
-		CVSProviderPlugin.getPlugin().setConsoleListener(this);
-		JFaceResources.getFontRegistry().addListener(this);
-		CVSUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
+		// Called when console is removed from the console view
+		synchronized (document) {
+			initialized = false;
+			JFaceResources.getFontRegistry().removeListener(this);
+		}
 	}
 	
 	/**
 	 * Clean-up created fonts.
 	 */
 	public void shutdown() {
-		commandColor.dispose();
-		messageColor.dispose();
-		errorColor.dispose();
+		// Call super dispose because we want the partitioner to be
+		// disconnected.
+		super.dispose();
+		if (commandColor != null)
+			commandColor.dispose();
+		if (messageColor != null)
+			messageColor.dispose();
+		if (errorColor != null)
+			errorColor.dispose();
+		CVSUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -102,22 +213,22 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	 */
 	public void commandInvoked(String line) {
 		commandStarted = System.currentTimeMillis();
-		commandStream.println(Policy.bind("Console.preExecutionDelimiter")); //$NON-NLS-1$
-		commandStream.println(line);
+		appendLine(ConsoleDocument.COMMAND, Policy.bind("Console.preExecutionDelimiter")); //$NON-NLS-1$
+		appendLine(ConsoleDocument.COMMAND, line);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#messageLineReceived(java.lang.String)
 	 */
 	public void messageLineReceived(String line) {
-		messageStream.println("  " + line); //$NON-NLS-1$
+		appendLine(ConsoleDocument.MESSAGE, "  " + line); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener#errorLineReceived(java.lang.String)
 	 */
 	public void errorLineReceived(String line) {
-		errorStream.println("  " + line); //$NON-NLS-1$
+		appendLine(ConsoleDocument.ERROR, "  " + line); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -139,15 +250,15 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 			} else {
 				statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
 			}
-			commandStream.println(statusText);
+			appendLine(ConsoleDocument.COMMAND, statusText);
 			IStatus[] children = status.getChildren();
 			if (children.length == 0) {
 				if (!status.isOK())
-				commandStream.println(messageLineForStatus(status));
+					appendLine(ConsoleDocument.COMMAND, messageLineForStatus(status));
 			} else {
 				for (int i = 0; i < children.length; i++) {
 					if (!children[i].isOK())
-					commandStream.println(messageLineForStatus(children[i]));
+						appendLine(ConsoleDocument.COMMAND, messageLineForStatus(children[i]));
 				}
 			}
 		} else if (exception != null) {
@@ -156,12 +267,12 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 			} else {
 				statusText = Policy.bind("Console.resultException", time); //$NON-NLS-1$
 			}
-			commandStream.println(statusText);
+			appendLine(ConsoleDocument.COMMAND, statusText);
 		} else {
 			statusText = Policy.bind("Console.resultOk", time); //$NON-NLS-1$
 		}
-		commandStream.println(Policy.bind("Console.postExecutionDelimiter")); //$NON-NLS-1$
-		commandStream.println(""); //$NON-NLS-1$
+		appendLine(ConsoleDocument.COMMAND, Policy.bind("Console.postExecutionDelimiter")); //$NON-NLS-1$
+		appendLine(ConsoleDocument.COMMAND, ""); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -170,24 +281,42 @@ public class CVSOutputConsole extends MessageConsole implements IConsoleListener
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();		
 		// colors
-		if(property.equals(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR)) {
-			Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
-			commandStream.setColor(newColor);
-			commandColor.dispose();
-			commandColor = newColor;
-		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR)) {
-			Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
-			messageStream.setColor(newColor);
-			messageColor.dispose();
-			messageColor = newColor;
-		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR)) {
-			Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
-			errorStream.setColor(newColor);
-			errorColor.dispose();
-			errorColor = newColor;
-		// font
-		} else if(property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
-			setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
+		if (initialized) {
+			if (property.equals(ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR)) {
+				Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR);
+				commandStream.setColor(newColor);
+				commandColor.dispose();
+				commandColor = newColor;
+			} else if (property.equals(ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR)) {
+				Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR);
+				messageStream.setColor(newColor);
+				messageColor.dispose();
+				messageColor = newColor;
+			} else if (property.equals(ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR)) {
+				Color newColor = createColor(CVSUIPlugin.getStandardDisplay(), ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR);
+				errorStream.setColor(newColor);
+				errorColor.dispose();
+				errorColor = newColor;
+				// font
+			} else if (property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
+				setFont(JFaceResources.getFontRegistry().get(ICVSUIConstants.PREF_CONSOLE_FONT));
+			}
+		}
+		// show preferences
+		if(property.equals(ICVSUIConstants.PREF_CONSOLE_SHOW_ON_MESSAGE)) {
+			Object value = event.getNewValue();
+			if(value instanceof String) {
+				showOnMessage = Boolean.getBoolean((String)event.getNewValue());
+			} else {
+				showOnMessage = ((Boolean)value).booleanValue();
+			}
+			if(showOnMessage) {
+				showConsole();
+			} else {
+				IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+				manager.removeConsoles(new IConsole[] {this});
+				ConsolePlugin.getDefault().getConsoleManager().addConsoleListener(new MyLifecycle());
+			}
 		}
 	}
 	
