@@ -82,7 +82,6 @@ public final class IDE {
 	
 	/**
 	 * The resource based perspective identifier.
-	 * @issue should this now be org.eclipse.ui.ide.resourcePerspective?
 	 */
 	public static final String RESOURCE_PERSPECTIVE_ID = "org.eclipse.ui.resourcePerspective"; //$NON-NLS-1$
 
