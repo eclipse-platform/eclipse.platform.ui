@@ -1,9 +1,11 @@
 package org.eclipse.debug.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -165,6 +167,7 @@ public interface IDebugView extends IViewPart {
 	 * Returns the context menu manager for this view.
 	 *
 	 * @return the context menu manager for this view, or <code>null</code> if none
+	 * @deprecated See AbstractDebugView#getContextMenuManagers()
 	 */
 	public IMenuManager getContextMenuManager();
 }
