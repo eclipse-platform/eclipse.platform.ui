@@ -36,6 +36,8 @@ import org.osgi.service.url.URLStreamHandlerService;
 public class PlatformActivator extends Plugin implements BundleActivator {
 	private static final String PROP_ECLIPSE_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
+	private static final String NL_SYSTEM_BUNDLE = "org.eclipse.osgi.nl"; //$NON-NLS-1$
+	private static final String NL_PROP_EXT = ".properties"; //$NON-NLS-1$
 
 	private static BundleContext context;
 	private EclipseBundleListener pluginBundleListener;
@@ -80,7 +82,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private void startRegistry(BundleContext runtimeContext) {
 		boolean fromCache = true;
-		ExtensionRegistry registry = null;		
+		ExtensionRegistry registry = null;
 		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) { //$NON-NLS-1$
 			// Try to read the registry from the cache first. If that fails, create a new registry
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
@@ -124,7 +126,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		// register a listener to catch new bundle installations/resolutions.
 		pluginBundleListener = new EclipseBundleListener(registry);
 		runtimeContext.addBundleListener(pluginBundleListener);
-		
+
 		// populate the registry with all the currently installed bundles.
 		// There is a small window here while processBundles is being
 		// called where the pluginBundleListener may receive a BundleEvent 
@@ -179,7 +181,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			return;
 		try {
 			if (!registry.isDirty())
-				return;	
+				return;
 			FileManager manager = InternalPlatform.getDefault().getRuntimeFileManager();
 			File cacheFile = null;
 			try {
@@ -318,10 +320,13 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private void registerEntryLocator() {
 		EntryLocator systemResources = new EntryLocator() {
 			public URL getProperties(String basename, Locale locale) {
-				HashMap overrides = new HashMap();
-				overrides.put("$nl$", locale.getLanguage() + '_' + locale.getCountry()); //$NON-NLS-1$
-				IPath propertiesPath = new Path("$nl$/" + basename.replace('.', '/') + ".properties"); //$NON-NLS-1$ //$NON-NLS-2$
-				return Platform.find(context.getBundle(), propertiesPath, overrides);
+				basename = basename.replace('.', '/');
+				IPath propertiesPath = new Path(NL_SYSTEM_BUNDLE + '/' + basename + '_' + locale.getLanguage() + '_' + locale.getCountry() + NL_PROP_EXT);
+				URL result = Platform.find(context.getBundle(), propertiesPath);
+				if (result != null)
+					return result;
+				propertiesPath = new Path(NL_SYSTEM_BUNDLE + '/' + basename + '_' + locale.getLanguage() + NL_PROP_EXT);
+				return Platform.find(context.getBundle(), propertiesPath);
 			}
 		};
 		context.registerService(EntryLocator.class.getName(), systemResources, null);
