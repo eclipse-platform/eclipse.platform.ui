@@ -1493,6 +1493,8 @@ private static boolean isCompatible() {
  * running in this workspace.
  */
 private static boolean isAlreadyRunning() {
+	if (System.getProperty("org.eclipse.core.runtime.ignoreLockFile") != null) //$NON-NLS-1$
+			return false;
 	// Calculate the location of the lock file
 	File lockFile = computeLockFileLocation();
 	FileOutputStream stream = null;
