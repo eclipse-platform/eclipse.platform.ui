@@ -85,7 +85,8 @@ public class CompareViewerPane extends ViewForm {
 	 */
 	public void setText(String label) {
 		CLabel cl= (CLabel) getTopLeft();
-		cl.setText(label);		
+		if (cl != null)
+			cl.setText(label);		
 	}
 	
 	/**
@@ -96,7 +97,8 @@ public class CompareViewerPane extends ViewForm {
 	 */
 	public void setImage(Image image) {
 		CLabel cl= (CLabel) getTopLeft();
-		cl.setImage(image);
+		if (cl != null)
+			cl.setImage(image);
 	}
 	
 	/**
