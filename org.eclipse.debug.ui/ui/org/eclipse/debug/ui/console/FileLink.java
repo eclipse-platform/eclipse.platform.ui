@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.ui.console;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -42,9 +46,11 @@ public class FileLink implements IConsoleHyperlink {
 	/**
 	 * Constructs a hyperlink to the specified file.
 	 * 
-	 * @param file the file to open when activated	 * @param editorId the identifier of the editor to open the file in, or
+	 * @param file the file to open when activated
+	 * @param editorId the identifier of the editor to open the file in, or
 	 * <code>null</code> if the default editor should be used
-	 * @param fileOffset the offset in the file to select when activated, or -1	 * @param fileLength the length of text to select in the file when activated
+	 * @param fileOffset the offset in the file to select when activated, or -1
+	 * @param fileLength the length of text to select in the file when activated
 	 * or -1
 	 * @param fileLineNumber the line number to select in the file when
 	 * activated, or -1

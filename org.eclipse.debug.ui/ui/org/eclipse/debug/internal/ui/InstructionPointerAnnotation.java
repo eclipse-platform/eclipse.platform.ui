@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
  
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -25,24 +29,28 @@ public class InstructionPointerAnnotation extends Annotation {
 
 	/**
 	 * The thread for this instruction pointer annotation.  This is necessary only so that
-	 * instances of this class can be distinguished by equals().	 */
+	 * instances of this class can be distinguished by equals().
+	 */
 	private IStackFrame fStackFrame;
 	
 	/**
 	 * Flag indicating if this annotation represents a top stack frame.  Top stack frames
-	 * have different images from all other stack frames.	 */
+	 * have different images from all other stack frames.
+	 */
 	private boolean fTopStackFrame;
 
 	/**
 	 * The layer at which to draw the instruction pointer annotation.  The instruction pointer
 	 * should be rendered on top of any other type of annotation or marker.
 	 * 
-	 * @see org.eclipse.jface.text.source.Annotation	 */
+	 * @see org.eclipse.jface.text.source.Annotation
+	 */
 	public static final int INSTRUCTION_POINTER_ANNOTATION_LAYER = 6;
 
 	/**
 	 * Construct an instance of an InstructionPointerAnnotation based on the
-	 * specified stack frame.	 */
+	 * specified stack frame.
+	 */
 	public InstructionPointerAnnotation(IStackFrame stackFrame) {
 		setLayer(INSTRUCTION_POINTER_ANNOTATION_LAYER);
 		setStackFrame(stackFrame);
@@ -58,7 +66,8 @@ public class InstructionPointerAnnotation extends Annotation {
 	}
 	
 	/**
-	 * Retrieve the image associated with the instruction pointer.	 */
+	 * Retrieve the image associated with the instruction pointer.
+	 */
 	protected Image getInstructionPointerImage(boolean topStackFrame) {
 		if (topStackFrame) {
 			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJS_INSTRUCTION_POINTER_TOP);

@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,7 +76,10 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 
 	/**
 	 * Returns a content provider for the given process.
-	 *  	 * @param process	 * @return IConsoleColorProvider	 */
+	 *  
+	 * @param process
+	 * @return IConsoleColorProvider
+	 */
 	protected IConsoleColorProvider getContentProvider(IProcess process) {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
 		IConsoleColorProvider contentProvider = null;

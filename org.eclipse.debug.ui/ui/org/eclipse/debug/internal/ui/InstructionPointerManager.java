@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
  
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,22 +37,26 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class InstructionPointerManager {
 
 	/**
-	 * The singleton instance of this class.	 */
+	 * The singleton instance of this class.
+	 */
 	private static InstructionPointerManager fgDefault;
 
 	/**
 	 * Mapping of IDebugTarget objects to (mappings of IThread objects to lists of instruction
-	 * pointer contexts).	 */
+	 * pointer contexts).
+	 */
 	private Map fDebugTargetMap;
 	
 	/**
-	 * Clients must not instantiate this class.	 */
+	 * Clients must not instantiate this class.
+	 */
 	private InstructionPointerManager() {
 		fDebugTargetMap = new HashMap();
 	}
 	
 	/**
-	 * Return the singleton instance of this class, creating it if necessary.	 */
+	 * Return the singleton instance of this class, creating it if necessary.
+	 */
 	public static InstructionPointerManager getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new InstructionPointerManager();
@@ -58,7 +66,8 @@ public class InstructionPointerManager {
 	
 	/**
 	 * Add an instruction pointer annotation in the specified editor for the 
-	 * specified stack frame.	 */
+	 * specified stack frame.
+	 */
 	public void addAnnotation(ITextEditor textEditor, IStackFrame stackFrame) {
 		
 		// Create the annotation object
@@ -155,7 +164,8 @@ public class InstructionPointerManager {
 	}
 	
 	/**
-	 * Remove all annotations associated with the specified thread.  	 */
+	 * Remove all annotations associated with the specified thread.  
+	 */
 	private void removeAnnotations(IThread thread, Map threadMap) {
 		
 		// Retrieve the context list and remove each corresponding annotation
@@ -173,7 +183,8 @@ public class InstructionPointerManager {
 	}
 	
 	/**
-	 * Remove the specified annotation from the specified text editor.	 */
+	 * Remove the specified annotation from the specified text editor.
+	 */
 	private void removeAnnotation(ITextEditor textEditor, InstructionPointerAnnotation annotation) {
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
 		if (docProvider != null) {

@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
  
 import java.text.MessageFormat;
 
@@ -74,7 +78,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	/**
 	 * Sets the action used to render this delegate.
 	 * 
-	 * @param action the action used to render this delegate	 */
+	 * @param action the action used to render this delegate
+	 */
 	private void setAction(IAction action) {
 		fAction = action;
 	}
@@ -82,7 +87,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	/**
 	 * Returns the action used to render this delegate.
 	 * 
-	 * @return the action used to render this delegate	 */
+	 * @return the action used to render this delegate
+	 */
 	protected IAction getAction() {
 		return fAction;
 	}
@@ -91,7 +97,10 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * Adds the given action to the specified menu with an accelerator specified
 	 * by the given number.
 	 * 
-	 * @param menu the menu to add the action to	 * @param action the action to add	 * @param accelerator the number that should appear as an accelerator	 */
+	 * @param menu the menu to add the action to
+	 * @param action the action to add
+	 * @param accelerator the number that should appear as an accelerator
+	 */
 	protected void addToMenu(Menu menu, IAction action, int accelerator) {
 		StringBuffer label= new StringBuffer();
 		if (accelerator >= 0 && accelerator < 10) {
@@ -231,7 +240,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	/**
 	 * Sets this action's drop-down menu, disposing the previous menu.
 	 * 
-	 * @param menu the new menu	 */
+	 * @param menu the new menu
+	 */
 	private void setMenu(Menu menu) {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -305,7 +315,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	/**
 	 * Returns the launch history associated with this action's launch group.
 	 * 
-	 * @return the launch history associated with this action's launch group	 */
+	 * @return the launch history associated with this action's launch group
+	 */
 	protected LaunchHistory getLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupIdentifier());
 	} 

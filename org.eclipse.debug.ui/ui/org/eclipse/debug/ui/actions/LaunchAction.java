@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -41,7 +45,8 @@ public class LaunchAction extends Action {
 	 * Constucts an action that launches the specified launch configuration
 	 * in the specified mode.
 	 * 
-	 * @param configuration launch configuration	 * @param mode launch mode - one of <code>ILaunchManager.RUN_MODE</code> or
+	 * @param configuration launch configuration
+	 * @param mode launch mode - one of <code>ILaunchManager.RUN_MODE</code> or
 	 * <code>ILaunchManager.DEBUG_MODE</code>
 	 */
 	public LaunchAction(ILaunchConfiguration configuration, String mode) {

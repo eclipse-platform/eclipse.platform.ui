@@ -1,12 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.views.console;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -160,7 +164,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private boolean fPoll = false;
 	
 	/**
-	 * The associated docuemnt	 */
+	 * The associated docuemnt
+	 */
 	private IDocument fDocument = null;
 	
 	/**
@@ -179,7 +184,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private boolean fWrap = false;
 	
 	/**
-	 * List of partitions	 */
+	 * List of partitions
+	 */
 	private List fPartitions = new ArrayList(5);
 	
 	/**
@@ -189,11 +195,13 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private static final long BASE_DELAY= 100L;
 	
 	/**
-	 * The identifier of the stream that was last appended to	 */
+	 * The identifier of the stream that was last appended to
+	 */
 	private String fLastStreamIdentifier= null;
 	
 	/**
-	 * Keyboard input buffer	 */
+	 * Keyboard input buffer
+	 */
 	private StringBuffer fInputBuffer = new StringBuffer();
 	
 	/**
@@ -774,7 +782,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	
 	/**
 	 * Returns a collection of legal line delimiters for this partitioner's
-	 * associated document, sorted by length in descending order.	 */
+	 * associated document, sorted by length in descending order.
+	 */
 	protected String[] getLegalLineDelimiters() {
 		if (fSortedLineDelimiters == null) {
 			String[] lineDelimiters = fDocument.getLegalLineDelimiters();

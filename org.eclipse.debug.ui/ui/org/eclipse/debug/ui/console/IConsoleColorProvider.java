@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.ui.console;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.swt.graphics.Color;
@@ -56,23 +60,32 @@ public interface IConsoleColorProvider {
 	 * Returns whether the console associated with this color provider's
 	 * process can accept keyboard input. This attribute may change over the life
 	 * of a process/document.
-	 * 	 * @return whether the console associated with this color provider's
-	 * process can accept keyboard input	 */
+	 * 
+	 * @return whether the console associated with this color provider's
+	 * process can accept keyboard input
+	 */
 	public boolean isReadOnly();
 	
 	/**
 	 * Returns the color to draw output associated with the given stream.
-	 * 	 * @param streamIdentifer	 * @return Color	 */
+	 * 
+	 * @param streamIdentifer
+	 * @return Color
+	 */
 	public Color getColor(String streamIdentifer);
 	
 	/**
 	 * Connects this color provider to the given process and console document.
 	 * This color provider should connect its streams to the given console
 	 * document.
-	 * 	 * @param process	 * @param partitioner	 */
+	 * 
+	 * @param process
+	 * @param partitioner
+	 */
 	public void connect(IProcess process, IConsole console);
 	
 	/**
-	 * Disconnects this color provider.	 */
+	 * Disconnects this color provider.
+	 */
 	public void disconnect();
 }

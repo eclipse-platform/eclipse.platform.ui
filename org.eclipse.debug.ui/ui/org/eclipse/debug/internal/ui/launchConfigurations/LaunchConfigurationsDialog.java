@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -80,7 +84,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaunchConfigurationDialog {
 
 	/**
-	 * Keep track of the currently visible dialog instance	 */
+	 * Keep track of the currently visible dialog instance
+	 */
 	private static ILaunchConfigurationDialog fgCurrentlyVisibleLaunchConfigurationDialog;
 		
 	/**
@@ -256,7 +261,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	
 	/**
 	 * Constant specifying that a new launch configuration dialog was not opened.  Instead
-	 * an existing launch configuration dialog was used.	 */
+	 * an existing launch configuration dialog was used.
+	 */
 	public static final int LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN = 4;
 	
 	/**
@@ -1727,7 +1733,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Returns the banner image to display in the title area	 */
+	 * Returns the banner image to display in the title area
+	 */
 	protected Image getBannerImage() {
 		if (fBannerImage == null) {
 			ImageDescriptor descriptor = getLaunchGroup().getBannerImageDescriptor(); 
@@ -1750,7 +1757,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Returns the launch group being displayed.
 	 * 
-	 * @return launch group	 */
+	 * @return launch group
+	 */
 	public LaunchGroupExtension getLaunchGroup() {
 		return fGroup;
 	}

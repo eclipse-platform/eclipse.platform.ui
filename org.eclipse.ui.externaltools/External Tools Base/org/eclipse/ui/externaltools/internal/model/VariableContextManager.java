@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.model;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -54,7 +58,8 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 	/**
 	 * Returns the singleton resource selection manager
 	 * 
-	 * @return VariableContextManager	 */
+	 * @return VariableContextManager
+	 */
 	public static VariableContextManager getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new VariableContextManager(); 
@@ -133,7 +138,8 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 	 * Returns the active variable context. The context is that of the selected
 	 * resource, or a project being built.
 	 * 
-	 * @return variable context	 */
+	 * @return variable context
+	 */
 	public ExpandVariableContext getVariableContext() {
 		if (fBuilding) {
 			return new ExpandVariableContext(fProject, fKind);
@@ -145,8 +151,10 @@ public class VariableContextManager implements IWindowListener, ISelectionListen
 	/**
 	 * Notification that the given project is being built.
 	 * 
-	 * @param project	 * @param kind
-	 * @see ExternalToolBuilder#build(int, Map, IProgressMonitor)	 */
+	 * @param project
+	 * @param kind
+	 * @see ExternalToolBuilder#build(int, Map, IProgressMonitor)
+	 */
 	public void buildStarted(IProject project, int kind) {
 		fBuilding = true;
 		fProject = project;

@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.core.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
  
 import java.util.Map;
 
@@ -259,7 +265,8 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 	 * Returns whether this breakpoint has an associated marker that exists.
 	 * 
 	 * @return returns whether this breakpoint has an associated marker that exists
-	 * @since 2.1	 */
+	 * @since 2.1
+	 */
 	protected boolean markerExists() {
 		IMarker m = getMarker();
 		return (m != null && m.exists());

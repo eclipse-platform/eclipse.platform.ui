@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -75,7 +79,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Collection of breakpoints being added currently. Used to 
 	 * suppress change notication of "REGISTERED" attribute when
-	 * being added.	 */
+	 * being added.
+	 */
 	private List fSuppressChange = new ArrayList();
 	
 	/**
@@ -440,7 +445,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Returns whether change notification is to be suppressed for the given breakpoint.
 	 * Used when adding breakpoints and changing the "REGISTERED" attribute.
-	 * 	 * @param breakpoint	 * @return boolean whether change notification is suppressed	 */
+	 * 
+	 * @param breakpoint
+	 * @return boolean whether change notification is suppressed
+	 */
 	protected boolean isChangeSuppressed(IBreakpoint breakpoint) {
 		return fSuppressChange.contains(breakpoint);
 	}
@@ -495,13 +503,16 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	class BreakpointManagerVisitor implements IResourceDeltaVisitor {
 		/**
-		 * Moved markers		 */
+		 * Moved markers
+		 */
 		private List fMoved = new ArrayList();
 		/**
-		 * Removed breakpoints		 */
+		 * Removed breakpoints
+		 */
 		private List fRemoved = new ArrayList();
 		/**
-		 * Changed breakpoints and associated marker deltas		 */
+		 * Changed breakpoints and associated marker deltas
+		 */
 		private List fChanged = new ArrayList();
 		private List fChangedDeltas = new ArrayList();
 		
@@ -655,7 +666,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	
 	/**
 	 * Notifies listeners of the adds/removes/changes
-	 * 	 * @param breakpoints associated breakpoints	 * @param deltas or <code>null</code>	 * @param update type of change	 */
+	 * 
+	 * @param breakpoints associated breakpoints
+	 * @param deltas or <code>null</code>
+	 * @param update type of change
+	 */
 	private void fireUpdate(List breakpoints, List deltas, int update) {
 		if (breakpoints.isEmpty()) {
 			return; 

@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -157,7 +161,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * <code>null</code> if none.
 	 * 
 	 * @return the most recently launched configuration in this history, or
-	 * <code>null</code> if none 	 */
+	 * <code>null</code> if none 
+	 */
 	public ILaunchConfiguration getRecentLaunch() {
 		return fRecentLaunch;
 	}
@@ -180,7 +185,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * Returns the launch configuration in this history, in most recently
 	 * launched order.
 	 * 
-	 * @return launch history	 */
+	 * @return launch history
+	 */
 	public ILaunchConfiguration[] getHistory() {
 		return (ILaunchConfiguration[])fHistory.toArray(new ILaunchConfiguration[fHistory.size()]);
 	}
@@ -189,7 +195,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * Returns the favorite launch configurations in this history, in the order
 	 * they were created.
 	 * 
-	 * @return launch favorites	 */
+	 * @return launch favorites
+	 */
 	public ILaunchConfiguration[] getFavorites() {
 		return (ILaunchConfiguration[])fFavorites.toArray(new ILaunchConfiguration[fFavorites.size()]);
 	}
@@ -197,7 +204,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Sets this container's launch history.
 	 * 
-	 * @param history	 */
+	 * @param history
+	 */
 	public void setHistory(ILaunchConfiguration[] history) {
 		fHistory = new ArrayList(history.length);
 		for (int i = 0; i < history.length; i++) {
@@ -225,7 +233,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Adds the given configuration to the favorites list.
 	 * 
-	 * @param configuration	 */
+	 * @param configuration
+	 */
 	public void addFavorite(ILaunchConfiguration configuration) {
 		clearDirty();
 		if (!fFavorites.contains(configuration)) {
@@ -239,7 +248,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Returns the launch group associated with this history
 	 * 
-	 * @return group	 */
+	 * @return group
+	 */
 	public LaunchGroupExtension getLaunchGroup() {
 		return fGroup;
 	}
@@ -299,7 +309,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * Returns the maximum number of entries allowed in this history
 	 * 
-	 * @return the maximum number of entries allowed in this history	 */
+	 * @return the maximum number of entries allowed in this history
+	 */
 	protected int getMaxHistorySize() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE);
 	}

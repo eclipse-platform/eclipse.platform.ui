@@ -1,13 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-/**********************************************************************
-Copyright (c) 2002 IBM Corp. and others. All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
- 
-Contributors:
-**********************************************************************/
  
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,7 +35,8 @@ public class LaunchGroupExtension {
 	private ImageDescriptor fImageDescriptor;
 	
 	/**
-	 * The banner image for this group	 */
+	 * The banner image for this group
+	 */
 	private ImageDescriptor fBannerImageDescriptor;
 	
 	/**
@@ -134,7 +137,9 @@ public class LaunchGroupExtension {
 	/**
 	 * Creates an image descriptor based on the given attribute name
 	 * 
-	 * @param attribute	 * @return ImageDescriptor	 */
+	 * @param attribute
+	 * @return ImageDescriptor
+	 */
 	protected ImageDescriptor createImageDescriptor(String attribute) {
 		URL iconURL = getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
 		String iconPath = getConfigurationElement().getAttribute(attribute);

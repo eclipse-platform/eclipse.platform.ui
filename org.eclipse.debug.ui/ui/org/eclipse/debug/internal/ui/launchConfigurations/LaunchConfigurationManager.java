@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -120,7 +124,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * category (i.e. non-null), then this configuration should not be displayed
 	 * in the debug ui.
 	 * 
-	 * @param launchConfiguration	 * @return boolean	 */
+	 * @param launchConfiguration
+	 * @return boolean
+	 */
 	public static boolean isVisible(ILaunchConfiguration launchConfiguration) {
 		try {
 			return !(launchConfiguration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false));
@@ -535,7 +541,8 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	/**
 	 * Return the launch group with the given id, or <code>null</code>
 	 * 
-	 * @return the launch group with the given id, or <code>null</code>	 */
+	 * @return the launch group with the given id, or <code>null</code>
+	 */
 	public LaunchGroupExtension getLaunchGroup(String id) {
 		if (fLaunchGroups == null) {
 			loadLaunchGroups();
@@ -590,7 +597,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	/**
 	 * Returns the default launch group for the given mode.
 	 * 
-	 * @param mode	 * @return launch group	 */
+	 * @param mode
+	 * @return launch group
+	 */
 	public LaunchGroupExtension getDefaultLanuchGroup(String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);

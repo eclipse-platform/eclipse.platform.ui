@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -45,7 +49,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
  * Creates documents for processes as they are registered with a launch.
- * The singleton manager is accessible from the debug UI plugin. */
+ * The singleton manager is accessible from the debug UI plugin.
+ */
 public class ConsoleDocumentManager implements ILaunchListener {
 	
 	/**
@@ -55,7 +60,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	private IProcess fCurrentProcess= null;
 	
 	/**
-	 * Console document content provider extensions, keyed by extension id	 */
+	 * Console document content provider extensions, keyed by extension id
+	 */
 	private Map fColorProviders;
 	
 	/**
@@ -64,7 +70,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	private Map fLineTrackers;
 	
 	/**
-	 * Default document provider.	 */
+	 * Default document provider.
+	 */
 	protected IDocumentProvider fDefaultDocumentProvider = null;
 	
 	/**
@@ -305,7 +312,10 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	
 	/**
 	 * Returns the document provider applicable for the given process.
-	 * 	 * @param process	 * @return document provider	 */
+	 * 
+	 * @param process
+	 * @return document provider
+	 */
 	protected IDocumentProvider getDocumentProvider(IProcess process) {
 		if (fDefaultDocumentProvider == null) {
 			fDefaultDocumentProvider = new ConsoleDocumentProvider();
@@ -316,7 +326,10 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	/**
 	 * Returns a new console document color provider extension for the given
 	 * process type, or <code>null</code> if none.
-	 * 	 * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>	 * @return IConsoleColorProvider	 */
+	 * 
+	 * @param type corresponds to <code>IProcess.ATTR_PROCESS_TYPE</code>
+	 * @return IConsoleColorProvider
+	 */
 	public IConsoleColorProvider getColorProvider(String type) {
 		if (fColorProviders == null) {
 			fColorProviders = new HashMap();

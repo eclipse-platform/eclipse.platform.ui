@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.debug.ui.console;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
@@ -33,7 +37,8 @@ public interface IConsole {
 	 * standard in, out, and error streams with the console. Keyboard input will
 	 * be written to the given proxy.
 	 * 
-	 * @param streamsProxy	 */
+	 * @param streamsProxy
+	 */
 	public void connect(IStreamsProxy streamsProxy);
 	
 	/**
@@ -41,7 +46,9 @@ public interface IConsole {
 	 * the given identifier. This allows for more than the stanard (in, out,
 	 * error) streams to be connected to the console.
 	 * 
-	 * @param streamMonitor	 * @param streamIdentifer	 */
+	 * @param streamMonitor
+	 * @param streamIdentifer
+	 */
 	public void connect(IStreamMonitor streamMonitor, String streamIdentifer);
 	
 	/**
@@ -72,7 +79,8 @@ public interface IConsole {
 	/**
 	 * Returns the document associated with this console.
 	 * 
-	 * @return document	 */
+	 * @return document
+	 */
 	public IDocument getDocument(); 
 	
 	/**
