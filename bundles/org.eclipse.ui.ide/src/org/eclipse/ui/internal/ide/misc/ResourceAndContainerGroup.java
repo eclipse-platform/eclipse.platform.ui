@@ -320,7 +320,7 @@ public class ResourceAndContainerGroup implements Listener {
             return false;
         }
         //path is invalid if any prefix is occupied by a file
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IWorkspaceRoot root = workspace.getRoot();
         while (path.segmentCount() > 1) {
         	if (root.getFile(path).exists()) {
         		problemType = PROBLEM_PATH_OCCUPIED;
