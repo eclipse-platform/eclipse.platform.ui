@@ -664,7 +664,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#isValidPath
+	 * @see IPath#isValidPath(String)
 	 */
 	public boolean isValidPath(String path) {
 		Path test = new Path(path);
@@ -675,7 +675,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#isValidSegment
+	 * @see IPath#isValidSegment(String)
 	 */
 	public boolean isValidSegment(String segment) {
 		int size = segment.length();
@@ -692,7 +692,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#lastSegment
+	 * @see IPath#lastSegment()
 	 */
 	public String lastSegment() {
 		int len = segments.length;
@@ -700,7 +700,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#makeAbsolute
+	 * @see IPath#makeAbsolute()
 	 */
 	public IPath makeAbsolute() {
 		if (isAbsolute()) {
@@ -718,7 +718,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#makeRelative
+	 * @see IPath#makeRelative()
 	 */
 	public IPath makeRelative() {
 		if (!isAbsolute()) {
@@ -728,7 +728,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#makeUNC
+	 * @see IPath#makeUNC(boolean)
 	 */
 	public IPath makeUNC(boolean toUNC) {
 		// if we are already in the right form then just return
@@ -746,7 +746,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#matchingFirstSegments
+	 * @see IPath#matchingFirstSegments(IPath)
 	 */
 	public int matchingFirstSegments(IPath anotherPath) {
 		Assert.isNotNull(anotherPath);
@@ -763,7 +763,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#removeFileExtension
+	 * @see IPath#removeFileExtension()
 	 */
 	public IPath removeFileExtension() {
 		String extension = getFileExtension();
@@ -776,7 +776,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#removeFirstSegments
+	 * @see IPath#removeFirstSegments(int)
 	 */
 	public IPath removeFirstSegments(int count) {
 		if (count == 0)
@@ -794,7 +794,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#removeLastSegments
+	 * @see IPath#removeLastSegments(int)
 	 */
 	public IPath removeLastSegments(int count) {
 		if (count == 0)
@@ -811,7 +811,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#removeTrailingSeparator
+	 * @see IPath#removeTrailingSeparator()
 	 */
 	public IPath removeTrailingSeparator() {
 		if (!hasTrailingSeparator()) {
@@ -821,7 +821,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#segment
+	 * @see IPath#segment(int)
 	 */
 	public String segment(int index) {
 		if (index >= segments.length)
@@ -830,14 +830,14 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#segmentCount
+	 * @see IPath#segmentCount()
 	 */
 	public int segmentCount() {
 		return segments.length;
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#segments
+	 * @see IPath#segments()
 	 */
 	public String[] segments() {
 		String[] segmentCopy = new String[segments.length];
@@ -846,7 +846,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#setDevice
+	 * @see IPath#setDevice(String)
 	 */
 	public IPath setDevice(String value) {
 		if (value != null) {
@@ -860,14 +860,14 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#toFile
+	 * @see IPath#toFile()
 	 */
 	public File toFile() {
 		return new File(toOSString());
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#toOSString
+	 * @see IPath#toOSString()
 	 */
 	public String toOSString() {
 		//Note that this method is identical to toString except
@@ -907,7 +907,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#toPortableString
+	 * @see IPath#toPortableString()
 	 */
 	public String toPortableString() {
 		int resultSize = computeLength();
@@ -934,7 +934,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#toString
+	 * @see IPath#toString()
 	 */
 	public String toString() {
 		int resultSize = computeLength();
@@ -971,7 +971,7 @@ public class Path implements IPath, Cloneable {
 	}
 
 	/* (Intentionally not included in javadoc)
-	 * @see IPath#uptoSegment
+	 * @see IPath#uptoSegment(int)
 	 */
 	public IPath uptoSegment(int count) {
 		if (count == 0)
