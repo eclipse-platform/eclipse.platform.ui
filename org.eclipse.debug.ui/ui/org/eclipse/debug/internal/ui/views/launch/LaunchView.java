@@ -686,43 +686,39 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setEditorInput(null);
 		setSourceElement(null);
 		Object sourceElement= null;
-		try {
-			ILaunch launch= stackFrame.getLaunch();
-			if (launch == null) {
-				return;
-			}
-			ISourceLocator locator= launch.getSourceLocator();
-			if (locator == null) {
-				return;
-			}
-			sourceElement= locator.getSourceElement(stackFrame);
-			if (sourceElement == null) {
-				if (locator instanceof AbstractSourceLookupDirector)
-					commonSourceNotFound(stackFrame);
-				else
-					sourceNotFound(stackFrame);
-				return;
-			}
-			ISourcePresentation presentation= null;
-			if (locator instanceof ISourcePresentation) {
-				presentation= (ISourcePresentation) locator;
-			} else {
-				presentation= getPresentation(stackFrame.getModelIdentifier());
-			}
-			IEditorInput editorInput= null;
-			String editorId= null;
-			if (presentation != null) {
-				editorInput= presentation.getEditorInput(sourceElement);
-			}
-			if (editorInput != null) {
-				editorId= presentation.getEditorId(editorInput, sourceElement);
-			}
-			setEditorInput(editorInput);
-			setEditorId(editorId);
-			setSourceElement(sourceElement);
-		} catch (Throwable e) {
-			DebugUIPlugin.log(e);
+		ILaunch launch= stackFrame.getLaunch();
+		if (launch == null) {
+			return;
 		}
+		ISourceLocator locator= launch.getSourceLocator();
+		if (locator == null) {
+			return;
+		}
+		sourceElement= locator.getSourceElement(stackFrame);
+		if (sourceElement == null) {
+			if (locator instanceof AbstractSourceLookupDirector)
+				commonSourceNotFound(stackFrame);
+			else
+				sourceNotFound(stackFrame);
+			return;
+		}
+		ISourcePresentation presentation= null;
+		if (locator instanceof ISourcePresentation) {
+			presentation= (ISourcePresentation) locator;
+		} else {
+			presentation= getPresentation(stackFrame.getModelIdentifier());
+		}
+		IEditorInput editorInput= null;
+		String editorId= null;
+		if (presentation != null) {
+			editorInput= presentation.getEditorInput(sourceElement);
+		}
+		if (editorInput != null) {
+			editorId= presentation.getEditorId(editorInput, sourceElement);
+		}
+		setEditorInput(editorInput);
+		setEditorId(editorId);
+		setSourceElement(sourceElement);
 	}
 	
 	/* (non-Javadoc)
