@@ -11,9 +11,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard;
@@ -48,8 +46,8 @@ public class SetKeywordSubstitutionAction extends TeamAction {
 			// resource must be local
 			if (! resource.isAccessible()) return false;
 			// provider must be CVS
-			RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());
-			if (provider == null || !provider.isOfType(CVSProviderPlugin.getTypeId())) return false;
+			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+			if (provider == null) return false;
 			// resource must either be a project, or it must be managed
 			if (resource.getType() != IResource.PROJECT) {
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);

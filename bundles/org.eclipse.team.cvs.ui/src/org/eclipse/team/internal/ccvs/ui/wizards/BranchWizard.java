@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -133,7 +133,7 @@ public class BranchWizard extends Wizard {
 	private Hashtable getProviderMapping(IResource[] resources) {
 		Hashtable result = new Hashtable();
 		for (int i = 0; i < resources.length; i++) {
-			RepositoryProvider provider = RepositoryProviderType.getProvider(resources[i].getProject());
+			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
 			List list = (List)result.get(provider);
 			if (list == null) {
 				list = new ArrayList();

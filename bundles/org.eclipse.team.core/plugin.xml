@@ -17,7 +17,6 @@
    </library>
 </runtime>
 
-<extension-point id="repository-provider-type" name="Repository Provider Types"/>
 <extension-point id="fileTypes" name="File Types Registry"/>
 <extension-point id="ignore" name="Global Ignore Registry"/>
 

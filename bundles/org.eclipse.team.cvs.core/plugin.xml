@@ -39,18 +39,12 @@
 		</adapter>
 	</extension>
 
-	<!-- *************** Team Provider **************** -->
-	<extension point="org.eclipse.team.core.repository-provider-type" id="cvs-provider-type">
-		<repository>
-			<provider-type class="org.eclipse.team.ccvs.core.CVSRepositoryProviderType"/> 
-		</repository>
-	</extension>
-
 	<!-- *************** Project Nature **************** -->
 	<extension point="org.eclipse.core.resources.natures" id="cvsnature" name="%cvsNature">
 		<runtime>
-			<run class="org.eclipse.team.ccvs.core.CVSTeamProvider"/> 
+			<run class="org.eclipse.team.ccvs.core.CVSTeamProvider"/>
 		</runtime>
+		<one-of-nature id="org.eclipse.team.repository-provider"/>
 	</extension>
  
  	<!-- *************** Resource patterns ignored by CVS **************** -->

@@ -36,7 +36,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IUserInfo;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
@@ -202,7 +202,7 @@ public class CVSPropertiesPage extends PropertyPage {
 	private void initializeValues() {
 		passwordChanged = false;
 		
-		provider = (CVSTeamProvider)RepositoryProviderType.getProvider(project);
+		provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
 		if (provider == null) return;
 		
 		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
@@ -242,7 +242,7 @@ public class CVSPropertiesPage extends PropertyPage {
 	}
 	
 	private void initializeTag() {
-		provider = (CVSTeamProvider)RepositoryProviderType.getProvider(project);
+		provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
 		if (provider == null) return;
 		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
 		try {

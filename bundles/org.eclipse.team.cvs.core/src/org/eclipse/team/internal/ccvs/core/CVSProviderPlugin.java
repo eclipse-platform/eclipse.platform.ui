@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
@@ -201,8 +200,8 @@ public class CVSProviderPlugin extends Plugin {
 						if (resource.getType() == IResource.PROJECT) {
 							IProject project = (IProject)resource;
 							// Get the team provider for the project and
-							RepositoryProvider provider = RepositoryProviderType.getProvider(project);
-							if(provider==null || !provider.isOfType(NATURE_ID)) continue;
+							RepositoryProvider provider = RepositoryProvider.getProvider(project, getTypeId());
+							if(provider==null) continue;
 							/* Check if the project description changed. */
 							if ((delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
 								/* The project description changed. Write the file. */

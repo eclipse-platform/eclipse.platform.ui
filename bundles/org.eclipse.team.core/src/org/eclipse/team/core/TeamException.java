@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.core;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IStatus;
 
@@ -14,13 +19,13 @@ import org.eclipse.core.runtime.IStatus;
  * response; this can also be tested on the exception instance itself.
  * <p>
  * To determine the exact cause of the failure the caller should look at each status in detail.</p>
+ * 
+ * @since 2.0
  */
 public class TeamException extends Exception {
 
 	protected IStatus status = null;
 	
-	// Status codes that may appear in a TeamException...
-
 	// The operation completed successfully.
 	public static final int OK = 0;
 

@@ -16,9 +16,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
-import org.eclipse.team.core.StandardOperations;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.internal.simpleAccess.SimpleAccessOperations;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -43,7 +42,7 @@ public class CheckInAction extends TeamAction {
 						RepositoryProvider provider = (RepositoryProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.getStandardOperations().checkin(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+						provider.getSimpleAccess().checkin(providerResources, IResource.DEPTH_INFINITE, subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -61,10 +60,10 @@ public class CheckInAction extends TeamAction {
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());
-			StandardOperations stdOps = provider.getStandardOperations();
-			if (provider == null || stdOps == null) return false;
-			if (!stdOps.isCheckedOut(resource)) return false;
+			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+			SimpleAccessOperations ops = provider.getSimpleAccess();
+			if (provider == null || ops == null) return false;
+			if (!ops.isCheckedOut(resource)) return false;
 		}
 		return true;
 	}

@@ -20,7 +20,6 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -195,16 +194,16 @@ public class ResourceDeltaSyncHandler implements IResourceDeltaVisitor {
 						for (int i = 0; i < projectDeltas.length; i++) {							
 							IResourceDelta delta = projectDeltas[i];
 							IResource resource = delta.getResource();
-							RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());	
+							RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
 
 							// if a project is moved the originating project will not be associated with the CVS provider
 							// however listeners will probably still be interested in the move delta.	
 							if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
 								IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
-								provider = RepositoryProviderType.getProvider(destination.getProject());
+								provider = RepositoryProvider.getProvider(destination.getProject());
 							}
 							
-							if(provider!=null && provider.isOfType(CVSProviderPlugin.getTypeId())) {
+							if(provider!=null) {
 								delta.accept(visitor);
 							}
 						}

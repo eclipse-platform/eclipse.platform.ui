@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
@@ -47,16 +46,16 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 							IResourceDelta delta = projectDeltas[i];
 							IResource resource = delta.getResource();
 
-							RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());	
+							RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
 
 							// if a project is moved the originating project will not be associated with the CVS provider
 							// however listeners will probably still be interested in the move delta.	
 							if ((delta.getFlags() & IResourceDelta.MOVED_TO) > 0) {																
 								IResource destination = getResourceFor(resource.getProject(), resource, delta.getMovedToPath());
-								provider = RepositoryProviderType.getProvider(destination.getProject());
+								provider = RepositoryProvider.getProvider(destination.getProject());
 							}
 							
-							if(provider != null && provider.isOfType(CVSProviderPlugin.getTypeId())) {
+							if(provider != null) {
 								delta.accept(visitor);
 							}
 						}

@@ -13,12 +13,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -99,7 +100,7 @@ public class CompareWithRemoteAction extends TeamAction {
 	protected boolean isEnabled() {
 		IResource[] resources = getSelectedResources();
 		if (resources.length != 1) return false;
-		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resources[0].getProject());
+		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resources[0].getProject(), CVSProviderPlugin.getTypeId());
 		if(provider==null) return false;
 		return provider.hasRemote(resources[0]);
 	}

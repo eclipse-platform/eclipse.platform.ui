@@ -35,10 +35,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
@@ -201,7 +202,7 @@ public class TagSelectionDialog extends Dialog {
 					try {
 						monitor.beginTask(Policy.bind("TagSelectionDialog.fetching"), 100);
 						monitor.subTask(Policy.bind("TagSelectionDialog.preparing"));
-						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resource.getProject());
+						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 						monitor.worked(50);
 						monitor.subTask(Policy.bind("TagSelectionDialog.fetching"));
 						tagTree.setInput(new ProjectElement((ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(resource.getProject()), getShell()));

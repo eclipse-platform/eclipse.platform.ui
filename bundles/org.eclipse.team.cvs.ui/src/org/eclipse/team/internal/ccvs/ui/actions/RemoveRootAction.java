@@ -24,7 +24,6 @@ import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -81,8 +80,8 @@ public class RemoveRootAction extends TeamAction {
 						boolean shared = false;
 						IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 						for (int j = 0; j < projects.length; j++) {
-							RepositoryProvider teamProvider = RepositoryProviderType.getProvider(projects[j]);
-							if (teamProvider.isOfType(CVSProviderPlugin.getTypeId())) {
+							RepositoryProvider teamProvider = RepositoryProvider.getProvider(projects[j], CVSProviderPlugin.getTypeId());
+							if (teamProvider!=null) {
 								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
 								if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(roots[i])) {
 									shared = true;

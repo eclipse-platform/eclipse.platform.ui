@@ -34,7 +34,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResource;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
@@ -431,7 +431,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	
 	protected void assertValidCheckout(IProject project) {
 		// NOTE: Add code to ensure that the project was checkout out properly
-		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(project);
+		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project);
 		assertNotNull(provider);
 	}
 	protected InputStream getContents(ICVSFile file) throws CVSException, IOException {
@@ -458,7 +458,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return target;
 	}
 	protected CVSTeamProvider getProvider(IResource resource) throws TeamException {
-		return (CVSTeamProvider)RepositoryProviderType.getProvider(resource.getProject());
+		return (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject());
 	}
 	protected static InputStream getRandomContents(int sizeAtLeast) {
 		StringBuffer randomStuff = new StringBuffer(sizeAtLeast + 100);

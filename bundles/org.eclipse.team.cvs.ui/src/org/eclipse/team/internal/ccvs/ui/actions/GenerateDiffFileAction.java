@@ -11,8 +11,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
@@ -31,7 +32,7 @@ public class GenerateDiffFileAction extends TeamAction {
 	 */
 	protected boolean checkSharing(IResource[] resources) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
-			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resources[i].getProject());
+			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
 			if (provider==null) {
 				return false;
 			}

@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -40,7 +40,7 @@ public class DeconfigureProjectAction extends TeamAction {
 	protected boolean isEnabled() {
 		IProject[] selectedProjects = getSelectedProjects();
 		if (selectedProjects.length != 1) return false;
-		if (RepositoryProviderType.getProvider(selectedProjects[0]) != null) return false;
+		if (RepositoryProvider.getProvider(selectedProjects[0]) != null) return false;
 		return true;
 	}
 }

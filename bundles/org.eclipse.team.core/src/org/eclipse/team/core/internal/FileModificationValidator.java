@@ -11,7 +11,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamPlugin;
 
 public class FileModificationValidator implements IFileModificationValidator {
@@ -28,7 +27,7 @@ public class FileModificationValidator implements IFileModificationValidator {
 		IFile[] fileArray = new IFile[1];
 		for (int i = 0; i < files.length; i++) {
 			IFile file = files[i];
-			RepositoryProvider provider = RepositoryProviderType.getProvider(file.getProject());
+			RepositoryProvider provider = RepositoryProvider.getProvider(file.getProject());
 			IFileModificationValidator validator = null;
 			if (provider != null) {
 				validator = provider.getFileModificationValidator();
@@ -52,7 +51,7 @@ public class FileModificationValidator implements IFileModificationValidator {
 	 * @see IFileModificationValidator#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
-		RepositoryProvider provider = RepositoryProviderType.getProvider(file.getProject());
+		RepositoryProvider provider = RepositoryProvider.getProvider(file.getProject());
 		if (provider != null) {
 			IFileModificationValidator validator = provider.getFileModificationValidator();
 			if(validator!=null) {

@@ -22,8 +22,9 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -67,7 +68,7 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 			try {
 				for (int i = 0; i < resources.length; i++) {
 					IResource resource = resources[i];
-					CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resource.getProject());
+					CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
 					provider.diff(new IResource[] {resource}, options, new PrintStream(os), new SubProgressMonitor(monitor, 500));
 				}
 			} finally {

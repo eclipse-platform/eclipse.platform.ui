@@ -1,17 +1,41 @@
-/*
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
-package org.eclipse.team.core;
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
+package org.eclipse.team.core.internal.simpleAccess;
 
+import org.eclipse.team.core.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
-public class StandardOperations {
-/**
+/*
+ * This class represents provisional API.  Its here to allow experimentation with 3rd party tools
+ * calling providers in a repository neutral manner.
+ * 
+ * A provider is not required to implement this API.
+ * Implementers, and those who reference it, do so with the awareness that this class may be
+ * removed or substantially changed at future times without warning.
+ * 
+ * The <code>SimpleAccessOperations</code> class exposes a basic repository model that
+ * providers may implement to allow third-party plugins to perform repository operations
+ * programmatically. For example, a code generation tool may want to get source
+ * files before generating the code, and check-in the results.  If a provider plugin does
+ * not adhere to the <i>semantics</i> of the <code>SimpleAccessOperations</code> class
+ * as described, they are free to opt out of implementing it.
+ * 
+ * @since 2.0
+ */
+public interface SimpleAccessOperations {
+	/*
 	 * Updates the local resource to have the same content as the corresponding remote
 	 * resource. Where the local resource does not exist, this method will create it.
 	 * <p>
@@ -40,10 +64,9 @@ public class StandardOperations {
 	 * 		<li>UNABLE</li>
 	 * </ul>
 	 */
-	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-	}
+	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
 
-	/**
+	/*
 	 * Changes the state of the local resource from checked-in to checked-out and transfers the content
 	 * of the remote resource to the local resource.
 	 * <p>
@@ -75,10 +98,9 @@ public class StandardOperations {
 	 * </ul>
 	 * @see checkin(IResource[], int, IProgressMonitor)
 	 */
-	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-	}
+	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
 
-	/**
+	/*
 	 * Transfers the content of the local resource to the corresponding remote resource, and changes the
 	 * state of the local resource from checked-out to checked-in.
 	 * <p>
@@ -109,10 +131,9 @@ public class StandardOperations {
 	 * </ul>
 	 * @see checkout(IResource[], int, IProgressMonitor)
 	 */
-	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-	}
+	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
 
-	/**
+	/*
 	 * Changes the state of the local resource from checked-out to checked-in without updating the contents
 	 * of the remote resource.
 	 * <p>
@@ -142,10 +163,9 @@ public class StandardOperations {
 	 * @see checkin(IResource)
 	 * @see uncheckout(IResource)
 	 */
-	public void uncheckout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-	}
+	public void uncheckout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
 
-	/**
+	/*
 	 * Deletes the remote resource corresponding to the given local resource.
 	 * <p>
 	 * The notion of delete is simply to make the remote resource unavailable.  Where the provider
@@ -173,10 +193,9 @@ public class StandardOperations {
 	 * 		<li>UNABLE</li>
 	 * </ul>
 	 */
-	public void delete(IResource[] resources, IProgressMonitor progress) throws TeamException {
-	}
+	public void delete(IResource[] resources, IProgressMonitor progress) throws TeamException;
 
-	/**
+	/*
 	 * Informs the provider that a local resource's name or path has changed.
 	 * <p>
 	 * Some providers, such as versioning providers, may require this information to track the resource
@@ -197,8 +216,7 @@ public class StandardOperations {
 	 * 		<li>UNABLE</li>
 	 * </ul>
 	 */	
-	public void moved(IPath source, IResource target, IProgressMonitor progress) throws TeamException {
-	}
+	public void moved(IPath source, IResource target, IProgressMonitor progress) throws TeamException;
 	
 	/*
 	 * Implementor's Note:
@@ -210,7 +228,7 @@ public class StandardOperations {
 	 * interface in the future to better reflect their UI-orientation.
 	 */
 
-	/**
+	/*
 	 * Answers if the remote resource state is checked-out. If the resource has never been checked in this
 	 * method will return <code>true</code>.
 	 * <p>
@@ -220,13 +238,10 @@ public class StandardOperations {
 	 * @param resource the local resource to test.
 	 * @return <code>true</code> if the resource is checked-out and <code>false</code> if it is not.
 	 * @see checkout(IResource[], int, IProgressMonitor)
-	 * @see refreshState(IResource[], int, IProgressMonitor)
 	 */
-	public boolean isCheckedOut(IResource resource) {
-		return false;
-	}
-
-	/**
+	public boolean isCheckedOut(IResource resource);
+	
+	/*
 	 * Answers whether the resource has a corresponding remote resource.
 	 * <p>
 	 * Before a resource is checked-in, the resource will occur locally but not remotely, and calls to this
@@ -240,11 +255,9 @@ public class StandardOperations {
 	 * @see checkin(IResource[], int, IProgressMonitor)
 	 * @see refreshState(IResource[], int, IProgressMonitor)
 	 */
-	public boolean hasRemote(IResource resource) {
-		return false;
-	}
+	public boolean hasRemote(IResource resource);
 
-	/**
+	/*
 	 * Answer if the local resource currently has a different timestamp to the base timestamp
 	 * for this resource.
 	 * 
@@ -252,40 +265,5 @@ public class StandardOperations {
 	 * @return <code>true</code> if the resource has a different modification
 	 * timestamp, and <code>false</code> otherwise.
 	 */
-	public boolean isDirty(IResource resource) {
-		return false;
-	}
-	
-	/**
-	 * Answers true if the base of the given resource is different to the
-	 * released state of the given resource.
-	 */
-	public boolean isOutOfDate(IResource resource) {
-		return false;
-	}
-	
-	/**
-	 * Allows the provider to refresh resource state information for a resource.
-	 * <p>
-	 * As described above, some state information may be cached by the provider implementation to
-	 * avoid server round trips and allow responsive API calls.  Where a caller is relying on this
-	 * information being current, they should first explicitly refresh the resouce state.  Of course, there
-	 * are no guarantees that the refreshed information will not become stale immediately after the
-	 * call to this method.</p>
-	 * 
- 	 * @param resources the array of local resources to be refreshed.
-	 * @param depth the depth to traverse the given resources, taken from <code>IResource</code>
-	 * constants.
-	 * @param progress a progress monitor to indicate the duration of the operation, or
-	 * <code>null</code> if progress reporting is not required.
-	 * @throws TeamProviderException if there is a problem refreshing one or more of
-	 * the resources.  The exception will contain multiple statuses, one for each resource in the
-	 * <code>resources</code> array.  Possible status codes include:
-	 * <ul>
-	 *			<li>IO_FAILED</li>
-	 * 		<li>UNABLE</li>
-	 * </ul>
-	 */
-	public void refreshState(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
-	}
+	public boolean isDirty(IResource resource);
 }

@@ -16,8 +16,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -65,7 +66,7 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
-			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProviderType.getProvider(resources[i].getProject());
+			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
 			if (provider == null) return false;
 			if (!provider.hasRemote(resources[i])) return false;
 		}

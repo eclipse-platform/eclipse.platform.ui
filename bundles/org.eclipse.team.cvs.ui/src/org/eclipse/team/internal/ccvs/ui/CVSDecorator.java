@@ -17,12 +17,10 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
@@ -32,11 +30,6 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 import org.eclipse.ui.internal.DecoratorDefinition;
 import org.eclipse.ui.internal.DecoratorManager;
@@ -325,8 +318,8 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 * will be ignored by the decorator.
 	 */
 	private static CVSTeamProvider getCVSProviderFor(IResource resource) {
-		RepositoryProvider p = RepositoryProviderType.getProvider(resource.getProject());
-		if (p == null || !p.isOfType(CVSProviderPlugin.getTypeId())) {
+		RepositoryProvider p = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+		if (p == null) {
 			return null;
 		}
 		return (CVSTeamProvider) p;

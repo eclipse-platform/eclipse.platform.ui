@@ -18,9 +18,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
-import org.eclipse.team.core.StandardOperations;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.internal.simpleAccess.SimpleAccessOperations;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -53,7 +52,7 @@ public class DeleteAction extends TeamAction {
 							RepositoryProvider provider = (RepositoryProvider)iterator.next();
 							List list = (List)table.get(provider);
 							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-							provider.getStandardOperations().delete(providerResources, subMonitor);
+							provider.getSimpleAccess().delete(providerResources, subMonitor);
 							for (int i = 0; i < providerResources.length; i++) {
 								providerResources[i].delete(true, monitor);
 							}							
@@ -77,10 +76,10 @@ public class DeleteAction extends TeamAction {
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			RepositoryProvider provider = RepositoryProviderType.getProvider(resource.getProject());
-			StandardOperations stdOps = provider.getStandardOperations();
-			if (provider == null || stdOps == null) return false;
-			if (!stdOps.hasRemote(resource)) return false;
+			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+			SimpleAccessOperations ops = provider.getSimpleAccess();
+			if (provider == null || ops == null) return false;
+			if (!ops.hasRemote(resource)) return false;
 		}
 		return true;
 	}

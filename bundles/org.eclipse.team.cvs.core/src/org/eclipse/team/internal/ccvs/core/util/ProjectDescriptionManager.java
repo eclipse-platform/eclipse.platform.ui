@@ -30,7 +30,6 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -227,8 +226,8 @@ public class ProjectDescriptionManager {
 						IResource resource = delta.getResource();
 						if (resource.getType() == IResource.PROJECT) {
 							IProject project = (IProject)resource;
-							RepositoryProvider provider = RepositoryProviderType.getProvider(project);
-							if (provider!=null && !provider.isOfType(CVSProviderPlugin.getTypeId())) continue;
+							RepositoryProvider provider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+							if (provider!=null) continue;
 							// First, check if the .vcm_meta file for the project is in the delta.
 							IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.ADDED | IResourceDelta.CHANGED);
 							boolean inSync = false;

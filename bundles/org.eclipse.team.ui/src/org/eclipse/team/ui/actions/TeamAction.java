@@ -28,7 +28,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -280,7 +279,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	protected Hashtable getProviderMapping(IResource[] resources) {
 		Hashtable result = new Hashtable();
 		for (int i = 0; i < resources.length; i++) {
-			RepositoryProvider provider = RepositoryProviderType.getProvider(resources[i].getProject());
+			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject());
 			List list = (List)result.get(provider);
 			if (list == null) {
 				list = new ArrayList();

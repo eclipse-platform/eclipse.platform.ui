@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.core;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,25 +18,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.internal.FileTypeRegistry;
@@ -42,12 +40,14 @@ import org.eclipse.team.core.internal.Policy;
  * resource management plugin.
  * <p>
  * This plugin provides a lightweight registration and lookup service for
- * managing global ignores patterns and file type associations. Also it 
- * serves as a boot strap for registration of RepositoryProviderType classes.
+ * managing global ignores patterns and file type associations. 
  * </p>
  * 
  * @see RepositoryProvider
- * @see RepositoryProviderType
+ * @see IFileTypeRegistry
+ * @see IIgnoreInfo
+ * 
+ * @since 2.0
  */
 final public class TeamPlugin extends Plugin {
 
@@ -92,10 +92,6 @@ final public class TeamPlugin extends Plugin {
 			registry = new FileTypeRegistry();
 			registry.startup();
 			
-			// XXX forces loading of all repository plugins, may instead want to
-			// lazilly initialize plugin descriptors then on demand, create the executable
-			// extension.
-			initializeRepositoryProviderTypes();
 			readState();
 			initializePluginIgnores();
 		} catch(TeamException e) {
@@ -179,84 +175,7 @@ final public class TeamPlugin extends Plugin {
 			TeamPlugin.log(IStatus.WARNING, Policy.bind("TeamPlugin_setting_global_ignore_7"), ex); //$NON-NLS-1$
 		}
 	}
-	
-	/**
-	 * Utility for adding a nature to a project.
-	 */
-	static public void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws TeamException {
-		try {
-			IProjectDescription description = proj.getDescription();
-			String[] prevNatures= description.getNatureIds();
-			String[] newNatures= new String[prevNatures.length + 1];
-			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-			newNatures[prevNatures.length]= natureId;
-			description.setNatureIds(newNatures);
-			proj.setDescription(description, monitor);
-		} catch(CoreException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("manager.errorSettingNature",  //$NON-NLS-1$
-														 proj.getName(), natureId), e));
-		}
-	}
-	
-	/**
-	 * Utility for removing a project nature.
-	 */
-	static public void removeNatureFromProject(IProject proj, String natureId, IProgressMonitor monitor) throws TeamException {
-		try {
-			IProjectDescription description = proj.getDescription();
-			String[] prevNatures= description.getNatureIds();
-			List newNatures = new ArrayList(Arrays.asList(prevNatures));
-			newNatures.remove(natureId);
-			description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
-			proj.setDescription(description, monitor);
-		} catch(CoreException e) {
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("manager.errorRemovingNature",  //$NON-NLS-1$
-														 proj.getName(), natureId), e));
-		}
-	}
-	
-	/**
-	 * Find and initialize all the registered providers
-	 */
-	private void initializeRepositoryProviderTypes() throws TeamException {
-
-		IExtensionPoint extensionPoint = Platform.getPluginRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.PROVIDER_EXTENSION);
-		if (extensionPoint == null) {
-			throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, Policy.bind("manager.providerExtensionNotFound"), null)); //$NON-NLS-1$
-		}
-
-		IExtension[] extensions = extensionPoint.getExtensions();
-		if (extensions.length == 0)
-			return;
-		for (int i = 0; i < extensions.length; i++) {
-			IExtension extension = extensions[i];
-			IConfigurationElement[] configs = extension.getConfigurationElements();
-			if (configs.length == 0) {
-				// there is no configuration element
-				// log as an error but continue to instantiate other executable extensions.
-				TeamPlugin.log(IStatus.ERROR, Policy.bind("manager.providerNoConfigElems", extension.getUniqueIdentifier()), null); //$NON-NLS-1$
-				continue;
-			}
-			IConfigurationElement config = configs[0];
-			String configName = config.getName();
-			if (!"repository".equals(config.getName())) { //$NON-NLS-1$
-				String message = Policy.bind("resources.natureFormat", configName); //$NON-NLS-1$
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, null));
-			}
-
-			try {
-				RepositoryProviderType providerType = (RepositoryProviderType) config.createExecutableExtension("provider-type"); //$NON-NLS-1$
-				RepositoryProviderType.addProviderType(providerType);
-			} catch (ClassCastException e) {
-				String message = Policy.bind("resources.natureImplement", configName); //$NON-NLS-1$
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, null));
-			} catch (CoreException e){
-				String message = Policy.bind("resources.natureImplement", configName); //$NON-NLS-1$
-				throw new TeamException(new Status(IStatus.ERROR, TeamPlugin.ID, 0, message, null));
-			}
-		}
-	}
-	
+				
 	/*
 	 * Reads the ignores currently defined by extensions.
 	 */
@@ -322,6 +241,9 @@ final public class TeamPlugin extends Plugin {
 		}
 	}
 	
+	/*
+	 * Reads the global ignore file
+	 */
 	private void readState() throws TeamException {
 		// read saved repositories list and ignore list from disk, only if the file exists
 		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation().append(GLOBALIGNORE_FILE);
