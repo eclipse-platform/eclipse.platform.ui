@@ -73,7 +73,13 @@ public class InstructionPointerManager {
 		// Create the annotation object
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
 		IEditorInput editorInput = textEditor.getEditorInput();
-		InstructionPointerAnnotation instPtrAnnotation = new InstructionPointerAnnotation(stackFrame);
+		IThread thread = stackFrame.getThread();
+		boolean tos = false;
+		try {
+			tos = stackFrame.equals(thread.getTopStackFrame());
+		} catch (DebugException de) {
+		}			
+		InstructionPointerAnnotation instPtrAnnotation = new InstructionPointerAnnotation(stackFrame, tos);
 		
 		// Create the Position object that specifies a location for the annotation
 		Position position = null;
@@ -108,7 +114,6 @@ public class InstructionPointerManager {
 		
 		// Retrieve the list of instruction pointer contexts
 		IDebugTarget debugTarget = stackFrame.getDebugTarget();
-		IThread thread = stackFrame.getThread();
 		Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
 		if (threadMap == null) {
 			threadMap = new HashMap();	

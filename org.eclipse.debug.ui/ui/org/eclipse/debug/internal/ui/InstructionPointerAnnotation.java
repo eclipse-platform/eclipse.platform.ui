@@ -11,23 +11,22 @@
 package org.eclipse.debug.internal.ui;
 
  
-import org.eclipse.debug.core.DebugException;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
-import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.ui.texteditor.DefaultAnnotation;
 
 /**
  * An annotation for the vertical ruler in text editors that shows one of two
  * images for the current instruction pointer when debugging (one for the top
  * stack frame, one for all others).
  */
-public class InstructionPointerAnnotation extends Annotation {
+public class InstructionPointerAnnotation extends DefaultAnnotation {
 
 	/**
 	 * The frame for this instruction pointer annotation.  This is necessary only so that
@@ -53,10 +52,15 @@ public class InstructionPointerAnnotation extends Annotation {
 	 * Construct an instruction pointer annotation for the given stack frame.
 	 * 
 	 * @param stackFrame frame to create an instruction pointer annotation for
+	 * @param isTopFrame whether the given frame is the top stack frame in its thread 
 	 */
-	public InstructionPointerAnnotation(IStackFrame stackFrame) {
+	public InstructionPointerAnnotation(IStackFrame stackFrame, boolean isTopFrame) {
+		super(isTopFrame ? IInternalDebugUIConstants.INSTRUCTION_POINTER_CURRENT : IInternalDebugUIConstants.INSTRUCTION_POINTER_SECONDARY,
+						 IMarker.SEVERITY_INFO, true,
+						 isTopFrame ? DebugUIMessages.getString("InstructionPointerAnnotation.0") : DebugUIMessages.getString("InstructionPointerAnnotation.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		fTopStackFrame = isTopFrame;
+		fStackFrame = stackFrame;
 		setLayer(INSTRUCTION_POINTER_ANNOTATION_LAYER);
-		setStackFrame(stackFrame);
 	}
 
 	/**
@@ -100,22 +104,6 @@ public class InstructionPointerAnnotation extends Annotation {
 	 */
 	public int hashCode() {
 		return getStackFrame().hashCode();
-	}
-
-	/**
-	 * Sets the stack frame associated with this annotation and determines
-	 * if the frame is on top of the stack.
-	 * 
-	 * @param stackFrame frame associated with this annotation
-	 */
-	private void setStackFrame(IStackFrame stackFrame) {
-		fStackFrame = stackFrame;
-		IThread thread = stackFrame.getThread();
-		try {
-			fTopStackFrame = stackFrame.equals(thread.getTopStackFrame());
-		} catch (DebugException de) {
-			fTopStackFrame = false;
-		}		
 	}
 
 	/**

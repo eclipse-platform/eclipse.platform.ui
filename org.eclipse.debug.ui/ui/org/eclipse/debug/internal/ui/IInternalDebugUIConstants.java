@@ -26,6 +26,10 @@ public interface IInternalDebugUIConstants {
 	//Current stack frame instruction pointer
 	public static final String INSTRUCTION_POINTER= "org.eclipse.debug.ui.instructionPointer"; //$NON-NLS-1$
 	
+	// marker types for instruction pointer annotations - top stack frame, and secondary
+	public static final String INSTRUCTION_POINTER_CURRENT = "org.eclipse.debug.ui.instructionPointer.current"; //$NON-NLS-1$
+	public static final String INSTRUCTION_POINTER_SECONDARY = "org.eclipse.debug.ui.instructionPointer.secondary"; //$NON-NLS-1$
+	
 	// tool images
 	public static final String IMG_LCL_COLLAPSE_ALL = "IMG_LCL_COLLAPSE_ALL"; //$NON-NLS-1$
 	public static final String IMG_LCL_TERMINATE = "IMG_LCL_TERMINATE"; //$NON-NLS-1$

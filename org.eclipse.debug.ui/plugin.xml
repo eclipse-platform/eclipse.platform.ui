@@ -36,7 +36,6 @@
    <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName" schema="schema/launchConfigurationTypeImages.exsd"/>
    <extension-point id="launchGroups" name="%LaunchGroupsExtensionName" schema="schema/launchGroups.exsd"/>
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
-   <extension-point id="launchVariableComponents" name="%LaunchVariableComponentsName"/>
    <extension-point id="stringVariablePresentations" name="%StringVariablePresentationsName"/>
 
 <!-- Extensions -->
@@ -1252,8 +1251,7 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-   <extension
-         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
             colorPreferenceValue="0,0,255"
             annotationType="org.eclipse.debug.core.breakpoint"
@@ -1267,6 +1265,40 @@
             markerSeverity="0"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler">
       </specification>
+      <specification
+            colorPreferenceValue="0,255,0"
+            annotationType="org.eclipse.debug.core.currentIP"
+            colorPreferenceKey="currentIPColor"
+            verticalRulerPreferenceKey="currentIPVerticalRuler"
+            verticalRulerPreferenceValue="true"
+            overviewRulerPreferenceKey="currentIPOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            highlightPreferenceKey="currentIPHighlight"
+            highlightPreferenceValue="false"
+            markerType="org.eclipse.debug.ui.instructionPointer.current"
+            presentationLayer="6"
+            textPreferenceValue="false"
+            label="%debugCurrentInstructionPointer"
+            textPreferenceKey="currentIPIndication"
+            markerSeverity="0">
+      </specification>      
+      <specification
+            colorPreferenceValue="0,128,0"
+            annotationType="org.eclipse.debug.core.secondaryIP"
+            colorPreferenceKey="secondaryIPColor"
+            verticalRulerPreferenceKey="secondaryIPVerticalRuler"
+            verticalRulerPreferenceValue="true"
+            overviewRulerPreferenceKey="secondaryIPOverviewRuler"
+            overviewRulerPreferenceValue="true"
+            highlightPreferenceKey="secondaryIPHighlight"
+            highlightPreferenceValue="false"
+            markerType="org.eclipse.debug.ui.instructionPointer.secondary"
+            presentationLayer="6"
+            textPreferenceValue="false"
+            label="%debugCallStack"
+            textPreferenceKey="secondaryIPIndication"
+            markerSeverity="0">
+      </specification>      
    </extension>
 <!-- Dynamic (String Substitution) Variables -->
    <extension
