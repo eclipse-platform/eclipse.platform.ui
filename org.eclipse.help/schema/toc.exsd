@@ -24,6 +24,7 @@ the plugin.xml file should extend the &lt;tt&gt;org.eclipse.help.toc&lt;/tt&gt; 
 point and specify TOC file(s).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/ul&gt;
+&lt;p&gt;Optionally, a search index can be prebuilt and registered using &lt;code&gt;index&lt;/code&gt; element in order to performance of the first search attempt. Only one index per plug-in can be registered - multiple &lt;code&gt;index&lt;/code&gt; elements will result in undefined behaviour.
       </documentation>
    </annotation>
 
@@ -31,6 +32,7 @@ point and specify TOC file(s).&lt;/li&gt;
       <complexType>
          <sequence>
             <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="index" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -175,6 +177,26 @@ the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the
       </complexType>
    </element>
 
+   <element name="index">
+      <annotation>
+         <documentation>
+            (&lt;b&gt;since 3.1&lt;/b&gt;) an optional element that allows declaration of prebuilt search index created from documents contributed by this plug-in.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a plug-in-relative path of the prebuilt search index. The index referenced by the path must exist. Missing index will be flagged in the log file. Note that each locale must have a different index. If a plug-in contributes index directories for multiple locales, it should append the locale using standard Eclipse NLS lookup. (e.g. &lt;code&gt;index/&lt;/code&gt;, &lt;code&gt;nl/ja/JP/index/&lt;/code&gt;, &lt;code&gt;nl/en/US/index/&lt;/code&gt; etc.).
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -188,6 +210,7 @@ the documentation search, even if &lt;samp&gt;topic&lt;/samp&gt; elements in the
   &lt;toc file=&quot;maindocs.html&quot; primary=&quot;true&quot;/&gt;
   &lt;toc file=&quot;task.xml&quot;/&gt;
   &lt;toc file=&quot;sample.xml&quot; extradir=&quot;samples&quot;/&gt;
+  &lt;index path=&quot;index/&quot;/&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -287,7 +310,7 @@ files mentioned in the plugin.xml file.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
