@@ -349,5 +349,6 @@ public interface IPluginDescriptor {
 	 *   <code>false</code> otherwise
 	 * @since 3.0
 	 */
+	//TODO remove this - not useful anymore
 	public boolean isLegacy();
 }

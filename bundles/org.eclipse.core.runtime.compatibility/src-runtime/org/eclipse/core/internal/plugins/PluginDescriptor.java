@@ -28,6 +28,7 @@ import org.osgi.framework.*;
 public class PluginDescriptor implements IPluginDescriptor {
 
 	private static final String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
+	//TODO remove this
 	private static final String LEGACY = "Legacy"; //$NON-NLS-1$
 	private boolean active = false; // plugin is active
 	private volatile boolean activePending = false; // being activated
@@ -449,6 +450,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		if( (b.getState() & Bundle.ACTIVE) != 0 )
 			active = true;
 	}
+	//TODO remove this 
 	public boolean isLegacy() {
 		return new Boolean((String) bundleOsgi.getHeaders().get(LEGACY)).booleanValue(); //$NON-NLS-1$
 	}
