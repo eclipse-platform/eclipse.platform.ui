@@ -4,14 +4,15 @@
    id="org.eclipse.compare.tests"
    name="%pluginName"
    version="3.1.0"
-   provider-name="%providerName">
+   provider-name="%providerName"
+   class="org.eclipse.compare.tests.CompareTestPlugin">
 
    <runtime>
       <library name="comparetests.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.compare.tests"/>
       </library>
    </runtime>
+   
    <requires>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.compare"/>
@@ -20,6 +21,5 @@
       <import plugin="org.eclipse.jdt.junit"/>
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
-
 
 </plugin>

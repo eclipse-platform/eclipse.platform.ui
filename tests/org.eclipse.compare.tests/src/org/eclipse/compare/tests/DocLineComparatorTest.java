@@ -25,6 +25,7 @@ public class DocLineComparatorTest extends TestCase {
 	}
 
 	protected void setUp() throws Exception {
+		// empty
 	}
 
 	protected void tearDown() throws Exception {

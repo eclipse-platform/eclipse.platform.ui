@@ -10,22 +10,15 @@
  *******************************************************************************/
 package org.eclipse.compare.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.TestCase;
 
+public class UITest extends TestCase {
 
-/**
- * Test some non-UI areas of the compare plugin.
- */
-public class AllTests {
-
-	public static Test suite() {
-		TestSuite suite= new TestSuite("Test for org.eclipse.compare.tests"); //$NON-NLS-1$
-		//$JUnit-BEGIN$
-		suite.addTestSuite(StreamMergerTest.class);
-		suite.addTestSuite(DocLineComparatorTest.class);
-		suite.addTestSuite(FilterTest.class);
-		//$JUnit-END$
-		return suite;
+	public UITest(String name) {
+		super(name);
+	}
+		
+	public void testUI() {
+		// intentionally left empty
 	}
 }
