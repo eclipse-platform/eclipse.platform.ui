@@ -87,6 +87,12 @@ public class PerspectiveSwitcher {
 	
 	private int currentLocation = INITIAL;
 	
+	// temporary field to store the width of the coolbar
+	// so that we can save it on exit, it is possible
+	// that the CoolBar is disposed by the time we need 
+	// know it 
+	private Point coolBarSize = null;
+	
 	private static final int SEPARATOR_LENGTH = 20;
 
 	private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
@@ -385,7 +391,10 @@ public class PerspectiveSwitcher {
 	    	apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
 	    	propertyChangeListener = null;
 	    }
-	    toolBarListener = null;       
+	    if (perspectiveCoolBar != null && !perspectiveCoolBar.isDisposed()) {
+	    		coolBarSize = perspectiveCoolBar.getSize();
+	    }
+	    toolBarListener = null;
 	}
 
 	private void disposeChildControls() {
@@ -755,7 +764,18 @@ public class PerspectiveSwitcher {
 	public void saveState(IMemento persBarMem) {
 		// save the width of the perspective bar
 		IMemento childMem = persBarMem.createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
-		childMem.putString(IWorkbenchConstants.TAG_X, Integer.toString(perspectiveCoolBar.getSize().x));
+
+		int x;
+		if (perspectiveCoolBar != null && !perspectiveCoolBar.isDisposed()) {
+			x = perspectiveCoolBar.getSize().x;
+		} else if (coolBarSize != null) {
+			x = coolBarSize.x;
+		} else {
+			// this case should not occur as we remember the coolbar size before disposing
+			// the perspectiveCoolBar in disposeChildren
+			x = 160;
+		}
+		childMem.putString(IWorkbenchConstants.TAG_X, Integer.toString(x));
 	}
 
 	/**
