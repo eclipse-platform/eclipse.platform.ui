@@ -398,14 +398,13 @@ public class AntElementNode {
 	 * @return the node that includes the offset in its source range or <code>null</code>
 	 */
 	public AntElementNode getNode(int sourceOffset) {
-		if (childNodes == null) {
-			return null;
-		}
-		for (Iterator iter = childNodes.iterator(); iter.hasNext(); ) {
-			AntElementNode node = (AntElementNode) iter.next();
-			AntElementNode containingNode= node.getNode(sourceOffset);
-			if (containingNode != null) {
-				return containingNode;
+		if (childNodes != null) {
+			for (Iterator iter = childNodes.iterator(); iter.hasNext(); ) {
+				AntElementNode node = (AntElementNode) iter.next();
+				AntElementNode containingNode= node.getNode(sourceOffset);
+				if (containingNode != null) {
+					return containingNode;
+				}
 			}
 		}
 		if (offset <= sourceOffset && sourceOffset <= (offset + length - 2)) {
