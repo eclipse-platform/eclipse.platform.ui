@@ -212,8 +212,18 @@ public class CyclePartAction extends PageEventAction {
 		
 		Rectangle dialogBounds = dialog.getBounds();
 		Rectangle displayBounds = display.getClientArea();
-		dialogBounds.x = (displayBounds.width - dialogBounds.width) / 2;
-		dialogBounds.y = (displayBounds.height - dialogBounds.height) / 2;
+		Rectangle parentBounds = dialog.getParent().getBounds();
+		
+		//Place it in the center of its parent;
+		dialogBounds.x = parentBounds.x + ((parentBounds.width - dialogBounds.width) / 2);
+		dialogBounds.y = parentBounds.y + ((parentBounds.height - dialogBounds.height) / 2);
+		if(!displayBounds.contains(dialogBounds.x,dialogBounds.y) ||
+			!displayBounds.contains(dialogBounds.x + dialogBounds.width,dialogBounds.y + dialogBounds.height)) {
+			//Place it in the center of the display if it is not visible
+			//when placed in the center of its parent;
+			dialogBounds.x = (displayBounds.width - dialogBounds.width) / 2;
+			dialogBounds.y = (displayBounds.height - dialogBounds.height) / 2;
+		}			
 		dialogBounds.height = dialogBounds.height + 3 - table.getHorizontalBar().getSize().y;
 		
 		dialog.setBounds(dialogBounds);
