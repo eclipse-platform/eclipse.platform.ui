@@ -39,6 +39,8 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * 
@@ -103,7 +105,7 @@ public class AntOpenWithMenu extends ContributionItem {
 	private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
 		ImageDescriptor imageDesc = null;
 		if (editorDesc == null) {
-			imageDesc = registry.getImageDescriptor(getFileResource());
+			imageDesc = registry.getImageDescriptor(getFileResource().getName());
 		} else {
 			imageDesc = editorDesc.getImageDescriptor();
 		}
@@ -171,9 +173,9 @@ public class AntOpenWithMenu extends ContributionItem {
 		}
 
 		IEditorDescriptor defaultEditor = registry.getDefaultEditor(); // should not be null
-		IEditorDescriptor preferredEditor = registry.getDefaultEditor(fileResource); // may be null
+		IEditorDescriptor preferredEditor = IDE.getDefaultEditor(fileResource); // may be null
 		
-		Object[] editors= registry.getEditors(fileResource);
+		Object[] editors= registry.getEditors(fileResource.getName());
 		Arrays.sort(editors, new Comparator() {
 			/**
 			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
@@ -256,9 +258,9 @@ public class AntOpenWithMenu extends ContributionItem {
 		IFile fileResource = getFileResource();
 		try {
 			if (editor == null) {
-				page.openSystemEditor(fileResource);
+				page.openEditor(new FileEditorInput(fileResource), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 			} else {
-				page.openEditor(fileResource, editor.getId());
+				page.openEditor(new FileEditorInput(fileResource), editor.getId());
 			}
 		} catch (PartInitException e) {
 			AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
@@ -274,7 +276,7 @@ public class AntOpenWithMenu extends ContributionItem {
 	 */
 	private void createDefaultMenuItem(Menu menu, final IFile fileResource) {
 		final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-		menuItem.setSelection(registry.getDefaultEditor(fileResource) == null);
+		menuItem.setSelection(IDE.getDefaultEditor(fileResource) == null);
 		menuItem.setText(AntViewActionMessages.getString("AntViewOpenWithMenu.Default_Editor_4")); //$NON-NLS-1$
 
 		Listener listener = new Listener() {
@@ -282,9 +284,9 @@ public class AntOpenWithMenu extends ContributionItem {
 				switch (event.type) {
 					case SWT.Selection :
 						if (menuItem.getSelection()) {
-							registry.setDefaultEditor(fileResource, null);
+							IDE.setDefaultEditor(fileResource, null);
 							try {
-								page.openEditor(fileResource);
+								IDE.openEditor(page, fileResource, true);
 							} catch (PartInitException e) {
 								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
 							}

@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="Ant Tools Support"/>
-	<classpathentry sourcepath="JRE_SRC" kind="var" path="JRE_LIB"/>
+	<classpathentry kind="src" path="Ant Runner Support"/>
+	<classpathentry kind="src" path="Ant Editor"/>
+	<classpathentry kind="src" path="Remote Ant Support"/>
+	<classpathentry kind="src" path="/org.apache.ant"/>
 	<classpathentry kind="src" path="/org.eclipse.ant.core"/>
-	<classpathentry kind="src" path="/org.eclipse.jdt.launching"/>
-	<classpathentry kind="src" path="/org.eclipse.ui.externaltools"/>
-	<classpathentry kind="src" path="/org.eclipse.swt"/>
-	<classpathentry kind="src" path="/org.eclipse.debug.core"/>
 	<classpathentry kind="src" path="/org.eclipse.core.resources"/>
-	<classpathentry kind="src" path="/org.eclipse.core.runtime"/>
+	<classpathentry kind="src" path="/org.eclipse.core.variables"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.externaltools"/>
 	<classpathentry kind="src" path="/org.eclipse.ui"/>
+	<classpathentry kind="src" path="/org.eclipse.debug.core"/>
 	<classpathentry kind="src" path="/org.eclipse.debug.ui"/>
 	<classpathentry kind="src" path="/org.eclipse.jdt.debug.ui"/>
-	<classpathentry kind="src" path="/org.eclipse.jdt.core"/>
+	<classpathentry kind="src" path="/org.eclipse.jdt.launching"/>
+	<classpathentry sourcepath="/org.apache.ant/antsrc.zip" kind="lib" path="/org.apache.ant/lib/ant.jar"/>
 	<classpathentry kind="src" path="/org.eclipse.core.boot"/>
-	<classpathentry output="ant_runner_support_bin" kind="src" path="Ant Runner Support"/>
-	<classpathentry kind="src" path="Ant Editor"/>
-	<classpathentry kind="src" path="/org.apache.ant"/>
-	<classpathentry kind="src" path="/org.eclipse.search"/>
-	<classpathentry kind="src" path="Remote Ant Support"/>
-	<classpathentry kind="src" path="/org.eclipse.core.variables"/>
+	<classpathentry kind="src" path="/org.eclipse.core.runtime"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="/org.eclipse.jface.text"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.ide"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.editors"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.workbench.texteditor"/>
+	<classpathentry kind="src" path="/org.eclipse.ui.views"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -73,6 +73,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
@@ -349,15 +351,15 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			ProjectNode project = (ProjectNode) selection;
 			IEditorRegistry registry= PlatformUI.getWorkbench().getEditorRegistry();
 			IFile file= AntUtil.getFile(project.getBuildFileName());
-			IEditorDescriptor editor = registry.getDefaultEditor(file);
+			IEditorDescriptor editor = IDE.getDefaultEditor(file);
 			if (editor == null) {
 				editor= registry.getDefaultEditor();
 			}
 			try {
 				if (editor == null) {
-					getViewSite().getPage().openSystemEditor(file);
+					getViewSite().getPage().openEditor(new FileEditorInput(file), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 				} else {
-					getViewSite().getPage().openEditor(file, editor.getId());
+					getViewSite().getPage().openEditor(new FileEditorInput(file), editor.getId());
 				}
 			} catch (PartInitException e) {
 				AntUIPlugin.log(e);
