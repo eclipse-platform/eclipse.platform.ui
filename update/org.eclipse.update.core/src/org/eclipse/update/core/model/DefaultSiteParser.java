@@ -198,6 +198,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				
 			case STATE_MIRROR:
 				handleMirrorState(localName, attributes);
+				break;
 
 			default :
 				internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownStartState", getState(currentState)));//$NON-NLS-1$
