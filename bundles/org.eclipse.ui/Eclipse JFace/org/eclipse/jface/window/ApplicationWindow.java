@@ -214,7 +214,6 @@ protected void configureShell(Shell shell) {
 
 	new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
-	Font font = getFont();
 	if (toolBarManager != null) {
 		Control control = toolBarManager.createControl(shell);
 	}
@@ -294,11 +293,15 @@ protected StatusLineManager getStatusLineManager() {
 /**
  * Returns the symbolic font name of the font to be
  * used to display text in this window.
+ * This is not recommended and is included for backwards
+ * compatability.
+ * It is recommended to use the default font provided by
+ * SWT (that is, do not set the font).
  * 
  * @return the symbolic font name
  */
 public String getSymbolicFontName() {
-	return JFaceResources.DEFAULT_FONT;
+	return JFaceResources.TEXT_FONT;
 }
 /**
  * Returns the tool bar manager for this window (if it has one).
