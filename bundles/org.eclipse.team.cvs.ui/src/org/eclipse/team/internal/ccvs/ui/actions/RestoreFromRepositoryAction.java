@@ -65,21 +65,25 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
 					ICVSFolder commandRoot,
 					IProgressMonitor monitor) {
 			
-			// Find all RCS file names that contain "Attic"
-			int index = line.indexOf(ATTIC);
-			if (index == -1) return OK;
 			// Extract the file name and path from the RCS path
 			// String filePath = line.substring(index);
-			int start = line.indexOf(Session.SERVER_SEPARATOR, index);
-			String fileName = line.substring(start + 1);
-			if (fileName.endsWith(RCS_FILE_POSTFIX)) {
-				fileName = fileName.substring(0, fileName.length() - RCS_FILE_POSTFIX.length());
-			}
-			try {
-				atticFiles.add(currentFolder.getFile(fileName));
-			} catch (CVSException e) {
-				return e.getStatus();
-			}
+            // Find all RCS file names that contain "Attic"
+            int start = line.lastIndexOf(Session.SERVER_SEPARATOR);
+            if (start != -1) {
+    			String fileName = line.substring(start + 1);
+    			if (fileName.endsWith(RCS_FILE_POSTFIX)) {
+    				fileName = fileName.substring(0, fileName.length() - RCS_FILE_POSTFIX.length());
+    			}
+                if (currentFolder != null) {
+        			try {
+        				ICVSFile file = currentFolder.getFile(fileName);
+                        if (!file.exists())
+                            atticFiles.add(file);
+        			} catch (CVSException e) {
+        				return e.getStatus();
+        			}
+                }
+            }
 			return OK;
 		}
 		
