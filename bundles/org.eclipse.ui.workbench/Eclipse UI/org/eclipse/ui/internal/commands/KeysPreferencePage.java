@@ -94,7 +94,7 @@ import org.eclipse.ui.keys.IBindingService;
  * 
  * @since 3.0
  */
-public class KeysPreferencePage extends PreferencePage implements
+public final class KeysPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
 	/**
