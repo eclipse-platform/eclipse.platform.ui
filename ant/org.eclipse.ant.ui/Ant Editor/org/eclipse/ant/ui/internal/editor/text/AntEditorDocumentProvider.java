@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.Position;
@@ -36,6 +37,7 @@ import org.eclipse.ant.ui.internal.editor.outline.IProblem;
 import org.eclipse.ant.ui.internal.editor.outline.LocationProvider;
 import org.eclipse.ant.ui.internal.editor.outline.IProblemRequestor;
 import org.eclipse.ant.ui.internal.editor.outline.XMLCore;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
@@ -124,7 +126,11 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 							XMLProblemAnnotation annotation= new XMLProblemAnnotation(problem);
 							overlayMarkers(position, annotation);								
 							fGeneratedAnnotations.add(annotation);
-							addAnnotation(annotation, position, false);
+							try {
+								addAnnotation(annotation, position, false);
+							} catch (BadLocationException ex) {
+								AntUIPlugin.log(ex);
+							}
 								
 							temporaryProblemsChanged= true;
 						}
@@ -183,7 +189,7 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 		/*
 		 * @see AnnotationModel#addAnnotation(Annotation, Position, boolean)
 		 */
-		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) {
+		protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) throws BadLocationException {
 			super.addAnnotation(annotation, position, fireModelChanged);
 				
 			Object cached= fReverseMap.get(position);
