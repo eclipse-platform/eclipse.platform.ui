@@ -370,6 +370,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
    private void createSaveCombo(Composite composite) {
 		Group group = new Group(composite, SWT.NULL);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		data.horizontalSpan = 2;
 		group.setLayoutData(data);
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
