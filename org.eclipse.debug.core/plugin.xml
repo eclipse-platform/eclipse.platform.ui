@@ -23,6 +23,7 @@
 <extension-point id="launchers" name="%launcherExtensionPointName"/>
 <extension-point id="breakpoints" name="%breakpointExtensionPointName"/>
 <extension-point id="launchConfigurationTypes" name="%launchConfigurationTypeName"/>
+<extension-point id="statusHandlers" name="%statusHandlerExtensionPointName"/>
 
 <!-- Extensions -->
 <extension id="breakpointMarker" point="org.eclipse.core.resources.markers">

@@ -5,6 +5,9 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ISaveContext;
@@ -73,6 +76,12 @@ public class DebugPlugin extends Plugin {
 	public static final String EXTENSION_POINT_BREAKPOINTS= "breakpoints";	 //$NON-NLS-1$
 	
 	/**
+	 * Status handler extension point identifier
+	 * (value <code>"statusHandlers"</code>).
+	 */
+	public static final String EXTENSION_POINT_STATUS_HANDLERS= "statusHandlers";	 //$NON-NLS-1$	
+	
+	/**
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int INTERNAL_ERROR = 120;		
@@ -122,6 +131,12 @@ public class DebugPlugin extends Plugin {
 	 * This plug-in's save participant
 	 */
 	private ISaveParticipant fSaveParticipant = null;	
+	
+	/**
+	 * Table of status handlers. Keys are {plug-in identifier, status code}
+	 * pairs, and values are associated <code>IConfigurationElement</code>s.
+	 */
+	private HashMap fStatusHandlers = null;
 	
 	/**
 	 * Returns the singleton instance of the debug plug-in.
@@ -220,6 +235,26 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
+	 * Returns the status handler registered for the given
+	 * status, or <code>null</code> if none.
+	 *
+	 * @return the status handler registered for the given
+	 *  status, or <code>null</code> if none
+	 */
+	public IStatusHandler getStatusHandler(IStatus status) {
+		StatusHandlerKey key = new StatusHandlerKey(status.getPlugin(), status.getCode());
+		IConfigurationElement config = (IConfigurationElement)fStatusHandlers.get(key);
+		if (config != null) {
+			try {
+				return (IStatusHandler)config.createExecutableExtension("class");
+			} catch (CoreException e) {
+				log(e.getStatus());
+			}
+		}
+		return null;
+	}	
+	
+	/**
 	 * Returns the expression manager.
 	 *
 	 * @return the expression manager
@@ -298,6 +333,7 @@ public class DebugPlugin extends Plugin {
 		fBreakpointManager.startup();
 		fLaunchManager.startup();
 		recoverState();
+		initializeStatusHandlers();
 	}
 	
 	/**
@@ -507,6 +543,69 @@ public class DebugPlugin extends Plugin {
 		}
 
 	}
+	
+	/**
+	 * Register status handlers.
+	 * 
+	 * @exception CoreException if an exception occurrs reading
+	 *  the extensions
+	 */
+	private void initializeStatusHandlers() throws CoreException {
+		fStatusHandlers = new HashMap(10);
+		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(EXTENSION_POINT_STATUS_HANDLERS);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			String id = configurationElement.getAttribute("plugin");
+			String code = configurationElement.getAttribute("code");
+			
+			if (id != null && code != null) {
+				try {
+					StatusHandlerKey key = new StatusHandlerKey(id, Integer.parseInt(code));
+					fStatusHandlers.put(key, configurationElement);
+				} catch (NumberFormatException e) {
+					// invalid status handler
+					invalidStatusHandler(e, configurationElement.getAttribute("id"));
+				}
+			} else {
+				// invalid status handler
+				invalidStatusHandler(null, configurationElement.getAttribute("id"));
+			}
+		}			
+	}
+	
+	private void invalidStatusHandler(Exception e, String id) {
+		log(new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, MessageFormat.format("Invalid status handler extension: {0}", new String[] {id}), e));
+	}
+	
+	/**
+	 * Key for status handler extensions - a plug-in identifier/code pair
+	 */
+	class StatusHandlerKey {
+		
+		String fPluginId;
+		int fCode;
+		
+		StatusHandlerKey(String pluginId, int code) {
+			fPluginId = pluginId;
+			fCode = code;
+		}
+		
+		public int hashCode() {
+			return fPluginId.hashCode() + fCode;
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj instanceof StatusHandlerKey) {
+				StatusHandlerKey s = (StatusHandlerKey)obj;
+				return fCode == s.fCode && fPluginId.equals(s.fPluginId);
+			}
+			return false;
+		}
+	}
+	
+	
 }
 
 
