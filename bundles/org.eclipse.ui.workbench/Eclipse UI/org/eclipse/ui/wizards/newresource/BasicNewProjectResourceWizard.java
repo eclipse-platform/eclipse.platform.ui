@@ -445,19 +445,15 @@ private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspe
 	if (!IPreferenceConstants.PSPM_PROMPT.equals(pspm)) {
 		return true;
 	}
-	MessageDialogWithToggle dialog = new MessageDialogWithToggle(
+	MessageDialogWithToggle dialog = MessageDialogWithToggle.openQuestion(
 		window.getShell(),
 		ResourceMessages.getString("NewProject.perspSwitchTitle"), //$NON-NLS-1$
-		null,	// accept the default window icon
 		ResourceMessages.format(
 			"NewProject.perspSwitchMessage", //$NON-NLS-1$
 			new Object[] { finalPersp.getLabel() }),
-		MessageDialog.QUESTION,
-		new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
-		0,		// yes is the default
 		null,	// use the default message for the toggle
 		false); // toggle is initially unchecked
-	int result = dialog.open();
+	int result = dialog.getReturnCode();
 	if (result >= 0 && dialog.getToggleState()) {
 		if (result == 0) {
 			// User chose Yes/Don't ask again, so always switch

@@ -127,10 +127,10 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * @param toggleMessage the message for the toggle control, or <code>null</code> 
 	 *   for the default message ("Don't show me this message again").
 	 * @param toggleState the initial state for the toggle 
-	 * @return <code>true</code> if the user presses the OK button,
-	 *    <code>false</code> otherwise
+	 * @return the dialog, after being closed by the user, which the client can
+	 * 		only call <code>getReturnCode()</code> or <code>getToggleState()</code>
 	 */
-	public static boolean openConfirm(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
+	public static MessageDialogWithToggle openConfirm(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
 		MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 			parent,
 			title,
@@ -141,7 +141,8 @@ public class MessageDialogWithToggle extends MessageDialog {
 			0,		// OK is the default
 			toggleMessage,
 			toggleState);
-		return dialog.open() == 0;
+		dialog.open();
+		return dialog;
 	}
 	
 	/**
@@ -153,8 +154,10 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * @param toggleMessage the message for the toggle control, or <code>null</code> 
 	 *   for the default message ("Don't show me this message again").
 	 * @param toggleState the initial state for the toggle 
+	 * @return the dialog, after being closed by the user, which the client can
+	 * 		only call <code>getReturnCode()</code> or <code>getToggleState()</code>
 	 */
-	public static void openError(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
+	public static MessageDialogWithToggle openError(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
 		MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 			parent,
 			title,
@@ -166,6 +169,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 			toggleMessage,
 			toggleState);
 		dialog.open();
+		return dialog;
 	}
 	
 	/**
@@ -177,8 +181,10 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * @param toggleMessage the message for the toggle control, or <code>null</code> 
 	 *   for the default message ("Don't show me this message again").
 	 * @param toggleState the initial state for the toggle 
+	 * @return the dialog, after being closed by the user, which the client can
+	 * 		only call <code>getReturnCode()</code> or <code>getToggleState()</code>
 	 */
-	public static void openInformation(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
+	public static MessageDialogWithToggle openInformation(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
 		MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 			parent, 
 			title, 
@@ -190,6 +196,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 			toggleMessage,
 			toggleState);
 		dialog.open();
+		return dialog;
 	}
 	
 	/**
@@ -201,10 +208,10 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * @param toggleMessage the message for the toggle control, or <code>null</code> 
 	 *   for the default message ("Don't show me this message again").
 	 * @param toggleState the initial state for the toggle 
-	 * @return <code>true</code> if the user presses the OK button,
-	 *    <code>false</code> otherwise
+	 * @return the dialog, after being closed by the user, which the client can
+	 * 		only call <code>getReturnCode()</code> or <code>getToggleState()</code>
 	 */
-	public static boolean openQuestion(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
+	public static MessageDialogWithToggle openQuestion(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
 		MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 			parent,
 			title,
@@ -215,7 +222,8 @@ public class MessageDialogWithToggle extends MessageDialog {
 			0,		// yes is the default
 			toggleMessage,
 			toggleState);
-		return dialog.open() == 0;
+		dialog.open();
+		return dialog;
 	}
 	
 	/**
@@ -227,8 +235,10 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * @param toggleMessage the message for the toggle control, or <code>null</code> 
 	 *   for the default message ("Don't show me this message again").
 	 * @param toggleState the initial state for the toggle 
+	 * @return the dialog, after being closed by the user, which the client can
+	 * 		only call <code>getReturnCode()</code> or <code>getToggleState()</code>
 	 */
-	public static void openWarning(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
+	public static MessageDialogWithToggle openWarning(Shell parent, String title, String message, String toggleMessage, boolean toggleState) {
 		MessageDialogWithToggle dialog = new MessageDialogWithToggle(
 			parent,
 			title,
@@ -240,6 +250,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 			toggleMessage,
 			toggleState);
 		dialog.open();
+		return dialog;
 	}
 
 }

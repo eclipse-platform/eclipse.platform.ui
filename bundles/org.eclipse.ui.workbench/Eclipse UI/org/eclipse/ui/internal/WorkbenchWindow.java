@@ -80,7 +80,7 @@ import org.eclipse.ui.internal.commands.KeyBindingMatch;
 import org.eclipse.ui.internal.commands.KeySequence;
 import org.eclipse.ui.internal.commands.KeyStroke;
 import org.eclipse.ui.internal.commands.Manager;
-import org.eclipse.ui.internal.dialogs.PromptOnExitDialog;
+import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSet;
@@ -425,11 +425,27 @@ protected boolean canHandleShellCloseEvent() {
 	boolean promptOnExit = store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
 
 	if (promptOnExit) {
+		String message;
 		String productName = workbench.getConfigurationInfo().getAboutInfo().getProductName();
-		if (productName == null)
-			productName = ""; //$NON-NLS-1$
-		PromptOnExitDialog dlg = new PromptOnExitDialog(getShell(), productName);
-		return dlg.open() == PromptOnExitDialog.OK;
+		if (productName == null) {
+			message = WorkbenchMessages.getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
+		} else {
+			message = WorkbenchMessages.format("PromptOnExitDialog.message1", new Object[] {productName}); //$NON-NLS-1$
+		}
+		
+		MessageDialogWithToggle dlg = MessageDialogWithToggle.openConfirm(
+			getShell(),
+			WorkbenchMessages.getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
+			message,
+			WorkbenchMessages.getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
+			false);
+		
+		if (dlg.getReturnCode() == MessageDialogWithToggle.OK) {
+			store.setValue(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, !dlg.getToggleState());
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	return true;
