@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.decorators.DecoratorManager;
 
 public class EclipseTest extends ResourceTest {
 
@@ -870,7 +871,17 @@ public class EclipseTest extends ResourceTest {
 	
 	public static void waitForIgnoreFileHandling() {
 		waitForJobCompletion(SyncFileChangeListener.getDeferredHandler().getEventHandlerJob());
+        waitForDecorator();
 	}
+
+    private static void waitForDecorator() {
+        // Wait for the decorator job
+        Job[] decorators = Platform.getJobManager().find(DecoratorManager.FAMILY_DECORATE);
+        for (int i = 0; i < decorators.length; i++) {
+            Job job = decorators[i];
+            waitForJobCompletion(job);
+        }
+    }
 	
 	public static void waitForSubscriberInputHandling(SubscriberSyncInfoCollector input) {
 		input.waitForCollector(new IProgressMonitor() {
