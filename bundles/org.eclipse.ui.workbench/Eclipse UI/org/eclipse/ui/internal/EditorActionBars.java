@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -292,11 +293,24 @@ public class EditorActionBars extends SubActionBars2 {
 				// Disabled the tool bar items.
 				setEnabledAllowed(false);
 		}
-		if (toolBarContributionItem != null) {
-			toolBarContributionItem.setVisible(visible);
-			if (toolBarContributionItem.getParent() != null) {
-				toolBarContributionItem.getParent().markDirty();
+		
+		ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
+		if ((coolItemToolBarMgr != null) && (coolBarManager != null) ){
+			IContributionItem[] items = coolItemToolBarMgr.getItems();
+			for (int i=0; i < items.length; i++) {
+				IContributionItem item = items[i];
+				item.setVisible(visible);
+				coolItemToolBarMgr.markDirty();
+				if (!coolBarManager.isDirty()) {
+					coolBarManager.markDirty();
+				}
 			}
+			// Update the manager
+			coolItemToolBarMgr.update(false);
+			if (toolBarContributionItem != null) {
+				toolBarContributionItem.update(ICoolBarManager.SIZE);
+			}
+			coolBarManager.update(false);
 		}
 	}
 	/**
