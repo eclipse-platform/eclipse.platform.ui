@@ -113,7 +113,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @throws IllegalStateException if a REPLACE or REPLACE_FIND operation is not preceded by a successful FIND operation
 	 * @throws PatternSyntaxException if a regular expression has invalid syntax
 	 */
-	private IRegion findReplace(FindReplaceOperationCode operationCode, int startOffset, String findString, String replaceText, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) throws BadLocationException {
+	private IRegion findReplace(final FindReplaceOperationCode operationCode, int startOffset, String findString, String replaceText, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) throws BadLocationException {
 
 		// Validate option combinations
 		Assert.isTrue(!(regExSearch && wholeWord));
@@ -190,7 +190,8 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				else
 					found= fFindReplaceMatcher.find();
 
-				fFindReplaceState= operationCode;
+				if (operationCode == REPLACE_FIND_NEXT)
+					fFindReplaceState= FIND_NEXT;
 				
 				if (found && fFindReplaceMatcher.group().length() > 0) {
 					return new Region(fFindReplaceMatcher.start(), fFindReplaceMatcher.group().length());
