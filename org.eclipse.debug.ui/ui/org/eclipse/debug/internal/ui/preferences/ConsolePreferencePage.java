@@ -49,7 +49,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createFieldEditors() {
 		
-		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.getString("Wrap_text_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_WRAP, DebugPreferencesMessages.getString("ConsolePreferencePage.Wrap_text_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_output_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR, DebugPreferencesMessages.getString("ConsolePreferencePage.Show_&Console_View_when_there_is_program_error_3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
