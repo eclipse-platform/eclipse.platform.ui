@@ -312,6 +312,9 @@ public class PreferencesService implements IPreferencesService {
 			String value = properties.getProperty(fullPath);
 			IPath path = new Path(fullPath);
 			String key = path.lastSegment();
+			// intern strings we import because some people
+			// in their property change listeners use identity
+			// instead of equals. See bug 20193 and 20534.
 			key = key.intern();
 			path = path.removeLastSegments(1);
 			Preferences node = localRoot.node(path.toString());
