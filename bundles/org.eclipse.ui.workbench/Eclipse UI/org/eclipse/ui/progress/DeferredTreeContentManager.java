@@ -19,9 +19,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
@@ -219,7 +225,7 @@ public class DeferredTreeContentManager {
 				treeViewer.getControl().setRedraw(false);
 				treeViewer.add(parent, children);
 				treeViewer.getControl().setRedraw(true);
-
+				
 				return Status.OK_STATUS;
 			}
 		};
@@ -252,7 +258,18 @@ public class DeferredTreeContentManager {
 				 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (!placeholder.isRemoved()) {
+					Control control = treeViewer.getControl();
+					
+					//Workaround for Bug 42175
+					TreeItem top = null;
+					Tree tree = null;
+					if(control instanceof Tree){
+						tree = (Tree) control;
+						top = tree.getTopItem();						
+					}
 					treeViewer.remove(placeholder);
+					if(top != null)
+						tree.setTopItem(top);
 					placeholder.setRemoved(true);
 				}
 				return Status.OK_STATUS;
