@@ -94,13 +94,11 @@ public abstract class CoreFileSystemLibrary {
 			if (!hasNatives) {
 				//non-native implementation
 				attributes.setReadOnly(isReadOnly(fileName));
-			} else {
-				if (isUnicode)
-					internalGetResourceAttributesW(fileName.toCharArray(), attributes);
-				else
-					internalGetResourceAttributes(Convert.toPlatformBytes(fileName), attributes);
+				return attributes;
 			}
-			return attributes;
+			//ensure we return null on failure
+			if (isUnicode ? internalGetResourceAttributesW(fileName.toCharArray(), attributes) : internalGetResourceAttributes(Convert.toPlatformBytes(fileName), attributes))
+				return attributes;
 		} catch (UnsatisfiedLinkError e) {
 			if (!loggedFailedGetAttributes) {
 				loggedFailedGetAttributes = true;
@@ -142,11 +140,11 @@ public abstract class CoreFileSystemLibrary {
 	 * <code>false</code>).
 	 */
 	private static final native boolean internalCopyAttributesW(char[] source, char[] destination, boolean copyLastModified);
-	
+
 	/** Put the extended attributes that the platform supports in the IResource attributes object. Attributes
 	 * that are not supported by the platform will not be set and will remain the default value (<code>false</code>). */
 	private static final native boolean internalGetResourceAttributes(byte[] fileName, ResourceAttributes attribute);
-	
+
 	/** Put the extended attributes that the platform supports in the IResource attributes object. Attributes
 	 * that are not supported by the platform will not be set and will remain null (the default). 
 	 * (Unicode version - should not be called if <code>isUnicode</code> is <code>false</code>). */
@@ -185,7 +183,7 @@ public abstract class CoreFileSystemLibrary {
 	public static boolean isCaseSensitive() {
 		return caseSensitive;
 	}
-	
+
 	public static boolean isFile(long stat) {
 		return isSet(stat, STAT_VALID) && !isSet(stat, STAT_FOLDER);
 	}
@@ -208,7 +206,7 @@ public abstract class CoreFileSystemLibrary {
 	private static boolean isSet(long stat, long mask) {
 		return (stat & mask) != 0;
 	}
-	
+
 	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
 		String message = Policy.bind("localstore.couldNotLoadLibrary", libName); //$NON-NLS-1$
@@ -230,7 +228,7 @@ public abstract class CoreFileSystemLibrary {
 		return true;
 	}
 
-	public static void setResourceAttributes(String fileName, ResourceAttributes attributes) throws CoreException{
+	public static void setResourceAttributes(String fileName, ResourceAttributes attributes) throws CoreException {
 		if (!hasNatives) {
 			// inlined (no native) implementation
 			if (attributes.isReadOnly())
