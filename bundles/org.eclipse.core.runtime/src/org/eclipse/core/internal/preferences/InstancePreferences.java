@@ -32,13 +32,14 @@ public class InstancePreferences extends EclipsePreferences {
 	private static boolean initialized = false;
 	private static IPath baseLocation;
 
-	static {
+	private static IPath getBaseLocation() {
 		// If we are running with -data=@none we won't have an instance location.
 		// By leaving the value of baseLocation as null we still allow the users
 		// to set preferences in this scope but the values will not be persisted
 		// to disk when #flush() is called.
-		if (Platform.getInstanceLocation() != null)
+		if (baseLocation == null && Platform.getInstanceLocation() != null)
 			baseLocation = InternalPlatform.getDefault().getMetaArea().getStateLocation(Platform.PI_RUNTIME);
+		return baseLocation;
 	}
 
 	/**
@@ -62,11 +63,8 @@ public class InstancePreferences extends EclipsePreferences {
 		// cache the qualifier
 		qualifier = getSegment(path, 1);
 
-		// cache the location
-		if (qualifier == null)
-			return;
-		// get the base location from the platform
-		location = computeLocation(baseLocation, qualifier);
+		// don't cache the location until later in case instance prefs are
+		// accessed before the instance location is set.
 	}
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
@@ -154,6 +152,8 @@ public class InstancePreferences extends EclipsePreferences {
 	}
 
 	protected IPath getLocation() {
+		if (location == null)
+			location = computeLocation(getBaseLocation(), qualifier);
 		return location;
 	}
 
@@ -184,7 +184,7 @@ public class InstancePreferences extends EclipsePreferences {
 			return;
 		try {
 			synchronized (this) {
-				String[] names = computeChildren(baseLocation);
+				String[] names = computeChildren(getBaseLocation());
 				for (int i = 0; i < names.length; i++)
 					addChild(names[i], null);
 			}
