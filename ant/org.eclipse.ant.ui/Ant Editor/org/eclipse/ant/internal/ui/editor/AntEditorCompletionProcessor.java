@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +60,8 @@ import org.eclipse.ant.internal.ui.editor.templates.TaskContextType;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -76,7 +79,9 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.progress.IProgressService;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -144,7 +149,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     /**
      * The dtd.
      */
-	protected static ISchema dtd;
+	private static ISchema fgDtd;
 
     /**
      * Cursor position, counted from the beginning of the document.
@@ -162,12 +167,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * The set of characters that will trigger the activation of the
 	 * completion proposal computation.
 	 */
-	private char[] autoActivationChars= null;
-	
-    /**
-     * The provider for all task and attribute descriptions.
-     */
-	private TaskDescriptionProvider descriptionProvider = TaskDescriptionProvider.getDefault();
+	private char[] autoActivationChars= null; 
 	
 	private String errorMessage;
 	
@@ -192,15 +192,6 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	
 	public AntEditorCompletionProcessor(AntModel model) {
 		super();
-		if(dtd == null) {
-	        try {
-	     	  	dtd = parseDtd();
-	        } catch (IOException e) {
-	        	AntUIPlugin.log(e);
-	        } catch (ParseError e) {
-				AntUIPlugin.log(e);
-			}
-		}
 		antModel= model;
 	}
 
@@ -482,7 +473,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      */
     protected ICompletionProposal[] getAttributeProposals(String taskName, String prefix) {
         List proposals = new ArrayList();
-        IElement element = dtd.getElement(taskName);
+        IElement element = getDtd().getElement(taskName);
         if (element != null) {
         	Iterator keys = element.getAttributes().keySet().iterator();
         	while (keys.hasNext()) {
@@ -651,12 +642,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     	
 		String proposalInfo = null;
 		if (lookupDescription) {
-			String required = descriptionProvider.getRequiredAttributeForTaskAttribute(taskName, attrName);
+			String required = getDescriptionProvider().getRequiredAttributeForTaskAttribute(taskName, attrName);
 			if(required != null && required.length() > 0) {
 			    proposalInfo = AntEditorMessages.getString("AntEditorCompletionProcessor.Required___4") + required; //$NON-NLS-1$
 			    proposalInfo += "<BR><BR>"; //$NON-NLS-1$
 			}
-			String description = descriptionProvider.getDescriptionForTaskAttribute(taskName, attrName);
+			String description = getDescriptionProvider().getDescriptionForTaskAttribute(taskName, attrName);
 			if(description != null) {
 			    proposalInfo = (proposalInfo == null ? "" : proposalInfo); //$NON-NLS-1$
 			    proposalInfo += description;
@@ -682,7 +673,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      */
     private ICompletionProposal[] getAttributeValueProposals(String taskName, String attributeName, String prefix) {
         List proposals = new ArrayList();
-        IElement taskElement = dtd.getElement(taskName);
+        IElement taskElement = getDtd().getElement(taskName);
         if (taskElement != null) {
         	IAttribute attribute = (IAttribute) taskElement.getAttributes().get(attributeName);
         	if (attribute != null) {
@@ -858,7 +849,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 				proposals.add(newCompletionProposal(document, prefix, "target")); //$NON-NLS-1$
 			}
 		} else {
-			IElement parent = dtd.getElement(parentName);
+			IElement parent = getDtd().getElement(parentName);
 			if (parent != null) {
 				IDfm dfm = parent.getDfm();
 				String[] accepts = dfm.getAccepts();
@@ -920,7 +911,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     */
    protected ICompletionProposal[] getBuildFileProposals(IDocument document, String prefix) {
        String rootElementName= "project"; //$NON-NLS-1$
-       IElement rootElement = dtd.getElement(rootElementName);
+       IElement rootElement = getDtd().getElement(rootElementName);
        if (rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
        		ICompletionProposal proposal = newCompletionProposal(document, prefix, rootElementName);
 			return new ICompletionProposal[] {proposal};
@@ -945,7 +936,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
 		additionalProposalOffset= 0;
 		Image proposalImage = AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
-		String proposalInfo = descriptionProvider.getDescriptionForTask(elementName);
+		String proposalInfo = getDescriptionProvider().getDescriptionForTask(elementName);
 		boolean hasNestedElements= hasNestedElements(elementName);
 		String replacementString = getTaskProposalReplacementString(elementName, hasNestedElements);
 		int replacementOffset = cursorPosition - aPrefix.length();
@@ -1022,7 +1013,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     private String getTaskProposalReplacementString(String aTaskName, boolean hasNested) {
         StringBuffer replacement = new StringBuffer("<"); //$NON-NLS-1$
         replacement.append(aTaskName); 
-        Node attributeNode= descriptionProvider.getAttributesNode(aTaskName);
+        Node attributeNode= getDescriptionProvider().getAttributesNode(aTaskName);
 		
         if (attributeNode != null) {
 			appendRequiredAttributes(replacement, attributeNode);
@@ -1048,9 +1039,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		Node attribute;
 		for (int i = 0; i < attributes.getLength(); i++) {
 			attribute = attributes.item(i);
-			required= descriptionProvider.getRequiredOfNode(attribute);
+			required= getDescriptionProvider().getRequiredOfNode(attribute);
 			if (required.equalsIgnoreCase("yes")) { //$NON-NLS-1$
-				String attributeName= descriptionProvider.getTaskAttributeName(attribute);
+				String attributeName= getDescriptionProvider().getTaskAttributeName(attribute);
 				replacement.append(' ');
 				replacement.append(attributeName);
 				replacement.append("=\"\""); //$NON-NLS-1$
@@ -1066,7 +1057,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * Returns whether the named element supports nested elements.
      */
     private boolean hasNestedElements(String elementName) {
-        IElement element = dtd.getElement(elementName);
+        IElement element = getDtd().getElement(elementName);
         if (element != null) {
         	return !element.isEmpty();
         } 
@@ -1335,7 +1326,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     			return true;
     		}
     		//not everything is a task or type (nested elements)
-    		if (dtd.getElement(elementName) != null) {
+    		if (getDtd().getElement(elementName) != null) {
     			return true;
     		}
     		
@@ -1555,5 +1546,37 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 */
 	protected ICompletionProposal createProposal(Template template,TemplateContext context, Region region, int relevance) {
 		return new AntTemplateProposal(template, context, region, getImage(template), relevance);
+	}
+
+	protected ISchema getDtd() {
+		if (fgDtd == null) {
+			IRunnableWithProgress runnable= new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException {
+					try {
+						fgDtd= parseDtd();
+					} catch (IOException e) {
+			        	AntUIPlugin.log(e);
+			        } catch (ParseError e) {
+						AntUIPlugin.log(e);
+					}
+				}
+			};
+			
+			IProgressService service= PlatformUI.getWorkbench().getProgressService();
+			try {
+				service.busyCursorWhile(runnable);
+			} catch (InvocationTargetException e) {
+			} catch (InterruptedException e) {
+			}
+		}
+		return fgDtd;
+	}
+
+    /**
+     * The provider for all task and attribute descriptions.
+     */
+	private TaskDescriptionProvider getDescriptionProvider() {
+		return TaskDescriptionProvider.getDefault();
 	}
 }

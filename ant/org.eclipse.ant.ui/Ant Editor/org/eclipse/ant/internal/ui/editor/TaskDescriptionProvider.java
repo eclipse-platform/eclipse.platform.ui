@@ -15,6 +15,7 @@
 package org.eclipse.ant.internal.ui.editor;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -41,8 +46,6 @@ import org.xml.sax.SAXException;
  * <code>TASKS_DESCRIPTION_XML_FILE_NAME</code>. This file is parsed by the
  * provider and requested descriptions are returned.
  * <P>
- * Check out the documentation for the public methods of this class. 
- * 
  */
 public class TaskDescriptionProvider {
 
@@ -64,18 +67,30 @@ public class TaskDescriptionProvider {
     
     private static TaskDescriptionProvider fgDefault;
 
-    protected Map taskNodes = new HashMap();
+    private Map taskNodes= null;
     
     /**
      * Meant to be a singleton
      */
     private TaskDescriptionProvider() {
-        initialize();
     }
     
     public static TaskDescriptionProvider getDefault() {
     	if (fgDefault == null) {
     		fgDefault= new TaskDescriptionProvider();
+    		IRunnableWithProgress runnable= new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor)
+									throws InvocationTargetException, InterruptedException {					
+						fgDefault.initialize();
+				}
+			};
+			
+			IProgressService service= PlatformUI.getWorkbench().getProgressService();
+			try {
+				service.busyCursorWhile(runnable);
+			} catch (InvocationTargetException e) {
+			} catch (InterruptedException e) {
+			}
     	}
     	return fgDefault;
     }
@@ -84,6 +99,7 @@ public class TaskDescriptionProvider {
      * Parses the task description xml file and stores the information.
      */
     protected void initialize() {
+    	taskNodes= new HashMap();
         Document tempDocument = parseFile(TASKS_DESCRIPTION_XML_FILE_NAME);
         Node tempRootNode = tempDocument.getDocumentElement();
         NodeList tempChildNodes = tempRootNode.getChildNodes();
@@ -113,7 +129,7 @@ public class TaskDescriptionProvider {
      * The file will be loaded as resource, thus must begin with '/' and must
      * be relative to the classpath.
      */
-    protected Document parseFile(String aFileName) {
+    private Document parseFile(String aFileName) {
         Document tempDocument = null;
 
         DocumentBuilderFactory tempFactory = DocumentBuilderFactory.newInstance();
@@ -159,7 +175,7 @@ public class TaskDescriptionProvider {
      * <P>
      * The node must be either one of task node or attribute node.
      */
-    protected String getDescriptionOfNode(Node aNode) {
+    private String getDescriptionOfNode(Node aNode) {
         NodeList tempChildNodes = aNode.getChildNodes();
         for (int i=0; i<tempChildNodes.getLength(); i++) {
             Node tempNode = tempChildNodes.item(i);
@@ -279,7 +295,7 @@ public class TaskDescriptionProvider {
      * @param aTaskName The name of the task
      * @return The Elements Node of the Task.
      */
-    protected Node getElementsNode(String aTaskName) {
+    private Node getElementsNode(String aTaskName) {
     	
     	Node tmpStructureNode = getStructureNode(aTaskName);
     	if(tmpStructureNode != null) {
@@ -312,7 +328,7 @@ public class TaskDescriptionProvider {
      * @param aTaskName The name of the task
      * @return The Structure Node of the Task.
      */        
-    protected Node getStructureNode(String aTaskName) {	
+    private Node getStructureNode(String aTaskName) {	
     	Element taskElement = (Element)taskNodes.get(aTaskName);
         if(taskElement != null) {
         	//Dig us down to the Structure node
@@ -332,7 +348,7 @@ public class TaskDescriptionProvider {
      * @param anAttributesNodeList The NodeList to search in.
      * @return The Description found or null if none is found
      */
-    protected String getDescriptionForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
+    private String getDescriptionForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
     																 NodeList anAttributesNodeList) {
     	for (int i=0; i<anAttributesNodeList.getLength(); i++) {
                 Node tempNode = anAttributesNodeList.item(i);
@@ -369,7 +385,7 @@ public class TaskDescriptionProvider {
      * @return The First Child Node found matching the criterias,
      * or null if none is found.
      */
-    protected Node getChildNodeNamedOfTypeFromNode(String aNodeName, short aNodeType, Node aParentNode) {
+    private Node getChildNodeNamedOfTypeFromNode(String aNodeName, short aNodeType, Node aParentNode) {
     
     	NodeList tmpNodeList = aParentNode.getChildNodes();
 		for(int i=0; i<tmpNodeList.getLength(); ++i ) {
@@ -391,15 +407,15 @@ public class TaskDescriptionProvider {
      * @param anAttributesNodeList The NodeList to search in.
      * @return The Description found or null if none is found
      */
-    protected String getRequiredForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
+    private String getRequiredForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
     																 NodeList anAttributesNodeList) {
     	for (int i=0; i<anAttributesNodeList.getLength(); i++) {
-                Node tempNode = anAttributesNodeList.item(i);
-                if(tempNode.getNodeType() == Node.ELEMENT_NODE && aNodeName.equals(tempNode.getNodeName())) {
-                	if( anAttributeName.equals(getTaskAttributeName(tempNode)) ) {
-                    	return getRequiredOfNode(tempNode);
-                	}
-                }
+    		Node tempNode = anAttributesNodeList.item(i);
+            if(tempNode.getNodeType() == Node.ELEMENT_NODE && aNodeName.equals(tempNode.getNodeName())) {
+        		if( anAttributeName.equals(getTaskAttributeName(tempNode)) ) {
+                	return getRequiredOfNode(tempNode);
+            	}
+            }
         }
         
         //Not found
