@@ -121,6 +121,7 @@ if(request.getParameter("searchWord")!=null || request.getParameter("searchWordJ
 		</DIV>
 	</TD></TR>
 	<TR><TD><%=percentage%>% <%=WebappResources.getString("complete", request)%></TD></TR>
+	<TR><TD><br><%=WebappResources.getString("IndexingPleaseWait", request)%></TD></TR>
 </TABLE>
 </CENTER>
 <script language='JavaScript'>
@@ -174,10 +175,10 @@ setTimeout('refresh()', 2000);
 			href = "about:blank";
 %>
 
-<tr class='list'>
+<tr class='list' id='r<%=i%>'>
 	<td class='score' align='right'><%=scoreString%></td>
 	<td align='left' class='label' nowrap>
-		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=UrlUtil.htmlEncode(label)%>"><%=UrlUtil.htmlEncode(label)%></a>
+		<a id='a<%=i%>' href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=UrlUtil.JavaScriptEncode(tocLabel)%>")' title="<%=UrlUtil.htmlEncode(label)%>"><%=UrlUtil.htmlEncode(label)%></a>
 	</td>
 </tr>
 
