@@ -116,6 +116,12 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	private Button fShowInOverviewRulerCheckBox;
 	private Button fShowInVerticalRulerCheckBox;
 	private String[][] fQuickDiffProviderListModel;
+	
+	/**
+	 * Tells whether the fields are initialized.
+	 * @since 3.0
+	 */
+	private boolean fFieldsInitialized= false;
 
 	
 	public TextEditorPreferencePage2() {
@@ -697,7 +703,9 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 			String key= (String) fTextFields.get(t);
 			t.setText(fOverlayStore.getString(key));
 		}
-				
+		
+		fFieldsInitialized= true;
+		updateStatus(validatePositiveNumber("0")); //$NON-NLS-1$
 	}
 	
 	/*
@@ -802,6 +810,9 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 	}
 	
 	void updateStatus(IStatus status) {
+		if (!fFieldsInitialized)
+			return;
+		
 		if (!status.matches(IStatus.ERROR)) {
 			for (int i= 0; i < fNumberFields.size(); i++) {
 				Text text= (Text) fNumberFields.get(i);
@@ -815,6 +826,9 @@ public class TextEditorPreferencePage2 extends PreferencePage implements IWorkbe
 
 	/**
 	 * Applies the status to the status line of a dialog page.
+	 * 
+	 * @param page the dialog page
+	 * @param status the status
 	 */
 	public void applyToStatusLine(DialogPage page, IStatus status) {
 		String message= status.getMessage();
