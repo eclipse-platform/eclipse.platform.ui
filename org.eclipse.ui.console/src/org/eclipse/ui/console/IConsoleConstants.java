@@ -137,12 +137,18 @@ public interface IConsoleConstants {
 	 */
 	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_STREAMS_CLOSED"; //$NON-NLS-1$
 	
+    /**
+     * Property constant indicating a hyperlink has been added to a console.
+     * 
+     * @since 3.1
+     */
+    public static final String P_CONSOLE_HYPERLINK_ADDED = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_HYPERLINK_ADDED"; //$NON-NLS-1$
 
     /**
-     * The default tab size
+     * The default tab size for text consoles.
+     * 
+     * @since 3.1
      */
     public static final int DEFAULT_TAB_SIZE = 8;
-
-    public static final String P_CONSOLE_HYPERLINK_ADDED = ConsolePlugin.getUniqueIdentifier() + ".P_CONSOLE_HYPERLINK_ADDED"; //$NON-NLS-1$
 
 }
