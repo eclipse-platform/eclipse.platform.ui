@@ -24,6 +24,7 @@ public class EditorsTestSuite extends TestSuite {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.ui.editors"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		suite.addTest(ChainedPreferenceStoreTest.suite());
+		suite.addTest(SegmentedModeTest.suite());
 		//$JUnit-END$
 		return suite;
 	}
