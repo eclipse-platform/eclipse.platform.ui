@@ -34,6 +34,7 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -69,6 +70,8 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
     private XMLTextHover fTextHover;
     
     private ContentAssistant contentAssistant;
+    
+    private AntAutoIndentStrategy autoIndentStrategy;
     
     /**
      * Creates an instance with the specified color manager.
@@ -127,7 +130,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
     }
 
     /* (non-Javadoc)
-     * Method declared on SourceViewerConfiguration
+     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
      */
     public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
         return new String[] {
@@ -136,8 +139,8 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
             AntEditorPartitionScanner.XML_TAG };
     }
     
-    /**
-     * @see SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
      */
     public int getTabWidth(ISourceViewer sourceViewer) {
     	return AntUIPlugin.getDefault().getPreferenceStore().getInt(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
@@ -158,6 +161,9 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
     }
     
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
+     */
     public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
         PresentationReconciler reconciler = new PresentationReconciler();
 
@@ -189,12 +195,13 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		damageRepairer.setDefaultTextAttribute(new TextAttribute(JFaceResources.getColorRegistry().get(IAntEditorColorConstants.XML_COMMENT_COLOR)));				  
 	}
 
-    /*
-     * @see SourceViewerConfiguration#getReconciler(ISourceViewer)
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
      */
     public IReconciler getReconciler(ISourceViewer sourceViewer) {
 	    NotifyingReconciler reconciler= new NotifyingReconciler(new XMLReconcilingStrategy(fEditor), true);
 	    reconciler.setDelay(XMLReconcilingStrategy.DELAY);
+	    reconciler.addReconcilingParticipant(fEditor);
 	    return reconciler;
     }
 
@@ -290,4 +297,18 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 
         return formatter;
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoIndentStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
+		if (AntEditorPartitionScanner.XML_COMMENT.equals(contentType)) {
+			return super.getAutoIndentStrategy(sourceViewer, contentType);
+		} else {
+			if (autoIndentStrategy == null) {
+				autoIndentStrategy= new AntAutoIndentStrategy(fEditor.getAntModel());
+			}
+			return autoIndentStrategy;
+		}
+	}
 }
