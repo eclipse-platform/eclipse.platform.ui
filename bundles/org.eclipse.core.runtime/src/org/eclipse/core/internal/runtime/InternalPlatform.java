@@ -500,8 +500,6 @@ public final class InternalPlatform {
 				found = true; // ignored
 			if (args[i].equalsIgnoreCase(UPDATE))
 				found = true; // ignored
-			if (args[i].equalsIgnoreCase(FEATURE))
-				found = true; // ignored
 
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
@@ -526,7 +524,8 @@ public final class InternalPlatform {
 			}
 
 			// look for the product to run
-			if (args[i - 1].equalsIgnoreCase(PRODUCT)) {
+			// treat -feature as a synonym for -product for compatibility.
+			if (args[i - 1].equalsIgnoreCase(PRODUCT) || args[i - 1].equalsIgnoreCase(FEATURE)) {
 				System.setProperty(PROP_PRODUCT, arg);
 				found = true;
 			}
