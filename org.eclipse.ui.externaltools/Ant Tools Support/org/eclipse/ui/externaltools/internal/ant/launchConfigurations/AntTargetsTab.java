@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -263,26 +263,31 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void handleMove(int direction) {
-		int[] selected = executeTargetsTable.getTable().getSelectionIndices();
-		TableItem[] items= executeTargetsTable.getTable().getItems();
-
-		List contents= new ArrayList(items.length);
-		for (int i = 0; i < items.length; i++) {
-			TableItem item = items[i];
-			contents.add(item.getData());
+		IStructuredSelection sel = (IStructuredSelection)executeTargetsTable.getSelection();
+		List selList= sel.toList();
+		Object[] elements = getContentProvider().getElements(null);
+		List contents= new ArrayList(elements.length);
+		for (int i = 0; i < elements.length; i++) {
+			contents.add(elements[i]);
 		}
-		List moved= new ArrayList(selected.length);
-		for (int j= 0; j< selected.length; j++) {
-			moved.add(contents.get(selected[j]));
-			contents.remove(selected[j]);
+		Object[] moved= new Object[contents.size()];
+		int i;
+		for (Iterator current = selList.iterator(); current.hasNext();) {
+			Object config = current.next();
+			i= contents.indexOf(config);
+			moved[i + direction]= config;
 		}
+		
+		contents.removeAll(selList);
 			
-		contents.addAll(selected[0] + direction, moved);		
-			
+		for (int j = 0; j < moved.length; j++) {
+			Object config = moved[j];
+			if (config != null) {
+				contents.add(j, config);		
+			}
+		}
 		executeTargetsTable.setInput(contents.toArray(new TargetInfo[contents.size()]));
 		executeTargetsTable.setSelection(executeTargetsTable.getSelection());
-		
-		updateButtonEnablement();
 	}
 
 
@@ -525,7 +530,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			upButton.setEnabled(false);
 		}
 	
-		if (index >= 0 && index < executeTargetsTable.getTable().getItemCount() - 1) {
+		if (index >= 0 && 
+			executeTargetsTable.getTable().getSelectionIndices()[executeTargetsTable.getTable().getSelectionCount() - 1] < executeTargetsTable.getTable().getItemCount() - 1) {
 			downButton.setEnabled(true);
 		} else {
 			downButton.setEnabled(false);		
