@@ -180,7 +180,11 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		IBaseLabelProvider prov = getLabelProvider();
 		ITableLabelProvider tprov = null;
 		ILabelProvider lprov = null;
+		ITableColorProvider cprov = null;
 		
+		if (prov instanceof ITableColorProvider) {
+		    cprov = (ITableColorProvider)prov;
+		}
 			
 		if (prov instanceof ITableLabelProvider) {
 			tprov = (ITableLabelProvider) prov;
@@ -195,6 +199,10 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 			// Similar code in TableTreeViewer.doUpdateItem()
 			String text = "";//$NON-NLS-1$
 			Image image = null;
+			if(cprov != null) {
+			    ti.setBackground(column, cprov.getBackground(element, column));
+			    ti.setForeground(column, cprov.getForeground(element, column));
+			}
 			if (tprov != null) {
 				text = tprov.getColumnText(element, column);
 				image = tprov.getColumnImage(element, column);
@@ -216,15 +224,16 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 					}
 		    	}
 	    	}
+			
 			ti.setText(column, text);
 			if (ti.getImage(column) != image) {
 				ti.setImage(column, image);
 			}
 		}
 		if (prov instanceof IColorProvider) {
-			IColorProvider cprov = (IColorProvider) prov;
-			ti.setForeground(cprov.getForeground(element));
-			ti.setBackground(cprov.getBackground(element));
+			IColorProvider baseColorProv = (IColorProvider) prov;
+			ti.setForeground(baseColorProv.getForeground(element));
+			ti.setBackground(baseColorProv.getBackground(element));
 		}
 		if (prov instanceof IFontProvider) {
 		    IFontProvider fprov = (IFontProvider) prov;
