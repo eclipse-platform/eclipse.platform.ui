@@ -1,8 +1,10 @@
-package org.eclipse.help.ui.internal;
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
+
+package org.eclipse.help.ui.internal;
+
 import org.eclipse.help.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.resource.*;
@@ -263,6 +265,9 @@ public class ContextHelpDialog {
 						+ Display.getCurrent().getFocusControl().toString());
 			}
 		} catch (Throwable e) {
+			WorkbenchHelpPlugin.logError(
+				WorkbenchResources.getString("ContextHelpDialog.open"),
+				e);
 		}
 	}
 	private Image getImage() {
