@@ -12,6 +12,7 @@ package org.eclipse.ant.internal.ui.model;
 
 import java.io.File;
 import java.net.URLClassLoader;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -57,6 +58,20 @@ public interface IAntModel {
      * @param newClassLoader the classloader to use when resolving this Ant model
      */
     void setClassLoader(URLClassLoader newClassLoader);
+    
+    /**
+     * Sets the extra properties to be used for parsing
+     * If global settings as defined in the Ant UI preferences are to be used this method does not need to be called.
+     * @param properties the properties to ensure are set for parsing.
+     */
+    void setProperties(Map properties);
+    
+    /**
+     * Sets the property files to be used for parsing
+     * If global settings as defined in the Ant UI preferences are to be used this method does not need to be called.
+     * @param propertyFiles the file names of the property files to use for parsing
+     */
+    void setPropertyFiles(String[] propertyFiles);
 
     /**
      * Returns the Eclipse resource for the buildfile this Ant model represents

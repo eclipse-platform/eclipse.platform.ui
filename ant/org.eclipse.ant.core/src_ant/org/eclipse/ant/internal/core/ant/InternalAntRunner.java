@@ -14,7 +14,6 @@
 package org.eclipse.ant.internal.core.ant;
  
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
@@ -53,6 +53,7 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
+import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -359,7 +360,7 @@ public class InternalAntRunner {
 			processAntHome(false);
 			antProject.init();
 			setTypes(antProject);
-			processProperties(getArrayList(extraArguments));
+			processProperties(AntCoreUtil.getArrayList(extraArguments));
 			
 			setProperties(antProject, false);
 			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
@@ -420,7 +421,7 @@ public class InternalAntRunner {
 	 * Runs the build script.
 	 */
 	public void run() {
-		run(getArrayList(extraArguments));
+		run(AntCoreUtil.getArrayList(extraArguments));
 	}
 
 	private void printArguments(Project project) {
@@ -547,7 +548,7 @@ public class InternalAntRunner {
 	 * @exception Exception execution exceptions
 	 */
 	public void run(Object argArray) throws Exception {
-		run(getArrayList((String[]) argArray));
+		run(AntCoreUtil.getArrayList((String[]) argArray));
 	}
 
 	/*
@@ -933,7 +934,7 @@ public class InternalAntRunner {
 	
 	private boolean preprocessCommandLine(List commands) {
 		
-		String arg = getArgument(commands, "-listener"); //$NON-NLS-1$
+		String arg = AntCoreUtil.getArgument(commands, "-listener"); //$NON-NLS-1$
 		while (arg != null) {
 			if (arg.length() == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
@@ -942,22 +943,22 @@ public class InternalAntRunner {
 				buildListeners= new ArrayList(1);
 			}
 			buildListeners.add(arg);
-			arg = getArgument(commands, "-listener"); //$NON-NLS-1$
+			arg = AntCoreUtil.getArgument(commands, "-listener"); //$NON-NLS-1$
 		}
 
-		arg = getArgument(commands, "-logger"); //$NON-NLS-1$
+		arg = AntCoreUtil.getArgument(commands, "-logger"); //$NON-NLS-1$
 		if (arg != null) {
 			if (arg.length() == 0) {
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-logger_argument_2")); //$NON-NLS-1$
 			} 
 			loggerClassname = arg;
 		}
-		arg = getArgument(commands, "-logger"); //$NON-NLS-1$
+		arg = AntCoreUtil.getArgument(commands, "-logger"); //$NON-NLS-1$
 		if (arg != null) {
 			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_logger_class_may_be_specified_1")); //$NON-NLS-1$
 		}
 		
-		arg = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
+		arg = AntCoreUtil.getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (arg != null) {
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Specifying_an_InputHandler_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._2")); //$NON-NLS-1$
@@ -967,7 +968,7 @@ public class InternalAntRunner {
 			} 
 			inputHandlerClassname = arg;
 		}
-		arg = getArgument(commands, "-inputhandler"); //$NON-NLS-1$
+		arg = AntCoreUtil.getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (arg != null) {
 			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_input_handler_class_may_be_specified._2")); //$NON-NLS-1$
 		}
@@ -1023,9 +1024,9 @@ public class InternalAntRunner {
 			return false;
 		}
 		
-		String arg = getArgument(commands, "-logfile"); //$NON-NLS-1$
+		String arg = AntCoreUtil.getArgument(commands, "-logfile"); //$NON-NLS-1$
 		if (arg == null) {
-			arg = getArgument(commands, "-l"); //$NON-NLS-1$
+			arg = AntCoreUtil.getArgument(commands, "-l"); //$NON-NLS-1$
 		}
 		if (arg != null) {
 			if (arg.length() == 0) {
@@ -1043,11 +1044,11 @@ public class InternalAntRunner {
 		
 		}
 		
-		arg = getArgument(commands, "-buildfile"); //$NON-NLS-1$
+		arg = AntCoreUtil.getArgument(commands, "-buildfile"); //$NON-NLS-1$
 		if (arg == null) {
-			arg = getArgument(commands, "-file"); //$NON-NLS-1$
+			arg = AntCoreUtil.getArgument(commands, "-file"); //$NON-NLS-1$
 			if (arg == null) {
-				arg = getArgument(commands, "-f"); //$NON-NLS-1$
+				arg = AntCoreUtil.getArgument(commands, "-f"); //$NON-NLS-1$
 			}
 		}
 		
@@ -1067,16 +1068,16 @@ public class InternalAntRunner {
 			if (commands.remove("-noinput")) { //$NON-NLS-1$
 				allowInput= false;
 			}
-			arg= getArgument(commands, "-lib"); //$NON-NLS-1$
+			arg= AntCoreUtil.getArgument(commands, "-lib"); //$NON-NLS-1$
 			if (arg != null) {
 				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.157"), Project.MSG_ERR); //$NON-NLS-1$
 				return false;
 			}
 		}
 		
-		arg= getArgument(commands, "-find"); //$NON-NLS-1$
+		arg= AntCoreUtil.getArgument(commands, "-find"); //$NON-NLS-1$
 		if (arg == null) {
-			arg= getArgument(commands, "-s"); //$NON-NLS-1$
+			arg= AntCoreUtil.getArgument(commands, "-s"); //$NON-NLS-1$
 		}
 		if (arg != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_not_supported"), Project.MSG_ERR); //$NON-NLS-1$
@@ -1161,23 +1162,7 @@ public class InternalAntRunner {
 	}
 
 	private File getFileRelativeToBaseDir(String fileName) {
-		IPath path= new Path(fileName);
-		if (!path.isAbsolute()) {
-			String base= getCurrentProject().getUserProperty("basedir"); //$NON-NLS-1$
-			if (base != null) {
-				File baseDir= new File(base);
-				//relative to the base dir
-				path= new Path(baseDir.getAbsolutePath()); 
-			} else {
-				//relative to the build file location
-				path= new Path(getBuildFileLocation());
-				path= path.removeLastSegments(1);
-			}
-			path= path.addTrailingSeparator();
-			path= path.append(fileName);
-		}
-		
-		return path.toFile();
+	    return AntCoreUtil.getFileRelativeToBaseDir(fileName, getCurrentProject().getUserProperty("basedir"), getBuildFileLocation()); //$NON-NLS-1$
 	}
 
 	/*
@@ -1187,7 +1172,7 @@ public class InternalAntRunner {
 	 */
 	private void processProperties(List commands) {
 		//MULTIPLE property files are allowed
-		String arg= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
+		String arg= AntCoreUtil.getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while (arg != null) {
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
@@ -1200,7 +1185,7 @@ public class InternalAntRunner {
 			} 
 			
 			propertyFiles.add(arg);
-			arg= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
+			arg= AntCoreUtil.getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		}
 		
 		String[] globalPropertyFiles= AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles();
@@ -1222,32 +1207,10 @@ public class InternalAntRunner {
 	}
 
 	private void processMinusDProperties(List commands) {
-		String[] args = (String[]) commands.toArray(new String[commands.size()]);
-		for (int i = 0; i < args.length; i++) {
-			String arg = args[i];
-			if (arg.startsWith("-D")) { //$NON-NLS-1$
-				String name = arg.substring(2, arg.length());
-				String value = null;
-				int posEq = name.indexOf("="); //$NON-NLS-1$
-				if (posEq == 0) {
-					value= name.substring(1);
-					name= ""; //$NON-NLS-1$
-				} else if (posEq > 0 && posEq != name.length() - 1) {
-					value = name.substring(posEq + 1).trim();
-					name = name.substring(0, posEq);
-				}
-				
-				if (value == null) {
-					//the user has specified something like "-Debug"
-					continue;
-				}
-				if (userProperties == null) {
-					userProperties= new HashMap();
-				}
-				userProperties.put(name, value);
-				commands.remove(args[i]);
-			}
+	    if (!commands.isEmpty() && userProperties == null) {
+			userProperties= new HashMap();
 		}
+		AntCoreUtil.processMinusDProperties(commands, userProperties);
 	}
 
 	/*
@@ -1355,52 +1318,7 @@ public class InternalAntRunner {
 
 		logMessage(getCurrentProject(), msg.toString(), Project.MSG_INFO);
 	}
-
-	/*
-	 * From a command line list, get the argument for the given parameter.
-	 * The parameter and its argument are removed from the list.
-	 * 
-	 * @return <code>null</code> if the parameter is not found 
-	 * 			or an empty String if no arguments are found
-	 */
-	private String getArgument(List commands, String param) {
-		if (commands == null) {
-			return null;
-		}
-		int index = commands.indexOf(param);
-		if (index == -1) {
-			return null;
-		}
-		commands.remove(index);
-		if (index == commands.size()) {// if this is the last command
-			return ""; //$NON-NLS-1$
-		}
-		
-		String command = (String) commands.get(index);
-		if (command.startsWith("-")) { //new parameter //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
-		}
-		commands.remove(index);
-		return command;
-	}
-
-	/*
-	 * Helper method to ensure an array is converted into an ArrayList.
-	 */
-	private ArrayList getArrayList(String[] args) {
-		if (args == null) {
-			return null;
-		}
-		// We could be using Arrays.asList() here, but it does not specify
-		// what kind of list it will return. We need a list that
-		// implements the method List.remove(Object) and ArrayList does.
-		ArrayList result = new ArrayList(args.length);
-		for (int i = 0; i < args.length; i++) {
-			result.add(args[i]);
-		}
-		return result;
-	}
-
+	
 	/**
 	 * Sets the build progress monitor.
 	 * @param monitor The progress monitor to use
@@ -1429,39 +1347,30 @@ public class InternalAntRunner {
 	 * specified by -propertyfile.
 	 */
 	private void loadPropertyFiles() {
-		Iterator itr= propertyFiles.iterator();
-        while (itr.hasNext()) {
-            String filename= (String) itr.next();
-           	File file= getFileRelativeToBaseDir(filename);
-            Properties props = new Properties();
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-                props.load(fis);
-            } catch (IOException e) {
-            	String msg= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Could_not_load_property_file_{0}__{1}_4"), new String[]{filename, e.getMessage()}); //$NON-NLS-1$
-            	logMessage(getCurrentProject(), msg, Project.MSG_ERR);
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e){
-                    }
-                }
-            }
-
-            if (userProperties == null) {
-            	userProperties= new HashMap();
-            }
-            Enumeration propertyNames = props.propertyNames();
-            while (propertyNames.hasMoreElements()) {
-                String name = (String) propertyNames.nextElement();
-                //most specific to global
-                //do not overwrite specific with a global property
-                if (userProperties.get(name) == null) {
-            		userProperties.put(name, props.getProperty(name));
-                }
-            }
+	    if (propertyFiles.isEmpty()) {
+        	return;
+        }
+	    if (userProperties == null) {
+        	userProperties= new HashMap();
+        }
+        try {
+            List allProperties = AntCoreUtil.loadPropertyFiles(propertyFiles, getCurrentProject().getUserProperty("basedir"), getBuildFileLocation()); //$NON-NLS-1$
+	        Iterator iter= allProperties.iterator();
+	        while (iter.hasNext()) {
+	            Properties props = (Properties) iter.next();
+	            Enumeration propertyNames = props.propertyNames();
+	            while (propertyNames.hasMoreElements()) {
+	                String name = (String) propertyNames.nextElement();
+	                //most specific to global
+	                //do not overwrite specific with a global property
+	                if (userProperties.get(name) == null) {
+	                    userProperties.put(name, props.getProperty(name));
+	                }
+	            }
+	        }
+        } catch (IOException e) {
+            String msg= MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.4"), new String[]{e.getMessage()}); //$NON-NLS-1$
+        	logMessage(getCurrentProject(), msg, Project.MSG_ERR);
         }
 	}
 	

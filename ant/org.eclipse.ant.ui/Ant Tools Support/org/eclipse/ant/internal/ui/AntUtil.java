@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import java.util.StringTokenizer;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
 import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants;
@@ -68,6 +70,7 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IHyperlink;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -194,12 +197,34 @@ public final class AntUtil {
 		URL[] urls= getCustomClasspath(config);
 		//no lexical, no position, no task
 		IAntModel model= getAntModel(buildfile, urls, false, false, false);
+		
+		model.setProperties(getAllProperties(config));
+		model.setPropertyFiles(getPropertyFiles(config));
 		AntProjectNode project= model.getProjectNode(); //forces a reconcile
 		model.dispose();
 		return getTargets(project);
 	}
 	
-	private static AntTargetNode[] getTargets(AntProjectNode project) {
+    private static Map getAllProperties(ILaunchConfiguration config) throws CoreException {
+        String[] arguments = ExternalToolsUtil.getArguments(config);
+		Map properties= new HashMap();
+		if (arguments != null) {
+		    AntCoreUtil.processMinusDProperties(AntCoreUtil.getArrayList(arguments), properties);
+		}
+		Map configProperties= getProperties(config);
+		if (configProperties != null) {
+		    Iterator keys= configProperties.keySet().iterator();
+		    while (keys.hasNext()) {
+		        String name = (String) keys.next();
+		        if (properties.get(name) == null) {
+		            properties.put(name, configProperties.get(name));
+		        }
+		    }
+		}
+		return properties;
+    }
+
+    private static AntTargetNode[] getTargets(AntProjectNode project) {
         if (project == null || !project.hasChildren()) {
 		    return null;
 		}
@@ -238,7 +263,7 @@ public final class AntUtil {
 	}
 	
 	/**
-	 * Return a .xml file from the specified location.
+	 * Return a buildfile from the specified location.
 	 * If there isn't one return null.
 	 */
 	private static File getBuildFile(String path) {
