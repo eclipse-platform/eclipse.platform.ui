@@ -781,7 +781,7 @@ public class ContentFormatter2 implements IContentFormatter, IContentFormatterEx
 	/**
 	 * Formats the given region in the document using the indicated strategy.
 	 * The type of the region does not have to be the same as the type for
-	 * which the strategy was originally registred.
+	 * which the strategy was originally registered.
 	 * <p>
 	 * The formatting process will happen in the mode set up by the formatting
 	 * context or changes to the partition aware/unaware property.
@@ -954,6 +954,8 @@ public class ContentFormatter2 implements IContentFormatter, IContentFormatterEx
 		
 		determinePositionsToUpdate(offset, length);
 		
+		// since sort is stable, no reference pairs to the same zero-length position
+		// will get swapped.
 		Collections.sort(fOverlappingPositionReferences);
 		
 		int[] positions= new int[fOverlappingPositionReferences.size()];
@@ -1005,10 +1007,23 @@ public class ContentFormatter2 implements IContentFormatter, IContentFormatterEx
 			
 			PositionReference r= (PositionReference) fOverlappingPositionReferences.get(i);
 			
-			if (r.refersToOffset())
-				r.setOffset(offset + positions[i]);
-			else
-				r.setLength((offset + positions[i]) - r.getOffset());
+			if (r.refersToOffset()) {
+				int posOffset= offset + positions[i];
+				if (posOffset >= 0)
+					r.setOffset(posOffset);
+//				else
+//					Protest
+			} else {
+				// positions are ordered by offset. For every position that has references
+				// to both offset and length, the offset comes first.
+				// Therefore, the end of the position (offset + positions[i]) is supposedly
+				// greater than r.getOffset()
+				int length= offset + positions[i] - r.getOffset();
+				if (length >= 0)
+					r.setLength(length);
+//				else
+//					Protest
+			}
 			
 			Position p= r.getPosition();
 			String category= r.getCategory();
