@@ -137,6 +137,59 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		Platform.getJobManager().join(CharsetDeltaJob.FAMILY_CHARSET_DELTA, getMonitor());
 	}
 
+	/**
+	 * This test shows how we deal with aliases.
+	 */
+	public void testAlias() throws IOException, BundleException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType alias = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".alias");
+		assertNotNull("0.7", alias);
+		IContentType derived = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".derived-from-alias");
+		assertNotNull("0.8", derived);
+		IContentType target = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
+		assertNull("0.9", target);
+		IContentType[] selected;
+		selected = contentTypeManager.findContentTypesFor("foo.missing-target");
+		assertEquals("1.1", 2, selected.length);
+		assertEquals("1.2", alias, selected[0]);
+		assertEquals("1.3", derived, selected[1]);
+		selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
+		assertEquals("1.4", 2, selected.length);
+		assertEquals("1.5", derived, selected[0]);
+		assertEquals("1.6", alias, selected[1]);
+
+		//test late addition of content type 
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
+		listener.register();
+		Bundle installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle02");
+		assertEquals("2.0", Bundle.INSTALLED, installed.getState());
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		try {
+			IRegistryChangeEvent event = listener.getEvent(10000);
+			assertNotNull("2.1", event);
+			assertNotNull("2.2", Platform.getBundle("org.eclipse.bundle02"));
+			alias = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".alias");
+			assertNull("2.3", alias);
+			derived = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".derived-from-alias");
+			assertNotNull("2.4", derived);
+			target = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
+			assertNotNull("2.5", target);
+			// checks associations
+			selected = contentTypeManager.findContentTypesFor("foo.missing-target");
+			assertEquals("3.1", 2, selected.length);
+			assertEquals("3.2", target, selected[0]);
+			assertEquals("3.3", derived, selected[1]);
+			selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
+			assertEquals("3.4", 2, selected.length);
+			assertEquals("3.5", derived, selected[0]);
+			assertEquals("3.6", target, selected[1]);
+		} finally {
+			//remove installed bundle
+			installed.uninstall();
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		}
+	}
+
 	public void testAssociationInheritance() throws CoreException {
 		IContentTypeManager manager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType text = manager.getContentType(Platform.PI_RUNTIME + ".text");
@@ -665,10 +718,51 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	}
 
 	public void testInvalidMarkup() {
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		assertEquals("1.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
-		assertEquals("2.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
-		assertNull("3.0", contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "invalid-missing-name"));
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
+		listener.register();
+		Bundle installed = null;
+		try {
+			installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle03");
+		} catch (BundleException e) {
+			fail("0.3", e);
+		} catch (IOException e) {
+			fail("0.4", e);
+		}
+		assertEquals("0.5", Bundle.INSTALLED, installed.getState());
+		try {
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+			IRegistryChangeEvent event = listener.getEvent(10000);
+			// ensure the bundle was properly installed
+			assertNotNull("0.5", event);
+			assertNotNull("0.6", Platform.getBundle("org.eclipse.bundle03"));
+			// ensure the invalid content types are not available
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+			assertEquals("1.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
+			assertEquals("2.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
+			assertNull("3.0", contentTypeManager.getContentType("org.eclipse.bundle03.invalid-missing-name"));
+			// this content type has good markup, but invalid describer class
+			IContentType invalidDescriber = contentTypeManager.getContentType("org.eclipse.bundle03.invalid-describer");
+			assertNotNull("4.0", invalidDescriber);
+			// name based matching should work fine
+			assertSame("4.1", invalidDescriber, contentTypeManager.findContentTypeFor("invalid.describer"));
+			try {
+				// the describer class is invalid, the content type will be disabled
+				assertNull("4.2", contentTypeManager.findContentTypeFor(getRandomContents(), "invalid.describer"));
+			} catch (IOException e) {
+				fail("4.3", e);
+			}
+			// now it does not show up anymore 
+			assertNull("4.4", contentTypeManager.findContentTypeFor("invalid.describer"));
+			assertNull("4.5", contentTypeManager.getContentType("org.eclipse.bundle03.invalid-describer"));
+		} finally {
+			//remove installed bundle
+			try {
+				installed.uninstall();
+			} catch (BundleException e) {
+				fail("10.0", e);
+			}
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		}
 	}
 
 	/**
@@ -806,59 +900,6 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			// check whether an orphan association was added to the dynamically added bundle
 			assertEquals("5.0", 1, contentTypeManager.findContentTypesFor("foo.orphan2").length);
 			assertEquals("5.1", missing, contentTypeManager.findContentTypesFor("foo.orphan2")[0]);
-		} finally {
-			//remove installed bundle
-			installed.uninstall();
-			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
-		}
-	}
-
-	/**
-	 * This test shows how we deal with aliases.
-	 */
-	public void testAlias() throws IOException, BundleException {
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType alias = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".alias");
-		assertNotNull("0.7", alias);
-		IContentType derived = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".derived-from-alias");
-		assertNotNull("0.8", derived);
-		IContentType target = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
-		assertNull("0.9", target);
-		IContentType[] selected;
-		selected = contentTypeManager.findContentTypesFor("foo.missing-target");
-		assertEquals("1.1", 2, selected.length);
-		assertEquals("1.2", alias, selected[0]);
-		assertEquals("1.3", derived, selected[1]);
-		selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
-		assertEquals("1.4", 2, selected.length);
-		assertEquals("1.5", derived, selected[0]);
-		assertEquals("1.6", alias, selected[1]);
-
-		//test late addition of content type 
-		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		listener.register();
-		Bundle installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle02");
-		assertEquals("2.0", Bundle.INSTALLED, installed.getState());
-		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
-		try {
-			IRegistryChangeEvent event = listener.getEvent(10000);
-			assertNotNull("2.1", event);
-			assertNotNull("2.2", Platform.getBundle("org.eclipse.bundle02"));
-			alias = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".alias");
-			assertNull("2.3", alias);
-			derived = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".derived-from-alias");
-			assertNotNull("2.4", derived);
-			target = contentTypeManager.getContentType("org.eclipse.bundle02.missing-target");
-			assertNotNull("2.5", target);
-			// checks associations
-			selected = contentTypeManager.findContentTypesFor("foo.missing-target");
-			assertEquals("3.1", 2, selected.length);
-			assertEquals("3.2", target, selected[0]);
-			assertEquals("3.3", derived, selected[1]);
-			selected = contentTypeManager.findContentTypesFor(getRandomContents(), "foo.missing-target");
-			assertEquals("3.4", 2, selected.length);
-			assertEquals("3.5", derived, selected[0]);
-			assertEquals("3.6", target, selected[1]);
 		} finally {
 			//remove installed bundle
 			installed.uninstall();
