@@ -23,6 +23,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -34,8 +35,6 @@ import org.eclipse.ui.internal.registry.RegistryReader;
 public class WorkbenchEncoding {
 
 	private static class EncodingsRegistryReader extends RegistryReader {
-
-		private static final String ATT_NAME = "name"; //$NON-NLS-1$
 		
 		private List encodings;
 		
@@ -54,7 +53,7 @@ public class WorkbenchEncoding {
 		 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 		 */
 		protected boolean readElement(IConfigurationElement element) {
-			String name = element.getAttribute(ATT_NAME);
+			String name = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 			if (name != null)
 				encodings.add(name);
 			return true;

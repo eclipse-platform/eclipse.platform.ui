@@ -88,8 +88,8 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.components.services.IWorkbenchPartFactory;
 import org.eclipse.ui.internal.part.services.WorkbenchPartFactory;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
-import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
@@ -245,7 +245,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 // in order to see the changes.  For any other case, the
                 // perspective extension registry will be rebuilt anyway so
                 // just ignore it.
-                String id = elements[i].getAttribute(PerspectiveExtensionReader.ATT_TARGET_ID);
+                String id = elements[i].getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
                 if (id == null)
                     continue;
                 if (id.equals(currentId) && !persp.hasCustomDefinition()) {

@@ -22,14 +22,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class ActionSetPartAssociationsReader extends RegistryReader {
     private ActionSetRegistry registry;
 
-    private static final String TAG_EXTENSION = "actionSetPartAssociation";//$NON-NLS-1$
-
-    private static final String TAG_PART = "part";//$NON-NLS-1$
-
-    private static final String ATT_ID = "id";//$NON-NLS-1$
-
-    private static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
-
     /**
      * Creates a new reader.
      */
@@ -37,7 +29,11 @@ public class ActionSetPartAssociationsReader extends RegistryReader {
         super();
     }
 
-    //for dynamic UI
+    /**
+     * Creates a new reader.
+     * 
+     * @param registry the registry to populate
+     */
     public ActionSetPartAssociationsReader(ActionSetRegistry registry) {
         this.registry = registry;
     }
@@ -46,13 +42,13 @@ public class ActionSetPartAssociationsReader extends RegistryReader {
      * Process an extension.
      */
     private boolean processExtension(IConfigurationElement element) {
-        String actionSetId = element.getAttribute(ATT_TARGET_ID);
+        String actionSetId = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
         IConfigurationElement[] children = element.getChildren();
         for (int i = 0; i < children.length; i++) {
             IConfigurationElement child = children[i];
             String type = child.getName();
-            if (type.equals(TAG_PART)) {
-                String partId = child.getAttribute(ATT_ID);
+            if (type.equals(IWorkbenchRegistryConstants.TAG_PART)) {
+                String partId = child.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
                 if (partId != null)
                     registry.addAssociation(actionSetId, partId);
             } else {
@@ -70,7 +66,7 @@ public class ActionSetPartAssociationsReader extends RegistryReader {
     //for dynamic UI - change access from protected to public
     public boolean readElement(IConfigurationElement element) {
         String type = element.getName();
-        if (type.equals(TAG_EXTENSION)) {
+        if (type.equals(IWorkbenchRegistryConstants.TAG_ACTION_SET_ASSOCIATION)) {
             return processExtension(element);
         }
         return false;
@@ -78,6 +74,9 @@ public class ActionSetPartAssociationsReader extends RegistryReader {
 
     /**
      * Read the association extensions within a registry.
+     * 
+     * @param in the extension registry to read
+     * @param out the registry to populate
      */
     public void readRegistry(IExtensionRegistry in, ActionSetRegistry out) {
         registry = out;

@@ -29,10 +29,6 @@ import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
  */
 public class PreferencePageRegistryReader extends CategorizedPageRegistryReader {
 
-	private static final String ATT_NAME = "name"; //$NON-NLS-1$
-
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
-
 	private static final String TAG_PAGE = "page"; //$NON-NLS-1$
 
 	private List nodes;
@@ -177,18 +173,18 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 * @return WorkbenchPreferenceNode
 	 */
 	public static WorkbenchPreferenceNode createNode(IConfigurationElement element) {
-		boolean nameMissing = element.getAttribute(ATT_NAME) == null;
-		String id = element.getAttribute(ATT_ID);		
-		boolean classMissing = getClassValue(element, ATT_CLASS) == null;
+		boolean nameMissing = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null;
+		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);		
+		boolean classMissing = getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS) == null;
 
 		if (nameMissing) {
-			logMissingAttribute(element, ATT_NAME);
+			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
 		}
 		if (id == null) {
-			logMissingAttribute(element, ATT_ID);
+			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
 		}
 		if (classMissing) {
-			logMissingAttribute(element, ATT_CLASS);
+			logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
 		}
 		
 		if (nameMissing || id == null || classMissing) {

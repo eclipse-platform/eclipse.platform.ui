@@ -26,16 +26,6 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  */
 public class EditorRegistryReader extends RegistryReader {
 
-    /**
-     * Comment for <code>TAG_EDITOR</code>
-     */
-    public static final String TAG_EDITOR = "editor";//$NON-NLS-1$
-
-    /**
-     * Comment for <code>P_TRUE</code>
-     */
-    public static final String P_TRUE = "true";//$NON-NLS-1$
-
     private EditorRegistry editorRegistry;
 
     /**
@@ -59,7 +49,7 @@ public class EditorRegistryReader extends RegistryReader {
      * processes one configuration element.
      */
     protected boolean readElement(IConfigurationElement element) {
-        if (!element.getName().equals(TAG_EDITOR))
+        if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_EDITOR))
             return false;
 
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);

@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.actions.SimpleWildcardTester;
 import org.eclipse.ui.internal.ActionExpression;
-import org.eclipse.ui.internal.PluginActionBuilder;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.osgi.framework.Bundle;
 
@@ -48,9 +48,6 @@ import org.osgi.framework.Bundle;
  * implementing ITextSelection
  */
 public final class SelectionEnabler {
-    private static final String ATT_NAME = "name";//$NON-NLS-1$
-
-    private static final String ATT_CLASS = "class";//$NON-NLS-1$
 
     public static final int UNKNOWN = 0;
 
@@ -206,10 +203,9 @@ public final class SelectionEnabler {
                 Object r = m.invoke(selection, new Object[0]);
                 if (r instanceof Integer) {
                     return isEnabledFor(selection, ((Integer) r).intValue());
-                } else {
-                    // should not happen - but enable if it does
-                    return true;
                 }
+                // should not happen - but enable if it does
+                return true;
             } catch (NoSuchMethodException e) {
                 // should not happen - fall through if it does
             } catch (IllegalAccessException e) {
@@ -333,7 +329,7 @@ public final class SelectionEnabler {
     private void parseClasses(IConfigurationElement config) {
         // Get enables for.
         String enablesFor = config
-                .getAttribute(PluginActionBuilder.ATT_ENABLES_FOR);
+                .getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR);
         if (enablesFor == null)
             enablesFor = "*"; //$NON-NLS-1$
         if (enablesFor.equals("*")) //$NON-NLS-1$
@@ -357,20 +353,20 @@ public final class SelectionEnabler {
 
         // Get enablement block.					
         IConfigurationElement[] children = config
-                .getChildren(PluginActionBuilder.TAG_ENABLEMENT);
+                .getChildren(IWorkbenchRegistryConstants.TAG_ENABLEMENT);
         if (children.length > 0) {
             enablementExpression = new ActionExpression(children[0]);
             return;
         }
 
         // Get selection block.
-        children = config.getChildren(PluginActionBuilder.TAG_SELECTION);
+        children = config.getChildren(IWorkbenchRegistryConstants.TAG_SELECTION);
         if (children.length > 0) {
             classes = new ArrayList();
             for (int i = 0; i < children.length; i++) {
                 IConfigurationElement sel = children[i];
-                String cname = sel.getAttribute(ATT_CLASS);
-                String name = sel.getAttribute(ATT_NAME);
+                String cname = sel.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+                String name = sel.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
                 SelectionClass sclass = new SelectionClass();
                 sclass.className = cname;
                 sclass.nameFilter = name;

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.themes.IThemePreview;
 
 /**
@@ -21,8 +22,6 @@ import org.eclipse.ui.themes.IThemePreview;
  */
 public class ThemeElementCategory implements IPluginContribution,
         IThemeElementDefinition {
-
-    public static ThemeElementCategory[] categories;
 
     private String description;
 
@@ -40,6 +39,7 @@ public class ThemeElementCategory implements IPluginContribution,
      * 
      * @param label
      * @param id
+     * @param parentId 
      * @param description
      * @param pluginId
      * @param element
@@ -61,11 +61,11 @@ public class ThemeElementCategory implements IPluginContribution,
      * @throws CoreException thrown if there is a problem instantiating the preview
      */
     public IThemePreview createPreview() throws CoreException {
-        String classString = element.getAttribute("class"); //$NON-NLS-1$
+        String classString = element.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
         if (classString == null || "".equals(classString)) //$NON-NLS-1$
             return null;
         return (IThemePreview) WorkbenchPlugin.createExtension(element,
-                ThemeRegistryReader.ATT_CLASS);
+                IWorkbenchRegistryConstants.ATT_CLASS);
     }
 
     /**

@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -33,14 +34,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * action registry.
  */
 public class ObjectActionContributor extends PluginActionBuilder implements
-        IObjectActionContributor, IAdaptable {
-    private static final String ATT_NAME_FILTER = "nameFilter"; //$NON-NLS-1$
-
-    private static final String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
+        IObjectActionContributor, IAdaptable {    
 
     private static final String P_TRUE = "true"; //$NON-NLS-1$
-
-    private static final String TAG_ENABLEMENT = "enablement"; //$NON-NLS-1$
 
     private IConfigurationElement config;
 
@@ -52,12 +48,14 @@ public class ObjectActionContributor extends PluginActionBuilder implements
 
     /**
      * The constructor.
+     * 
+     * @param config the element
      */
     public ObjectActionContributor(IConfigurationElement config) {
         this.config = config;
         this.adaptable = P_TRUE.equalsIgnoreCase(config
-                .getAttribute(ATT_ADAPTABLE));
-        this.objectClass = config.getAttribute(ObjectActionContributorReader.ATT_OBJECTCLASS);
+                .getAttribute(IWorkbenchRegistryConstants.ATT_ADAPTABLE));
+        this.objectClass = config.getAttribute(IWorkbenchRegistryConstants.ATT_OBJECTCLASS);
     }
 
     /* (non-Javadoc)
@@ -67,6 +65,11 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         return adaptable;
     }
     
+    /**
+     * Return the object class for this contributor.
+     * 
+     * @return the object class
+     */
 	public String getObjectClass() {
 		return objectClass;
 	}
@@ -222,19 +225,19 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         String tag = element.getName();
 
         // Found visibility sub-element
-        if (tag.equals(PluginActionBuilder.TAG_VISIBILITY)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_VISIBILITY)) {
             ((ObjectContribution) currentContribution)
                     .setVisibilityTest(element);
             return true;
         }
 
         // Found filter sub-element				
-        if (tag.equals(PluginActionBuilder.TAG_FILTER)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_FILTER)) {
             ((ObjectContribution) currentContribution).addFilterTest(element);
             return true;
         }
 
-        if (tag.equals(TAG_ENABLEMENT)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_ENABLEMENT)) {
             ((ObjectContribution) currentContribution)
                     .setEnablementTest(element);
             return true;
@@ -247,7 +250,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
      * Returns whether the current selection matches the contribution name filter.
      */
     private boolean testName(Object object) {
-        String nameFilter = config.getAttribute(ATT_NAME_FILTER);
+        String nameFilter = config.getAttribute(IWorkbenchRegistryConstants.ATT_NAME_FILTER);
         if (nameFilter == null)
             return true;
         String objectName = null;
@@ -275,16 +278,31 @@ public class ObjectActionContributor extends PluginActionBuilder implements
 
         private Expression enablement;
 
+        /**
+         * Add a filter test.
+         * 
+         * @param element the element
+         */
         public void addFilterTest(IConfigurationElement element) {
             if (filterTest == null)
                 filterTest = new ObjectFilterTest();
             filterTest.addFilterElement(element);
         }
 
+        /**
+         * Set the visibility test.
+         * 
+         * @param element the element
+         */
         public void setVisibilityTest(IConfigurationElement element) {
             visibilityTest = new ActionExpression(element);
         }
 
+        /**
+         * Set the enablement test.
+         * 
+         * @param element the element
+         */
         public void setEnablementTest(IConfigurationElement element) {
             try {
                 enablement = ExpressionConverter.getDefault().perform(element);
@@ -296,6 +314,9 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         /**
          * Returns true if name filter is not specified for the contribution
          * or the current selection matches the filter.
+         * 
+         * @param object the object to test
+         * @return whether we're applicable
          */
         public boolean isApplicableTo(Object object) {
             boolean result = true;
@@ -335,7 +356,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
     	IConfigurationElement[] children = config.getChildren();
     	for (int i = 0; i < children.length; i++) {
 			IConfigurationElement element = children[i];
-			String label = element.getAttribute(ATT_LABEL);
+			String label = element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 			if(label != null) {
 				buffer.append(label);
 				buffer.append('\n'); 

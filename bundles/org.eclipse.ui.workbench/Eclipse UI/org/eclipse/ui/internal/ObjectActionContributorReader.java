@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -22,19 +23,15 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  */
 public class ObjectActionContributorReader extends RegistryReader {
 
-    public final static String TAG_OBJECT_CONTRIBUTION = "objectContribution";//$NON-NLS-1$
-
-    public final static String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
-
     private ObjectActionContributorManager manager;
 
     /**
      * Creates popup menu contributor from this element.
      */
     protected void processObjectContribution(IConfigurationElement element) {
-        String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
+        String objectClassName = element.getAttribute(IWorkbenchRegistryConstants.ATT_OBJECTCLASS);
         if (objectClassName == null) {
-            logMissingAttribute(element, ATT_OBJECTCLASS);
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_OBJECTCLASS);
             return;
         }
 
@@ -47,11 +44,11 @@ public class ObjectActionContributorReader extends RegistryReader {
      */
     protected boolean readElement(IConfigurationElement element) {
         String tagName = element.getName();
-        if (tagName.equals(TAG_OBJECT_CONTRIBUTION)) {
+        if (tagName.equals(IWorkbenchRegistryConstants.TAG_OBJECT_CONTRIBUTION)) {
             processObjectContribution(element);
             return true;
         }
-        if (tagName.equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE)) {
+        if (tagName.equals(IWorkbenchRegistryConstants.TAG_CONTRIBUTION_TYPE)) {
             return true;
         }
 
@@ -61,6 +58,8 @@ public class ObjectActionContributorReader extends RegistryReader {
     /**
      * Reads the registry and registers popup menu contributors
      * found there.
+     * 
+     * @param mng the manager to read into
      */
     public void readPopupContributors(ObjectActionContributorManager mng) {
         setManager(mng);
@@ -69,7 +68,11 @@ public class ObjectActionContributorReader extends RegistryReader {
                 IWorkbenchConstants.PL_POPUP_MENU);
     }
 
-    // for dynamic UI
+    /**
+     * Set the manager to read into. 
+     * 
+     * @param mng the manager
+     */
     public void setManager(ObjectActionContributorManager mng) {
         manager = mng;
     }

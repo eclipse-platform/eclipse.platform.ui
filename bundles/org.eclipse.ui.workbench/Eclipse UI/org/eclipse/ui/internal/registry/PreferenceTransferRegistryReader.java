@@ -8,12 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Jan 6, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+
 package org.eclipse.ui.internal.registry;
 
 import java.text.Collator;
@@ -42,33 +37,6 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
     private String pluginPoint;
 
     /**
-     * Comment for <code>TAG_TRANSFER</code>
-     */
-    public final static String TAG_TRANSFER = "transfer";//$NON-NLS-1$
-
-    /**
-     * <code>ATT_NAME</code> the name of the transfer
-     */
-    public final static String ATT_NAME = "name";//$NON-NLS-1$
-
-    /**
-     * <code>ATT_ICON</code> an optional icon used when displaying the transfer
-     */
-    public final static String ATT_ICON = "icon";//$NON-NLS-1$
-
-    /**
-     * <code>ATT_ID</code> the id for the transfer
-     */
-    public final static String ATT_ID = "id";//$NON-NLS-1$
-
-    private static final String TAG_MAPPING = "mapping"; //$NON-NLS-1$
-    private static final String TAG_ENTRY = "entry"; //$NON-NLS-1$
-    
-    private static final String ATT_SCOPE = "scope"; //$NON-NLS-1$
-    private static final String ATT_NODE = "node"; //$NON-NLS-1$
-    private static final String ATT_KEYS = "keys"; //$NON-NLS-1$
- 
-    /**
      *  Create an instance of this class.
      *
      *  @param pluginPointId java.lang.String
@@ -80,6 +48,8 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
     /**
      * Adds new wizard to the provided collection. Override to
      * provide more logic.
+     * 
+     * TODO: remove the config parameter?
      */
     protected void addNewElementToResult(PreferenceTransferElement element,
             IConfigurationElement config) {
@@ -97,14 +67,14 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
     protected PreferenceTransferElement createPreferenceTransferElement(
             IConfigurationElement element) {
         // PreferenceTransfers must have a name and class attribute
-        if (element.getAttribute(ATT_NAME) == null) {
-            logMissingAttribute(element, ATT_NAME);
+        if (element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null) {
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
             return null;
         }
         
         // must specifiy a mapping
-        if (element.getChildren(TAG_MAPPING) == null) {
-            logMissingElement(element, TAG_MAPPING);
+        if (element.getChildren(IWorkbenchRegistryConstants.TAG_MAPPING) == null) {
+            logMissingElement(element, IWorkbenchRegistryConstants.TAG_MAPPING);
             return null;
         }
         
@@ -135,7 +105,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
      * Implement this method to read element attributes.
      */
     public boolean readElement(IConfigurationElement element) {
-        if (!element.getName().equals(TAG_TRANSFER))
+        if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_TRANSFER))
             return false;
         PreferenceTransferElement transfer = createPreferenceTransferElement(element);
         if (transfer != null)
@@ -159,9 +129,9 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
      * @return the child configuration elements
      */
     public static IConfigurationElement[] getMappings(IConfigurationElement configElement) {
-        IConfigurationElement[] children = configElement.getChildren(TAG_MAPPING);
+        IConfigurationElement[] children = configElement.getChildren(IWorkbenchRegistryConstants.TAG_MAPPING);
         if (children.length < 1) {
-            logMissingElement(configElement, TAG_MAPPING);
+            logMissingElement(configElement, IWorkbenchRegistryConstants.TAG_MAPPING);
             return null;
         } 
         return children;
@@ -172,7 +142,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
      * @return the scope attribute for this element
      */
     public static String getScope(IConfigurationElement element) {
-        return element.getAttribute(ATT_SCOPE);
+        return element.getAttribute(IWorkbenchRegistryConstants.ATT_SCOPE);
     }
 
     /**
@@ -180,13 +150,13 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
      * @return the maps mapping nodes to keys for this element
      */
     public static Map getEntry(IConfigurationElement element) {
-        IConfigurationElement[] entries = element.getChildren(TAG_ENTRY);
+        IConfigurationElement[] entries = element.getChildren(IWorkbenchRegistryConstants.TAG_ENTRY);
         if (entries.length == 0)
             return null;
         Map map = new HashMap(entries.length);
         for (int i = 0; i < entries.length; i++) {
             IConfigurationElement entry = entries[i];
-            map.put(entry.getAttribute(ATT_NODE), convertToStringArray(entry.getAttribute(ATT_KEYS)));            
+            map.put(entry.getAttribute(IWorkbenchRegistryConstants.ATT_NODE), convertToStringArray(entry.getAttribute(IWorkbenchRegistryConstants.ATT_KEYS)));            
         }
         return map;
     }

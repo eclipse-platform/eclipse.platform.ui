@@ -21,18 +21,20 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read view extensions from the registry.
  */
 public class ActionSetRegistryReader extends RegistryReader {
-    private static final String TAG_SET = "actionSet";//$NON-NLS-1$
-
     private ActionSetRegistry registry;
 
     /**
-     * RegistryViewReader constructor comment.
+     * Create a new instance of the reader.
      */
     public ActionSetRegistryReader() {
         super();
     }
 
-    //for dynamic UI
+    /**
+     * Create a new instance of the reader. 
+     * 
+     * @param registry the registry to read into
+     */
     public ActionSetRegistryReader(ActionSetRegistry registry) {
         this.registry = registry;
     }
@@ -42,7 +44,7 @@ public class ActionSetRegistryReader extends RegistryReader {
      */
     //for dynamic UI: change access from protected to public
     public boolean readElement(IConfigurationElement element) {
-        if (element.getName().equals(TAG_SET)) {
+        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
             try {
                 ActionSetDescriptor desc = new ActionSetDescriptor(element);
                 registry.addActionSet(desc);
@@ -53,13 +55,15 @@ public class ActionSetRegistryReader extends RegistryReader {
                                 "Unable to create action set descriptor.", e.getStatus());//$NON-NLS-1$
             }
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     /**
      * Read the view extensions within a registry.
+     * 
+     * @param in the registry to read from
+     * @param out the registry to read into
      */
     public void readRegistry(IExtensionRegistry in, ActionSetRegistry out) {
         registry = out;

@@ -26,8 +26,8 @@ import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
 import org.eclipse.ui.model.WorkbenchAdapter;
@@ -70,7 +70,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public WorkbenchWizardElement(IConfigurationElement configurationElement) {
         this.configurationElement = configurationElement;
-        id = configurationElement.getAttribute(WizardsRegistryReader.ATT_ID);
+        id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
     /**
@@ -116,7 +116,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public Object createExecutableExtension() throws CoreException {
         return WorkbenchPlugin.createExtension(configurationElement,
-                WizardsRegistryReader.ATT_CLASS);
+                IWorkbenchRegistryConstants.ATT_CLASS);
     }
 
     /**
@@ -159,7 +159,8 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public ImageDescriptor getImageDescriptor() {
     	if (imageDescriptor == null) {
-    		String iconName = configurationElement.getAttribute(WizardsRegistryReader.ATT_ICON);
+    		String iconName = configurationElement
+                    .getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 	        if (iconName == null) 
 	        	return null;
             imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
@@ -179,7 +180,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * Returns the name of this wizard element.
      */
     public String getLabel(Object element) {
-        return configurationElement.getAttribute(WizardsRegistryReader.ATT_NAME);
+        return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
     }
 
     /**
@@ -252,7 +253,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public ImageDescriptor getDescriptionImage() {
     	if (descriptionImage == null) {
-    		String descImage = configurationElement.getAttribute(WizardsRegistryReader.ATT_DESCRIPTION_IMAGE);
+    		String descImage = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_DESCRIPTION_IMAGE);
     		if (descImage == null)
     			return null;
             descriptionImage = AbstractUIPlugin.imageDescriptorFromPlugin(
@@ -265,7 +266,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      * @see org.eclipse.ui.wizards.INewWizardDescriptor#getHelpHref()
      */
     public String getHelpHref() {
-        return configurationElement.getAttribute(WizardsRegistryReader.ATT_HELP_HREF);
+        return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_HREF);
     }
 	
 	/* (non-Javadoc)
@@ -311,7 +312,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	 */
 	public String [] getTags() {
  
-        String flag = configurationElement.getAttribute(WizardsRegistryReader.ATT_PROJECT);
+        String flag = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_PROJECT);
         if (Boolean.valueOf(flag).booleanValue()) {
         	return PROJECT_TAGS;
         }

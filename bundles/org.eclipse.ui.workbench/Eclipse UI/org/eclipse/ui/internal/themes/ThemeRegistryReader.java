@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.themes.IColorFactory;
 
@@ -32,57 +33,12 @@ import org.eclipse.ui.themes.IColorFactory;
  * @since 3.0
  */
 public class ThemeRegistryReader extends RegistryReader {
-    public static final String ATT_CATEGORYID = "categoryId"; //$NON-NLS-1$
-
-    public static final String ATT_PRESENTATIONID = "presentationId"; //$NON-NLS-1$
-
-    public static final String ATT_CLASS = "class"; //$NON-NLS-1$
-
-    public static final String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
-
-    public static final String ATT_ID = "id"; //$NON-NLS-1$
-
-    public static final String ATT_PARENT_ID = "parentId"; //$NON-NLS-1$
-
-    public static final String ATT_IS_EDITABLE = "isEditable"; //$NON-NLS-1$
-
-    public static final String ATT_LABEL = "label"; //$NON-NLS-1$
-
-    public static final String ATT_VALUE = "value"; //$NON-NLS-1$
-
-    public static final String ATT_NAME = "name"; //$NON-NLS-1$
-
-    public static final String ATT_OS = "os"; //$NON-NLS-1$
-
-    public static final String ATT_WS = "ws"; //$NON-NLS-1$
-
-    public static final String ATT_COLORFACTORY = "colorFactory"; //$NON-NLS-1$
 
     /**
      * The translation bundle in which to look up internationalized text.
      */
     private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(ThemeRegistryReader.class.getName());
-
-    public static final String TAG_CATEGORYPRESENTATIONBINDING = "categoryPresentationBinding"; //$NON-NLS-1$
-
-    public static final String TAG_CATEGORYDEFINITION = "themeElementCategory"; //$NON-NLS-1$
-
-    public static final String TAG_COLORDEFINITION = "colorDefinition"; //$NON-NLS-1$
-
-    public static final String TAG_COLOROVERRIDE = "colorOverride"; //$NON-NLS-1$    
-
-    public static final String TAG_COLORVALUE = "colorValue"; //$NON-NLS-1$
-
-    public static final String TAG_FONTDEFINITION = "fontDefinition"; //$NON-NLS-1$
-
-    public static final String TAG_FONTOVERRIDE = "fontOverride"; //$NON-NLS-1$
-
-    public static final String TAG_FONTVALUE = "fontValue"; //$NON-NLS-1$
-
-    public static final String TAG_DATA = "data"; //$NON-NLS-1$
-
-    public static final String TAG_THEME = "theme";//$NON-NLS-1$
 
     private Collection categoryDefinitions = new HashSet();
 
@@ -146,15 +102,15 @@ public class ThemeRegistryReader extends RegistryReader {
      * @return the new category
      */
     private ThemeElementCategory readCategory(IConfigurationElement element) {
-        String name = element.getAttribute(ATT_LABEL);
+        String name = element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 
-        String id = element.getAttribute(ATT_ID);
-        String parentId = element.getAttribute(ATT_PARENT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        String parentId = element.getAttribute(IWorkbenchRegistryConstants.ATT_PARENT_ID);
 
         String description = null;
 
         IConfigurationElement[] descriptions = element
-                .getChildren(TAG_DESCRIPTION);
+                .getChildren(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 
         if (descriptions.length > 0)
             description = descriptions[0].getValue();
@@ -170,14 +126,14 @@ public class ThemeRegistryReader extends RegistryReader {
      * @return the new color
      */
     private ColorDefinition readColor(IConfigurationElement element) {
-        String name = element.getAttribute(ATT_LABEL);
+        String name = element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 
-        String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
+        String defaultMapping = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULTS_TO);
 
         String value = getPlatformSpecificColorValue(element
-                .getChildren(TAG_COLORVALUE));
+                .getChildren(IWorkbenchRegistryConstants.TAG_COLORVALUE));
 
         if (value == null) {
             value = getColorValue(element);
@@ -189,17 +145,17 @@ public class ThemeRegistryReader extends RegistryReader {
             return null;
         }
 
-        String categoryId = element.getAttribute(ATT_CATEGORYID);
+        String categoryId = element.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY_ID);
 
         String description = null;
         boolean isEditable = true;
-        String isEditableString = element.getAttribute(ATT_IS_EDITABLE);
+        String isEditableString = element.getAttribute(IWorkbenchRegistryConstants.ATT_IS_EDITABLE);
         if (isEditableString != null) {
             isEditable = Boolean.valueOf(isEditableString).booleanValue();
         }
 
         IConfigurationElement[] descriptions = element
-                .getChildren(TAG_DESCRIPTION);
+                .getChildren(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 
         if (descriptions.length > 0)
             description = descriptions[0].getValue();
@@ -220,7 +176,7 @@ public class ThemeRegistryReader extends RegistryReader {
         if (element == null)
             return null;
 
-        String value = element.getAttribute(ATT_VALUE);
+        String value = element.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
         if (value == null) {
             value = checkColorFactory(element);
         }
@@ -255,16 +211,15 @@ public class ThemeRegistryReader extends RegistryReader {
 
         for (int i = 0; i < elements.length; i++) {
             IConfigurationElement element = elements[i];
-            String elementOs = element.getAttribute(ATT_OS);
-            String elementWs = element.getAttribute(ATT_WS);
+            String elementOs = element.getAttribute(IWorkbenchRegistryConstants.ATT_OS);
+            String elementWs = element.getAttribute(IWorkbenchRegistryConstants.ATT_WS);
 
             if (osname.equalsIgnoreCase(elementOs)) {
                 if (wsname.equalsIgnoreCase(elementWs)) {
                     // best possible match.  Return
                     return element;
-                } else {
-                    match = element;
                 }
+                match = element;
             } else if (wsname.equalsIgnoreCase(elementWs)) {
                 match = element;
             }
@@ -278,7 +233,7 @@ public class ThemeRegistryReader extends RegistryReader {
      */
     public boolean readElement(IConfigurationElement element) {
         String elementName = element.getName();
-        if (themeDescriptor == null && elementName.equals(TAG_COLORDEFINITION)) {
+        if (themeDescriptor == null && elementName.equals(IWorkbenchRegistryConstants.TAG_COLORDEFINITION)) {
             ColorDefinition definition = readColor(element);
             if (definition != null) {
                 if (!colorDefinitions.contains(definition)) {
@@ -288,14 +243,14 @@ public class ThemeRegistryReader extends RegistryReader {
             }
             return true;
         } else if (themeDescriptor != null
-                && elementName.equals(TAG_COLOROVERRIDE)) {
+                && elementName.equals(IWorkbenchRegistryConstants.TAG_COLOROVERRIDE)) {
             ColorDefinition definition = readColor(element);
             if (definition != null) {                
                 themeDescriptor.add(definition);
             }
             return true;
         } else if (themeDescriptor == null
-                && elementName.equals(TAG_FONTDEFINITION)) {
+                && elementName.equals(IWorkbenchRegistryConstants.TAG_FONTDEFINITION)) {
             FontDefinition definition = readFont(element);
             if (definition != null) {
                 if (!fontDefinitions.contains(definition)) {
@@ -305,14 +260,14 @@ public class ThemeRegistryReader extends RegistryReader {
             }
             return true;
         } else if (themeDescriptor != null
-                && elementName.equals(TAG_FONTOVERRIDE)) {
+                && elementName.equals(IWorkbenchRegistryConstants.TAG_FONTOVERRIDE)) {
             FontDefinition definition = readFont(element);
             if (definition != null) {
                 themeDescriptor.add(definition);
             }
             return true;
         } else if (themeDescriptor == null
-                && elementName.equals(TAG_CATEGORYDEFINITION)) {
+                && elementName.equals(IWorkbenchRegistryConstants.TAG_CATEGORYDEFINITION)) {
             ThemeElementCategory definition = readCategory(element);
             if (definition != null) {
                 if (!categoryDefinitions.contains(definition)) {
@@ -321,7 +276,7 @@ public class ThemeRegistryReader extends RegistryReader {
                 }
             }
             return true;
-        } else if (element.getName().equals(TAG_THEME)) {
+        } else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_THEME)) {
             if (themeDescriptor != null)
                 logError(element, RESOURCE_BUNDLE
                         .getString("Themes.badNesting")); //$NON-NLS-1$
@@ -334,12 +289,12 @@ public class ThemeRegistryReader extends RegistryReader {
                 return true;
             }
         } else if (themeDescriptor != null
-                && elementName.equals(TAG_DESCRIPTION)) {
+                && elementName.equals(IWorkbenchRegistryConstants.TAG_DESCRIPTION)) {
             themeDescriptor.setDescription(element.getValue());
             return true;
-        } else if (elementName.equals(TAG_DATA)) {
-            String name = element.getAttribute(ATT_NAME);
-            String value = element.getAttribute(ATT_VALUE);
+        } else if (elementName.equals(IWorkbenchRegistryConstants.TAG_DATA)) {
+            String name = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+            String value = element.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
             if (name == null || value == null) {
                 logError(element, RESOURCE_BUNDLE.getString("Data.badData")); //$NON-NLS-1$			    
             } else {
@@ -352,9 +307,9 @@ public class ThemeRegistryReader extends RegistryReader {
                 }
             }
             return true;
-        } else if (elementName.equals(TAG_CATEGORYPRESENTATIONBINDING)) {
-            String categoryId = element.getAttribute(ATT_CATEGORYID);
-            String presentationId = element.getAttribute(ATT_PRESENTATIONID);
+        } else if (elementName.equals(IWorkbenchRegistryConstants.TAG_CATEGORYPRESENTATIONBINDING)) {
+            String categoryId = element.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY_ID);
+            String presentationId = element.getAttribute(IWorkbenchRegistryConstants.ATT_PRESENTATIONID);
             themeRegistry.addCategoryPresentationBinding(categoryId,
                     presentationId);
             return true;
@@ -370,16 +325,16 @@ public class ThemeRegistryReader extends RegistryReader {
      * @return the new font
      */
     private FontDefinition readFont(IConfigurationElement element) {
-        String name = element.getAttribute(ATT_LABEL);
+        String name = element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 
-        String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
+        String defaultMapping = element.getAttribute(IWorkbenchRegistryConstants.ATT_DEFAULTS_TO);
 
         String value = getPlatformSpecificFontValue(element
-                .getChildren(TAG_FONTVALUE));
+                .getChildren(IWorkbenchRegistryConstants.TAG_FONTVALUE));
         if (value == null) {
-            value = element.getAttribute(ATT_VALUE);
+            value = element.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
         }
 
         if (value != null && defaultMapping != null) {
@@ -387,10 +342,10 @@ public class ThemeRegistryReader extends RegistryReader {
             return null;
         }
 
-        String categoryId = element.getAttribute(ATT_CATEGORYID);
+        String categoryId = element.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY_ID);
 
         boolean isEditable = true;
-        String isEditableString = element.getAttribute(ATT_IS_EDITABLE);
+        String isEditableString = element.getAttribute(IWorkbenchRegistryConstants.ATT_IS_EDITABLE);
         if (isEditableString != null) {
             isEditable = Boolean.valueOf(isEditableString).booleanValue();
         }
@@ -398,7 +353,7 @@ public class ThemeRegistryReader extends RegistryReader {
         String description = null;
 
         IConfigurationElement[] descriptions = element
-                .getChildren(TAG_DESCRIPTION);
+                .getChildren(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 
         if (descriptions.length > 0)
             description = descriptions[0].getValue();
@@ -428,7 +383,7 @@ public class ThemeRegistryReader extends RegistryReader {
         if (element == null)
             return null;
 
-        return element.getAttribute(ATT_VALUE);
+        return element.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
     }
 
     /**
@@ -439,11 +394,11 @@ public class ThemeRegistryReader extends RegistryReader {
      */
     private String checkColorFactory(IConfigurationElement element) {
         String value = null;
-        if (element.getAttribute(ThemeRegistryReader.ATT_COLORFACTORY) != null
-                || element.getChildren(ATT_COLORFACTORY).length > 0) {
+        if (element.getAttribute(IWorkbenchRegistryConstants.ATT_COLORFACTORY) != null
+                || element.getChildren(IWorkbenchRegistryConstants.ATT_COLORFACTORY).length > 0) {
             try {
                 IColorFactory factory = (IColorFactory) element
-                        .createExecutableExtension(ATT_COLORFACTORY);
+                        .createExecutableExtension(IWorkbenchRegistryConstants.ATT_COLORFACTORY);
                 value = StringConverter.asString(factory.createColor());
             } catch (Exception e) {
                 WorkbenchPlugin.log(RESOURCE_BUNDLE

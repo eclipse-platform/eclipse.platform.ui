@@ -24,6 +24,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -31,34 +32,6 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  * from plugins into workbench parts (both editors and views).
  */
 public abstract class PluginActionBuilder extends RegistryReader {
-    public static final String TAG_MENU = "menu"; //$NON-NLS-1$
-
-    public static final String TAG_ACTION = "action"; //$NON-NLS-1$
-
-    public static final String TAG_SEPARATOR = "separator"; //$NON-NLS-1$
-
-    public static final String TAG_GROUP_MARKER = "groupMarker"; //$NON-NLS-1$
-
-    public static final String TAG_FILTER = "filter"; //$NON-NLS-1$
-
-    public static final String TAG_VISIBILITY = "visibility"; //$NON-NLS-1$
-
-    public static final String TAG_ENABLEMENT = "enablement"; //$NON-NLS-1$
-
-    public static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
-
-    public static final String ATT_TARGET_ID = "targetID"; //$NON-NLS-1$
-
-    public static final String ATT_ID = "id"; //$NON-NLS-1$
-
-    public static final String ATT_LABEL = "label"; //$NON-NLS-1$
-
-    public static final String ATT_ENABLES_FOR = "enablesFor"; //$NON-NLS-1$
-
-    public static final String ATT_NAME = "name"; //$NON-NLS-1$
-
-    public static final String ATT_PATH = "path"; //$NON-NLS-1$
-
     protected String targetID;
 
     protected String targetContributionTag;
@@ -76,6 +49,10 @@ public abstract class PluginActionBuilder extends RegistryReader {
     /**
      * Contributes submenus and/or actions into the provided menu and tool bar
      * managers.
+     * 
+     * @param menu the menu to contribute to
+     * @param toolbar the toolbar to contribute to 
+     * @param appendIfMissing append containers if missing
      */
     public final void contribute(IMenuManager menu, IToolBarManager toolbar,
             boolean appendIfMissing) {
@@ -109,7 +86,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
      * in the target extension.
      */
     protected String getTargetID(IConfigurationElement element) {
-        String value = element.getAttribute(ATT_TARGET_ID);
+        String value = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
         return value != null ? value : "???"; //$NON-NLS-1$
     }
     
@@ -117,7 +94,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
      * Returns the id of this contributions.
      */
     protected String getID(IConfigurationElement element) {
-        String value = element.getAttribute(ATT_ID);
+        String value = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         return value != null ? value : "???"; //$NON-NLS-1$
     }
 
@@ -144,7 +121,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
         // Ignore all object contributions element as these
         // are handled by the ObjectActionContributorReader.
-        if (tag.equals(ObjectActionContributorReader.TAG_OBJECT_CONTRIBUTION)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_OBJECT_CONTRIBUTION)) {
             return true;
         }
 
@@ -168,13 +145,13 @@ public abstract class PluginActionBuilder extends RegistryReader {
         }
 
         // Found menu contribution sub-element		
-        if (tag.equals(TAG_MENU)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_MENU)) {
             currentContribution.addMenu(element);
             return true;
         }
 
         // Found action contribution sub-element
-        if (tag.equals(TAG_ACTION)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_ACTION)) {
             currentContribution.addAction(createActionDescriptor(element));
             return true;
         }
@@ -191,12 +168,22 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
         protected ArrayList actions;
 
+        /**
+         * Add a menu. 
+         * 
+         * @param element the element to base the menu on
+         */
         public void addMenu(IConfigurationElement element) {
             if (menus == null)
                 menus = new ArrayList(1);
             menus.add(element);
         }
 
+        /**
+         * Add an action.
+         * 
+         * @param desc the descriptor
+         */
         public void addAction(ActionDescriptor desc) {
             if (actions == null)
                 actions = new ArrayList(3);
@@ -208,6 +195,10 @@ public abstract class PluginActionBuilder extends RegistryReader {
          * managers.
          * 
          * The elements added are filtered based on activity enablement.
+         * @param menu the menu to contribute to
+         * @param menuAppendIfMissing whether to append missing groups to menus
+         * @param toolbar the toolbar to contribute to
+         * @param toolAppendIfMissing whether to append missing groups to toolbars
          */
         public void contribute(IMenuManager menu, boolean menuAppendIfMissing,
                 IToolBarManager toolbar, boolean toolAppendIfMissing) {
@@ -240,9 +231,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
         protected void contributeMenu(IConfigurationElement menuElement,
                 IMenuManager mng, boolean appendIfMissing) {
             // Get config data.
-            String id = menuElement.getAttribute(ATT_ID);
-            String label = menuElement.getAttribute(ATT_LABEL);
-            String path = menuElement.getAttribute(ATT_PATH);
+            String id = menuElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+            String label = menuElement.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
+            String path = menuElement.getAttribute(IWorkbenchRegistryConstants.ATT_PATH);
             if (label == null) {
                 WorkbenchPlugin
                         .log("Invalid Menu Extension (label == null): " + id); //$NON-NLS-1$
@@ -313,9 +304,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
             IConfigurationElement[] children = menuElement.getChildren();
             for (int i = 0; i < children.length; i++) {
                 String childName = children[i].getName();
-                if (childName.equals(TAG_SEPARATOR)) {
+                if (childName.equals(IWorkbenchRegistryConstants.TAG_SEPARATOR)) {
                     contributeSeparator(newMenu, children[i]);
-                } else if (childName.equals(TAG_GROUP_MARKER)) {
+                } else if (childName.equals(IWorkbenchRegistryConstants.TAG_GROUP_MARKER)) {
                     contributeGroupMarker(newMenu, children[i]);
                 }
             }
@@ -372,7 +363,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
          */
         protected void contributeSeparator(IMenuManager menu,
                 IConfigurationElement element) {
-            String id = element.getAttribute(ATT_NAME);
+            String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
             if (id == null || id.length() <= 0)
                 return;
             IContributionItem sep = menu.find(id);
@@ -387,7 +378,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
          */
         protected void contributeGroupMarker(IMenuManager menu,
                 IConfigurationElement element) {
-            String id = element.getAttribute(ATT_NAME);
+            String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
             if (id == null || id.length() <= 0)
                 return;
             IContributionItem marker = menu.find(id);

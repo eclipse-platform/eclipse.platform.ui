@@ -29,8 +29,8 @@ import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
-import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -96,7 +96,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
             throws CoreException {
         IWorkbenchPropertyPage ppage = null;
         ppage = (IWorkbenchPropertyPage) WorkbenchPlugin.createExtension(
-                pageElement, RegistryReader.ATT_CLASS);
+                pageElement, IWorkbenchRegistryConstants.ATT_CLASS);
 
         ppage.setTitle(getPageName());
         
@@ -122,7 +122,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
      * @return the page icon
      */
     public ImageDescriptor getPageIcon() {
-    	String iconName = pageElement.getAttribute(PropertyPagesRegistryReader.ATT_ICON);
+    	String iconName = pageElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
         if (iconName == null)
             return null;
         return AbstractUIPlugin.imageDescriptorFromPlugin(pageElement
@@ -145,7 +145,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
      * @return the page name
      */
     public String getPageName() {
-        return pageElement.getAttribute(PropertyPagesRegistryReader.ATT_NAME);
+        return pageElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
     }
 
     /**

@@ -49,18 +49,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
     public static final String TAG_FILTER = "filter";//$NON-NLS-1$
 
     /**
-     * Value "<code>name</code>".
-     */
-    public static final String ATT_NAME = "name";//$NON-NLS-1$
-
-    private static final String ATT_ID = "id";//$NON-NLS-1$
-
-    /**
-     * Value "<code>icon</code>".
-     */
-    public static final String ATT_ICON = "icon";//$NON-NLS-1$
-
-    /**
      * Value "<code>objectClass</code>".
      */
     public static final String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
@@ -124,12 +112,12 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
      * Reads static property page specification.
      */
     private void processPageElement(IConfigurationElement element) {
-    	String pageId = element.getAttribute(ATT_ID);
-        String pageClassName = getClassValue(element, ATT_CLASS);
+    	String pageId = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        String pageClassName = getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS);
         String objectClassName = element.getAttribute(ATT_OBJECTCLASS); 
 
         if (pageId == null) {
-            logMissingAttribute(element, ATT_ID);
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
             return;
         }
         if (objectClassName == null) {
@@ -137,7 +125,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
             return;
         }
         if (pageClassName == null) {
-            logMissingAttribute(element, ATT_CLASS);
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
             return;
         }
 

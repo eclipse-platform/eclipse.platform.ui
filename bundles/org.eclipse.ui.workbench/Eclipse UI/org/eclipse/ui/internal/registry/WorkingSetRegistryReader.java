@@ -21,16 +21,22 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read working set extensions from the registry.
  */
 public class WorkingSetRegistryReader extends RegistryReader {
-    private static final String TAG = "workingSet"; //$NON-NLS-1$
+    
 
     private WorkingSetRegistry registry;
 
-    //for dynamic UI
+    /**
+     * Create a new instance of this reader.
+     */
     public WorkingSetRegistryReader() {
         super();
     }
 
-    //for dynamic UI
+    /**
+     * Create a new instance of this reader.
+     * 
+     * @param registry the registry to populate
+     */
     public WorkingSetRegistryReader(WorkingSetRegistry registry) {
         super();
         this.registry = registry;
@@ -41,9 +47,8 @@ public class WorkingSetRegistryReader extends RegistryReader {
      * 
      * @see RegistryReader#readElement(IConfigurationElement)
      */
-    // for dynamic UI - change access from protected to public
     public boolean readElement(IConfigurationElement element) {
-        if (element.getName().equals(TAG)) {
+        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_WORKING_SET)) {
             try {
                 WorkingSetDescriptor desc = new WorkingSetDescriptor(element);
                 registry.addWorkingSetDescriptor(desc);

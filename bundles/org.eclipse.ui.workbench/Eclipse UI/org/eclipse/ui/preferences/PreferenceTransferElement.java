@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PreferenceTransferRegistryReader;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.model.WorkbenchAdapter;
@@ -45,7 +46,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
      */
     public PreferenceTransferElement(IConfigurationElement configurationElement) {
         this.configurationElement = configurationElement;
-        id = configurationElement.getAttribute(PreferenceTransferRegistryReader.ATT_ID);
+        id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
     }
 
     /**
@@ -63,6 +64,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
      * @throws CoreException 
      */
     public IPreferenceFilter getFilter() throws CoreException {
+        //TODO: can the CoreException be removed?
         if (filter == null) {
             IConfigurationElement[] mappings = PreferenceTransferRegistryReader.getMappings(configurationElement);
             PreferenceFilter prefFilter = new PreferenceFilter();
@@ -72,7 +74,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
                 prefFilter.scopes[i] = PreferenceTransferRegistryReader.getScope(mappings[i]);
                 prefFilter.maps[i] = PreferenceTransferRegistryReader.getEntry(mappings[i]);
             } 
-            filter = (IPreferenceFilter)prefFilter;
+            filter = prefFilter;
         }
         return filter;
     }
@@ -102,7 +104,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
      */
     public ImageDescriptor getImageDescriptor() {
     	if (imageDescriptor == null) {
-    		String iconName = configurationElement.getAttribute(PreferenceTransferRegistryReader.ATT_ICON);
+    		String iconName = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 	        if (iconName == null) 
 	        	return null;
             imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
@@ -116,7 +118,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
      * @return the name of the element
      */
     public String getName() {
-        return configurationElement.getAttribute(PreferenceTransferRegistryReader.ATT_NAME);
+        return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
     }
 
     /* (non-Javadoc)

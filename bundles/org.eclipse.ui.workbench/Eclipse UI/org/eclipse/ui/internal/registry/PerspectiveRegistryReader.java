@@ -21,8 +21,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read view extensions from the registry.
  */
 public class PerspectiveRegistryReader extends RegistryReader {
-    private static final String TAG_LAYOUT = "perspective";//$NON-NLS-1$
-
     private PerspectiveRegistry registry;
 
     /**
@@ -40,7 +38,7 @@ public class PerspectiveRegistryReader extends RegistryReader {
      */
     // for dynamic UI - change access from protected to public
     protected boolean readElement(IConfigurationElement element) {
-        if (element.getName().equals(TAG_LAYOUT)) {
+        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_PERSPECTIVE)) {
             try {
                 PerspectiveDescriptor desc = new PerspectiveDescriptor(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID), element);
                 registry.addPerspective(desc);

@@ -38,41 +38,6 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     private Set includeOnlyTags = null;
 
-    public static final String TAG_EXTENSION = "perspectiveExtension";//$NON-NLS-1$
-
-    public static final String TAG_ACTION_SET = "actionSet";//$NON-NLS-1$
-
-    public static final String TAG_WIZARD_SHORTCUT = "newWizardShortcut";//$NON-NLS-1$
-
-    public static final String TAG_VIEW_SHORTCUT = "viewShortcut";//$NON-NLS-1$
-
-    public static final String TAG_PERSP_SHORTCUT = "perspectiveShortcut";//$NON-NLS-1$
-
-    public static final String TAG_VIEW = "view";//$NON-NLS-1$
-
-    public static final String TAG_SHOW_IN_PART = "showInPart";//$NON-NLS-1$
-
-    private static final String ATT_ID = "id";//$NON-NLS-1$
-
-    public static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
-
-    private static final String ATT_RELATIVE = "relative";//$NON-NLS-1$
-
-    private static final String ATT_RELATIONSHIP = "relationship";//$NON-NLS-1$
-
-    private static final String ATT_RATIO = "ratio";//$NON-NLS-1$
-
-    // ATT_VISIBLE added by dan_rubel@instantiations.com  
-    private static final String ATT_VISIBLE = "visible";//$NON-NLS-1$
-
-    private static final String ATT_CLOSEABLE = "closeable";//$NON-NLS-1$
-
-    private static final String ATT_MOVEABLE = "moveable";//$NON-NLS-1$
-
-    private static final String ATT_STANDALONE = "standalone";//$NON-NLS-1$
-
-    private static final String ATT_SHOW_TITLE = "showTitle";//$NON-NLS-1$
-
     private static final String VAL_LEFT = "left";//$NON-NLS-1$
 
     private static final String VAL_RIGHT = "right";//$NON-NLS-1$
@@ -88,6 +53,8 @@ public class PerspectiveExtensionReader extends RegistryReader {
     private static final String VAL_TRUE = "true";//$NON-NLS-1$	
 
     // VAL_FALSE added by dan_rubel@instantiations.com  
+    // TODO: this logic is backwards... we should be checking for true, but
+    // technically this is API now...
     private static final String VAL_FALSE = "false";//$NON-NLS-1$	
 
 	private IExtensionTracker tracker;
@@ -101,6 +68,10 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     /**
      * Read the view extensions within a registry.
+     * 
+     * @param extensionTracker the tracker 
+     * @param id the id 
+     * @param out the layout
      */
     public void extendLayout(IExtensionTracker extensionTracker, String id, PageLayout out) {
     	tracker = extensionTracker;
@@ -121,7 +92,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
      * Process an action set.
      */
     private boolean processActionSet(IConfigurationElement element) {
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null)
             pageLayout.addActionSet(id);
         return true;
@@ -138,17 +109,17 @@ public class PerspectiveExtensionReader extends RegistryReader {
             String type = child.getName();
             if (includeTag(type)) {
                 boolean result = false;
-                if (type.equals(TAG_ACTION_SET))
+                if (type.equals(IWorkbenchRegistryConstants.TAG_ACTION_SET))
                     result = processActionSet(child);
-                else if (type.equals(TAG_VIEW))
+                else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW))
                     result = processView(child);
-                else if (type.equals(TAG_VIEW_SHORTCUT))
+                else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW_SHORTCUT))
                     result = processViewShortcut(child);
-                else if (type.equals(TAG_WIZARD_SHORTCUT))
+                else if (type.equals(IWorkbenchRegistryConstants.TAG_WIZARD_SHORTCUT))
                     result = processWizardShortcut(child);
-                else if (type.equals(TAG_PERSP_SHORTCUT))
+                else if (type.equals(IWorkbenchRegistryConstants.TAG_PERSP_SHORTCUT))
                     result = processPerspectiveShortcut(child);
-                else if (type.equals(TAG_SHOW_IN_PART))
+                else if (type.equals(IWorkbenchRegistryConstants.TAG_SHOW_IN_PART))
                     result = processShowInPart(child);
                 if (!result) {
                     WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
@@ -166,7 +137,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
      * Process a perspective shortcut
      */
     private boolean processPerspectiveShortcut(IConfigurationElement element) {
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null)
             pageLayout.addPerspectiveShortcut(id);
         return true;
@@ -176,7 +147,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
      * Process a show in element.
      */
     private boolean processShowInPart(IConfigurationElement element) {
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null)
             pageLayout.addShowInPart(id);
         return true;
@@ -188,28 +159,28 @@ public class PerspectiveExtensionReader extends RegistryReader {
      */
     private boolean processView(IConfigurationElement element) {
         // Get id, relative, and relationship.
-        String id = element.getAttribute(ATT_ID);
-        String relative = element.getAttribute(ATT_RELATIVE);
-        String relationship = element.getAttribute(ATT_RELATIONSHIP);
-        String ratioString = element.getAttribute(ATT_RATIO);
-        boolean visible = !VAL_FALSE.equals(element.getAttribute(ATT_VISIBLE));
-        String closeable = element.getAttribute(ATT_CLOSEABLE);
-        String moveable = element.getAttribute(ATT_MOVEABLE);
-        String standalone = element.getAttribute(ATT_STANDALONE);
-        String showTitle = element.getAttribute(ATT_SHOW_TITLE);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+        String relative = element.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE);
+        String relationship = element.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIONSHIP);
+        String ratioString = element.getAttribute(IWorkbenchRegistryConstants.ATT_RATIO);
+        boolean visible = !VAL_FALSE.equals(element.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE));
+        String closeable = element.getAttribute(IWorkbenchRegistryConstants.ATT_CLOSEABLE);
+        String moveable = element.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
+        String standalone = element.getAttribute(IWorkbenchRegistryConstants.ATT_STANDALONE);
+        String showTitle = element.getAttribute(IWorkbenchRegistryConstants.ATT_SHOW_TITLE);
 
         float ratio;
 
         if (id == null) {
-            logMissingAttribute(element, ATT_ID);
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ID);
             return false;
         }
         if (relationship == null) {
-            logMissingAttribute(element, ATT_RELATIONSHIP);
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_RELATIONSHIP);
             return false;
         }
         if (!VAL_FAST.equals(relationship) && relative == null) {
-            logMissingAttribute(element, ATT_RELATIVE);
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_RELATIVE);
             return false;
         }
 
@@ -298,7 +269,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
      * Process a view shortcut
      */
     private boolean processViewShortcut(IConfigurationElement element) {
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null)
             pageLayout.addShowViewShortcut(id);
         return true;
@@ -308,7 +279,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
      * Process a wizard shortcut
      */
     private boolean processWizardShortcut(IConfigurationElement element) {
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null)
             pageLayout.addNewWizardShortcut(id);
         return true;
@@ -316,8 +287,8 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     protected boolean readElement(IConfigurationElement element) {
         String type = element.getName();
-        if (type.equals(TAG_EXTENSION)) {
-            String id = element.getAttribute(ATT_TARGET_ID);
+        if (type.equals(IWorkbenchRegistryConstants.TAG_EXTENSION)) {
+            String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
             if (targetID.equals(id)) {
             	if (tracker != null)
             		tracker.registerObject(element.getDeclaringExtension(), new DirtyPerspectiveMarker(id), IExtensionTracker.REF_STRONG);
@@ -330,6 +301,8 @@ public class PerspectiveExtensionReader extends RegistryReader {
 
     /**
      * Sets the tags to include.  All others are ignored.
+     * 
+     * @param tags the tags to include
      */
     public void setIncludeOnlyTags(String[] tags) {
         includeOnlyTags = new HashSet();

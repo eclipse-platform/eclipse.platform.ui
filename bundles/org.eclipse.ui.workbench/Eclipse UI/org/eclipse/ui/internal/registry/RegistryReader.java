@@ -36,16 +36,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class RegistryReader {
 	
-	/**
-	 * Class attribute.  Value <code>class</code>.
-	 */
-	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
-	
-	/**
-	 * Description element.  Value <code>description</code>.
-	 */
-    public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-
     // for dynamic UI - remove this cache to avoid inconsistency
     //protected static Hashtable extensionPoints = new Hashtable();
     /**
@@ -186,7 +176,7 @@ public abstract class RegistryReader {
      * @since 3.1
      */
     public static String getDescription(IConfigurationElement configElement) {
-		IConfigurationElement[] children = configElement.getChildren(TAG_DESCRIPTION);
+		IConfigurationElement[] children = configElement.getChildren(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 	    if (children.length >= 1) {
 	        return children[0].getValue();
 	    }
@@ -213,6 +203,6 @@ public abstract class RegistryReader {
 		if (candidateChildren.length == 0) 
 			return null;
 	
-		return candidateChildren[0].getAttribute(ATT_CLASS);
+		return candidateChildren[0].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
     }
 }

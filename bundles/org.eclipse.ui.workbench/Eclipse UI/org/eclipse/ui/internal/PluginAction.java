@@ -32,6 +32,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
@@ -68,6 +69,10 @@ public abstract class PluginAction extends Action implements
 
     /**
      * PluginAction constructor.
+     * 
+     * @param actionElement the element
+     * @param id the identifier
+     * @param style the style bits
      */
     public PluginAction(IConfigurationElement actionElement, String id,
             int style) {
@@ -90,11 +95,11 @@ public abstract class PluginAction extends Action implements
         pluginId = configElement.getDeclaringExtension().getNamespace();
 
         // Read enablement declaration.
-        if (configElement.getAttribute(PluginActionBuilder.ATT_ENABLES_FOR) != null) {
+        if (configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ENABLES_FOR) != null) {
             enabler = new SelectionEnabler(configElement);
         } else {
             IConfigurationElement[] kids = configElement
-                    .getChildren(PluginActionBuilder.TAG_ENABLEMENT);
+                    .getChildren(IWorkbenchRegistryConstants.TAG_ENABLEMENT);
             if (kids.length > 0)
                 enabler = new SelectionEnabler(configElement);
         }
@@ -144,15 +149,15 @@ public abstract class PluginAction extends Action implements
      *
      * @param obj a possible action delegate implementation
      * @return the <code>IActionDelegate</code> implementation for the object
-     * @throws a <code>WorkbenchException</code> if not expect delegate type
+     * @throws WorkbenchException if not of the expected delegate type
      */
     protected IActionDelegate validateDelegate(Object obj)
             throws WorkbenchException {
         if (obj instanceof IActionDelegate)
             return (IActionDelegate) obj;
-        else
-            throw new WorkbenchException(
-                    "Action must implement IActionDelegate"); //$NON-NLS-1$
+        
+        throw new WorkbenchException(
+                "Action must implement IActionDelegate"); //$NON-NLS-1$
     }
 
     /** 
@@ -245,6 +250,8 @@ public abstract class PluginAction extends Action implements
      * Handles selection change. If rule-based enabled is
      * defined, it will be first to call it. If the delegate
      * is loaded, it will also be given a chance.
+     * 
+     * @param newSelection the new selection
      */
     public void selectionChanged(ISelection newSelection) {
         // Update selection.
@@ -288,6 +295,7 @@ public abstract class PluginAction extends Action implements
     /**
      * For testing purposes only.
      * 
+     * @return the selection 
      * @since 3.1
      */
     public ISelection getSelection() {

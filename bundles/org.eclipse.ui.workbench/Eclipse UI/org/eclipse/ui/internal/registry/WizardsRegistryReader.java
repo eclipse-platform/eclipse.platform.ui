@@ -52,35 +52,13 @@ public class WizardsRegistryReader extends RegistryReader {
 
     public final static String FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
 
-    private final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
-
-    private final static String TAG_PRIMARYWIZARD = "primaryWizard"; //$NON-NLS-1$
-
-    public final static String ATT_HELP_HREF = "helpHref"; //$NON-NLS-1$
-
-    public final static String ATT_DESCRIPTION_IMAGE = "descriptionImage"; //$NON-NLS-1$
-
     final public static String UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
 
     private final static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.NewWizardsRegistryReader_otherCategory;
 
     private final static String CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 
-    private final static String ATT_CATEGORY = "category";//$NON-NLS-1$
-
-    // @issue project-specific attribute and behavior
-    public final static String ATT_PROJECT = "project";//$NON-NLS-1$
-
     private WorkbenchWizardElement[] primaryWizards = new WorkbenchWizardElement[0];
-
-    public final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
-
-    public final static String ATT_NAME = "name";//$NON-NLS-1$
-
-    public final static String ATT_ICON = "icon";//$NON-NLS-1$
-
-    public final static String ATT_ID = "id";//$NON-NLS-1$
-
     
     private class CategoryNode {
         private Category category;
@@ -123,9 +101,10 @@ public class WizardsRegistryReader extends RegistryReader {
 	private String plugin;
 
     /**
-     *	Create an instance of this class.
+     *Create an instance of this class.
      *
-     *	@param pluginPointId java.lang.String
+     * @param pluginId the plugin id
+     * @param pluginPointId java.lang.String
      */
     public WizardsRegistryReader(String pluginId, String pluginPointId) {
         pluginPoint = pluginPointId;
@@ -141,6 +120,7 @@ public class WizardsRegistryReader extends RegistryReader {
      */
     protected void addNewElementToResult(WorkbenchWizardElement element,
             IConfigurationElement config) {
+        // TODO: can we remove the config parameter?
         deferWizard(element);
     }
 
@@ -364,7 +344,7 @@ public class WizardsRegistryReader extends RegistryReader {
      *	If a category is not specified then return a default one.
      */
     protected String getCategoryStringFor(IConfigurationElement config) {
-        String result = config.getAttribute(ATT_CATEGORY);
+        String result = config.getAttribute(IWorkbenchRegistryConstants.TAG_CATEGORY);
         if (result == null)
             result = UNCATEGORIZED_WIZARD_CATEGORY;
 
@@ -425,17 +405,17 @@ public class WizardsRegistryReader extends RegistryReader {
      * Implement this method to read element attributes.
      */
     public boolean readElement(IConfigurationElement element) {
-        if (element.getName().equals(TAG_CATEGORY)) {
+        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
             deferCategory(element);
             return true;
-        } else if (element.getName().equals(TAG_PRIMARYWIZARD)) {
+        } else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_PRIMARYWIZARD)) {
             if (deferPrimary == null)
                 deferPrimary = new HashSet();
-            deferPrimary.add(element.getAttribute(ATT_ID));
+            deferPrimary.add(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 
             return true;
         } else {
-            if (!element.getName().equals(TAG_WIZARD))
+            if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_WIZARD))
                 return false;
             WorkbenchWizardElement wizard = createWizardElement(element);
             if (wizard != null)
@@ -525,13 +505,13 @@ public class WizardsRegistryReader extends RegistryReader {
     protected WorkbenchWizardElement createWizardElement(
             IConfigurationElement element) {
         // WizardElements must have a name attribute
-        if (element.getAttribute(ATT_NAME) == null) {
-            logMissingAttribute(element, ATT_NAME);
+        if (element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) == null) {
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
             return null;
         }
         
-        if (getClassValue(element, ATT_CLASS) == null) {       
-            logMissingAttribute(element, ATT_CLASS);
+        if (getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS) == null) {       
+            logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_CLASS);
             return null;
         }
         return new WorkbenchWizardElement(element);

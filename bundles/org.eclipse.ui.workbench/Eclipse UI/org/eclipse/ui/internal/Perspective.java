@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
@@ -1228,7 +1229,7 @@ public class Perspective {
     private ArrayList getPerspectiveExtensionActionSets() {
         PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
         reader
-                .setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_ACTION_SET });
+                .setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
         PageLayout layout = new PageLayout();
         reader.extendLayout(null, descriptor.getOriginalId(), layout);
         return layout.getActionSets();
@@ -1240,7 +1241,7 @@ public class Perspective {
     private ArrayList getShowInIdsFromRegistry() {
         PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
         reader
-                .setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_SHOW_IN_PART });
+                .setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_SHOW_IN_PART });
         PageLayout layout = new PageLayout();
         reader.extendLayout(null, descriptor.getOriginalId(), layout);
         return layout.getShowInPartIds();

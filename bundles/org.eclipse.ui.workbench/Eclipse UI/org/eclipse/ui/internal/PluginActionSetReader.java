@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.decorators.LightweightActionDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -46,6 +47,9 @@ public class PluginActionSetReader extends RegistryReader {
 
     /**
      * Return all the action descriptor within the set.
+     * 
+     * @param actionSet the set
+     * @return the descriptors
      */
     public LightweightActionDescriptor[] readActionDescriptors(
             ActionSetDescriptor actionSet) {
@@ -65,15 +69,15 @@ public class PluginActionSetReader extends RegistryReader {
             readElementChildren(element);
             return true;
         }
-        if (tag.equals(ObjectActionContributorReader.TAG_OBJECT_CONTRIBUTION)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_OBJECT_CONTRIBUTION)) {
             // This builder is sometimes used to read the popup menu
             // extension point.  Ignore all object contributions.
             return true;
         }
-        if (tag.equals(PluginActionSetBuilder.TAG_MENU)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_MENU)) {
             return true; // just cache the element - don't go into it
         }
-        if (tag.equals(PluginActionSetBuilder.TAG_ACTION)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_ACTION)) {
             cache.add(createActionDescriptor(element));
             return true; // just cache the action - don't go into
         }

@@ -18,27 +18,19 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
  * The DecoratorRegistryReader is the class that reads the
  * decorator descriptions from the registry
  */
-
 public class DecoratorRegistryReader extends RegistryReader {
 
     //The registry values are the ones read from the registry
     private Collection values = new ArrayList();
 
     private Collection ids = new HashSet();
-
-    private static final String ATT_ID = "id"; //$NON-NLS-1$    
-
-    private static final String P_TRUE = "true"; //$NON-NLS-1$
-
-
-    private static final String ATT_LIGHTWEIGHT = "lightweight"; //$NON-NLS-1$
-
 
     /**
      * Constructor for DecoratorRegistryReader.
@@ -54,7 +46,7 @@ public class DecoratorRegistryReader extends RegistryReader {
 
         //String name = element.getAttribute(ATT_LABEL);
 
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (ids.contains(id)) {
             logDuplicateId(element);
             return false;
@@ -65,7 +57,7 @@ public class DecoratorRegistryReader extends RegistryReader {
 
         DecoratorDefinition desc = null;
         //Lightweight or Full? It is lightweight if it is declared lightweight or if there is no class
-        if (P_TRUE.equals(element.getAttribute(ATT_LIGHTWEIGHT)) || noClass) {
+        if (Boolean.valueOf(element.getAttribute(IWorkbenchRegistryConstants.ATT_LIGHTWEIGHT)).booleanValue() || noClass) {
 
             String iconPath = element.getAttribute(LightweightDecoratorDefinition.ATT_ICON);
 
@@ -101,6 +93,11 @@ public class DecoratorRegistryReader extends RegistryReader {
         return values;
     }
 
+    /**
+     * Return the values.
+     * 
+     * @return the values
+     */
     public Collection getValues() {
         return values;
     }
@@ -109,7 +106,7 @@ public class DecoratorRegistryReader extends RegistryReader {
      * Logs a registry error when the configuration element is unknown.
      */
     protected void logDuplicateId(IConfigurationElement element) {
-        logError(element, "Duplicate id found: " + element.getAttribute(ATT_ID));//$NON-NLS-1$
+        logError(element, "Duplicate id found: " + element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));//$NON-NLS-1$
     }
 
 }

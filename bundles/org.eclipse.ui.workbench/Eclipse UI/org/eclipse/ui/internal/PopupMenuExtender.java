@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This class extends a single popup menu
@@ -57,6 +58,11 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
 
     /**
      * Construct a new menu extender.
+     * 
+     * @param id the menu id
+     * @param menu the menu to extend
+     * @param prov the selection provider
+     * @param part the part to extend
      */
     public PopupMenuExtender(String id, MenuManager menu,
             ISelectionProvider prov, IWorkbenchPart part) {
@@ -301,7 +307,7 @@ public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener
 				IConfigurationElement [] elements = delta.getExtension().getConfigurationElements();
 				for (int j = 0; j < elements.length; j++) {
 					IConfigurationElement element = elements[j];
-					if (element.getName().equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE)) {
+					if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CONTRIBUTION_TYPE)) {
 						clearPopups = true;
 						break;
 					}					

@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -72,7 +72,7 @@ public class WizardCollectionElement extends AdaptableList implements
      */
     public WizardCollectionElement(IConfigurationElement element, WizardCollectionElement parent) {
 		configElement = element;
-		id = configElement.getAttribute(WizardsRegistryReader.ATT_ID); 
+		id = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID); 
 		this.parent = parent;
 	}
 
@@ -201,7 +201,7 @@ public class WizardCollectionElement extends AdaptableList implements
      */
     public String getLabel(Object o) {
     	return configElement != null ? configElement
-				.getAttribute(WizardsRegistryReader.ATT_NAME) : name;
+				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME) : name;
     }
 
     /**

@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This class reads the registry for extensions that plug into
@@ -28,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * elements.
  */
 public class ViewerActionBuilder extends PluginActionBuilder {
-    public static final String TAG_CONTRIBUTION_TYPE = "viewerContribution"; //$NON-NLS-1$
+    
 
     private ISelectionProvider provider;
 
@@ -92,7 +93,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
         String tag = element.getName();
 
         // Found visibility sub-element
-        if (tag.equals(PluginActionBuilder.TAG_VISIBILITY)) {
+        if (tag.equals(IWorkbenchRegistryConstants.TAG_VISIBILITY)) {
             ((ViewerContribution) currentContribution)
                     .setVisibilityTest(element);
             return true;
@@ -115,7 +116,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
             IWorkbenchPart part) {
         provider = prov;
         this.part = part;
-        readContributions(id, TAG_CONTRIBUTION_TYPE,
+        readContributions(id, IWorkbenchRegistryConstants.TAG_CONTRIBUTION_TYPE,
                 IWorkbenchConstants.PL_POPUP_MENU);
         return (cache != null);
     }
@@ -129,11 +130,21 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 
         private ActionExpression visibilityTest;
 
+        /**
+         * Create a new ViewerContribution.
+         * 
+         * @param selProvider the selection provider
+         */
         public ViewerContribution(ISelectionProvider selProvider) {
             super();
             this.selProvider = selProvider;
         }
 
+        /**
+         * Set the visibility test.
+         * 
+         * @param element the element
+         */
         public void setVisibilityTest(IConfigurationElement element) {
             visibilityTest = new ActionExpression(element);
         }
