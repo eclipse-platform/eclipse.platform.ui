@@ -171,7 +171,7 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	
 	private void run(Shell shell, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		final InvocationTargetException[] exception = new InvocationTargetException[] { null };
-		CVSUIPlugin.runWithProgress(shell, false, runnable);
+		CVSUIPlugin.runWithProgress(shell, false, runnable, CVSUIPlugin.PERFORM_SYNC_EXEC);
 	}
 	
 	private void edit(IFile[] files, IProgressMonitor monitor) throws CVSException {

@@ -230,6 +230,66 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	}
 	
 	/**
+	 * Creates a busy cursor and runs the specified runnable.
+	 * May be called from a non-UI thread.
+	 * 
+	 * @param parent the parent Shell for the dialog
+	 * @param cancelable if true, the dialog will support cancelation
+	 * @param runnable the runnable
+	 * @param flags customizing attributes for the error handling
+	 * 
+	 * @exception InvocationTargetException when an exception is thrown from the runnable
+	 * @exception InterruptedException when the progress monitor is cancelled
+	 */
+	public static void runWithProgress(final Shell parent, final boolean cancelable,
+		final IRunnableWithProgress runnable, int flags) throws InvocationTargetException, InterruptedException {
+		
+		if ((flags & PERFORM_SYNC_EXEC) > 0) {
+			
+			// create a runnable that deals with exceptions
+			final Exception exception[] = new Exception[] { null };
+			Runnable outerRunnable = new Runnable() {
+				public void run() {
+					try {
+						TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+					} catch (InvocationTargetException e) {
+						exception[1] = e;
+					} catch (InterruptedException e) {
+						exception[1] = e;
+					}
+				}
+			};
+			
+			// get a Display and perform the syncExec
+			Display display;
+			if (parent == null) {
+				display = Display.getCurrent();
+				if (display == null) {
+					display = Display.getDefault();
+				}
+			} else {
+				display = parent.getDisplay();
+			}
+			display.syncExec(outerRunnable);
+
+			// handle any exception
+			if (exception[0] != null) {
+				Exception e = exception[0];
+				if (e instanceof InvocationTargetException) {
+					throw (InvocationTargetException) e;
+				} else if (e instanceof InterruptedException) {
+					throw (InterruptedException) e;
+				} else {
+					// impossible but we'll handle it anyway
+					throw new InvocationTargetException(e);
+				}
+			}
+		} else {
+			TeamUIPlugin.runWithProgress(parent, cancelable, runnable);
+		}
+	}
+	
+	/**
 	 * Returns the image descriptor for the given image ID.
 	 * Returns null if there is no such image.
 	 */
