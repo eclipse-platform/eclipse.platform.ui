@@ -6,6 +6,7 @@ package org.eclipse.help.internal.search;
 import java.io.*;
 import java.util.*;
 import org.apache.lucene.HTMLParser.HTMLParser;
+import org.apache.lucene.analysis.*;
 import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
@@ -21,6 +22,7 @@ public class SearchIndex {
 	private IndexWriter iw;
 	private File indexDir;
 	private String locale;
+	private Analyzer analyzer;
 	private PluginVersionInfo docPlugins;
 	private HelpProperties indexedDocs;
 	private static final String INDEXED_CONTRIBUTION_INFO_FILE =
@@ -30,6 +32,7 @@ public class SearchIndex {
 	public SearchIndex(String locale) {
 		super();
 		this.locale = locale;
+		analyzer=HelpSystem.getSearchManager().getAnalyzer(locale);
 		String helpStatePath = HelpPlugin.getDefault().getStateLocation().toOSString();
 		String searchStatePath =
 			helpStatePath + File.separator + "nl" + File.separator + locale;
@@ -87,7 +90,7 @@ public class SearchIndex {
 			}
 			indexedDocs.restore();
 			setInconsistent(true);
-			iw = new IndexWriter(indexDir, new StopAnalyzer(), create);
+			iw = new IndexWriter(indexDir, analyzer, create);
 			iw.mergeFactor = 20;
 			iw.maxFieldLength = 1000000;
 			return true;
@@ -200,7 +203,7 @@ public class SearchIndex {
 		boolean fieldSearchOnly,
 		SearchResult searchResult) {
 		try {
-			QueryBuilder queryBuilder = new QueryBuilder(searchWord, new StopAnalyzer());
+			QueryBuilder queryBuilder = new QueryBuilder(searchWord, analyzer);
 			Query luceneQuery = queryBuilder.getLuceneQuery(fieldNames, fieldSearchOnly);
 			if (luceneQuery != null) {
 				Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());

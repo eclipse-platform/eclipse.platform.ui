@@ -5,6 +5,8 @@ package org.eclipse.help.internal.search;
  */
 import java.net.*;
 import java.util.*;
+import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
@@ -15,9 +17,11 @@ import org.eclipse.help.internal.util.*;
 public class SearchManager {
 	// Search indexes, indexed (no pun!) by locale
 	private HashMap indexes = new HashMap();
+	// Caches analyzers for eache locale
+	private HashMap analyzers = new HashMap();
+	private final Analyzer defaultAnalyzer = new StandardAnalyzer();
 	// Progress monitors, indexed by locale
 	private HashMap progressMonitors = new HashMap();
-
 	/**
 	 * Constructs a Search manager.
 	 */
@@ -32,11 +36,78 @@ public class SearchManager {
 		}
 		return index;
 	}
-	public IProgressMonitor getProgressMonitor(String locale)
-	{
-		return (IProgressMonitor)progressMonitors.get(locale);
+	/**
+	 * Obtains Analyzer that indexing and search should
+	 * use for a given locale.
+	 * @param locale 2 or 5 character locale representation
+	 */
+	public Analyzer getAnalyzer(String locale) {
+		// get an analyzer from cache
+		Analyzer analyzer = (Analyzer) analyzers.get(locale);
+		if (analyzer != null)
+			return analyzer;
+		// obtain configured analyzer for this locale
+		analyzer = createAnalyzer(locale);
+		if (analyzer != null) {
+			// save analyzer in the cache
+			analyzers.put(locale, analyzer);
+			return analyzer;
+		}
+		// obtains configured analyzer for the language only
+		String language = null;
+		if (locale.length() > 2) {
+			language = locale.substring(0, 2);
+			analyzer = createAnalyzer(language);
+			if (analyzer != null) {
+				// save analyzer in the cache
+				analyzers.put(language, analyzer);
+				analyzers.put(locale, analyzer);
+				return analyzer;
+			}
+		}
+		// create default analyzer
+		analyzer = defaultAnalyzer;
+		analyzers.put(locale, analyzer);
+		if (language != null)
+			analyzers.put(language, analyzer);
+		return analyzer;
 	}
-	
+	/**
+	 * Creates analyzer for a locale, 
+	 * if it is configured in the org.eclipse.help.luceneAnalyzer
+	 * extension point.
+	 * @return Analyzer or null if no analyzer is configured
+	 * for given locale.
+	 */
+	public Analyzer createAnalyzer(String locale) {
+		Collection contributions = new ArrayList();
+		// find extension point
+		IConfigurationElement configElements[] =
+			Platform.getPluginRegistry().getConfigurationElementsFor(
+				"org.eclipse.help",
+				"luceneAnalyzer");
+		for (int i = 0; i < configElements.length; i++) {
+			if (!configElements[i].getName().equals("analyzer"))
+				continue;
+			String analyzerLocale = configElements[i].getAttribute("locale");
+			if (analyzerLocale == null || !analyzerLocale.equals(locale))
+				continue;
+			try {
+				Object analyzer = configElements[i].createExecutableExtension("class");
+				if (!(analyzer instanceof Analyzer))
+					continue;
+				return (Analyzer) analyzer;
+			} catch (CoreException ce) {
+				Logger.logError(
+					Resources.getString("ES23", configElements[i].getAttribute("class"), locale),
+					ce);
+			}
+		}
+		return null;
+	}
+	public IProgressMonitor getProgressMonitor(String locale) {
+		return (IProgressMonitor) progressMonitors.get(locale);
+	}
 	/**
 	 * Returns the documents to be added to index. 
 	 * The collection consists of the associated PluginURL objects.
@@ -90,23 +161,20 @@ public class SearchManager {
 		}
 		return removedDocs;
 	}
-	
 	/**
 	 * Obtains locale from query string
 	 * @return locale in the form ll_CC
 	 * @param query String
 	 */
 	private static String getLocale(String query) {
-		
 		int indx = query.indexOf("&lang=");
 		if (indx == -1)
 			return Locale.getDefault().toString();
-		else if (query.charAt(indx + 8) == '_') 
+		else if (query.charAt(indx + 8) == '_')
 			return query.substring(indx + 6, indx + 11);
 		else
 			return query.substring(indx + 6, indx + 7);
 	}
-	
 	/**
 	 * Searches index for documents containing an expression.
 	 * If the index hasn't been built then return null.
@@ -159,12 +227,10 @@ public class SearchManager {
 		// we recreate the whole index.
 		if (!isIndexingNeeded(locale))
 			return;
-			
 		// monitor indexing
 		if (pm == null)
 			pm = new IndexProgressMonitor();
-		progressMonitors.put(locale,pm);
-		
+		progressMonitors.put(locale, pm);
 		SearchIndex index = getIndex(locale);
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("Search Manager", "indexing " + locale);
