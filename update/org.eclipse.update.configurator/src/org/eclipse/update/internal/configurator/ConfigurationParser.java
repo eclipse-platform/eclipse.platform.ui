@@ -66,8 +66,12 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			Utils.debug("Error parsing configuration " + e.getMessage());
 			throw e;
 		} finally {
-			if (input != null) 
-				input.close();
+			try {
+				if (input != null) 
+					input.close();
+			} catch (IOException e1) {
+				Utils.log(e1.getLocalizedMessage());
+			}
 		}
 	}
 

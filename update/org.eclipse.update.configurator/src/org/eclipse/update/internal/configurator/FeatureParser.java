@@ -68,12 +68,20 @@ public class FeatureParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public FeatureEntry parse(URL featureURL){
+		InputStream in = null;
 		try {
 			this.url = featureURL;
-			InputStream in = featureURL.openStream();
+			in = featureURL.openStream();
 			parser.parse(new InputSource(in), this);
 		} catch (SAXException e) {;
 		} catch (IOException e) {
+		} finally {
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e1) {
+					Utils.log(e1.getLocalizedMessage());
+				}
 		}
 		return feature;
 	}

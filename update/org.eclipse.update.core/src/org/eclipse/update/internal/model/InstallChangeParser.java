@@ -60,8 +60,16 @@ public class InstallChangeParser extends DefaultHandler {
 			//$NON-NLS-1$
 		}
 
-		InputSource source = new InputSource(changeStream);
-		parser.parse(source,this);
+		try {
+			InputSource source = new InputSource(changeStream);
+			parser.parse(source,this);
+		} finally {
+			if (changeStream != null)
+				try {
+					changeStream.close();
+				} catch (IOException e1) {
+				}
+		}
 		
 		// 16366
 		if (change!=null) change.setFile(file);

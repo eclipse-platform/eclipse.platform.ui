@@ -46,7 +46,8 @@ public class SiteFTPFactory extends SiteModelFactory implements ISiteFactory {
 			throw Utilities.newCoreException("Unable to access URL",ISite.SITE_ACCESS_EXCEPTION, e);
 		} finally {
 			try {
-				siteStream.close();
+				if (siteStream != null)
+					siteStream.close();
 			} catch (Exception e) {
 			}
 		}

@@ -970,8 +970,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		String result = null;
 		if (identifier == null)
 			return result;
+		InputStream in = null;
 		try {
-			InputStream in = new FileInputStream(propertyFile);
+			in = new FileInputStream(propertyFile);
 			PropertyResourceBundle bundle = new PropertyResourceBundle(in);
 			result = bundle.getString(identifier);
 		} catch (IOException e) {
@@ -980,6 +981,12 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		} catch (MissingResourceException e) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
 				UpdateCore.debug("Exception reading '" + identifier + "' from property file:" + propertyFile);
+		} finally {
+			if (in == null)
+				try {
+					in.close();
+				} catch (IOException e1) {
+				}
 		}
 		return result;
 	}

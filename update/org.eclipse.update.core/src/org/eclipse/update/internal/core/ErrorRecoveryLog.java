@@ -259,6 +259,12 @@ public class ErrorRecoveryLog {
 			UpdateCore.warn("Unable to read:"+logFile,e);
 			multi.add(createStatus(IStatus.ERROR,"Unable to access property file:"+logFile,e));
 			return multi;
+		} finally {
+			if (in != null)
+				try {
+					in.close();
+				} catch (IOException e1) {
+				}
 		}
 		
 		String eof = prop.getProperty("eof");

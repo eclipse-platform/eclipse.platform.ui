@@ -484,7 +484,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			if (!cfigFile.getName().equals(CONFIG_NAME))
 				cfigFile = new File(cfigFile, CONFIG_NAME);
 			File cfigDir = cfigFile.getParentFile();
-			if (cfigDir != null)
+			if (cfigDir != null && !cfigDir.exists())
 				cfigDir.mkdirs();
 
 			// Backup old file
@@ -506,6 +506,12 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			os = new FileOutputStream(cfigTmp);
 			try {
 				saveAsXML(os);
+				try {
+					os.close();
+					os = null;
+				} catch (IOException e1) {
+					Utils.log("Could not close output stream for " + cfigTmp);
+				}
 				// set file time stamp to match that of the config element
 				cfigTmp.setLastModified(config.getDate().getTime());
 				// make the change stamp to be the same as the config file
@@ -514,7 +520,12 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			} catch (CoreException e) {
 				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			} finally {
-				os.close();
+				if (os != null)
+					try {
+						os.close();
+					} catch (IOException e1) {
+						Utils.log("Could not close output stream for temp file " + cfigTmp);
+					}
 			}
 
 			// make the saved config the "active" one
@@ -532,6 +543,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				// config (if it existed) as "bak"
 				cfigBak.delete(); // clean up
 			} else {
+				Utils.log("Could not rename temp file");
 				// this codepath represents a tiny failure window. The load processing
 				// on startup will detect missing config and will attempt to start
 				// with "tmp" (latest), then "bak" (the previous). We can also end up
@@ -1194,7 +1206,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			StreamResult result = new StreamResult(stream);
 
 			transformer.transform(source,result);
-			stream.close();
+			//will close the stream in the caller
+			//stream.close();
 		} catch (Exception e) {
 			throw Utils.newCoreException("", e);
 		}  

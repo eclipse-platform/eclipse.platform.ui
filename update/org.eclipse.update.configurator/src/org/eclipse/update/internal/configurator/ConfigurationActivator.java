@@ -94,9 +94,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		if (platform==null)
 			throw new Exception("Can not start");
 		
-		// we can now log to the log file for this bundle
-		Utils.setLog(platform.getLog(context.getBundle()));
-		
 		installURL = platform.getInstallURL();
 		configLocation = platform.getConfigurationLocation();
 		// create the name space directory for update (configuration/org.eclipse.update)
@@ -115,13 +112,20 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		if (configuration == null)
 			throw Utils.newCoreException("Cannot create configuration in " + configLocation.getURL(), null);
 
+		DataInputStream stream = null;
 		try {
-			DataInputStream stream = new DataInputStream(new URL(configLocation.getURL(),NAME_SPACE+'/'+LAST_CONFIG_STAMP).openStream());
+			stream = new DataInputStream(new URL(configLocation.getURL(),NAME_SPACE+'/'+LAST_CONFIG_STAMP).openStream());
 			lastTimeStamp = stream.readLong();
-			stream.close();
 		} catch (Exception e) {
 			lastTimeStamp = configuration.getChangeStamp() - 1;
-		} 
+		} finally {
+			if (stream != null)
+				try {
+					stream.close();
+				} catch (IOException e1) {
+					Utils.log(e1.getLocalizedMessage());
+				}
+		}
 	}
 
 
@@ -320,16 +324,24 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 	
 	private void writePlatformConfigurationTimeStamp() {
+		DataOutputStream stream = null;
 		try {
 			if (configLocation.isReadOnly())
 				return;
 			
 			String configArea = configLocation.getURL().getFile();
 			lastTimeStamp = configuration.getChangeStamp();
-			DataOutputStream stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ NAME_SPACE+ File.separator+ LAST_CONFIG_STAMP));
+			stream = new DataOutputStream(new FileOutputStream(configArea +File.separator+ NAME_SPACE+ File.separator+ LAST_CONFIG_STAMP));
 			stream.writeLong(lastTimeStamp);
 		} catch (Exception e) {
 			Utils.log(e.getLocalizedMessage());
+		} finally {
+			if (stream != null)
+				try {
+					stream.close();
+				} catch (IOException e1) {
+					Utils.log(e1.getLocalizedMessage());
+				}
 		}
 	}
 
@@ -348,7 +360,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			return;
 		platformTracker.close();
 		platformTracker = null;
-		Utils.setLog(null);
 	}
 
 	private void loadOptions() {
@@ -411,5 +422,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 	public static ConfigurationActivator getConfigurator() {
 		return configurator;
+	}
+	
+	static Bundle getBundle() {
+		return ConfigurationActivator.getBundle();
 	}
 }
