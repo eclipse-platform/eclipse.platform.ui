@@ -79,10 +79,13 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      */
     private Map extensionImages = new HashMap();
 
-    /*
+    /**
      * Vector of EditorDescriptor - all the editors loaded from plugin files.
      * The list is kept in order to be able to show in the editor selection
-     * dialog of the resource associations page.
+     * dialog of the resource associations page.  This list is sorted based on the 
+     * human readable label of the editor descriptor.
+     * 
+     * @see #comparer
      */
     private List sortedEditorsFromPlugins = new ArrayList();
 
@@ -109,7 +112,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     };
 
     /**
-     * Return an instance of the receiver.
+     * Return an instance of the receiver. Adds listeners into the extension
+     * registry for dynamic UI purposes.
      */
     public EditorRegistry() {
         super();
@@ -230,7 +234,10 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
     /**
-     * Fires a property changed event.
+     * Fires a property changed event to all registered listeners.
+     * 
+     * @param type the type of event
+     * @see IEditorRegistry#PROP_CONTENTS
      */
     private void firePropertyChange(final int type) {
         Object[] array = propChangeListeners.getListeners();
@@ -273,7 +280,9 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
     /**
-     * Returns the default file image.
+     * Returns the default file image descriptor.
+     * 
+     * @return the image descriptor
      */
     private ImageDescriptor getDefaultImage() {
         // @issue what should be the default image?
@@ -329,6 +338,10 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         FileEditorMapping[] array = typeEditorMappings.allMappings();
         final Collator collator = Collator.getInstance();
         Arrays.sort(array, new Comparator() {
+            
+            /* (non-Javadoc)
+             * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+             */
             public int compare(Object o1, Object o2) {
                 String s1 = ((FileEditorMapping) o1).getLabel();
                 String s2 = ((FileEditorMapping) o2).getLabel();
@@ -381,22 +394,30 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
     /**
-     * Find the file editor mapping for the type. Returns null if not found.
+     * Find the file editor mapping for the file extension. Returns
+     * <code>null</code> if not found.
+     * 
+     * @param ext
+     *            the file extension
+     * @return the mapping, or <code>null</code>
      */
-    private FileEditorMapping getMappingFor(String type) {
-        if (type == null)
+    private FileEditorMapping getMappingFor(String ext) {
+        if (ext == null)
             return null;
-        String key = mappingKeyFor(type);
+        String key = mappingKeyFor(ext);
         return typeEditorMappings.get(key);
     }
 
     /**
      * Find the file editor mappings for the given filename.
-     * 
+     * <p>
      * Return an array of two FileEditorMapping items, where the first mapping
      * is for the entire filename, and the second mapping is for the filename's
      * extension only. These items can be null if no mapping exist on the
-     * filename and/or filename's extension.
+     * filename and/or filename's extension.</p>
+     * 
+     * @param filename the filename 
+     * @return the mappings
      */
     private FileEditorMapping[] getMappingForFilename(String filename) {
         FileEditorMapping[] mapping = new FileEditorMapping[2];
@@ -414,13 +435,16 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         return mapping;
     }
 
-    /*
+    /**
+     * Return the editor descriptors pulled from the OS.
+     * <p>
      * WARNING! The image described by each editor descriptor is *not* known by
      * the workbench's graphic registry. Therefore clients must take care to
      * ensure that if they access any of the images held by these editors that
      * they also dispose them
+     * </p>
+     * @return the editor descriptors
      */
-
     public IEditorDescriptor[] getSortedEditorsFromOS() {
         List externalEditors = new ArrayList();
         Program[] programs = Program.getPrograms();
@@ -456,18 +480,25 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
     /**
-     *  
+     * Return the editors loaded from plugins.
+     * 
+     * @return the sorted array of editors declared in plugins
+     * @see #comparer
      */
     public IEditorDescriptor[] getSortedEditorsFromPlugins() {
         IEditorDescriptor[] array = new IEditorDescriptor[sortedEditorsFromPlugins
                 .size()];
         sortedEditorsFromPlugins.toArray(array);
         return array;
-
     }
 
     /**
-     * Answer an intial id to editor map.
+     * Answer an intial id to editor map. This will create a new map and
+     * populate it with the default system editors.
+     * 
+     * @param initialSize
+     *            the initial size of the map
+     * @return the new map
      */
     private HashMap initialIdToEditorMap(int initialSize) {
         HashMap map = new HashMap(initialSize);
@@ -475,6 +506,14 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         return map;
     }
 
+    /**
+     * Add the system editors to the provided map. This will always add an
+     * editor with an id of {@link #SYSTEM_EXTERNAL_EDITOR_ID} and may also add
+     * an editor with id of {@ #SYSTEM_INPLACE_EDITOR_ID} if the system
+     * configuration supports it.
+     * 
+     * @param map the map to augment
+     */
     private void addSystemEditors(HashMap map) {
         // there will always be a system external editor descriptor
         EditorDescriptor editor = new EditorDescriptor();
@@ -495,6 +534,10 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         }
     }
 
+    /**
+     * Initialize the registry state from plugin declarations and preference
+     * overrides.
+     */
     private void initializeFromStorage() {
         typeEditorMappings = new EditorMap();
         extensionImages = new HashMap();
@@ -529,7 +572,12 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
 
     /**
      * Set the default editors according to the preference store which can be
-     * overwritten in the file properties.ini.
+     * overwritten in the file properties.ini.  In the form: 
+     * <p>
+     * <code>ext1:id1;ext2:id2;...</code>
+     * </p>
+     * 
+     * @param defaultEditors the default editors to set
      */
     private void setProductDefaults(String defaultEditors) {
         if (defaultEditors == null || defaultEditors.length() == 0)
@@ -729,10 +777,10 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
      * Determine if the editors list contains the editor descriptor.
      * 
      * @param editorsArray
-     * 			The list of editors.
+     * 			The list of editors
      * @param editorDescriptor
-     * 			The editor descriptor.
-     * @return true if the editors list contains the editor descriptor.
+     * 			The editor descriptor
+     * @return <code>true</code> if the editors list contains the editor descriptor
      */
     private boolean contains(List editorsArray,
             IEditorDescriptor editorDescriptor) {
@@ -810,8 +858,9 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         return readResources(editorTable);
     }
 
-    /*
-     *  
+    /**
+     * Return a friendly version of the given key suitable for use in the editor
+     * map.
      */
     private String mappingKeyFor(String type) {
         // keep everyting lower case for case-sensitive platforms
@@ -821,6 +870,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     /**
      * Return a key that combines the file's name and extension of the given
      * mapping
+     * 
+     * @param mapping the mapping to generate a key for
      */
     private String mappingKeyFor(FileEditorMapping mapping) {
         return mappingKeyFor(mapping.getName()
@@ -952,7 +1003,11 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     /**
      * Set the collection of FileEditorMappings. The given collection is
      * converted into the internal hash table for faster lookup Each mapping
-     * goes from an extension to the collection of editors that work on it.
+     * goes from an extension to the collection of editors that work on it. This
+     * operation will rebuild the internal editor mappings.
+     * 
+     * @param newResourceTypes
+     *            te new file editor mappings.
      */
     public void setFileEditorMappings(FileEditorMapping[] newResourceTypes) {
         typeEditorMappings = new EditorMap();
@@ -978,7 +1033,9 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
     /**
-     * Alphabetically sort the internal editors
+     * Alphabetically sort the internal editors.
+     * 
+     * @see #comparer
      */
     private Object[] sortEditors(List unsortedList) {
         Object[] array = new Object[unsortedList.size()];
@@ -989,7 +1046,9 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
     }
 
     /**
-     * Alphabetically sort the internal editors
+     * Alphabetically sort the internal editors.
+     * 
+     * @see #comparer
      */
     private void sortInternalEditors() {
         Object[] array = sortEditors(sortedEditorsFromPlugins);
@@ -999,7 +1058,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         }
     }
 
-    /*
+    /**
      * Map of FileEditorMapping (extension to FileEditorMapping) Uses two
      * java.util.HashMap: one keeps the default which are set by the plugins and
      * the other keeps the changes made by the user through the preference page.
@@ -1009,10 +1068,22 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
 
         HashMap map = new HashMap();
 
+        /**
+         * Put a default mapping into the editor map.
+         * 
+         * @param key the key to set
+         * @param value the value to associate
+         */
         public void putDefault(String key, FileEditorMapping value) {
             defaultMap.put(key, value);
         }
 
+        /**
+         * Put a mapping into the user editor map.
+         * 
+         * @param key the key to set
+         * @param value the value to associate
+         */
         public void put(String key, FileEditorMapping value) {
             Object result = defaultMap.get(key);
             if (value.equals(result))
@@ -1021,6 +1092,15 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
                 map.put(key, value);
         }
 
+        /**
+         * Return the mapping associated to the key. First searches user
+         * map, and then falls back to the default map if there is no match. May
+         * return <code>null</code>
+         * 
+         * @param key
+         *            the key to search for
+         * @return the mapping associated to the key or <code>null</code>
+         */
         public FileEditorMapping get(String key) {
             Object result = map.get(key);
             if (result == null)
@@ -1028,6 +1108,12 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
             return (FileEditorMapping) result;
         }
 
+        /**
+         * Return all mappings. This will return default mappings overlayed with
+         * user mappings.
+         * 
+         * @return the mappings
+         */
         public FileEditorMapping[] allMappings() {
             HashMap merge = (HashMap) defaultMap.clone();
             merge.putAll(map);
@@ -1036,6 +1122,11 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
             return (FileEditorMapping[]) values.toArray(result);
         }
 
+        /**
+         * Return all user mappings.
+         * 
+         * @return the mappings
+         */
         public FileEditorMapping[] userMappings() {
             Collection values = map.values();
             FileEditorMapping result[] = new FileEditorMapping[values.size()];
@@ -1081,11 +1172,21 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         }
         if (externalProgram == null) {
             return null;
-        } else {
-            return new ExternalProgramImageDescriptor(externalProgram);
-        }
+        } 
+        
+        return new ExternalProgramImageDescriptor(externalProgram);
     }
     
+    /**
+     * Removes the entry with the value of the editor descriptor from the given
+     * map. If the descriptor is the last descriptor in a given
+     * FileEditorMapping then the mapping is removed from the map.
+     * 
+     * @param map
+     *            the map to search
+     * @param desc
+     *            the descriptor value to remove
+     */
     private void removeEditorFromMapping(HashMap map, IEditorDescriptor desc) {
         Iterator iter = map.values().iterator();
         FileEditorMapping mapping;
