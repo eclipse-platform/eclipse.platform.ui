@@ -231,6 +231,19 @@ public abstract class Job extends InternalJob {
 		return super.getState();
 	}
 	/**
+	 * Returns whether this job is a system job.  System jobs are typically not 
+	 * revealed to users in any UI presentation of jobs.  Other than their UI presentation,
+	 * system jobs act exactly like other jobs.  If this value is not explicitly set, jobs
+	 * are treated as non-system jobs.
+	 * 
+	 * @returnvalue <code>true</code> if this job should be a system job, and
+	 * <code>false</code> otherwise.
+	 * @see setSystem
+	 */
+	public boolean isSystem()  {
+		return super.isSystem();
+	}
+	/**
 	 * Removes a job listener from this job.
 	 * Has no effect if an identical listener is not already registered.
 	 * 
@@ -303,6 +316,19 @@ public abstract class Job extends InternalJob {
 	 */
 	public final void setRule(ISchedulingRule rule) {
 		super.setRule(rule);
+	}
+	/**
+	 * Sets whether or not this job is a system job.  System jobs are typically not 
+	 * revealed to users in any UI presentation of jobs.  Other than their UI presentation,
+	 * system jobs act exactly like other jobs.  If this value is not explicitly set, jobs
+	 * are treated as non-system jobs.
+	 * 
+	 * @param value <code>true</code> if this job should be a system job, and
+	 * <code>false</code> otherwise.
+	 * @see isSystem
+	 */
+	public final void setSystem(boolean value)  {
+		super.setSystem(value);
 	}
 	/**
 	 * Returns whether this job should be run.

@@ -27,14 +27,6 @@ public abstract class InternalJob implements Comparable {
 	private List listeners;
 	private IProgressMonitor monitor;
 	private String name;
-	private int priority = Job.LONG;
-	private ISchedulingRule schedulingRule;
-	/**
-	 * If the job is waiting, this represents the time the job should start by.  If
-	 * this job is sleeping, this represents the time the job should wake up.
-	 */
-	private long startTime;
-	private int state = Job.NONE;
 	/**
 	 * The job ahead of me in a queue or list.
 	 */
@@ -43,6 +35,15 @@ public abstract class InternalJob implements Comparable {
 	 * The job behind me in a queue or list.
 	 */
 	private InternalJob previous;
+	private int priority = Job.LONG;
+	private ISchedulingRule schedulingRule;
+	private boolean system = false;
+	/**
+	 * If the job is waiting, this represents the time the job should start by.  If
+	 * this job is sleeping, this represents the time the job should wake up.
+	 */
+	private long startTime;
+	private int state = Job.NONE;
 	
 	protected InternalJob(String name)  {
 		Assert.isNotNull(name);
@@ -55,6 +56,19 @@ public abstract class InternalJob implements Comparable {
 		if (listeners == null)
 			listeners = Collections.synchronizedList(new ArrayList(2));
 		listeners.add(listener);
+	}
+	/**
+	 * Adds an entry at the end of the list of which this item is the head.
+	 */
+	final void addLast(InternalJob entry) {
+		if (previous == null) {
+			previous = entry;
+			entry.previous = null;
+		} else
+			previous.addLast(entry);
+	}
+	public boolean belongsTo(Object family) {
+		return false;
 	}
 	protected boolean cancel() {
 		return manager.cancel((Job) this);
@@ -102,6 +116,33 @@ public abstract class InternalJob implements Comparable {
 		ISchedulingRule otherRule = otherJob.getRule();
 		return myRule != null && otherRule != null && myRule.isConflicting(otherRule);
 	}
+	protected boolean isSystem()  {
+		return system;
+	}
+	/**
+	 * Returns the next entry (ahead of this one) in the list, or null if there is no next entry
+	 */
+	final InternalJob next() {
+		return next;
+	}
+	/**
+	 * Returns the previous entry (behind this one) in the list, or null if there is no previous entry
+	 */
+	final InternalJob previous() {
+		return previous;
+	}
+	/**
+	 * Removes this entry from any list it belongs to.  Returns the receiver.
+	 */
+	final InternalJob remove() {
+		if (next != null)
+			next.setPrevious(previous);
+		if (previous != null)
+			previous.setNext(next);
+		next = null;
+		previous = null;
+		return this;
+	}
 	/* (non-Javadoc)
 	 * @see Job#removeJobListener(IJobChangeListener)
 	 */
@@ -117,6 +158,12 @@ public abstract class InternalJob implements Comparable {
 	final void setMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
 	}
+	final void setNext(InternalJob entry) {
+		this.next = entry;
+	}
+	final void setPrevious(InternalJob entry) {
+		this.previous = entry;
+	}
 	protected void setPriority(int NewPriority) {
 		manager.setPriority(this, NewPriority);
 	}
@@ -129,6 +176,9 @@ public abstract class InternalJob implements Comparable {
 	final synchronized void setState(int i) {
 		state = i;
 	}
+	protected void setSystem(boolean value) {
+		this.system = value;
+	}
 	protected boolean sleep() {
 		return manager.sleep(this);
 	}
@@ -137,48 +187,5 @@ public abstract class InternalJob implements Comparable {
 	}
 	protected void wakeUp() {
 		manager.wakeUp(this);
-	}
-	/**
-	 * Adds an entry at the end of the list of which this item is the head.
-	 */
-	final void addLast(InternalJob entry) {
-		if (previous == null) {
-			previous = entry;
-			entry.previous = null;
-		} else
-			previous.addLast(entry);
-	}
-	public boolean belongsTo(Object family) {
-		return false;
-	}
-	/**
-	 * Returns the next entry (ahead of this one) in the list, or null if there is no next entry
-	 */
-	final InternalJob next() {
-		return next;
-	}
-	/**
-	 * Returns the previous entry (behind this one) in the list, or null if there is no previous entry
-	 */
-	final InternalJob previous() {
-		return previous;
-	}
-	final void setNext(InternalJob entry) {
-		this.next = entry;
-	}
-	final void setPrevious(InternalJob entry) {
-		this.previous = entry;
-	}
-	/**
-	 * Removes this entry from any list it belongs to.  Returns the receiver.
-	 */
-	final InternalJob remove() {
-		if (next != null)
-			next.setPrevious(previous);
-		if (previous != null)
-			previous.setNext(next);
-		next = null;
-		previous = null;
-		return this;
 	}
 }
