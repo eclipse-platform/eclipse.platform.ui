@@ -18,6 +18,7 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
       <complexType>
          <sequence>
             <element ref="structureCreator" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contentTypeBinding" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -55,17 +56,36 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  name of a class that implements &lt;samp&gt;org.eclipse.compare.structuremergeviewer.IStructureCreator&lt;/samp&gt;
+                  a fully qualified name of a class that implements &lt;samp&gt;org.eclipse.compare.structuremergeviewer.IStructureCreator&lt;/samp&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.compare.structuremergeviewer.IStructureComparator"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="extensions" type="string" use="required">
+         <attribute name="extensions" type="string">
             <annotation>
                <documentation>
                   a comma separated list of file extensions e.g. &quot;java, properties&quot;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentTypeBinding">
+      <complexType>
+         <attribute name="contentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="structureCreatorId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>

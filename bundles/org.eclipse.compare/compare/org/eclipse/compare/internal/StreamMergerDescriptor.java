@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 class StreamMergerDescriptor {
     
 	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
-	private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
     
 	private IConfigurationElement fElement;
 	
@@ -44,12 +43,5 @@ class StreamMergerDescriptor {
 			//ExceptionHandler.displayMessageDialog(ex, SearchMessages.getString("Search.Error.createSorter.title"), SearchMessages.getString("Search.Error.createSorter.message")); //$NON-NLS-2$ //$NON-NLS-1$
 			return null;
 		}
-	}
-	
-	/**
-	 * Returns the streammergers's extensions.
-	 */
-	public String getExtension() {
-		return fElement.getAttribute(EXTENSIONS_ATTRIBUTE);
 	}
 }

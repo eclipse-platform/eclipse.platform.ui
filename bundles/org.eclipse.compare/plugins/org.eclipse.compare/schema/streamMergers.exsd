@@ -17,25 +17,26 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
       <complexType>
          <sequence>
             <element ref="streamMerger" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contentTypeBinding" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -54,17 +55,36 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  name of a class that implements &lt;samp&gt;org.eclipse.compare.IStreamMerger&lt;/samp&gt;
+                  a fully qualified name of a class that implements &lt;samp&gt;org.eclipse.compare.IStreamMerger&lt;/samp&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.compare.IStreamMerger"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="extensions" type="string" use="required">
+         <attribute name="extensions" type="string">
             <annotation>
                <documentation>
                   a comma separated list of file extensions e.g. &quot;java, properties&quot;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentTypeBinding">
+      <complexType>
+         <attribute name="contentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="streamMergerId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
@@ -81,8 +101,8 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
 &lt;pre&gt;
 &lt;extension point = &quot;org.eclipse.compare.streamMergers&quot;&gt; 
      &lt;streamMerger 
-         id=&quot;org.eclipse.compare.merge.TextMerger&quot; 
-         class=&quot;org.eclipse.compare.merge.TextMerger&quot; 
+         id=&quot;org.eclipse.compare.internal.merge.TextStreamMerger&quot; 
+         class=&quot;org.eclipse.compare.internal.merge.TextStreamMerger&quot; 
          extensions=&quot;properties&quot; 
     /&gt; 
 &lt;/extension&gt; 

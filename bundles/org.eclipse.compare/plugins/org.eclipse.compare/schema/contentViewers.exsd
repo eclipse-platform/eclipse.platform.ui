@@ -17,6 +17,7 @@ However since viewers don&apos;t have a default constructor the extension point 
       <complexType>
          <sequence>
             <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contentTypeBinding" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -54,19 +55,37 @@ However since viewers don&apos;t have a default constructor the extension point 
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  name of a class that implements a factory for the 
-content merge viewer and implements 
-&lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
+                  a fully qualified name of a class that implements a factory for the 
+content viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.Viewer:org.eclipse.compare.IViewerCreator"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="extensions" type="string" use="required">
+         <attribute name="extensions" type="string">
             <annotation>
                <documentation>
                   a comma separated list of file extensions e.g. &quot;java, gif&quot;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentTypeBinding">
+      <complexType>
+         <attribute name="contentTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contentViewerId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
