@@ -29,12 +29,10 @@ public class ConfigOperation extends PendingOperation {
 		this.site = site;
 	}
 	
-	public void execute(IProgressMonitor pm) throws CoreException {
+	public boolean execute(IProgressMonitor pm) throws CoreException {
 		site.configure(feature);
 		UpdateManager.getOperationsManager().ensureUnique(config, feature, site);
-
-		markProcessed();
-		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
+		return true;
 	}
 	
 	public void undo() throws CoreException{

@@ -15,7 +15,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
 
-public class PendingOperation {
+public abstract class PendingOperation {
 	public static final int INSTALL = 0x1;
 	public static final int UNINSTALL = 0x2;
 	public static final int CONFIGURE = 0x3;
@@ -81,8 +81,13 @@ public class PendingOperation {
 		// used to be called setModel
 	}
 	
-	public void execute(IProgressMonitor pm) throws CoreException {
-	}
+	/**
+	 * Returns true if restart is needed
+	 * @param pm
+	 * @return
+	 * @throws CoreException
+	 */
+	public abstract boolean execute(IProgressMonitor pm) throws CoreException;
 	
 	public void undo()  throws CoreException{
 	}

@@ -50,7 +50,7 @@ public class InstallOperation extends PendingOperation {
 		this.verifier = verifier;
 	}
 
-	public void execute(IProgressMonitor pm) throws CoreException {
+	public boolean execute(IProgressMonitor pm) throws CoreException {
 
 		if (optionalFeatures == null)
 			targetSite.install(feature, verifier, pm);
@@ -80,9 +80,8 @@ public class InstallOperation extends PendingOperation {
 		if (oldFeature == null) {
 			UpdateManager.getOperationsManager().ensureUnique(config, feature, targetSite);
 		}
-
-		markProcessed();
-		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
+		
+		return true;
 	}
 
 	public void undo() throws CoreException {

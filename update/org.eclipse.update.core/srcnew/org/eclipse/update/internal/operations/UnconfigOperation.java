@@ -28,14 +28,12 @@ public class UnconfigOperation extends PendingOperation {
 		this.site = site;
 	}
 	
-	public void execute(IProgressMonitor pm) throws CoreException {
+	public boolean execute(IProgressMonitor pm) throws CoreException {
 		PatchCleaner2 cleaner = new PatchCleaner2(site, feature);
 		boolean result = site.unconfigure(feature);
 		cleaner.dispose();
-
-		markProcessed();
-		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
 		
+		return true;
 		// should we throw an exception when result == false ?
 	}
 	

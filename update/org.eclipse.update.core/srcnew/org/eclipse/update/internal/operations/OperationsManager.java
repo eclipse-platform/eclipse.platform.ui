@@ -240,89 +240,89 @@ public class OperationsManager implements IAdaptable {
 			new PendingOperation[list.size()]);
 	}
 
-//	public void executeOneJob(
-//		PendingOperation job,
-//		IInstallConfiguration config,
-//		IConfiguredSite targetSite,
-//		IFeatureReference[] optionalFeatures,
-//		IVerificationListener verifier,
-//		IProgressMonitor monitor)
-//		throws CoreException {
-//
-//		IFeature feature = job.getFeature();
-//		if (job.getJobType() == PendingOperation.UNINSTALL) {
-//			//find the  config site of this feature
-//			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
-//			if (site != null) {
-//				site.remove(feature, monitor);
-//			} else {
-//				// we should do something here
-//				String message =
-//					UpdateManager.getFormattedMessage(
-//						KEY_UNABLE,
-//						feature.getLabel());
-//				IStatus status =
-//					new Status(
-//						IStatus.ERROR,
-//						UpdateManager.getPluginId(),
-//						IStatus.OK,
-//						message,
-//						null);
-//				throw new CoreException(status);
-//			}
-//		} else if (job instanceof InstallOperation) {
-//			InstallOperation installJob = (InstallOperation)job;
-//			installJob.setInstallConfiguration(config);
-//			installJob.setTargetSite(targetSite);
-//			installJob.setOptionalFeatures(optionalFeatures);
-//			installJob.setVerificationListener(verifier);
-//			installJob.execute(monitor);
-//		} else if (job.getJobType() == PendingOperation.INSTALL) {
-//			if (optionalFeatures == null)
-//				targetSite.install(feature, verifier, monitor);
-//			else
-//				targetSite.install(
-//					feature,
-//					optionalFeatures,
-//					verifier,
-//					monitor);
-//			IFeature oldFeature = job.getOldFeature();
-//			if (oldFeature != null && !job.isOptionalDelta()) {
-//				boolean oldSuccess = unconfigure(config, oldFeature);
-//				if (!oldSuccess) {
-//					if (!UpdateManager.isNestedChild(config, oldFeature)) {
-//						// "eat" the error if nested child
-//						String message =
-//							UpdateManager.getFormattedMessage(
-//								KEY_OLD,
-//								oldFeature.getLabel());
-//						IStatus status =
-//							new Status(
-//								IStatus.ERROR,
-//								UpdateManager.getPluginId(),
-//								IStatus.OK,
-//								message,
-//								null);
-//						throw new CoreException(status);
-//					}
-//				}
-//			}
-//			if (oldFeature == null) {
-//				ensureUnique(config, feature, targetSite);
-//			}
-//		} else if (job.getJobType() == PendingOperation.CONFIGURE) {
-//			configure(config, feature);
-//			ensureUnique(config, feature, targetSite);
-//		} else if (job.getJobType() == PendingOperation.UNCONFIGURE) {
-//			unconfigure(config, job.getFeature());
-//		} else {
-//			// should not be here
-//			return;
-//		}
-//
-//		job.markProcessed();
-//		fireObjectChanged(job, null);
-//	}
+	//	public void executeOneJob(
+	//		PendingOperation job,
+	//		IInstallConfiguration config,
+	//		IConfiguredSite targetSite,
+	//		IFeatureReference[] optionalFeatures,
+	//		IVerificationListener verifier,
+	//		IProgressMonitor monitor)
+	//		throws CoreException {
+	//
+	//		IFeature feature = job.getFeature();
+	//		if (job.getJobType() == PendingOperation.UNINSTALL) {
+	//			//find the  config site of this feature
+	//			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
+	//			if (site != null) {
+	//				site.remove(feature, monitor);
+	//			} else {
+	//				// we should do something here
+	//				String message =
+	//					UpdateManager.getFormattedMessage(
+	//						KEY_UNABLE,
+	//						feature.getLabel());
+	//				IStatus status =
+	//					new Status(
+	//						IStatus.ERROR,
+	//						UpdateManager.getPluginId(),
+	//						IStatus.OK,
+	//						message,
+	//						null);
+	//				throw new CoreException(status);
+	//			}
+	//		} else if (job instanceof InstallOperation) {
+	//			InstallOperation installJob = (InstallOperation)job;
+	//			installJob.setInstallConfiguration(config);
+	//			installJob.setTargetSite(targetSite);
+	//			installJob.setOptionalFeatures(optionalFeatures);
+	//			installJob.setVerificationListener(verifier);
+	//			installJob.execute(monitor);
+	//		} else if (job.getJobType() == PendingOperation.INSTALL) {
+	//			if (optionalFeatures == null)
+	//				targetSite.install(feature, verifier, monitor);
+	//			else
+	//				targetSite.install(
+	//					feature,
+	//					optionalFeatures,
+	//					verifier,
+	//					monitor);
+	//			IFeature oldFeature = job.getOldFeature();
+	//			if (oldFeature != null && !job.isOptionalDelta()) {
+	//				boolean oldSuccess = unconfigure(config, oldFeature);
+	//				if (!oldSuccess) {
+	//					if (!UpdateManager.isNestedChild(config, oldFeature)) {
+	//						// "eat" the error if nested child
+	//						String message =
+	//							UpdateManager.getFormattedMessage(
+	//								KEY_OLD,
+	//								oldFeature.getLabel());
+	//						IStatus status =
+	//							new Status(
+	//								IStatus.ERROR,
+	//								UpdateManager.getPluginId(),
+	//								IStatus.OK,
+	//								message,
+	//								null);
+	//						throw new CoreException(status);
+	//					}
+	//				}
+	//			}
+	//			if (oldFeature == null) {
+	//				ensureUnique(config, feature, targetSite);
+	//			}
+	//		} else if (job.getJobType() == PendingOperation.CONFIGURE) {
+	//			configure(config, feature);
+	//			ensureUnique(config, feature, targetSite);
+	//		} else if (job.getJobType() == PendingOperation.UNCONFIGURE) {
+	//			unconfigure(config, job.getFeature());
+	//		} else {
+	//			// should not be here
+	//			return;
+	//		}
+	//
+	//		job.markProcessed();
+	//		fireObjectChanged(job, null);
+	//	}
 
 	public void ensureUnique(
 		IInstallConfiguration config,
@@ -399,7 +399,7 @@ public class OperationsManager implements IAdaptable {
 			toggleOperation = new ConfigOperation(config, site, feature);
 
 		toggleOperation.execute(null); // no progress monitor needed
-	
+
 		IStatus status = UpdateManager.getValidator().validateCurrentState();
 		if (status != null) {
 			toggleOperation.undo();
@@ -412,8 +412,7 @@ public class OperationsManager implements IAdaptable {
 				// Check if this operation is cancelling one that's already pending
 				PendingOperation oldOperation = findPendingChange(feature);
 
-				if ((isConfigured
-					&& oldOperation instanceof UnconfigOperation)
+				if ((isConfigured && oldOperation instanceof UnconfigOperation)
 					|| (!isConfigured
 						&& oldOperation instanceof ConfigOperation)) {
 					// no need to do either pending change
@@ -421,8 +420,13 @@ public class OperationsManager implements IAdaptable {
 				} else {
 					addPendingChange(toggleOperation);
 					restartNeeded = true;
-				} 
-				
+				}
+
+				toggleOperation.markProcessed();
+				UpdateManager.getOperationsManager().fireObjectChanged(
+					toggleOperation,
+					null);
+
 				SiteManager.getLocalSite().save();
 				UpdateManager.getOperationsManager().fireObjectChanged(
 					adapter,
@@ -469,4 +473,39 @@ public class OperationsManager implements IAdaptable {
 		}
 	}
 
+	/**
+	 * Returns true if a restart is needed
+	 * @param site
+	 * @param feature
+	 * @param isConfigured
+	 * @return
+	 * @throws CoreException
+	 */
+	public boolean installFeature(
+		PendingOperation job,
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		IFeatureReference[] optionalFeatures,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws CoreException {
+
+		if (!(job instanceof InstallOperation))
+			return false;
+
+		InstallOperation installJob = (InstallOperation) job;
+		installJob.setInstallConfiguration(config);
+		installJob.setTargetSite(targetSite);
+		installJob.setOptionalFeatures(optionalFeatures);
+		installJob.setVerificationListener(verificationListener);
+
+		boolean needsRestart = installJob.execute(monitor);
+
+		installJob.markProcessed();
+		UpdateManager.getOperationsManager().fireObjectChanged(
+			installJob,
+			null);
+
+		return needsRestart;
+	}
 }

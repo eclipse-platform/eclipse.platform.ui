@@ -50,7 +50,7 @@ public class UninstallOperation extends PendingOperation {
 		this.verifier = verifier;
 	}
 
-	public void execute(IProgressMonitor pm) throws CoreException {
+	public boolean execute(IProgressMonitor pm) throws CoreException {
 
 		//find the  config site of this feature
 //			IConfiguredSite site = UpdateManager.getConfigSite(feature, config);
@@ -75,6 +75,8 @@ public class UninstallOperation extends PendingOperation {
 
 		markProcessed();
 		UpdateManager.getOperationsManager().fireObjectChanged(this, null);
+		
+		return true;
 	}
 
 	public void undo() throws CoreException {
