@@ -115,6 +115,9 @@ public class LazyReaderTest extends TestCase {
 		stream.reset();
 		assertTrue("2.9", stream.ready());
 		assertEquals("2.10", 13, stream.getOffset());
+		stream.reset();
+		assertTrue("2.11", stream.ready());
+		assertEquals("2.12", 13, stream.getOffset());		
 	}
 
 	public static Test suite() {
