@@ -75,6 +75,7 @@ public class AntModel {
 	private boolean fIsDirty= true;
 	private IDocumentListener fListener;
 	
+	//TODO Bug 50302
 	private boolean fValidateFully= false; //AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
 	
 	/**
@@ -209,6 +210,7 @@ public class AntModel {
 		//setTypes(project, loader);
 	}
 	
+//	TODO Bug 50302
 //	private void setTasks(Project project, ClassLoader loader) {
 //		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
 //		
@@ -228,7 +230,9 @@ public class AntModel {
 //			}
 //		}
 //	}
-//
+	
+//TODO Bug 50302
+	
 //	private void setTypes(Project project, ClassLoader loader) {
 //		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
 //		
