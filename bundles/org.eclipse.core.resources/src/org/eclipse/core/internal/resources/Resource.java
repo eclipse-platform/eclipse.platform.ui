@@ -301,7 +301,7 @@ public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor
 
 			// copy the children
 			// FIXME: fix the progress monitor here...create a sub monitor and do a worked(1) after each child instead
-			IResource[] children = ((IContainer) this).members();
+			IResource[] children = ((IContainer) this).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 			for (int i = 0; i < children.length; i++) {
 				Resource child = (Resource) children[i];
 				child.copy(destPath.append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100 / children.length));
