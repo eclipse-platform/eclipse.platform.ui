@@ -475,7 +475,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			
 			
 			rgb= null;
-			// background color
+			// background color: same as editor, or system default
 			if (!store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
 				if (store.contains(PREFERENCE_COLOR_BACKGROUND)) {
 					if (store.isDefault(PREFERENCE_COLOR_BACKGROUND))
@@ -484,9 +484,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 						rgb= PreferenceConverter.getColor(store, PREFERENCE_COLOR_BACKGROUND);
 				}
 			}
-			if (rgb == null)
-				rgb= new RGB(255, 255, 255);
 			rulerColumn.setBackground(sharedColors.getColor(rgb));			
+			
 			rulerColumn.redraw();
 		}
 	}
@@ -522,6 +521,18 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 				}
 			}
 			
+			RGB rgb= null;
+			// background color: same as editor, or system default
+			if (!store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
+				if (store.contains(PREFERENCE_COLOR_BACKGROUND)) {
+					if (store.isDefault(PREFERENCE_COLOR_BACKGROUND))
+						rgb= PreferenceConverter.getDefaultColor(store, PREFERENCE_COLOR_BACKGROUND);
+					else
+						rgb= PreferenceConverter.getColor(store, PREFERENCE_COLOR_BACKGROUND);
+				}
+			}
+			changeColumn.setBackground(sharedColors.getColor(rgb));			
+
 			if (changeColumn instanceof LineNumberChangeRulerColumn) {
 				LineNumberChangeRulerColumn lncrc= (LineNumberChangeRulerColumn) changeColumn;
 				lncrc.setDisplayMode(store.getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE));

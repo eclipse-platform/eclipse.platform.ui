@@ -30,6 +30,14 @@ public interface IChangeRulerColumn extends IVerticalRulerColumn, IVerticalRuler
 	public abstract void setHover(IAnnotationHover hover);
 
 	/**
+	 * Sets the background color for normal lines. The color has to be disposed of by the caller when
+	 * the receiver is no longer used.
+	 * 
+	 * @param addedColor the new color to be used as standard line background
+	 */
+	public abstract void setBackground(Color addedColor);
+
+	/**
 	 * Sets the background color for added lines. The color has to be disposed of by the caller when
 	 * the receiver is no longer used.
 	 * 

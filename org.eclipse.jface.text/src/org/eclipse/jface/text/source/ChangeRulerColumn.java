@@ -178,7 +178,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/**
 	 * Returns the System background color for list widgets.
 	 * 
-	 * @param display the display
+	 * @param display the display the drawing occurs on
 	 * @return the System background color for list widgets
 	 */
 	protected Color getBackground(Display display) {
@@ -364,7 +364,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			if (y >= canvasheight)
 				break;
 			
-			paintLine(line, y, lineheight, gc);
+			paintLine(line, y, lineheight, gc, fCachedTextWidget.getDisplay());
 		}
 	}
 	
@@ -429,7 +429,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			if (widgetLine == -1)
 				continue;
 
-			paintLine(modelLine, y, lineheight, gc);
+			paintLine(modelLine, y, lineheight, gc, fCachedTextWidget.getDisplay());
 			
 			y+= lineheight;
 		}
@@ -466,7 +466,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	/*
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#paintLineHook(int, int, int, org.eclipse.swt.graphics.GC)
 	 */
-	protected void paintLine(int line, int y, int lineheight, GC gc) {
+	protected void paintLine(int line, int y, int lineheight, GC gc, Display display) {
 		ILineDiffInfo info= getDiffInfo(line);
 
 		if (info != null) {
@@ -475,7 +475,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 
 			// draw background color if special
 			if (hasSpecialColor(info)) {
-				gc.setBackground(getColor(info));
+				gc.setBackground(getColor(info, display));
 				gc.fillRectangle(0, y, width, lineheight);
 			}
 
@@ -483,7 +483,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 			int delBefore= info.getRemovedLinesAbove();
 			int delBelow= info.getRemovedLinesBelow();
 			if (delBefore > 0 || delBelow > 0) {
-				Color deletionColor= getDeletionColor();
+				Color deletionColor= getDeletionColor(display);
 				gc.setForeground(deletionColor);
 
 				if (delBefore > 0) {
@@ -528,31 +528,22 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	}
 
 	/**
-	 * Returns the current background color.
-	 * 
-	 * @return the currently set background color or <code>null</code>
-	 * @since 3.0
-	 */
-	protected Color getBackground() {
-		return fBackground;
-	}
-	
-	/**
 	 * Returns the color for deleted lines.
 	 * 
 	 * @return the color to be used for the deletion indicator
 	 */
-	private Color getDeletionColor() {
-		return fDeletedColor == null ? getBackground() : fDeletedColor;
+	private Color getDeletionColor(Display display) {
+		return fDeletedColor == null ? getBackground(display) : fDeletedColor;
 	}
 
 	/**
 	 * Returns the color for the given line diff info.
 	 * 
 	 * @param info the <code>ILineDiffInfo</code> being queried
+	 * @param display the display that the drawing occurs on
 	 * @return the correct background color for the line type being described by <code>info</code>
 	 */
-	private Color getColor(ILineDiffInfo info) {
+	private Color getColor(ILineDiffInfo info, Display display) {
 		Assert.isTrue(info != null && info.getType() != ILineDiffInfo.UNCHANGED);
 		Color ret= null;
 		switch (info.getType()) {
@@ -563,7 +554,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 				ret= fAddedColor;
 				break;
 		}
-		return ret == null ? getBackground() : ret;
+		return ret == null ? getBackground(display) : ret;
 	}
 
 	/*
@@ -587,10 +578,8 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		return fHover;
 	}
 
-	/**
-	 * Sets the hover of this ruler column.
-	 * 
-	 * @param hover the hover that will produce hover information text for this ruler column
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setHover(org.eclipse.jface.text.source.IAnnotationHover)
 	 */
 	public void setHover(IAnnotationHover hover) {
 		fHover= hover;
@@ -618,31 +607,31 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		}
 	}
 
-	/**
-	 * Sets the background color for added lines. The color has to be disposed of by the caller when
-	 * the receiver is no longer used.
-	 * 
-	 * @param addedColor the new color to be used for the added lines background
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setBackground(org.eclipse.swt.graphics.Color)
+	 */
+	public void setBackground(Color background) {
+		fBackground= background;			
+		if (fCanvas != null && !fCanvas.isDisposed())
+			fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setAddedColor(org.eclipse.swt.graphics.Color)
 	 */
 	public void setAddedColor(Color addedColor) {
 		fAddedColor= addedColor;
 	}
 
-	/**
-	 * Sets the background color for changed lines. The color has to be disposed of by the caller when
-	 * the receiver is no longer used.
-	 * 
-	 * @param changedColor the new color to be used for the changed lines background
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setChangedColor(org.eclipse.swt.graphics.Color)
 	 */
 	public void setChangedColor(Color changedColor) {
 		fChangedColor= changedColor;
 	}
 
-	/**
-	 * Sets the color for the deleted lines indicator. The color has to be disposed of by the caller when
-	 * the receiver is no longer used.
-	 * 
-	 * @param deletedColor the new color to be used for the deleted lines indicator.
+	/*
+	 * @see org.eclipse.jface.text.source.IChangeRulerColumn#setDeletedColor(org.eclipse.swt.graphics.Color)
 	 */
 	public void setDeletedColor(Color deletedColor) {
 		fDeletedColor= deletedColor;

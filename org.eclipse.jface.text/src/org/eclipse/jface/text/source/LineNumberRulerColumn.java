@@ -380,16 +380,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		return fBackground;
 	}
 	
-	/**
-	 * Returns the current background color.
-	 * 
-	 * @return the currently set background color or <code>null</code>
-	 * @since 3.0
-	 */
-	protected Color getBackground() {
-		return fBackground;
-	}
-	
 	/*
 	 * @see IVerticalRulerColumn#getControl()
 	 */
@@ -667,7 +657,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			if (y >= canvasheight)
 				break;
 			
-			paintLine(line, y, lineheight, gc);
+			paintLine(line, y, lineheight, gc, fCachedTextWidget.getDisplay());
 				
 			String s= createDisplayString(line);
 			int indentation= fIndentation[s.length()];
@@ -747,7 +737,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			if (widgetLine == -1)
 				continue;
 			
-			paintLine(modelLine, y, lineheight, gc);
+			paintLine(modelLine, y, lineheight, gc, fCachedTextWidget.getDisplay());
 
 			String s= createDisplayString(modelLine);
 			int indentation= fIndentation[s.length()];
@@ -765,9 +755,10 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 * @param y the y-coordinate of the box being painted for <code>line</code>, relative to <code>gc</code>
 	 * @param lineheight the height of one line (and therefore of the box being painted)
 	 * @param gc the drawing context the client may choose to draw on.
+	 * @param display the display the drawing occurs on
 	 * @since 3.0
 	 */
-	protected void paintLine(int line, int y, int lineheight, GC gc) {
+	protected void paintLine(int line, int y, int lineheight, GC gc, Display display) {
 	}
 	
 	/**

@@ -12,6 +12,7 @@ package org.eclipse.jface.text.source;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.Assert;
 
@@ -67,9 +68,9 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#paintLineHook(int, int, int, org.eclipse.swt.graphics.GC)
+	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#paintLine(int, int, int, org.eclipse.swt.graphics.GC, org.eclipse.swt.widgets.Display)
 	 */
-	protected void paintLine(int line, int y, int lineheight, GC gc) {
+	protected void paintLine(int line, int y, int lineheight, GC gc, Display display) {
 		ILineDiffInfo info= getDiffInfo(line);
 
 		if (info != null) {
@@ -78,7 +79,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 
 			// draw background color if special
 			if (hasSpecialColor(info)) {
-				gc.setBackground(getColor(info));
+				gc.setBackground(getColor(info, display));
 				gc.fillRectangle(0, y, width, lineheight);
 			}
 
@@ -105,7 +106,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 			int delBefore= info.getRemovedLinesAbove();
 			int delBelow= info.getRemovedLinesBelow();
 			if (delBefore > 0 || delBelow > 0) {
-				Color deletionColor= getDeletionColor();
+				Color deletionColor= getDeletionColor(display);
 				gc.setBackground(deletionColor);
 				gc.setForeground(deletionColor);
 
@@ -168,19 +169,21 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	/**
 	 * Returns the color for deleted lines.
 	 * 
+	 * @param display the display that the drawing occurs on
 	 * @return the color to be used for the deletion indicator
 	 */
-	private Color getDeletionColor() {
-		return fDeletedColor == null ? getBackground() : fDeletedColor;
+	private Color getDeletionColor(Display display) {
+		return fDeletedColor == null ? getBackground(display) : fDeletedColor;
 	}
 
 	/**
 	 * Returns the color for the given line diff info.
 	 * 
 	 * @param info the <code>ILineDiffInfo</code> being queried
+	 * @param display the display that the drawing occurs on
 	 * @return the correct background color for the line type being described by <code>info</code>
 	 */
-	private Color getColor(ILineDiffInfo info) {
+	private Color getColor(ILineDiffInfo info, Display display) {
 		Assert.isTrue(info != null && info.getType() != ILineDiffInfo.UNCHANGED);
 		Color ret= null;
 		switch (info.getType()) {
@@ -191,7 +194,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 				ret= fAddedColor;
 				break;
 		}
-		return ret == null ? getBackground() : ret;
+		return ret == null ? getBackground(display) : ret;
 	}
 
 	/**
@@ -209,7 +212,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 			case ILineDiffInfo.ADDED :
 				return "+"; //$NON-NLS-1$
 		}
-		return " ";
+		return " "; //$NON-NLS-1$
 	}
 
 	/*
