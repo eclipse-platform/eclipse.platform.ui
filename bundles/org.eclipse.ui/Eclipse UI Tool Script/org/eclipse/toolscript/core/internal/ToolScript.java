@@ -31,19 +31,19 @@ import org.eclipse.core.runtime.*;
  */
 public class ToolScript implements IToolScript {
 	// Internal tags for storing script related information
-	private static final String TAG_SCRIPT_TYPE = "!{script:type}"; //$NON-NLS-1$
-	private static final String TAG_SCRIPT_NAME = "!{script:name}"; //$NON-NLS-1$
-	private static final String TAG_SCRIPT_LOCATION = "!{script:loc}"; //$NON-NLS-1$
-	private static final String TAG_SCRIPT_ARGUMENTS = "!{script:args}"; //$NON-NLS-1$
-	private static final String TAG_SCRIPT_DIRECTORY = "!{script:dir}"; //$NON-NLS-1$
-	private static final String TAG_SCRIPT_REFRESH = "!{script:refresh}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_TYPE = "!{script_type}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_NAME = "!{script_name}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_LOCATION = "!{script_loc}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_ARGUMENTS = "!{script_args}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_DIRECTORY = "!{script_dir}"; //$NON-NLS-1$
+	private static final String TAG_SCRIPT_REFRESH = "!{script_refresh}"; //$NON-NLS-1$
 	
 	// Known kind of scripts
 	public static final String SCRIPT_TYPE_PROGRAM = "org.eclipse.toolscript.type.program"; //$NON-NLS-1$
 	public static final String SCRIPT_TYPE_ANT = "org.eclipse.toolscript.type.ant"; //$NON-NLS-1$
 	
 	// Variable names the tool script will expand
-	public static final String VAR_DIR_WORKSPACE = "${workspace}"; //$NON-NLS-1$
+	public static final String VAR_DIR_WORKSPACE = "${workspace_dir}"; //$NON-NLS-1$
 	public static final String VAR_DIR_PROJECT = "${project}"; //$NON-NLS-1$
 
 	private static final String EMPTY_VALUE = ""; //$NON-NLS-1$;
