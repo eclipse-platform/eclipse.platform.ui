@@ -87,4 +87,23 @@ public abstract class AbstractItemExtensionElement {
 	 */
 	public abstract void createControl(Composite composite);
 
+	/**
+	 * Called by the cheat sheet framework to dispose of this item element extension.
+	 * <p>
+	 * This is the last method called on the <code>AbstractItemExtensionElement</code>.
+	 * At this point the controls (if they were ever created) have been disposed as part 
+	 * of an SWT composite.  There is no guarantee that createControl() has been called,
+	 * so the controls may never have been created.
+	 * </p>
+	 * <p>
+	 * Within this method an item element extension may release any resources, fonts,
+	 * images, etc.&nbsp; held by this part.  It is also very important to deregister
+	 * all listeners.
+	 * </p>
+	 * <p>
+	 * Clients should not call this method (the cheat sheet framework calls this method
+	 * at appropriate times).
+	 * </p>
+	 */
+	public abstract void dispose();
 }
