@@ -10,26 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
@@ -43,9 +29,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
@@ -53,7 +36,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 /*
  * The page for setting the editor options.
  */
-public class AntEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		
 	private final String[][] fAppearanceColorListModel= new String[][] {
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.lineNumberForegroundColor"), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR}, //$NON-NLS-1$
@@ -66,57 +49,16 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.XML_COMMENT_COLOR, null} //$NON-NLS-1$
 	};
 	
-	private final String[][] fContentAssistColorListModel= new String[][] {
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.backgroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND }, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.foregroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND }, //$NON-NLS-1$
-	};
-
-	private OverlayPreferenceStore fOverlayStore;
-	
-	private Map fCheckBoxes= new HashMap();
-	private SelectionListener fCheckBoxListener= new SelectionListener() {
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-		public void widgetSelected(SelectionEvent e) {
-			Button button= (Button) e.widget;
-			fOverlayStore.setValue((String) fCheckBoxes.get(button), button.getSelection());
-		}
-	};
-	
-	private Map fTextFields= new HashMap();
-	private ModifyListener fTextFieldListener= new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			Text text= (Text) e.widget;
-			fOverlayStore.setValue((String) fTextFields.get(text), text.getText());
-		}
-	};
-
-	private Map fNumberFields= new HashMap();
-	private ModifyListener fNumberFieldListener= new ModifyListener() {
-		public void modifyText(ModifyEvent e) {
-			numberFieldChanged((Text) e.widget);
-		}
-	};
-	
 	private List fAppearanceColorList;
-	private List fContentAssistColorList;
 	
 	private ColorEditor fAppearanceColorEditor;
-	private ColorEditor fContentAssistColorEditor;
-	
-	private Control fAutoInsertDelayText;
-	private Control fAutoInsertTriggerText;
-	private Label fAutoInsertDelayLabel;
-	private Label fAutoInsertTriggerLabel;
 	
 	public AntEditorPreferencePage() {
+		super();
 		setDescription(AntPreferencesMessages.getString("AntEditorPreferencePage.description")); //$NON-NLS-1$
-		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
-
-		fOverlayStore= createOverlayStore();
 	}
 	
-	private OverlayPreferenceStore createOverlayStore() {
+	protected OverlayPreferenceStore createOverlayStore() {
 		
 		ArrayList overlayKeys= new ArrayList();
 
@@ -158,25 +100,11 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
-	}
-	
-	private Label getLabelControl(Control[] labelledTextField){
-		return (Label)labelledTextField[0];
-	}
-
-	private Text getTextControl(Control[] labelledTextField){
-		return (Text)labelledTextField[1];
-	}
 
 	private void handleAppearanceColorListSelection() {	
 		int i= fAppearanceColorList.getSelectionIndex();
 		String key= fAppearanceColorListModel[i][1];
-		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
+		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), key);
 		fAppearanceColorEditor.setColorValue(rgb);		
 	}
 	
@@ -283,168 +211,20 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 				int i= fAppearanceColorList.getSelectionIndex();
 				String key= fAppearanceColorListModel[i][1];
 				
-				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
+				PreferenceConverter.setValue(getOverlayStore(), key, fAppearanceColorEditor.getColorValue());
 			}
 		});
 		return appearanceComposite;
 	}
-	
-	/**
-	 * Returns an array of size 2:
-	 *  - first element is of type <code>Label</code>
-	 *  - second element is of type <code>Text</code>
-	 * Use <code>getLabelControl</code> and <code>getTextControl</code> to get the 2 controls.
-	 */
-	private Control[] addLabelledTextField(Composite composite, String label, String key, int textLimit, int indentation, String[] errorMessages) {
-		Label labelControl= new Label(composite, SWT.NONE);
-		labelControl.setText(label);
-		labelControl.setFont(composite.getFont());
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		labelControl.setLayoutData(gd);
-	
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
-		textControl.setLayoutData(gd);
-		textControl.setTextLimit(textLimit);
-		textControl.setFont(composite.getFont());
-		fTextFields.put(textControl, key);
-		if (errorMessages != null) {
-			fNumberFields.put(textControl, errorMessages);
-			textControl.addModifyListener(fNumberFieldListener);
-		} else {
-			textControl.addModifyListener(fTextFieldListener);
-		}
-		
-		return new Control[]{labelControl, textControl};
-	}
-		
-	private Control createContentAssistPage(Composite parent) {
-		Font font= parent.getFont();
-		Composite contentAssistComposite= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout(); 
-		layout.numColumns= 2;
-		contentAssistComposite.setLayout(layout);
-		contentAssistComposite.setFont(font);
-
-		String text= AntPreferencesMessages.getString("AntEditorPreferencePage.Insert"); //$NON-NLS-1$
-		addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT, 0);		
-
-		text= AntPreferencesMessages.getString("AntEditorPreferencePage.&Enable_auto_activation_2"); //$NON-NLS-1$
-		final Button autoactivation= addCheckBox(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION, 0);
-		autoactivation.addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				updateAutoactivationControls();
-			}
-		});		
-		
-		Control[] labelledTextField;
-		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Auto_activation_&delay__3"); //$NON-NLS-1$
-		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_auto_activation"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_auto_activation")};  //$NON-NLS-1$//$NON-NLS-2$
-		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 0, errorMessages);
-		fAutoInsertDelayLabel= getLabelControl(labelledTextField);
-		fAutoInsertDelayText= getTextControl(labelledTextField);
-		
-		text= AntPreferencesMessages.getString("AntEditorPreferencePage.Auto_activation_tri&ggers__4"); //$NON-NLS-1$
-		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, null);
-		fAutoInsertTriggerLabel= getLabelControl(labelledTextField);
-		fAutoInsertTriggerText= getTextControl(labelledTextField);
-		
-		Label label= new Label(contentAssistComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Code_assist_colo&r_options__5")); //$NON-NLS-1$
-		label.setFont(font);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		label.setLayoutData(gd);
-
-		Composite editorComposite= new Composite(contentAssistComposite, SWT.NONE);
-		layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		editorComposite.setLayout(layout);
-		editorComposite.setFont(font);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
-		gd.horizontalSpan= 2;
-		editorComposite.setLayoutData(gd);		
-
-		fContentAssistColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		gd.heightHint= convertHeightInCharsToPixels(8);
-		fContentAssistColorList.setLayoutData(gd);
-		fContentAssistColorList.setFont(font);
-						
-		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 2;
-		stylesComposite.setLayout(layout);
-		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		stylesComposite.setFont(font);
-		
-		label= new Label(stylesComposite, SWT.LEFT);
-		label.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.Col&or__6")); //$NON-NLS-1$
-		label.setFont(font);
-		gd= new GridData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		label.setLayoutData(gd);
-
-		fContentAssistColorEditor= new ColorEditor(stylesComposite);
-		Button colorButton= fContentAssistColorEditor.getButton();
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		colorButton.setLayoutData(gd);
-
-		fContentAssistColorList.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				handleContentAssistColorListSelection();
-			}
-		});
-		
-		colorButton.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			public void widgetSelected(SelectionEvent e) {
-				int i= fContentAssistColorList.getSelectionIndex();
-				String key= fContentAssistColorListModel[i][1];
-				
-				PreferenceConverter.setValue(fOverlayStore, key, fContentAssistColorEditor.getColorValue());
-			}
-		});
-
-		return contentAssistComposite;
-	}
-	
-	private void handleContentAssistColorListSelection() {	
-		int i= fContentAssistColorList.getSelectionIndex();
-		String key= fContentAssistColorListModel[i][1];
-		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
-		fContentAssistColorEditor.setColorValue(rgb);
-	}
-		
-	private void updateAutoactivationControls() {
-	   boolean autoactivation= fOverlayStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
-	   fAutoInsertDelayText.setEnabled(autoactivation);
-	   fAutoInsertDelayLabel.setEnabled(autoactivation);
-
-	   fAutoInsertTriggerText.setEnabled(autoactivation);
-	   fAutoInsertTriggerLabel.setEnabled(autoactivation);
-   }
-	
+			
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
-		fOverlayStore.load();
-		fOverlayStore.start();
+		getOverlayStore().load();
+		getOverlayStore().start();
 		
 		TabFolder folder= new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());	
@@ -453,11 +233,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		TabItem item= new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.general")); //$NON-NLS-1$
 		item.setControl(createAppearancePage(folder));
-		
-		item= new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.codeAssistTab.title")); //$NON-NLS-1$
-		item.setControl(createContentAssistPage(folder));
-				
+					
 		initialize();
 		
 		applyDialogFont(folder);
@@ -479,178 +255,12 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 				}
 			}
 		});
-		
-		for (int i= 0; i < fContentAssistColorListModel.length; i++) {
-			fContentAssistColorList.add(fContentAssistColorListModel[i][0]);
-		}
-		fContentAssistColorList.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (fContentAssistColorList != null && !fContentAssistColorList.isDisposed()) {
-					fContentAssistColorList.select(0);
-					handleContentAssistColorListSelection();
-				}
-			}
-		});
-	}
-	
-	private void initializeFields() {
-		
-		Iterator e= fCheckBoxes.keySet().iterator();
-		while (e.hasNext()) {
-			Button b= (Button) e.next();
-			String key= (String) fCheckBoxes.get(b);
-			b.setSelection(fOverlayStore.getBoolean(key));
-		}
-		
-		e= fTextFields.keySet().iterator();
-		while (e.hasNext()) {
-			Text t= (Text) e.next();
-			String key= (String) fTextFields.get(t);
-			t.setText(fOverlayStore.getString(key));
-		}		
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
+	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#handleDefaults()
 	 */
-	public boolean performOk() {
-		fOverlayStore.propagate();
-		AntUIPlugin.getDefault().savePluginPreferences();
-		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
-	protected void performDefaults() {
-		fOverlayStore.loadDefaults();
-		initializeFields();
-
+	protected void handleDefaults() {
 		handleAppearanceColorListSelection();
-		handleContentAssistColorListSelection();
-
-		super.performDefaults();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		
-		if (fOverlayStore != null) {
-			fOverlayStore.stop();
-			fOverlayStore= null;
-		}
-		
-		super.dispose();
-	}
-	
-	private Button addCheckBox(Composite parent, String labelText, String key, int indentation) {		
-		Button checkBox= new Button(parent, SWT.CHECK);
-		checkBox.setText(labelText);
-		checkBox.setFont(parent.getFont());
-		
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		gd.horizontalSpan= 2;
-		checkBox.setLayoutData(gd);
-		checkBox.addSelectionListener(fCheckBoxListener);
-		
-		fCheckBoxes.put(checkBox, key);
-		
-		return checkBox;
-	}
-	
-	private Control addTextField(Composite composite, String labelText, String key, int textLimit, int indentation, String[] errorMessages) {
-		Font font= composite.getFont();
-		
-		Label label= new Label(composite, SWT.NONE);
-		label.setText(labelText);
-		label.setFont(font);
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalIndent= indentation;
-		label.setLayoutData(gd);
-		
-		Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
-		textControl.setFont(font);		
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
-		textControl.setLayoutData(gd);
-		textControl.setTextLimit(textLimit);
-		fTextFields.put(textControl, key);
-		if (errorMessages != null) {
-			fNumberFields.put(textControl, errorMessages);
-			textControl.addModifyListener(fNumberFieldListener);
-		} else {
-			textControl.addModifyListener(fTextFieldListener);
-		}
-			
-		return textControl;
-	}
-	
-	private void numberFieldChanged(Text textControl) {
-		String number= textControl.getText();
-		IStatus status= validatePositiveNumber(number, (String[])fNumberFields.get(textControl));
-		if (!status.matches(IStatus.ERROR)) {
-			fOverlayStore.setValue((String) fTextFields.get(textControl), number);
-		}
-		updateStatus(status);
-	}
-	
-	private IStatus validatePositiveNumber(String number, String[] errorMessages) {
-		StatusInfo status= new StatusInfo();
-		if (number.length() == 0) {
-			status.setError(errorMessages[0]);
-		} else {
-			try {
-				int value= Integer.parseInt(number);
-				if (value < 0)
-					status.setError(MessageFormat.format(errorMessages[1], new String[]{number})); //$NON-NLS-1$
-			} catch (NumberFormatException e) {
-				status.setError(MessageFormat.format(errorMessages[1], new String[]{number})); //$NON-NLS-1$
-			}
-		}
-		return status;
-	}
-	
-	private void updateStatus(IStatus status) {
-		if (!status.matches(IStatus.ERROR)) {
-			Set keys= fNumberFields.keySet();
-			for (Iterator iter = keys.iterator(); iter.hasNext();) {
-				Text text = (Text) iter.next();
-				IStatus s= validatePositiveNumber(text.getText(), (String[])fNumberFields.get(text));
-				status= s.getSeverity() > status.getSeverity() ? s : status;
-			}
-		}	
-		setValid(!status.matches(IStatus.ERROR));
-		applyToStatusLine(this, status);
-	}
-
-	/*
-	 * Applies the status to the status line of a dialog page.
-	 */
-	private void applyToStatusLine(DialogPage page, IStatus status) {
-		String message= status.getMessage();
-		switch (status.getSeverity()) {
-			case IStatus.OK:
-				page.setMessage(message, IMessageProvider.NONE);
-				page.setErrorMessage(null);
-				break;
-			case IStatus.WARNING:
-				page.setMessage(message, IMessageProvider.WARNING);
-				page.setErrorMessage(null);
-				break;				
-			case IStatus.INFO:
-				page.setMessage(message, IMessageProvider.INFORMATION);
-				page.setErrorMessage(null);
-				break;			
-			default:
-				if (message.length() == 0) {
-					message= null;
-				}
-				page.setMessage(null);
-				page.setErrorMessage(message);
-				break;		
-		}
 	}
 }
