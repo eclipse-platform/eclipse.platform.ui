@@ -27,7 +27,8 @@ public class SiteURLFactory extends BaseSiteFactory {
 		InputStream siteStream = null;
 		
 		try {		
-			SiteURLContentProvider contentProvider = new SiteURLContentProvider(removeSiteXML(url));
+			url =removeSiteXML(url);
+			SiteURLContentProvider contentProvider = new SiteURLContentProvider(url);
 		
 			siteXML = new URL(url,Site.SITE_XML);
 			siteStream = siteXML.openStream();
@@ -76,9 +77,9 @@ public class SiteURLFactory extends BaseSiteFactory {
 	 */
 	private URL removeSiteXML(URL url) throws MalformedURLException{
 		URL result = url;
-		if (url!=null && url.toExternalForm().endsWith(Site.SITE_XML)){
-			int index = url.toExternalForm().lastIndexOf(Site.SITE_XML);
-			result = new URL(url.getProtocol(), url.getHost(), url.toExternalForm().substring(0,index));
+		if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
+			int index = url.getFile().lastIndexOf(Site.SITE_XML);
+			result = new URL(url.getProtocol(), url.getHost(), url.getFile().substring(0,index));
 		}
 		return result;
 	}

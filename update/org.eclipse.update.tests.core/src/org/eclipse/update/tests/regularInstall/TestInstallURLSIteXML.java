@@ -63,8 +63,10 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	public void testFileSite() throws Exception {
 
 		ISite remoteSite = SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML));
+		//ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);		
 		IFeature remoteFeature = getFeature1(remoteSite);
 		ISite localSite = SiteManager.getSite(new URL(TARGET_FILE_SITE, Site.SITE_XML));
+		//ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);		
 		localSite.install(remoteFeature, null);
 
 		// verify
@@ -152,7 +154,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
 		URL INSTALL_SITE = null;
 		try {
-			INSTALL_SITE = new URL("http", bundle.getString("HTTP_HOST_1"), bundle.getString("HTTP_PATH_2")+Site.SITE_XML);
+			INSTALL_SITE = new URL("http", bundle.getString("HTTP_HOST_1"), bundle.getString("HTTP_PATH_2"));
 		} catch (Exception e) {
 			fail(e.toString());
 			e.printStackTrace();
