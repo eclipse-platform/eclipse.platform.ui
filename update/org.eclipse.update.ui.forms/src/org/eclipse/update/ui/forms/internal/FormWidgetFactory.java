@@ -15,6 +15,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
 public class FormWidgetFactory {
+	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
+	public static final String TREE_BORDER = "treeBorder";
 	public static final String DEFAULT_HEADER_COLOR = "__default__header__";
 	public static final String COLOR_BORDER = "__border";
 	public static final String COLOR_COMPOSITE_SEPARATOR = "__compSep";
@@ -37,11 +39,18 @@ public class FormWidgetFactory {
 			Control[] children = composite.getChildren();
 			for (int i = 0; i < children.length; i++) {
 				Control c = children[i];
+				boolean inactiveBorder=false;
 				if (c.getEnabled() == false && !(c instanceof CCombo))
 					continue;
 				if (c instanceof SelectableFormLabel)
 					continue;
-				if (c instanceof Text || c instanceof Canvas || c instanceof CCombo) {
+				Object flag = c.getData(KEY_DRAW_BORDER);
+				if (flag!=null) {
+					if (flag.equals(Boolean.FALSE)) continue;
+					if (flag.equals(TREE_BORDER)) inactiveBorder=true;
+				}
+				 
+				if (!inactiveBorder && (c instanceof Text || c instanceof Canvas || c instanceof CCombo)) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(c.getBackground());
@@ -51,7 +60,7 @@ public class FormWidgetFactory {
 						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1, b.height + 1);
 					else 
 						gc.drawRectangle(b.x - 1, b.y - 2, b.width + 1, b.height + 3);
-				} else if (c instanceof Table || c instanceof Tree || c instanceof TableTree) {
+				} else if (inactiveBorder ||c instanceof Table || c instanceof Tree || c instanceof TableTree) {
 					Rectangle b = c.getBounds();
 					GC gc = event.gc;
 					gc.setForeground(borderColor);
