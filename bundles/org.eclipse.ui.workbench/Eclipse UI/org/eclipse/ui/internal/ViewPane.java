@@ -343,7 +343,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		layout2.marginWidth = 1;
 
 		composite.setLayout(layout2);
-		isvToolBar2 = new ToolBar(composite, SWT.VERTICAL | SWT.FLAT | SWT.WRAP);
+		isvToolBar2 = new ToolBar(control, SWT.VERTICAL | SWT.FLAT | SWT.WRAP);
 		//	isvToolBar2 = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 
 		//	control.setTopCenter(isvToolBar2);
