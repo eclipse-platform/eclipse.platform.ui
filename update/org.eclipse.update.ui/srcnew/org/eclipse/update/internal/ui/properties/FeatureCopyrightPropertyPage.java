@@ -74,6 +74,7 @@ public class FeatureCopyrightPropertyPage extends PropertyPage implements IWorkb
 			} else {
 				label.setText("Feature does not contain a copyright statement");
 			}
+			Dialog.applyDialogFont(parent);
 		} catch (CoreException e) {
 		}
 		return null;

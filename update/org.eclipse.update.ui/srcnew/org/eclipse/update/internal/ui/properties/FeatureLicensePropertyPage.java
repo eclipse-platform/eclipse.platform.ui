@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.properties;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -61,6 +62,9 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 				Label label = new Label(composite, SWT.NULL);
 				label.setText("Feature does not contain a license.");
 			}
+			
+			Dialog.applyDialogFont(parent);
+			
 			return composite;
 			
 		} catch (CoreException e) {

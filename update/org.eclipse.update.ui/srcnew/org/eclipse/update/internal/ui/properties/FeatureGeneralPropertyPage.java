@@ -1,6 +1,7 @@
 package org.eclipse.update.internal.ui.properties;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -39,6 +40,9 @@ public class FeatureGeneralPropertyPage
 			addGeneralSection(feature, composite);	
 			addSupportedPlatformsSection(feature, composite);
 			addDescription(feature, composite);
+			
+			Dialog.applyDialogFont(parent);
+			
 			return composite;
 
 		} catch (CoreException e) {
