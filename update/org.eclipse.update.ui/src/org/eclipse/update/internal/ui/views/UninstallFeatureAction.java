@@ -46,7 +46,7 @@ public class UninstallFeatureAction extends Action {
 				return;
 
 			IOperation uninstallOperation =
-				(IOperation) OperationsManager
+				OperationsManager
 					.getOperationFactory()
 					.createUninstallOperation(
 					adapter.getConfiguredSite(),

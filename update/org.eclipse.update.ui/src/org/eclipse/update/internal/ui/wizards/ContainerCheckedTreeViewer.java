@@ -97,7 +97,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
      */
     private void initializeItem(TreeItem item) {
         if (item.getChecked() && !item.getGrayed()) {
-            updateChildrenItems((TreeItem) item);
+            updateChildrenItems(item);
         }
     }
 

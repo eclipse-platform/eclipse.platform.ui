@@ -37,8 +37,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	public static final String WEB_APP_ID = "org.eclipse.update"; //$NON-NLS-1$
 	// preference key
 	public static final String P_DISCOVERY_SITES_ENABLED = "discoverySitesEnabled"; //$NON-NLS-1$
-	
-	private static final String UPDATE_BROWSER_ID = "org.eclipse.update";	//$NON-NLS-1$
 	//The shared instance.
 	private static UpdateUI plugin;
 	//Resource bundle.
@@ -338,7 +336,7 @@ public class UpdateUI extends AbstractUIPlugin {
 
 		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 		try {
-			IWebBrowser browser = support.createBrowser(IWorkbenchBrowserSupport.AS_EXTERNAL, UPDATE_BROWSER_ID, null, null);
+			IWebBrowser browser = support.getExternalBrowser();
 			browser.openURL(new URL(url));
 		}
 		catch (MalformedURLException e) {

@@ -167,7 +167,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 
 		TableItem[] configs = configViewer.getTable().getItems();
 		if (configs.length >0)
-			activitiesViewer.setInput((InstallConfiguration)configs[0].getData());
+			activitiesViewer.setInput(configs[0].getData());
 		
 		composite.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
