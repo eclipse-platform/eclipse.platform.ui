@@ -44,7 +44,7 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 				super.deleteResource(node, (Resource) aliases[i]);
 	}
 
-	protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
 		super.resourceChanged(node, target);
 		if (node.getLocalLocation() == null)
 			return;

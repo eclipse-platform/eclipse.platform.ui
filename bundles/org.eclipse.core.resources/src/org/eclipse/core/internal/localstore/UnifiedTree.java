@@ -184,7 +184,7 @@ public class UnifiedTree {
 		return createNode(target, stat, locationString, name, true);
 	}
 
-	protected void addChildrenFromFileSystem(UnifiedTreeNode node, String parentLocalLocation, Object[] list, int index) throws CoreException {
+	protected void addChildrenFromFileSystem(UnifiedTreeNode node, String parentLocalLocation, Object[] list, int index) {
 		if (list == null)
 			return;
 		for (int i = index; i < list.length; i++) {
@@ -240,7 +240,7 @@ public class UnifiedTree {
 			addElementToQueue(levelMarker);
 	}
 
-	protected void addRootToQueue() throws CoreException {
+	protected void addRootToQueue() {
 		long stat = 0;
 		String rootLocationString = null;
 		String name = null;
@@ -258,7 +258,7 @@ public class UnifiedTree {
 	/**
 	 * Creates a child node for a location in the file system. Does nothing and returns null if the location does not correspond to a valid file/folder. 
 	 */
-	protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode parent, String parentLocalLocation, String childName) throws CoreException {
+	protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode parent, String parentLocalLocation, String childName) {
 		IPath childPath = parent.getResource().getFullPath().append(childName);
 		String location = createChildLocation(parentLocalLocation, childName);
 		long stat = CoreFileSystemLibrary.getStat(location);
@@ -272,7 +272,7 @@ public class UnifiedTree {
 
 	//XXX: do we still need this method? UnifiedTreeNodes are always created with a valid IResource (which may exist or not)
 	//see #createChildNodeFromFileSystem
-	protected UnifiedTreeNode createNodeFromFileSystem(IPath path, String location, String localName) throws CoreException {
+	protected UnifiedTreeNode createNodeFromFileSystem(IPath path, String location, String localName) {
 		long stat = CoreFileSystemLibrary.getStat(location);
 		UnifiedTreeNode node = createNode(null, stat, location, localName, false);
 		int type = node.isFile() ? IResource.FILE : IResource.FOLDER;
@@ -361,7 +361,7 @@ public class UnifiedTree {
 		childLevelValid = isValidLevel(level+1, depth);
 		return isValidLevel(level, depth);
 	}
-	protected void initializeQueue() throws CoreException {
+	protected void initializeQueue() {
 		//init the queue
 		if (queue == null)
 			queue = new Queue(100, false);
@@ -401,7 +401,7 @@ public class UnifiedTree {
 	 * Remove from the last element of the queue to the first child of the
 	 * given node.
 	 */
-	protected void removeNodeChildrenFromQueue(UnifiedTreeNode node) throws CoreException {
+	protected void removeNodeChildrenFromQueue(UnifiedTreeNode node) {
 		UnifiedTreeNode first = node.getFirstChild();
 		if (first == null)
 			return;

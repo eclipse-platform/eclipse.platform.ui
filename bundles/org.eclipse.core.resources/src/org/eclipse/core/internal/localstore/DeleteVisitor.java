@@ -86,7 +86,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			localFile.delete();
 	}
 
-	protected boolean equals(IResource one, IResource another) throws CoreException {
+	protected boolean equals(IResource one, IResource another) {
 		return one.getFullPath().equals(another.getFullPath());
 	}
 
@@ -94,11 +94,11 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		return status;
 	}
 
-	protected boolean isAncestor(IResource one, IResource another) throws CoreException {
+	protected boolean isAncestor(IResource one, IResource another) {
 		return one.getFullPath().isPrefixOf(another.getFullPath()) && !equals(one, another);
 	}
 
-	protected boolean isAncestorOfResourceToSkip(IResource resource) throws CoreException {
+	protected boolean isAncestorOfResourceToSkip(IResource resource) {
 		if (skipList == null)
 			return false;
 		for (int i = 0; i < skipList.size(); i++) {
@@ -114,7 +114,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			skipList.remove(resource);
 	}
 
-	protected boolean shouldSkip(IResource resource) throws CoreException {
+	protected boolean shouldSkip(IResource resource) {
 		if (skipList == null)
 			return false;
 		for (int i = 0; i < skipList.size(); i++)
@@ -123,7 +123,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		return false;
 	}
 
-	public boolean visit(UnifiedTreeNode node) throws CoreException {
+	public boolean visit(UnifiedTreeNode node) {
 		Policy.checkCanceled(monitor);
 		Resource target = (Resource) node.getResource();
 		if (target.getType() == IResource.PROJECT)

@@ -59,7 +59,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	 * This method has the same implementation as resourceChanged but as they are different
 	 * cases, we prefer to use different methods.
 	 */
-	protected void contentAdded(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void contentAdded(UnifiedTreeNode node, Resource target) {
 		resourceChanged(node, target);
 	}
 
@@ -149,7 +149,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		parent.getLocalManager().refresh(parent, IResource.DEPTH_ZERO, false, null);
 	}
 
-	protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
 		ResourceInfo info = target.getResourceInfo(false, true);
 		if (info == null)
 			return;
@@ -244,7 +244,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	/**
 	 * lastModified
 	 */
-	protected void synchronizeLastModified(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void synchronizeLastModified(UnifiedTreeNode node, Resource target) {
 		if (target.isLocal(IResource.DEPTH_ZERO))
 			resourceChanged(node, target);
 		else

@@ -60,27 +60,27 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 		return status;
 	}
 
-	protected void refresh(Container parent) throws CoreException {
+	protected void refresh(Container parent) {
 		changed(parent);
 	}
 
-	protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void createResource(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 
-	protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void deleteResource(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 
-	protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void fileToFolder(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 
-	protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void folderToFile(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 
-	protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
+	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
 		changed(target);
 	}
 }
