@@ -173,9 +173,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize
 	 */
-	public void initialize(IWorkbenchConfigurer configurer) {
+	public void initialize(IWorkbenchConfigurer worbenchConfigurer) {
 		// remember for future reference
-		this.configurer = configurer;	
+		this.configurer = worbenchConfigurer;	
 		
 		// make sure we always save and restore workspace state
 		configurer.setSaveAndRestore(true);
