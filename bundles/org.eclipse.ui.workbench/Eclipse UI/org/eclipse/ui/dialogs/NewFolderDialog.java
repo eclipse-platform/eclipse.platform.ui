@@ -167,7 +167,7 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 				if (linkTargetName == null)
 					folderHandle.create(false, true, monitor);
 				else
-					folderHandle.createLink(new Path(linkTargetName), IResource.NONE, monitor);
+					folderHandle.createLink(new Path(linkTargetName), IResource.ALLOW_MISSING_LOCAL, monitor);
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
 			} finally {
@@ -257,7 +257,8 @@ private void validateLinkedResource() {
 		else
 			getOkButton().setEnabled(false);
 			
-		updateStatus(status);
+		if (status.isOK() == false)
+			updateStatus(status);
 	}
 }
 /**
