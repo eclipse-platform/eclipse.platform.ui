@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -112,8 +111,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 					reader.close();
 			}
 		} catch (IOException e) {
-			String message= SearchMessages.getString("TextSearchVisitor.error"); //$NON-NLS-1$
-			message= MessageFormat.format(message, new IPath[] {file.getFullPath()});
+			String message= SearchMessages.getFormattedString("TextSearchVisitor.error", file.getFullPath()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 		}
 		finally {
