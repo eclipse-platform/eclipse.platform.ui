@@ -6,6 +6,7 @@ package org.eclipse.update.internal.ui.views;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -392,9 +393,10 @@ public class ConfigurationView
 			}
 			ILocalSite localSite = getLocalSite();
 			try {
-				int status = localSite.getStatus(adapter.getFeature());
+				IStatus status = localSite.getFeatureStatus(adapter.getFeature());
+				int code = status.getCode();
 				if (configured) {
-					switch (status) {
+					switch (code) {
 						case IFeature.STATUS_UNHAPPY :
 							return errorFeatureImage;
 						case IFeature.STATUS_AMBIGUOUS :
@@ -403,7 +405,7 @@ public class ConfigurationView
 							return featureImage;
 					}
 				} else {
-					switch (status) {
+					switch (code) {
 						case IFeature.STATUS_UNHAPPY :
 							return errorUnconfFeatureImage;
 						case IFeature.STATUS_AMBIGUOUS :

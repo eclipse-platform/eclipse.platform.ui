@@ -761,7 +761,7 @@ public class ConfiguredSite
 	/*
 	 * 
 	 */
-	public boolean isBroken(IFeature feature) {
+	public IStatus getBrokenStatus(IFeature feature) {
 		// check the Plugins of all the features
 		// every plugin of the feature must be on the site
 		ISite currentSite = getSite();
@@ -775,7 +775,7 @@ public class ConfiguredSite
 			String listOfMissingPlugins = ""; //$NON-NLS-1$
 			for (int k = 0; k < missing.length; k++) {
 				listOfMissingPlugins =
-					"\r\nplugin:"
+					listOfMissingPlugins + " "
 						+ missing[k].getVersionedIdentifier().toString();
 				//$NON-NLS-1$
 			}
@@ -789,16 +789,17 @@ public class ConfiguredSite
 				new String[] {
 					featureString,
 					siteString,
-					listOfMissingPlugins };
+					listOfMissingPlugins};
 			String msg =
 					Policy.bind(
 						"ConfiguredSite.MissingPluginsBrokenFeature",
 						values);
 			//$NON-NLS-1$
 			UpdateManagerPlugin.log(msg,new Exception());
-			return true;
+			return createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg,null);
 		}
-		return false;
+		
+		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY,null,null);
 	}
 
 	/*
@@ -1181,4 +1182,22 @@ public class ConfiguredSite
 
 		return (file1.equals(file2));
 	}		 
+	
+	/*
+	 * creates a Status
+	 */
+	private IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e){
+		String id =
+			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+	
+		StringBuffer completeString = new StringBuffer("");
+		if (msg!=null)
+			completeString.append(msg);
+		if (e!=null){
+			completeString.append("\r\n[");
+			completeString.append(e.toString());
+			completeString.append("]\r\n");
+		}
+		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
+	}		
 }

@@ -143,25 +143,29 @@ public interface ILocalSite extends IAdaptable {
 	public IInstallConfiguration[] getPreservedConfigurations();
 	
 	/**
-	 * Indicates if the 'state' of the specified feature.
+	 * Indicates if the 'state' of the specified feature and its children features.
 	 * 
 	 * A feature is considered to be 'unhappy' in the context of this site,
-	 * if some of the plug-ins referenced by the feature are not installed on this site.
+	 * if some of the plug-ins referenced by the feature, or any of its children,
+	 *  are not installed on this site.
 	 * 
 	 * A feature is considered to be 'happy' in the context of a local site
-	 * if all the plug-ins referenced by the feature are installed on the site and no other
-	 * version of any of the plug-ins are installed on any other site of the local site.
+	 * if all the plug-ins referenced by the feature, or any of its children,
+	 * are installed on the site and no other version of any of the plug-ins
+	 * are installed on any other site of the local site.
 	 * 
 	 * A feature is considered to be 'ambiguous' in the context of a local site
-	 * if all the plug-ins referenced by the feature are installed on the site and other
-	 * version of any of the plug-ins are installed on any other site of the local site.
+	 * if all the plug-ins referenced by the feature, or any of its children,
+	 * are installed on the site and other version of any of the plug-ins
+	 * are installed on any other site of the local site.
 	 * 
 	 * @param feature the feature
 	 * @see IFeature#STATUS_HAPPY
 	 * @see IFeature#STATUS_UNHAPPY
 	 * @see IFeature#STATUS_AMBIGUOUS
 	 * @return the state of the feature
+	 * @exception CoreException
 	 * @since 2.0
 	 */
-	public int getStatus(IFeature feature);	
+	public IStatus getFeatureStatus(IFeature feature) throws CoreException ;	
 }

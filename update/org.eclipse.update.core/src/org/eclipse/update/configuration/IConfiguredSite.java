@@ -81,12 +81,16 @@ public interface IConfiguredSite extends IAdaptable {
 	 * to be broken in the context of this site, if some of the plug-ins
 	 * referenced by the feature are not installed on this site.
 	 * 
+	 * The status code is <code>IStatus.ERROR</code> if the feature is considered
+	 * broken. The Status may contain the reason why the feature is broken.
+	 * The status code is <code>IStatus.OK</code> if the feature is not considered
+	 * broken.
+	 * 
 	 * @param feature the feature
-	 * @return <code>true</code> if the feature is broken on this
-	 * site, <code>false</code> otherwise
+	 * @return teh status for this feature on this configured site
 	 * @since 2.0
 	 */
-	public boolean isBroken(IFeature feature);
+	public IStatus getBrokenStatus(IFeature feature);
 
 	/**
 	 * Indicates if the specified feature is configured on this site.

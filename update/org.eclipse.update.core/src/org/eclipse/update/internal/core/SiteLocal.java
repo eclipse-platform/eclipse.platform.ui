@@ -826,23 +826,25 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 *  If some of the plugins are on the plugin path, but not all -> UNHAPPY
 	 * 	Check on all ConfiguredSites
 	 */
-	public int getStatus(IFeature feature) {
+	private IStatus getStatus(IFeature feature) {
 
 		// check if broken first
 		IConfiguredSite[] configuredSites = getCurrentConfiguration().getConfiguredSites();
 		ISite featureSite = feature.getSite();
 		if (featureSite == null) {
+			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusSiteNull",new Object[]{feature.getURL()});
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
 				UpdateManagerPlugin.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
-			return IFeature.STATUS_AMBIGUOUS;
+			return createStatus(IStatus.WARNING,IFeature.STATUS_AMBIGUOUS,msg,null);
 		}
 
 		for (int i = 0; i < configuredSites.length; i++) {
 			if (featureSite.equals(configuredSites[i].getSite())) {
-				if (configuredSites[i].isBroken(feature)) {
+				IStatus status = configuredSites[i].getBrokenStatus(feature);
+				if (status.getSeverity()!=IStatus.OK) {
 					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
 						UpdateManagerPlugin.debug("Feature broken:" + feature.getLabel() + ".Site:" + configuredSites[i].toString());
-					return IFeature.STATUS_UNHAPPY;
+					return status;
 				}
 			}
 		}
@@ -852,6 +854,38 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
 		IPluginEntry[] allPluginsEntries = getAllConfiguredPlugins();
 		return status(featuresEntries, allPluginsEntries);
+	}
+
+	/*
+	 *  check if the Plugins of the feature are on the plugin path
+	 *  If all the plugins are on the plugin path, and the version match and there is no other version -> HAPPY
+	 *  If all the plugins are on the plugin path, and the version match and there is other version -> AMBIGUOUS
+	 *  If some of the plugins are on the plugin path, but not all -> UNHAPPY
+	 * 	Check on all ConfiguredSites
+	 */
+	public IStatus getFeatureStatus(IFeature feature) throws CoreException {
+		
+		IStatus featureStatus = getStatus(feature);
+		IFeatureReference[] children = feature.getIncludedFeatureReferences();
+		IFeature childFeature = null;		
+		IStatus childStatus;
+		
+		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),featureStatus.getCode(),featureStatus.getMessage(), featureStatus.getException());
+		
+		for (int i = 0; i < children.length; i++) {
+			try {
+				childFeature = children[i].getFeature();
+			} catch (CoreException e){
+				UpdateManagerPlugin.warn("Error retrieving feature:"+children[i],new Exception());
+			}
+			if (childFeature==null){
+				UpdateManagerPlugin.warn("Feature is null for:"+children[i],new Exception());
+			} else {
+				childStatus = getStatus(childFeature);	
+				multi.add(childStatus);
+			}
+		}
+		return multi; 
 	}
 
 	/*
@@ -868,12 +902,13 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			for (int i = 0; i < configuredSites.length; i++) {
 				configuredFeaturesRef = configuredSites[i].getConfiguredFeatures();
 				for (int j = 0; j < configuredFeaturesRef.length; j++) {
-					try {
-						feature = configuredFeaturesRef[j].getFeature();
-						allConfiguredPlugins.addAll(Arrays.asList(feature.getPluginEntries()));
-					} catch (CoreException e) {
-						UpdateManagerPlugin.warn(null, e);
-					}
+					//try {
+						//feature = configuredFeaturesRef[j].getFeature();
+						//allConfiguredPlugins.addAll(Arrays.asList(feature.getPluginEntries()));
+						allConfiguredPlugins.addAll(Arrays.asList(configuredFeaturesRef[j].getSite().getPluginEntries()));
+					//} catch (CoreException e) {
+					//	UpdateManagerPlugin.warn(null, e);
+					//}
 				}
 			}
 
@@ -891,7 +926,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/*
 	 * compute the status based on getStatus() rules 
 	 */
-	private int status(IPluginEntry[] featurePlugins, IPluginEntry[] allPlugins) {
+	private IStatus status(IPluginEntry[] featurePlugins, IPluginEntry[] allPlugins) {
 		VersionedIdentifier featureID;
 		VersionedIdentifier compareID;
 
@@ -904,14 +939,31 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
 					if (!featureID.getVersion().equals(compareID.getVersion())) {
 						// there is a plugin with a different version on the path
+						String msg = Policy.bind("SiteLocal.TwoVersionSamePlugin",featureID.toString(),compareID.toString());
 						UpdateManagerPlugin.warn("Found 2 versions of the same plugin on the path:" + featureID.toString() + " & " + compareID.toString());
-						return IFeature.STATUS_AMBIGUOUS;
+						return createStatus(IStatus.WARNING,IFeature.STATUS_AMBIGUOUS,msg,null);
 					}
 				}
 			}
 		}
-
 		// we return happy as we consider the isBroken verification has been done
-		return IFeature.STATUS_HAPPY;
+		return createStatus(IStatus.OK,IFeature.STATUS_HAPPY,null,null);
 	}
+	/*
+	 * creates a Status
+	 */
+	public IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e){
+		String id =
+			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+	
+		StringBuffer completeString = new StringBuffer("");
+		if (msg!=null)
+			completeString.append(msg);
+		if (e!=null){
+			completeString.append("\r\n[");
+			completeString.append(e.toString());
+			completeString.append("]\r\n");
+		}
+		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
+	}		
 }

@@ -155,6 +155,4 @@ public class ConfiguredSiteModel extends ModelObject {
 		if (statusType!=IStatus.OK) statusType = IStatus.ERROR;
 		return new Status(statusType, id, IStatus.OK, completeString.toString(), e);
 	}
-
-
 }

@@ -109,7 +109,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		// test only 2 install config in local site
 		int newNumberUnconfiguredFeatures = ((ConfiguredSite)newConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;
 		int oldNumberUnconfiguredFeatures = ((ConfiguredSite)oldConfigSite).getConfigurationPolicy().getUnconfiguredFeatures().length;		
-		//FIXME wrong calculation
+		//wrong calculation
 		assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures,newNumberUnconfiguredFeatures);
 		
 		// cleanup
