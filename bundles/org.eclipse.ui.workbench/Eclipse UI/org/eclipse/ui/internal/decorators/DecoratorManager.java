@@ -11,15 +11,36 @@
 package org.eclipse.ui.internal.decorators;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IDelayedLabelDecorator;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IDecoratorManager;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.LegacyResourceSupport;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * The DecoratorManager is the class that handles all of the
@@ -170,6 +191,7 @@ public class DecoratorManager
 
 	/**
 	 * Inform all of the listeners that require an update
+	 * @param event the event with the update details
 	 */
 	void fireListeners(final LabelProviderChangedEvent event) {
 		Object [] array = listeners.getListeners();
@@ -181,6 +203,27 @@ public class DecoratorManager
 				}
 			});
 		}		
+	}
+	
+	/**
+	 * Fire any listeners from the UIThread. Used for cases where this
+	 * may be invoked outside of the UI by the public API.
+	 * @param event the event with the update details
+	 */
+	void fireListenersInUIThread(final LabelProviderChangedEvent event){
+		
+		WorkbenchJob updateJob = new WorkbenchJob(WorkbenchMessages.getString("DecorationScheduler.UpdateJobName")){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				fireListeners(event);
+				return Status.OK_STATUS;
+			}
+		};
+		updateJob.setSystem(true);
+		updateJob.schedule();
+		
 	}
 
 	/**
@@ -434,7 +477,7 @@ public class DecoratorManager
 	public void updateForEnablementChange() {
 		//Clear any results that may be around as all labels have changed
 		scheduler.clearResults();
-		fireListeners(new LabelProviderChangedEvent(this));
+		fireListenersInUIThread(new LabelProviderChangedEvent(this));
 		writeDecoratorsPreference();
 	}
 
