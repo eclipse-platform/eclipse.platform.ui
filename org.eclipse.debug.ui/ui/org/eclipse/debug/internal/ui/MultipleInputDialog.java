@@ -64,10 +64,11 @@ public class MultipleInputDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createButtonBar(Composite parent) {
-		Control buttonBar = super.createButtonBar(parent);
+		Control bar = super.createButtonBar(parent);
 		validateFields();
-		return buttonBar;
+		return bar;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
