@@ -192,7 +192,7 @@ public Vector getResources(ClassLoader loader, String name, String msg) {
 public void getResourcesTest() {
 
 	String path = "org.eclipse.core.tests.internal.plugins";
-	String clazz = path + ".TestClass";
+//	String clazz = path + ".TestClass";
 	String res = "test.txt";
 	String absres = path.replace('.', '/') + "/" + res;
 
@@ -383,7 +383,6 @@ public void xmlTest() {
 
 	// get test plugin A (requires com.ibm.xml)
 	Plugin p = null;
-	IPluginDescriptor pd;
 	IPluginDescriptor pdA = registry.getPluginDescriptor("plugin.a");
 	assertTrue("0.1.0", pdA != null);
 	try {

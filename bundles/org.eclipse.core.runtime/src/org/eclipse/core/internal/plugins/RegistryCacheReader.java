@@ -1,9 +1,9 @@
 /**********************************************************************
  * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -11,19 +11,14 @@
 
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
-import org.eclipse.core.internal.plugins.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.boot.BootLoader;
-
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
 
 public class RegistryCacheReader {
 

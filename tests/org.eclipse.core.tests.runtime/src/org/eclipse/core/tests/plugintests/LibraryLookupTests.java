@@ -194,7 +194,7 @@ public void testCode() {
 	String classNamePrefix = "org.eclipse.core.tests.internal.runtimetests.";
 	// codePluginA has one jar file
 	//	<pluginRootDirectory>/codePluginA.jar (with class SampleA).
-	IPluginDescriptor myPlugin = codeHelper(registry, "codePluginA", "A", classNamePrefix + "SampleA");
+	codeHelper(registry, "codePluginA", "A", classNamePrefix + "SampleA");
 
 	// codePluginB has one jar file
 	//	<pluginRootDirectory>/bin/codePluginB.jar (with class SampleB).
@@ -338,15 +338,13 @@ public void test3093 () {
 		}
 		copyFile(jarSource, jarDest);
 		// Activate this plugin
-		Plugin active = null;
 		try {
-			active = plugin.getPlugin();
+			plugin.getPlugin();
 		} catch (CoreException ce) {
 			fail("1.1 Core exception encountered.",ce);
 		}
 		URL[] cp = ((URLClassLoader)plugin.getPluginClassLoader()).getURLs();
 		assertTrue("1.2 One URL on class path", cp.length == 1);
-		String urlString = cp[0].toString();
 		// Make sure we have the right protocol (not jar: but file:)
 		assertEquals("1.3 Right protocol", cp[0].getProtocol(), "file");
 		// Make sure we really picked up the right directory.

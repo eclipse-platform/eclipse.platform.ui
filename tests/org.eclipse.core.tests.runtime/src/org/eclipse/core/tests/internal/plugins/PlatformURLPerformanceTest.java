@@ -47,7 +47,7 @@ public long doLoad(String urls, String clazz, int count) {
 			if (i==1) first = (new java.util.Date()).getTime();
 			URLClassLoader l = null;
 			l = new URLClassLoader(new URL[] {path},null);
-			Class c = l.loadClass(clazz);
+			l.loadClass(clazz);
 		}
 		last = (new java.util.Date()).getTime();
 		time = last-time;
@@ -82,7 +82,6 @@ public void testPlatformURLCompareTest() {
 
 	System.out.println(clazz);
 	System.out.println("Count: " + count);
-	long time;
 
 	// local loads
 
@@ -131,7 +130,6 @@ public void testPlatformURLCompareTestLocal() {
 
 	System.out.println(clazz);
 	System.out.println("Count: " + count);
-	long time;
 
 	// local loads
 
@@ -190,7 +188,6 @@ public void xxxtestPlatformURLCompareTestServer() {
 	System.out.println("Test requires manual setup of " + server);
 	System.out.println(clazz);
 	System.out.println("Count: " + count);
-	long time;
 
 	// poke server to wake it up plus force any server caching so all tests
 	// are on equal footing
