@@ -335,6 +335,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
 		boolean oldAutoBuildSetting = description.isAutoBuilding();
 		description.setAutoBuilding(newAutoBuildSetting);
+		
+		// store the auto build in the preference store so that we can enable import and export
+		store.setValue(IPreferenceConstants.AUTO_BUILD, newAutoBuildSetting);
+
 		try {
 			ResourcesPlugin.getWorkspace().setDescription(description);
 		} catch (CoreException e) {
