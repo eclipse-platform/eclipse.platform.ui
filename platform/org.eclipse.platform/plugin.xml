@@ -11,7 +11,7 @@
       <library name="platform.jar">
          <export name="*"/>
       </library>
-   </runtime>
+   </runtime>   
    <requires>
       <import plugin="org.eclipse.ui.intro"/>
       <import plugin="org.eclipse.ui.cheatsheets"/>
@@ -20,7 +20,7 @@
    </requires>
    
 
-   <extension
+   <extension  
          point="org.eclipse.ui.intro">
       <intro
             name="%introPart.title"
@@ -45,12 +45,12 @@
             <implementation
                   ws="win32"
                   style="css/shared.css"
-                  class="org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation"
+                  type="org.eclipse.platform.intro.BrowserPresentation"
                   os="win32">
             </implementation>
             <implementation
                   style="css/shared_swt.properties"
-                  class="org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation">
+                  type="org.eclipse.platform.intro.FormsPresentation">
             </implementation>
          </presentation>
       </config>
