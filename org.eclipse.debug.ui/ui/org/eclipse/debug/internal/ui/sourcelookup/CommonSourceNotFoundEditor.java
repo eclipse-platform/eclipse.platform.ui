@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -22,7 +21,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -33,7 +31,7 @@ import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.sourcelookup.*;
+import org.eclipse.debug.ui.sourcelookup.SourceLookupDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
@@ -78,11 +76,6 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 * Text widgets used for this editor
 	 */
 	private Text fText;	
-	/**
-	 * The stackframe associated with the object that is requesting source. Object
-	 * may or may not be a stackframe.
-	 */
-	protected IStackFrame fStackFrame;	
     /**
      * object for which the source is showing for (i.e., stackframe, breakpoint)
      */
@@ -219,54 +212,50 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	{
 		fireChangeEventsOnStack();
 		
-		if(fObject instanceof IStackFrame)
+		if(fObject instanceof IStackFrame) {
 			return; //launch view will pick up from here
-		//TODO: since moving to 3.0, this is hit and miss...doesn't
-		//always open a new editor, might be the plugin I was using for testing though...
-		
+		}
+
+		// close this editor and open a new editor
+		final int lineNumber = getLineNumber();
+		Runnable open = new Runnable() {
+			public void run() {
+				IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+				if (dwindow != null) {
+					IWorkbenchPage page= dwindow.getActivePage();
+					if (page != null) {
+						IDebugModelPresentation modelPres = DebugUITools.newDebugModelPresentation();	
+						IEditorInput input = modelPres.getEditorInput(fObject);
+						if (input != null) {
+							String id = modelPres.getEditorId(input, fObject);
+							if (id != null) {
+								IEditorPart editor = null;
+								try {
+									editor = page.openEditor(input, id);
+								} catch (PartInitException e1) {
+								}
+								if(editor == null)
+									return;
+								//Now try to scroll the editor to the line of interest			
+								if(lineNumber != -1){			
+									try{		
+										IMarker locationMarker;
+										locationMarker = ResourcesPlugin.getWorkspace().getRoot().createMarker(SCROLL_TO_MARKER);
+										locationMarker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+										locationMarker.setAttribute(IMarker.TRANSIENT, true);
+										IDE.gotoMarker(editor, locationMarker);		
+									} catch(CoreException e){}
+								}		
+							}
+						}
+						modelPres.dispose();
+					}
+				}
+			}
+		};
 		closeEditor();	
 		// get new editor input
-		IDebugModelPresentation modelPres = DebugUITools.newDebugModelPresentation();	
-		IEditorInput newEditorInput = modelPres.getEditorInput(fObject);
-		IEditorPart editor = null;
-		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
-		if (dwindow == null) return;
-		IWorkbenchPage page= dwindow.getActivePage();
-		if (page == null) return;
-		
-		if(fObject instanceof IMarker)
-		{
-			try{
-				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, fObject));
-			}catch(PartInitException e){}
-		}
-		else if(fObject instanceof IFile)
-		{
-			try{
-				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, fObject));
-			}catch(PartInitException e){}
-		}else { //get editor input
-			
-			try{
-				editor = page.openEditor(newEditorInput, modelPres.getEditorId(newEditorInput, fObject));
-			}catch(PartInitException e){}
-			
-		}
-		modelPres.dispose();	
-		if(editor == null)
-			return;
-		//Now try to scroll the editor to the line of interest
-		int line = getLineNumber();			
-		if(line != -1){			
-			try{		
-				IMarker locationMarker;
-				locationMarker = ResourcesPlugin.getWorkspace().getRoot().createMarker(SCROLL_TO_MARKER);
-				locationMarker.setAttribute(IMarker.LINE_NUMBER, line);
-				locationMarker.setAttribute(IMarker.TRANSIENT, true);
-				IDE.gotoMarker(editor, locationMarker);		
-			}catch(CoreException e){}
-		}		
-		
+		DebugUIPlugin.getStandardDisplay().asyncExec(open);
 	}
 	
 	/**
@@ -275,11 +264,10 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 */
 	protected int getLineNumber(){
 		int line = -1;
-		if(fObject instanceof IMarker)
-		{
+		if(fObject instanceof IMarker) {
 			try{
 				line=((Integer)((IMarker)fObject).getAttribute(IMarker.LINE_NUMBER)).intValue();							
-			}catch(CoreException e){}
+			} catch(CoreException e){}
 		}
 		return line;
 	}
@@ -298,12 +286,9 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 */
 	public void setInput(IEditorInput input) {
 		super.setInput(input);
-		if(input instanceof CommonSourceNotFoundEditorInput)
-		{
-			fStackFrame = ((CommonSourceNotFoundEditorInput)input).getStackFrame();
+		if(input instanceof CommonSourceNotFoundEditorInput) {
 			fObject = ((CommonSourceNotFoundEditorInput)input).getObject();
 		}
-		else fStackFrame = null;
 		setTitle(input.getName());
 		if (fText != null) {			
 			fText.setText(input.getToolTipText()+"\n"); //$NON-NLS-1$
@@ -314,21 +299,16 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 * Fires change event(s) to clear the source file history of the items in the stack.
 	 */
 	protected void fireChangeEventsOnStack(){
-		if(fObject == null)
-			return;
-		if(fObject instanceof IStackFrame)
-		{
+		if(fObject instanceof IStackFrame) {
 			fireChangeEvent(DebugEvent.CONTENT, (IStackFrame)fObject);				
-		}
-		else if(fObject instanceof IDebugElement)
-		{ //loop through all threads and clear the cached source files
+		} else if(fObject instanceof IDebugElement) { //loop through all threads and clear the cached source files
 			try{		
 				IThread[] threads =((IDebugElement)fObject).getDebugTarget().getThreads();
 				for(int i=0; i< threads.length; i++)
 				{
 					fireChangeEvent(DebugEvent.CONTENT, threads[i].getTopStackFrame());
 				}
-			}catch(DebugException e){}
+			} catch(DebugException e){}
 		}			
 	}
 	
@@ -364,7 +344,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 				break;
 				
 			case DebugEvent.CHANGE :
-				if(!source.equals(fStackFrame))
+				if(!source.equals(fObject))
 					return;
 				//	Trigger a selectionChange event
 				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -394,26 +374,13 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 	 * @param source the source of the event
 	 * @return true if the <code>source</code> is related to this editor, false otherwise
 	 */
-	protected boolean checkIfEditorShouldClose(Object source)
-	{
+	protected boolean checkIfEditorShouldClose(Object source) {
 		//Make sure terminate event is for me
-		if(fStackFrame == null)
-			return false;	
-		if(source instanceof IDebugTarget)
-		{
-			if(((IDebugTarget)source).equals(fStackFrame.getDebugTarget()))
-				return true;
+		if (fObject instanceof IDebugElement && source instanceof IDebugElement) {
+			IDebugElement element = (IDebugElement)fObject;
+			IDebugElement sourceElement = (IDebugElement)source;
+			return sourceElement.getDebugTarget().equals(element.getDebugTarget());
 		}
-		else if(source instanceof IStackFrame)
-		{
-			if(source.equals(fStackFrame))
-				return true;
-		}
-		else if(source instanceof IThread)
-		{
-			if(((IThread)source).equals(fStackFrame.getThread()))
-				return true;
-		}		 
 		return false;
 	}
 	

@@ -696,7 +696,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			sourceElement= locator.getSourceElement(stackFrame);
 			if (sourceElement == null) {
 				if (locator instanceof AbstractSourceLookupDirector)
-					commonSourceNotFound(stackFrame, stackFrame);
+					commonSourceNotFound(stackFrame);
 				else
 					sourceNotFound(stackFrame);
 				return;
@@ -741,8 +741,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	/**
 	 * Sets editor id and input for the "common source not found" editor.
 	 */
-	private void commonSourceNotFound(IStackFrame frame, Object objectRequestingSource) {
-		setEditorInput(new CommonSourceNotFoundEditorInput(frame, objectRequestingSource));
+	private void commonSourceNotFound(IStackFrame frame) {
+		setEditorInput(new CommonSourceNotFoundEditorInput(frame));
 		setEditorId(IInternalDebugUIConstants.ID_COMMON_SOURCE_NOT_FOUND_EDITOR);
 	}
 

@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.sourcelookup;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -21,12 +20,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 /**
- * The editor input that can be shown by the <code>SourceNotFoundEditor</code>
- * The editor message tells the user that source wasn't found.
- * 
- * May be subclassed if a debugger requires additional buttons on the editor. For example,
- * a button may be added if the user has the additional option of using generated source
- * for debugging.
+ * Editor input for the <code>CommonSourceNotFoundEditor</code>. The editor
+ * input can be created on a debug element or breakpoint.
  * 
  * @see CommonSourceNotFoundEditor
  * 
@@ -35,37 +30,29 @@ import org.eclipse.ui.IPersistableElement;
 public class CommonSourceNotFoundEditorInput extends PlatformObject implements IEditorInput {
 	
 	/**
-	 * Associated stack frame
+	 * input element label (cached on creation)
 	 */
-	private IStackFrame fFrame;
-	
-	/**
-	 * Stack frame text (cached on creation)
-	 */
-	protected String fFrameText;
+	protected String fLabel;
 	/**
 	 * the object that the editor is being brought up for
 	 */
 	protected Object fObject;
 	
 	/**
-	 * Constructs an editor input for the given stack frame,
-	 * to indicate source could not be found.
-	 * 
-	 * @param frame the stack frame associated
-	 * @param object the object that the input is for
+	 * Constructs an editor input for the given debug element
+	 * or breakpoint.
+	 *
+	 * @param object debug element or breakpoint
 	 */
-	public CommonSourceNotFoundEditorInput(IStackFrame frame, Object object) {
+	public CommonSourceNotFoundEditorInput(Object object) {
 		fObject = object;
-		if(frame == null)
-			fFrameText = "";  //$NON-NLS-1$
-		else
-		{
-			fFrame = frame;
-			IDebugModelPresentation pres =
-				DebugUITools.newDebugModelPresentation(frame.getModelIdentifier());
-			fFrameText = pres.getText(frame);
+		if (object != null) {
+			IDebugModelPresentation pres = DebugUITools.newDebugModelPresentation();
+			fLabel = pres.getText(object);
 			pres.dispose();
+		}
+		if (fLabel == null) {
+			fLabel = "";  //$NON-NLS-1$
 		}
 	}	
 	
@@ -80,14 +67,14 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return DebugUITools.getDefaultImageDescriptor(fFrame);
+		return DebugUITools.getDefaultImageDescriptor(fObject);
 	}
 	
 	/**
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	public String getName() {
-		return fFrameText;		
+		return fLabel;		
 	}
 	
 	/**
@@ -101,17 +88,9 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return MessageFormat.format(SourceLookupUIMessages.getString("addSourceLocation.editorMessage"), new String[] { fFrameText }); //$NON-NLS-1$
+		return MessageFormat.format(SourceLookupUIMessages.getString("addSourceLocation.editorMessage"), new String[] { fLabel }); //$NON-NLS-1$
 	}
-	
-	/**
-	 * Returns the stack frame that is associated with this source editor. May be null.
-	 * @return the stack frame
-	 */
-	public IStackFrame getStackFrame(){
-		return fFrame;
-	}
-	
+		
 	/**
 	 * Returns the object that was the reason why source was being searched for (i.e., it was clicked on)
 	 * @return the object.
