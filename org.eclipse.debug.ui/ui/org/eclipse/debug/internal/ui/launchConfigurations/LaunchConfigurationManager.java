@@ -204,7 +204,10 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 */	
 	public ILaunchConfiguration getLastLaunch(String groupId) {
 		LaunchHistory history = getLaunchHistory(groupId);
-		return history.getRecentLaunch();
+		if (history != null) {
+			return history.getRecentLaunch();
+		}
+		return null;
 	}
 	
 	/**

@@ -779,7 +779,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			for (int i = 0; i < groups.length; i++) {
 				LaunchGroupExtension extension = groups[i];
 				LaunchHistory history = LaunchConfigurationManager.getDefault().getLaunchHistory(extension.getIdentifier());
-				if (history.accepts(configuration)) {
+				if (history != null && history.accepts(configuration)) {
 					possibleGroups.add(extension);
 				} 
 			}
