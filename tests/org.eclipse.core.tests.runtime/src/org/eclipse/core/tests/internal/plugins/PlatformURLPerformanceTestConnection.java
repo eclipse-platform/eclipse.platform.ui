@@ -10,12 +10,6 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.plugins;
 
-/*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
- */
-
 /**
  * Eclipse URL support
  * platform:platform/	maps to platform installation location
