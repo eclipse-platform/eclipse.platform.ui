@@ -115,7 +115,7 @@ public class ContextType {
 	 * @throws RuntimeException an unspecified exception if the id has already
 	 *         been set on this context type
 	 */
-	final void setId(String id) throws RuntimeException {
+	public final void setId(String id) throws RuntimeException {
 		Assert.isNotNull(id);
 		Assert.isTrue(fId == null); // may only be called once when the context is instantiated
 		fId= id;
@@ -132,7 +132,7 @@ public class ContextType {
 	 * 
 	 * @param name the name of the context type
 	 */
-	final void setName(String name) {
+	public final void setName(String name) {
 		Assert.isTrue(fName == null); // only initialized by extension code
 		fName= name;
 	}
