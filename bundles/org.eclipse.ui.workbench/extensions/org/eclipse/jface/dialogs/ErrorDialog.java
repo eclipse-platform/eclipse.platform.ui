@@ -137,15 +137,11 @@ protected void createButtonsForButtonBar(Composite parent) {
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
 	}
 }
-/* (non-Javadoc)
- * Method declared on Dialog.
- * Creates and returns the contents of the upper part 
- * of the dialog (above the button bar).
+/**
+ * Create the area the message will be shown in.
  */
-protected Control createDialogArea(Composite parent) {
+protected Control createMessageArea(Composite composite) {
 	// create composite
-	Composite composite = (Composite)super.createDialogArea(parent);
-	((GridLayout)composite.getLayout()).numColumns = 2;
 
 	// create image
 	Image image = getImage();
@@ -164,15 +160,75 @@ protected Control createDialogArea(Composite parent) {
 		label.setText(message);
 		GridData data = new GridData(
 			GridData.GRAB_HORIZONTAL |
-			GridData.GRAB_VERTICAL |
+			//GridData.GRAB_VERTICAL |
 			GridData.HORIZONTAL_ALIGN_FILL |
 			GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
 		label.setLayoutData(data);
-		label.setFont(parent.getFont());
+		label.setFont(composite.getFont());
 	}
 	return composite;
 }
+
+/*
+ * @see Dialog.createButtonBar()
+ */
+protected Control createButtonBar(Composite parent) {
+	
+	Composite composite = new Composite(parent, SWT.NONE);
+
+	// create a layout with spacing and margins appropriate for the font size.
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 0; // this is incremented by createButton
+	layout.makeColumnsEqualWidth = true;
+	layout.marginWidth = 0;
+	layout.marginHeight = 0;
+	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+
+	composite.setLayout(layout);
+
+	GridData data = new GridData(
+		GridData.HORIZONTAL_ALIGN_END |
+		GridData.VERTICAL_ALIGN_CENTER);
+	data.horizontalSpan = 2;
+	composite.setLayoutData(data);
+
+	composite.setFont(parent.getFont());
+	
+	// Add the buttons to the button bar.
+	createButtonsForButtonBar(composite);
+
+	return composite;
+
+}
+
+/*
+ * @see Dialog.createContents(Composite)
+ */
+protected Control createContents(Composite parent) {
+	
+	// initialize the dialog units
+	initializeDialogUnits(parent);
+	
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 2;
+	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+	layout.makeColumnsEqualWidth = false;
+	parent.setLayout(layout);
+	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
+	// create the dialog area and button bar
+	dialogArea = createMessageArea(parent);
+	buttonBar = createButtonBar(parent);
+	
+	
+	return parent;
+}
+
 
 /**
  * Returns the image to display beside the message in this dialog.
@@ -204,6 +260,7 @@ protected List createDropDownList(Composite parent) {
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL |
 		GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL);
 	data.heightHint = list.getItemHeight() * LIST_ITEM_COUNT;
+	data.horizontalSpan = 2;
 	list.setLayoutData(data);
 	listCreated = true;
 	return list;
@@ -326,7 +383,7 @@ protected static boolean shouldDisplay(IStatus status, int mask) {
  */
 private void toggleDetailsArea() {
 	Point windowSize = getShell().getSize();
-	Point oldSize = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	Point oldSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	
 	if (listCreated) {
 		list.dispose();
@@ -337,8 +394,9 @@ private void toggleDetailsArea() {
 		detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
 	}
 
-	Point newSize = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 	getShell().setSize(new Point(windowSize.x, windowSize.y + (newSize.y - oldSize.y)));
-}
+	
+	}
 }
