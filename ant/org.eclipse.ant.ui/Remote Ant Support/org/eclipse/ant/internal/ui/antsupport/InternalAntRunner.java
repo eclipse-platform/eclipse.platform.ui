@@ -797,9 +797,11 @@ public class InternalAntRunner {
 				eclipseSpecifiedTasks= new HashMap();
 			}
 			int index= arg.indexOf(',');
-			String name= arg.substring(0, index);
-			String className= arg.substring(index + 1);
-			eclipseSpecifiedTasks.put(name, className);
+			if (index != -1) {
+				String name= arg.substring(0, index);
+				String className= arg.substring(index + 1);
+				eclipseSpecifiedTasks.put(name, className);
+			}
 			arg = getArgument(commands, "-eclipseTask"); //$NON-NLS-1$
 		}
 		
@@ -809,9 +811,11 @@ public class InternalAntRunner {
 				eclipseSpecifiedTypes= new HashMap();
 			}
 			int index= arg.indexOf(',');
-			String name= arg.substring(0, index);
-			String className= arg.substring(index + 1);
-			eclipseSpecifiedTypes.put(name, className);
+			if (index != -1) {	
+				String name= arg.substring(0, index);
+				String className= arg.substring(index + 1);
+				eclipseSpecifiedTypes.put(name, className);
+			}
 			arg = getArgument(commands, "-eclipseType"); //$NON-NLS-1$
 		}
 	}
