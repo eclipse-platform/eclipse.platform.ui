@@ -29,7 +29,7 @@ public class ObjectMap implements Map {
 	 * Creates a new object map of default size
 	 */
 	public ObjectMap() {
-		super();
+		this(DEFAULT_SIZE);
 	}
 
 	/**
