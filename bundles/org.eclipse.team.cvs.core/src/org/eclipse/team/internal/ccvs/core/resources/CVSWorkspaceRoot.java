@@ -137,7 +137,7 @@ public class CVSWorkspaceRoot {
 	}
 	
 	/**
-	 * Sync the given unshared project against the given repository and module.
+	 * Sync the given unshared project with the given repository and module.
 	 */
 	public static IRemoteSyncElement getRemoteSyncTree(IProject project, ICVSRepositoryLocation location, String moduleName, CVSTag tag, IProgressMonitor progress) throws TeamException {
 		if (CVSWorkspaceRoot.getCVSFolderFor(project).isCVSFolder()) {

@@ -418,7 +418,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	/** 
-	 * Diff the resources against the repository and write the output to the provided 
+	 * Diff the resources with the repository and write the output to the provided 
 	 * PrintStream in a form that is usable as a patch. The patch is rooted at the
 	 * project.
 	 */

@@ -87,7 +87,7 @@ public abstract class Site {
 	 * represents the same Site as this object. Two Site objects are equal 
 	 * if they have the same types and URLs.
 	 * 
-	 * @param other the Site to compare against
+	 * @param other the Site to compare with
 	 * 
 	 * @return <code>true</code> if the Sites are the same; <code>false</code>
 	 * otherwise

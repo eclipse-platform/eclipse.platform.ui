@@ -143,7 +143,7 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 			}
 		}
 		
-		// check against all the registered patterns
+		// check with all the registered patterns
 		boolean ignored = matcher.match(getName());
 		
 		// check the parent, if the parent is ignored then this resource

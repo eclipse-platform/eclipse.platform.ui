@@ -159,7 +159,7 @@ public class CVSTestSetup extends TestSetup {
 
 	protected CVSRepositoryLocation setupRepository(String location) throws CVSException {
 
-		// Give some info about which repository the tests are running against
+		// Give some info about which repository the tests are running with
 		System.out.println("Connecting to: " + location);
 		
 		// Validate that we can connect, also creates and caches the repository location. This

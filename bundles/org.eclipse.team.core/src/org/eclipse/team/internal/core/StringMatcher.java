@@ -110,7 +110,7 @@ public class StringMatcher {
 	 * If invoking the StringMatcher with string literals in Java, don't forget
 	 * escape characters are represented by "\\".
 	 *
-	 * @param aPattern the pattern to match text against
+	 * @param aPattern the pattern to match text with
 	 * @param ignoreCase if true, case is ignored
 	 * @param ignoreWildCards if true, wild cards and their escape sequences are ignored
 	 * 		  (everything is taken literally).

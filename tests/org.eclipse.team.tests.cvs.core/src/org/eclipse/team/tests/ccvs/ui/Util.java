@@ -607,7 +607,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	 * @param display the root display
 	 * @param pollingPeriod the number of milliseconds to wait between polls
 	 * @param value a value used for matching
-	 * @param criteria a strategy for matching the controls against a value,
+	 * @param criteria a strategy for matching the controls with a value,
 	 *           or null to match any Shell.
 	 * @param waiter the waiter to be notified
 	 */
@@ -670,7 +670,7 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 	 * @param root the root of the hierarchy to search
 	 * @param clazz the Class representing the precise type of Control to find
 	 * @param value a value used for matching
-	 * @param criteria a strategy for matching the controls against a value,
+	 * @param criteria a strategy for matching the controls with a value,
 	 *           or null to match anything of the right class.
 	 * @return the first matching Control, or null if none found.
 	 */

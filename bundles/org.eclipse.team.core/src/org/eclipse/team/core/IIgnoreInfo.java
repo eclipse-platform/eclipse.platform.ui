@@ -32,7 +32,7 @@ public interface IIgnoreInfo {
 	/**
 	 * Return whether or not this ignore info is enabled. A disabled ignore
 	 * info remains in the global ignore list, but no attempt is made to match
-	 * against it to determine resource ignore state.
+	 * with it to determine resource ignore state.
 	 * 
 	 * @return whether the ignore info is enabled
 	 */
