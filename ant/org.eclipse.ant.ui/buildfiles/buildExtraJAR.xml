@@ -40,6 +40,7 @@
 			 		${basedir}/bin;
 			 		${swt.jar};
 			 		${basedir}/../org.eclipse.text/text.jar;
+			 		${basedir}/../org.eclipse.ant.core/antsupport.jar;
 			 		${basedir}/../org.eclipse.ant.core/bin;
 			 		${basedir}/../org.eclipse.core.resources/bin;
 			 		${basedir}/../org.eclipse.debug.core/bin;
