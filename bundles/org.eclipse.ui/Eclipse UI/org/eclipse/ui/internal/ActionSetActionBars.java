@@ -38,7 +38,7 @@ protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
 public void dispose() {
 	super.dispose();
 	if (coolBarItem != null) 
-		coolBarItem.removeAll();
+		coolBarItem.getToolBarManager().removeAll();
 }
 /**
  * Returns the tool bar manager.  If items are added or
@@ -57,7 +57,7 @@ public IToolBarManager getToolBarManager() {
 			coolBarItem = new CoolBarContributionItem(cBarMgr, actionSetId);
 			coolBarItem.setVisible(active);
 		}
-		return coolBarItem;
+		return coolBarItem.getToolBarManager();
 	}
 	return null;
 }

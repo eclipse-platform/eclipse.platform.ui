@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.*;
  */
 public class CoolBarManager extends ContributionManager implements IToolBarManager {
 	/** 
-	 * The tool bar items style; <code>SWT.NONE</code> by default.
+	 * The cool bar style; <code>SWT.NONE</code> by default.
 	 */
-	private int itemStyle = SWT.NONE;
+	private int style = SWT.NONE;
 
 	/** 
 	 * The cool bar control; <code>null</code> before creation
@@ -29,7 +29,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	private CoolBar coolBar = null;
 
+	/** 
+	 * MenuManager for chevron menu when CoolItems not fully displayed.
+	 */
 	private MenuManager chevronMenuManager;
+	
+	/** 
+	 * MenuManager for coolbar popup menu
+	 */
 	private MenuManager coolBarMenuManager = new MenuManager();
 
 	/**
@@ -39,7 +46,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	/**
 	 */
 	public CoolBarManager(int style) {
-		itemStyle = style;
+		this.style = style;
 	}
 	/**
 	 * Adds an action as a contribution item to this manager.
@@ -48,10 +55,10 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * @param action the action
 	 */
 	public void add(IAction action) {
-		// what to do?
+		// not valid, only CoolBarContributionItems may be added
 	}
 	/**
-	 * Adds a contribution item to this manager.
+	 * Adds a CoolBarContributionItem to this manager.
 	 * 
 	 * @exception IllegalArgumentException if the type of item is
 	 * not valid
@@ -61,6 +68,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		super.add(item);
 	}
 	/**
+	 * Adds a contribution item to the coolbar's menu.
 	 */
 	public void addToMenu(ActionContributionItem item) {
 		coolBarMenuManager.add(item.getAction());
@@ -70,7 +78,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * with the given name.
 	 *
 	 * @param itemId the id of the CoolBarContributionItem
-	 * @param item the contribution item
+	 * @param item the CoolBarContributionItem
 	 * @param append <code>true</code> to add to the end of the group, 
 	 *   and <code>false</code> to add the beginning of the group
 	 * @exception IllegalArgumentException if there is no group with
@@ -82,12 +90,10 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
 			String id = cbItem.getId();
 			if (id != null && id.equalsIgnoreCase(itemId)) {
-				item.setParent(cbItem);
 				if (append) {
-					cbItem.add(item);
+					cbItem.getToolBarManager().add(item);
 				} else {
-					IContributionItem firstItem = cbItem.getItems()[0];
-					cbItem.insertBefore(firstItem.getId(), item);
+					// ????
 				}
 				return;
 			}
@@ -103,7 +109,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	public CoolBar createControl(Composite parent) {
 		if (!coolBarExist() && parent != null) {
-			coolBar = new CoolBar(parent, itemStyle);
+			// Create the CoolBar and its popup menu.
+			coolBar = new CoolBar(parent, style);
 			coolBar.addListener(SWT.Resize, new Listener() {
 				public void handleEvent(Event event) {
 					coolBar.getParent().layout();
@@ -114,6 +121,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					popupCoolBarMenu(e);
 				}
 			});
+			// Create the toolbars for each of the CoolBarContributionItems.
 			IContributionItem[] items = getItems();
 			for (int i = 0; i < items.length; i++) {
 				CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
@@ -145,19 +153,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		return coolBar;
 	}
 	/**
-	 * Returns the overrides for the items of this manager.
-	 * 
-	 * @return the overrides for the items of this manager
-	 * @since 2.0 
-	 */
-	public IContributionManagerOverrides getOverrides() {
-		/// ????
-		return null;
-	}
-	/**
 	 */
 	public int getStyle() {
-		return itemStyle;
+		return style;
 	}
 	private void handleChevron(SelectionEvent event) {
 		CoolItem item = (CoolItem) event.widget;
@@ -257,13 +255,13 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * @param action the action to insert
 	 */
 	public void insertAfter(String id, IAction action) {
-		// what to do?
+		// not valid, only CoolBarContributionItems may be added
 	}
 	/**
 	 * Inserts a contribution item after the item with the given id.
 	 *
 	 * @param id the CoolBarContributionItem 
-	 * @param item the contribution item to insert
+	 * @param item the CoolBarContributionItem to insert
 	 * @exception IllegalArgumentException if there is no item with
 	 *   the given id
 	 * @exception IllegalArgumentException if the type of item is
@@ -283,13 +281,13 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	 * @param action the action to insert
 	 */
 	public void insertBefore(String id, IAction action) {
-		// what to do?
+		// not valid, only CoolBarContributionItems may be added
 	}
 	/**
 	 * Inserts a contribution item before the item with the given id.
 	 *
 	 * @param id the CoolBarContributionItem 
-	 * @param item the contribution item to insert
+	 * @param item the CoolBarContributionItem to insert
 	 * @exception IllegalArgumentException if there is no item with
 	 *   the given id
 	 * @exception IllegalArgumentException if the type of item is

@@ -602,7 +602,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			CoolBarManager cBarMgr = (CoolBarManager)manager;
 			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, "org.eclipse.ui.internal"); //$NON-NLS-1$
 			coolBarItem.setVisible(true);
-			toolsManager = (IContributionManager)coolBarItem;
+			toolsManager = (IContributionManager)coolBarItem.getToolBarManager();
 			cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
 			cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
 		} else {

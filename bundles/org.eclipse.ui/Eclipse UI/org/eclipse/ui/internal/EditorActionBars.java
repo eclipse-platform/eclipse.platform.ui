@@ -63,7 +63,7 @@ public void deactivate(boolean forceVisibility) {
 public void dispose() {
 	super.dispose();
 	if (coolBarItem != null)
-		coolBarItem.removeAll();
+		coolBarItem.getToolBarManager().removeAll();
 }
 /**
  * Gets the editor contributor
@@ -95,7 +95,7 @@ public IToolBarManager getToolBarManager() {
 			coolBarItem = new CoolBarContributionItem(cBarMgr, type);
 			coolBarItem.setVisible(active);
 		}
-		return coolBarItem;
+		return coolBarItem.getToolBarManager();
 	}
 	return null;
 }
