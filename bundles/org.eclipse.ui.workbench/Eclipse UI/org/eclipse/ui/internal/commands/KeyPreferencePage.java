@@ -27,8 +27,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -64,11 +62,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.WWinKeyBindingService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -291,6 +286,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		preferenceActiveKeyConfigurations = new ArrayList(preferenceRegistry.getActiveKeyConfigurations());
 		preferenceKeyBindings = new ArrayList(preferenceRegistry.getKeyBindings());
 		preferenceKeyConfigurations = new ArrayList(preferenceRegistry.getKeyConfigurations());
+		
+		// TODO solve preferenceKeyBindings for PL
 	}
 
 	public boolean performOk() {
@@ -305,23 +302,11 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		} catch (IOException eIO) {
 		}
 
+		Manager.getInstance().getKeyMachine().setKeyConfiguration(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : ZERO_LENGTH_STRING); //$NON-NLS-1$
 		Manager.getInstance().update();
 
-		if (workbench instanceof Workbench) {
-			Workbench workbench = (Workbench) this.workbench;
-			Manager.getInstance().getKeyMachine().setKeyConfiguration(activeKeyConfiguration != null ? activeKeyConfiguration.getValue() : ZERO_LENGTH_STRING); //$NON-NLS-1$
-			IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
-
-			if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
-				WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
-
-				if (wWinKeyBindingService != null)
-					wWinKeyBindingService.clear();
-
-				MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-				menuManager.update(IAction.TEXT);
-			}
-		}
+		if (workbench instanceof Workbench)
+			((Workbench) this.workbench).updateKeys();
 
 		return super.performOk();
 	}
@@ -396,6 +381,8 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 			localActiveKeyConfigurations = new ArrayList(localRegistry.getActiveKeyConfigurations());
 			localKeyBindings = new ArrayList(localRegistry.getKeyBindings());
 			localKeyConfigurations = new ArrayList(localRegistry.getKeyConfigurations());
+
+			// TODO solve core and local KeyBindings for PL
 	
 			copyToUI();
 			update();
