@@ -19,8 +19,8 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
             <element ref="command"/>
-<!--element ref="gestureBinding"/-->
 <!--element ref="gestureConfiguration"/-->
+<!--element ref="gestureBinding"/-->
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
             <element ref="context"/>
@@ -153,6 +153,38 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
+<!--element name="gestureConfiguration">
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element-->
 <!--element name="gestureBinding">
       <complexType>
          <sequence>
@@ -194,38 +226,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             </annotation>
          </attribute>
          <attribute name="string" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element-->
-<!--element name="gestureConfiguration">
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
             <annotation>
                <documentation>
                   
@@ -334,13 +334,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -350,6 +343,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element-->
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
       </complexType>
    </element-->
    <element name="context">
@@ -438,7 +438,7 @@ This is no public API for declaring commands, categories, key bindings, key conf
       </appInfo>
       <documentation>
          &lt;p&gt;
-Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br /&gt;
+Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;&lt;/br&gt;
 All rights reserved. This program and the accompanying materials 
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
