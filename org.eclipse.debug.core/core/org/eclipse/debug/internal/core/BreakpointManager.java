@@ -87,7 +87,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		initBreakpointExtensions();
 		getWorkspace().addResourceChangeListener(this);
 		
-		IMarker[] breakpoints= null;
 		IWorkspaceRoot root= getWorkspace().getRoot();
 		loadBreakpoints(root);	
 	}
