@@ -1,7 +1,7 @@
 package org.eclipse.core.internal.boot;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -21,7 +21,6 @@ public class PlatformURLHandler extends URLStreamHandler {
 	public static final String PROTOCOL = "platform";
 	public static final String FILE = "file";
 	public static final String JAR = "jar";
-	public static final String VA = "valoader";
 	public static final String JAR_SEPARATOR = "!/";
 	public static final String PROTOCOL_SEPARATOR = ":";
 protected PlatformURLHandler() {

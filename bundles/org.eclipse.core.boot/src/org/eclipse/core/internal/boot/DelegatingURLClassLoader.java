@@ -1,7 +1,7 @@
 package org.eclipse.core.internal.boot;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -235,7 +235,7 @@ public void addURLs(URL[] codePath, URLContentFilter[] codeFilters, URL[] resour
 private static URL mungeJarURL(URL url) {
 	if (url.getProtocol().equals("jar")) {
 		String file = url.getFile();
-		if (file.startsWith("file:") || file.startsWith("valoader:")) {
+		if (file.startsWith("file:")) {
 			int ix = file.indexOf("!/");
 			if (ix != -1) file = file.substring(0,ix);
 			try {
@@ -462,7 +462,7 @@ protected String findLibrary(String libName) {
 	if (base == null)
 		return null;
 	String libFileName = null;
-	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
+	if (base.getProtocol().equals(PlatformURLHandler.FILE)) {
 		// directly access library	
 		libFileName = (base.getFile() + libName).replace('/', File.separatorChar);
 	} else {

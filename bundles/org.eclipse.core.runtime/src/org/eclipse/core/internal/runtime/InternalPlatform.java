@@ -51,7 +51,6 @@ public final class InternalPlatform {
 	private static AuthorizationDatabase keyring = null;
 	private static String keyringFile = null;
 	private static String password = "";
-	private static boolean inDevelopmentMode = false;
 	private static boolean splashDown = false;
 	private static boolean cacheRegistry = true;
 	private static String pluginCustomizationFile = null;
@@ -84,7 +83,6 @@ public final class InternalPlatform {
 	private static final String LOG = "-consolelog";
 	private static final String KEYRING = "-keyring";
 	private static final String PASSWORD = "-password";
-	private static final String DEV = "-dev";
 	private static final String NOREGISTRYCACHE = "-noregistrycache";
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization";
 	
@@ -96,24 +94,6 @@ public final class InternalPlatform {
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static String DEBUG_PLUGINS_DUMP = "";
 
-	private static boolean inVAJ;
-	static {
-		try {
-			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
-			inVAJ = true;
-		} catch (Exception e) {
-			inVAJ = false;
-		}
-	}
-	private static boolean inVAME;
-	static {
-		try {
-			Class.forName("com.ibm.eclipse.core.VAME");
-			inVAME = true;
-		} catch (Exception e) {
-			inVAME = false;
-		}
-	}
 /**
  * Private constructor to block instance creation.
  */
@@ -429,29 +409,6 @@ private static void handleException(ISafeRunnable code, Throwable e) {
 	code.handleException(e);
 }
 /**
- * Returns true if the platform is currently running in Development Mode.  If it is, there are 
- * special procedures that should be taken when defining plug-in class paths.
- */
-public static boolean inDevelopmentMode() {
-	return inDevelopmentMode || inVAJ() || inVAME();
-}
-/**
- * Returns true if the platform is currently running in  VA/Java.  If it is, there are 
- * typically some special procedures
- * that should be taken when dealing with plug-in activation and class loading.
- */
-public static boolean inVAJ() {
-	return inVAJ;
-}
-/**
- * Returns true if the platform is currently running in  VA/ME.  If it is, there are 
- * typically some special procedures
- * that should be taken when dealing with plug-in activation and class loading.
- */
-public static boolean inVAME() {
-	return inVAME;
-}
-/**
  * Internal method for finding and returning a runnable instance of the 
  * given class as defined in the specified plug-in.
  * The returned object is initialized with the supplied arguments.
@@ -743,12 +700,6 @@ private static String[] processCommandLine(String[] args) {
 		// look for the log flag
 		if (args[i].equalsIgnoreCase(LOG)) {
 			consoleLogEnabled = true;
-			found = true;
-		}
-
-		// look for the development mode flag
-		if (args[i].equalsIgnoreCase(DEV)) {
-			inDevelopmentMode = true;
 			found = true;
 		}
 

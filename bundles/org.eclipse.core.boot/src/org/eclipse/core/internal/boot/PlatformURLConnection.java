@@ -1,7 +1,7 @@
 package org.eclipse.core.internal.boot;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -181,7 +181,7 @@ public URL getURLAsLocal() throws IOException {
 	connect(true);	// connect and force caching if necessary
 	URL u = connection.getURL();
 	String up = u.getProtocol();
-	if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR) && !up.equals(PlatformURLHandler.VA)) throw new IOException("Unable to access URL as local "+url.toString());
+	if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR)) throw new IOException("Unable to access URL as local "+url.toString());
 	return u;
 }
 private URL getURLInCache() throws IOException {
@@ -310,8 +310,8 @@ private boolean shouldCache(boolean asLocal) {
 	// don't cache files that are known to be local
 	String rp = resolvedURL.getProtocol();
 	String rf = resolvedURL.getFile();
-	if (rp.equals(PlatformURLHandler.FILE) || rp.equals(PlatformURLHandler.VA)) return false;
-	if (rp.equals(PlatformURLHandler.JAR) && (rf.startsWith(PlatformURLHandler.FILE) || rf.startsWith(PlatformURLHandler.VA) )) return false;
+	if (rp.equals(PlatformURLHandler.FILE)) return false;
+	if (rp.equals(PlatformURLHandler.JAR) && (rf.startsWith(PlatformURLHandler.FILE))) return false;
 
 	// for other files force caching if local connection was requested
 	if (asLocal) return true;

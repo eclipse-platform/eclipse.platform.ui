@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.boot;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +16,8 @@ import java.lang.reflect.Method;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformRunnable;
 
 /**
  * Special boot loader class for the Eclipse Platform. This class cannot
@@ -38,7 +44,6 @@ public final class InternalBootLoader {
 	private static String applicationR10 = null; // R1.0 compatibility
 	private static URL installURL = null;
 	private static boolean debugRequested = false;
-	private static boolean usage = false;
 	private static String devClassPath = null;
 	private static String debugOptionsFilename = null;
 	private static Properties options = null;
@@ -100,41 +105,12 @@ public final class InternalBootLoader {
 
 	// command line arguments
 	private static final String DEBUG = "-debug";
-	private static final String PLATFORM = "-platform";
 	private static final String DATA = "-data";
 	private static final String DEV = "-dev";
 	private static final String WS = "-ws";
 	private static final String OS = "-os";
 	private static final String ARCH = "-arch";
 	private static final String NL = "-nl";
-	private static final String USAGE = "-?";
-
-	// Development mode constants
-	private static final String PLUGIN_JARS = "plugin.jars";
-	private static final String VA_PROPERTIES = ".va.properties";
-	private static final String KEY_LIBRARY = "library";
-	private static final String KEY_EXPORT = "export";
-	private static final String KEY_PROJECT = "projects";
-
-	private static boolean inVAJ;
-	static {
-		try {
-			Class.forName("com.ibm.uvm.lang.ProjectClassLoader");
-			inVAJ = true;
-		} catch (Exception e) {
-			inVAJ = false;
-		}
-	}
-
-	private static boolean inVAME;
-	static {
-		try {
-			Class.forName("com.ibm.eclipse.core.VAME");
-			inVAME = true;
-		} catch (Exception e) {
-			inVAME = false;
-		}
-	}
 
 /**
  * Private constructor to block instance creation.
@@ -206,24 +182,18 @@ public static URL getInstallURL() {
 		return installURL;
 
 	// Get the location of this class and compute the install location.
-	// this involves striping off last element (jar or directory) and adjusting 
-	// for VAJ/VAME peculiarities.
+	// this involves striping off last element (jar or directory) 
 	URL url = InternalBootLoader.class.getProtectionDomain().getCodeSource().getLocation();
 	String path = url.getFile();
 	if (path.endsWith("/"))
 		path = path.substring(0, path.length() - 1);
 	int ix = path.lastIndexOf('/');
-	if ((inVAJ || inVAME))
-		// in VAJ or VAME strip off one segment (the boot project).  Be sure to leave a trailing /
-		path = path.substring(0, ix + 1);
-	else {
-		// in jdk ... strip off boot jar/bin, boot plugin and plugins dir.  Be sure to leave a trailing /
-		path = path.substring(0, ix);
-		ix = path.lastIndexOf('/');
-		path = path.substring(0, ix);
-		ix = path.lastIndexOf('/');
-		path = path.substring(0, ix + 1);
-	}
+	//strip off boot jar/bin, boot plugin and plugins dir.  Be sure to leave a trailing /
+	path = path.substring(0, ix);
+	ix = path.lastIndexOf('/');
+	path = path.substring(0, ix);
+	ix = path.lastIndexOf('/');
+	path = path.substring(0, ix + 1);
 
 	try {
 		if (url.getProtocol().equals("jar"))
@@ -237,8 +207,6 @@ public static URL getInstallURL() {
 	}
 	return installURL;
 }
-
-
 private static String[] getListOption(String option) {
 	String filter = options.getProperty(option);
 	if (filter == null)
@@ -281,14 +249,6 @@ private static Object[] getPlatformClassLoaderPath() {
 	if (execBase == null)
 		execBase = getInstallURL() + RUNTIMEDIR;
 
-	String devBase = null;
-	Properties jarDefinitions = null;
-	if (InternalBootLoader.inVAJ || InternalBootLoader.inVAME) {
-		devBase = getInstallURL().toExternalForm();
-		jarDefinitions = loadJarDefinitions();
-	} else
-		devBase = execBase;
-
 	// build a list alternating lib spec and export spec
 	ArrayList libSpecs = new ArrayList(5);
 	String[] exportAll = new String[] { "*" };
@@ -298,7 +258,7 @@ private static Object[] getPlatformClassLoaderPath() {
 		String[] specs = getArrayFromList(DelegatingURLClassLoader.devClassPath);
 		// convert dev class path into url strings
 		for (int j = 0; j < specs.length; j++) {
-			libSpecs.add(devBase + specs[j] + "/");
+			libSpecs.add(execBase + specs[j] + "/");
 			libSpecs.add(exportAll);
 		}
 	}
@@ -306,33 +266,21 @@ private static Object[] getPlatformClassLoaderPath() {
 	list.add("runtime.jar");
 	list.add(exportAll);
 
-	// add in the class path entries spec'd in the config.  If in development mode, 
-	// add the entries from the plugin.jars first.
+	// add in the class path entries spec'd in the config.
 	for (Iterator i = list.iterator(); i.hasNext();) {
 		String library = (String) i.next();
 		String[] filters = (String[]) i.next();
-		// check for jar definitions
-		if (jarDefinitions != null) {
-			String key = library.substring(library.lastIndexOf('/') + 1);
-			String[] specs = getArrayFromList(jarDefinitions.getProperty(key));
-			for (int j = 0; j < specs.length; j++) {
-				libSpecs.add(devBase + specs[j] + "/");
-				libSpecs.add(filters);
-			}
-		}
 
-		// convert plugin.xml library entries to url strings if running in JDK
-		if (!(InternalBootLoader.inVAJ || InternalBootLoader.inVAME)) {
-			String libSpec = execBase + library.replace(File.separatorChar, '/');
-			if (!libSpec.endsWith("/")) {
-				if (libSpec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
-					libSpec += PlatformURLHandler.JAR_SEPARATOR;
-				else
-					libSpec = PlatformURLHandler.JAR + PlatformURLHandler.PROTOCOL_SEPARATOR + libSpec + PlatformURLHandler.JAR_SEPARATOR;
-			}
-			libSpecs.add(libSpec);
-			libSpecs.add(filters);
+		// convert plugin.xml library entries to url strings
+		String libSpec = execBase + library.replace(File.separatorChar, '/');
+		if (!libSpec.endsWith("/")) {
+			if (libSpec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
+				libSpec += PlatformURLHandler.JAR_SEPARATOR;
+			else
+				libSpec = PlatformURLHandler.JAR + PlatformURLHandler.PROTOCOL_SEPARATOR + libSpec + PlatformURLHandler.JAR_SEPARATOR;
 		}
+		libSpecs.add(libSpec);
+		libSpecs.add(filters);
 	}
 
 	// create path entries for libraries
@@ -395,48 +343,6 @@ public static URL[] getPluginPath(URL pluginPathLocation/*R1.0 compatibility*/) 
 	}
 	return result;
 }
-private static URL[] getPluginPathVa(URL[] pluginPath) {
-	Vector result = new Vector(Arrays.asList(pluginPath));
-	if (inVAME) {
-		// check for projects with plugins on Java classpath
-		String classpath = System.getProperty("java.class.path");
-		StringTokenizer paths = new StringTokenizer(classpath, File.pathSeparator);
-		while (paths.hasMoreTokens()) {
-			String curr = (String) paths.nextToken();
-			if (!curr.endsWith(File.separator))
-				curr += File.separator;
-			curr += "plugins" + File.separator;
-			File dir = new File(curr);
-			if (dir.isDirectory()) {
-				try {
-					result.add(dir.toURL());
-				} catch (MalformedURLException e) {
-				}
-			}
-		}
-	} else
-		if (inVAJ /*disabled*/
-			&& false) {
-			// check for projects with plugins in project_resources		
-			File pr = new File(getInstallURL().getFile());
-			String[] projects = ((projects = pr.list()) == null) ? new String[0] : projects;
-			for (int i = 0; i < projects.length; i++) {
-				File dir = new File(pr, projects[i] + File.separator + "plugins");
-				if (dir.isDirectory()) {
-					try {
-						result.add(dir.toURL());
-					} catch (MalformedURLException e) {
-					}
-				}
-			}
-		}
-
-	// if there are no new entries, return original plugin path.  Otherwise, return the new path
-	if (pluginPath.length == result.size())
-		return pluginPath;
-	else
-		return (URL[]) result.toArray(new URL[result.size()]);
-}
 /**
  * @see BootLoader
  */
@@ -485,7 +391,7 @@ public static boolean inDebugMode() {
  * @see BootLoader
  */
 public static boolean inDevelopmentMode() {
-	return inDevelopmentMode || inVAJ || inVAME;
+	return inDevelopmentMode;
 }
 private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/, String location, String[] args) throws Exception {
 	if (running)
@@ -499,22 +405,13 @@ private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/,
 
 	// if a platform location was not found in the arguments, compute one.		
 	if (baseLocation == null) {
-		if (inVAJ || inVAME) {
-			// In VAJ, set user.dir to be <code>eclipse</code> in the parent of the install 
-			// directory.  This typically makes the platform working directory:
-			//		.../ide/eclipse
-			String dir = new File(new File(getInstallURL().getFile()).getParent(), "eclipse").getAbsolutePath();
-			System.setProperty("user.dir", dir);
-			baseLocation = dir;
-		} else {
-			// otherwise, use user.dir.  If user.dir overlaps with the install dir, then make the 
-			// location be a workspace subdir of the install location.
-			baseLocation = System.getProperty("user.dir");
-			URL installURL = resolve(getInstallURL());
-			String installLocation = new File(installURL.getFile()).getAbsolutePath();
-			if (baseLocation.equals(installLocation))
-				baseLocation = new File(installLocation, WORKSPACE).getAbsolutePath();
-		}
+		// use user.dir.  If user.dir overlaps with the install dir, then make the 
+		// location be a workspace subdir of the install location.
+		baseLocation = System.getProperty("user.dir");
+		URL installURL = resolve(getInstallURL());
+		String installLocation = new File(installURL.getFile()).getAbsolutePath();
+		if (baseLocation.equals(installLocation))
+			baseLocation = new File(installLocation, WORKSPACE).getAbsolutePath();
 	}
 
 	// load any debug options
@@ -533,18 +430,6 @@ private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/,
 	return appArgs;
 }
 /**
- * Returns the complete plugin path.
- * If in development mode, the returned value may have additional VA
- * values added.
- */
-private static URL[] internalGetPluginPath() {
-	URL[] result = getCurrentPlatformConfiguration().getPluginPath();
-	// augment with additional VA entries if in development mode.
-	if (inDevelopmentMode())
-		result = getPluginPathVa(result);
-	return result;
-}
-/**
  * @see BootLoader
  */
 public static boolean isRunning() {
@@ -554,26 +439,6 @@ public static boolean isStarting() {
 	return starting;
 }
 
-private static Properties loadJarDefinitions() {
-	if (!inDevelopmentMode())
-		return null;
-	Properties result = null;
-	InputStream is;
-	try {
-		result = new Properties();
-		URL props = new URL(getInstallURL(),  PLUGINSDIR + RUNTIMENAME + "/" + PLUGIN_JARS);
-		is = props.openStream();
-		try {
-			result.load(is);
-			return result;
-		} finally {
-			is.close();
-		}
-	} catch (IOException e) {
-		result = null;
-	}
-	return result;
-}
 private static void loadOptions() {
 	// if no debug option was specified, don't even bother to try.
 	// Must ensure that the options slot is null as this is the signal to the
@@ -640,12 +505,6 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			continue;
 		}
 
-		// look for the usage flag
-		if (args[i].equalsIgnoreCase(USAGE)) {
-			usage = true;
-			found = true;
-		}
-
 		if (found) {
 			configArgs[configArgIndex++] = i;
 			continue;
@@ -675,7 +534,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		// look for the platform location.  Only set it if not already set. This 
 		// preserves the value set in the startup() parameter.  Be sure however
 		// to consume the command-line argument.
-		if (args[i - 1].equalsIgnoreCase(PLATFORM) || args[i - 1].equalsIgnoreCase(DATA)) {
+		if (args[i - 1].equalsIgnoreCase(DATA)) {
 			found = true;
 			if (baseLocation == null)
 				baseLocation = arg;
@@ -699,7 +558,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 			arch = arg;
 		}
 
-		// look for the system architecture
+		// look for the nationality/language
 		if (args[i - 1].equalsIgnoreCase(NL)) {
 			found = true;
 			nl = arg;
@@ -784,7 +643,7 @@ public static Object run(String applicationName/*R1.0 compatibility*/, URL plugi
 		result = runnable.run(applicationArgs);
 	} catch (Throwable e) {
 		e.printStackTrace();
-		throw new Exception(e.getMessage());
+		throw new InvocationTargetException(e);
 	} finally {
 		shutdown();
 		return result;
@@ -893,7 +752,7 @@ public static String[] startup(URL pluginPathLocation/*R1.0 compatibility*/, Str
 	Class platform = loader.loadClass(PLATFORM_ENTRYPOINT);
 	Method method = platform.getDeclaredMethod("loaderStartup", new Class[] { URL[].class, String.class, Properties.class, String[].class, Runnable.class });
 	try {
-		URL[] pluginPath = internalGetPluginPath();
+		URL[] pluginPath = getCurrentPlatformConfiguration().getPluginPath();
 		method.invoke(platform, new Object[] { pluginPath, baseLocation, options, args, handler });
 	} catch (InvocationTargetException e) {
 		if (e.getTargetException() instanceof Error)

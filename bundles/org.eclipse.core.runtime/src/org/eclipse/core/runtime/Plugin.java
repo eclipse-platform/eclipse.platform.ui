@@ -375,8 +375,6 @@ private String getFileFromURL(URL target) {
 	String protocol = target.getProtocol();
 	if (protocol.equals(PlatformURLHandler.FILE))
 		return target.getFile();
-	if (protocol.equals(PlatformURLHandler.VA))
-		return target.getFile();
 	if (protocol.equals(PlatformURLHandler.JAR)) {
 		// strip off the jar separator at the end of the url then do a recursive call
 		// to interpret the sub URL.
@@ -535,7 +533,7 @@ public final void savePluginPreferences() {
 		// there are no preference settings
 		// rather than write an empty file, just delete any existing file
 		if (prefFile.exists()) {
-			boolean success = prefFile.delete();
+			prefFile.delete();
 			// don't worry if delete unsuccessful
 		}
 		return;

@@ -1,7 +1,7 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -1349,7 +1349,7 @@ public PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pluginPa
 private String[] getPathMembers(URL path) {
 	String[] list = null;
 	String protocol = path.getProtocol();
-	if (protocol.equals("file") || (InternalPlatform.inVAJ() && protocol.equals("valoader"))) {
+	if (protocol.equals("file")) {
 		list = (new File(path.getFile())).list();
 	} else {
 		// XXX: attempt to read URL and see if we got html dir page

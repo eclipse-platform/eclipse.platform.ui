@@ -1,7 +1,7 @@
 package org.eclipse.core.internal.plugins;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -22,7 +22,6 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 	private boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
 	protected Plugin pluginObject = null; // plugin object
-	private boolean useDevURLs = InternalPlatform.inVAJ() || InternalPlatform.inVAME();
 	private boolean usePlatformURLs = true;
 	private ResourceBundle bundle = null; // plugin.properties
 	private Locale locale = null; // bundle locale
@@ -38,11 +37,6 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 
 	private static final String URL_PROTOCOL_FILE = "file";
 
-	// Development mode constants
-	private static final String PLUGIN_JARS = "plugin.jars";
-	private static final String VA_PROPERTIES = ".va.properties";
-	private static final String KEY_PROJECT = "projects";
-	
 	// Places to look for library files 
 	private static String[] WS_JAR_VARIANTS = buildWSVariants();
 	private static String[] OS_JAR_VARIANTS = buildOSVariants();
@@ -78,9 +72,7 @@ private static String[] buildNLVariants() {
 	return (String[])result.toArray(new String[result.size()]);
 }
 private static String[] buildVanillaVariants() {
-	ArrayList result = new ArrayList();
-	result.add("");
-	return (String[])result.toArray(new String[result.size()]);
+	return new String[] {""};
 }
 private String[] buildBasePaths(String pluginBase) {
 	// Now build a list of all the bases to use
@@ -314,36 +306,11 @@ public ClassLoader getPluginClassLoader(boolean eclipseURLs) {
 	return loader;
 }
 private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
-	// If running in development mode, check for a plugin.jars file. 
-	// The file has entries corresponding to each of the <library>
-	// elements in the plugin.xml. Each defined property is of form
-	//    libname=source1,source2,source3,...
-	// For example
-	// plugin.xml
-	//   <runtime>
-	//     <library name=baseapi.jar>
-	//       <export name="*"/>
-	//     </library>
-	//     <library name=another.jar/>
-	//     <library name=base.jar/>
-	//   </runtime>
-	//
-	// plugin.jars
-	//    baseapi.jar=Base API Project
-	//    base.jar=Base Project 1, Base Project 2
-	//    another.jar=More Code
-	//
-	// The above results in a loader search path consisting of
-	//    Base API Project
-	//    More Code
-	//    Base Project 1, Base Project 2
-	//
 	// Any library access filters specified in the plugin.xml are
 	// applied to the corresponding loader search path entries
 
-	Properties jarDefinitions = loadJarDefinitions();
-	// compute the base of the classpath urls.  If <code>eclipseURLs</code> is
-	// true, we should use eclipse: URLs.  Otherwise the native URLs are used.
+	// compute the base of the classpath urls.  If <code>platformURLFlag</code> is
+	// true, we should use platform: URLs.  Otherwise the native URLs are used.
 	usePlatformURLs = platformURLFlag;
 	// If we are using platform URLs, install will look like
 	// platform:/plugin/<pluginId>_<pluginVersion>/
@@ -378,7 +345,7 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 			if (!spec.endsWith(".jar"))
 				baseSpecs.add(spec);
 			// add the dev path for the plugin itself
-			addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, exportAll, ILibrary.CODE, false, true, result);
+			addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, exportAll, ILibrary.CODE, true, result);
 		}
 		// Now add all the spec directories to the basePaths so we 
 		// will look in these directories for jar files, etc.
@@ -396,8 +363,7 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 		basePaths = newBasePaths;			
 	}
 
-	// add in the class path entries spec'd in the plugin.xml.  If in development mode, 
-	// add the entries from the plugin.jars first.  
+	// add in the class path entries spec'd in the plugin.xml.  
 	ILibrary[] list = getRuntimeLibraries();
 	for (int i = 0; i < list.length; i++) {
 		ILibrary library = list[i];
@@ -405,17 +371,8 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 		if (library.getPath().isEmpty())
 			continue;
 		String[] filters = library.isFullyExported() ? exportAll : library.getContentFilters();
-		// add in the plugin.jars entries
 		String libSpec = library.getPath().toString();
-		String jarDefinition = null;
-		if (jarDefinitions != null && libSpec != null) {
-			jarDefinition = jarDefinitions.getProperty(libSpec);
-			String[] specs = getArrayFromList(jarDefinition);
-			// convert jar spec into url strings
-			for (int j = 0; j < specs.length; j++)
-				resolveAndAddLibrary(specs[j] + "/", filters, basePaths, library.getType(), true, result);
-		}
-		resolveAndAddLibrary(libSpec, filters, basePaths, library.getType(), jarDefinition != null, result);
+		resolveAndAddLibrary(libSpec, filters, basePaths, library.getType(), result);
 	}
 
 	Object[] array = new Object[4];
@@ -426,22 +383,22 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	return array;
 }
 
-private boolean resolveAndAddLibrary(String spec, String[] filters, String[] basePaths, String type, boolean hasJarSpec, ArrayList[] result) {
+private boolean resolveAndAddLibrary(String spec, String[] filters, String[] basePaths, String type, ArrayList[] result) {
 	if (spec.charAt(0) == '$') {
 		IPath path = new Path(spec);
 		String first = path.segment(0);
 		String remainder = path.removeFirstSegments(1).toString();
 		if (first.equalsIgnoreCase("$ws$"))
-			return addLibraryWithFragments(basePaths, WS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, false, result);
+			return addLibraryWithFragments(basePaths, WS_JAR_VARIANTS, "/" + remainder, filters, type, false, result);
 		if (first.equalsIgnoreCase("$os$"))
-			return addLibraryWithFragments(basePaths, OS_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, false, result);
+			return addLibraryWithFragments(basePaths, OS_JAR_VARIANTS, "/" + remainder, filters, type, false, result);
 		if (first.equalsIgnoreCase("$nl$"))
-			return addLibraryWithFragments(basePaths, NL_JAR_VARIANTS, "/" + remainder, filters, type, hasJarSpec, false, result);
+			return addLibraryWithFragments(basePaths, NL_JAR_VARIANTS, "/" + remainder, filters, type, false, result);
 	}
-	return addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, filters, type, hasJarSpec, false, result);
+	return addLibraryWithFragments(basePaths, JAR_VARIANTS, spec, filters, type, false, result);
 }
 
-private boolean addLibraryWithFragments(String[] basePaths, String[] variants, String spec, String[] filters, String type, boolean hasJarSpec, boolean addAll, ArrayList[] result) {
+private boolean addLibraryWithFragments(String[] basePaths, String[] variants, String spec, String[] filters, String type, boolean addAll, ArrayList[] result) {
 	// If addAll is set to false, only the first valid match will be
 	// added to the class path.  If addAll is set to true, all valid
 	// path permutations will be added to the class path.  Typically
@@ -455,13 +412,13 @@ private boolean addLibraryWithFragments(String[] basePaths, String[] variants, S
 	// So keep looping if addAll = true OR added = false.
 	for (int j = 0; j < variants.length && (addAll || !added); j++) {
 		for (int i = 0; i < basePaths.length && (addAll || !added); i++) {
-			added = addLibrary(basePaths[i], spec, variants[j], filters, type, hasJarSpec, result);
+			added = addLibrary(basePaths[i], spec, variants[j], filters, type, result);
 		}
 	}
 	return added;
 }
 
-private boolean addLibrary(String base, String libSpec, String variant, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+private boolean addLibrary(String base, String libSpec, String variant, String[] filters, String type, ArrayList[] result) {
 	// create path entries for all libraries except those which are files
 	// and do not exist.
 	String spec = null;
@@ -479,11 +436,6 @@ private boolean addLibrary(String base, String libSpec, String variant, String[]
 
 	// if the libspec is NOT considered a directory, treat as a jar
 	if (!spec.endsWith("/")) {
-		// if running in VAJ or VAME and there was a plugin.jars definition, ignore the plugin.xml
-		// library entry (assume the plugin.jars entries covered all the bases.  Otherwise, 
-		// convert the plugin.xml entry into a URL.
-		if ((InternalPlatform.inVAJ() || InternalPlatform.inVAME()) && hasJarSpec)
-			return false;
 		if (spec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
 			spec += PlatformURLHandler.JAR_SEPARATOR;
 		else
@@ -517,8 +469,6 @@ public String getFileFromURL(URL target) {
 	String protocol = target.getProtocol();
 	if (protocol.equals(PlatformURLHandler.FILE))
 		return target.getFile();
-//	if (protocol.equals(PlatformURLHandler.VA))
-//		return target.getFile();
 	if (protocol.equals(PlatformURLHandler.JAR)) {
 		// strip off the jar separator at the end of the url then do a recursive call
 		// to interpret the sub URL.
@@ -753,27 +703,6 @@ public synchronized boolean isPluginActivated() {
 public synchronized boolean isPluginDeactivated() {
 	return deactivated;
 }
-private Properties loadJarDefinitions() {
-	// We only need to load the plugin.jars files if we are in VAJ or VAME.
-	if (!InternalPlatform.inVAJ() && !InternalPlatform.inVAME())
-		return null;
-	Properties result = null;
-	InputStream is;
-	try {
-		result = new Properties();
-		URL props = new URL(getInstallURLInternal(), PLUGIN_JARS);
-		is = props.openStream();
-		try {
-			result.load(is);
-			return result;
-		} finally {
-			is.close();
-		}
-	} catch (IOException e) {
-		result = null;
-	}
-	return result;
-}
 private void logError(IStatus status) {
 	InternalPlatform.getRuntimePlugin().getLog().log(status);
 	if (InternalPlatform.DEBUG)
@@ -806,8 +735,6 @@ private void pluginActivationExit(boolean errorExit) {
 		active = true;
 }
 private String getFragmentLocation(PluginFragmentModel fragment) {
-	if (useDevURLs) 
-		return PlatformURLBaseConnection.PLATFORM_URL_STRING;
 	if (usePlatformURLs)
 		return FragmentDescriptor.FRAGMENT_URL + fragment.toString() + "/";
 	return fragment.getLocation();
