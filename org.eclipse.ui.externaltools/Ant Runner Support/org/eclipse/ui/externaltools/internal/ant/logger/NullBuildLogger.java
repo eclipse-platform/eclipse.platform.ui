@@ -17,14 +17,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 
 public class NullBuildLogger implements BuildLogger {
-	
-	public static final int MSG_ERR = 0;
-	public static final int MSG_WARN = 10;
-	public static final int MSG_INFO = 20;
-	public static final int MSG_VERBOSE = 30;
-	public static final int MSG_DEBUG = 40;
 
-	protected int fMessageOutputLevel = MSG_INFO;
+	protected int fMessageOutputLevel = Project.MSG_INFO;
 	private PrintStream fErr= null;
 	private PrintStream fOut= null;
 	protected boolean fEmacsMode= false;
@@ -37,7 +31,7 @@ public class NullBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
 	 */
 	public void setMessageOutputLevel(int level) {
-		fMessageOutputLevel= toConsolePriority(level);
+		fMessageOutputLevel= level;
 	}
 	
 	protected int getMessageOutputLevel() {
@@ -95,7 +89,7 @@ public class NullBuildLogger implements BuildLogger {
 	 * @see BuildListener#messageLogged(BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
-		logMessage(event.getMessage(), toConsolePriority(event.getPriority()));
+		logMessage(event.getMessage(), event.getPriority());
 	}
 
 	protected PrintStream getErrorPrintStream() {
@@ -137,7 +131,7 @@ public class NullBuildLogger implements BuildLogger {
 			return;
 		}
 		
-		if (priority == MSG_ERR) {
+		if (priority == Project.MSG_ERR) {
 			if (getErrorPrintStream() != null && getErrorPrintStream() != System.err) {
 				//user has designated to log to a logfile
 				getErrorPrintStream().println(message);
@@ -162,27 +156,6 @@ public class NullBuildLogger implements BuildLogger {
 			ToolMessages.format(
 				"NullBuildLogger.buildException", //$NON-NLS-1$
 				new String[] { exception.toString()}),
-				MSG_ERR);	
-	}
-	
-	/**
-	 * Converts a Ant project's priority level to a priority
-	 * level used by the Log Console.
-	 */
-	protected int toConsolePriority(int antPriority) {
-		switch (antPriority) {
-			case Project.MSG_ERR:
-				return MSG_ERR;
-			case Project.MSG_WARN:
-				return MSG_WARN;	
-			case Project.MSG_INFO:
-				return MSG_INFO;	
-			case Project.MSG_VERBOSE:
-				return MSG_VERBOSE;	
-			case Project.MSG_DEBUG:
-				return MSG_DEBUG;	
-			default:
-				return MSG_INFO;	
-		}
+				Project.MSG_ERR);	
 	}
 }
