@@ -354,6 +354,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new Separator());
 		
 		menu.add(findAction);
+		menu.add(new GroupMarker(IWorkbenchActionConstants.FIND_EXT));
 		menu.add(new Separator());
 		
 		menu.add(addBookmarkAction);

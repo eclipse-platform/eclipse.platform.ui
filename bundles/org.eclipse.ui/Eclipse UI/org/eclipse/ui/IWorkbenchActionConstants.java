@@ -269,7 +269,7 @@ public interface IWorkbenchActionConstants {
 	 * Edit menu: name of group for start of menu (value <code>"editStart"</code>).
 	 */
 	public static final String EDIT_START = "editStart";	// Group. //$NON-NLS-1$
-	
+		
 	/**
 	 * Edit menu: name of group for end of menu (value <code>"editEnd"</code>).
 	 */
@@ -328,17 +328,22 @@ public interface IWorkbenchActionConstants {
 	public static final String FIND = "find"; 				// Global action. //$NON-NLS-1$
 	
 	/**
+	 * Edit menu: name of group for extra Find-like actions (value <code>"find.ext"</code>).
+	 */
+	public static final String FIND_EXT = "cut.ext";			// Group. //$NON-NLS-1$
+	
+	/**
 	 * Edit menu: name of standard Select All global action
 	 * (value <code>"selectAll"</code>).
 	 */
-	public static final String SELECT_ALL = "selectAll";	// Global action. //$NON-NLS-1$
+	public static final String SELECT_ALL = "selectAll";		// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Bookmark global action
 	 * (value <code>"bookmark"</code>).
 	 */
 	public static final String BOOKMARK = "bookmark"; 		// Global action. //$NON-NLS-1$
-
+	
 // Standard workbench actions:
 	/**
 	 * Workbench menu: name of group for start of menu
