@@ -452,6 +452,8 @@ public void disposeEntry(NavigationHistoryEntry entry) {
 }
 void checkDuplicates(NavigationHistoryEditorInfo info) {
 	NavigationHistoryEditorInfo dup = null;
+	if(info.editorInput == null) //failed to restore
+		return;
 	for (Iterator iter = editors.iterator(); iter.hasNext();) {
 		dup = (NavigationHistoryEditorInfo)iter.next();
 		if(info != dup && info.editorID.equals(dup.editorID) && info.editorInput.equals(dup.editorInput))
