@@ -155,7 +155,7 @@ public final class PaneFolder {
 		{
 			viewForm = new ViewForm(tabFolder, SWT.NONE);
 
-			// Only attach these to the viewForm when there's actuall a control to display
+			// Only attach these to the viewForm when there's actually a control to display
 			viewFormTopLeftProxy = new ProxyControl(viewForm);
 			viewFormTopCenterProxy = new ProxyControl(viewForm);
 			viewFormTopRightProxy = new ProxyControl(viewForm);
