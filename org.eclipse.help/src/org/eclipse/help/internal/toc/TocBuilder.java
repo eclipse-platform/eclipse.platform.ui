@@ -3,7 +3,10 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
+
 import java.util.*;
+import org.eclipse.help.internal.util.*;
+
 public class TocBuilder {
 	// list of all toc files
 	protected Collection contributedTocFiles;
@@ -50,10 +53,18 @@ public class TocBuilder {
 		}
 	}
 	public void buildTocFile(TocFile tocFile) {
-		unprocessedTocFiles.remove(tocFile);
-		//tocFile.build(this);
-		TocFileParser parser = new TocFileParser(this);
-		parser.parse(tocFile);
+		try
+		{
+			unprocessedTocFiles.remove(tocFile);
+			//tocFile.build(this);
+			TocFileParser parser = new TocFileParser(this);
+			parser.parse(tocFile);
+		}
+		catch(Exception e)
+		{
+			String msg = Resources.getString("E033",tocFile.getHref());
+			Logger.logError(msg, e);
+		}
 	}
 	public void buildAnchor(Anchor anchor) {
 		// cache the anchor in the toc file
