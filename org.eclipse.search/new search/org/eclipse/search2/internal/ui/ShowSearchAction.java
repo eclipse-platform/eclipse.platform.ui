@@ -33,11 +33,7 @@ class ShowSearchAction extends Action {
 		setImageDescriptor(image);
 		setToolTipText(tooltip);
 	}
-	/**
-	 *	Invoke the resource wizard selection wizard
-	 *
-	 *	@param browser org.eclipse.jface.parts.Window
-	 */
+	
 	public void run() {
 		fView.showSearchResult(fSearch);
 	}
