@@ -203,7 +203,8 @@ public class MarkerAnnotationPreferences {
 			throw new Throwable();
 		} catch (Throwable t) {
 			StackTraceElement[] elements= t.getStackTrace();
-			if (!elements[2].getClassName().equals(EditorsUI.class.getName()))
+			if (!(elements[2].getClassName().equals(EditorsUI.class.getName())
+					|| elements[3].getClassName().equals(EditorsUI.class.getName())))
 				throw new IllegalStateException();
 		}
 	}
