@@ -70,7 +70,6 @@ public interface IPageLayout {
 	 */
 	public static String ID_OUTLINE = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
 
-
 	/**
 	 * The view id for the workbench's Task List standard component.
 	 */
@@ -80,6 +79,13 @@ public interface IPageLayout {
 	 * The view id for the workbench's Bookmark Navigator standard component.
 	 */
 	public static String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkNavigator"; //$NON-NLS-1$
+
+	/**
+	 * Id of the navigate action set. 
+	 * (value <code>"org.eclipse.ui.NavigateActionSet"</code>)
+	 * @since 2.1
+	 */
+	public static final String ID_NAVIGATE_ACTION_SET = "org.eclipse.ui.NavigateActionSet"; //$NON-NLS-1$
 
 	/**
 	 * Relationship constant indicating a part should be placed to the left of
