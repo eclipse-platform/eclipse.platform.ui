@@ -36,6 +36,8 @@ public class WorkManager implements IManager {
 		private boolean running = false;
 		ThreadJob() {
 			super(""); //$NON-NLS-1$
+			setSystem(true);
+			setPriority(INTERACTIVE);
 			depth = 1;
 		}
 		int decrement() {
