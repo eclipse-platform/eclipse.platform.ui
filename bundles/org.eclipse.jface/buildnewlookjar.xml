@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="buildnewlookjar.xml" default="jface-new.jar">
+	<target name="jface-new.jar">
+	    <jar jarfile="jface-new.jar">
+			<fileset
+		    	dir="bin"
+		    />
+	    </jar>
+    </target>
+</project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="buildnewlookjar.xml" default="workbench-new.jar">
+	<target name="workbench-new.jar">
+	    <jar jarfile="workbench-new.jar">
+			<fileset
+		    	dir="bin"
+		    />
+	    </jar>
+    </target>
+</project>
