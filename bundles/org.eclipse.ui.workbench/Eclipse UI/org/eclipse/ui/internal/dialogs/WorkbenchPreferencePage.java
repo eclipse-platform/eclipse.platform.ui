@@ -116,11 +116,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		buttonComposite.setLayout(layout);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		buttonComposite.setLayoutData(data);
-		buttonComposite.setText(WorkbenchMessages.getString("WorkInProgressPreference.openMode")); //$NON-NLS-1$
+		buttonComposite.setText(WorkbenchMessages.getString("WorkbenchPreference.openMode")); //$NON-NLS-1$
 		buttonComposite.setFont(font);
 		
 
-		String label = WorkbenchMessages.getString("WorkInProgressPreference.doubleClick"); //$NON-NLS-1$	
+		String label = WorkbenchMessages.getString("WorkbenchPreference.doubleClick"); //$NON-NLS-1$	
 		doubleClickButton = createRadioButton(buttonComposite,label);
 		doubleClickButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -129,7 +129,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		});
 		doubleClickButton.setSelection(!openOnSingleClick);
 
-		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick"); //$NON-NLS-1$
+		label = WorkbenchMessages.getString("WorkbenchPreference.singleClick"); //$NON-NLS-1$
 		singleClickButton = createRadioButton(buttonComposite,label);
 		singleClickButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -138,7 +138,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		});
 		singleClickButton.setSelection(openOnSingleClick);
 		
-		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick_SelectOnHover"); //$NON-NLS-1$				
+		label = WorkbenchMessages.getString("WorkbenchPreference.singleClick_SelectOnHover"); //$NON-NLS-1$				
 		selectOnHoverButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
 		selectOnHoverButton.setText(label);
 		selectOnHoverButton.setFont(font);
@@ -154,7 +154,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		selectOnHoverButton.setLayoutData(data);
 		
 		
-		label = WorkbenchMessages.getString("WorkInProgressPreference.singleClick_OpenAfterDelay"); //$NON-NLS-1$				
+		label = WorkbenchMessages.getString("WorkbenchPreference.singleClick_OpenAfterDelay"); //$NON-NLS-1$				
 		openAfterDelayButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
 		openAfterDelayButton.setText(label);
 		openAfterDelayButton.setEnabled(openOnSingleClick);
@@ -173,7 +173,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			font,
 			buttonComposite,
 			WorkbenchMessages.getString("Preference.note"),//$NON-NLS-1$
-			WorkbenchMessages.getString("WorkInProgressPreference.noEffectOnAllViews")); //$NON-NLS-1$
+			WorkbenchMessages.getString("WorkbenchPreference.noEffectOnAllViews")); //$NON-NLS-1$
 	}
 	
 	private void selectClickMode(boolean singleClick) {
