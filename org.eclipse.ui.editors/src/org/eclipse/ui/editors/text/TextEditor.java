@@ -88,15 +88,6 @@ public class TextEditor extends ExtendedTextEditor {
 		setInsertMode(INSERT);
 	}
 
-	/**
-	 * Initializes the key binding scopes of this editor.
-	 * 
-	 * @since 2.1
-	 */
-	protected void initializeKeyBindingScopes() {
-		setKeyBindingScopes(new String[] { "org.eclipse.ui.textEditorScope" });  //$NON-NLS-1$
-	}
-	
 	/*
 	 * @see IWorkbenchPart#dispose()
 	 * @since 2.0
