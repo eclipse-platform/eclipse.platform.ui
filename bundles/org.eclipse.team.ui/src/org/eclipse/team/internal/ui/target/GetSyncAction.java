@@ -16,7 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -24,6 +27,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.InfiniteSubProgressMonitor;
+import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
@@ -63,11 +67,43 @@ public class GetSyncAction extends TargetSyncAction {
 			if (changed.length == 0) {
 				return syncSet;
 			}
-			List resources = new ArrayList();
+			List fileResources = new ArrayList();
+ 			List folderDeletions = new ArrayList();
+ 			List folderAdditions = new ArrayList();
+ 			//Find the incoming file changes the potential incoming folder deletions:
 			for (int i = 0; i < changed.length; i++) {
-				resources.add(changed[i].getResource());
+				if (changed[i].getChangeDirection()==ITeamNode.INCOMING || changed[i].getChangeDirection()==ITeamNode.CONFLICTING) {
+					if (changed[i].getResource().getType()==IResource.FILE) fileResources.add(changed[i].getResource());
+	 				else if (changed[i].getChangeType()==Differencer.DELETION 
+	 					&& /*don't delete nonexistant folders*/changed[i].getResource().exists()) 
+	 					folderDeletions.add(changed[i].getResource());
+	 				else {
+	 					//If the new remote folders have no children then we'd better explicitly create them locally:
+	 					IResource resource=changed[i].getResource();
+	 					if (getRemoteResourceFor(resource).members(monitor).length==0) 
+	 						folderAdditions.add(changed[i].getResource());
+	 				}
+				}
 			}
-			get((IResource[])resources.toArray(new IResource[resources.size()]), monitor);
+			get((IResource[])fileResources.toArray(new IResource[fileResources.size()]), monitor);
+			get((IResource[])folderAdditions.toArray(new IResource[folderDeletions.size()]), monitor);
+ 			if (folderDeletions.size()>0) {
+ 				//Prune the list of potential incoming folder deletions, retaining only those that don't have local content:
+	 			boolean delete;
+	 			Iterator iter=folderDeletions.iterator();
+	 			for (IContainer container=(IContainer)iter.next(); iter.hasNext(); container=(IContainer)iter.next()) {
+	 				delete=true;
+	 				IResource[] children=container.members();
+	 				for (int j = 0; j < children.length; j++) {
+	 					if (!folderDeletions.contains(children[j])) {
+	 						delete=false;
+	 						break;
+	 					}
+					}
+	 				if (!delete) folderDeletions.remove(container);
+	 			}
+	 			get((IResource[])folderDeletions.toArray(new IResource[folderDeletions.size()]), monitor);
+ 			}
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
@@ -75,6 +111,13 @@ public class GetSyncAction extends TargetSyncAction {
 				}
 			});
 			return null;
+		} catch (final CoreException e) {
+ 			getShell().getDisplay().syncExec(new Runnable() {
+ 				public void run() {
+ 					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+ 				}
+ 			});
+ 			return null;
 		}
 		return syncSet;
 	}

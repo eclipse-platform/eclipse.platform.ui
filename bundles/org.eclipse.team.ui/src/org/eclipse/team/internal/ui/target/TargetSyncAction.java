@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.Policy;
@@ -49,6 +50,10 @@ public abstract class TargetSyncAction extends Action {
 
 	protected int syncMode;
 	private Shell shell;
+	
+	protected static IRemoteResource getRemoteResourceFor(IResource local) throws TeamException {
+		return TargetManager.getProvider(local.getProject()).getRemoteSyncElement(local).getRemote();
+	}
 	
 	/**
 	 * Creates a TargetSyncAction which works on selection and doesn't commit changes.
