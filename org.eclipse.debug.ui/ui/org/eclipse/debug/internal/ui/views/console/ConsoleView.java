@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -60,16 +63,36 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 
 	protected ClearOutputAction fClearOutputAction= null;
 	protected FollowHyperlinkAction fFollowLinkAction = null;
+	protected ProcessDropDownAction fProcessDropDownAction = null;
 
 	protected Map fGlobalActions= new HashMap(10);
 	protected List fSelectionActions = new ArrayList(3);
 	
 	protected IDocument fCurrentDocument= null;
 	
+	protected int fMode = MODE_CURRENT_PROCESS;
+	
+	// view modes
+	/**
+	 * Shows the output of the selected process in the debug view,
+	 * or the current process when there is no debug view
+	 */
+	public static final int MODE_CURRENT_PROCESS = 1;
+		
+	/**
+	 * Shows the output of a specific process
+	 */
+	public static final int MODE_SPECIFIC_PROCESS = 2;
+	
 	/**
 	 * The current process being viewed, or <code>null</code.
 	 */
 	private IProcess fProcess;
+	
+	/**
+	 * Current launch listener, or <code>null</code> if none.
+	 */
+	private ILaunchListener fLaunchListener = null;
 	
 	/**
 	 * An empty document.
@@ -83,6 +106,39 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		protected ITextStore newTextStore() {
 			return new ConsoleOutputTextStore(0);
 		}
+	}
+	
+	/**
+	 * If showing the output for a specific process, the console view reverts to
+	 * showing the output of the current process if that launch is removed.
+	 */
+	class LaunchListener implements ILaunchListener {
+		
+		/**
+		 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
+		 */
+		public void launchAdded(ILaunch launch) {
+		}
+
+		/**
+		 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
+		 */
+		public void launchChanged(ILaunch launch) {
+		}
+
+		/**
+		 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
+		 */
+		public void launchRemoved(ILaunch launch) {
+			if (getMode() == MODE_SPECIFIC_PROCESS) {
+				IProcess process = getProcess();
+				if (process != null && launch.equals(process.getLaunch())) {
+					setMode(MODE_CURRENT_PROCESS);
+					setViewerInput(DebugUITools.getCurrentProcess());
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -113,9 +169,11 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * on the current active page or if the current process is <code>null</code>.
 	 */
 	public void setViewerInputFromConsoleDocumentManager(IProcess process) {
-		IViewPart debugView= findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (debugView == null || process == null) {
-			setViewerInput(process);
+		if (getMode() == MODE_CURRENT_PROCESS) {
+			IViewPart debugView= findView(IDebugUIConstants.ID_DEBUG_VIEW);
+			if (debugView == null || process == null) {
+				setViewerInput(process);
+			}
 		}
 	}
 	
@@ -214,6 +272,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
 		
 		fFollowLinkAction = new FollowHyperlinkAction(getConsoleViewer());
+		fProcessDropDownAction = new ProcessDropDownAction(this);
 						
 		actionBars.updateActionBars();
 		
@@ -248,6 +307,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		mgr.add(fClearOutputAction);
+		mgr.add(fProcessDropDownAction);
 	}
 
 	/**
@@ -349,6 +409,14 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		if (fFollowLinkAction != null) {
 			fFollowLinkAction.dispose();
 		}
+		if (fLaunchListener != null) {
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchListener);
+			fLaunchListener = null;
+		}
+		if (fProcessDropDownAction != null) {
+			fProcessDropDownAction.dispose();
+			fProcessDropDownAction = null;
+		}
 		super.dispose();
 	}
 	
@@ -391,7 +459,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		setViewerInput(DebugUITools.getCurrentProcess());
+		if (getMode() == MODE_CURRENT_PROCESS) {
+			setViewerInput(DebugUITools.getCurrentProcess());
+		}
 	}
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
@@ -409,4 +479,28 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		getConsoleViewer().setVisible(true);
 	}
 
+	/**
+	 * Returns this view's mode.
+	 */
+	protected int getMode() {
+		return fMode;
+	}
+	
+	/**
+	 * Sets this view's mode
+	 */
+	protected void setMode(int mode) {
+		if (getMode() != mode) {
+			fMode = mode;
+			if (mode == MODE_SPECIFIC_PROCESS) {
+				fLaunchListener = new LaunchListener();
+				DebugPlugin.getDefault().getLaunchManager().addLaunchListener(fLaunchListener);
+			} else {
+				if (fLaunchListener != null) {
+					DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(fLaunchListener);
+					fLaunchListener = null;
+				}
+			}
+		}
+	}
 }
