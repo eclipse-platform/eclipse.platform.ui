@@ -40,6 +40,10 @@ public class Handle implements IHandle {
 		}
 	}
 
+	public boolean getDefined() {
+		return defined;
+	}
+	
 	public String getId() {
 		return id;
 	}
@@ -50,10 +54,6 @@ public class Handle implements IHandle {
 			throw new NotDefinedException();
 			
 		return object;
-	}
-
-	public boolean isDefined() {
-		return defined;
 	}
 
 	public void removeHandleListener(IHandleListener handleListener) {

@@ -28,6 +28,9 @@ public abstract class Key implements Comparable {
 
 	protected String name;
 
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
+
 	Key(String name) {	
 		if (name == null)
 			throw new NullPointerException();
@@ -46,13 +49,19 @@ public abstract class Key implements Comparable {
 			return false;
 
 		Key key = (Key) object;
-		return name.equals(key.name);
+		boolean equals = true;
+		equals &= name.equals(key.name);
+		return equals;
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + name.hashCode();
-		return result;
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;
 	}
 	
 	public String toString() {

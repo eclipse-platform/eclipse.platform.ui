@@ -214,7 +214,10 @@ public final class KeyStroke implements Comparable {
 	private SortedSet modifierKeys;
 	private NaturalKey naturalKey;
 
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
 	private transient ModifierKey[] modifierKeysAsArray;
+	private transient String string;
 	
 	private KeyStroke(SortedSet modifierKeys, NaturalKey naturalKey) {
 		if (naturalKey == null)
@@ -240,7 +243,10 @@ public final class KeyStroke implements Comparable {
 			return false;
 
 		KeyStroke keyStroke = (KeyStroke) object;	
-		return modifierKeys.equals(keyStroke.modifierKeys) && naturalKey.equals(keyStroke.naturalKey);
+		boolean equals = true;
+		equals &= modifierKeys.equals(keyStroke.modifierKeys);
+		equals &= naturalKey.equals(keyStroke.naturalKey);		
+		return equals;
 	}
 
 	/**
@@ -271,14 +277,21 @@ public final class KeyStroke implements Comparable {
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + modifierKeys.hashCode();
-		result = result * HASH_FACTOR + naturalKey.hashCode();
-		return result;		
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + modifierKeys.hashCode();
+			hashCode = hashCode * HASH_FACTOR + naturalKey.hashCode();
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;
 	}
 
 	public String toString() {
-		return format(false);
+		if (string == null)
+			string = format(false);
+	
+		return string;
 	}
 
 	private String format(boolean localize) {

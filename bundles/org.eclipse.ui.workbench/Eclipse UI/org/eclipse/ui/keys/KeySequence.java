@@ -102,7 +102,11 @@ public final class KeySequence implements Comparable {
 	}
 
 	private List keyStrokes;
-	
+
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
+	private transient String string;
+		
 	private KeySequence(List keyStrokes) {
 		this.keyStrokes = Util.safeCopy(keyStrokes, KeyStroke.class);
 	}
@@ -118,7 +122,9 @@ public final class KeySequence implements Comparable {
 			return false;
 
 		KeySequence keySequence = (KeySequence) object;
-		return keyStrokes.equals(keySequence.keyStrokes);
+		boolean equals = true;
+		equals &= keyStrokes.equals(keySequence.keyStrokes);
+		return equals;
 	}
 
 	/**
@@ -140,9 +146,13 @@ public final class KeySequence implements Comparable {
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + keyStrokes.hashCode();
-		return result;
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + keyStrokes.hashCode();
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;
 	}
 
 	/**
@@ -160,7 +170,10 @@ public final class KeySequence implements Comparable {
 	}
 
 	public String toString() {
-		return format(false);
+		if (string == null)
+			string = format(false);
+	
+		return string;
 	}
 
 	private String format(boolean localize) {

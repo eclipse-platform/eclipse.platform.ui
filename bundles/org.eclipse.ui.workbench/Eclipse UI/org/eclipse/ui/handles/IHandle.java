@@ -39,6 +39,13 @@ public interface IHandle {
 	 * 
 	 * @return
 	 */	
+	boolean getDefined();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
 	String getId();
 
 	/**
@@ -49,13 +56,6 @@ public interface IHandle {
 	 */	
 	Object getObject()
 		throws NotDefinedException;
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isDefined();
 	
 	/**
 	 * Unregisters an IHandleListener instance with this handle.
