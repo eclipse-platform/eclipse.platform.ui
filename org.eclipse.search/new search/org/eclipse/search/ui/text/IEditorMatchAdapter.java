@@ -32,9 +32,9 @@ public interface IEditorMatchAdapter {
 	 * For example, if a match is reported in a file, This method should return 
 	 * <code>true</code>, if the given editor displays the file. 
 	 * 
-	 * @param match The match.
-	 * @param editor The editor that possibly contains the matches element.
-	 * @return
+	 * @param match The match
+	 * @param editor The editor that possibly contains the matches element
+	 * @return wether the given match should be displayed in the editor
 	 */
 	public abstract boolean isShownInEditor(Match match, IEditorPart editor);
 	/**
