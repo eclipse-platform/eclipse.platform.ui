@@ -409,26 +409,31 @@ public void deleteMarkers(String type, boolean includeSubtypes, int depth) throw
 }
 /**
  * This method should be called to delete a resource from the tree because it will also
- * delete its properties and markers.
+ * delete its properties and markers.  If a status object is provided, minor exceptions are
+ * added, otherwise they are thrown.  If major exceptions occur, they are always thrown.
  */
 public void deleteResource(boolean convertToPhantom, MultiStatus status) throws CoreException {
 	/* delete properties */
+	CoreException err = null;
 	try {
 		getPropertyManager().deleteProperties(this);
 	} catch (CoreException e) {
-		status.add(e.getStatus());
+		if (status != null)
+			status.add(e.getStatus());
+		else 
+			err = e;
 	}
-
 	/* remove markers on this resource and its descendents. */
 	if (exists())
 		getMarkerManager().removeMarkers(this);
-
 	/* if we are synchronizing, do not delete the resource. Convert it
 	   into a phantom. Actual deletion will happen when we refresh or push. */
 	if (convertToPhantom && getType() != PROJECT && synchronizing(getResourceInfo(true, false)))
 		convertToPhantom();
 	else
 		workspace.deleteResource(this);
+	if (err != null)
+		throw err;
 }
 /**
  * @see IResource#equals
