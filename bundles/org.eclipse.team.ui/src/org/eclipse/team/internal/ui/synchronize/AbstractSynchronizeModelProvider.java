@@ -407,12 +407,15 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
         for (int j = 0; j < resources.length; j++) {
             IResource resource = resources[j];
 			ISynchronizeModelElement[] elements = getModelObjects(resource);
-			for (int i = 0; i < elements.length; i++) {
-                ISynchronizeModelElement element = elements[i];
-                // Add all parents of the element to the expansion set
-                while (element != null) {
-                    expandedElements.add(element);
-                    element = (ISynchronizeModelElement)element.getParent();
+            // Only expand when there is one element per resource
+            if (elements.length == 1) {
+    			for (int i = 0; i < elements.length; i++) {
+                    ISynchronizeModelElement element = elements[i];
+                    // Add all parents of the element to the expansion set
+                    while (element != null) {
+                        expandedElements.add(element);
+                        element = (ISynchronizeModelElement)element.getParent();
+                    }
                 }
             }
 		}
