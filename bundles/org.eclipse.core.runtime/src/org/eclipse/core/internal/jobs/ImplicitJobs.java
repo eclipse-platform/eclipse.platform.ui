@@ -9,10 +9,10 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.runtime.*;
+import java.util.*;
+import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -53,11 +53,7 @@ class ImplicitJobs {
 		final Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob;
 		synchronized (this) {
-			//first check for a suspended job rule
-			threadJob = (ThreadJob) suspendedJobs.get(rule);
-			//next check for a thread job for this thread
-			if (threadJob == null)
-				threadJob = (ThreadJob) threadJobs.get(currentThread);
+			threadJob = findThreadJob(currentThread, rule);
 			if (threadJob != null) {
 				//nested rule, just push on stack and return
 				threadJob.push(rule);
@@ -101,6 +97,30 @@ class ImplicitJobs {
 		}
 	}
 
+	/**
+	 * Finds and returns the ThreadJob associated with this thread and rule. Returns
+	 * <code>null</code> if no related ThreadJob can be found
+	 * 
+	 * Note: Callers of this method must synchronize on the receiver while invoking
+	 * this method.
+	 * 
+	 * @param thread The thread to find a ThreadJob for
+	 * @param rule The rule associated with the ThreadJob
+	 * @return The ThreadJob for the given thread and rule, or <code>null</code>
+	 */
+	private ThreadJob findThreadJob(final Thread thread, ISchedulingRule rule) {
+		//first check for a suspended job rule that contains the rule to begin
+		if (suspendedJobs.size() > 0) {
+			for (Iterator it = suspendedJobs.keySet().iterator(); it.hasNext();) {
+				ISchedulingRule suspendedRule = (ISchedulingRule)it.next();
+				if (suspendedRule.contains(rule))
+					return (ThreadJob) suspendedJobs.get(suspendedRule);
+			}
+		}
+		//next check for a thread job for this thread
+		return (ThreadJob) threadJobs.get(thread);
+	}
+
 	/* (Non-javadoc) 
 	 * @see IJobManager#endRule 
 	 */
@@ -108,11 +128,7 @@ class ImplicitJobs {
 		if (JobManager.DEBUG_BEGIN_END)
 			JobManager.debug("End rule: " + rule); //$NON-NLS-1$
 		final Thread currentThread = Thread.currentThread();
-		//first check for a suspended job rule
-		ThreadJob threadJob = (ThreadJob) suspendedJobs.get(rule);
-		//next check for a thread job for this thread
-		if (threadJob == null)
-			threadJob = (ThreadJob) threadJobs.get(currentThread);
+		ThreadJob threadJob = findThreadJob(currentThread, rule);
 		if (threadJob == null)
 			Assert.isLegal(rule == null, "endRule without matching beginRule: " + rule); //$NON-NLS-1$
 		else if (threadJob.pop(rule)) {
