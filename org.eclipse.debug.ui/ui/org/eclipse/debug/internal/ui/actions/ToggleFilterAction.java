@@ -26,14 +26,6 @@ public abstract class ToggleFilterAction extends Action {
 	 */
 	private ViewerFilter fViewerFilter;
 
-	/**
-	 * Returns the appropriate tool tip text depending on
-	 * the state of the action.
-	 */
-	protected String getToolTipText(boolean on) {
-		return on ? getShowText() : getHideText();
-	}
-
 	public void run() {
 		valueChanged(isChecked());
 	}
@@ -65,10 +57,8 @@ public abstract class ToggleFilterAction extends Action {
 				} else {
 					getViewer().removeFilter(getViewerFilter());
 				}
-				setToolTipText(getToolTipText(on));									
 			}
 		});
-
 	}
 
 	/**
@@ -83,10 +73,6 @@ public abstract class ToggleFilterAction extends Action {
 	protected void setViewerFilter(ViewerFilter filter) {
 		fViewerFilter= filter;
 	}
-
-	protected abstract String getShowText();
-
-	protected abstract String getHideText();
 	
 	protected StructuredViewer getViewer() {
 		return fViewer;

@@ -79,7 +79,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 	public ShowSupportedBreakpointsAction(StructuredViewer viewer, IViewPart view) {
 		super();
 		setText(ActionMessages.getString("ShowSupportedBreakpointsAction.Show_For_Selected")); //$NON-NLS-1$
-		setToolTipText(getHideText());
+		setToolTipText(ActionMessages.getString("ShowSupportedBreakpointsAction.Show_For_Selected")); //$NON-NLS-1$
 		setViewerFilter(new BreakpointFilter());
 		setViewer(viewer);
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET));
@@ -93,20 +93,8 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		
 	}
 
-	/**
-	 * @see ToggleFilterAction#getShowText()
-	 */
-	protected String getShowText() {
-		return ActionMessages.getString("ShowSupportedBreakpointsAction.Show_All_Breakpoints_2"); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see ToggleFilterAction#getHideText()
-	 */
-	protected String getHideText() {
-		return ActionMessages.getString("ShowSupportedBreakpointsAction.Only_Show_Breakpoints_Applicable_to_Selected_Debug_Element_3"); //$NON-NLS-1$
-	}
 	
+		
 	public void dispose() {
 		if (isChecked()) {
 			getView().getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
