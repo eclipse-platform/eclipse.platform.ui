@@ -101,8 +101,9 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 			Viewer viewer = view.getViewer();
 			if (viewer instanceof StructuredViewer) {
 				IStructuredContentProvider cp = (IStructuredContentProvider)((StructuredViewer)viewer).getContentProvider();
-				Object input = viewer.getInput();
-				return cp.getElements(input);
+				if (cp != null) {
+					return cp.getElements(viewer.getInput());
+				}
 			}
 		}
 		return null;
