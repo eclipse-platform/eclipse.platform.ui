@@ -193,8 +193,6 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 					else
 						context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
 					context.run(monitor, window.getShell());
-				} catch (BuildCanceledException e) {
-					throw new InterruptedException();
 				} catch (Exception e) {
 					throw new InvocationTargetException(e, e.getMessage());
 				}
@@ -205,7 +203,11 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {
-			IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, ToolMessages.getString("ExternalToolsAction.internalError"), e); //$NON-NLS-1$;
+			IStatus status = null;
+			if (e.getTargetException() instanceof CoreException)
+				status = ((CoreException)e.getTargetException()).getStatus();
+			else
+				status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, ToolMessages.getString("ExternalToolsAction.internalError"), e.getTargetException()); //$NON-NLS-1$;
 			ErrorDialog.openError(
 				window.getShell(), 
 				ToolMessages.getString("ExternalToolsAction.runErrorTitle"), //$NON-NLS-1$;

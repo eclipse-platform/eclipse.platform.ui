@@ -212,7 +212,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * 
 	 * @param monitor the monitor to report progress to, or <code>null</code>.
 	 */
-	private void executeRunner(IProgressMonitor monitor) throws CoreException {
+	private void executeRunner(IProgressMonitor monitor) throws CoreException, InterruptedException {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
@@ -239,7 +239,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * 
 	 * @param monitor the monitor to report progress to, or <code>null</code>.
 	 */
-	public void run(IProgressMonitor monitor) throws CoreException {
+	public void run(IProgressMonitor monitor) throws CoreException, InterruptedException {
 		String problem = validateInContext();
 		if (problem != null) {
 			IStatus status = new Status(IStatus.WARNING, ExternalToolsPlugin.PLUGIN_ID, 0, problem, null);
@@ -260,7 +260,7 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * @param monitor the monitor to report progress to, or <code>null</code>.
 	 * @param shell the shell to parent the error message dialog
 	 */
-	public void run(IProgressMonitor monitor, Shell shell) {
+	public void run(IProgressMonitor monitor, Shell shell) throws InterruptedException {
 		try {
 			String problem = validateInContext();
 			if (problem != null) {

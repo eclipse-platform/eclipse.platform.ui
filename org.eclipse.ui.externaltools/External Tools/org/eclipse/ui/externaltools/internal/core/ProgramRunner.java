@@ -30,7 +30,7 @@ public class ProgramRunner extends ExternalToolsRunner {
 	/* (non-Javadoc)
 	 * Method declared in ExternalToolsRunner.
 	 */
-	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException {
+	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException, InterruptedException {
 		String commandLine = runnerContext.getExpandedLocation() + " " + runnerContext.getExpandedArguments(); //$NON-NLS-1$;
 		try {
 			File workingDir = null;
@@ -59,7 +59,9 @@ public class ProgramRunner extends ExternalToolsRunner {
 			Thread.currentThread().sleep(200);
 				
 			finished[0] = true;
-		} catch (Exception e) {
+		} catch (IOException e) {
+			handleException(e);
+		} catch (InterruptedException e) {
 			handleException(e);
 		} finally {
 			monitor.done();

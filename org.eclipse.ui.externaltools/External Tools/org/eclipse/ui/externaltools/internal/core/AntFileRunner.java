@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Responsible for running ant files.
@@ -30,7 +31,7 @@ public class AntFileRunner extends ExternalToolsRunner {
 	/* (non-Javadoc)
 	 * Method declared in ExternalToolsRunner.
 	 */
-	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException {
+	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException, InterruptedException {
 		try {
 			String[] targets = runnerContext.getAntTargets();
 			AntRunner runner = new AntRunner();
@@ -48,8 +49,13 @@ public class AntFileRunner extends ExternalToolsRunner {
 			if (runnerContext.getShowLog())
 				runner.addBuildLogger(LOGGER_CLASS);
 			runner.run(monitor);
-		} catch (Exception e) {
-			handleException(e);
+		} catch (CoreException e) {
+			Throwable carriedException = e.getStatus().getException();
+			if (carriedException instanceof OperationCanceledException) {
+				throw new InterruptedException(carriedException.getMessage());
+			} else {
+				throw e;
+			}
 		} finally {
 			monitor.done();
 		}

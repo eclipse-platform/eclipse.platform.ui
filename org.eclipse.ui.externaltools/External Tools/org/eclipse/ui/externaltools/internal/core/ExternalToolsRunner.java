@@ -32,7 +32,7 @@ public abstract class ExternalToolsRunner {
 	 * are responsible for showing the execution log if
 	 * specified in the context.
 	 */
-	public abstract void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException;
+	public abstract void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException, InterruptedException;
 	
 	/**
 	 * Handles exceptions that may occur while running.

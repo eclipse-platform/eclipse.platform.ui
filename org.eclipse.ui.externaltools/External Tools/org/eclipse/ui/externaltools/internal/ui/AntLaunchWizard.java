@@ -115,8 +115,6 @@ public class AntLaunchWizard extends Wizard {
 				try {
 					DefaultRunnerContext context = new DefaultRunnerContext(antTool, antFile.getProject(), window.getWorkbench().getWorkingSetManager());
 					context.run(monitor, window.getShell());
-				} catch (BuildCanceledException e) {
-					throw new InterruptedException();
 				} catch (Exception e) {
 					throw new InvocationTargetException(e, e.getMessage());
 				}
@@ -128,7 +126,11 @@ public class AntLaunchWizard extends Wizard {
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			IStatus status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, ToolMessages.getString("AntLaunchWizard.internalAntError"), e); //$NON-NLS-1$;
+			IStatus status = null;
+			if (e.getTargetException() instanceof CoreException)
+				status = ((CoreException)e.getTargetException()).getStatus();
+			else
+				status = new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, 0, ToolMessages.getString("AntLaunchWizard.internalAntError"), e.getTargetException()); //$NON-NLS-1$;
 			ErrorDialog.openError(
 				getShell(), 
 				ToolMessages.getString("AntLaunchWizard.runErrorTitle"), //$NON-NLS-1$;
