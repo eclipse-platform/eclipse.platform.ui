@@ -567,12 +567,11 @@ public class ProjectionDocument extends AbstractDocument {
 			}
 			return true;				
 		
-		} else if (isUpdating() && fMapping.getImageLength() == 0) {
+		} else if (fMapping.getImageLength() == 0 && masterEvent.getLength() == 0) {
 			
 			// there is no segment in this projection document, thus one must be created
 			// need to bypass the usual infrastructure as the new segment/fragment would be of length 0 and thus the segmentation be not well formed
 			
-			Assert.isTrue(masterEvent.getLength() == 0);
 			try {
 				Fragment fragment= new Fragment(0, 0);
 				fMasterDocument.addPosition(fFragmentsCategory, fragment);
