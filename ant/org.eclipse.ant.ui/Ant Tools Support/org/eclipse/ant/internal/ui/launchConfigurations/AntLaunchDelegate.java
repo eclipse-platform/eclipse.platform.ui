@@ -200,8 +200,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 				
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
 		setProcessAttributes(process, idStamp, commandLine, captureOutput);
-		
-		if (CommonTab.isLaunchInBackground(configuration)) {
+		boolean debug= fMode.equals(ILaunchManager.DEBUG_MODE);
+		if (debug || CommonTab.isLaunchInBackground(configuration)) {
 			final AntRunner finalRunner= runner;
 			Runnable r = new Runnable() {
 				public void run() {
@@ -228,7 +228,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			} catch (CoreException e) {
 				process.terminated();
 				monitor.done();
-				handleException(e,  AntLaunchConfigurationMessages.getString("AntLaunchDelegate.23")); //$NON-NLS-1$
+				handleException(e, AntLaunchConfigurationMessages.getString("AntLaunchDelegate.23")); //$NON-NLS-1$
 				return;
 			}
 			process.terminated();
@@ -469,7 +469,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	}
 	
 	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, int requestPort, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
-		if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
+        boolean debug= fMode.equals(ILaunchManager.DEBUG_MODE);
+		if (debug) {
 			RemoteAntDebugBuildListener listener= new RemoteAntDebugBuildListener(launch);
 			if (requestPort != -1) {
 				listener.startListening(port, requestPort);
@@ -489,6 +490,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
         if (copy.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false)) {
         	setDefaultVM(configuration, copy);
         }
+        if (debug) { //do not allow launch in foreground bug 83254
+            copy.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
+        }
 
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
 		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
@@ -500,7 +504,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			setProcessAttributes(processes[i], idStamp, null, captureOutput);
 		}
 
-		if (CommonTab.isLaunchInBackground(configuration)) {
+		if (CommonTab.isLaunchInBackground(copy)) {
 			// refresh resources after process finishes
 			if (RefreshTab.getRefreshScope(configuration) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, processes[0]);
