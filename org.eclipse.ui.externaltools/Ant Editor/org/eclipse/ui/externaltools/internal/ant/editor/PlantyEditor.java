@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.texteditor.ContentAssistAction;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePage;
@@ -84,7 +85,7 @@ public class PlantyEditor extends TextEditor {
         ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.PlantyMessages"), "ContentAssistProposal.", this);
 
         // This action definition is associated with the accelerator Ctrl+Space
-        action.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.content.assist.proposals");
+        action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
         setAction("ContentAssistProposal", action); //$NON-NLS-1$
     }
 
