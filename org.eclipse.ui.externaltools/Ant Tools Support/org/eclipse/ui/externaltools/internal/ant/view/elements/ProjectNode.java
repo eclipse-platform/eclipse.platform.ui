@@ -206,7 +206,7 @@ public class ProjectNode extends AntNode {
 		// Set the project node data based on the Apache Ant data
 		String projectName = project.getName();
 		if (projectName == null) {
-			projectName = AntViewElementsMessages.getString("ProjectNode.(unnamed)"); //$NON-NLS-1$
+			projectName = AntViewElementsMessages.getString("ProjectNode.<name_unspecified>_1"); //$NON-NLS-1$
 		}
 		// Update the project name
 		setName(projectName);
