@@ -200,6 +200,40 @@ public void testAddAndRemoveFile() {
 		handleCoreException(e);
 	}
 }
+public void testMulti() {
+
+	class Listener1 implements IResourceChangeListener {
+		public boolean done = false;
+		public void resourceChanged(IResourceChangeEvent event) {
+			assertEquals("1.0", IResourceChangeEvent.POST_CHANGE, event.getType());
+			done = true;
+		}
+	}
+
+	class Listener2 extends Listener1 implements IResourceChangeListener {
+		public void resourceChanged(IResourceChangeEvent event) {
+			assertEquals("2.0", IResourceChangeEvent.POST_AUTO_BUILD, event.getType());
+			done = true;
+		}
+	}
+
+	Listener1 listener1 = new Listener1();
+	Listener2 listener2 = new Listener2();
+
+	getWorkspace().addResourceChangeListener(listener1, IResourceChangeEvent.POST_CHANGE);
+	getWorkspace().addResourceChangeListener(listener2, IResourceChangeEvent.POST_AUTO_BUILD);
+
+	try {
+		project1.touch(getMonitor());
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+
+	assertTrue("3.0", listener1.done);
+	assertTrue("3.1", listener2.done);
+	getWorkspace().removeResourceChangeListener(listener1);
+	getWorkspace().removeResourceChangeListener(listener2);
+}
 public void testAddAndRemoveFolder() {
 	try {
 		verifier.reset();
