@@ -84,6 +84,9 @@
     <test id="resources.performance.BenchWorkspace">
       <run class="org.eclipse.core.tests.resources.perf.BenchWorkspace"/>
     </test>
+    <test id="resources.performance.BenchMiscWorkspace">
+      <run class="org.eclipse.core.tests.resources.perf.BenchMiscWorkspace"/>
+    </test>
 
     <test id="regression.AllTests">
       <run class="org.eclipse.core.tests.resources.regression.AllTests"/>
@@ -175,6 +178,9 @@
 	</test>
 	<test id = "org.eclipse.core.tests.resources.session.TestClosedProjectLocation">
 		<run class="org.eclipse.core.tests.resources.session.TestClosedProjectLocation"/>
+	</test>
+	<test id = "org.eclipse.core.tests.resources.session.FindDeletedMembersTest">
+		<run class="org.eclipse.core.tests.resources.session.FindDeletedMembersTest"/>
 	</test>
   
     <test id="usecase.AllTests">
