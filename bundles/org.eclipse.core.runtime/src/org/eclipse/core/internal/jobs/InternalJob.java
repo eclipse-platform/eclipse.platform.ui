@@ -51,7 +51,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	private volatile int flags = Job.NONE;
 	private final int jobNumber = nextJobNumber++;
-	private List listeners;
+	private IJobChangeListener[] listeners = JobListeners.EMPTY_LISTENERS;
 	private IProgressMonitor monitor;
 	private String name;
 	/**
@@ -91,9 +91,18 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see Job#addJobListener(IJobChangeListener)
 	 */
 	protected void addJobChangeListener(IJobChangeListener listener) {
-		if (listeners == null)
-			listeners = Collections.synchronizedList(new ArrayList(2));
-		listeners.add(listener);
+		//check for duplicate
+		IJobChangeListener[] tempListeners = listeners;
+		int oldCount = tempListeners.length;
+		for (int i = 0; i < oldCount; i++) 
+			if (tempListeners[i] == listener)
+				return;
+		//create a new array
+		IJobChangeListener[] newListeners = new IJobChangeListener[tempListeners.length+1];
+		System.arraycopy(tempListeners, 0, newListeners, 0, oldCount);
+		newListeners[oldCount] = listener;
+		//atomic assignment
+		listeners = newListeners;
 	}
 
 	/**
@@ -137,7 +146,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Returns the job listeners that are only listening to this job.  Returns null
 	 * if this job has no listeners.
 	 */
-	final List getListeners() {
+	final IJobChangeListener[] getListeners() {
 		return listeners;
 	}
 	/* (non-Javadoc)
@@ -283,7 +292,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		return previous;
 	}
 	/**
-	 * Removes this entry from any list it belongs to.  Returns the receiver.
+	 * Removes this entry from any list it belongs to.  Returns the receivelar.
 	 */
 	final InternalJob remove() {
 		if (next != null)
@@ -297,10 +306,21 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see Job#removeJobListener(IJobChangeListener)
 	 */
 	protected void removeJobChangeListener(IJobChangeListener listener) {
-		if (listeners != null)
-			listeners.remove(listener);
-		if (listeners.isEmpty())
-			listeners = null;
+		IJobChangeListener[] tempListeners = listeners;
+		int oldCount = tempListeners.length;
+		if (oldCount == 0 || (oldCount == 1 && tempListeners[0] == listener)) {
+			listeners = JobListeners.EMPTY_LISTENERS;
+			return;
+		}
+		//find listener to remove
+		for (int i = 0; i < oldCount; i++) 
+			if (tempListeners[i] == listener) {
+				IJobChangeListener[] newListeners = new IJobChangeListener[oldCount-1];
+				System.arraycopy(tempListeners, 0, newListeners, 0, i);
+				System.arraycopy(tempListeners, 0, newListeners, i, oldCount-i-1);
+				listeners = newListeners;
+				return;
+			}
 	}
 	/* (non-Javadoc)
 	 * @see Job#run(IProgressMonitor)

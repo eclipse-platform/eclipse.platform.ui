@@ -9,7 +9,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
@@ -23,7 +22,7 @@ class JobListeners {
 	/**
 	 * Static singleton empty listener list.
 	 */
-	private static final IJobChangeListener[] EMPTY_LISTENERS = new IJobChangeListener[0];
+	static final IJobChangeListener[] EMPTY_LISTENERS = new IJobChangeListener[0];
 	
 	interface IListenerDoit {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event);
@@ -61,8 +60,10 @@ class JobListeners {
 	};
 	/**
 	 * The global job listeners.
+	 * Concurrency - this array is copied every time it is modified, to allow
+	 * concurrent reads to happen while listeners are being added or removed
 	 */
-	protected final List global = Collections.synchronizedList(new ArrayList());
+	protected IJobChangeListener[] global = EMPTY_LISTENERS;
 
 	/**
 	 * TODO Could use an instance pool to re-use old event objects
@@ -93,7 +94,7 @@ class JobListeners {
 	 */
 	private void doNotify(final IListenerDoit doit, final IJobChangeEvent event) {
 		//notify all global listeners
-		IJobChangeListener[] listeners = (IJobChangeListener[])global.toArray(EMPTY_LISTENERS);
+		IJobChangeListener[] listeners = global;
 		int size = listeners.length;
 		for (int i = 0; i < size; i++) {
 			try {
@@ -106,10 +107,9 @@ class JobListeners {
 			}
 		}
 		//notify all local listeners
-		List local = ((InternalJob) event.getJob()).getListeners();
-		if (local == null)
+		listeners = ((InternalJob) event.getJob()).getListeners();
+		if (listeners == null)
 			return;
-		listeners = (IJobChangeListener[]) local.toArray(EMPTY_LISTENERS);
 		size = listeners.length;
 		for (int i = 0; i < size; i++) {
 			try {
@@ -140,11 +140,36 @@ class JobListeners {
 	}
 
 	public void add(IJobChangeListener listener) {
-		global.add(listener);
+		//check for duplicate
+		IJobChangeListener[] tempListeners = global;
+		int oldCount = tempListeners.length;
+		for (int i = 0; i < oldCount; i++) 
+			if (tempListeners[i] == listener)
+				return;
+		//create a new array
+		IJobChangeListener[] newListeners = new IJobChangeListener[tempListeners.length+1];
+		System.arraycopy(tempListeners, 0, newListeners, 0, oldCount);
+		newListeners[oldCount] = listener;
+		//atomic assignment
+		global = newListeners;
 	}
 
 	public void remove(IJobChangeListener listener) {
-		global.remove(listener);
+		IJobChangeListener[] tempListeners = global;
+		int oldCount = tempListeners.length;
+		if (oldCount == 0 || (oldCount == 1 && tempListeners[0] == listener)) {
+			global = EMPTY_LISTENERS;
+			return;
+		}
+		//find listener to remove
+		for (int i = 0; i < oldCount; i++) 
+			if (tempListeners[i] == listener) {
+				IJobChangeListener[] newListeners = new IJobChangeListener[oldCount-1];
+				System.arraycopy(tempListeners, 0, newListeners, 0, i);
+				System.arraycopy(tempListeners, 0, newListeners, i, oldCount-i-1);
+				global = newListeners;
+				return;
+			}
 	}
 
 	public void aboutToRun(Job job) {
