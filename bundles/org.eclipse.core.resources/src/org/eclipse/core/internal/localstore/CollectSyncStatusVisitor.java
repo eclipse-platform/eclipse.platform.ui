@@ -53,6 +53,9 @@ public List getAffectedResources() {
 public MultiStatus getSyncStatus() {
 	return status;
 }
+protected void refresh(Container parent) throws CoreException {
+	changed(parent);
+}
 protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
 	changed(target);
 }

@@ -286,37 +286,40 @@ public boolean isDescriptionSynchronized(IProject target) {
  * to the given depth.  Returns false otherwise.
  * @see IResource.isSynchronized
  */
-public boolean isSynchronized(IResource resource, int depth) {
-	switch (resource.getType()) {
-		case IResource.ROOT:
+public boolean isSynchronized(IResource target, int depth) {
+	switch (target.getType()) {
+		case IResource.ROOT :
 			if (depth == IResource.DEPTH_ZERO)
 				return true;
 			//check sync on child projects.
 			depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
-			IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
+			IProject[] projects = ((IWorkspaceRoot) target).getProjects();
 			for (int i = 0; i < projects.length; i++) {
 				if (!isSynchronized(projects[i], depth))
 					return false;
 			}
 			return true;
-		case IResource.PROJECT:
-			if (!resource.isAccessible())
+		case IResource.PROJECT :
+			if (!target.isAccessible())
 				return true;
-				//fall through
-		default:
-			IsSynchronizedVisitor visitor = new IsSynchronizedVisitor(Policy.monitorFor(null));
-			UnifiedTree tree = new UnifiedTree(resource);
-			try {
-				tree.accept(visitor, depth);
-			} catch (CoreException e) {
-				ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
-				return false;
-			} catch (IsSynchronizedVisitor.ResourceChangedException e) {
-				//visitor throws an exception if out of sync
-				return false;
-			}
-			return true;
+			break;
+		case IResource.FILE :
+			if (fastIsSynchronized((File) target))
+				return true;
+			break;
 	}
+	IsSynchronizedVisitor visitor = new IsSynchronizedVisitor(Policy.monitorFor(null));
+	UnifiedTree tree = new UnifiedTree(target);
+	try {
+		tree.accept(visitor, depth);
+	} catch (CoreException e) {
+		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+		return false;
+	} catch (IsSynchronizedVisitor.ResourceChangedException e) {
+		//visitor throws an exception if out of sync
+		return false;
+	}
+	return true;
 }
 public void link(Resource target, IPath localLocation) {
 	//resource already exists when linking -- just need to update sync info
@@ -380,8 +383,41 @@ public IPath locationFor(IResource target) {
 			}
 	}
 }
-
-
+/**
+ * Returns a resource path to the given local location. Returns null if
+ * it is not under a project's location.
+ */
+protected IPath pathForLocation(IPath location) {
+	if (Platform.getLocation().equals(location))
+		return Path.ROOT;
+	IProject[] projects = getWorkspace().getRoot().getProjects();
+	for (int i = 0; i < projects.length; i++) {
+		IProject project = projects[i];
+		IPath projectLocation = project.getLocation();
+		if (projectLocation != null && projectLocation.isPrefixOf(location)) {
+			int segmentsToRemove = projectLocation.segmentCount();
+			return project.getFullPath().append(location.removeFirstSegments(segmentsToRemove));
+		}
+	}
+	return null;
+}
+/**
+ * Optimized sync check for files.  Returns true if the file exists and is in sync, and false
+ * otherwise.  The intent is to let the default implementation handle the complex
+ * cases like gender change, case variants, etc.
+ */
+public boolean fastIsSynchronized(File target) {
+	ResourceInfo info = target.getResourceInfo(false, false);
+	if (target.exists(target.getFlags(info), true)) {
+		IPath location = target.getLocation();
+		if (location != null) {
+			long stat = CoreFileSystemLibrary.getStat(location.toString());
+			if (CoreFileSystemLibrary.isFile(stat) && info.getLocalSyncInfo() == CoreFileSystemLibrary.getLastModified(stat))
+				return true;
+		}
+	}
+	return false;
+}
 public InputStream read(IFile target, boolean force, IProgressMonitor monitor) throws CoreException {
 	// thread safety: (the location can be null if the project for this file does not exist)
 	IPath location = locationFor(target);
@@ -562,24 +598,6 @@ protected IResource resourceFor(IPath path, boolean files) {
 	if (numSegments == 1)
 		return root.getProject(path.segment(0));
 	return files ? (IResource)root.getFile(path) : (IResource)root.getFolder(path);
-}
-/**
- * Returns a resource path to the given local location. Returns null if
- * it is not under a project's location.
- */
-protected IPath pathForLocation(IPath location) {
-	if (Platform.getLocation().equals(location))
-		return Path.ROOT;
-	IProject[] projects = getWorkspace().getRoot().getProjects();
-	for (int i = 0; i < projects.length; i++) {
-		IProject project = projects[i];
-		IPath projectLocation = project.getLocation();
-		if (projectLocation != null && projectLocation.isPrefixOf(location)) {
-			int segmentsToRemove = projectLocation.segmentCount();
-			return project.getFullPath().append(location.removeFirstSegments(segmentsToRemove));
-		}
-	}
-	return null;
 }
 public void shutdown(IProgressMonitor monitor) throws CoreException {
 	historyStore.shutdown(monitor);

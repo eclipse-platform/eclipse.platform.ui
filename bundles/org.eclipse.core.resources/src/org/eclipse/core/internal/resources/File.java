@@ -243,6 +243,15 @@ protected void internalSetContents(InputStream content, IPath location, boolean 
 	updateProjectDescription();
 	workspace.getAliasManager().updateAliases(this, location, IResource.DEPTH_ZERO, monitor);
 }
+/**
+ * Optimized refreshLocal for files.  This implementation does not block the workspace
+ * for the common case where the file exists both locally and on the file system, and
+ * is in sync.  For all other cases, it defers to the super implementation.
+ */
+public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
+	if (!getLocalManager().fastIsSynchronized(this))
+		super.refreshLocal(IResource.DEPTH_ZERO, monitor);
+}
 
 /*
  * @see IFile
