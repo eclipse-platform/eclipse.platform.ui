@@ -1240,25 +1240,6 @@
             id="org.eclipse.debug.ui.properties.process">
       </page>
    </extension>
-   <extension
-         point="org.eclipse.ui.fontDefinitions">
-      <fontDefinition
-            label="%DetailPaneFontDefinition.label"
-            defaultsTo="org.eclipse.jface.textfont"
-            id="org.eclipse.debug.ui.DetailPaneFont">
-         <description>
-            %DetailPaneFontDefinition.description
-         </description>         
-      </fontDefinition>
-      <fontDefinition
-            label="%MemoryViewTableFontDefinition.label"
-            defaultsTo="org.eclipse.jface.textfont"
-            id="org.eclipse.debug.ui.MemoryViewTableFont">
-         <description>
-            %MemoryViewTableFontDefinition.description
-         </description>
-      </fontDefinition>
-   </extension>
 <!-- commands and their bindings -->
    <extension
          point="org.eclipse.ui.commands">
@@ -1822,6 +1803,24 @@
    <extension
          point="org.eclipse.ui.themes">
 		<themeElementCategory label="%debugPresentation.label" id="org.eclipse.debug.ui.presentation"/>
+      <fontDefinition
+            label="%DetailPaneFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            categoryId= "org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.DetailPaneFont">
+         <description>
+            %DetailPaneFontDefinition.description
+         </description>         
+      </fontDefinition>
+      <fontDefinition
+            label="%MemoryViewTableFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            categoryId= "org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.MemoryViewTableFont">
+         <description>
+            %MemoryViewTableFontDefinition.description
+         </description>
+      </fontDefinition>
 		<colorDefinition
 			label="%standardErrorColor.label"
             value="COLOR_RED"
@@ -1855,7 +1854,7 @@
             value="114,119,129"
             categoryId= "org.eclipse.debug.ui.presentation"
             id="org.eclipse.debug.ui.MemoryViewLineColor">
-            <description>Text color for lines that are not yet buffered in the Memory View.</description> 
+            <description>%memoryViewUnbufferedLines.description</description> 
 		</colorDefinition>		
    </extension>
 <!-- raw hex rendering for Memory View -->
