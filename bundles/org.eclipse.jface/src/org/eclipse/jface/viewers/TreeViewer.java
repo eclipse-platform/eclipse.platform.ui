@@ -1,17 +1,31 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
+
 /**
  * A concrete viewer based on an SWT <code>Tree</code> control.
  * <p>
@@ -83,6 +97,12 @@ protected void doUpdateItem(Item item, Object element) {
 	Image image = provider.getImage(element);
 	if (image != null || item.getImage() != null) {
 		item.setImage(image);
+	}
+	if (provider instanceof IColorProvider) {
+		IColorProvider cp = (IColorProvider) provider;
+		TreeItem treeItem = (TreeItem) item;
+		treeItem.setForeground(cp.getForeground(element));
+		treeItem.setBackground(cp.getBackground(element));
 	}
 }
 /* (non-Javadoc)

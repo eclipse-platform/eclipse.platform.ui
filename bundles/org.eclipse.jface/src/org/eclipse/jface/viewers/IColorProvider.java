@@ -1,31 +1,38 @@
-/*
-Copyright (c) 2000, 2001, 2002 IBM Corp.
-All rights reserved.  This program and the accompanying materials
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
-*/
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
 
 package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.graphics.Color;
 
 /**
- * Interface to provide color representation based on a specific object
+ * Interface to provide color representation for a given element.
  */
 public interface IColorProvider {
 
 	/**
- 	* Provides a foreground color based on a specified object.
- 	* @param	element	the object for which to resolve the foreground color.
- 	* @return	the foreground color.
- 	*/
+	 * Provides a foreground color for the given element.
+	 * 
+	 * @param element the element
+	 * @return	the foreground color for the element, or <code>null</code> 
+	 *   to use the default foreground color
+	 */
 	Color getForeground(Object element);
 
 	/**
- 	* Provides a background color based on a specified object.
- 	* @param	element	the object for which to resolve the background color.
- 	* @return	the background color.
- 	*/
+	 * Provides a background color for the given element.
+	 * 
+	 * @param element the element
+	 * @return	the background color for the element, or <code>null</code> 
+	 *   to use the default background color
+	 */
 	Color getBackground(Object element);
 }
