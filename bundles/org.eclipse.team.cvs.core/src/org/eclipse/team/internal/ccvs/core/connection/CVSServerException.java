@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
@@ -27,7 +28,7 @@ public class CVSServerException extends CVSException {
 		IStatus[] children = ((MultiStatus)status).getChildren();
 		if (children.length != 1)
 			return false;
-		if (children[0].getCode() == CVSException.NO_SUCH_TAG)
+		if (children[0].getCode() == CVSStatus.NO_SUCH_TAG)
 			return true;
 		return false;
 	}
@@ -56,7 +57,7 @@ public class CVSServerException extends CVSException {
 		if (children.length > 0) {
 			return new CVSServerException(message, children);
 		} else {
-			return new CVSServerException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.SERVER_ERROR, message, null));
+			return new CVSServerException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, message, null));
 		}
 	}
 	
@@ -65,6 +66,6 @@ public class CVSServerException extends CVSException {
 	}
 	
 	private CVSServerException(String message, IStatus[] children) {
-		super(new MultiStatus(CVSProviderPlugin.ID, SERVER_ERROR, children, message, null));
+		super(new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, children, message, null));
 	}
 }

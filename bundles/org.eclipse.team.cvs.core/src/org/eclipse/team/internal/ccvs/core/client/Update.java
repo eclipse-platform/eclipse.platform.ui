@@ -10,6 +10,8 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 
@@ -18,6 +20,9 @@ public class Update extends Command {
 	public static final LocalOption CLEAR_STICKY = new LocalOption("-A");
 	public static final LocalOption IGNORE_LOCAL_CHANGES = new LocalOption("-C");
 	public static final LocalOption RETRIEVE_ABSENT_DIRECTORIES = new LocalOption("-d");
+	
+	/*** Default command output listener ***/
+	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new UpdateListener(null);
 
 	/**
 	 * Makes a -r or -D or -A option for a tag.
@@ -37,7 +42,11 @@ public class Update extends Command {
 	protected String getCommandId() {
 		return "update";
 	}
-		
+	
+	protected ICommandOutputListener getDefaultCommandOutputListener() {
+		return DEFAULT_OUTPUT_LISTENER;
+	}
+	
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			

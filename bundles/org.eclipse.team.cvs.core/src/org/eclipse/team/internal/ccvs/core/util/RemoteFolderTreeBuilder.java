@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -38,7 +39,6 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.omg.CORBA.UNKNOWN;
@@ -419,7 +419,7 @@ public class RemoteFolderTreeBuilder {
 			new String[] { localPath.toString() },
 			new UpdateListener(listener),
 			monitor); 
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// FIXME: This should be refactored (maybe static methods on CVSException?)
 			CVSServerException e = new CVSServerException(status);
 			if ( ! e.isNoTagException() && e.containsErrors())
@@ -434,7 +434,7 @@ public class RemoteFolderTreeBuilder {
 				new String[] { localPath.toString() },
 				new UpdateListener(listener),
 				monitor);
-			if (status.getCode() == CVSException.SERVER_ERROR) {
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				throw new CVSServerException(status);
 			}
 		}
@@ -465,7 +465,7 @@ public class RemoteFolderTreeBuilder {
 			fileNames,
 			new StatusListener(listener),
 			monitor);
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
 		}
 		

@@ -11,9 +11,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
 
 public class UpdateListener implements ICommandOutputListener {
 	static final String SERVER_PREFIX = "cvs server: ";
@@ -79,6 +79,7 @@ public class UpdateListener implements ICommandOutputListener {
 	 */
 	public IStatus errorLine(String line, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
+		
 		if (line.startsWith(SERVER_PREFIX)) {
 			// Strip the prefix from the line
 			String message = line.substring(SERVER_PREFIX.length());
@@ -118,7 +119,7 @@ public class UpdateListener implements ICommandOutputListener {
 						updateMessageListener.fileDoesNotExist(filename);
 					}
 				}
-				return new Status(IStatus.WARNING, CVSProviderPlugin.ID, CVSException.CONFLICT, line, null);
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
 			} else if (message.startsWith("warning:")) {
 				/*
 				 * We can get the following conflict warnings
@@ -131,13 +132,13 @@ public class UpdateListener implements ICommandOutputListener {
 						updateMessageListener.fileDoesNotExist(filename);
 					}
 				}
-				return new Status(IStatus.WARNING, CVSProviderPlugin.ID, CVSException.WARNING, line, null);
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
 			} else if (message.startsWith("conflicts")) {
 				// This line is info only. The server doesn't report an error.
-				return new Status(IStatus.INFO, CVSProviderPlugin.ID, CVSException.CONFLICT, line, null);
+				return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, line);
 			} else if (!message.startsWith("cannot open directory")
 					&& !message.startsWith("nothing known about")) {
-				return new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null);
+				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 			}
 		} else if (line.startsWith(SERVER_ABORTED_PREFIX)) {
 			// Strip the prefix from the line
@@ -145,9 +146,9 @@ public class UpdateListener implements ICommandOutputListener {
 			if (message.startsWith("no such tag")) {
 				// This is reported from CVS when a tag is used on the update there are no files in the directory
 				// To get the folders, the update request should be re-issued for HEAD
-				return new Status(IStatus.WARNING, CVSProviderPlugin.ID, CVSException.NO_SUCH_TAG, line, null);
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, line);
 			} else {
-				return new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null);
+				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 			}
 		}
 		return OK;

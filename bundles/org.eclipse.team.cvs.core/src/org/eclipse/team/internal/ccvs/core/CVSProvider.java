@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSListener;
@@ -183,7 +184,7 @@ public class CVSProvider implements ICVSProvider {
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
 		}
 		
@@ -403,7 +404,7 @@ public class CVSProvider implements ICVSProvider {
 					new String[] { moduleName, vendor, tag },
 					null,
 					monitor);
-				if (status.getCode() == CVSException.SERVER_ERROR) {
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
 			} finally {

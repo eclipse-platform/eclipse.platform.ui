@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.client;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
@@ -104,7 +105,7 @@ public class Checkout extends Command {
 		IStatus status = execute(session, NO_GLOBAL_OPTIONS, new LocalOption[] {FETCH_MODULE_ALIASES}, NO_ARGUMENTS, 
 			moduleDefinitionListener, monitor);
 			
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// XXX diff errors??
 			throw new CVSServerException(status);
 		}

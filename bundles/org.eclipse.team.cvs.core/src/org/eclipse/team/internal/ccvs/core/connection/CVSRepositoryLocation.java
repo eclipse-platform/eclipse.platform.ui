@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -31,7 +32,6 @@ import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
@@ -420,7 +420,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// Parsing failed. Include a status that
 			// shows the passed location and the proper form
 			MultiStatus error = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.invalidFormat", new Object[] {location}), null);
-			error.merge(new CVSStatus(IStatus.ERROR, null, Policy.bind("CVSRepositoryLocation.locationForm")));
+			error.merge(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.locationForm")));
 			error.merge(e.getStatus());
 			throw new CVSException(error);
 		}
@@ -459,7 +459,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			String methodName = location.substring(start + 1, end);
 			IConnectionMethod method = getPluggedInConnectionMethod(methodName);
 			if (method == null)
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, null, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));
+				throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));
 			
 			// Get the user name and password (if provided)
 			partId = "CVSRepositoryLocation.parsingUser";
@@ -608,13 +608,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		
 		// Check some simple things that are not checked in creation
 		if (location == null)
-			return new CVSStatus(CVSStatus.ERROR, null, Policy.bind("CVSRepositoryLocation.nullLocation"));
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.nullLocation"));
 		if (location.equals(""))
-			return new CVSStatus(CVSStatus.ERROR, null, Policy.bind("CVSRepositoryLocation.emptyLocation"));
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.emptyLocation"));
 		if (location.endsWith(" ") || location.endsWith("\t"))
-			return new CVSStatus(CVSStatus.ERROR, null, Policy.bind("CVSRepositoryLocation.endWhitespace"));
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.endWhitespace"));
 		if (!location.startsWith(":") || location.indexOf(COLON, 1) == -1)
-			return new CVSStatus(CVSStatus.ERROR, null, Policy.bind("CVSRepositoryLocation.startOfLocation"));
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.startOfLocation"));
 
 		// Do some quick checks to provide geberal feedback
 		String formatError = Policy.bind("CVSRepositoryLocation.locationForm");
@@ -623,18 +623,18 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (at != -1) {
 			String user = location.substring(secondColon + 1, at);
 			if (user.equals(""))
-				return new CVSStatus(CVSStatus.ERROR, null, formatError);
+				return new CVSStatus(CVSStatus.ERROR, formatError);
 		} else
 			at = secondColon;
 		int colon = location.indexOf(COLON, at + 1);
 		if (colon == -1)
-			return new CVSStatus(CVSStatus.ERROR, null, formatError);
+			return new CVSStatus(CVSStatus.ERROR, formatError);
 		String host = location.substring(at + 1, colon);
 		if (host.equals(""))
-				return new CVSStatus(CVSStatus.ERROR, null, formatError);
+				return new CVSStatus(CVSStatus.ERROR, formatError);
 		String path = location.substring(colon + 1, location.length());
 		if (path.equals(""))
-				return new CVSStatus(CVSStatus.ERROR, null, formatError);
+				return new CVSStatus(CVSStatus.ERROR, formatError);
 				
 		// Do a full parse and see if it passes
 		try {

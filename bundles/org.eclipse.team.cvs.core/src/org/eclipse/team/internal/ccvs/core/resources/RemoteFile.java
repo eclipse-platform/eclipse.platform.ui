@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -24,14 +25,13 @@ import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProvider;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
@@ -132,7 +132,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 				} finally {
 					s.close();
 				}
-				if (status.getCode() == CVSException.SERVER_ERROR) {
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
 			}
@@ -162,7 +162,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
 		}
 		return (ILogEntry[])entries.toArray(new ILogEntry[entries.size()]);

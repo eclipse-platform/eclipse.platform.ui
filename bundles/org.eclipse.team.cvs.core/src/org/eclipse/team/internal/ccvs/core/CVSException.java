@@ -24,11 +24,6 @@ import org.eclipse.team.internal.ccvs.core.connection.ResourceStatus;
  */
 
 public class CVSException extends TeamException {
-
-	public static final int SERVER_ERROR = -10; // XXX What should this number be?
-	public static final int NO_SUCH_TAG = -11;
-	public static final int CONFLICT = -12;
-	public static final int WARNING = -13;
 	
 	public CVSException(
 		int severity,

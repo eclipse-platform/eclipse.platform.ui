@@ -6,8 +6,6 @@ package org.eclipse.team.ccvs.core;
  */
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
@@ -74,6 +72,6 @@ public class CVSTag {
 			if ( Character.isSpaceChar(c) || c == '$' || c == ',' || c == '.' || c == ':' || c == ';' || c == '@' || c == '|')
 				return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.badCharName"));
 		}
-		return new CVSStatus(IStatus.OK, "ok");
+		return new CVSStatus(CVSStatus.OK, "ok");
 	}
 }

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
@@ -107,7 +108,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			fileNames,
 			new StatusListener(listener),
 			monitor);
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
 		}
 		
@@ -174,7 +175,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			CVSServerException e = new CVSServerException(status);
 			if ( ! e.isNoTagException() || ! child.isContainer())
 				if (e.containsErrors())
@@ -252,7 +253,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				new String[] { "." },
 				new UpdateListener(listener),
 				monitor);
-			if (status.getCode() == CVSException.SERVER_ERROR) {
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				throw new CVSServerException(status);
 			}
 			if (progress.isCanceled()) {

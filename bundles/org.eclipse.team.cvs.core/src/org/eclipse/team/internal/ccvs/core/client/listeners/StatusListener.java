@@ -9,11 +9,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IStatusListener;
 
 public class StatusListener implements ICommandOutputListener {
 	private static boolean isFolder = false;
@@ -56,13 +53,11 @@ public class StatusListener implements ICommandOutputListener {
 		return OK;
 	}
 
-	public IStatus errorLine(String line, ICVSFolder commandRoot,
-		IProgressMonitor monitor) {
+	public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
 		if (line.startsWith("cvs server: conflict:")) {
 			// We get this because we made up an entry line to send to the server
-			// Just ignore it
-			// XXX We should make this a warning!!!
-			return OK;
+			// Therefore, we make this a warning!!!
+			return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
 		}
 		if (line.startsWith("cvs server: Examining")) {
 			isFolder = true;
@@ -78,6 +73,6 @@ public class StatusListener implements ICommandOutputListener {
 			isFolder = false;
 			return OK;
 		}
-		return new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null);
+		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 	}
 }

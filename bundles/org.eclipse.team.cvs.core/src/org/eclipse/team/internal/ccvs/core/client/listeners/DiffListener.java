@@ -9,9 +9,7 @@ import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 public class DiffListener implements ICommandOutputListener {
@@ -36,7 +34,7 @@ public class DiffListener implements ICommandOutputListener {
 		// ignore these errors for now - this is used only with the diff
 		// request and the errors can be safely ignored.
 		if(! line.startsWith("cvs server:")) {
-			return new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null);
+			return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 		}
 		return OK;
 	}

@@ -6,23 +6,24 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
  */
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 public interface ICommandOutputListener {
-	public static final IStatus OK = new Status(IStatus.OK,
-		CVSProviderPlugin.ID, 0, Policy.bind("ok"), null);
+	
+	/*** Status to be returned when no error or warning occured ***/
+	public static final IStatus OK = new CVSStatus(CVSStatus.OK,Policy.bind("ok"));
 	
 	/**
 	 * Invoked when a message line is received from the server.
 	 * <p>
-	 * The status severity must indicate whether this is a warning,
-	 * error, or informational text.  The status code must not be
-	 * CVSException.SERVER_ERROR.
+	 * Any status other than ICommandOutputListener.OK will be accumulated
+	 * by the command and returned. The severity of the status matches those of
+	 * IStatus and must indicate whether this is a warning, error, or informational 
+	 * text.while the code should be one of the codes provided by CVSStatus.
+	 * The status code must not be CVSStatus.SERVER_ERROR.
 	 * </p>
 	 * 
 	 * @param line the line of message text sent by the server
@@ -36,9 +37,11 @@ public interface ICommandOutputListener {
 	/**
 	 * Invoked when an error line is received from the server.
 	 * <p>
-	 * The status severity must indicate whether this is a warning,
-	 * error, or informational text.  The status code must not be
-	 * CVSException.SERVER_ERROR.
+	 * Any status other than ICommandOutputListener.OK will be accumulated
+	 * by the command and returned. The severity of the status matches those of
+	 * IStatus and must indicate whether this is a warning, error, or informational 
+	 * text.while the code should be one of the codes provided by CVSStatus.
+	 * The status code must not be CVSStatus.SERVER_ERROR.
 	 * </p>
 	 * 
 	 * @param line the line of error text sent by the server

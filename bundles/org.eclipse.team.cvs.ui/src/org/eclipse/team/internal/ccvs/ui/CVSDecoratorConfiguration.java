@@ -5,11 +5,10 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.ccvs.core.CVSStatus;
 
 public class CVSDecoratorConfiguration {
 
@@ -51,7 +50,7 @@ public class CVSDecoratorConfiguration {
 		if (format.equals(""))
 			return new CVSStatus(CVSStatus.ERROR, "format cannot be empty");		
 		
-		return new CVSStatus(IStatus.OK, "ok");
+		return new CVSStatus(CVSStatus.OK, "ok");
 	}
 	
 	/**
@@ -63,7 +62,7 @@ public class CVSDecoratorConfiguration {
 		if (format.equals(""))
 			return new CVSStatus(CVSStatus.ERROR, "format cannot be empty");		
 		
-		return new CVSStatus(IStatus.OK, "ok");
+		return new CVSStatus(CVSStatus.OK, "ok");
 	}
 	
 	public static String bind(String format, Map bindings) {

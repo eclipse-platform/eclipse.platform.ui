@@ -5,16 +5,12 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
  * All Rights Reserved.
  */
  
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.client.Checkout;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /*
@@ -60,13 +56,8 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 	/*
 	 * @see ICommandOutputListener#errorLine(String, ICVSFolder, IProgressMonitor)
 	 */
-	public IStatus errorLine(
-		String line,
-		ICVSFolder commandRoot,
-		IProgressMonitor monitor) {
-			
-		// XXX We should not get any errors!!!
-		return OK;
+	public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {	
+		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
 	}
 	
 	public String[] getModuleExpansions() {

@@ -35,7 +35,6 @@ import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
@@ -58,10 +57,8 @@ import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FileSystemSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.RemoteFolderTreeBuilder;
 
@@ -316,7 +313,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					(String[])folders.toArray(new String[folders.size()]),
 					null,
 					progress);
-				if (status.getCode() == CVSException.SERVER_ERROR) {
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
 			}
@@ -327,7 +324,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					(String[])textfiles.toArray(new String[textfiles.size()]),
 					null,
 					progress);
-				if (status.getCode() == CVSException.SERVER_ERROR) {
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
 			}
@@ -338,7 +335,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
 					null,
 					progress);
-				if (status.getCode() == CVSException.SERVER_ERROR) {
+				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
 				}
 			}
@@ -379,7 +376,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
 		}
 	}
@@ -472,7 +469,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
 		}
 	}
@@ -502,7 +499,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// XXX diff errors??
 			throw new CVSServerException(status);
 		}
@@ -621,7 +618,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// However, we still need to check to see if its been created remotely by a third party.
 			ICVSFolder parent = managed.getParent();
 			if (!parent.isCVSFolder())
-				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Parent is not managed", null));
+				throw new TeamException(new CVSStatus(CVSStatus.ERROR, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Parent is not managed", null));
 			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
 			// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
 			RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
@@ -630,7 +627,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					remote = (ICVSRemoteResource)remoteParent.getChild(resource.getName());
 					// The types need to match or we're in trouble
 					if (!(remote.isContainer() == managed.isFolder()))
-						throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Local and remote resource types differ", null));
+						throw new TeamException(new CVSStatus(CVSStatus.ERROR, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Local and remote resource types differ", null));
 				} catch (CVSException e) {
 					// XXX Either need an exception or null to indicate child does not exist
 				}
@@ -639,13 +636,9 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			baseTree = remote;
 			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
 		} else {
-			try {
-				ICVSRepositoryLocation location = remote.getRepository();
-				baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
-				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
-			} catch(CVSException e) {
-				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree", e));
-			}
+			ICVSRepositoryLocation location = remote.getRepository();
+			baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
 		}
 		return new CVSRemoteSyncElement(false, resource, baseTree, remote);
 	}
@@ -659,7 +652,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// However, we still need to check to see if its been created remotely by a third party.
 			ICVSFolder parent = managed.getParent();
 			if (!parent.isCVSFolder())
-				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Parent is not managed", null));
+				throw new TeamException(new CVSStatus(CVSStatus.ERROR, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Parent is not managed", null));
 			ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
 			// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
 			RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
@@ -668,7 +661,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					remote = (ICVSRemoteResource)remoteParent.getChild(resource.getName());
 					// The types need to match or we're in trouble
 					if (!(remote.isContainer() == managed.isFolder()))
-						throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Local and remote resource types differ", null));
+						throw new TeamException(new CVSStatus(CVSStatus.ERROR, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Local and remote resource types differ", null));
 				} catch (CVSException e) {
 					// XXX Either need an exception or null to indicate child does not exist
 				}
@@ -680,7 +673,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				ICVSRepositoryLocation location = remote.getRepository();
 				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
 			} catch(CVSException e) {
-				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree", e));
+				throw new TeamException(new CVSStatus(CVSStatus.ERROR, resource.getProjectRelativePath(), "Error retrieving remote resource tree", e));
 			}
 		}
 		return remote;
@@ -917,7 +910,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// XXX diff errors??
 			throw new CVSServerException(status);
 		}
@@ -985,7 +978,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		} finally {
 			s.close();
 		}
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// XXX diff errors??
 			throw new CVSServerException(status);
 		}
@@ -1017,14 +1010,14 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamProvider#validateEdit(IFile[], Object)
 	 */
 	public IStatus validateEdit(IFile[] files, Object context) {
-		return new CVSStatus(IStatus.OK, "OK");
+		return new CVSStatus(CVSStatus.OK, "OK");
 	}
 
 	/*
 	 * @see ITeamProvider#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
-		return new CVSStatus(IStatus.OK, "OK");
+		return new CVSStatus(CVSStatus.OK, "OK");
 	}
 	
 	/*

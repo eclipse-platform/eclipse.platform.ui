@@ -5,14 +5,17 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -98,6 +101,18 @@ public abstract class Command {
 		responseHandlers.put(handler.getResponseID(), handler);
 	}
 	
+	/*** Default command output listener ***/
+	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER =
+		new ICommandOutputListener() {
+			public IStatus messageLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+				return OK;
+			}
+			public IStatus errorLine(String line, ICVSFolder commandRoot, IProgressMonitor monitor) {
+				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
+			}
+
+		};
+	
 	/*
 	 * XXX For the time being, the console listener is registered with Command
 	 */
@@ -120,6 +135,16 @@ public abstract class Command {
 	 */
 	protected abstract String getCommandId();
 
+	/**
+	 * Provides the default command output listener which is used to accumulate errors.
+	 * 
+	 * Subclasses can override this method in order to properly interpret information
+	 * received from the server.
+	 */
+	protected ICommandOutputListener getDefaultCommandOutputListener() {
+		return DEFAULT_OUTPUT_LISTENER;
+	}
+	
 	/**
 	 */
 	protected void sendArguments(Session session, String[] arguments) throws CVSException {
@@ -341,7 +366,7 @@ public abstract class Command {
 
 			// Finished adds last 5% of work.
 			commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 5),
-				status.getCode() != CVSException.SERVER_ERROR);
+				status.getCode() != CVSStatus.SERVER_ERROR);
 			monitor.worked(5);
 			return status;
 		} finally {
@@ -370,8 +395,11 @@ public abstract class Command {
 		int nextProgress = currentIncrement;
 		int worked = 0;
 
-		MultiStatus accumulatedStatus = new MultiStatus(CVSProviderPlugin.ID, CVSException.OK,
-			Policy.bind("Command.succeeded"), null);
+		// If no listener was provided, use the command's default in order to get error reporting
+		if (listener == null)
+			listener = getDefaultCommandOutputListener();
+				
+		List accumulatedStatus = new ArrayList();
 		for (;;) {
 			// update monitor work amount
 			if (--nextProgress <= 0) {
@@ -401,23 +429,20 @@ public abstract class Command {
 			if (response.equals("ok")) {
 				break;
 			} else if (response.equals("error")) {
-				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID,
-					CVSException.SERVER_ERROR, argument, null);
-				status.merge(accumulatedStatus);
-				return status;
+				if (argument.length() == 0)
+					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getCommandId()));
+				return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
+					(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
+					argument, null);
 			// handle message responses
 			} else if (response.equals("M")) {
+				IStatus status = listener.messageLine(argument, session.getLocalRoot(), monitor);
+				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 				if (consoleListener != null && session.isOutputToConsole()) consoleListener.messageLine(argument, null, null);
-				if (listener != null) {
-					IStatus status = listener.messageLine(argument, session.getLocalRoot(), monitor);
-					accumulatedStatus.merge(status);
-				}
 			} else if (response.equals("E")) {
+				IStatus status = listener.errorLine(argument, session.getLocalRoot(), monitor);
+				if (status != ICommandOutputListener.OK) accumulatedStatus.add(status);
 				if (consoleListener != null && session.isOutputToConsole()) consoleListener.errorLine(argument, null, null);
-				if (listener != null) {
-					IStatus status = listener.errorLine(argument, session.getLocalRoot(), monitor);
-					accumulatedStatus.merge(status);
-				}
 			// handle other responses
 			} else {
 				ResponseHandler handler = (ResponseHandler) responseHandlers.get(response);
@@ -426,11 +451,17 @@ public abstract class Command {
 				} else {
 					throw new CVSException(new org.eclipse.core.runtime.Status(IStatus.ERROR,
 						CVSProviderPlugin.ID, CVSException.IO_FAILED,
-						Policy.bind("Command.unsupportedResponse", response, argument), null));
+						Policy.bind("Command.unsupportedResponse", response), null));
 				}
 			}
 		}
-		return accumulatedStatus;
+		if (accumulatedStatus.isEmpty()) {
+			return ICommandOutputListener.OK;
+		} else {
+			return new MultiStatus(CVSProviderPlugin.ID, CVSStatus.INFO,
+				(IStatus[]) accumulatedStatus.toArray(new IStatus[accumulatedStatus.size()]),
+				Policy.bind("Command.warnings", Policy.bind("Command." + getCommandId())), null);
+		}
 	}
 	
 	/**
