@@ -28,9 +28,7 @@ import java.util.TreeSet;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.IFeatureEntry;
-// @issue illegal reference to PluginDescriptor to obtain fragment info
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-//@issue illegal reference to PreferenceExporter
 import org.eclipse.core.internal.runtime.PreferenceExporter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -38,18 +36,23 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.model.PluginFragmentModel;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
+
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
@@ -78,8 +81,6 @@ public final class SystemSummaryDialog extends Dialog {
 	 * Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
 		createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
 	}
 
@@ -89,7 +90,8 @@ public final class SystemSummaryDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite outer = (Composite) super.createDialogArea(parent);
 
-		Text text = new Text(outer, SWT.MULTI | SWT.READ_ONLY);
+		Text text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
+		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		GridData gridData =
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		gridData.grabExcessVerticalSpace = true;
@@ -170,7 +172,9 @@ public final class SystemSummaryDialog extends Dialog {
 			String pluginID = info.getFeaturePluginIdentifier();
 			if (pluginID != null) {
 				IPluginDescriptor descriptor= pluginRegistry.getPluginDescriptor(pluginID);
-				pluginID = descriptor.getLabel();
+				if (descriptor != null) {
+					pluginID = descriptor.getLabel();
+				}
 				if ("".equals(pluginID)) {   //$NON-NLS-1$
 					pluginID = IDEWorkbenchMessages.getString("SystemSummary.notSpecified"); //$NON-NLS-1$
 				}
@@ -361,4 +365,14 @@ public final class SystemSummaryDialog extends Dialog {
 		}
 		return IDEWorkbenchMessages.getString("SystemSummary.activity.status.unknown"); //$NON-NLS-1$
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == IDialogConstants.CLOSE_ID) {
+			close();
+		}
+		super.buttonPressed(buttonId);
+	}
+
 }
