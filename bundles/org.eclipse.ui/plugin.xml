@@ -49,17 +49,17 @@
 
    <extension
          point="org.eclipse.ui.contexts">
-      <activity
+      <context
             name="%context.editingText.name"
             description="%context.editingText.description"
             id="org.eclipse.ui.textEditorScope">
-      </activity>
-      <activity
+      </context>
+      <context
             name="%context.editingJavaSource.name"
             description="%context.editingJavaSource.description"
             parentId="org.eclipse.ui.textEditorScope"
             id="org.eclipse.jdt.ui.javaEditorScope">
-      </activity>
+      </context>
    </extension>
    
    <extension
