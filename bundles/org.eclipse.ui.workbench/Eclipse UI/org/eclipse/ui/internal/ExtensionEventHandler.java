@@ -52,7 +52,6 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.DecoratorRegistryReader;
-import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -60,12 +59,8 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.EditorRegistryReader;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
-import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
-import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 import org.eclipse.ui.internal.themes.ColorDefinition;
@@ -191,10 +186,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_NEW)) {
-            loadNewWizards(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_EDITOR)) {
             loadEditor(ext);
             return;
@@ -213,16 +204,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             loadWorkingSets(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_POPUP_MENU)) {
-            loadPopupMenu(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PREFERENCES)) {
             loadPreferencePages(ext);
-            return;
-        }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PROPERTY_PAGES)) {
-            loadPropertyPages(ext);
             return;
         }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_FONT_DEFINITIONS)) {
@@ -302,36 +285,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         }
     }
 
-    private void loadNewWizards(IExtension ext) {
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
-            reader.readElement(elements[i]);
-        }
-        // We may need to reset this perspective as new wizards are added
-        // to the menu.
-        changeList
-                .add(MessageFormat
-                        .format(
-                                ExtensionEventHandlerMessages
-                                        .getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
-                                new Object[] {
-                                        ext.getNamespace(),
-                                        ExtensionEventHandlerMessages
-                                                .getString("ExtensionEventHandler.newWizards") })); //$NON-NLS-1$ 
-    }
-
-    private void loadPropertyPages(IExtension ext) {
-        PropertyPageContributorManager manager = PropertyPageContributorManager
-                .getManager();
-        PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(
-                manager);
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-            reader.readElement(elements[i]);
-        }
-    }
-
     private void loadPreferencePages(IExtension ext) {
         PreferenceManager manager = workbench.getPreferenceManager();
         List nodes = manager.getElements(PreferenceManager.POST_ORDER);
@@ -366,48 +319,13 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         }
     }
 
-    /**
-     * TODO: object contributions are easy to update, but viewer contributions are not because they're 
-     * statically cached in anonymous PopupMenuExtenders.  Currently you will be prompted to restart in 
-     * the case of a viewer contribtion. 
-     * 
-     * We can implement this refresh by keeping a weak set of references to PopupMenuExtenders and 
-     * iterating over them on a delta.  We add a method to PopupMenuExtender that will supply an extension
-     * to the underlying staticActionBuilder for processing. 
-     */
-    private void loadPopupMenu(IExtension ext) {
-        ObjectActionContributorManager oMan = ObjectActionContributorManager
-                .getManager();
-        ObjectActionContributorReader oReader = new ObjectActionContributorReader();
-        oReader.setManager(oMan);
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        boolean clearPopups = false;
-        // takes care of object contributions
-        for (int i = 0; i < elements.length; i++) {
-            oReader.readElement(elements[i]);
-            if (elements[i].getName().equals(
-                    ViewerActionBuilder.TAG_CONTRIBUTION_TYPE))
-                clearPopups = true;
-        }
-
-        if (clearPopups)
-            PopupMenuExtender.getManager().clearCaches();
-    }
-
     private void revoke(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_NEW)) {
-            //NewWizardsRegistryReader.removeExtension(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_VIEWS)) {
             unloadView(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_EDITOR)) {
-            unloadEditor(ext);
-            return;
-        }
+        
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVES)) {
             unloadPerspective(ext);
             return;
@@ -469,57 +387,57 @@ class ExtensionEventHandler implements IRegistryChangeListener {
     }
 
     private void unloadView(IExtension ext) {
-        final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-                IStatus.OK, WorkbenchMessages
-                        .getString("ViewFactory.problemsSavingViews"), null); //$NON-NLS-1$
-        IViewRegistry vReg = WorkbenchPlugin.getDefault().getViewRegistry();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        XMLMemento memento = null;
-        for (int i = 0; i < windows.length; i++) {
-            WorkbenchWindow window = (WorkbenchWindow) windows[i];
-            IWorkbenchPage[] pages = window.getPages();
-            for (int j = 0; j < pages.length; j++) {
-                ArrayList viewsRemoved = new ArrayList();
-                IConfigurationElement[] elements = ext
-                        .getConfigurationElements();
-                for (int k = 0; k < elements.length; k++) {
-                    if (!elements[k].getName().equals(
-                            IWorkbenchConstants.TAG_VIEW))
-                        continue;
-                    String id = elements[k]
-                            .getAttribute(IWorkbenchConstants.TAG_ID);
-                    if (id != null) {
-                        ViewFactory viewFactory = ((WorkbenchPage) pages[j])
-                                .getViewFactory();
-                        IViewReference viewRef = viewFactory.getView(id);
-                        if (viewRef != null) {
-                            // don't save view state
-                            //							if (isViewOpen(viewRef, viewFactory)){
-                            //								memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_VIEWS);
-                            //								saveViewState(pages[j], id, viewFactory.saveViewState(memento, viewRef, result));
-                            //								//((WorkbenchPage)pages[j]).getStateMap().put(id, memento);
-                            //							}
-                            ((WorkbenchPage) pages[j]).hideView(viewRef);
-                            ((WorkbenchPage) pages[j]).getViewFactory()
-                                    .releaseView(viewRef);
-                        }
-                        viewsRemoved.add(id);
-                        ((ViewRegistry) vReg).remove(id);
-                    }
-                }
-                Object[] showViewIdsRemoved = findShowViewIdsRemoved(
-                        ((WorkbenchPage) pages[j]).getShowViewActionIds(),
-                        viewsRemoved);
-                if (showViewIdsRemoved.length > 0)
-                    removeViewIdsFromShowViewMenu(window, showViewIdsRemoved);
-            }
-        }
-        if (result.getSeverity() != IStatus.OK) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
-                    result);
-        }
+//        final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
+//                IStatus.OK, WorkbenchMessages
+//                        .getString("ViewFactory.problemsSavingViews"), null); //$NON-NLS-1$
+//        IViewRegistry vReg = WorkbenchPlugin.getDefault().getViewRegistry();
+//        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+//        XMLMemento memento = null;
+//        for (int i = 0; i < windows.length; i++) {
+//            WorkbenchWindow window = (WorkbenchWindow) windows[i];
+//            IWorkbenchPage[] pages = window.getPages();
+//            for (int j = 0; j < pages.length; j++) {
+//                ArrayList viewsRemoved = new ArrayList();
+//                IConfigurationElement[] elements = ext
+//                        .getConfigurationElements();
+//                for (int k = 0; k < elements.length; k++) {
+//                    if (!elements[k].getName().equals(
+//                            IWorkbenchConstants.TAG_VIEW))
+//                        continue;
+//                    String id = elements[k]
+//                            .getAttribute(IWorkbenchConstants.TAG_ID);
+//                    if (id != null) {
+//                        ViewFactory viewFactory = ((WorkbenchPage) pages[j])
+//                                .getViewFactory();
+//                        IViewReference viewRef = viewFactory.getView(id);
+//                        if (viewRef != null) {
+//                            // don't save view state
+//                            //							if (isViewOpen(viewRef, viewFactory)){
+//                            //								memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_VIEWS);
+//                            //								saveViewState(pages[j], id, viewFactory.saveViewState(memento, viewRef, result));
+//                            //								//((WorkbenchPage)pages[j]).getStateMap().put(id, memento);
+//                            //							}
+//                            ((WorkbenchPage) pages[j]).hideView(viewRef);
+//                            ((WorkbenchPage) pages[j]).getViewFactory()
+//                                    .releaseView(viewRef);
+//                        }
+//                        viewsRemoved.add(id);
+//                        ((ViewRegistry) vReg).remove(id);
+//                    }
+//                }
+//                Object[] showViewIdsRemoved = findShowViewIdsRemoved(
+//                        ((WorkbenchPage) pages[j]).getShowViewActionIds(),
+//                        viewsRemoved);
+//                if (showViewIdsRemoved.length > 0)
+//                    removeViewIdsFromShowViewMenu(window, showViewIdsRemoved);
+//            }
+//        }
+//        if (result.getSeverity() != IStatus.OK) {
+//            ErrorDialog.openError((Shell) null, WorkbenchMessages
+//                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
+//                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
+//                    result);
+//        }
     }
 
     private void saveViewState(IWorkbenchPage page, String id, IMemento memento) {
@@ -675,31 +593,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         return true;
     }
 
-    private void unloadEditor(IExtension ext) {
-        MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-                WorkbenchMessages
-                        .getString("EditorManager.problemsSavingEditors"), null); //$NON-NLS-1$
-        EditorRegistry eReg = (EditorRegistry) WorkbenchPlugin.getDefault()
-                .getEditorRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        for (int i = 0; i < elements.length; i++) {
-            String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            for (int j = 0; j < windows.length; j++) {
-                WorkbenchWindow window = (WorkbenchWindow) windows[j];
-                IWorkbenchPage[] pages = window.getPages();
-                for (int k = 0; k < pages.length; k++)
-                    closeEditors(pages[k], id, result);
-            }
-            eReg.remove(id);
-        }
-        if (result.getSeverity() != IStatus.OK) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
-                    result);
-        }
-    }
 
     private void closeEditors(IWorkbenchPage page, String id, MultiStatus result) {
         XMLMemento memento = XMLMemento

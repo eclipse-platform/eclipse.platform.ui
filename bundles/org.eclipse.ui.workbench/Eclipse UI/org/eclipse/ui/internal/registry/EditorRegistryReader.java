@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
@@ -29,27 +28,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class EditorRegistryReader extends RegistryReader {
 
-    private static final String ATT_CLASS = "class";//$NON-NLS-1$
+    public static final String TAG_EDITOR = "editor";//$NON-NLS-1$
 
-    private static final String ATT_NAME = "name";//$NON-NLS-1$
-
-    private static final String TAG_EDITOR = "editor";//$NON-NLS-1$
-
-    private static final String P_TRUE = "true";//$NON-NLS-1$
-
-    private static final String ATT_COMMAND = "command";//$NON-NLS-1$
-
-    private static final String ATT_LAUNCHER = "launcher";//$NON-NLS-1$
-
-    private static final String ATT_DEFAULT = "default";//$NON-NLS-1$
-
-    public static final String ATT_ID = "id";//$NON-NLS-1$
-
-    private static final String ATT_ICON = "icon";//$NON-NLS-1$
-
-    private static final String ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
-
-    private static final String ATT_FILENAMES = "filenames";//$NON-NLS-1$
+    public static final String P_TRUE = "true";//$NON-NLS-1$
 
     private EditorRegistry editorRegistry;
 
@@ -80,44 +61,39 @@ public class EditorRegistryReader extends RegistryReader {
 
         EditorDescriptor editor = new EditorDescriptor();
         editor.setConfigurationElement(element);
-        String id = element.getAttribute(ATT_ID);
+        String id = element.getAttribute(EditorDescriptor.ATT_ID);
         if (id == null) {
-            logMissingAttribute(element, ATT_ID);
+            logMissingAttribute(element, EditorDescriptor.ATT_ID);
             return true;
         }
-        editor.setID(id);
-        IExtension extension = element.getDeclaringExtension();
-        editor.setPluginIdentifier(extension.getNamespace());
-
+        
         List extensionsVector = new ArrayList();
         List filenamesVector = new ArrayList();
         boolean defaultEditor = false;
 
         // Get editor name (required field).
-        String name = element.getAttribute(ATT_NAME);
+        String name = element.getAttribute(EditorDescriptor.ATT_NAME);
         if (name == null) {
-            logMissingAttribute(element, ATT_NAME);
+            logMissingAttribute(element, EditorDescriptor.ATT_NAME);
             return true;
         }
-        editor.setName(name);
 
         // Get editor icon (required field for internal editors)
-        String icon = element.getAttribute(ATT_ICON);
+        String icon = element.getAttribute(EditorDescriptor.ATT_ICON);
         if (icon == null) {
-            if (element.getAttribute(ATT_CLASS) != null) {
-                logMissingAttribute(element, ATT_ICON);
+            if (element.getAttribute(EditorDescriptor.ATT_CLASS) != null) {
+                logMissingAttribute(element, EditorDescriptor.ATT_ICON);
                 return true;
             }
         }
         if (icon != null) {
-            String extendingPluginId = extension.getNamespace();
+            String extendingPluginId = element.getNamespace();
             editor.setImageDescriptor(AbstractUIPlugin
-                    .imageDescriptorFromPlugin(extendingPluginId, icon));
-            editor.setImageFilename(icon);
+                    .imageDescriptorFromPlugin(extendingPluginId, icon));            
         }
 
         // Get target extensions (optional field)
-        String extensionsString = element.getAttribute(ATT_EXTENSIONS);
+        String extensionsString = element.getAttribute(EditorDescriptor.ATT_EXTENSIONS);
         if (extensionsString != null) {
             StringTokenizer tokenizer = new StringTokenizer(extensionsString,
                     ",");//$NON-NLS-1$
@@ -125,7 +101,7 @@ public class EditorRegistryReader extends RegistryReader {
                 extensionsVector.add(tokenizer.nextToken().trim());
             }
         }
-        String filenamesString = element.getAttribute(ATT_FILENAMES);
+        String filenamesString = element.getAttribute(EditorDescriptor.ATT_FILENAMES);
         if (filenamesString != null) {
             StringTokenizer tokenizer = new StringTokenizer(filenamesString,
                     ",");//$NON-NLS-1$
@@ -135,15 +111,13 @@ public class EditorRegistryReader extends RegistryReader {
         }
 
         // Get launcher class or command.	
-        String launcher = element.getAttribute(ATT_LAUNCHER);
-        String command = element.getAttribute(ATT_COMMAND);
+        String launcher = element.getAttribute(EditorDescriptor.ATT_LAUNCHER);
+        String command = element.getAttribute(EditorDescriptor.ATT_COMMAND);
         if (launcher != null) {
             // open using a launcer
-            editor.setLauncher(launcher);
             editor.setOpenMode(EditorDescriptor.OPEN_EXTERNAL);
         } else if (command != null) {
             // open using an external editor 	
-            editor.setFileName(command);
             editor.setOpenMode(EditorDescriptor.OPEN_EXTERNAL);
             if (icon == null) {
                 editor.setImageDescriptor(WorkbenchImages
@@ -151,13 +125,11 @@ public class EditorRegistryReader extends RegistryReader {
             }
         } else {
             // open using an internal editor
-            String className = element.getAttribute(ATT_CLASS);
-            editor.setClassName(className);
             editor.setOpenMode(EditorDescriptor.OPEN_INTERNAL);
         }
 
         // Is this the default editor?
-        String def = element.getAttribute(ATT_DEFAULT);
+        String def = element.getAttribute(EditorDescriptor.ATT_DEFAULT);
         if (def != null)
             defaultEditor = def.equalsIgnoreCase(P_TRUE);
 

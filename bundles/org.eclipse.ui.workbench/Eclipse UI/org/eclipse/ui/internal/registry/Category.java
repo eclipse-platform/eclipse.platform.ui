@@ -51,17 +51,15 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
 
     private String id;
 
-    private String pluginId;
-
     private String name;
 
     private String[] parentPath;
 
-    private String unparsedPath;
-
     private ArrayList elements;
 
     private IConfigurationElement configurationElement;
+
+	private String pluginId;
 
     /**
      * Creates an instance of <code>Category</code> as a
@@ -96,11 +94,9 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
     public Category(IConfigurationElement configElement)
             throws WorkbenchException {
         id = configElement.getAttribute(ATT_ID);
-        pluginId = configElement.getDeclaringExtension().getNamespace();
-        name = configElement.getAttribute(ATT_NAME);
-        unparsedPath = configElement.getAttribute(ATT_PARENT);
+
         configurationElement = configElement;
-        if (id == null || name == null)
+        if (id == null || getLabel() == null)
             throw new WorkbenchException("Invalid category: " + id); //$NON-NLS-1$
     }
 
@@ -157,20 +153,25 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
      * Method declared on ICategory.
      */
     public String getLabel() {
-        return name;
+        return configurationElement == null ? name : configurationElement
+				.getAttribute(ATT_NAME);
     }
 
     /* (non-Javadoc)
      * Method declared on ICategory.
      */
     public String[] getParentPath() {
+    	if (parentPath != null)
+    		return parentPath;
+    	
+    	String unparsedPath = configurationElement == null ? null
+				: configurationElement.getAttribute(ATT_PARENT);
         if (unparsedPath != null) {
             StringTokenizer stok = new StringTokenizer(unparsedPath, "/"); //$NON-NLS-1$
             parentPath = new String[stok.countTokens()];
             for (int i = 0; stok.hasMoreTokens(); i++) {
                 parentPath[i] = stok.nextToken();
             }
-            unparsedPath = null;
         }
 
         return parentPath;
@@ -220,13 +221,6 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
-    public boolean fromPlugin() {
-        return pluginId != null;
-    }
-
-    /* (non-Javadoc)
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
@@ -237,6 +231,18 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return pluginId;
+        return configurationElement == null ? pluginId : configurationElement
+				.getNamespace();
     }
+
+	/**
+	 * Clear all elements from this category.
+	 * 
+	 * @since 3.1
+	 */
+	public void clear() {
+		if (elements != null) {
+			elements.clear();
+		}	
+	}
 }

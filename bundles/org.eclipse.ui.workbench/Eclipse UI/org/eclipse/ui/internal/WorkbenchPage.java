@@ -85,6 +85,8 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
+import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -184,6 +186,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private Set stickyPerspectives = new HashSet(7);
 
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
+
+	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
 
     /**
      * Manages editor contributions and action set part associations.
@@ -1938,7 +1942,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     private void hideView(Perspective persp, IViewReference ref) {
         // Notify interested listeners before the hide
-        window.firePerspectiveChanged(this, getPerspective(), ref,
+        window.firePerspectiveChanged(this, persp.getDesc(), ref,
                 CHANGE_VIEW_HIDE);
 
         // Hide the part.
@@ -4017,4 +4021,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         
     }
+
+	/**
+     * EXPERIMENTAL
+	 */
+	public IConfigurationElementTracker getConfigurationElementTracker() {
+		return tracker ;		
+	}
 }

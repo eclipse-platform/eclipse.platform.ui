@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class CategorizedPageRegistryReader extends RegistryReader {
 
-	static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
+	public static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
 
 	static final String PREFERENCE_SEPARATOR = "/"; //$NON-NLS-1$
 

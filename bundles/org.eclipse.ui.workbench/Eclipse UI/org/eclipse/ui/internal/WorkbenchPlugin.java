@@ -19,15 +19,12 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.custom.BusyIndicator;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Policy;
-
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -35,14 +32,10 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
-
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
-import org.eclipse.ui.internal.intro.IntroRegistryReader;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -51,14 +44,14 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
-import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.themes.IThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.SWTResourceUtil;
-
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -451,8 +444,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public IIntroRegistry getIntroRegistry() {
         if (introRegistry == null) {
             introRegistry = new IntroRegistry();
-            IntroRegistryReader reader = new IntroRegistryReader();
-            reader.readIntros(Platform.getExtensionRegistry(), introRegistry);
         }
         return introRegistry;
     }
@@ -512,14 +503,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public IViewRegistry getViewRegistry() {
         if (viewRegistry == null) {
             viewRegistry = new ViewRegistry();
-            try {
-                ViewRegistryReader reader = new ViewRegistryReader();
-                reader.readViews(Platform.getExtensionRegistry(), viewRegistry);
-            } catch (CoreException e) {
-                // cannot safely show a dialog so log it
-                WorkbenchPlugin.log(
-                        "Unable to read view registry.", e.getStatus()); //$NON-NLS-1$
-            }
         }
         return viewRegistry;
     }

@@ -17,11 +17,8 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-
 import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.dialogs.IPropertyPageContributor;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.RegistryPageContributor;
 
@@ -39,17 +36,17 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 
     private static final String TAG_PAGE = "page";//$NON-NLS-1$
 
-    private static final String TAG_FILTER = "filter";//$NON-NLS-1$
+    public static final String TAG_FILTER = "filter";//$NON-NLS-1$
 
-    private static final String ATT_NAME = "name";//$NON-NLS-1$
+    public static final String ATT_NAME = "name";//$NON-NLS-1$
 
     private static final String ATT_ID = "id";//$NON-NLS-1$
 
-    private static final String ATT_ICON = "icon";//$NON-NLS-1$
+    public static final String ATT_ICON = "icon";//$NON-NLS-1$
 
-    private static final String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
+    public static final String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
 
-    private static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
+    public static final String ATT_ADAPTABLE = "adaptable";//$NON-NLS-1$
 
     private static final String P_TRUE = "true";//$NON-NLS-1$
 
@@ -103,33 +100,12 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
     }
 
     /**
-     * Parses child element and processes it 
-     */
-    private void processChildElement(IConfigurationElement element) {
-        String tag = element.getName();
-        if (tag.equals(TAG_FILTER)) {
-            String key = element.getAttribute(ATT_FILTER_NAME);
-            String value = element.getAttribute(ATT_FILTER_VALUE);
-            if (key == null || value == null)
-                return;
-            if (filterProperties == null)
-                filterProperties = new HashMap();
-            filterProperties.put(key, value);
-        }
-    }
-
-    /**
      * Reads static property page specification.
      */
     private void processPageElement(IConfigurationElement element) {
-        String pluginId = element.getDeclaringExtension().getNamespace();
-        String pageId = element.getAttribute(ATT_ID);
-        String pageName = element.getAttribute(ATT_NAME);
-        String iconName = element.getAttribute(ATT_ICON);
+    	String pageId = element.getAttribute(ATT_ID);
         String pageClassName = element.getAttribute(ATT_CLASS);
         String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
-        String adaptable = element.getAttribute(ATT_ADAPTABLE);
-        String category = element.getAttribute(ATT_CATEGORY);
 
         if (pageId == null) {
             logMissingAttribute(element, ATT_ID);
@@ -144,17 +120,9 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
             return;
         }
 
-        filterProperties = null;
-        IConfigurationElement[] children = element.getChildren();
-        for (int i = 0; i < children.length; i++) {
-            processChildElement(children[i]);
-        }
-
-        IPropertyPageContributor contributor = new RegistryPageContributor(
-                pluginId, pageId, pageName, iconName, category, filterProperties,
-                objectClassName, P_TRUE.equalsIgnoreCase(adaptable), element);
-        registerContributor(objectClassName, contributor);
-        pages.add(contributor);
+        RegistryPageContributor contributor = new RegistryPageContributor(
+                pageId, element);
+        registerContributor(contributor, objectClassName);
     }
 
     /**
@@ -179,8 +147,7 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
      * Creates object class instance and registers the contributor with the
      * property page manager.
      */
-    private void registerContributor(String objectClassName,
-            IPropertyPageContributor contributor) {
+    private void registerContributor(RegistryPageContributor contributor, String objectClassName) {
         manager.registerContributor(contributor, objectClassName);
     }
 

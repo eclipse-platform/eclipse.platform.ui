@@ -95,6 +95,8 @@ import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -328,6 +330,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * @since 3.1
      */
     private int largeUpdates = 0;
+
+	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
     
     void registerActionSets(IActionSet[] actionSets) {
         
@@ -2831,4 +2835,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 SWT.DEFAULT));
         defaultLayout.addTrim(control, side, reference);
     }
+
+	/**
+     * EXPERIMENTAL
+	 */
+	public IConfigurationElementTracker getConfigurationElementTracker() {
+		return tracker ;
+	}
 }

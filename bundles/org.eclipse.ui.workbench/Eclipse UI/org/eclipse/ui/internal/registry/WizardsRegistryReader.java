@@ -11,15 +11,12 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -30,18 +27,18 @@ public class WizardsRegistryReader extends RegistryReader {
 
     private String pluginPoint;
 
-    protected final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
+    public final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
 
-    protected final static String ATT_NAME = "name";//$NON-NLS-1$
+    public final static String ATT_NAME = "name";//$NON-NLS-1$
 
     // @issue we should have an IExtensionConstants class with all these attribute names, element names, attribute values (like true, false, etc).
     public final static String ATT_CLASS = "class";//$NON-NLS-1$
 
-    protected final static String ATT_ICON = "icon";//$NON-NLS-1$
+    public final static String ATT_ICON = "icon";//$NON-NLS-1$
 
-    protected final static String ATT_ID = "id";//$NON-NLS-1$
+    public final static String ATT_ID = "id";//$NON-NLS-1$
 
-    protected final static String trueString = "TRUE";//$NON-NLS-1$
+    public final static String trueString = "TRUE";//$NON-NLS-1$
 
     /**
      *	Create an instance of this class.
@@ -79,16 +76,16 @@ public class WizardsRegistryReader extends RegistryReader {
     protected WorkbenchWizardElement createWizardElement(
             IConfigurationElement element) {
         // WizardElements must have a name attribute
-        String nameString = element.getAttribute(ATT_NAME);
-        if (nameString == null) {
+        if (element.getAttribute(ATT_NAME) == null) {
             logMissingAttribute(element, ATT_NAME);
             return null;
         }
-        WorkbenchWizardElement result = new WorkbenchWizardElement(nameString);
-        if (initializeWizard(result, element))
-            return result; // ie.- initialization was successful
-
-        return null;
+        
+        if (element.getAttribute(ATT_CLASS) == null && element.getChildren(ATT_CLASS).length == 0) {       
+            logMissingAttribute(element, ATT_CLASS);
+            return null;
+        }
+        return new WorkbenchWizardElement(element);
     }
 
     /**
@@ -116,38 +113,6 @@ public class WizardsRegistryReader extends RegistryReader {
             readWizards();
         }
         return wizards;
-    }
-
-    /**
-     *	Initialize the passed element's properties based on the contents of
-     *	the passed registry.  Answer a boolean indicating whether the element
-     *	was able to be adequately initialized.
-     *
-     *	@return boolean
-     *	@param element WorkbenchWizardElement
-     *	@param extension Extension
-     */
-    protected boolean initializeWizard(WorkbenchWizardElement element,
-            IConfigurationElement config) {
-        element.setID(config.getAttribute(ATT_ID));
-        element.setDescription(getDescription(config));
-
-        // apply CLASS and ICON properties	
-        element.setConfigurationElement(config);
-        String iconName = config.getAttribute(ATT_ICON);
-        if (iconName != null) {
-            IExtension extension = config.getDeclaringExtension();
-            String extendingPluginId = extension.getNamespace();
-            ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    extendingPluginId, iconName);
-            element.setImageDescriptor(image);
-        }
-        // ensure that a class was specified
-        if (element.getConfigurationElement() == null) {
-            logMissingAttribute(config, ATT_CLASS);
-            return false;
-        }
-        return true;
     }
 
     /**

@@ -18,12 +18,14 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 
 /**
  * This manager is used to populate a popup menu manager with actions
@@ -36,6 +38,7 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
      * PopupMenuManager constructor.
      */
     public ObjectActionContributorManager() {
+    	super();
         loadContributors();
     }
 
@@ -397,4 +400,13 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 
         return getCommonClass(testList);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler#addInstance(org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker, org.eclipse.core.runtime.IConfigurationElement)
+	 */
+	public void addInstance(IConfigurationElementTracker tracker, IConfigurationElement element) {
+        ObjectActionContributorReader reader = new ObjectActionContributorReader();
+        reader.setManager(this);
+        reader.readElement(element);
+	}
 }

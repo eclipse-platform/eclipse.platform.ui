@@ -32,17 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
@@ -59,7 +48,15 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -87,26 +84,28 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.themes.IThemeManager;
-
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
+import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -1871,6 +1870,8 @@ public final class Workbench implements IWorkbench {
             WorkbenchPlugin.getDefault().reset();
         }
         WorkbenchThemeManager.getInstance().dispose();
+        PropertyPageContributorManager.getManager().dispose();
+        ObjectActionContributorManager.getManager().dispose();
     }
 
     /*
@@ -2077,7 +2078,7 @@ public final class Workbench implements IWorkbench {
      * @see org.eclipse.ui.IWorkbench#getIntroManager()
      */
     public IIntroManager getIntroManager() {
-        return introManager;
+        return getWorkbenchIntroManager();
     }
 
     /** 
@@ -2085,10 +2086,13 @@ public final class Workbench implements IWorkbench {
      * @since 3.0
      */
     /*package*/WorkbenchIntroManager getWorkbenchIntroManager() {
+    	if (introManager == null) {
+    		introManager = new WorkbenchIntroManager(this);
+    	}
         return introManager;
     }
 
-    private WorkbenchIntroManager introManager = new WorkbenchIntroManager(this);
+    private WorkbenchIntroManager introManager;
 
     /** 
      * @return the intro extension for this workbench.
@@ -2106,8 +2110,8 @@ public final class Workbench implements IWorkbench {
      * @since 3.0
      */
     public void setIntroDescriptor(IntroDescriptor descriptor) {
-        if (introManager.getIntro() != null) {
-            introManager.closeIntro(introManager.getIntro());
+        if (getIntroManager().getIntro() != null) {
+        	getIntroManager().closeIntro(getIntroManager().getIntro());
         }
         introDescriptor = descriptor;
     }
@@ -2116,6 +2120,7 @@ public final class Workbench implements IWorkbench {
      * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
      */
     private IntroDescriptor introDescriptor;
+	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#getThemeManager()
@@ -2203,4 +2208,12 @@ public final class Workbench implements IWorkbench {
             }
         }
     }
+
+	/**
+     * EXPERIMENTAL
+	 * @return
+	 */
+	public IConfigurationElementTracker getConfigurationElementTracker() {		
+		return tracker ;
+	}
 }

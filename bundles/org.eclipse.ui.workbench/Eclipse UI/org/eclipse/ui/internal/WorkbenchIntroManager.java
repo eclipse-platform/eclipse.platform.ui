@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -20,7 +21,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -29,8 +32,8 @@ import org.eclipse.ui.intro.IIntroPart;
  * 
  * @since 3.0
  */
-public class WorkbenchIntroManager implements IIntroManager {
-
+public class WorkbenchIntroManager implements IIntroManager {	
+	
     private final Workbench workbench;
 
     /**
@@ -40,6 +43,13 @@ public class WorkbenchIntroManager implements IIntroManager {
      */
     WorkbenchIntroManager(Workbench workbench) {
         this.workbench = workbench;
+        workbench.getConfigurationElementTracker().registerRemovalHandler(new IConfigurationElementRemovalHandler(){
+
+			public void removeInstance(IConfigurationElement source, Object object) {
+				if (object instanceof IIntroPart) {
+					closeIntro((IIntroPart) object);
+				}
+			}});
     }
 
     /**
@@ -63,7 +73,7 @@ public class WorkbenchIntroManager implements IIntroManager {
                     .findViewReference(IIntroConstants.INTRO_VIEW_ID);
             page.hideView(introView);
             if (reference == null || reference.getPart(false) == null) {
-                introPart = null;
+                introPart = null;                
                 return true;
             }
             return false;
@@ -222,8 +232,13 @@ public class WorkbenchIntroManager implements IIntroManager {
      * value.
      */
     /*package*/IIntroPart createNewIntroPart() throws CoreException {
-        return introPart = workbench.getIntroDescriptor() == null ? null
-                : workbench.getIntroDescriptor().createIntro();
+        IntroDescriptor introDescriptor = workbench.getIntroDescriptor();
+		introPart = introDescriptor == null ? null
+                : introDescriptor.createIntro();
+        if (introPart != null) {
+        	workbench.getConfigurationElementTracker().registerObject(introDescriptor.getConfigurationElement(), introPart);
+        }
+    	return introPart;
     }
 
     /* (non-Javadoc)

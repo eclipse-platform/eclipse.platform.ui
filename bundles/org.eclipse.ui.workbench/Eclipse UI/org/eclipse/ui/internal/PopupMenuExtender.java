@@ -15,6 +15,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,6 +31,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -32,34 +39,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * This class extends a single popup menu
  */
-public class PopupMenuExtender implements IMenuListener {
-
-    //for dynamic UI
-    public static final class PopupMenuExtenderManager {
-
-        private Set extenders = new HashSet();
-
-        public void clearCaches() {
-            for (Iterator i = extenders.iterator(); i.hasNext();) {
-                PopupMenuExtender extender = (PopupMenuExtender) i.next();
-                extender.readStaticActions();
-            }
-        }
-
-        private void addExtender(PopupMenuExtender extender) {
-            extenders.add(extender);
-        }
-
-        private void removeExtender(PopupMenuExtender extender) {
-            extenders.remove(extender);
-        }
-    }
-
-    private static final PopupMenuExtenderManager manager = new PopupMenuExtenderManager();
-
-    public static final PopupMenuExtenderManager getManager() {
-        return manager;
-    }
+public class PopupMenuExtender implements IMenuListener, IRegistryChangeListener {
 
     private final Set menuIds = new HashSet();
 
@@ -72,6 +52,8 @@ public class PopupMenuExtender implements IMenuListener {
     private final IWorkbenchPart part;
 
     private ViewerActionBuilder staticActionBuilder;
+
+	private boolean staticActionsRead;
 
     /**
      * Construct a new menu extender.
@@ -88,8 +70,8 @@ public class PopupMenuExtender implements IMenuListener {
             menuWrapper = new SubMenuManager(menu);
             menuWrapper.setVisible(true);
         }
-        getManager().addExtender(this);
         readStaticActions();
+        Platform.getExtensionRegistry().addRegistryChangeListener(this);
     }
 
     // getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
@@ -228,6 +210,7 @@ public class PopupMenuExtender implements IMenuListener {
      * Notifies the listener that the menu is about to be shown.
      */
     public void menuAboutToShow(IMenuManager mgr) {
+    	readStaticActions();
         testForAdditions();
         if (menuWrapper != null) {
             mgr = menuWrapper;
@@ -242,6 +225,11 @@ public class PopupMenuExtender implements IMenuListener {
      * Read static items for the context menu.
      */
     private void readStaticActions() {
+    	if (staticActionsRead)
+    		return;
+    	
+    	staticActionsRead = true;
+    	
         // If no menu id provided, then there is no contributions
         // to add. Fix for bug #33140.
         if (menuIds.isEmpty()) {
@@ -287,7 +275,50 @@ public class PopupMenuExtender implements IMenuListener {
         if (staticActionBuilder != null) {
             staticActionBuilder.dispose();
         }
-        getManager().removeExtender(this);
+        Platform.getExtensionRegistry().removeRegistryChangeListener(this);
         menu.removeMenuListener(this);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+	 */
+	public void registryChanged(final IRegistryChangeEvent event) {
+		Display display = Display.getDefault();
+		if (part != null) {
+			display = part.getSite().getPage().getWorkbenchWindow().getWorkbench().getDisplay();
+		}
+		//check the delta to see if there are any viewer contribution changes.  if so, null our builder to cause reparsing on the next menu show
+		IExtensionDelta [] deltas = event.getExtensionDeltas();
+		for (int i = 0; i < deltas.length; i++) {
+			IExtensionDelta delta = deltas[i];
+			IExtensionPoint extensionPoint = delta.getExtensionPoint();
+			if (extensionPoint.getNamespace().equals(
+					WorkbenchPlugin.PI_WORKBENCH)
+					&& extensionPoint.getSimpleIdentifier().equals(
+							IWorkbenchConstants.PL_POPUP_MENU)) {
+
+				boolean clearPopups = false;
+				IConfigurationElement [] elements = delta.getExtension().getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					IConfigurationElement element = elements[j];
+					if (element.getName().equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE)) {
+						clearPopups = true;
+						break;
+					}					
+				}
+										
+				if (clearPopups) {
+					display.syncExec(new Runnable() {
+						public void run() {
+							staticActionsRead = false;
+							if (staticActionBuilder != null) {
+								staticActionBuilder.dispose();
+								staticActionBuilder = null;
+							}
+						}
+					});
+				}
+			}
+		}
+	}
 }

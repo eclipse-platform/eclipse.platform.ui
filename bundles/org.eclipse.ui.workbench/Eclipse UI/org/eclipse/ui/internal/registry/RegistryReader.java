@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * done by default.
  */
 public abstract class RegistryReader {
-    protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+    public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
     // for dynamic UI - remove this cache to avoid inconsistency
     //protected static Hashtable extensionPoints = new Hashtable();
@@ -43,20 +43,6 @@ public abstract class RegistryReader {
      * The constructor.
      */
     protected RegistryReader() {
-    }
-
-    /**
-     * This method extracts description as a subelement of
-     * the given element.
-     * @return description string if defined, or empty string
-     * if not.
-     */
-    protected String getDescription(IConfigurationElement config) {
-        IConfigurationElement[] children = config.getChildren(TAG_DESCRIPTION);
-        if (children.length >= 1) {
-            return children[0].getValue();
-        }
-        return "";//$NON-NLS-1$
     }
 
     /**
@@ -102,7 +88,7 @@ public abstract class RegistryReader {
      * provided, such that the order will not change as
      * extensions are added or removed.
      */
-    protected IExtension[] orderExtensions(IExtension[] extensions) {
+    public static IExtension[] orderExtensions(IExtension[] extensions) {
         // By default, the order is based on plugin id sorted
         // in ascending order. The order for a plugin providing
         // more than one extension for an extension point is
@@ -175,5 +161,20 @@ public abstract class RegistryReader {
         extensions = orderExtensions(extensions);
         for (int i = 0; i < extensions.length; i++)
             readExtension(extensions[i]);
+    }
+    
+    /**
+     * Utility for extracting the description child of an element.
+     * 
+     * @param configElement the element
+     * @return the description
+     * @since 3.1
+     */
+    public static String getDescription(IConfigurationElement configElement) {
+		IConfigurationElement[] children = configElement.getChildren(TAG_DESCRIPTION);
+	    if (children.length >= 1) {
+	        return children[0].getValue();
+	    }
+	    return "";//$NON-NLS-1$
     }
 }

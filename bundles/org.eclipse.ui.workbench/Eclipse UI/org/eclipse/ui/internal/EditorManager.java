@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -86,6 +87,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
@@ -109,7 +111,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * <li>The editor should persist its own state plus editor input.</li>
  * </ol>
  */
-public class EditorManager {
+public class EditorManager implements IConfigurationElementRemovalHandler {
     private EditorAreaHelper editorPresentation;
 
     private WorkbenchWindow window;
@@ -151,6 +153,8 @@ public class EditorManager {
         this.window = window;
         this.page = workbenchPage;
         this.editorPresentation = pres;
+        
+        page.getConfigurationElementTracker().registerRemovalHandler(this);
     }
 
     /**
@@ -916,6 +920,11 @@ public class EditorManager {
                     WorkbenchMessages
                             .format(
                                     "EditorManager.unableToInstantiate", new Object[] { desc.getId(), ex[0] })); //$NON-NLS-1$
+        
+        IConfigurationElement element = desc.getConfigurationElement();
+        if (element != null) {
+        	page.getConfigurationElementTracker().registerObject(element, editor[0]);
+        }
         return editor[0];
     }
 
@@ -1823,4 +1832,18 @@ public class EditorManager {
             return ((Editor) e).getMemento();
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
+	 */
+	public void removeInstance(IConfigurationElement source, Object object) {
+		if (object instanceof IEditorPart) {		
+			//close the editor and clean up the editor history
+			
+			IEditorPart editor = (IEditorPart) object;
+			IEditorInput input = editor.getEditorInput();
+			page.closeEditor(editor, true);			
+			((Workbench)window.getWorkbench()).getEditorHistory().remove(input);
+		}
+	}
 }

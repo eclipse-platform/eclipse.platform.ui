@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
@@ -35,6 +36,7 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -42,7 +44,7 @@ import org.eclipse.ui.internal.util.Util;
  * It implements a reference counting strategy so that one view can be shared
  * by more than one client.
  */
-/*package*/class ViewFactory {
+/*package*/class ViewFactory implements IConfigurationElementRemovalHandler {
 
     private class ViewReference extends WorkbenchPartReference implements
             IViewReference {
@@ -264,6 +266,7 @@ import org.eclipse.ui.internal.util.Util;
         this.page = page;
         this.viewReg = reg;
         counter = new ReferenceCounter();
+        page.getConfigurationElementTracker().registerRemovalHandler(this);
     }
 
     /**
@@ -323,6 +326,7 @@ import org.eclipse.ui.internal.util.Util;
                     try {
                         UIStats.start(UIStats.CREATE_PART, label);
                         view = desc.createView();
+                        page.getConfigurationElementTracker().registerObject(desc.getConfigurationElement(), view);
                     } finally {
                         UIStats.end(UIStats.CREATE_PART, label);
                     }
@@ -659,5 +663,29 @@ import org.eclipse.ui.internal.util.Util;
 
         return memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
+	 */
+	public void removeInstance(IConfigurationElement source, Object object) {
+		if (object instanceof IViewPart) {
+			IViewPart part = (IViewPart) object;
+//			String primaryViewId = part.getViewSite().getId();
+//			String secondaryViewId = part.getViewSite().getSecondaryId();
+//			IViewReference viewRef = page.findViewReference(
+//					primaryViewId, secondaryViewId);
+//			IPerspectiveDescriptor[] descs = page.getOpenedPerspectives();
+//			Perspective active = page.getActivePerspective();
+//			for (int i = 0; i < descs.length; i++) {
+//				Perspective nextPerspective = page.findPerspective(descs[i]);
+//
+//				if (nextPerspective == null || active == nextPerspective)
+//					continue;
+//
+//				page.hideView(nextPerspective, viewRef);
+//			}
+			page.hideView(part);
+		}		
+	}
 }
 

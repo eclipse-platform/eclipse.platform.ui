@@ -12,12 +12,10 @@ package org.eclipse.ui.internal.intro;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -34,13 +32,7 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
     private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
 
-    private IConfigurationElement configElement;
-
-    private String id;
-
-    private String pluginId;
-
-    private String iconName;
+    private IConfigurationElement element;
 
     private ImageDescriptor imageDescriptor;
 
@@ -49,23 +41,12 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      */
     public IntroDescriptor(IConfigurationElement configElement)
             throws CoreException {
-        this.configElement = configElement;
-        loadFromExtension();
-    }
+    	element = configElement;  
 
-    /**
-     * load a intro descriptor from the registry.
-     */
-    private void loadFromExtension() throws CoreException {
-        id = configElement.getAttribute(ATT_ID);
-        pluginId = configElement.getDeclaringExtension().getNamespace();
-        String className = configElement.getAttribute(ATT_CLASS);
-        iconName = configElement.getAttribute(ATT_ICON);
-        // Sanity check.
-        if (className == null) {
+    	if (configElement.getAttribute(ATT_CLASS) == null) {
             throw new CoreException(new Status(IStatus.ERROR, configElement
                     .getDeclaringExtension().getNamespace(), 0,
-                    "Invalid extension (Missing class name): " + id, //$NON-NLS-1$
+                    "Invalid extension (Missing class name): " + getId(), //$NON-NLS-1$
                     null));
         }
     }
@@ -74,15 +55,14 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      * @see org.eclipse.ui.intro.IIntroDescriptor#createIntro()
      */
     public IIntroPart createIntro() throws CoreException {
-        return (IIntroPart) WorkbenchPlugin.createExtension(configElement,
-                ATT_CLASS);
+    	return (IIntroPart) element.createExecutableExtension(ATT_CLASS);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IIntroDescriptor#getId()
      */
-    public String getId() {
-        return id;
+    public String getId() {    	
+        return element.getAttribute(ATT_ID);
     }
 
     /* (non-Javadoc)
@@ -90,13 +70,14 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      */
     public ImageDescriptor getImageDescriptor() {
         if (imageDescriptor != null)
-            return imageDescriptor;
-        if (iconName == null)
+            return imageDescriptor;        
+		String iconName = element.getAttribute(ATT_ICON);
+		if (iconName == null)
             return null;
-        IExtension extension = configElement.getDeclaringExtension();
-        String extendingPluginId = extension.getNamespace();
+        
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                extendingPluginId, iconName);
+        		element.getDeclaringExtension().getNamespace(),
+        		iconName);
         return imageDescriptor;
     }
 
@@ -104,13 +85,23 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-        return id;
+        return element.getAttribute(ATT_ID);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return pluginId;
+        return element.getNamespace();
+    }
+    
+    /**
+     * Returns the configuration element.
+     * 
+     * @return the configuration element
+     * @since 3.1
+     */
+    public IConfigurationElement getConfigurationElement() {
+    	return element;
     }
 }

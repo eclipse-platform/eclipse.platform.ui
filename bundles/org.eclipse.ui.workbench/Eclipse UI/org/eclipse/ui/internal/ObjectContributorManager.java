@@ -15,14 +15,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementAdditionHandler;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
 
 /**
  * This class is a default implementation of <code>IObjectContributorManager</code>.
@@ -44,9 +49,24 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * @see IObjectContributor
  * @see IObjectContributorManager
  */
-public abstract class ObjectContributorManager {
-    // Empty list that is immutable
-    private static final List EMPTY_LIST = Arrays.asList(new Object[0]);
+public abstract class ObjectContributorManager implements IConfigurationElementRemovalHandler, IConfigurationElementAdditionHandler {
+	
+	/** 
+	 * @since 3.1
+	 */
+	private class ContributorRecord {
+		/**
+		 * @param contributor
+		 * @param targetType
+		 */
+		public ContributorRecord(IObjectContributor contributor, String targetType) {
+			this.contributor = contributor;
+			this.objectClassName = targetType;
+		}
+		
+		String objectClassName;
+		IObjectContributor contributor;
+	}
 
     /** Table of contributors. */
     protected Map contributors;
@@ -59,15 +79,20 @@ public abstract class ObjectContributorManager {
     
     /** Cache of adaptable class contributor search paths; <code>null</code> if none. */
     protected Map adaptableLookup;
+    
+    protected Set contributorRecordSet;
 
     /** 
      * Constructs a new contributor manager.
      */
     public ObjectContributorManager() {
         contributors = new Hashtable(5);
+        contributorRecordSet = new HashSet(5);
         objectLookup = null;
         resourceAdapterLookup = null;
         adaptableLookup = null;
+        Workbench.getInstance().getConfigurationElementTracker().registerAdditionHandler(this);
+        Workbench.getInstance().getConfigurationElementTracker().registerRemovalHandler(this);
     }
 
     /**
@@ -238,13 +263,25 @@ public abstract class ObjectContributorManager {
      */
     public void registerContributor(IObjectContributor contributor,
             String targetType) {
-        Vector contributorList = (Vector) contributors.get(targetType);
+        List contributorList = (List) contributors.get(targetType);
         if (contributorList == null) {
-            contributorList = new Vector(5);
+            contributorList = new ArrayList(5);
             contributors.put(targetType, contributorList);
         }
-        contributorList.addElement(contributor);
+        contributorList.add(contributor);
         flushLookup();
+        
+        //hook the object listener
+        if (contributor instanceof IAdaptable) {
+        	IConfigurationElement element = (IConfigurationElement) ((IAdaptable) contributor)
+					.getAdapter(IConfigurationElement.class);
+			if (element == null)
+				return;
+			ContributorRecord contributorRecord = new ContributorRecord(contributor, targetType);
+			contributorRecordSet.add(contributorRecord);
+			Workbench.getInstance().getConfigurationElementTracker()
+					.registerObject(element, contributorRecord);
+        }
     }
 
     /**
@@ -259,11 +296,11 @@ public abstract class ObjectContributorManager {
      * @see IContributorManager#unregisterContributor
      */
     public void unregisterContributor(IObjectContributor contributor,
-            String targetType) {
-        Vector contributorList = (Vector) contributors.get(targetType);
+            String targetType) {    	
+        List contributorList = (List) contributors.get(targetType);
         if (contributorList == null)
             return;
-        contributorList.removeElement(contributor);
+        contributorList.remove(contributor);
         flushLookup();
     }
 
@@ -317,7 +354,7 @@ public abstract class ObjectContributorManager {
 		if (objectList == null) {
 			objectList = addContributorsFor(objectClass);
 			if (objectList.size() == 0)
-				objectList = EMPTY_LIST;
+				objectList = Collections.EMPTY_LIST;
 			cacheObjectLookup(objectClass, objectList);
 		}
 		// return a shallow copy of the contributors, ensure that the caller
@@ -344,7 +381,7 @@ public abstract class ObjectContributorManager {
 		if (resourceList == null) {
 			resourceList = addContributorsFor(resourceClass);
 			if (resourceList.size() == 0)
-				resourceList = EMPTY_LIST;
+				resourceList = Collections.EMPTY_LIST;
 			else
 				resourceList = filterOnlyAdaptableContributors(resourceList);
 			cacheResourceAdapterLookup(resourceClass, resourceList);
@@ -376,10 +413,10 @@ public abstract class ObjectContributorManager {
 			// ignore resource adapters because these must be adapted via the
 			// IContributorResourceAdapter.
 			if (LegacyResourceSupport.isResourceType(adapterType))
-				return EMPTY_LIST;
+				return Collections.EMPTY_LIST;
 			adaptableList = (List) contributors.get(adapterType);
 			if (adaptableList == null || adaptableList.size() == 0)
-				adaptableList = EMPTY_LIST;
+				adaptableList = Collections.EMPTY_LIST;
 			else
 				adaptableList = filterOnlyAdaptableContributors(adaptableList);
 			cacheAdaptableLookup(adapterType, adaptableList);
@@ -439,6 +476,30 @@ public abstract class ObjectContributorManager {
 				adaptableContributors.add(c);
 			}
 		}
-		return adaptableContributors == null ? EMPTY_LIST : adaptableContributors;
+		return adaptableContributors == null ? Collections.EMPTY_LIST : adaptableContributors;
 	}
+	
+
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
+	 */
+	public void removeInstance(IConfigurationElement source, Object object) {
+		if (object instanceof ContributorRecord) {
+			ContributorRecord contributorRecord = (ContributorRecord) object;
+			unregisterContributor((contributorRecord).contributor,
+					(contributorRecord).objectClassName);
+			contributorRecordSet.remove(contributorRecord);
+		}
+	}
+	
+	/**
+	 * Remove listeners and dispose of this manager.
+	 * 
+	 * @since 3.1
+	 */
+	public void dispose() {
+        Workbench.getInstance().getConfigurationElementTracker().unregisterAdditionHandler(this);
+        Workbench.getInstance().getConfigurationElementTracker().unregisterRemovalHandler(this);
+	}	
 }
