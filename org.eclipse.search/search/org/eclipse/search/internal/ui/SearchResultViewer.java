@@ -56,6 +56,7 @@ class SearchResultViewer extends TableViewer {
 	private SearchAgainAction fSearchAgainAction;
 	private RemoveAllSearchesAction fRemoveAllSearchesAction;
 	private RemoveMatchAction fRemoveMatchAction;
+	private RemoveResultAction fRemoveEntriesAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private int fMarkerToShow;
@@ -88,6 +89,8 @@ class SearchResultViewer extends TableViewer {
 		fGotoMarkerAction.setEnabled(false);
 		fRemoveMatchAction= new RemoveMatchAction(this);
 		fRemoveMatchAction.setEnabled(false);
+		fRemoveEntriesAction= new RemoveResultAction(this);
+		fRemoveEntriesAction.setEnabled(false);
 		fRemoveAllSearchesAction= new RemoveAllSearchesAction();
 		fSearchAgainAction= new SearchAgainAction();
 		fSearchAgainAction.setEnabled(hasSearch);
@@ -204,7 +207,7 @@ class SearchResultViewer extends TableViewer {
 			menu.add(fGotoMarkerAction);
 			if (enableRemoveMatchMenuItem())
 				menu.add(fRemoveMatchAction);
-			menu.add(new RemoveResultAction(this));				
+			menu.add(fRemoveEntriesAction);
 			menu.add(new Separator());
 		}
 		// If we have elements
@@ -250,7 +253,11 @@ class SearchResultViewer extends TableViewer {
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.F5) {
 					fSearchAgainAction.run();
-					return;
+					return;	// performance
+				}
+				if (e.character == SWT.DEL) {
+					fRemoveEntriesAction.run();
+					return; // performance
 				}
 			}
 		});
