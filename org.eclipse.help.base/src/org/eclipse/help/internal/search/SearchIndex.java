@@ -148,7 +148,7 @@ public class SearchIndex {
 				doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
 				doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
 				doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
-				// doc.add(Field.UnIndexed("summary", parser.getSummary()));
+				doc.add(Field.UnIndexed("summary", parser.getSummary()));
 				iw.addDocument(doc);
 			} finally {
 				parser.closeDocument();

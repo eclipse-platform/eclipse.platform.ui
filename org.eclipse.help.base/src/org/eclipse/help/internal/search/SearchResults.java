@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.Hits;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -106,12 +106,13 @@ public class SearchResults implements ISearchHitCollector {
 			if (label == null || "".equals(label)) { //$NON-NLS-1$
 				label = href;
 			}
-
+			String summary = doc.get("summary");			
+			
 			j++;
 			
 			// Set document href
 			href = href + "?resultof=" + urlEncodedWords; //$NON-NLS-1$
-			searchHitList.add(new SearchHit(href, label, score, toc));
+			searchHitList.add(new SearchHit(href, label, summary, score, toc));
 		}
 		searchHits = (SearchHit[]) searchHitList
 				.toArray(new SearchHit[searchHitList.size()]);

@@ -21,17 +21,19 @@ public class SearchHit implements ISearchEngineResult {
 	private String label;
 	private float score;
 	private IToc toc;
+	private String summary;
 	/**
 	 * Constructor
 	 * 
 	 * @param toc
 	 *            TOC containing topic or null
 	 */
-	public SearchHit(String href, String label, float score, IToc toc) {
+	public SearchHit(String href, String label, String summary, float score, IToc toc) {
 		this.href = href;
 		this.label = label;
 		this.score = score;
 		this.toc = toc;
+		this.summary = summary;
 	}
 	/**
 	 * Gets the href.
@@ -87,9 +89,21 @@ public class SearchHit implements ISearchEngineResult {
      * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getDescription()
      */
     public String getDescription() {
-        return null;
+        return getSummary();
     }
     public IHelpResource getCategory() {
     	return toc;
      }
+	/**
+	 * @return Returns the summary.
+	 */
+	public String getSummary() {
+		return summary;
+	}
+	/**
+	 * @param summary The summary to set.
+	 */
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
 }
