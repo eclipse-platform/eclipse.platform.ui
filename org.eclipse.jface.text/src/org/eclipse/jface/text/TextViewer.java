@@ -3930,7 +3930,7 @@ public class TextViewer extends Viewer implements
 	 * @param forwardSearch the search direction
 	 * @param caseSensitive <code>true</code> if case sensitive, <code>false</code> otherwise
 	 * @param wholeWord <code>true</code> if match must be whole words, <code>false</code> otherwise
-	 * @return the widget offset of the first match
+	 * @return the model offset of the first match
 	 * @deprecated as of 3.0 use {@link #findAndSelect(int, String, boolean, boolean, boolean, boolean)}
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) {
@@ -3953,7 +3953,7 @@ public class TextViewer extends Viewer implements
 	 * @param caseSensitive <code>true</code> if case sensitive, <code>false</code> otherwise
 	 * @param wholeWord <code>true</code> if matches must be whole words, <code>false</code> otherwise
 	 * @param regExSearch <code>true</code> if <code>findString</code> is a regular expression, <code>false</code> otherwise
-	 * @return the widget offset of the first match
+	 * @return the model offset of the first match
 	 *  
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
@@ -3997,7 +3997,7 @@ public class TextViewer extends Viewer implements
 	 * @param rangeOffset the search scope offset
 	 * @param rangeLength the search scope length
 	 * @param regExSearch <code>true</code> if <code>findString</code> is a regular expression, <code>false</code> otherwise
-	 * @return the widget offset of the first match
+	 * @return the model offset of the first match
 	 * @since 3.0
 	 */
 	protected int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
