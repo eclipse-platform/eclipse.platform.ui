@@ -110,7 +110,7 @@ is not specified, the marker type is &lt;b&gt;not&lt;/b&gt; persisted.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Following is an example of a builder configuration: 
+         Following is an example of a marker configuration: 
 
 &lt;p&gt;
 &lt;pre&gt;
@@ -151,7 +151,7 @@ include additional markers as required.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2003 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
