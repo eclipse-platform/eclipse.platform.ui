@@ -26,7 +26,7 @@ public abstract class ChangeSet {
 
     private String name;
     
-    private SyncInfoTree set = new SyncInfoTree();
+    private final SyncInfoTree set = new SyncInfoTree();
 
     /**
      * Create a change set with no name. Subclasses

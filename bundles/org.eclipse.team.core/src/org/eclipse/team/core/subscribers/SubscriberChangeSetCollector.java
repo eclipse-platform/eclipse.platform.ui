@@ -65,8 +65,9 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
             if (dispatchEvents.isEmpty()) {
                 return false;
             }
+            SyncInfoTree[] locked = null;
             try {
-                beginDispath();
+                locked = beginDispath();
                 for (Iterator iter = dispatchEvents.iterator(); iter.hasNext();) {
                     Event event = (Event) iter.next();
 	                switch (event.getType()) {
@@ -82,7 +83,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
                 }
             } finally {
                 try {
-                    endDispatch(monitor);
+                    endDispatch(locked, monitor);
                 } finally {
                     dispatchEvents.clear();
                 }
@@ -90,21 +91,49 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
             return true;
         }
 
-        private void beginDispath() {
+        /*
+         * Begin input on all the sets and return the sync sets that were 
+         * locked. If this method throws an exception then the client
+         * can assume that no sets were locked
+         */
+        private SyncInfoTree[] beginDispath() {
             ChangeSet[] sets = getSets();
-            for (int i = 0; i < sets.length; i++) {
-                ChangeSet set = sets[i];
-                set.getSyncInfoSet().beginInput();
+            List lockedSets = new ArrayList();
+            try {
+                for (int i = 0; i < sets.length; i++) {
+                    ChangeSet set = sets[i];
+                    SyncInfoTree syncInfoSet = set.getSyncInfoSet();
+                    lockedSets.add(syncInfoSet);
+                    syncInfoSet.beginInput();
+                }
+                return (SyncInfoTree[]) lockedSets.toArray(new SyncInfoTree[lockedSets.size()]);
+            } catch (RuntimeException e) {
+                try {
+                    for (Iterator iter = lockedSets.iterator(); iter.hasNext();) {
+                        SyncInfoTree tree = (SyncInfoTree) iter.next();
+                        try {
+                            tree.endInput(null);
+                        } catch (Throwable e1) {
+                            // Ignore so that original exception is not masked
+                        }
+                    }
+                } catch (Throwable e1) {
+                    // Ignore so that original exception is not masked
+                }
+                throw e;
             }
         }
 
-        private void endDispatch(IProgressMonitor monitor) {
-            ChangeSet[] sets = getSets();
-            monitor.beginTask(null, 100 * sets.length);
-            for (int i = 0; i < sets.length; i++) {
-                ChangeSet set = sets[i];
+        private void endDispatch(SyncInfoTree[] locked, IProgressMonitor monitor) {
+            if (locked == null) {
+                // The begin failed so there's nothing to unlock
+                return;
+            }
+            monitor.beginTask(null, 100 * locked.length);
+            for (int i = 0; i < locked.length; i++) {
+                SyncInfoTree tree = locked[i];
                 try {
-                    set.getSyncInfoSet().endInput(Policy.subMonitorFor(monitor, 100));
+                    tree.endInput(Policy.subMonitorFor(monitor, 100));
                 } catch (RuntimeException e) {
                     // Don't worry about ending every set if an error occurs.
                     // Instead, log the error and suggest a restart.

@@ -55,7 +55,8 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
             } else {
                 syncInfoSet = activeCollector.getSyncInfoSet(set);
             }
-            createChangeSetModelElement(set, syncInfoSet);
+            if (syncInfoSet != null)
+                createChangeSetModelElement(set, syncInfoSet);
         }
 
         /* (non-Javadoc)

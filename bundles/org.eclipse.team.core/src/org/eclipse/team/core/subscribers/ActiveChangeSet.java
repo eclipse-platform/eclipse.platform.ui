@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.osgi.service.prefs.Preferences;
 
@@ -139,8 +140,9 @@ public class ActiveChangeSet extends ChangeSet {
         comment = prefs.get(CTX_COMMENT, null);
         String resourcePaths = prefs.get(CTX_RESOURCES, null);
         if (resourcePaths != null) {
+            SyncInfoTree syncInfoSet = getSyncInfoSet();
             try {
-                getSyncInfoSet().beginInput();
+                syncInfoSet.beginInput();
 	            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	            StringTokenizer tokenizer = new StringTokenizer(resourcePaths, "\n"); //$NON-NLS-1$
 	            while (tokenizer.hasMoreTokens()) {
@@ -157,7 +159,7 @@ public class ActiveChangeSet extends ChangeSet {
 	                }
 	            }
             } finally {
-                getSyncInfoSet().endInput(null);
+                syncInfoSet.endInput(null);
             }
         }
     }

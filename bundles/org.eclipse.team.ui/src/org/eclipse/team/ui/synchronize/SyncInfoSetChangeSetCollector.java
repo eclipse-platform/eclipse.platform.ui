@@ -225,7 +225,7 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
      * @param monitor a progress monitor
      */
     protected final void performUpdate(IWorkspaceRunnable runnable, boolean preserveExpansion, IProgressMonitor monitor) {
-        provider.performUpdate(runnable, preserveExpansion);
+        provider.performUpdate(runnable, preserveExpansion, false /* run in the handler thread and refresh at the end */);
     }
     
     /* (non-javadoc)

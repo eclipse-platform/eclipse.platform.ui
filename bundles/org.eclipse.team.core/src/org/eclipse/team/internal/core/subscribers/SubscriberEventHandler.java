@@ -354,8 +354,9 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 */
 	private void dispatchEvents(SubscriberEvent[] events, IProgressMonitor monitor) {
 		// this will batch the following set changes until endInput is called.
-		try {
-			syncSetInput.getSyncSet().beginInput();
+		SubscriberSyncInfoSet syncSet = syncSetInput.getSyncSet();
+        try {
+			syncSet.beginInput();
 			for (int i = 0; i < events.length; i++) {
 				SubscriberEvent event = events[i];
 				switch (event.getType()) {
@@ -363,12 +364,12 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 						syncSetInput.collect(event.getResult(), monitor);
 						break;
 					case SubscriberEvent.REMOVAL :
-						syncSetInput.getSyncSet().remove(event.getResource(), event.getDepth());
+						syncSet.remove(event.getResource(), event.getDepth());
 						break;
 				}
 			}
 		} finally {
-			syncSetInput.getSyncSet().endInput(monitor);
+			syncSet.endInput(monitor);
 		}
 	}
 	

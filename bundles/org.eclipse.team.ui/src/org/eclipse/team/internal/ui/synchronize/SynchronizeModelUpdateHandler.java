@@ -595,16 +595,50 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      * which esults in the view being updated.
      * @param runnable the runnable which updates the model.
      * @param preserveExpansion whether the expansion of the view should be preserver
+     * @param updateInUIThread if <code>true</code>, the model will be updated in the
+     * UI thread. Otherwise, the model will be updated in the handler thread and the view
+     * updated in the UI thread at the end.
      */
-    public void performUpdate(final IWorkspaceRunnable runnable, boolean preserveExpansion) {
-        queueEvent(new RunnableEvent(getUpdateRunnable(runnable, true), true), true);
+    public void performUpdate(final IWorkspaceRunnable runnable, boolean preserveExpansion, boolean updateInUIThread) {
+        if (updateInUIThread) {
+            queueEvent(new RunnableEvent(getUIUpdateRunnable(runnable, preserveExpansion), true), true);
+        } else {
+	        queueEvent(new RunnableEvent(getBackgroundUpdateRunnable(runnable, preserveExpansion), true), true);
+        }
+    }
+
+    /**
+     * Wrap the runnable in an outer runnable that preserves expansion.
+     */
+    private IWorkspaceRunnable getUIUpdateRunnable(final IWorkspaceRunnable runnable, final boolean preserveExpansion) {
+        return new IWorkspaceRunnable() {
+            public void run(final IProgressMonitor monitor) throws CoreException {
+                final CoreException[] exception = new CoreException[] { null };
+                runViewUpdate(new Runnable() {
+                    public void run() {
+    	                IResource[] resources = null;
+    	                if (preserveExpansion)
+    	                    resources = provider.getExpandedResources();
+    	                try {
+    		                runnable.run(monitor);
+    	                } catch (CoreException e) {
+                            exception[0] = e;
+                        }
+                        if (preserveExpansion)
+                            provider.expandResources(resources);
+                    }
+                });
+                if (exception[0] != null)
+                    throw exception[0];
+            }
+        };
     }
 
     /*
      * Wrap the runnable in an outer runnable that preserves expansion if requested
      * and refreshes the view when the update is completed.
      */
-    private IWorkspaceRunnable getUpdateRunnable(final IWorkspaceRunnable runnable, final boolean preserveExpansion) {
+    private IWorkspaceRunnable getBackgroundUpdateRunnable(final IWorkspaceRunnable runnable, final boolean preserveExpansion) {
         return new IWorkspaceRunnable() {
             public void run(IProgressMonitor monitor) throws CoreException {
                 IResource[] resources = null;

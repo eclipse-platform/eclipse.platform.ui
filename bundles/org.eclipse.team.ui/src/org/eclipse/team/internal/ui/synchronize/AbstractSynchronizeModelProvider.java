@@ -934,7 +934,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
      * @param runnable the runnable which updates the model.
      * @param preserveExpansion whether the expansion of the view should be preserver
      */
-    public void performUpdate(IWorkspaceRunnable runnable, boolean preserveExpansion) {
-        updateHandler.performUpdate(runnable, preserveExpansion); 
+    public void performUpdate(IWorkspaceRunnable runnable, boolean preserveExpansion, boolean runInUIThread) {
+        updateHandler.performUpdate(runnable, preserveExpansion, runInUIThread); 
     }
 }
