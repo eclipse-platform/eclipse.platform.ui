@@ -87,7 +87,7 @@ public class DefaultPartPresentation extends StackPresentation {
 	private Listener dragListener;
 	private List activationList = new ArrayList(10);
 	private boolean activationListChange = true;
-	static private String ACTIV_ID = "activationNum";
+	static private String ACTIV_ID = "activationNum"; //$NON-NLS-1$
 	
 	/**
 	 * While we are dragging a tab from this folder, this holdes index of the tab

@@ -926,4 +926,16 @@ void add(LayoutPart child, int relationship, int left, int right, LayoutPart rel
 	addChild(info);
 }
 
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
+ */
+public void testInvariants() {
+	super.testInvariants();
+	
+	LayoutPart[] children = getChildren();
+	
+	for (int idx = 0; idx < children.length; idx++) {
+		children[idx].testInvariants();
+	}
+}
 }

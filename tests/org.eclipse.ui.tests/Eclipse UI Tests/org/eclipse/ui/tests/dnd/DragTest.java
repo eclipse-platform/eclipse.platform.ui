@@ -162,6 +162,8 @@ public class DragTest extends UITestCase {
 		} else {
 			fail("data/dragtests.xml is missing data for test" + getName());
 		}
+		
+		page.getActivePerspective().testInvariants();
 	}
 	
 	public void doSetUp() throws Exception {

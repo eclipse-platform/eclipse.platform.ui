@@ -174,46 +174,51 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     		LayoutPart child = children[idx];
     		
     		// No null children allowed
-    		Assert.isNotNull(child);
+    		Assert.isNotNull(child, "null children are not allowed in PartStack"); //$NON-NLS-1$
     		
     		// This object can only contain placeholders or PartPanes
-    		Assert.isTrue(child instanceof PartPlaceholder || child instanceof PartPane);
+    		Assert.isTrue(child instanceof PartPlaceholder || child instanceof PartPane, 
+    				"PartStack can only contain PartPlaceholders or PartPanes"); //$NON-NLS-1$
     		
     		// Ensure that all the PartPanes have an associated presentable part 
     		IPresentablePart part = child.getPresentablePart();
     		if (child instanceof PartPane) {
-    			Assert.isNotNull(part);
+    			Assert.isNotNull(part, "All PartPanes must have a non-null IPresentablePart"); //$NON-NLS-1$
     		}
     		
     		// Ensure that the child's backpointer points to this stack
     		ILayoutContainer childContainer = child.getContainer();
+
+			// Disable tests for placeholders -- PartPlaceholder backpointers don't
+			// obey the usual rules -- they sometimes point to a container placeholder
+			// for this stack instead of the real stack.
+			if (!(child instanceof PartPlaceholder)) {
     		
-    		if (isDisposed()) {
-    			// Disable tests for placeholders -- PartPlaceholder backpointers don't
-    			// obey the usual rules -- they sometimes point to a container placeholder
-    			// for this stack instead of the real stack.
-    			if (!(child instanceof PartPlaceholder)) {
+	    		if (isDisposed()) {
+	
 	    			// Currently, we allow null backpointers if the widgetry is disposed.
 	    			// However, it is never valid for the child to have a parent other than
 	    			// this object
 	    			if (childContainer != null) {
-	    				Assert.isTrue(childContainer == this);
+	    				Assert.isTrue(childContainer == this, 
+	    						"PartStack has a child that thinks it has a different parent"); //$NON-NLS-1$
 	    			}
-    			}
-    		} else {
-    			// If the widgetry exists, the child's backpointer must point to us
-    			Assert.isTrue(childContainer == this);
-    			
-        		// If this child has focus, then ensure that it is selected and that we have
-        		// the active appearance.
-        		
-        		if (SwtUtil.isChild(child.getControl(), focusControl)) {
-        			Assert.isTrue(child == current);
-//  focus check commented out since it fails when focus workaround in LayoutPart.setVisible is not present       			
-//        			Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
-        		}
-    		}
-    		
+	    		} else {
+	    			// If the widgetry exists, the child's backpointer must point to us
+    				Assert.isTrue(childContainer == this, 
+    					"PartStack has a child that thinks it has a different parent"); //$NON-NLS-1$
+    				
+	        		// If this child has focus, then ensure that it is selected and that we have
+	        		// the active appearance.
+	        		
+	        		if (SwtUtil.isChild(child.getControl(), focusControl)) {
+	        			Assert.isTrue(child == current, "The part with focus is not the selected part"); //$NON-NLS-1$
+	//  focus check commented out since it fails when focus workaround in LayoutPart.setVisible is not present       			
+	//        			Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
+	        		}
+	    		}
+			}
+			
     		// Ensure that "current" points to a valid child
     		if (child == current) {
     			currentFound = true;
@@ -232,7 +237,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     			
     			// If the presentation controls have focus, ensure that we have the active appearance
     			if (SwtUtil.isChild(presentation.getControl(), focusControl)) {
-    				Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
+    				Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS,
+    						"The presentation has focus but does not have the active appearance"); //$NON-NLS-1$
     			}
     		}
     	}
@@ -242,8 +248,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 	 * @see org.eclipse.ui.internal.LayoutPart#describeLayout(java.lang.StringBuffer)
 	 */
 	public void describeLayout(StringBuffer buf) {		
-		testInvariants();
-		
 		int activeState = getActive();
 		if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
 			buf.append("active "); //$NON-NLS-1$

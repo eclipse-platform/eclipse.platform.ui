@@ -1745,4 +1745,12 @@ public void describeLayout(StringBuffer buf) {
 	getPresentation().getLayout().describeLayout(buf);
 }
 
+/**
+ * Sanity-checks the LayoutParts in this perspective. Throws an Assertation exception
+ * if an object's internal state is invalid.
+ */
+public void testInvariants() {
+	getPresentation().getLayout().testInvariants();
+}
+
 }
