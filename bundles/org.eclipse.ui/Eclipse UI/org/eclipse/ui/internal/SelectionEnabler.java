@@ -31,7 +31,7 @@ public class SelectionEnabler {
 	public static final int ANY_NUMBER =  -2;
 	public static final int NONE_OR_ONE = -3;
 	public static final int NONE        = -4;
-	private List classes;
+	private List classes = new ArrayList();;
 	private ActionExpression enablementExpression;
 	private int mode=UNKNOWN;
 
@@ -142,7 +142,7 @@ private boolean isEnabledFor(IStructuredSelection ssel) {
 		return enablementExpression.isEnabledFor(ssel);
 
 	// Compare selection to class requirements.
-	if (classes==null) return true;
+	if (classes.isEmpty()) return true;
 	for (Iterator elements=ssel.iterator(); elements.hasNext();) {
 		Object obj = elements.next();
 		if (obj instanceof IAdaptable) {
