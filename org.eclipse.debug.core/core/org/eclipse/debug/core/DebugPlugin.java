@@ -547,7 +547,7 @@ public class DebugPlugin extends Plugin {
 	 *  cancelled
 	 * @see Runtime
 	 * 
-	 * @since 2.2
+	 * @since 3.0
 	 */
 	public static Process exec(String[] cmdLine, File workingDirectory, String[] envp) throws CoreException {
 		Process p= null;
