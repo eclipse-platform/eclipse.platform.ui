@@ -88,8 +88,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			public void widgetSelected(SelectionEvent e) {
 				Rectangle shellPosition = getShell().getBounds();
 				job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.FALSE);
-				decrementNestingDepth();
-				close();
+				finishedRun();
 				ProgressManagerUtil.animateDown(shellPosition);
 			}
 		});
@@ -128,7 +127,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 						Shell currentShell = getShell();
 						if (currentShell == null || currentShell.isDisposed())
 							return Status.CANCEL_STATUS;
-						close();
+						finishedRun();
 						return Status.OK_STATUS;
 					}
 				};
@@ -196,7 +195,6 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					 */
 					public void run() {
 						getProgressMonitor().done();
-						finishedRun();
 					}
 				});
 			}
@@ -334,7 +332,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			//if the job completed before we had a chance to add
 			//the listener, just remove the listener and return
 			job.removeJobChangeListener(listener);
-			close();
+			finishedRun();
 		}
 		
 		return result;
