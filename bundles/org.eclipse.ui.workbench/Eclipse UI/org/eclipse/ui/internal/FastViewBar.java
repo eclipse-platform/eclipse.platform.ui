@@ -54,7 +54,7 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
  * 
  * @see org.eclipse.ui.internal.FastViewPane
  */
-class FastViewBar implements IWindowTrim {
+public class FastViewBar implements IWindowTrim {
 	private ToolBarManager fastViewBar;
 	private Menu fastViewBarMenu;
 	private Menu sidesMenu; 
@@ -80,14 +80,7 @@ class FastViewBar implements IWindowTrim {
 	private IChangeListener orientationChangeListener = new IChangeListener() {
 		public void update(boolean changed) {
 			if (changed && selectedView != null) {
-				viewOrientation.put(selectedView.getId(), currentOrientation.getState());
-				Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
-				
-				IViewReference ref = persp.getActiveFastView();
-				if (ref != null) {
-					persp.setActiveFastView(null);
-				}
-				persp.setActiveFastView(selectedView);
+				setOrientation(selectedView, currentOrientation.get());
 			}
 		}
 	};
@@ -113,6 +106,25 @@ class FastViewBar implements IWindowTrim {
 		});
 	}
 	
+	/**
+	 * @param selectedView2
+	 * @param object
+	 */
+	public void setOrientation(IViewReference refToSet, int newState) {
+		if (newState == getOrientation(refToSet)) {
+			return;
+		}
+		
+		viewOrientation.put(refToSet.getId(), new Integer(newState));
+		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+		
+		IViewReference ref = persp.getActiveFastView();
+		if (ref != null) {
+			persp.setActiveFastView(null);
+		}
+		persp.setActiveFastView(refToSet);
+	}
+
 	/**
 	 * Creates the underlying SWT control for the fast view bar. Will add exactly
 	 * one new control to the given composite. Makes no assumptions about the layout
@@ -402,25 +414,7 @@ class FastViewBar implements IWindowTrim {
 		// The fast view bar menu is created lazily here.
 		if (fastViewBarMenu == null) {
 			Menu menu = new Menu(toolBar);
-			closeItem = new MenuItem(menu, SWT.NONE);
-			closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-			closeItem.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (selectedView != null) {
-						window.getActiveWorkbenchPage().hideView(selectedView);						
-					}
-				}
-			});
-			restoreItem = new MenuItem(menu, SWT.NONE);
-			restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
-			restoreItem.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					if (selectedView != null) {
-						window.getActiveWorkbenchPage().removeFastView(selectedView);
-					}
-				}
-			});
-
+			
 			orientationItem = new MenuItem(menu, SWT.CASCADE);
 			{
 				orientationItem.setText(WorkbenchMessages.getString("FastViewBar.view_orientation")); //$NON-NLS-1$
@@ -432,6 +426,27 @@ class FastViewBar implements IWindowTrim {
 				
 				orientationItem.setMenu(orientationSwtMenu);
 			}
+			
+			restoreItem = new MenuItem(menu, SWT.CHECK);
+			restoreItem.setSelection(true);
+			restoreItem.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
+			restoreItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (selectedView != null) {
+						window.getActiveWorkbenchPage().removeFastView(selectedView);
+					}
+				}
+			});
+			
+			closeItem = new MenuItem(menu, SWT.NONE);
+			closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			closeItem.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (selectedView != null) {
+						window.getActiveWorkbenchPage().hideView(selectedView);						
+					}
+				}
+			});
 			
 			new MenuItem(menu, SWT.SEPARATOR);
 			
@@ -459,7 +474,7 @@ class FastViewBar implements IWindowTrim {
 		if (selectingView) {
 			// Set the new orientation, but avoid re-sending the event to our own
 			// listener
-			currentOrientation.set(isHorizontal(selectedView) ? SWT.HORIZONTAL : SWT.VERTICAL,
+			currentOrientation.set(getOrientation(selectedView),
 					orientationChangeListener);
 		}
 		
@@ -467,6 +482,10 @@ class FastViewBar implements IWindowTrim {
 		fastViewBarMenu.setVisible(true);		
 	}
 		
+	public int getOrientation(IViewReference ref) {
+		return isHorizontal(ref) ? SWT.HORIZONTAL : SWT.VERTICAL;
+	}
+	
 	/**
 	 * Returns the underlying SWT control for the fast view bar, or null if
 	 * createControl has not yet been invoked. The caller must not make any
@@ -642,15 +661,7 @@ class FastViewBar implements IWindowTrim {
 		if (orientation != null) {
 			horizontal = orientation.intValue() == SWT.HORIZONTAL;
 		} else {
-			ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
-			
-			if (pane != null && pane.getControl() != null) {
-				Rectangle bounds = pane.getBounds();
-				
-				if (bounds.width != bounds.height) {
-					horizontal = bounds.width > bounds.height;
-				}
-			}
+			horizontal = false;
 		}
 		
 		return horizontal;
@@ -725,5 +736,5 @@ class FastViewBar implements IWindowTrim {
 			viewOrientation.put(next.getString(IWorkbenchConstants.TAG_VIEW), next.getInteger(IWorkbenchConstants.TAG_POSITION));		
 		}
 	}
-	
+
 }

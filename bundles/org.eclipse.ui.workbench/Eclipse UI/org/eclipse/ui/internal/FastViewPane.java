@@ -34,6 +34,8 @@ import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuClose;
+import org.eclipse.ui.internal.presentations.SystemMenuFastView;
+import org.eclipse.ui.internal.presentations.SystemMenuFastViewOrientation;
 import org.eclipse.ui.internal.presentations.SystemMenuMaximize;
 import org.eclipse.ui.internal.presentations.SystemMenuMinimize;
 import org.eclipse.ui.internal.presentations.SystemMenuMoveView;
@@ -129,6 +131,8 @@ public class FastViewPane {
 		
     private class SystemMenuContribution extends ContributionItem {
         
+    	private SystemMenuFastViewOrientation orientation;
+    	private SystemMenuFastView systemMenuFastView;
         private SystemMenuClose systemMenuClose;
         private SystemMenuMaximize systemMenuMaximize;
         private SystemMenuMinimize systemMenuMinimize;
@@ -137,6 +141,8 @@ public class FastViewPane {
         private SystemMenuSizeFastView systemMenuSizeFastView;
         
         SystemMenuContribution(IStackPresentationSite stackPresentationSite, FastViewPane fastViewPane) {
+        	orientation = new SystemMenuFastViewOrientation(fastViewPane.getCurrentPane());
+        	systemMenuFastView = new SystemMenuFastView(fastViewPane.getCurrentPane());
             systemMenuClose = new SystemMenuClose(fastViewPane.getCurrentPane().getPresentablePart(), stackPresentationSite);
             systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
             systemMenuMinimize = new SystemMenuMinimize(stackPresentationSite);
@@ -146,6 +152,8 @@ public class FastViewPane {
         }
         
         public void fill(Menu menu, int index) {
+        	orientation.fill(menu, index);
+        	systemMenuFastView.fill(menu, index);
             systemMenuRestore.fill(menu, index);
             systemMenuMoveView.fill(menu, index);
             systemMenuSizeFastView.fill(menu, index);
@@ -156,6 +164,8 @@ public class FastViewPane {
         }
         
         public void dispose() {
+        	orientation.dispose();
+        	systemMenuFastView.dispose();
             systemMenuClose.dispose();
             systemMenuMaximize.dispose();
             systemMenuMinimize.dispose();

@@ -24,6 +24,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -295,6 +296,19 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		getPage().hideView(getViewReference());
 	}
 
+	private Rectangle getParentBounds() {
+		Control ctrl = getControl();
+		
+		if (getContainer() != null && getContainer() instanceof LayoutPart) {
+			LayoutPart part = (LayoutPart)getContainer();
+			
+			if (part.getControl() != null) {
+				ctrl = part.getControl();
+			}
+		}
+		
+		return DragUtil.getDisplayBounds(ctrl);
+	}
 	
 	/**
 	 * Make this view pane a fast view
@@ -304,11 +318,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	    if (fastViewBar == null) {
 	        return;
 	    }
-		Control control = getControl();
-		Shell shell = control.getShell();
+		Shell shell = getControl().getShell();
 		
 		RectangleAnimation animation = new RectangleAnimation(shell,  
-				DragUtil.getDisplayBounds(control), 
+				getParentBounds(), 
 				fastViewBar.getLocationOfNextIcon(), 
 				250);
 		
@@ -317,6 +330,24 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		getPage().addFastView(getViewReference());
 	}
 
+	public void doRemoveFast() {
+
+		Shell shell = getControl().getShell();
+		
+		Rectangle initialBounds = getParentBounds();
+				
+		getPage().removeFastView(getViewReference());
+
+		Rectangle finalBounds = getParentBounds();
+		
+		RectangleAnimation animation = new RectangleAnimation(shell,  
+				initialBounds, 
+				finalBounds, 
+				250);
+		
+		animation.schedule();
+	}
+	
 	/**
 	 * Pin the view.
 	 */

@@ -181,7 +181,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         
         SystemMenuContribution(IStackPresentationSite stackPresentationSite, ViewPane viewPane) {
             systemMenuClose = new SystemMenuClose(viewPane.getPresentablePart(), stackPresentationSite);
-            systemMenuFastView = new SystemMenuFastView(stackPresentationSite, viewPane);
+            systemMenuFastView = new SystemMenuFastView(viewPane);
             systemMenuMaximize = new SystemMenuMaximize(stackPresentationSite);
             systemMenuMinimize = new SystemMenuMinimize(stackPresentationSite);
             systemMenuMoveView = new SystemMenuMoveView(viewPane.getPresentablePart(), stackPresentationSite);

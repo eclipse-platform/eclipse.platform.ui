@@ -19,22 +19,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuFastView extends ContributionItem {
 
-    private IStackPresentationSite stackPresentationSite;
-
     private ViewPane viewPane;
 
-    public SystemMenuFastView(IStackPresentationSite stackPresentationSite,
-            ViewPane viewPane) {
-        this.stackPresentationSite = stackPresentationSite;
+    public SystemMenuFastView(ViewPane viewPane) {
         this.viewPane = viewPane;
     }
 
     public void dispose() {
-        stackPresentationSite = null;
         viewPane = null;
     }
 
@@ -42,14 +36,18 @@ public class SystemMenuFastView extends ContributionItem {
         WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
                 .getWorkbenchWindow();
         if (workbenchWindow.getFastViewBar() != null
-                && stackPresentationSite.isMoveable(viewPane
-                        .getPresentablePart())) {
-            MenuItem menuItem = new MenuItem(menu, SWT.NONE);
+                && !viewPane.getPage().getActivePerspective().isFixedView(viewPane.getViewReference())) {
+            final MenuItem menuItem = new MenuItem(menu, SWT.CHECK);
+            menuItem.setSelection(viewPane.getPage().getActivePerspective().isFastView(viewPane.getViewReference()));
             menuItem.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
             menuItem.addSelectionListener(new SelectionAdapter() {
 
                 public void widgetSelected(SelectionEvent e) {
-                    viewPane.doMakeFast();
+                	if (menuItem.getSelection()) {
+                		viewPane.doMakeFast();
+                	} else {
+                		viewPane.doRemoveFast();
+                	}
                 }
             });
         }
