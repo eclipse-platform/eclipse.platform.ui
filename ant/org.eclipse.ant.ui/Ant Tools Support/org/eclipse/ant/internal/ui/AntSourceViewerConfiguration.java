@@ -25,13 +25,13 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
-public class AntSourceViewerConfiguration extends SourceViewerConfiguration {
+public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	private AntEditorTagScanner tagScanner;
     private AntEditorProcInstrScanner instructionScanner;
@@ -40,7 +40,11 @@ public class AntSourceViewerConfiguration extends SourceViewerConfiguration {
 	private TextAttribute xmlCommentAttribute;
 	private TextAttribute xmlDtdAttribute;
 	
-	private AntEditorProcInstrScanner getDefaultScanner() {
+    public AntSourceViewerConfiguration() {
+        super(AntUIPlugin.getDefault().getCombinedPreferenceStore());
+    }
+
+    private AntEditorProcInstrScanner getDefaultScanner() {
 	    if (instructionScanner == null) {
 	        instructionScanner = new AntEditorProcInstrScanner();
 	    }

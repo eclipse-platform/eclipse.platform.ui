@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.io.File;
 import java.util.ResourceBundle;
+
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -82,12 +83,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -357,13 +356,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	private boolean fSelectionSetFromOutline= false;
 
     private FoldingActionGroup fFoldingGroup;
-    
-	/** 
-	 * The hyper link manager.
-	 * @since 3.1  
-	 */
-	private AntEditorLinkManager fLinkManager;
-
   
     public AntEditor() {
         super();
@@ -412,7 +404,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 */
     protected void initializeEditor() {
 		super.initializeEditor();
-		setPreferenceStore(createCombinedPreferenceStore());
+		setPreferenceStore(AntUIPlugin.getDefault().getCombinedPreferenceStore());
 		setCompatibilityMode(false);
 		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);	
 		setRulerContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"); //$NON-NLS-1$
@@ -565,15 +557,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 				startTabConversion();
 			} else {
 				stopTabConversion();
-			}
-			return;
-		}
-			
-		if (AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS.equals(property)) {
-			if (isBrowserLikeLinks()) {
-				enableBrowserLikeLinks();
-			} else {
-				disableBrowserLikeLinks();
 			}
 			return;
 		}
@@ -808,10 +791,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			startTabConversion();
 		}
 		
-		if (isBrowserLikeLinks()) {
-			enableBrowserLikeLinks();
-		}
-		
 		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
 		fEditorSelectionChangedListener.install(getSelectionProvider());
 	}
@@ -851,10 +830,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (fProjectionSupport != null) {
 			fProjectionSupport.dispose();
 			fProjectionSupport= null;
-		}
-		
-		if (isBrowserLikeLinks()) {
-			disableBrowserLikeLinks();
 		}
 		
 		AntModelCore.getDefault().removeAntModelListener(fAntModelListener);
@@ -1020,18 +995,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		synchronizeOutlinePage(true);
 	}
 
-	/**
-	 * Creates a combined preference store, this store is read-only.
-	 * 
-	 * @return the combined preference store
-	 * @since 3.0
-	 */
-	private IPreferenceStore createCombinedPreferenceStore() {
-		IPreferenceStore antStore= AntUIPlugin.getDefault().getPreferenceStore();
-		IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
-		return new ChainedPreferenceStore(new IPreferenceStore[] { antStore, generalTextStore });
-	}
-
     /**
      * Returns the viewer associated with this editor
      * @return The viewer associated with this editor
@@ -1065,36 +1028,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 */
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] { "org.eclipse.ant.ui.AntEditorScope" });  //$NON-NLS-1$
-	}
-	
-	/**
-	 * Return whether the browser like links should be enabled
-	 * according to the preference store settings.
-	 * @return <code>true</code> if the browser like links should be enabled
-	 */
-	private boolean isBrowserLikeLinks() {
-		IPreferenceStore store= getPreferenceStore();
-		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_BROWSER_LIKE_LINKS);
-	}
-	
-	/**
-	 * Enables browser like links.
-	 */
-	private void enableBrowserLikeLinks() {
-		if (fLinkManager == null) {
-			fLinkManager= new AntEditorLinkManager(this);
-			fLinkManager.install();
-		}
-	}
-	
-	/**
-	 * Disables browser like links.
-	 */
-	private void disableBrowserLikeLinks() {
-		if (fLinkManager != null) {
-			fLinkManager.uninstall();
-			fLinkManager= null;
-		}
 	}
 	
 	protected IPreferenceStore getEditorPreferenceStore() {

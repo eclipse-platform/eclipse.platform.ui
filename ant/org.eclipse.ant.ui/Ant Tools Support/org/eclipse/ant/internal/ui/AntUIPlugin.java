@@ -17,13 +17,16 @@ import java.util.Locale;
 import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThread;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -49,6 +52,12 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	public static final String PI_ANTUI = "org.eclipse.ant.ui"; //$NON-NLS-1$
 	
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
+	
+	/**
+	 * The combined preference store.
+	 * @since 3.1
+	 */
+	private IPreferenceStore fCombinedPreferenceStore;
 
 	/** 
 	 * Constructs an instance of this plug-in runtime class.
@@ -182,4 +191,19 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		String osname= System.getProperty("os.name").toLowerCase(Locale.US); //$NON-NLS-1$
 		return osname.indexOf("mac") != -1; //$NON-NLS-1$
    }
+   
+   /**
+	 * Returns a combined preference store, this store is read-only.
+	 * 
+	 * @return the combined preference store
+	 * 
+	 * @since 3.1
+	 */
+	public IPreferenceStore getCombinedPreferenceStore() {
+		if (fCombinedPreferenceStore == null) {
+			IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
+			fCombinedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { getPreferenceStore(), generalTextStore });
+		}
+		return fCombinedPreferenceStore;
+	}
 }
