@@ -195,20 +195,6 @@ public abstract class Action implements IAction {
     }
 
     /**
-     * Creates a new action with the given unique identifier and text.
-     *
-     * @param id the unique identifier for this action
-     * @param text the string used as the text for the action, 
-     *   or <code>null</code> if there is no text
-     * 
-     * @since 3.1
-     */
-    protected Action(String id, String text) {
-        this(text);
-        setId(id);
-    }
-    
-    /**
      * Creates a new action with the given text and image.
      * Calls the zero-arg constructor, then <code>setText</code> and <code>setImageDescriptor</code>.
      *
