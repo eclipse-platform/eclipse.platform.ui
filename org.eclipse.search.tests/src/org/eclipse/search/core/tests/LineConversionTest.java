@@ -88,7 +88,7 @@ public class LineConversionTest extends TestCase {
 
 		Position p1= new Position(2, 67);
 		try {
-			Position p2= PositionTracker.convertToCharacterPosition(p1, doc);
+			PositionTracker.convertToCharacterPosition(p1, doc);
 			assertTrue("shouldn't happen", false);
 		} catch (BadLocationException e) {
 		}

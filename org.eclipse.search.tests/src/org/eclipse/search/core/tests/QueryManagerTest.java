@@ -85,7 +85,7 @@ public class QueryManagerTest extends TestCase {
 	
 	public void testRemoveCancels() {
 		LongQuery query= new LongQuery();
-		NewSearchUI.runQuery(query);
+		NewSearchUI.runQueryInBackground(query);
 		try {
 			// give the other thread some time to finish.
 			Thread.sleep(1000);
@@ -107,7 +107,7 @@ public class QueryManagerTest extends TestCase {
 
 	public void testRemoveAllCancels() {
 		LongQuery query= new LongQuery();
-		NewSearchUI.runQuery(query);
+		NewSearchUI.runQueryInBackground(query);
 		InternalSearchUI.getInstance().removeQuery(query);
 		try {
 			// give the other thread some time to finish.

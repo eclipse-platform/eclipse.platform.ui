@@ -39,13 +39,17 @@ public class PositionTrackerTest extends TestCase {
 	}
 		
 	public static Test allTests() {
-		return new JUnitSetup(new TestSuite(PositionTrackerTest.class));
+		return setUpTest(new TestSuite(PositionTrackerTest.class));
 	}
 	
 	public static Test suite() {
 		return allTests();
 	}
 
+	public static Test setUpTest(Test test) {
+		return new JUnitSourceSetup(test);
+	}
+	
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -85,24 +89,28 @@ public class PositionTrackerTest extends TestCase {
 
 	private void checkInsertInsideMatch(FileSearchResult result, IFile file) throws PartInitException, BadLocationException {
 		Match[] matches= result.getMatches(file);
-		IDE.openEditor(SearchPlugin.getActivePage(), file);
-		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
-		IDocument doc= fb.getDocument();
-		
-		for (int i = 0; i < matches.length; i++) {
-			Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
-			assertNotNull(currentPosition);
-			doc.replace(currentPosition.offset+1, 0, "Test");	
-		}
+		try {
+			IDE.openEditor(SearchPlugin.getActivePage(), file);
+			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
+			IDocument doc= fb.getDocument();
 
-		for (int i = 0; i < matches.length; i++) {
-			Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
-			assertNotNull(currentPosition);
-			String text= doc.get(currentPosition.offset, currentPosition.length);
-			StringBuffer buf= new StringBuffer();
-			buf.append(text.charAt(0));
-			buf.append(text.substring(5));
-			assertEquals(buf.toString(), ((FileSearchQuery)result.getQuery()).getSearchString());
+			for (int i= 0; i < matches.length; i++) {
+				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
+				assertNotNull(currentPosition);
+				doc.replace(currentPosition.offset + 1, 0, "Test");
+			}
+
+			for (int i= 0; i < matches.length; i++) {
+				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
+				assertNotNull(currentPosition);
+				String text= doc.get(currentPosition.offset, currentPosition.length);
+				StringBuffer buf= new StringBuffer();
+				buf.append(text.charAt(0));
+				buf.append(text.substring(5));
+				assertEquals(buf.toString(), ((FileSearchQuery) result.getQuery()).getSearchString());
+			}
+		} finally {
+			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 }
 
@@ -112,16 +120,20 @@ public class PositionTrackerTest extends TestCase {
 		for (int i = 0; i < originalStarts.length; i++) {
 			originalStarts[i]= matches[i].getOffset();
 		}
-		IDE.openEditor(SearchPlugin.getActivePage(), file);
-		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
-		IDocument doc= fb.getDocument();
-		doc.replace(0, 0, "Test");
-		
-		for (int i = 0; i < originalStarts.length; i++) {
-			Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
-			assertNotNull(currentPosition);
-			assertEquals(originalStarts[i]+"Test".length(), currentPosition.getOffset());
-		
+		try {
+			IDE.openEditor(SearchPlugin.getActivePage(), file);
+			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
+			IDocument doc= fb.getDocument();
+			doc.replace(0, 0, "Test");
+
+			for (int i= 0; i < originalStarts.length; i++) {
+				Position currentPosition= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(matches[i]);
+				assertNotNull(currentPosition);
+				assertEquals(originalStarts[i] + "Test".length(), currentPosition.getOffset());
+
+			}
+		} finally {
+			SearchPlugin.getActivePage().closeAllEditors(false);
 		}
 	}
 	

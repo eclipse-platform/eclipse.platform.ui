@@ -19,7 +19,7 @@ import junit.framework.TestSuite;
  */
 public class AllSearchModelTests extends TestSuite {
 
-	/**
+	/*
 	 * Returns the suite.  This is required to
 	 * use the JUnit Launcher.
 	 */

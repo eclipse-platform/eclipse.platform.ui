@@ -38,7 +38,12 @@ public class SearchResultPageTest extends TestCase {
 	}
 
 	public static Test allTests() {
-		return new JUnitSetup(new TestSuite(SearchResultPageTest.class));
+		return setUpTest(new TestSuite(SearchResultPageTest.class));
+	}
+	
+	
+	public static Test setUpTest(Test test) {
+		return new JUnitSourceSetup(test);
 	}
 	
 	public static Test suite() {
@@ -104,6 +109,11 @@ public class SearchResultPageTest extends TestCase {
 			Display.getDefault().readAndDispatch();
 		}
 	}
+	
+	private void consumeEvents() {
+		while (Display.getDefault().readAndDispatch()) {
+		}
+	}
 
 	private void checkElementDisplay(StructuredViewer viewer, AbstractTextSearchResult result, Object element) {
 		Widget widget= viewer.testFindItem(element);
@@ -122,16 +132,25 @@ public class SearchResultPageTest extends TestCase {
 		page.setLayout(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 		Table table= ((TableViewer) page.getViewer()).getTable();
 		
+		consumeEvents();
+		
 		// select the first element.
 		table.setSelection(0);
+		table.showSelection();
 		
+		consumeEvents();
 		// back from first match, goto last
 		page.gotoPreviousMatch();
+		
+		consumeEvents();
+		
 		assertEquals(1, table.getSelectionCount());
 		assertEquals(table.getItemCount()-1, table.getSelectionIndex());
 
 		// and forward again, to the first match.
 		page.gotoNextMatch();
+		
+		consumeEvents();
 		assertEquals(1, table.getSelectionCount());
 		assertEquals(0, table.getSelectionIndex());
 }

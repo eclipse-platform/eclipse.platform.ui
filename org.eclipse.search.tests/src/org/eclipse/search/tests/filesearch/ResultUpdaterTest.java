@@ -13,23 +13,34 @@ package org.eclipse.search.tests.filesearch;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.tests.ResourceHelper;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+
 public class ResultUpdaterTest extends TestCase {
-	FileSearchQuery fQuery1;
-	FileSearchQuery fQuery2;
+	private FileSearchQuery fQuery1;
+	
+	private IProject fProject;
+	
+	private static final String PROJECT_TO_MODIFY= "ModifiableProject";
 
 	public ResultUpdaterTest(String name) {
 		super(name);
 	}
 		
 	public static Test allTests() {
-		return new JUnitSetup(new TestSuite(ResultUpdaterTest.class));
+		return setUpTest(new TestSuite(ResultUpdaterTest.class));
+	}
+	
+	public static Test setUpTest(Test test) {
+		return test;
 	}
 	
 	public static Test suite() {
@@ -38,11 +49,19 @@ public class ResultUpdaterTest extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		// create a own project to make modifications
+		fProject= ResourceHelper.createJUnitSourceProject(PROJECT_TO_MODIFY);
 		
-		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
+		TextSearchScope scope= new TextSearchScope("xx", new IResource[] { fProject });
 		scope.addExtension("*.java");
 		fQuery1= new FileSearchQuery(scope,  "", "Test");
-		fQuery2= new FileSearchQuery(scope, "", "TestCase");
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		ResourceHelper.deleteProject(PROJECT_TO_MODIFY);
 	}
 	
 	public void testRemoveFile() throws Exception {
@@ -52,7 +71,7 @@ public class ResultUpdaterTest extends TestCase {
 		Object[] elements= result.getElements();
 		int fileCount= result.getMatchCount(elements[0]);
 		int totalCount= result.getMatchCount();
-		((IFile)elements[0]).delete(true, true, null);
+		ResourceHelper.delete((IFile)elements[0]);
 		assertEquals(totalCount-fileCount, result.getMatchCount());
 		assertEquals(0, result.getMatchCount(elements[0]));
 	}
@@ -61,9 +80,7 @@ public class ResultUpdaterTest extends TestCase {
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		AbstractTextSearchResult result= (AbstractTextSearchResult) fQuery1.getSearchResult();
-		JUnitSetup.getProject().delete(true, true, null);
+		ResourceHelper.delete(fProject);
 		assertEquals(0, result.getMatchCount());
-		// must recreate the project.
-		ResourcesPlugin.getWorkspace().getRoot().getProject(JUnitSetup.PROJECT_NAME).create(null);
 	}
 }

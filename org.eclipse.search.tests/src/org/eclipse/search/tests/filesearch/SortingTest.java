@@ -29,9 +29,13 @@ public class SortingTest extends TestCase {
 	public SortingTest(String name) {
 		super(name);
 	}
+	
+	public static Test setUpTest(Test test) {
+		return new JUnitSourceSetup(test);
+	}
 		
 	public static Test allTests() {
-		return new JUnitSetup(new TestSuite(SortingTest.class));
+		return setUpTest(new TestSuite(SortingTest.class));
 	}
 	
 	public static Test suite() {

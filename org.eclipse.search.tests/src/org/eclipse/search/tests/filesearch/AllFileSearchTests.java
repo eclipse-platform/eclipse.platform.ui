@@ -20,11 +20,17 @@ public class AllFileSearchTests extends TestSuite {
 	}
 
 	public AllFileSearchTests() {
-		addTest(AnnotationManagerTest.allTests());
-		addTest(LineAnnotationManagerTest.allTests());
-		addTest(SearchResultPageTest.allTests()); 
-		addTest(ResultUpdaterTest.allTests());
-		addTest(SortingTest.allTests());
+		
+		TestSuite suite= new TestSuite();
+		suite.addTest(AnnotationManagerTest.allTests());
+		suite.addTest(FileSearchTests.allTests());
+		suite.addTest(LineAnnotationManagerTest.allTests());
+		suite.addTest(PositionTrackerTest.allTests());
+		suite.addTest(ResultUpdaterTest.allTests());
+		suite.addTest(SearchResultPageTest.allTests());
+		suite.addTest(SortingTest.allTests());
+		
+		addTest(new JUnitSourceSetup(suite));
 	}
 
 }
