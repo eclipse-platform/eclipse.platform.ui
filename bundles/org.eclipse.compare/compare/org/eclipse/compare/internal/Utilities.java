@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.*;
 
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -547,9 +548,9 @@ public class Utilities {
 	}
 	
 	public static String getCharset(IResource resource) {
-		if (resource instanceof IEncodedStreamContentAccessor) {
+		if (resource instanceof IEncodedStorage) {
 			try {
-				return ((IEncodedStreamContentAccessor)resource).getCharset();
+				return ((IEncodedStorage)resource).getCharset();
 			} catch (CoreException ex) {
 				// fall  through
 			}
