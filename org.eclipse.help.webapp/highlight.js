@@ -33,15 +33,19 @@ function highlightWordInText(aWord, textNode){
 	allText=new String(textNode.data);
 	allTextLowerCase=allText.toLowerCase();
 	index=allTextLowerCase.indexOf(aWord);
-	if(index>0){
-		while(index>0){
+	if(index>=0){
+		// create a node to replace the textNode so we end up
+		// not changing number of children of textNode.parent
+		replacementNode=document.createElement("span");
+		textNode.parentNode.insertBefore(replacementNode, textNode);
+		while(index>=0){
 			before=allText.substring(0,index);
 			newBefore=document.createTextNode(before);
-			textNode.parentNode.insertBefore(newBefore, textNode);
+			replacementNode.appendChild(newBefore);
 			spanNode=document.createElement("span");
 			spanNode.style.background="ButtonFace";
 			spanNode.style.color="ButtonText";
-			textNode.parentNode.insertBefore(spanNode, textNode);
+			replacementNode.appendChild(spanNode);
 			boldText=document.createTextNode(allText.substring(index,index+aWord.length));
 			spanNode.appendChild(boldText);
 			allText=allText.substring(index+aWord.length);
@@ -49,7 +53,7 @@ function highlightWordInText(aWord, textNode){
 			index=allTextLowerCase.indexOf(aWord);
 		}
 		newAfter=document.createTextNode(allText);
-		textNode.parentNode.insertBefore(newAfter, textNode);
+		replacementNode.appendChild(newAfter);
 		textNode.parentNode.removeChild(textNode);
 	}
 }
