@@ -183,6 +183,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		IFeatureReference[] features = localSite.getFeatureReferences();
 		if (features.length==0) fail("The local site does not contain feature, should not contain an XML file but features should be found anyway by parsing");
+		if (localSite.getArchives().length==0) fail("The local site does not contain archives, should not contain an XML file but archives should be found anyway by parsing");
 		
 		//cleanup
 		File file = new File(localSite.getURL().getFile()+File.separator+SiteFile.INSTALL_FEATURE_PATH+remoteFeature.getIdentifier());

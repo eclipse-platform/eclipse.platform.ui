@@ -30,5 +30,13 @@ f.mkdirs()
 java.util.Locale.getDefault()
 java.util.ResourceBundle
 
+java.net.URL url = new java.net.URL("file",null,"C:\\path"+java.io.File.separator);
+url.getPath().endsWith("/");
+url
+
+
+java.lang.ClassLoader l = new java.net.URLClassLoader(new java.net.URL[] {new java.net.URL("file",null,"c:\\oti\\wsw205\\eclipse\\install\\features\\org.eclipse.help.feature_1.0.4/") }, null);
+java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("feature", java.util.Locale.getDefault(), l);
+bundle
 
 

@@ -10,6 +10,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.ICategory;
 
 /**
  *
@@ -145,6 +146,13 @@ public class FeatureReference implements IFeatureReference {
 	 */
 	public void setFeatureType(String featureType) {
 		this.featureType = featureType;
+	}
+
+	/*
+	 * @see IFeatureReference#addCategory(ICategory)
+	 */
+	public void addCategory(ICategory category) {
+		this. addCategoryString(category.getName());
 	}
 
 }

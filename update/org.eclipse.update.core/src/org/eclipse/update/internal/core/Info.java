@@ -79,5 +79,14 @@ public class Info implements IInfo{
 		this.url = url;
 	}
 
+	/*
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		String result = "IInfo: ";
+		 result = result +( (text==null)?url.toExternalForm():text + " : "+url.toExternalForm());
+		return result;
+	}
+
 }
 

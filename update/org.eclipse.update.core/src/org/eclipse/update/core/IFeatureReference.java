@@ -47,6 +47,12 @@ public interface IFeatureReference {
 	IFeature getFeature() throws CoreException;
 	
 	
+	/**
+	 * Adds the feature to the category
+	 */
+	void addCategory(ICategory category);
+	
+	
 }
 
 

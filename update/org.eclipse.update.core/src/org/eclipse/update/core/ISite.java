@@ -62,4 +62,12 @@ public interface ISite extends IPluginContainer {
 	 */
 	IInfo[] getArchives();
 	
+	/**
+	 * Creates a new categoy within the Site
+	 * The validity of the Category is not checked
+	 */
+	void addCategory(ICategory category);
+	
+	
+	
 }
