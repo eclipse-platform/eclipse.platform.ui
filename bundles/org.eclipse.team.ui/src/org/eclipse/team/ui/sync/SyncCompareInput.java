@@ -54,11 +54,18 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 	
 	private ICompareInputChangeListener listener = new ICompareInputChangeListener() {
 		public void compareInputChanged(ICompareInput source) {
-			catchupReleaseViewer.update(source, new String[] {CatchupReleaseViewer.PROP_KIND});
-			updateStatusLine();
+			SyncCompareInput.this.compareInputChanged(source);
 		}
 	};
 
+	/**
+	 * Subclasses may override but must call super.
+	 */
+	protected void compareInputChanged(ICompareInput source) {
+		catchupReleaseViewer.update(source, new String[] {CatchupReleaseViewer.PROP_KIND});
+		updateStatusLine();
+	}
+	
 	/**
 	 * Creates a new catchup or release operation.
 	 */

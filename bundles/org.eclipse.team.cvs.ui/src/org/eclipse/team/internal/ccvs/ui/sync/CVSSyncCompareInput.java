@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -26,6 +27,7 @@ import org.eclipse.team.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.ui.sync.ITeamNode;
 import org.eclipse.team.ui.sync.SyncCompareInput;
 import org.eclipse.team.ui.sync.SyncSet;
+import org.eclipse.team.ui.sync.TeamFile;
 import org.eclipse.team.ui.sync.UnchangedTeamContainer;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -58,5 +60,21 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 		
 		// Update the status line
 		updateStatusLine();
+	}
+	
+	/**
+	 * Overridden to mark the source as merged.
+	 */
+	protected void compareInputChanged(ICompareInput source) {
+		super.compareInputChanged(source);
+		// Mark the source as merged.
+		if (source instanceof TeamFile) {
+			IRemoteSyncElement element = ((TeamFile)source).getMergeResource().getSyncElement();
+			try {
+				CVSUIPlugin.getPlugin().getRepositoryManager().merged(new IRemoteSyncElement[] {element});
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
+			}
+		}
 	}
 }
