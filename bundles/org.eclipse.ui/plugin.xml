@@ -41,7 +41,6 @@
    <extension-point id="popupMenus" name="%ExtPoint.popupMenus " schema="schema/popupMenus.exsd"/>
    <extension-point id="preferencePages" name="%ExtPoint.preferencePages" schema="schema/preferencePages.exsd"/>
    <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.exsd"/>
-   <extension-point id="roles" name="%ExtPoint.roles" schema="schema/roles.exsd"/>
    <extension-point id="startup" name="%ExtPoint.startup" schema="schema/startup.exsd"/>
    <extension-point id="viewActions" name="%ExtPoint.viewActions" schema="schema/viewActions.exsd"/>
    <extension-point id="views" name="%ExtPoint.views" schema="schema/views.exsd"/>
