@@ -58,10 +58,7 @@ contexts manifest file:&lt;/b&gt;&lt;/i&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic href CDATA #IMPLIED &gt;&lt;/tt&gt;
 &lt;p&gt;The contexts manifest files provide all the information needed when
 context-sensitive help is requested by the user. The id is passed by the
-platform to identify the currently active context. The context definitions
-with matching IDs are then retrieved. The IContext object is then created
-by help system that contains descriptions and topics from all context definitions
-for a given ID.&amp;nbsp; The description is to be displayed to the user, and
+platform to the help system to identify the currently active context.The context definitions with matching IDs are then retrieved. The IDs in the manifest file, must not contain the period character, since the IDs are uniquely identified by pluginID.contextID string when in memory.  The IContext object is then created by help system that contains descriptions and topics from all context definitions for a given ID in a plug-in.&amp;nbsp; The description is to be displayed to the user, and
 related topics might be useful to the user for understanding the current
 context.&amp;nbsp; The related topic are html files packaged in doc.zip, together
 with topics that are part of on line help.
