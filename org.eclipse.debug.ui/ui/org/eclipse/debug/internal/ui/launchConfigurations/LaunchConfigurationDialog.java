@@ -575,7 +575,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		gd = new GridData(GridData.FILL_VERTICAL);
 		gd.horizontalSpan = 3;
 		gd.widthHint = 200;
-		gd.heightHint = 390;
+		gd.heightHint = 325;
 		tree.getControl().setLayoutData(gd);
 		tree.setContentProvider(new LaunchConfigurationContentProvider());
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
@@ -651,7 +651,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		Label nameLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
 		nameLabel.setText("Name");
 		gd = new GridData(GridData.BEGINNING);
-		nameLabel.setLayoutData(gd);		
+		nameLabel.setLayoutData(gd);
 		
 		Text nameText = new Text(c, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -674,7 +674,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		TabFolder tabFolder = new TabFolder(c, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		gd.heightHint = 390;
+		gd.heightHint = 325;
 		gd.widthHint = 375;
 		tabFolder.setLayoutData(gd);
 		setTabFolder(tabFolder);
