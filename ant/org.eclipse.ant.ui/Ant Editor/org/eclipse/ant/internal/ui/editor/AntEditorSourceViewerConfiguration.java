@@ -213,7 +213,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		if (fTextHover == null) {
-			fTextHover= new XMLTextHover();
+			fTextHover= new XMLTextHover(fEditor);
 		}
 		return fTextHover;
 	}
