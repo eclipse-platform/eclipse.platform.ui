@@ -20,7 +20,6 @@ import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
@@ -60,7 +59,6 @@ public final class InternalPlatform {
 	public static String DEBUG_REGISTRY_DUMP = null;
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static boolean DEBUG_STARTUP = false;
-	public static boolean DEBUG_STRINGS = false;
 	private static Runnable endOfInitializationHandler = null;
 	private static final String FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
@@ -92,7 +90,6 @@ public final class InternalPlatform {
 	private static final String OPTION_DEBUG_REGISTRY = Platform.PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_REGISTRY_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_STRINGS = Platform.PI_RUNTIME + "/strings"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 	static PackageAdmin packageAdmin;
@@ -156,8 +153,6 @@ public final class InternalPlatform {
 	private FileManager runtimeFileManager;
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
 	
-	private StringPoolJob stringPoolJob;
-
 	private ServiceTracker userLocation = null;
 
 	public static InternalPlatform getDefault() {
@@ -190,30 +185,6 @@ public final class InternalPlatform {
 
 	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		AuthorizationHandler.addProtectionSpace(resourceUrl, realm);
-	}
-
-	/**
-	 * Adds a platform string pool participant.  The platform periodically builds
-	 * a string pool and asks all registered participants to share their strings in
-	 * the pool.  Once all participants have added their strings to the pool, the
-	 * pool is discarded to avoid additional memory overhead.
-	 * 
-	 * Adding a participant that is equal to a participant already registered will
-	 * replace the scheduling rule associated with the participant, but will otherwise
-	 * be ignored.
-	 * 
-	 * @param participant The participant to add
-	 * @param rule The scheduling rule that must be owned at the time the
-	 * participant is called.  This allows a participant to protect their data structures
-	 * against access at unsafe times.
-	 * 
-	 * @see #removeStringPoolParticipant(IStringPoolParticipant)
-	 * @since 3.1
-	 */
-	public void addStringPoolParticipant(IStringPoolParticipant participant, ISchedulingRule rule) {
-		if (stringPoolJob == null)
-			stringPoolJob = new StringPoolJob();
-		stringPoolJob.addStringPoolParticipant(participant, rule);
 	}
 
 	private URL asActualURL(URL url) throws IOException {
@@ -738,7 +709,6 @@ public final class InternalPlatform {
 			DEBUG_REGISTRY = getBooleanOption(OPTION_DEBUG_REGISTRY, false);
 			DEBUG_REGISTRY_DUMP = getOption(OPTION_DEBUG_REGISTRY_DUMP);
 			DEBUG_PREFERENCES = getBooleanOption(OPTION_DEBUG_PREFERENCES, false);
-			DEBUG_STRINGS= getBooleanOption(OPTION_DEBUG_STRINGS, false);
 		}
 	}
 
@@ -1007,19 +977,6 @@ public final class InternalPlatform {
 		synchronized (logListeners) {
 			logListeners.remove(listener);
 		}
-	}
-
-	/** 
-	 * Removes the indicated log listener from the set of registered string
-	 * pool participants.  If no such participant is registered, no action is taken.
-	 *
-	 * @param participant the participant to deregister
-	 * @see #addStringPoolParticipant(IStringPoolParticipant, ISchedulingRule)
-	 * @since 3.1
-	 */
-	public void removeStringPoolParticipant(IStringPoolParticipant participant) {
-		if (stringPoolJob != null)
-			stringPoolJob.removeStringPoolParticipant(participant);
 	}
 
 	/**
