@@ -8,7 +8,9 @@
  * Contributors: 
  *      IBM Corporation - initial API and implementation 
  *  	Dan Rubel <dan_rubel@instantiations.com>
- *        - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
+ *        - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml
+ * 		Ted Stockwell <emorning@yahoo.com>
+ * 		  - Fix for bug 63595 - IPageLayout.addFastView regression (3.0M8 to 3.0M9)
 ************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -163,13 +165,29 @@ public class PageLayout implements IPageLayout {
 	}
 	
 	/**
+	 * Check to see if the partId represents a fast view's id.
+	 * 
+	 * @param partId
+	 * 			The part's id.
+	 * @return true if the partId is a fast view id.
+	 */
+	private boolean isFastViewId(String partId)
+	{
+		for (int i = 0; i < fastViews.size(); i++) {
+			if (((IViewReference) fastViews.get(i)).getId().equals(partId))
+				return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Returns the view layout record for the given view id, or null if not found.
 	 * If create is true, the record is created if it doesn't already exist.
 	 * 
      * @since 3.0
      */
     ViewLayoutRec getViewLayoutRec(String id, boolean create) {
-        Assert.isNotNull(getRefPart(id));
+    	Assert.isTrue(getRefPart(id)!= null || isFastViewId(id));
         
         ViewLayoutRec rec = (ViewLayoutRec) mapIDtoViewLayoutRec.get(id);
         if (rec == null && create) {
@@ -342,10 +360,8 @@ public class PageLayout implements IPageLayout {
 			WorkbenchPlugin.log(WorkbenchMessages.format("PageLayout.duplicateRefPart", new Object[] { partId })); //$NON-NLS-1$
 			return true;
 		}
-		for (int i = 0; i < fastViews.size(); i++) {
-			if (((IViewReference) fastViews.get(i)).getId().equals(partId))
-				return true;
-		}
+		if(isFastViewId(partId))
+			return true;
 
 		return false;
 	}
