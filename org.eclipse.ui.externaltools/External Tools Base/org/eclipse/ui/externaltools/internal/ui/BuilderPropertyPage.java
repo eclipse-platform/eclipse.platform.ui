@@ -562,9 +562,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				userHasMadeChanges= true;
 				//retrieve the last "new" config
 				//may have been changed by the user pressing apply in the edit dialog
-				config= (ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1);
-				viewer.add(config);
-				viewer.setChecked(config, isEnabled(config));
+				Display.getDefault().asyncExec(new Runnable() {	
+					public void run() {
+						ILaunchConfiguration updatedConfig= (ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1);
+						viewer.add(updatedConfig);
+						viewer.setChecked(updatedConfig, isEnabled(updatedConfig));
+					}
+				});
 			}
 		} catch (CoreException e) {
 			handleException(e);
