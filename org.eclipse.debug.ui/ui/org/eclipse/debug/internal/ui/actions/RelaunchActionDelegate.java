@@ -105,12 +105,6 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		}
 	}
 	
-	/*
-	public static void relaunch(LaunchConfigurationHistoryElement history) {
-		relaunch(history.getLaunchConfiguration(), history.getMode());
-	}
-	*/
-	
 	/**
 	 * Re-launches the given configuration in the specified mode.
 	 */
