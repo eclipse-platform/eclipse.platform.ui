@@ -1169,6 +1169,18 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}	
 
 	private void selectedTableAssignmentsForCommand() {
+		int selection = tableAssignmentsForCommand.getSelectionIndex();
+		List commandAssignmentsAsList = new ArrayList(commandAssignments);
+			
+		if (selection >= 0 && selection < commandAssignmentsAsList.size() && tableAssignmentsForCommand.getSelectionCount() == 1) {
+			CommandAssignment commandAssignment = (CommandAssignment) commandAssignmentsAsList.get(selection);
+			KeyBindingNode.Assignment assignment = commandAssignment.assignment;
+			String contextId = commandAssignment.contextId;
+			KeySequence keySequence = commandAssignment.keySequence;
+			setContextId(contextId);			
+			setKeySequence(keySequence);
+		}		
+		
 		update();		
 	}
 	
@@ -1176,8 +1188,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		int selection = tableAssignmentsForKeySequence.getSelectionIndex();
 		List keySequenceAssignmentsAsList = new ArrayList(keySequenceAssignments);
 			
-		if (selection >= 0 && selection < keySequenceAssignmentsAsList.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1)
-			setContextId(((KeySequenceAssignment) keySequenceAssignmentsAsList.get(selection)).contextId);
+		if (selection >= 0 && selection < keySequenceAssignmentsAsList.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1) {
+			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) keySequenceAssignmentsAsList.get(selection);
+			KeyBindingNode.Assignment assignment = keySequenceAssignment.assignment;
+			String contextId = keySequenceAssignment.contextId;				
+			setContextId(contextId);			
+		}
 
 		update();		
 	}
