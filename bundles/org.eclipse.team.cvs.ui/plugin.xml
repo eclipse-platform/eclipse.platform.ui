@@ -97,12 +97,6 @@
 				menubarPath="team.main/checkinGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
 			<action 
-				id="org.eclipse.team.ccvs.ui.diff"
-				label="%DiffAction.label"
-				tooltip="%DiffAction.tooltip"
-				menubarPath="compareWithMenu/compareWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.DiffAction"/>
-			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithRemote"
 				label="%CompareWithRemoteAction.label"
 				tooltip="%CompareWithRemoteAction.tooltip"
