@@ -5,7 +5,7 @@
   <property name="eclipse-home" value="${basedir}/../.."/>
   <!-- sets the properties eclipse-home, and library-file -->
   <property name="plugin-name" value="org.eclipse.update.tests.core"/>
-  <property name="library-file" value="${eclipse-home}/fragments/org.eclipse.test/library.xml"/>
+  <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->
   <!-- should be done within the body of the suite target. -->
