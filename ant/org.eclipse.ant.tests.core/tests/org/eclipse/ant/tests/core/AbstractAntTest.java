@@ -175,6 +175,8 @@ public abstract class AbstractAntTest extends TestCase {
 		prefs.setCustomURLs(prefs.getDefaultCustomURLs());
 		prefs.setCustomTasks(new Task[]{});
 		prefs.setCustomTypes(new Type[]{});
+		prefs.setCustomPropertyFiles(new String[]{});
+		prefs.setCustomProperties(new Property[]{});
 	}
 }
 

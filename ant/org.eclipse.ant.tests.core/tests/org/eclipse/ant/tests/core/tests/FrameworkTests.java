@@ -12,6 +12,7 @@ import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.Property;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.IFile;
@@ -87,5 +88,55 @@ public class FrameworkTests extends AbstractAntTest {
 		assertSuccessful();
 		classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFile("AntTestTask.class");
 		assertTrue("Class file was not generated", classFile.exists());
+	}
+	
+	/**
+	 * Tests the properties added using a global property file
+	 */
+	public void testGlobalPropertyFile() throws CoreException {
+		
+		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+		
+		String path= getPropertyFileName();
+		prefs.setCustomPropertyFiles(new String[]{path});
+		
+		run("TestForEcho.xml", new String[]{});
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as Yep", "Yep".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("AntTests should have a value of testing", "testing from properties file".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+		
+		restorePreferenceDefaults();
+	}
+	
+	/**
+	 * Tests the properties added using a global property
+	 */
+	public void testGlobalProperty() throws CoreException {
+		
+		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+		prefs.setCustomProperties(new Property[]{new Property("eclipse.is.cool", "Yep"), new Property("JUnitTest", "true")});
+		
+		run("TestForEcho.xml", new String[]{});
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as Yep", "Yep".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("JUnitTests should have a value of true", "true".equals(AntTestChecker.getDefault().getUserProperty("JUnitTest")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+		
+		restorePreferenceDefaults();
+	}
+	
+	public void testGlobalPropertyFileWithMinusDTakingPrecedence() throws CoreException {
+		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
+		
+		String path= getPropertyFileName();
+		prefs.setCustomPropertyFiles(new String[]{path});
+		
+		run("echoing.xml", new String[]{"-DAntTests=testing", "-Declipse.is.cool=true"}, false);
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+		restorePreferenceDefaults();
 	}
 }

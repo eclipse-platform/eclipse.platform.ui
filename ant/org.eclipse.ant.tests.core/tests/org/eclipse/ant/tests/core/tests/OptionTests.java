@@ -331,7 +331,7 @@ public class OptionTests extends AbstractAntTest {
 	public void testPropertyFile() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-propertyfile", getPropertyFileName()});
 		assertSuccessful();
-		assertTrue("eclipse.is.cool should have been set as true", "Yep".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("eclipse.is.cool should have been set as Yep", "Yep".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
 		assertTrue("AntTests should have a value of testing", "testing from properties file".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
 	}
