@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.part.ViewPart;
 
 /**
  * A view container manages the services for a view.
