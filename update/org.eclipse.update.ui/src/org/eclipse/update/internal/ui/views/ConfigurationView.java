@@ -958,41 +958,66 @@ public class ConfigurationView
 		if (obj instanceof IFeatureAdapter) {
 			try {
 				propertiesAction.setEnabled(true);
-				
 				ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) obj;
 				IFeature feature = adapter.getFeature(null);
-				
+
 				boolean missing = feature instanceof MissingFeature;
-				boolean enable = !missing && ((adapter.isOptional() || !adapter.isIncluded()));
+				boolean enable = !missing
+						&& ((adapter.isOptional() || !adapter.isIncluded()));
+
+				uninstallFeatureAction.setFeature(adapter);
+				uninstallFeatureAction.setEnabled(enable
+						&& uninstallFeatureAction.canUninstall());
+				if (adapter.isConfigured())
+					setDescriptionOnTask(
+							uninstallFeatureAction,
+							adapter,
+							UpdateUI
+									.getString("ConfigurationView.uninstallDesc2"));
+				else
+					setDescriptionOnTask(
+							uninstallFeatureAction,
+							adapter,
+							UpdateUI
+									.getString("ConfigurationView.uninstallDesc"));
 
 				featureStateAction.setFeature(adapter);
 				featureStateAction.setEnabled(enable);
-				
-				uninstallFeatureAction.setFeature(adapter);
-				uninstallFeatureAction.setEnabled(enable && uninstallFeatureAction.canUninstall());
-				if (adapter.isConfigured())
-					setDescriptionOnTask(uninstallFeatureAction, adapter,UpdateUI.getString("ConfigurationView.uninstallDesc2"));
-				else
-					setDescriptionOnTask(uninstallFeatureAction, adapter,UpdateUI.getString("ConfigurationView.uninstallDesc"));
-
-				if (enable && adapter.isConfigured()) {
-					IFeature[] features = UpdateUtils.getInstalledFeatures(feature, false);
-					swapVersionAction.setEnabled(features.length > 1);
+				swapVersionAction.setEnabled(false);
+				if (enable) {
+					IFeature[] features = UpdateUtils.getInstalledFeatures(
+							feature, false);
 					if (features.length > 1) {
-						swapVersionAction.setCurrentFeature(feature);
-						swapVersionAction.setFeatures(features);
+						if (adapter.isConfigured()) {
+							// We only enable replace action if configured
+							// and selected. bug 74019
+							swapVersionAction.setEnabled(true);
+							swapVersionAction.setCurrentFeature(feature);
+							swapVersionAction.setFeatures(features);
+						} else {
+							// If we are not configured and another version is
+							// we want to disable StateAction. bug 74019
+							features = UpdateUtils.getInstalledFeatures(
+									feature, true);
+							if (features.length > 0) {
+								featureStateAction.setEnabled(false);
+							}
+						}
 					}
-					findUpdatesAction.setEnabled(true);
-					findUpdatesAction.setFeature(feature);
-				} else {
-					swapVersionAction.setEnabled(false);
-					findUpdatesAction.setEnabled(false);
 				}
 
+				findUpdatesAction.setEnabled(false);
+				if (enable && adapter.isConfigured()) {
+					if (feature.getUpdateSiteEntry() != null) {
+						findUpdatesAction.setFeature(feature);
+						findUpdatesAction.setEnabled(true);
+					}
+				}
+				
 				if (missing) {
 					MissingFeature mf = (MissingFeature) feature;
-					installOptFeatureAction.setEnabled(
-						mf.isOptional() && mf.getOriginatingSiteURL() != null);
+					installOptFeatureAction.setEnabled(mf.isOptional()
+							&& mf.getOriginatingSiteURL() != null);
 					installOptFeatureAction.setFeature(mf);
 				} else {
 					installOptFeatureAction.setEnabled(false);
@@ -1006,10 +1031,11 @@ public class ConfigurationView
 			findUpdatesAction.setEnabled(true);
 			findUpdatesAction.setFeature(null);
 			ILocalSite site = getLocalSite();
-			revertAction.setEnabled(site != null && site.getConfigurationHistory().length > 1);
+			revertAction.setEnabled(site != null
+					&& site.getConfigurationHistory().length > 1);
 		} else if (obj instanceof IConfiguredSiteAdapter) {
-			siteStateAction.setSite(
-				((IConfiguredSiteAdapter) obj).getConfiguredSite());
+			siteStateAction.setSite(((IConfiguredSiteAdapter) obj)
+					.getConfiguredSite());
 			siteStateAction.setEnabled(true);
 		}
 		preview.setSelection(ssel);
