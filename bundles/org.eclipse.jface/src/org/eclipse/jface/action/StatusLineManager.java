@@ -25,16 +25,14 @@ import org.eclipse.swt.widgets.Control;
  * sophisticated layout is required.
  * </p>
  */
-public class StatusLineManager extends ContributionManager implements IStatusLineWithProgressManager {
+public class StatusLineManager extends ContributionManager implements IStatusLineManager {
 
 	/**
 	 * The status line control; <code>null</code> before
 	 * creation and after disposal.
 	 */
 	private StatusLine statusLine = null;
-	
-	private String lastMessage;
-	private Image lastImage;
+
 	
 /**
  * Creates a new status line manager.
@@ -42,6 +40,7 @@ public class StatusLineManager extends ContributionManager implements IStatusLin
  * status line control.
  */
 public StatusLineManager() {
+	//Nothing to do on creation
 }
 /**
  * Creates and returns this manager's status line control. 
@@ -101,7 +100,6 @@ public IProgressMonitor getProgressMonitor() {
 		 */
 		public void done() {
 			statusLine.done();
-			clearProgress();
 		}
 		
 		/* (non-Javadoc)
@@ -187,7 +185,6 @@ public void setErrorMessage(Image image, String message) {
 public void setMessage(String message) {
 	if (statusLineExist())
 		statusLine.setMessage(message);
-	lastMessage = message;
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
@@ -195,8 +192,6 @@ public void setMessage(String message) {
 public void setMessage(Image image, String message) {
 	if (statusLineExist())
 		statusLine.setMessage(image, message);
-	lastMessage = message;
-	lastImage = image;
 }
 
 /**
@@ -331,22 +326,6 @@ public void update(boolean force) {
 			statusLine.setRedraw(true);
 		}
 	}
-}
-
-/* (non-Javadoc)
- * @see org.eclipse.jface.action.IStatusLineWithProgressManager#clearProgress()
- */
-public void clearProgress() {
-	statusLine.setMessage(lastImage,lastMessage);
-
-}
-
-/* (non-Javadoc)
- * @see org.eclipse.jface.action.IStatusLineWithProgressManager#setProgressMessage(java.lang.String)
- */
-public void setProgressMessage(String message) {
-	if (statusLineExist())
-		statusLine.setMessage(message);
 }
 
 }

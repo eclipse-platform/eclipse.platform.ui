@@ -875,27 +875,19 @@ public class ActionContributionItem extends ContributionItem {
 
 		GC gc = new GC(item.getDisplay());
 
-		int ellipsisWidth = gc.textExtent(ellipsis).x;
 		int maxWidth = item.getImage().getBounds().width * 4;
 		
 		if(gc.textExtent(textValue).x < maxWidth)
 			return textValue ;
 		
-		int length = textValue .length();
-		int pivot = length / 2;
-		int s = pivot;
-		int e = pivot + 1;
-		while (s >= 0 && e < length) {
-			String s1 = textValue .substring(0, s);
-			String s2 = textValue .substring(e, length);
-			int l1 = gc.textExtent(s1).x;
-			int l2 = gc.textExtent(s2).x;
-			if (l1 + ellipsisWidth + l2 < maxWidth) {
-				return s1 + ellipsis + s2;
-			}
-			s--;
-			e++;
+		for (int i = textValue.length(); i > 0; i--) {
+			String test = textValue .substring(0, i);
+			test = test + ellipsis;
+			if(gc.textExtent(test).x < maxWidth)
+				return test ;
 		}
+		
+		//If for some reason we fall through abort
 		return textValue ;
 	}
 }
