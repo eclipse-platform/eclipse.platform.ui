@@ -400,15 +400,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#getPrimaryFeatureIdentifier()
 	 */
 	public String getPrimaryFeatureIdentifier() {
-
+		String primaryFeatureId = null;
 		if (cmdFeature != null) // -feature was specified on command line
-			return cmdFeature;
-
-		// feature was not specified on command line
-		if (defaultFeature != null)
-			return defaultFeature; // return customized default if set
+			primaryFeatureId = cmdFeature;
+		else if (defaultFeature != null)
+			primaryFeatureId = defaultFeature; // return customized default if set
 		else
-			return DEFAULT_FEATURE_ID; // return hardcoded default
+			primaryFeatureId = DEFAULT_FEATURE_ID; // return hardcoded default
+		
+		// check if feature exists
+		if (findConfiguredFeatureEntry(primaryFeatureId) == null)
+			return null;
+		else
+			return primaryFeatureId;
 	}
 
 	/*

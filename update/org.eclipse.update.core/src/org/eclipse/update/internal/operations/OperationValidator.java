@@ -1080,6 +1080,9 @@ public class OperationValidator implements IOperationValidator {
 			BootLoader
 				.getCurrentPlatformConfiguration()
 				.getPrimaryFeatureIdentifier();
+		
+		if (featureId == null)
+			return; // no existing primary feature, nothing to worry about
 
 		for (int i = 0; i < features.size(); i++) {
 			IFeature feature = (IFeature) features.get(i);
