@@ -42,6 +42,15 @@ public class Feature extends FeatureModel implements IFeature {
 	private List /*of IFeatureReference*/
 	includedFeatureReferences;
 
+	/*
+	 * 
+	 */
+	 private class InstallAbortedException extends CoreException{
+	 	public InstallAbortedException(CoreException exp) {
+			super(exp.getStatus());
+		}
+	 }
+
 	/**
 	 * Feature default constructor
 	 * 
@@ -396,12 +405,12 @@ public class Feature extends FeatureModel implements IFeature {
 			// indicate install success
 			success = true;
 
-		} catch (Exception e) {
+		} catch (InstallAbortedException e){
+			// warn user
+			UpdateManagerPlugin.warn("Install aborted:");
+		} catch (CoreException e) {
 			originalException = e;
 		} finally {
-			if (monitor != null)
-				monitor.done();
-
 			Exception newException = null;
 			try {
 				if (consumer != null) {
@@ -409,15 +418,17 @@ public class Feature extends FeatureModel implements IFeature {
 						result = consumer.close();
 						// close the log
 						recoveryLog.close(recoveryLog.END_INSTALL_LOG);
-						recoveryLog.delete();
 					} else {
 						consumer.abort();
 					}
 				}
 				handler.installCompleted(success);
+				// if abort is done, no need for the log to stay
+				recoveryLog.delete();				
 			} catch (Exception e) {
 				newException = e;
 			}
+			
 			if (originalException != null) // original exception wins
 				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", this.getLabel()),
@@ -669,7 +680,8 @@ public class Feature extends FeatureModel implements IFeature {
 	private void abort() throws CoreException {
 		// throws an exception that will be caught by the install
 		// the install will abort the consumer.	 	
-		throw Utilities.newCoreException(Policy.bind("Feature.InstallationCancelled"), null); //$NON-NLS-1$
+		CoreException exp = Utilities.newCoreException(Policy.bind("Feature.InstallationCancelled"), null); //$NON-NLS-1$
+		throw new InstallAbortedException(exp);
 	}
 
 	/*

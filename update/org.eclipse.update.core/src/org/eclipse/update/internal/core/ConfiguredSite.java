@@ -207,30 +207,42 @@ public class ConfiguredSite
 			installedFeatureRef =
 				getSite().install(feature, verificationListener, monitor);
 
-			if (UpdateManagerPlugin.DEBUG
-				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
-				UpdateManagerPlugin.debug(
-					"Sucessfully installed: "
-						+ installedFeatureRef.getURL().toExternalForm());
-			}
-
-			if (installedFeatureRef!=null){
-				try {
-					installedFeature = installedFeatureRef.getFeature();
-				} catch (CoreException e) {
-					UpdateManagerPlugin.warn(null,e);
+			if (monitor!=null && monitor.isCanceled()){
+				if (UpdateManagerPlugin.DEBUG
+					&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
+					UpdateManagerPlugin.debug(
+						"Install cancelled: "
+							+ installedFeatureRef.getURL().toExternalForm());
 				}
-			}
 
-			// everything done ok
-			activity.setStatus(IActivity.STATUS_OK);
-			// notify listeners
-			Object[] siteListeners = listeners.getListeners();
-			for (int i = 0; i < siteListeners.length; i++) {
-				if (installedFeature != null) {
-					IConfiguredSiteChangedListener listener =
-						((IConfiguredSiteChangedListener) siteListeners[i]);
-					listener.featureInstalled(installedFeature);
+				// everything done ok
+				activity.setStatus(IActivity.STATUS_NOK);				
+			} else {
+				if (UpdateManagerPlugin.DEBUG
+					&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
+					UpdateManagerPlugin.debug(
+						"Sucessfully installed: "
+							+ installedFeatureRef.getURL().toExternalForm());
+				}
+	
+				if (installedFeatureRef!=null){
+					try {
+						installedFeature = installedFeatureRef.getFeature();
+					} catch (CoreException e) {
+						UpdateManagerPlugin.warn(null,e);
+					}
+				}
+	
+				// everything done ok
+				activity.setStatus(IActivity.STATUS_OK);
+				// notify listeners
+				Object[] siteListeners = listeners.getListeners();
+				for (int i = 0; i < siteListeners.length; i++) {
+					if (installedFeature != null) {
+						IConfiguredSiteChangedListener listener =
+							((IConfiguredSiteChangedListener) siteListeners[i]);
+						listener.featureInstalled(installedFeature);
+					}
 				}
 			}
 		} catch (CoreException e) {
