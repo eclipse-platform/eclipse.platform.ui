@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2002, 2003 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.resources.team;
 
 import org.eclipse.core.internal.resources.ResourceStatus;
@@ -56,12 +56,14 @@ protected TeamHook() {
  * to be created.
  * </p>
  * 
- * @param file the file to be linked * @param updateFlags bit-wise or of update flag constants
+ * @param file the file to be linked
+ * @param updateFlags bit-wise or of update flag constants
  *   (only ALLOW_MISSING_LOCAL is relevant here)
  * @param location a file system path where the file should be linked
  * @return a status object with code <code>IStatus.OK</code> 
  * 	if linking is allowed, otherwise a status object with severity 
- * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed. * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
+ * 	<code>IStatus.ERROR</code> indicating why the creation is not allowed.
+ * @see org.eclipse.core.resources.IResource#ALLOW_MISSING_LOCAL
  */
 public IStatus validateCreateLink(IFile file, int updateFlags, IPath location) {
 	return ResourceStatus.OK_STATUS;

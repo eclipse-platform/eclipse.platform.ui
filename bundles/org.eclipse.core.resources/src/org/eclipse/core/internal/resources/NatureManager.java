@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
@@ -532,7 +532,8 @@ protected IStatus validateAdditions(HashSet newNatures, HashSet additions, IProj
  * otherwise a non-OK status indicating why linking is not allowed.
  * Linking is allowed if there is no project nature that explicitly disallows it.
  * No validation is done on the nature ids themselves (ids that don't have
- * a corresponding nature definition will be ignored). */
+ * a corresponding nature definition will be ignored).
+ */
 public IStatus validateLinkCreation(String[] natureIds) {
 	for (int i = 0; i < natureIds.length; i++) {
 		IProjectNatureDescriptor desc = getNatureDescriptor(natureIds[i]);

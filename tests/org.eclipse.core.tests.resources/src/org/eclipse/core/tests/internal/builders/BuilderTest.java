@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.Map;
 
@@ -98,7 +104,8 @@ public void testAutoBuildPR() {
 	}
 }
 /**
- * Tests installing and running a builder that always fails during instantation. */
+ * Tests installing and running a builder that always fails during instantation.
+ */
 public void testBrokenBuilder() {
 	// Create some resource handles
 	IProject project = getWorkspace().getRoot().getProject("PROJECT");

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     IBM - Initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.util.Map;
@@ -54,8 +54,11 @@ public class TestingSupport {
 	 * Returns a copy of the session properties for the given resource. If the resource
 	 * is not accessible or any problems occur accessing it, then <code>null</code> is
 	 * returned.
-	 * 	 * @param resource the resource to get the properties from	 * @return the resource's session properties or <code>null</code>
-	 * @since 2.1	 */
+	 * 
+	 * @param resource the resource to get the properties from
+	 * @return the resource's session properties or <code>null</code>
+	 * @since 2.1
+	 */
 	public static Map getSessionProperties(IResource resource) {
 		ResourceInfo info = ((Resource) resource).getResourceInfo(true, false);
 		if (info == null)

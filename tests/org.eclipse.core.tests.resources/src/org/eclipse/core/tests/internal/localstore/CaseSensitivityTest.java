@@ -1,7 +1,27 @@
-/********************************************************************** * Copyright (c) 2000,2002 IBM Corporation and others. * All rights reserved.   This program and the accompanying materials * are made available under the terms of the Common Public License v0.5 * which accompanies this distribution, and is available at * http://www.eclipse.org/legal/cpl-v05.html *  * Contributors:  * IBM - Initial API and implementation **********************************************************************/package org.eclipse.core.tests.internal.localstore;import java.io.IOException;import junit.framework.Test;import junit.framework.TestSuite;import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;import org.eclipse.core.resources.*;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.Path;
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.tests.internal.localstore;
+
+import java.io.IOException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 
 public class CaseSensitivityTest extends LocalStoreTest {
-	private boolean isCaseSensitive = CoreFileSystemLibrary.isCaseSensitive();	
+	private boolean isCaseSensitive = CoreFileSystemLibrary.isCaseSensitive();
+	
 public CaseSensitivityTest() {
 	super();
 }
@@ -9,23 +29,27 @@ public CaseSensitivityTest(String name) {
 	super(name);
 }
 public static Test suite() {
-	return new TestSuite(CaseSensitivityTest.class);}
+	return new TestSuite(CaseSensitivityTest.class);
+}
 public void testCreateProjects() {
 	String projectName = "testProject31415";
 	
 	// create a project, should be fine
 	IProject project1 = getWorkspace().getRoot().getProject(projectName);
 	try {
-		project1.create(null);		project1.open(null);
+		project1.create(null);
+		project1.open(null);
 		assertTrue("1.0",true);
 	} catch (CoreException e) {
-		assertTrue("1.0",false);	// should not happen		return;					// no point in proceding
+		assertTrue("1.0",false);	// should not happen
+		return;					// no point in proceding
 	}
 		
 	// create a second project; should fail because has same name with different casing
 	IProject project2 = getWorkspace().getRoot().getProject(projectName.toUpperCase());
 	try {
-		project2.create(null);		project2.open(null);
+		project2.create(null);
+		project2.open(null);
 		assertTrue("1.1",isCaseSensitive);
 	} catch (CoreException e) {
 		assertTrue("1.1",!isCaseSensitive);
@@ -42,7 +66,8 @@ public void testCreateFolders() {
 		folder1.create(true, true, null);
 		assertTrue("1.0",true);
 	} catch (CoreException e) {
-		assertTrue("1.0",false);	// should not happen		return;					// no point in proceding
+		assertTrue("1.0",false);	// should not happen
+		return;					// no point in proceding
 	}
 		
 	// create a second folder; should fail because has same name with different casing
@@ -52,7 +77,16 @@ public void testCreateFolders() {
 		assertTrue("1.1",isCaseSensitive);
 	} catch (CoreException e) {
 		assertTrue("1.1",!isCaseSensitive);
-	}		// create a file; should fail because has same name with different casing	IFile file = aProject.getFile(folderName.toUpperCase());	try {		file.create(getRandomContents(), true, null);		assertTrue("1.2",false);	} catch (CoreException e) {		assertTrue("1.2",true);	}
+	}
+	
+	// create a file; should fail because has same name with different casing
+	IFile file = aProject.getFile(folderName.toUpperCase());
+	try {
+		file.create(getRandomContents(), true, null);
+		assertTrue("1.2",false);
+	} catch (CoreException e) {
+		assertTrue("1.2",true);
+	}
 }
 
 public void testCreateFiles() {
@@ -65,7 +99,8 @@ public void testCreateFiles() {
 		file1.create(getRandomContents(), true, null);
 		assertTrue("1.0",true);
 	} catch (CoreException e) {
-		assertTrue("1.0",false);	// should not happen		return;					// no point in proceding
+		assertTrue("1.0",false);	// should not happen
+		return;					// no point in proceding
 	}
 		
 	// create a second file; should fail because has same name with different casing
@@ -75,7 +110,16 @@ public void testCreateFiles() {
 		assertTrue("1.1",isCaseSensitive);
 	} catch (CoreException e) {
 		assertTrue("1.1",!isCaseSensitive);
-	}		// create a folder; should fail because has same name with different casing	IFolder folder = aProject.getFolder(fileName.toUpperCase());	try {		folder.create(true, true, null);		assertTrue("1.2",false);	} catch (CoreException e) {		assertTrue("1.2",true);	}
+	}
+	
+	// create a folder; should fail because has same name with different casing
+	IFolder folder = aProject.getFolder(fileName.toUpperCase());
+	try {
+		folder.create(true, true, null);
+		assertTrue("1.2",false);
+	} catch (CoreException e) {
+		assertTrue("1.2",true);
+	}
 }
 
 public void testRenameProject() {
@@ -85,7 +129,8 @@ public void testRenameProject() {
 	// create 2 projects with different names
 	IProject project1 = getWorkspace().getRoot().getProject(project1name);
 	try {
-		project1.create(null);		project1.open(null);
+		project1.create(null);
+		project1.open(null);
 		assertTrue("1.0",true);
 	} catch (CoreException e) {
 		assertTrue("1.0",false);	// should not happen
@@ -95,7 +140,8 @@ public void testRenameProject() {
 	IProject project2 = getWorkspace().getRoot().getProject(project2name);
 	try {
 		project2.create(null);
-		project2.open(null);		assertTrue("1.1",true);
+		project2.open(null);
+		assertTrue("1.1",true);
 	} catch (CoreException e) {
 		assertTrue("1.1",false);	// should not happen
 		return;					// no point in proceding
@@ -105,7 +151,9 @@ public void testRenameProject() {
 	try {
 		project1.move(Path.ROOT.append(project2.getName().toUpperCase()),true,null);
 		assertTrue("1.2",isCaseSensitive);
-	} catch (CoreException e) {		assertTrue("1.2",!isCaseSensitive);	}
+	} catch (CoreException e) {
+		assertTrue("1.2",!isCaseSensitive);
+	}
 }
 
 public void testRenameFolder() {
@@ -206,7 +254,18 @@ public void testCopyAndMoveFolder() {
 		folder1.copy(destinationProject.getFullPath().append(folder1.getName()),true,null);
 		assertTrue("1.2",isCaseSensitive);
 	} catch (CoreException e) {
-		assertTrue("1.2",!isCaseSensitive);	}		// try to move the folder from source project to destination project.	// should fail due to conflict	try {		folder1.move(destinationProject.getFullPath().append(folder1.getName()),true,null);		assertTrue("1.3",false);	} catch (CoreException e) {		assertTrue("1.3",true);	}}
+		assertTrue("1.2",!isCaseSensitive);
+	}
+	
+	// try to move the folder from source project to destination project.
+	// should fail due to conflict
+	try {
+		folder1.move(destinationProject.getFullPath().append(folder1.getName()),true,null);
+		assertTrue("1.3",false);
+	} catch (CoreException e) {
+		assertTrue("1.3",true);
+	}
+}
 
 public void testCopyAndMoveFile() {
 	String fileName = "fileTest31415";
@@ -237,7 +296,19 @@ public void testCopyAndMoveFile() {
 	try {
 		file1.copy(destinationProject.getFullPath().append(file1.getName()),true,null);
 		assertTrue("1.2",isCaseSensitive);
-	} catch (CoreException e) {		assertTrue("1.2",!isCaseSensitive);	}		// try to move the file from source project to destination project.	// should fail due to conflict	try {		file1.move(destinationProject.getFullPath().append(file1.getName()),true,null);		assertTrue("1.3",false);	} catch (CoreException e) {		assertTrue("1.3",true);	}}
+	} catch (CoreException e) {
+		assertTrue("1.2",!isCaseSensitive);
+	}
+	
+	// try to move the file from source project to destination project.
+	// should fail due to conflict
+	try {
+		file1.move(destinationProject.getFullPath().append(file1.getName()),true,null);
+		assertTrue("1.3",false);
+	} catch (CoreException e) {
+		assertTrue("1.3",true);
+	}
+}
 
 public void testCopyAndMoveFolderOverFile() {
 	String name = "test31415";
@@ -253,14 +324,33 @@ public void testCopyAndMoveFolderOverFile() {
 		assertTrue("1.0",false);	// should not happen
 		return;					// no point in proceding
 	}
-	IFile file = destinationProject.getFile(name.toUpperCase());	try {		file.create(getRandomContents(), true, null);		assertTrue("1.1",true);	} catch (CoreException e) {		assertTrue("1.1",false);	// should not happen		return;					// no point in proceding	}	
+
+	IFile file = destinationProject.getFile(name.toUpperCase());
+	try {
+		file.create(getRandomContents(), true, null);
+		assertTrue("1.1",true);
+	} catch (CoreException e) {
+		assertTrue("1.1",false);	// should not happen
+		return;					// no point in proceding
+	}
+	
 	// try to copy the folder from source project to destination project.
 	// should fail due to conflict with existing file with case-different name
 	try {
 		folder.copy(destinationProject.getFullPath().append(folder.getName()),true,null);
-		assertTrue("1.2",isCaseSensitive);	} catch (CoreException e) {
+		assertTrue("1.2",isCaseSensitive);
+	} catch (CoreException e) {
 		assertTrue("1.2",!isCaseSensitive);
-	}	// try to move the folder from source project to destination project.	// should fail due to conflict with existing file with case-different name	try {		folder.move(destinationProject.getFullPath().append(folder.getName()),true,null);		assertTrue("1.3",false);	} catch (CoreException e) {		assertTrue("1.3",true);	}
+	}
+
+	// try to move the folder from source project to destination project.
+	// should fail due to conflict with existing file with case-different name
+	try {
+		folder.move(destinationProject.getFullPath().append(folder.getName()),true,null);
+		assertTrue("1.3",false);
+	} catch (CoreException e) {
+		assertTrue("1.3",true);
+	}
 }
 
 public void testCopyAndMoveFileOverFolder() {
@@ -294,7 +384,74 @@ public void testCopyAndMoveFileOverFolder() {
 		assertTrue("1.2",isCaseSensitive);
 	} catch (CoreException e) {
 		assertTrue("1.2",!isCaseSensitive);
-	}		// try to move the file from source project to destination project.	// should fail due to conflict with existing folder with case-different name	try {		file.move(destinationProject.getFullPath().append(file.getName()),true,null);		assertTrue("1.3",false);	} catch (CoreException e) {		assertTrue("1.3",true);	}}public void testCopyAndMoveFolderBecomeProject() {	IProject sourceProject = getWorkspace().getRoot().getProjects()[0];	IProject blockingProject = getWorkspace().getRoot().getProjects()[1];		// create a folder in the source project with a case-different name to the second project	IFolder folder = sourceProject.getFolder(blockingProject.getName().toUpperCase());	try {		folder.create(true, true, null);	} catch (CoreException e) {		fail("1.0",e);	}	// try to move the folder from source project to the root, which makes it a project.	// should always fails since we aren't allowed to move a folder to be a project.	try {		folder.move(Path.ROOT.append(folder.getName()),true,null);		fail("1.1");	} catch (CoreException e) {	}		// try to copy the folder from source project to the root, which makes it a project.	// should always fail since we aren't allowed to copy a folder to be a project	try {		folder.copy(Path.ROOT.append(folder.getName()),true,null);		fail("1.2");	} catch (CoreException e) {	}}public void testCopyAndMoveProjectBecomeFolder() {	IProject sourceProject = getWorkspace().getRoot().getProjects()[0];	IProject destinationProject = getWorkspace().getRoot().getProjects()[1];		// create a file in the destination project with a case-different name of the source project	IFile file = destinationProject.getFile(sourceProject.getName().toUpperCase());	try {		file.create(getRandomContents(), true, null);	} catch (CoreException e) {		fail("1.0",e);	}	// try to move the source project to the destination project, which makes it a folder.	// should fail because we aren't allowed to move a project to be a folder	try {		sourceProject.move(destinationProject.getFullPath().append(sourceProject.getName()),true,null);		fail("1.1");	} catch (CoreException e) {	}		// try to copy the source project to the destination project, which makes it a folder.	// should fail because we aren't allowed to copy a project to be a folder	try {		sourceProject.copy(destinationProject.getFullPath().append(sourceProject.getName()),true,null);		fail("1.2");	} catch (CoreException e) {	}}public void testRefreshLocalFolder1() {
+	}
+	
+	// try to move the file from source project to destination project.
+	// should fail due to conflict with existing folder with case-different name
+	try {
+		file.move(destinationProject.getFullPath().append(file.getName()),true,null);
+		assertTrue("1.3",false);
+	} catch (CoreException e) {
+		assertTrue("1.3",true);
+	}
+}
+public void testCopyAndMoveFolderBecomeProject() {
+	IProject sourceProject = getWorkspace().getRoot().getProjects()[0];
+	IProject blockingProject = getWorkspace().getRoot().getProjects()[1];
+	
+	// create a folder in the source project with a case-different name to the second project
+	IFolder folder = sourceProject.getFolder(blockingProject.getName().toUpperCase());
+	try {
+		folder.create(true, true, null);
+	} catch (CoreException e) {
+		fail("1.0",e);
+	}
+
+	// try to move the folder from source project to the root, which makes it a project.
+	// should always fails since we aren't allowed to move a folder to be a project.
+	try {
+		folder.move(Path.ROOT.append(folder.getName()),true,null);
+		fail("1.1");
+	} catch (CoreException e) {
+	}
+	
+	// try to copy the folder from source project to the root, which makes it a project.
+	// should always fail since we aren't allowed to copy a folder to be a project
+	try {
+		folder.copy(Path.ROOT.append(folder.getName()),true,null);
+		fail("1.2");
+	} catch (CoreException e) {
+	}
+}
+public void testCopyAndMoveProjectBecomeFolder() {
+	IProject sourceProject = getWorkspace().getRoot().getProjects()[0];
+	IProject destinationProject = getWorkspace().getRoot().getProjects()[1];
+	
+	// create a file in the destination project with a case-different name of the source project
+	IFile file = destinationProject.getFile(sourceProject.getName().toUpperCase());
+	try {
+		file.create(getRandomContents(), true, null);
+	} catch (CoreException e) {
+		fail("1.0",e);
+	}
+
+	// try to move the source project to the destination project, which makes it a folder.
+	// should fail because we aren't allowed to move a project to be a folder
+	try {
+		sourceProject.move(destinationProject.getFullPath().append(sourceProject.getName()),true,null);
+		fail("1.1");
+	} catch (CoreException e) {
+	}
+	
+	// try to copy the source project to the destination project, which makes it a folder.
+	// should fail because we aren't allowed to copy a project to be a folder
+	try {
+		sourceProject.copy(destinationProject.getFullPath().append(sourceProject.getName()),true,null);
+		fail("1.2");
+	} catch (CoreException e) {
+	}
+}
+public void testRefreshLocalFolder1() {
 	String name = "test31415";
 	IProject project = getWorkspace().getRoot().getProjects()[0];
 	
@@ -306,21 +463,196 @@ public void testCopyAndMoveFileOverFolder() {
 	} catch (CoreException e) {
 		fail("1.1", e);	// should not happen
 	}
-	// get a Folder handle with the same name but different casing	// in order to determine file system location	IFolder herringRouge = project.getFolder(name);		// create a directory with the folder's name	folder.getLocation().toFile().delete();
-	java.io.File dir = herringRouge.getLocation().toFile();	dir.mkdir();	// do a refresh, which should cause a problem	
+
+	// get a Folder handle with the same name but different casing
+	// in order to determine file system location
+	IFolder herringRouge = project.getFolder(name);
+	
+	// create a directory with the folder's name
+	folder.getLocation().toFile().delete();
+	java.io.File dir = herringRouge.getLocation().toFile();
+	dir.mkdir();
+
+	// do a refresh, which should cause a problem	
 	try {
 		project.refreshLocal(IResource.DEPTH_INFINITE,null);
 	} catch (CoreException e) {
-		fail("1.2", e);	}
-		assertTrue("2.0", !folder.exists());
+		fail("1.2", e);
+	}
+	
+	assertTrue("2.0", !folder.exists());
 	assertTrue("2.1", herringRouge.exists());
 }
 public void testRefreshLocalFile1() {
-	String name = "test31415";	IProject project = getWorkspace().getRoot().getProjects()[0];		// create a File, which should be fine	IFile file = project.getFile(name.toUpperCase());	try {		file.create(getRandomContents(), true, null);		assertTrue("1.0",true);	} catch (CoreException e) {		fail("1.1", e);	// should not happen	}	// get a File handle with the same name but different casing	// in order to determine file system location	IFile herringRouge = project.getFile(name);	// create a file in the local file system with the same name but different casing	ensureDoesNotExistInFileSystem(file);	ensureExistsInFileSystem(herringRouge);		// do a refresh, which should cause a problem		try {		project.refreshLocal(IResource.DEPTH_INFINITE,null);	} catch (CoreException e) {		fail("3.0", e);	}
+	String name = "test31415";
+	IProject project = getWorkspace().getRoot().getProjects()[0];
+	
+	// create a File, which should be fine
+	IFile file = project.getFile(name.toUpperCase());
+	try {
+		file.create(getRandomContents(), true, null);
+		assertTrue("1.0",true);
+	} catch (CoreException e) {
+		fail("1.1", e);	// should not happen
+	}
+
+	// get a File handle with the same name but different casing
+	// in order to determine file system location
+	IFile herringRouge = project.getFile(name);
+
+	// create a file in the local file system with the same name but different casing
+	ensureDoesNotExistInFileSystem(file);
+	ensureExistsInFileSystem(herringRouge);
+	
+	// do a refresh, which should cause a problem	
+	try {
+		project.refreshLocal(IResource.DEPTH_INFINITE,null);
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
 	
 	assertTrue("4.0", !file.exists());
 	assertTrue("4.1", herringRouge.exists());
 }
-public void testRefreshLocalFolder2() {	String name = "test31415";	IProject project = getWorkspace().getRoot().getProjects()[0];		// create a Folder, which should be fine	IFolder folder = project.getFolder(name.toUpperCase());	try {		folder.create(true, true, null);		assertTrue("1.0",true);	} catch (CoreException e) {		fail("1.1", e);	// should not happen	}	// get a File handle with the same name but different casing	// in order to determine file system location	IFile herringRouge = project.getFile(name);	// create a file in the local file system with the same name but different casing	ensureDoesNotExistInFileSystem(folder);	ensureExistsInFileSystem(herringRouge);	// do a refresh, which should cause a problem		try {		project.refreshLocal(IResource.DEPTH_INFINITE,null);	} catch (CoreException e) {		fail("3.0", e);	}		assertTrue("4.0", !folder.exists());	assertTrue("4.1", herringRouge.exists());}public void testRefreshLocalFile2() {	String name = "test31415";	IProject project = getWorkspace().getRoot().getProjects()[0];		// create a File, which should be fine	IFile file = project.getFile(name.toUpperCase());	try {		file.create(getRandomContents(), true, null);		assertTrue("1.0",true);	} catch (CoreException e) {		fail("1.1", e);	// should not happen	}	// get a Folder handle with the same name but different casing	// in order to determine file system location	IFolder herringRouge = project.getFolder(name);		// create a directory with the folder's name	java.io.File localFile = file.getLocation().toFile();	localFile.delete();	assertTrue("2.0", !localFile.exists());	java.io.File dir = herringRouge.getLocation().toFile();	dir.mkdir();	assertTrue("2.1", dir.exists());	// do a refresh, which should cause a problem		try {		project.refreshLocal(IResource.DEPTH_INFINITE,null);	} catch (CoreException e) {		fail("3.0", e);	}		assertTrue("4.0", !file.exists());
-	assertTrue("4.1", herringRouge.exists());}
-public void testDeleteResources() {	String name = "test31415";		// create a project, should be fine	IProject project = getWorkspace().getRoot().getProject(name);	try {		project.create(null);		project.open(null);		assertTrue("1.0",true);	} catch (CoreException e) {		assertTrue("1.1",false);	// should not happen		return;					// no point in proceding	}		// create a Folder, which should be fine	IFolder folder = project.getFolder(name);	try {		folder.create(true, true, null);		assertTrue("2.0",true);	} catch (CoreException e) {		fail("2.1", e);	// should not happen	}	// create a File, which should be fine	IFile file = folder.getFile(name);	try {		file.create(getRandomContents(), true, null);		assertTrue("3.0",true);	} catch (CoreException e) {		fail("3.1", e);	// should not happen	}	// replace the File's filesystem rep. with a case-different name	java.io.File localFile = file.getLocation().toFile();	localFile.delete();	assertTrue("4.0", !localFile.exists());	localFile = new java.io.File(file.getLocation().removeLastSegments(1).toString(),name.toUpperCase());	try {		localFile.createNewFile();	} catch (IOException e) {		fail("4.1",e);	}	assertTrue("4.2", localFile.exists());		try {		file.delete(true,null);		// FIXME: there is a bug in the code related to this scenario//		assert("5.0", isCaseSensitive);	} catch (CoreException e) {		// FIXME: there is a bug in the code related to this scenario//		assert("5.1", !isCaseSensitive);	}		localFile.delete();	// so that we can change its parent folder	assertTrue("6.0", !localFile.exists());	// replace the Folder's filesystem rep. with a case-different name	java.io.File localFolder = folder.getLocation().toFile();	localFolder.delete();	assertTrue("7.0", !localFolder.exists());	localFolder = new java.io.File(folder.getLocation().removeLastSegments(1).toString(),name.toUpperCase());	localFolder.mkdir();	assertTrue("7.1", localFolder.exists());		try {		folder.delete(true,null);		// FIXME: there is a bug in the code related to this scenario//		assert("8.0", isCaseSensitive);	} catch (CoreException e) {		// FIXME: there is a bug in the code related to this scenario//		assert("8.1", !isCaseSensitive);	}}}
+
+public void testRefreshLocalFolder2() {
+	String name = "test31415";
+	IProject project = getWorkspace().getRoot().getProjects()[0];
+	
+	// create a Folder, which should be fine
+	IFolder folder = project.getFolder(name.toUpperCase());
+	try {
+		folder.create(true, true, null);
+		assertTrue("1.0",true);
+	} catch (CoreException e) {
+		fail("1.1", e);	// should not happen
+	}
+
+	// get a File handle with the same name but different casing
+	// in order to determine file system location
+	IFile herringRouge = project.getFile(name);
+
+	// create a file in the local file system with the same name but different casing
+	ensureDoesNotExistInFileSystem(folder);
+	ensureExistsInFileSystem(herringRouge);
+
+	// do a refresh, which should cause a problem	
+	try {
+		project.refreshLocal(IResource.DEPTH_INFINITE,null);
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+	
+	assertTrue("4.0", !folder.exists());
+	assertTrue("4.1", herringRouge.exists());
+}
+
+public void testRefreshLocalFile2() {
+	String name = "test31415";
+	IProject project = getWorkspace().getRoot().getProjects()[0];
+	
+	// create a File, which should be fine
+	IFile file = project.getFile(name.toUpperCase());
+	try {
+		file.create(getRandomContents(), true, null);
+		assertTrue("1.0",true);
+	} catch (CoreException e) {
+		fail("1.1", e);	// should not happen
+	}
+
+	// get a Folder handle with the same name but different casing
+	// in order to determine file system location
+	IFolder herringRouge = project.getFolder(name);
+	
+	// create a directory with the folder's name
+	java.io.File localFile = file.getLocation().toFile();
+	localFile.delete();
+	assertTrue("2.0", !localFile.exists());
+	java.io.File dir = herringRouge.getLocation().toFile();
+	dir.mkdir();
+	assertTrue("2.1", dir.exists());
+
+	// do a refresh, which should cause a problem	
+	try {
+		project.refreshLocal(IResource.DEPTH_INFINITE,null);
+	} catch (CoreException e) {
+		fail("3.0", e);
+	}
+	
+	assertTrue("4.0", !file.exists());
+	assertTrue("4.1", herringRouge.exists());
+}
+public void testDeleteResources() {
+	String name = "test31415";
+	
+	// create a project, should be fine
+	IProject project = getWorkspace().getRoot().getProject(name);
+	try {
+		project.create(null);
+		project.open(null);
+		assertTrue("1.0",true);
+	} catch (CoreException e) {
+		assertTrue("1.1",false);	// should not happen
+		return;					// no point in proceding
+	}
+	
+	// create a Folder, which should be fine
+	IFolder folder = project.getFolder(name);
+	try {
+		folder.create(true, true, null);
+		assertTrue("2.0",true);
+	} catch (CoreException e) {
+		fail("2.1", e);	// should not happen
+	}
+
+	// create a File, which should be fine
+	IFile file = folder.getFile(name);
+	try {
+		file.create(getRandomContents(), true, null);
+		assertTrue("3.0",true);
+	} catch (CoreException e) {
+		fail("3.1", e);	// should not happen
+	}
+
+	// replace the File's filesystem rep. with a case-different name
+	java.io.File localFile = file.getLocation().toFile();
+	localFile.delete();
+	assertTrue("4.0", !localFile.exists());
+	localFile = new java.io.File(file.getLocation().removeLastSegments(1).toString(),name.toUpperCase());
+	try {
+		localFile.createNewFile();
+	} catch (IOException e) {
+		fail("4.1",e);
+	}
+	assertTrue("4.2", localFile.exists());
+	
+	try {
+		file.delete(true,null);
+		// FIXME: there is a bug in the code related to this scenario
+//		assert("5.0", isCaseSensitive);
+	} catch (CoreException e) {
+		// FIXME: there is a bug in the code related to this scenario
+//		assert("5.1", !isCaseSensitive);
+	}
+	
+	localFile.delete();	// so that we can change its parent folder
+	assertTrue("6.0", !localFile.exists());
+
+	// replace the Folder's filesystem rep. with a case-different name
+	java.io.File localFolder = folder.getLocation().toFile();
+	localFolder.delete();
+	assertTrue("7.0", !localFolder.exists());
+	localFolder = new java.io.File(folder.getLocation().removeLastSegments(1).toString(),name.toUpperCase());
+	localFolder.mkdir();
+	assertTrue("7.1", localFolder.exists());
+	
+	try {
+		folder.delete(true,null);
+		// FIXME: there is a bug in the code related to this scenario
+//		assert("8.0", isCaseSensitive);
+	} catch (CoreException e) {
+		// FIXME: there is a bug in the code related to this scenario
+//		assert("8.1", !isCaseSensitive);
+	}
+}
+}
