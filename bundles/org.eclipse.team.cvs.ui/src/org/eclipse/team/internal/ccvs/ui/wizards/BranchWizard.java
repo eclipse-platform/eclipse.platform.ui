@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -49,7 +52,24 @@ public class BranchWizard extends Wizard {
 	}
 	
 	public void addPages() {
-		mainPage = new BranchWizardPage("versionPage", Policy.bind("BranchWizard.createABranch"), areAllResourcesSticky(resources), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH)); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean allResourcesSticky = areAllResourcesSticky(resources);
+		String versionName = "";		
+		try {
+			if(allResourcesSticky) {
+				IResource stickyResource = resources[0];									
+				if(stickyResource.getType()==IResource.FILE) {
+					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)stickyResource);
+					versionName = cvsFile.getSyncInfo().getTag().getName();
+				} else {
+					ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)stickyResource);
+					versionName = cvsFolder.getFolderSyncInfo().getTag().getName();
+				}
+			}
+		} catch(CVSException e) {
+			CVSUIPlugin.log(e.getStatus());
+			versionName = "";
+		}
+		mainPage = new BranchWizardPage("versionPage", Policy.bind("BranchWizard.createABranch"), allResourcesSticky, versionName, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH)); //$NON-NLS-1$ //$NON-NLS-2$
 		addPage(mainPage);
 	}
 	public boolean performFinish() {
