@@ -12,7 +12,6 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -65,8 +64,8 @@ public class DialogSettingsHelper {
 		IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
 		try {
 			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
+			x = settings.getInt(DIALOG_WIDTH);
+			y = settings.getInt(DIALOG_HEIGHT);
 			return new Point(Math.max(x, initialSize.x), Math.max(y, initialSize.y));
 		} catch (NumberFormatException e) {
 		}
@@ -84,8 +83,8 @@ public class DialogSettingsHelper {
 	public static Point getInitialLocation(String dialogSettingsSectionName) {
 		IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
 		try {
-			int x= settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
-			int y= settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
+			int x= settings.getInt(DIALOG_ORIGIN_X);
+			int y= settings.getInt(DIALOG_ORIGIN_Y);
 			return new Point(x,y);
 		} catch (NumberFormatException e) {
 		}

@@ -11,12 +11,12 @@
 package org.eclipse.ant.internal.ui.debug;
 
 import org.eclipse.ant.internal.ui.AntUtil;
-import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate;
@@ -28,7 +28,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 /**
  * Computes the default source lookup path for an Ant launch configuration.
  * The default source lookup path is the folder or project containing 
- * the Ant buildfile. If the program is not specified, the workspace
+ * the Ant buildfile. If the folder or project cannot be determined, the workspace
  * is searched by default.
  */
 public class AntSourcePathComputerDelegate implements ISourcePathComputerDelegate {
@@ -38,7 +38,7 @@ public class AntSourcePathComputerDelegate implements ISourcePathComputerDelegat
 	 */
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		String path = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
-		path= StringVariableManager.getDefault().performStringSubstitution(path);
+		path= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(path);
 		ISourceContainer sourceContainer = null;
 		if (path != null) {
 			IResource resource = AntUtil.getFileForLocation(path, null);
