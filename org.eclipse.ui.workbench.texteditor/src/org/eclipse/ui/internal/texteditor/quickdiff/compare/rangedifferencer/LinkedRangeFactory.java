@@ -43,11 +43,32 @@ public class LinkedRangeFactory {
 	 * Relative amount of memory that must be free in order to allow the creation of additional instances
 	 */
 	private static final double THRESHOLD= 0.1;
-	
 	/**
 	 * Number of instantiations after which the amount of free memory is checked
 	 */
-	private static final long CHECK_INTERVAL= 10000;
+	private static final long CHECK_INTERVAL= 5000;
+	/**
+	 * Considered maximal size of a difference object in bytes.
+	 */
+	private static final long OBJECT_SIZE= 100;
+	/**
+	 * The maximal memory requirement for the next round in bytes.
+	 */
+	private static final long MAXIMAL_INTERVAL_REQUIREMENT= CHECK_INTERVAL * OBJECT_SIZE;
+	/**
+	 * Allowed memory consumption in bytes.
+	 */
+	private static final long MAX_MEMORY_CONSUMPTION= 10 * 1024 * 1024;
+	/**
+	 * The maximal number of instances.
+	 */
+	private static final long MAX_INSTANCES= MAX_MEMORY_CONSUMPTION /  OBJECT_SIZE;
+
+	
+	/**
+	 * Preallocated low memory exception
+	 */
+	private LowMemoryException fLowMemoryException= new LowMemoryException();
 
 	/**
 	 * Number of instantiations
@@ -74,15 +95,16 @@ public class LinkedRangeFactory {
 	 * @throws LowMemoryException
 	 */
 	private void check() throws LowMemoryException {
-		if (++fCount >= CHECK_INTERVAL) {
-			fCount= 0;
+		if (fCount % CHECK_INTERVAL == 0) {
 			
 			Runtime runtime= Runtime.getRuntime();
 			long maxMemory= runtime.maxMemory();
 			long maxFreeMemory= maxMemory - (runtime.totalMemory() - runtime.freeMemory());
 			
-			if (((float) maxFreeMemory) / maxMemory < THRESHOLD)
-				throw new LowMemoryException();
+			if (((float) (maxFreeMemory - MAXIMAL_INTERVAL_REQUIREMENT)) / maxMemory < THRESHOLD)
+				throw fLowMemoryException;
 		}
+		if (++fCount >= MAX_INSTANCES)
+			throw fLowMemoryException;
 	}
 }
