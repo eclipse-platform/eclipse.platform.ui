@@ -24,10 +24,11 @@ public interface IResourceTree {
 /**
  * Adds the state of the given file to the local history.
  * Does nothing if the file does not exist in the local file system
- * or if the file does not exist in the workspace tree.
+ * or if the file does not exist in the workspace tree. The given
+ * path is the absolute path of the file in the local file system.
  * 
  * @param file the file
- * @param FIXME
+ * @param path the local file system path for the file contents
  */
 public void addToLocalHistory(IFile file, IPath path);
 
@@ -40,8 +41,8 @@ public void addToLocalHistory(IFile file, IPath path);
  * destination file is queried for its timestamp.
  * <p>
  * If the source file does not exist in the workspace tree then no action is taken.
- * If the destination file already exists in the workspace tree then the properties
- * and markers will still be moved.
+ * If the destination file already exists in the workspace tree then this
+ * operation fails.
  * </p>
  * 
  * @param source the source file
@@ -56,9 +57,9 @@ public void movedFile(IFile source, IFile destination, long timestamp);
  * in the local file system to the given destination. The appropriate changes
  * should be made to the workspace tree. This operation preserves timestamps.
  * <p>
- * If the source file does not exist in the workspace tree then no action is taken.
- * If the destination file already exists in the workspace tree then the properties
- * and markers will still be moved.
+ * If the source folder does not exist in the workspace tree then no action is taken.
+ * If the destination folder already exists in the workspace then this operation
+ * fails.
  * </p>
  * <p>
  * Even if the depth parameter is <code>IResource.DEPTH_ZERO</code> the
@@ -77,6 +78,12 @@ public void movedFolder(IFolder source, IFolder destination, int depth);
  * Declares that the contents for the given source project have been successfully moved
  * in the local file system to the given destination. The appropriate changes
  * should be made to the workspace tree. This operation preserves timestamps.
+ * 
+ * <p>
+ * If the source project does not exist in the workspace tree then no action is taken.
+ * If the destination project already exists in the workspace (and is different than 
+ * the source) then this operation fails.
+ * </p>
  * 
  * @param source the source project
  * @param destination the destination project
@@ -107,7 +114,8 @@ public void deletedFolder(IFolder folder);
 /**
  * Declares that the given project has been successfully deleted from
  * the local file system. The appropriate changes should be made
- * to the workspace tree. This is a depth zero operation. (??)
+ * to the workspace tree. This is a <code>IResource.DEPTH_INFINITE</code>
+ * operation.
  * 
  * @param project the project
  */
@@ -146,6 +154,9 @@ public boolean isSynchronized(IResource resource, int depth);
 	
 /**
  * Returns the computed timestamp for the given file in the local file system.
+ * Returns the <code>NULL_TIMESTAMP</code> if the file does not
+ * exist in the workspace or if its location in the local file system cannot be
+ * determined.
  * 
  * [ISSUE: what happens if the file is busy?]
  * 
@@ -162,6 +173,8 @@ public long computeTimestamp(IFile file);
  * made to continue deleting.
  * 
  * @param root the root file
+ * @return <code>true</code> if the delete was successful and
+ *   <code>false</code> otherwise
  */
 public boolean deleteInFileSystem(File root);
 
