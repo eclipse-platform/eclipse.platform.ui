@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.forms;
 import java.util.*;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.internal.widgets.FormUtil;
 /**
  * Manages colors that will be applied to forms and form widgets. The colors
  * are chosen to make the widgets look correct in the editor area. If a
@@ -37,11 +37,11 @@ public class FormColors {
 	 */
 	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR";
 
-	public static final String TB_BG = "_sec_tb_bg";
-	public static final String TB_FG = "_sec_tb_fg";
-	public static final String TB_GBG = "_sec_tb_gbg";
-	public static final String TB_BORDER = "_sec_tb_fg";
-	public static final String TB_TOGGLE = "_sec_tb_twistie";	
+	public static final String TB_BG = "org.eclipse.ui.forms.TB_BG";
+	public static final String TB_FG = "org.eclipse.ui.forms.TB_FG";
+	public static final String TB_GBG = "org.eclipse.ui.forms.TB_GBG";
+	public static final String TB_BORDER = "org.eclipse.ui.forms.TB_BORDER";
+	public static final String TB_TOGGLE = "org.eclipse.ui.forms.TB_TOGGLE";
 	protected Map colorRegistry = new HashMap(10);
 	protected Color background;
 	protected Color foreground;
@@ -85,10 +85,48 @@ public class FormColors {
 	 * differently.
 	 */
 	protected void initializeColorTable() {
-		//createColor(BORDER, 195, 191, 179);
 		createColor(SEPARATOR, 152, 170, 203);
-		createColor(TITLE, FormUtil.getSystemColor(this, SWT.COLOR_LIST_SELECTION));
-		createColor(BORDER, FormUtil.getSystemColor(this, SWT.COLOR_LIST_SELECTION));
+		createColor(TITLE, getSystemColor(SWT.COLOR_LIST_SELECTION));
+		RGB border = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
+		RGB black = new RGB(0,0,0);
+		createColor(BORDER, blend(border, black, 80));
+	}
+/**
+ * Allocates colors for the section tool bar (all the keys that
+ * start with TB). Since these colors are only needed when
+ * TITLE_BAR style is used with the Section widget, they
+ * are not needed all the time and are allocated on demand.
+ * Consequently, this method will do nothing if the colors
+ * have been already initialized. Call this method prior to
+ * using colors with the TB keys to ensure they are available.
+ */	
+	public void initializeSectionToolBarColors() {
+		if (getColor(FormColors.TB_BG)!=null) return;
+			
+		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		RGB formBackground = getBackground().getRGB();
+		// blend 77% white with the title background gradient
+		tbBg = blend(formBackground, tbBg, 77);
+		createColor(FormColors.TB_BG, tbBg);
+		
+		// blend 50 % white with the previous blend for half-way
+		RGB tbGbg = blend(formBackground, tbBg, 50);
+		createColor(FormColors.TB_GBG, tbGbg);
+		
+		// Title bar foreground
+		RGB tbFg = getSystemColor(SWT.COLOR_LIST_SELECTION);
+		createColor(FormColors.TB_FG, tbFg);
+		
+		// title bar outline - border color
+		RGB tbBorder = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
+		createColor(FormColors.TB_BORDER, tbBorder);
+		// toggle color
+		RGB toggle = getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		createColor(FormColors.TB_TOGGLE, toggle);
+	}
+	
+	public RGB getSystemColor(int code) {
+		return getDisplay().getSystemColor(code).getRGB();
 	}
 	/**
 	 * Creates the color for the specified key using the provided RGB object.
@@ -226,5 +264,27 @@ public class FormColors {
 	 */
 	public boolean isShared() {
 		return shared;
+	}
+	/**
+	 * Blends c1 and c2 based on the provided ratio.
+	 * @param c1 first color
+	 * @param c2 second color
+	 * @param ratio percentage of the first color in the blend
+	 */
+	private RGB blend(RGB c1, RGB c2, int ratio) {
+		int r = blend(c1.red, c2.red, ratio);
+		int g = blend(c1.green, c2.green, ratio);
+		int b = blend(c1.blue, c2.blue, ratio);
+		return new RGB(r, g, b);
+	}
+	/**
+	 * Blends two primary color components based on the provided ratio.
+	 * @param v1 first component
+	 * @param v2 second component
+	 * @param ratio percentage of the first component in the blend
+	 * @return
+	 */
+	private int blend(int v1, int v2, int ratio) {
+		return (ratio*v1 + (100-ratio)*v2)/100;
 	}
 }

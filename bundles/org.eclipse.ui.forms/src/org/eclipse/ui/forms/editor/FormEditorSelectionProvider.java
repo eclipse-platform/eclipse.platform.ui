@@ -45,7 +45,9 @@ public class FormEditorSelectionProvider extends MultiPageSelectionProvider {
 			if (selectionProvider != null)
 				selectionProvider.setSelection(selection);
 		}
-		else
+		else {
 			this.globalSelection = selection;
+			fireSelectionChanged(new SelectionChangedEvent(this, globalSelection));
+		}
 	}
 }

@@ -95,9 +95,7 @@ public class FormToolkit {
 					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 							b.height + 1);
 					gc.setForeground(getBorderStyle() == SWT.BORDER
-							? c.getDisplay()
-									.getSystemColor(
-											SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT):colors.getForeground());
+							? colors.getBorderColor():colors.getForeground());
 					if (c instanceof CCombo)
 						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 								b.height + 1);
@@ -380,7 +378,7 @@ public class FormToolkit {
 		section.setFont(JFaceResources.getFontRegistry().get(
 				JFaceResources.BANNER_FONT));
 		if ((sectionStyle & Section.TITLE_BAR) != 0) {
-			FormUtil.allocateSectionTitleBarColors(colors);
+			colors.initializeSectionToolBarColors();
 			//section.setForeground(colors.getColor(COLOR_TB_FG));
 			section.setTitleBarBackground(colors.getColor(FormColors.TB_GBG));
 			section.setTitleBarBorderColor(colors
@@ -677,8 +675,7 @@ public class FormToolkit {
 	private void initialize() {
 		String osname = System.getProperty("os.name");
 		if (osname.equals("Windows XP")) {
-			RGB rgb = FormUtil.getSystemColor(colors,
-					SWT.COLOR_WIDGET_BACKGROUND);
+			RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
 				borderStyle = SWT.BORDER;
 		}
@@ -686,8 +683,5 @@ public class FormToolkit {
 		hyperlinkGroup.setBackground(colors.getBackground());
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
-	}
-	public void allocateSectionTitleBarColors() {
-		FormUtil.allocateSectionTitleBarColors(colors);
 	}
 }
