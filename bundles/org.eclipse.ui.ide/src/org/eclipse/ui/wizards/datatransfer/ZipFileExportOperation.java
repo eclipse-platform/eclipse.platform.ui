@@ -10,13 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.wizards.datatransfer;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.jface.operation.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  *	Operation for exporting a resource and its children to a new .zip file
@@ -88,22 +99,22 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	 */
 	protected void addError(String message, Throwable e) {
 		errorTable.add(
-			new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, e));
+			new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 0, message, e));
 	}
 	/**
 	 *  Answer the total number of file resources that exist at or below self
 	 *  in the resources hierarchy.
 	 *
 	 *  @return int
-	 *  @param resource org.eclipse.core.resources.IResource
+	 *  @param checkResource org.eclipse.core.resources.IResource
 	 */
-	protected int countChildrenOf(IResource resource) throws CoreException {
-		if (resource.getType() == IResource.FILE)
+	protected int countChildrenOf(IResource checkResource) throws CoreException {
+		if (checkResource.getType() == IResource.FILE)
 			return 1;
 
 		int count = 0;
-		if (resource.isAccessible()) {
-			IResource[] children = ((IContainer) resource).members();
+		if (checkResource.isAccessible()) {
+			IResource[] children = ((IContainer) checkResource).members();
 			for (int i = 0; i < children.length; i++)
 				count += countChildrenOf(children[i]);
 		}
@@ -129,28 +140,28 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	 *  Export the passed resource to the destination .zip. Export with
 	 * no path leadup
 	 *
-	 *  @param resource org.eclipse.core.resources.IResource
+	 *  @param exportResource org.eclipse.core.resources.IResource
 	 */
-	protected void exportResource(IResource resource)
+	protected void exportResource(IResource exportResource)
 		throws InterruptedException {
-		exportResource(resource, 1);
+		exportResource(exportResource, 1);
 	}
 
 	/**
 	 *  Export the passed resource to the destination .zip
 	 *
-	 *  @param resource org.eclipse.core.resources.IResource
+	 *  @param exportResource org.eclipse.core.resources.IResource
 	 *  @param depth - the number of resource levels to be included in
 	 *   				the path including the resourse itself.
 	 */
-	protected void exportResource(IResource resource, int leadupDepth)
+	protected void exportResource(IResource exportResource, int leadupDepth)
 		throws InterruptedException {
-		if (!resource.isAccessible())
+		if (!exportResource.isAccessible())
 			return;
 
-		if (resource.getType() == IResource.FILE) {
+		if (exportResource.getType() == IResource.FILE) {
 			String destinationName;
-			IPath fullPath = resource.getFullPath();
+			IPath fullPath = exportResource.getFullPath();
 			if (createLeadupStructure)
 				destinationName = fullPath.makeRelative().toString();
 			else
@@ -162,17 +173,17 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 			monitor.subTask(destinationName);
 
 			try {
-				exporter.write((IFile) resource, destinationName);
+				exporter.write((IFile) exportResource, destinationName);
 			} catch (IOException e) {
 				addError(DataTransferMessages.format("DataTransfer.errorExporting", //$NON-NLS-1$
 				new Object[] {
-					resource.getFullPath().makeRelative(),
+					exportResource.getFullPath().makeRelative(),
 					e.getMessage()}),
 					e);
 			} catch (CoreException e) {
 				addError(DataTransferMessages.format("DataTransfer.errorExporting", //$NON-NLS-1$
 				new Object[] {
-					resource.getFullPath().makeRelative(),
+					exportResource.getFullPath().makeRelative(),
 					e.getMessage()}),
 					e);
 			}
@@ -183,10 +194,10 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 			IResource[] children = null;
 
 			try {
-				children = ((IContainer) resource).members();
+				children = ((IContainer) exportResource).members();
 			} catch (CoreException e) {
 				// this should never happen because an #isAccessible check is done before #members is invoked
-				addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] { resource.getFullPath()}), e); //$NON-NLS-1$
+				addError(DataTransferMessages.format("DataTransfer.errorExporting", new Object[] { exportResource.getFullPath()}), e); //$NON-NLS-1$
 			}
 
 			for (int i = 0; i < children.length; i++)
@@ -225,7 +236,7 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	public IStatus getStatus() {
 		IStatus[] errors = new IStatus[errorTable.size()];
 		errorTable.toArray(errors);
-		return new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK, errors, DataTransferMessages.getString("FileSystemExportOperation.problemsExporting"), //$NON-NLS-1$
+		return new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.OK, errors, DataTransferMessages.getString("FileSystemExportOperation.problemsExporting"), //$NON-NLS-1$
 		null);
 	}
 	/**
@@ -263,9 +274,9 @@ class ZipFileExportOperation implements IRunnableWithProgress {
 	 *	Export the resources that were previously specified for export
 	 *	(or if a single resource was specified then export it recursively)
 	 */
-	public void run(IProgressMonitor monitor)
+	public void run(IProgressMonitor progressMonitor)
 		throws InvocationTargetException, InterruptedException {
-		this.monitor = monitor;
+		this.monitor = progressMonitor;
 
 		try {
 			initialize();
