@@ -12,8 +12,6 @@ import org.eclipse.help.internal.navigation1_0.HelpNavigationManager;
 import org.eclipse.help.internal.server.HelpServer;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.tomcat.Launcher;
-
 /**
  * The actual implementation of the help system plugin.
  */
@@ -134,16 +132,6 @@ public final class HelpSystem {
 	 *   this plug-in 
 	 */
 	public static void shutdown() throws CoreException {
-		// stop the web app
-		Launcher.getDefault().stop(
-			"examples",
-			HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier());
-
-		Launcher.getDefault().stop(
-			"help",
-			HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier());
-
-
 		getPreferences().save();
 		Logger.logInfo(Resources.getString("I003"));
 		Logger.shutdown();
@@ -152,19 +140,6 @@ public final class HelpSystem {
 	 * Called by Platform after loading the plugin
 	 */
 	public static void startup() {
-		// start the web app
-		Launcher.getDefault().start(
-			"examples",
-			HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-			"webapps");
-			
-		Launcher.getDefault().start(
-			"help",
-			HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-			"webapps");
-
-
-
 		try {
 			setPreferences(new HelpPreferences());
 		} catch (Exception e) {
