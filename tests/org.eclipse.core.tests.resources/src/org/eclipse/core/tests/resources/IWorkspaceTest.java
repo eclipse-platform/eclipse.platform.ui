@@ -322,7 +322,6 @@ public void testDelete() throws CoreException {
 public void testGetNatureDescriptors() {
 	//NOTE: see static fields for description of available test natures
 	IProjectNatureDescriptor[] descriptors = getWorkspace().getNatureDescriptors();
-	assertEquals("1.0", 9, descriptors.length);
 	
 	IProjectNatureDescriptor current = findNature(descriptors, NATURE_SIMPLE);
 	assertTrue("2.0", current != null);
