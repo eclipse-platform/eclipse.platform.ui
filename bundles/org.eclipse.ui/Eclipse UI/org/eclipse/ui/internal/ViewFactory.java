@@ -22,7 +22,6 @@ public class ViewFactory
 	private WorkbenchPage page;
 	private IViewRegistry viewReg;
 	private ReferenceCounter counter;
-	private HashMap mementoTable = new HashMap();
 
 /**
  * ViewManager constructor comment.
@@ -42,32 +41,8 @@ public ViewFactory(WorkbenchPage page, IViewRegistry reg) {
  * disposed when releaseView is called an equal number of times
  * to getView.
  */
-public IViewReference createView(final String viewID) throws PartInitException {
-	final IMemento memento = (IMemento)mementoTable.get(viewID);
-	
-	final IViewReference ref[] = new IViewReference[1];
-	final PartInitException ex[] = new PartInitException[1];
-	Platform.run(new SafeRunnableAdapter() {
-		public void run() {
-			try {
-				IMemento stateMem = null;
-				if(memento != null)
-					stateMem = memento.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
-				ref[0] = createView(viewID,stateMem);
-			} catch (PartInitException e) {
-				ex[0] = e;
-			}
-		}
-		public void handleException(Throwable e) {
-			//Execption is already logged.
-			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{viewID}); //$NON-NLS-1$
-			ex[0] = new PartInitException(message);
-		}
-	});
-	if(ex[0] != null)
-		throw ex[0];
-		
-	return ref[0];
+public IViewReference createView(String id) throws PartInitException {
+	return createView(id,null);
 }
 /**
  * Creates an instance of a view defined by id.
@@ -78,7 +53,7 @@ public IViewReference createView(final String viewID) throws PartInitException {
  * disposed when releaseView is called an equal number of times
  * to getView.
  */
-private IViewReference createView(String id,IMemento memento) 
+public IViewReference createView(String id,IMemento memento) 
 	throws PartInitException 
 {
 	IViewDescriptor desc = viewReg.find(id);
@@ -128,37 +103,6 @@ private ViewReference createView(IViewDescriptor desc,IMemento memento)
 	
 	// Return view.
 	return ref;
-}
-public void saveState(IMemento memento) {
-	IViewReference refs[] = getViews();
-	for (int i = 0; i < refs.length; i++) {
-		final IMemento viewMemento = memento.createChild(IWorkbenchConstants.TAG_VIEW);
-		viewMemento.putString(IWorkbenchConstants.TAG_ID, refs[i].getId());
-		final IViewPart view = refs[i].getView(false);
-		if(view != null) {
-			final boolean result[] = new boolean[1];
-			Platform.run(new SafeRunnableAdapter() {
-				public void run() {
-					view.saveState(viewMemento.createChild(IWorkbenchConstants.TAG_VIEW_STATE));
-					result[0] = true;
-				}
-				public void handleException(Throwable e) {
-					result[0] = false;
-				}
-			});
-		} else {
-			IMemento mem = (IMemento)mementoTable.get(refs[i].getId());
-			if(mem != null)
-				viewMemento.putMemento(mem);
-		}
-	}
-}
-public void restoreState(IMemento memento) {
-	IMemento mem[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-	for (int i = 0; i < mem.length; i++) {
-		String id = mem[i].getString(IWorkbenchConstants.TAG_ID);
-		mementoTable.put(id,mem[i].getChild(IWorkbenchConstants.TAG_VIEW_STATE));
-	}
 }
 /**
  * Remove a view rec from the manager.
