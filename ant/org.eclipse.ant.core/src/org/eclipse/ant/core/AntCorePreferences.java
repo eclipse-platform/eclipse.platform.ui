@@ -15,6 +15,8 @@ import java.util.*;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.plugins.PluginClassLoader;
 import org.eclipse.core.runtime.*;
 
 
@@ -38,6 +40,8 @@ public class AntCorePreferences {
 	
 	protected List pluginClassLoaders;
 	
+	private ClassLoader[] orderedPluginClassLoaders;
+	
 	private String antHome;
 	
 	private boolean runningHeadless= false;
@@ -52,7 +56,7 @@ public class AntCorePreferences {
 		restoreCustomObjects();
 	}
 
-	protected void restoreCustomObjects() {
+	private void restoreCustomObjects() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
 		// tasks
 		String tasks = prefs.getString(IAntCoreConstants.PREFERENCE_TASKS);
@@ -424,10 +428,154 @@ public class AntCorePreferences {
 	}
 
 	protected ClassLoader[] getPluginClassLoaders() {
-		return (ClassLoader[]) pluginClassLoaders.toArray(new ClassLoader[pluginClassLoaders.size()]);
+		if (orderedPluginClassLoaders == null) {
+			Iterator classLoaders= pluginClassLoaders.iterator();
+			Map idToLoader= new HashMap(pluginClassLoaders.size());
+			IPluginDescriptor[] descriptors= new IPluginDescriptor[pluginClassLoaders.size()];
+			int i= 0;
+			while (classLoaders.hasNext()) {
+				PluginClassLoader loader = (PluginClassLoader) classLoaders.next();
+				IPluginDescriptor descriptor= loader.getPluginDescriptor();
+				idToLoader.put(descriptor.getUniqueIdentifier(), loader);
+				descriptors[i]= descriptor;
+				i++;
+			}
+			String[] ids= computePrerequisiteOrderPlugins(descriptors);
+			orderedPluginClassLoaders= new ClassLoader[pluginClassLoaders.size()];
+			for (int j = 0; j < ids.length; j++) {
+				String id = ids[j];
+				orderedPluginClassLoaders[j]= (ClassLoader)idToLoader.get(id);
+			}
+		}
+		return orderedPluginClassLoaders;
 	}
 
-	protected void initializePluginClassLoaders() {
+	/**
+	 * Copied from org.eclipse.pde.internal.build.Utils
+	 */
+	private String[] computePrerequisiteOrderPlugins(IPluginDescriptor[] plugins) {
+		List prereqs = new ArrayList(9);
+		Set pluginList = new HashSet(plugins.length);
+		for (int i = 0; i < plugins.length; i++) {
+			pluginList.add(plugins[i].getUniqueIdentifier());
+		}
+		
+		// create a collection of directed edges from plugin to prereq
+		for (int i = 0; i < plugins.length; i++) {
+			boolean boot = false;
+			boolean runtime = false;
+			boolean found = false;
+			IPluginPrerequisite[] prereqList = plugins[i].getPluginPrerequisites();
+			if (prereqList != null) {
+				for (int j = 0; j < prereqList.length; j++) {
+					// ensure that we only include values from the original set.
+					String prereq = prereqList[j].getUniqueIdentifier();
+					boot = boot || prereq.equals(BootLoader.PI_BOOT);
+					runtime = runtime || prereq.equals(Platform.PI_RUNTIME);
+					if (pluginList.contains(prereq)) {
+						found = true;
+						prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), prereq });
+					}
+				}
+			}
+
+			// if we didn't find any prereqs for this plugin, add a null prereq
+			// to ensure the value is in the output	
+			if (!found) {
+				prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), null });
+			}
+
+			// if we didn't find the boot or runtime plugins as prereqs and they are in the list
+			// of plugins to build, add prereq relations for them.  This is required since the 
+			// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
+			// Note that we should skip the xerces plugin as this would cause a circularity.
+			if (plugins[i].getUniqueIdentifier().equals("org.apache.xerces")) //$NON-NLS-1$
+				continue;
+			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getUniqueIdentifier().equals(BootLoader.PI_BOOT))
+				prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), BootLoader.PI_BOOT });
+			if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getUniqueIdentifier().equals(Platform.PI_RUNTIME) && !plugins[i].getUniqueIdentifier().equals(BootLoader.PI_BOOT))
+				prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), Platform.PI_RUNTIME });
+		}
+
+		// do a topological sort, insert the fragments into the sorted elements
+		String[][] prereqArray = (String[][]) prereqs.toArray(new String[prereqs.size()][]);
+		return computeNodeOrder(prereqArray);
+	}
+	
+	/**
+	 * Copied from org.eclipse.pde.internal.build.Utils
+	 */
+	private String[] computeNodeOrder(String[][] specs) {
+		Map counts = computeCounts(specs);
+		List nodes = new ArrayList(counts.size());
+		while (!counts.isEmpty()) {
+			List roots = findRootNodes(counts);
+			if (roots.isEmpty())
+				break;
+			for (Iterator i = roots.iterator(); i.hasNext();)
+				counts.remove(i.next());
+			nodes.addAll(roots);
+			removeArcs(specs, roots, counts);
+		}
+		String[] result = new String[nodes.size()];
+		nodes.toArray(result);
+
+		return result;
+	}
+	
+	/**
+	 * Copied from org.eclipse.pde.internal.build.Utils
+	 */
+	private void removeArcs(String[][] mappings, List roots, Map counts) {
+		for (Iterator j = roots.iterator(); j.hasNext();) {
+			String root = (String) j.next();
+			for (int i = 0; i < mappings.length; i++) {
+				if (root.equals(mappings[i][1])) {
+					String input = mappings[i][0];
+					Integer count = (Integer) counts.get(input);
+					if (count != null)
+						counts.put(input, new Integer(count.intValue() - 1));
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Copied from org.eclipse.pde.internal.build.Utils
+	 */
+	private List findRootNodes(Map counts) {
+		List result = new ArrayList(5);
+		for (Iterator i = counts.keySet().iterator(); i.hasNext();) {
+			String node = (String) i.next();
+			int count = ((Integer) counts.get(node)).intValue();
+			if (count == 0)
+				result.add(node);
+		}
+		return result;
+	}
+	
+	/**
+	 * Copied from org.eclipse.pde.internal.build.Utils
+	 */
+	private Map computeCounts(String[][] mappings) {
+		Map counts = new HashMap(5);
+		for (int i = 0; i < mappings.length; i++) {
+			String from = mappings[i][0];
+			Integer fromCount = (Integer) counts.get(from);
+			String to = mappings[i][1];
+			if (to == null)
+				counts.put(from, new Integer(0));
+			else {
+				if (((Integer) counts.get(to)) == null)
+					counts.put(to, new Integer(0));
+				fromCount = fromCount == null ? new Integer(1) : new Integer(fromCount.intValue() + 1);
+				counts.put(from, fromCount);
+			}
+		}
+		return counts;
+	}
+	
+	private void initializePluginClassLoaders() {
 		pluginClassLoaders = new ArrayList(10);
 		// ant.core should always be present (provides access to Xerces as well)
 		pluginClassLoaders.add(Platform.getPlugin(AntCorePlugin.PI_ANTCORE).getDescriptor().getPluginClassLoader());
