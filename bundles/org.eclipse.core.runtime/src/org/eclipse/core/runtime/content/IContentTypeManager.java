@@ -53,7 +53,8 @@ public interface IContentTypeManager {
 	 * </p> 
 	 * <p>
 	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.
+	 * will flow to the caller. The input stream will not be closed by this 
+	 * operation.
 	 * </p> 
 	 * 
 	 * @param contents an input stream
@@ -84,8 +85,9 @@ public interface IContentTypeManager {
 	 * to provide a file name if available.
 	 * </p>
 	 * <p>
-	 * Any IOExceptions (other than CharConversionException) that may occur 
-	 * while reading the given input stream will flow to the caller.
+	 * Any IOExceptions that may occur while reading the given input stream 
+	 * will flow to the caller.  The input stream will not be closed by this 
+	 * operation.
 	 * </p> 
 	 * 
 	 * @param contents an input stream
@@ -129,7 +131,8 @@ public interface IContentTypeManager {
 	 * Tries to obtain a description for the given contents and file name. 
 	 * <p>
 	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.
+	 * will flow to the caller.  The input stream will not be closed by this 
+	 * operation.
 	 * </p>
 	 * <p>
 	 * If a file name is not provided, the entire content type registry will be 
@@ -151,7 +154,8 @@ public interface IContentTypeManager {
 	 * Tries to obtain a description for the given contents and file name. 
 	 * <p>
 	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.
+	 * will flow to the caller.  The reader will not be closed by this 
+	 * operation.
 	 * </p>
 	 * <p>
 	 * If a file name is not provided, the entire content type registry will be 

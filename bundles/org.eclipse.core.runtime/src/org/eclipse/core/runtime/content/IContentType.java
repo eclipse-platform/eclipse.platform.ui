@@ -95,7 +95,8 @@ public interface IContentType {
 	 * Tries to obtain a description for the given contents. 
 	 * <p>
 	 * Any IOExceptions that may occur while reading the given input stream 
-	 * will flow to the caller.
+	 * will flow to the caller.  The input stream will not be closed by this 
+	 * operation.
 	 * </p>
 	 *  
 	 * @param contents the contents to be interpreted
@@ -111,7 +112,8 @@ public interface IContentType {
 	 * Tries to obtain a description for the given contents. 
 	 * <p>
 	 * Any IOExceptions that may occur while reading the given reader 
-	 * will flow to the caller.
+	 * will flow to the caller.  The reader will not be closed by this 
+	 * operation.
 	 * </p>
 	 *  
 	 * @param contents the contents to be interpreted
