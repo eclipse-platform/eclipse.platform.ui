@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.presentations;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -142,11 +143,12 @@ public class EditorPresentation extends BasicStackPresentation {
         IWorkbenchWindow workbenchWindow = null;
         IHandler openEditorDropDownHandler = new AbstractHandler() {
 
-            public void execute(Object parameter) throws ExecutionException {
+            public Object execute(Map parameterValuesByName) throws ExecutionException {
                 Rectangle clientArea = tabFolder.getClientArea();
                 Point location = tabFolder.getDisplay().map(tabFolder, null,
                         clientArea.x, clientArea.y);
                 showList(shell, location.x, location.y);
+                return null;
             }
         };
         openEditorDropDownHandlerSubmission = new HandlerSubmission(null,

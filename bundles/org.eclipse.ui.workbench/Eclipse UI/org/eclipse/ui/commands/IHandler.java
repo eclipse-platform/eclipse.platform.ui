@@ -36,16 +36,18 @@ public interface IHandler {
     void addHandlerListener(IHandlerListener handlerListener);
 
     /**
-     * Executes with the specified parameter.
+     * Executes with the map of parameter values by name.
      * 
-     * @param parameter
-     *            the parameter.
+     * @param parameterValuesByName
+     *            the map of parameter values by name. Reserved for future use,
+     *            must be <code>null</code>.
+     * @return the result of the execution. Reserved for future use, must be
+     *         <code>null</code>.
      * @throws ExecutionException
      *             if an exception occurred during execution.
      */
-    void execute(Object parameter) throws ExecutionException;
-    // TODO Object execute(Map parameterValuesByName) throws ExecutionException;
-    
+    Object execute(Map parameterValuesByName) throws ExecutionException;
+
     /**
      * Returns the map of attribute values by name.
      * <p>

@@ -98,10 +98,12 @@ public final class HandlerProxy extends AbstractHandler {
         handler = null;
     }
 
-    public void execute(Object parameter) throws ExecutionException {
+    public Object execute(Map parameterValuesByName) throws ExecutionException {
         if (loadHandler()) {
-            handler.execute(parameter);
+            return handler.execute(parameterValuesByName);
         }
+        
+        return null;
     }
 
     // this method is no longer part of IHandler. lets try to remove this..

@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
@@ -60,7 +59,8 @@ public class WidgetMethodHandler extends AbstractHandler implements
      * 
      * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
      */
-    public final void execute(Object parameter) throws ExecutionException {
+    public final Object execute(Map parameterValuesByName)
+            throws ExecutionException {
         final Method methodToExecute = getMethodToExecute();
         if (methodToExecute != null) {
             try {
@@ -73,6 +73,8 @@ public class WidgetMethodHandler extends AbstractHandler implements
                 throw new ExecutionException(e.getTargetException());
             }
         }
+        
+        return null;
     }
 
     public Map getAttributeValuesByName() {

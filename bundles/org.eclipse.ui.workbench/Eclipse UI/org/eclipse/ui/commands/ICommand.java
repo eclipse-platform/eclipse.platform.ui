@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.ui.commands;
 
 import java.util.List;
@@ -59,16 +58,19 @@ public interface ICommand extends Comparable {
     void addCommandListener(ICommandListener commandListener);
 
     /**
-     * Executes with the specified parameter.
+     * Executes with the map of parameter values by name.
      * 
-     * @param parameter
-     *            the parameter.
+     * @param parameterValuesByName
+     *            the map of parameter values by name. Reserved for future use,
+     *            must be <code>null</code>.
+     * @return the result of the execution. Reserved for future use, must be
+     *         <code>null</code>.
      * @throws ExecutionException
      *             if an exception occurred during execution.
      * @throws NotHandledException
      *             if this is not handled.
      */
-    void execute(Object parameter) throws ExecutionException,
+    Object execute(Map parameterValuesByName) throws ExecutionException,
             NotHandledException;
 
     /**
@@ -85,8 +87,7 @@ public interface ICommand extends Comparable {
      * @throws NotHandledException
      *             if this is not handled.
      */
-    Map getAttributeValuesByName()
-    	throws NotHandledException;
+    Map getAttributeValuesByName() throws NotHandledException;
 
     /**
      * <p>

@@ -413,10 +413,6 @@ public final class WorkbenchKeyboard {
      * @param commandId
      *            The identifier for the command that should be executed; should
      *            not be <code>null</code>.
-     * @param event
-     *            The event triggering the execution. This is needed for
-     *            backwards compatability and might be removed in the future.
-     *            This value should not be <code>null</code>.
      * @return <code>true</code> if there was a handler; <code>false</code>
      *         otherwise.
      * @throws CommandException
@@ -425,7 +421,7 @@ public final class WorkbenchKeyboard {
      *             log the message, display a dialog, or ignore this exception
      *             entirely.
      */
-    private boolean executeCommand(String commandId, Event event)
+    private boolean executeCommand(String commandId)
             throws CommandException {
         if (DEBUG) {
             System.out
@@ -472,8 +468,9 @@ public final class WorkbenchKeyboard {
 
         final boolean commandDefined = command.isDefined();
         final boolean commandHandled = command.isHandled();
+        
         if (commandDefined && commandHandled && isEnabled(command)) {
-            command.execute(event);
+            command.execute(null);
         }
 
         return (commandDefined && commandHandled);
@@ -759,7 +756,7 @@ public final class WorkbenchKeyboard {
                         ICommand command = (ICommand) commands
                                 .get(selectionIndex);
                         try {
-                            executeCommand(command.getId(), new Event());
+                            executeCommand(command.getId());
                         } catch (CommandException e) {
                             logException(e);
                         }
@@ -825,7 +822,7 @@ public final class WorkbenchKeyboard {
      *            The key strokes that could potentially match, in the order of
      *            priority; must not be <code>null</code>.
      * @param event
-     *            The event to pass to the action; may be <code>null</code>.
+     *            The event; may be <code>null</code>.
      * @return <code>true</code> if a command is executed; <code>false</code>
      *         otherwise.
      * @throws CommandException
@@ -874,7 +871,7 @@ public final class WorkbenchKeyboard {
 
             } else if (isPerfectMatch(sequenceAfterKeyStroke)) {
                 String commandId = getPerfectMatch(sequenceAfterKeyStroke);
-                return (executeCommand(commandId, event) || !sequenceBeforeKeyStroke
+                return (executeCommand(commandId) || !sequenceBeforeKeyStroke
                         .isEmpty());
 
             } else if ((multiKeyAssistShell != null)
@@ -885,7 +882,7 @@ public final class WorkbenchKeyboard {
             // We don't want to swallow keyboard navigation keys.
             return false;
 
-            }
+            } 
         }
 
         resetState();

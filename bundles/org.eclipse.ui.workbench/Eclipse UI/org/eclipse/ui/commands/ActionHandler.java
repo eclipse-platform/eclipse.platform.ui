@@ -37,10 +37,8 @@ public final class ActionHandler extends AbstractHandler {
      * workbench should be changed such that if a RetargetAction loses its
      * action, this ActionHandler instance's corresponding HandlerSubmission
      * should be removed. In any case, this attribute especially should never be
-     * made public.
-     * 
-     * Also, RetargetAction doesn't not notify that this property has changed.
-     * All handler attributes must notify listeners on change.
+     * made public. Also, RetargetAction doesn't not notify that this property
+     * has changed. All handler attributes must notify listeners on change.
      */
     private final static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
 
@@ -82,18 +80,16 @@ public final class ActionHandler extends AbstractHandler {
         });
     }
 
-    public void execute(Object parameter) throws ExecutionException {
+    public Object execute(Map parameterValuesByName) throws ExecutionException {
         if ((action.getStyle() == IAction.AS_CHECK_BOX)
                 || (action.getStyle() == IAction.AS_RADIO_BUTTON))
                 action.setChecked(!action.isChecked());
         try {
-            if (parameter instanceof Event)
-                action.runWithEvent((Event) parameter);
-            else
-                action.run();
+            action.runWithEvent(new Event());
         } catch (Exception e) {
             throw new ExecutionException(e);
         }
+        return null;
     }
 
     public Map getAttributeValuesByName() {
