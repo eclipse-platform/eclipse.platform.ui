@@ -157,9 +157,9 @@ public class FontRegistry extends ResourceRegistry {
             if (defaultFont != baseFont)
                 staleFonts.add(baseFont);
             if (defaultFont != boldFont)
-                staleFonts.add(baseFont);
+                staleFonts.add(boldFont);
             if (defaultFont != italicFont)
-                staleFonts.add(baseFont);
+                staleFonts.add(italicFont);
         }
     }
 
