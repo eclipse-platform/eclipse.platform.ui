@@ -71,7 +71,7 @@ public class PluginURL extends HelpURL {
 	public InputStream openStream() {
 		if (getPlugin() == null)
 			return null;
-		if (getFile() == null)
+		if (getFile() == null || "".equals(getFile()))
 			return null;
 		// When the platform supports find() with a locale specified, use this
 		//Locale locale = getLocale();
