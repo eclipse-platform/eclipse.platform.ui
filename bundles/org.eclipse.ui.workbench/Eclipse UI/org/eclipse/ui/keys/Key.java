@@ -14,12 +14,20 @@ package org.eclipse.ui.keys;
 /**
  * <p>
  * <code>Key</code> is the abstract base class for all objects representing keys 
- * on the keyboard. All <code>Key</code> objects have a name describing which 
- * key they represent. The name of a <code>Key</code> object is provided by its
- * <code>toString()</code> method. <code>Key</code> objects are considered equal 
- * iff their names are equal. All <code>Key</code> objects provide a translated
- * version of their name, suitable for display to a user. It is not permitted to
- * extend this class.
+ * on the keyboard.
+ * </p>
+ * <p>
+ * All <code>Key</code> objects have a formal string representation, called the
+ * 'name' of the key, available via the <code>toString()</code> method. 
+ * </p>
+ * <p>
+ * All <code>Key</code> objects, via the <code>format()</code> method, 
+ * provide a version of their formal string representation translated by 
+ * platform and locale, suitable for display to a user.
+ * </p> 
+ * <p>
+ * <code>Key</code> objects are immutable. Clients are not permitted to extend 
+ * this class.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -60,7 +68,7 @@ public abstract class Key implements Comparable {
 	private transient boolean hashCodeComputed;
 	
 	/**
-	 * Constructs an instance of Key given a name.
+	 * Constructs an instance of <code>Key</code> given a name.
 	 * 
 	 * @param name The name of the key, must not be null.
 	 */
@@ -94,11 +102,11 @@ public abstract class Key implements Comparable {
 	}
 
 	/**
-	 * Returns the name of the key that this object represents, translated for
-	 * the user's current platform and locale.
+	 * Returns the formal string representation of this key, translated for the 
+	 * user's current platform and locale.
 	 * 
-	 * @return The translated name of the key that this object represents, 
-	 *         suitable for display to the user. Guaranteed not to be null.
+	 * @return The formal string representation of this key, translated for the 
+	 * 		   user's current platform and locale. Guaranteed not to be null.
 	 */
 	public abstract String format();
 
@@ -116,10 +124,10 @@ public abstract class Key implements Comparable {
 	}
 	
 	/**
-	 * Returns the name of the key that this object represents.
+	 * Returns the formal string representation of this key.
 	 * 
-	 * @return The name of the key that this object represents. Guaranteed not
-	 * 		   to be null.
+	 * @return The formal string representation of this key. Guaranteed not to 
+	 * 		   be null.
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {

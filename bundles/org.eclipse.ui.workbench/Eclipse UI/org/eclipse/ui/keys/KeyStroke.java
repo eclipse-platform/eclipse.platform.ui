@@ -44,8 +44,8 @@ import org.eclipse.ui.internal.util.Util;
  * platform and locale, suitable for display to a user.
  * </p>
  * <p>
- * <code>KeyStroke</code> objects are immutable. It is not permitted to extend 
- * this class.
+ * <code>KeyStroke</code> objects are immutable. Clients are not permitted to 
+ * extend this class.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -55,11 +55,31 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class KeyStroke implements Comparable {
 
+	/**
+	 * The delimiter for <code>Key</code> objects in the formal string 
+	 * representation.
+	 */
 	public final static char KEY_DELIMITER = '\u002B';
+	
+	/**
+	 * The set of delimiters for <code>Key</code> objects allowed during parsing
+	 * of the formal string representation. 
+	 */
 	public final static String KEY_DELIMITERS = KEY_DELIMITER + Util.ZERO_LENGTH_STRING;
-		
+
+	/**
+	 * A comparator to sort modifier keys in the order that they would be 
+	 * displayed to a user. This comparator is platform-specific.
+	 */
 	private final static Comparator modifierKeyComparator = new Comparator() {
 
+		/**
+		 * Calculates a rank for a given modifier key.
+		 * 
+		 * @param modifierKey the modifier key to rank.
+		 * @return the rank of this modifier key. This is a non-negative number
+		 *         where a lower number suggests a higher rank.
+		 */
 		private int rank(ModifierKey modifierKey) {
 			String platform = SWT.getPlatform();
 			
@@ -77,8 +97,8 @@ public final class KeyStroke implements Comparable {
 					return 3;
 			}
 
-			// TODO this is order of modifier keys on gnome
 			if ("gtk".equals(platform)) { //$NON-NLS-1$
+				// TODO this is order of modifier keys on gnome
 				if (ModifierKey.SHIFT.equals(modifierKey))
 					return 0;
 				
@@ -87,10 +107,8 @@ public final class KeyStroke implements Comparable {
 
 				if (ModifierKey.ALT.equals(modifierKey))
 					return 2;
-			}
-			
-			/* TODO this is order of modifier keys on kde
-			if ("gtk".equals(platform)) { //$NON-NLS-1$
+
+				/* TODO this is order of modifier keys on kde
 				if (ModifierKey.ALT.equals(modifierKey))
 					return 0;
 				
@@ -99,9 +117,9 @@ public final class KeyStroke implements Comparable {
            
 				if (ModifierKey.SHIFT.equals(modifierKey))
 					return 2;
+				*/
 			}
-			*/
-
+			
 			if ("win32".equals(platform)) { //$NON-NLS-1$
 				if (ModifierKey.CTRL.equals(modifierKey))
 					return 0;
@@ -116,6 +134,9 @@ public final class KeyStroke implements Comparable {
 			return Integer.MAX_VALUE;
 		}
 		
+		/* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
 		public int compare(Object left, Object right) {
 			ModifierKey modifierKeyLeft = (ModifierKey) left;
 			ModifierKey modifierKeyRight = (ModifierKey) right;
@@ -129,13 +150,44 @@ public final class KeyStroke implements Comparable {
 		}
 	};		
 
+	/**
+	 * An internal constant used only in this object's hash code algorithm.
+	 */
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
-	private final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$	
-	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeyStroke.class.getName());
 	
+	/**
+	 * An internal constant used only in this object's hash code algorithm.
+	 */
+	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
+
+	/**
+	 * An internal constant used to find the translation of the key delimiter 
+	 * in the resource bundle.
+	 */
+	private final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$	
+	
+	/**
+	 * The resource bundle used by <code>format()</code> to translate formal
+	 * string representations by locale.
+	 */
+	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeyStroke.class.getName());
+
+	/**
+	 * An internal map used to lookup instances of <code>CharacterKey</code> 
+	 * given the formal string representation of a character key.
+	 */
 	private static SortedMap characterKeyLookup = new TreeMap();
+
+	/**
+	 * An internal map used to lookup instances of <code>ModifierKey</code> 
+	 * given the formal string representation of a modifier key.
+	 */
 	private static SortedMap modifierKeyLookup = new TreeMap();
+
+	/**
+	 * An internal map used to lookup instances of <code>SpecialKey</code> 
+	 * given the formal string representation of a special key.
+	 */
 	private static SortedMap specialKeyLookup = new TreeMap();
 	
 	static {
@@ -177,7 +229,7 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * TODO 
 	 * 
 	 * @param naturalKey
 	 * @return
@@ -187,7 +239,7 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * TODO
 	 * 
 	 * @param modifierKey
 	 * @param naturalKey
@@ -201,7 +253,7 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * TODO
 	 * 
 	 * @param modifierKeys
 	 * @param naturalKey
@@ -213,7 +265,7 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * TODO
 	 * 
 	 * @param modifierKeys
 	 * @param naturalKey
@@ -224,7 +276,7 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * TODO
 	 * 
 	 * @param string
 	 * @return
@@ -275,20 +327,63 @@ public final class KeyStroke implements Comparable {
 		}
 	}
 
+	/**
+	 * The set of modifier keys for this key stroke.
+	 */
 	private SortedSet modifierKeys;
+	
+	/**
+	 * The natural key for this key stroke.
+	 */
 	private NaturalKey naturalKey;
 
+	/**
+	 * The cached hash code for this object. Because <code>KeyStroke</code> 
+	 * objects are immutable, their hash codes need only to be computed once. 
+	 * After the first call to <code>hashCode()</code>, the computed value is 
+	 * cached here for all subsequent calls.
+	 */
 	private transient int hashCode;
+	
+	/**
+	 * A flag to determine if the <code>hashCode</code> field has already been 
+	 * computed. 
+	 */
 	private transient boolean hashCodeComputed;
+	
+	/**
+	 * The set of modifier keys for this key stroke in the form of an array. 
+	 * Used internally by <code>int compareTo(Object)</code>. 
+	 */	
 	private transient ModifierKey[] modifierKeysAsArray;
+
+	/**
+	 * The cached formal string representation for this object. Because 
+	 * <code>KeyStroke</code> objects are immutable, their formal string 
+	 * representations need only to be computed once. After the first call to 
+	 * <code>toString()</code>, the computed value is cached here for all 
+	 * subsequent calls.
+	 */
 	private transient String string;
 	
+	/**
+	 * Constructs an instance of <code>KeyStroke</code> given a set of modifier 
+	 * keys and a natural key.
+	 * 
+	 * @param modifierKeys the set of modifier keys. This set may be empty, but
+	 *        it must not be <code>null</code>. If this set is not empty, it 
+	 *        must only contain instances of <code>ModifierKey</code>.
+	 * @param naturalKey the natural key. May be <code>null</code>.
+	 */
 	private KeyStroke(SortedSet modifierKeys, NaturalKey naturalKey) {
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
 		this.naturalKey = naturalKey;		
 		this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[this.modifierKeys.size()]);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
 	public int compareTo(Object object) {
 		KeyStroke keyStroke = (KeyStroke) object;
 		int compareTo = Util.compare((Comparable[]) modifierKeysAsArray, (Comparable[]) keyStroke.modifierKeysAsArray);
@@ -299,6 +394,9 @@ public final class KeyStroke implements Comparable {
 		return compareTo;	
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object object) {
 		if (!(object instanceof KeyStroke))
 			return false;
@@ -311,9 +409,12 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * Returns the formal string representation for this key stroke, translated 
+	 * for the user's current platform and locale.
 	 * 
-	 * @return
+	 * @return The formal string representation for this key stroke, translated 
+	 *         for the user's current platform and locale. Guaranteed not to be 
+	 *         <code>null</code>.
 	 */
 	public String format() {
 		// TODO consider platform-specific resource bundles
@@ -335,23 +436,29 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * Returns the set of modifier keys for this key stroke.
 	 * 
-	 * @return
-	 */
+	 * @return the set of modifier keys. This set may be empty, but is 
+	 * 		   guaranteed not to be <code>null</code>. If this set is not empty, 
+	 *         it is guaranteed to only contain instances of 
+	 *         <code>ModifierKey</code>.
+     */
 	public Set getModifierKeys() {
 		return Collections.unmodifiableSet(modifierKeys);
 	}
 
 	/**
-	 * JAVADOC
+	 * Returns the natural key for this key stroke.
 	 * 
-	 * @return
+	 * @return the natural key. May be <code>null</code>.
 	 */
 	public NaturalKey getNaturalKey() {
 		return naturalKey;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
@@ -364,14 +471,22 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * JAVADOC
+	 * Returns whether or not this key stroke is complete. Key strokes are 
+	 * complete iff they have a natural key which is not <code>null</code>.
 	 * 
-	 * @return
+	 * @return <code>true</code>, iff the key stroke is complete. 
 	 */
 	public boolean isComplete() {
 		return naturalKey != null;
 	}	
-	
+
+	/**
+	 * Returns the formal string representation for this key stroke.
+	 * 
+	 * @return The formal string representation for this key stroke. Guaranteed 
+	 * 		   not to be <code>null</code>. 
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		if (string == null) {
 			StringBuffer stringBuffer = new StringBuffer();
