@@ -122,7 +122,8 @@ function doAdvancedSearch()
 			scope += "&scope="+escape(buttons[i].name);
 		}
 		
-		//saveSelectedBooks();
+		// persist selection
+		//window.opener.saveSelectedBooks(getSelectedBooks());
 		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
 		var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;
@@ -145,26 +146,37 @@ function fixHeights()
 
 function restoreSelectedBooks()
 {
+	var selectedBooks = window.opener.selectedBooks;
 	var inputs = document.body.getElementsByTagName("INPUT");
 	for (var i=0; i<inputs.length; i++) {
-		if (inputs[i].type == "checkbox" )
-		{
-			if (!opener.books[inputs[i].id]) opener.books[inputs[i].id] = true;
-			inputs[i].checked = opener.books[inputs[i].id];
-		}
+		if (inputs[i].type == "checkbox" && isSelected(inputs[i].name, selectedBooks))
+			inputs[i].checked = true;
 	}
 }
 
-function saveSelectedBooks()
+
+function getSelectedBooks()
 {
-	opener.books = new Array();
+	var selectedBooks = new Array();
 	var inputs = document.body.getElementsByTagName("INPUT");
 	for (var i=0; i<inputs.length; i++) {
-		if (inputs[i].type == "checkbox" )
-			opener.books[inputs[i].id] = inputs[i].checked;
+		if (inputs[i].type == "checkbox"  && inputs[i].checked)
+			selectedBooks[selectedBooks.length] = inputs[i].name;
 	}
+	return selectedBooks;
 }
 
+function isSelected(book, selectedBooks)
+{
+	// the first time select all
+	if (!selectedBooks)
+		return true;
+		
+	for (var i=0; i<selectedBooks.length; i++)
+		if (book == selectedBooks[i])
+			return true;
+	return false;
+}
 
 function onloadHandler()
 {

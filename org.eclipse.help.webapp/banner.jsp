@@ -89,15 +89,23 @@ if (isIE)
  	 extraStyle = "<style type='text/css'>#go{padding-left:4px;padding-right:4px;} </style>";
 document.write(extraStyle);
 	
-var books = new Array();
+var selectedBooks;
 var advancedDialog;
 var w = 580;
 var h = 400;
 
+function saveSelectedBooks(books)
+{
+	selectedBooks = new Array(books.length);
+	for (var i=0; i<selectedBooks.length; i++){
+		selectedBooks[i] = books[i];
+	}
+}
+
 function openAdvanced()
 {
 	advancedDialog = window.open("advanced.jsp?searchWord="+escape(document.getElementById("searchWord").value), "advancedDialog", "height="+h+",width="+w );
-	advancedDialog.focus();
+	advancedDialog.focus(); 
 }
 
 function closeAdvanced()
