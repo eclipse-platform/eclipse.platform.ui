@@ -92,6 +92,7 @@ public interface IConsoleManager {
 	 * 
 	 * @param console the console for which pattern match listeners are requested
 	 * @return a collection of new pattern match listeners
+     * @see IPatternMatchListener
 	 * @since 3.1
 	 */
 	public IPatternMatchListener[] createPatternMatchListeners(IConsole console);

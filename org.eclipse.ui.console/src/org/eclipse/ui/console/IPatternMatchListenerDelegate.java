@@ -11,18 +11,29 @@
 package org.eclipse.ui.console;
 
 /**
- * @see org.eclipse.ui.console.IOConsole
+ * A pattern match listener delegate is notified of regular expression matches
+ * in a <code>TextConsole</code>. A delegate is contributed via the
+ * <code>consolePatternMatcherListeners</code> extension point.
+ * <p>
+ * Clients contributing a console pattern match listener extension are intended
+ * to implement this interface.
+ * </p>
+ * @see org.eclipse.ui.console.IPatternMatchListener
+ * @see org.eclipse.ui.console.TextConsole
  * @since 3.1
  */
 public interface IPatternMatchListenerDelegate {
     /**
-     * Connects the delegate to the console being monitored
-     * @param console the console being monitored
+     * Notification that pattern matching will begin in the specified console.
+     * A pattern matcher is connected to only one console at a time.
+     * 
+     * @param console the console in which pattern matching will be performed
      */
     public void connect(IConsole console);
     
     /**
-     * Disconnects the delegate from the console
+     * Notification that pattern matching has been completed in the console
+     * this delegate was last connected to.
      */
     public void disconnect();
     
