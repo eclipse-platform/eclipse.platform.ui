@@ -300,6 +300,10 @@ public class ShowViewDialog
 			filteredTree);
 
 		if (unfilteredTree != null) {
+			expandTree(
+				settings.getArray(STORE_EXPANDED_CATEGORIES_ID),
+				filteredTree);
+		    
 			boolean unfilteredSelected =
 				getDialogSettings().getBoolean(SHOW_ALL_ENABLED);
 

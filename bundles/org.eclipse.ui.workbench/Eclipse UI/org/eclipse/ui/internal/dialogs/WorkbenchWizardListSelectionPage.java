@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -19,16 +20,16 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -52,13 +53,14 @@ public abstract class WorkbenchWizardListSelectionPage
 	private static final String DIALOG_SETTING_SECTION_NAME = "WizardListSelectionPage."; //$NON-NLS-1$
 
 	private final static int SIZING_LISTS_HEIGHT = 200;
-	private static final String STORE_SELECTED_FILTERED_WIZARD_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_FILTERED_WIZARD_ID"; //$NON-NLS-1$
-	private static final String STORE_SELECTED_UNFILTERED_WIZARD_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_UNFILTERED_WIZARD_ID"; //$NON-NLS-1$
-	private static final String UNFILTERED_TAB_SELECTED = DIALOG_SETTING_SECTION_NAME + ".UNFILTERED_TAB_SELECTED"; //$NON-NLS-1$
+	private static final String STORE_SELECTED_WIZARD_ID = DIALOG_SETTING_SECTION_NAME + "STORE_SELECTED_WIZARD_ID"; //$NON-NLS-1$
+	private static final String SHOW_ALL_ENABLED = DIALOG_SETTING_SECTION_NAME + ".SHOW_ALL_ENABLED"; //$NON-NLS-1$
 	private TableViewer filteredViewer, unfilteredViewer;
 	private String message;
 
-	private TabFolder tabFolder;
+	private StackLayout stackLayout;
+	private Composite stackComposite;
+	private Button showAllCheck;
 	/**
 	 * Creates a <code>WorkbenchWizardListSelectionPage</code>.
 	 * 
@@ -99,23 +101,34 @@ public abstract class WorkbenchWizardListSelectionPage
 		messageLabel.setText(message);
 		messageLabel.setFont(font);
 
-		if (WorkbenchActivityHelper.isFiltering()) {
-			tabFolder = new TabFolder(outerContainer, SWT.NONE);
-			layoutTopControl(tabFolder);
+		stackLayout = new StackLayout();			
+		stackComposite = new Composite(outerContainer, SWT.NONE);
+		stackComposite.setLayout(stackLayout);
+		stackComposite.setFont(parent.getFont());
+		layoutTopControl(stackComposite);		
+		filteredViewer = createViewer(stackComposite, true);
+		
+		if (WorkbenchActivityHelper.showAll()) {
+			unfilteredViewer = createViewer(stackComposite, false);
 
-			tabFolder.setFont(parent.getFont());
-			filteredViewer = createViewer(tabFolder, true);
-			unfilteredViewer = createViewer(tabFolder, false);
-
+			showAllCheck = new Button(outerContainer, SWT.CHECK);
+			showAllCheck.setText(ActivityMessages.getString("ActivityFiltering.showAll")); //$NON-NLS-1$
+			
 			// flipping tabs updates the selected node
-			tabFolder.addSelectionListener(new SelectionAdapter() {
+			showAllCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if (tabFolder.getSelectionIndex() == 0) {
+					if (!showAllCheck.getSelection()) {
+					    filteredViewer.setSelection(unfilteredViewer.getSelection());
+						stackLayout.topControl = filteredViewer.getControl();	
+						stackComposite.layout();					    
 						selectionChanged(
 							new SelectionChangedEvent(
 								filteredViewer,
 								filteredViewer.getSelection()));
 					} else {
+					    unfilteredViewer.setSelection(filteredViewer.getSelection());
+						stackLayout.topControl = unfilteredViewer.getControl();	
+						stackComposite.layout();					    					    
 						selectionChanged(
 							new SelectionChangedEvent(
 								unfilteredViewer,
@@ -124,10 +137,9 @@ public abstract class WorkbenchWizardListSelectionPage
 				}
 			});
 
-		} else {
-			unfilteredViewer = createViewer(outerContainer, false);
-			layoutTopControl(unfilteredViewer.getControl());
 		}
+		
+		stackLayout.topControl = filteredViewer.getControl();
 
 		restoreWidgetValues();
 
@@ -154,13 +166,6 @@ public abstract class WorkbenchWizardListSelectionPage
 		viewer.addSelectionChangedListener(this);
 		viewer.addDoubleClickListener(this);
 		viewer.setInput(wizardElements);
-
-		if (parent instanceof TabFolder) {
-			TabItem tabItem = new TabItem((TabFolder) parent, SWT.NONE);
-			tabItem.setControl(viewer.getControl());
-			tabItem.setText(filtering ? ActivityMessages.getString("ActivityFiltering.filtered") //$NON-NLS-1$
-			: ActivityMessages.getString("ActivityFiltering.unfiltered")); //$NON-NLS-1$
-		}
 
 		return viewer;
 	}
@@ -214,26 +219,26 @@ public abstract class WorkbenchWizardListSelectionPage
 	 * held last time this wizard was used to completion.
 	 */
 	private void restoreWidgetValues() {
-		boolean unfilteredSelected =
-			getDialogSettings().getBoolean(UNFILTERED_TAB_SELECTED);
-
-		updateViewerSelection(
-			unfilteredViewer,
-			STORE_SELECTED_UNFILTERED_WIZARD_ID);
-
-		if (WorkbenchActivityHelper.isFiltering()) {
-			updateViewerSelection(
+	    
+	    updateViewerSelection(
 				filteredViewer,
-				STORE_SELECTED_FILTERED_WIZARD_ID);
-			if (unfilteredSelected) {
-				tabFolder.setSelection(1);
-				selectionChanged(
-					new SelectionChangedEvent(
-						unfilteredViewer,
-						unfilteredViewer.getSelection()));
-			}
+				STORE_SELECTED_WIZARD_ID);
+	    
+		if (unfilteredViewer != null) {
+		    updateViewerSelection(
+					unfilteredViewer,
+					STORE_SELECTED_WIZARD_ID);
+		    
+			boolean unfilteredSelected =
+				getDialogSettings().getBoolean(SHOW_ALL_ENABLED);
+			
+			showAllCheck.setSelection(unfilteredSelected);
 
-		}
+			if (unfilteredSelected) {
+				stackLayout.topControl = unfilteredViewer.getControl();
+				stackComposite.layout();
+			}			
+		}		
 	}
 
 	/**
@@ -255,18 +260,25 @@ public abstract class WorkbenchWizardListSelectionPage
 	 * that they will persist into the next invocation of this wizard page
 	 */
 	public void saveWidgetValues() {
-		saveViewerSelection(
-			unfilteredViewer,
-			STORE_SELECTED_UNFILTERED_WIZARD_ID);
-		if (WorkbenchActivityHelper.isFiltering()) {
-			saveViewerSelection(
-				filteredViewer,
-				STORE_SELECTED_FILTERED_WIZARD_ID);
-			getDialogSettings().put(
-				UNFILTERED_TAB_SELECTED,
-				tabFolder.getSelectionIndex() == 1 ? true : false);
+		IDialogSettings settings = getDialogSettings();
 
+		if (showAllCheck != null && showAllCheck.getSelection()) {
+		    saveViewerSelection(
+					unfilteredViewer,
+					STORE_SELECTED_WIZARD_ID);
 		}
+		else {
+		    saveViewerSelection(
+					filteredViewer,
+					STORE_SELECTED_WIZARD_ID);
+		}	    
+		
+		if (showAllCheck != null) {
+			settings.put(
+				SHOW_ALL_ENABLED,
+				showAllCheck.getSelection());
+		}
+		
 	}
 
 	/**
@@ -288,7 +300,7 @@ public abstract class WorkbenchWizardListSelectionPage
 		}
 
 		setSelectedNode(createWizardNode(currentWizardSelection));
-		setMessage((String) currentWizardSelection.getDescription());
+		setMessage(currentWizardSelection.getDescription());
 	}
 
 	/**
