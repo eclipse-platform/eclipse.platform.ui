@@ -255,6 +255,7 @@
 
 	<extension point="org.eclipse.compare.structureCreators">
 		<structureCreator
+			id="org.eclipse.compare.ZipFileStructureCreator"
 			extensions="zip"
 			class="org.eclipse.compare.ZipFileStructureCreator">
 		</structureCreator>
@@ -262,14 +263,17 @@
 	
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer
+			id="org.eclipse.compare.BinaryCompareViewerCreator"
 			extensions="class,exe,dll,binary,zip,jar"
 			class="org.eclipse.compare.internal.BinaryCompareViewerCreator">
 		</viewer>
 		<viewer
+			id="org.eclipse.compare.TextMergeViewerCreator"
 			extensions="txt"
 			class="org.eclipse.compare.internal.TextMergeViewerCreator">
 		</viewer>
 		<viewer
+			id="org.eclipse.compare.ImageMergeViewerCreator"
 			extensions="gif,jpg"
 			class="org.eclipse.compare.internal.ImageMergeViewerCreator">
 		</viewer>
@@ -277,6 +281,7 @@
 	
 	<extension point="org.eclipse.compare.contentViewers">
 		<viewer
+			id="org.eclipse.compare.TextViewerCreator"
 			extensions="txt"
 			class="org.eclipse.compare.internal.TextViewerCreator">
 		</viewer>
