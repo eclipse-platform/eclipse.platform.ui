@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.debug.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.ant.internal.ui.preferences.AntObjectLabelProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.debug.core.DebugException;
@@ -41,6 +42,11 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
+		if (element instanceof AntProperty) {
+			return AntObjectLabelProvider.getPropertyImage();
+		} else if (element instanceof AntProperties) {
+			return AntObjectLabelProvider.getPropertyImage();
+        }
 		return null;
 	}
 	
@@ -94,6 +100,8 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 		} else if (element instanceof AntProperty) {
 		    AntProperty property= (AntProperty) element;
 		    return property.getText();  
+        } else if (element instanceof AntProperties) {
+		   return ((AntProperties)element).getName();
         }
 		
 		return null;

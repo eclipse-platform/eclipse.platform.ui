@@ -41,12 +41,22 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	private boolean fStepping = false;
 	
-	/**
-	 * The properties associated with this thread
-	 */
-	private List fProperties;
-	
 	private boolean fRefreshProperties= true;
+	
+	/**
+	 * The user properties associated with this thread
+	 */
+	private AntProperties fUserProperties;
+	
+	/**
+	 * The system properties associated with this thread
+	 */
+	private AntProperties fSystemProperties;
+	
+	/**
+	 * The properties set during the build associated with this thread
+	 */
+	private AntProperties fRuntimeProperties;
 	
 	/**
 	 * Constructs a new thread for the given target
@@ -72,7 +82,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	
 	/**
 	 * Returns the current stack frames in the thread
-	 * possibly waiting until the frames are populating
+	 * possibly waiting until the frames are populated
      * 
 	 * @return the current stack frames in the thread
 	 * @throws DebugException if unable to perform the request
@@ -295,19 +305,23 @@ public class AntThread extends AntDebugElement implements IThread {
     public synchronized void newProperties(String data) {
 	    try {
 	    	String[] datum= data.split(DebugMessageIds.MESSAGE_DELIMITER);
-	    	if (fProperties == null) {
-	    		fProperties= new ArrayList(datum.length);
+	    	if (fUserProperties == null) {
+	    		initializePropertyGroups();
 	    	}
+	    	
+	    	List userProperties= ((AntPropertiesValue)fUserProperties.getValue()).getProperties();
+	    	List systemProperties= ((AntPropertiesValue)fSystemProperties.getValue()).getProperties();
+	    	List runtimeProperties= ((AntPropertiesValue)fRuntimeProperties.getValue()).getProperties();
 	    	//0 PROPERTIES message
 	    	//1 propertyName length
 	    	//2 propertyName
 	    	//3 propertyValue length
 	    	//3 propertyValue
-	    	//4 ...
+	    	//4 propertyType
+	    	//5 ...
 	    	if (datum.length > 1) { //new properties
 	    		String propertyName;
 	    		String propertyValue;
-	    		AntProperty property;
 	    		int propertyNameLength;
 	    		int propertyValueLength;
 	    		for (int i = 1; i < datum.length; i++) {
@@ -317,8 +331,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	    				propertyName+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
 	    			}
 	    			propertyValueLength= Integer.parseInt(datum[++i]);
-	    			if (propertyValueLength == 0 && i + 1 == datum.length) {
-	    				//bug 81299
+	    			if (propertyValueLength == 0 && i + 1 == datum.length) { //bug 81299
 	    				propertyValue= ""; //$NON-NLS-1$
 	    			} else {
 	    				propertyValue= datum[++i];
@@ -327,8 +340,8 @@ public class AntThread extends AntDebugElement implements IThread {
 	    				propertyValue+= DebugMessageIds.MESSAGE_DELIMITER + datum[++i];
 	    			}
 	    			
-	    			property= new AntProperty((AntDebugTarget) getDebugTarget(), propertyName, propertyValue);
-	    			fProperties.add(property);
+	    			int propertyType= Integer.parseInt(datum[++i]);
+	    			addProperty(userProperties, systemProperties, runtimeProperties, propertyName, propertyValue, propertyType);
 	    		}
 	    	}
 	    } finally {
@@ -336,6 +349,31 @@ public class AntThread extends AntDebugElement implements IThread {
 	        //wake up the call from getVariables
 	    	notifyAll();
 	    }
+	}
+
+	private void addProperty(List userProperties, List systemProperties, List runtimeProperties, String propertyName, String propertyValue, int propertyType) {
+		AntProperty property= new AntProperty((AntDebugTarget) getDebugTarget(), propertyName, propertyValue);
+		switch (propertyType) {
+			case DebugMessageIds.PROPERTY_SYSTEM:
+				systemProperties.add(property);
+				break;
+			case DebugMessageIds.PROPERTY_USER:
+				userProperties.add(property);
+				break;
+
+			case DebugMessageIds.PROPERTY_RUNTIME:
+				runtimeProperties.add(property);
+				break;
+		}
+	}
+
+	private void initializePropertyGroups() {
+		fUserProperties= new AntProperties(fTarget, DebugModelMessages.getString("AntThread.0")); //$NON-NLS-1$
+		fUserProperties.setValue(new AntPropertiesValue(fTarget));
+		fSystemProperties= new AntProperties(fTarget, DebugModelMessages.getString("AntThread.1")); //$NON-NLS-1$
+		fSystemProperties.setValue(new AntPropertiesValue(fTarget));
+		fRuntimeProperties= new AntProperties(fTarget, DebugModelMessages.getString("AntThread.2")); //$NON-NLS-1$
+		fRuntimeProperties.setValue(new AntPropertiesValue(fTarget));
 	}
     
     protected synchronized IVariable[] getVariables() {
@@ -349,7 +387,6 @@ public class AntThread extends AntDebugElement implements IThread {
                 }
             }
         }
-        
-        return (IVariable[])fProperties.toArray(new IVariable[fProperties.size()]);
+        return new IVariable[]{fSystemProperties, fUserProperties, fRuntimeProperties};
       }
 }

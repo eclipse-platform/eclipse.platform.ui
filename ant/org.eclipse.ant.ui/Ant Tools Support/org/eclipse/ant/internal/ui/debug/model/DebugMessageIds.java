@@ -44,4 +44,7 @@ public class DebugMessageIds extends MessageIds {
 	
 	public final static String PROPERTIES= "prop"; //$NON-NLS-1$
 	public final static String PROPERTY_VALUE= "value"; //$NON-NLS-1$
+	public final static int PROPERTY_USER= 0;
+	public final static int PROPERTY_SYSTEM= 1;
+	public final static int PROPERTY_RUNTIME= 2;
 }
