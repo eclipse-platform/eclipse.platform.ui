@@ -189,18 +189,9 @@ public void initializeContent() {
 protected void initializeLaunchInfoTree(TableTreeItem treeItemParent, LaunchInfo launchInfo, IUMRegistry registry) {
 
 	TableTreeItem treeItem = null;
-	TableTreeItem treeItemApplication = null;
-
-	// Application configuration
-	//--------------------------
-	String strText = launchInfo.getApplicationConfiguration();
-	if (strText != null && strText.length() > 0) {
-		treeItem = new TableTreeItem(treeItemParent, SWT.NULL);
-		treeItem.setText(0, strText);
-	}
-
-	// Merged configurations
-	//----------------------
+	
+	// Configurations
+	//---------------
 	String[] straText = null;
 	LaunchInfo.VersionedIdentifier[] configurations = launchInfo.getConfigurations();
 
@@ -218,8 +209,8 @@ protected void initializeLaunchInfoTree(TableTreeItem treeItemParent, LaunchInfo
 		}
 	}
 
-	// Merged components
-	//------------------
+	// Components
+	//-----------
 	LaunchInfo.VersionedIdentifier[] components = launchInfo.getComponents();
 
 	for (int i = 0; i < components.length; ++i) {
