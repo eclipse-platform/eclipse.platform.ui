@@ -72,10 +72,6 @@ public class NewConfigurationView
 		"ConfigurationView.Popup.removePreserved";
 	private static final String KEY_SHOW_STATUS =
 		"ConfigurationView.Popup.showStatus";
-	private static final String KEY_HISTORY_FOLDER =
-		"ConfigurationView.historyFolder";
-	private static final String KEY_SAVED_FOLDER =
-		"ConfigurationView.savedFolder";
 	private static final String KEY_STATUS_TITLE =
 		"ConfigurationView.statusTitle";
 	private static final String KEY_STATUS_DEFAULT =
@@ -463,12 +459,6 @@ public class NewConfigurationView
 			}
 		}
 		return null;
-	}
-
-	public void selectCurrentConfiguration() {
-		getTreeViewer().setSelection(
-			new StructuredSelection(getLocalSite()),
-			true);
 	}
 
 
@@ -860,62 +850,26 @@ public class NewConfigurationView
 		}
 	}
 
-	private void registerListeners() {
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			config.addInstallConfigurationChangedListener(this);
-			IConfiguredSite[] isites = config.getConfiguredSites();
-			for (int i = 0; i < isites.length; i++) {
-				isites[i].addConfiguredSiteChangedListener(this);
-			}
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-		}
-	}
 
-	private void unregisterListeners() {
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			config.removeInstallConfigurationChangedListener(this);
-			IConfiguredSite[] isites = config.getConfiguredSites();
-			for (int i = 0; i < isites.length; i++) {
-				isites[i].removeConfiguredSiteChangedListener(this);
-			}
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-		}
-	} /**
-																																											 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
-																																											 */
+																																											 
 	public void installSiteAdded(IConfiguredSite csite) {
 		asyncRefresh();
-	} /**
-																																											 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
-																																											 */
+	} 																																									 
 	public void installSiteRemoved(IConfiguredSite site) {
 		asyncRefresh();
-	} /**
-																																											 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
-																																											 */
+	} 																																									 
 	public void featureInstalled(IFeature feature) {
 		asyncRefresh();
-	} /**
-																																											 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
-																																											 */
+	} 																																									 
 	public void featureRemoved(IFeature feature) {
 		asyncRefresh();
-	} /**
-																																											 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-																																											 */
+	} 																																									 
 	public void featureConfigured(IFeature feature) {
-	};
-	/**
-	 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-	 */
+	}
+	
 	public void featureUnconfigured(IFeature feature) {
-	};
+	}
+	
 	public void currentInstallConfigurationChanged(IInstallConfiguration configuration) {
 		asyncRefresh();
 	}
@@ -937,13 +891,7 @@ public class NewConfigurationView
 			}
 		});
 	}
-	private Object[] invertArray(Object[] array) {
-		Object[] invertedArray = new Object[array.length];
-		for (int i = 0; i < array.length; i++) {
-			invertedArray[i] = array[array.length - 1 - i];
-		}
-		return invertedArray;
-	}
+
 	private int getStatusCode(IFeature feature, IStatus status) {
 		int code = status.getCode();
 		if (code == IFeature.STATUS_UNHAPPY) {
