@@ -54,6 +54,10 @@ public class ResourceMappingSelectionArea extends DialogArea {
 			}
 			return super.getImage(element);
 		}
+        public void dispose() {
+            provider.dispose();
+            super.dispose();
+        }
 	}
 	
     /**
