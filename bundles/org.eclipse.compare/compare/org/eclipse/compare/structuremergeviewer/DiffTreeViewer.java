@@ -221,7 +221,7 @@ public class DiffTreeViewer extends TreeViewer {
 										
 		setSorter(new DiffViewerSorter());
 		
-		ToolBarManager tbm= CompareViewerSwitchingPane.getToolBarManager(parent);
+		ToolBarManager tbm= CompareViewerPane.getToolBarManager(parent);
 		if (tbm != null) {
 			tbm.removeAll();
 			

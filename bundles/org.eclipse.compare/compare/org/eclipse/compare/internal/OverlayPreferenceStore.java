@@ -24,7 +24,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 	public static final class TypeDescriptor {
 		private TypeDescriptor() {
 		}
-	};
+	}
 	
 	public static final TypeDescriptor BOOLEAN= new TypeDescriptor();
 	public static final TypeDescriptor DOUBLE= new TypeDescriptor();
@@ -42,7 +42,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 			fDescriptor= descriptor;
 			fKey= key;
 		}
-	};
+	}
 	
 	private class PropertyListener implements IPropertyChangeListener {
 				
@@ -54,7 +54,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 			if (key != null)
 				propagateProperty(fParent, key, fStore); 
 		}
-	};
+	}
 	
 	
 	private IPreferenceStore fParent;

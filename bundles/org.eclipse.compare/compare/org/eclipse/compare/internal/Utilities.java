@@ -168,11 +168,13 @@ public class Utilities {
 				try {
 					in.close();
 				} catch (IOException x) {
+					// silently ignored
 				}
 			}
 			try {
 				bos.close();
 			} catch (IOException x) {
+				// silently ignored
 			}
 		}
 		
@@ -198,11 +200,13 @@ public class Utilities {
 			return buffer.toString();
 			
 		} catch (IOException ex) {
+			// NeedWork
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();
 				} catch (IOException ex) {
+					// silently ignored
 				}
 			}
 		}
@@ -304,6 +308,7 @@ public class Utilities {
 			try {
 				return bundle.getString(key);
 			} catch (MissingResourceException x) {
+				// NeedWork
 			}
 		}
 		return dfltValue;
@@ -315,6 +320,7 @@ public class Utilities {
 			try {
 				return MessageFormat.format(bundle.getString(key), new String[] { arg });
 			} catch (MissingResourceException x) {
+				// NeedWork
 			}
 		}
 		return "!" + key + "!";//$NON-NLS-2$ //$NON-NLS-1$
@@ -348,7 +354,9 @@ public class Utilities {
 				if (s != null)
 					return Integer.parseInt(s);
 			} catch (NumberFormatException x) {
+				// NeedWork
 			} catch (MissingResourceException x) {
+				// NeedWork
 			}
 		}
 		return dfltValue;

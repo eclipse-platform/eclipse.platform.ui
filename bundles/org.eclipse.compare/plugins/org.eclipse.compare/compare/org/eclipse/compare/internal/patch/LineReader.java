@@ -85,6 +85,7 @@ import org.eclipse.jface.util.Assert;
 		try {
 			fReader.close();
 		} catch (IOException ex) {
+			// silently ignored
 		}
 	}
 	
@@ -96,6 +97,7 @@ import org.eclipse.jface.util.Assert;
 				lines.add(line);
 			return lines;
 		} catch (IOException ex) {
+			// NeedWork
 			//System.out.println("error while reading file: " + fileName + "(" + ex + ")");
 		} finally {
 			close();

@@ -132,6 +132,7 @@ import org.eclipse.compare.internal.*;
 					PatchMessages.getString("PatchWizard.unexpectedException.message"));	//$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// cannot happen
+			// NeedWork: use assert!
 		}
 		
 		// Save the dialog settings

@@ -73,7 +73,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		public InputStream getContents() {
 			return new ByteArrayInputStream(fContent.getBytes());
 		}
-	};
+	}
 		
 	private PatchWizard fPatchWizard;
 	
@@ -369,7 +369,9 @@ import org.eclipse.compare.structuremergeviewer.*;
 			);
 			return result[0];
 		} catch (InvocationTargetException ex) {
+			// NeedWork
 		} catch (InterruptedException ex) {
+			// NeedWork
 		}
 		return -1;
 	}
@@ -678,6 +680,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			try {
 				stripPrefixSegments= Integer.parseInt(s);
 			} catch(NumberFormatException ex) {
+				// silently ignored
 			}
 		}
 		return stripPrefixSegments;
@@ -690,6 +693,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			try {
 				fuzzFactor= Integer.parseInt(s);
 			} catch(NumberFormatException ex) {
+				// silently ignored
 			}
 		}
 		return fuzzFactor;

@@ -59,7 +59,7 @@ public class AddFromHistoryAction implements IActionDelegate {
 				IProgressMonitor pm= pmdialog.getProgressMonitor();
 				IFile[] states= null;
 				try {
-					states= container.findDeletedMembersWithHistory(IContainer.DEPTH_INFINITE, pm);
+					states= container.findDeletedMembersWithHistory(IResource.DEPTH_INFINITE, pm);
 				} catch (CoreException ex) {
 					pm.done();
 				}

@@ -109,7 +109,9 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 				operation.run(pmd.getProgressMonitor());				
 				
 			} catch (InterruptedException x) {
+				// NeedWork
 			} catch (OperationCanceledException x) {
+				// NeedWork
 			} catch (InvocationTargetException x) {
 				String title= Utilities.getString("CompareDialog.saveErrorTitle"); //$NON-NLS-1$
 				String msg= Utilities.getString("CompareDialog.saveErrorMessage"); //$NON-NLS-1$

@@ -200,6 +200,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 			try {
 				is= sca.getContents();
 			} catch (CoreException ex) {
+				// NeedWork
 			}
 		}
 
@@ -245,6 +246,7 @@ public class ZipFileStructureCreator implements IStructureCreator {
 			try {
 				zip.close();
 			} catch (IOException ex) {
+				// silently ignored
 			}
 		}
 

@@ -82,6 +82,7 @@ public abstract class BufferedContent implements IContentChangeNotifier, IStream
 				InputStream is= createStream();
 				fContent= Utilities.readBytes(is);
 			} catch(CoreException ex) {
+				// NeedWork
 			}
 		}
 		return fContent;

@@ -46,7 +46,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 		public void propertyChange(PropertyChangeEvent event) {
 			CompareEditor.this.propertyChange(event);
 		}
-	};
+	}
 
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 	
@@ -206,7 +206,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 			firePropertyChange(PROP_DIRTY);
 			
 		} catch (InterruptedException x) {
+			// NeedWork
 		} catch (OperationCanceledException x) {
+			// NeedWork
 		} catch (InvocationTargetException x) {
 			String title= Utilities.getString("CompareEditor.saveError.title"); //$NON-NLS-1$
 			String reason= x.getTargetException().getMessage();

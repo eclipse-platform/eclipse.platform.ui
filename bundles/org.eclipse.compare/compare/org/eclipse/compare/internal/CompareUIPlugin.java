@@ -148,6 +148,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						try {
 							return (IStructureCreator) conf.createExecutableExtension(CLASS_ATTRIBUTE);
 						} catch (CoreException ex) {
+							// NeedWork
 						}
 						return null;
 					}
@@ -476,6 +477,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						try {
 							fgImages2.put(id, image);
 						} catch (NullPointerException ex) {
+							// NeedWork
 						}
 						fgDisposeOnShutdownImages.add(image);
 
@@ -784,6 +786,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					try {
 						is.close();
 					} catch (IOException ex) {
+						// silently ignored
 					}
 				}
 			}

@@ -84,6 +84,7 @@ public class ImageMergeViewer extends ContentMergeViewer {
 					try {
 						stream= sca.getContents();
 					} catch (CoreException ex) {
+						// NeedWork
 					}
 				}
 			}
@@ -94,6 +95,7 @@ public class ImageMergeViewer extends ContentMergeViewer {
 				try {
 					image= new Image(display, stream);
 				} catch (SWTException ex) {
+					// silently ignored
 				}
 			}
 
@@ -108,6 +110,7 @@ public class ImageMergeViewer extends ContentMergeViewer {
 				try {
 					stream.close();
 				} catch (IOException ex) {
+					// silently ignored
 				}
 			}
 		}

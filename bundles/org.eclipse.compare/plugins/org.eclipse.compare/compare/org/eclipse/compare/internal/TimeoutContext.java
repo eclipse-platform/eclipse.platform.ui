@@ -358,6 +358,7 @@ public class TimeoutContext {
 		try {
 			t.join(timeout);
 		} catch (InterruptedException e) {
+			// silently ignored
 		}
 		
 		if (t.timeout(display)) {	// timeout

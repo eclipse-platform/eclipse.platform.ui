@@ -23,11 +23,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 
@@ -142,7 +142,7 @@ public class CompareWithPatchAction implements IActionDelegate {
 		dialog.setMessage(PatchMessages.getString("PatchAction.SaveAllDescription")); //$NON-NLS-1$
 		dialog.setContentProvider(new ListContentProvider());
 		dialog.setInput(Arrays.asList(CompareUIPlugin.getDirtyEditors()));
-		return dialog.open() == Dialog.OK;
+		return dialog.open() == Window.OK;
 	}
 
 	private ILabelProvider createDialogLabelProvider() {

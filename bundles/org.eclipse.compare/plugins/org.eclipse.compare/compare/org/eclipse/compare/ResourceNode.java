@@ -146,6 +146,7 @@ public class ResourceNode extends BufferedContent
 							fChildren.add(child);
 					}
 				} catch (CoreException ex) {
+					// NeedWork
 				}
 			}
 		}

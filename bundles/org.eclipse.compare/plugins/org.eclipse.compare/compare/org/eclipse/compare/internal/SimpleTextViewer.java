@@ -42,7 +42,7 @@ public class SimpleTextViewer extends AbstractViewer {
 			fSourceViewer.setDocument(new Document(getString(input)));
 		} else if (input instanceof ICompareInput) {
 			fInput= (ICompareInput) input;
-			ITypedElement left= ((ICompareInput) fInput).getLeft();
+			ITypedElement left= fInput.getLeft();
 			fSourceViewer.setDocument(new Document(getString(left)));
 		}
 	}
@@ -58,6 +58,7 @@ public class SimpleTextViewer extends AbstractViewer {
 			try {
 				return Utilities.readString(sca.getContents());
 			} catch (CoreException ex) {
+				// NeedWork
 			}
 		}
 		return ""; //$NON-NLS-1$

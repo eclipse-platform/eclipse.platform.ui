@@ -102,12 +102,14 @@ public class BinaryCompareViewer extends AbstractViewer {
 					try {
 						left.close();
 					} catch (IOException ex) {
+						// silently ignored
 					}
 				}
 				if (right != null) {
 					try {
 						right.close();
 					} catch (IOException ex) {
+						// silently ignored
 					}
 				}			
 			}

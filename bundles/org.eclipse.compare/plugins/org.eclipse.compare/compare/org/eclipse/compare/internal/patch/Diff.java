@@ -59,7 +59,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	}
 	
 	Hunk[] getHunks() {
-		return (Hunk[]) fHunks.toArray((Hunk[]) new Hunk[fHunks.size()]);
+		return (Hunk[]) fHunks.toArray(new Hunk[fHunks.size()]);
 	}
 
 	IPath getPath() {

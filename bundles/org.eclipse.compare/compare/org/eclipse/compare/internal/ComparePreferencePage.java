@@ -53,7 +53,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		public InputStream getContents() {
 			return new ByteArrayInputStream(fContent.getBytes());
 		}
-	};
+	}
 
 	private static final String PREFIX= CompareUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 	public static final String OPEN_STRUCTURE_COMPARE= PREFIX + "OpenStructureCompare"; //$NON-NLS-1$

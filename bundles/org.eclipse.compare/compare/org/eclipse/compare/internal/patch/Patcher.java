@@ -190,7 +190,7 @@ public class Patcher {
 		
 		lr.close();
 		
-		fDiffs= (Diff[]) diffs.toArray((Diff[]) new Diff[diffs.size()]);
+		fDiffs= (Diff[]) diffs.toArray(new Diff[diffs.size()]);
 	}
 
 	/**
@@ -527,6 +527,7 @@ public class Patcher {
 					Date date= DATE_FORMATS[i].parse(line);
 					return date.getTime();		
 				} catch (ParseException ex) {
+					// silently ignored
 				}
 			}
 			// System.err.println("can't parse date: <" + line + ">");
@@ -807,6 +808,7 @@ public class Patcher {
 							marker.setAttribute(IMarker.MESSAGE, PatchMessages.getString("Patcher.Marker.message"));	//$NON-NLS-1$
 							marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 						} catch (CoreException ex) {
+							// NeedWork
 						}
 					}
 				}
@@ -847,11 +849,13 @@ public class Patcher {
 					lr.ignoreSingleCR();
 				lines= lr.readLines();
 			} catch(CoreException ex) {
+				// NeedWork
 			} finally {
 				if (is != null)
 					try {
 						is.close();
 					} catch(IOException ex) {
+						// silently ignored
 					}
 			}
 		}
@@ -892,6 +896,7 @@ public class Patcher {
 				try {
 					is.close();
 				} catch(IOException ex) {
+					// silently ignored
 				}
 		}
 	}

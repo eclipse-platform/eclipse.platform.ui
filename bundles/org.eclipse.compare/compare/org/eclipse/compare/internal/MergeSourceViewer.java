@@ -145,6 +145,7 @@ public class MergeSourceViewer extends SourceViewer
 			try {
 				t.setLineBackground(region.x, region.y, c);
 			} catch (IllegalArgumentException ex) {
+				// silently ignored
 			}
 		}
 	}
@@ -175,10 +176,12 @@ public class MergeSourceViewer extends SourceViewer
 		try {
 			startLine= doc.getLineOfOffset(start);
 		} catch(BadLocationException ex) {
+			// silently ignored
 		}
 		try {
 			endLine= doc.getLineOfOffset(start+length);
 		} catch(BadLocationException ex) {
+			// silently ignored
 		}
 		
 		return endLine-startLine+1;
@@ -210,6 +213,7 @@ public class MergeSourceViewer extends SourceViewer
 			try {
 				return doc.getLineOfOffset(start);
 			} catch(BadLocationException ex) {
+				// silently ignored
 			}
 		}
 		return 0;
@@ -242,6 +246,7 @@ public class MergeSourceViewer extends SourceViewer
 		try {
 			startLine= doc.getLineOfOffset(start);
 		} catch (BadLocationException e) {
+			// silently ignored
 		}
 		
 		int lineCount= 0;
@@ -261,6 +266,7 @@ public class MergeSourceViewer extends SourceViewer
 			try {
 				endLine= doc.getLineOfOffset(start + length - 1);	// why -1?
 			} catch (BadLocationException e) {
+				// silently ignored
 			}
 			lineCount= endLine-startLine+1;
 		}

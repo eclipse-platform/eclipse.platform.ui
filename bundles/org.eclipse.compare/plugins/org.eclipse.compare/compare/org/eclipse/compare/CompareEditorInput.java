@@ -454,7 +454,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		);		
 
 		if (fInput instanceof ICompareInput) {
-			fStructureInputPane.setInput((ICompareInput) fInput);
+			fStructureInputPane.setInput(fInput);
 			ISelection sel= fStructureInputPane.getSelection();
 			if (sel == null || sel.isEmpty())
 				feed1(sel);	// we only feed downstream viewers if the top left pane is empty

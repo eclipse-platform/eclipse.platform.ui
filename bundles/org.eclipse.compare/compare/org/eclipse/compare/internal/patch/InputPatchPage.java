@@ -146,6 +146,7 @@ import org.eclipse.core.runtime.*;
 			try {
 				reader.close();
 			} catch (IOException x) {
+				// silently ignored
 			}
 		}
 		

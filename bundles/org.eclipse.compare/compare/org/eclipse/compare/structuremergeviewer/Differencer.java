@@ -450,17 +450,20 @@ public class Differencer {
 				
 			}
 		} catch (IOException ex) {
+			// NeedWork
 		} finally {
 			if (is1 != null) {
 				try {
 					is1.close();
 				} catch(IOException ex) {
+					// silently ignored
 				}
 			}
 			if (is2 != null) {
 				try {
 					is2.close();
 				} catch(IOException ex) {
+					// silently ignored
 				}
 			}
 		}
@@ -477,6 +480,7 @@ public class Differencer {
 			try {
 				return ((IStreamContentAccessor)o).getContents();
 			} catch(CoreException ex) {
+				// NeedWork
 			}
 		}
 		return null;

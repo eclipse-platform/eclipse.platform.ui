@@ -69,6 +69,7 @@ public class BufferedResourceNode extends ResourceNode {
 						try {
 							is.close();
 						} catch(IOException ex) {
+							// Silently ignored
 						}
 				}
 			}
@@ -109,6 +110,7 @@ public class BufferedResourceNode extends ResourceNode {
 				if (bytes != null)
 					dst.setContent(bytes);
 			} catch (CoreException ex) {
+				// NeedWork
 			}
 		}
 		return child;

@@ -320,7 +320,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				e.gc.drawLine(0+1, s.y-1, s.x-1-1, s.y-1);
 			}
 		}
-	};
+	}
 
 	/**
 	 * The position updater used to adapt the positions representing
@@ -480,16 +480,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				try {
 					p= new Position(start, l);
 				} catch (RuntimeException ex) {
-					//System.out.println("Diff.createPosition: " + start + " " + l);
+					// silently ignored
 				}
 				
 				try {
 					doc.addPosition(IDocumentRange.RANGE_CATEGORY, p);
 				} catch (BadPositionCategoryException ex) {
+					// silently ignored
 				}
 				return p;
 			} catch (BadLocationException ee) {
-				//System.out.println("Diff.createPosition: " + start + " " + end);
+				// silently ignored
 			}
 			return null;
 		}
@@ -1780,6 +1781,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				try {
 					s= Utilities.readString(sca.getContents());
 				} catch (CoreException ex) {
+					// NeedWork
 				}
 	
 				newDoc= new Document(s != null ? s : ""); //$NON-NLS-1$
@@ -1807,8 +1809,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					try {
 						newDoc.addPosition(IDocumentRange.RANGE_CATEGORY, range);
 					} catch (BadPositionCategoryException ex) {
+						// silently ignored
 						if (DEBUG) System.out.println("BadPositionCategoryException: " + ex);	//$NON-NLS-1$
 					} catch (BadLocationException ex) {
+						// silently ignored
 						if (DEBUG) System.out.println("BadLocationException: " + ex);	//$NON-NLS-1$
 					}
 					addNewRange(type, input, range);
@@ -1911,6 +1915,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			try {
 				oldDoc.removePositionCategory(IDocumentRange.RANGE_CATEGORY);
 			} catch (BadPositionCategoryException ex) {
+				// NeedWork
 			}
 			
 			oldDoc.removeDocumentListener(fDocumentListener);
@@ -2431,6 +2436,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			try {
 				return doc.get(startPos, endPos - startPos);
 			} catch (BadLocationException e) {
+				// silently ignored
 			}
 
 		}
@@ -2529,6 +2535,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				leftLine= leftDoc.getLineOfOffset(leftStart+sy.getTokenStart(es.leftStart()));
 				rightLine= rightDoc.getLineOfOffset(rightStart+sm.getTokenStart(es.rightStart()));
 			} catch (BadLocationException e) {
+				// silently ignored
 			}
 			i++;
 			for (; i < r.length; i++) {
@@ -2539,6 +2546,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					if (rightLine != rightDoc.getLineOfOffset(rightStart+sm.getTokenStart(es.rightStart())))
 						break;
 				} catch (BadLocationException e) {
+					// silently ignored
 				}
 			}
 			int end= i;
@@ -2815,6 +2823,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						new String[] { Integer.toString(line + 1), Integer.toString(column + 1) } );
 					
 				} catch (BadLocationException x) {
+					// silently ignored
 				}
 			}
 		}
@@ -3253,7 +3262,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		double width= w;
 		fBasicCenterCurve= new double[getCenterWidth()];
 		for (int i= 0; i < getCenterWidth(); i++) {
-			double r= ((double) i) / width;
+			double r= i / width;
 			fBasicCenterCurve[i]= Math.cos(Math.PI * r);
 		}
 	}
@@ -3901,6 +3910,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					}	
 				
 				} catch (BadLocationException e) {
+					// silently ignored
 				}
 			}
 		

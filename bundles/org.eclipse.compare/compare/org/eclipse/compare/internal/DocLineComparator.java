@@ -51,6 +51,7 @@ public class DocLineComparator implements ITokenComparator {
 			try {
 				fLineOffset= fDocument.getLineOfOffset(start);
 			} catch (BadLocationException ex) {
+				// silently ignored
 			}
 
 			if (fLength == 0)
@@ -60,6 +61,7 @@ public class DocLineComparator implements ITokenComparator {
 				try {
 					endLine= fDocument.getLineOfOffset(start + fLength);
 				} catch (BadLocationException ex) {
+					// silently ignored
 				}
 				fLineCount= endLine - fLineOffset + 1;
 			}
@@ -153,6 +155,7 @@ public class DocLineComparator implements ITokenComparator {
 				IRegion r= fDocument.getLineInformation(fLineOffset + line);
 				return fDocument.get(r.getOffset(), r.getLength());
 			} catch(BadLocationException e) {
+				// silently ignored
 			}
 		}
 		return ""; //$NON-NLS-1$

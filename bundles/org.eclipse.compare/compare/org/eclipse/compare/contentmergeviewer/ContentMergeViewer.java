@@ -74,7 +74,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		public void run() {
 			saveContent(getInput());
 		}
-	};
+	}
 	
 	/**
 	 * Property names.
@@ -232,7 +232,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fComposite.layout(true);
 			fControl.getDisplay().update();
 		}
-	};
+	}
 
 	/** Style bits for top level composite */
 	private int fStyles;
@@ -604,7 +604,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			if (fAncestorEnabled && oldFlag != fShowAncestor)
 				fComposite.layout(true);
 			
-			ToolBarManager tbm= CompareViewerSwitchingPane.getToolBarManager(fComposite.getParent());
+			ToolBarManager tbm= CompareViewerPane.getToolBarManager(fComposite.getParent());
 			if (tbm != null) {
 				updateToolItems();
 				tbm.update(true);
@@ -667,7 +667,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
 		fKeyBindingService= ps != null ? ps.getKeyBindingService() : null;
 						
-		ToolBarManager tbm= CompareViewerSwitchingPane.getToolBarManager(parent);
+		ToolBarManager tbm= CompareViewerPane.getToolBarManager(parent);
 		if (tbm != null) {
 			tbm.removeAll();
 			

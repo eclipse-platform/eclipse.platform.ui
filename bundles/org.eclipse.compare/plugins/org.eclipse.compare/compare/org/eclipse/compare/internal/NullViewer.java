@@ -13,7 +13,7 @@ package org.eclipse.compare.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.compare.CompareViewerSwitchingPane;
+import org.eclipse.compare.CompareViewerPane;
 
 /**
  * Used whenever the input is null or no viewer can be found.
@@ -26,7 +26,7 @@ public class NullViewer extends AbstractViewer {
 
 		fDummy= new Tree(parent, SWT.NULL);
 
-		CompareViewerSwitchingPane.clearToolBar(parent);
+		CompareViewerPane.clearToolBar(parent);
 	}
 
 	public Control getControl() {

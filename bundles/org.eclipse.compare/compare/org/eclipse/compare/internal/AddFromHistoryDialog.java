@@ -75,6 +75,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 				try {
 					fStates= fFile.getHistory(new NullProgressMonitor());
 				} catch (CoreException ex) {
+					// NeedWork
 				}
 			}
 			return fStates;
@@ -143,7 +144,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		final int count= inputFiles.length;
 		final IFile[] files= new IFile[count];
 		for (int i= 0; i < count; i++)
-			files[i]= (IFile) inputFiles[i];
+			files[i]= inputFiles[i];
 		if (count > 1)
 			internalSort(files, 0, count-1);
 			

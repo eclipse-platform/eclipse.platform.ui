@@ -124,6 +124,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 							if (is != null)
 								fContent= Utilities.readString(is);
 						} catch (CoreException ex) {
+							// NeedWork
 						}
 					}
 				}
@@ -909,7 +910,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 			editions= new ArrayList();
 			fMemberEditions.put(item, editions);
 			if (fMemberTable != null && !fMemberTable.isDisposed()) {
-				ITypedElement te= (ITypedElement)item;
+				ITypedElement te= item;
 				String name= te.getName();
 				
 				// find position

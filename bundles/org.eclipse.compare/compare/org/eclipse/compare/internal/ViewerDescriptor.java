@@ -45,6 +45,7 @@ public class ViewerDescriptor implements IViewerDescriptor {
 			try {
 				fViewerCreator= (IViewerCreator) fConfiguration.createExecutableExtension(CLASS_ATTRIBUTE);
 			} catch (CoreException e) {
+				// NeedWork
 			}
 		}
 

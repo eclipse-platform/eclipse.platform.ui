@@ -77,7 +77,9 @@ public class DocumentRangeNode
 			try {
 				document.addPosition(RANGE_CATEGORY, fRange);
 			} catch (BadPositionCategoryException ex) {
+				// silently ignored
 			} catch (BadLocationException ex) {
+				// silently ignored
 			}
 		}
 	}
@@ -173,8 +175,9 @@ public class DocumentRangeNode
 				fBaseDocument.addPosition(RANGE_CATEGORY, p);
 				fAppendPosition= p;
 			} catch (BadPositionCategoryException ex) {
+				// silently ignored
 			} catch (BadLocationException ex) {
-				// ignore
+				// silently ignored
 			}
 		} else {
 			fAppendPosition= new Position(pos);
@@ -196,8 +199,9 @@ public class DocumentRangeNode
 					fBaseDocument.addPosition(RANGE_CATEGORY, p);
 					fAppendPosition= p;
 				} catch (BadPositionCategoryException ex) {
+					// silently ignored
 				} catch (BadLocationException ex) {
-					// ignore
+					// silently ignored
 				}
 			} else {
 				fAppendPosition= new Position(fBaseDocument.getLength());
@@ -282,7 +286,7 @@ public class DocumentRangeNode
 			try {
 				fBaseDocument.replace(p.getOffset(), p.getLength(), s);
 			} catch (BadLocationException ex) {
-				// ignore
+				// silently ignored
 			}
 		}
 	}
@@ -323,6 +327,7 @@ public class DocumentRangeNode
 					InputStream is= ((IStreamContentAccessor)other).getContents();
 					srcContents= Utilities.readString(is);
 				} catch(CoreException ex) {
+					// NeedWork
 				}
 			}
 		}
