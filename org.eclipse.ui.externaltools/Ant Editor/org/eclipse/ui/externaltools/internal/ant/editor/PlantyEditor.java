@@ -82,7 +82,7 @@ public class PlantyEditor extends TextEditor {
     protected void createActions() {
         super.createActions();
 
-        ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.PlantyMessages"), "ContentAssistProposal.", this);
+        ContentAssistAction action = new ContentAssistAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.PlantyMessages"), "ContentAssistProposal.", this); //$NON-NLS-1$ //$NON-NLS-2$
 
         // This action definition is associated with the accelerator Ctrl+Space
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);

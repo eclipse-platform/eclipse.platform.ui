@@ -32,9 +32,9 @@ public interface PlantyColorConstants {
 	RGB TAG=                new RGB(  0,   0, 128);
 	
 	
-	String P_XML_COMMENT = "planty.color.xml_comment";
-	String P_PROC_INSTR = "planty.color.instr";
-	String P_STRING = "planty.color.string";
-	String P_DEFAULT = "planty.color.default";
-	String P_TAG = "planty.color.tag";
+	String P_XML_COMMENT = "planty.color.xml_comment"; //$NON-NLS-1$
+	String P_PROC_INSTR = "planty.color.instr"; //$NON-NLS-1$
+	String P_STRING = "planty.color.string"; //$NON-NLS-1$
+	String P_DEFAULT = "planty.color.default"; //$NON-NLS-1$
+	String P_TAG = "planty.color.tag"; //$NON-NLS-1$
 }

@@ -41,7 +41,7 @@ public class PlantyCommentScanner extends RuleBasedScanner {
         List rules = new ArrayList();
 
         // Add rule for comments.
-        rules.add(new MultiLineRule("<!--", "-->", comment));
+        rules.add(new MultiLineRule("<!--", "-->", comment)); //$NON-NLS-1$ //$NON-NLS-2$
 
         IRule[] result = new IRule[rules.size()];
         rules.toArray(result);

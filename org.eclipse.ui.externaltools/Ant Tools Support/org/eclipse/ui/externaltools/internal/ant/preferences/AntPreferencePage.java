@@ -30,7 +30,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
      */
 		public AntPreferencePage() {
 			super(GRID);
-			setDescription("General Ant Settings:");
+			setDescription(AntPreferencesMessages.getString("AntPreferencePage.General")); //$NON-NLS-1$
 			setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
 		}
 	/**
@@ -39,13 +39,13 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	public void createFieldEditors() {
 
 		Label label= new Label(getFieldEditorParent(), SWT.NONE);
-		label.setText("Enter the names of the build files to find if using Run As -> Ant Build\nand the currently selected resource is not an Ant build file.\nList is comma separated (e.g export.xml, build.xml, clean.xml).");
+		label.setText(AntPreferencesMessages.getString("AntPreferencePage.Enter")); //$NON-NLS-1$
 		GridData gd= new GridData();
 		gd.horizontalSpan= 2;
 		label.setLayoutData(gd);
 		label.setFont(getFieldEditorParent().getFont());
 		
-		fBuildFileNames = new StringFieldEditor(IPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "&Names:", getFieldEditorParent());
+		fBuildFileNames = new StringFieldEditor(IPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.getString("AntPreferencePage.&Names__3"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(fBuildFileNames);
 		fBuildFileNames.getTextControl(getFieldEditorParent()).addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {

@@ -101,7 +101,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		if (isValid) {
 			getPage().setErrorMessage(null);
 		} else {
-			getPage().setErrorMessage("A specific working set must be selected from the list.");
+			getPage().setErrorMessage(ExternalToolsVariableMessages.getString("WorkingSetComponent.Must_Select")); //$NON-NLS-1$
 		}
 		setIsValid(isValid);
 		getPage().updateValidState();

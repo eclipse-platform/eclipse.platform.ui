@@ -29,7 +29,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	private Button promptForMigrationButton;
 	
 	public ExternalToolsPreferencePage() {
-		setDescription("Preferences for external tools:");
+		setDescription(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Preferences_for_external_tools__1")); //$NON-NLS-1$
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
 	}
 
@@ -52,7 +52,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		composite.setLayoutData(data);
 		
 		Group group= new Group(composite, SWT.NONE);
-		group.setText("Project Builders");
+		group.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Project_Builders_2")); //$NON-NLS-1$
 		data= new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
 		layout= new GridLayout();
@@ -61,7 +61,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		
 		promptForMigrationButton= new Button(group, SWT.CHECK | SWT.LEFT);
 		promptForMigrationButton.setFont(font);
-		promptForMigrationButton.setText("Always &prompt before migrating project builders");
+		promptForMigrationButton.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Always_&prompt_before_migrating_project_builders_3")); //$NON-NLS-1$
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
 		
 		return composite;

@@ -51,7 +51,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 		if (resource != null && resource instanceof IFile) {
 			IFile file = (IFile)resource;
 			String extension = file.getFileExtension();
-			if (extension != null && extension.equalsIgnoreCase("xml")) {
+			if (extension != null && extension.equalsIgnoreCase("xml")) { //$NON-NLS-1$
 				StringBuffer buffer = new StringBuffer(file.getProject().getName());
 				buffer.append(" "); //$NON-NLS-1$
 				buffer.append(file.getName());

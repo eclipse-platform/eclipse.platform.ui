@@ -44,7 +44,7 @@ public class PlantyProcInstrScanner extends RuleBasedScanner {
                     ExternalToolsPlugin.getPreferenceColor(PlantyColorConstants.P_PROC_INSTR)));
 
         //Add rule for processing instructions
-        rules.add(new SingleLineRule("<?", "?>", procInstr));
+        rules.add(new SingleLineRule("<?", "?>", procInstr)); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add generic whitespace rule.
         rules.add(new WhitespaceRule(new PlantyWhitespaceDetector()));

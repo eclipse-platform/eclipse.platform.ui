@@ -68,7 +68,7 @@ public class FileSelectionDialog extends MessageDialog {
  *    <code>null</code> to display a default message
  */
 public FileSelectionDialog(Shell parentShell, IAdaptable rootElement, String message) {
-	super(parentShell, "Choose Location", null, message, MessageDialog.NONE, new String[] {"Ok", "Cancel"}, 0);
+	super(parentShell, ExternalToolsUIMessages.getString("FileSelectionDialog.Choose_Location_1"), null, message, MessageDialog.NONE, new String[] {ExternalToolsUIMessages.getString("FileSelectionDialog.Ok_2"), ExternalToolsUIMessages.getString("FileSelectionDialog.Cancel_3")}, 0); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	root = rootElement;
 	setShellStyle(getShellStyle() | SWT.RESIZE);
 }

@@ -33,7 +33,7 @@ public class PlantyActionContributor extends TextEditorActionContributor {
 	 */
 	public PlantyActionContributor() {
 		super();
-		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.PlantyMessages"), "ContentAssistProposal."); //$NON-NLS-1$
+		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.PlantyMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
 //        fContentAssistTip= new RetargetTextEditororg.eclipse.ui.externaltools.internal.ant.editorBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.PlantyMessages"), "ContentAssistTip."); //$NON-NLS-1$
 	}
 	

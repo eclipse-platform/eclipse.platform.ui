@@ -148,7 +148,7 @@ public class Parser {
 		private Reader fDelegate;
 		
 		public DTDReader(String pub, String sys, String root) {
-			String document = "<!DOCTYPE "+root+" PUBLIC '"+pub+"' '"+sys+"'><"+root+"/>";
+			String document = "<!DOCTYPE "+root+" PUBLIC '"+pub+"' '"+sys+"'><"+root+"/>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			fDelegate = new StringReader(document);
 		}
 		

@@ -153,7 +153,7 @@ public class NullBuildLogger implements BuildLogger {
 			return;
 		}
 		fHandledException= exception;
-		logMessage(MessageFormat.format(AntSupportMessages.getString("AntProcessBuildLogger.BUILD_FAILED__{0}_1"), 
+		logMessage(MessageFormat.format(AntSupportMessages.getString("AntProcessBuildLogger.BUILD_FAILED__{0}_1"),  //$NON-NLS-1$
 					new String[] { exception.toString()}),
 					Project.MSG_ERR);	
 	}

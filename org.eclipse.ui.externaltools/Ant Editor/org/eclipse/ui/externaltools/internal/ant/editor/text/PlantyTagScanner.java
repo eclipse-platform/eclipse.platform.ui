@@ -38,8 +38,8 @@ public class PlantyTagScanner extends RuleBasedScanner {
         Vector rules = new Vector();
 
         // Add rule for single and double quotes
-        rules.add(new SingleLineRule("\"", "\"", string, '\\'));
-        rules.add(new SingleLineRule("'", "'", string, '\\'));
+        rules.add(new SingleLineRule("\"", "\"", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
+        rules.add(new SingleLineRule("'", "'", string, '\\')); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add generic whitespace rule.
         rules.add(new WhitespaceRule(new PlantyWhitespaceDetector()));

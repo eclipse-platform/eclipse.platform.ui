@@ -16,16 +16,16 @@ package org.eclipse.ui.externaltools.internal.ant.dtd;
  */
 public interface IAttribute extends IAtom {
 
-	public static final String CDATA = "CDATA";
-	public static final String ID = "ID";
-	public static final String IDREF = "IDREF";
-	public static final String IDREFS = "IDREFS";
-	public static final String NMTOKEN = "NMTOKEN";
-	public static final String NMTOKENS = "NMTOKENS";
-	public static final String ENTITY = "ENTITY";
-	public static final String ENTITIES = "ENTITIES";
-	public static final String NOTATION = "NOTATION";
-	public static final String ENUMERATION = "enumeration";
+	public static final String CDATA = "CDATA"; //$NON-NLS-1$
+	public static final String ID = "ID"; //$NON-NLS-1$
+	public static final String IDREF = "IDREF"; //$NON-NLS-1$
+	public static final String IDREFS = "IDREFS"; //$NON-NLS-1$
+	public static final String NMTOKEN = "NMTOKEN"; //$NON-NLS-1$
+	public static final String NMTOKENS = "NMTOKENS"; //$NON-NLS-1$
+	public static final String ENTITY = "ENTITY"; //$NON-NLS-1$
+	public static final String ENTITIES = "ENTITIES"; //$NON-NLS-1$
+	public static final String NOTATION = "NOTATION"; //$NON-NLS-1$
+	public static final String ENUMERATION = "enumeration"; //$NON-NLS-1$
 	
 	/**
 	 * @return the attribute type. This will be one of "CDATA", "ID", "IDREF",

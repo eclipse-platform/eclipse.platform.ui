@@ -36,9 +36,9 @@ import org.eclipse.jface.text.rules.*;
  * @version 22.10.2002
  */
 public class PlantyPartitionScanner extends RuleBasedPartitionScanner {
-	public final static String XML_DEFAULT = "__xml_default";
-	public final static String XML_COMMENT = "__xml_comment";
-	public final static String XML_TAG = "__xml_tag";
+	public final static String XML_DEFAULT = "__xml_default"; //$NON-NLS-1$
+	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
+	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
 
     /**
      * Creates an instance.
@@ -48,7 +48,7 @@ public class PlantyPartitionScanner extends RuleBasedPartitionScanner {
 		List rules = new ArrayList();
 
         IToken xmlComment = new Token(XML_COMMENT);
-		rules.add(new MultiLineRule("<!--", "-->", xmlComment));
+		rules.add(new MultiLineRule("<!--", "-->", xmlComment)); //$NON-NLS-1$ //$NON-NLS-2$
 
         IToken tag = new Token(XML_TAG);
 		rules.add(new TagRule(tag));

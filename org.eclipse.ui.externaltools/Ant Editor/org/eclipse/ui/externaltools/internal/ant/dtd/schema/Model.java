@@ -71,7 +71,7 @@ public class Model implements IModel {
 		fLeaf = leaf;
 	}
 
-	protected static final String[] fOps = {"?",",","|","&","!!!"};
+	protected static final String[] fOps = {"?",",","|","&","!!!"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
 	private Nfm qualifyNfm(Nfm nfm) {
 		if (nfm == null)
@@ -208,7 +208,7 @@ public class Model implements IModel {
 	 * @see org.eclipse.ui.externaltools.internal.ant.dtd.IModel#getQualifier()
 	 */
 	public String getQualifier() {
-		return fMin == 1 ? (fMax == UNBOUNDED ? "+" : "") : (fMax == UNBOUNDED ? "*" : "?");
+		return fMin == 1 ? (fMax == UNBOUNDED ? "+" : "") : (fMax == UNBOUNDED ? "*" : "?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	/**

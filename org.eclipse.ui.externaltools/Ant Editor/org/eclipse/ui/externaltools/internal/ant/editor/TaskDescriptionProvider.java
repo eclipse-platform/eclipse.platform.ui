@@ -48,18 +48,18 @@ public class TaskDescriptionProvider {
      * <P>
      * The value is "/anttasks_1.5b.xml".
      */
-    public static String TASKS_DESCRIPTION_XML_FILE_NAME = "/anttasks_1.5b.xml";
+    public static String TASKS_DESCRIPTION_XML_FILE_NAME = "/anttasks_1.5b.xml"; //$NON-NLS-1$
 
-    public static String XML_TAG_TASKS = "tasks";
-    public static String XML_TAG_TASK = "task";
-    public static String XML_TAG_ELEMENTS = "elements";
-    public static String XML_TAG_ATTRIBUTE = "attribute";
-    public static String XML_TAG_ATTRIBUTES = "attributes";
-    public static String XML_TAG_ELEMENT = "element";
-    public static String XML_TAG_STRUCTURE = "structure";
-    public static String XML_TAG_DESCRIPTION = "short-description";
-    public static String XML_ATTRIBUTE_NAME = "name";
-    public static String XML_ATTRIBUTE_REQUIRED = "required";
+    public static String XML_TAG_TASKS = "tasks"; //$NON-NLS-1$
+    public static String XML_TAG_TASK = "task"; //$NON-NLS-1$
+    public static String XML_TAG_ELEMENTS = "elements"; //$NON-NLS-1$
+    public static String XML_TAG_ATTRIBUTE = "attribute"; //$NON-NLS-1$
+    public static String XML_TAG_ATTRIBUTES = "attributes"; //$NON-NLS-1$
+    public static String XML_TAG_ELEMENT = "element"; //$NON-NLS-1$
+    public static String XML_TAG_STRUCTURE = "structure"; //$NON-NLS-1$
+    public static String XML_TAG_DESCRIPTION = "short-description"; //$NON-NLS-1$
+    public static String XML_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+    public static String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
     
 
     protected HashMap taskNodes = new HashMap();;
@@ -185,8 +185,8 @@ public class TaskDescriptionProvider {
         	  tmpRequiredValue = aNode.getAttributes().getNamedItem(XML_ATTRIBUTE_REQUIRED).getNodeValue();
    		}
    		
-   		if(tmpRequiredValue.equals("NOTDEFINED")) {
-   			return "";
+   		if(tmpRequiredValue.equals("NOTDEFINED")) { //$NON-NLS-1$
+   			return ""; //$NON-NLS-1$
    		}
    		
    		return tmpRequiredValue;

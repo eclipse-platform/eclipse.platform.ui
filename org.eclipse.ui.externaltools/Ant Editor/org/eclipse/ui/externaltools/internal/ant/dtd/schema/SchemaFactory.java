@@ -39,14 +39,14 @@ public class SchemaFactory implements DeclHandler {
 	private static HashSet fTypes = new HashSet();
 	private Exception fErrorException;
 	static {
-		fTypes.add("CDATA");
-		fTypes.add("ID");
-		fTypes.add("IDREF");
-		fTypes.add("IDREFS");
-		fTypes.add("NMTOKEN");
-		fTypes.add("NMTOKENS");
-		fTypes.add("ENTITY");
-		fTypes.add("ENTITIES");
+		fTypes.add("CDATA"); //$NON-NLS-1$
+		fTypes.add("ID"); //$NON-NLS-1$
+		fTypes.add("IDREF"); //$NON-NLS-1$
+		fTypes.add("IDREFS"); //$NON-NLS-1$
+		fTypes.add("NMTOKEN"); //$NON-NLS-1$
+		fTypes.add("NMTOKENS"); //$NON-NLS-1$
+		fTypes.add("ENTITY"); //$NON-NLS-1$
+		fTypes.add("ENTITIES"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -79,14 +79,14 @@ public class SchemaFactory implements DeclHandler {
 			String[] enum = null;
 			if (fTypes.contains(type))
 				attr.setType(type);
-			else if (type.startsWith("NOTATION"))
-				enum = parseValues(type.substring("NOTATION".length()+1), ',');
+			else if (type.startsWith("NOTATION")) //$NON-NLS-1$
+				enum = parseValues(type.substring("NOTATION".length()+1), ','); //$NON-NLS-1$
 			else
 				enum = parseValues(type, '|');
 			attr.setEnum(enum);
 			
-			attr.setRequired(valueDefault == null || !valueDefault.equals("#IMPLIED"));
-			attr.setFixed(valueDefault != null && valueDefault.equals("#FIXED"));
+			attr.setRequired(valueDefault == null || !valueDefault.equals("#IMPLIED")); //$NON-NLS-1$
+			attr.setFixed(valueDefault != null && valueDefault.equals("#FIXED")); //$NON-NLS-1$
 			attr.setDefault(value);
 		}
 	}
@@ -129,13 +129,13 @@ public class SchemaFactory implements DeclHandler {
 		}
 		
 		fElement = element;
-		if (model.equals("ANY"))
+		if (model.equals("ANY")) //$NON-NLS-1$
 			element.setAny(true);
-		else if (model.equals("EMPTY"))
+		else if (model.equals("EMPTY")) //$NON-NLS-1$
 			element.setEmpty(true);
-		else if (model.equals("(#PCDATA)"))
+		else if (model.equals("(#PCDATA)")) //$NON-NLS-1$
 			element.setText(true);
-		else if (model.startsWith("(#PCDATA"))
+		else if (model.startsWith("(#PCDATA")) //$NON-NLS-1$
 			element.setMixed(true);
 		else
 			element.setContentModel(parseModel(model));
@@ -161,9 +161,9 @@ public class SchemaFactory implements DeclHandler {
 				Local.format("Element {0} model does not start with left parenthesis", fElement.getName()));
 
 		IModel emodel;
-		boolean ortext = model.startsWith("(#PCDATA|");
+		boolean ortext = model.startsWith("(#PCDATA|"); //$NON-NLS-1$
 		if (ortext) {
-			fPos = "(#PCDATA".length() + 1;
+			fPos = "(#PCDATA".length() + 1; //$NON-NLS-1$
 			emodel = scanExpr();
 		}
 		else {
