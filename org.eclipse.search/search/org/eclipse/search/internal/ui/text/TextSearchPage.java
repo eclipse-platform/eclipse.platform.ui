@@ -176,7 +176,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		if (status != null && !status.isOK()) {
 			String title= SearchMessages.getString("Search.Problems.title"); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), title, null, status); //$NON-NLS-1$
-		} else if (getContainer().getActionId() == ISearchPageContainer.ACTION_REPLACE){
+			return false;
+		}
+
+		if (getContainer().getActionId() == ISearchPageContainer.ACTION_REPLACE){
 			getContainer().setPostPerformRunnable(new Runnable() {
 				public void run() {
 					SearchResultView view= (SearchResultView) SearchPlugin.getSearchResultView();
