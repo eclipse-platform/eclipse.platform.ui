@@ -9,8 +9,10 @@ import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * A viewer is a model-based adapter on a widget.
@@ -142,11 +144,22 @@ protected void fireHelpRequested(HelpEvent event) {
  *
  * @see ISelectionChangedListener#selectionChanged
  */
-protected void fireSelectionChanged(SelectionChangedEvent event) {
+protected void fireSelectionChanged(final SelectionChangedEvent event) {
 	Object[] listeners = selectionChangedListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((ISelectionChangedListener) listeners[i]).selectionChanged(event);
-	}
+		final ISelectionChangedListener l = (ISelectionChangedListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.selectionChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeSelectionChangedListener(l);
+			}
+		});		
+	}	
 }
 /**
  * Returns the primary control associated with this viewer.

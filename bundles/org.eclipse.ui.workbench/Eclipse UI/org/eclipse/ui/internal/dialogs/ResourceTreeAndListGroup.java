@@ -7,6 +7,9 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -27,13 +30,13 @@ public class ResourceTreeAndListGroup implements ICheckStateListener, ISelection
 	private	Object			currentTreeSelection;
 	private	Collection		expandedTreeNodes = new HashSet();
 	private	Map				checkedStateStore = new HashMap(9);
-	private 	Collection		whiteCheckedTreeItems = new HashSet();
-	private	Collection		listeners = new HashSet();
+	private Collection		whiteCheckedTreeItems = new HashSet();
+	private	ListenerList	listeners = new ListenerList();
 	
 	private	ITreeContentProvider		treeContentProvider;
 	private	IStructuredContentProvider	listContentProvider;
-	private 	ILabelProvider				treeLabelProvider;
-	private 	ILabelProvider				listLabelProvider;
+	private ILabelProvider				treeLabelProvider;
+	private ILabelProvider				listLabelProvider;
 	
 	// widgets
 	private	CheckboxTreeViewer	treeViewer;
@@ -610,10 +613,22 @@ protected void listItemChecked(
  *	Notify all checked state listeners that the passed element has had
  *	its checked state changed to the passed state
  */
-protected void notifyCheckStateChangeListeners(CheckStateChangedEvent event) {
-	Iterator listenersEnum = listeners.iterator();
-	while (listenersEnum.hasNext())
-		((ICheckStateListener)listenersEnum.next()).checkStateChanged(event);
+protected void notifyCheckStateChangeListeners(final CheckStateChangedEvent event) {
+	Object[] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICheckStateListener l = (ICheckStateListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.checkStateChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeCheckStateListener(l);
+			}
+		});
+	}		
 }
 /**
  *Set the contents of the list viewer based upon the specified selected

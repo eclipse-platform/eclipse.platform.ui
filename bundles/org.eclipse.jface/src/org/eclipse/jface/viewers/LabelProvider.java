@@ -4,7 +4,9 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -48,10 +50,23 @@ public void dispose() {
  *
  * @see ILabelProviderListener#labelProviderChanged
  */
-protected void fireLabelProviderChanged(LabelProviderChangedEvent event) {
+protected void fireLabelProviderChanged(final LabelProviderChangedEvent event) {
 	Object[] listeners = this.listeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((ILabelProviderListener) listeners[i]).labelProviderChanged(event);
+		final ILabelProviderListener l = (ILabelProviderListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.labelProviderChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeListener(l);
+			}
+		});	
+		
+		
 	}
 }
 /**

@@ -18,8 +18,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers
@@ -61,6 +63,28 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
+	
+	/**
+	 * The safe runnable used to call the label provider.
+	 */
+	private	UpdateItemSafeRunnable safeUpdateItem = new UpdateItemSafeRunnable();
+	
+	class UpdateItemSafeRunnable extends SafeRunnable {
+		Object element;
+		Item item;
+		boolean exception = false;
+		public void run() {
+			if(exception) return;
+			doUpdateItem(item,element);
+		}
+		public void handleException(Throwable e) {
+			super.handleException(e);
+			//If and unexpected exception happens, remove it
+			//to make sure the application keeps running.
+			exception = true;
+		}		
+	} 	
+	
 /**
  * Creates an abstract tree viewer. The viewer has no input, no content provider, a
  * default label provider, no sorter, no filters, and has auto-expand turned off.
@@ -360,7 +384,9 @@ protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		}
 
 		// update icon and label
-		doUpdateItem(item,element);
+		safeUpdateItem.item = item;
+		safeUpdateItem.element = element;
+		Platform.run(safeUpdateItem);
 	}
 }
 /**
@@ -401,10 +427,21 @@ public void expandToLevel(Object element, int level) {
  *
  * @see ITreeViewerListener#treeCollapsed
  */
-protected void fireTreeCollapsed(TreeExpansionEvent event) {
+protected void fireTreeCollapsed(final TreeExpansionEvent event) {
 	Object[] listeners = treeListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((ITreeViewerListener) listeners[i]).treeCollapsed(event);
+		final ITreeViewerListener l = (ITreeViewerListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.treeCollapsed(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the application keeps running.
+				removeTreeListener(l);
+			}
+		});	
 	}
 }
 /**
@@ -415,11 +452,23 @@ protected void fireTreeCollapsed(TreeExpansionEvent event) {
  *
  * @see ITreeViewerListener#treeExpanded
  */
-protected void fireTreeExpanded(TreeExpansionEvent event) {
+protected void fireTreeExpanded(final TreeExpansionEvent event) {
 	Object[] listeners = treeListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((ITreeViewerListener) listeners[i]).treeExpanded(event);
-	}
+		final ITreeViewerListener l = (ITreeViewerListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.treeExpanded(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the application keeps running.
+				removeTreeListener(l);
+			}
+		});	
+	}	
+	
 }
 /**
  * Returns the auto-expand level.

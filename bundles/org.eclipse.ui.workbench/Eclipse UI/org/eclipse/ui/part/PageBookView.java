@@ -6,6 +6,7 @@ package org.eclipse.ui.part;
  */
 import java.util.*;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
@@ -213,11 +214,22 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		/* (non-Javadoc)
 		 * Method declared on ISelectionChangedListener.
 		 */
-		public void selectionChanged(SelectionChangedEvent event) {
+		public void selectionChanged(final SelectionChangedEvent event) {
 			// pass on the notification to listeners
 			Object[] listeners = selectionChangedListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+			for (int i = 0; i < listeners.length; ++i) {
+				final ISelectionChangedListener l = (ISelectionChangedListener)listeners[i];
+				Platform.run(new SafeRunnable() {
+					public void run() {
+						l.selectionChanged(event);
+					}
+					public void handleException(Throwable e) {
+						super.handleException(e);
+						//If and unexpected exception happens, remove it
+						//to make sure the workbench keeps running.
+						removeSelectionChangedListener(l);
+					}
+				});		
 			}
 		}
 		/* (non-Javadoc)

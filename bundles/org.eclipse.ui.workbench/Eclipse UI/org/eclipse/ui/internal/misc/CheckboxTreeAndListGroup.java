@@ -8,6 +8,9 @@ package org.eclipse.ui.internal.misc;
 import java.util.*;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -23,9 +26,9 @@ public class CheckboxTreeAndListGroup implements ICheckStateListener, ISelection
 	private	Object			root;
 	private	Object			currentTreeSelection;
 	private	List			expandedTreeNodes = new ArrayList();
-	private	Map		checkedStateStore = new HashMap(9);
+	private	Map				checkedStateStore = new HashMap(9);
 	private List			whiteCheckedTreeItems = new ArrayList();
-	private	List			listeners = new ArrayList();
+	private	ListenerList	listeners = new ListenerList();
 	
 	private	ITreeContentProvider		treeContentProvider;
 	private	IStructuredContentProvider	listContentProvider;
@@ -412,10 +415,22 @@ protected void listItemChecked(
  *	Notify all checked state listeners that the passed element has had
  *	its checked state changed to the passed state
  */
-protected void notifyCheckStateChangeListeners(CheckStateChangedEvent event) {
-	Iterator listenersEnum = listeners.iterator();
-	while (listenersEnum.hasNext())
-		((ICheckStateListener)listenersEnum.next()).checkStateChanged(event);
+protected void notifyCheckStateChangeListeners(final CheckStateChangedEvent event) {
+	Object[] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICheckStateListener l = (ICheckStateListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.checkStateChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeCheckStateListener(l);
+			}
+		});
+	}
 }
 /**
  *Set the contents of the list viewer based upon the specified selected

@@ -7,6 +7,8 @@ package org.eclipse.jface.viewers;
 import java.util.*;
 import java.util.List; // Otherwise ambiguous
 
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.*;
@@ -74,7 +76,29 @@ public abstract class StructuredViewer extends ContentViewer {
 	 * List of post selection listeners (element type: <code>ISelectionActivateListener</code>).
 	 * @see #firePostSelectionChanged
 	 */
-	private ListenerList postSelectionChangedListeners = new ListenerList(1);	
+	private ListenerList postSelectionChangedListeners = new ListenerList(1);
+	
+	/**
+	 * The safe runnable used to call the label provider.
+	 */
+	private	UpdateItemSafeRunnable safeUpdateItem = new UpdateItemSafeRunnable();
+	
+	class UpdateItemSafeRunnable extends SafeRunnable {
+		Object object;
+		Widget widget;
+		boolean fullMap;
+		boolean exception = false;
+		public void run() {
+			if(exception) return;
+			doUpdateItem(widget,object,fullMap);
+		}
+		public void handleException(Throwable e) {
+			super.handleException(e);
+			//If and unexpected exception happens, remove it
+			//to make sure the application keeps running.
+			exception = true;
+		}		
+	} 		
 	
 /**
  * Creates a structured element viewer. The viewer has no input, 
@@ -296,10 +320,21 @@ protected final Widget findItem(Object element) {
  *
  * @see IDoubleClickListener#doubleClick
  */
-protected void fireDoubleClick(DoubleClickEvent event) {
+protected void fireDoubleClick(final DoubleClickEvent event) {
 	Object[] listeners = doubleClickListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((IDoubleClickListener) listeners[i]).doubleClick(event);
+		final IDoubleClickListener l = (IDoubleClickListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.doubleClick(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeDoubleClickListener(l);
+			}
+		});			
 	}
 }
 /**
@@ -310,10 +345,21 @@ protected void fireDoubleClick(DoubleClickEvent event) {
  *
  * @see IOpenListener#doubleClick
  */
-protected void fireOpen(OpenEvent event) {
+protected void fireOpen(final OpenEvent event) {
 	Object[] listeners = openListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((IOpenListener)listeners[i]).open(event);
+		final IOpenListener l = (IOpenListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.open(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeOpenListener(l);
+			}
+		});			
 	}
 }
 /**
@@ -324,10 +370,21 @@ protected void fireOpen(OpenEvent event) {
  * 
  * @see addPostSelectionChangedListener
  */
-protected void firePostSelectionChanged(SelectionChangedEvent event) {
+protected void firePostSelectionChanged(final SelectionChangedEvent event) {
 	Object[] listeners = postSelectionChangedListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((ISelectionChangedListener)listeners[i]).selectionChanged(event);
+		final ISelectionChangedListener l = (ISelectionChangedListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.selectionChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeSelectionChangedListener(l);
+			}
+		});		
 	}
 }
 /**
@@ -780,7 +837,10 @@ public void refresh(final Object element, final boolean updateLabels) {
  * </p>
  */
 protected final void refreshItem(Widget widget, Object element) {
-	doUpdateItem(widget, element, false);
+	safeUpdateItem.widget = widget;
+	safeUpdateItem.object = element;
+	safeUpdateItem.fullMap = false;
+	Platform.run(safeUpdateItem);
 }
 /**
  * Removes the given open listener from this viewer.
@@ -1129,7 +1189,10 @@ public void update(Object element, String[] properties) {
  * @param element the element
  */
 protected final void updateItem(Widget widget, Object element) {
-	doUpdateItem(widget, element, true);
+	safeUpdateItem.widget = widget;
+	safeUpdateItem.object = element;
+	safeUpdateItem.fullMap = true;
+	Platform.run(safeUpdateItem);
 }
 /**
  * Updates the selection of this viewer.

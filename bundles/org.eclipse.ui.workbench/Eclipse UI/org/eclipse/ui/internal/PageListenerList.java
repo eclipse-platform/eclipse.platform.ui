@@ -32,8 +32,8 @@ public void addPageListener(IPageListener l) {
  */
 public void firePageActivated(final IWorkbenchPage page) {
 	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPageListener l = (IPageListener)array[nX];
+	for (int i = 0; i < array.length; i ++) {
+		final IPageListener l = (IPageListener)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.pageActivated(page);
@@ -52,8 +52,8 @@ public void firePageActivated(final IWorkbenchPage page) {
  */
 public void firePageClosed(final IWorkbenchPage page) {
 	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPageListener l = (IPageListener)array[nX];
+	for (int i = 0; i < array.length; i ++) {
+		final IPageListener l = (IPageListener)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.pageClosed(page);
@@ -71,9 +71,9 @@ public void firePageClosed(final IWorkbenchPage page) {
  * Notifies the listener that a part has been opened.
  */
 public void firePageOpened(final IWorkbenchPage page) {
-	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPageListener l = (IPageListener)array[nX];
+	Object [] listeners = this.listeners.getListeners();
+	for (int i = 0; i < listeners.length; i ++) {
+		final IPageListener l = (IPageListener)listeners[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.pageOpened(page);

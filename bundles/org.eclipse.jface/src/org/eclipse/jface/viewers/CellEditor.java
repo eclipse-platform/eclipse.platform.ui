@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -276,10 +277,21 @@ protected abstract void doSetValue(Object value);
  * @see ICellEditorListener#applyEditorValue
  */
 protected void fireApplyEditorValue() {
-	Object[] listeners = this.listeners.getListeners();
-	for (int i = 0; i < listeners.length; ++i) {
-		((ICellEditorListener) listeners[i]).applyEditorValue();
-	}
+	Object[] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICellEditorListener l = (ICellEditorListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.applyEditorValue();
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeListener(l);
+			}
+		});
+	}	
 }
 /**
  * Notifies all registered cell editor listeners that editing has been
@@ -288,10 +300,21 @@ protected void fireApplyEditorValue() {
  * @see ICellEditorListener#cancelEditor
  */
 protected void fireCancelEditor() {
-	Object[] listeners = this.listeners.getListeners();
-	for (int i = 0; i < listeners.length; ++i) {
-		((ICellEditorListener) listeners[i]).cancelEditor();
-	}
+	Object[] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICellEditorListener l = (ICellEditorListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.cancelEditor();
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeListener(l);
+			}
+		});
+	}	
 }
 /**
  * Notifies all registered cell editor listeners of a value change.
@@ -300,11 +323,22 @@ protected void fireCancelEditor() {
  * @param newValidState the current valid state
  * @see ICellEditorListener#editorValueChanged
  */
-protected void fireEditorValueChanged(boolean oldValidState, boolean newValidState) {
-	Object[] listeners = this.listeners.getListeners();
-	for (int i = 0; i < listeners.length; ++i) {
-		((ICellEditorListener) listeners[i]).editorValueChanged(oldValidState, newValidState);
-	}
+protected void fireEditorValueChanged(final boolean oldValidState, final boolean newValidState) {
+	Object[] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICellEditorListener l = (ICellEditorListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.editorValueChanged(oldValidState, newValidState);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeListener(l);
+			}
+		});
+	}	
 }
 /**
  * Notifies all registered property listeners
@@ -312,11 +346,22 @@ protected void fireEditorValueChanged(boolean oldValidState, boolean newValidSta
  *
  * @param actionId the id indicating what action's enablement has changed.
  */
-protected void fireEnablementChanged(String actionId) {
-	Object[] listeners = propertyChangeListeners.getListeners();
-	for (int i = 0; i < listeners.length; ++i) {
-		((IPropertyChangeListener) listeners[i]).propertyChange(new PropertyChangeEvent(this, actionId, null, null));
-	}
+protected void fireEnablementChanged(final String actionId) {
+	Object[] array = propertyChangeListeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final IPropertyChangeListener l = (IPropertyChangeListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.propertyChange(new PropertyChangeEvent(this, actionId, null, null));
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removePropertyChangeListener(l);
+			}
+		});
+	}	
 }
 /**
  * Sets the style bits for this cell editor.

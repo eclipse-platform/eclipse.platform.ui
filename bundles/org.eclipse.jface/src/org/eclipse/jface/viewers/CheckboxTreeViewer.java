@@ -4,7 +4,9 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
@@ -103,11 +105,23 @@ private void applyState(Set checked, Set grayed, Widget widget) {
  *
  * @see ICheckStateListener#checkStateChanged
  */
-protected void fireCheckStateChanged(CheckStateChangedEvent event) {
-	Object[] listeners = checkStateListeners.getListeners();
-	for (int i = 0; i < listeners.length; ++i) {
-		((ICheckStateListener) listeners[i]).checkStateChanged(event);
-	}
+protected void fireCheckStateChanged(final CheckStateChangedEvent event) {
+	Object[] array = checkStateListeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICheckStateListener l = (ICheckStateListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.checkStateChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeCheckStateListener(l);
+			}
+		});
+	}	
+	
 }
 /**
  * Gathers the checked and grayed states of the given widget and its

@@ -4,7 +4,9 @@ package org.eclipse.ui.views.contentoutline;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -67,12 +69,23 @@ public void createControl(Composite parent) {
  */
 protected void fireSelectionChanged(ISelection selection) {
 	// create an event
-	SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
+	final SelectionChangedEvent event = new SelectionChangedEvent(this, selection);
 
 	// fire the event
 	Object[] listeners = selectionChangedListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
-		((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+		final ISelectionChangedListener l = (ISelectionChangedListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.selectionChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeSelectionChangedListener(l);
+			}
+		});		
 	}
 }
 /* (non-Javadoc)

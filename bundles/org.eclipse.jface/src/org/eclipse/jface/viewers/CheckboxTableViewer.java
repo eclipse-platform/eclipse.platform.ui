@@ -4,7 +4,9 @@ package org.eclipse.jface.viewers;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.SWT;
@@ -150,10 +152,21 @@ protected static Table createTable(Composite parent, int style) {
  *
  * @see ICheckStateListener#checkStateChanged
  */
-private void fireCheckStateChanged(CheckStateChangedEvent event) {
-	Object[] listeners = checkStateListeners.getListeners();
-	for (int i = 0; i < listeners.length; ++i) {
-		((ICheckStateListener) listeners[i]).checkStateChanged(event);
+private void fireCheckStateChanged(final CheckStateChangedEvent event) {
+	Object[] array = checkStateListeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICheckStateListener l = (ICheckStateListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.checkStateChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeCheckStateListener(l);
+			}
+		});
 	}
 }
 /* (non-Javadoc)

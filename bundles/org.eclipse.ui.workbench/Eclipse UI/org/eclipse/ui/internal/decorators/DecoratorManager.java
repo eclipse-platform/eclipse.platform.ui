@@ -13,6 +13,8 @@ Contributors:
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
@@ -33,7 +35,7 @@ public class DecoratorManager
 	private LightweightDecoratorManager lightweightManager;
 
 	//Hold onto the list of listeners to be told if a change has occured
-	private HashSet listeners = new HashSet();
+	private ListenerList listeners = new ListenerList();
 
 	//The cachedDecorators are a 1-many mapping of type to full decorator.
 	private HashMap cachedFullDecorators = new HashMap();
@@ -137,13 +139,22 @@ public class DecoratorManager
 	/**
 	 * Inform all of the listeners that require an update
 	 */
-	private void fireListeners(LabelProviderChangedEvent event) {
-		Iterator iterator = listeners.iterator();
-		while (iterator.hasNext()) {
-			ILabelProviderListener listener =
-				(ILabelProviderListener) iterator.next();
-			listener.labelProviderChanged(event);
-		}
+	private void fireListeners(final LabelProviderChangedEvent event) {
+		Object [] array = listeners.getListeners();
+		for (int i = 0; i < array.length; i ++) {
+			final ILabelProviderListener l = (ILabelProviderListener)array[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.labelProviderChanged(event);
+				}
+				public void handleException(Throwable e) {
+					super.handleException(e);
+					//If and unexpected exception happens, remove it
+					//to make sure the workbench keeps running.
+					removeListener(l);
+				}
+			});
+		}		
 	}
 
 	/**

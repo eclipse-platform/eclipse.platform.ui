@@ -5,6 +5,9 @@ package org.eclipse.ui.internal.dialogs;
  * Contributors:  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * font should be activated and used by other components.
  */
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -20,7 +23,7 @@ class CheckboxSingleListGroup extends Composite implements ICheckStateListener, 
 	private	Object			root;
 	private	Object			currentList1Selection;
 	private	Map				checkedStateStore = new HashMap(9);
-	private	List			listeners = new ArrayList();
+	private	ListenerList	listeners = new ListenerList();
 	private	boolean			singleList1Check = false;
 	private	boolean			singleList2Check = false;
 	
@@ -235,10 +238,22 @@ protected void list1ItemChecked(Object listElement,boolean state) {
  *	Notify all checked state listeners that the passed element has had
  *	its checked state changed to the passed state
  */
-protected void notifyCheckStateChangeListeners(CheckStateChangedEvent event) {
-	Iterator listenersEnum = listeners.iterator();
-	while (listenersEnum.hasNext())
-		((ICheckStateListener)listenersEnum.next()).checkStateChanged(event);
+protected void notifyCheckStateChangeListeners(final CheckStateChangedEvent event) {
+	Object[] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final ICheckStateListener l = (ICheckStateListener)array[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.checkStateChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeCheckStateListener(l);
+			}
+		});
+	}		
 }
 /**
  *	Remove the passed listener from self's collection of clients

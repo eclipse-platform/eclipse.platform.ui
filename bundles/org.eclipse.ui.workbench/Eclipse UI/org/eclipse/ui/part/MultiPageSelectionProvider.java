@@ -5,8 +5,10 @@ package org.eclipse.ui.part;
  * All Rights Reserved.
  */
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 
 /**
@@ -53,10 +55,21 @@ public void addSelectionChangedListener(ISelectionChangedListener listener) {
  *
  * @param event the selection changed event
  */
-public void fireSelectionChanged(SelectionChangedEvent event) {
+public void fireSelectionChanged(final SelectionChangedEvent event) {
 	Object[] listeners = this.listeners.getListeners();
-	for (int i = 0; i < listeners.length; i++) {
-		((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+	for (int i = 0; i < listeners.length; ++i) {
+		final ISelectionChangedListener l = (ISelectionChangedListener)listeners[i];
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.selectionChanged(event);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removeSelectionChangedListener(l);
+			}
+		});		
 	}
 }
 /**
