@@ -5,6 +5,7 @@ package org.eclipse.update.internal.ui.wizards;
  */
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -23,6 +24,7 @@ public class InstallWizard extends Wizard {
 	private static final String KEY_UNABLE = "InstallWizard.error.unable";
 	private static final String KEY_OLD = "InstallWizard.error.old";
 	private ReviewPage reviewPage;
+	private OptionalFeaturesPage optionalFeaturesPage;
 	private TargetPage targetPage;
 	private PendingChange job;
 	private boolean successfulInstall = false;
@@ -46,12 +48,25 @@ public class InstallWizard extends Wizard {
 	public boolean performFinish() {
 		final IConfiguredSite targetSite =
 			(targetPage == null) ? null : targetPage.getTargetSite();
+		final IFeatureReference[] optionalFeatures =
+			(optionalFeaturesPage == null)
+				? null
+				: optionalFeaturesPage.getCheckedOptionalFeatures();
+		final Object[] optionalElements =
+			(optionalFeaturesPage == null)
+				? null
+				: optionalFeaturesPage.getOptionalElements();
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
 				try {
 					successfulInstall = false;
 					makeConfigurationCurrent(config);
-					execute(targetSite, monitor);
+					execute(
+						targetSite,
+						optionalElements,
+						optionalFeatures,
+						monitor);
 					saveLocalSite();
 					successfulInstall = true;
 				} catch (CoreException e) {
@@ -67,8 +82,7 @@ public class InstallWizard extends Wizard {
 			Throwable target = e.getTargetException();
 			if (target instanceof InstallAbortedException) {
 				// should we revert to the previous configuration?
-			}
-			else {
+			} else {
 				UpdateUIPlugin.logException(e);
 			}
 			return false;
@@ -88,6 +102,10 @@ public class InstallWizard extends Wizard {
 			if (UpdateModel.hasLicense(job)) {
 				addPage(new LicensePage(job));
 			}
+			if (hasOptionalFeatures(job.getFeature())) {
+				optionalFeaturesPage = new OptionalFeaturesPage(job, config);
+				addPage(optionalFeaturesPage);
+			}
 			targetPage = new TargetPage(job, config);
 			addPage(targetPage);
 		}
@@ -96,7 +114,8 @@ public class InstallWizard extends Wizard {
 	public static IInstallConfiguration createInstallConfiguration() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config = localSite.cloneCurrentConfiguration();
+			IInstallConfiguration config =
+				localSite.cloneCurrentConfiguration();
 			config.setLabel(Utilities.format(config.getCreationDate()));
 			return config;
 		} catch (CoreException e) {
@@ -105,7 +124,8 @@ public class InstallWizard extends Wizard {
 		}
 	}
 
-	public static void makeConfigurationCurrent(IInstallConfiguration config) throws CoreException {
+	public static void makeConfigurationCurrent(IInstallConfiguration config)
+		throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.addConfiguration(config);
 	}
@@ -127,9 +147,13 @@ public class InstallWizard extends Wizard {
 		return super.getNextPage(page);
 	}
 	/*
-	 * When we are uninstalling, there is not targetSite
+	 * When we are uninstalling, there is no targetSite
 	 */
-	private void execute(IConfiguredSite targetSite, IProgressMonitor monitor)
+	private void execute(
+		IConfiguredSite targetSite,
+		Object[] optionalElements,
+		IFeatureReference[] optionalFeatures,
+		IProgressMonitor monitor)
 		throws CoreException {
 		IFeature feature = job.getFeature();
 		if (job.getJobType() == PendingChange.UNINSTALL) {
@@ -142,19 +166,29 @@ public class InstallWizard extends Wizard {
 				throwError(UpdateUIPlugin.getResourceString(KEY_UNABLE));
 			}
 		} else if (job.getJobType() == PendingChange.INSTALL) {
-			targetSite.install(feature, getVerificationListener(), monitor);
+			if (optionalFeatures == null)
+				targetSite.install(feature, getVerificationListener(), monitor);
+			else
+				targetSite.install(
+					feature,
+					optionalFeatures,
+					getVerificationListener(),
+					monitor);
 			IFeature oldFeature = job.getOldFeature();
-			if (oldFeature!=null) {
-				boolean oldSuccess = unconfigure(oldFeature);
+			if (oldFeature != null && !job.isOptionalDelta()) {
+				if (optionalElements != null)
+					preserveOptionalState(config, targetSite, optionalElements);
+				boolean oldSuccess = unconfigure(config, oldFeature);
 				if (!oldSuccess) {
-					if (!isNestedChild(oldFeature)) // "eat" the error if nested child
+					if (!isNestedChild(oldFeature))
+						// "eat" the error if nested child
 						throwError(UpdateUIPlugin.getResourceString(KEY_OLD));
 				}
 			}
 		} else if (job.getJobType() == PendingChange.CONFIGURE) {
 			configure(job.getFeature());
 		} else if (job.getJobType() == PendingChange.UNCONFIGURE) {
-			unconfigure(job.getFeature());
+			unconfigure(config, job.getFeature());
 		} else {
 			// should not be here
 			return;
@@ -174,7 +208,10 @@ public class InstallWizard extends Wizard {
 		throw new CoreException(status);
 	}
 
-	static IConfiguredSite findConfigSite(IFeature feature, IInstallConfiguration config) throws CoreException {
+	static IConfiguredSite findConfigSite(
+		IFeature feature,
+		IInstallConfiguration config)
+		throws CoreException {
 		IConfiguredSite[] configSites = config.getConfiguredSites();
 		for (int i = 0; i < configSites.length; i++) {
 			IConfiguredSite site = configSites[i];
@@ -185,7 +222,10 @@ public class InstallWizard extends Wizard {
 		return null;
 	}
 
-	private boolean unconfigure(IFeature feature) throws CoreException {
+	private static boolean unconfigure(
+		IInstallConfiguration config,
+		IFeature feature)
+		throws CoreException {
 		IConfiguredSite site = findConfigSite(feature, config);
 		if (site != null) {
 			return site.unconfigure(feature);
@@ -202,25 +242,84 @@ public class InstallWizard extends Wizard {
 	private IVerificationListener getVerificationListener() {
 		return new JarVerificationService(this.getShell());
 	}
-	
+
 	private boolean isNestedChild(IFeature feature) {
 		IConfiguredSite[] csites = config.getConfiguredSites();
 		try {
-			for (int i=0; csites!=null && i<csites.length; i++) {
+			for (int i = 0; csites != null && i < csites.length; i++) {
 				IFeatureReference[] refs = csites[i].getConfiguredFeatures();
-				for (int j=0; refs!=null && j<refs.length; j++) {
+				for (int j = 0; refs != null && j < refs.length; j++) {
 					IFeature parent = refs[j].getFeature();
-					IFeatureReference[] children = parent.getIncludedFeatureReferences();
-					for (int k=0; children!=null && k<children.length; k++) {
+					IFeatureReference[] children =
+						parent.getIncludedFeatureReferences();
+					for (int k = 0;
+						children != null && k < children.length;
+						k++) {
 						IFeature child = children[k].getFeature();
 						if (feature.equals(child))
 							return true;
 					}
 				}
 			}
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			// will return false
 		}
 		return false;
+	}
+
+	static boolean hasOptionalFeatures(IFeatureReference fref) {
+		try {
+			return hasOptionalFeatures(fref.getFeature());
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+	static boolean hasOptionalFeatures(IFeature feature) {
+		try {
+			IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+			for (int i = 0; i < irefs.length; i++) {
+				IFeatureReference iref = irefs[i];
+				if (iref.isOptional())
+					return true;
+				// see if it has optional children
+				IFeature child = iref.getFeature();
+				if (hasOptionalFeatures(child))
+					return true;
+			}
+		} catch (CoreException e) {
+		}
+		return false;
+	}
+
+	static void preserveOptionalState(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		Object[] optionalElements) {
+		for (int i = 0; i < optionalElements.length; i++) {
+			FeatureHierarchyElement fe =
+				(FeatureHierarchyElement) optionalElements[i];
+			Object [] children = fe.getChildren(true);
+			preserveOptionalState(config, targetSite, children);
+			if (!fe.isEnabled(config)) {
+				IFeature newFeature = fe.getFeature();
+				try {
+					IFeature localFeature = findLocalFeature(targetSite, newFeature);
+					if (localFeature!=null)
+						targetSite.unconfigure(localFeature);
+				} catch (CoreException e) {
+					// Eat this - we will leave with it
+				}
+			}
+		}
+	}
+	private static IFeature findLocalFeature(IConfiguredSite csite, IFeature feature) throws CoreException {
+		IFeatureReference [] refs = csite.getConfiguredFeatures();
+		for (int i=0; i<refs.length; i++) {
+			IFeatureReference ref = refs[i];
+			VersionedIdentifier refVid = ref.getVersionedIdentifier();
+			if (feature.getVersionedIdentifier().equals(refVid))
+				return ref.getFeature();
+		}
+		return null;
 	}
 }

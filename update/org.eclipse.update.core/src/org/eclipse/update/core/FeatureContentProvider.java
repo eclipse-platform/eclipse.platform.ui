@@ -6,9 +6,15 @@ package org.eclipse.update.core;
 
 import java.io.*;
 import java.net.URL;
+import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
@@ -26,10 +32,71 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
 public abstract class FeatureContentProvider
 	implements IFeatureContentProvider {
 
+	/**
+	 * 
+	 */
+	public class FileFilter {
+
+		private String filterString = null;
+		private IPath filterPath = null;
+		
+		/**
+		 * Constructor for FileFilter.
+		 */
+		public FileFilter(String filter) {
+			super();
+			this.filterString = filter;
+			this.filterPath = new Path(filter);
+		}
+
+
+
+
+		/**
+		 * returns true if the name matches the rule
+		 */
+		public boolean accept(String name) {
+			
+			if (name==null) return false;
+			
+			// no '*' pattern matching
+			// must be equals
+			IPath namePath = new Path(name);
+			if (filterPath.lastSegment().indexOf('*')==-1) {
+				return filterPath.equals(namePath);
+			}
+			
+			// check same file extension  if extension exists (a.txt/*.txt)
+			// or same file name (a.txt,a.*)
+			String extension = filterPath.getFileExtension();
+			if (!extension.equals("*")){
+				if (!extension.equalsIgnoreCase(namePath.getFileExtension())) return false;
+			} else {
+				IPath noExtension = filterPath.removeFileExtension();
+				String fileName = noExtension.lastSegment();
+				if (!fileName.equals("*")){
+					if (!namePath.lastSegment().startsWith(fileName))
+						return false;
+				}
+			}
+			
+			// check same path
+			IPath p1 = namePath.removeLastSegments(1);
+			IPath p2 = filterPath.removeLastSegments(1);
+			return p1.equals(p2);
+		}
+
+	}
+	
+	
+	
 	private URL base;
 	private IFeature feature;
 	private File tmpDir; // local work area for each provider
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$	
+	
+	private static final String DOT_PERMISSIONS = "permissions.properties";
+	private static final String EXECUTABLES = "permissions.executable";
 	
 	// lock
 	private final static Object lock = new Object();
@@ -295,4 +362,92 @@ public abstract class FeatureContentProvider
 		return nonPluginBaseID + entry.getIdentifier();
 	}
 
+	/**
+	 * Sets the permission of all the ContentReferences
+	 * Check for the .permissions contentReference and use it
+	 * to set the permissions of other ContentReference 
+	 * 
+	 * @return void
+  	 */
+	protected void validatePermissions(ContentReference[] references) {
+		
+		if (references==null || references.length==0) return;
+		
+		Map permissions = getPermissions(references);
+		if (permissions.isEmpty()) return;
+		
+		for (int i = 0; i < references.length; i++) {
+			ContentReference contentReference = references[i];
+			String id = contentReference.getIdentifier();
+			Object value = null;
+			if ((value = matchesOneRule(id,permissions))!=null){
+				Integer permission = (Integer)value;
+				contentReference.setPermission(permission.intValue());
+			}
+		}
+	}
+
+	/**
+	 * Returns the value of the matching rule or <code>null</code> if none found.
+	 * A rule is matched if the id is equals to a key, or if the id is resolved by a key.
+	 * if the id is <code>/path/file.txt</code> it is resolved by <code>/path/*</code>
+	 * or <code>/path/*.txt</code>
+	 * 
+	 * @param id the identifier
+	 * @param permissions list of rules
+	 * @return Object the value of the matcing rule or <code>null</code>
+	 */
+	private Object matchesOneRule(String id, Map permissions) {
+		Object result;
+		
+		Set keySet = permissions.keySet();
+		Iterator iter = keySet.iterator();
+		while (iter.hasNext()) {
+			FileFilter rule = (FileFilter) iter.next();
+			if (rule.accept(id)){
+				return permissions.get(rule);
+			}
+		}
+		
+		return null;
+	}
+
+	
+	/*
+	 * returns the permission MAP 
+	 */
+	private Map getPermissions(ContentReference[] references){
+
+		Map result = new HashMap();
+		// search for .permissions
+		boolean notfound = true;
+		ContentReference permissionReference = null;
+		for (int i = 0; i < references.length && notfound; i++) {
+			ContentReference contentReference = references[i];
+			if (DOT_PERMISSIONS.equals(contentReference.getIdentifier())){
+				 notfound= false;
+				 permissionReference = contentReference;
+			}
+		}
+		if (notfound) return result;
+		
+		Properties prop = new Properties();
+		try {
+			prop.load(permissionReference.getInputStream());
+		} catch (IOException e){
+			UpdateManagerPlugin.warn("",e);
+		}
+		
+		String executables = prop.getProperty(EXECUTABLES);
+		if (executables==null) return result;
+		
+		StringTokenizer tokenizer = new StringTokenizer(executables,",");
+		Integer defaultExecutablePermission = new Integer(ContentReference.DEFAULT_EXECUTABLE_PERMISSION);
+		while (tokenizer.hasMoreTokens()){
+			FileFilter filter = new FileFilter(tokenizer.nextToken());
+			result.put(filter,defaultExecutablePermission);
+		}
+		
+		return result;
+	}
 }

@@ -19,6 +19,11 @@ import org.eclipse.update.core.model.InstallAbortedException;
  * 
  */
 public class UpdateManagerUtils {
+	
+	private static boolean OS_UNIX = BootLoader.OS_HPUX.equals(BootLoader.getOS()) ||
+										BootLoader.OS_AIX.equals(BootLoader.getOS()) ||
+										BootLoader.OS_LINUX.equals(BootLoader.getOS()) ||
+										BootLoader.OS_SOLARIS.equals(BootLoader.getOS());
 
 	/**
 	 * return the urlString if it is a absolute URL
@@ -189,17 +194,20 @@ public class UpdateManagerUtils {
 	 * [20305] need to slam permissions for executable libs on some
 	 * platforms. This is a temporary fix
 	 */
-	public static void checkPermissions(String filePath) {
-		if (filePath != null
-			&& BootLoader.OS_HPUX.equals(BootLoader.getOS())
-			&& filePath.endsWith(".sl")) {
+	public static void checkPermissions(ContentReference ref,String filePath) {
+		
+		if(ref.getPermission()!=0){
+			UpdateManagerPlugin.warn("Change permission for "+filePath+" to "+ref.getPermission());
+			// FIXME
+		}
+		
+		if (filePath != null && OS_UNIX && ref.getPermission()!=0) {
 			// add execute permission on shared libraries 20305
 			// do not remove write permission 20896
 			// chmod a+x *.sl
 			try {
 				Process pr =
-					Runtime.getRuntime().exec(
-						new String[] { "chmod", "a+x", filePath });
+					Runtime.getRuntime().exec(new String[] { "chmod", "a+x", filePath });
 				Thread chmodOutput = new StreamConsumer(pr.getInputStream());
 				chmodOutput.setName("chmod output reader");
 				chmodOutput.start();
@@ -410,12 +418,13 @@ public class UpdateManagerUtils {
 	}	
 	
 	/*
-	 * returns the list of FeatureRference that are parent of 
-	 * the Feature or an empty array if no parent found
+	 * returns the list of FeatureReference that are parent of 
+	 * the Feature or an empty array if no parent found.
+	 * @param onlyOptional if set to <code>true</code> only return parents that consider the feature optional
 	 * @param child
 	 * @param possiblesParent
 	 */ 
-	 public static IFeatureReference[] getParentFeatures(IFeature childFeature,IFeatureReference[] possiblesParent) throws CoreException {
+	 public static IFeatureReference[] getParentFeatures(IFeature childFeature,IFeatureReference[] possiblesParent,boolean onlyOptional) throws CoreException {
 
 	 	if (childFeature==null)
 	 		return new IFeatureReference[0];
@@ -432,13 +441,25 @@ public class UpdateManagerUtils {
 					for (int j = 0; j < children.length; j++) {
 						try {
 							compareFeature = children[j].getFeature();
-						} catch (CoreException e){};
+						} catch (CoreException e){
+							UpdateManagerPlugin.warn("",e);
+						};
 						if (childFeature.equals(compareFeature)){
-							parentList.add(possiblesParent[i]);
+							if (onlyOptional){
+								if (children[j].isOptional()){
+									parentList.add(possiblesParent[i]);
+								} else {
+									UpdateManagerPlugin.warn("Feature :"+children[j]+" not optional. Not included in parents list.");
+								} 
+							} else {
+								parentList.add(possiblesParent[i]);
+							} 
 						}
 					}
 		 		}
-	 		}catch (CoreException e){};
+	 		}catch (CoreException e){
+	 			UpdateManagerPlugin.warn("",e);
+	 		};
 		}
 		
 		IFeatureReference[] parents = new IFeatureReference[0];
@@ -452,10 +473,11 @@ public class UpdateManagerUtils {
 	/*
 	 * returns the list of Features that are parent of 
 	 * the Feature or an empty array if no parent found
+	 * @param onlyOptional if set to <code>true</code> only return parents that consider the feature optional
 	 * @param child
 	 * @param possiblesParent
 	 */ 
-	 public static IFeatureReference[] getParentFeatures(IFeatureReference child,IFeatureReference[] possiblesParent) throws CoreException {
+	 public static IFeatureReference[] getParentFeatures(IFeatureReference child,IFeatureReference[] possiblesParent,boolean onlyOptional) throws CoreException {
 
 	 	if (child==null)
 	 		return new IFeatureReference[0];
@@ -470,7 +492,7 @@ public class UpdateManagerUtils {
 	 	if (childFeature==null)
 	 		return new IFeatureReference[0];
 	 		 	
-	 	return getParentFeatures(childFeature,possiblesParent);	
+	 	return getParentFeatures(childFeature,possiblesParent,onlyOptional);	
 	 }	
 	 
 	/*
@@ -516,5 +538,40 @@ public class UpdateManagerUtils {
 			} catch (IOException ioe) {
 			}
 		}
+	}
+	
+	/**
+	 * Return the optional children to install
+	 * The optional features to install may not all be direct children 
+	 * of the feature.
+	 * Also include non-optional features
+	 * 
+	 * @param children all the nested features
+	 * @param optionalfeatures optional features to install
+	 * @return IFeatureReference[]
+	 */
+	public static IFeatureReference[] optionalChildrenToInstall(IFeatureReference[] children, IFeatureReference[] optionalfeatures) {
+				
+		List optionalChildrenToInstall = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			IFeatureReference optionalFeature = children[i];
+			if (!optionalFeature.isOptional()){
+				optionalChildrenToInstall.add(optionalFeature);
+			} else {
+				for (int j = 0; j < optionalfeatures.length; j++) {
+					if (optionalFeature.equals(optionalfeatures[j])){
+						optionalChildrenToInstall.add(optionalFeature);
+						break;
+					}
+				}
+			}
+		}
+		
+		IFeatureReference[] result = new IFeatureReference[optionalChildrenToInstall.size()];
+		if (optionalChildrenToInstall.size()>0){
+			optionalChildrenToInstall.toArray(result);
+		}
+		
+		return result;
 	}
 }

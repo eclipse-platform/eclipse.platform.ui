@@ -30,8 +30,7 @@ public interface ISite extends IAdaptable {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String DEFAULT_INSTALLED_FEATURE_TYPE =
-		"org.eclipse.update.core.installed";
+	public static final String DEFAULT_INSTALLED_FEATURE_TYPE = "org.eclipse.update.core.installed";
 	//$NON-NLS-1$		
 
 	/**
@@ -42,9 +41,16 @@ public interface ISite extends IAdaptable {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String DEFAULT_PACKAGED_FEATURE_TYPE =
-		"org.eclipse.update.core.packaged";
+	public static final String DEFAULT_PACKAGED_FEATURE_TYPE = "org.eclipse.update.core.packaged";
 	//$NON-NLS-1$		
+
+	/**
+	 * If we are unable to access a site, the returned CoreException will contain
+	 * this return code.
+	 * 
+	 * @since 2.0.1
+	 */
+	public static final int SITE_ACCESS_EXCEPTION = 42;
 
 	/**
 	 * Returns the site URL
@@ -177,8 +183,7 @@ public interface ISite extends IAdaptable {
 	 * @exception CoreException
 	 * @since 2.0
 	 */
-	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature)
-		throws CoreException;
+	public IPluginEntry[] getPluginEntriesOnlyReferencedBy(IFeature feature) throws CoreException;
 
 	/**
 	 * Returns the size of the files that need to be downloaded in order
@@ -218,11 +223,22 @@ public interface ISite extends IAdaptable {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	public IFeatureReference install(
-		IFeature feature,
-		IVerificationListener verificationListener,
-		IProgressMonitor monitor)
-		throws InstallAbortedException, CoreException;
+	public IFeatureReference install(IFeature feature, IVerificationListener verificationListener, IProgressMonitor monitor) throws InstallAbortedException, CoreException;
+
+	/**
+	 * Installs the specified feature on this site.
+	 * Only optional features passed as parameter will be installed.
+	 * 
+	 * @param feature feature to install
+	 * @param optionalfeatures list of optional features to be installed
+	 * @param verificationListener install verification listener
+	 * @param monitor install monitor, can be <code>null</code>
+	 * @exception InstallAbortedException when the user cancels the install
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public IFeatureReference install(IFeature feature, IFeatureReference[] optionalfeatures, IVerificationListener verificationListener, IProgressMonitor monitor) throws InstallAbortedException, CoreException;
+
 
 	/**
 	 * Removes (uninstalls) the specified feature from this site. This method
@@ -234,8 +250,7 @@ public interface ISite extends IAdaptable {
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	public void remove(IFeature feature, IProgressMonitor monitor)
-		throws CoreException;
+	public void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Sets the site content provider. This is typically performed

@@ -23,8 +23,9 @@ public class ConfiguredFeatureAdapter
 	public ConfiguredFeatureAdapter(
 		IConfiguredSiteAdapter adapter,
 		IFeature feature,
-		boolean configured) {
-		super(feature);
+		boolean configured,
+		boolean optional) {
+		super(feature, optional);
 		this.adapter = adapter;
 		this.configured = configured;
 	}
@@ -45,15 +46,19 @@ public class ConfiguredFeatureAdapter
 			ConfiguredFeatureAdapter[] result =
 				new ConfiguredFeatureAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {
+				IFeatureReference fref = included[i];
 				IFeature feature;
+				boolean childConfigured=configured;
 				try {
-					feature = included[i].getFeature();
+					feature = fref.getFeature();
+					childConfigured = adapter.getConfigurationSite().isConfigured(feature);
 				} catch (CoreException e) {
-					feature = new MissingFeature(getSite(), getURL());
+					feature = new MissingFeature(fref);
+					childConfigured = false;
 				}
 
 				result[i] =
-					new ConfiguredFeatureAdapter(adapter, feature, configured);
+					new ConfiguredFeatureAdapter(adapter, feature, childConfigured, fref.isOptional());
 				result[i].setIncluded(true);
 			}
 			return result;

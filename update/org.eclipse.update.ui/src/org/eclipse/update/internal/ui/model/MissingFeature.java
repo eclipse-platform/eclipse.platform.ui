@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureContentConsumer;
@@ -17,14 +18,52 @@ import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.core.IVerificationListener;
 import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.model.InstallAbortedException;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class MissingFeature implements IFeature {
 
 	private URL url;
 	private ISite site;
-	private VersionedIdentifier id = new VersionedIdentifier("unknown", "0.0.0");
+	private IFeatureReference reference;
+	private IURLEntry desc;
+	private VersionedIdentifier id = new VersionedIdentifier(UpdateUIPlugin.getResourceString("MissingFeature.id"), "0.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 	public MissingFeature(ISite site, URL url) {
+		this.site = site;
 		this.url = url;
+		desc = new IURLEntry() {
+			public URL getURL() {
+				return null;
+			}
+			public String getAnnotation() {
+				return UpdateUIPlugin.getResourceString("MissingFeature.desc.unknown"); //$NON-NLS-1$
+			}
+			public Object getAdapter(Class key) {
+				return null;
+			}
+		};
+	}
+	public MissingFeature(IFeatureReference ref) {
+		this(ref.getSite(), ref.getURL());
+		this.reference = ref;
+		
+		if (ref.isOptional()) {
+			desc = new IURLEntry() {
+				public URL getURL() {
+					return null;
+				}
+				public String getAnnotation() {
+					return UpdateUIPlugin.getResourceString("MissingFeature.desc.optional");  //$NON-NLS-1$
+				}
+				public Object getAdapter(Class key) {
+					return null;
+				}
+			};
+		}
+	}
+	
+	public boolean isOptional() {
+		return reference!=null && reference.isOptional();
 	}
 
 	/*
@@ -45,6 +84,10 @@ public class MissingFeature implements IFeature {
 	 * @see IFeature#getLabel()
 	 */
 	public String getLabel() {
+		if (reference!=null) {
+			String name = reference.getName();
+			if (name!=null) return name;
+		}
 		return url.toString();
 	}
 
@@ -73,14 +116,14 @@ public class MissingFeature implements IFeature {
 	 * @see IFeature#getProvider()
 	 */
 	public String getProvider() {
-		return "Unknown";
+		return UpdateUIPlugin.getResourceString("MissingFeature.provider"); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see IFeature#getDescription()
 	 */
 	public IURLEntry getDescription() {
-		return null;
+		return desc;
 	}
 
 	/*
@@ -275,7 +318,13 @@ public class MissingFeature implements IFeature {
 	public IFeatureReference install(IFeature targetFeature, IVerificationListener verificationListener, IProgressMonitor monitor) throws CoreException {
 		return null;
 	}
-
+	
+	/*
+	 * @see org.eclipse.update.core.IFeature#install(IFeature, IFeatureReference[], IVerificationListener, IProgressMonitor)
+	 */
+	public IFeatureReference install(IFeature targetFeature, IFeatureReference[] optionalFeatures, IVerificationListener verificationListener, IProgressMonitor monitor) throws InstallAbortedException, CoreException {
+		return null;
+	}
 	/*
 	 * @see IFeature#remove(IProgressMonitor)
 	 */
@@ -315,6 +364,5 @@ public class MissingFeature implements IFeature {
 	public String getAffinityFeature() {
 		return null;
 	}
-
 }
 

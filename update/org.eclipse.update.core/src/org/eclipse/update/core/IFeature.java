@@ -63,6 +63,33 @@ public interface IFeature extends IAdaptable {
 	 */	
 	public static final int STATUS_UNHAPPY = 2;
 	
+	
+	/**
+	 * Indicates the one-click update will search the 
+	 * location of the nesting root feature.
+	 * 
+	 * @since 2.0.1
+	 */	
+	public static final int SEARCH_LOCATION_DEFAULT = 0;	
+
+	/**
+	 * Indicates the one-click update will search the 
+	 * location defined by the feature.
+	 * 
+	 * @since 2.0.1
+	 */	
+	public static final int SEARCH_LOCATION_FEATURE = 1;	
+
+	/**
+	 * Indicates the one-click update will search both the 
+	 * location of the nesting root feature and the 
+	 * location defined by the feature.
+	 * 
+	 * @since 2.0.1
+	 */	
+	public static final int SEARCH_LOCATION_BOTH = 2;	
+
+	
 	/**
 	 * Returns the feature identifier.
 	 * 
@@ -243,6 +270,7 @@ public interface IFeature extends IAdaptable {
 
 	/**
 	 * Install the contents of this feature into the specified target feature.
+	 * All optional features will be installed
 	 * 
 	 * @param targetFeature
 	 * @param verificationListener
@@ -253,6 +281,25 @@ public interface IFeature extends IAdaptable {
 	 */
 	public IFeatureReference install(
 		IFeature targetFeature,
+		IVerificationListener verificationListener,
+		IProgressMonitor monitor)
+		throws InstallAbortedException,CoreException;
+
+	/**
+	 * Install the contents of this feature into the specified target feature.
+	 * Only the listed optional features will be installed.
+	 * 
+	 * @param targetFeature
+	 * @param optionalFeatures the optional features to be installed
+	 * @param verificationListener
+	 * @param monitor
+	 * @exception InstallAbortedException when the user cancels the install
+	 * @exception CoreException
+	 * @since 2.0.1
+	 */
+	public IFeatureReference install(
+		IFeature targetFeature,
+		IFeatureReference[] optionalFeatures,
 		IVerificationListener verificationListener,
 		IProgressMonitor monitor)
 		throws InstallAbortedException,CoreException;

@@ -39,6 +39,21 @@ public class FeatureReference
 	}
 
 	/**
+	 * Constructor FeatureReference.
+	 * @param ref the reference to copy
+	 */
+	public FeatureReference(IFeatureReference ref) {
+		super(ref);
+		setSite(ref.getSite());
+		try {
+			setURL(ref.getURL());
+		} catch (CoreException e){
+			UpdateManagerPlugin.warn("",e);
+		}
+	}
+
+
+	/**
 	 * Returns the feature this reference points to
 	 *  @return the feature on the Site
 	 */
@@ -185,4 +200,26 @@ public class FeatureReference
 		
 		return getFeature().getVersionedIdentifier();
 	}
+	/**
+	 * @see org.eclipse.update.core.IFeatureReference#getName()
+	 */
+	public String getName() {
+		if (getOptions()==null) {
+			try {
+				return getFeature().toString();
+			} catch (CoreException e){
+				UpdateManagerPlugin.warn("",e);
+			}
+		}
+		return getOptions().getName();
+	}
+
+	/**
+	 * @see org.eclipse.update.core.IFeatureReference#isOptional()
+	 */
+	public boolean isOptional() {
+		if (getOptions()==null) return false;
+		return getOptions().isOptional();
+	}
+
 }

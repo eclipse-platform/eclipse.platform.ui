@@ -90,5 +90,21 @@ public interface IFeatureReference extends IAdaptable {
 	 * @since 2.0 
 	 */
 	public void setSite(ISite site);
+	
+	/**
+	 * Returns <code>true</code> if the feature is optional, <code>false</code> otherwise.
+	 * 
+	 * @return boolean
+	 * @since 2.0.1
+	 */
+	public boolean isOptional();
 
+	/**
+	 * Returns the name of the feature reference.
+	 * 
+	 * @return feature reference name
+	 * @since 2.0.1
+	 */
+	public String getName();	
+	
 }
