@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.internal.runtime.Assert;
@@ -30,11 +31,13 @@ import org.eclipse.core.runtime.jobs.*;
  * must NEVER call the worker pool while its own monitor is held.
  */
 public class JobManager implements IJobManager {
-	private static final String JOB_DEBUG_OPTION = Platform.PI_RUNTIME + "/jobs"; //$NON-NLS-1$
-	public static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(JOB_DEBUG_OPTION));
+	private static final String OPTION_DEBUG_JOBS = Platform.PI_RUNTIME + "/jobs"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_JOBS_TIMING = Platform.PI_RUNTIME + "/jobs/timing"; //$NON-NLS-1$
+	public static final boolean DEBUG = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS));
+	public static final boolean DEBUG_TIMING = Boolean.TRUE.toString().equalsIgnoreCase(Platform.getDebugOption(OPTION_DEBUG_JOBS_TIMING));
+	private static final DateFormat DEBUG_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS"); //$NON-NLS-1$
 	private static JobManager instance;
 	protected static final long NEVER = Long.MAX_VALUE;
-
 	private final JobListeners jobListeners = new JobListeners();
 
 	/**
@@ -81,7 +84,13 @@ public class JobManager implements IJobManager {
 		instance = null;
 	}
 	public static void debug(String msg) {
-		System.out.println("[" + Thread.currentThread() + "]" + msg); //$NON-NLS-1$ //$NON-NLS-2$
+		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
+		if (DEBUG_TIMING) {
+			DEBUG_FORMAT.format(new Date(), msgBuf, new FieldPosition(0));
+			msgBuf.append('-');
+		}
+		msgBuf.append('[').append(Thread.currentThread()).append(']').append(msg);
+		System.out.println(msgBuf.toString());
 	}
 	private JobManager() {
 		instance = this;

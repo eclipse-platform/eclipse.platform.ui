@@ -9,6 +9,8 @@ org.eclipse.core.runtime/debug/context=false
 
 # Prints debug information on running background jobs
 org.eclipse.core.runtime/jobs=false
+# Includes current date and time in job debug information
+org.eclipse.core.runtime/jobs/timing=false
 
 # Prints time taken by Plugin constructors and startup() methods.
 org.eclipse.core.runtime/timing/startup=false
