@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>3.0 Debug Platform Change Notes</title>
+<title>3.1 Debug Platform Change Notes</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
@@ -12,8 +12,13 @@
 <h2>New Features</h2>
 
 <h3> Breakpoint Organizers</h3>
+<p>new breakpoint type attribute/IBreakpointManager.getTypeName(...), IBreakpointTypeCategory</p>
 <h3>Logical Structure Providers</h3>
-<h3>Memory Renderings</h3>
+<p>also includes set/get default structure type for a set of structures, ILogicalStructureTypeDelegate2</p>
+<h3>Capture Output Options</h3>
+<h3>Memory Renderings/Memory Block Manager/Listener</h3>
+<h3>Parse Arguments</h3>
+<p>DebugPlugin.parseArguments(..)</p>
 <h3>Run To Line Handler</h3>
 <h3>Run To Line Action Delegate</h3>
 <p>can also be contributed to a view</p>
@@ -28,8 +33,8 @@
 <p>When the command is invoked via the key-binding, the selection or active editor 
   will be used as the target for the launch shortcut's launch method. The shortcut 
   is only invoked if the shortcut is enabled for the selection or editor.</p>
-<h3>Source Lookup Facility</h3>
-<h3>Watchpoints (IWatchpoint)</h3>
+<h3>Source Lookup/Display Facility</h3>
+<h3>Watchpoints (IWatchpoint) and images</h3>
 <h3>Colors and Fonts for debug elements</h3>
 <h3>Inserting elements into debug view/hierarchy</h3>
 <h3>Abstract Debug Element</h3>
@@ -37,15 +42,19 @@
 <h3>Launch from context menu in editor</h3>
 <p>Editor input must have an ILaunchable adapter for this to work.</p>
 <h3>Support for hidden launch (unregistered)</h3>
+<p>new launch method and ILaunchManager.isRegistered(..)</p>
 <h3>Reuseable breakpoint ruler toggle actions</h3>
 <h3>Environment variables case preservation</h3>
 <h3>Memory block extensions and Memory View</h3>
+<h3>IStreamsProxy2</h3>
+<h3>LaunchConfigurationDelegate#getBreakpoints(..)</h3>
+<p>allows to check if there are relevant breakpoints in the workspace for a launch</p>
 <h2>Changes</h2>
 <h3>Debug Event Dispatch</h3>
 <p>Debug event set listeners are notified of fired debug events asynchronously 
   in a different thread than the event is reported in.</p>
 <h3>Debug Actions in Background</h3>
-<h3>Background Content Providers</h3>
+<h3>Background Content Providers/Workbench adapters</h3>
 <p>&nbsp;</p>
 </body>
 </html>
