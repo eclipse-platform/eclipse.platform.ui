@@ -34,12 +34,12 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	/**
 	 * This is the ID of the plugin as defined in the plugin.xml
 	 */
-	public static final String ID = "org.eclipse.team.examples.filesystem";
+	public static final String ID = "org.eclipse.team.examples.filesystem"; //$NON-NLS-1$
 	
 	/**
 	 * This is the provider ID of the plugin as defined in the plugin.xml
 	 */
-	public static final String PROVIDER_ID = ID + ".FileSystemProvider";
+	public static final String PROVIDER_ID = ID + ".FileSystemProvider"; //$NON-NLS-1$
 	
 	// This static field will hold the singleton instance of the plugin class
 	private static FileSystemPlugin plugin;
@@ -63,7 +63,7 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		// localize the string bindings used by the plugins (in order to provide NLS support)
-		Policy.localize("org.eclipse.team.examples.filesystem.messages");
+		Policy.localize("org.eclipse.team.examples.filesystem.messages"); //$NON-NLS-1$
 	}
 	
 	/**

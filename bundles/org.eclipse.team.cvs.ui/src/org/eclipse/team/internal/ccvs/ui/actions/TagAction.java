@@ -94,7 +94,7 @@ public abstract class TagAction extends WorkspaceAction {
 		if (dialog.shouldMoveTag() && store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG))  {
 			MessageDialogWithToggle confirmDialog = MessageDialogWithToggle.openQuestion(getShell(), 
 				Policy.bind("TagAction.moveTagConfirmTitle"),  //$NON-NLS-1$
-				Policy.bind("TagAction.moveTagConfirmMessage", dialog.getTagName()),
+				Policy.bind("TagAction.moveTagConfirmMessage", dialog.getTagName()), //$NON-NLS-1$
 				null,
 				false);
 			

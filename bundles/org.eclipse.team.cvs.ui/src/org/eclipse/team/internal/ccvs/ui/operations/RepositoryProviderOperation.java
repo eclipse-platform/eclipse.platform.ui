@@ -53,7 +53,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
 		Map table = getProviderMapping(getResources());
 		Set keySet = table.keySet();
-		monitor.beginTask("", keySet.size() * 1000);
+		monitor.beginTask(null, keySet.size() * 1000);
 		monitor.setTaskName(getTaskName());
 		Iterator iterator = keySet.iterator();
 		while (iterator.hasNext()) {

@@ -54,7 +54,7 @@ public class FileSystemProvider extends RepositoryProvider {
 	private IPath root;
 	
 	// The QualifiedName that is used to persist the location accross workspace as a persistant property on a resource
-	private static QualifiedName FILESYSTEM_REPO_LOC = new QualifiedName(FileSystemPlugin.ID, "disk_location");
+	private static QualifiedName FILESYSTEM_REPO_LOC = new QualifiedName(FileSystemPlugin.ID, "disk_location"); //$NON-NLS-1$
 
 	/**
 	 * Create a new FileSystemProvider.
@@ -110,7 +110,7 @@ public class FileSystemProvider extends RepositoryProvider {
 		// ensure that the location is a folder (if it exists)
 		File file = new File(location);
 		if (file.exists() && !file.isDirectory()) {
-			throw new TeamException(Policy.bind("FileSystemProvider.mustBeFolder", location));
+			throw new TeamException(Policy.bind("FileSystemProvider.mustBeFolder", location)); //$NON-NLS-1$
 		}
 		
 		// record the location as a persistant property so it will be remembered across platform invokations

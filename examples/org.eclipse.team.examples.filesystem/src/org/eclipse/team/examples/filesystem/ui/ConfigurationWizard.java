@@ -57,8 +57,8 @@ public class ConfigurationWizard extends Wizard implements IConfigurationWizard 
 	public void addPages() {
 		mainPage = new FileSystemMainPage(
 			"FileSystemMainPage", //$NON-NLS-1$
-			Policy.bind("ConfigurationWizard.name"), 
-			Policy.bind("ConfigurationWizard.description"), 
+			Policy.bind("ConfigurationWizard.name"),  //$NON-NLS-1$
+			Policy.bind("ConfigurationWizard.description"),  //$NON-NLS-1$
 			null);
 		addPage(mainPage);
 	}
@@ -77,8 +77,8 @@ public class ConfigurationWizard extends Wizard implements IConfigurationWizard 
 		} catch (TeamException e) {
 			ErrorDialog.openError(
 				getShell(),
-				Policy.bind("ConfigurationWizard.errorMapping"),
-				Policy.bind("ConfigurationWizard.error"),
+				Policy.bind("ConfigurationWizard.errorMapping"), //$NON-NLS-1$
+				Policy.bind("ConfigurationWizard.error"), //$NON-NLS-1$
 				e.getStatus());
 			return false;
 		}

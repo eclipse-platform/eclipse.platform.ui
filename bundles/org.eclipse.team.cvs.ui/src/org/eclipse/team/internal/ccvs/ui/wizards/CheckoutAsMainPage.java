@@ -45,7 +45,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	private Text projectNameField;
 	private ICVSRemoteFolder[] folders;
 
-	public static final String NAME = "CheckoutAsMainPage";
+	public static final String NAME = "CheckoutAsMainPage"; //$NON-NLS-1$
 	
 	/**
 	 * @param pageName
@@ -54,7 +54,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * @param description
 	 */
 	public CheckoutAsMainPage(ImageDescriptor titleImage, ICVSRemoteFolder[] folders, boolean allowProjectConfiguration) {
-		super(NAME, Policy.bind("CheckoutAsMainPage.title"), titleImage, Policy.bind("CheckoutAsMainPage.description")); //$NON-NLS-1$
+		super(NAME, Policy.bind("CheckoutAsMainPage.title"), titleImage, Policy.bind("CheckoutAsMainPage.description")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.folders = folders;
 		this.allowProjectConfiguration = allowProjectConfiguration;
 	}

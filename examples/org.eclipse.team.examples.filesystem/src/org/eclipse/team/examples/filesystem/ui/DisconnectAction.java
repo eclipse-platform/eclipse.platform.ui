@@ -33,7 +33,7 @@ public class DisconnectAction extends TeamAction {
 				RepositoryProvider.unmap(projects[i]);
 			}
 		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), Policy.bind("DisconnectAction.errorTitle"), null, e.getStatus());
+			ErrorDialog.openError(getShell(), Policy.bind("DisconnectAction.errorTitle"), null, e.getStatus()); //$NON-NLS-1$
 		} 
 	}
 	

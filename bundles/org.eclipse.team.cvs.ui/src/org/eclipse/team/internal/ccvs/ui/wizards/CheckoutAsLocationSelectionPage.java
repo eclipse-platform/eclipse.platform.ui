@@ -43,7 +43,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 
-	public static final String NAME = "CheckoutAsLocationSelectionPage";
+	public static final String NAME = "CheckoutAsLocationSelectionPage"; //$NON-NLS-1$
 	
 	private Button browseButton;
 	private Text locationPathField;
@@ -63,7 +63,7 @@ public class CheckoutAsLocationSelectionPage extends CVSWizardPage {
 	 * @param description
 	 */
 	public CheckoutAsLocationSelectionPage(ImageDescriptor titleImage, ICVSRemoteFolder[] remoteFolders) {
-		super(NAME, Policy.bind("CheckoutAsLocationSelectionPage.title"), titleImage, Policy.bind("CheckoutAsLocationSelectionPage.description"));
+		super(NAME, Policy.bind("CheckoutAsLocationSelectionPage.title"), titleImage, Policy.bind("CheckoutAsLocationSelectionPage.description")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.remoteFolders = remoteFolders;
 	}
 

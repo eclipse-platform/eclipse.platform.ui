@@ -304,7 +304,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					view.setWorkingSet(workingSet);
 					view.selectSubscriber(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
 				} else {
-					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null);
+					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		} catch (InterruptedException e) {

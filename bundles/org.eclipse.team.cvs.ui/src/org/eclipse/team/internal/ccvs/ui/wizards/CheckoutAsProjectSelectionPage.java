@@ -52,7 +52,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
  */
 public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	
-	public static final String NAME = "CheckoutAsProjectSelectionPage";
+	public static final String NAME = "CheckoutAsProjectSelectionPage"; //$NON-NLS-1$
 	
 	private TreeViewer tree;
 	private Text nameField;
@@ -73,7 +73,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	 * @param titleImage
 	 */
 	public CheckoutAsProjectSelectionPage(ImageDescriptor titleImage, ICVSRemoteFolder[] remoteFolders) {
-		super(NAME, Policy.bind("CheckoutAsProjectSelectionPage.title"), titleImage, Policy.bind("CheckoutAsProjectSelectionPage.description"));
+		super(NAME, Policy.bind("CheckoutAsProjectSelectionPage.title"), titleImage, Policy.bind("CheckoutAsProjectSelectionPage.description")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.remoteFolders = remoteFolders;
 	}
 

@@ -16,13 +16,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 public class WorkInProgressPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	public WorkInProgressPreferencePage() {
 		super(GRID);
-		setTitle("CVS Work In Progress");
-		setDescription("Preferences for enabling features that are not complete:");
+		setTitle(Policy.bind("WorkInProgressPreferencePage.0")); //$NON-NLS-1$
+		setDescription(Policy.bind("WorkInProgressPreferencePage.1")); //$NON-NLS-1$
 		setPreferenceStore(CVSUIPlugin.getPlugin().getPreferenceStore());
 	}
 
@@ -38,9 +39,9 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	public void createFieldEditors() {		
-		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_REPOVIEW, "Enable background fetching of resources in the CVS Repositories view", SWT.NONE, getFieldEditorParent()));	
-		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_OPERATIONS, "Enable operations to be run in the background (e.g. checkout, update, commit)", SWT.NONE, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(ICVSUIConstants.USE_NEW_SYNCVIEW, "Enable the CVS sync actions to open the new sync view", SWT.NONE, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_REPOVIEW, Policy.bind("WorkInProgressPreferencePage.2"), SWT.NONE, getFieldEditorParent()));	 //$NON-NLS-1$
+		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_OPERATIONS, Policy.bind("WorkInProgressPreferencePage.3"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		addField(new BooleanFieldEditor(ICVSUIConstants.USE_NEW_SYNCVIEW, Policy.bind("WorkInProgressPreferencePage.4"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

@@ -30,7 +30,7 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
  */
 public final class FileModificationValidator implements IFileModificationValidator {
 	//Used to avoid creating multiple copies of the OK status:
-	private static final IStatus OK_STATUS = new Status(Status.OK, FileSystemPlugin.ID, Status.OK, Policy.bind("ok"), null);
+	private static final IStatus OK_STATUS = new Status(Status.OK, FileSystemPlugin.ID, Status.OK, Policy.bind("ok"), null); //$NON-NLS-1$
 
 	private RepositoryProvider provider;
 	private SimpleAccessOperations operations;

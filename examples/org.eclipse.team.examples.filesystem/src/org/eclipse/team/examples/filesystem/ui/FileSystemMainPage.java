@@ -208,7 +208,7 @@ public class FileSystemMainPage extends WizardPage {
 		setControl(composite);
 		
 		Label label = new Label(composite, SWT.NULL);
-		label.setText(Policy.bind("FileSystemMainPage.location"));
+		label.setText(Policy.bind("FileSystemMainPage.location")); //$NON-NLS-1$
 		label.setLayoutData(new GridData());
 		
 		locationCombo = createEditableCombo(composite);
@@ -225,7 +225,7 @@ public class FileSystemMainPage extends WizardPage {
 		new Label(composite, SWT.NULL);
 		Button browse = new Button(composite, SWT.NULL);
 		browse.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		browse.setText(Policy.bind("FileSystemMainPage.browseDir"));
+		browse.setText(Policy.bind("FileSystemMainPage.browseDir")); //$NON-NLS-1$
 		browse.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				DirectoryDialog d = new DirectoryDialog(getShell());
@@ -290,7 +290,7 @@ public class FileSystemMainPage extends WizardPage {
 		} else {
 			File file = new File(location);
 			if(!file.exists() || !file.isDirectory()) {
-				setErrorMessage(Policy.bind("FileSystemMainPage.notValidLocation"));
+				setErrorMessage(Policy.bind("FileSystemMainPage.notValidLocation")); //$NON-NLS-1$
 				setPageComplete(false);
 				return;				
 			}			

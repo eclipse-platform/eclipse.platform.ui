@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.examples.filesystem.Policy;
 
 /**
  * Class represents a handle to a <code>java.io.File</code> that conforms to
@@ -67,7 +68,7 @@ public class FileSystemRemoteResource implements IRemoteResource {
 	 */
 	public InputStream getContents(IProgressMonitor progress) throws TeamException {
 		if (isContainer())
-			throw new TeamException("This resource is a container so it cannot have data.");
+			throw new TeamException(Policy.bind("FileSystemRemoteResource.0")); //$NON-NLS-1$
 		try {
 			return new FileInputStream(ioFile);
 		} catch (FileNotFoundException e) {
@@ -107,7 +108,7 @@ public class FileSystemRemoteResource implements IRemoteResource {
 	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
 		// Make sure we have a container
 		if (!isContainer())
-			throw new TeamException(Policy.bind("RemoteResource.mustBeFolder", ioFile.getName()));
+			throw new TeamException(Policy.bind("RemoteResource.mustBeFolder", ioFile.getName())); //$NON-NLS-1$
 
 		// convert the File children to remote resource children
 		File[] members = ioFile.listFiles();

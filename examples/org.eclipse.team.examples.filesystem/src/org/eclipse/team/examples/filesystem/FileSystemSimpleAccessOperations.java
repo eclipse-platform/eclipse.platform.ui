@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
+import org.eclipse.team.examples.filesystem.Policy;
 
 /**
  * SimpleAccessOperations is not part of the Team API. We use it here because it provides
@@ -61,7 +62,7 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 		// ensure the progress monitor is not null
 		progress = Policy.monitorFor(progress);
-		progress.beginTask(Policy.bind("GetAction.working"), resources.length);
+		progress.beginTask(Policy.bind("GetAction.working"), resources.length); //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
 			Policy.checkCanceled(progress);
 			IPath rootdir = provider.getRoot();
@@ -140,7 +141,7 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 	 */
 	public void checkout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 		progress = Policy.monitorFor(progress);
-		progress.beginTask("Checking resources out...", resources.length);
+		progress.beginTask(Policy.bind("FileSystemSimpleAccessOperations.1"), resources.length); //$NON-NLS-1$
 		IPath rootdir = provider.getRoot();
 		for (int i = 0; i < resources.length; i++) {
 			Policy.checkCanceled(progress);
@@ -179,7 +180,7 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 		// ensure the progress monitor is not null
 		progress = Policy.monitorFor(progress);
-		progress.beginTask(Policy.bind("PutAction.working"), resources.length);
+		progress.beginTask(Policy.bind("PutAction.working"), resources.length); //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
 			Policy.checkCanceled(progress);
 			IPath rootdir = provider.getRoot();
@@ -243,7 +244,7 @@ public class FileSystemSimpleAccessOperations implements SimpleAccessOperations 
 	 */
 	public void uncheckout(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 		progress = Policy.monitorFor(progress);
-		progress.beginTask("Re-locking resources...", resources.length);
+		progress.beginTask(Policy.bind("FileSystemSimpleAccessOperations.3"), resources.length); //$NON-NLS-1$
 		IPath rootdir = provider.getRoot();
 		for (int i = 0; i < resources.length; i++) {
 			Policy.checkCanceled(progress);

@@ -105,7 +105,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 		);
 		
 		moveTagButton = new Button(parent, SWT.CHECK);
-		moveTagButton.setText(Policy.bind("TagAction.moveTag"));
+		moveTagButton.setText(Policy.bind("TagAction.moveTag")); //$NON-NLS-1$
 		moveTagButton.setLayoutData(new GridData(
 			GridData.GRAB_HORIZONTAL |
 			GridData.GRAB_VERTICAL |

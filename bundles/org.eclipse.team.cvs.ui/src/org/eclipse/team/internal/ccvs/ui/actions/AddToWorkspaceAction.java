@@ -146,7 +146,7 @@ public class AddToWorkspaceAction extends CVSAction {
 		IResource[] projects = (IResource[]) targetProjects.toArray(new IResource[targetProjects.size()]);
 		PromptingDialog prompt = new PromptingDialog(getShell(), projects, 
 													  getOverwriteLocalAndFileSystemPrompt(), 
-													  Policy.bind("ReplaceWithAction.confirmOverwrite"),
+													  Policy.bind("ReplaceWithAction.confirmOverwrite"), //$NON-NLS-1$
 													  true /* all or nothing*/);//$NON-NLS-1$
 		return (prompt.promptForMultiple().length == projects.length);
 	}
