@@ -1559,11 +1559,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		
 		// Add variables from config
 		Iterator iter= envMap.entrySet().iterator();
+		boolean win32= BootLoader.getOS().equals(Constants.OS_WIN32);
 		while (iter.hasNext()) {
 			Map.Entry entry= (Map.Entry) iter.next();
 			String key= (String) entry.getKey();
-			if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
-				// Win32 vars are case insensitive. Lowercase everything so
+			if (win32) {
+				// Win32 vars are case insensitive. Uppercase everything so
 				// that (for example) "pAtH" will correctly replace "PATH"
 				key= key.toUpperCase();
 			}
@@ -1625,7 +1626,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					String key= line.substring(0, separator);
 					if (windowsOS) {
 						// Win32's environment vars are case insensitive. Put everything
-						// to lowercase so that (for example) the "PATH" variable will match
+						// to uppercase so that (for example) the "PATH" variable will match
 						// "pAtH" correctly on Windows.
 						key= key.toUpperCase();
 					}
