@@ -2913,7 +2913,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// Find the Update Manager State directory
 		if (initDir == null || !initDir.exists() || !initDir.isDirectory())
 			return;
-		String temp = initCfg.getName()+".metadata";		
+		String temp = initCfg.getName()+".metadata"; //$NON-NLS-1$
 		File UMDir = new File(initDir,temp+'/');
 	
 		// Attempt to rename it
