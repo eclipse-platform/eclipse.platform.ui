@@ -27,8 +27,10 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * {@link org.eclipse.ui.model.IWorkbenchAdapter IWorkbenchAdapter}. This provider
  * will listen for resource changes within the workspace and update the viewer
  * as necessary.
+ * 
+ * @since 3.0
  */
-public final class WorkbenchResourceContentProvider extends WorkbenchContentProvider implements IResourceChangeListener {
+/* package */ final class WorkbenchResourceContentProvider extends WorkbenchContentProvider implements IResourceChangeListener {
 	private Viewer viewer;
 
 	/**
