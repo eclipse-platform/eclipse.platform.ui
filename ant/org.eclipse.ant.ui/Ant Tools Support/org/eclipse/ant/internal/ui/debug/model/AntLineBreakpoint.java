@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
 
@@ -71,6 +72,8 @@ public class AntLineBreakpoint extends LineBreakpoint {
 			    attributes.put(IBreakpoint.ID, IAntDebugConstants.ID_ANT_DEBUG_MODEL);
                 attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.getString("AntLineBreakpoint.0"), new String[] {Integer.toString(lineNumber)})); //$NON-NLS-1$
 			    ensureMarker().setAttributes(attributes);
+                
+                register(true);
 			}
 	    };
 	    run(getMarkerRule(resource), wr);
@@ -91,6 +94,18 @@ public class AntLineBreakpoint extends LineBreakpoint {
             return ensureMarker().getAttribute(IAntDebugConstants.ANT_RUN_TO_LINE, false);
         } catch (DebugException e) {
            return false;
+        }
+    }
+    
+    /**
+     * Add this breakpoint to the breakpoint manager,
+     * or sets it as unregistered.
+     */
+    private void register(boolean register) throws CoreException {
+        if (register) {
+            DebugPlugin.getDefault().getBreakpointManager().addBreakpoint(this);
+        } else {
+            setRegistered(false);
         }
     }
 }
