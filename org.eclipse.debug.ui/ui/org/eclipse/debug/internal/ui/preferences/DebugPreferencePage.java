@@ -15,6 +15,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -58,9 +59,13 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.getString("DebugPreferencePage.Reuse_editor_when_displa&ying_source_code_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.getString("DebugPreferencePage.Activate_the_&workbench_when_a_breakpoint_is_hit_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		
-		createSpacer(getFieldEditorParent(), 1);
+		createSpacer(getFieldEditorParent(), 2);
 		
 		createSaveBeforeLaunchEditors(getFieldEditorParent());
+		
+		createSpacer(getFieldEditorParent(), 2);
+		
+		addField(new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("VariableViewsPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
 		
 	}
 

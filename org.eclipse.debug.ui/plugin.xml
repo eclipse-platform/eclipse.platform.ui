@@ -99,12 +99,6 @@
             id="org.eclipse.debug.ui.ConsolePreferencePage">
       </page>
       <page
-            name="%VariableViewsPreferencePage.name"
-            category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.debug.internal.ui.preferences.VariableViewsPreferencePage"
-            id="org.eclipse.debug.ui.VariableViewsPreferencePage">
-      </page>
-      <page
             name="%LaunchHistoryPreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.LaunchHistoryPreferencePage"
