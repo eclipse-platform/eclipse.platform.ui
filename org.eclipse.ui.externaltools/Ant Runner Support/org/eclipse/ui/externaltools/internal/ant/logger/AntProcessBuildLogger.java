@@ -65,30 +65,41 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		
 		AntStreamMonitor monitor = getMonitor(priority);
 		
+		if (event.getTarget() == null && event.getTarget() == null) {
+			// look for "Buildfile:" message
+			if (message.startsWith("Buildfile:")) {
+				String fileName = message.substring(10).trim();
+				IFile file = getFileForLocation(fileName);
+				if (file != null) {
+					FileLink link = new FileLink(fLength + 11 + StringUtils.LINE_SEP.length(), fileName.length(), file, null,  -1, -1, -1);
+					addLink(link);
+				}
+			}
+		}
+		
 		StringBuffer fullMessage= new StringBuffer();
 		fullMessage.append(StringUtils.LINE_SEP);
 		
-		int linkAdjustment= 0;
 		if (event.getTask() != null && !fEmacsMode) {
-			linkAdjustment= getAdornedMessage(event, fullMessage);
-			if (linkAdjustment < 0) {
-				linkAdjustment= 0;
-			}
+			getAdornedMessage(event, fullMessage);
 		}
 		fullMessage.append(message);
 		message= fullMessage.toString();
 		
-		IConsoleHyperlink link = getHyperLink(message, event, linkAdjustment);
-		if (link != null) {
-			fProcess.getConsole().addLink(link);
-		}
 		monitor.append(message);
 		logMessageToLogFile(message, priority);
 		
 		fLength += message.length();	
 	}
 
-	private int getAdornedMessage(BuildEvent event, StringBuffer fullMessage) {
+	/**
+	 * Builds a right justified task prefix for the given build event, placing it
+	 * in the given string buffer. Creates a hyperlink for the task prefix. 
+	 *  
+	 * @param event build event
+	 * @param fullMessage buffer to place task prefix in
+	 */
+	private void getAdornedMessage(BuildEvent event, StringBuffer fullMessage) {
 		String name = event.getTask().getTaskName();
 		int size = LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
@@ -97,7 +108,21 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fullMessage.append('[');
 		fullMessage.append(name);
 		fullMessage.append("] ");
-		return size;
+		int offset = fLength + size + StringUtils.LINE_SEP.length();
+		int length = LEFT_COLUMN_SIZE - size - 1;
+		IConsoleHyperlink taskLink = getTaskLink(offset, length, event);
+		if (taskLink != null) {
+			addLink(taskLink);
+		}
+	}
+	
+	/**
+	 * Adds the given link to the console
+	 *  
+	 * @param link
+	 */
+	protected void addLink(IConsoleHyperlink link) {
+		fProcess.getConsole().addLink(link);
 	}
 
 	private AntStreamMonitor getMonitor(int priority) {
@@ -138,10 +163,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	}
 	
 	/**
-	 * Returns a hyperlink for the given build event, or <code>null</code> if
-	 * none.
-	 * 	 * @return hyper link, or <code>null</code>	 */
-	private IConsoleHyperlink getHyperLink(String message, BuildEvent event, int linkAdjustment) {
+	 * Returns a hyperlink for the given task, or <code>null</code> if unable to
+	 * parse a valid location for the task. The link is set to exist at the specified
+	 * offset and length.
+	 * 
+	 * @return hyper link, or <code>null</code>
+	 */
+	private IConsoleHyperlink getTaskLink(int offset, int length, BuildEvent event) {
 		Task task = event.getTask();
 		if (task != null) {
 			Location location = task.getLocation();
@@ -161,11 +189,11 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 					// split file and line number
 					String fileName = path.substring(0, index);
 					String lineNumber = path.substring(index + 1);
-					IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(fileName));
-					if (file != null && file.exists()) {
+					IFile file = getFileForLocation(fileName);
+					if (file != null) {
 						try {
-							int line = Integer.valueOf(lineNumber).intValue();
-							return new FileLink(fLength + linkAdjustment + StringUtils.LINE_SEP.length(), message.length() - linkAdjustment, file, null, -1, -1, line);
+							int line = Integer.parseInt(lineNumber);
+							return new FileLink(offset, length, file, null, -1, -1, line);
 						} catch (NumberFormatException e) {
 						}
 					}
@@ -173,7 +201,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			}
 		}
 		return null;
-	}
+	}	
 	
 	/**
 	 * Looks for associated ant process, if not already found.
@@ -237,5 +265,20 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		msg.append(event.getTarget().getName());
 		msg.append(':');
 		logMessage(msg.toString(), event, Project.MSG_INFO);
+	}
+	
+	/**
+	 * Returns the workspace file associated with the given abosolute path in the local file system,
+	 * or <code>null</code> if none.
+	 *   
+	 * @param absolutePath
+	 * @return file or <code>null</code>
+	 */
+	protected IFile getFileForLocation(String absolutePath) {
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(absolutePath));
+		if (file != null && file.exists()) {
+			return file;
+		}
+		return null;
 	}
 }
