@@ -221,7 +221,7 @@ public String getCharset(boolean checkImplicit) throws CoreException {
 	InputStream contents = new BufferedInputStream(getContents());
 	boolean failed = false;
 	try {
-		IContentDescription description = contentTypeManager.getDescriptionFor(contents, contentTypeManager.findContentTypesForFileName(getName()), IContentDescription.CHARSET);
+		IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), IContentDescription.CHARSET);
 		return (description == null || description.getCharset() == null) ? getParent().getDefaultCharset() : description.getCharset();
 	} catch (IOException e) {
 		failed = true;		
