@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -24,8 +23,17 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.ole.win32.OLE;
@@ -38,14 +46,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -58,7 +58,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -83,18 +83,13 @@ public class OleEditor extends EditorPart {
 			IResourceDelta affectedElement =
 				mainDelta.findMember(resource.getFullPath());
 			if (affectedElement != null)
-				try {
-					processDelta(affectedElement);
-				} catch (CoreException exception) {
-					//Failed so close the receiver
-					getSite().getPage().closeEditor(OleEditor.this, true);
-				}
+				processDelta(affectedElement);
 		}
 
 		/*
 		 * Process the delta for the receiver
 		 */
-		private boolean processDelta(final IResourceDelta delta) throws CoreException {
+		private boolean processDelta(final IResourceDelta delta) {
 
 			Runnable changeRunnable = null;
 
@@ -171,20 +166,23 @@ public class OleEditor extends EditorPart {
 	};
 
 	private static final String RENAME_ERROR_TITLE =
-		WorkbenchMessages.getString("OleEditor.errorSaving"); //$NON-NLS-1$
+		OleMessages.getString("OleEditor.errorSaving"); //$NON-NLS-1$
 	private static final String OLE_EXCEPTION_TITLE =
-		WorkbenchMessages.getString("OleEditor.oleExceptionTitle"); //$NON-NLS-1$
+		OleMessages.getString("OleEditor.oleExceptionTitle"); //$NON-NLS-1$
 	private static final String OLE_EXCEPTION_MESSAGE =
-		WorkbenchMessages.getString("OleEditor.oleExceptionMessage"); //$NON-NLS-1$
+		OleMessages.getString("OleEditor.oleExceptionMessage"); //$NON-NLS-1$
+	private static final String OLE_CREATE_EXCEPTION_MESSAGE =
+		OleMessages.getString("OleEditor.oleCreationExceptionMessage"); //$NON-NLS-1$
 	private static final String SAVE_ERROR_TITLE =
-		WorkbenchMessages.getString("OleEditor.savingTitle"); //$NON-NLS-1$
+		OleMessages.getString("OleEditor.savingTitle"); //$NON-NLS-1$
 	private static final String SAVE_ERROR_MESSAGE =
-		WorkbenchMessages.getString("OleEditor.savingMessage"); //$NON-NLS-1$
+		OleMessages.getString("OleEditor.savingMessage"); //$NON-NLS-1$
 
 	/**
 	 * Return a new ole editor.
 	 */
 	public OleEditor() {
+		//Do nothing
 	}
 
 	private void activateClient(IWorkbenchPart part) {
@@ -224,7 +222,21 @@ public class OleEditor extends EditorPart {
 		if (clientFrame == null || clientFrame.isDisposed())
 			return;
 		// Create a OLE client site.
-		clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
+		try{
+			clientSite = new OleClientSite(clientFrame, SWT.NONE, source);
+		}
+		catch (SWTException exception){		
+			
+			IStatus errorStatus = 
+				new Status(
+						IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH,
+						IStatus.ERROR,
+						OLE_CREATE_EXCEPTION_MESSAGE,
+						exception);
+			ErrorDialog.openError(null,OLE_EXCEPTION_TITLE,errorStatus.getMessage(),errorStatus);
+			return;
+		}
 		clientSite.setBackground(
 			JFaceColors.getBannerBackground(clientFrame.getDisplay()));
 
@@ -242,6 +254,8 @@ public class OleEditor extends EditorPart {
 	}
 	/**
 	 * Display an error dialog with the supplied title and message.
+	 * @param title
+	 * @param message
 	 */
 	private void displayErrorDialog(String title, String message) {
 		Shell parent = null;
@@ -286,6 +300,11 @@ public class OleEditor extends EditorPart {
 		if(clientSite == null)
 			return;
 		BusyIndicator.showWhile(clientSite.getDisplay(), new Runnable() {
+			
+			/*
+			 *  (non-Javadoc)
+			 * @see java.lang.Runnable#run()
+			 */
 			public void run() {
 
 				//Do not try and use the component provided save if the source has
@@ -299,20 +318,20 @@ public class OleEditor extends EditorPart {
 							try {
 								resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
 							} catch (CoreException ex) {
+								//Do nothing on a failed refresh
 							}
 							return;
-						} else {
-							displayErrorDialog(
-								OLE_EXCEPTION_TITLE,
-								OLE_EXCEPTION_MESSAGE + String.valueOf(result));
-							return;
-						}
+						}displayErrorDialog(
+							OLE_EXCEPTION_TITLE,
+							OLE_EXCEPTION_MESSAGE + String.valueOf(result));
+						return;
 					}
 				}
 				if (saveFile(source)) {
 					try {
 						resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
 					} catch (CoreException ex) {
+						//Do nothing on a failed refresh
 					}
 				} else
 					displayErrorDialog(SAVE_ERROR_TITLE, SAVE_ERROR_MESSAGE + source.getName());
@@ -355,14 +374,6 @@ public class OleEditor extends EditorPart {
 	public File getSourceFile() {
 		return source;
 	}
-	/* (non-Javadoc)
-	 * Sets the cursor and selection state for this editor to the passage defined
-	 * by the given marker.
-	 *
-	 * @see IEditorPart
-	 */
-	public void gotoMarker(IMarker marker) {
-	}
 
 	private void handleWord() {
 		OleAutomation dispInterface = new OleAutomation(clientSite);
@@ -401,15 +412,14 @@ public class OleEditor extends EditorPart {
 		// Check input.
 		if (!(input instanceof IFileEditorInput))
 			throw new PartInitException(
-				WorkbenchMessages.format("OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
-		//$NON-NLS-1$
+				OleMessages.format("OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
 		
 		IFile file = (((IFileEditorInput) input).getFile());
 		
 		//Cannot create this with a file and no physical location
 		if(file.getLocation() == null || !(new File(file.getLocation().toOSString()).exists()))
 			throw new PartInitException(
-				WorkbenchMessages.format("OleEditor.noFileInput", new Object[] { file.getLocation() })); //$NON-NLS-1$
+				OleMessages.format("OleEditor.noFileInput", new Object[] { file.getLocation() })); //$NON-NLS-1$
 						
 		// Save input.
 		setSite(site);
@@ -472,37 +482,34 @@ public class OleEditor extends EditorPart {
 		clientFrame.setContainerMenus(containerMenu);
 		clientFrame.setWindowMenus(windowMenu);
 	}
-	/* (non-Javadoc)
-	 * Returns whether the contents of this editor have changed since the last save
-	 * operation. As this is an external editor and we have no way of knowing return true
-	 * if there is something to save to.
-	 *
-	 * @see IEditorPart
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
 	 */
 	public boolean isDirty() {
 		/*Return only if we have a clientSite which is dirty 
 		as this can be asked before anything is opened*/
 		return this.clientSite != null;
 	}
-	/* (non-Javadoc)
-	 * Returns whether the "save as" operation is supported by this editor. We assume we
-	 * can always save a file whether it will be via OLE or not.
-	 *
-	 * @see IEditorPart
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 	/**
-	 *	Since we don't know when a change has been made, always answer true
+	 *Since we don't know when a change has been made, always answer true
+	 * @return <code>false</code> if it was not opened and <code>true</code> 
+	 * only if it is dirty
 	 */
 	public boolean isSaveNeeded() {
-		//Answer false if it was not opened and true only if it is dirty
 		return getClientSite() != null && isDirty();
 	}
 	/**
 	 * Save the supplied file using the SWT API.
 	 * @param file java.io.File
+	 * @return <code>true</code> if the save was successful
 	 */
 	private boolean saveFile(File file) {
 
@@ -519,14 +526,14 @@ public class OleEditor extends EditorPart {
 			// save was successful so discard the backup
 			tempFile.delete();
 			return true;
-		} else {
-			// save failed so restore the backup
-			tempFile.renameTo(file);
-			return false;
-		}
+		} 
+		// save failed so restore the backup
+		tempFile.renameTo(file);
+		return false;
 	}
 	/**
 	 * Save the new File using the client site.
+	 * @return WorkspaceModifyOperation
 	 */
 	private WorkspaceModifyOperation saveNewFileOperation() {
 
@@ -542,7 +549,7 @@ public class OleEditor extends EditorPart {
 				if(newPath == null)
 					return;
 					
-				if (dialog.getReturnCode() == Dialog.OK) {
+				if (dialog.getReturnCode() == Window.OK) {
 					String projectName = newPath.segment(0);
 					newPath = newPath.removeFirstSegments(1);
 					IProject project = resource.getWorkspace().getRoot().getProject(projectName);
@@ -563,10 +570,13 @@ public class OleEditor extends EditorPart {
 		};
 
 	}
-	/**
-	 * Asks the part to take focus within the workbench.
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
-	public void setFocus() {}
+	public void setFocus() {
+		//Do not take focus
+	}
 	
 	/**
 	 * Make ole active so that the controls are rendered.
@@ -587,7 +597,8 @@ public class OleEditor extends EditorPart {
 	}
 	
 	/**
-	 *	Set the file resource that this object is displaying
+	 * Set the file resource that this object is displaying
+	 * @param file
 	 */
 	protected void setResource(IFile file) {
 		resource = file;
@@ -595,6 +606,8 @@ public class OleEditor extends EditorPart {
 	}
 	/**
 	 * See if it is one of the known types that use OLE Storage.
+	 * @param progID the type to test
+	 * @return <code>true</code> if it is one of the known types
 	 */
 	private static boolean usesStorageFiles(String progID) {
 		return (progID != null && (progID.startsWith("Word.", 0) //$NON-NLS-1$
@@ -606,6 +619,7 @@ public class OleEditor extends EditorPart {
 	/**
 	 * The source has changed to the newFile. Update
 	 * editors and set any required flags
+	 * @param newFile The file to get the new contents from.
 	 */
 	private void sourceChanged(IFile newFile) {
 
