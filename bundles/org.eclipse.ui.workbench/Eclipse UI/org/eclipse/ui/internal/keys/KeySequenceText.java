@@ -71,7 +71,7 @@ public final class KeySequenceText {
 		// Set up the text field.
 		text = new Text(composite, SWT.BORDER);
 
-		if ("carbon".equals(SWT.getPlatform())) {
+		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
 			// don't worry about this font name here, it is the official menu font and point size on the mac.
 			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
 		
@@ -209,6 +209,9 @@ public final class KeySequenceText {
 		if ((maximumStrokes > 0) || (maximumStrokes == INFINITE)) {
 			maxStrokes = maximumStrokes;
 		}
+		
+		// Make sure we are obeying the new limit.
+		setKeySequence(getKeySequence());
 	}
 
 	/**
