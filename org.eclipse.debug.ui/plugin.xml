@@ -138,12 +138,6 @@
             class="org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage"
             id="org.eclipse.debug.ui.StringVariablePreferencePage">
       </page>
-      <page
-            name="%MemoryViewName"
-            category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.debug.internal.ui.views.memory.MemoryViewPreferencePage"
-            id="org.eclipse.debug.ui.MemoryViewPreferencePage">
-      </page>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

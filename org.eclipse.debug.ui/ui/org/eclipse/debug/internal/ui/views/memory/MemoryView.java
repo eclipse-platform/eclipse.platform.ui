@@ -399,6 +399,9 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	private void contributeToActionBars() {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalToolBar(bars.getToolBarManager());
+		
+		bars.getMenuManager().add(new SetDefaultColumnSizePrefAction());
+		bars.updateActionBars();
 	}
 
 
