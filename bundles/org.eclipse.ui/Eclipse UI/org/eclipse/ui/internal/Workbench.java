@@ -575,7 +575,7 @@ public IWorkbenchPage openPage(final IAdaptable input)
 public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
 {
-	// If "reuse" and a window already exists for the input reuse it.
+	// If "reuse" and a page already exists for the input, reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
 	if (version2 && (input != null)) {
@@ -593,24 +593,27 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 		}
 	}
 
-	// If version 2 demo, ignore "Open Perspective" preference.
-	if (version2) {
-		IWorkbenchWindow window = openWorkbenchWindow(perspID, input);
-		return window.getActivePage();
+	// If the active window is empty, open a page in it.
+	IWorkbenchWindow window = getActiveWorkbenchWindow();
+	if (window != null) {
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return window.openPage(perspID,input);
+		}
 	}
 	
-	// The page is non-existent.  Open it.	
+	// Open a new page in the preferred mode.
 	String setting = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 	if (setting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
-		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		return window.openPage(perspID,input);
 	} else {
-		IWorkbenchWindow window = openWorkbenchWindow(perspID, input);
-		return window.getActivePage();
+		IWorkbenchWindow win2 = openWorkbenchWindow(perspID, input);
+		return win2.getActivePage();
 	}
 }
 /**
  * Opens a new window and page with the default perspective.
+ * @deprecated
  */
 public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) 
 	throws WorkbenchException 
@@ -620,6 +623,7 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 }
 /**
  * Opens a new workbench window and page with a specific perspective.
+ * @deprecated
  */
 public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 

@@ -611,7 +611,8 @@ public boolean okToClose() {
 	return true;
 }
 /**
- * Opens a new page. 
+ * Opens a new page.
+ * @deprecated 
  */
 public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
@@ -654,6 +655,7 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 }
 /**
  * Opens a new page. 
+ * @deprecated 
  */
 public IWorkbenchPage openPage(IAdaptable input)
 	throws WorkbenchException 

@@ -95,7 +95,7 @@ public IWorkbenchWindow [] getWorkbenchWindows();
  * "Open Perspective" is "in current window", the page will be created in
  * the current window.  Otherwise, it will be created in a new window.
  * The perspective of the new page is the default perspective.
- * On return, the new window and new page be active.
+ * On return, the new window and new page will be active.
  *
  * @param input the page input, or <code>null</code> if there is no current input.
  *		This is used to seed the input for the new page's views.
@@ -109,16 +109,15 @@ public IWorkbenchPage openPage(final IAdaptable input)
  * "Open Perspective" is "in current window", the page will be created in
  * the current window.  Otherwise, it will be created in a new window.
  * The perspective of the new page is defined by the specified perspective ID.  
- * On return, the new window and new page be active.
+ * On return, the new window and new page will be active.
  * <p>
- * In most cases where this method is used the caller is tightly coupled to
- * a particular perspective.  They define it in the registry and contribute some
- * user interface action to open or activate it.  In situations like this a
- * static variable is often used to identify the perspective Id.
+ * In most cases where this method is used, the caller is tightly coupled to
+ * a particular perspective, and may even define it in the registry.
+ * A static variable is often used to identify the perspective Id in 
+ * java code.
  * </p><p>
- * The workbench also defines a number of menu items to activate or open each
- * registered perspective. A complete list of these perspectives is available 
- * from the perspective registry found on IWorkbenchPlugin.
+ * A complete list of the perspectives is the workbench can be retrieved 
+ * from the perspective registry, found on IWorkbenchPlugin.
  * </p>
  * @param perspectiveId the perspective id for the window's initial page
  * @param input the page input, or <code>null</code> if there is no current input.
@@ -129,36 +128,18 @@ public IWorkbenchPage openPage(final IAdaptable input)
 public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
 	throws WorkbenchException;
 /**
- * Creates and opens a new workbench window with one page.  The perspective of
- * the new page is defined by the specified perspective ID.  The new window and new 
- * page become active.
- * <p>
- * In most cases where this method is used the caller is tightly coupled to
- * a particular perspective.  They define it in the registry and contribute some
- * user interface action to open or activate it.  In situations like this a
- * static variable is often used to identify the perspective Id.
- * </p><p>
- * The workbench also defines a number of menu items to activate or open each
- * registered perspective. A complete list of these perspectives is available 
- * from the perspective registry found on IWorkbenchPlugin.
- * </p>
- * @param perspectiveId the perspective id for the window's initial page
- * @param input the page input, or <code>null</code> if there is no current input.
- *		This is used to seed the input for the new page's views.
- * @return the new workbench window
- * @exception WorkbenchException if a new window and page could not be opened
+ * Creates and opens a new workbench window.  
+ * 
+ * @deprecated As of 2.0, the explicit creation of workbench windows is discouraged
+ * @see IWorkbench#openPage(String, IAdaptable)
  */
 public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
 	throws WorkbenchException;
 /**
- * Creates and opens a new workbench window. The default perspective is used
- * as a template for creating the new window's first page. The new window and new 
- * page become active.
- *
- * @param input the page input, or <code>null</code> if there is no current input.
- *		This is used to seed the input for the new page's views.
- * @return the new workbench window
- * @exception WorkbenchException if a new window and page could not be opened
+ * Creates and opens a new workbench window.  
+ * 
+ * @deprecated As of 2.0, the explicit creation of workbench windows is discouraged
+ * @see IWorkbench#openPage(IAdaptable)
  */
 public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	throws WorkbenchException;
