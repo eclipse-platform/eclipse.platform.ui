@@ -3,102 +3,124 @@
 
 <!-- F1 on F1 -->
    <context  id="f1Shell" >
-      <description>%f1Shell</description>
+      <description>Context-sensitive &quot;infopop&quot; help is provided for many interfaces, including views, wizards, fields, checkboxes, buttons, and menu items. To access this help, bring focus to the item by clicking it or using the tab key, and then press F1.
+
+Some infopops include links to topics within the online help where you can find more information about the item.
+
+This infopop opened because you pressed F1 while an infopop was already open.</description>
    </context>
 
 <!-- not used, but picked up by most contexts -->
    <context  id="embeddedHelpView" >
-      <description>%embeddedHelpView</description>
+      <description>Navigate to the desired topic in the left-hand frame. Topics will be displayed in the right-hand frame. To search, click the &lt;b&gt;Search&lt;/b&gt; tab at the bottom of the navigation frame.</description>
    </context>
 
 <!-- Used on Linux only -->
    <context  id="browser" >
-      <description>%browser</description>
+      <description>Displays the content of the topic selected in the navigation frame, or linked from other topics.
+
+Click the &lt;b&gt;Show/Hide navigation&lt;/b&gt; button above to show or hide the navigation frame.</description>
    </context>
 
 <!-- Information Set drop-down menu; inherited by things on the left-hand side  -->
    <context  id="navigationViewer" >
-      <description>%navigationViewer</description>
+      <description>Select an information set from the drop down list, and choose the navigation View you prefer from the tabs at the bottom.
+
+All navigation views contain links to the same information set, but they are organized in different ways to help you find the right information. The search engine searches only the current information set.</description>
    </context>
 
 <!-- Navigation trees -->
    <context  id="topicsViewer" >
-      <description>%topicsViewer</description>
+      <description>Expand the topic tree to the desired topic and click on the topic to select it. To print a topic and all its child topics, right-click the topic and select &lt;b&gt;Print topics tree&lt;/b&gt;.
+
+To select another navigation view, click a tab at the bottom of the navigation frame. All navigation views contain links to the same information set, but they are organized in different ways to help you find the right information.</description>
    </context>
 
 <!-- All Advanced Search window options -->
    <context  id="advancedSearch" >
-      <description>%advancedSearch</description>
+      <description>Enable &lt;b&gt;Search headings only&lt;/b&gt; to return topics that contain the search terms in their headings.
+
+Enable &lt;b&gt;Search within results&lt;/b&gt; to refine your last search by searching only within the current result set. Remember to clear this option after you complete the search, or else future searches will continue to refine the current search.
+
+Enable topic groups under &lt;b&gt;Enable filtering by&lt;/b&gt; to limit the search to only those topic groups.</description>
    </context>
 
 <!-- Search field, Go button, Advanced button -->
    <context  id="searchPage" >
-      <description>%searchPage</description>
+      <description>Type a search term or terms in the field, and then click &lt;b&gt;Go&lt;/b&gt;. This will return all topics that contain all the search terms, in a ranked, expandable and collapsible list.
+
+You can use OR and NOT qualifiers between terms. Also, if you put double-quotation marks around a phrase, search will return only results that contain the exact phrase.
+
+Click &lt;b&gt;Advanced&lt;/b&gt; to see the advanced search settings, including searching headings only, refining the current search, and additional filtering.</description>
    </context>
 
 <!-- Search results tree; inherits searchPage, topicsViewer, embeddedHelpView -->
    <context  id="resultsViewer" >
-      <description>%resultsViewer</description>
+      <description>Shows the results of the last-run search. If there are more than fifteen topics, they are grouped in expandable and collapsible folders. Select a topic to see its content in the right-hand frame. Click &lt;b&gt;Advanced&lt;/b&gt; to search only within headings, narrow the most recent search by searching again within the current result set, or filter out certain groups of information.</description>
    </context>
 
 <!-- Help page in preferences dialog, Default and Apply buttons -->
    <context  id="prefPage" >
-      <description>%prefPage</description>
+      <description>This page sets advanced help configuration options, including installing documentation on a server, logging errors for trouble shooting, and configuring the internal help server. Select one of the options and press F1 for more information.
+
+Click &lt;b&gt;Default&lt;/b&gt; to load the default product settings. Click &lt;b&gt;Apply&lt;/b&gt; to apply changes you have made without closing the dialog box.</description>
    </context>
 
 <!-- Doc location group, including browser path -->
    <context  id="installOptions" >
-      <description>%installOptions</description>
+      <description>Lets you specify whether the documentation is installed locally or remotely. If you select &lt;b&gt;Remotely on a server&lt;/b&gt;, provide a URL for the server (for example, http://docserver.company.com/). Talk to your system administrator to ensure the server is configured correctly and the documentation is installed on it.</description>
    </context>
 
 <!-- Used on Linux only -->
    <context  id="browserPath" >
-      <description>%browserPath</description>
+      <description>Specify the path to the browser that you want to use for displaying the online documentation (for example, /usr/bin/netscape).</description>
    </context>
 
 <!-- Logging options group -->
    <context  id="loggingOptions" >
-      <description>%loggingOptions</description>
+      <description>Specify the level of information reported in the help log file. The errors, warnings, and other information (depending on the level you select) are logged in the file .metadata\.plugins\org.eclipse.help.ui\.log, where .metadata is the product&apos;s working directory. If the documentation is installed remotely, there will be a log file on the server as well.</description>
    </context>
 
 <!-- Help server config group -->
    <context  id="localServerConfig" >
-      <description>%localServerConfig</description>
+      <description>Allows you to override the network address that the help system will use internally. Use the &lt;b&gt;Manual&lt;/b&gt; option only when the help system is not working because the port it is trying to use is taken, or because your IP address has changed.
+
+Under normal circumstances, use the &lt;b&gt;Automatic&lt;/b&gt; setting.</description>
    </context>
 
 <!-- not used -->
    <context  id="synchronizeAction" >
-      <description>%synchronizeAction</description>
+      <description>Synchronizes the navigation with the current topic in the content frame.</description>
    </context>
 
 <!-- not used -->
    <context  id="copyAction" >
-      <description>%copyAction</description>
+      <description>Copies the selected text into the clipboard.</description>
    </context>
 
 <!-- not used -->
    <context  id="printAction" >
-      <description>%printAction</description>
+      <description>Displays a print dialog box, which lets you print the current topic.</description>
    </context>
 
 <!-- not used -->
    <context  id="backAction" >
-      <description>%backAction</description>
+      <description>Navigates to the last-viewed topic.</description>
    </context>
 
 <!-- not used -->
    <context  id="forwardAction" >
-      <description>%forwardAction</description>
+      <description>Navigates to the topic that you were viewing before you clicked the &lt;b&gt;Back&lt;/b&gt; button.</description>
    </context>
 
 <!-- not used -->
    <context  id="homeAction" >
-      <description>%homeAction</description>
+      <description>Opens the home page for the information set.</description>
    </context>
 
 <!-- not used -->
    <context  id="showHideAction" >
-      <description>%showHideAction</description>
+      <description>Hides or shows navigation frame on the left-hand side of the help view.</description>
    </context>
 
 </contexts>
