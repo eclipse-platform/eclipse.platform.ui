@@ -91,6 +91,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	Label pathLabel = new Label(basicInfoComposite, SWT.NONE);
 	pathLabel.setText(PATH_TITLE);
 	GridData gd = new GridData();
+	gd.verticalAlignment = SWT.TOP;
 	pathLabel.setLayoutData(gd);
 	pathLabel.setFont(font);
 	
@@ -117,6 +118,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
 	locationTitle.setText(LOCATION_TITLE);
 	gd = new GridData();
+	gd.verticalAlignment = SWT.TOP;
 	locationTitle.setLayoutData(gd);
 	locationTitle.setFont(font);
 	
@@ -134,6 +136,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 		Label resolvedLocationTitle = new Label(basicInfoComposite, SWT.LEFT);
 		resolvedLocationTitle.setText(RESOLVED_LOCATION_TITLE);
 		gd = new GridData();
+		gd.verticalAlignment = SWT.TOP;
 		resolvedLocationTitle.setLayoutData(gd);
 		resolvedLocationTitle.setFont(font);
 		
@@ -264,8 +267,8 @@ private void createStateGroup(Composite parent, IResource resource) {
 	timeStampLabel.setText(TIMESTAMP_TITLE);
 	timeStampLabel.setFont(font);
 
-	// path value label
-	Text timeStampValue = new Text(composite, SWT.WRAP | SWT.READ_ONLY);
+	// timeStamp value label
+	Text timeStampValue = new Text(composite, SWT.READ_ONLY);
 	timeStampValue.setText(getDateStringValue(resource));
 	timeStampValue.setFont(font);
 	timeStampValue.setLayoutData(
