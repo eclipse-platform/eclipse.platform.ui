@@ -46,11 +46,15 @@ public interface ISizeProvider {
      * 	   flag is not specified, then the third argument to computePreferredSize will always be set to
      *     INFINITE. The perpendicular size is expensive to compute, and it is usually only used 
      *     for wrapping parts.
-     * <li>SWT.FILL: The part may want to use a set of predetermined sizes instead of using
-     *     the workbench-provided size. In this case computePreferredSize(horizontal, availableSpace, someWidth,
-     *     preferredSize) will be expected to return the nearest predetermined size. Note that this flag should
-     *     be used sparingly. It can prevent layout caching and may cause the workbench layout algorithm
-     *     to degrade to exponential worst-case runtime.</li>
+     * <li>SWT.FILL: The part may not return the preferred size verbatim when computePreferredSize is
+     *     is given a value between the minimum and maximum sizes. This is commonly used if the part
+     *     wants to use a set of predetermined sizes instead of using the workbench-provided size. 
+     *     For example, computePreferredSize(horizontal, availableSpace, someWidth,
+     *     preferredSize) may return the nearest predetermined size. Note that this flag should
+     *     be used sparingly. It can prevent layout caching and cause the workbench layout algorithm
+     *     to degrade to exponential worst-case runtime. If this flag is omitted, then
+     *     computePreferredSize may be used to compute the minimum and maximum sizes, but not for
+     *     anything in between.</li>
      * </ul>
      * 
      * @param width a value of true or false determines whether the return value applies when computing
@@ -94,19 +98,19 @@ public interface ISizeProvider {
      * <li>To maintain a constant size of 100x300 pixels: {return width ? 100 : 300}, getSizeFlags(boolean) must 
      *     return SWT.MIN | SWT.MAX</li>
      * <li>To grow without constraints: {return preferredResult;}, getSizeFlags(boolean) must return 0.</li>
-     * <li>To enforce a width that is always a multiple of 100 pixels:
+     * <li>To enforce a width that is always a multiple of 100 pixels, to a minimum of 100 pixels:
      * 		<code>
-     *      { 
-     * 		if (width && preferredResult != INFINITE) {
-     * 			int result = preferredResult - (preferredResult + 50) % 100;
-     *          result = Math.min(result, availableParallel - (availableParallel % 100);
-     * 
-     * 			return result; 
-     * 		}
-     * 	    return preferredResult;
-     *      }
+     *        {
+     *              if (width && preferredResult != INFINITE) {                       
+     *                  int result = preferredResult - ((preferredResult + 50) % 100) + 50;
+     *                  result = Math.max(100, Math.min(result, availableParallel - (availableParallel % 100)));
+     *        
+     *                  return result; 
+     *              }
+     *              return preferredResult;
+     *         }
      * 		</code>
-     * 	   In this case, getSizeFlags(boolean width) must return (width ? SWT.FILL : 0)
+     * 	   In this case, getSizeFlags(boolean width) must return (width ? SWT.FILL | SWT.MIN: 0)
      * </ul>
      * <li>To maintain a minimum area of 100000 pixels:
      * 	   <code>
