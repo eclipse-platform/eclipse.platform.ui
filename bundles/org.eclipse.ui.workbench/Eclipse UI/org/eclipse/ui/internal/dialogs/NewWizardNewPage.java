@@ -256,6 +256,22 @@ class NewWizardNewPage
 		}
 
 		tree.setLayoutData(data);
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+		    /*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+			 */
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection s = (IStructuredSelection) event.getSelection();
+				Object element = s.getFirstElement();
+				if (viewer.isExpandable(element)) {
+					viewer.setExpandedState(element, !viewer.getExpandedState(element));
+				} else if (element instanceof WorkbenchWizardElement) {
+				    page.advanceToNextPage();
+				}
+			}
+		});
 	}
 	
 	/**
