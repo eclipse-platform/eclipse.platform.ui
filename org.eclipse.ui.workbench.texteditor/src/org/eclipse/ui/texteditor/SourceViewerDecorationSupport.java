@@ -292,6 +292,11 @@ public class SourceViewerDecorationSupport {
 			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
 		}
 		
+		if (fMarginPainter != null) {
+			fFontPropertyChangeListener= new FontPropertyChangeListener();
+			JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
+		}
+		
 		updateTextDecorations();
 		updateOverviewDecorations();
 	}
