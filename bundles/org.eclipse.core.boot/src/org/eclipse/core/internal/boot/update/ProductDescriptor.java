@@ -22,7 +22,7 @@ public ProductDescriptor() {
 	
 }
  public Object clone() throws CloneNotSupportedException {
-	ComponentDescriptor clone = (ComponentDescriptor)super.clone();
+	ProductDescriptor clone = (ProductDescriptor)super.clone();
 
 	return clone;
 
@@ -210,7 +210,7 @@ public  URL getInstallURL() {
  * Returns the empty string if no label for this Product
  * is specified in its jar manifest file.
  * <p> Note that any translation specified in the jar manifest
- * file is automatically applied.  LINDA
+ * file is automatically applied.  
  * </p>
  *
  * @see #getResourceString 
@@ -255,7 +255,7 @@ public String getManifestVersion() {
  * Returns the empty string if no vendor name is specified in 
  * the manifest file.
  * <p> Note that any translation specified in the manifest
- * file is automatically applied. LINDA
+ * file is automatically applied. 
  * </p>
  *
  * @see #getResourceString 
@@ -360,7 +360,8 @@ public boolean isAllInstalled() {
  */
 public boolean isDominantApp() {
 	String app = LaunchInfo.getCurrent().getApplicationConfigurationIdentifier();
-	if (app.equals(getUniqueIdentifier()))
+	LaunchInfo.VersionedIdentifier vid = new LaunchInfo.VersionedIdentifier(app);
+	if (vid.getIdentifier().equals(getUniqueIdentifier()))
 		return true;
 	return false;
 }
@@ -398,6 +399,8 @@ public int isInstallable(IProductDescriptor prodInstalled) {
  *   <code>false</code> otherwise
  */
 public boolean isRemovable() {
+	if (isDominantApp())
+		return false;
 	Enumeration list = _getAllComponentEntries().elements();
 	IComponentDescriptor comp;
 	while(list.hasMoreElements()) {
