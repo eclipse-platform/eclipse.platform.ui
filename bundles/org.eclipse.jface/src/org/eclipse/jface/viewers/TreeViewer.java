@@ -111,11 +111,12 @@ protected void doUpdateItem(final Item item, Object element) {
 			item.setText(updateLabel.getText());
 		
 	} else {
-		ILabelProvider provider = (ILabelProvider)baseProvider;
-		item.setText(provider.getText(element));
-		Image image = provider.getImage(element);
-		if (item.getImage() != image) {
-			item.setImage(image);
+		if(baseProvider instanceof ILabelProvider){
+			ILabelProvider provider = (ILabelProvider)baseProvider;
+			item.setText(provider.getText(element));
+			Image image = provider.getImage(element);
+			if (item.getImage() != image) 
+				item.setImage(image);
 		}
 	}
 	if (baseProvider instanceof IColorProvider) {

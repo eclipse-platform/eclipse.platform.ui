@@ -1507,6 +1507,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 						mapElement(newElement, item);
 					} else {
 						disassociate(item);
+						//Clear the text and image to force a label update
+						item.setImage(null);
+						item.setText("");//$NON-NLS-1$
+						
 					}
 				}
 			}

@@ -270,8 +270,9 @@ public abstract class StructuredViewer extends ContentViewer
 	protected void disassociate(Item item) {
 		Object element = item.getData();
 		Assert.isNotNull(element);
-		item.setData(null);
+		//Clear the map before we clear the data
 		unmapElement(element, item);
+		item.setData(null);
 	}
 	/**
 	 * Returns the widget in this viewer's control which represents the given

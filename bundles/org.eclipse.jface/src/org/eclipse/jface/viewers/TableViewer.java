@@ -483,6 +483,8 @@ protected void internalRefresh(Object element, boolean updateLabels) {
 				// E.g. (a, b) -> (b, a) first replaces a->0 with b->0, then replaces b->1 with a->1, but this actually removes b->0.
 				// So, if the object associated with this item has changed,
 				// just disassociate it for now, and update it below.
+				items[i].setText("");
+				items[i].setImage(new Image[0]);
 				disassociate(items[i]);
 			}
 		}
