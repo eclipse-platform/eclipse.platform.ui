@@ -29,6 +29,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
+import org.osgi.framework.Bundle;
 
 /**
  * This project builder implementation will run an external tool or tools during the
@@ -65,7 +66,10 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {				
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {		
+		if (ExternalToolsPlugin.getDefault().getBundle().getState() != Bundle.ACTIVE) {
+			return null;
+		}
 		//need to build all external tools from one builder (see bug 39713)
 		//if not a full build
 		ICommand[] commands = getProject().getDescription().getBuildSpec();
