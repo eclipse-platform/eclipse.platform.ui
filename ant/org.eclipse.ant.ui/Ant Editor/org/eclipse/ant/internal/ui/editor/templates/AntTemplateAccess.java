@@ -11,8 +11,8 @@
 package org.eclipse.ant.internal.ui.editor.templates;
 
 import java.io.IOException;
+
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
@@ -77,13 +77,5 @@ public class AntTemplateAccess {
 			fRegistry.addContextType(TaskContextType.TASK_CONTEXT_TYPE);
 		}
 		return fRegistry;
-	}
-
-	public IPreferenceStore getPreferenceStore() {	    
-		return AntUIPlugin.getDefault().getPreferenceStore();
-	}
-
-	public void savePluginPreferences() {
-		AntUIPlugin.getDefault().savePluginPreferences();
 	}
 }
