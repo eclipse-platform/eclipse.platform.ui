@@ -39,6 +39,15 @@ public class IPerspectiveListenerTest extends AbstractTestCase implements IPersp
 		
 		assert( Tool.isActivated( fEvent ) );
 	}
+
+	public void testPerspectiveChanged()
+	{
+				fPageMask = fPage;
+		fPerMask = fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(EmptyPerspective.PERSP_ID );
+		fPage.setPerspective( fPerMask );
+		
+		assert( Tool.isActivated( fEvent ) );
+	}
 	
 	/**
 	 * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
@@ -54,5 +63,7 @@ public class IPerspectiveListenerTest extends AbstractTestCase implements IPersp
 	 */
 	public void perspectiveChanged( IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) 
 	{
+		if( page == fPageMask && perspective == fPerMask )
+			fEvent |= Tool.CHANGED;
 	}
 }

@@ -135,5 +135,9 @@ public class Tool {
 	{
 		return ( ( bits & ACTIVATED ) != 0 );		
 	}
-
+	
+	public static boolean isChanged( int bits )
+	{
+		return( ( bits & CLOSED ) != 0 );
+	}
 }
