@@ -37,12 +37,7 @@ public class JarVerificationDialog extends Dialog {
 		Shell shell,
 		IVerificationResult verificationResult) {
 		super(shell);
-		try {
-			_fileName =
-				verificationResult.getContentReference().asFile().getAbsolutePath();
-		} catch (IOException e) {
-			_fileName = verificationResult.getContentReference().getIdentifier();
-		}
+		_fileName = verificationResult.getContentReference().getIdentifier();
 		_VerificationResult = verificationResult;
 		_strId = verificationResult.getFeature().getVersionedIdentifier().toString();
 		_strFeatureName = verificationResult.getFeature().getLabel();
