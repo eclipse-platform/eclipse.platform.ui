@@ -359,7 +359,7 @@ public class WorkingSetManager {
 	/**
 	 * Saves the working sets in the persistence store
 	 */
-	public boolean saveState() {
+	public synchronized boolean saveState() {
 		Document doc = new DocumentImpl();
 		Element rootElement = doc.createElement("workingSets");
 		doc.appendChild(rootElement);
