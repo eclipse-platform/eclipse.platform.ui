@@ -19,7 +19,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
 
 public abstract class TargetProvider {
 	/**
@@ -136,8 +136,8 @@ public abstract class TargetProvider {
 	
 	/**
 	 * Answers true if the base identifier of the given resource is different to the
-	 * current released state of the resource. Also answer true if there was not 
-	 * previously a correspondance between the local and remote resource.
+	 * current released state of the resource. Answer false if there is no correspondence
+	 * between the local and remote resources (i.e. hasBase(resource) returns false).
 	 * 
 	 * @param resource the resource to test
 	 * @param monitor a progress monitor
@@ -155,6 +155,14 @@ public abstract class TargetProvider {
 	 * @param resource the resource to test
 	 */
 	public abstract boolean isDirty(IResource resource);
+	
+	/**
+	 * Answer true if the given resource at one time had a remote counterpart and still does
+	 * to the knowledge of the provider.
+	 * 
+	 * @param resource the resource to test
+	 */
+	public abstract boolean hasBase(IResource resource);
 
 	public abstract void deregister(IProject project);
 	
@@ -181,4 +189,10 @@ public abstract class TargetProvider {
 			throw new TeamException(e.getStatus());
 		}
 	}
+	
+	/**
+	 * Return an IRemoteSyncElement for the given resource. This element is used to
+	 * compare the state of the local and remote resources.
+	 */
+	public abstract IRemoteSyncElement getRemoteSyncElement(IResource resource);
 }

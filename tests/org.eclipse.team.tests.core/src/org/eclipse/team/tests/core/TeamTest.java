@@ -198,9 +198,9 @@ public class TeamTest extends EclipseWorkspaceTest {
 			// Ignore .project file
 			if (container2.getName().equals(".project"))
 				return;
-			assertTrue(compareContent(container1.getContents(null), ((IFile) container2).getContents()));
+			assertTrue(compareContent(container1.getContents(DEFAULT_MONITOR), ((IFile) container2).getContents()));
 		} else {
-			IRemoteResource[] remoteResources = container1.members(null);
+			IRemoteResource[] remoteResources = container1.members(DEFAULT_MONITOR);
 			IResource[] localResources = ((IFolder) container2).members();
 			for (int i = 0; i < localResources.length; i++) {
 				assertEquals(remoteResources[i], localResources[i]);
@@ -211,7 +211,7 @@ public class TeamTest extends EclipseWorkspaceTest {
 		IProject project = getUniqueTestProject(projectPrefix);
 		IResource[] resources = buildResources(project, resourceNames, false);
 		TargetProvider target = createProvider(project);
-		target.put(resources, null);
+		target.put(resources, DEFAULT_MONITOR);
 		return project;
 	}
 

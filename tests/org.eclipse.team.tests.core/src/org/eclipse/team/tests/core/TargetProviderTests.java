@@ -75,14 +75,14 @@ public class TargetProviderTests extends TeamTest {
 		IProject project = getUniqueTestProject("get");
 		IResource[] resources = buildResources(project, new String[] { "file1.txt", "folder1/", "folder1/b.txt" }, false);
 		TargetProvider target = createProvider(project);
-		target.put(resources, null);
+		target.put(resources, DEFAULT_MONITOR);
 		assertLocalEqualsRemote(project);
 		// test get on a new project
-		project.delete(true, true, null);
-		project.create(null);
-		project.open(null);
+		project.delete(true, true, DEFAULT_MONITOR);
+		project.create(DEFAULT_MONITOR);
+		project.open(DEFAULT_MONITOR);
 		target = createProvider(project);
-		target.get(new IResource[] { project }, null);
+		target.get(new IResource[] { project }, DEFAULT_MONITOR);
 		assertLocalEqualsRemote(project);
 	}
 	/**
@@ -97,10 +97,10 @@ public class TargetProviderTests extends TeamTest {
 		for (int i = 0; i < resources.length; i++) {
 			assertTrue(target.canPut(resources[i]));
 		}
-		target.put(resources, null);
-		project.delete(true, true, null);
-		project.create(null);
-		project.open(null);
+		target.put(resources, DEFAULT_MONITOR);
+		project.delete(true, true, DEFAULT_MONITOR);
+		project.create(DEFAULT_MONITOR);
+		project.open(DEFAULT_MONITOR);
 		target = createProvider(project);
 		for (int i = 0; i < resources.length; i++) {
 			assertTrue(target.canGet(resources[i]));

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.ITargetRunnable;
 import org.eclipse.team.core.target.Site;
@@ -208,4 +209,28 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 			TeamPlugin.log(e.getStatus());
 		}
 	}
+	
+	/**
+	 * @see TargetProvider#getRemoteSyncElement(IResource)
+	 */
+	public IRemoteSyncElement getRemoteSyncElement(IResource resource) {
+		return new RemoteTargetSyncElement(this, resource, getRemoteResourceFor(resource));
+	}
+
+
+	/**
+	 * @see TargetProvider#hasBase(IResource)
+	 */
+	public boolean hasBase(IResource resource) {
+		// the project always has a base
+		if (resource.getType() == IResource.PROJECT) return true;
+		try {
+			return getState(resource).hasPhantom();
+		} catch (TeamException e) {
+			TeamPlugin.log(e.getStatus());
+			return true;
+		}
+	}
+
+
 }

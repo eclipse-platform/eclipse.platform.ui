@@ -274,8 +274,8 @@ public abstract class ResourceState {
 	 * @see ITeamProvider#isDirty(IResource)
 	 */
 	public boolean isDirty() {
-		if (!hasLocal())
-			return hasPhantom();
+		if (!hasPhantom()) return false;
+		if (!hasLocal()) return true;
 		if (localBaseTimestamp == EMPTY_LOCALBASETS)
 			return localResource.getType() == IResource.FILE;
 		return localBaseTimestamp != localResource.getModificationStamp();
@@ -286,11 +286,9 @@ public abstract class ResourceState {
 	 * current released state of the resource.
 	 */
 	public boolean isOutOfDate(IProgressMonitor monitor) throws TeamException {
-		if (remoteBaseIdentifier.equals(EMPTY_REMOTEBASEID))
-			 return (localResource.getType() == IResource.FILE && hasRemote(monitor));
-
-		String releasedIdentifier = null;
-		releasedIdentifier = getReleasedIdentifier(monitor);
+		if (!hasPhantom()) return false;
+		if (remoteBaseIdentifier.equals(EMPTY_REMOTEBASEID)) return false;
+		String releasedIdentifier = getReleasedIdentifier(monitor);
 		return !remoteBaseIdentifier.equals(releasedIdentifier);
 	}
 

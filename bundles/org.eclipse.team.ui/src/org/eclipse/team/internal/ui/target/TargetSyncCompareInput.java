@@ -42,11 +42,11 @@ public class TargetSyncCompareInput extends SyncCompareInput {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(null, resources.length);
-			RemoteTargetSyncElement[] elements = new RemoteTargetSyncElement[resources.length];
+			IRemoteSyncElement[] elements = new IRemoteSyncElement[resources.length];
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				TargetProvider provider = TargetManager.getProvider(resource.getProject());
-				elements[i] = new RemoteTargetSyncElement(resources[i], provider.getRemoteResourceFor(resource));				
+				elements[i] = provider.getRemoteSyncElement(resource);				
 				monitor.worked(1);
 			}
 			return elements;

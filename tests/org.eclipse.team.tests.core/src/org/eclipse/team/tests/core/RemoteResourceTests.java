@@ -70,7 +70,7 @@ public class RemoteResourceTests extends TeamTest {
 		IProject project = createAndPut("getname", new String[] { "file1.txt", "folder1/", "folder1/b.txt" });
 		TargetProvider target = getProvider(project);
 		IRemoteResource remote = target.getRemoteResourceFor(project.getFile("file1.txt"));
-		InputStream jin = remote.getContents(null);
+		InputStream jin = remote.getContents(DEFAULT_MONITOR);
 		try {
 			while (jin.available() > 0) {
 				jin.read();
@@ -85,7 +85,7 @@ public class RemoteResourceTests extends TeamTest {
 		IProject project = createAndPut("getname", new String[] { "file1.txt", "folder1/", "folder1/b.txt" });
 		TargetProvider target = getProvider(project);
 		IRemoteResource remote = target.getRemoteResource();
-		IRemoteResource[] altResources = remote.members(null);
+		IRemoteResource[] altResources = remote.members(DEFAULT_MONITOR);
 		for (int i = 0; i < altResources.length; i++) {
 			assertEquals(altResources[i], project.findMember(altResources[i].getName()));
 		}

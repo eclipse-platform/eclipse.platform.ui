@@ -12,17 +12,27 @@ package org.eclipse.team.tests.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.Member;
 
-import junit.framework.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.*;
+import org.eclipse.team.core.sync.ILocalSyncElement;
+import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.target.UrlUtil;
-import org.eclipse.team.internal.ui.target.RemoteTargetSyncElement;
 
 public class SyncElementTest extends TeamTest {
 	/*
@@ -103,8 +113,7 @@ public class SyncElementTest extends TeamTest {
 	}
 
 	IRemoteSyncElement getRemoteSyncTree(IProject project, IProgressMonitor monitor) throws TeamException {
-		IRemoteSyncElement result = new RemoteTargetSyncElement(project,getProvider(project).getRemoteResource());
-		return result;
+		return getProvider(project).getRemoteSyncElement(project);
 	}
 	protected IProject checkoutCopy(IProject project, String postfix) throws CoreException,TeamException {
 		TargetProvider provider = getProvider(project);
