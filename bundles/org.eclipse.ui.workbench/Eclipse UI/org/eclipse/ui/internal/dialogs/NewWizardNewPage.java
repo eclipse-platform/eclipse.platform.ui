@@ -146,11 +146,15 @@ class NewWizardNewPage
 	public NewWizardNewPage(
 		NewWizardSelectionPage mainPage,
 		IWorkbench aWorkbench,
-		WizardCollectionElement wizardCategories, WorkbenchWizardElement[] primaryWizards) {
+		WizardCollectionElement wizardCategories,
+		WorkbenchWizardElement[] primaryWizards) {
 		this.page = mainPage;
 		this.wizardCategories = wizardCategories;
 		this.primaryWizards = primaryWizards;
-		needShowAll = primaryWizards.length > 0;
+		
+		trimPrimaryWizards();
+		
+		needShowAll = this.primaryWizards.length > 0;
 		if (needShowAll) {
 		    if (allPrimary(wizardCategories)) {
 		        this.wizardCategories = null; // dont bother considering the categories as all wizards are primary
@@ -160,6 +164,19 @@ class NewWizardNewPage
 	}
 
 	/**
+     * Remove all primary wizards that are not in the wizard collection
+     */
+    private void trimPrimaryWizards() {
+        ArrayList newPrimaryWizards = new ArrayList(primaryWizards.length);
+        for (int i = 0; i < primaryWizards.length; i++) {	
+            if (wizardCategories.findWizard(primaryWizards[i].getID(), true) != null)
+                newPrimaryWizards.add(primaryWizards[i]);
+        }
+        
+        primaryWizards = (WorkbenchWizardElement []) newPrimaryWizards.toArray(new WorkbenchWizardElement [newPrimaryWizards.size()]);        
+    }
+
+    /**
      * @return whether show all is needed.  Show all is needed if any of the 
      * wizards in the category or its children are NOT primary wizards.
      */
@@ -167,7 +184,7 @@ class NewWizardNewPage
         Object [] wizards = category.getWizards();
         for (int i = 0; i < wizards.length; i++) {
             WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
-            if (notPrimary(wizard))
+            if (!isPrimary(wizard))
                 return false;
         }
         
@@ -182,9 +199,9 @@ class NewWizardNewPage
 
     /**
      * @param wizard
-     * @return
+     * @return whether the given wizard is primary
      */
-    private boolean notPrimary(WorkbenchWizardElement wizard) {
+    private boolean isPrimary(WorkbenchWizardElement wizard) {
         for (int j = 0; j < primaryWizards.length; j++) {
             if (primaryWizards[j].equals(wizard))
                 return true;
