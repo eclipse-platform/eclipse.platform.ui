@@ -50,21 +50,24 @@ public void fill(Menu menu, int index) {
 	// Add one item for each window.
 	for (int i = 0; i < array.length; i++) {
 		final IWorkbenchWindow window = array[i];
-		String name = window.getShell().getText();
-		if (name != null) {
-			MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
-			++ index;
-			mi.setText(name);
-			mi.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					Shell windowShell = window.getShell();
-					if(windowShell.getMinimized())
-						windowShell.setMinimized(false);
-					windowShell.forceFocus();
-					windowShell.moveAbove(null);
-				}
-			});
-			mi.setSelection(window == fWindow);
+		// can encounter disposed shells if this update is in response to a shell closing
+		if (!window.getShell().isDisposed()) {
+			String name = window.getShell().getText();
+			if (name != null) {
+				MenuItem mi = new MenuItem(menu, SWT.RADIO, index);
+				++ index;
+				mi.setText(name);
+				mi.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						Shell windowShell = window.getShell();
+						if(windowShell.getMinimized())
+							windowShell.setMinimized(false);
+						windowShell.forceFocus();
+						windowShell.moveAbove(null);
+					}
+				});
+				mi.setSelection(window == fWindow);
+			}
 		}
 	}
 }
