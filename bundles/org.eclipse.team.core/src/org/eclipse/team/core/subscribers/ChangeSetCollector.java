@@ -78,11 +78,10 @@ public abstract class ChangeSetCollector {
     }
     
     /**
-     * Add the set to the list of active sets. This method
-     * can be made public by subclasses.
+     * Add the set to the list of active sets.
      * @param set the set to be added
      */
-    protected void add(final ChangeSet set) {
+    public void add(final ChangeSet set) {
         if (!contains(set)) {
             sets.add(set);
             set.getSyncInfoSet().addSyncSetChangedListener(getChangeSetChangeListener());

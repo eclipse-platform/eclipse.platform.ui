@@ -236,7 +236,8 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
      * Add the active change set to this collector.
      * @param set the active change set being added
      */
-    public void add(ActiveChangeSet set) {
+    public void add(ChangeSet set) {
+        Assert.isTrue(set instanceof ActiveChangeSet);
         if (!contains(set)) {
             super.add(set);
             handleAddedResources(set, set.getSyncInfoSet().getSyncInfos());

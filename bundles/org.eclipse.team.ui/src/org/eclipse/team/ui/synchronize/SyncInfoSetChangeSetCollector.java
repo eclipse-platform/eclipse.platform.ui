@@ -13,9 +13,11 @@ package org.eclipse.team.ui.synchronize;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.subscribers.ChangeSet;
+import org.eclipse.team.core.subscribers.ChangeSetCollector;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetModelProvider;
 
@@ -37,6 +39,9 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
     
     /*
      * Listener that will remove sets when they become empty.
+     * The sets in this collector are only modified from either the
+     * UI thread or the provider's event handler thread so updates
+     * done by this listener will update the view properly.
      */
     ISyncInfoSetChangeListener changeSetListener = new ISyncInfoSetChangeListener() {
         
@@ -85,13 +90,34 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
 
     /**
      * Add the given resource sync info nodes to the appropriate
-     * change sets, adding them inf necessary.
+     * change sets, adding them if necessary.
+     * This method is invoked by the <code>handleChanges</code> 
+     * and <code>reset</code> methods 
+     * when the model provider changes state. Updates done to the collector
+     * from within this thread will be thread-safe and update the view
+     * properly. Updates done from other threads should perform adds 
+     * within a runnable passed to the
+     * <code>performUpdate</code> method to ensure the view is
+     * updated properly.
+     * <p>
+     * Subclasses must override this method.
      * @param infos the sync infos to add
      */
     protected abstract void add(SyncInfo[] infos);
 
     /**
      * Remove the given resources from all sets of this collector.
+     * This method is invoked by the <code>handleChanges</code> method
+     * when the model provider changes state. It should not
+     * be invoked by other clients. The model provider
+     * will invoke this method from a particular thread (which may
+     * or may not be the UI thread). 
+     * Updates done from other threads should perform removes 
+     * within a runnable passed to the
+     * <code>performUpdate</code> method to ensure the view is
+     * updated properly.
+     * <p>
+     * Subclasses may override this method.
      * @param resources the resources to be removed
      */
     protected void remove(IResource[] resources) {
@@ -100,13 +126,6 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
             ChangeSet set = sets[i];
             set.remove(resources);
         }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.team.core.subscribers.ChangeSetCollector#add(org.eclipse.team.core.subscribers.ChangeSet)
-     */
-    public void add(ChangeSet set) {
-        super.add(set);
     }
 
     /* (non-Javadoc)
@@ -120,7 +139,18 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
      * Repopulate the change sets from the seed set.
      * If <code>null</code> is passed, clear any state
      * but do not repopulate.
-     *
+     * <p>
+     * This method is invoked by the model provider when the
+     * model provider changes state. It should not
+     * be invoked by other clients. The model provider
+     * will invoke this method from a particular thread (which may
+     * or may not be the UI thread). Updates done to the collector
+     * from within this thread will be thread-safe and update the view
+     * properly. Updates done from other threads should use the 
+     * <code>performUpdate</code> method to ensure the view is
+     * updated properly.
+     * <p>
+     * Subclasses may override this method.
      */
     public void reset(SyncInfoSet seedSet) {
         // First, remove all the sets
@@ -134,6 +164,20 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
         }
     }
 
+    /**
+     * This method is invoked by the model provider when the
+     * seed <code>SyncInfoSet</code> changes. It should not
+     * be invoked by other clients. The model provider
+     * will invoke this method from a particular thread (which may
+     * or may not be the UI thread). Updates done to the collector
+     * from within this thread will be thread-safe and update the view
+     * properly. Updates done from other threads should use the 
+     * <code>performUpdate</code> method to ensure the view is
+     * updated properly.
+     * <p>
+     * Subclasses may override this method.
+     * @param event the set change event.
+     */
     public void handleChange(ISyncInfoSetChangeEvent event) {
         List removals = new ArrayList();
         List additions = new ArrayList();
@@ -153,18 +197,41 @@ public abstract class SyncInfoSetChangeSetCollector extends ChangeSetCollector {
         }
     }
     
-    public ISynchronizePageConfiguration getConfiguration() {
+    /**
+     * Return the configuration for the page that is displaying the model created 
+     * using this collector.
+     * @return the configuration for the page that is displaying the model created 
+     * using this collector
+     */
+    public final ISynchronizePageConfiguration getConfiguration() {
         return configuration;
     }
     
-    protected void runViewUpdate(Runnable runnable, boolean preserveExpansion) {
-        provider.runViewUpdate(runnable, preserveExpansion);
+    /**
+     * Execute the given runnable which updates the sync sets contained
+     * in this collector. This method should be used by subclasses when they 
+     * are populating or modifying sets from another thread. In other words,
+     * if the sets of this collector are updated directly in the <code>add</code>
+     * method then this method is not required. However, if sets are created
+     * or modified by another thread, that thread must use this method to ensure 
+     * the updates occur in the proper thread in order to ensure thread safety.
+     * <p>
+     * The update may be run in a different thread then the caller.
+     * However, regardless of which thread the upate is run in, the view
+     * will be updated once the update is completed.
+     * @param runnable the workspace runnable that updates the sync sets.
+     * @param preserveExpansion whether the expansed items in the view should
+     * remain expanded after the update is performed.
+     * @param monitor a progress monitor
+     */
+    protected final void performUpdate(IWorkspaceRunnable runnable, boolean preserveExpansion, IProgressMonitor monitor) {
+        provider.performUpdate(runnable, preserveExpansion);
     }
     
     /* (non-javadoc)
      * Sets the provider for this collector. This method is for internal use only.
      */
-    public void setProvider(ChangeSetModelProvider provider) {
+    public final void setProvider(ChangeSetModelProvider provider) {
         this.provider = provider;
     }
 

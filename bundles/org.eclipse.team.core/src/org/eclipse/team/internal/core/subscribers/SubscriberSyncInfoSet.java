@@ -77,4 +77,13 @@ public class SubscriberSyncInfoSet extends SyncInfoTree {
 		}
 	}
 	
+	/**
+	 * Return the handler that is used to provide event serialization
+	 * and thread-safety the set population.
+	 * @return the handler that is used to provide event serialization
+	 * and thread-safety the set population
+	 */
+    public SubscriberEventHandler getHandler() {
+        return handler;
+    }
 }

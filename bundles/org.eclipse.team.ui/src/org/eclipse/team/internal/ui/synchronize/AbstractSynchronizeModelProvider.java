@@ -314,7 +314,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		if (viewer != null && !viewer.getControl().isDisposed()) {
 			try {
 				viewer.getControl().setRedraw(false);
-				if (isRootProvider()) {
+				if (isRootProvider() || getModelRoot().getParent() == null) {
 				    // Refresh the entire view
 				    viewer.refresh();
 				} else {
@@ -921,5 +921,16 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
             name2 = "/"; //$NON-NLS-1$
         }
         return name + ": " + name2; //$NON-NLS-1$
+    }
+    
+    /**
+     * Execute a runnable which performs an update of the model being displayed
+     * by this provider. The runnable should be executed in a thread-safe manner
+     * which esults in the view being updated.
+     * @param runnable the runnable which updates the model.
+     * @param preserveExpansion whether the expansion of the view should be preserver
+     */
+    public void performUpdate(IWorkspaceRunnable runnable, boolean preserveExpansion) {
+        updateHandler.performUpdate(runnable, preserveExpansion); 
     }
 }

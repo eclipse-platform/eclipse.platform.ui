@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -27,6 +28,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
+import org.eclipse.team.internal.core.subscribers.SubscriberEventHandler;
+import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoSet;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -536,5 +540,75 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 		ISynchronizeModelElement root = provider.getModelRoot();
 		if(root instanceof SynchronizeModelElement)
 			((SynchronizeModelElement)root).fireChanges();
+    }
+
+    /**
+     * Execute a runnable which performs an update of the model being displayed
+     * by the handler's provider. The runnable should be executed in a thread-safe manner
+     * which esults in the view being updated.
+     * @param runnable the runnable which updates the model.
+     * @param preserveExpansion whether the expansion of the view should be preserver
+     */
+    public void performUpdate(final IWorkspaceRunnable runnable, boolean preserveExpansion) {
+        SyncInfoSet set = provider.getSyncInfoSet();
+        if (set instanceof SubscriberSyncInfoSet) {
+            SubscriberSyncInfoSet subscriberSet = (SubscriberSyncInfoSet)set;
+            SubscriberEventHandler handler = subscriberSet.getHandler();
+            handler.run(getUpdateRunnable(runnable, preserveExpansion), true /* give this update priority */ );
+        } else {
+            runViewUpdate(new Runnable() {
+                public void run() {
+                    try {
+                        runnable.run(new NullProgressMonitor());
+                    } catch (CoreException e) {
+                        TeamUIPlugin.log(e);
+                    }
+                }
+            });
+        }
+        
+    }
+    
+    private SubscriberEventHandler getSubscriberHandler() {
+        SyncInfoSet set = provider.getSyncInfoSet();
+        if (set instanceof SubscriberSyncInfoSet) {
+            SubscriberSyncInfoSet subscriberSet = (SubscriberSyncInfoSet)set;
+            return subscriberSet.getHandler();
+        }
+        return null;
+    }
+
+    /*
+     * Wrap the runnable in an outer runnable that preserves expansion if requested
+     * and refreshes the view when the update is completed.
+     */
+    private IWorkspaceRunnable getUpdateRunnable(final IWorkspaceRunnable runnable, final boolean preserveExpansion) {
+        return new IWorkspaceRunnable() {
+            public void run(IProgressMonitor monitor) throws CoreException {
+                IResource[] resources = null;
+                if (preserveExpansion)
+                    resources = getExpandedResources();
+                runnable.run(monitor);
+                updateView(resources);
+            }
+            private IResource[] getExpandedResources() {
+                final IResource[][] resources = new IResource[1][0];
+                runViewUpdate(new Runnable() {
+                    public void run() {
+                        resources[0] = provider.getExpandedResources();
+                    }
+                });
+                return resources[0];
+            }
+            private void updateView(final IResource[] resources) {
+                runViewUpdate(new Runnable() {
+                    public void run() {
+                        provider.getViewer().refresh();
+                        if (resources != null)
+                            provider.expandResources(resources);
+                    }
+                });
+            }
+        };
     }
 }

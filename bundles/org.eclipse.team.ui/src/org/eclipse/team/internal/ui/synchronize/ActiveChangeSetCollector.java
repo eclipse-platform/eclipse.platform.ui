@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
@@ -52,31 +53,47 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
 
     private final ChangeSetModelProvider provider;
 
-    /**
+    /*
      * Listener registered with active change set manager
      */
     private IChangeSetChangeListener activeChangeSetListener = new IChangeSetChangeListener() {
 
         public void setAdded(final ChangeSet set) {
             // Remove any resources that are in the new set
-            remove(set.getResources());
-            createSyncInfoSet(set);
+            provider.runViewUpdate(new Runnable() {
+                public void run() {
+		            remove(set.getResources());
+		            createSyncInfoSet(set);
+                }
+            });
         }
         
         public void defaultSetChanged(final ChangeSet previousDefault, final ChangeSet set) {
-            listener.defaultSetChanged(previousDefault, set);
+            provider.runViewUpdate(new Runnable() {
+                public void run() {
+                    listener.defaultSetChanged(previousDefault, set);
+                }
+            });
         }
         
         public void setRemoved(final ChangeSet set) {
-            remove(set);
+            provider.runViewUpdate(new Runnable() {
+                public void run() {
+                    remove(set);
+                }
+            });
         }
 
         public void nameChanged(final ChangeSet set) {
-            listener.nameChanged(set);
+            provider.runViewUpdate(new Runnable() {
+                public void run() {
+                    listener.nameChanged(set);
+                }
+            });
         }
 
         public void resourcesChanged(final ChangeSet set, final IResource[] resources) {
-            listener.resourcesChanged(set, resources);
+            // Not used by the provider
         }
         
     };
@@ -105,7 +122,16 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
      * If <code>null</code> is passed, the state
      * of the collector is cleared but the set is not
      * repopulated.
-     *
+     * <p>
+     * This method is invoked by the model provider when the
+     * model provider changes state. It should not
+     * be invoked by other clients. The model provider
+     * will invoke this method from a particular thread (which may
+     * or may not be the UI thread). Updates done to the collector
+     * from within this thread will be thread-safe and update the view
+     * properly. Updates done from other threads should use the 
+     * <code>performUpdate</code> method to ensure the view is
+     * updated properly.
      */
     public void reset(SyncInfoSet seedSet) {
         // First, clean up
@@ -144,6 +170,20 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         }
     }
     
+    /**
+     * Handle a sync info set change event from the provider's
+     * seed set.
+     * <p>
+     * This method is invoked by the model provider when the
+     * model provider changes state. It should not
+     * be invoked by other clients. The model provider
+     * will invoke this method from a particular thread (which may
+     * or may not be the UI thread). Updates done to the collector
+     * from within this thread will be thread-safe and update the view
+     * properly. Updates done from other threads should use the 
+     * <code>performUpdate</code> method to ensure the view is
+     * updated properly.
+     */
     public void handleChange(ISyncInfoSetChangeEvent event) {
         List removals = new ArrayList();
         List additions = new ArrayList();
@@ -255,12 +295,18 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
         boolean added = false;
         if (sis == null) {
             sis = new SyncInfoTree();
+            sis.beginInput();
             activeSets.put(set, sis);
             added = true;
-        } else {
-            sis.clear();
         }
-        sis.addAll(select(set.getSyncInfoSet().getSyncInfos()));
+        try {
+            sis.beginInput();
+            if (!sis.isEmpty())
+                sis.removeAll(sis.getResources());
+            sis.addAll(select(set.getSyncInfoSet().getSyncInfos()));
+        } finally {
+            sis.endInput(null);
+        }
         if (added) {
             set.getSyncInfoSet().addSyncSetChangedListener(this);
             listener.setAdded(set);
@@ -298,8 +344,8 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
      * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoSetReset(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
      */
     public void syncInfoSetReset(final SyncInfoSet set, IProgressMonitor monitor) {
-        provider.runViewUpdate(new Runnable() {
-            public void run() {
+        provider.performUpdate(new IWorkspaceRunnable() {
+            public void run(IProgressMonitor monitor) {
 		        ChangeSet changeSet = getChangeSet(set);
 		        if (changeSet != null) {
 			        SyncInfoSet targetSet = (SyncInfoSet)activeSets.get(changeSet);
@@ -317,8 +363,8 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
      * @see org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener#syncInfoChanged(org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
      */
     public void syncInfoChanged(final ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
-        provider.runViewUpdate(new Runnable() {
-            public void run() {
+        provider.performUpdate(new IWorkspaceRunnable() {
+            public void run(IProgressMonitor monitor) {
                 ChangeSet changeSet = getChangeSet(event.getSet());
                 if (changeSet != null) {
 	                SyncInfoSet targetSet = (SyncInfoSet)activeSets.get(changeSet);

@@ -21,8 +21,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.subscribers.ChangeSet;
-import org.eclipse.team.core.subscribers.IChangeSetChangeListener;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.actions.ChangeSetActionGroup;
@@ -57,45 +55,29 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
             } else {
                 syncInfoSet = activeCollector.getSyncInfoSet(set);
             }
-            runViewUpdate(new Runnable() {
-                public void run() {
-                    createChangeSetModelElement(set, syncInfoSet);
-                }
-            });
+            createChangeSetModelElement(set, syncInfoSet);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.team.core.subscribers.IChangeSetChangeListener#defaultSetChanged(org.eclipse.team.core.subscribers.ChangeSet, org.eclipse.team.core.subscribers.ChangeSet)
          */
         public void defaultSetChanged(final ChangeSet previousDefault, final ChangeSet set) {
-            runViewUpdate(new Runnable() {
-                public void run() {
-		            refreshLabel(previousDefault);
-		            refreshLabel(set);
-                }
-            });
+		    refreshLabel(previousDefault);
+		    refreshLabel(set);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.team.core.subscribers.IChangeSetChangeListener#setRemoved(org.eclipse.team.core.subscribers.ChangeSet)
          */
         public void setRemoved(final ChangeSet set) {
-            runViewUpdate(new Runnable() {
-                public void run() {
-                    removeModelElementForSet(set);
-                }
-            });
+            removeModelElementForSet(set);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.team.core.subscribers.IChangeSetChangeListener#nameChanged(org.eclipse.team.core.subscribers.ChangeSet)
          */
         public void nameChanged(final ChangeSet set) {
-            runViewUpdate(new Runnable() {
-                public void run() {
-                    refreshLabel(set);
-                }
-            });
+            refreshLabel(set);
         }
 
         /* (non-Javadoc)
@@ -252,22 +234,6 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
     public void setViewerSorter(ViewerSorter viewerSorter) {
         this.viewerSorter = viewerSorter;
         firePropertyChange(ISynchronizeModelProvider.P_VIEWER_SORTER, null, null);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#runViewUpdate(java.lang.Runnable)
-     */
-    public void runViewUpdate(final Runnable runnable,  final boolean preserveExpansion) {
-        runViewUpdate(new Runnable() {
-            public void run() {
-                IResource[] resources = null;
-                if (preserveExpansion)
-                    resources = getExpandedResources();
-                runnable.run();
-                if (resources != null)
-                    expandResources(resources);
-            }
-        });
     }
 
     /* (non-Javadoc)

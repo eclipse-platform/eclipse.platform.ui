@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import java.text.DateFormat;
 import java.util.*;
 
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -54,8 +55,6 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
 	private FetchLogEntriesJob fetchLogEntriesJob;
 
     private static final String DEFAULT_INCOMING_SET_NAME = "Unassigned Remote Changes";
-
-    private static final String DEFAULT_OUTGOING_SET_NAME = "Unassigned Local Changes";
 
 	/* *****************************************************************************
 	 * Special sync info that has its kind already calculated.
@@ -257,12 +256,14 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
 	 * to add each resource to an appropriate commit set.
      */
     private void handleRemoteChanges(final SyncInfo[] infos, final IProgressMonitor monitor) throws CVSException, InterruptedException {
+        monitor.beginTask(null, 100);
         final LogEntryCache logs = getSyncInfoComment(infos, Policy.subMonitorFor(monitor, 80));
-        runViewUpdate(new Runnable() {
-            public void run() {
-                addLogEntries(infos, logs, Policy.subMonitorFor(monitor, 10));
+        performUpdate(new IWorkspaceRunnable() {
+            public void run(IProgressMonitor monitor) {
+                addLogEntries(infos, logs, monitor);
             }
-        }, true  /* preserver expansion */);
+        }, true  /* preserver expansion */, Policy.subMonitorFor(monitor, 20));
+        monitor.done();
     }
     
 	/**
