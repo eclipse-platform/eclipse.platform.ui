@@ -240,6 +240,19 @@ public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
 public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	throws WorkbenchException;
 /**
+ * Closes then restarts this workbench.
+ * <p>
+ * If the workbench has an open editor with unsaved content, the user will be
+ * given the opportunity to save it.
+ * </p>
+ *
+ * @return <code>true</code> if the workbench was successfully closed,
+ *   and <code>false</code> if it could not be closed
+ * 
+ * @since 2.0
+ */
+public boolean restart();
+/**
  * Shows the specified perspective to the user. The caller should use this method
  * when the perspective to be shown is not dependent on the page's input. That is,
  * the perspective can open in any page depending on user preferences.

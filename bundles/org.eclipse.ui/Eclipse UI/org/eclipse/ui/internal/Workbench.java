@@ -61,6 +61,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private String[] commandLineArgs;
 	private Window.IExceptionHandler handler;
 	private AcceleratorConfiguration acceleratorConfiguration;
+	private Object returnCode;
 	/**
 	 * Workbench constructor comment.
 	 */
@@ -177,6 +178,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Closes the workbench.
 	 */
 	public boolean close() {
+		return close(EXIT_OK);
+	}
+	/**
+	 * Closes the workbench, returning the given return code from the run method.
+	 */
+	public boolean close(Object returnCode) {
+		this.returnCode = returnCode;
 		final boolean[] ret = new boolean[1];
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
@@ -688,6 +696,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		saveState(memento);
 		return memento;
 	}
+	/* (non-Javadoc)
+	 * Method declared on IWorkbench.
+	 */
+	public boolean restart() {
+		return close(EXIT_RESTART); // this is the return code from run() to trigger a restart 
+	}
 	/**
 	 * @see IPersistable
 	 */
@@ -743,7 +757,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			if (!display.isDisposed())
 			  display.dispose();
 		}
-		return null;
+		return returnCode;
 	}
 	/**
 	 * run an event loop for the workbench.
