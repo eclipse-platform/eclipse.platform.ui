@@ -46,6 +46,7 @@ import org.eclipse.ui.internal.contexts.ContextManagerFactory;
 import org.eclipse.ui.internal.contexts.IMutableContextManager;
 import org.eclipse.ui.internal.contexts.ProxyContextManager;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 
 /**
@@ -330,8 +331,21 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                          */
                         public void widgetDisposed(DisposeEvent e) {
                             registeredWindows.remove(null);
-                            removeEnabledSubmissions(newSubmissions);
                             newShell.removeDisposeListener(this);
+                            
+                            /*
+                             * In the case where a dispose has happened, we are expecting an
+                             * activation event to arrive at some point in the future. If we
+                             * process the submissions now, then we will update the
+                             * activeShell before checkWindowType is called. This means that
+                             * dialogs won't be recognized as dialogs.
+                             */
+                            final Iterator newSubmissionItr = newSubmissions
+                                    .iterator();
+                            while (newSubmissionItr.hasNext()) {
+                                removeEnabledSubmissionReal((EnabledSubmission) newSubmissionItr
+                                        .next());
+                            }
                         }
                     });
 
@@ -484,14 +498,67 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         return keyboard;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#getShellType(org.eclipse.swt.widgets.Shell)
+     */
+    public int getShellType(Shell shell) {
+        // If the shell is null, then return none.
+        if (shell == null) {
+            return IWorkbenchContextSupport.TYPE_NONE;
+        }
+
+        final List submissions = (List) registeredWindows.get(shell);
+        if (submissions != null) {
+            // The shell is registered, so check what type it was registered as.
+            if (submissions.isEmpty()) {
+                // It was registered as none.
+                return IWorkbenchContextSupport.TYPE_NONE;
+            }
+
+            // Look for the right type of context id.
+            final Iterator submissionItr = submissions.iterator();
+            while (submissionItr.hasNext()) {
+                final EnabledSubmission enabledSubmission = (EnabledSubmission) submissionItr
+                        .next();
+                final String contextId = enabledSubmission.getContextId();
+                if (contextId == IWorkbenchContextSupport.CONTEXT_ID_DIALOG) {
+                    return IWorkbenchContextSupport.TYPE_DIALOG;
+                } else if (contextId == IWorkbenchContextSupport.CONTEXT_ID_WINDOW) {
+                    return IWorkbenchContextSupport.TYPE_WINDOW;
+                }
+            }
+
+            // This shouldn't be possible.
+            Assert
+                    .isTrue(
+                            false,
+                            "A registered shell should have at least one submission matching TYPE_WINDOW or TYPE_DIALOG"); //$NON-NLS-1$
+            return IWorkbenchContextSupport.TYPE_NONE; // not reachable
+
+        } else if (shell.getParent() != null) {
+            /*
+             * The shell is not registered, but it has a parent. It is therefore
+             * considered a dialog by default.
+             */
+            return IWorkbenchContextSupport.TYPE_DIALOG;
+
+        } else {
+            /*
+             * The shell is not registered, but has no parent.  It gets no key
+             * bindings.
+             */
+            return IWorkbenchContextSupport.TYPE_NONE;
+        }
+    }
+
     /**
      * Initializes the key binding support.
      */
     public final void initialize() {
         // Hook up the key binding support.
-        keyboard = new WorkbenchKeyboard(workbench, workbench
-                .getActivitySupport().getActivityManager(), workbench
-                .getCommandSupport().getCommandManager());
+        keyboard = new WorkbenchKeyboard(workbench);
         setKeyFilterEnabled(true);
     }
 
@@ -512,7 +579,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#openKeyAssistDialog()
      */
     public final void openKeyAssistDialog() {
-        keyboard.openMultiKeyAssistShell(workbench.getDisplay(), true);
+        keyboard.openMultiKeyAssistShell();
     }
 
     private void processEnabledSubmissions(boolean force) {
@@ -724,7 +791,20 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
              */
             public void widgetDisposed(DisposeEvent e) {
                 registeredWindows.remove(shell);
-                removeEnabledSubmissions(submissions);
+                shell.removeDisposeListener(this);
+                
+                /*
+                 * In the case where a dispose has happened, we are expecting an
+                 * activation event to arrive at some point in the future. If we
+                 * process the submissions now, then we will update the
+                 * activeShell before checkWindowType is called. This means that
+                 * dialogs won't be recognized as dialogs.
+                 */
+                final Iterator submissionItr = submissions.iterator();
+                while (submissionItr.hasNext()) {
+                    removeEnabledSubmissionReal((EnabledSubmission) submissionItr
+                            .next());
+                }
             }
         });
 

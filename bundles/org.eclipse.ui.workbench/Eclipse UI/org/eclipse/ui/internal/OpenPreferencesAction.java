@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -63,17 +61,7 @@ public class OpenPreferencesAction extends Action implements
             // action has been dispose
             return;
         }
-        PreferenceManager pm = WorkbenchPlugin.getDefault()
-                .getPreferenceManager();
-
-        if (pm != null) {
-            PreferenceDialog d = new WorkbenchPreferenceDialog(workbenchWindow
-                    .getShell(), pm);
-            d.create();
-            WorkbenchHelp.setHelp(d.getShell(),
-                    IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
-            d.open();
-        }
+        WorkbenchPreferenceDialog.createDialogOn(null).open();
     }
 
     /* (non-Javadoc)

@@ -11,56 +11,36 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -96,6 +76,12 @@ public final class WorkbenchKeyboard {
      * filter.
      */
     private static final boolean DEBUG_VERBOSE = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
+
+    /**
+     * The time in milliseconds to wait after pressing a key before displaying
+     * the key assist dialog.
+     */
+    private static final int DELAY = 1000;
 
     /** The collection of keys that are to be processed out-of-order. */
     static KeySequence outOfOrderKeys;
@@ -201,12 +187,6 @@ public final class WorkbenchKeyboard {
     }
 
     /**
-     * The activity manager to be used to resolve key bindings. This member
-     * variable should never be <code>null</code>.
-     */
-    private final IActivityManager activityManager;
-
-    /**
      * The command manager to be used to resolve key bindings. This member
      * variable should never be <code>null</code>.
      */
@@ -243,21 +223,11 @@ public final class WorkbenchKeyboard {
     };
 
     /**
-     * The <code>Shell</code> displayed to the user to assist them in
-     * completing a multi-stroke keyboard shortcut.
+     * The <code>KeyAssistDialog</code> displayed to the user to assist them
+     * in completing a multi-stroke keyboard shortcut.
+     * @since 3.1
      */
-    private Shell multiKeyAssistShell = null;
-
-    /**
-     * Whether the last key assist dialog that was opened was both opened by
-     * someone external to <code>WorkbenchKeyboard</code> (i.e., by calling
-     * <code>openMultiKeyAssistShell(display, true)</code>) and the user
-     * preference for opening the multi-key assist shell is normally
-     * <code>false</code>. This is used to determine whether -- when
-     * narrowing down the multi-key assist shell in response to user key input --
-     * the multi-key assist shell needs to set this preference before opening.
-     */
-    private boolean setKeyAssistPreferenceOnOpen = false;
+    private KeyAssistDialog keyAssistDialog = null;
 
     /**
      * The time at which the last timer was started. This is used to judge if a
@@ -328,21 +298,12 @@ public final class WorkbenchKeyboard {
      * @param associatedWorkbench
      *            The workbench with which this keyboard interface should work;
      *            must not be <code>null</code>.
-     * @param associatedActivityManager
-     *            The activity manager to be used by this keyboard interface;
-     *            must not be <code>null</code>.
-     * @param associatedCommandManager
-     *            The command manager to be used by this keyboard interface;
-     *            must not be <code>null</code>.
+     * @since 3.1
      */
-    public WorkbenchKeyboard(Workbench associatedWorkbench,
-            IActivityManager associatedActivityManager,
-            ICommandManager associatedCommandManager) {
-
+    public WorkbenchKeyboard(Workbench associatedWorkbench) {
         workbench = associatedWorkbench;
         state = new KeyBindingState(associatedWorkbench);
-        activityManager = associatedActivityManager;
-        commandManager = associatedCommandManager;
+        commandManager = workbench.getCommandSupport().getCommandManager();
         workbench.addWindowListener(windowListener);
     }
 
@@ -357,7 +318,7 @@ public final class WorkbenchKeyboard {
      */
     private void checkActiveWindow(IWorkbenchWindow window) {
         if (!window.equals(state.getAssociatedWindow())) {
-            resetState();
+            resetState(true);
             state.setAssociatedWindow(window);
         }
     }
@@ -367,13 +328,11 @@ public final class WorkbenchKeyboard {
      * isn't already disposed.
      */
     private void closeMultiKeyAssistShell() {
-        setKeyAssistPreferenceOnOpen = false;
-        if ((multiKeyAssistShell != null)
-                && (!multiKeyAssistShell.isDisposed())) {
-            workbench.getContextSupport().unregisterShell(multiKeyAssistShell);
-            multiKeyAssistShell.close();
-            multiKeyAssistShell.dispose();
-            multiKeyAssistShell = null;
+        if (keyAssistDialog != null) {
+            final Shell shell = keyAssistDialog.getShell();
+            if ((shell != null) && (shell.isVisible())) {
+                keyAssistDialog.close(true);
+            }
         }
     }
 
@@ -394,9 +353,9 @@ public final class WorkbenchKeyboard {
                             .get("enabled"))) { //$NON-NLS-1$
                 return false;
             }
-            
+
             return true;
-            
+
         } catch (NotHandledException eNotHandled) {
             return false;
         }
@@ -419,7 +378,7 @@ public final class WorkbenchKeyboard {
      *             log the message, display a dialog, or ignore this exception
      *             entirely.
      */
-    private boolean executeCommand(String commandId) throws CommandException {
+    final boolean executeCommand(String commandId) throws CommandException {
         if (DEBUG) {
             System.out
                     .println("KEYS >>> WorkbenchKeyboard.executeCommand(commandId = '" //$NON-NLS-1$
@@ -427,7 +386,7 @@ public final class WorkbenchKeyboard {
         }
 
         // Reset the key binding state (close window, clear status line, etc.)
-        resetState();
+        resetState(false);
 
         // Dispatch to the handler.
         ICommand command = commandManager.getCommand(commandId);
@@ -463,6 +422,15 @@ public final class WorkbenchKeyboard {
             command.execute(null);
         }
 
+        /*
+         * Now that the command has executed (and had the opportunity to use the
+         * remembered state of the dialog), it is safe to delete that
+         * information.
+         */
+        if (keyAssistDialog != null) {
+            keyAssistDialog.clearRememberedState();
+        }
+
         return (commandDefined && commandHandled);
     }
 
@@ -496,39 +464,35 @@ public final class WorkbenchKeyboard {
         // Allow special key out-of-order processing.
         List keyStrokes = generatePossibleKeyStrokes(event);
         if (isOutOfOrderKey(keyStrokes)) {
-            if (event.type == SWT.KeyDown) {
-                Widget widget = event.widget;
-                if ((event.character == SWT.DEL)
-                        && ((event.stateMask & SWT.MODIFIER_MASK) == 0)
-                        && ((widget instanceof Text) || (widget instanceof Combo))) {
-                    /*
-                     * KLUDGE. Bug 54654. The text widget relies on no listener
-                     * doing any work before dispatching the native delete
-                     * event. This does not work, as we are restricted to
-                     * listeners. However, it can be said that pressing a delete
-                     * key in a text widget will never use key bindings. This
-                     * can be shown be considering how the event dispatching is
-                     * expected to work in a text widget. So, we should do
-                     * nothing ... ever.
-                     */
-                    return;
+            Widget widget = event.widget;
+            if ((event.character == SWT.DEL)
+                    && ((event.stateMask & SWT.MODIFIER_MASK) == 0)
+                    && ((widget instanceof Text) || (widget instanceof Combo))) {
+                /*
+                 * KLUDGE. Bug 54654. The text widget relies on no listener
+                 * doing any work before dispatching the native delete event.
+                 * This does not work, as we are restricted to listeners.
+                 * However, it can be said that pressing a delete key in a text
+                 * widget will never use key bindings. This can be shown be
+                 * considering how the event dispatching is expected to work in
+                 * a text widget. So, we should do nothing ... ever.
+                 */
+                return;
 
-                } else if (widget instanceof StyledText) {
-                    /*
-                     * KLUDGE. Some people try to do useful work in verify
-                     * listeners. The way verify listeners work in SWT, we need
-                     * to verify the key as well; otherwise, we can detect that
-                     * useful work has been done.
-                     */
-                    ((StyledText) widget)
-                            .addVerifyKeyListener(new OutOfOrderVerifyListener(
-                                    new OutOfOrderListener(this)));
+            } else if (widget instanceof StyledText) {
+                /*
+                 * KLUDGE. Some people try to do useful work in verify
+                 * listeners. The way verify listeners work in SWT, we need to
+                 * verify the key as well; otherwise, we can detect that useful
+                 * work has been done.
+                 */
+                ((StyledText) widget)
+                        .addVerifyKeyListener(new OutOfOrderVerifyListener(
+                                new OutOfOrderListener(this)));
 
-                } else {
-                    widget.addListener(SWT.KeyDown,
-                            new OutOfOrderListener(this));
+            } else {
+                widget.addListener(event.type, new OutOfOrderListener(this));
 
-                }
             }
 
             /*
@@ -589,22 +553,15 @@ public final class WorkbenchKeyboard {
         state.setAssociatedWindow(workbench.getActiveWorkbenchWindow());
 
         // After some time, open a shell displaying the possible completions.
-        final IPreferenceStore store = WorkbenchPlugin.getDefault()
-                .getPreferenceStore();
-        if (store.getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST)) {
-            final Display display = workbench.getDisplay();
-            final int delay = store
-                    .getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME);
-            display.timerExec(delay, new Runnable() {
-
-                public void run() {
-                    if ((System.currentTimeMillis() > (myStartTime - delay))
-                            && (startTime == myStartTime)) {
-                        openMultiKeyAssistShell(display);
-                    }
+        final Display display = workbench.getDisplay();
+        display.timerExec(DELAY, new Runnable() {
+            public void run() {
+                if ((System.currentTimeMillis() > (myStartTime - DELAY))
+                        && (startTime == myStartTime)) {
+                    openMultiKeyAssistShell();
                 }
-            });
-        }
+            }
+        });
     }
 
     /**
@@ -641,7 +598,7 @@ public final class WorkbenchKeyboard {
      * @param e
      *            The exception to log; must not be <code>null</code>.
      */
-    private final void logException(CommandException e) {
+    final void logException(final CommandException e) {
         Throwable nestedException = e.getCause();
         Throwable exception = (nestedException == null) ? e : nestedException;
         String message = Util.translateString(RESOURCE_BUNDLE,
@@ -660,239 +617,19 @@ public final class WorkbenchKeyboard {
     }
 
     /**
-     * Opens a <code>Shell</code> to assist the user in completing a
-     * multi-stroke key binding. After this method completes,
-     * <code>multiKeyAssistShell</code> should point at the newly opened
-     * window.
-     * 
-     * @param display
-     *            The display on which the shell should be opened; must not be
-     *            <code>null</code>.
+     * Opens a <code>KeyAssistDialog</code> to assist the user in completing a
+     * multi-stroke key binding. This method lazily creates a
+     * <code>keyAssistDialog</code> and shares it between executions.
      */
-    public final void openMultiKeyAssistShell(final Display display) {
-        openMultiKeyAssistShell(display, false);
-    }
-
-    /**
-     * Opens a <code>Shell</code> to assist the user in completing a
-     * multi-stroke key binding. After this method completes,
-     * <code>multiKeyAssistShell</code> should point at the newly opened
-     * window.
-     * 
-     * @param notOpenedByKeyPress
-     *            Whether the key assist dialog is being opened by someone
-     *            external to <code>WorkbenchKeyboard</code>. This means it
-     *            could have been opened even though the user preference for the
-     *            key assist is not true. Normally, this would mean that the
-     *            shell would not update with subsequent key strokes (in a
-     *            multi-stroke key binding), but we would actually like it to
-     *            update in this special case.
-     * @param display
-     *            The display on which the shell should be opened; must not be
-     *            <code>null</code>.
-     */
-    public final void openMultiKeyAssistShell(final Display display,
-            boolean notOpenedByKeyPress) {
-        // Safety check to close an already open shell, if there is one.
-        Point previousSize = null;
-        int previousWidth = -1;
-        if (multiKeyAssistShell != null) {
-            if (this.setKeyAssistPreferenceOnOpen) {
-                notOpenedByKeyPress = true;
-            }
-            previousSize = multiKeyAssistShell.getSize();
-            previousWidth = ((Table) multiKeyAssistShell.getChildren()[0])
-                    .getColumn(0).getWidth();
-//            multiKeyAssistShell.close();
+    public final void openMultiKeyAssistShell() {
+        if (keyAssistDialog == null) {
+            keyAssistDialog = new KeyAssistDialog(workbench, this, state);
         }
-
-        // Get the status line. If none, then abort.
-        StatusLineContributionItem statusLine = state.getStatusLine();
-        if (statusLine == null) {
-            return;
+        if (keyAssistDialog.getShell() == null) {
+            final Shell parentShell = workbench.getDisplay().getActiveShell();
+            keyAssistDialog.setParentShell(parentShell);
         }
-
-        // Set up the shell.
-        if (multiKeyAssistShell == null) {
-            multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
-            GridLayout layout = new GridLayout();
-            layout.marginHeight = 0;
-            layout.marginWidth = 0;
-            multiKeyAssistShell.setLayout(layout);
-            multiKeyAssistShell.setBackground(display
-                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-        }
-
-        // Get the list of items.
-        Map partialMatches = new TreeMap(new Comparator() {
-
-            public int compare(Object a, Object b) {
-                KeySequence sequenceA = (KeySequence) a;
-                KeySequence sequenceB = (KeySequence) b;
-                return sequenceA.format().compareTo(sequenceB.format());
-            }
-        });
-        partialMatches.putAll(commandManager.getPartialMatches(state
-                .getCurrentSequence()));
-        Iterator partialMatchItr = partialMatches.entrySet().iterator();
-        while (partialMatchItr.hasNext()) {
-            Map.Entry entry = (Map.Entry) partialMatchItr.next();
-            String commandId = (String) entry.getValue();
-            ICommand command = commandManager.getCommand(commandId);
-            // TODO The enabled property of ICommand is broken.
-            if (!command.isDefined()
-                    || !activityManager.getIdentifier(command.getId())
-                            .isEnabled() // ||
-            // !command.isEnabled()
-            ) {
-                partialMatchItr.remove();
-            }
-        }
-        
-        // Remove the previous controls (a bit wasteful, but cleaner code).
-        final Control[] children = multiKeyAssistShell.getChildren();
-        for (int i = 0; i < children.length; i++) {
-            children[i].dispose();
-        }
-
-        // Layout the partial matches.
-        if (partialMatches.isEmpty()) {
-            Label noMatchesLabel = new Label(multiKeyAssistShell, SWT.NULL);
-            noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE,
-                    "NoMatches.Message")); //$NON-NLS-1$
-            noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-            noMatchesLabel.setBackground(multiKeyAssistShell.getBackground());
-
-        } else {
-            // Layout the table.
-            final Table completionsTable = new Table(multiKeyAssistShell,
-                    SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE);
-            completionsTable.setBackground(multiKeyAssistShell.getBackground());
-            completionsTable.setLinesVisible(true);
-            GridData gridData = new GridData(GridData.FILL_BOTH);
-            completionsTable.setLayoutData(gridData);
-            // Initialize the columns and rows.
-            final List commands = new ArrayList(); // remember commands
-            TableColumn columnKeySequence = new TableColumn(completionsTable,
-                    SWT.LEFT, 0);
-            TableColumn columnCommandName = new TableColumn(completionsTable,
-                    SWT.LEFT, 1);
-            Iterator itemsItr = partialMatches.entrySet().iterator();
-            while (itemsItr.hasNext()) {
-                Map.Entry entry = (Map.Entry) itemsItr.next();
-                KeySequence sequence = (KeySequence) entry.getKey();
-                String commandId = (String) entry.getValue();
-                ICommand command = commandManager.getCommand(commandId);
-                try {
-                    String[] text = { sequence.format(), command.getName() };
-                    TableItem item = new TableItem(completionsTable, SWT.NULL);
-                    item.setText(text);
-                    commands.add(command);
-                } catch (NotDefinedException e) {
-                    // Not much to do, but this shouldn't really happen.
-                }
-            }
-            columnKeySequence.pack();
-            if (previousWidth != -1) {
-                columnKeySequence.setWidth(previousWidth);
-            }
-            columnCommandName.pack();
-            // If you double-click on the table, it should execute the selected
-            // command.
-            completionsTable.addSelectionListener(new SelectionListener() {
-
-                public void widgetDefaultSelected(SelectionEvent event) {
-                    int selectionIndex = completionsTable.getSelectionIndex();
-                    if (selectionIndex >= 0) {
-                        ICommand command = (ICommand) commands
-                                .get(selectionIndex);
-                        try {
-                            executeCommand(command.getId());
-                        } catch (CommandException e) {
-                            logException(e);
-                        }
-                    }
-                }
-
-                public void widgetSelected(SelectionEvent event) {
-                    // Do nothing
-                }
-            });
-
-        }
-
-        // Size the shell.
-        multiKeyAssistShell.pack();
-        Point assistShellSize = multiKeyAssistShell.getSize();
-        if (previousSize != null) {
-            assistShellSize.x = previousSize.x;
-        }
-        final Point workbenchWindowSize = state.getAssociatedWindow().getShell().getSize();
-        final int maxWidth = workbenchWindowSize.x * 2 / 5;
-        final int maxHeight = workbenchWindowSize.y / 2;
-        if (assistShellSize.x > maxWidth) {
-            assistShellSize.x = maxWidth;
-        }
-        if (assistShellSize.y > maxHeight) {
-            assistShellSize.y = maxHeight;
-        }
-        multiKeyAssistShell.setSize(assistShellSize);
-
-        // Position the shell.
-        final Rectangle workbenchWindowBounds = state.getAssociatedWindow()
-                .getShell().getBounds();
-        final int xCoord = workbenchWindowBounds.x
-                + workbenchWindowBounds.width - assistShellSize.x;
-        final int yCoord = workbenchWindowBounds.y
-                + workbenchWindowBounds.height - assistShellSize.y;
-        final Point assistShellLocation = new Point(xCoord, yCoord);
-        Rectangle displayBounds = display.getClientArea();
-        final int displayRightEdge = displayBounds.x + displayBounds.width;
-        if (assistShellLocation.x < displayBounds.x) {
-            assistShellLocation.x = displayBounds.x;
-        } else if ((assistShellLocation.x + assistShellSize.x) > displayRightEdge) {
-            assistShellLocation.x = displayRightEdge - assistShellSize.x;
-        }
-        final int displayBottomEdge = displayBounds.y + displayBounds.height;
-        if (assistShellLocation.y < displayBounds.y) {
-            assistShellLocation.y = displayBounds.y;
-        } else if ((assistShellLocation.y + assistShellSize.y) > displayBottomEdge) {
-            assistShellLocation.y = displayBottomEdge - assistShellSize.y;
-        }
-        multiKeyAssistShell.setLocation(assistShellLocation);
-
-        // If the shell loses focus, it should be closed.
-        multiKeyAssistShell.addListener(SWT.Deactivate, new Listener() {
-
-            public void handleEvent(Event event) {
-                closeMultiKeyAssistShell();
-            }
-        });
-
-        // Open the shell.
-        workbench.getContextSupport().registerShell(multiKeyAssistShell,
-                IWorkbenchContextSupport.TYPE_WINDOW);
-        final IPreferenceStore store = WorkbenchPlugin.getDefault()
-                .getPreferenceStore();
-        final boolean previousValue = store
-                .getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST);
-        if ((notOpenedByKeyPress) && (!previousValue)) {
-            setKeyAssistPreferenceOnOpen = true;
-            store.setValue(IPreferenceConstants.MULTI_KEY_ASSIST, true);
-            multiKeyAssistShell.addDisposeListener(new DisposeListener() {
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-                 */
-                public void widgetDisposed(DisposeEvent e) {
-                    store
-                            .setValue(IPreferenceConstants.MULTI_KEY_ASSIST,
-                                    false);
-                }
-            });
-        }
-        multiKeyAssistShell.open();
+        keyAssistDialog.open();
     }
 
     /**
@@ -956,18 +693,20 @@ public final class WorkbenchKeyboard {
                 return (executeCommand(commandId) || !sequenceBeforeKeyStroke
                         .isEmpty());
 
-            } else if ((multiKeyAssistShell != null)
+            } else if ((keyAssistDialog != null)
                     && ((event.keyCode == SWT.ARROW_DOWN)
                             || (event.keyCode == SWT.ARROW_UP)
                             || (event.keyCode == SWT.ARROW_LEFT)
-                            || (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR))) {
+                            || (event.keyCode == SWT.ARROW_RIGHT)
+                            || (event.keyCode == SWT.CR)
+                            || (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
                 // We don't want to swallow keyboard navigation keys.
                 return false;
 
             }
         }
 
-        resetState();
+        resetState(true);
         return false;
     }
 
@@ -1019,10 +758,17 @@ public final class WorkbenchKeyboard {
     /**
      * Resets the state, and cancels any running timers. If there is a
      * <code>Shell</code> currently open, then it closes it.
+     * 
+     * @param clearRememberedState
+     *            Whether the remembered state (dialog bounds) of the key assist
+     *            should be forgotten immediately as well.
      */
-    private void resetState() {
+    private final void resetState(final boolean clearRememberedState) {
         startTime = Long.MAX_VALUE;
         state.reset();
         closeMultiKeyAssistShell();
+        if ((keyAssistDialog != null) && clearRememberedState) {
+            keyAssistDialog.clearRememberedState();
+        }
     }
 }

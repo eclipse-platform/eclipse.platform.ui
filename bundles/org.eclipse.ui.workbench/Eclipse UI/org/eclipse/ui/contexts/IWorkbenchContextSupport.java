@@ -122,6 +122,20 @@ public interface IWorkbenchContextSupport {
     IContextManager getContextManager();
 
     /**
+     * Returns the shell type for the given shell.
+     * 
+     * @param shell
+     *            The shell for which the type should be determined. If this
+     *            value is <code>null</code>, then
+     *            <code>IWorkbenchContextSupport.TYPE_NONE</code> is returned.
+     * @return <code>IWorkbenchContextSupport.TYPE_WINDOW</code>,
+     *         <code>IWorkbenchContextSupport.TYPE_DIALOG</code>, or
+     *         <code>IWorkbenchContextSupport.TYPE_NONE</code>.
+     * @since 3.1
+     */
+    public int getShellType(final Shell shell);
+
+    /**
      * Tests whether the global key binding architecture is currently active.
      * 
      * @return <code>true</code> if the key bindings are active;

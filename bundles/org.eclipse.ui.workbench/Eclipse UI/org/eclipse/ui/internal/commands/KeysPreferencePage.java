@@ -35,12 +35,8 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -84,14 +80,12 @@ import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 
-public class KeysPreferencePage extends
-        org.eclipse.jface.preference.PreferencePage implements
+public class KeysPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
 
     private final static class CommandAssignment implements Comparable {
@@ -273,6 +267,12 @@ public class KeysPreferencePage extends
             .getBundle(KeysPreferencePage.class.getName());
 
     /**
+     * The index of the modify tab.
+     * @since 3.1
+     */
+    private static final int TAB_INDEX_MODIFY = 1;
+
+    /**
      * The index of the column on the view tab containing the category name.
      */
     private final static int VIEW_CATEGORY_COLUMN_INDEX = 0;
@@ -343,8 +343,6 @@ public class KeysPreferencePage extends
     private Map categoryIdsByUniqueName;
 
     private Map categoryUniqueNamesById;
-
-    private Button checkBoxMultiKeyAssist;
 
     private Combo comboCategory;
 
@@ -428,8 +426,6 @@ public class KeysPreferencePage extends
     private Text textKeySequence;
 
     private KeySequenceText textKeySequenceManager;
-
-    private IntegerFieldEditor textMultiKeyAssistTime;
 
     private SortedMap tree;
 
@@ -683,61 +679,6 @@ public class KeysPreferencePage extends
         }
     }
 
-    private Composite createAdvancedTab(TabFolder parent) {
-        GridData gridData = null;
-
-        // The composite for this tab.
-        final Composite composite = new Composite(parent, SWT.NULL);
-        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        // The multi-key assist button.
-        checkBoxMultiKeyAssist = new Button(composite, SWT.CHECK);
-        checkBoxMultiKeyAssist.setText(Util.translateString(RESOURCE_BUNDLE,
-                "checkBoxMultiKeyAssist.Text")); //$NON-NLS-1$
-        checkBoxMultiKeyAssist.setToolTipText(Util.translateString(
-                RESOURCE_BUNDLE, "checkBoxMultiKeyAssist.ToolTipText")); //$NON-NLS-1$
-        checkBoxMultiKeyAssist.setSelection(getPreferenceStore().getBoolean(
-                IPreferenceConstants.MULTI_KEY_ASSIST));
-        gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.horizontalSpan = 2;
-        checkBoxMultiKeyAssist.setLayoutData(gridData);
-
-        // The multi key assist time.
-        final IPreferenceStore store = WorkbenchPlugin.getDefault()
-                .getPreferenceStore();
-        textMultiKeyAssistTime = new IntegerFieldEditor(
-                IPreferenceConstants.MULTI_KEY_ASSIST_TIME, Util
-                        .translateString(RESOURCE_BUNDLE,
-                                "textMultiKeyAssistTime.Text"), composite); //$NON-NLS-1$
-        textMultiKeyAssistTime.setPreferenceStore(store);
-        textMultiKeyAssistTime.setPreferencePage(this);
-        textMultiKeyAssistTime.setTextLimit(9);
-        textMultiKeyAssistTime.setErrorMessage(Util.translateString(
-                RESOURCE_BUNDLE, "textMultiKeyAssistTime.ErrorMessage")); //$NON-NLS-1$
-        textMultiKeyAssistTime
-                .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-        textMultiKeyAssistTime.setValidRange(1, Integer.MAX_VALUE);
-        textMultiKeyAssistTime.setStringValue(Integer.toString(store
-                .getInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
-        textMultiKeyAssistTime
-                .setPropertyChangeListener(new IPropertyChangeListener() {
-
-                    public void propertyChange(PropertyChangeEvent event) {
-                        if (event.getProperty().equals(FieldEditor.IS_VALID))
-                            setValid(textMultiKeyAssistTime.isValid());
-                    }
-                });
-
-        // Conigure the layout of the composite.
-        final GridLayout gridLayout = new GridLayout();
-        gridLayout.marginHeight = 5;
-        gridLayout.marginWidth = 5;
-        gridLayout.numColumns = 2;
-        composite.setLayout(gridLayout);
-
-        return composite;
-    }
-
     protected Control createContents(Composite parent) {
         // Initialize the minus colour.
         minusColour = getShell().getDisplay().getSystemColor(
@@ -755,12 +696,6 @@ public class KeysPreferencePage extends
         modifyTab.setText(Util.translateString(RESOURCE_BUNDLE,
                 "modifyTab.Text")); //$NON-NLS-1$
         modifyTab.setControl(createModifyTab(tabFolder));
-
-        // Advanced tab
-        final TabItem advancedTab = new TabItem(tabFolder, SWT.NULL);
-        advancedTab.setText(Util.translateString(RESOURCE_BUNDLE,
-                "advancedTab.Text")); //$NON-NLS-1$
-        advancedTab.setControl(createAdvancedTab(tabFolder));
 
         // Do some fancy stuff.
         applyDialogFont(tabFolder);
@@ -1157,6 +1092,7 @@ public class KeysPreferencePage extends
      */
     private final Composite createViewTab(final TabFolder parent) {
         GridData gridData = null;
+        int widthHint;
 
         // Create the composite for the tab.
         final Composite composite = new Composite(parent, SWT.NONE);
@@ -1169,6 +1105,7 @@ public class KeysPreferencePage extends
         tableKeyBindings.setHeaderVisible(true);
         gridData = new GridData(GridData.FILL_BOTH);
         gridData.heightHint = 400;
+        gridData.horizontalSpan = 2;
         tableKeyBindings.setLayoutData(gridData);
         final TableColumn tableColumnCategory = new TableColumn(
                 tableKeyBindings, SWT.NONE, VIEW_CATEGORY_COLUMN_INDEX);
@@ -1196,17 +1133,58 @@ public class KeysPreferencePage extends
                 .setText(UNSORTED_COLUMN_NAMES[VIEW_CONTEXT_COLUMN_INDEX]);
         tableColumnContext.addSelectionListener(new SortOrderSelectionListener(
                 VIEW_CONTEXT_COLUMN_INDEX));
+        tableKeyBindings.addSelectionListener(new SelectionAdapter() {
+            public final void widgetDefaultSelected(final SelectionEvent e) {
+                selectedTableKeyBindings();
+            }
+        });
 
-        // A button for exporting the contents to a file.
-        final Button button = new Button(composite, SWT.PUSH);
+        // A composite for the buttons.
+        final Composite buttonBar = new Composite(composite, SWT.NONE);
+        buttonBar.setLayout(new GridLayout(2, false));
         gridData = new GridData();
         gridData.horizontalAlignment = GridData.END;
-        final int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-        gridData.widthHint = Math.max(widthHint, button.computeSize(
+        buttonBar.setLayoutData(gridData);
+
+        // A button for editing the current selection.
+        final Button editButton = new Button(buttonBar, SWT.PUSH);
+        gridData = new GridData();
+        widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        gridData.widthHint = Math.max(widthHint, editButton.computeSize(
                 SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
-        button.setLayoutData(gridData);
-        button.setText(Util.translateString(RESOURCE_BUNDLE, "buttonExport")); //$NON-NLS-1$
-        button.addSelectionListener(new SelectionListener() {
+        editButton.setLayoutData(gridData);
+        editButton.setText(Util.translateString(RESOURCE_BUNDLE, "buttonEdit")); //$NON-NLS-1$
+        editButton.addSelectionListener(new SelectionListener() {
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public final void widgetDefaultSelected(final SelectionEvent event) {
+                selectedTableKeyBindings();
+            }
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+                widgetDefaultSelected(e);
+            }
+        });
+
+        // A button for exporting the contents to a file.
+        final Button buttonExport = new Button(buttonBar, SWT.PUSH);
+        gridData = new GridData();
+        widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        gridData.widthHint = Math.max(widthHint, buttonExport.computeSize(
+                SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+        buttonExport.setLayoutData(gridData);
+        buttonExport.setText(Util.translateString(RESOURCE_BUNDLE,
+                "buttonExport")); //$NON-NLS-1$
+        buttonExport.addSelectionListener(new SelectionListener() {
 
             /*
              * (non-Javadoc)
@@ -1240,6 +1218,130 @@ public class KeysPreferencePage extends
 
     private void doubleClickedTableAssignmentsForKeySequence() {
         update();
+    }
+    
+    /**
+     * Allows the user to change the key bindings for a particular command.
+     * Switches the tab to the modify tab, and then selects the category and
+     * command that corresponds with the given command name. It then selects the
+     * given key sequence and gives focus to the key sequence text widget.
+     * 
+     * @param commandName
+     *            The name of the command for which the key bindings should be
+     *            edited; if <code>null</code>, then just switch to the
+     *            modify tab. If the <code>commandName</code> is undefined or
+     *            does not correspond to anything in the keys preference page,
+     *            then this also just switches to the modify tab.
+     * @param keySequence
+     *            The key sequence for the selected item. If <code>null</code>,
+     *            then just switch to the modify tab.
+     * @since 3.1
+     */
+    public final void editCommand(final String commandName,
+            final String keySequence) {
+
+        final String commandId = (String) commandIdsByUniqueName
+                .get(commandName);
+        String categoryId = null;
+        if (commandId != null) {
+            final ICommand command = commandManager.getCommand(commandId);
+            try {
+                categoryId = command.getCategoryId();
+            } catch (final NotDefinedException e) {
+                // Leave the category identifier as null.
+            }
+        }
+        final String categoryName = (String) categoryUniqueNamesById
+                .get(categoryId);
+
+        editCommand(categoryName, commandName, keySequence);
+    }
+
+    /**
+     * Allows the user to change the key bindings for a particular command.
+     * Switches the tab to the modify tab, and then selects the category and
+     * command that corresponds with the given category and command name. It
+     * then selects the given key sequence and gives focus to the key sequence
+     * text widget.
+     * 
+     * @param categoryName
+     *            The name of the category for which the key bindings should be
+     *            edited; if <code>null</code>, then just switch to the
+     *            modify tab. If the <code>categoryName</code> is undefined or
+     *            does not correspond to anything in the keys preference page,
+     *            then this also just switches to the modify tab.
+     * @param commandName
+     *            The name of the command for which the key bindings should be
+     *            edited; if <code>null</code>, then just switch to the
+     *            modify tab. If the <code>commandName</code> is undefined or
+     *            does not correspond to anything in the keys preference page,
+     *            then this also just switches to the modify tab.
+     * @param keySequence
+     *            The key sequence for the selected item. If <code>null</code>,
+     *            then just switch to the modify tab.
+     */
+    public final void editCommand(final String categoryName,
+            final String commandName, final String keySequence) {
+        // Switch to the modify tab.
+        tabFolder.setSelection(TAB_INDEX_MODIFY);
+
+        // If there is no command name, stop here.
+        if ((commandName == null) || (categoryName == null)
+                || (keySequence == null)) {
+            return;
+        }
+
+        // Update the category combo box.
+        final String[] categoryNames = comboCategory.getItems();
+        int i = 0;
+        for (; i < categoryNames.length; i++) {
+            if (categoryName.equals(categoryNames[i]))
+                break;
+        }
+        if (i >= comboCategory.getItemCount()) {
+            // Couldn't find the category, so abort.
+            return;
+        }
+        comboCategory.select(i);
+
+        // Update the commands combo box.
+        setCommandsForCategory();
+
+        // Update the command combo box.
+        final String[] commandNames = comboCommand.getItems();
+        int j = 0;
+        for (; j < commandNames.length; j++) {
+            if (commandName.equals(commandNames[j]))
+                break;
+        }
+        if (j >= comboCommand.getItemCount()) {
+            // Couldn't find the command, so just select the first and then stop
+            comboCommand.select(0);
+            update();
+            return;
+        }
+        comboCommand.select(j);
+        
+        /*
+         * Update and validate the state of the modify tab in response to these
+         * selection changes.
+         */
+        update();
+
+        // Select the right key binding, if possible.
+        final TableItem[] items = tableAssignmentsForCommand.getItems();
+        int k = 0;
+        for (; k < items.length; k++) {
+            final String currentKeySequence = items[k].getText(2);
+            if (keySequence.equals(currentKeySequence)) {
+                break;
+            }
+        }
+        if (k < tableAssignmentsForCommand.getItemCount()) {
+            tableAssignmentsForCommand.select(k);
+            tableAssignmentsForCommand.notifyListeners(SWT.Selection, null);
+            textKeySequence.setFocus();
+        }
     }
 
     private String getCategoryId() {
@@ -1328,13 +1430,6 @@ public class KeysPreferencePage extends
             }
         }
 
-        // Set the defaults on the advanced tab.
-        IPreferenceStore store = getPreferenceStore();
-        checkBoxMultiKeyAssist.setSelection(store
-                .getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
-        textMultiKeyAssistTime.setStringValue(Integer.toString(store
-                .getDefaultInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
-
         update();
     }
 
@@ -1359,15 +1454,9 @@ public class KeysPreferencePage extends
         } catch (IOException eIO) {
             // Do nothing
         }
-
-        // Save the advanced settings.
-        IPreferenceStore store = getPreferenceStore();
-        store.setValue(IPreferenceConstants.MULTI_KEY_ASSIST,
-                checkBoxMultiKeyAssist.getSelection());
-        store.setValue(IPreferenceConstants.MULTI_KEY_ASSIST_TIME,
-                textMultiKeyAssistTime.getIntValue());
-
+        
         // Save the selected tab for future reference.
+        IPreferenceStore store = getPreferenceStore();
         store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
                 tabFolder.getSelectionIndex());
         return super.performOk();
@@ -1572,6 +1661,28 @@ public class KeysPreferencePage extends
         }
 
         update();
+    }
+
+    /**
+     * Responds to some kind of trigger on the View tab by taking the current
+     * selection on the key bindings table and selecting the appropriate items
+     * in the Modify tab.
+     * @since 3.1
+     */
+    private final void selectedTableKeyBindings() {
+        final int selectionIndex = tableKeyBindings.getSelectionIndex();
+        if (selectionIndex != -1) {
+            final TableItem item = tableKeyBindings.getItem(selectionIndex);
+            final String categoryName = item
+                    .getText(VIEW_CATEGORY_COLUMN_INDEX);
+            final String commandName = item.getText(VIEW_COMMAND_COLUMN_INDEX);
+            final String keySequence = item
+                    .getText(VIEW_KEY_SEQUENCE_COLUMN_INDEX);
+            editCommand(categoryName, commandName, keySequence);
+
+        } else {
+            editCommand(null, null, null);
+        }
     }
 
     private void setAssignmentsForCommand() {
