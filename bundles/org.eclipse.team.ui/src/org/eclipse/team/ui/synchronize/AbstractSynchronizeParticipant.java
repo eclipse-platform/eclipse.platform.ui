@@ -379,13 +379,6 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
         return new PreferencePage[] { new SyncViewerPreferencePage() };
     }
     
-    /* (non-Javadoc)
-     * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#getChangeSetCapability()
-     */
-    public ChangeSetCapability getChangeSetCapability() {
-        return null;
-    }
-    
 	/**
 	 * Return whether this particpant supports the contribution of actions to
 	 * the context menu by contributing a <code>viewerContribution</code>

@@ -178,12 +178,16 @@ public class TreeViewerAdvisor extends StructuredViewerAdvisor {
 	 * @param configuration
 	 */
 	protected SynchronizeModelManager createModelManager(ISynchronizePageConfiguration configuration) {
-	    ChangeSetCapability changeSetCapability = configuration.getParticipant().getChangeSetCapability();
-        if (changeSetCapability != null) {
-	        if (changeSetCapability.supportsActiveChangeSets() || changeSetCapability.supportsCheckedInChangeSets()) {
-	            return new ChangeSetModelManager(configuration);
-	        }
-	    }
+        ISynchronizeParticipant participant = configuration.getParticipant();
+        if (participant instanceof IChangeSetProvider) {
+            IChangeSetProvider provider = (IChangeSetProvider) participant;
+    	    ChangeSetCapability changeSetCapability = provider.getChangeSetCapability();
+            if (changeSetCapability != null) {
+    	        if (changeSetCapability.supportsActiveChangeSets() || changeSetCapability.supportsCheckedInChangeSets()) {
+    	            return new ChangeSetModelManager(configuration);
+    	        }
+    	    }
+        }
 		return new HierarchicalModelManager(configuration);
 	}
 	

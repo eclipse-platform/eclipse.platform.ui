@@ -27,6 +27,7 @@ import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
 import org.eclipse.team.ui.synchronize.*;
@@ -204,7 +205,7 @@ public class CVSChangeSetTests extends CVSSyncSubscriberTest {
 		};
         SynchronizeViewTestAdapter.getCollector(workspaceSubscriber);
         ISynchronizeParticipant participant = SynchronizeViewTestAdapter.getParticipant(workspaceSubscriber);
-        ChangeSetCapability capability = participant.getChangeSetCapability();
+        ChangeSetCapability capability = ((IChangeSetProvider)participant).getChangeSetCapability();
         SubscriberChangeSetCollector activeManager = capability.getActiveChangeSetManager();
         activeManager.waitUntilDone(eventLoopProgressMonitor);
         SubscriberParticipantPage page = (SubscriberParticipantPage)SynchronizeViewTestAdapter.getSyncViewPage(participant);

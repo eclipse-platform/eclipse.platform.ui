@@ -22,16 +22,15 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ChangeSet;
-import org.eclipse.team.core.subscribers.IChangeSetChangeListener;
-import org.eclipse.team.core.subscribers.SubscriberChangeSetCollector;
 import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
 import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
  * Group incoming changes according to the active change set thet are
@@ -135,7 +134,11 @@ public class ActiveChangeSetCollector implements ISyncInfoSetChangeListener {
     }
     
     public SubscriberChangeSetCollector getActiveChangeSetManager() {
-        return getConfiguration().getParticipant().getChangeSetCapability().getActiveChangeSetManager();
+        ISynchronizeParticipant participant = getConfiguration().getParticipant();
+        if (participant instanceof IChangeSetProvider) {  
+            return ((IChangeSetProvider)participant).getChangeSetCapability().getActiveChangeSetManager();
+        }
+        return null;
     }
     
     /**

@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
  * Action group that is used by CVS Change Set Capabilities
@@ -30,11 +30,14 @@ public class CVSChangeSetActionGroup extends SynchronizePageActionGroup {
      * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
      */
     public void fillContextMenu(IMenuManager menu) {
-        if (getConfiguration().getParticipant().getChangeSetCapability().enableCheckedInChangeSetsFor(getConfiguration())) {
-    		appendToGroup(
-    				menu, 
-    				ISynchronizePageConfiguration.FILE_GROUP, 
-    				openCommitSet);
+        ISynchronizeParticipant participant = getConfiguration().getParticipant();
+        if (participant instanceof IChangeSetProvider) {  
+            if (((IChangeSetProvider)participant).getChangeSetCapability().enableCheckedInChangeSetsFor(getConfiguration())) {
+        		appendToGroup(
+        				menu, 
+        				ISynchronizePageConfiguration.FILE_GROUP, 
+        				openCommitSet);
+            }
         }
     }
 }

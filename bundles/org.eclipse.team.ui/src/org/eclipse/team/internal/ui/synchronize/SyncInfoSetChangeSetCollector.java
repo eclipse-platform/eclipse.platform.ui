@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize;
+package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
@@ -16,10 +16,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.subscribers.ChangeSet;
-import org.eclipse.team.core.subscribers.ChangeSetCollector;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetModelProvider;
+import org.eclipse.team.internal.core.subscribers.ChangeSet;
+import org.eclipse.team.internal.core.subscribers.ChangeSetCollector;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * This abstract class provides API for accumulating the <code>SyncInfo</code>

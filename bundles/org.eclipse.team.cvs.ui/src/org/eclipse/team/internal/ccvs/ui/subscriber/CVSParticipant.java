@@ -22,12 +22,14 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.synchronize.*;
 
 /**
  * Superclass for all CVS particpants (workspace, merge and compare)
  */
-public class CVSParticipant extends SubscriberParticipant {
+public class CVSParticipant extends SubscriberParticipant implements IChangeSetProvider {
 	
 	private CVSChangeSetCapability capability;
 

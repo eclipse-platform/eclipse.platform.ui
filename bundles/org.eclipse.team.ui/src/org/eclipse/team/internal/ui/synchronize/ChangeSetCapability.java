@@ -8,11 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.ui.synchronize;
+package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.team.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.core.subscribers.SubscriberChangeSetCollector;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
+import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 /**
  * A change set capability is used by a SubscriberSynchronizePage

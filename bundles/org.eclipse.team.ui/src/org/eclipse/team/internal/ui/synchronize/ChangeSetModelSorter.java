@@ -12,9 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.core.subscribers.ChangeSet;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**

@@ -11,19 +11,14 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IFontDecorator;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.core.subscribers.ChangeSet;
-import org.eclipse.team.core.subscribers.SubscriberChangeSetCollector;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
  * Label decorator that decorates the default active change set.
@@ -34,7 +29,10 @@ public class ChangeSetLabelDecorator extends LabelProvider implements ILabelDeco
 	private SubscriberChangeSetCollector collector;
 
     public ChangeSetLabelDecorator(ISynchronizePageConfiguration configuration) {
-        this.collector = configuration.getParticipant().getChangeSetCapability().getActiveChangeSetManager();
+        ISynchronizeParticipant participant = configuration.getParticipant();
+        if (participant instanceof IChangeSetProvider) {  
+            this.collector = ((IChangeSetProvider)participant).getChangeSetCapability().getActiveChangeSetManager();
+        }
     }
     
     public String decorateText(String input, Object element) {

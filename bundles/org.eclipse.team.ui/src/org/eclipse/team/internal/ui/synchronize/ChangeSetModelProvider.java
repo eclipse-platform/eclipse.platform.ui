@@ -20,8 +20,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.actions.ChangeSetActionGroup;
 import org.eclipse.team.ui.synchronize.*;
@@ -345,7 +345,12 @@ public class ChangeSetModelProvider extends CompositeModelProvider {
      * Return the change set capability
      */
     public ChangeSetCapability getChangeSetCapability() {
-        return getConfiguration().getParticipant().getChangeSetCapability();
+        ISynchronizeParticipant participant = getConfiguration().getParticipant();
+        if (participant instanceof IChangeSetProvider) {
+            IChangeSetProvider provider = (IChangeSetProvider) participant;
+            return provider.getChangeSetCapability();
+        }
+        return null;
     }
     
     public void dispose() {

@@ -20,14 +20,13 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetModelProvider;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetModelSorter;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 

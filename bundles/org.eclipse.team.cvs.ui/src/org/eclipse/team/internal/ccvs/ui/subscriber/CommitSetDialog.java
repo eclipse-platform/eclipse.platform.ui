@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**

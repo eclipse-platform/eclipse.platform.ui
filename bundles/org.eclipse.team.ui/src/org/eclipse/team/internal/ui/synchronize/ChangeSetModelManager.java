@@ -68,7 +68,8 @@ public class ChangeSetModelManager extends HierarchicalModelManager implements I
 		configuration.addPropertyChangeListener(this);
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, CHANGE_SET_GROUP);
 		configuration.addActionContribution(new CommitSetActionContribution());
-		if (configuration.getParticipant().getChangeSetCapability().supportsActiveChangeSets()) {
+		ChangeSetCapability changeSetCapability = getChangeSetCapability(configuration);
+        if (changeSetCapability != null && changeSetCapability.supportsActiveChangeSets()) {
 		    configuration.addLabelDecorator(new ChangeSetLabelDecorator(configuration));
 		}
 		configuration.addPropertyChangeListener(new IPropertyChangeListener() {
@@ -80,13 +81,22 @@ public class ChangeSetModelManager extends HierarchicalModelManager implements I
 
         });
 	}
+
+    private ChangeSetCapability getChangeSetCapability(ISynchronizePageConfiguration configuration) { 
+        ISynchronizeParticipant participant = configuration.getParticipant();
+        if (participant instanceof IChangeSetProvider) {
+            IChangeSetProvider provider = (IChangeSetProvider) participant;
+            return provider.getChangeSetCapability();
+        }
+        return null;
+    }
 	
     private void updateEnablement() {
         if (toggleCommitSetAction != null) {
             ISynchronizePageConfiguration configuration = getConfiguration();
-            ChangeSetCapability changeSetCapability = configuration.getParticipant().getChangeSetCapability();
-            boolean enabled = changeSetCapability.enableActiveChangeSetsFor(configuration)
-            	|| changeSetCapability.enableCheckedInChangeSetsFor(configuration);
+            ChangeSetCapability changeSetCapability = getChangeSetCapability(configuration);
+            boolean enabled = changeSetCapability != null && (changeSetCapability.enableActiveChangeSetsFor(configuration)
+            	|| changeSetCapability.enableCheckedInChangeSetsFor(configuration));
             toggleCommitSetAction.setEnabled(enabled);
         }
         
@@ -147,7 +157,8 @@ public class ChangeSetModelManager extends HierarchicalModelManager implements I
         // Load our setting before invoking super since the inherited
         // initialize will create the provider
         IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
-        enabled = getConfiguration().getParticipant().getChangeSetCapability().enableChangeSetsByDefault();
+        ChangeSetCapability changeSetCapability = getChangeSetCapability(getConfiguration());
+        enabled = changeSetCapability != null && changeSetCapability.enableChangeSetsByDefault();
 		if(pageSettings != null && pageSettings.get(P_COMMIT_SET_ENABLED) != null) {
 		    enabled = pageSettings.getBoolean(P_COMMIT_SET_ENABLED);
 		}
