@@ -66,7 +66,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	/**
 	 * The extension for prefernces files
 	 */
-	private final static String[] PREFERENCE_EXT = new String[] {"*.epf"};
+	private final static String[] PREFERENCE_EXT = new String[] {"*.epf", "*.*"};
 	
 
 	/**
