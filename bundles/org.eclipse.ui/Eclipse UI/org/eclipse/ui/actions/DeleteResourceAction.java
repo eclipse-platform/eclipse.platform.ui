@@ -4,16 +4,15 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -22,7 +21,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.internal.dialogs.ReadOnlyStateChecker;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**
@@ -124,6 +123,11 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 * Whether or not we are deleting content for projects.
 	 */
 	private boolean deleteContent = false;
+	
+	/**
+	 * Whether or not to automatically delete out of sync resources
+	 */
+	private boolean forceOutOfSyncDelete = false;
 /**
  * Creates a new delete resource action.
  *
@@ -245,6 +249,7 @@ boolean confirmDeleteProjects() {
  * Deletes the given resources.
  */
 void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
+	forceOutOfSyncDelete = false;
 	monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
 	for (int i = 0; i < resourcesToDelete.length; ++i) {
 		if (monitor.isCanceled()) {
@@ -259,14 +264,50 @@ void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws Core
  */
 void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreException {
 	boolean force = false; // don't force deletion of out-of-sync resources
-	if (resourceToDelete.getType() == IResource.PROJECT) {
-		// if it's a project, ask whether content should be deleted too
-		IProject project = (IProject) resourceToDelete;
-		project.delete(deleteContent, force, monitor);
+	try {
+		if (resourceToDelete.getType() == IResource.PROJECT) {
+			// if it's a project, ask whether content should be deleted too
+			IProject project = (IProject) resourceToDelete;
+			project.delete(deleteContent, force, monitor);
+		}
+		else {
+			// if it's not a project, just delete it
+			resourceToDelete.delete(force, monitor);
+		}
 	}
-	else {
-		// if it's not a project, just delete it
-		resourceToDelete.delete(force, monitor);
+	catch (CoreException exception) {
+		if (resourceToDelete.getType() == IResource.FILE) {
+			IStatus[] children = exception.getStatus().getChildren();
+					
+			if (children.length == 1 && 
+				children[0].getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+				if (forceOutOfSyncDelete) {
+					resourceToDelete.delete(true, monitor);
+				}
+				else {
+					int result = queryDeleteOutOfSync(resourceToDelete);
+			
+					if (result == IDialogConstants.YES_ID) {
+						resourceToDelete.delete(true, monitor);
+					}
+					else
+					if (result == IDialogConstants.YES_TO_ALL_ID) {
+						forceOutOfSyncDelete = true;
+						resourceToDelete.delete(true, monitor);
+					}
+					else
+					if (result == IDialogConstants.CANCEL_ID) {
+						throw new OperationCanceledException();							
+					}
+				}
+			}
+			else {
+				throw exception;
+			}
+		}
+		else {
+			throw exception;
+		}
 	}
 }
 /**
@@ -299,12 +340,10 @@ int getSelectedResourceTypes() {
 public void run() {
 	if (!confirmDelete())
 		return;
-
 	final IResource[] resourcesToDelete = getResourcesToDelete();
 	
 	if (resourcesToDelete.length == 0)
 		return;
-
 	try {
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
@@ -315,9 +354,32 @@ public void run() {
 	} catch (InvocationTargetException e) {
 		Throwable t = e.getTargetException();
 		if (t instanceof CoreException) {
-			ErrorDialog.openError(shell, WorkbenchMessages.getString("DeleteResourceAction.errorTitle"), null, // no special message //$NON-NLS-1$
-			 ((CoreException) t).getStatus());
-		} else {
+			CoreException exception = (CoreException) t;
+			IStatus status = exception.getStatus();
+			IStatus[] children = status.getChildren();
+			boolean outOfSyncError = false;
+
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+					outOfSyncError = true;
+					break;
+				}
+			}
+			if (outOfSyncError) {
+				ErrorDialog.openError(
+					shell, 
+					WorkbenchMessages.getString("DeleteResourceAction.errorTitle"), 	//$NON-NLS-1$
+					WorkbenchMessages.getString("DeleteResourceAction.outOfSyncError"),	//$NON-NLS-1$
+					status);
+			} 
+			else {
+				ErrorDialog.openError(
+					shell, 
+					WorkbenchMessages.getString("DeleteResourceAction.errorTitle"), // no special message //$NON-NLS-1$
+					null, status);
+			}
+		} 
+		else {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
 			WorkbenchPlugin.log(MessageFormat.format("Exception in {0}.run: {1}", new Object[] {getClass().getName(), t}));//$NON-NLS-1$
 			MessageDialog.openError(
@@ -362,11 +424,45 @@ protected boolean updateSelection(IStructuredSelection selection) {
 /**
  * Handle a key release.
  */
-
 public void handleKeyReleased(KeyEvent event) {
 	if (event.character == SWT.DEL && event.stateMask == 0 && isEnabled()) {
 		run();
 	}
 }
-
+/**
+ * Ask the user whether the given resource should be deleted
+ * despite being out of sync with the file system.
+ * @param resource the out of sync resource
+ * @return One of the IDialogConstants constants indicating which
+ * 	of the Yes, Yes to All, No, Cancel options has been selected by 
+ * 	the user.
+ */
+private int queryDeleteOutOfSync(IResource resource) {
+	final MessageDialog dialog =
+		new MessageDialog(
+			shell,
+			WorkbenchMessages.getString("DeleteResourceAction.messageTitle"),	//$NON-NLS-1$		
+			null,
+			WorkbenchMessages.format("DeleteResourceAction.outOfSyncQuestion", new Object[] {resource.getName()}),	//$NON-NLS-1$
+			MessageDialog.QUESTION,
+			new String[] {
+				IDialogConstants.YES_LABEL,
+				IDialogConstants.YES_TO_ALL_LABEL,
+				IDialogConstants.NO_LABEL,
+				IDialogConstants.CANCEL_LABEL },
+			0);
+	shell.getDisplay().syncExec(new Runnable() {
+		public void run() {
+			dialog.open();
+		}
+	});
+	int result = dialog.getReturnCode();
+	if (result == 0)
+		return IDialogConstants.YES_ID;
+	if (result == 1)
+		return IDialogConstants.YES_TO_ALL_ID;
+	if (result == 2)
+		return IDialogConstants.NO_ID;
+	return IDialogConstants.CANCEL_ID;
+}
 }
