@@ -312,8 +312,7 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 			if (target_h <= current_h)
 				delta_h += 24;
 			delay =
-				((delta_h * 60 - current_m) * 60 - current_s) * 1000
-					- current_ms;
+				((delta_h * 60 - current_m) * 60 - current_s) * 1000 - current_ms;
 			return delay;
 		} else {
 			// Compute the delay for "every Xday at x o'clock"
@@ -334,10 +333,7 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 			int delta_h = target_h - current_h;
 
 			delay =
-				(((delta_d * 24 + target_h - current_h) * 60 - current_m) * 60
-					- current_s)
-					* 1000
-					- current_ms;
+				(((delta_d * 24 + target_h - current_h) * 60 - current_m) * 60 - current_s)* 1000 - current_ms;
 
 			return delay;
 		}
