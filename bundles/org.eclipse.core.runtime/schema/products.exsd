@@ -145,12 +145,12 @@ There are two possible forms of product extension, static and dynamic.  Static p
 &lt;pre&gt;
    &lt;extension id=&quot;coolProduct&quot; point=&quot;org.eclipse.core.runtime.products&quot;&gt; 
       &lt;product name=&quot;%coolName&quot; application=&quot;coolApplication&quot; description=&quot;%coolDescription&quot;&gt; 
-          &lt;parameter name=&quot;windowImage&quot; value=&quot;window.gif&quot;/&gt; 
-          &lt;parameter name=&quot;aboutImage&quot; value=&quot;image.gif&quot;/&gt; 
-          &lt;parameter name=&quot;featureImage&quot; value=&quot;feature.gif&quot;/&gt; 
-          &lt;parameter name=&quot;aboutText&quot; value=&quot;%aboutText&quot;/&gt; 
-          &lt;parameter name=&quot;appName&quot; value=&quot;CoolApp&quot;/&gt; 
-          &lt;parameter name=&quot;welcomePage&quot; value=&quot;$nl$/welcome.xml&quot;/&gt; 
+          &lt;property name=&quot;windowImage&quot; value=&quot;window.gif&quot;/&gt; 
+          &lt;property name=&quot;aboutImage&quot; value=&quot;image.gif&quot;/&gt; 
+          &lt;property name=&quot;featureImage&quot; value=&quot;feature.gif&quot;/&gt; 
+          &lt;property name=&quot;aboutText&quot; value=&quot;%aboutText&quot;/&gt; 
+          &lt;property name=&quot;appName&quot; value=&quot;CoolApp&quot;/&gt; 
+          &lt;property name=&quot;welcomePage&quot; value=&quot;$nl$/welcome.xml&quot;/&gt; 
       &lt;/product&gt; 
    &lt;/extension&gt; 
 &lt;/pre&gt;
