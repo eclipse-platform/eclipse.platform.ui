@@ -112,13 +112,17 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     public void addWorkingSet(IWorkingSet workingSet) {
         Assert.isTrue(!workingSets.contains(workingSet),
                 "working set already registered"); //$NON-NLS-1$
-        workingSets.add(workingSet);
+        internalAddWorkingSet(workingSet);
+    }
+
+    private void internalAddWorkingSet(IWorkingSet workingSet) {
+		workingSets.add(workingSet);
         ((WorkingSet)workingSet).connect(this);
         addToUpdater(workingSet);
         firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
-    }
+	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager
      */
     protected boolean internalRemoveWorkingSet(IWorkingSet workingSet) {
@@ -309,13 +313,11 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         for (int i = 0; i < children.length; i++) {
             IWorkingSet workingSet = restoreWorkingSet(children[i]);
             if (workingSet != null) {
-                this.workingSets.add(workingSet);
-                addToUpdater(workingSet);
-                firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
+            	internalAddWorkingSet(workingSet);
             }
         }
     }
-
+    
     /**
      * Recreates a working set from the persistence store.
      * 
