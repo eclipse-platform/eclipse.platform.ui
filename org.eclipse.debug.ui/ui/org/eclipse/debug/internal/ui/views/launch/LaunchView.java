@@ -486,21 +486,21 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 
 	/**
-	 * Notifies this view that the given launches have terminated. When a launch
-	 * terminates, remove all context submissions associated with it.
+	 * Notifies this view to clean up for the given launches (they've been terminated,
+	 * removed, etc.). Wemove all context submissions associated with these launches.
 	 * Clear the cache of the last stack frame that source was displayed for
 	 * if that launch is terminated.
 	 * 
 	 * @param launches the terminated launches
 	 */
-	protected void launchesTerminated(ILaunch[] launches) {
+	protected void cleanupLaunches(ILaunch[] launches) {
 		fContextListener.launchesTerminated(launches);
 		IStackFrame frame = getStackFrame();
 		if (frame != null) {
-			ILaunch launch= frame.getLaunch();
+			ILaunch frameLaunch= frame.getLaunch();
 			for (int i = 0; i < launches.length; i++) {
-				ILaunch terminatedLaunch = launches[i];
-				if (terminatedLaunch.equals(launch)) {
+				ILaunch launch = launches[i];
+				if (launch.equals(frameLaunch)) {
 					setStackFrame(null);
 				}
 			}

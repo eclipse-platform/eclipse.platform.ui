@@ -501,6 +501,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					} else {
 						refresh();
 					}
+					
+					getLaunchView().cleanupLaunches(launches);
+					
 					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
 					IDebugTarget[] targets= lm.getDebugTargets();
 					if (targets.length > 0) {
@@ -542,7 +545,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		}
 		Runnable r= new Runnable() {
 			public void run() {
-				getLaunchView().launchesTerminated(launches);
+				getLaunchView().cleanupLaunches(launches);
 			}
 		};
 		getView().asyncExec(r);
