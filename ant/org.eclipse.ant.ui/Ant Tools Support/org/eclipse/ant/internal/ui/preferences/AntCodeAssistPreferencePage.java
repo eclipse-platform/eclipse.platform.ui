@@ -120,7 +120,7 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 
 		fContentAssistColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		gd.heightHint= convertHeightInCharsToPixels(8);
+		gd.heightHint= convertHeightInCharsToPixels(3);
 		fContentAssistColorList.setLayoutData(gd);
 		fContentAssistColorList.setFont(font);
 						
