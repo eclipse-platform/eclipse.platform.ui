@@ -180,8 +180,10 @@ public class CheckoutIntoProjectSelectionPage extends CVSWizardPage {
 		if (!Path.EMPTY.isValidSegment(folderName)) {
 			setPageComplete(false);
 			setErrorMessage(Policy.bind("CheckoutIntoProjectSelectionPage.invalidFolderName", folderName)); //$NON-NLS-1$
+			return;
 		}
 		boolean complete = selection != null && selection.getType() != IResource.FILE;
+		setErrorMessage(null);
 		setPageComplete(complete);
 	}
 	
