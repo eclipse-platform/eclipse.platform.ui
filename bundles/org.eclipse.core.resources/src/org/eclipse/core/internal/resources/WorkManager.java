@@ -16,15 +16,22 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
 /**
- * Used to track operation state for each thread that is involved in an operation.
- * This includes prepared and running operation depth, auto-build strategy and
- * cancel state.
+ * Used to track operation state for each thread that is involved in an
+ * operation. This includes prepared and running operation depth, auto-build
+ * strategy and cancel state.
  */
 class WorkManager implements IManager {
 	/**
-	 * Scheduling rule for use during resource change notification.  This
-	 * rule must always be allowed to nest within a resource rule of any granularity
-	 * since it is used from within the scope of all resource changing operations.
+	 * Scheduling rule for use during resource change notification. This rule
+	 * must always be allowed to nest within a resource rule of any granularity
+	 * since it is used from within the scope of all resource changing
+	 * operations. The purpose of this rule is two-fold: 1. To prevent other
+	 * resource changing jobs from being scheduled while the notification is
+	 * running 2. To cause an exception if a resource change listener tries to
+	 * begin a resource rule during a notification. This also prevents
+	 * deadlock, because the notification thread owns the workspace lock, and
+	 * threads that own the workspace lock must never block trying to acquire a
+	 * resource rule.
 	 */
 	class NotifyRule implements ISchedulingRule {
 		public boolean contains(ISchedulingRule rule) {
@@ -35,8 +42,7 @@ class WorkManager implements IManager {
 		}
 	}
 	/**
-	 * Indicates whether any operations have run that may require a build.
-	 */
+	 * Indicates whether any operations have run that may require a build. */
 	private boolean hasBuildChanges = false;
 	private IJobManager jobManager;
 	private final ILock lock;
@@ -51,15 +57,26 @@ class WorkManager implements IManager {
 	}
 	/**
 	 * Begins a resource change notification.
+	 * @param currentRule The rule for the operation that is ending.
 	 */
-	public void beginNotify() {
-		jobManager.beginRule(notifyRule);
+	public void beginNotify(final ISchedulingRule currentRule) {
+		//if we don't currently have a rule, we must released the ws lock
+		// before beginRule to prevent deadlock
+		int depth = 0;
+		if (currentRule == null)
+			depth = beginUnprotected();
+		try {
+			jobManager.beginRule(notifyRule);
+		} finally {
+			if (currentRule == null)
+				endUnprotected(depth);
+		}
 	}
 	/**
 	 * Releases the workspace lock without changing the nested operation depth.
-	 * Must be followed eventually by endUnprotected.  Any 
-	 * beginUnprotected/endUnprotected pair must be done entirely within the scope
-	 * of a checkIn/checkOut pair.  Returns the old lock depth.
+	 * Must be followed eventually by endUnprotected. Any
+	 * beginUnprotected/endUnprotected pair must be done entirely within the
+	 * scope of a checkIn/checkOut pair. Returns the old lock depth.
 	 * @see endUnprotected
 	 */
 	public int beginUnprotected() {
@@ -69,21 +86,21 @@ class WorkManager implements IManager {
 		return depth;
 	}
 	/**
-	 * An operation calls this method and it only returns when the operation
-	 * is free to run.
+	 * An operation calls this method and it only returns when the operation is
+	 * free to run.
 	 */
 	public void checkIn(ISchedulingRule rule) {
 		try {
 			jobManager.beginRule(rule);
 		} finally {
-			//must increment regardless of failure because checkOut is always in finally
+			//must increment regardless of failure because checkOut is always
+			// in finally
 			lock.acquire();
 			incrementPreparedOperations();
 		}
 	}
 	/**
-	 * Inform that an operation has finished.
-	 */
+	 * Inform that an operation has finished. */
 	public synchronized void checkOut(ISchedulingRule rule) throws CoreException {
 		decrementPreparedOperations();
 		rebalanceNestedOperations();
@@ -97,7 +114,7 @@ class WorkManager implements IManager {
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace
-	 * operation. Should NOT be called from outside a 
+	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
 	private void decrementPreparedOperations() {
@@ -117,7 +134,7 @@ class WorkManager implements IManager {
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace
-	 * operation. Should NOT be called from outside a 
+	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
 	public synchronized int getPreparedOperationDepth() {
@@ -126,7 +143,7 @@ class WorkManager implements IManager {
 
 	/**
 	 * This method can only be safelly called from inside a workspace
-	 * operation. Should NOT be called from outside a 
+	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
 	void incrementNestedOperations() {
@@ -134,44 +151,40 @@ class WorkManager implements IManager {
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace
-	 * operation. Should NOT be called from outside a 
+	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
 	private void incrementPreparedOperations() {
 		preparedOperations++;
 	}
 	/**
-	 * Returns true if the nested operation depth is the same
-	 * as the prepared operation depth, and false otherwise.
-	 *
-	 * This method can only be safelly called from inside a workspace
-	 * operation. Should NOT be called from outside a 
-	 * prepareOperation/endOperation block.
+	 * Returns true if the nested operation depth is the same as the prepared
+	 * operation depth, and false otherwise. This method can only be safelly
+	 * called from inside a workspace operation. Should NOT be called from
+	 * outside a prepareOperation/endOperation block.
 	 */
 	boolean isBalanced() {
 		return nestedOperations == preparedOperations;
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace
-	 * operation. Should NOT be called from outside a 
+	 * operation. Should NOT be called from outside a
 	 * prepareOperation/endOperation block.
 	 */
 	public void operationCanceled() {
 		operationCanceled = true;
 	}
 	/**
-	 * Used to make things stable again after an operation has failed between
-	 * a workspace.prepareOperation() and workspace.beginOperation().
-	 * 
-	 * This method can only be safelly called from inside a workspace
-	 * operation. Should NOT be called from outside a 
-	 * prepareOperation/endOperation block.
+	 * Used to make things stable again after an operation has failed between a
+	 * workspace.prepareOperation() and workspace.beginOperation(). This method
+	 * can only be safelly called from inside a workspace operation. Should NOT
+	 * be called from outside a prepareOperation/endOperation block.
 	 */
 	public void rebalanceNestedOperations() {
 		nestedOperations = preparedOperations;
 	}
 	/**
-	 * Indicates if the operation that has just completed may potentially 
+	 * Indicates if the operation that has just completed may potentially
 	 * require a build.
 	 */
 	public void setBuild(boolean hasChanges) {
@@ -195,15 +208,16 @@ class WorkManager implements IManager {
 	public void startup(IProgressMonitor monitor) {
 	}
 	/**
-	 * Returns true if the workspace lock has already been acquired by this thread,
-	 * and false otherwise.
+	 * Returns true if the workspace lock has already been acquired by this
+	 * thread, and false otherwise.
 	 */
 	public boolean isLockAlreadyAcquired() {
 		boolean result = false;
 		try {
 			boolean success = lock.acquire(0L);
 			if (success) {
-				//if lock depth is greater than one, then we already owned it before
+				//if lock depth is greater than one, then we already owned it
+				// before
 				result = lock.getDepth() > 1;
 				lock.release();
 			}

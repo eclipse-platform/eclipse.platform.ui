@@ -835,7 +835,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// as we are completing a top level operation.
 			try {
 				notificationManager.beginNotify();
-				workManager.beginNotify();
+				workManager.beginNotify(rule);
 				// check for a programming error on using beginOperation/endOperation
 				Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
 
