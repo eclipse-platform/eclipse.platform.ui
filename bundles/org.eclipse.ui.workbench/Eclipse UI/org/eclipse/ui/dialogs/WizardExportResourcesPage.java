@@ -270,7 +270,7 @@ public abstract class WizardExportResourcesPage
 				input.add(projects[i]);
 		}
 
-		int availableRows = availableRows(parent);
+		int availableRows = Dialog.availableRows(parent);
 		
 		this.resourceGroup =
 			new ResourceTreeAndListGroup(

@@ -4,6 +4,7 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
@@ -65,8 +66,17 @@ public void createControl(Composite parent) {
 	//Create a table for the list
 	Table table = new Table(outerContainer, SWT.BORDER);
 	GridData data = new GridData(GridData.FILL_BOTH);
-	data.widthHint = SIZING_LISTS_WIDTH;
-	data.heightHint = SIZING_LISTS_HEIGHT;
+	
+	int availableRows = Dialog.availableRows(parent);
+	
+	//Only give a height hint if the dialog is going to be too small
+	if(availableRows > 50){
+		data.heightHint = SIZING_LISTS_HEIGHT;
+	}
+	else{
+		data.heightHint = availableRows * 3;
+	}
+		
 	table.setLayoutData(data);
 	table.setFont(font);
 

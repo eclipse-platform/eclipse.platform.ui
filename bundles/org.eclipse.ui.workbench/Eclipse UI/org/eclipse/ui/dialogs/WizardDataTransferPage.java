@@ -409,17 +409,5 @@ public abstract class WizardDataTransferPage
 			"WizardExportPage.internalErrorTitle");
 	}
 
-	/**
-	 * Return the number of rows available in the current display using the
-	 * current font.
-	 * @param parent
-	 * @return int
-	 */	
-	protected int availableRows(Composite parent) {
-
-		int fontHeight = (parent.getFont().getFontData())[0].getHeight();
-		int displayHeight = parent.getDisplay().getBounds().height;
-
-		return displayHeight / fontHeight;
-	}
+	
 }
