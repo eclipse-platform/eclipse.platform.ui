@@ -136,12 +136,24 @@
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IProjectContributions"
 			objectClass="org.eclipse.core.resources.IProject">
+			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithVersion"
 				label="%CompareWithVersionAction.label"
 				tooltip="%CompareWithVersionAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithVersionAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.IFileContributions"
+			objectClass="org.eclipse.core.resources.IFile">
+			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.compareWithRevision"
+				label="%CompareWithRevisionAction.label"
+				tooltip="%CompareWithRevisionAction.tooltip"
+				menubarPath="compareWithMenu/compareWithGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"/>
 		</objectContribution>
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
