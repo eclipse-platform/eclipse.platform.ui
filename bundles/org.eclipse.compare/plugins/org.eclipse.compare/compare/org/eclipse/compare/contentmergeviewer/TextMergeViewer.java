@@ -183,6 +183,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private RGB OUTGOING;
 	private RGB OUTGOING_FILL;
 	
+	private RGB RESOLVED;
 
 	private boolean fEndOfDocReached;
 	private IDocumentListener fDocumentListener;
@@ -246,6 +247,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private boolean fSubDoc= true;
 	private IPositionUpdater fPositionUpdater;
 	private boolean fIsMotif;	
+	private boolean fIsCarbon;	
 		
 
 	// SWT widgets
@@ -272,15 +274,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		private static final int INSET= BIRDS_EYE_VIEW_INSET;
 
-		private Color fIndicatorColor;
+		private RGB fIndicatorColor;
 		private Color fSeparatorColor;
 		
 		public HeaderPainter() {
 			fSeparatorColor= getColor(fSummaryHeader.getDisplay(), ViewForm.borderInsideRGB);
 		}
 		
-		public void setColor(Color color) {
+		public boolean setColor(RGB color) {
+			RGB oldColor= fIndicatorColor;
 			fIndicatorColor= color;
+			if (color == null)
+				return oldColor != null;
+			if (oldColor != null)
+				return color.equals(oldColor);
+			return true;
 		}
 		
 		private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topLeft, Color bottomRight) {
@@ -298,12 +306,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			Point s= fSummaryHeader.getSize();
 			
 			if (fIndicatorColor != null) {
-				e.gc.setBackground(fIndicatorColor);
+				Display d= fSummaryHeader.getDisplay();
+				e.gc.setBackground(getColor(d, fIndicatorColor));
 				//Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
 				int min= Math.min(s.x, s.y)-2*INSET;
 				Rectangle r= new Rectangle((s.x-min)/2, (s.y-min)/2, min, min);
 				e.gc.fillRectangle(r);
-				Display d= fSummaryHeader.getDisplay();
 				if (d != null)
 					drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
 			}
@@ -637,6 +645,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		String platform= SWT.getPlatform();
 		fIsMotif= "motif".equals(platform); //$NON-NLS-1$
+		fIsCarbon= "carbon".equals(platform); //$NON-NLS-1$
 		
 		if (fIsMotif)
 			fMarginWidth= 0;
@@ -787,6 +796,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		SELECTED_OUTGOING= getForeground(display);
 		OUTGOING= interpolate(SELECTED_OUTGOING, bg, 0.6);
 		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, bg, 0.97);
+		
+		RESOLVED= new RGB(0, 255, 0);
 				
 		refreshBirdsEyeView();
 		invalidateLines();
@@ -1020,7 +1031,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				paintBirdsEyeView(this, gc);
 			}
 		};
-		fBirdsEyeCanvas.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+		//fBirdsEyeCanvas.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 		fBirdsEyeCanvas.addMouseListener(
 			new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
@@ -2004,6 +2015,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
   			
 		Rectangle trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
 		int scrollbarHeight= trim.height;
+		if (fIsCarbon)
+			scrollbarHeight-= 3;	// get rid of the focus ring
+
 		Composite composite= (Composite) getControl();
 
 		int leftTextWidth= width1;
@@ -2031,9 +2045,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
 		int scrollbarWidth= 0;
-		if (fSynchronizedScrolling && fScrollCanvas != null)
+		if (fSynchronizedScrolling && fScrollCanvas != null) {
 			//scrollbarWidth= fScrollCanvas.computeTrim(0, 0, 0, 0).width;
 			scrollbarWidth= fLeft.getTextWidget().computeTrim(0, 0, 0, 0).width;
+			if (fIsCarbon)
+				scrollbarWidth-= 6;	// get rid of the focus ring
+		}
 		int rightTextWidth= width2-scrollbarWidth;
 		if (fRightCanvas != null)
 			rightTextWidth-= fMarginWidth;
@@ -2050,10 +2067,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
   		if (fBirdsEyeCanvas != null) {
+  			int verticalScrollbarButtonHeight= scrollbarWidth;
+			int horizontalScrollbarButtonHeight= scrollbarHeight;
+			if (fIsCarbon) {
+				verticalScrollbarButtonHeight+= 2;
+				horizontalScrollbarButtonHeight= 18;
+			}
   			if (fSummaryHeader != null)
-				fSummaryHeader.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, scrollbarWidth);
-  			y+= scrollbarHeight;
-  			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(3*scrollbarHeight));
+				fSummaryHeader.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, verticalScrollbarButtonHeight);
+  			y+= verticalScrollbarButtonHeight;
+  			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(2*verticalScrollbarButtonHeight+horizontalScrollbarButtonHeight));
    		}
 		
 		// doesn't work since TextEditors don't have their correct size yet.
@@ -2626,7 +2649,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private void updateResolveStatus() {
 			
-		Color color= null;
+		RGB rgb= null;
 		
 		if (showResolveUI()) {
 			// we only show red or green if there is at least one incoming or conflicting change
@@ -2653,18 +2676,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		
 			if (incomingOrConflicting > 0) {
-				Display display= fSummaryHeader.getDisplay();
 				if (unresolvedConflicting > 0)
-					color= display.getSystemColor(SWT.COLOR_RED);
+					rgb= SELECTED_CONFLICT;
 				else if (unresolvedIncoming > 0)
-					color= display.getSystemColor(SWT.COLOR_BLUE);
+					rgb= SELECTED_INCOMING;
 				else
-					color= display.getSystemColor(SWT.COLOR_GREEN);
+					rgb= RESOLVED;
 			}
 		}
 		
-		fHeaderPainter.setColor(color);
-		fSummaryHeader.redraw();
+		if (fHeaderPainter.setColor(rgb))
+			fSummaryHeader.redraw();
 	}
 
 	private void updateStatus(Diff diff) {
