@@ -11,13 +11,28 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.ui.internal.*;
-import org.eclipse.core.runtime.*;
-import org.xml.sax.*;
-import org.apache.xerces.parsers.*;
-import org.xml.sax.helpers.*;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 /**
  * A parser for the the welcome page
  */
@@ -67,7 +82,7 @@ public class WelcomeParser extends DefaultHandler {
 		}
 		public void skippedEntity(String name) throws SAXException {
 		}
-		public void startDocument() throws org.xml.sax.SAXException {
+		public void startDocument() throws SAXException {
 		}
 		public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 		}
@@ -83,11 +98,11 @@ public class WelcomeParser extends DefaultHandler {
 			if (localName.equals(TAG_INTRO)) {
 				ItemHandler h = new IntroItemHandler();
 				h.setParent(WelcomePageHandler.this);
-				parser.setContentHandler(h);
+				parser.getXMLReader().setContentHandler(h);
 			} else if (localName.equals(TAG_ITEM)) {
 				ItemHandler h = new ItemHandler();
 				h.setParent(WelcomePageHandler.this);
-				parser.setContentHandler(h);
+				parser.getXMLReader().setContentHandler(h);
 			}
 		}
 	}	
@@ -113,7 +128,7 @@ public class WelcomeParser extends DefaultHandler {
 			public void endElement (String namespaceURI, String localName, String qName) throws SAXException {
 				if (localName.equals(TAG_BOLD)) {
 					boldRanges.add(new int[] {textStart, offset - textStart});
-					parser.setContentHandler(parent);
+					parser.getXMLReader().setContentHandler(parent);
 				}
 			}
 		}
@@ -128,7 +143,7 @@ public class WelcomeParser extends DefaultHandler {
 			public void endElement (String namespaceURI, String localName, String qName) throws SAXException {
 				if (localName.equals(TAG_ACTION)) {
 					actionRanges.add(new int[] {textStart, offset - textStart});
-					parser.setContentHandler(parent);
+					parser.getXMLReader().setContentHandler(parent);
 				}
 			}
 		}	
@@ -143,7 +158,7 @@ public class WelcomeParser extends DefaultHandler {
 			public void endElement (String namespaceURI, String localName, String qName) throws SAXException {
 				if (localName.equals(TAG_TOPIC)) {
 					helpRanges.add(new int[] {textStart, offset - textStart});
-					parser.setContentHandler(parent);
+					parser.getXMLReader().setContentHandler(parent);
 				}
 			}
 		}	
@@ -185,23 +200,23 @@ public class WelcomeParser extends DefaultHandler {
 			if (localName.equals(TAG_BOLD)) {
 				BoldHandler h = new BoldHandler();
 				h.setParent(ItemHandler.this);
-				parser.setContentHandler(h);
+				parser.getXMLReader().setContentHandler(h);
 			} else if(localName.equals(TAG_ACTION)) {
 				ActionHandler h = new ActionHandler(atts.getValue(ATT_PLUGIN_ID), atts.getValue(ATT_CLASS));
 				h.setParent(ItemHandler.this);
-				parser.setContentHandler(h);
+				parser.getXMLReader().setContentHandler(h);
 			} else if(localName.equals(TAG_PARAGRAPH)) {
 				wrapStart = textStart;
 			} else if(localName.equals(TAG_TOPIC)) {
 				TopicHandler h = new TopicHandler(atts.getValue(ATT_ID), atts.getValue(ATT_HREF));
 				h.setParent(ItemHandler.this);
-				parser.setContentHandler(h);
+				parser.getXMLReader().setContentHandler(h);
 			}
 		}
 		public void endElement (String namespaceURI, String localName, String qName) throws SAXException {
 			if (localName.equals(TAG_ITEM)) {
 				items.add(constructWelcomeItem());
-				parser.setContentHandler(parent);
+				parser.getXMLReader().setContentHandler(parent);
 			} else if (localName.equals(TAG_PARAGRAPH)) {
 				wrapRanges.add(new int[] {wrapStart, offset - wrapStart});
 			}				
@@ -211,7 +226,7 @@ public class WelcomeParser extends DefaultHandler {
 		public void endElement (String namespaceURI, String localName, String qName) throws SAXException {
 			if (localName.equals(TAG_INTRO)) {
 				introItem = constructWelcomeItem();
-				parser.setContentHandler(parent);
+				parser.getXMLReader().setContentHandler(parent);
 			} else if (localName.equals(TAG_PARAGRAPH)) {
 				wrapRanges.add(new int[] {wrapStart, offset - wrapStart});
 			}					
@@ -220,13 +235,16 @@ public class WelcomeParser extends DefaultHandler {
 /**
  * Creates a new welcome parser.
  */
-public WelcomeParser() {
+public WelcomeParser() throws ParserConfigurationException, SAXException, FactoryConfigurationError {
 	super();
-	parser = new SAXParser();
-	parser.setContentHandler(this);
-	parser.setDTDHandler(this);
-	parser.setEntityResolver(this);
-	parser.setErrorHandler(this);
+	SAXParserFactory factory = SAXParserFactory.newInstance();
+    factory.setFeature("http://xml.org/sax/features/namespaces", true);
+    parser = factory.newSAXParser();
+    
+	parser.getXMLReader().setContentHandler(this);
+	parser.getXMLReader().setDTDHandler(this);
+	parser.getXMLReader().setEntityResolver(this);
+	parser.getXMLReader().setErrorHandler(this);
 }
 /**
  * Returns the intro item.
@@ -257,7 +275,7 @@ public boolean isFormatWrapped() {
  */
 public void parse(InputStream is) {
 	try {
-		parser.parse(new InputSource(is));
+		parser.parse(new InputSource(is), this);
 	} catch (SAXException e) {
 		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, WorkbenchMessages.getString("WelcomeParser.parseException"), e);  //$NON-NLS-1$	
 		WorkbenchPlugin.log(WorkbenchMessages.getString("WelcomeParser.parseError"), status);  //$NON-NLS-1$	
@@ -274,7 +292,7 @@ public void startElement (String namespaceURI, String localName, String qName, A
 		WelcomeContentHandler h = new WelcomePageHandler(atts.getValue(ATT_TITLE));
 		format = atts.getValue(ATT_FORMAT);
 		h.setParent(this);
-		parser.setContentHandler(h);
+		parser.getXMLReader().setContentHandler(h);
 	}
 }
 }
