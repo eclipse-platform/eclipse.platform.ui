@@ -11,11 +11,6 @@
    </annotation>
 
    <element name="extension">
-      <annotation>
-         <appInfo>
-            <meta.element translatable="true"/>
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="configExtension" minOccurs="1" maxOccurs="unbounded"/>
@@ -41,6 +36,9 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
