@@ -42,6 +42,17 @@ public void mouseDown(MouseEvent e) {
 	CTabItem tabUnderPointer = tabFolder.getItem(new Point(e.x, e.y));
 	if (tabUnderPointer != tab)
 		return;
+	if(tabUnderPointer == null) {
+		//Avoid drag from the borders.
+		Rectangle clientArea = tabFolder.getClientArea();
+		if((tabFolder.getStyle() & SWT.TOP) != 0) {
+			if(e.y > clientArea.y)
+				return;
+		} else {
+			if(e.y < clientArea.y + clientArea.height)
+				return;
+		}
+	}
 
 	super.mouseDown(e);
 }
