@@ -29,18 +29,21 @@ import org.eclipse.team.internal.ccvs.core.Policy;
  * conversely, at what point to resume.
  */
 public class TimeoutOutputStream extends FilterOutputStream {
+	// unsynchronized variables
+	private final long writeTimeout; // write() timeout in millis
+	private final long closeTimeout; // close() timeout in millis, or -1
+
+	// requests for the thread (synchronized)
 	private byte[] iobuffer; // circular buffer
 	private int head = 0; // points to first unwritten byte
 	private int length = 0; // number of remaining unwritten bytes
-	private boolean cannotWrite = false; // if true, writes will not be honoured
 	private boolean closeRequested = false; // if true, close requested
 	private boolean flushRequested = false; // if true, flush requested
-	private IOException ioe = null;
-	private RuntimeException re = null;
 
-	private long writeTimeout; // write() timeout in millis
-	private long closeTimeout; // close() timeout in millis, or -1
+	// responses from the thread (synchronized)
 	private Thread thread;
+	private boolean waitingForClose = false; // if true, the thread is waiting for close()
+	private IOException ioe = null;
 
 	/**
 	 * Creates a timeout wrapper for an output stream.
@@ -54,10 +57,14 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 */
 	public TimeoutOutputStream(OutputStream out, int bufferSize, long writeTimeout, long closeTimeout) {
 		super(out);
-		this.iobuffer = new byte[bufferSize];
 		this.writeTimeout = writeTimeout;
 		this.closeTimeout = closeTimeout;
-		thread = new Thread(new CommitBufferRunnable(), "TimeoutOutputStream");//$NON-NLS-1$
+		this.iobuffer = new byte[bufferSize];
+		thread = new Thread(new Runnable() {
+			public void run() {
+				runThread();
+			}
+		}, "TimeoutOutputStream");//$NON-NLS-1$
 		thread.setDaemon(true);
 		thread.start();
 	}
@@ -78,7 +85,6 @@ public class TimeoutOutputStream extends FilterOutputStream {
 			if (thread == null) return;
 			oldThread = thread;
 			closeRequested = true;
-			flushRequested = true;
 			thread.interrupt();
 			checkError();
 		}
@@ -101,15 +107,10 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized void write(int b) throws IOException {
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
-		checkError();
-		if (length == iobuffer.length) {
-			syncCommit();
-			if (length == iobuffer.length) throw new InterruptedIOException();
-		}
+		syncCommit(true);
 		iobuffer[(head + length) % iobuffer.length] = (byte) b;
 		length++;
-		asyncCommit();
+		notify();
 	}
 	
 	/**
@@ -119,24 +120,21 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized void write(byte[] buffer, int off, int len) throws IOException {
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
-		checkError();
 		int amount = 0;
 		try {
-			while (len-- > 0) {
-				if (length == iobuffer.length) {
-					syncCommit();
-					if (length == iobuffer.length) throw new InterruptedIOException();
+			do {
+				syncCommit(true);
+				while (amount < len && length != iobuffer.length) {
+					iobuffer[(head + length) % iobuffer.length] = buffer[off++];
+					length++;
+					amount++;
 				}
-				iobuffer[(head + length) % iobuffer.length] = buffer[off++];
-				length++;
-				amount++;
-			}
+			} while (amount < len);
 		} catch (InterruptedIOException e) {
 			e.bytesTransferred = amount;
 			throw e;
 		}
-		asyncCommit();
+		notify();
 	}
 
 	/**
@@ -146,49 +144,39 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized void flush() throws IOException {
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
-		checkError();
+		int oldLength = length;
 		flushRequested = true;
-		int amount = 0;
 		try {
-			while (flushRequested && length != 0) {
-				int oldLength = length;
-				syncCommit();
-				amount += oldLength - length;
-				if (length == oldLength) throw new InterruptedIOException();
-			}
+			syncCommit(false);
 		} catch (InterruptedIOException e) {
-			e.bytesTransferred = amount;
+			e.bytesTransferred = oldLength - length;
 			throw e;
 		}
-		asyncCommit();
+		notify();
 	}
 	
-	/*
-	 * Waits for the buffer to drain.
-	 * The buffer might still be at the same level when this method returns if the operation timed out.
+	/**
+	 * Waits for the buffer to drain if it is full.
+	 * @param partial if true, waits until the buffer is partially empty, else drains it entirely
+	 * @throws InterruptedIOException if the buffer could not be drained as requested
 	 */
-	private void syncCommit() throws IOException {
+	private void syncCommit(boolean partial) throws IOException {
+		checkError(); // check errors before allowing the addition of new bytes
+		if (partial && length != iobuffer.length || length == 0) return;
+		if (waitingForClose) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
 		notify();
 		try {
 			wait(writeTimeout);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt(); // we weren't expecting to be interrupted
 		}
-		checkError();
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
+		checkError(); // check errors before allowing the addition of new bytes
+		if (partial && length != iobuffer.length || length == 0) return;
+		throw new InterruptedIOException();
 	}
 
-	/*
-	 * Notifies the background thread that some bytes were written so that it can drain the buffer
-	 * asynchronously in the background.
-	 */
-	private void asyncCommit() throws IOException {
-		if (length != 0 || flushRequested || closeRequested) notify();
-	}
-
-	/*
-	 * Checks if exceptions are pending and throws the next one, if any.
+	/**
+	 * If an exception is pending, throws it.
 	 */
 	private void checkError() throws IOException {
 		if (ioe != null) {
@@ -196,116 +184,95 @@ public class TimeoutOutputStream extends FilterOutputStream {
 			ioe = null;
 			throw e;
 		}
-		if (re != null) {
-			RuntimeException e = re;
-			re = null;
-			throw e;
+	}
+
+	/**
+	 * Runs the thread in the background.
+	 */
+	private void runThread() {
+		try {
+			writeUntilDone();
+		} catch (IOException e) {
+			synchronized (this) { ioe = e; }
+		} finally {
+			waitUntilClosed();
+			try {
+				out.close();
+			} catch (IOException e) {
+				synchronized (this) { ioe = e; } 
+			} finally {
+				synchronized (this) {
+					thread = null;
+					notify();
+				}
+			}
 		}
 	}
-	
-	private class CommitBufferRunnable implements Runnable {
-		private final Object lock = TimeoutOutputStream.this;
 
-		public void run() {
+	/**
+	 * Waits until we have been requested to close the stream.
+	 */
+	private synchronized void waitUntilClosed() {
+		waitingForClose = true;
+		notify();
+		while (! closeRequested) {
 			try {
-				writeUntilDone();
-				waitUntilClosed();
-			} catch (IOException e) {
-				synchronized (lock) { ioe = e; }
-				waitUntilClosed();
-			} catch (RuntimeException e) {
-				synchronized (lock) { re = e; }
-				waitUntilClosed();
-			} finally {
-				/*** Closes the stream and sets thread to null when done ***/
-				try {
-					out.close();
-				} catch (IOException e) {
-					synchronized (lock) { ioe = e; } 
-				} catch (RuntimeException e) {
-					synchronized (lock) { re = e; }
-				} finally {
-					synchronized (lock) {
-						cannotWrite = true;
-						thread = null;
-						lock.notify();
-					}
-				}
+				wait();
+			} catch (InterruptedException e) {
+				closeRequested = true; // alternate quit signal
 			}
 		}
-		
-		/**
-		 * Writes bytes from the buffer until closed and buffer is empty
-		 */
-		private void writeUntilDone() throws IOException {
-			boolean pause = false;
-			boolean mustFlush = false;
-			for (;;) {
-				int off, len;
-				synchronized (lock) {
-					for (;;) {
-						if (closeRequested && length == 0) return; // quit signal
-						if ((mustFlush || flushRequested || length != 0) && ! pause) break;
-						pause = false;
-						try {
-							lock.wait();
-						} catch (InterruptedException e) {
-							closeRequested = true; // alternate quit signal
-						}
-					}
-					off = head;
-					len = iobuffer.length - head;
-					if (len > length) len = length;
-					if (flushRequested) {
-						mustFlush = true;
-						flushRequested = false;
-					}
-				}
-				if (len != 0) {
+	}
+
+	/**
+	 * Writes bytes from the buffer until closed and buffer is empty
+	 */
+	private void writeUntilDone() throws IOException {
+		int bytesUntilFlush = -1; // if > 0, then we will flush after that many bytes have been written
+		for (;;) {
+			int off, len;
+			synchronized (this) {
+				for (;;) {
+					if (closeRequested && length == 0) return; // quit signal
+					if (length != 0 || flushRequested) break;
 					try {
-						// the i/o operation might block without releasing the lock,
-						// so we do this outside of the synchronized block
-						out.write(iobuffer, off, len);
-					} catch (InterruptedIOException e) {
-						len = e.bytesTransferred;
-						e.bytesTransferred = 0;
-						if (len == 0) pause = true;
-						synchronized (lock) { ioe = e; }
-					}
-					synchronized (lock) {
-						head = (head + len) % iobuffer.length;
-						length -= len;
-						lock.notify();
-					}
-				} else {
-					try {
-						out.flush();
-						mustFlush = false;
-					} catch (InterruptedIOException e) {
-						if (e.bytesTransferred == 0) pause = true;
-						e.bytesTransferred = 0;
-						synchronized (lock) { ioe = e; }
-					}
-					synchronized (lock) {
-						lock.notify();
-					}
-				}
-			}
-		}
-		
-		/**
-		 * Waits until we have been requested to close the stream.
-		 */
-		private void waitUntilClosed() {
-			synchronized (lock) {
-				cannotWrite = true;
-				lock.notify();
-				while (! closeRequested) {
-					try {
-						lock.wait();
+						wait();
 					} catch (InterruptedException e) {
 						closeRequested = true; // alternate quit signal
 					}
+				}
+				off = head;
+				len = iobuffer.length - head;
+				if (len > length) len = length;
+				if (flushRequested && bytesUntilFlush < 0) {
+					flushRequested = false;
+					bytesUntilFlush = length;
+				}
+			}
+			if (len != 0) {
+				// write out all remaining bytes from the buffer before flushing
+				try {
+					// the i/o operation might block without releasing the lock,
+					// so we do this outside of the synchronized block
+					out.write(iobuffer, off, len);
+				} catch (InterruptedIOException e) {
+					len = e.bytesTransferred;
+				}
+				synchronized (this) {
+					head = (head + len) % iobuffer.length;
+					length -= len;
+					notify();
+				}
+			}
+			if (bytesUntilFlush >= 0) {
+				bytesUntilFlush -= len;
+				if (bytesUntilFlush <= 0) {
+					// flush the buffer now
+					try {
+						out.flush();
+					} catch (InterruptedIOException e) {
+					}
+					bytesUntilFlush = -1; // might have been 0
 				}
 			}
 		}

@@ -27,17 +27,20 @@ import java.io.InterruptedIOException;
  * conversely, at what point to resume.
  */
 public class TimeoutInputStream extends FilterInputStream {
-	private byte[] iobuffer; // circular buffer
-	private int head = 0; // points to first unread byte
-	private int length = 0; // number of remaining unread bytes
-	private boolean eof = false; // if true, EOF encountered
-	private boolean closeRequested = false; // if true, close requested
-	private IOException ioe = null;
-	private RuntimeException re = null;
+	// unsynchronized variables
+	private final long readTimeout; // read() timeout in millis
+	private final long closeTimeout; // close() timeout in millis, or -1
 
-	private long readTimeout; // read() timeout in millis
-	private long closeTimeout; // close() timeout in millis, or -1
-	private Thread thread;
+	// requests for the thread (synchronized)
+	private boolean closeRequested = false; // if true, close requested
+
+	// responses from the thread (synchronized)
+	private Thread thread;   // if null, thread has terminated
+	private byte[] iobuffer; // circular buffer
+	private int head = 0;    // points to first unread byte
+	private int length = 0;  // number of remaining unread bytes
+	private IOException ioe = null; // if non-null, contains a pending exception
+	private boolean waitingForClose = false; // if true, thread is waiting for close()
 
 	/**
 	 * Creates a timeout wrapper for an input stream.
@@ -51,10 +54,14 @@ public class TimeoutInputStream extends FilterInputStream {
 	 */
 	public TimeoutInputStream(InputStream in, int bufferSize, long readTimeout, long closeTimeout) {
 		super(in);
-		this.iobuffer = new byte[bufferSize];
 		this.readTimeout = readTimeout;
 		this.closeTimeout = closeTimeout;
-		thread = new Thread(new FillBufferRunnable(), "TimeoutInputStream");//$NON-NLS-1$
+		this.iobuffer = new byte[bufferSize];
+		thread = new Thread(new Runnable() {
+			public void run() {
+				runThread();
+			}
+		}, "TimeoutInputStream");//$NON-NLS-1$
 		thread.setDaemon(true);
 		thread.start();
 	}
@@ -105,17 +112,11 @@ public class TimeoutInputStream extends FilterInputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized int read() throws IOException {
-		if (length == 0) checkError();
-		syncFill();
-		if (length == 0) {
-			checkError();
-			if (eof) return -1;
-			throw new InterruptedIOException();
-		}
+		if (! syncFill()) return -1; // EOF reached
 		int b = iobuffer[head++] & 255;
 		if (head == iobuffer.length) head = 0;
 		length--;
-		asyncFill();
+		notify();
 		return b;
 	}
 	
@@ -126,13 +127,7 @@ public class TimeoutInputStream extends FilterInputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized int read(byte[] buffer, int off, int len) throws IOException {
-		if (length == 0) checkError();
-		syncFill();
-		if (length == 0) {
-			checkError();
-			if (eof) return -1;
-			throw new InterruptedIOException();
-		}
+		if (! syncFill()) return -1; // EOF reached
 		int pos = off;
 		if (len > length) len = length;
 		while (len-- > 0) {
@@ -140,7 +135,7 @@ public class TimeoutInputStream extends FilterInputStream {
 			if (head == iobuffer.length) head = 0;
 			length--;
 		}
-		asyncFill();
+		notify();
 		return pos - off;
 	}
 
@@ -151,28 +146,21 @@ public class TimeoutInputStream extends FilterInputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized long skip(long count) throws IOException {
-		if (length == 0) checkError();
 		long amount = 0;
 		try {
-			while (count != 0) {
-				int skip = (count > length) ? length : (int) count;
+			do {
+				if (! syncFill()) break; // EOF reached
+				int skip = (int) Math.min(count - amount, length);
 				head = (head + skip) % iobuffer.length;
 				length -= skip;
 				amount += skip;
-				count -= skip;
-				syncFill();
-				if (length == 0) {
-					checkError();
-					if (eof) break;
-					throw new InterruptedIOException();
-				}
-			}
-			asyncFill();
-			return amount;
+			} while (amount < count);
 		} catch (InterruptedIOException e) {
 			e.bytesTransferred = (int) amount; // assumes amount < Integer.MAX_INT
 			throw e;
 		}
+		notify();
+		return amount;
 	}
 
 	/**
@@ -182,31 +170,29 @@ public class TimeoutInputStream extends FilterInputStream {
 		return false;
 	}
 
-	/*
+	/**
 	 * Waits for the buffer to fill if it is empty and the stream has not reached EOF.
-	 * The buffer might still be empty when this method returns if the operation timed out
-	 * or EOF was encountered.
+	 * @return true if bytes are available, false if EOF has been reached
+	 * @throws InterruptedIOException if EOF not reached but no bytes are available
 	 */
-	private void syncFill() throws IOException {
-		if (length != 0 || eof) return;
+	private boolean syncFill() throws IOException {
+		if (length != 0) return true;
+		checkError(); // check errors only after we have read all remaining bytes
+		if (waitingForClose) return false;
 		notify();
 		try {
 			wait(readTimeout);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt(); // we weren't expecting to be interrupted
 		}
+		if (length != 0) return true;
+		checkError(); // check errors only after we have read all remaining bytes
+		if (waitingForClose) return false;
+		throw new InterruptedIOException();
 	}
 
-	/*
-	 * Notifies the background thread that some bytes were read so that it can fill the buffer
-	 * asynchronously in the background.
-	 */
-	private void asyncFill() {
-		if ((length != iobuffer.length && ! eof) || closeRequested) notify();
-	}
-
-	/*
-	 * Checks if exceptions are pending and throws the next one, if any.
+	/**
+	 * If an exception is pending, throws it.
 	 */
 	private void checkError() throws IOException {
 		if (ioe != null) {
@@ -214,100 +200,78 @@ public class TimeoutInputStream extends FilterInputStream {
 			ioe = null;
 			throw e;
 		}
-		if (re != null) {
-			RuntimeException e = re;
-			re = null;
-			throw e;
-		}
 	}
 	
-	private class FillBufferRunnable implements Runnable {
-		private final Object lock = TimeoutInputStream.this;
-
-		public void run() {
+	/**
+	 * Runs the thread in the background.
+	 */
+	private void runThread() {
+		try {
+			readUntilDone();
+		} catch (IOException e) {
+			synchronized (this) { ioe = e; }
+		} finally {
+			waitUntilClosed();
 			try {
-				readUntilDone();
-				waitUntilClosed();
+				in.close();
 			} catch (IOException e) {
-				synchronized (lock) { ioe = e; }
-				waitUntilClosed();
-			} catch (RuntimeException e) {
-				synchronized (lock) { re = e; }
-				waitUntilClosed();
+				synchronized (this) { ioe = e; } 
 			} finally {
-				/*** Closes the stream and sets thread to null when done ***/
-				try {
-					in.close();
-				} catch (IOException e) {
-					synchronized (lock) { ioe = e; } 
-				} catch (RuntimeException e) {
-					synchronized (lock) { re = e; }
-				} finally {
-					synchronized (lock) {
-						eof = true;
-						thread = null;
-						lock.notify();
-					}
+				synchronized (this) {
+					thread = null;
+					notify();
 				}
 			}
 		}
-		
-		/**
-		 * Reads bytes into the buffer until EOF, closed, or error.
-		 */
-		private void readUntilDone() throws IOException {
-			boolean pause = false;
-			for (;;) {
-				int off, len;
-				synchronized (lock) {
-					for (;;) {
-						if (closeRequested || eof) return; // quit signal
-						if (length != iobuffer.length && ! pause) break;
-						pause = false;
-						try {
-							lock.wait();
-						} catch (InterruptedException e) {
-							closeRequested = true; // alternate quit signal
-						}
-					}
-					off = (head + length) % iobuffer.length;
-					len = ((head > off) ? head : iobuffer.length) - off;
-				}
-				int count;
-				try {
-					// the i/o operation might block without releasing the lock,
-					// so we do this outside of the synchronized block
-					count = in.read(iobuffer, off, len);
-				} catch (InterruptedIOException e) {
-					// keep partial transfer
-					count = e.bytesTransferred;
-					e.bytesTransferred = 0;
-					synchronized (lock) { ioe = e; }
-				}
-				synchronized (lock) {
-					if (count == -1) return;
-					if (count == 0) pause = true;
-					length += count;
-					lock.notify();
-				}
-			}				
+	}
+	
+	/**
+	 * Waits until we have been requested to close the stream.
+	 */
+	private synchronized void waitUntilClosed() {
+		waitingForClose = true;
+		notify();
+		while (! closeRequested) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				closeRequested = true; // alternate quit signal
+			}
 		}
-		
-		/**
-		 * Waits until we have been requested to close the stream.
-		 */
-		private void waitUntilClosed() {
-			synchronized (lock) {
-				eof = true;
-				lock.notify();
-				while (! closeRequested) {
+	}
+
+	/**
+	 * Reads bytes into the buffer until EOF, closed, or error.
+	 */
+	private void readUntilDone() throws IOException {
+		for (;;) {
+			int off, len;
+			synchronized (this) {
+				for (;;) {
+					if (closeRequested) return; // quit signal
+					if (length != iobuffer.length) break;
 					try {
-						lock.wait();
+						wait();
 					} catch (InterruptedException e) {
 						closeRequested = true; // alternate quit signal
 					}
 				}
+				off = (head + length) % iobuffer.length;
+				len = ((head > off) ? head : iobuffer.length) - off;
 			}
-		}
+			int count;
+			try {
+				// the i/o operation might block without releasing the lock,
+				// so we do this outside of the synchronized block
+				count = in.read(iobuffer, off, len);
+				if (count == -1) return; // EOF encountered
+			} catch (InterruptedIOException e) {
+				count = e.bytesTransferred; // keep partial transfer
+			}
+			synchronized (this) {
+				length += count;
+				notify();
+			}
+		}				
 	}
 }
