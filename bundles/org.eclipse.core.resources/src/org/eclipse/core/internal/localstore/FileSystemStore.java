@@ -16,14 +16,13 @@ import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.*;
-import java.io.*;
+import java.io.*; 
 
 public class FileSystemStore implements ILocalStoreConstants {
 	/**
 	 * Singleton buffer created to prevent buffer creations in the
-	 * transferStreams method.  Used an optimization, based on the
-	 * assumption that multiple writes won't happen in a given
-	 * instance of FileSystemStore.
+	 * transferStreams method.  Used as an optimization, based on the assumption
+	 * that multiple writes won't happen in a given instance of FileSystemStore.
 	 */
 	private final byte[] buffer = new byte[8192];
 	
@@ -239,7 +238,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				}
 			}
-		}
+		} 
 		// for some reason we couldn't move - workaround: copy and delete the source
 		// but if just case-renaming on a case-insensitive FS, there is no workaround 
 		if (caseRenaming) {
