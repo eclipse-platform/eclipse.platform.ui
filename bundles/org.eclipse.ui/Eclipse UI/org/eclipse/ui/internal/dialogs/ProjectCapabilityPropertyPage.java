@@ -89,7 +89,7 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 	 * 
 	 * @return IProject the project for this property page
 	 */
-	private IProject getProject() {
+	/* package */ IProject getProject() {
 		if (project == null)
 			project = (IProject) getElement().getAdapter(IResource.class);
 			
