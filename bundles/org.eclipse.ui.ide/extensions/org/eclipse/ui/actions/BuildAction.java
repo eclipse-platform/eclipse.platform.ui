@@ -264,7 +264,7 @@ public class BuildAction extends WorkspaceAction {
         saveAllResources();
 
         runInBackground(ResourcesPlugin.getWorkspace().getRuleFactory()
-                .buildRule());
+                .buildRule(), ResourcesPlugin.FAMILY_MANUAL_BUILD);
     }
 
     /**

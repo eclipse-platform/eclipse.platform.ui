@@ -380,8 +380,56 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
      * <code>null</code> if there isn't one.
      */
     public void runInBackground(ISchedulingRule rule) {
+    	runInBackground(rule, (Object []) null);
+    }
+ 
+    /**
+     * Run the action in the background rather than with the
+     * progress dialog.
+     * @param rule The rule to apply to the background job or
+     * <code>null</code> if there isn't one.
+     * @param jobFamily a single family that the job should 
+     * belong to or <code>null</code> if none.
+     * 
+     * @since 3.1
+     */
+    public void runInBackground(ISchedulingRule rule, Object jobFamily) {
+    	if (jobFamily == null) 
+    		runInBackground(rule, (Object []) null);
+    	else
+    		runInBackground(rule, new Object[] {jobFamily});
+    }
+    
+    /**
+     * Run the action in the background rather than with the
+     * progress dialog.
+     * @param rule The rule to apply to the background job or
+     * <code>null</code> if there isn't one.
+     * @param jobFamilies the families the job should belong 
+     * to or <code>null</code> if none.
+     * 
+     * @since 3.1
+     */
+    public void runInBackground(ISchedulingRule rule, final Object [] jobFamilies) {
 
         Job backgroundJob = new Job(removeMnemonics(getText())) {
+        	
+        	/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 */
+			public boolean belongsTo(Object family) {
+				if (jobFamilies == null || family == null) {
+					return false;
+				}
+				
+				for (int i = 0; i < jobFamilies.length; i++) {
+					if (family.equals(jobFamilies[i])) {
+						return true;
+					}
+				}
+				return false;
+			}
+			
             /* (non-Javadoc)
              * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
              */
