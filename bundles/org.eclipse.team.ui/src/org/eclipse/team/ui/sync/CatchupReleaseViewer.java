@@ -396,6 +396,7 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 		//determine what other filters to apply based on current action states
 		switch (syncMode) {
 			case SyncView.SYNC_INCOMING:
+			case SyncView.SYNC_MERGE:
 				if (!showOnlyConflicts.isChecked()) {
 					filters |= CategoryFilter.SHOW_INCOMING;
 				}
@@ -406,7 +407,6 @@ public abstract class CatchupReleaseViewer extends DiffTreeViewer implements ISe
 				}
 				break;
 			case SyncView.SYNC_BOTH:
-			case SyncView.SYNC_MERGE:
 				boolean conflictsOnly = showOnlyConflicts.isChecked();
 				//if showing only conflicts, don't allow these actions to happen
 				showIncoming.setEnabled(!conflictsOnly);
