@@ -72,7 +72,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="org.eclipse.update.standalone.StandaloneUpdateApplication">
+               class="org.eclipse.update.internal.standalone.StandaloneUpdateApplication">
          </run>
       </application>
    </extension>
