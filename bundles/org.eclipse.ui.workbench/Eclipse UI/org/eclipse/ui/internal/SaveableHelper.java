@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -59,25 +60,30 @@ public class SaveableHelper {
 		// If confirmation is required ..
 		if (confirm) {
 			int choice = AutomatedResponse;
-			if (choice == -1) {
-				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, part.getTitle()); 
-				// Show a dialog.
-				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-					MessageDialog d = new MessageDialog(
-						window.getShell(), WorkbenchMessages.Save_Resource,
-						null, message, MessageDialog.QUESTION, buttons, 0);
-				choice = d.open();
+			if (choice == -1) {				
+				if (saveable instanceof ISaveablePart2) {
+					choice = ((ISaveablePart2)saveable).promptToSaveOnClose();
+				}
+				if (choice == -1 || choice == ISaveablePart2.DEFAULT) {
+					String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, part.getTitle()); 
+					// Show a dialog.
+					String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
+						MessageDialog d = new MessageDialog(
+							window.getShell(), WorkbenchMessages.Save_Resource,
+							null, message, MessageDialog.QUESTION, buttons, 0);
+					choice = d.open();
+				}
 			}
 
 			// Branch on the user choice.
 			// The choice id is based on the order of button labels above.
 			switch (choice) {
-				case 0 : //yes
+				case ISaveablePart2.YES : //yes
 					break;
-				case 1 : //no
+				case ISaveablePart2.NO : //no
 					return true;
 				default :
-				case 2 : //cancel
+				case ISaveablePart2.CANCEL : //cancel
 					return false;
 			}
 		}

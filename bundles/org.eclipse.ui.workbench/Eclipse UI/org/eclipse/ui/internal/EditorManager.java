@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
@@ -68,6 +69,7 @@ import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
@@ -1276,6 +1278,23 @@ public class EditorManager implements IExtensionRemovalHandler {
     public static boolean saveAll(List dirtyEditors, boolean confirm,
             final IWorkbenchWindow window) {
         if (confirm) {
+         	// process all editors that implement ISaveablePart2
+        	// these parts are removed from the list after saving them.
+        	ListIterator listIterator = dirtyEditors.listIterator();
+            while (listIterator.hasNext()) {
+                IEditorPart part = (IEditorPart) listIterator.next();
+                if (part instanceof ISaveablePart2) {
+                	window.getActivePage().bringToTop(part);
+                	if (!SaveableHelper.savePart(part, part, window, true))
+                		return false;
+                	listIterator.remove();
+                }
+            }	
+            
+        	// If the editor list is empty return.
+            if (dirtyEditors.isEmpty())
+            	return true;
+            
             // Convert the list into an element collection.
             AdaptableList input = new AdaptableList(dirtyEditors);
 
@@ -1298,7 +1317,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                 return false;
 
             // If the editor list is empty return.
-            if (dirtyEditors.size() == 0)
+            if (dirtyEditors.isEmpty())
                 return true;
         }
 
