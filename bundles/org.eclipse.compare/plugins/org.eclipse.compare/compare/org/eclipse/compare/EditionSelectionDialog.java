@@ -721,7 +721,7 @@ public class EditionSelectionDialog extends Dialog {
 			fThread= null;
 		}
 		
-		fContentPane= new CompareViewerSwitchingPane(vsplitter, SWT.NONE) {
+		fContentPane= new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				return CompareUIPlugin.findContentViewer(oldViewer, input, this, fCompareConfiguration);	
 			}
