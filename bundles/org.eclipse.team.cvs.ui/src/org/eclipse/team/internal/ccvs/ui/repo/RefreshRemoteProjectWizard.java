@@ -41,7 +41,6 @@ public class RefreshRemoteProjectWizard extends Wizard {
 	private ICVSRepositoryLocation root;
 	private ICVSRemoteResource[] rootFolders;
 	private RefreshRemoteProjectSelectionPage projectSelectionPage;
-	private RefreshFileSelectionPage fileSelectionPage;
 	private IDialogSettings settings;
 	
 	public static boolean execute(Shell shell, final ICVSRepositoryLocation root) {
@@ -93,13 +92,6 @@ public class RefreshRemoteProjectWizard extends Wizard {
 			Policy.bind("RefreshRemoteProjectSelectionPage.pageDescription"), //$NON-NLS-1$
 			parentDialog, settings, root, rootFolders);
 		addPage(projectSelectionPage);
-//		fileSelectionPage = new RefreshFileSelectionPage(
-//			"FileSelectionPage", //$NON-NLS-1$
-//			Policy.bind("RefreshFileSelectionPage.pageTitle"), //$NON-NLS-1$
-//			substImage,
-//			Policy.bind("RefreshFileSelectionPage.pageDescription"), //$NON-NLS-1$
-//			root);
-//		addPage(fileSelectionPage);
 	}
 	
 	/**
@@ -141,15 +133,4 @@ public class RefreshRemoteProjectWizard extends Wizard {
 	public void setParentDialog(Dialog parentDialog) {
 		this.parentDialog = parentDialog;
 	}
-
-//	/**
-//	 * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
-//	 */
-//	public IWizardPage getNextPage(IWizardPage page) {
-//		if (page == projectSelectionPage) {
-//			fileSelectionPage.setRootFolders(projectSelectionPage.getSelectedRemoteProject());
-//		}
-//		return super.getNextPage(page);
-//	}
-
 }

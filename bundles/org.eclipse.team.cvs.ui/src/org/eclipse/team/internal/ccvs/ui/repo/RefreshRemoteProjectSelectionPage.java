@@ -22,12 +22,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.ListSelectionArea;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.WorkingSetSelectionArea;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -97,7 +99,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 		Composite composite = createComposite(parent, 1);
 		setControl(composite);
 		// set F1 help
-		//WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_FINISH_PAGE);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.REFRESH_REMOTE_PROJECT_SELECTION_PAGE);
 		
 		listArea = new ListSelectionArea(parentDialog, 
 			new InputElement(), 

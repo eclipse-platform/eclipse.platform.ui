@@ -65,6 +65,7 @@ public interface IHelpContextIds {
 	public static final String CHECKOUT_INTO_CONFIGURATION_PAGE = PREFIX + "checkout_into_configuration_page_context"; //$NON-NLS-1$
 	public static final String RESTORE_FROM_REPOSITORY_FILE_SELECTION_PAGE = PREFIX + "restore_from_repository_file_selection_page_context"; //$NON-NLS-1$
 	public static final String WORKING_SET_FOLDER_SELECTION_PAGE = PREFIX + "working_set_folder_selection_page_context"; //$NON-NLS-1$
+	public static final String REFRESH_REMOTE_PROJECT_SELECTION_PAGE = PREFIX + "refresh_remote_project_selection_page_context"; //$NON-NLS-1$
 
 	// Preference Pages
 	public static final String PREF_REPOSITORIES_ARE_BINARY = PREFIX + "repositories_are_binary_pref"; //$NON-NLS-1$
@@ -108,6 +109,9 @@ public interface IHelpContextIds {
 	public static final String SHOW_REMOTE_MODULES_ACTION = PREFIX + "show_remote_modules_action_context"; //$NON-NLS-1$
 	public static final String SHOW_COMMENT_IN_HISTORY_ACTION = PREFIX + "show_comment_in_history_action_context"; //$NON-NLS-1$
 	public static final String SHOW_TAGS_IN_HISTORY_ACTION = PREFIX + "show_tag_in_history_action_context"; //$NON-NLS-1$
+	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_action_context"; //$NON-NLS-1$
+	public static final String DESELECT_WORKING_SET_ACTION = PREFIX + "deselect_working_set_action_context"; //$NON-NLS-1$
+	public static final String EDIT_WORKING_SET_ACTION = PREFIX + "edit_working_set_action_context"; //$NON-NLS-1$
 
 	// Team menu actions
 	public static final String TEAM_SYNCHRONIZE_ACTION = PREFIX + "team_synchronize_action_context"; //$NON-NLS-1$

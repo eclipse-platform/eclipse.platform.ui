@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
@@ -201,7 +202,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
-		// New Working Set (popup)
+		// Select Working Set (popup)
 		selectWorkingSetAction = new Action(Policy.bind("RepositoriesView.newWorkingSet")) { //$NON-NLS-1$
 			public void run() {
 				IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
@@ -221,7 +222,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 				}
 			}
 		};
-		//WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_CVS_WORKING_SET_ACTION);
+		WorkbenchHelp.setHelp(selectWorkingSetAction, IHelpContextIds.SELECT_WORKING_SET_ACTION);
 
 		// Deselect Working Set (popup)
 		deselectWorkingSetAction = new Action(Policy.bind("RepositoriesView.deselectWorkingSet")) { //$NON-NLS-1$
@@ -229,7 +230,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 				setWorkingSet(null, true);
 			}
 		};
-		//WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_CVS_WORKING_SET_ACTION);
+		WorkbenchHelp.setHelp(deselectWorkingSetAction, IHelpContextIds.DESELECT_WORKING_SET_ACTION);
 
 		// Edit Working Set (popup)
 		editWorkingSetAction = new Action(Policy.bind("RepositoriesView.editWorkingSet")) { //$NON-NLS-1$
@@ -254,7 +255,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 					setWorkingSet(wizard.getSelection(), true);
 			}
 		};
-		//WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_CVS_WORKING_SET_ACTION);
+		WorkbenchHelp.setHelp(editWorkingSetAction, IHelpContextIds.EDIT_WORKING_SET_ACTION);
 
 		// Create the popup menu
 		MenuManager menuMgr = new MenuManager();
