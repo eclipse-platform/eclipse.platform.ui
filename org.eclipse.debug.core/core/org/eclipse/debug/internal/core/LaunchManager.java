@@ -1347,7 +1347,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		
 		private ILaunchesListener fListener;
 		private int fType;
-		private ILaunch[] fLaunches;
+		private ILaunch[] fNotifierLaunches;
 		private ILaunch[] fRegistered;
 		
 		/**
@@ -1364,30 +1364,30 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		public void run() throws Exception {
 			switch (fType) {
 				case ADDED:
-					fListener.launchesAdded(fLaunches);
+					fListener.launchesAdded(fNotifierLaunches);
 					break;
 				case REMOVED:
-					fListener.launchesRemoved(fLaunches);
+					fListener.launchesRemoved(fNotifierLaunches);
 					break;
 				case CHANGED:
 					if (fRegistered == null) {
 						List registered = null;
-						for (int j = 0; j < fLaunches.length; j++) {
-							if (isRegistered(fLaunches[j])) {
+						for (int j = 0; j < fNotifierLaunches.length; j++) {
+							if (isRegistered(fNotifierLaunches[j])) {
 								if (registered != null) {
-									registered.add(fLaunches[j]);
+									registered.add(fNotifierLaunches[j]);
 								} 
 							} else {
 								if (registered == null) {
-									registered = new ArrayList(fLaunches.length);
+									registered = new ArrayList(fNotifierLaunches.length);
 									for (int k = 0; k < j; k++) {
-										registered.add(fLaunches[k]);
+										registered.add(fNotifierLaunches[k]);
 									}
 								}
 							}
 						}
 						if (registered == null) {
-							fRegistered = fLaunches;
+							fRegistered = fNotifierLaunches;
 						} else {
 							fRegistered = (ILaunch[])registered.toArray(new ILaunch[registered.size()]);
 						}
@@ -1406,7 +1406,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		 * @param update the type of change
 		 */
 		public void notify(ILaunch[] launches, int update) {
-			fLaunches = launches;
+			fNotifierLaunches = launches;
 			fType = update;
 			fRegistered = null;
 			Object[] copiedListeners= fLaunchesListeners.getListeners();
@@ -1414,7 +1414,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				fListener = (ILaunchesListener)copiedListeners[i];
 				Platform.run(this);
 			}	
-			fLaunches = null;
+			fNotifierLaunches = null;
 			fRegistered = null;
 			fListener = null;			
 		}

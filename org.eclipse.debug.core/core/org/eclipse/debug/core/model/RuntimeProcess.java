@@ -330,7 +330,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		 * The <code>IProcess</code> which will be informed when this
 		 * monitor detects that the underlying process has terminated.
 		 */
-		protected RuntimeProcess fProcess;
+		protected RuntimeProcess fRuntimeProcess;
 
 		/**
 		 * The <code>Thread</code> which is monitoring the underlying process.
@@ -350,7 +350,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 					Thread.interrupted();
 				} finally {
 					fOSProcess = null;
-					fProcess.terminated();
+					fRuntimeProcess.terminated();
 				}
 			}
 			fThread = null;
@@ -365,7 +365,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			super(DebugCoreMessages.getString("ProcessMonitorJob.0")); //$NON-NLS-1$
 			setPriority(Job.INTERACTIVE);
 			setSystem(true);
-			fProcess= process;
+			fRuntimeProcess= process;
 			fOSProcess= process.getSystemProcess();
 			schedule();
 		}

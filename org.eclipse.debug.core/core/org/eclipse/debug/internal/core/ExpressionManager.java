@@ -525,7 +525,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		
 		private IExpressionsListener fListener;
 		private int fType;
-		private IExpression[] fExpressions;
+		private IExpression[] fNotifierExpressions;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -541,13 +541,13 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		public void run() throws Exception {
 			switch (fType) {
 				case ADDED:
-					fListener.expressionsAdded(fExpressions);
+					fListener.expressionsAdded(fNotifierExpressions);
 					break;
 				case REMOVED:
-					fListener.expressionsRemoved(fExpressions);
+					fListener.expressionsRemoved(fNotifierExpressions);
 					break;
 				case CHANGED:
-					fListener.expressionsChanged(fExpressions);		
+					fListener.expressionsChanged(fNotifierExpressions);		
 					break;
 			}			
 		}
@@ -560,7 +560,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 		 */
 		public void notify(IExpression[] expressions, int update) {
 			if (fExpressionsListeners != null) { 
-				fExpressions = expressions;
+				fNotifierExpressions = expressions;
 				fType = update;
 				Object[] copiedListeners = fExpressionsListeners.getListeners();
 				for (int i= 0; i < copiedListeners.length; i++) {
@@ -568,9 +568,8 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 					Platform.run(this);
 				}
 			}	
-			fExpressions = null;
+			fNotifierExpressions = null;
 			fListener = null;				
 		}
-	}		
-
+	}
 }

@@ -210,7 +210,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 */
 	protected class LabelJob extends Job implements ISchedulingRule {
 		private Vector fElementQueue= new Vector();
-		private IDebugModelPresentation fPresentation;
+		private IDebugModelPresentation fJobPresentation;
 		
 		/**
 		 * Creates a new job with the given name which will use the given
@@ -221,7 +221,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 		 */
 		public LabelJob(String name, IDebugModelPresentation presentation) {
 			super(name);
-			fPresentation= presentation;
+			fJobPresentation= presentation;
 			setRule(this);
 		}
 		
@@ -264,7 +264,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 					synchronized(currentJobLock) {
 						Object element= fElementQueue.remove(0);
 						if (element != null) {
-							fLabelProvider.textComputed(element, fPresentation.getText(element));
+							fLabelProvider.textComputed(element, fJobPresentation.getText(element));
 							computedElements.add(element);
 						}
 					}
@@ -283,15 +283,14 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
 		public boolean contains(ISchedulingRule rule) {
-			return (rule instanceof LabelJob) && fPresentation == ((LabelJob)rule).fPresentation;
+			return (rule instanceof LabelJob) && fJobPresentation == ((LabelJob)rule).fJobPresentation;
 		}
 
 		/*
 		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
 		 */
 		public boolean isConflicting(ISchedulingRule rule) {
-			return (rule instanceof LabelJob) && fPresentation == ((LabelJob)rule).fPresentation;
+			return (rule instanceof LabelJob) && fJobPresentation == ((LabelJob)rule).fJobPresentation;
 		}
 	}
-
 }

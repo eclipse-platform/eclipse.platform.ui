@@ -801,7 +801,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		private IBreakpointsListener fListener;
 		private int fType;
 		private IMarkerDelta[] fDeltas;
-		private IBreakpoint[] fBreakpoints;
+		private IBreakpoint[] fNotifierBreakpoints;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -817,13 +817,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		public void run() throws Exception {
 			switch (fType) {
 				case ADDED:
-					fListener.breakpointsAdded(fBreakpoints);
+					fListener.breakpointsAdded(fNotifierBreakpoints);
 					break;
 				case REMOVED:
-					fListener.breakpointsRemoved(fBreakpoints, fDeltas);
+					fListener.breakpointsRemoved(fNotifierBreakpoints, fDeltas);
 					break;
 				case CHANGED:
-					fListener.breakpointsChanged(fBreakpoints, fDeltas);		
+					fListener.breakpointsChanged(fNotifierBreakpoints, fDeltas);		
 					break;
 			}			
 		}
@@ -837,7 +837,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		public void notify(IBreakpoint[] breakpoints, IMarkerDelta[] deltas, int update) {
 			fType = update;
-			fBreakpoints = breakpoints;
+			fNotifierBreakpoints = breakpoints;
 			fDeltas = deltas;
 			Object[] copiedListeners = fBreakpointsListeners.getListeners();
 			for (int i= 0; i < copiedListeners.length; i++) {
@@ -845,7 +845,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				Platform.run(this);
 			}
 			fDeltas = null;
-			fBreakpoints = null;
+			fNotifierBreakpoints = null;
 			fListener = null;
 		}
 	}	
