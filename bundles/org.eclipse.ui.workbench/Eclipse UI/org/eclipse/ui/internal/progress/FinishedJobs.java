@@ -214,7 +214,7 @@ class FinishedJobs {
 			    			JobInfo ji= (JobInfo) jte;
 			    			Job job= ji.getJob();
 			    			if (job != null && job.belongsTo(myJob)) {
-			    				if (NewProgressViewer.DEBUG) System.err.println("found other from family " + otherRoot);
+			    				if (NewProgressViewer.DEBUG) System.err.println("found other from family " + otherRoot); //$NON-NLS-1$
 			    				if (found == null)
 			    					found= new ArrayList();
 			    				found.add(otherRoot);
