@@ -271,6 +271,24 @@ coolBar.setRedraw(true);
 	 */
 	private void dispose(CoolItem coolItem) {
 		if ((coolItem != null) && !coolItem.isDisposed()) {
+// workaround for 22448
+boolean redraw = false;
+if (coolBar != null) {
+	int[] wraps = coolBar.getWrapIndices();
+	int index = coolBar.indexOf(coolItem);
+	if (index != -1) {
+		if (index == 0) redraw = true; 
+		else {
+			for (int i=0; i<wraps.length; i++) {
+				if (wraps[i] == index) {
+					redraw = true;
+					break;
+				}
+			}
+		}
+	}
+}
+if (redraw) coolBar.setRedraw(false);
 			CoolBarContributionItem cbItem = (CoolBarContributionItem)coolItem.getData();
 			if (cbItem != null && rememberPositions) rememberPositionFor(cbItem.getId(), getLayout());
 			coolItem.setData(null);
@@ -282,6 +300,7 @@ coolBar.setRedraw(true);
 				coolItem.setControl(null);
 			}
 			coolItem.dispose();
+if (redraw) coolBar.setRedraw(true);
 		}
 	}		
 	/**
