@@ -211,7 +211,6 @@ public class EncodingActionGroup extends ActionGroup {
 				if (s != null){
 					String encodingValue = d.getValue();
 					s.setEncoding(encodingValue);
-					EncodingDefinitionManager.addEncoding(encodingValue);
 				}
 			}
 		}
