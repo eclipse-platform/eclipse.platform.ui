@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -32,17 +33,31 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		
 	public void add(IClasspathEntry parent, Object child) {
 		Object newEntry= null;
+		boolean added= false;
 		if (parent == null || parent == model) {
+			added= true;
 			newEntry= model.addEntry(child);
+			if (newEntry == null) {
+				//entry already exists
+				newEntry= model.createEntry(child, model);
+				added= false;
+			}
 			parent= model;
 		} else if (parent instanceof GlobalClasspathEntries) {
-			newEntry= model.createEntry(child, parent);
-			((GlobalClasspathEntries)parent).addEntry((ClasspathEntry)newEntry);
+			GlobalClasspathEntries globalParent= (GlobalClasspathEntries) parent;
+			newEntry= model.createEntry(child, globalParent);
+			ClasspathEntry newClasspathEntry= (ClasspathEntry) newEntry;
+			if (!globalParent.contains(newClasspathEntry)) {
+				added= true;
+				globalParent.addEntry(newClasspathEntry);
+			}
 		} 
 		if (newEntry != null) {
-			treeViewer.add(parent, newEntry);
+			if (added) {
+				treeViewer.add(parent, newEntry);
+			}
 			treeViewer.setExpandedState(parent, true);
-			treeViewer.reveal(newEntry);
+			treeViewer.setSelection(new StructuredSelection(newEntry), true);
 			refresh();
 		}
 	}
