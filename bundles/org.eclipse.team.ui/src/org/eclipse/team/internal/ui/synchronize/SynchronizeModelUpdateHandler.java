@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -26,17 +25,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
-import org.eclipse.team.internal.core.subscribers.SubscriberEventHandler;
-import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoSet;
-import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**
  * Handler that serializes the updating of a synchronize model provider.
+ * All modifications to the synchronize model are performed in this
+ * handler's thread.
  */
 public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implements IResourceChangeListener, ISyncInfoSetChangeListener {
     
@@ -49,6 +46,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	private static final int BUSY_STATE_CHANGED = 2;
 	private static final int RESET = 3;
 	private static final int SYNC_INFO_SET_CHANGED = 4;
+	private static final int RUNNABLE = 5;
 	
 	private AbstractSynchronizeModelProvider provider;
 	
@@ -106,6 +104,30 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
         public ISyncInfoSetChangeEvent getEvent() {
             return event;
         }
+	}
+	
+	/**
+	 * This is a special event used to reset and connect sync sets.
+	 * The preemtive flag is used to indicate that the runnable should take
+	 * the highest priority and thus be placed on the front of the queue
+	 * and be processed as soon as possible, preemting any event that is currently
+	 * being processed. The curent event will continue processing once the 
+	 * high priority event has been processed
+	 */
+	class RunnableEvent extends Event {
+		private IWorkspaceRunnable runnable;
+		private boolean preemtive;
+		public RunnableEvent(IWorkspaceRunnable runnable, boolean preemtive) {
+			super(ResourcesPlugin.getWorkspace().getRoot(), RUNNABLE, IResource.DEPTH_ZERO);
+			this.runnable = runnable;
+			this.preemtive = preemtive;
+		}
+		public void run(IProgressMonitor monitor) throws CoreException {
+			runnable.run(monitor);
+		}
+		public boolean isPreemtive() {
+			return preemtive;
+		}
 	}
 	
 	private IPropertyChangeListener listener = new IPropertyChangeListener() {
@@ -191,6 +213,9 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      */
     protected void processEvent(Event event, IProgressMonitor monitor) throws CoreException {
         switch (event.getType()) {
+		case RUNNABLE :
+			executeRunnable(event, monitor);
+			break;
         case MARKERS_CHANGED:
 			// Changes contains all elements that need their labels updated
 			long start = System.currentTimeMillis();
@@ -499,6 +524,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 		// elements in the model with errors, but currently we prefer to let ignore and except
 		// another listener to display them. 
     }
+    
     public ISynchronizeModelProvider getProvider() {
         return provider;
     }
@@ -550,32 +576,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      * @param preserveExpansion whether the expansion of the view should be preserver
      */
     public void performUpdate(final IWorkspaceRunnable runnable, boolean preserveExpansion) {
-        SyncInfoSet set = provider.getSyncInfoSet();
-        if (set instanceof SubscriberSyncInfoSet) {
-            SubscriberSyncInfoSet subscriberSet = (SubscriberSyncInfoSet)set;
-            SubscriberEventHandler handler = subscriberSet.getHandler();
-            handler.run(getUpdateRunnable(runnable, preserveExpansion), true /* give this update priority */ );
-        } else {
-            runViewUpdate(new Runnable() {
-                public void run() {
-                    try {
-                        runnable.run(new NullProgressMonitor());
-                    } catch (CoreException e) {
-                        TeamUIPlugin.log(e);
-                    }
-                }
-            });
-        }
-        
-    }
-    
-    private SubscriberEventHandler getSubscriberHandler() {
-        SyncInfoSet set = provider.getSyncInfoSet();
-        if (set instanceof SubscriberSyncInfoSet) {
-            SubscriberSyncInfoSet subscriberSet = (SubscriberSyncInfoSet)set;
-            return subscriberSet.getHandler();
-        }
-        return null;
+        queueEvent(new RunnableEvent(getUpdateRunnable(runnable, true), true), true);
     }
 
     /*
@@ -611,4 +612,21 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
             }
         };
     }
+    
+	/*
+	 * Execute the RunnableEvent
+	 */
+	private void executeRunnable(Event event, IProgressMonitor monitor) {
+		try {
+			// Dispatch any queued results to clear pending output events
+			dispatchEvents(Policy.subMonitorFor(monitor, 1));
+		} catch (TeamException e) {
+			handleException(e);
+		}
+		try {
+			((RunnableEvent)event).run(Policy.subMonitorFor(monitor, 1));
+		} catch (CoreException e) {
+			handleException(e);
+		}
+	}
 }
