@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands.registry;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 abstract class AbstractCommandRegistry implements ICommandRegistry {
@@ -85,16 +84,12 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 
 	protected void fireCommandRegistryChanged() {
 		if (commandRegistryListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(commandRegistryListeners).iterator();	
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < commandRegistryListeners.size(); i++) {
 				if (commandRegistryEvent == null)
 					commandRegistryEvent = new CommandRegistryEvent(this);
-				
-				while (iterator.hasNext())	
-					((ICommandRegistryListener) iterator.next()).commandRegistryChanged(commandRegistryEvent);
-			}							
-		}			
+							
+				((ICommandRegistryListener) commandRegistryListeners.get(i)).commandRegistryChanged(commandRegistryEvent);
+			}				
+		}						
 	}
 }	

@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.commands.ICategory;
@@ -155,17 +154,13 @@ final class Category implements ICategory {
 
 	void fireCategoryChanged() {
 		if (categoryListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(categoryListeners).iterator();			
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < categoryListeners.size(); i++) {
 				if (categoryEvent == null)
 					categoryEvent = new CategoryEvent(this);
-				
-				while (iterator.hasNext())	
-					((ICategoryListener) iterator.next()).categoryChanged(categoryEvent);
-			}							
-		}			
+							
+				((ICategoryListener) categoryListeners.get(i)).categoryChanged(categoryEvent);
+			}				
+		}		
 	}
 
 	boolean setDefined(boolean defined) {

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.contexts.registry;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 abstract class AbstractContextRegistry implements IContextRegistry {
@@ -55,16 +54,12 @@ abstract class AbstractContextRegistry implements IContextRegistry {
 
 	protected void fireContextRegistryChanged() {
 		if (contextRegistryListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(contextRegistryListeners).iterator();	
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < contextRegistryListeners.size(); i++) {
 				if (contextRegistryEvent == null)
 					contextRegistryEvent = new ContextRegistryEvent(this);
-				
-				while (iterator.hasNext())	
-					((IContextRegistryListener) iterator.next()).contextRegistryChanged(contextRegistryEvent);
-			}							
-		}			
+							
+				((IContextRegistryListener) contextRegistryListeners.get(i)).contextRegistryChanged(contextRegistryEvent);
+			}				
+		}	
 	}
 }	

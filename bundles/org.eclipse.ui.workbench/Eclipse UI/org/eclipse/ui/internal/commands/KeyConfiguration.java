@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.commands.IKeyConfiguration;
@@ -185,16 +184,12 @@ final class KeyConfiguration implements IKeyConfiguration {
 	
 	void fireKeyConfigurationChanged() {
 		if (keyConfigurationListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(keyConfigurationListeners).iterator();			
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < keyConfigurationListeners.size(); i++) {
 				if (keyConfigurationEvent == null)
 					keyConfigurationEvent = new KeyConfigurationEvent(this);
-				
-				while (iterator.hasNext())	
-					((IKeyConfigurationListener) iterator.next()).keyConfigurationChanged(keyConfigurationEvent);
-			}							
+							
+				((IKeyConfigurationListener) keyConfigurationListeners.get(i)).keyConfigurationChanged(keyConfigurationEvent);
+			}				
 		}			
 	}
 

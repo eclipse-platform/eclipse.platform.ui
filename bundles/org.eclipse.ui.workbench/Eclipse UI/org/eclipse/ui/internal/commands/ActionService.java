@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -89,16 +88,12 @@ public final class ActionService implements IActionService {
 	
 	private void fireActionServiceChanged() {
 		if (actionServiceListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(actionServiceListeners).iterator();
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < actionServiceListeners.size(); i++) {
 				if (actionServiceEvent == null)
 					actionServiceEvent = new ActionServiceEvent(this);
-				
-				while (iterator.hasNext())	
-					((IActionServiceListener) iterator.next()).actionServiceChanged(actionServiceEvent);
-			}							
-		}			
+							
+				((IActionServiceListener) actionServiceListeners.get(i)).actionServiceChanged(actionServiceEvent);
+			}				
+		}
 	}	
 }

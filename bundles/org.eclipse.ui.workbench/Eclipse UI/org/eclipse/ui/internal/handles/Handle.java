@@ -1,7 +1,6 @@
 package org.eclipse.ui.internal.handles;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.internal.handles.api.IHandle;
@@ -77,16 +76,12 @@ public class Handle implements IHandle {
 	
 	private void fireHandleChanged() {
 		if (handleListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(handleListeners).iterator();			
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < handleListeners.size(); i++) {
 				if (handleEvent == null)
 					handleEvent = new HandleEvent(this);
-				
-				while (iterator.hasNext())	
-					((IHandleListener) iterator.next()).handleChanged(handleEvent);
-			}							
-		}			
+							
+				((IHandleListener) handleListeners.get(i)).handleChanged(handleEvent);
+			}				
+		}	
 	}		
 }

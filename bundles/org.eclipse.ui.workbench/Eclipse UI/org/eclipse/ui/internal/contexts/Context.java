@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.contexts;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.contexts.IContext;
@@ -185,16 +184,12 @@ final class Context implements IContext {
 	
 	void fireContextChanged() {
 		if (contextListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(contextListeners).iterator();			
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < contextListeners.size(); i++) {
 				if (contextEvent == null)
 					contextEvent = new ContextEvent(this);
-				
-				while (iterator.hasNext())	
-					((IContextListener) iterator.next()).contextChanged(contextEvent);
-			}							
+							
+				((IContextListener) contextListeners.get(i)).contextChanged(contextEvent);
+			}				
 		}			
 	}
 	

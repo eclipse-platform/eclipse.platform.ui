@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.commands.ICommand;
@@ -259,17 +258,13 @@ final class Command implements ICommand {
 
 	void fireCommandChanged() {
 		if (commandListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(commandListeners).iterator();			
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < commandListeners.size(); i++) {
 				if (commandEvent == null)
 					commandEvent = new CommandEvent(this);
-				
-				while (iterator.hasNext())	
-					((ICommandListener) iterator.next()).commandChanged(commandEvent);
-			}							
-		}			
+							
+				((ICommandListener) commandListeners.get(i)).commandChanged(commandEvent);
+			}				
+		}		
 	}
 	
 	boolean setActive(boolean active) {

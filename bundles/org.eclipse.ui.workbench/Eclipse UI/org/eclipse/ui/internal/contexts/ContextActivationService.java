@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.contexts;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -84,16 +83,12 @@ public final class ContextActivationService implements IContextActivationService
 	
 	private void fireContextActivationServiceChanged() {
 		if (contextActivationServiceListeners != null) {
-			// TODO copying to avoid ConcurrentModificationException
-			Iterator iterator = new ArrayList(contextActivationServiceListeners).iterator();					
-			
-			if (iterator.hasNext()) {
+			for (int i = 0; i < contextActivationServiceListeners.size(); i++) {
 				if (contextActivationServiceEvent == null)
 					contextActivationServiceEvent = new ContextActivationServiceEvent(this);
-				
-				while (iterator.hasNext())	
-					((IContextActivationServiceListener) iterator.next()).contextActivationServiceChanged(contextActivationServiceEvent);
-			}							
-		}			
+							
+				((IContextActivationServiceListener) contextActivationServiceListeners.get(i)).contextActivationServiceChanged(contextActivationServiceEvent);
+			}				
+		}	
 	}	
 }
