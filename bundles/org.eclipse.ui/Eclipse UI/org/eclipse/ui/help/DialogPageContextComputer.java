@@ -43,12 +43,21 @@ public DialogPageContextComputer(IDialogPage page, Object helpContext) {
  * @param event the help event 
  */
 private void addContexts(Object object, HelpEvent event) {
-	Assert.isTrue(object instanceof Object[] || object instanceof IContextComputer);
+	Assert.isTrue(
+		object instanceof Object[] || 
+		object instanceof IContextComputer ||
+		object instanceof String);
+		
+	if (object instanceof String) {
+		contextList.add(object);
+		return;
+	}
+		
 	Object[] contexts;
 	if (object instanceof IContextComputer) 
 		// get local contexts
 		contexts = ((IContextComputer)object).getLocalContexts(event);
-	else
+	else 
 		contexts = (Object[])object;
 
 	// copy the contexts into our list	

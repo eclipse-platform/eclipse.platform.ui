@@ -197,20 +197,46 @@ public static IHelp getHelpSupport() {
 	}
 	return helpSupport;
 }
+
 /**
  * Initializes the help listener.
  */
 private static void initializeHelpListener() {
 	helpListener = new HelpListener() {
 		public void helpRequested(HelpEvent event) {
-			// get the help context id from the widget
-			String contextId = (String)event.widget.getData(HELP_KEY);
-			if (contextId != null && getHelpSupport() != null) {	
+			if (getHelpSupport() == null)
+				return;
+			
+			// get the help context from the widget
+			Object object = event.widget.getData(HELP_KEY);
+
+			// Since 2.0 we can expect that object is a String, however
+			// for backward compatability we handle context computers and arrays.
+			
+			if (object instanceof String) {
 				// determine a location in the upper right corner of the widget
 				Point point = computePopUpLocation(event.widget.getDisplay());
 				
 				// display the help
-				displayHelp(contextId, point);
+				displayHelp((String)object, point);
+				
+				return;
+			}
+			
+			
+			Object[] helpContext = null;
+			if (object instanceof IContextComputer) 
+				// if it is a computed context, compute it now
+				helpContext = ((IContextComputer)object).computeContexts(event);
+			else if (object instanceof Object[])
+				helpContext = (Object[])object;
+
+			if (helpContext != null) {	
+				// determine a location in the upper right corner of the widget
+				Point point = computePopUpLocation(event.widget.getDisplay());
+				
+				// display the help
+				displayHelp(helpContext, point);
 			}
 		}
 	};
