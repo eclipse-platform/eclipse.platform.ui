@@ -34,8 +34,8 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * To support single-click launching, tabs are required to initialize
  * default values into launch configurations (possibly when their controls
- * have not been created). See <code>setDefatul(ILaunchConfigurationWorkingCopy)</code>.
- * As well, the method <code>lanuched</code> can be called when the tab's
+ * have not been created). See <code>setDefault(ILaunchConfigurationWorkingCopy)</code>.
+ * As well, the method <code>launched</code> can be called when the tab's
  * control does not exist.
  * </p>
  * <p>
