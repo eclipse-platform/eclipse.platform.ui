@@ -41,6 +41,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 
@@ -406,7 +407,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 				try {
 					persistEncoding(element, encoding);
 				} catch (CoreException ex) {
-					// XXX: log
+					EditorsPlugin.log(ex.getStatus());
 				}
 			}
 		}

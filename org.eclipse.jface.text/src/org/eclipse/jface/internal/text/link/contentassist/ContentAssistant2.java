@@ -1561,7 +1561,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension#completePrefix()
 	 */
 	public String completePrefix() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

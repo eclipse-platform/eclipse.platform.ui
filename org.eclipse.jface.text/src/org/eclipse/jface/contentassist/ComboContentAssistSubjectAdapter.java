@@ -131,7 +131,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 		int spaceWidth= gc.textExtent(" ").x; //$NON-NLS-1$
 		gc.dispose();
 		/*
-		 * FIXME: the two space widths below is a workaround for bug 44072
+		 * XXX: the two space widths below is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=44072
 		 */
 		int x= 2 * spaceWidth + fCombo.getClientArea().x + fCombo.getBorderWidth() + extent.x;
 		return new Point(x, fCombo.getClientArea().y);

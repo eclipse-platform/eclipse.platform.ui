@@ -376,7 +376,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				 * XXX:
 				 * This is a workaround for a corresponding bug in Java readers and writer,
 				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-				 * </p>
 				 */
 				if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
 					int n= 0;
@@ -1135,6 +1134,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		IResource parent= toCreateOrModify;
 		do {
+			 /*
+			 * XXX This is a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=67601
+			 * IResourceRuleFactory.createRule should iterate the hierarchy itself. 
+			 */
 			toCreateOrModify= parent;
 			parent= toCreateOrModify.getParent();
 		} while (parent != null && !parent.exists());

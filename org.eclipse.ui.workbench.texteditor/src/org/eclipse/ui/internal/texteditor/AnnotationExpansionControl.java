@@ -255,7 +255,6 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDown(MouseEvent e) {
-			// TODO Auto-generated method stub
 			super.mouseDown(e);
 		}
 	}

@@ -114,7 +114,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	public Point getLocationAtOffset(int offset) {
 		Point caretLocation= fText.getCaretLocation();
 		/*
-		 * FIXME workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=52520
+		 * XXX workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=52520
 		 */
 		caretLocation.y += 2;
 		return caretLocation;
