@@ -12,23 +12,22 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.util.*;
 /** 
- * Root of navigation TocFile
- * Can be linked with other Toc objects.
+ * Toc created from files in a extra directory in a plugin.
  */
 public class DirectoryToc {
 	private String dir;
-	private TocFile tocFile;
 	private ITopic[] extraTopics;
+	private String locale;
 	/**
 	 * Constructor.
 	 */
 	protected DirectoryToc(TocFile tocFile) {
-		this.tocFile = tocFile;
+		this(tocFile.getPluginID(), tocFile.getLocale(), tocFile.getExtraDir());
+	}
+	private DirectoryToc(String pluginID, String locale, String directory) {
+		this.locale = locale;
 		// Obtain extra search directory if provided
-		this.dir =
-			HrefUtil.normalizeDirectoryHref(
-				tocFile.getPluginID(),
-				tocFile.getExtraDir());
+		this.dir = HrefUtil.normalizeDirectoryHref(pluginID, directory);
 
 	}
 	/**
@@ -44,7 +43,6 @@ public class DirectoryToc {
 			Collection col = createExtraTopics();
 			extraTopics = (ITopic[]) col.toArray(new ITopic[col.size()]);
 			// for memory foot print, release TocFile and dir
-			tocFile = null;
 			dir = null;
 		}
 
@@ -76,7 +74,7 @@ public class DirectoryToc {
 		// Find doc.zip file
 		IPath iPath = new Path("$nl$/doc.zip");
 		Map override = new HashMap(1);
-		override.put("$nl$", tocFile.getLocale());
+		override.put("$nl$", locale);
 		URL url = null;
 		try {
 			url = pluginDesc.getPlugin().find(iPath, override);
