@@ -214,11 +214,13 @@ public class CreateLinkedResourceGroup {
         resolvedPathLabelText.setText(IDEWorkbenchMessages
                 .getString("CreateLinkedResourceGroup.resolvedPathLabel")); //$NON-NLS-1$
         resolvedPathLabelText.setVisible(false);
+        resolvedPathLabelText.setFont(font);
 
         resolvedPathLabelData = new Label(resolvedPathGroup, SWT.SINGLE);
         data = new GridData(GridData.FILL_HORIZONTAL);
         resolvedPathLabelData.setLayoutData(data);
         resolvedPathLabelData.setVisible(false);
+        resolvedPathLabelData.setFont(font);
 
         if (linkTarget != null)
             linkTargetField.setText(linkTarget);
