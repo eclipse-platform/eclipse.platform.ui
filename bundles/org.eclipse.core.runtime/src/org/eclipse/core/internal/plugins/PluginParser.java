@@ -444,25 +444,38 @@ public void handleRuntimeState(String elementName, Attributes attributes) {
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 }
 
-private URLModel[] addURL(URLModel url, URLModel[] container) {
-	URLModel[] result = new URLModel[container == null ? 1 : container.length];
+private URLModel[] addURLElement(URLModel newElement, URLModel[] container) {
+	URLModel[] result = new URLModel[container == null ? 1 : container.length + 1];
 	if (container != null) 
 		System.arraycopy(container, 0, result, 0, container.length);
-	result[result.length - 1] = url;
+	result[result.length - 1] = newElement;
 	return result;
 }
-
+private PluginDescriptorModel[] addPluginDescriptorElement(PluginDescriptorModel newElement, PluginDescriptorModel[] container) {
+	PluginDescriptorModel[] result = new PluginDescriptorModel[container == null ? 1 : container.length + 1];
+	if (container != null) 
+		System.arraycopy(container, 0, result, 0, container.length);
+	result[result.length - 1] = newElement;
+	return result;
+}
+private PluginFragmentModel[] addPluginFragmentElement(PluginFragmentModel newElement, PluginFragmentModel[] container) {
+	PluginFragmentModel[] result = new PluginFragmentModel[container == null ? 1 : container.length + 1];
+	if (container != null) 
+		System.arraycopy(container, 0, result, 0, container.length);
+	result[result.length - 1] = newElement;
+	return result;
+}
 public void handleURLState(String elementName, Attributes attributes) {
 	URLModel url = null;
 	InstallModel model = (InstallModel)objectStack.peek();
 	if (elementName.equals(URL_UPDATE)) {
 		url = parseURLAttributes(attributes);
-		model.setUpdates(addURL(url, model.getUpdates()));
+		model.setUpdates((URLModel [])addURLElement(url, model.getUpdates()));
 		return; 
 	} else
 		if (elementName.equals(URL_DISCOVERY)) {
 			url = parseURLAttributes(attributes);
-			model.setDiscoveries(addURL(url, model.getDiscoveries()));
+			model.setDiscoveries((URLModel [])addURLElement(url, model.getDiscoveries()));
 			return; 
 		}
 	// We ignore all elements under extension points (if there are any)
@@ -523,7 +536,6 @@ public void parseComponentAttributes(Attributes attributes) {
 public void parseComponentFragmentAttributes(Attributes attributes) {
 
 	PluginFragmentModel current = factory.createPluginFragment();
-	objectStack.push(current);
 
 	// process attributes
 	int len = attributes.getLength();
@@ -541,13 +553,16 @@ public void parseComponentFragmentAttributes(Attributes attributes) {
 				if (attrName.equals(COMPONENT_FRAGMENT_VERSION))
 					current.setVersion(attrValue);
 	}
+	
+	ComponentModel componentModel = (ComponentModel)objectStack.peek();
+	PluginFragmentModel fragments[] = componentModel.getFragments();
+	fragments = (PluginFragmentModel [])addPluginFragmentElement(current,fragments);
+	componentModel.setFragments(fragments);
 }
-
 
 public void parseComponentPluginAttributes(Attributes attributes) {
 
 	PluginDescriptorModel current = factory.createPluginDescriptor();
-	objectStack.push(current);
 
 	// process attributes
 	int len = attributes.getLength();
@@ -565,6 +580,11 @@ public void parseComponentPluginAttributes(Attributes attributes) {
 				if (attrName.equals(COMPONENT_PLUGIN_VERSION))
 					current.setVersion(attrValue);
 	}
+	
+	ComponentModel componentModel = (ComponentModel)objectStack.peek();
+	PluginDescriptorModel plugins[] = componentModel.getPlugins();
+	plugins = (PluginDescriptorModel [])addPluginDescriptorElement(current,plugins);
+	componentModel.setPlugins(plugins);
 }
 
 public void parseConfigurationAttributes(Attributes attributes) {
