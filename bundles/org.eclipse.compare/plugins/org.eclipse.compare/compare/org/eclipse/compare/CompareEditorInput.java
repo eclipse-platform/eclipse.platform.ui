@@ -413,6 +413,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				}
 			}
 		);
+		fStructureInputPane.addSelectionChangedListener(
+			new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent e) {
+					ISelection s= e.getSelection();
+					if (s == null || s.isEmpty())
+						feed1(s);
+				}
+			}
+		);
 		fStructureInputPane.addDoubleClickListener(
 			new IDoubleClickListener() {
 				public void doubleClick(DoubleClickEvent event) {
@@ -429,12 +438,30 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				}
 			}
 		);
+		fStructurePane1.addSelectionChangedListener(
+			new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent e) {
+					ISelection s= e.getSelection();
+					if (s == null || s.isEmpty())
+						feed2(s);
+				}
+			}
+		);
 
 		// setup the wiring for third pane
 		fStructurePane2.addOpenListener(
 			new IOpenListener() {
 				public void open(OpenEvent oe) {
 					feed3(oe.getSelection());
+				}
+			}
+		);
+		fStructurePane2.addSelectionChangedListener(
+			new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent e) {
+					ISelection s= e.getSelection();
+					if (s == null || s.isEmpty())
+						feed3(s);
 				}
 			}
 		);
