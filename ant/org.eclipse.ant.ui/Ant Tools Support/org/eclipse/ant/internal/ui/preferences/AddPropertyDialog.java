@@ -50,14 +50,8 @@ public class AddPropertyDialog extends Dialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NULL);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 2;
-		topLayout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		topLayout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		comp.setLayout(topLayout);
-		comp.setFont(parent.getFont());
-		GridData gd;
+		Composite comp= (Composite) super.createDialogArea(parent);
+		((GridLayout) comp.getLayout()).numColumns = 2;
 		
 		fNameLabel = new Label(comp, SWT.NONE);
 		fNameLabel.setText(AntPreferencesMessages.getString("AddPropertyDialog.&Name__1")); //$NON-NLS-1$
@@ -65,7 +59,7 @@ public class AddPropertyDialog extends Dialog {
 		
 		fNameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
 		fNameText.setText(fInitialValues[0]);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 300;
 		fNameText.setLayoutData(gd);
 		fNameText.setFont(comp.getFont());
