@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 /**
  * <p>
- * IUndoableOperation defines an operation that can be executed, undone, and redone.
- * Operations typically have fully defined parameters. That is, they are usually
- * created after the user has been queried for any input needed to define the
- * operation.
+ * IUndoableOperation defines an operation that can be executed, undone, and
+ * redone. Operations typically have fully defined parameters. That is, they are
+ * usually created after the user has been queried for any input needed to
+ * define the operation.
  * </p>
  * <p>
  * Operations determine their ability to execute, undo, or redo according to the
@@ -46,17 +47,17 @@ public interface IUndoableOperation {
 	 * @param context -
 	 *            the context to be added
 	 */
-	void addContext(UndoContext context);
+	void addContext(IUndoContext context);
 
 	/**
 	 * <p>
 	 * Returns whether the operation can be executed in its current state.
 	 * 
 	 * <p>
-	 * Note:  This method may be used to enable UI commands, so the 
-	 * computation must be fast.  If necessary, this method can be optimistic 
-	 * in its computation and return an error status during actual execution
-	 * if it is determined later that the operation cannot actually execute.
+	 * Note: This method may be used to enable UI commands, so the computation
+	 * must be fast. If necessary, this method can be optimistic in its
+	 * computation and return an error status during actual execution if it is
+	 * determined later that the operation cannot actually execute.
 	 * 
 	 * @return <code>true</code> if the operation can be executed;
 	 *         <code>false</code> otherwise.
@@ -68,11 +69,11 @@ public interface IUndoableOperation {
 	 * Returns whether the operation can be redone in its current state.
 	 * 
 	 * <p>
-	 * Note:  This method may be used to enable UI commands, so the 
-	 * computation must be fast.  If necessary, this method can be optimistic 
-	 * in its computation and return an error status during the actual redo
-	 * if it is determined later that the operation cannot actually redo.
-
+	 * Note: This method may be used to enable UI commands, so the computation
+	 * must be fast. If necessary, this method can be optimistic in its
+	 * computation and return an error status during the actual redo if it is
+	 * determined later that the operation cannot actually redo.
+	 * 
 	 * @return <code>true</code> if the operation can be redone;
 	 *         <code>false</code> otherwise.
 	 */
@@ -83,11 +84,11 @@ public interface IUndoableOperation {
 	 * Returns whether the operation can be undone in its current state.
 	 * 
 	 * <p>
-	 * Note:  This method may be used to enable UI commands, so the 
-	 * computation must be fast.  If necessary, this method can be optimistic 
-	 * in its computation and return an error status during the actual undo
-	 * if it is determined later that the operation cannot actually undo.
-
+	 * Note: This method may be used to enable UI commands, so the computation
+	 * must be fast. If necessary, this method can be optimistic in its
+	 * computation and return an error status during the actual undo if it is
+	 * determined later that the operation cannot actually undo.
+	 * 
 	 * @return <code>true</code> if the operation can be undone;
 	 *         <code>false</code> otherwise.
 	 */
@@ -105,20 +106,30 @@ public interface IUndoableOperation {
 	 * Execute the operation. This method should only be called the first time
 	 * that an operation is executed.
 	 * 
-	 * @param monitor
+	 * @param monitor -
+	 *            the progress monitor (or <code>null</code>) to use for
+	 *            reporting progress to the user.
+	 * @param info -
+	 *            the IAdaptable (or <code>null</code>) provided by the caller
+	 *            containing additional information.  When this API is called
+	 *            from the UI, callers can use this to provide additional info
+	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            callers are encourated to provide an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class.
+	 * 
 	 * @return the IStatus of the execution. The status severity should be set
 	 *         to <code>OK</code> if the operation was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the execution.
 	 */
-	IStatus execute(IProgressMonitor monitor);
+	IStatus execute(IProgressMonitor monitor, IAdaptable info);
 
 	/**
 	 * Returns the array of contexts that have been assigned to the operation.
 	 * 
 	 * @return the array of contexts
 	 */
-	UndoContext[] getContexts();
+	IUndoContext[] getContexts();
 
 	/**
 	 * Return the description that should be used to further describe this
@@ -146,20 +157,29 @@ public interface IUndoableOperation {
 	 * @return <code>true</code> if the context is present, <code>false</code>
 	 *         if it is not.
 	 */
-	boolean hasContext(UndoContext context);
-	
+	boolean hasContext(IUndoContext context);
+
 	/**
 	 * Redo the operation. This method should only be called after an operation
 	 * has been undone.
 	 * 
-	 * @param monitor
+	 * @param monitor -
+	 *            the progress monitor (or <code>null</code>) to use for
+	 *            reporting progress to the user.
+	 * @param info -
+	 *            the IAdaptable (or <code>null</code>) provided by the caller
+	 *            containing additional information.  When this API is called
+	 *            from the UI, callers can use this to provide additional info
+	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            callers are encourated to provide an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus of the redo. The status severity should be set to
 	 *         <code>OK</code> if the redo was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the redo.
 	 */
-	
-	IStatus redo(IProgressMonitor monitor);
+
+	IStatus redo(IProgressMonitor monitor, IAdaptable info);
 
 	/**
 	 * Remove the specified context from the operation. This method has no
@@ -168,18 +188,27 @@ public interface IUndoableOperation {
 	 * @param context -
 	 *            the context to be removed
 	 */
-	void removeContext(UndoContext context);
+	void removeContext(IUndoContext context);
 
 	/**
 	 * Undo the operation. This method should only be called after an operation
 	 * has been executed.
 	 * 
-	 * @param monitor
+	 * @param monitor -
+	 *            the progress monitor (or <code>null</code>) to use for
+	 *            reporting progress to the user.
+	 * @param info -
+	 *            the IAdaptable (or <code>null</code>) provided by the caller
+	 *            containing additional information.  When this API is called
+	 *            from the UI, callers can use this to provide additional info
+	 *            for prompting the user.   If an IAdaptable is provided, 
+	 *            callers are encourated to provide an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus of the undo. The status severity should be set to
 	 *         <code>OK</code> if the redo was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the undo.
 	 */
-	IStatus undo(IProgressMonitor monitor);
+	IStatus undo(IProgressMonitor monitor, IAdaptable info);
 
 }

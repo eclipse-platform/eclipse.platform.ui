@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -25,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -58,6 +60,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -73,9 +76,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInSource;
@@ -836,9 +842,11 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Creates the action group, which encapsulates all actions for the view.
+     * Installs global action handlers for undo and redo.
      */
     protected void makeActions() {
         setActionGroup(new MainActionGroup(this));
+        createGlobalActionHandlers();
     }
 
     /**
@@ -1338,4 +1346,32 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             }
         };
     }
+    
+    /**
+     * Returns the <code>UndoContext</code> for this view.
+     * The navigator considers the workspace the context for undo.
+     */
+    protected IUndoContext getUndoContext() { 
+    	return (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+    }
+    
+    /**
+     * Creates global action handlers for undo and redo.
+     */
+    
+    protected void createGlobalActionHandlers() {
+    	IUndoContext undoContext = getUndoContext();
+    	if (undoContext != null) {
+	        // set up action handlers that operate on the current context
+	        IAction action = new UndoActionHandler(this.getSite().getWorkbenchWindow(), undoContext);
+	        IActionBars actionBars = getViewSite().getActionBars();
+	        actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
+	                action);
+	        action = new RedoActionHandler(this.getSite().getWorkbenchWindow(), undoContext);
+	        actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
+	                action);
+    	}
+    	
+    }
+    
 }

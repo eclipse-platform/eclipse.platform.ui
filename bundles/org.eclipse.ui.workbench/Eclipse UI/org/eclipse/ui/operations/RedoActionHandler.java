@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
-import org.eclipse.core.commands.operations.UndoContext;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * <p>
- * RedoActionHandler provides common behavior for labeling and enabling the menu
- * item for redo.
+ * RedoActionHandler provides common behavior for redoing an operation,
+ * as well as labeling and enabling the menu item.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -33,15 +37,18 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
-	 * the redo action for the specified operation context.
+	 * the redo action for a specified operation context.
 	 * 
+	 * @param window -
+	 *            the workbench window that created the action.
 	 * @param context -
-	 *            the UndoContext to be used to filter the operations
-	 *            history.
+	 *            the context to be used for redoing.
 	 */
-	public RedoActionHandler(UndoContext context) {
-		super(context);
-		setId("OperationHistoryRedoHandler");//$NON-NLS-1$
+	public RedoActionHandler(IWorkbenchWindow window, IUndoContext context) {
+		super(window, context);
+	    setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+                .getImageDescriptor(ISharedImages.IMG_TOOL_REDO));  
+
 	}
 
 	protected void flush() {
@@ -52,16 +59,19 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 		return WorkbenchMessages.getString("Workbench.redo"); //$NON-NLS-1$
 	}
 
-	protected String getOperationLabel() {
-		return getHistory().getRedoOperation(fContext).getLabel();
-
+	protected IUndoableOperation getOperation() {
+		return getHistory().getRedoOperation(fContext);
 	}
 
 	public void run() {
-		getHistory().redo(fContext, null);
+		getHistory().redo(fContext, null, this);
 	}
 
 	protected boolean shouldBeEnabled() {
+		// make sure a context is set. If a part doesn't return
+		// a context, then we should not enable.
+		if (fContext == null)
+			return false;
 		return getHistory().canRedo(fContext);
 	}
 }

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -54,14 +55,20 @@ public interface IContextOperationApprover {
 	 *            the context for which the operation is to be approved
 	 * @param history -
 	 *            the history undoing the operation
+	 * @param uiInfo -
+	 *            the IAdaptable (or <code>null</code>) that can be used to
+	 *            obtain additional UI information if any user prompting is
+	 *            necessary during the execution of the operation. If an
+	 *            IAdaptable is provided, it will provide an adapter for
+	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         redo will not proceed if the status severity is no
 	 *         <code>OK</code>, and the caller requesting the redo will be
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedRedoing(IUndoableOperation operation, UndoContext context,
-			IOperationHistory history);
+	IStatus proceedRedoing(IUndoableOperation operation, IUndoContext context,
+			IOperationHistory history, IAdaptable uiInfo);
 
 	/**
 	 * Return a status indicating whether the specified operation should be
@@ -76,12 +83,18 @@ public interface IContextOperationApprover {
 	 *            the context for which the operation is to be approved
 	 * @param history -
 	 *            the history undoing the operation
+	 * @param uiInfo -
+	 *            the IAdaptable (or <code>null</code>) that can be used to
+	 *            obtain additional UI information if any user prompting is
+	 *            necessary during the execution of the operation. If an
+	 *            IAdaptable is provided, it will provide an adapter for
+	 *            org.eclipse.swt.widgets.Shell.class.
 	 * @return the IStatus describing whether the operation is approved. The
 	 *         undo will not proceed if the status severity is not
 	 *         <code>OK</code>, and the caller requesting the undo will be
 	 *         returned the status that caused the rejection. Any other status
 	 *         severities will not be interpreted by the history.
 	 */
-	IStatus proceedUndoing(IUndoableOperation operation, UndoContext context,
-			IOperationHistory history);
+	IStatus proceedUndoing(IUndoableOperation operation, IUndoContext context,
+			IOperationHistory history, IAdaptable uiInfo);
 }

@@ -42,7 +42,7 @@ public final class OperationHistoryEvent {
 	 * notification that it has been added to the history.
 	 */
 
-	public static final int ABOUT_TO_EXECUTE = 0x0004;
+	public static final int ABOUT_TO_EXECUTE = 0x0001;
 
 	/**
 	 * ABOUT_TO_REDO indicates that an operation is about to be redone.
@@ -51,7 +51,7 @@ public final class OperationHistoryEvent {
 	 * operationNotCompleted notification if the redo is cancelled or otherwise
 	 * fails.
 	 */
-	public static final int ABOUT_TO_REDO = 0x0010;
+	public static final int ABOUT_TO_REDO = 0x0002;
 
 	/**
 	 * ABOUT_TO_UNDO indicates that an operation is about to be undone.
@@ -60,7 +60,7 @@ public final class OperationHistoryEvent {
 	 * operationNotCompleted notification if the undo is cancelled or otherwise
 	 * fails.
 	 */
-	public static final int ABOUT_TO_UNDO = 0x0008;
+	public static final int ABOUT_TO_UNDO = 0x0004;
 
 	/**
 	 * DONE indicates that operation has been executed. Listeners can take
@@ -72,7 +72,7 @@ public final class OperationHistoryEvent {
 	 * Clients will also receive a notification that the operation has been
 	 * added to the history.
 	 */
-	public static final int DONE = 0x0020;
+	public static final int DONE = 0x0008;
 
 	// constants are bit masked in case there are overlapping events in the
 	// future
@@ -82,7 +82,13 @@ public final class OperationHistoryEvent {
 	 * Listeners typically use this to add their context to a new operation as
 	 * appropriate or otherwise record the operation.
 	 */
-	public static final int OPERATION_ADDED = 0x0001;
+	public static final int OPERATION_ADDED = 0x0010;
+
+	/**
+	 * OPERATION_CHANGED indicates that an operation has changed in
+	 * some way since it was added to the operations history.
+	 */
+	public static final int OPERATION_CHANGED = 0x0020;
 
 	/**
 	 * OPERATION_NOT_OK indicates that an operation was attempted and not
@@ -93,26 +99,26 @@ public final class OperationHistoryEvent {
 	 * or when this notification is received, since there will be no
 	 * notification of the completion.
 	 */
-	public static final int OPERATION_NOT_OK = 0x0100;
+	public static final int OPERATION_NOT_OK = 0x0040;
 
 	/**
 	 * OPERATION_REMOVED indicates an operation was removed from the history.
 	 * Listeners typically remove any record of the operation that they may have
 	 * kept in their own state.
 	 */
-	public static final int OPERATION_REMOVED = 0x0002;
+	public static final int OPERATION_REMOVED = 0x0080;
 
 	/**
 	 * REDONE indicates that an operation was redone. Listeners can take
 	 * appropriate action, such as revealing any relevant state in the UI.
 	 */
-	public static final int REDONE = 0x0080;
+	public static final int REDONE = 0x0100;
 
 	/**
 	 * UNDONE indicates that an operation was undone. Listeners can take
 	 * appropriate action, such as revealing any relevant state in the UI.
 	 */
-	public static final int UNDONE = 0x0040;
+	public static final int UNDONE = 0x0200;
 
 	private int code = 0;
 

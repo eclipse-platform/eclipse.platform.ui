@@ -13,23 +13,39 @@ package org.eclipse.ui.operations;
 import java.text.MessageFormat;
 
 import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.UndoContext;
+import org.eclipse.core.commands.operations.IOperationHistoryListener;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.OperationHistoryEvent;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * <p>
  * OperationHistoryActionHandler provides common behavior for the undo and redo
- * action handlers. It supports filtering of undo or redo on a particular
- * context. A null context means that there is no filter on the redo history.
+ * actions. It supports filtering of undo or redo on a particular context. A
+ * null context means that there is no undo or redo supported. When a part is
+ * activated, the action looks for an adapter for the undo context. If one is
+ * supplied, then the action will filter the operations history on that context.
+ * </p>
+ * <p>
+ * OperationHistoryActionHandler provides an adapter for its 
+ * org.eclipse.ui.IWorkbenchWindow and its 
+ * org.eclipse.swt.widgets.Shell in the info parameter of the IOperationHistory
+ * undo and redo methods.
  * </p>
  * <p>
  * OperationHistoryActionHandler assumes a linear undo/redo model. When the
  * handler is run, the operation history is asked to perform the most recent
- * undo for the handler's context. Further, the handler proactively flushes the
- * operation undo or redo history when there is no valid operation for a given
- * context, to avoid keeping a stale history of invalid operations.
+ * undo for the handler's context. The handler can be configured (using
+ * #setPruneHistory(true) to flush the operation undo or redo history for its
+ * context when there is no valid operation, to avoid keeping a stale history of
+ * invalid operations. By default, pruning does not occur and it is assumed that
+ * clients of the particular undo context are pruning the history when
+ * necessary.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -43,43 +59,138 @@ import org.eclipse.ui.actions.ActionFactory;
  * @experimental
  */
 public abstract class OperationHistoryActionHandler extends Action implements
-		ActionFactory.IWorkbenchAction {
+		ActionFactory.IWorkbenchAction, IAdaptable, IOperationHistoryListener {
 
-	protected UndoContext fContext = null;
+	protected IUndoContext fContext = null;
 
-	protected OperationHistoryActionHandler(UndoContext context) {
+	private boolean fPruning = false;
+
+	protected IWorkbenchWindow fWorkbenchWindow;
+
+	/**
+	 * Construct an operation history action for the specified workbench window
+	 * with the specified undo context.
+	 * 
+	 * @param window -
+	 *            the workbench window for the action.
+	 * @param context -
+	 *            the undo context to be used
+	 */
+	public OperationHistoryActionHandler(IWorkbenchWindow window,
+			IUndoContext context) {
+		// string will be reset inside action
+		super(""); //$NON-NLS-1$
+		fWorkbenchWindow = window;
 		fContext = context;
+		getHistory().addOperationHistoryListener(this);
 	}
 
+	/**
+	 * Dispose of any resources allocated by this action.
+	 */
 	public void dispose() {
 		// nothing to dispose
 	}
 
+	/*
+	 * Flush the history associated with this action.
+	 */
 	protected abstract void flush();
 
+	/*
+	 * Return the string describing the command.
+	 */
 	protected abstract String getCommandString();
 
+	/*
+	 * Return the operation history we are using.
+	 */
 	protected IOperationHistory getHistory() {
-		return PlatformUI.getWorkbench().getOperationSupport()
+		return fWorkbenchWindow.getWorkbench().getOperationSupport()
 				.getOperationHistory();
 	}
 
-	protected abstract String getOperationLabel();
-
-	public abstract void run();
+	/*
+	 * Return the current operation.
+	 */
+	protected abstract IUndoableOperation getOperation();
 
 	/**
-	 * Set the operation context that should be used to retrieve the undo and
-	 * redo history. A null value is interpreted as showing all contexts.
-	 * 
-	 * @param context
+	 * Run the action. Implemented by subclasses.
 	 */
-	public void setContext(UndoContext context) {
+	public abstract void run();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(Shell.class)) {
+			return fWorkbenchWindow.getShell();
+		}
+		if (adapter.equals(IWorkbenchWindow.class)) {
+			return fWorkbenchWindow;
+		}
+		return null;
+	}
+
+	/**
+	 * The undo and redo subclasses should implement this.
+	 * 
+	 * @return - a boolean indicating enablement state
+	 */
+	protected abstract boolean shouldBeEnabled();
+
+	/**
+	 * Set the context shown by the handler. Normally the context is set as
+	 * parts activate and deactivate, but a part may wish to set the context
+	 * manually.
+	 * 
+	 * @param context -
+	 *            the context to be used for the undo history
+	 */
+	public void setContext(IUndoContext context) {
 		fContext = context;
 		update();
 	}
 
-	protected abstract boolean shouldBeEnabled();
+	/**
+	 * Specify whether the action handler should actively prune the operation
+	 * history when invalid operations are encountered. The default value is
+	 * <code>false</code>.
+	 * 
+	 * @param prune -
+	 *            <code>true</code> if the history should be pruned by the
+	 *            handler, and <code>false</code> if it should not.
+	 * 
+	 */
+	public void setPruneHistory(boolean prune) {
+		fPruning = prune;
+	}
+
+	/**
+	 * Something has changed in the operation history. Check to see if it
+	 * involves this context.
+	 * 
+	 * @param event -
+	 *            the event that has occurred.
+	 */
+	public void historyNotification(OperationHistoryEvent event) {
+		switch (event.getEventType()) {
+		case OperationHistoryEvent.OPERATION_ADDED:
+		case OperationHistoryEvent.OPERATION_REMOVED:
+		case OperationHistoryEvent.UNDONE:
+		case OperationHistoryEvent.REDONE:
+			if (event.getOperation().hasContext(fContext))
+				update();
+			break;
+		case OperationHistoryEvent.OPERATION_CHANGED:
+			if (event.getOperation() == getOperation()) {
+				update();
+			}
+		}
+	}
 
 	/**
 	 * Update enabling and labels according to the current status of the
@@ -89,13 +200,15 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
 		if (enabled) {
-			text = MessageFormat.format("{0} {1}", new Object[] {text, getOperationLabel()}); //$NON-NLS-1$
+			text = MessageFormat.format(
+					"{0} {1}", new Object[] { text, getOperation().getLabel() }); //$NON-NLS-1$
 		} else {
 			/*
-			 * if there is nothing to do, ensure the history is flushed of this
-			 * context
+			 * if there is nothing to do and we are pruning the history, flush
+			 * the history of this context.
 			 */
-			flush();
+			if (fContext != null && fPruning)
+				flush();
 		}
 		setText(text.toString());
 		setEnabled(enabled);

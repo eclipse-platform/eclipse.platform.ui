@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.operations;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,7 +37,7 @@ public class TestOperation extends AbstractOperation {
 		return fExecutionCount > 0;
 	}
 
-	public IStatus execute(IProgressMonitor monitor) {
+	public IStatus execute(IProgressMonitor monitor, IAdaptable uiInfo) {
 		fExecutionCount++;
 		return Status.OK_STATUS;
 	}
@@ -45,15 +46,15 @@ public class TestOperation extends AbstractOperation {
 		return fDescription;
 	}
 
-	public IStatus redo(IProgressMonitor monitor) {
-		return execute(monitor);
+	public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
+		return execute(monitor, uiInfo);
 	}
 
 	public String toString() {
 		return getLabel();
 	}
 
-	public IStatus undo(IProgressMonitor monitor) {
+	public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 		fExecutionCount--;
 		return Status.OK_STATUS;
 	}

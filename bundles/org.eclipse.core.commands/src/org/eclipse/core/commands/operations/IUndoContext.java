@@ -27,26 +27,39 @@ package org.eclipse.core.commands.operations;
  * @since 3.1
  * @experimental
  */
-public class UndoContext implements IUndoContext {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
-	 */
-	public String getLabel() {
-		return ""; //$NON-NLS-1$
-	}
+public interface IUndoContext {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#getOperationApprover()
+	/**
+	 * Get the label that should be used to describe the context in any views.
+	 * Contexts may be shown when filtered operation histories are shown to the
+	 * user.
+	 * 
+	 * @return the label for the context.
 	 */
-	public IContextOperationApprover getOperationApprover() {
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext context)
+	public String getLabel();
+
+	/**
+	 * Get the operation approver that is used to approve undo or redo
+	 * operations involving this context.
+	 * 
+	 * @return the operation approver for the context. A <code>null</code>
+	 *         return value indicates that no special approval is necessary.
 	 */
-	public boolean matches(IUndoContext context) {
-		return context == this;
-	}
+	public IContextOperationApprover getOperationApprover();
+
+	/**
+	 * Return whether the specified context is considered a match for the
+	 * receiving context. When a context matches another context, objects that
+	 * have the context are considered to also have the matching context.
+	 * 
+	 * @param context -
+	 *            the context to be checked against the receiving context.
+	 * 
+	 * @return <code>true</code> if the receiving context can be considered a
+	 *         match for the specified context, and <code>false</code> if it
+	 *         cannot.
+	 */
+	public boolean matches(IUndoContext context);
+
 }

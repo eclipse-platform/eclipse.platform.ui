@@ -33,7 +33,7 @@ package org.eclipse.core.commands.operations;
  * @since 3.1
  * @experimental
  */
-public interface IHistoryNotificationAwareOperation extends IUndoableOperation {
+public interface IHistoryNotificationAwareOperation {
 
 	/**
 	 * <p>

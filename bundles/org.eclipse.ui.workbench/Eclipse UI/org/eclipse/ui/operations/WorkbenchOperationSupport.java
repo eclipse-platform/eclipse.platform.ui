@@ -11,13 +11,12 @@
 
 package org.eclipse.ui.operations;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryFactory;
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
-import org.eclipse.core.commands.operations.UndoContext;
-import org.eclipse.ui.internal.WorkbenchUndoContext;
 
 /**
  * <p>
@@ -55,11 +54,13 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 
 	/**
 	 * Returns the undo context for workbench operations.
+	 * The workbench configures an undo context with the appropriate policies
+	 * for the workbench undo model.  
 	 * 
 	 * @return the workbench operation context.
 	 * @since 3.1
 	 */
-	public UndoContext getUndoContext() {
+	public IUndoContext getUndoContext() {
 		if (undoContext == null) {
 			undoContext = new WorkbenchUndoContext(
 					"Workbench Context"); //$NON-NLS-1$

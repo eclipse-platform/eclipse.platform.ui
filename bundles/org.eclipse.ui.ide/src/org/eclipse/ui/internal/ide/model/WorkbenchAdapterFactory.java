@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -91,6 +93,9 @@ class WorkbenchAdapterFactory implements IAdapterFactory {
         if (adapterType == IActionFilter.class) {
             return getActionFilter(o);
         }
+        if (adapterType == IUndoContext.class) {
+        	return getUndoContext(o);
+        }
         return null;
     }
 
@@ -107,7 +112,7 @@ class WorkbenchAdapterFactory implements IAdapterFactory {
      */
     public Class[] getAdapterList() {
         return new Class[] { IWorkbenchAdapter.class, IElementFactory.class,
-                IPersistableElement.class, IActionFilter.class };
+                IPersistableElement.class, IActionFilter.class, IUndoContext.class };
     }
 
     /**
@@ -164,6 +169,16 @@ class WorkbenchAdapterFactory implements IAdapterFactory {
         }
         if (o instanceof IMarker) {
             return markerAdapter;
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the IUndoContext for an object.
+     */
+    protected Object getUndoContext(Object o) {
+        if (o instanceof IWorkspace) {
+            return PlatformUI.getWorkbench().getOperationSupport().getUndoContext();
         }
         return null;
     }

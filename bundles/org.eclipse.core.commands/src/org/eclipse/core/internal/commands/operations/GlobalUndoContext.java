@@ -8,17 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.core.internal.commands.operations;
 
-package org.eclipse.ui.operations;
-
-import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IContextOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 
 /**
- * An instance of this interface provides support for managing operations and a
- * shared operations history at the <code>IWorkbench</code> level.
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * An operation context that matches to any context.  It can be used to 
+ * get an unfiltered (global) history.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -31,26 +29,26 @@ import org.eclipse.core.commands.operations.IUndoContext;
  * @since 3.1
  * @experimental
  */
-public interface IWorkbenchOperationSupport {
+public class GlobalUndoContext implements IUndoContext {
 
-	/**
-	 * Dispose of any state kept by the operations support, including the
-	 * history and contained operations.
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IUndoContext#getLabel()
 	 */
-	public void dispose();
+	public String getLabel() {
+		return "Global Undo Context"; //$NON-NLS-1$
+	}
 
-	/**
-	 * Returns the undo context for workbench-wide operations.
-	 * 
-	 * @return the workbench operation context
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IUndoContext#getOperationApprover()
 	 */
-	public IUndoContext getUndoContext();
-
-	/**
-	 * Returns the operation history for the workbench.
-	 * 
-	 * @return the workbench operation history
+	public IContextOperationApprover getOperationApprover() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IUndoContext#matches(IUndoContext context)
 	 */
-	public IOperationHistory getOperationHistory();
-
+	public boolean matches(IUndoContext context) {
+		return true;
+	}
 }

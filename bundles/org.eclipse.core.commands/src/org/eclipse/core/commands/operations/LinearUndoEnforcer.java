@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -33,12 +34,12 @@ import org.eclipse.core.runtime.Status;
 public class LinearUndoEnforcer extends LinearUndoViolationDetector {
 
 	protected IStatus allowLinearRedoViolation(IUndoableOperation operation,
-			UndoContext context, IOperationHistory history) {
+			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
 		return Status.CANCEL_STATUS;
 	}
 
 	protected IStatus allowLinearUndoViolation(IUndoableOperation operation,
-			UndoContext context, IOperationHistory history) {
+			IUndoContext context, IOperationHistory history, IAdaptable uiInfo) {
 		return Status.CANCEL_STATUS;
 	}
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -32,13 +33,13 @@ import org.eclipse.core.runtime.Status;
 public class ContextConsultingOperationApprover implements IOperationApprover {
 
 	public IStatus proceedRedoing(IUndoableOperation operation,
-			IOperationHistory history) {
-		UndoContext[] contexts = operation.getContexts();
+			IOperationHistory history, IAdaptable uiInfo) {
+		IUndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
-			UndoContext context = contexts[i];
+			IUndoContext context = contexts[i];
 			IContextOperationApprover approver = context.getOperationApprover();
 			if (approver != null) {
-				IStatus approval = approver.proceedRedoing(operation, context, history);
+				IStatus approval = approver.proceedRedoing(operation, context, history, uiInfo);
 				if (!approval.isOK())
 					return approval;
 			}
@@ -47,13 +48,13 @@ public class ContextConsultingOperationApprover implements IOperationApprover {
 	}
 
 	public IStatus proceedUndoing(IUndoableOperation operation,
-			IOperationHistory history) {
-		UndoContext[] contexts = operation.getContexts();
+			IOperationHistory history, IAdaptable uiInfo) {
+		IUndoContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
-			UndoContext context = contexts[i];
+			IUndoContext context = contexts[i];
 			IContextOperationApprover approver = context.getOperationApprover();
 			if (approver != null) {
-				IStatus approval = approver.proceedUndoing(operation, context, history);
+				IStatus approval = approver.proceedUndoing(operation, context, history, uiInfo);
 				if (!approval.isOK())
 					return approval;
 			}

@@ -13,6 +13,8 @@ package org.eclipse.core.commands.operations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.internal.commands.util.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
@@ -46,7 +48,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		fLabel = label;
 	}
 
-	public void addContext(UndoContext context) {
+	public void addContext(IUndoContext context) {
 		if (!fContexts.contains(context)) {
 			fContexts.add(context);
 		}
@@ -93,10 +95,10 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public abstract IStatus execute(IProgressMonitor monitor);
+	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info);
 
-	public UndoContext[] getContexts() {
-		return (UndoContext[]) fContexts.toArray(new UndoContext[fContexts
+	public IUndoContext[] getContexts() {
+		return (IUndoContext[]) fContexts.toArray(new IUndoContext[fContexts
 				.size()]);
 	}
 
@@ -123,8 +125,16 @@ public abstract class AbstractOperation implements IUndoableOperation {
 		fLabel = name;
 	}
 
-	public boolean hasContext(UndoContext context) {
-		return fContexts.contains(context);
+	public boolean hasContext(IUndoContext context) {
+		Assert.isNotNull(context);
+		for (int i = 0; i< fContexts.size(); i++) {
+			IUndoContext otherContext = (IUndoContext)fContexts.get(i);
+			// have to check both ways because one context may be more general in
+			// its matching rules than another.
+			if (context.matches(otherContext) || otherContext.matches(context)) 
+				return true;
+		}
+		return false;
 	}
 
 	/*
@@ -132,9 +142,9 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperation#redo(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public abstract IStatus redo(IProgressMonitor monitor);
+	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info);
 
-	public void removeContext(UndoContext context) {
+	public void removeContext(IUndoContext context) {
 		fContexts.remove(context);
 	}
 
@@ -143,6 +153,6 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperation#undo(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public abstract IStatus undo(IProgressMonitor monitor);
+	public abstract IStatus undo(IProgressMonitor monitor, IAdaptable info);
 
 }

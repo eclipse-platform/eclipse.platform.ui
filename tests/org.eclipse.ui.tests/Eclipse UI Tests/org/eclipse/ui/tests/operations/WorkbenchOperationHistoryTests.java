@@ -11,11 +11,15 @@
 
 package org.eclipse.ui.tests.operations;
 
+import org.eclipse.core.commands.operations.IContextOperationApprover;
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
-import org.eclipse.core.commands.operations.UndoContext;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.operations.WorkbenchUndoContext;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -24,7 +28,7 @@ import org.eclipse.ui.tests.util.UITestCase;
  * @since 3.1
  */
 public class WorkbenchOperationHistoryTests extends UITestCase {
-	UndoContext context, c1, c2;
+	IUndoContext context, c1, c2;
 
 	IOperationHistory history;
 
@@ -38,8 +42,8 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	}
 
 	protected void doSetUp() throws Exception {
-		history = fWorkbench.getOperationSupport().getOperationHistory();
-		context = fWorkbench.getOperationSupport().getUndoContext();
+		history = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
+		context = PlatformUI.getWorkbench().getOperationSupport().getUndoContext();
 		c1 = new ObjectUndoContext("c1");
 		c2 = new ObjectUndoContext("c2");
 		op1 = new TestOperation("op1", "Test Operation 1");
@@ -56,40 +60,60 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 		op6 = new TestOperation("op6", "Test Operation 6");
 		op6.addContext(context);
 		op6.addContext(c2);
-		history.execute(op1, null);
-		history.execute(op2, null);
-		history.execute(op3, null);
-		history.execute(op4, null);
-		history.execute(op5, null);
-		history.execute(op6, null);
+		history.execute(op1, null, null);
+		history.execute(op2, null, null);
+		history.execute(op3, null, null);
+		history.execute(op4, null, null);
+		history.execute(op5, null, null);
+		history.execute(op6, null, null);
 
 	}
 
 	protected void doTearDown() throws Exception {
-		history.dispose(null, true, true);
+		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true);
 	}
 
 	public void testWorkbenchOperationApproval() {
 		// Enforcing of linear undo should be in effect for the workbench
 		// context.
 		// The first undo in c1 should be fine
-		IStatus status = history.undo(c1, null);
+		IStatus status = history.undo(c1, null, null);
 		assertTrue(status.isOK());
 
 		// the second undo in c1 causes a linear violation on the workbench
 		// context
 		assertTrue(history.canUndo(c1));
-		status = history.undo(c1, null);
+		status = history.undo(c1, null, null);
 		assertFalse(status.isOK());
 
 		// undo the newer context items
-		status = history.undo(context, null);
+		status = history.undo(context, null, null);
 		assertTrue(status.isOK());
-		status = history.undo(context, null);
+		status = history.undo(context, null, null);
 		assertTrue(status.isOK());
 
 		// now we should be ok to undo c1
-		status = history.undo(c1, null);
+		status = history.undo(c1, null, null);
 		assertTrue(status.isOK());
+	}
+	
+	public void testWorkspaceAdapter() {
+		IUndoContext workspaceContext = (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		assertTrue("Should have context registered on workspace", workspaceContext == context);
+	}
+	
+	public void testMatchingContext() {
+		IUndoContext newContext = new IUndoContext() {
+			public String getLabel() { return "Matching Test Context"; }
+			public IContextOperationApprover getOperationApprover() { return null; }
+			public boolean matches(IUndoContext otherContext) { return false; }
+		};
+		assertFalse(newContext.matches(context));
+		((WorkbenchUndoContext)context).addMatch(newContext);
+		assertTrue(history.getUndoHistory(context).length == history.getUndoHistory(newContext).length);
+		assertTrue(op1.hasContext(newContext));
+		assertFalse(op3.hasContext(context));
+		op3.addContext(newContext);
+		assertTrue(op3.hasContext(context));
 	}
 }

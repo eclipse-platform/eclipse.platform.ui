@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.operations;
 
-import org.eclipse.core.commands.operations.UndoContext;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * <p>
- * UndoActionHandler provides common behavior for labeling and enabling the menu
- * item for undo.
+ * UndoActionHandler provides common behavior for performing an undo, as
+ * well as enabling and labelling the undo menu item.  
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -33,15 +37,17 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 
 	/**
 	 * Construct an action handler that handles the labelling and enabling of
-	 * the undo action for the specified operation context.
+	 * the undo action for a specified operation context.
 	 * 
+	 * @param window -
+	 *            the workbench window that created the action.
 	 * @param context -
-	 *            the UndoContext to be used to filter the operations
-	 *            history.
+	 *            the context to be used for the undo
 	 */
-	public UndoActionHandler(UndoContext context) {
-		super(context);
-		setId("OperationHistoryUndoHandler");//$NON-NLS-1$
+	public UndoActionHandler(IWorkbenchWindow window, IUndoContext context) {
+		super(window, context);
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+                .getImageDescriptor(ISharedImages.IMG_TOOL_UNDO));
 	}
 
 	protected void flush() {
@@ -52,16 +58,19 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 		return WorkbenchMessages.getString("Workbench.undo"); //$NON-NLS-1$
 	}
 
-	protected String getOperationLabel() {
-		return getHistory().getUndoOperation(fContext).getLabel();
+	protected IUndoableOperation getOperation() {
+		return getHistory().getUndoOperation(fContext);
 
 	}
 
 	public void run() {
-		getHistory().undo(fContext, null);
+		getHistory().undo(fContext, null, this);
 	}
 
 	protected boolean shouldBeEnabled() {
+		// if a context was not supplied, do not enable.
+		if (fContext == null)
+			return false;
 		return getHistory().canUndo(fContext);
 	}
 }
