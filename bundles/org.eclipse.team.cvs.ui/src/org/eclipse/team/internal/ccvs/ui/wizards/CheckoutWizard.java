@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -26,8 +27,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutMultipleProjectsOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.HasProjectMetaFileOperation;
 import org.eclipse.ui.*;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Gathers all information necesary for a checkout from a repository.
@@ -69,6 +68,7 @@ public class CheckoutWizard extends Wizard implements ICVSWizard, INewWizard {
 		
 		modulePage = new ModuleSelectionPage("moduleSelection", Policy.bind("CheckoutWizard.10"), substImage); //$NON-NLS-1$ //$NON-NLS-2$
 		modulePage.setDescription(Policy.bind("CheckoutWizard.11")); //$NON-NLS-1$
+		modulePage.setHelpContxtId(IHelpContextIds.CHECKOUT_MODULE_SELECTION_PAGE);
 		addPage(modulePage);
 		
 		// Dummy page to allow lazy creation of CheckoutAsWizard

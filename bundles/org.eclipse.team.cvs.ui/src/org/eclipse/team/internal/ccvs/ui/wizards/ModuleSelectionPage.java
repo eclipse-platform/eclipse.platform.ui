@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositorySorter;
@@ -47,15 +46,21 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	private IProject project;
 	private ICVSRepositoryLocation location;
 	private boolean badLocation = false;
+	private String helpContextId;
 	
 	public ModuleSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
 	
+	public void setHelpContxtId(String helpContextId) {
+		this.helpContextId = helpContextId;
+	}
+	
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 2);
-		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_MODULE_PAGE);
+
+		if (helpContextId != null)
+			WorkbenchHelp.setHelp(composite, helpContextId);
 		
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {

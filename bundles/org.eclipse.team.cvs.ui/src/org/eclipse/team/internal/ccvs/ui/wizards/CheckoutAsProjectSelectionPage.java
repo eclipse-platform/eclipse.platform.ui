@@ -13,39 +13,24 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This page allows the user to select the target parent container for
@@ -60,7 +45,6 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 	private Combo filterList;
 	private Button recurseCheck;
 	
-	private IResource[] resources;
 	private IResource selection;
 	private ICVSRemoteFolder[] remoteFolders;
 	private String folderName;
@@ -103,7 +87,7 @@ public class CheckoutAsProjectSelectionPage extends CVSWizardPage {
 		Composite composite= createComposite(parent, 2);
 		setControl(composite);
 		
-		// WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_INTO_RESOURCE_SELECTION_PAGE);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_PROJECT_SELECTION_PAGE);
 		
 		if (isSingleFolder()) {
 			createLabel(composite, Policy.bind("CheckoutAsProjectSelectionPage.name")); //$NON-NLS-1$

@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -113,6 +114,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			modulePage.setDescription(Policy.bind("SharingWizard.enterModuleNameDescription")); //$NON-NLS-1$
 			modulePage.setCVSWizard(this);
 			modulePage.setProject(project);
+			modulePage.setHelpContxtId(IHelpContextIds.SHARING_MODULE_PAGE);
 			addPage(modulePage);
 			
 			addTagPage(sharingImage);
@@ -128,6 +130,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			Policy.bind("SharingWizard.selectTag"), //$NON-NLS-1$
 			ProjectElement.INCLUDE_HEAD_TAG | ProjectElement.INCLUDE_BRANCHES); //$NON-NLS-1$
 		tagPage.setCVSWizard(this);
+		tagPage.setHelpContxtId(IHelpContextIds.SHARING_TAG_SELETION_PAGE);
 		addPage(tagPage);
 	}
 	

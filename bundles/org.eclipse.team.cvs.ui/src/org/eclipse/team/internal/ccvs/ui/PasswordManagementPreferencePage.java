@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class PasswordManagementPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private TableViewer viewer;
@@ -159,6 +160,9 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 		Dialog.applyDialogFont(ancestor);
 		viewer.setInput(KnownRepositories.getInstance());
 		handleSelection();
+		
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PASSWORD_MANAGEMENT_PAGE);
+		
 		return parent;
 	}
 	
@@ -182,7 +186,6 @@ public class PasswordManagementPreferencePage extends PreferencePage implements 
 	
 	private void removeAll() {
 		ICVSRepositoryLocation[] locations = KnownRepositories.getInstance().getRepositories();
-		List repos = new ArrayList();
 		for (int i = 0; i < locations.length; i++) {
 			ICVSRepositoryLocation l = locations[i];
 			if(l.getUserInfoCached()) 

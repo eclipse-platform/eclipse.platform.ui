@@ -13,29 +13,14 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
@@ -66,6 +51,7 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 	private Button useResourceTagButton;
 	private Button selectTagButton;
 	private boolean useResourceTag = false;
+	private String helpContextId;
 	
 	public TagSelectionWizardPage(String pageName, String title, ImageDescriptor titleImage, String description, String label, int includeFlags) {
 		super(pageName, title, titleImage, description);
@@ -73,6 +59,10 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 		this.includeFlags = includeFlags;
 	}
 
+	public void setHelpContxtId(String helpContextId) {
+		this.helpContextId = helpContextId;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -81,7 +71,8 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 		setControl(composite);
 		
 		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARE_WITH_EXISTING_TAG_SELETION_DIALOG);
+		if (helpContextId != null)
+			WorkbenchHelp.setHelp(composite, helpContextId);
 		
 		if (allowNoTag) {
 			SelectionListener listener = new SelectionAdapter() {

@@ -10,26 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This is the main page of the Check Out As wizard. It allows the user to specify
@@ -69,7 +63,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 		Composite composite = createComposite(parent, 1);
 		setControl(composite);
 		
-		// WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_AS_MAIN_PAGE);
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.CHECKOUT_CONFIGURATION_PAGE);
 		
 		if (isSingleFolder()) {
 			createSingleFolderArea(composite);

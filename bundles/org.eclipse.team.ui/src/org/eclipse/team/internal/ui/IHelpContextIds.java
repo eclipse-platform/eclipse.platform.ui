@@ -22,6 +22,7 @@ public interface IHelpContextIds {
 	public static final String SHARE_PROJECT_PAGE = PREFIX + "share_project_page_context"; //$NON-NLS-1$
 	public static final String IMPORT_PROJECT_SET_PAGE = PREFIX + "import_project_set_page_context"; //$NON-NLS-1$
 	public static final String EXPORT_PROJECT_SET_PAGE = PREFIX + "export_project_set_page_context"; //$NON-NLS-1$
+	public static final String SYNC_RESOURCE_SELECTION_PAGE = PREFIX + "sync_resource_selection_page_context"; //$NON-NLS-1$
 	public static final String TARGET_NEW_SITE_PAGE = PREFIX + "target_new_site_page_context"; //$NON-NLS-1$
 	public static final String TARGET_MAPPING_SELECTION_PAGE = PREFIX + "target_mapping_selection_page_context"; //$NON-NLS-1$
 
@@ -45,4 +46,5 @@ public interface IHelpContextIds {
 	public static final String EXPANDALL_ACTION = PREFIX + "expandall_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_ACTION = PREFIX + "remove_action_context"; //$NON-NLS-1$
 	public static final String NAVIGATOR_SHOW_ACTION = PREFIX + "navigator_show_action_context"; //$NON-NLS-1$
+
 }

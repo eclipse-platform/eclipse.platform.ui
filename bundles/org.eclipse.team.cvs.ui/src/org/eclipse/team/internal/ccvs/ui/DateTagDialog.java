@@ -22,7 +22,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
  * Dialog for obtaining a date from the user
@@ -195,7 +194,6 @@ public class DateTagDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(Policy.bind("DateTagDialog.5")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.SYSTEM_SUMMARY_DIALOG);
 	} 
 
 	/* (non-Javadoc)
@@ -216,7 +214,7 @@ public class DateTagDialog extends Dialog {
 		updateWidgetEnablements();
 		
 		// set F1 help
-		//WorkbenchHelp.setHelp(topLevel, IHelpContextIds.DATE_TAG_DIALOG);
+		WorkbenchHelp.setHelp(topLevel, IHelpContextIds.DATE_TAG_DIALOG);
 		Dialog.applyDialogFont(parent);
 		return topLevel;
 	}

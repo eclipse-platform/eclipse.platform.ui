@@ -92,6 +92,7 @@ public class CheckoutAsWizard extends Wizard {
 		
 		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("CheckoutAsWizard.3"), substImage, Policy.bind("CheckoutAsWizard.4"), Policy.bind("CheckoutAsWizard.5"), ProjectElement.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		tagSelectionPage.setFolders(remoteFolders);
+		tagSelectionPage.setHelpContxtId(IHelpContextIds.CHECKOUT_TAG_SELETION_PAGE);
 		addPage(tagSelectionPage);
 	}
 

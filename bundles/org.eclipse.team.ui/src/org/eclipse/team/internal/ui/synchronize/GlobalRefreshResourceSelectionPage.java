@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -53,7 +54,6 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	private Button participantScope;
 	private Button selectedResourcesScope;
 	private Button workingSetScope;
-	private Button selectWorkingSetButton;
 	
 	// The checked tree viewer
 	private ContainerCheckedTreeViewer fViewer;
@@ -138,6 +138,8 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		top.setLayoutData(data);
 		setControl(top);
 
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.SYNC_RESOURCE_SELECTION_PAGE);
+		
 		Label l = new Label(top, SWT.NULL);
 		l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.5")); //$NON-NLS-1$
 
@@ -284,7 +286,6 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	 */
 	private IResource areAnyElementsChecked() {
 		TreeItem[] item = fViewer.getTree().getItems();
-		List checked = new ArrayList();
 		for (int i = 0; i < item.length; i++) {
 			TreeItem child = item[i];
 			if(child.getChecked() || child.getGrayed()) {
@@ -401,7 +402,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 				allWorkingSetResources.addAll(IDE.computeSelectedResources(new StructuredSelection(set.getElements())));
 			}
 			scopeCheckingElement = true;
-			fViewer.setCheckedElements((IResource[]) allWorkingSetResources.toArray(new IResource[allWorkingSetResources.size()]));
+			fViewer.setCheckedElements(allWorkingSetResources.toArray(new IResource[allWorkingSetResources.size()]));
 			scopeCheckingElement = false;
 			setPageComplete(true);
 		} else {
@@ -410,23 +411,6 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			scopeCheckingElement = false;
 			setPageComplete(false);
 		}
-	}
-	
-	private IResource[] getResourcesFromSelection() {
-		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow != null) {
-			IWorkbenchPart activePart = activeWorkbenchWindow.getPartService().getActivePart();
-			if (activePart != null) {
-				ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
-				if (selectionProvider != null) {
-					ISelection selection = selectionProvider.getSelection();
-					if(selection instanceof IStructuredSelection) {
-						return Utils.getResources(((IStructuredSelection)selection).toArray());
-					}
-				}
-			}
-		}
-		return new IResource[0];
 	}
 	
 	private void collectCheckedItems(TreeItem item, List checked) {
