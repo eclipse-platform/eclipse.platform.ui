@@ -126,6 +126,8 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     private HashMap attributes = new HashMap();
    
     private boolean autoScroll = true;
+    
+    private MatchJob matchJob = new MatchJob();
 
     public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor) {
         super(title, imageDescriptor);
@@ -472,27 +474,13 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
     private void matchByLine(final CompiledPatternMatchListener compiled, final int eventOffset) throws BadLocationException {
         IDocument document = getDocument();
-        final IPatternMatchListener notifier = compiled.listener;
         int curLine = document.getLineOfOffset(eventOffset);
         int numLines = document.getNumberOfLines();
+        
         for(; curLine<numLines; curLine++) {
-            final int start = document.getLineOffset(curLine);
-            final String line = document.get(start, document.getLineLength(curLine));
-            Job job = new Job("Pattern Match Job") { //$NON-NLS-1$
-                protected IStatus run(IProgressMonitor monitor) {
-                    Matcher matcher = compiled.pattern.matcher(line);
-                    while(matcher.find()) {
-                        String group = matcher.group();
-                        int matchOffset = start + matcher.start();
-                        notifier.matchFound(new PatternMatchEvent(IOConsole.this, matchOffset, group.length()));
-                    }
-                    return Status.OK_STATUS;
-                }
-                
-            };
-            job.setSystem(true);
-            job.schedule();
-            
+            int start = document.getLineOffset(curLine);
+            String line = document.get(start, document.getLineLength(curLine));
+            matchJob.addMatchUnit(new MatchUnit(compiled, line, start, false));
         }
     }
     
@@ -500,21 +488,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         final int start = Math.min(compiled.end, eventOffset);
         IDocument document = getDocument();
         final String contents = document.get(start, document.getLength()-start);
-        Job job = new Job("Pattern Match Job") { //$NON-NLS-1$
-            protected IStatus run(IProgressMonitor monitor) {
-                Matcher matcher = compiled.pattern.matcher(contents);
-                IPatternMatchListener notifier = compiled.listener;
-                while(matcher.find()) {
-                    String group = matcher.group();
-                    int matchOffset = eventOffset + matcher.start();
-                    notifier.matchFound(new PatternMatchEvent(IOConsole.this, matchOffset, group.length()));
-                    compiled.end = matcher.end() + start;
-                }
-                return Status.OK_STATUS;
-            } 
-        };
-        job.setSystem(true);
-        job.schedule();
+        matchJob.addMatchUnit(new MatchUnit(compiled, contents, start, true));
     }
 
     private class CompiledPatternMatchListener {
@@ -526,5 +500,60 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             this.pattern = pattern;
             this.listener = matchListener;
         }
+    }
+    
+    private class MatchUnit {
+        String content;
+        int docOffset;
+        CompiledPatternMatchListener listener;
+        boolean docMatch = false;
+        
+        public MatchUnit(CompiledPatternMatchListener listener, String content, int docOffset, boolean docMatch) {
+            this.listener = listener;
+            this.content = content;
+            this.docOffset = docOffset;
+            this.docMatch = docMatch;
+        }
+    }
+    
+    private class MatchJob extends Job {
+        private ArrayList matchUnits = new ArrayList();
+        
+        MatchJob() {
+            super("Match Job"); //$NON-NLS-1$
+            setSystem(true);
+        }
+        
+        void addMatchUnit(MatchUnit unit) {
+            synchronized(matchUnits) {
+                matchUnits.add(unit);
+            }
+            schedule();
+        }
+        
+        protected IStatus run(IProgressMonitor monitor) {
+            while(!matchUnits.isEmpty()) {
+                ArrayList copy = matchUnits;
+                synchronized(matchUnits) {
+                    matchUnits = new ArrayList();
+                }
+                
+                for (Iterator iter = copy.iterator(); iter.hasNext();) {
+                    MatchUnit unit = (MatchUnit) iter.next();
+                    Matcher matcher = unit.listener.pattern.matcher(unit.content);
+                    while(matcher.find()) {
+                        String group = matcher.group();
+                        int matchOffset = unit.docOffset + matcher.start();
+                        unit.listener.listener.matchFound(new PatternMatchEvent(IOConsole.this, matchOffset, group.length()));
+                        if(unit.docMatch) {
+                            unit.listener.end = matcher.end() + unit.docOffset;
+                        }
+                    }        
+                }
+            }
+            
+            return Status.OK_STATUS;
+        } 
+
     }
 }
