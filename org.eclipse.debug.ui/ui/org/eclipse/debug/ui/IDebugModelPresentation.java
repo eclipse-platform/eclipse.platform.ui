@@ -87,7 +87,7 @@ import org.eclipse.ui.IEditorInput;
  * @see IDebugViewAdapter
  */
 
-public interface IDebugModelPresentation extends ILabelProvider {
+public interface IDebugModelPresentation extends ILabelProvider, ISourcePresentation {
 	/** 
 	 * Variable type names presentation property (value <code>"org.eclipse.debug.ui.displayVariableTypeNames"</code>).
 	 * When <code>DISPLAY_VARIABLE_TYPE_NAMES</code> is set to <code>True</code>,
@@ -129,28 +129,6 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * @see ILabelProvider
 	 */
 	public String getText(Object element);
-	/**
-	 * Returns an editor input that should be used to display the given object
-	 * in an editor or <code>null</code> if unable to provide an editor input
-	 * for the given object.
-	 *
-	 * @param element a debug model object
-	 * @return an editor input, or <code>null</code> if none
-	 */
-	IEditorInput getEditorInput(Object element);
-	
-	/**
-	 * Returns the id of the editor to use to display the
-	 * given editor input and object, or <code>null</code> if
-	 * unable to provide an editor id.
-	 *
-	 * @param input an editor input that was previously retrieved from this
-	 *    debug model presentation's <code>getEditorInput</code> method
-	 * @param element the debug model object that was used in the call to
-	 *    <code>getEditorInput</code>, that corresponds to the given input
-	 * @return an editor id, or <code>null</code> if none
-	 */
-	String getEditorId(IEditorInput input, Object element);
 	
 	/**
 	 * Computes a detailed description of the given value, reporting

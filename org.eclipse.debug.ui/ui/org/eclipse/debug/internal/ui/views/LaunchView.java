@@ -29,6 +29,7 @@ import org.eclipse.debug.internal.ui.actions.TerminateAllAction;
 import org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -408,8 +409,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					}					
 					// Get the corresponding element.
 		
-					// translate to an editor input using the model presentation
-					IDebugModelPresentation presentation = getPresentation(stackFrame.getModelIdentifier());
+					// translate to an editor input using the source presentation
+					// provided by the source locator, or the default debug model
+					// presentation
+					ISourcePresentation presentation = null;
+					if (locator instanceof ISourcePresentation) {
+						presentation = (ISourcePresentation)locator;
+					} else {
+						presentation = getPresentation(stackFrame.getModelIdentifier());
+					}
 				
 				
 					if (presentation != null) {
