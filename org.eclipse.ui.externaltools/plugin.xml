@@ -89,12 +89,6 @@
 			command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-		/>	
 	</extension>
 	
 	<extension point="org.eclipse.ui.views">
