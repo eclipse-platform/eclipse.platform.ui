@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.util.*;
@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class ProcessedQuery {
 	private Vector tokens;
-	private String userQuery;
+	private String searchWord;
 	private Collection fieldNames;
 	private boolean fieldSearch;
 	private String processedQuery;
@@ -18,10 +18,10 @@ public class ProcessedQuery {
 	 * @param userQuery user search query string
 	 */
 	public ProcessedQuery(
-		String userQuery,
+		String searchWord,
 		Collection fieldNames,
 		boolean fieldSearch) {
-		this.userQuery = userQuery;
+		this.searchWord = searchWord;
 		this.fieldNames = fieldNames;
 		this.fieldSearch = fieldSearch;
 		// split search query into tokens
@@ -41,7 +41,7 @@ public class ProcessedQuery {
 		tokens = new Vector();
 		//Divide along quotation marks and brackets
 		StringTokenizer qTokenizer =
-			new StringTokenizer(userQuery.trim(), "\"()", true);
+			new StringTokenizer(searchWord.trim(), "\"()", true);
 		boolean withinQuotation = false;
 		String quotedString = "";
 		while (qTokenizer.hasMoreTokens()) {

@@ -23,8 +23,8 @@ public class SearchQueryData {
 	private boolean fieldSearch;
 	private boolean bookFiltering;
 	private List selectedBooks;
-	/** search keyword(s) */
-	private String expression;
+	/** search word(s) */
+	private String searchWord;
 	/** locale to be used for search */
 	private String locale;
 	/** fields that will be searched */
@@ -35,7 +35,7 @@ public class SearchQueryData {
 	 * @param maxH int
 	 */
 	public SearchQueryData() {
-		expression = "";
+		searchWord = "";
 		bookFiltering = false;
 		locale = Locale.getDefault().toString();
 		maxHits = MAX_HITS;
@@ -113,8 +113,8 @@ public class SearchQueryData {
 	}
 	public String toURLQuery() {
 		String q =
-			"keyword="
-				+ URLCoder.encode(expression)
+			"searchWord="
+				+ URLCoder.encode(searchWord)
 				+ "&maxHits="
 				+ maxHits
 				+ "&lang="
@@ -135,17 +135,17 @@ public class SearchQueryData {
 			}
 		return q;
 	} /**
-	 * Gets the expression
+	 * Gets the searchWord
 	 * @return Returns a String
 	 */
-	public String getExpression() {
-		return expression;
+	public String getSearchWord() {
+		return searchWord;
 	}
 	/**
-	 * Sets the expression
-	 * @param expression The expression to set
+	 * Sets the searchWord
+	 * @param searchWord The search word to set
 	 */
-	public void setExpression(String expression) {
-		this.expression = expression;
+	public void setSearchWord(String searchWord) {
+		this.searchWord = searchWord;
 	}
 }

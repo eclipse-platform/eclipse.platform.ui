@@ -21,10 +21,10 @@ function onloadHandler()
 function getFrameInputParameters()
 {
 	var query="";
-	if(args && args["query"])
+	if(args && args["searchWord"])
 	{
 		// TODO pass the locale correctly
-		query=query+"?keyword="+args["query"]; //+"&lang=en_US";
+		query=query+"?searchWord="+args["searchWord"]; //+"&lang=en_US";
 	}
 	return query;
 }

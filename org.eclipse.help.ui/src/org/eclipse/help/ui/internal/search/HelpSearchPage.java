@@ -24,7 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class HelpSearchPage extends DialogPage implements ISearchPage {
 	private static final int ENTRY_FIELD_LENGTH = 256;
 	private static final int ENTRY_FIELD_ROW_COUNT = 1;
-	private Combo patternCombo = null;
+	private Combo searchWordCombo = null;
 	private static java.util.List previousSearchQueryData =
 		new java.util.ArrayList(20);
 	private Button all;
@@ -58,29 +58,29 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		group.setLayoutData(gd);
 		group.setText(WorkbenchResources.getString("expression"));
 		// Pattern combo
-		patternCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
+		searchWordCombo = new Combo(group, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(30);
-		patternCombo.setLayoutData(gd);
+		searchWordCombo.setLayoutData(gd);
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
-		patternCombo.addSelectionListener(new SelectionAdapter() {
+		searchWordCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (patternCombo.getSelectionIndex() < 0)
+				if (searchWordCombo.getSelectionIndex() < 0)
 					return;
 				int index =
-					previousSearchQueryData.size() - 1 - patternCombo.getSelectionIndex();
+					previousSearchQueryData.size() - 1 - searchWordCombo.getSelectionIndex();
 				searchQueryData = (SearchQueryData) previousSearchQueryData.get(index);
-				patternCombo.setText(searchQueryData.getExpression());
+				searchWordCombo.setText(searchQueryData.getSearchWord());
 				all.setSelection(!searchQueryData.isBookFiltering());
 				selected.setSelection(searchQueryData.isBookFiltering());
 				displaySelectedBooks();
 				//headingsButton.setSelection(searchOperation.getQueryData().isFieldsSearch());
 			}
 		});
-		patternCombo.addModifyListener(new ModifyListener() {
+		searchWordCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				scontainer.setPerformActionEnabled(patternCombo.getText().length() > 0);
+				scontainer.setPerformActionEnabled(searchWordCombo.getText().length() > 0);
 			}
 		});
 		// Syntax description
@@ -162,7 +162,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	 * @see ISearchPage#performAction()
 	 */
 	public boolean performAction() {
-		searchQueryData.setExpression(patternCombo.getText());
+		searchQueryData.setSearchWord(searchWordCombo.getText());
 		searchQueryData.setFieldsSearch(false /*headingsButton.getSelection()*/
 		);
 		if (!previousSearchQueryData.contains(searchQueryData))
@@ -202,20 +202,19 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	 * Implements method from IDialogPage
 	 */
 	public void setVisible(boolean visible) {
-		if (visible && patternCombo != null) {
+		if (visible && searchWordCombo != null) {
 			if (firstTime) {
 				firstTime = false;
 				// Set item and text here to prevent page from resizing
 				String[] patterns = new String[previousSearchQueryData.size()];
 				for (int i = 0; i < previousSearchQueryData.size(); i++) {
 					patterns[previousSearchQueryData.size() - 1 - i] =
-						((SearchQueryData) previousSearchQueryData.get(i)).getExpression();
+						((SearchQueryData) previousSearchQueryData.get(i)).getSearchWord();
 				}
-				patternCombo.setItems(patterns);
-				//initializePatternControl();
+				searchWordCombo.setItems(patterns);
 			}
-			patternCombo.setFocus();
-			scontainer.setPerformActionEnabled(patternCombo.getText().length() > 0);
+			searchWordCombo.setFocus();
+			scontainer.setPerformActionEnabled(searchWordCombo.getText().length() > 0);
 		}
 		super.setVisible(visible);
 	}

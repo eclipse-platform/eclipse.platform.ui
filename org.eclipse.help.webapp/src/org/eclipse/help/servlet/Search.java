@@ -28,14 +28,14 @@ public class Search {
 	/**
 	 * Generates the html for the search results based on input xml data
 	 */
-	public void generateResults(String query, Writer out) {
+	public void generateResults(String searchQuery, Writer out) {
 		try {
-			if (query == null || query.trim().length() == 0)
+			if (searchQuery == null || searchQuery.trim().length() == 0)
 				return;
 
 			String urlString = "search:/";
-			if (query != null && query.length() >= 0)
-				urlString += "?" + query;
+			if (searchQuery != null && searchQuery.length() >= 0)
+				urlString += "?" + searchQuery;
 				
 			//System.out.println("search:"+query);
 			InputSource xmlSource = new InputSource(connector.openStream(urlString));

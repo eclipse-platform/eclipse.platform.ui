@@ -143,7 +143,7 @@ public class DefaultHelp implements IHelp
 				+ AppServer.getHost()
 				+ ":"
 				+ AppServer.getPort()
-				+ "/help?tab=search&query="
+				+ "/help?tab=search&searchWord="
 				+ URLCoder.encode(query)
 				+ "&topic="
 				+ URLEncoder.encode(createTopicURL(topic));

@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.protocols;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
@@ -13,7 +13,7 @@ import org.eclipse.help.internal.util.*;
  */
 public class SearchURL extends HelpURL {
 	/**
-	 * SearchURL constructor comment.
+	 * SearchURL constructor.
 	 * @param url java.lang.String
 	 */
 	public SearchURL(String url) {

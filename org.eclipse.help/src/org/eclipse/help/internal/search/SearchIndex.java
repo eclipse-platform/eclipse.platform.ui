@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.*;
@@ -193,7 +193,7 @@ public class SearchIndex {
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
 	 */
 	public void search(
-		String queryString,
+		String searchWord,
 		Collection fieldNames,
 		boolean fieldSearch,
 		int maxhits,
@@ -203,10 +203,10 @@ public class SearchIndex {
 			Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
 			Analyzer analyzer = new StopAnalyzer();
 			ProcessedQuery processedQuery =
-				new ProcessedQuery(queryString, fieldNames, fieldSearch);
-			Query query =
+				new ProcessedQuery(searchWord, fieldNames, fieldSearch);
+			Query luceneQuery =
 				QueryParser.parse(processedQuery.toString(), "contents", analyzer);
-			Hits hits = searcher.search(query);
+			Hits hits = searcher.search(luceneQuery);
 			searchResult.addHits(hits);
 			searcher.close();
 		} catch (Exception e) {

@@ -11,7 +11,7 @@ import java.net.URLDecoder;
 
 public class HighlightFilter implements IFilter
 {
-	private String query;
+	private String searchWord;
 	
 	private static final byte[] headTagBegin = "<head".getBytes();
 	private static final byte[] headTagBeginCaps = "<HEAD".getBytes();
@@ -25,8 +25,8 @@ public class HighlightFilter implements IFilter
 	/**
 	 * Constructor.
 	 */
-	public HighlightFilter(String query) {
-		this.query = query;
+	public HighlightFilter(String searchWord) {
+		this.searchWord = searchWord;
 	}
 
 	/*
@@ -34,10 +34,10 @@ public class HighlightFilter implements IFilter
 	 */
 	public byte[] filter(byte[] input)
 	{
-		if (query == null)
+		if (searchWord == null)
 			return input;
 
-		Collection keywords = getKeywords();
+		Collection keywords = getWords();
 		keywords = removeWildCards(keywords);
 		keywords = JavaScriptEncode(keywords);
 		byte[] script = createJScript(keywords);
@@ -85,7 +85,7 @@ public class HighlightFilter implements IFilter
 	}
 	
 	/**
-	 * Creates Java Script that does hightlighting
+	 * Creates Java Script that does highlighting
 	 */
 	private byte[] createJScript(Collection keywords) {
 		StringBuffer buf = new StringBuffer(scriptPart1);
@@ -105,10 +105,10 @@ public class HighlightFilter implements IFilter
 	 * Extracts keywords from query 
 	 * @return Collection of String
 	 */
-	private Collection getKeywords() {
+	private Collection getWords() {
 		Collection tokens = new ArrayList();
 		//Divide along quotation marks and brackets
-		StringTokenizer qTokenizer = new StringTokenizer(query.trim(), "\"()", true);
+		StringTokenizer qTokenizer = new StringTokenizer(searchWord.trim(), "\"()", true);
 		boolean withinQuotation = false;
 		String quotedString = "";
 		while (qTokenizer.hasMoreTokens()) {
@@ -136,7 +136,7 @@ public class HighlightFilter implements IFilter
 
 		}
 
-		Collection keywords = new HashSet(); // to eliminate duplicate words
+		Collection words = new HashSet(); // to eliminate duplicate words
 		for (Iterator it = tokens.iterator(); it.hasNext();) {
 			String token = (String) it.next();
 			String tokenLowerCase = token.toLowerCase();
@@ -146,9 +146,9 @@ public class HighlightFilter implements IFilter
 				&& !tokenLowerCase.equals("and")
 				&& !tokenLowerCase.equals("or")
 				&& !tokenLowerCase.equals("not"))
-				keywords.add(token);
+				words.add(token);
 		}
-		return keywords;
+		return words;
 
 	}
 	/**
@@ -160,16 +160,16 @@ public class HighlightFilter implements IFilter
 			return col;
 		Collection result = new ArrayList();
 		for (Iterator it = col.iterator(); it.hasNext();) {
-			String keyword = (String) it.next();
+			String word = (String) it.next();
 			
-			int l = keyword.length();
+			int l = word.length();
 			if (l < 1)
 				continue;
-			char[] keywordChars = new char[l];
-			keyword.getChars(0, l, keywordChars, 0);
+			char[] wordChars = new char[l];
+			word.getChars(0, l, wordChars, 0);
 			StringBuffer jsEncoded = new StringBuffer();
-			for (int j = 0; j < keywordChars.length; j++) {
-				String charInHex = Integer.toString((int) keywordChars[j], 16).toUpperCase();
+			for (int j = 0; j < wordChars.length; j++) {
+				String charInHex = Integer.toString((int) wordChars[j], 16).toUpperCase();
 				switch (charInHex.length()) {
 					case 1 :
 						jsEncoded.append("\\u000").append(charInHex);
@@ -192,41 +192,41 @@ public class HighlightFilter implements IFilter
 	}
 	
 	/**
-	 * Removes wildcard characters from keywords, by splitting keywords around wild cards
+	 * Removes wildcard characters from words, by splitting words around wild cards
 	 * @return Collection of String
 	 */
 	private Collection removeWildCards(Collection col) {
 		if (col == null)
 			return col;
 
-		// Split keywords into parts: before "*" and after "*"
+		// Split words into parts: before "*" and after "*"
 		Collection resultPass1 = new ArrayList();
 		for (Iterator it = col.iterator(); it.hasNext();) {
-			String keyword = (String) it.next();
+			String word = (String) it.next();
 			int index;
-			while((index=keyword.indexOf("*"))>=0){
+			while((index=word.indexOf("*"))>=0){
 				if(index>0)
-					resultPass1.add(keyword.substring(0, index));
-				if(keyword.length()>index)
-					keyword=keyword.substring(index+1);
+					resultPass1.add(word.substring(0, index));
+				if(word.length()>index)
+					word=word.substring(index+1);
 			}
-			if(keyword.length()>0)
-				resultPass1.add(keyword);
+			if(word.length()>0)
+				resultPass1.add(word);
 		}
 		
-		// Split keywords into parts: before "?" and after "?"
+		// Split words into parts: before "?" and after "?"
 		Collection resultPass2 = new ArrayList();
 		for (Iterator it = resultPass1.iterator(); it.hasNext();) {
-			String keyword = (String) it.next();
+			String word = (String) it.next();
 			int index;
-			while((index=keyword.indexOf("?"))>=0){
+			while((index=word.indexOf("?"))>=0){
 				if(index>0)
-					resultPass2.add(keyword.substring(0, index));
-				if(keyword.length()>index)
-					keyword=keyword.substring(index+1);
+					resultPass2.add(word.substring(0, index));
+				if(word.length()>index)
+					word=word.substring(index+1);
 			}
-			if(keyword.length()>0)
-				resultPass2.add(keyword);
+			if(word.length()>0)
+				resultPass2.add(word);
 		}
 		
 		return resultPass2;

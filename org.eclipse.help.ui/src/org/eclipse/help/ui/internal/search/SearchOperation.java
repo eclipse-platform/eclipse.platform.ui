@@ -73,10 +73,10 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			sView
 				.searchStarted(
 					IHelpUIConstants.RESULTS_PAGE_ID,
-					WorkbenchResources.getString("singleSearchResult", queryData.getExpression()),
+					WorkbenchResources.getString("singleSearchResult", queryData.getSearchWord()),
 					WorkbenchResources.getString(
 						"multipleSearchResult",
-						queryData.getExpression(),
+						queryData.getSearchWord(),
 						"{0}"),
 					IMAGE_DSCR_SEARCH,
 					null,
@@ -110,7 +110,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 						IHelp ihelp = WorkbenchHelp.getHelpSupport();
 						if (ihelp instanceof DefaultHelp)
 							((DefaultHelp) ihelp).displaySearch(
-								queryData.getExpression(),
+								queryData.getSearchWord(),
 								(String) entry.getSelectedMarker().getAttribute(
 									IHelpUIConstants.HIT_MARKER_ATTR_HREF));
 					} catch (Exception e) {

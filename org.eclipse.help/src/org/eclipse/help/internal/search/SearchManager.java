@@ -1,6 +1,6 @@
 package org.eclipse.help.internal.search;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.net.*;
@@ -111,13 +111,13 @@ public class SearchManager {
 	 * Searches index for documents containing an expression.
 	 * If the index hasn't been built then return null.
 	 */
-	public synchronized String getSearchResults(String query) {
-		String locale = getLocale(query);
+	public synchronized String getSearchResults(String searchQuery) {
+		String locale = getLocale(searchQuery);
 		SearchIndex index = getIndex(locale);
 		if (index == null)
 			return null;
-		SearchQuery searchQuery = new SearchQuery(query);
-		SearchResult result = searchQuery.search(index);
+		SearchQuery searchQueryObj = new SearchQuery(searchQuery);
+		SearchResult result = searchQueryObj.search(index);
 		// TO DO: Filtering...
 		///result.filterTopicsFromExcludedCategories(searchQuery.getExcludedCategories());
 		if (Logger.DEBUG)

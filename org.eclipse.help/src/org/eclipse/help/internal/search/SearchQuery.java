@@ -41,8 +41,8 @@ public class SearchQuery {
 			return l;
 		}
 	}
-	public String getKey() {
-		return (String) terms.get("keyword");
+	public String getSearchWord() {
+		return (String) terms.get("searchWord");
 	}
 	public int getMaxHits() {
 		try {
@@ -98,11 +98,11 @@ public class SearchQuery {
 	 * Search on index using this query
 	 */
 	public SearchResult search(SearchIndex index) {
-		Logger.logInfo(Resources.getString("Searching_for", getKey()));
+		Logger.logInfo(Resources.getString("Searching_for", getSearchWord()));
 		// Create the xml document for search results
-		SearchResult xmlResults = new SearchResult(getKey(), getScope());
+		SearchResult xmlResults = new SearchResult(getSearchWord(), getScope());
 		index.search(
-			getKey(),
+			getSearchWord(),
 			getFieldNames(),
 			isFieldSearch(),
 			getMaxHits(),
