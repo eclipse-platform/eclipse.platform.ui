@@ -20,6 +20,11 @@ import org.eclipse.core.runtime.jobs.*;
  * specialized iterator to ensure the complex iteration logic is contained in one place.
  */
 class JobListeners {
+	/**
+	 * Static singleton empty listener list.
+	 */
+	private static final IJobChangeListener[] EMPTY_LISTENERS = new IJobChangeListener[0];
+	
 	interface IListenerDoit {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event);
 	}
@@ -88,18 +93,12 @@ class JobListeners {
 	 */
 	private void doNotify(final IListenerDoit doit, final IJobChangeEvent event) {
 		//notify all global listeners
-		int size = global.size();
+		IJobChangeListener[] listeners = (IJobChangeListener[])global.toArray(EMPTY_LISTENERS);
+		int size = listeners.length;
 		for (int i = 0; i < size; i++) {
-			//note: tolerate concurrent modification
-			IJobChangeListener listener = null;
 			try {
-				listener = (IJobChangeListener) global.get(i);
-			} catch (IndexOutOfBoundsException e) {
-				//concurrently removed
-			}
-			try {
-				if (listener != null)
-					doit.notify(listener, event);
+				if (listeners[i] != null)
+					doit.notify(listeners[i], event);
 			} catch (Exception e) {
 				handleException(e);
 			} catch (LinkageError e) {
@@ -108,24 +107,18 @@ class JobListeners {
 		}
 		//notify all local listeners
 		List local = ((InternalJob) event.getJob()).getListeners();
-		if (local != null) {
-			size = local.size();
-			for (int i = 0; i < size; i++) {
-				//note: tolerate concurrent modification
-				IJobChangeListener listener = null;
-				try {
-					listener = (IJobChangeListener) local.get(i);
-				} catch (IndexOutOfBoundsException e) {
-					//concurrently removed
-				}
-				try {
-					if (listener != null)
-						doit.notify(listener, event);
-				} catch (Exception e) {
-					handleException(e);
-				} catch (LinkageError e) {
-					handleException(e);
-				}
+		if (local == null)
+			return;
+		listeners = (IJobChangeListener[]) local.toArray(EMPTY_LISTENERS);
+		size = listeners.length;
+		for (int i = 0; i < size; i++) {
+			try {
+				if (listeners[i] != null)
+					doit.notify(listeners[i], event);
+			} catch (Exception e) {
+				handleException(e);
+			} catch (LinkageError e) {
+				handleException(e);
 			}
 		}
 	}
