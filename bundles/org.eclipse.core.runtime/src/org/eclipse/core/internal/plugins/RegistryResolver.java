@@ -694,7 +694,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	IndexEntry ix = (IndexEntry) idmap.get(child);
 	if (ix == null) {
 		if (parent != null)
-			error(Policy.bind("pluginPrereqDisabled", new String[] { parent.getId(), child }));
+			error(Policy.bind("parse.prereqDisabled", new String[] { parent.getId(), child }));
 		if (DEBUG_RESOLVE)
 			debug("<POP  " + child + " not found");
 		cookie.isOk(false);
