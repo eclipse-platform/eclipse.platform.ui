@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
@@ -56,6 +57,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -398,14 +400,15 @@ public class BasicNewProjectResourceWizard
         }
 
 		// gather the preferred perspectives
-		// always consider the final perspective to be preferred
+		// always consider the final perspective (and those derived from it) 
+        // to be preferred
 		ArrayList preferredPerspIds = new ArrayList();
-		preferredPerspIds.add(finalPerspId);
+        addPerspectiveAndDescendants(preferredPerspIds, finalPerspId);
 		String preferred = configElement.getAttribute(PREFERRED_PERSPECTIVES);
 		if (preferred != null) {
 			StringTokenizer tok = new StringTokenizer(preferred, " \t\n\r\f,"); //$NON-NLS-1$
 			while (tok.hasMoreTokens()) {
-				preferredPerspIds.add(tok.nextToken());
+                addPerspectiveAndDescendants(preferredPerspIds, tok.nextToken());
 			}
 		}
 
@@ -440,6 +443,25 @@ public class BasicNewProjectResourceWizard
 		}
 	}
 
+    /**
+     * Adds to the list all perspective IDs in the Workbench who's original ID 
+     * matches the given ID.
+     * 
+     * @param perspectiveIds the list of perspective IDs to supplement.
+     * @param id the id to query.
+     * @since 3.0
+     */
+    private static void addPerspectiveAndDescendants(List perspectiveIds, String id) {
+       IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+       IPerspectiveDescriptor [] perspectives = registry.getPerspectives();
+       for (int i = 0; i < perspectives.length; i++) {
+           PerspectiveDescriptor descriptor = ((PerspectiveDescriptor)perspectives[i]);
+           if (descriptor.getOriginalId().equals(id)) {
+               perspectiveIds.add(descriptor.getId());
+           }
+       }
+    }
+    
 	/**
 	 * Prompts the user for whether to switch perspectives.
 	 * 
