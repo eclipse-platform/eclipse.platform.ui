@@ -14,15 +14,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * This job creates an animated rectangle that moves from a source rectangle to
@@ -32,13 +30,17 @@ import org.eclipse.swt.widgets.Composite;
  * @since 3.0
  */
 public class RectangleAnimation extends Job {
+	private static final int LINE_WIDTH = 2;
 	private Rectangle start;
 	private int elapsed;
 	private int duration;
 	private long startTime = 0;
 	private Rectangle end;
-	private Rectangle last;
 	private boolean done = false;
+	private Shell theShell;
+	private Display display;
+	private Region shellRegion;
+	private boolean first = true;
 	
 	/**
 	 * Canvas used to draw the animation, or null if the animation should be skipped.
@@ -60,52 +62,58 @@ public class RectangleAnimation extends Job {
 	private Runnable paintJob = new Runnable() { //$NON-NLS-1$
 
 		public void run() {
-			if (canvas == null || canvas.isDisposed()) {
+			
+			// Measure the start as the time of the first syncExec
+			if (startTime == 0) {
+				startTime = System.currentTimeMillis();
+			}
+			
+			if (theShell == null || theShell.isDisposed()) {
 				done = true;
 				return;
 			}
 			
-			canvas.redraw();
+			long currentTime = System.currentTimeMillis();
+			
+			double amount = (double)(currentTime - startTime) / (double)duration;
+			
+			if (amount > 1.0) {
+				amount = 1.0;
+				done = true;
+			}
+			
+			Rectangle toPaint = interpolate(start, end, amount);			
+
+			theShell.setBounds(toPaint);
+			if (shellRegion != null) {
+				shellRegion.dispose();
+				shellRegion = new Region(display);
+			}
+			
+			Rectangle rect = theShell.getClientArea();
+			shellRegion.add(rect);
+			rect.x += LINE_WIDTH;
+			rect.y += LINE_WIDTH;
+			rect.width = Math.max(0, rect.width - 2 * LINE_WIDTH);
+			rect.height = Math.max(0, rect.height - 2 * LINE_WIDTH);
+			
+			shellRegion.subtract(rect);
+			
+			theShell.setRegion(shellRegion);
+			display.update();
+			
+			if (first) {
+				theShell.setVisible(true);
+			}
+			
+			first = false;
 		}
 		
 	};
 
-	private void draw(GC gc) {
-		if (startTime == 0) {
-			return;
-		}
-		
-		if (canvas == null || canvas.isDisposed()) {
-			done = true;
-			return;
-		}
-		
-		long currentTime = System.currentTimeMillis();
-		
-		double amount = (double)(currentTime - startTime) / (double)duration;
-		
-		if (amount > 1.0) {
-			amount = 1.0;
-			done = true;
-		}
-		
-		Rectangle toPaint = interpolate(start, end, amount);
-		
-		gc.setLineWidth(2);
-		Color color = canvas.getDisplay().getSystemColor(SWT.COLOR_WHITE);
-		gc.setForeground(color);
-		
-		gc.setXORMode(true);
-		if (last != null) {
-			if (last.equals(toPaint)) {
-				return;
-			}
-			gc.drawRectangle(Geometry.toControl(canvas, last));
-		}
-		gc.drawRectangle(Geometry.toControl(canvas, toPaint));
-		last = toPaint;
+	public RectangleAnimation(Shell parentShell, Rectangle start, Rectangle end) {
+		this(parentShell, start, end, 400);
 	}
-
 	
 	/**
 	 * Creates an animation that will morph the start rectangle to the end rectangle in the
@@ -122,31 +130,24 @@ public class RectangleAnimation extends Job {
 	 * @param end final rectangle (display coordinates)
 	 * @param duration number of milliseconds over which the animation will run 
 	 */
-	public RectangleAnimation(Composite whereToDraw, Rectangle start, Rectangle end, int duration) {
+	public RectangleAnimation(Shell parentShell, Rectangle start, Rectangle end, int duration) {
 		super(WorkbenchMessages.getString("RectangleAnimation.Animating_Rectangle")); //$NON-NLS-1$
 		this.duration = duration;
 		this.start = start;
 		this.end = end;
 	
+		display = parentShell.getDisplay();
+		
 		setSystem(true);
 
-		// Determine if we're on a platform where animations look ugly. 
-		// If so, we indicate this by setting canvas=null, in which case this job does nothing.
-		String platform = SWT.getPlatform();
-		if (!"win32".equals(platform)) { //$NON-NLS-1$
-			return;
-		}
+	
+		theShell = new Shell(parentShell, SWT.NO_TRIM | SWT.ON_TOP);
+		Color color = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+		theShell.setBackground(color);
 		
-		this.canvas = new Canvas(whereToDraw, SWT.NO_BACKGROUND);
-		canvas.setBounds(whereToDraw.getClientArea());
+		theShell.setBounds(start);
 		
-		canvas.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent event) {
-				draw(event.gc);
-			}
-		});
-		
-		canvas.moveAbove(null);
+		shellRegion = new Region(display);
 	}
 
 	/* (non-Javadoc)
@@ -155,22 +156,32 @@ public class RectangleAnimation extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		
 		// We use canvas = null to indicate that the animation should be skipped on this platform.
-		if (canvas == null) {
+		if (theShell == null) {
 			return Status.OK_STATUS;
 		}
 		
-		startTime = System.currentTimeMillis();
+		startTime = 0;
 		
 		while (!done) {
-			if (!canvas.isDisposed()) {
-				canvas.getDisplay().syncExec(paintJob);
+			if (!theShell.isDisposed()) {
+				display.syncExec(paintJob);
+				// Don't pin the CPU
+				Thread.yield();
 			}
 		}
 
-		if (!canvas.isDisposed()) {
-			canvas.getDisplay().syncExec(new Runnable() {
+		if (!theShell.isDisposed()) {
+			display.syncExec(new Runnable() {
 				public void run() {
-					canvas.dispose();
+					theShell.dispose();
+				}
+			});
+		}
+		
+		if (!shellRegion.isDisposed()) {
+			display.syncExec(new Runnable() {
+				public void run() {
+					shellRegion.dispose();
 				}
 			});
 		}

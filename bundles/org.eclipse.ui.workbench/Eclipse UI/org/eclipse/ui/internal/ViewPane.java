@@ -289,16 +289,17 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Make this view pane a fast view
 	 */
 	public void doMakeFast() {
-	    FastViewBar fastViewBar = ((WorkbenchWindow)getPage().getWorkbenchWindow()).getFastViewBar();
+		WorkbenchWindow window = (WorkbenchWindow)getPage().getWorkbenchWindow();
+		
+	    FastViewBar fastViewBar = window.getFastViewBar();
 	    if (fastViewBar == null) {
 	        return;
 	    }
-		Shell shell = getControl().getShell();
+		Shell shell = window.getShell();
 		
 		RectangleAnimation animation = new RectangleAnimation(shell,  
 				getParentBounds(), 
-				fastViewBar.getLocationOfNextIcon(), 
-				250);
+				fastViewBar.getLocationOfNextIcon());
 		
 		animation.schedule();
 		
@@ -317,8 +318,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		
 		RectangleAnimation animation = new RectangleAnimation(shell,  
 				initialBounds, 
-				finalBounds, 
-				250);
+				finalBounds);
 		
 		animation.schedule();
 	}

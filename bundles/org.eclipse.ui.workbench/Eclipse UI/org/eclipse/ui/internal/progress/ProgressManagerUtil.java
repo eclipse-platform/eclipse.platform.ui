@@ -288,7 +288,7 @@ public class ProgressManagerUtil {
 		end.x += windowLocation.x;
 		end.y += windowLocation.y;
 		RectangleAnimation animation = new RectangleAnimation(internalWindow
-				.getShell(), startPosition, end, 250);
+				.getShell(), startPosition, end);
 		animation.schedule();
 	}
 
@@ -311,7 +311,7 @@ public class ProgressManagerUtil {
 		region.x += windowLocation.x;
 		region.y += windowLocation.y;
 		RectangleAnimation animation = new RectangleAnimation(internalWindow
-				.getShell(), region, endPosition, 250);
+				.getShell(), region, endPosition);
 		animation.schedule();
 	}
 }

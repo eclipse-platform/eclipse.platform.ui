@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -542,7 +543,20 @@ public class FastViewBar implements IWindowTrim {
 					if (selectedView != null) {
 						WorkbenchPage page = window.getActiveWorkbenchPage();
 						if (page != null) {
+							int idx = getIndex(selectedView);
+							ToolItem item = getItem(idx);
+							Rectangle bounds = item.getBounds();
+							Rectangle startBounds = Geometry.toDisplay(item.getParent(), bounds);
+							
 							page.removeFastView(selectedView);
+							
+							LayoutPart pane = ((WorkbenchPartReference)selectedView).getPane();
+							
+							RectangleAnimation animation = new RectangleAnimation(window.getShell(),
+									startBounds,
+									DragUtil.getDisplayBounds(pane.getControl()));
+			
+							animation.schedule();
 						}
 					}
 				}
