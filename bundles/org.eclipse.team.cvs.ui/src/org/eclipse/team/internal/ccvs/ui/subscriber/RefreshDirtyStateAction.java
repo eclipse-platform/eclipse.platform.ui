@@ -13,16 +13,21 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.AndSyncInfoFilter;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoChangeTypeFilter;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Resets the dirty state of files whose contents match their base.
  */
-public class RefreshDirtyStateAction extends SynchronizeModelAction {
+public class RefreshDirtyStateAction extends CVSParticipantAction {
 	
+	public RefreshDirtyStateAction(ISynchronizePageConfiguration configuration) {
+		super(configuration);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
@@ -38,7 +43,7 @@ public class RefreshDirtyStateAction extends SynchronizeModelAction {
 	 * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#getSubscriberOperation(org.eclipse.ui.IWorkbenchPart, org.eclipse.compare.structuremergeviewer.IDiffElement[])
 	 */
 	protected SynchronizeModelOperation getSubscriberOperation(
-			IWorkbenchPart part, IDiffElement[] elements) {
-		return new RefreshDirtyStateOperation(part, elements);
+			ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		return new RefreshDirtyStateOperation(configuration, elements);
 	}
 }

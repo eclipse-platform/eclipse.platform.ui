@@ -14,17 +14,20 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Runs an update command that will prompt the user for overwritting local
  * changes to files that have non-mergeable conflicts. All the prompting logic
  * is in the super class.
  */
-public class OverrideAndUpdateAction extends SynchronizeModelAction {
+public class OverrideAndUpdateAction extends CVSParticipantAction {
 	
+	public OverrideAndUpdateAction(ISynchronizePageConfiguration configuration) {
+		super(configuration);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
@@ -32,7 +35,7 @@ public class OverrideAndUpdateAction extends SynchronizeModelAction {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING});
 	}
 	
-	protected SynchronizeModelOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		return new OverrideAndUpdateSubscriberOperation(part, elements);
+	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		return new OverrideAndUpdateSubscriberOperation(configuration, elements);
 	}
 }

@@ -11,16 +11,24 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
-import org.eclipse.ui.IWorkbenchPart;
 
-public class WorkspaceUpdateAction extends SynchronizeModelAction {
+public class WorkspaceUpdateAction extends CVSParticipantAction {
 	
 	private boolean promptBeforeUpdate;
+
+	public WorkspaceUpdateAction(ISynchronizePageConfiguration configuration) {
+		super(configuration);
+	}
+
+	public WorkspaceUpdateAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {
+		super(configuration, provider, bundleKey);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
@@ -32,8 +40,8 @@ public class WorkspaceUpdateAction extends SynchronizeModelAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.SubscriberAction#getSubscriberOperation(org.eclipse.compare.structuremergeviewer.IDiffElement[])
 	 */
-	protected SynchronizeModelOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		return new WorkspaceUpdateOperation(part, elements, promptBeforeUpdate);
+	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		return new WorkspaceUpdateOperation(configuration, elements, promptBeforeUpdate);
 	}
 
 	public void setPromptBeforeUpdate(boolean prompt) {

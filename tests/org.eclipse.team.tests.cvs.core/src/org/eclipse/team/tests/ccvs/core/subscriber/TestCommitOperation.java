@@ -14,9 +14,9 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitOperation;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceCommitOperation;
 
-class TestCommitOperation extends SubscriberCommitOperation {
+class TestCommitOperation extends WorkspaceCommitOperation {
 	
 	private boolean prompted;
 

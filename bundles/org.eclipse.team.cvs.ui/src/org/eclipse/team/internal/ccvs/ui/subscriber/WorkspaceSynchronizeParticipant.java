@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.ActionDelegateWrapper;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.internal.ccvs.ui.actions.BranchAction;
+import org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction;
+import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
+import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
+import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -31,33 +30,88 @@ public class WorkspaceSynchronizeParticipant extends CVSParticipant {
 	 * The id of a workspace action group to which additions actions can 
 	 * be added.
 	 */
-	public static final String ACTION_GROUP = "cvs_workspace_actions"; //$NON-NLS-1$
+	public static final String TOOLBAR_CONTRIBUTION_GROUP = "toolbar_group_1"; //$NON-NLS-1$
 	
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_1 = "context_group_1"; //$NON-NLS-1$
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_2 = "context_group_2"; //$NON-NLS-1$
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_3 = "context_group_3"; //$NON-NLS-1$
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP_4 = "context_group_4"; //$NON-NLS-1$
+
 	/**
 	 * CVS workspace action contribution
 	 */
 	public class WorkspaceActionContribution extends SynchronizePageActionGroup {
-		private ActionDelegateWrapper commitToolbar;
-		private ActionDelegateWrapper updateToolbar;
+		private WorkspaceCommitAction commitToolbar;
+		private WorkspaceUpdateAction updateToolbar;
+		
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			commitToolbar = new ActionDelegateWrapper(new SubscriberCommitAction(), configuration.getSite().getPart());
-			WorkspaceUpdateAction action = new WorkspaceUpdateAction();
-			action.setPromptBeforeUpdate(true);
-			updateToolbar = new ActionDelegateWrapper(action, configuration.getSite().getPart());
-			Utils.initAction(commitToolbar, "action.SynchronizeViewCommit.", Policy.getBundle()); //$NON-NLS-1$
-			Utils.initAction(updateToolbar, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$
-		}
-		public void fillActionBars(IActionBars actionBars) {
-			IToolBarManager toolbar = actionBars.getToolBarManager();
-			appendToGroup(toolbar, ACTION_GROUP, updateToolbar);
-			appendToGroup(toolbar, ACTION_GROUP, commitToolbar);
-			super.fillActionBars(actionBars);
-		}
-		public void modelChanged(ISynchronizeModelElement element) {
-			if (commitToolbar == null) return;
-			commitToolbar.setSelection(element);
-			updateToolbar.setSelection(element);
+			
+			updateToolbar = new WorkspaceUpdateAction(
+					configuration, 
+					getVisibleRootsSelectionProvider(), 
+					"WorkspaceToolbarUpdateAction."); //$NON-NLS-1$
+			updateToolbar.setPromptBeforeUpdate(true);
+			appendToGroup(
+					ISynchronizePageConfiguration.P_TOOLBAR_MENU,
+					TOOLBAR_CONTRIBUTION_GROUP,
+					updateToolbar);
+			
+			commitToolbar = new WorkspaceCommitAction(
+					configuration, 
+					getVisibleRootsSelectionProvider(), 
+					"WorkspaceToolbarCommitAction."); //$NON-NLS-1$
+			appendToGroup(
+					ISynchronizePageConfiguration.P_TOOLBAR_MENU,
+					TOOLBAR_CONTRIBUTION_GROUP,
+					commitToolbar);
+			
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					new WorkspaceUpdateAction(configuration));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_1,
+					new WorkspaceCommitAction(configuration));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
+					new OverrideAndUpdateAction(configuration));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
+					new OverrideAndCommitAction(configuration));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_2,
+					new ConfirmMergedAction(configuration));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+					new CVSActionDelegateWrapper(new IgnoreAction(), configuration));
+			if (!configuration.getSite().isModal()) {
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+						new CVSActionDelegateWrapper(new GenerateDiffFileAction(), configuration));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+						new CVSActionDelegateWrapper(new BranchAction(), configuration));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+						new CVSActionDelegateWrapper(new ShowAnnotationAction(), configuration));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+						new CVSActionDelegateWrapper(new ShowResourceInHistoryAction(), configuration));
+			}
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP_4,
+					new RefreshDirtyStateAction(configuration));
 		}
 	}
 	
@@ -75,10 +129,25 @@ public class WorkspaceSynchronizeParticipant extends CVSParticipant {
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
-		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ACTION_GROUP);
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, TOOLBAR_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new WorkspaceActionContribution());
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
 		configuration.setMode(ISynchronizePageConfiguration.BOTH_MODE);
 		//configuration.setProperty(SynchronizePageConfiguration.P_MODEL_MANAGER, new ChangeLogModelManager(configuration));
+		
+		// Add context menu groups here to give the client displaying the
+		// page a chance to remove the context menu
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP_1);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP_2);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP_3);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP_4);
 	}
 }

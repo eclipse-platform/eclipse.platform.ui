@@ -15,6 +15,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -45,15 +46,35 @@ import org.eclipse.ui.IWorkbenchSite;
 public abstract class TeamOperation extends JobChangeAdapter implements IRunnableWithProgress {
 	
 	private IWorkbenchPart part;
+	private IRunnableContext context;
 	
 	/**
 	 * Create an team operation associated with the given part.
 	 * @param part the part the operation is associated with or <code>null</code>
 	 */
 	protected TeamOperation(IWorkbenchPart part) {
-		this.part = part;
+		this(part, null);
 	}
 	
+	/**
+	 * Create an team operation that will run in the given context.
+	 * @param context a runnable context
+	 */
+	protected TeamOperation(IRunnableContext context) {
+		this(null, context);
+	}
+	
+	/**
+	 * Create an team operation associated with the given part 
+	 * that will run in the given context.
+	 * @param part the part the operation is associated with or <code>null</code>
+	 * @param context a runnable context
+	 */
+	protected TeamOperation(IWorkbenchPart part, IRunnableContext context) {
+		this.part = part;
+		this.context = context;
+	}
+
 	/**
 	 * Return the part that is associated with this operation.
 	 * @return Returns the part or <code>null</code>
@@ -192,7 +213,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * @return the runnable context in which to run this action.
 	 */
 	private ITeamRunnableContext getRunnableContext() {
-		if (canRunAsJob()) {
+		if (context == null && canRunAsJob()) {
 			JobRunnableContext context = new JobRunnableContext(getJobName(), getOperationIcon(), getGotoAction(), getKeepOperation(), this, getSite());
 			context.setPostponeBuild(isPostponeAutobuild());
 			context.setSchedulingRule(getSchedulingRule());
@@ -201,6 +222,9 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 			ProgressDialogRunnableContext context = new ProgressDialogRunnableContext(getShell());
 			context.setPostponeBuild(isPostponeAutobuild());
 			context.setSchedulingRule(getSchedulingRule());
+			if (this.context != null) {
+				context.setRunnableContext(this.context);
+			}
 			return context;
 		}
 	}

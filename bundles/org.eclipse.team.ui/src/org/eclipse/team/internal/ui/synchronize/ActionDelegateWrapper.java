@@ -11,20 +11,30 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * An Action that wraps IActionDelegates so they can be used programatically
  * in toolbars, etc.
  */
-public class ActionDelegateWrapper extends Action {
+public class ActionDelegateWrapper extends Action implements ISelectionChangedListener {
 	
 	private IActionDelegate delegate;
 
-	public ActionDelegateWrapper(IActionDelegate delegate, IWorkbenchPart part) {
+	public ActionDelegateWrapper(IActionDelegate delegate, ISynchronizePageConfiguration configuration) {
 		this.delegate = delegate;
+		IWorkbenchPart part = configuration.getSite().getPart();
 		if(part != null) {
 			if (delegate instanceof IObjectActionDelegate) {
 				((IObjectActionDelegate)delegate).setActivePart(this, part);
@@ -38,17 +48,38 @@ public class ActionDelegateWrapper extends Action {
 				((IEditorActionDelegate)delegate).setActiveEditor(this, (IEditorPart)part);
 			}
 		}
-		// Assume there is no selection untiul told otherwise
-		setSelection(StructuredSelection.EMPTY);
+		initialize(configuration);
 	}
 
+	/**
+	 * Method invoked from the constructor when a configuration is provided.
+	 * The default implementation registers the action as a selection change
+	 * listener. Subclass may override.
+	 * @param configuration the synchronize page configuration
+	 */
+	protected void initialize(final ISynchronizePageConfiguration configuration) {
+		configuration.getSite().getSelectionProvider().addSelectionChangedListener(this);
+		configuration.getPage().getViewer().getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				configuration.getSite().getSelectionProvider().removeSelectionChangedListener(ActionDelegateWrapper.this);
+			}
+		});
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		getDelegate().selectionChanged(this, event.getSelection());
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		delegate.run(this);
+		getDelegate().run(this);
 	}
-
+	
 	/**
 	 * Return the delegate associated with this action.
 	 * @return the delegate associated with this action
@@ -57,20 +88,4 @@ public class ActionDelegateWrapper extends Action {
 		return delegate;
 	}
 
-	/**
-	 * Set the selection of the action 
-	 * @param selection the selection
-	 */
-	public void setSelection(ISelection selection) {
-		getDelegate().selectionChanged(this, selection);
-	}
-	
-	/**
-	 * Set the selection of the action to the given object
-	 * @param input the selected object
-	 */
-	public void setSelection(Object input) {
-		ISelection selection = new StructuredSelection(input);
-		setSelection(selection);
-	}
 }

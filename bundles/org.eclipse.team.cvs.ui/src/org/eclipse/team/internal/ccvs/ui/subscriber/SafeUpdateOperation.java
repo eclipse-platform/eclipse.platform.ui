@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -38,7 +39,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * This update action will update all mergable resources first and then prompt the
@@ -53,8 +54,8 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	
 	private SyncInfoSet skipped = new SyncInfoSet();
 	
-	protected SafeUpdateOperation(IWorkbenchPart part, IDiffElement[] elements, boolean promptBeforeUpdate) {
-		super(part, elements);
+	protected SafeUpdateOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, boolean promptBeforeUpdate) {
+		super(configuration, elements);
 		this.promptBeforeUpdate = promptBeforeUpdate;
 	}
 	

@@ -90,6 +90,11 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 			IMenuManager viewMenu = actionBars.getMenuManager();
 			group = findGroup(manager, ISynchronizePageConfiguration.MODE_GROUP);
 			if (viewMenu != null && group != null) {
+				IContributionItem layoutGroup = findGroup(manager, ISynchronizePageConfiguration.LAYOUT_GROUP);
+				if (layoutGroup != null) {
+					// Put the modes in the layout group to save space
+					group = layoutGroup;
+				}
 				MenuManager modesItem = new MenuManager(Policy.bind("action.modes.label")); //$NON-NLS-1$
 				viewMenu.appendToGroup(group.getId(), modesItem);	
 				modes.fillMenu(modesItem);

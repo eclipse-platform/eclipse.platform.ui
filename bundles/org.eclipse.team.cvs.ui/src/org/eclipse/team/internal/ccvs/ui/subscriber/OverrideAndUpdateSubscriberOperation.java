@@ -18,15 +18,17 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.OverrideAndUpdateOperation;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation {
-	protected OverrideAndUpdateSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		super(part, elements);
+	protected OverrideAndUpdateSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		super(configuration, elements);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.TeamOperation#shouldRun()

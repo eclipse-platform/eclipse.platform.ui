@@ -13,7 +13,9 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -25,15 +27,15 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * This action performs an update for the CVSWorkspaceSubscriber.
  */
 public class WorkspaceUpdateOperation extends SafeUpdateOperation {
 
-	protected WorkspaceUpdateOperation(IWorkbenchPart part, IDiffElement[] elements, boolean promptBeforeUpdate) {
-		super(part, elements, promptBeforeUpdate);
+	protected WorkspaceUpdateOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, boolean promptBeforeUpdate) {
+		super(configuration, elements, promptBeforeUpdate);
 	}
 
 	/* (non-Javadoc)

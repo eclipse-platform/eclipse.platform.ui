@@ -24,7 +24,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -35,16 +37,16 @@ import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-public class SubscriberCommitOperation extends CVSSubscriberOperation {
+public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 	
 	private String comment;
 	private SyncInfoSet syncSet;
 	private boolean override;
 
-	public SubscriberCommitOperation(IWorkbenchPart part, IDiffElement[] elements, boolean override) {
-		super(part, elements);
+	public WorkspaceCommitOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, boolean override) {
+		super(configuration, elements);
 		this.override = override;
 	}
 

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 
 /**
@@ -73,14 +73,6 @@ public interface ISynchronizePageConfiguration {
 	 * included.
 	 */
 	public static final String P_VIEW_MENU = TeamUIPlugin.ID + ".P_VIEW_MENU"; //$NON-NLS-1$
-	
-	/**
-	 * The configuration property that defines the filter id that
-	 * determines which object contribution actions appear in the 
-	 * context menu for the page. This defaults to the id of the
-	 * participant but can be set to another id or <code>null</code>
-	 */
-	public static final String P_OBJECT_CONTRIBUTION_ID = TeamUIPlugin.ID +  ".P_OBJECT_CONTRIBUTION_ID"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant for the working set used to filter the visible
@@ -158,13 +150,6 @@ public interface ISynchronizePageConfiguration {
 	public static final String PREFERENCES_GROUP = "preferences"; //$NON-NLS-1$
 	
 	/**
-	 * The id of the group that determines where workbench object contributions
-	 * should appear. This group will only be used if there is an
-	 * OBJECT_CONTRIBUTION_ID set in the configuration
-	 */
-	public static final String OBJECT_CONTRIBUTIONS_GROUP = IWorkbenchActionConstants.MB_ADDITIONS;
-
-	/**
 	 * The id of the layout group that determines whether the layout selection
 	 * actions appear in the view dropdown or toolbar.
 	 */
@@ -182,7 +167,7 @@ public interface ISynchronizePageConfiguration {
 	 * Clients can remove, add and change the ordering for groups in
 	 * the context menu.
 	 */
-	public static final String[] DEFAULT_CONTEXT_MENU = new String[] { FILE_GROUP,  EDIT_GROUP, SYNCHRONIZE_GROUP, NAVIGATE_GROUP, OBJECT_CONTRIBUTIONS_GROUP};
+	public static final String[] DEFAULT_CONTEXT_MENU = new String[] { FILE_GROUP,  EDIT_GROUP, SYNCHRONIZE_GROUP, NAVIGATE_GROUP};
 
 	/**
 	 * These are the default groups used for the toolbar of a page.
@@ -401,4 +386,19 @@ public interface ISynchronizePageConfiguration {
 	 * or a cusom type).
 	 */
 	void setComparisonType(String type);
+	
+	/**
+	 * Sets the runnable context that can be used by the page's
+	 * actions to display progress.
+	 * @param context a runnable context (or null)
+	 */
+	void setRunnableContext(IRunnableContext context);
+	
+	/**
+	 * Return the runnable context. If <code>null</code> is returned,
+	 * actions can use their own method of progress feedback either
+	 * using a background job or the progress service
+	 * @return a runnable context (or <code>null</code>)
+	 */
+	IRunnableContext getRunnableContext();
 }

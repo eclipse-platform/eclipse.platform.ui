@@ -22,11 +22,14 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * This action performs a "cvs update -j start -j end ..." to merge changes
@@ -36,8 +39,8 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 	
 	Subscriber currentSubcriber = null;
 	
-	protected MergeUpdateOperation(IWorkbenchPart part, IDiffElement[] elements, boolean promptBeforeUpdate) {
-		super(part, elements, promptBeforeUpdate);
+	protected MergeUpdateOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, boolean promptBeforeUpdate) {
+		super(configuration, elements, promptBeforeUpdate);
 	}
 	
 	/* (non-Javadoc)

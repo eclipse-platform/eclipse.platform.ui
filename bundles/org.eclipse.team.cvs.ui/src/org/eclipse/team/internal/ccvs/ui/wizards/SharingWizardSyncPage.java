@@ -78,7 +78,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		input = createCompareInput();
 		input.createPartControl(pageBook);
 		syncPage = input.getControl();
-		infos = (SyncInfoSet)configuration.getSyncInfoSet();
+		infos = configuration.getSyncInfoSet();
 		infos.addSyncSetChangedListener(this);
 		
 		noChangesPage = createNoChangesPage(pageBook);
@@ -142,6 +142,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
 		IWorkingSet newSet = manager.createWorkingSet("sharing wizard", new IAdaptable[] {project});
 		configuration.setWorkingSet(newSet);
+		configuration.setRunnableContext(getContainer());
 		
 		CompareConfiguration cc = new CompareConfiguration();
 		cc.setLeftEditable(false);

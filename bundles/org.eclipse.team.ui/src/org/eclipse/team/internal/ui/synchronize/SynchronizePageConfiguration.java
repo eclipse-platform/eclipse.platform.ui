@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
@@ -102,6 +103,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	private Map properties = new HashMap();
 	private boolean actionsInitialized = false;
 	private ISynchronizePage page;
+	private IRunnableContext context;
 	
 	/**
 	 * Create a configuration for creating a page from the given particpant.
@@ -109,7 +111,6 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	 */
 	public SynchronizePageConfiguration(ISynchronizeParticipant participant) {
 		this.participant = participant;
-		setProperty(P_OBJECT_CONTRIBUTION_ID, participant.getId());
 		setProperty(P_CONTEXT_MENU, DEFAULT_CONTEXT_MENU);
 		setProperty(P_TOOLBAR_MENU, DEFAULT_TOOLBAR_MENU);
 		setProperty(P_VIEW_MENU, DEFAULT_VIEW_MENU);
@@ -540,5 +541,19 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	 */
 	public void setComparisonType(String type) {
 		setProperty(P_COMPARISON_TYPE,type);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration#setRunnableContext(org.eclipse.jface.operation.IRunnableContext)
+	 */
+	public void setRunnableContext(IRunnableContext context) {
+		this.context = context;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration#getRunnableContext()
+	 */
+	public IRunnableContext getRunnableContext() {
+		return context;
 	}
 }

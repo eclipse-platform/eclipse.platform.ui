@@ -12,19 +12,29 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.ActionDelegateWrapper;
+import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
+import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PartInitException;
 
 public class MergeSynchronizeParticipant extends CVSParticipant {
 	
@@ -32,9 +42,11 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 * The id of a workspace action group to which additions actions can 
 	 * be added.
 	 */
-	public static final String ACTION_GROUP = "cvs_merge_actions"; //$NON-NLS-1$
+	public static final String TOOLBAR_CONTRIBUTION_GROUP = "toolbar_group"; //$NON-NLS-1$
 	
-	
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_1"; //$NON-NLS-1$
+	public static final String NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_2"; //$NON-NLS-1$
+
 	private final static String CTX_ROOT = "root"; //$NON-NLS-1$
 	private final static String CTX_ROOT_PATH = "root_resource"; //$NON-NLS-1$
 	private final static String CTX_START_TAG = "start_tag"; //$NON-NLS-1$
@@ -46,23 +58,40 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 * Actions for the merge particpant's toolbar
 	 */
 	public class MergeParticipantActionContribution extends SynchronizePageActionGroup {
-		private ActionDelegateWrapper updateAdapter;
+		private MergeUpdateAction updateAction;
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			MergeUpdateAction action = new MergeUpdateAction();
-			action.setPromptBeforeUpdate(true);
-			updateAdapter = new ActionDelegateWrapper(action, configuration.getSite().getPart());
-			Utils.initAction(updateAdapter, "action.SynchronizeViewUpdate.", Policy.getBundle()); //$NON-NLS-1$
-			super.initialize(configuration);
-		}
-		public void modelChanged(ISynchronizeModelElement input) {
-			if (updateAdapter == null) return;
-			updateAdapter.setSelection(input);
-		}
-		public void fillActionBars(IActionBars actionBars) {
-			IToolBarManager toolbar = actionBars.getToolBarManager();
-			appendToGroup(toolbar, ACTION_GROUP, updateAdapter);
-			super.fillActionBars(actionBars);
+			
+			updateAction = new MergeUpdateAction(
+					configuration, 
+					getVisibleRootsSelectionProvider(), 
+					"WorkspaceToolbarUpdateAction."); //$NON-NLS-1$
+			updateAction.setPromptBeforeUpdate(true);
+			appendToGroup(
+					ISynchronizePageConfiguration.P_TOOLBAR_MENU,
+					TOOLBAR_CONTRIBUTION_GROUP,
+					updateAction);
+			
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					new MergeUpdateAction(configuration));
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					new ConfirmMergedAction(configuration));
+			
+			if (!configuration.getSite().isModal()) {
+				appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP,
+					new CVSActionDelegateWrapper(new ShowAnnotationAction(), configuration));
+				appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP,
+					new CVSActionDelegateWrapper(new ShowResourceInHistoryAction(), configuration));
+			}
+
 		}
 	}
 	
@@ -192,8 +221,14 @@ public class MergeSynchronizeParticipant extends CVSParticipant {
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
-		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ACTION_GROUP);
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, TOOLBAR_CONTRIBUTION_GROUP);
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ISynchronizePageConfiguration.REMOVE_PARTICPANT_GROUP);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP);
 		configuration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
 		configuration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
 		configuration.addActionContribution(new MergeParticipantActionContribution());

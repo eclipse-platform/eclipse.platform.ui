@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -19,12 +22,12 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 
 public class CompareRevertOperation extends CVSSubscriberOperation {
-	protected CompareRevertOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		super(part, elements);
+	protected CompareRevertOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		super(configuration, elements);
 	}
 	
 	/* (non-Javadoc)

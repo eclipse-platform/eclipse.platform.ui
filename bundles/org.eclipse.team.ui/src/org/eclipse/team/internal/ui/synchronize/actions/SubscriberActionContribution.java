@@ -83,7 +83,13 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager manager) {
-		appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, refreshSelectionAction);	
+		if (findGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP) != null
+			&& findGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP) != null) {
+			// Place synchronize with navigato to save space
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, refreshSelectionAction);	
+		} else {
+			appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, refreshSelectionAction);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -94,11 +100,22 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 			
 			// toolbar
 			IToolBarManager manager = actionBars.getToolBarManager();
-			appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, refreshAllAction);
+			if (findGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP) != null
+				&& findGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP) != null) {
+				// Place synchronize with navigato to save space
+				appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, refreshAllAction);	
+			} else {
+				appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, refreshAllAction);
+			}
 
 			// view menu
 			IMenuManager menu = actionBars.getMenuManager();
-			appendToGroup(menu, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, configureSchedule);
+			if (findGroup(menu, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP) != null
+					&& findGroup(menu, ISynchronizePageConfiguration.PREFERENCES_GROUP) != null) {
+				appendToGroup(menu, ISynchronizePageConfiguration.PREFERENCES_GROUP, configureSchedule);
+			} else {
+				appendToGroup(menu, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, configureSchedule);
+			}
 			appendToGroup(menu, ISynchronizePageConfiguration.PREFERENCES_GROUP, showPreferences);
 		}		
 	}

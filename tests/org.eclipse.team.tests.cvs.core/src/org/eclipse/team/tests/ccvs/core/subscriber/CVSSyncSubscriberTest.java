@@ -23,7 +23,7 @@ import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
-import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedOperation;
+import org.eclipse.team.internal.ccvs.ui.subscriber.ConfirmMergedOperation;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
@@ -227,7 +227,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	protected void markAsMerged(CVSSyncTreeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
 		IResource[] resources = getResources(project, resourcePaths);
 		SyncInfo[] infos = createSyncInfos(subscriber, resources);
-		new SubscriberConfirmMergedOperation(null, getElements(infos)).run(DEFAULT_MONITOR);
+		new ConfirmMergedOperation(null, getElements(infos)).run(DEFAULT_MONITOR);
 	}
 
 	protected IDiffElement[] getElements(SyncInfo[] infos) {

@@ -115,6 +115,12 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		}
 		public IActionBars getActionBars() {
 			return ParticipantPageSaveablePart.this.getActionBars();
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.synchronize.ISynchronizePageSite#isModal()
+		 */
+		public boolean isModal() {
+			return true;
 		}	
 	}
 	

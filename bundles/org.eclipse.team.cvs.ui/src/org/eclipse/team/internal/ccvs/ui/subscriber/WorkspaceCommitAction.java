@@ -11,15 +11,23 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
-import org.eclipse.ui.IWorkbenchPart;
 
-public class SubscriberCommitAction extends SynchronizeModelAction {
+public class WorkspaceCommitAction extends CVSParticipantAction {
 
+	public WorkspaceCommitAction(ISynchronizePageConfiguration configuration) {
+		super(configuration);
+	}
+
+	public WorkspaceCommitAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {
+		super(configuration, provider, bundleKey);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
@@ -30,7 +38,7 @@ public class SubscriberCommitAction extends SynchronizeModelAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.SubscriberAction#getSubscriberOperation(org.eclipse.compare.structuremergeviewer.IDiffElement[])
 	 */
-	protected SynchronizeModelOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		return new SubscriberCommitOperation(part, elements, false /* override */);
+	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		return new WorkspaceCommitOperation(configuration, elements, false /* override */);
 	}
 }

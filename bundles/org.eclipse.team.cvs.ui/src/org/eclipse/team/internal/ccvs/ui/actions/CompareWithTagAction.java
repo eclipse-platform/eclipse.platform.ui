@@ -18,7 +18,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
@@ -48,7 +49,6 @@ public class CompareWithTagAction extends WorkspaceAction {
 					ISynchronizePageConfiguration.NAVIGATE_GROUP, 
 					ISynchronizePageConfiguration.MODE_GROUP, 
 					ISynchronizePageConfiguration.LAYOUT_GROUP });
-			configuration.setProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID, CVSCompareSubscriber.ID_MODAL);			
 			participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), 	participant.getName(), configuration, null); //$NON-NLS-1$
 		}
 	}

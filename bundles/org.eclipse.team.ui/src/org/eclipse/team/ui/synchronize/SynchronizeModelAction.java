@@ -15,13 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.ui.*;
+import org.eclipse.ui.actions.BaseSelectionListenerAction;
 
 /**
  * This action provides utilities for performing operations on selections that
@@ -37,19 +42,58 @@ import org.eclipse.ui.*;
  * @see org.eclipse.team.ui.synchronize.SynchronizeModelOperation
  * @since 3.0
  */
-public abstract class SynchronizeModelAction implements IObjectActionDelegate, IViewActionDelegate, IEditorActionDelegate {
+public abstract class SynchronizeModelAction extends BaseSelectionListenerAction {
 	
-	private IStructuredSelection selection;
-	private IWorkbenchPart part;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	private ISynchronizePageConfiguration configuration;
+
+	/**
+	 * Create an action with the given text and configuration. By default,
+	 * the action registers for selection change with the selection provider 
+	 * from the configuration's site.
+	 * @param text the action's text
+	 * @param configuration the actions synchronize page configuration
 	 */
-	public final void run(IAction action) {
+	protected SynchronizeModelAction(String text, ISynchronizePageConfiguration configuration) {
+		this(text, configuration, configuration.getSite().getSelectionProvider());
+	}
+	
+	/**
+	 * Create an action with the given text and configuration. By default,
+	 * the action registers for selection change with the given selection provider.
+	 * @param text the action's text
+	 * @param configuration the actions synchronize page configuration
+	 * @param selectionProvider a selection provider
+	 */
+	protected SynchronizeModelAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
+		super(text);
+		this.configuration = configuration;
+		initialize(configuration, selectionProvider);
+	}
+	
+	/**
+	 * Method invoked from the constructor.
+	 * The default implementation registers the action as a selection change
+	 * listener. Subclasses may override.
+	 * @param configuration the synchronize page configuration
+	 * @param selectionProvider a selection provider
+	 */
+	protected void initialize(final ISynchronizePageConfiguration configuration, final ISelectionProvider selectionProvider) {
+		selectionProvider.addSelectionChangedListener(this);
+		configuration.getPage().getViewer().getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				selectionProvider.removeSelectionChangedListener(SynchronizeModelAction.this);
+			}
+		});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
 		// TODO: We used to prompt for unsaved changes in any editor. We don't anymore. Would
 		// it be better to prompt for unsaved changes to editors affected by this action?
 		try {
-			getSubscriberOperation(part, getFilteredDiffElements()).run();
+			getSubscriberOperation(configuration, getFilteredDiffElements()).run();
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
@@ -62,10 +106,12 @@ public abstract class SynchronizeModelAction implements IObjectActionDelegate, I
 	 * will be run when the action is run. Subclass may implement this method and provide 
 	 * an operation subclass or may override the <code>run(IAction)</code> method directly
 	 * if they choose not to implement a <code>SynchronizeModelOperation</code>.
+	 * @param configuration the synchronize page configuration for the page
+	 * to which this action is associated
 	 * @param elements the selected diff element for which this action is enabled.
 	 * @return the subscriber operation to be run by this action.
 	 */
-	protected abstract SynchronizeModelOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements);
+	protected abstract SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements);
 	
 	/** 
 	 * Generic error handling code that uses an error dialog to show the error to the 
@@ -76,6 +122,14 @@ public abstract class SynchronizeModelAction implements IObjectActionDelegate, I
 		Utils.handle(e);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	protected boolean updateSelection(IStructuredSelection selection) {
+		super.updateSelection(selection);
+		return (getFilteredDiffElements().length > 0);
+	}
+	
 	/**
 	 * This method returns all instances of IDiffElement that are in the current
 	 * selection.
@@ -83,16 +137,7 @@ public abstract class SynchronizeModelAction implements IObjectActionDelegate, I
 	 * @return the selected elements
 	 */
 	protected final IDiffElement[] getSelectedDiffElements() {
-		return Utils.getDiffNodes(selection.toArray());
-	}
-
-	/**
-	 * The default enablement behavior for subscriber actions is to enable
-	 * the action if there is at least one SyncInfo in the selection
-	 * for which the action's filter passes.
-	 */
-	protected boolean isEnabled() {
-		return (getFilteredDiffElements().length > 0);
+		return Utils.getDiffNodes(getStructuredSelection().toArray());
 	}
 
 	/**
@@ -124,61 +169,24 @@ public abstract class SynchronizeModelAction implements IObjectActionDelegate, I
 		}
 		return (IDiffElement[]) filtered.toArray(new IDiffElement[filtered.size()]);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
+
+	/**
+	 * Set the selection of this action to the given selection
+	 * @param selection the selection
 	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		this.part = targetPart;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
-	public void init(IViewPart view) {
-		this.part = view;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
-			this.selection = (IStructuredSelection) selection;
-			if (action != null) {
-				setActionEnablement(action);
-			}
+			selectionChanged((IStructuredSelection)selection);
+		} else {
+			selectionChanged(StructuredSelection.EMPTY);
 		}
-	}
-	
-	/**
-	 * Method invoked from <code>selectionChanged(IAction, ISelection)</code> 
-	 * to set the enablement status of the action. The instance variable 
-	 * <code>selection</code> will contain the latest selection so the methods
-	 * <code>getSelectedResources()</code> and <code>getSelectedProjects()</code>
-	 * will provide the proper objects.
-	 * 
-	 * This method can be overridden by subclasses but should not be invoked by them.
-	 */
-	protected void setActionEnablement(IAction action) {
-		action.setEnabled(isEnabled());
-	}
 		
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-	 */
-	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
-		// Ignore since these actions aren't meant for editors.
-		// This seems to be required because of a bug in the UI 
-		// plug-in that will disable viewer actions if they aren't
-		// editor actions? Go figure...
 	}
 	
 	/**
-	 * Returns the workbench part assigned to this action or <code>null</code>.
-	 * @return Returns the part.
+	 * @return Returns the configuration.
 	 */
-	public IWorkbenchPart getPart() {
-		return part;
+	public ISynchronizePageConfiguration getConfiguration() {
+		return configuration;
 	}
 }

@@ -11,16 +11,24 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.OrSyncInfoFilter;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
-import org.eclipse.ui.IWorkbenchPart;
 
 
-public class MergeUpdateAction extends SynchronizeModelAction {
+public class MergeUpdateAction extends CVSParticipantAction {
+	
+	public MergeUpdateAction(ISynchronizePageConfiguration configuration) {
+		super(configuration);
+	}
+
+	public MergeUpdateAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {
+		super(configuration, provider, bundleKey);
+	}
 	
 	private boolean promptBeforeUpdate;
 
@@ -38,8 +46,8 @@ public class MergeUpdateAction extends SynchronizeModelAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.SubscriberAction#getSubscriberOperation(org.eclipse.compare.structuremergeviewer.IDiffElement[])
 	 */
-	protected SynchronizeModelOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		return new MergeUpdateOperation(part, elements, promptBeforeUpdate);
+	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		return new MergeUpdateOperation(configuration, elements, promptBeforeUpdate);
 	}
 
 	public void setPromptBeforeUpdate(boolean prompt) {

@@ -21,11 +21,42 @@ import org.eclipse.team.core.synchronize.SyncInfoFilter;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
+import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 public class CompareParticipant extends CVSParticipant implements IPropertyChangeListener {
+	
+	public static final String CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_1"; //$NON-NLS-1$
+	public static final String NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP = "context_group_2"; //$NON-NLS-1$
+
+	/**
+	 * Actions for the compare particpant's toolbar
+	 */
+	public class CompareParticipantActionContribution extends SynchronizePageActionGroup {
+		public void initialize(ISynchronizePageConfiguration configuration) {
+			super.initialize(configuration);
+			
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CONTEXT_MENU_CONTRIBUTION_GROUP,
+					new CompareRevertAction(configuration));
+			
+			if (!configuration.getSite().isModal()) {
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP,
+						new CVSActionDelegateWrapper(new ShowAnnotationAction(), configuration));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP,
+						new CVSActionDelegateWrapper(new ShowResourceInHistoryAction(), configuration));
+			}
+		}
+	}
 	
 	private SyncInfoFilter contentComparison = new SyncInfoFilter() {
 		private SyncInfoFilter contentCompare = new SyncInfoFilter.ContentComparisonSyncInfoFilter();
@@ -64,13 +95,6 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	public String getName() {
 		return getSubscriber().getName();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#isPersistent()
-	 */
-	public boolean isPersistent() {
-		return false;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -78,6 +102,13 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ISynchronizePageConfiguration.REMOVE_PARTICPANT_GROUP);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				NON_MODAL_CONTEXT_MENU_CONTRIBUTION_GROUP);
+		configuration.addActionContribution(new CompareParticipantActionContribution());
 	}
 	
 	/* (non-Javadoc)

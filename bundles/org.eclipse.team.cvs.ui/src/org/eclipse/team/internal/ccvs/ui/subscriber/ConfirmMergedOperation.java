@@ -16,20 +16,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * This action marks the local resource as merged by updating the base
  * resource revision to match the remote resource revision
  */
-public class SubscriberConfirmMergedOperation extends CVSSubscriberOperation {
+public class ConfirmMergedOperation extends CVSSubscriberOperation {
 
-	public SubscriberConfirmMergedOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		super(part, elements);
+	public ConfirmMergedOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		super(configuration, elements);
 	}
 
 	/* (non-Javadoc)

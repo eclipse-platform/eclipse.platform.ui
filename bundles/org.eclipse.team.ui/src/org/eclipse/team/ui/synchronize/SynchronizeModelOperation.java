@@ -19,7 +19,6 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamOperation;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A subscriber operation provides access to a {@link SyncInfoSet} containing
@@ -37,13 +36,13 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	private IDiffElement[] elements;
 	
 	/**
-	 * Create a subscriber operation that will operate on the given diff elements
+	 * Create an operation that will operate on the given diff elements
 	 * that were obtained from a view populated by a 
 	 * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider}.
 	 * @param elements
 	 */
-	protected SynchronizeModelOperation(IWorkbenchPart part, IDiffElement[] elements) {
-		super(part);
+	protected SynchronizeModelOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		super(configuration.getSite().getPart(), configuration.getRunnableContext());
 		this.elements = elements;
 	}
 

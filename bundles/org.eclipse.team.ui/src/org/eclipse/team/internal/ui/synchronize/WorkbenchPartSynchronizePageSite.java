@@ -94,4 +94,11 @@ public class WorkbenchPartSynchronizePageSite implements ISynchronizePageSite {
 	public IActionBars getActionBars() {
 		return site.getActionBars();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizePageSite#isModal()
+	 */
+	public boolean isModal() {
+		return false;
+	}
 }
