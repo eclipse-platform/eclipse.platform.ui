@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 /**
  * A project description contains the metadata required to define
@@ -70,7 +70,7 @@ public String getDefaultCharset();
  * contain duplicates. Returns an empty array if there are no dynamic project 
  * references on this description.
  *
- * @see #getReferencedProjects
+ * @see #getReferencedProjects()
  * @return a list of projects
  * @since 3.0
  */
@@ -95,7 +95,7 @@ public String getName();
  * Returns an empty array if there are no natures on this description.
  *
  * @return the list of natures for the described project
- * @see #setNatureIds
+ * @see #setNatureIds(String[])
  */ 
 public String[] getNatureIds();
 /**
@@ -109,7 +109,7 @@ public String[] getNatureIds();
  * The result will not contain duplicates. Returns an empty
  * array if there are no referenced projects on this description.
  *
- *@see #getDynamicReferences
+ *@see #getDynamicReferences()
  * @return a list of projects
  */
 public IProject[] getReferencedProjects();
@@ -130,7 +130,7 @@ public boolean hasNature(String natureId);
  * </p>
  *
  * @return a new command
- * @see #setBuildSpec
+ * @see #setBuildSpec(ICommand[])
  */
 public ICommand newCommand();
 /**
@@ -141,9 +141,9 @@ public ICommand newCommand();
  * </p>
  *
  * @param buildSpec the array of build commands to run
- * @see IProject#setDescription
- * @see #getBuildSpec
- * @see #newCommand
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+ * @see #getBuildSpec()
+ * @see #newCommand()
  */
 public void setBuildSpec(ICommand[] buildSpec);
 /**
@@ -154,8 +154,8 @@ public void setBuildSpec(ICommand[] buildSpec);
  * </p>
  *
  * @param comment the comment for the described project
- * @see IProject#setDescription
- * @see #getComment
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+ * @see #getComment()
  */
 public void setComment(String comment);
 /**
@@ -167,8 +167,8 @@ public void setComment(String comment);
  * 
  * @param charset the name of the default charset for the described project, or 
  * <code>null</code>
- * @see IProject#setDescription
- * @see #getDefaultCharset 
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+ * @see #getDefaultCharset() 
  * @since 3.0
  * @deprecated Use IProject#setDefaultCharset instead
  */
@@ -181,9 +181,9 @@ public void setDefaultCharset(String charset);
  * Users must call <code>IProject.setDescription</code> before changes 
  * made to this description take effect.
  * </p>
- * @see #getDynamicReferences
- * @see IProject#setDescription
- * @param a list of projects
+ * @see #getDynamicReferences()
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+ * @param projects list of projects
  * @since 3.0
  */
 public void setDynamicReferences(IProject[] projects);
@@ -208,7 +208,7 @@ public void setDynamicReferences(IProject[] projects);
  * </p>
  *
  * @param location the location for the described project or <code>null</code>
- * @see #getLocation
+ * @see #getLocation()
  */
 public void setLocation(IPath location);
 /**
@@ -225,8 +225,8 @@ public void setLocation(IPath location);
  * </p>
  *
  * @param projectName the name of the described project
- * @see IProject#setDescription
- * @see #getName
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+ * @see #getName()
  */
 public void setName(String projectName);
 /** 
@@ -239,8 +239,8 @@ public void setName(String projectName);
  * </p>
  *
  * @param natures the list of natures
- * @see IProject#setDescription
- * @see #getNatureIds
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+ * @see #getNatureIds()
  */ 
 public void setNatureIds(String[] natures);
 /**
@@ -253,8 +253,8 @@ public void setNatureIds(String[] natures);
  * </p>
  *
  * @param projects a list of projects
- * @see IProject#setDescription
- * @see #getReferencedProjects
+ * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+ * @see #getReferencedProjects()
  */
 public void setReferencedProjects(IProject[] projects);
 }

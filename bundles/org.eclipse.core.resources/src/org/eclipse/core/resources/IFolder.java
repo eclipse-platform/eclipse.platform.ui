@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.*;
  * extensions are managed by the platform's adapter manager.
  * </p>
  *
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  */
 public interface IFolder extends IContainer, IAdaptable {
 	
@@ -129,7 +129,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#createRule
+ * @see IResourceRuleFactory#createRule(IResource)
  * @since 2.0
  */
 public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException;
@@ -191,7 +191,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  *       linked resources.</li>
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
- * @see IResource#isLinked
+ * @see IResource#isLinked()
  * @see IResource#ALLOW_MISSING_LOCAL
  * @since 2.1
  */
@@ -229,7 +229,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
- * @see IResourceRuleFactory#deleteRule
+ * @see IResourceRuleFactory#deleteRule(IResource)
  * @see IResource#delete(int,IProgressMonitor)
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
@@ -246,7 +246,7 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  *
  * @param name the string name of the member file
  * @return the (handle of the) member file
- * @see #getFolder
+ * @see #getFolder(String)
  */
 public IFile getFile(String name);
 /**
@@ -261,7 +261,7 @@ public IFile getFile(String name);
  *
  * @param name the string name of the member folder
  * @return the (handle of the) member folder
- * @see #getFile
+ * @see #getFile(String)
  */
 public IFolder getFolder(String name);
 /**
@@ -307,7 +307,7 @@ public IFolder getFolder(String name);
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
- * @see IResourceRuleFactory#moveRule
+ * @see IResourceRuleFactory#moveRule(IResource, IResource)
  * @see IResource#move(IPath,int,IProgressMonitor)
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;

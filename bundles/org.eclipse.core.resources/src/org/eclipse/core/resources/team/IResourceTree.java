@@ -29,7 +29,7 @@ public interface IResourceTree {
 	/**
 	 * Constant indicating that no file timestamp was supplied.
 	 * 
-	 * @see #movedFile
+	 * @see #movedFile(IFile, IFile)
 	 */
 	public static final long NULL_TIMESTAMP = 0L;
 
@@ -130,7 +130,7 @@ public interface IResourceTree {
 	 * @param file the file of interest
 	 * @param timestamp the local file system timestamp for the file, or 
 	 *    <code>NULL_TIMESTAMP</code> if unknown
-	 * @see #computeTimestamp
+	 * @see #computeTimestamp(IFile)
 	 */
 	public void updateMovedFileTimestamp(IFile file, long timestamp);
 
@@ -209,7 +209,7 @@ public interface IResourceTree {
 	 * 
 	 * @param source the handle of the source file that was moved
 	 * @param destination the handle of where the file moved to
-	 * @see #computeTimestamp
+	 * @see #computeTimestamp(IFile)
 	 */
 	public void movedFile(IFile source, IFile destination);
 

@@ -47,7 +47,7 @@ public interface IEncodedStorage extends IStorage {
 	 * @return the name of a charset, or <code>null</code>
 	 * @exception CoreException if an error happens while determining 
 	 * the charset. See any refinements for more information.
-	 * @see IStorage#getContents
+	 * @see IStorage#getContents()
 	 */	
 	public String getCharset() throws CoreException;
 }

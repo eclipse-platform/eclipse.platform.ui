@@ -40,7 +40,7 @@ public interface IFileModificationValidator {
  *   as an <code>Object</code> to avoid any direct references on the SWT component)
  * @return a status object that is OK if things are fine, otherwise a status describing
  *    reasons why modifying the given files is not reasonable
- * @see IWorkspace#validateEdit
+ * @see IWorkspace#validateEdit(IFile[], Object)
  */
 public IStatus validateEdit(IFile[] files, Object context);
 /**
@@ -56,8 +56,8 @@ public IStatus validateEdit(IFile[] files, Object context);
  * @return a status indicating whether or not it is reasonable to try writing to the given file; 
  * <code>IStatus.OK</code> indicates a save should be attempted.
  * 
- * @see IFile#setContents
- * @see IFile#appendContents
+ * @see IFile#setContents(java.io.InputStream, int, org.eclipse.core.runtime.IProgressMonitor)
+ * @see IFile#appendContents(java.io.InputStream, int, org.eclipse.core.runtime.IProgressMonitor)
  */
 public IStatus validateSave(IFile file);
 }

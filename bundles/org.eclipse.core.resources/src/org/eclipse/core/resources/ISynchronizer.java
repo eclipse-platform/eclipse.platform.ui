@@ -49,7 +49,7 @@ public void accept(QualifiedName partner, IResource start, IResourceVisitor visi
  * Adding a sync partner multiple times has no effect.
  *
  * @param partner the partner name to register
- * @see #remove
+ * @see #remove(QualifiedName)
  */
 public void add(QualifiedName partner);
 /**
@@ -100,7 +100,7 @@ public byte[] getSyncInfo(QualifiedName partner, IResource resource) throws Core
  * longer be stored on resources.
  *
  * @param partner the partner name to remove from the registry
- * @see #add
+ * @see #add(QualifiedName)
  */
 public void remove(QualifiedName partner);
 /**

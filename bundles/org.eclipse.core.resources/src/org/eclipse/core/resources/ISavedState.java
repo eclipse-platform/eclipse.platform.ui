@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IPath;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see IWorkspace#addSaveParticipant
+ * @see IWorkspace#addSaveParticipant(org.eclipse.core.runtime.Plugin, ISaveParticipant)
  */
 public interface ISavedState {
 /**
@@ -27,8 +27,8 @@ public interface ISavedState {
  *
  * @return the files currently mapped by the participant
  *
- * @see #lookup
- * @see ISaveContext#map
+ * @see #lookup(IPath)
+ * @see ISaveContext#map(IPath, IPath)
  */
 public IPath[] getFiles();
 /**
@@ -45,8 +45,8 @@ public int getSaveNumber();
  * or <code>null</code> if none.
  *
  * @return the mapped location of a given path
- * @see #getFiles
- * @see ISaveContext#map
+ * @see #getFiles()
+ * @see ISaveContext#map(IPath, IPath)
  */
 public IPath lookup(IPath file);
 /**
@@ -78,7 +78,7 @@ public IPath lookup(IPath file);
  * </p>
  *
  * @param listener the listener
- * @see ISaveContext#needDelta
+ * @see ISaveContext#needDelta()
  * @see IResourceChangeListener
  */
 public void processResourceChangeEvents(IResourceChangeListener listener);

@@ -24,7 +24,7 @@ package org.eclipse.core.resources;
  * </p>
  *
  * @see IProjectNature
- * @see IWorkspace#getNatureDescriptor
+ * @see IWorkspace#getNatureDescriptor(String)
  * @since 2.0
  */
 public interface IProjectNatureDescriptor {
@@ -77,8 +77,8 @@ public String[] getNatureSetIds();
  * 
  * @return boolean <code>true</code> if creating links is allowed, 
  *       and <code>false</code> otherwise.
- * @see IFolder#createLink
- * @see IFile#createLink
+ * @see IFolder#createLink(org.eclipse.core.runtime.IPath, int, org.eclipse.core.runtime.IProgressMonitor)
+ * @see IFile#createLink(org.eclipse.core.runtime.IPath, int, org.eclipse.core.runtime.IProgressMonitor)
  * @since 2.1
  */
 public boolean isLinkingAllowed();

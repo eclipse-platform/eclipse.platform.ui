@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.*;
  * extensions are managed by the platform's adapter manager.
  * </p>
  *
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  * @see IProject
  * @see IFolder
  * @see IWorkspaceRoot
@@ -40,7 +40,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * Member constant (bit mask value 1) indicating that phantom member resources are
 	 * to be included.
 	 * 
-	 * @see IResource#isPhantom
+	 * @see IResource#isPhantom()
 	 * @since 2.0
 	 */
 	public static final int INCLUDE_PHANTOMS = 1;
@@ -49,7 +49,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * Member constant (bit mask value 2) indicating that team private members are
 	 * to be included.
 	 * 
-	 * @see IResource#isTeamPrivateMember
+	 * @see IResource#isTeamPrivateMember()
 	 * @since 2.0
 	 */
 	public static final int INCLUDE_TEAM_PRIVATE_MEMBERS = 2;
@@ -65,7 +65,7 @@ public interface IContainer extends IResource, IAdaptable {
  * @param path the path of the resource
  * @return <code>true</code> if a resource of some type with the given path 
  *     exists relative to this resource, and <code>false</code> otherwise
- * @see IResource#exists
+ * @see IResource#exists()
  */
 public boolean exists(IPath path);
 /**
@@ -110,8 +110,8 @@ public IResource findMember(String name);
  *   interest
  * @return the member resource, or <code>null</code> if no such
  * 		resource exists
- * @see #members
- * @see IResource#isPhantom
+ * @see #members()
+ * @see IResource#isPhantom()
  */
 public IResource findMember(String name, boolean includePhantoms);
 /**
@@ -165,7 +165,7 @@ public IResource findMember(IPath path);
  * @return the member resource, or <code>null</code> if no such
  * 		resource exists
  * @see #members(boolean)
- * @see IResource#isPhantom
+ * @see IResource#isPhantom()
  */
 public IResource findMember(IPath path, boolean includePhantoms);
 /**
@@ -189,7 +189,7 @@ public IResource findMember(IPath path, boolean includePhantoms);
  * @return the name of the default charset encoding for this container 
  * @throws CoreException if this method fails
  * @see IContainer#getDefaultCharset(boolean) 
- * @see IFile#getCharset
+ * @see IFile#getCharset()
  * @since 3.0
  */
 public String getDefaultCharset() throws CoreException;
@@ -224,7 +224,7 @@ public String getDefaultCharset() throws CoreException;
  * @return the name of the default charset encoding for this container,
  * or <code>null</code> 
  * @throws CoreException if this method fails
- * @see IFile#getCharset
+ * @see IFile#getCharset()
  * @since 3.0
  */
 public String getDefaultCharset(boolean checkImplicit) throws CoreException;
@@ -247,7 +247,7 @@ public String getDefaultCharset(boolean checkImplicit) throws CoreException;
  *
  * @param path the path of the member file
  * @return the (handle of the) member file
- * @see #getFolder
+ * @see #getFolder(IPath)
  */
 public IFile getFile(IPath path);
 /**
@@ -269,7 +269,7 @@ public IFile getFile(IPath path);
  *
  * @param path the path of the member folder
  * @return the (handle of the) member folder
- * @see #getFile
+ * @see #getFile(IPath)
  */
 public IFolder getFolder(IPath path);
 
@@ -292,8 +292,8 @@ public IFolder getFolder(IPath path);
  * <li> This resource does not exist.</li>
  * <li> This resource is a project that is not open.</li>
  * </ul>
- * @see #findMember
- * @see IResource#isAccessible
+ * @see #findMember(IPath)
+ * @see IResource#isAccessible()
  */
 public IResource[] members() throws CoreException;
 
@@ -321,8 +321,8 @@ public IResource[] members() throws CoreException;
  *     this resource is a project that is not open.</li>
  * </ul>
  * @see #members(int)
- * @see IResource#exists
- * @see IResource#isPhantom
+ * @see IResource#exists()
+ * @see IResource#isPhantom()
  */
 public IResource[] members(boolean includePhantoms) throws CoreException;
 
@@ -356,7 +356,7 @@ public IResource[] members(boolean includePhantoms) throws CoreException;
  * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
  *     this resource is a project that is not open.</li>
  * </ul>
- * @see IResource#exists
+ * @see IResource#exists()
  * @since 2.0
  */
 public IResource[] members(int memberFlags) throws CoreException;
@@ -397,7 +397,7 @@ public IResource[] members(int memberFlags) throws CoreException;
  *    reporting and cancellation are not desired
  * @return an array of recently deleted files
  * @exception CoreException if this method fails
- * @see IFile#getHistory
+ * @see IFile#getHistory(IProgressMonitor)
  * @since 2.0
  */
 public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException;
@@ -414,7 +414,7 @@ public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor
  * <ul>
  * <li> This resource does not exist.</li>
  * </ul>
- * @see IContainer#getDefaultCharset
+ * @see IContainer#getDefaultCharset()
  * @since 3.0
  */
 public void setDefaultCharset(String charset) throws CoreException;

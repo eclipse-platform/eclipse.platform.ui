@@ -25,7 +25,7 @@ import org.eclipse.core.internal.watson.IElementComparator;
  * </p>
  *
  * @see IResource
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  */
 public interface IResourceDelta extends IAdaptable {
 
@@ -35,7 +35,8 @@ public interface IResourceDelta extends IAdaptable {
 
 	/**
 	 * Delta kind constant indicating that the resource has not been changed in any way.
-	 * @see IResourceDelta#getKind
+	 * 
+	 * @see IResourceDelta#getKind()
 	 */
 	public static final int NO_CHANGE = IElementComparator.K_NO_CHANGE;
 
@@ -43,7 +44,8 @@ public interface IResourceDelta extends IAdaptable {
 	 * Delta kind constant (bit mask) indicating that the resource has been added
 	 * to its parent. That is, one that appears in the "after" state,
 	 * not in the "before" one.
-	 * @see IResourceDelta#getKind
+	 * 
+	 * @see IResourceDelta#getKind()
 	 */
 	public static final int ADDED = 0x1;
 
@@ -51,35 +53,40 @@ public interface IResourceDelta extends IAdaptable {
 	 * Delta kind constant (bit mask) indicating that the resource has been removed
 	 * from its parent. That is, one that appears in the "before" state,
 	 * not in the "after" one. 
-	 * @see IResourceDelta#getKind
+	 * 
+	 * @see IResourceDelta#getKind()
 	 */
 	public static final int REMOVED = 0x2;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that the resource has been changed. 
 	 * That is, one that appears in both the "before" and "after" states.
-	 * @see IResourceDelta#getKind
+	 * 
+	 * @see IResourceDelta#getKind()
 	 */
 	public static final int CHANGED = 0x4;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that a phantom resource has been added at
 	 * the location of the delta node. 
-	 * @see IResourceDelta#getKind
+	 * 
+	 * @see IResourceDelta#getKind()
 	 */
 	public static final int ADDED_PHANTOM = 0x8;
 
 	/**
 	 * Delta kind constant (bit mask) indicating that a phantom resource has been removed from 
 	 * the location of the delta node. 
-	 * @see IResourceDelta#getKind
+	 * 
+	 * @see IResourceDelta#getKind()
 	 */
 	public static final int REMOVED_PHANTOM = 0x10;
 
 	/**
 	 * The bit mask which describes all possible delta kinds,
 	 * including ones involving phantoms.
-	 * @see IResourceDelta#getKind
+	 * 
+	 * @see IResourceDelta#getKind()
 	 */
 	public static final int ALL_WITH_PHANTOMS = 
 		CHANGED | ADDED | REMOVED | ADDED_PHANTOM | REMOVED_PHANTOM;
@@ -91,21 +98,24 @@ public interface IResourceDelta extends IAdaptable {
 
 	/**
 	 * Change constant (bit mask) indicating that the content of the resource has changed.
-	 * @see IResourceDelta#getFlags 
+	 * 
+	 * @see IResourceDelta#getFlags() 
 	 */
 	public static final int CONTENT = 0x100;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource was moved from another location.
 	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int MOVED_FROM = 0x1000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource was moved to another location.
 	 * The location in the new state can be retrieved using <code>getMovedToPath()</code>.
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int MOVED_TO = 0x2000;
 
@@ -113,27 +123,31 @@ public interface IResourceDelta extends IAdaptable {
 	 * Change constant (bit mask) indicating that the resource was opened or closed.
 	 * For example, if the current state of the resource is open then 
 	 * it was previously closed.
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int OPEN = 0x4000;
 
 	/**
 	 * Change constant (bit mask) indicating that the type of the resource has changed.
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int TYPE = 0x8000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource's sync status has changed.
 	 * This type of change is not included in build deltas, only in those for resource notification.
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int SYNC = 0x10000;
 
 	/**
 	 * Change constant (bit mask) indicating that the resource's markers have changed.
 	 * This type of change is not included in build deltas, only in those for resource notification.
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int MARKERS = 0x20000;
 
@@ -141,13 +155,15 @@ public interface IResourceDelta extends IAdaptable {
 	 * Change constant (bit mask) indicating that the resource has been
 	 * replaced by another at the same location (i.e., the resource has 
 	 * been deleted and then added). 
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int REPLACED = 0x40000;
 
 	/**
 	 * Change constant (bit mask) indicating that a project's description has changed. 
-	 * @see IResourceDelta#getFlags
+	 * 
+	 * @see IResourceDelta#getFlags()
 	 */
 	public static final int DESCRIPTION = 0x80000;
 
@@ -168,7 +184,7 @@ public interface IResourceDelta extends IAdaptable {
  *
  * @param visitor the visitor
  * @exception CoreException if the visitor failed with this exception.
- * @see IResourceDeltaVisitor#visit
+ * @see IResourceDeltaVisitor#visit(IResourceDelta)
  */
 public void accept(IResourceDeltaVisitor visitor) throws CoreException;
 
@@ -192,8 +208,8 @@ public void accept(IResourceDeltaVisitor visitor) throws CoreException;
  *   interest
  * @exception CoreException if the visitor failed with this exception.
  * @see #accept(IResourceDeltaVisitor)
- * @see IResource#isPhantom
- * @see IResourceDeltaVisitor#visit
+ * @see IResource#isPhantom()
+ * @see IResourceDeltaVisitor#visit(IResourceDelta)
  */
 public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException;
 
@@ -226,11 +242,11 @@ public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throw
  *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
  *   indicating which members are of interest
  * @exception CoreException if the visitor failed with this exception.
- * @see IResource#isPhantom
- * @see IResource#isTeamPrivateMember
+ * @see IResource#isPhantom()
+ * @see IResource#isTeamPrivateMember()
  * @see IContainer#INCLUDE_PHANTOMS
  * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
- * @see IResourceDeltaVisitor#visit
+ * @see IResourceDeltaVisitor#visit(IResourceDelta)
  * @since 2.0
  */
 public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException;
@@ -400,10 +416,10 @@ public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags);
  * @see IResourceDelta#SYNC
  * @see IResourceDelta#MARKERS
  * @see IResourceDelta#REPLACED
- * @see #getKind
- * @see #getMovedFromPath
- * @see #getMovedToPath
- * @see IResource#move
+ * @see #getKind()
+ * @see #getMovedFromPath()
+ * @see #getMovedToPath()
+ * @see IResource#move(IPath, int, IProgressMonitor)
  */
 public int getFlags();
 /**
@@ -412,8 +428,8 @@ public int getFlags();
  * Note: the returned path never has a trailing separator.
  * </p>
  * @return the full, absolute path of this resource delta
- * @see IResource#getFullPath
- * @see #getProjectRelativePath
+ * @see IResource#getFullPath()
+ * @see #getProjectRelativePath()
  */
 public IPath getFullPath();
 /**
@@ -448,9 +464,9 @@ public IMarkerDelta[] getMarkerDeltas();
  * Note: the returned path never has a trailing separator.
  *
  * @return a path, or <code>null</code>
- * @see #getMovedToPath
- * @see #getFullPath
- * @see #getFlags
+ * @see #getMovedToPath()
+ * @see #getFullPath()
+ * @see #getFlags()
  */
 public IPath getMovedFromPath();
 /**
@@ -462,9 +478,9 @@ public IPath getMovedFromPath();
  * Note: the returned path never has a trailing separator.
  * 
  * @return a path, or <code>null</code>
- * @see #getMovedFromPath
- * @see #getFullPath
- * @see #getFlags
+ * @see #getMovedFromPath()
+ * @see #getFullPath()
+ * @see #getFlags()
  */
 public IPath getMovedToPath();
 /**
@@ -476,8 +492,8 @@ public IPath getMovedToPath();
  * for any given resource. The returned path never has a trailing separator.
  * </p>
  * @return the project-relative path of this resource delta
- * @see IResource#getProjectRelativePath
- * @see #getFullPath
+ * @see IResource#getProjectRelativePath()
+ * @see #getFullPath()
  * @see Path#EMPTY
  */
 public IPath getProjectRelativePath();

@@ -59,7 +59,7 @@ public interface IWorkspace extends IAdaptable {
 	 * notifications should be avoided during the invocation of a compound
 	 * resource changing operation.
 	 * 
-	 * @see IWorkspace#run
+	 * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
 	 * @since 3.0
 	 */
 	public static final int AVOID_UPDATE = 1;
@@ -79,7 +79,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceChangeListener
 	 * @see IResourceChangeEvent
 	 * @see #addResourceChangeListener(IResourceChangeListener, int)
-	 * @see #removeResourceChangeListener
+	 * @see #removeResourceChangeListener(IResourceChangeListener)
 	 */
 	public void addResourceChangeListener(IResourceChangeListener listener);
 	/**
@@ -111,7 +111,7 @@ public interface IWorkspace extends IAdaptable {
 	 * listener
 	 * @see IResourceChangeListener
 	 * @see IResourceChangeEvent
-	 * @see #removeResourceChangeListener
+	 * @see #removeResourceChangeListener(IResourceChangeListener)
 	 */
 	public void addResourceChangeListener(IResourceChangeListener listener, int eventMask);
 	/**
@@ -133,7 +133,7 @@ public interface IWorkspace extends IAdaptable {
 	 * <li>The previous state could not be recovered.</li>
 	 * </ul>
 	 * @see ISaveParticipant
-	 * @see #removeSaveParticipant
+	 * @see #removeSaveParticipant(Plugin)
 	 */
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
 	/**
@@ -166,12 +166,12 @@ public interface IWorkspace extends IAdaptable {
 	 * in the exception is a multi-status with entries for the project builds
 	 * that failed.
 	 * 
-	 * @see IProject#build
-	 * @see #computeProjectOrder
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @see #computeProjectOrder(IProject[])
 	 * @see IncrementalProjectBuilder#FULL_BUILD
 	 * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
 	 * @see IncrementalProjectBuilder#CLEAN_BUILD
-	 * @see IResourceRuleFactory#buildRule
+	 * @see IResourceRuleFactory#buildRule()
 	 */
 	public void build(int kind, IProgressMonitor monitor) throws CoreException;
 	/**
@@ -198,7 +198,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * 
 	 * @param build whether or not to run a build
-	 * @see IWorkspace#run
+	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
 	 */
 	public void checkpoint(boolean build);
 	/**
@@ -235,7 +235,7 @@ public interface IWorkspace extends IAdaptable {
 	 * This class is not intended to be instantiated by clients.
 	 * </p>
 	 * 
-	 * @see #computeProjectOrder
+	 * @see IWorkspace#computeProjectOrder(IProject[])
 	 * @since 2.1
 	 */
 	public final class ProjectOrder {
@@ -425,7 +425,7 @@ public interface IWorkspace extends IAdaptable {
 	 * more details.</li>
 	 * </ul>
 	 * @see IResource#copy(IPath,int,IProgressMonitor)
-	 * @see IResourceRuleFactory#copyRule
+	 * @see IResourceRuleFactory#copyRule(IResource, IResource)
 	 * @since 2.0
 	 */
 	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -503,7 +503,7 @@ public interface IWorkspace extends IAdaptable {
 	 * status contained in the exception is a multi-status indicating where the
 	 * individual failures occurred.
 	 * @see IResource#delete(int,IProgressMonitor)
-	 * @see IResourceRuleFactory#deleteRule
+	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 * @since 2.0
 	 */
 	public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -522,7 +522,7 @@ public interface IWorkspace extends IAdaptable {
 	 * change event notification. See <code>IResourceChangeEvent</code> for
 	 * more details.</li>
 	 * </ul>
-	 * @see IResourceRuleFactory#markerRule
+	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
 	public void deleteMarkers(IMarker[] markers) throws CoreException;
 	/**
@@ -540,7 +540,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </p>
 	 * 
 	 * @param pluginId the unique identifier of the plug-in
-	 * @see ISaveContext#needDelta
+	 * @see ISaveContext#needDelta()
 	 */
 	public void forgetSavedTree(String pluginId);
 	/**
@@ -581,7 +581,7 @@ public interface IWorkspace extends IAdaptable {
 	 * called.
 	 * 
 	 * @return the workspace description
-	 * @see #setDescription
+	 * @see #setDescription(IWorkspaceDescription)
 	 */
 	public IWorkspaceDescription getDescription();
 	/**
@@ -637,8 +637,8 @@ public interface IWorkspace extends IAdaptable {
 	 * @exception CoreException if the operation failed, either because the
 	 * project description file does not exist, or cannot be opened, or cannot
 	 * be parsed as a legal project description file
-	 * @see #newProjectDescription
-	 * @see IProject#getDescription
+	 * @see #newProjectDescription(String)
+	 * @see IProject#getDescription()
 	 * @since 2.0
 	 */
 	public IProjectDescription loadProjectDescription(IPath projectDescriptionFile) throws CoreException;
@@ -761,7 +761,7 @@ public interface IWorkspace extends IAdaptable {
 	 * more details.</li>
 	 * </ul>
 	 * @see IResource#move(IPath,int,IProgressMonitor)
-	 * @see IResourceRuleFactory#moveRule
+	 * @see IResourceRuleFactory#moveRule(IResource, IResource)
 	 * @since 2.0
 	 */
 	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -784,10 +784,10 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @param projectName the name of the project
 	 * @return a new project description
-	 * @see IProject#getDescription
-	 * @see IProject#create
-	 * @see IProject#copy
-	 * @see IProject#move
+	 * @see IProject#getDescription()
+	 * @see IProject#create(IProjectDescription, IProgressMonitor)
+	 * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
+	 * @see IProject#move(IProjectDescription, boolean, IProgressMonitor)
 	 */
 	public IProjectDescription newProjectDescription(String projectName);
 	/**
@@ -796,7 +796,7 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @param listener the listener
 	 * @see IResourceChangeListener
-	 * @see #addResourceChangeListener
+	 * @see #addResourceChangeListener(IResourceChangeListener)
 	 */
 	public void removeResourceChangeListener(IResourceChangeListener listener);
 	/**
@@ -809,7 +809,7 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @param plugin the plug-in
 	 * @see ISaveParticipant
-	 * @see #addSaveParticipant
+	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 */
 	public void removeSaveParticipant(Plugin plugin);
 	/**
@@ -1080,14 +1080,14 @@ public interface IWorkspace extends IAdaptable {
 	 * <ul>
 	 * <li>The operation cannot be batched with others.</li>
 	 * </ul>
-	 * @see #addSaveParticipant
+	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
 	 */
 	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException;
 	/**
 	 * Sets the workspace description.
 	 * 
 	 * @param description the new workspace description.
-	 * @see #getDescription
+	 * @see #getDescription()
 	 * @exception CoreException if the method fails. Reasons include:
 	 * <ul>
 	 * <li>There was a problem writing the description to disk.</li>
@@ -1122,7 +1122,7 @@ public interface IWorkspace extends IAdaptable {
 	 * 
 	 * @param natureIds a valid set of nature extension identifiers
 	 * @return the set of nature Ids sorted in prerequisite order
-	 * @see #validateNatureSet
+	 * @see #validateNatureSet(String[])
 	 * @since 2.0
 	 */
 	public String[] sortNatureSet(String[] natureIds);
@@ -1198,7 +1198,7 @@ public interface IWorkspace extends IAdaptable {
 	 * direct references on the SWT component)
 	 * @return a status object that is OK if things are fine, otherwise a status
 	 * describing reasons why modifying the given files is not reasonable
-	 * @see IResourceRuleFactory#validateEditRule
+	 * @see IResourceRuleFactory#validateEditRule(IResource[])
 	 * @since 2.0
 	 */
 	public IStatus validateEdit(IFile[] files, Object context);
@@ -1347,7 +1347,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResource#FOLDER
 	 * @see IResource#FILE
 	 * @see IStatus#OK
-	 * @see IResourceStatus#getPath
+	 * @see IResourceStatus#getPath()
 	 */
 	public IStatus validatePath(String path, int typeMask);
 	/**
@@ -1373,8 +1373,8 @@ public interface IWorkspace extends IAdaptable {
 	 * @return a status object with code <code>IStatus.OK</code> if the given
 	 * location is valid as the project content location, otherwise a status
 	 * object indicating what is wrong with the location
-	 * @see IProjectDescription#getLocation
-	 * @see IProjectDescription#setLocation
+	 * @see IProjectDescription#getLocation()
+	 * @see IProjectDescription#setLocation(IPath)
 	 * @see IStatus#OK
 	 */
 	public IStatus validateProjectLocation(IProject project, IPath location);

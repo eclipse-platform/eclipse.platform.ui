@@ -36,8 +36,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * return <code>null</code>.
  * 
  * @see WorkspaceJob
- * @see IWorkspace#run
- * @see MultiRule#combine
+ * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
+ * @see org.eclipse.core.runtime.jobs.MultiRule#combine(ISchedulingRule, ISchedulingRule)
  * @since 3.0
  */
 public interface IResourceRuleFactory {
@@ -101,8 +101,7 @@ public interface IResourceRuleFactory {
 	 * Returns the scheduling rule that is required for performing 
 	 * <code>refreshLocal</code> on a resource.
 	 * 
-	 * @param source the source of the copy
-	 * @param destination the destination of the copy
+	 * @param resource the resource to refresh
 	 * @return a scheduling rule, or <code>null</code>
 	 */
 	public ISchedulingRule refreshRule(IResource resource);

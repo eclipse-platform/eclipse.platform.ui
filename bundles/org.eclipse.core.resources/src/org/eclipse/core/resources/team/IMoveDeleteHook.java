@@ -274,7 +274,7 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this
 	 *   method attempted to carry out the operation
-	 * @see IResource#move(IPath,int,IProgressMonitor)
+	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
 	public boolean moveFile(
 		IResourceTree tree,
@@ -343,7 +343,7 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this 
 	 *   method attempted to carry out the operation
-	 * @see IResource#move(IPath,int,IProgressMonitor)
+	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 */
 	public boolean moveFolder(
 		IResourceTree tree,
@@ -402,7 +402,7 @@ public interface IMoveDeleteHook {
 	 * @return <code>false</code> if this method declined to assume 
 	 *   responsibility for this operation, and <code>true</code> if this method
 	 *   attempted to carry out the operation
-	 * @see IResource#move(IPath,int,IProgressMonitor)
+	 * @see IResource#move(org.eclipse.core.runtime.IPath,int,IProgressMonitor)
 	 * @see IResource#move(IProjectDescription,int,IProgressMonitor)
 	 */
 	public boolean moveProject(

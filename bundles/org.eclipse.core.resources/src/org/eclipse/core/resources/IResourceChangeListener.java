@@ -21,7 +21,7 @@ import java.util.EventListener;
  * Clients may implement this interface.
  * </p>
  * @see IResourceDelta
- * @see IWorkspace#addResourceChangeListener
+ * @see IWorkspace#addResourceChangeListener(IResourceChangeListener, int)
  */
 public interface IResourceChangeListener extends EventListener {
 /**

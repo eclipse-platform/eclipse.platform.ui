@@ -31,8 +31,8 @@ public interface IPathVariableChangeListener extends EventListener {
 	 *
 	 * @param event the path variable change event object describing which variable
 	 *    changed and how
-	 * @see IPathVariableManager#addChangeListener
-	 * @see IPathVariableManager#removeChangeListener
+	 * @see IPathVariableManager#addChangeListener(IPathVariableChangeListener)
+	 * @see IPathVariableManager#removeChangeListener(IPathVariableChangeListener)
 	 * @see IPathVariableChangeEvent
 	 */
 	public void pathVariableChanged(IPathVariableChangeEvent event);

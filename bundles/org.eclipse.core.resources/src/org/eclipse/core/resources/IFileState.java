@@ -44,7 +44,7 @@ import java.io.InputStream;
  *
  * @see IFile
  * @see IStorage
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  */
 public interface IFileState extends IEncodedStorage, IAdaptable {
 /**
@@ -74,8 +74,8 @@ public InputStream getContents() throws CoreException;
  * method specifies that <code>IFileState</code>s always have a 
  * path and that path is the full workspace path of the file represented by this state.
  *
- * @see IResource#getFullPath
- * @see IStorage#getFullPath
+ * @see IResource#getFullPath()
+ * @see IStorage#getFullPath()
  */
 public IPath getFullPath();
 /**
@@ -97,8 +97,8 @@ public long getModificationTime();
  * name and that name is equivalent to the last segment of the full path
  * of the resource represented by this state.
  *
- * @see IResource#getName
- * @see IStorage#getName
+ * @see IResource#getName()
+ * @see IStorage#getName()
  */
 public String getName();
 /**

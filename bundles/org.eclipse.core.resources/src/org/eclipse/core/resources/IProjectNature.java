@@ -24,11 +24,11 @@ import org.eclipse.core.runtime.CoreException;
  * Clients may implement this interface.
  * </p>
  *
- * @see IProject#getNature
- * @see IProject#hasNature
- * @see IProjectDescription#getNatureIds
- * @see IProjectDescription#hasNature
- * @see IProjectDescription#setNatureIds
+ * @see IProject#getNature(String)
+ * @see IProject#hasNature(String)
+ * @see IProjectDescription#getNatureIds()
+ * @see IProjectDescription#hasNature(String)
+ * @see IProjectDescription#setNatureIds(String[])
  */
 public interface IProjectNature {
 /** 

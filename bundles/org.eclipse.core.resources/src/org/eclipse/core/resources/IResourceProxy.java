@@ -33,7 +33,7 @@ public interface IResourceProxy {
 	 * 
 	 * @return the modification stamp, or <code>NULL_STAMP</code> if the
 	 * resource either does not exist or exists as a closed project
-	 * @see IResource#getModificationStamp
+	 * @see IResource#getModificationStamp()
 	 */
 	public long getModificationStamp();
 	/**
@@ -41,7 +41,7 @@ public interface IResourceProxy {
 	 *
 	 * @return <code>true</code> if the resource is accessible, and
 	 * <code>false</code> otherwise
-	 * @see IResource#isAccessible
+	 * @see IResource#isAccessible()
 	 */
 	public boolean isAccessible();
 	/**
@@ -49,7 +49,7 @@ public interface IResourceProxy {
 	 *
 	 * @return <code>true</code> if the resource is marked as derived, and
 	 * <code>false</code> otherwise
-	 * @see IResource#isDerived
+	 * @see IResource#isDerived()
 	 */
 	public boolean isDerived();
 	/**
@@ -57,7 +57,7 @@ public interface IResourceProxy {
 	 * 
 	 * @return <code>true</code> if the resource is linked, and
 	 * <code>false</code> otherwise
-	 * @see IResource#isLinked
+	 * @see IResource#isLinked()
 	 */
 	public boolean isLinked();
 	/**
@@ -65,7 +65,7 @@ public interface IResourceProxy {
 	 * 
 	 * @return <code>true</code> if the resource is a phantom resource, and
 	 * <code>false</code> otherwise
-	 * @see IResource#isPhantom
+	 * @see IResource#isPhantom()
 	 */
 	public boolean isPhantom();
 	/**
@@ -73,14 +73,14 @@ public interface IResourceProxy {
 	 *
 	 * @return <code>true</code> if the resource is a team private member, and
 	 * <code>false</code> otherwise
-	 * @see IResource#isTeamPrivateMember
+	 * @see IResource#isTeamPrivateMember()
 	 */
 	public boolean isTeamPrivateMember();
 	/**
 	 * Returns the simple name of the resource being visited.
 	 * 
 	 * @return the name of the resource
-	 * @see IResource#getName
+	 * @see IResource#getName()
 	 */
 	public String getName();
 	/**
@@ -96,7 +96,7 @@ public interface IResourceProxy {
 	 * @param key the qualified name of the property
 	 * @return the string value of the session property, 
 	 *     or <code>null</code> if the resource has no such property
-	 *	 @see IResource#getSessionProperty
+	 *	 @see IResource#getSessionProperty(QualifiedName)
 	 */
 	public Object getSessionProperty(QualifiedName key);
 	/**
@@ -115,7 +115,7 @@ public interface IResourceProxy {
 	 * simple resource name can be obtained from the proxy with no cost.
 	 * </p>
 	 * @return the full path of the resource
-	 * @see IResource#getFullPath
+	 * @see IResource#getFullPath()
 	 */
 	public IPath requestFullPath();
 	/**

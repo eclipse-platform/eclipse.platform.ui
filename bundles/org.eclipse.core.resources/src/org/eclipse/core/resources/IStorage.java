@@ -55,7 +55,7 @@ public IPath getFullPath();
  *
  * @return the name of the data represented by this storage,
  *		or <code>null</code> if this storage has no name
- * @see #getFullPath
+ * @see #getFullPath()
  */
 public String getName();
 /**

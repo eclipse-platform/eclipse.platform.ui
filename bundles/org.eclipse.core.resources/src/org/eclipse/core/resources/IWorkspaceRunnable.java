@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * Clients may implement this interface.
  * </p>
- * @see IWorkspace#run
+ * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
  */
 public interface IWorkspaceRunnable {
 /**

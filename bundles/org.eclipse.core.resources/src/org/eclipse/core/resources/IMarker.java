@@ -84,35 +84,35 @@ public interface IMarker extends IAdaptable {
 	/** 
 	 * Base marker type. 
 	 *
-	 * @see #getType
+	 * @see #getType()
 	 */
 	public static final String MARKER = ResourcesPlugin.PI_RESOURCES + ".marker"; //$NON-NLS-1$
 
 	/** 
 	 * Task marker type. 
 	 *
-	 * @see #getType
+	 * @see #getType()
 	 */
 	public static final String TASK = ResourcesPlugin.PI_RESOURCES + ".taskmarker"; //$NON-NLS-1$
 
 	/** 
 	 * Problem marker type. 
 	 *
-	 * @see #getType
+	 * @see #getType()
 	 */
 	public static final String PROBLEM = ResourcesPlugin.PI_RESOURCES + ".problemmarker"; //$NON-NLS-1$
 
 	/** 
 	 * Text marker type. 
 	 *
-	 * @see #getType
+	 * @see #getType()
 	 */
 	public static final String TEXT = ResourcesPlugin.PI_RESOURCES + ".textmarker"; //$NON-NLS-1$
 
 	/** 
 	 * Bookmark marker type. 
 	 *
-	 * @see #getType
+	 * @see #getType()
 	 */
 	public static final String BOOKMARK = ResourcesPlugin.PI_RESOURCES + ".bookmark"; //$NON-NLS-1$
 
@@ -127,7 +127,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #SEVERITY_ERROR
 	 * @see #SEVERITY_WARNING
 	 * @see #SEVERITY_INFO
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final String SEVERITY = "severity"; //$NON-NLS-1$
 	
@@ -136,7 +136,7 @@ public interface IMarker extends IAdaptable {
 	 * of the marker (e.g., a name for a bookmark or task).  The content
 	 * and form of this attribute is not specified or interpreted by the platform.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 */
 	public static final String MESSAGE = "message"; //$NON-NLS-1$
 	
@@ -146,7 +146,7 @@ public interface IMarker extends IAdaptable {
 	 * should be concise and aimed at users.  The content and 
 	 * form of this attribute is not specified or interpreted by the platform.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 */
 	public static final String LOCATION = "location"; //$NON-NLS-1$
 	
@@ -157,7 +157,7 @@ public interface IMarker extends IAdaptable {
 	 * @see #PRIORITY_HIGH
 	 * @see #PRIORITY_NORMAL
 	 * @see #PRIORITY_LOW
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final String PRIORITY = "priority"; //$NON-NLS-1$
 	
@@ -165,7 +165,7 @@ public interface IMarker extends IAdaptable {
 	 * Done marker attribute.  A boolean value indicating whether 
 	 * the marker (e.g., a task) is considered done.  
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 */
 	public static final String DONE = "done"; //$NON-NLS-1$
 
@@ -173,7 +173,7 @@ public interface IMarker extends IAdaptable {
 	 * Character start marker attribute.  An integer value indicating where a text
 	 * marker starts.  This attribute is zero-relative and inclusive.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 */
 	public static final String CHAR_START = "charStart"; //$NON-NLS-1$
 
@@ -181,7 +181,7 @@ public interface IMarker extends IAdaptable {
 	 * Character end marker attribute.  An integer value indicating where a text
 	 * marker ends.  This attribute is zero-relative and exclusive.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 */
 	public static final String CHAR_END = "charEnd"; //$NON-NLS-1$
 
@@ -189,7 +189,7 @@ public interface IMarker extends IAdaptable {
 	 * Line number marker attribute.  An integer value indicating the line number
 	 * for a text marker.  This attribute is 1-relative.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 */
 	public static final String LINE_NUMBER = "lineNumber"; //$NON-NLS-1$
 	
@@ -198,7 +198,7 @@ public interface IMarker extends IAdaptable {
 	 * marker (e. g., a task) is considered transient even if its type is
 	 * declared as persistent. 
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 * @since 2.1 
 	 */
 	public static final String TRANSIENT = "transient"; //$NON-NLS-1$
@@ -212,7 +212,7 @@ public interface IMarker extends IAdaptable {
 	 * interpreted by Core in any manner and will not be enforced by Core 
 	 * when performing any operations on markers.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, String)
 	 * @since 2.1 
 	 */
 	public static final String USER_EDITABLE = "userEditable"; //$NON-NLS-1$
@@ -224,42 +224,42 @@ public interface IMarker extends IAdaptable {
 	/** 
 	 * High priority constant (value 2).
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final int PRIORITY_HIGH = 2;
 	
 	/** 
 	 * Normal priority constant (value 1).
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final int PRIORITY_NORMAL = 1;
 	
 	/** 
 	 * Low priority constant (value 0).
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final int PRIORITY_LOW = 0;
 
 	/** 
 	 * Error severity constant (value 2) indicating an error state.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final int SEVERITY_ERROR= 2;
 	
 	/** 
 	 * Warning severity constant (value 1) indicating a warning.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final int SEVERITY_WARNING = 1;
 	
 	/** 
 	 * Info severity constant (value 0) indicating information only.
 	 *
-	 * @see #getAttribute
+	 * @see #getAttribute(String, int)
 	 */
 	public static final int SEVERITY_INFO = 0;
 /**
@@ -271,7 +271,7 @@ public interface IMarker extends IAdaptable {
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public void delete() throws CoreException;
 /**
@@ -381,7 +381,7 @@ public long getCreationTime() throws CoreException;
  * Marker ids are not globally unique.
  *
  * @return the id of the marker
- * @see IResource#findMarker
+ * @see IResource#findMarker(long)
  */
 public long getId();
 /**
@@ -429,7 +429,7 @@ public boolean isSubtypeOf(String superType) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public void setAttribute(String attributeName, int value) throws CoreException;
 /**
@@ -451,7 +451,7 @@ public void setAttribute(String attributeName, int value) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public void setAttribute(String attributeName, Object value) throws CoreException;
 /**
@@ -470,7 +470,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public void setAttribute(String attributeName, boolean value) throws CoreException;
 /**
@@ -494,7 +494,7 @@ public void setAttribute(String attributeName, boolean value) throws CoreExcepti
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public void setAttributes(String[] attributeNames, Object[] values) throws CoreException;
 /**
@@ -519,7 +519,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public void setAttributes(Map attributes) throws CoreException;
 }

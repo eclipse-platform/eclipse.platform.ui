@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.CoreException;
  * Clients may implement this interface.
  * </p>
  *
- * @see IResource#accept
+ * @see IResource#accept(IResourceVisitor)
  */
 public interface IResourceDeltaVisitor {
 /** 

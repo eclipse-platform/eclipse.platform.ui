@@ -63,7 +63,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * </p>
  *
  * @see IWorkspace
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  */
 public interface IResource extends IAdaptable, ISchedulingRule {
 
@@ -75,7 +75,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/** 
 	 * Type constant (bit mask value 1) which identifies file resources.
 	 *
-	 * @see IResource#getType
+	 * @see IResource#getType()
 	 * @see IFile
 	 */
 	public static final int FILE = 0x1;
@@ -83,7 +83,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Type constant (bit mask value 2) which identifies folder resources.
 	 *
-	 * @see IResource#getType
+	 * @see IResource#getType()
 	 * @see IFolder
 	 */
 	public static final int FOLDER = 0x2;
@@ -91,7 +91,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Type constant (bit mask value 4) which identifies project resources.
 	 *
-	 * @see IResource#getType
+	 * @see IResource#getType()
 	 * @see IProject
 	 */
 	public static final int PROJECT = 0x4;
@@ -99,7 +99,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Type constant (bit mask value 8) which identifies the root resource.
 	 *
-	 * @see IResource#getType
+	 * @see IResource#getType()
 	 * @see IWorkspaceRoot
 	 */
 	public static final int ROOT = 0x8;
@@ -142,7 +142,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * should maintain local history by taking snapshots of the contents of
 	 * files just before being overwritten or deleted.
 	 * 
-	 * @see IFile#getHistory
+	 * @see IFile#getHistory(IProgressMonitor)
 	 * @since 2.0
 	 */
 	public static final int KEEP_HISTORY = 0x2;
@@ -187,8 +187,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Update flag constant (bit mask value 16) indicating that the link creation
 	 * should proceed even if the local file system file or directory is missing.
 	 * 
-	 * @see IFolder#createLink
-	 * @see IFile#createLink
+	 * @see IFolder#createLink(IPath, int, IProgressMonitor)
+	 * @see IFile#createLink(IPath, int, IProgressMonitor)
 	 * @since 2.1
 	 */
 	public static final int ALLOW_MISSING_LOCAL = 0x10;
@@ -198,8 +198,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * operation should only copy the link, rather than copy the underlying
 	 * contents of the linked resource.
 	 *
-	 * @see #copy
-	 * @see #move
+	 * @see #copy(IPath, int, IProgressMonitor)
+	 * @see #move(IPath, int, IProgressMonitor)
 	 * @since 2.1
 	 */
 	public static final int SHALLOW = 0x20;
@@ -212,7 +212,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * Modification stamp constant (value -1) indicating no modification stamp is
 	 * available.
 	 *
-	 * @see #getModificationStamp
+	 * @see #getModificationStamp()
 	 */
 	public static final int NULL_STAMP = -1;
 	
@@ -281,10 +281,9 @@ public interface IResource extends IAdaptable, ISchedulingRule {
  * </ul>
  * @see IContainer#INCLUDE_PHANTOMS
  * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
- * @see IResource#isPhantom
- * @see IResource#isTeamPrivateMember
- * @see IResourceProxyVisitor#visit
- * @see WorkspaceLock
+ * @see IResource#isPhantom()
+ * @see IResource#isTeamPrivateMember()
+ * @see IResourceProxyVisitor#visit(IResourceProxy)
  * @since 2.1
  */
 public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws CoreException;
@@ -304,7 +303,7 @@ public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws 
  * <li> This resource does not exist.</li>
  * <li> The visitor failed with this exception.</li>
  * </ul>
- * @see IResourceVisitor#visit
+ * @see IResourceVisitor#visit(IResource)
  * @see #accept(IResourceVisitor,int,int)
  */
 public void accept(IResourceVisitor visitor) throws CoreException;
@@ -339,8 +338,8 @@ public void accept(IResourceVisitor visitor) throws CoreException;
  *     this resource does not exist and is not a phantom.</li>
  * <li> The visitor failed with this exception.</li>
  * </ul>
- * @see IResource#isPhantom
- * @see IResourceVisitor#visit
+ * @see IResource#isPhantom()
+ * @see IResourceVisitor#visit(IResource)
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
@@ -392,12 +391,12 @@ public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms)
  * </ul>
  * @see IContainer#INCLUDE_PHANTOMS
  * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
- * @see IResource#isPhantom
- * @see IResource#isTeamPrivateMember
+ * @see IResource#isPhantom()
+ * @see IResource#isTeamPrivateMember()
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
- * @see IResourceVisitor#visit
+ * @see IResourceVisitor#visit(IResource)
  * @since 2.0
  */
 public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException;
@@ -558,7 +557,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * </ul>
  * @see #FORCE
  * @see #SHALLOW
- * @see IResourceRuleFactory#copyRule
+ * @see IResourceRuleFactory#copyRule(IResource, IResource)
  * @since 2.0
  */
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -674,7 +673,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * </ul>
  * @see #FORCE
  * @see #SHALLOW
- * @see IResourceRuleFactory#copyRule
+ * @see IResourceRuleFactory#copyRule(IResource, IResource)
  * @since 2.0
  */
 public void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -692,7 +691,7 @@ public void copy(IProjectDescription description, int updateFlags, IProgressMoni
  * <li> This resource does not exist.</li>
  * <li> This resource is a project that is not open.</li>
  * </ul>
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public IMarker createMarker(String type) throws CoreException;
 
@@ -824,13 +823,13 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IFile#delete
- * @see IFolder#delete
+ * @see IFile#delete(boolean, boolean, IProgressMonitor)
+ * @see IFolder#delete(boolean, boolean, IProgressMonitor)
  * @see #FORCE
  * @see #KEEP_HISTORY
  * @see #ALWAYS_DELETE_PROJECT_CONTENT
  * @see #NEVER_DELETE_PROJECT_CONTENT
- * @see IResourceRuleFactory#deleteRule
+ * @see IResourceRuleFactory#deleteRule(IResource)
  * @since 2.0
  */
 public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -858,7 +857,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
- * @see IResourceRuleFactory#markerRule
+ * @see IResourceRuleFactory#markerRule(IResource)
  */
 public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
 /**
@@ -869,9 +868,9 @@ public void deleteMarkers(String type, boolean includeSubtypes, int depth) throw
  *
  * @param other the other object
  * @return an indication of whether the objects are equals
- * @see #getType
- * @see #getFullPath
- * @see #getWorkspace
+ * @see #getType()
+ * @see #getFullPath()
+ * @see #getWorkspace()
  */
 public boolean equals(Object other);
 /**
@@ -954,7 +953,7 @@ public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) th
  * </p>
  *
  * @return a string file extension
- * @see #getName
+ * @see #getName()
  */
 public String getFileExtension();
 /**
@@ -980,7 +979,7 @@ public String getFileExtension();
  * </p>
  *
  * @return the absolute path of this resource
- * @see #getProjectRelativePath
+ * @see #getProjectRelativePath()
  * @see Path#ROOT
  */
 public IPath getFullPath();
@@ -1034,9 +1033,9 @@ public long getLocalTimeStamp();
  * 
  * @return the absolute path of this resource in the local file system,
  *  or <code>null</code> if no path can be determined
- * @see #getRawLocation
- * @see  IProjectDescription#setLocation
- * @see Platform#getLocation
+ * @see #getRawLocation()
+ * @see  IProjectDescription#setLocation(IPath)
+ * @see Platform#getLocation()
  */
 public IPath getLocation();
 /**
@@ -1047,7 +1046,7 @@ public IPath getLocation();
  *
  * @param id the id of the marker
  * @return the specified marker handle
- * @see IMarker#getId
+ * @see IMarker#getId()
  */
 public IMarker getMarker(long id);
 /**
@@ -1109,8 +1108,8 @@ public long getModificationStamp();
  * </p>
  *
  * @return the name of the resource
- * @see #getFullPath
- * @see #getProjectRelativePath
+ * @see #getFullPath()
+ * @see #getProjectRelativePath()
  */
 public String getName();
 /**
@@ -1143,7 +1142,7 @@ public IContainer getParent();
  * <li> This resource is not local.</li>
  * <li> This resource is a project that is not open.</li>
  * </ul>
- * @see #setPersistentProperty
+ * @see #setPersistentProperty(QualifiedName, String)
  */
 public String getPersistentProperty(QualifiedName key) throws CoreException;
 /**
@@ -1180,8 +1179,8 @@ public IProject getProject();
  * </p>
  *
  * @return the relative path of this resource with respect to its project
- * @see #getFullPath
- * @see #getProject
+ * @see #getFullPath()
+ * @see #getProject()
  * @see Path#EMPTY
  */
 public IPath getProjectRelativePath();
@@ -1200,11 +1199,11 @@ public IPath getProjectRelativePath();
  * 
  * @return the raw path of this resource in the local file system,  or
  * <code>null</code> if no path can be determined
- * @see #getLocation
- * @see IFile#createLink
- * @see IFolder#createLink
+ * @see #getLocation()
+ * @see IFile#createLink(IPath, int, IProgressMonitor)
+ * @see IFolder#createLink(IPath, int, IProgressMonitor)
  * @see IPathVariableManager
- * @see IProjectDescription#getLocation
+ * @see IProjectDescription#getLocation()
  * @since 2.1
  */
 public IPath getRawLocation();
@@ -1221,7 +1220,7 @@ public IPath getRawLocation();
  * <li> This resource is not local.</li>
  * <li> This resource is a project that is not open.</li>
  * </ul>
- * @see #setSessionProperty
+ * @see #setSessionProperty(QualifiedName, Object)
  */
 public Object getSessionProperty(QualifiedName key) throws CoreException;
 /**
@@ -1266,8 +1265,8 @@ public IWorkspace getWorkspace();
  *
  * @return <code>true</code> if this resource is accessible, and
  *   <code>false</code> otherwise
- * @see #exists
- * @see IProject#isOpen
+ * @see #exists()
+ * @see IProject#isOpen()
  */
 public boolean isAccessible();
 /**
@@ -1276,7 +1275,7 @@ public boolean isAccessible();
  *
  * @return <code>true</code> if this resource is marked as derived, and
  *   <code>false</code> otherwise
- * @see #setDerived
+ * @see #setDerived(boolean)
  * @since 2.0
  */
 public boolean isDerived();
@@ -1296,7 +1295,7 @@ public boolean isDerived();
  * @return <code>true</code> if this resource is local, and
  *   <code>false</code> otherwise
  *
- * @see #setLocal
+ * @see #setLocal(boolean, int, IProgressMonitor)
  */
 public boolean isLocal(int depth);
 /**
@@ -1314,8 +1313,8 @@ public boolean isLocal(int depth);
  * @return <code>true</code> if this resource is linked, and 
  *   <code>false</code> otherwise
  *
- * @see IFile#createLink
- * @see IFolder#createLink
+ * @see IFile#createLink(IPath, int, IProgressMonitor)
+ * @see IFolder#createLink(IPath, int, IProgressMonitor)
  * @since 2.1
  */
 public boolean isLinked();
@@ -1337,7 +1336,7 @@ public boolean isLinked();
  *
  * @return <code>true</code> if this resource is a phantom resource, and
  *   <code>false</code> otherwise
- * @see #exists
+ * @see #exists()
  * @see IContainer#members(boolean)
  * @see IContainer#findMember(String, boolean)
  * @see IContainer#findMember(IPath, boolean)
@@ -1382,7 +1381,7 @@ public boolean isReadOnly();
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
- * @see #refreshLocal
+ * @see #refreshLocal(int, IProgressMonitor)
  * @since 2.0
  */
 public boolean isSynchronized(int depth);
@@ -1392,7 +1391,7 @@ public boolean isSynchronized(int depth);
  *
  * @return <code>true</code> if this resource is a team private member, and
  *   <code>false</code> otherwise
- * @see #setTeamPrivateMember
+ * @see #setTeamPrivateMember(boolean)
  * @since 2.0
  */
 public boolean isTeamPrivateMember();
@@ -1442,7 +1441,7 @@ public boolean isTeamPrivateMember();
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
- * @see IResourceDelta#getFlags
+ * @see IResourceDelta#getFlags()
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 /**
@@ -1564,11 +1563,11 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> Resource changes are disallowed during certain types of resource change
  * event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceDelta#getFlags
+ * @see IResourceDelta#getFlags()
  * @see #FORCE
  * @see #KEEP_HISTORY
  * @see #SHALLOW
- * @see IResourceRuleFactory#moveRule
+ * @see IResourceRuleFactory#moveRule(IResource, IResource)
  * @since  2.0
  */
 public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -1614,7 +1613,7 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceDelta#getFlags
+ * @see IResourceDelta#getFlags()
  */
 public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 
@@ -1714,11 +1713,11 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * <li> Resource changes are disallowed during certain types of resource change 
  *      event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceDelta#getFlags
+ * @see IResourceDelta#getFlags()
  * @see #FORCE
  * @see #KEEP_HISTORY
  * @see #SHALLOW
- * @see IResourceRuleFactory#moveRule
+ * @see IResourceRuleFactory#moveRule(IResource, IResource)
  * @since  2.0
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -1756,7 +1755,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
  * @see IResource#DEPTH_INFINITE
- * @see IResourceRuleFactory#refreshRule
+ * @see IResourceRuleFactory#refreshRule(IResource)
  */
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
 /**
@@ -1801,7 +1800,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see #isDerived
+ * @see #isDerived()
  * @since 2.0
  */
 public void setDerived(boolean isDerived) throws CoreException;
@@ -1830,7 +1829,7 @@ public void setDerived(boolean isDerived) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see #isLocal
+ * @see #isLocal(int)
  */
 public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException;
 /**
@@ -1882,14 +1881,14 @@ public long setLocalTimeStamp(long value) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see #getPersistentProperty
- * @see #isLocal
+ * @see #getPersistentProperty(QualifiedName)
+ * @see #isLocal(int)
  */
 public void setPersistentProperty(QualifiedName key, String value) throws CoreException;
 /**
  * Sets or unsets this resource as read-only in the file system.
  *
- * @param <code>true</code> to set it to read-only, 
+ * @param readOnly <code>true</code> to set it to read-only, 
  *		<code>false</code> to unset
  */
 public void setReadOnly(boolean readOnly);
@@ -1921,7 +1920,7 @@ public void setReadOnly(boolean readOnly);
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see #getSessionProperty
+ * @see #getSessionProperty(QualifiedName)
  */
 public void setSessionProperty(QualifiedName key, Object value) throws CoreException;
 /**
@@ -1956,7 +1955,7 @@ public void setSessionProperty(QualifiedName key, Object value) throws CoreExcep
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see #isTeamPrivateMember
+ * @see #isTeamPrivateMember()
  * @since 2.0
  */
 public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
@@ -1984,7 +1983,7 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#modifyRule
+ * @see IResourceRuleFactory#modifyRule(IResource)
  */ 
 public void touch(IProgressMonitor monitor) throws CoreException;
 }

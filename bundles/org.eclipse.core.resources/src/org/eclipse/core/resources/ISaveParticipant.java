@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * Clients may implement this interface.
  * </p>
- * @see IWorkspace#save
+ * @see IWorkspace#save(boolean, org.eclipse.core.runtime.IProgressMonitor)
  */
 public interface ISaveParticipant extends EventListener {
 /**
@@ -67,7 +67,7 @@ public void prepareToSave(ISaveContext context) throws CoreException;
  * </p>
  *
  * @param context the save context object
- * @see ISaveContext#getPreviousSaveNumber
+ * @see ISaveContext#getPreviousSaveNumber()
  */
 public void rollback(ISaveContext context);
 /**
@@ -163,7 +163,7 @@ public void rollback(ISaveContext context);
  *
  * @param context the save context object
  * @exception CoreException if this method fails
- * @see ISaveContext#getSaveNumber
+ * @see ISaveContext#getSaveNumber()
  */
 public void saving(ISaveContext context) throws CoreException;
 }

@@ -86,8 +86,8 @@ public interface IResourceChangeEvent {
 	 * resource delta as returned by <code>getDelta</code>.
 	 * See class comments for further details.
 	 *
-	 * @see #getType
-	 * @see #getDelta
+	 * @see #getType()
+	 * @see #getDelta()
 	 */
 	public static final int POST_CHANGE = 1;
 
@@ -97,8 +97,8 @@ public interface IResourceChangeEvent {
 	 * project as returned by <code>getResource</code>.
 	 * See class comments for further details.
 	 *
-	 * @see #getType
-	 * @see #getResource
+	 * @see #getType()
+	 * @see #getResource()
 	 */
 	public static final int PRE_CLOSE= 2;
 
@@ -108,8 +108,8 @@ public interface IResourceChangeEvent {
 	 * project as returned by <code>getResource</code>.
 	 * See class comments for further details.
 	 *
-	 * @see #getType
-	 * @see #getResource
+	 * @see #getType()
+	 * @see #getResource()
 	 */
 	public static final int PRE_DELETE = 4;
 
@@ -120,8 +120,8 @@ public interface IResourceChangeEvent {
 	 * resource delta as returned by <code>getDelta</code>.
 	 * See class comments for further details.
 	 *
-	 * @see #getType
-	 * @see #getResource
+	 * @see #getType()
+	 * @see #getResource()
 	 */
 	public static final int PRE_AUTO_BUILD = 8;
 
@@ -132,8 +132,8 @@ public interface IResourceChangeEvent {
 	 * resource delta as returned by <code>getDelta</code>.
 	 * See class comments for further details.
 	 *
-	 * @see #getType
-	 * @see #getResource
+	 * @see #getType()
+	 * @see #getResource()
 	 */
 	public static final int 	POST_AUTO_BUILD = 16;
 /**

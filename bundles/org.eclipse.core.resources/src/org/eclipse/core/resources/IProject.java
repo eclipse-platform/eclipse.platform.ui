@@ -38,7 +38,7 @@ import java.util.Map;
  * extensions are managed by the platform's adapter manager.
  * </p>
  *
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  */
 public interface IProject extends IContainer, IAdaptable {
 /**
@@ -77,11 +77,11 @@ public interface IProject extends IContainer, IAdaptable {
  *		also be a multi-status.
  * 
  * @see IProjectDescription
- * @see IncrementalProjectBuilder#build
+ * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
  * @see IncrementalProjectBuilder#FULL_BUILD
  * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
  * @see IncrementalProjectBuilder#CLEAN_BUILD
- * @see IResourceRuleFactory#buildRule
+ * @see IResourceRuleFactory#buildRule()
  */
 public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException;
 /** 
@@ -114,7 +114,7 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
  * @see IProjectDescription
  * @see IncrementalProjectBuilder#FULL_BUILD
  * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
- * @see IResourceRuleFactory#buildRule
+ * @see IResourceRuleFactory#buildRule()
  */
 public void build(int kind, IProgressMonitor monitor) throws CoreException;
 /**
@@ -148,9 +148,9 @@ public void build(int kind, IProgressMonitor monitor) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see #open
- * @see #isOpen
- * @see IResourceRuleFactory#modifyRule
+ * @see #open(IProgressMonitor)
+ * @see #isOpen()
+ * @see IResourceRuleFactory#modifyRule(IResource)
  */
 public void close(IProgressMonitor monitor) throws CoreException;
 
@@ -194,8 +194,8 @@ public void close(IProgressMonitor monitor) throws CoreException;
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
- * @see IWorkspace#validateProjectLocation
- * @see IResourceRuleFactory#createRule
+ * @see IWorkspace#validateProjectLocation(IProject, IPath)
+ * @see IResourceRuleFactory#createRule(IResource)
  */
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
@@ -243,8 +243,8 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
- * @see IWorkspace#validateProjectLocation
- * @see IResourceRuleFactory#createRule
+ * @see IWorkspace#validateProjectLocation(IProject, IPath)
+ * @see IResourceRuleFactory#createRule(IResource)
  */
 public void create(IProgressMonitor monitor) throws CoreException;
 
@@ -278,11 +278,11 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResource#delete
- * @see #open
- * @see #close
+ * @see IResource#delete(int, IProgressMonitor)
+ * @see #open(IProgressMonitor)
+ * @see #close(IProgressMonitor)
  * @see IResource#delete(int,IProgressMonitor)
- * @see IResourceRuleFactory#deleteRule
+ * @see IResourceRuleFactory#deleteRule(IResource)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -298,9 +298,10 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
  * <li> This project does not exist.</li>
  * <li> This project is not open.</li>
  * </ul>
- * @see #create
- * @see #copy
- * @see #move 
+ * @see #create(IProgressMonitor)
+ * @see #create(IProjectDescription, IProgressMonitor)
+ * @see IResource#copy(IProjectDescription, int, IProgressMonitor)
+ * @see #move(IProjectDescription, boolean, IProgressMonitor) 
  */
 public IProjectDescription getDescription() throws CoreException;
 /**
@@ -315,7 +316,7 @@ public IProjectDescription getDescription() throws CoreException;
  *
  * @param name the string name of the member file
  * @return the (handle of the) member file
- * @see #getFolder
+ * @see #getFolder(String)
  */
 public IFile getFile(String name);
 /**
@@ -330,7 +331,7 @@ public IFile getFile(String name);
  *
  * @param name the string name of the member folder
  * @return the (handle of the) member folder
- * @see #getFile
+ * @see #getFile(String)
  */
 public IFolder getFolder(String name);
 /** 
@@ -378,8 +379,8 @@ public IPath getPluginWorkingLocation(IPluginDescriptor plugin);
  * <li> This project does not exist.</li>
  * <li> This project is not open.</li>
  * </ul>
- * @see IProjectDescription#getReferencedProjects
- * @see IProjectDescription#getDynamicReferences
+ * @see IProjectDescription#getReferencedProjects()
+ * @see IProjectDescription#getDynamicReferences()
  */
 public IProject[] getReferencedProjects() throws CoreException;
 /**
@@ -426,7 +427,7 @@ public boolean hasNature(String natureId) throws CoreException;
  * <li> This project is not open.</li>
  * </ul>
  * @since 2.0
- * @see IWorkspace#validateNatureSet
+ * @see IWorkspace#validateNatureSet(String[])
  */
 public boolean isNatureEnabled(String natureId) throws CoreException;
 /**
@@ -439,8 +440,8 @@ public boolean isNatureEnabled(String natureId) throws CoreException;
  *
  * @return <code>true</code> if this project is open, <code>false</code> if
  *		this project is closed or does not exist
- * @see #open
- * @see #close
+ * @see #open(IProgressMonitor)
+ * @see #close(IProgressMonitor)
  */
 public boolean isOpen();
 
@@ -482,9 +483,9 @@ public boolean isOpen();
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceDelta#getFlags
+ * @see IResourceDelta#getFlags()
  * @see IResource#move(IProjectDescription,int,IProgressMonitor)
- * @see IResourceRuleFactory#moveRule
+ * @see IResourceRuleFactory#moveRule(IResource, IResource)
  */
 public void move(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
 
@@ -512,8 +513,8 @@ public void move(IProjectDescription description, boolean force, IProgressMonito
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see #close
- * @see IResourceRuleFactory#moveRule
+ * @see #close(IProgressMonitor)
+ * @see IResourceRuleFactory#moveRule(IResource, IResource)
  */
 public void open(IProgressMonitor monitor) throws CoreException;
 
@@ -552,11 +553,11 @@ public void open(IProgressMonitor monitor) throws CoreException;
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  *
- * @see #getDescription
- * @see IProjectNature#configure
- * @see IProjectNature#deconfigure
+ * @see #getDescription()
+ * @see IProjectNature#configure()
+ * @see IProjectNature#deconfigure()
  * @see #setDescription(IProjectDescription,int,IProgressMonitor)
- * @see IResourceRuleFactory#modifyRule
+ * @see IResourceRuleFactory#modifyRule(IResource)
  */
 public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
@@ -641,12 +642,12 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  *
- * @see #getDescription
- * @see IProjectNature#configure
- * @see IProjectNature#deconfigure
+ * @see #getDescription()
+ * @see IProjectNature#configure()
+ * @see IProjectNature#deconfigure()
  * @see IResource#FORCE
  * @see IResource#KEEP_HISTORY
- * @see IResourceRuleFactory#modifyRule
+ * @see IResourceRuleFactory#modifyRule(IResource)
  * @since 2.0
  */
 public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;

@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see IWorkspace#save
+ * @see IWorkspace#save(boolean, org.eclipse.core.runtime.IProgressMonitor)
  */
 public interface ISaveContext {
 	
@@ -35,21 +35,21 @@ public interface ISaveContext {
 	/** 
 	 * Type constant which identifies a full save.
 	 *
-	 * @see ISaveContext#getKind
+	 * @see ISaveContext#getKind()
 	 */
 	public static final int FULL_SAVE = 1;
 
 	/** 
 	 * Type constant which identifies a snapshot.
 	 *
-	 * @see ISaveContext#getKind
+	 * @see ISaveContext#getKind()
 	 */
 	public static final int SNAPSHOT = 2;
 
 	/** 
 	 * Type constant which identifies a project save.
 	 *
-	 * @see ISaveContext#getKind
+	 * @see ISaveContext#getKind()
 	 */
 	public static final int PROJECT_SAVE = 3;
 /**
@@ -58,7 +58,7 @@ public interface ISaveContext {
  *
  * @return the files currently mapped by the participant
  *
- * @see #map
+ * @see #map(IPath, IPath)
  */
 public IPath[] getFiles();
 /**
@@ -83,7 +83,7 @@ public int getKind();
  *
  * @return the previous save number if positive, or <code>0</code> 
  *		if never saved before
- * @see ISaveParticipant#rollback
+ * @see ISaveParticipant#rollback(ISaveContext)
  */
 public int getPreviousSaveNumber();
 /**
@@ -93,7 +93,7 @@ public int getPreviousSaveNumber();
  * @return the project being saved or <code>null</code> if this is not
  *   project save
  *
- * @see #getKind
+ * @see #getKind()
  */
 public IProject getProject();
 /**
@@ -106,7 +106,7 @@ public IProject getProject();
  * </p>
  *
  * @return the save number
- * @see ISaveParticipant#saving
+ * @see ISaveParticipant#saving(ISaveContext)
  */
 public int getSaveNumber();
 /**
@@ -114,8 +114,8 @@ public int getSaveNumber();
  * <code>null</code> if none.
  *
  * @return the location of a given file or <code>null</code>
- * @see #map
- * @see ISavedState#lookup
+ * @see #map(IPath, IPath)
+ * @see ISavedState#lookup(IPath)
  */
 public IPath lookup(IPath file);
 /**
@@ -138,10 +138,10 @@ public IPath lookup(IPath file);
  * @param file the logical name of the participant's data file
  * @param location the real (i.e., filesystem) name by which the file should be known 
  *		for this save, or <code>null</code> to remove the entry
- * @see #lookup
- * @see #getSaveNumber
- * @see #needSaveNumber
- * @see ISavedState#lookup
+ * @see #lookup(IPath)
+ * @see #getSaveNumber()
+ * @see #needSaveNumber()
+ * @see ISavedState#lookup(IPath)
  */
 public void map(IPath file, IPath location);
 /**
@@ -163,8 +163,8 @@ public void map(IPath file, IPath location);
  * or project saves.
  * </p>
  *
- * @see IWorkspace#addSaveParticipant
- * @see ISavedState#processResourceChangeEvents
+ * @see IWorkspace#addSaveParticipant(org.eclipse.core.runtime.Plugin, ISaveParticipant)
+ * @see ISavedState#processResourceChangeEvents(IResourceChangeListener)
  */
 public void needDelta();
 /**
@@ -181,8 +181,8 @@ public void needDelta();
  * one can be an active participant whether or not one asks for a delta.
  * </p>
  *
- * @see IWorkspace#addSaveParticipant
- * @see ISavedState#getSaveNumber
+ * @see IWorkspace#addSaveParticipant(org.eclipse.core.runtime.Plugin, ISaveParticipant)
+ * @see ISavedState#getSaveNumber()
  */
 public void needSaveNumber();
 }

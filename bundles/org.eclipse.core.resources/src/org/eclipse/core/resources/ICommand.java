@@ -28,7 +28,7 @@ public interface ICommand {
  *
  * @return a table of command arguments (key type : <code>String</code> 
  *		value type : <code>String</code>), or <code>null</code>
- * @see #setArguments
+ * @see #setArguments(Map)
  */
 public Map getArguments();
 /**
@@ -36,7 +36,7 @@ public Map getArguments();
  * <code>null</code> if the name has not been set.
  *
  * @return the name of the builder, or <code>null</code> if not set
- * @see #setBuilderName
+ * @see #setBuilderName(String)
  */
 public String getBuilderName();
 /**
@@ -56,7 +56,7 @@ public String getBuilderName();
  *
  * @param args a table of command arguments (keys and values must
  *   both be of type <code>String</code>), or <code>null</code>
- * @see #getArguments
+ * @see #getArguments()
  */
 public void setArguments(Map args);
 /**
@@ -68,7 +68,7 @@ public void setArguments(Map args);
  * </p>
  *
  * @param builderName the name of the builder
- * @see #getBuilderName
+ * @see #getBuilderName()
  */
 public void setBuilderName(String builderName);
 }

@@ -31,14 +31,14 @@ import java.io.InputStream;
  * extensions are managed by the platform's adapter manager.
  * </p>
  *
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  */
 public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	/**
 	 * Character encoding constant (value 0) which identifies
 	 * files that have an unknown character encoding scheme.
 	 * 
-	 * @see IFile#getEncoding
+	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
 	public int ENCODING_UNKNOWN = 0;
@@ -46,7 +46,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Character encoding constant (value 1) which identifies
 	 * files that are encoded with the US-ASCII character encoding scheme.
 	 * 
-	 * @see IFile#getEncoding
+	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
 	public int ENCODING_US_ASCII = 1;
@@ -55,7 +55,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * files that are encoded with the ISO-8859-1 character encoding scheme,
 	 * also known as ISO-LATIN-1.
 	 * 
-	 * @see IFile#getEncoding
+	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
 	public int ENCODING_ISO_8859_1 = 2;
@@ -63,7 +63,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Character encoding constant (value 3) which identifies
 	 * files that are encoded with the UTF-8 character encoding scheme.
 	 * 
-	 * @see IFile#getEncoding
+	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
 	public int ENCODING_UTF_8 = 3;
@@ -71,7 +71,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Character encoding constant (value 4) which identifies
 	 * files that are encoded with the UTF-16BE character encoding scheme.
 	 * 
-	 * @see IFile#getEncoding
+	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
 	public int ENCODING_UTF_16BE = 4;
@@ -79,7 +79,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Character encoding constant (value 5) which identifies
 	 * files that are encoded with the UTF-16LE character encoding scheme.
 	 * 
-	 * @see IFile#getEncoding
+	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
 	public int ENCODING_UTF_16LE = 5;
@@ -87,7 +87,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Character encoding constant (value 6) which identifies
 	 * files that are encoded with the UTF-16 character encoding scheme.
 	 * 
-	 * @see IFile#getEncoding
+	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */
 	public int ENCODING_UTF_16 = 6;
@@ -200,7 +200,7 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
- * @see IResourceRuleFactory#modifyRule
+ * @see IResourceRuleFactory#modifyRule(IResource)
  * @since 2.0
  */
 public void appendContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -299,7 +299,7 @@ public void create(InputStream source, boolean force, IProgressMonitor monitor) 
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
- * @see IResourceRuleFactory#createRule
+ * @see IResourceRuleFactory#createRule(IResource)
  * @since 2.0
  */
 public void create(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -361,7 +361,7 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  *       linked resources.</li>
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
- * @see IResource#isLinked 
+ * @see IResource#isLinked() 
  * @see IResource#ALLOW_MISSING_LOCAL
  * @since 2.1
  */
@@ -400,7 +400,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#delete(int,IProgressMonitor)
- * @see IResourceRuleFactory#deleteRule
+ * @see IResourceRuleFactory#deleteRule(IResource)
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 /**
@@ -425,8 +425,8 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  *  
  * @return the name of a charset
  * @see IFile#getCharset(boolean) 
- * @see IEncodedStorage#getCharset
- * @see IContainer#getDefaultCharset
+ * @see IEncodedStorage#getCharset()
+ * @see IContainer#getDefaultCharset()
  * @since 3.0
  */
 public String getCharset() throws CoreException;
@@ -461,8 +461,8 @@ public String getCharset() throws CoreException;
  * </p>
  *  
  * @return the name of a charset, or <code>null</code>
- * @see IEncodedStorage#getCharset
- * @see IContainer#getDefaultCharset
+ * @see IEncodedStorage#getCharset()
+ * @see IContainer#getDefaultCharset()
  * @since 3.0
  */
 public String getCharset(boolean checkImplicit) throws CoreException;
@@ -533,8 +533,8 @@ public int getEncoding() throws CoreException;
  * <code>IFile</code>s always have a path and that path is relative to the
  * containing workspace.
  *
- * @see IResource#getFullPath
- * @see IStorage#getFullPath
+ * @see IResource#getFullPath()
+ * @see IStorage#getFullPath()
  */
 public IPath getFullPath();
 /**
@@ -558,8 +558,8 @@ public IFileState[] getHistory(IProgressMonitor monitor) throws CoreException;
  * <code>IFile</code>s always have a name and that name equivalent to the
  * last segment of its full path.
  *
- * @see IResource#getName
- * @see IStorage#getName
+ * @see IResource#getName()
+ * @see IStorage#getName()
  */
 public String getName();
 /**
@@ -567,8 +567,8 @@ public String getName();
  * This refinement of the corresponding <code>IStorage</code> and <code>IResource</code>
  * methods links the semantics of read-only resources and read-only storage objects.
  *
- * @see IResource#isReadOnly
- * @see IStorage#isReadOnly
+ * @see IResource#isReadOnly()
+ * @see IStorage#isReadOnly()
  */
 public boolean isReadOnly();
 
@@ -617,7 +617,7 @@ public boolean isReadOnly();
  * </ul>
  *
  * @see IResource#move(IPath,int,IProgressMonitor)
- * @see IResourceRuleFactory#moveRule
+ * @see IResourceRuleFactory#moveRule(IResource, IResource)
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 /**
@@ -632,7 +632,7 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  * <ul>
  * <li> This resource does not exist.</li>
  * </ul>
- * @see #getCharset
+ * @see #getCharset()
  * @since 3.0
  */
 public void setCharset(String newCharset) throws CoreException;
@@ -781,7 +781,7 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
- * @see IResourceRuleFactory#modifyRule
+ * @see IResourceRuleFactory#modifyRule(IResource)
  * @since 2.0
  */
 public void setContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -847,7 +847,7 @@ public void setContents(InputStream source, int updateFlags, IProgressMonitor mo
  *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
- * @see IResourceRuleFactory#modifyRule
+ * @see IResourceRuleFactory#modifyRule(IResource)
  * @since 2.0
  */
 public void setContents(IFileState source, int updateFlags, IProgressMonitor monitor) throws CoreException;
