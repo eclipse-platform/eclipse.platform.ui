@@ -69,16 +69,15 @@ function onloadHandler()
 	{
 %>
 	tocTitle = '<%=UrlUtil.JavaScriptEncode(data.getTocLabel(data.getSelectedToc()))%>';
+	var tocTopic = "<%=data.getTocDescriptionTopic(data.getSelectedToc())%>";
 	
 	// set title on the content toolbar
 	parent.parent.parent.setContentToolbarTitle(tocTitle);
 		
 	// select specified topic, or else the book
 	var topic = '<%=data.getSelectedTopic()%>';
-	if (topic != "about:blank")
-	{
-		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 2)
-		{
+	if (topic != "about:blank" && topic != tocTopic) {
+		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 2) {
 			// remove the .. from topic
 			topic = topic.substring(2);
 			// remove advanced/tocView.jsp from path to obtain contextPath
@@ -93,9 +92,9 @@ function onloadHandler()
 			}			
 		}
 		selectTopic(topic);
-	}
-	else
+	} else {
 		selectTopicById(tocId);
+	}
 
 <%
 	} else if ("yes".equals(request.getParameter("synch"))) {
