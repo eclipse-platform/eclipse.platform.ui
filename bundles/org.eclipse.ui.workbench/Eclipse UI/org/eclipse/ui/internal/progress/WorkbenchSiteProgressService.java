@@ -53,7 +53,7 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	
 	private class SiteUpdateJob extends WorkbenchJob {
 		private boolean busy;
-		private boolean useWaitCursor;
+		private boolean useWaitCursor = false;
 		Object lock = new Object();
 		/**
 		 * Set whether we are updating with the wait or busy cursor.
@@ -120,8 +120,10 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	 */
 	public WorkbenchSiteProgressService(final PartSite partSite) {
 		site = partSite;
-		
+		updateJob = new SiteUpdateJob();
+		updateJob.setSystem(true);		
 	}
+	
 	public void dispose() {
 		
 		if(updateJob != null)
@@ -199,8 +201,6 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	 */
 	public IJobChangeListener getJobChangeListener(final Job job, boolean useHalfBusyCursor) {
 		if (listener == null) {
-			updateJob = new SiteUpdateJob();
-			updateJob.setSystem(true);
 			updateJob.useWaitCursor = useHalfBusyCursor;
 			listener = new JobChangeAdapter() {
 				/*
