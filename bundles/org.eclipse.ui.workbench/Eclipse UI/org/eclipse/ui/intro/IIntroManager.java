@@ -11,14 +11,13 @@
 package org.eclipse.ui.intro;
 
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 
 /**
  * Manages the intro part that introduces the product to new users.
  * The intro part is typically shown the first time a product is started up.
  * <p>
  * The initial behavior of the intro part is controlled by the application
- * from via the {@link org.eclipse.ui.application.WorkbenchAdvisor#openIntro(IWorkbenchWindowConfigurer)}
+ * from via the {@link org.eclipse.ui.application.WorkbenchWindowAdvisor#openIntro()}
  * method.
  * </p>
  * <p>

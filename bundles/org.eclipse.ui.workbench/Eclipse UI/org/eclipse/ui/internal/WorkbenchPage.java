@@ -1427,9 +1427,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             return false;
 
         // Create list dialog.
-        CustomizePerspectiveDialog dlg = new CustomizePerspectiveDialog(window
-                .getShell(), persp);
-
+        CustomizePerspectiveDialog dlg = window.createCustomizePerspectiveDialog(persp);
+        
         // Open.
         boolean ret = (dlg.open() == Window.OK);
         if (ret) {

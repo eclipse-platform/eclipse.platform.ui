@@ -31,8 +31,8 @@ import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
-import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
@@ -98,11 +98,11 @@ public class UIDialogs extends TestCase {
          * fixme: should try to get current perspective, or default;
          * currently only
          */
+            WorkbenchWindow window = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
             persp = new Perspective((PerspectiveDescriptor) getWorkbench()
                     .getPerspectiveRegistry().getPerspectives()[0],
-                    (WorkbenchPage) getWorkbench().getActiveWorkbenchWindow()
-                            .getActivePage());
-            dialog = new CustomizePerspectiveDialog(getShell(), persp);
+                    (WorkbenchPage) window.getActivePage());
+            dialog = window.createCustomizePerspectiveDialog(persp);
         } catch (WorkbenchException e) {
             dialog = null;
         }

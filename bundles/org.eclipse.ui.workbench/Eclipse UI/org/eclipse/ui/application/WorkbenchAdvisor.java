@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.application.CompatibilityWorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -110,29 +111,37 @@ public abstract class WorkbenchAdvisor {
      * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
      * operation is not filling the action bars of an actual workbench window,
      * but rather a proxy (used for perspective customization).
+     * 
+     * @deprecated use {@link ActionBarAdvisor#FILL_PROXY instead}
      */
-    public static final int FILL_PROXY = 0x01;
+    public static final int FILL_PROXY = ActionBarAdvisor.FILL_PROXY;
 
     /**
      * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
      * operation is supposed to fill (or describe) the workbench window's menu
      * bar.
+     * 
+     * @deprecated use {@link ActionBarAdvisor#FILL_MENU_BAR instead}
      */
-    public static final int FILL_MENU_BAR = 0x02;
+    public static final int FILL_MENU_BAR = ActionBarAdvisor.FILL_MENU_BAR;
 
     /**
      * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
      * operation is supposed to fill (or describe) the workbench window's cool
      * bar.
+     * 
+     * @deprecated use {@link ActionBarAdvisor#FILL_COOL_BAR instead}
      */
-    public static final int FILL_COOL_BAR = 0x04;
+    public static final int FILL_COOL_BAR = ActionBarAdvisor.FILL_COOL_BAR;
 
     /**
      * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
      * operation is supposed to fill (or describe) the workbench window's status
      * line.
+     * 
+     * @deprecated use {@link ActionBarAdvisor#FILL_STATUS_LINE instead}
      */
-    public static final int FILL_STATUS_LINE = 0x08;
+    public static final int FILL_STATUS_LINE = ActionBarAdvisor.FILL_STATUS_LINE;
 
     /**
      * The workbench configurer.
@@ -326,6 +335,30 @@ public abstract class WorkbenchAdvisor {
     }
 
     /**
+     * EXPERIMENTAL -- May change before 3.1 ships.
+     * 
+     * Creates a new workbench window advisor for configuring a new workbench window
+     * via the given workbench window configurer.
+     * Clients should override to provide their own window configurer.
+     * This method replaces all the other window and action bar lifecycle methods 
+     * on the workbench advisor.
+     * <p>
+     * The default implementation creates a window advisor that calls back to the
+     * legacy window and action bar lifecycle methods on the workbench advisor,
+     * for backwards compatibility with 3.0.
+     * </p>
+     * 
+     * TODO: replace this with an extension point and a getDefaultWorkbenchWindowAdvisorId() method
+     * 
+     * @param configurer the workbench window configurer
+     * @return a new workbench window advisor
+     * @since 3.1
+     */
+    public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
+        return new CompatibilityWorkbenchWindowAdvisor(this, configurer);
+    }
+    
+    /**
      * Performs arbitrary actions before the given workbench window is
      * opened.
      * <p>
@@ -341,6 +374,9 @@ public abstract class WorkbenchAdvisor {
      * 
      * @param configurer an object for configuring the particular workbench
      * window being opened
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#preWindowOpen()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
         // do nothing
@@ -384,6 +420,10 @@ public abstract class WorkbenchAdvisor {
      * Note: suggest adding ActionBuilder as API, to encapsulate the action building outside 
      *   of the advisor, and to handle the common pattern of hanging onto the action builder
      *   in order to properly handle FILL_PROXY 
+     * 
+     * @deprecated since 3.1, override {@link ActionBarAdvisor#fillActionBars(int)} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
+     * @see WorkbenchWindowAdvisor#createActionBarAdvisor(IActionBarConfigurer)
      */
     public void fillActionBars(IWorkbenchWindow window,
             IActionBarConfigurer configurer, int flags) {
@@ -405,7 +445,9 @@ public abstract class WorkbenchAdvisor {
      * 
      * @param configurer an object for configuring the particular workbench
      *   window just restored
-     * Note: document checked exception
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#postWindowRestore()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void postWindowRestore(IWorkbenchWindowConfigurer configurer)
             throws WorkbenchException {
@@ -427,6 +469,9 @@ public abstract class WorkbenchAdvisor {
      * 
      * @param configurer configurer an object for configuring the particular workbench
      * window just created
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#openIntro()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void openIntro(IWorkbenchWindowConfigurer configurer) {
         if (introOpened)
@@ -464,6 +509,9 @@ public abstract class WorkbenchAdvisor {
      * 
      * @param configurer an object for configuring the particular workbench
      *   window just created
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#postWindowCreate()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void postWindowCreate(IWorkbenchWindowConfigurer configurer) {
         // do nothing
@@ -482,6 +530,9 @@ public abstract class WorkbenchAdvisor {
      * 
      * @param configurer an object for configuring the particular workbench
      *   window just opened
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#postWindowOpen()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
         // do nothing
@@ -507,6 +558,9 @@ public abstract class WorkbenchAdvisor {
      * @return <code>true</code> to allow the window to close, 
      * and <code>false</code> to prevent the window from closing
      * @see org.eclipse.ui.IWorkbenchWindow#close
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#preWindowShellClose()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
         // do nothing, but allow the close() to proceed
@@ -526,6 +580,9 @@ public abstract class WorkbenchAdvisor {
      * 
      * @param configurer an object for configuring the particular workbench
      *   window being closed
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#postWindowClose()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void postWindowClose(IWorkbenchWindowConfigurer configurer) {
         // do nothing
@@ -544,6 +601,9 @@ public abstract class WorkbenchAdvisor {
      * @param menuId the menu id
      * @return <code>true</code> for application menus, and <code>false</code>
      * for part-specific menus
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#isApplicationMenu(String)} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public boolean isApplicationMenu(IWorkbenchWindowConfigurer configurer,
             String menuId) {
@@ -552,7 +612,8 @@ public abstract class WorkbenchAdvisor {
     }
 
     /**
-     * Returns the default input for newly created workbench pages.
+     * Returns the default input for newly created workbench pages
+     * when the input is not explicitly specified.
      * <p>
      * The default implementation returns <code>null</code>.
      * Subclasses may override.
@@ -560,6 +621,9 @@ public abstract class WorkbenchAdvisor {
      * 
      * @return the default input for a new workbench window page, or
      * <code>null</code> if none
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#getDefaultPageInput()} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public IAdaptable getDefaultPageInput() {
         // default: no input
@@ -583,6 +647,9 @@ public abstract class WorkbenchAdvisor {
      */
     public abstract String getInitialWindowPerspectiveId();
 
+    // TODO see if getInitialWindowPerspectiveId() can be pushed
+    // to the window advisor (as getDefaultWindowPerspectiveId())
+    
     /**
      * Returns the id of the preference page that should be presented most
      * prominently.
@@ -598,6 +665,9 @@ public abstract class WorkbenchAdvisor {
         return null;
     }
 
+    // TODO see if getMainPreferencePageId() can be pushed
+    // to the window advisor    
+    
     /**
      * Creates the contents of the window.
      * <p>
@@ -617,6 +687,9 @@ public abstract class WorkbenchAdvisor {
      * @see IWorkbenchWindowConfigurer#createCoolBarControl
      * @see IWorkbenchWindowConfigurer#createStatusLineControl
      * @see IWorkbenchWindowConfigurer#createPageComposite
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#createWindowContents(Shell)} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public void createWindowContents(IWorkbenchWindowConfigurer configurer,
             Shell shell) {
@@ -659,6 +732,11 @@ public abstract class WorkbenchAdvisor {
 	 * @param parent the parent composite
 	 * @return the control or <code>null</code>
 	 * @since 3.1
+     * 
+     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#createEmptyWindowContents(Composite)} instead
+     * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
+     * 
+     * TODO: get rid of this before M6 since it was both introduced and deprecated in 3.1
 	 */
 	public Control createEmptyWindowContents(IWorkbenchWindowConfigurer configurer, Composite parent) {
 		return null;

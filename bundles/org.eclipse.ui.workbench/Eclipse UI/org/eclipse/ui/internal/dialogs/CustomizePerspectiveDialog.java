@@ -79,6 +79,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.AbstractActionBarConfigurer;
@@ -366,24 +367,32 @@ public class CustomizePerspectiveDialog extends Dialog {
 
     public class CustomizeActionBars extends AbstractActionBarConfigurer
             implements IActionBars2 {
+        
+        IWorkbenchWindowConfigurer configurer;
+        
         /**
          * Fake action bars to use to build the menus and toolbar contributions for the
          * workbench.  We cannot use the actual workbench action bars, since doing so would
          * make the action set items visible.  
          */
         MenuManager menuManager;
-
         CoolBarManager coolBarManager;
 
-        public CustomizeActionBars() {
-        }
-
-        public CustomizeActionBars(MenuManager menuManager,
+        public CustomizeActionBars(IWorkbenchWindowConfigurer configurer, MenuManager menuManager,
                 CoolBarManager coolBarManager) {
+            this.configurer = configurer;
             this.menuManager = menuManager;
             this.coolBarManager = coolBarManager;
         }
 
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.application.IActionBarConfigurer#getWindowConfigurer()
+         */
+        public IWorkbenchWindowConfigurer getWindowConfigurer() {
+            return configurer;
+        }
+        
         /*
          *  (non-Javadoc)
          * @see org.eclipse.ui.application.IActionBarConfigurer#getMenuManager()
@@ -808,15 +817,15 @@ public class CustomizePerspectiveDialog extends Dialog {
         }
     }
 
-    public CustomizePerspectiveDialog(Shell parentShell, Perspective persp) {
-        super(parentShell);
+    public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer, Perspective persp) {
+        super(configurer.getWindow().getShell());
         perspective = persp;
         // @issue should pass in the parent window, not use getActiveWorkbenchWindow()
         window = (WorkbenchWindow) PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
 
         // build a structure for the menuitems and toolitems that the workbench contributes
-        customizeWorkbenchActionBars = new CustomizeActionBars(
+        customizeWorkbenchActionBars = new CustomizeActionBars(configurer, 
                 new MenuManager(), new CoolBarManager());
 
         // Fill current actionBars in the "fake" workbench actionbars

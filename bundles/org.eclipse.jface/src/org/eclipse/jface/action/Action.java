@@ -195,6 +195,20 @@ public abstract class Action implements IAction {
     }
 
     /**
+     * Creates a new action with the given unique identifier and text.
+     *
+     * @param id the unique identifier for this action
+     * @param text the string used as the text for the action, 
+     *   or <code>null</code> if there is no text
+     * 
+     * @since 3.1
+     */
+    protected Action(String id, String text) {
+        this(text);
+        setId(id);
+    }
+    
+    /**
      * Creates a new action with the given text and image.
      * Calls the zero-arg constructor, then <code>setText</code> and <code>setImageDescriptor</code>.
      *
@@ -234,6 +248,23 @@ public abstract class Action implements IAction {
         }
     }
 
+    /**
+     * Creates a new action with the given unique identifier, text, and style.
+     *
+     * @param id the unique identifier for this action
+     * @param text the string used as the text for the action, 
+     *   or <code>null</code> if there is no text
+     * @param style one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
+     *      <code>AS_DROP_DOWN_MENU</code>, <code>AS_RADIO_BUTTON</code>, and
+     *      <code>AS_UNSPECIFIED</code>.
+     * 
+     * @since 3.1
+     */
+    protected Action(String id, String text, int style) {
+        this(text, style);
+        setId(id);
+    }
+    
     /* (non-Javadoc)
      * Method declared on IAction.
      */

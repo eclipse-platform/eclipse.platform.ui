@@ -30,6 +30,17 @@ import org.eclipse.jface.action.IStatusLineManager;
  * @since 3.0
  */
 public interface IActionBarConfigurer {
+    
+    /**
+     * Returns the workbench window configurer for the window
+     * containing this configurer's action bars. 
+     * 
+     * @return the workbench window configurer
+     * @since 3.1
+     */
+    public IWorkbenchWindowConfigurer getWindowConfigurer();
+    
+    
     /**
      * Returns the menu manager for the main menu bar of a workbench window.
      * 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
-import org.eclipse.ui.application.WorkbenchAdvisor;
 
 /**
  * Builds the actions and populates the menubar and toolbar when a new window
@@ -42,40 +42,25 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * retargetable actions, for which the <code>BrowserView</code> registers 
  * handling actions.
  * 
- * @since 3.0
+ * @since 3.1
  */
-public class BrowserActionBuilder {
+public class BrowserActionBarAdvisor extends ActionBarAdvisor {
 
-	private IWorkbenchWindow window;
-	private ActionFactory.IWorkbenchAction newWindowAction, quitAction, aboutAction;
-	private RetargetAction backAction, forwardAction, stopAction, refreshAction;
-    private IAction historyAction;
-    private IAction newTabAction;
+	private IAction newWindowAction, newTabAction, quitAction, historyAction, aboutAction;
+    private RetargetAction backAction, forwardAction, stopAction, refreshAction; 
 
-	public BrowserActionBuilder(IWorkbenchWindow window) {
-		this.window = window;
+    public BrowserActionBarAdvisor(IActionBarConfigurer configurer) {
+        super(configurer);
 	}
-
-	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
-		if ((flags & WorkbenchAdvisor.FILL_PROXY) == 0) {
-			makeActions(configurer);
-		}
-		if ((flags & WorkbenchAdvisor.FILL_MENU_BAR) != 0) {
-			fillMenuBar(configurer.getMenuManager());
-		}
-		if ((flags & WorkbenchAdvisor.FILL_COOL_BAR) != 0) {
-			fillCoolBar(configurer.getCoolBarManager());
-		}
-	}
-	
-	private void makeActions(IActionBarConfigurer configurer) {
-		ISharedImages images = window.getWorkbench().getSharedImages();
+    
+	protected void makeActions(final IWorkbenchWindow window) {
+        ISharedImages images = window.getWorkbench().getSharedImages();
 		
 		newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
-		newWindowAction.setText("&New Window");
-		configurer.registerGlobalAction(newWindowAction);
+        newWindowAction.setText("&New Window");
+        register(newWindowAction);
 		
-		newTabAction = new Action("New &Tab") {
+		newTabAction = new Action("newTab", "New &Tab") { //$NON-NLS-1$
 		    int counter = 0;
 		    { setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "newTab"); } //$NON-NLS-1$
             public void run() {
@@ -90,38 +75,38 @@ public class BrowserActionBuilder {
                 }
             }
 		};
-		configurer.registerGlobalAction(newTabAction);
+        register(newTabAction);
 		
 		quitAction = ActionFactory.QUIT.create(window);
-		configurer.registerGlobalAction(quitAction);
+        register(quitAction);
 		
-		backAction = new RetargetAction("back", "&Back");  //$NON-NLS-1$
-		backAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "back"); //$NON-NLS-1$
+        backAction = new RetargetAction("back", "&Back");
+        backAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "back"); //$NON-NLS-1$
 		backAction.setToolTipText("Back");
 		backAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
 		window.getPartService().addPartListener(backAction);
-		configurer.registerGlobalAction(backAction);
+        register(backAction);
 		
-		forwardAction = new RetargetAction("forward", "&Forward");  //$NON-NLS-1$
-		forwardAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "forward"); //$NON-NLS-1$
+        forwardAction = new RetargetAction("forward", "&Forward");
+        forwardAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "forward"); //$NON-NLS-1$
 		forwardAction.setToolTipText("Forward");
 		forwardAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 		window.getPartService().addPartListener(forwardAction);
-		configurer.registerGlobalAction(forwardAction);
+		register(forwardAction);
 		
-		stopAction = new RetargetAction("stop", "Sto&p");  //$NON-NLS-1$
-		stopAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "stop"); //$NON-NLS-1$
+		stopAction = new RetargetAction("stop", "Sto&p");
+        stopAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "stop"); //$NON-NLS-1$
 		stopAction.setToolTipText("Stop");
 		window.getPartService().addPartListener(stopAction);
-		configurer.registerGlobalAction(stopAction);
+		register(stopAction);
 		
-		refreshAction = new RetargetAction("refresh", "&Refresh");  //$NON-NLS-1$
-		refreshAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "refresh"); //$NON-NLS-1$
+		refreshAction = new RetargetAction("refresh", "&Refresh");
+        refreshAction.setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "refresh"); //$NON-NLS-1$
 		refreshAction.setToolTipText("Refresh");
 		window.getPartService().addPartListener(refreshAction);
-		configurer.registerGlobalAction(refreshAction);
+		register(refreshAction);
 		
-		historyAction = new Action("History", IAction.AS_CHECK_BOX) {
+		historyAction = new Action("history", "History", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 		    { setActionDefinitionId(IBrowserConstants.COMMAND_PREFIX + "history"); } //$NON-NLS-1$
 		    public void run() {
 		        try {
@@ -142,37 +127,37 @@ public class BrowserActionBuilder {
                 }
 		    }
 		};
-		configurer.registerGlobalAction(historyAction);
+        register(historyAction);
 
 		aboutAction = ActionFactory.ABOUT.create(window);
-		configurer.registerGlobalAction(aboutAction);
+        register(aboutAction);
 	}
 
-	public void fillMenuBar(IMenuManager menuBar) {
+	protected void fillMenuBar(IMenuManager menuBar) {
 		IMenuManager fileMenu = new MenuManager("&File", "file");  //$NON-NLS-2$
 		menuBar.add(fileMenu);
-		fileMenu.add(newWindowAction);
-		fileMenu.add(newTabAction);
+        fileMenu.add(newWindowAction);
+        fileMenu.add(newTabAction);
 		fileMenu.add(new Separator());
-		fileMenu.add(quitAction);
+        fileMenu.add(quitAction);
 		
 		IMenuManager viewMenu = new MenuManager("&View", "view");  //$NON-NLS-2$
 		menuBar.add(viewMenu);
-		viewMenu.add(backAction);
-		viewMenu.add(forwardAction);
-		viewMenu.add(stopAction);
-		viewMenu.add(refreshAction);
+        viewMenu.add(backAction);
+        viewMenu.add(forwardAction);
+        viewMenu.add(stopAction);
+        viewMenu.add(refreshAction);
 		viewMenu.add(new Separator("views")); //$NON-NLS-1$
-		viewMenu.add(historyAction);
+        viewMenu.add(historyAction);
 
 		IMenuManager helpMenu = new MenuManager("&Help", "help");  //$NON-NLS-2$
 		menuBar.add(helpMenu);
-		helpMenu.add(aboutAction);
+        helpMenu.add(aboutAction);
 	}
 
-	public void fillCoolBar(ICoolBarManager coolBar) {
+	protected void fillCoolBar(ICoolBarManager coolBar) {
 		IToolBarManager toolBar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-		coolBar.add(new ToolBarContributionItem(toolBar, "standard"));
+		coolBar.add(new ToolBarContributionItem(toolBar, "standard")); //$NON-NLS-1$
 		
 		// For the Back and Forward actions, force their text to be shown on the toolbar,
 		// not just their image.  For the remaining actions, the ActionContributionItem
@@ -184,14 +169,8 @@ public class BrowserActionBuilder {
 		ActionContributionItem forwardCI = new ActionContributionItem(forwardAction);
 		forwardCI.setMode(ActionContributionItem.MODE_FORCE_TEXT);
 		toolBar.add(forwardCI);
-		
-		toolBar.add(stopAction);
-		toolBar.add(refreshAction);
-	}
-	
-	public void dispose() {
-	    newWindowAction.dispose();
-	    quitAction.dispose();
-	    aboutAction.dispose();
+
+        toolBar.add(stopAction);
+        toolBar.add(refreshAction);
 	}
 }

@@ -74,8 +74,10 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
@@ -83,6 +85,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
@@ -105,6 +108,10 @@ import org.eclipse.ui.internal.util.PrefUtil;
 public class WorkbenchWindow extends ApplicationWindow implements
         IWorkbenchWindow {
 
+    private WorkbenchWindowAdvisor windowAdvisor;
+    
+    private ActionBarAdvisor actionBarAdvisor;
+    
     private int number;
 
     private PageList pageList = new PageList();
@@ -246,9 +253,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * 
      * @since 3.0
      */
-    private static final int FILL_ALL_ACTION_BARS = WorkbenchAdvisor.FILL_MENU_BAR
-            | WorkbenchAdvisor.FILL_COOL_BAR
-            | WorkbenchAdvisor.FILL_STATUS_LINE;
+    private static final int FILL_ALL_ACTION_BARS = ActionBarAdvisor.FILL_MENU_BAR
+            | ActionBarAdvisor.FILL_COOL_BAR
+            | ActionBarAdvisor.FILL_STATUS_LINE;
 
     /**
      * Creates and initializes a new workbench window.
@@ -270,15 +277,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
         actionPresentation = new ActionPresentation(this);
 
-        // let the application do further configuration
-        getAdvisor().preWindowOpen(getWindowConfigurer());
+        fireWindowOpening();
 
         // set the shell style
         setShellStyle(getWindowConfigurer().getShellStyle());
 
         // Fill the action bars
-        fillActionBars(getWindowConfigurer().getActionBarConfigurer(),
-                FILL_ALL_ACTION_BARS);
+        fillActionBars(FILL_ALL_ACTION_BARS);
     }
 
     /**
@@ -582,11 +587,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
     	if (getPages().length == 0) {
     		showEmptyWindowContents();
     	}
-        getAdvisor().postWindowCreate(getWindowConfigurer());
-        getAdvisor().openIntro(getWindowConfigurer());
+        fireWindowCreated();
+        getWindowAdvisor().openIntro();
         int result = super.open();
-        getWorkbenchImpl().fireWindowOpened(this);
-        getAdvisor().postWindowOpen(getWindowConfigurer());
+        fireWindowOpened();
         if (perspectiveSwitcher != null) {
             perspectiveSwitcher.updatePerspectiveBar();
             perspectiveSwitcher.updateBarParent();
@@ -601,8 +605,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
         if (!super.canHandleShellCloseEvent()) {
             return false;
         }
-        // let the advisor veto the user's explicit request to close the window
-        return getAdvisor().preWindowShellClose(getWindowConfigurer());
+        // let the advisor or other interested parties
+        // veto the user's explicit request to close the window
+        return fireWindowShellClosing();
     }
 
     /**
@@ -704,7 +709,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     private void showEmptyWindowContents() {
         if (!emptyWindowContentsCreated) {
             Composite parent = getPageComposite();
-	        emptyWindowContents = getAdvisor().createEmptyWindowContents(getWindowConfigurer(), parent);
+	        emptyWindowContents = getWindowAdvisor().createEmptyWindowContents(parent);
 	        emptyWindowContentsCreated = true;
             // force the empty window composite to be layed out
             parent.layout();
@@ -770,8 +775,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     protected Control createContents(Composite parent) {
         // we know from Window.create that the parent is a Shell.
-        getAdvisor()
-                .createWindowContents(getWindowConfigurer(), (Shell) parent);
+        getWindowAdvisor().createWindowContents((Shell) parent);
         // the page composite must be set by createWindowContents
         Assert
                 .isNotNull(pageComposite,
@@ -874,6 +878,74 @@ public class WorkbenchWindow extends ApplicationWindow implements
     public void setPerspectiveBarLocation(String location) {
         if (perspectiveSwitcher != null)
             perspectiveSwitcher.setPerspectiveBarLocation(location);
+    }
+
+    /**
+     * Notifies interested parties (namely the advisor)
+     * that the window is about to be opened.
+     * 
+     * @since 3.1
+     */
+    private void fireWindowOpening() {
+        // let the application do further configuration
+        getWindowAdvisor().preWindowOpen();
+    }
+
+    /**
+     * Notifies interested parties (namely the advisor) that the
+     * window has been restored from a previously saved state.
+     * 
+     * @throws WorkbenchException passed through from the advisor
+     * @since 3.1
+     */
+    void fireWindowRestored() throws WorkbenchException {
+        getWindowAdvisor().postWindowRestore();
+    }
+
+    /**
+     * Notifies interested parties (namely the advisor)
+     * that the window has been created.
+     * 
+     * @since 3.1
+     */
+    private void fireWindowCreated() {
+        getWindowAdvisor().postWindowCreate();
+    }
+
+    /**
+     * Notifies interested parties (namely the advisor and the
+     * window listeners) that the window has been opened.
+     * 
+     * @since 3.1
+     */
+    private void fireWindowOpened() {
+        getWorkbenchImpl().fireWindowOpened(this);
+        getWindowAdvisor().postWindowOpen();
+    }
+
+    /**
+     * Notifies interested parties (namely the advisor)
+     * that the window's shell is closing.  Allows
+     * the close to be vetoed.
+     * 
+     * @return <code>true</code> if the close should proceed,
+     *   <code>false</code> if it should be canceled
+     * @since 3.1
+     */
+    private boolean fireWindowShellClosing() {
+        return getWindowAdvisor().preWindowShellClose();
+    }
+
+    /**
+     * Notifies interested parties (namely the advisor and the
+     * window listeners) that the window has been closed.
+     * 
+     * @since 3.1
+     */
+    private void fireWindowClosed() {
+        // let the application do further deconfiguration
+        getWindowAdvisor().postWindowClose();
+        getWorkbenchImpl().fireWindowClosed(this);
     }
 
     /**
@@ -1230,10 +1302,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
             contextSupport.unregisterShell(getShell());
 
             closeAllPages();
-            // let the application do further deconfiguration
-            getAdvisor().postWindowClose(getWindowConfigurer());
-            getWorkbenchImpl().fireWindowClosed(this);
+            
+            fireWindowClosed();
 
+            getActionBarAdvisor().dispose();
+            getWindowAdvisor().dispose();
+            
             // Null out the progress region.  Bug 64024.
             progressRegion = null;
         } finally {
@@ -1247,7 +1321,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      */
     public boolean isApplicationMenu(String menuID) {
         // delegate this question to the workbench advisor
-        return getAdvisor().isApplicationMenu(getWindowConfigurer(), menuID);
+        return getWindowAdvisor().isApplicationMenu(menuID);
     }
 
     /**
@@ -1655,7 +1729,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                         .getDefaultPerspective();
                 if (defPerspID != null) {
 	                WorkbenchPage newPage = new WorkbenchPage(this, defPerspID,
-	                        getAdvisor().getDefaultPageInput());
+	                        getDefaultPageInput());
 	                pageList.add(newPage);
 	                firePageOpened(newPage);
                 }
@@ -2497,6 +2571,44 @@ public class WorkbenchWindow extends ApplicationWindow implements
         return getWorkbenchImpl().getAdvisor();
     }
 
+    /**
+     * Returns the window advisor, creating a new one for this
+     * window if needed.
+     * <p>
+     * IMPORTANT This method is declared private to prevent regular
+     * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
+     * hold of the window advisor that would allow them to tamper with the
+     * window. The window advisor is internal to the application.
+     * </p>
+     */
+    private/* private - DO NOT CHANGE */
+    WorkbenchWindowAdvisor getWindowAdvisor() {
+        if (windowAdvisor == null) {
+            windowAdvisor = getAdvisor().createWorkbenchWindowAdvisor(getWindowConfigurer());
+            Assert.isNotNull(windowAdvisor);
+        }
+        return windowAdvisor;
+    }
+
+    /**
+     * Returns the action bar advisor, creating a new one for this
+     * window if needed.
+     * <p>
+     * IMPORTANT This method is declared private to prevent regular
+     * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
+     * hold of the action bar advisor that would allow them to tamper with the
+     * window's action bars. The action bar advisor is internal to the application.
+     * </p>
+     */
+    private/* private - DO NOT CHANGE */
+    ActionBarAdvisor getActionBarAdvisor() {
+        if (actionBarAdvisor == null) {
+            actionBarAdvisor = getWindowAdvisor().createActionBarAdvisor(getWindowConfigurer().getActionBarConfigurer());
+            Assert.isNotNull(actionBarAdvisor);
+        }
+        return actionBarAdvisor;
+    }
+
     /*
      * Returns the IWorkbench implementation.
      */
@@ -2505,19 +2617,34 @@ public class WorkbenchWindow extends ApplicationWindow implements
     }
 
     /**
-     * Creates a clone copy of the current action bars
-     * @param configurer location of managers
-     * @param flags indicate which actions to load and whether its a proxy fill
+     * Fills the window's real action bars.
+     * 
+     * @param flags indicate which bars to fill
      */
-    public void fillActionBars(IActionBarConfigurer configurer, int flags) {
+    public void fillActionBars(int flags) {
         Workbench workbench = getWorkbenchImpl();
         workbench.largeUpdateStart();
         try {
-
-            getAdvisor().fillActionBars(this, configurer, flags);
-
+            getActionBarAdvisor().fillActionBars(flags);
         } finally {
             workbench.largeUpdateEnd();
+        }
+    }
+
+    /**
+     * Fills the window's proxy action bars.
+     * 
+     * @param proxyBars the proxy configurer
+     * @param flags indicate which bars to fill
+     */
+    public void fillActionBars(IActionBarConfigurer proxyBars, int flags) {
+        Assert.isNotNull(proxyBars);
+        WorkbenchWindowConfigurer.WindowActionBarConfigurer wab = (WorkbenchWindowConfigurer.WindowActionBarConfigurer) getWindowConfigurer().getActionBarConfigurer();
+        wab.setProxy(proxyBars);
+        try {
+            getActionBarAdvisor().fillActionBars(flags | ActionBarAdvisor.FILL_PROXY);
+        } finally {
+            wab.setProxy(null);
         }
     }
 
@@ -2844,4 +2971,26 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		return tracker ;
 	}
+
+    /**
+     * Creates the perspective customization dialog.
+     * 
+     * @return a new perspective customization dialog
+     * @since 3.1
+     */
+    public CustomizePerspectiveDialog createCustomizePerspectiveDialog(Perspective persp) {
+        return new CustomizePerspectiveDialog(getWindowConfigurer(), persp);
+    }
+
+    /**
+     * Returns the default page input for workbench pages
+     * opened in this window.
+     * 
+     * @return the default page input or <code>null</code> if none
+     * @since 3.1
+     */
+    IAdaptable getDefaultPageInput() {
+        return getWorkbenchImpl().getDefaultPageInput();
+    }
+
 }

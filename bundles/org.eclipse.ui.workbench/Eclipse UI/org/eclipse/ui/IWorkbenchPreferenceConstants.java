@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 
 /**
  * Preference ids exposed by the Eclipse Platform User Interface.
@@ -217,7 +216,7 @@ public interface IWorkbenchPreferenceConstants {
      * The default value for this preference is: <code>true</code> (show intro)
      * </p> 
      * 
-     * @see org.eclipse.ui.application.WorkbenchAdvisor#openIntro(IWorkbenchWindowConfigurer)
+     * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#openIntro()
      * @since 3.0
      */
     public static final String SHOW_INTRO = "showIntro"; //$NON-NLS-1$
@@ -308,6 +307,8 @@ public interface IWorkbenchPreferenceConstants {
 	 * <p>
 	 * The default value for this preference is <code>true</code>.
 	 * </p>
+     * 
+     * @since 3.1
 	 */
 	public static final String SHOW_WORKSPACE_SELECTION_DIALOG = "SHOW_WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
 
@@ -316,6 +317,8 @@ public interface IWorkbenchPreferenceConstants {
 	 * Stores the maximum number of workspaces that should be displayed in the
 	 * ChooseWorkspaceDialog.
 	 * </p>
+     * 
+     * @since 3.1
 	 */
 	public static final String MAX_RECENT_WORKSPACES = "MAX_RECENT_WORKSPACES"; //$NON-NLS-1$
 
@@ -323,6 +326,8 @@ public interface IWorkbenchPreferenceConstants {
 	 * <p>
 	 * Stores a comma separated list of the recently used workspace paths.
 	 * </p>
+     * 
+     * @since 3.1
 	 */
 	public static final String RECENT_WORKSPACES = "RECENT_WORKSPACES"; //$NON-NLS-1$
 
@@ -330,12 +335,16 @@ public interface IWorkbenchPreferenceConstants {
 	 * <p>
 	 * Stores the version of the protocol used to decode/encode the list of recent workspaces.
 	 * </p>
+     * 
+     * @since 3.1
 	 */
 	public static final String RECENT_WORKSPACES_PROTOCOL = "RECENT_WORKSPACES_PROTOCOL"; //$NON-NLS-1$
 	
 	/**
 	 * <p> Stores whether or not system jobs are being
 	 * shown</p>.
+     * 
+     * @since 3.1
 	 */
 	public static final String SHOW_SYSTEM_JOBS = "SHOW_SYSTEM_JOBS";//$NON-NLS-1$
 }

@@ -140,6 +140,24 @@ public final class WorkbenchWindowConfigurer implements
      */
     class WindowActionBarConfigurer extends AbstractActionBarConfigurer {
 
+        private IActionBarConfigurer proxy;
+        
+        /**
+         * Sets the proxy to use, or <code>null</code> for none.
+         * 
+         * @param proxy the proxy
+         */
+        public void setProxy(IActionBarConfigurer proxy) {
+            this.proxy = proxy;
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.application.IActionBarConfigurer#getWindowConfigurer()
+         */
+        public IWorkbenchWindowConfigurer getWindowConfigurer() {
+            return window.getWindowConfigurer();
+        }
+        
         /**
          * Returns whether the given id is for a cool item.
          * 
@@ -162,6 +180,9 @@ public final class WorkbenchWindowConfigurer implements
          * @see org.eclipse.ui.application.IActionBarConfigurer
          */
         public IStatusLineManager getStatusLineManager() {
+            if (proxy != null) {
+                return proxy.getStatusLineManager();
+            }
             return window.getStatusLineManager();
         }
 
@@ -169,6 +190,9 @@ public final class WorkbenchWindowConfigurer implements
          * @see org.eclipse.ui.application.IActionBarConfigurer
          */
         public IMenuManager getMenuManager() {
+            if (proxy != null) {
+                return proxy.getMenuManager();
+            }
             return window.getMenuManager();
         }
 
@@ -176,6 +200,9 @@ public final class WorkbenchWindowConfigurer implements
          * @see org.eclipse.ui.internal.AbstractActionBarConfigurer
          */
         public ICoolBarManager getCoolBarManager() {
+            if (proxy != null) {
+                return proxy.getCoolBarManager();
+            }
             return window.getCoolBarManager();
         }
 
@@ -183,6 +210,9 @@ public final class WorkbenchWindowConfigurer implements
          * @see org.eclipse.ui.application.IActionBarConfigurer
          */
         public void registerGlobalAction(IAction action) {
+            if (proxy != null) {
+                proxy.registerGlobalAction(action);
+            }
             window.registerGlobalAction(action);
         }
     }

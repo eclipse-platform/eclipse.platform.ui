@@ -1423,8 +1423,7 @@ public final class Workbench implements IWorkbench {
             try {
                 result.merge(newWindow.restoreState(childMem, null));
                 try {
-                    getAdvisor().postWindowRestore(
-                            newWindow.getWindowConfigurer());
+                    newWindow.fireWindowRestored();
                 } catch (WorkbenchException e) {
                     result.add(e.getStatus());
                 }
