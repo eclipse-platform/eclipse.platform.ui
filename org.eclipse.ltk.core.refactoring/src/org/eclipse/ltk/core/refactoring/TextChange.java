@@ -611,6 +611,16 @@ public abstract class TextChange extends Change {
 		IRegion currentRegion= getRegion(changeGroups);
 		Assert.isTrue(region.getOffset() <= currentRegion.getOffset() && 
 			currentRegion.getOffset() + currentRegion.getLength() <= region.getOffset() + region.getLength());
+		// Make sure that all edits in the change groups are rooted under the edit the text change stand for.
+		TextEdit root= getEdit();
+		Assert.isNotNull(root, "No root edit"); //$NON-NLS-1$
+		for (int c= 0; c < changeGroups.length; c++) {
+			TextEditChangeGroup group= changeGroups[c];
+			TextEdit[] edits= group.getTextEdits();
+			for (int e= 0; e < edits.length; e++) {
+				Assert.isTrue(root == edits[e].getRoot(), "Wrong root edit"); //$NON-NLS-1$
+			}
+		}
 		PreviewAndRegion result= getPreviewDocument(changeGroups, pm);
 		int delta;
 		if (result.region == null) {	// all edits were delete edits so no new region
