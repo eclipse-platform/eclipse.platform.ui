@@ -85,7 +85,7 @@ public class EmbeddedBrowserDialog {
 				int dy=y+(h-dh)/2;
 				dx+=10;
 				if(dy>30) dy-=30;
-				EmbeddedBrowserDialog workingSetManagerDialog =
+				EmbeddedBrowserDialog workingSetDialog =
 				new EmbeddedBrowserDialog(
 						shell,
 						windowTitle,
@@ -94,7 +94,7 @@ public class EmbeddedBrowserDialog {
 						dy,
 						dw,
 						dh);
-				event.browser = workingSetManagerDialog.getBrowser();
+				event.browser = workingSetDialog.getBrowser();
 
 			}
 		});
