@@ -12,6 +12,7 @@ Contributors:
 package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -646,13 +647,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 		labelKeySequencesForCommand = new Label(compositeAssignmentRight, SWT.LEFT);
 		labelKeySequencesForCommand.setFont(compositeAssignmentRight.getFont());
-		labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand")); //$NON-NLS-1$
+		labelKeySequencesForCommand.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand.noSelection")); //$NON-NLS-1$
 
 		tableKeySequencesForCommand = new Table(compositeAssignmentRight, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableKeySequencesForCommand.setFont(compositeAssignmentRight.getFont());
 		tableKeySequencesForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 75;
+		gridData.heightHint = 90;
 		gridData.widthHint = 390;	
 		tableKeySequencesForCommand.setLayoutData(gridData);
 
@@ -748,13 +750,14 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		
 		labelCommandsForKeySequence = new Label(compositeAssignmentRight, SWT.LEFT);
 		labelCommandsForKeySequence.setFont(compositeAssignmentRight.getFont());
-		labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence")); //$NON-NLS-1$
+		labelCommandsForKeySequence.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence.noSelection")); //$NON-NLS-1$
 
 		tableCommandsForKeySequence = new Table(compositeAssignmentRight, SWT.BORDER | SWT.H_SCROLL | SWT.HIDE_SELECTION | SWT.V_SCROLL);
 		tableCommandsForKeySequence.setFont(compositeAssignmentRight.getFont());
 		tableCommandsForKeySequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 75;
+		gridData.heightHint = 60;
 		gridData.widthHint = 390;	
 		tableCommandsForKeySequence.setLayoutData(gridData);
 
@@ -1023,15 +1026,17 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void update() {
-		boolean commandSelected = false;
+		Command command = null;
 		ISelection selection = treeViewerCommands.getSelection();
 		
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object object = ((IStructuredSelection) selection).getFirstElement();
 						
 			if (object instanceof Command)
-				commandSelected = true;
+				command = (Command) object;
 		}
+
+		boolean commandSelected = command != null;
 
 		KeySequence keySequence = getKeySequence();
 		boolean validKeySequence = keySequence != null && !keySequence.getKeyStrokes().isEmpty();
@@ -1040,23 +1045,41 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 		String keyConfigurationId = getKeyConfigurationId();
 		boolean validKeyConfigurationId = keyConfigurationId != null && keyConfigurationsById.get(keyConfigurationId) != null;
 
+		labelKeySequencesForCommand.setEnabled(commandSelected);
 		tableKeySequencesForCommand.setEnabled(commandSelected);
+		labelKeySequence.setEnabled(commandSelected);		
 		comboKeySequence.setEnabled(commandSelected);
+		labelScope.setEnabled(commandSelected);		
 		comboScope.setEnabled(commandSelected);
+		labelKeyConfiguration.setEnabled(commandSelected);	
 		comboKeyConfiguration.setEnabled(commandSelected);	
 		buttonChange.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);		
-		tableCommandsForKeySequence.setEnabled(commandSelected && validKeySequence && validScopeId && validKeyConfigurationId);		
+		labelCommandsForKeySequence.setEnabled(validKeySequence);		
+		tableCommandsForKeySequence.setEnabled(validKeySequence);		
 
+		if (commandSelected) {
+			String text = MessageFormat.format(Util.getString(resourceBundle, "labelKeySequencesForCommand.selection"), new Object[] { command.getName() }); //$NON-NLS-1$
+			labelKeySequencesForCommand.setText(text);		
+		} else 
+			labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand.noSelection")); //$NON-NLS-1$
+		
 		CommandRecord commandRecord = getSelectedCommandRecord();
 		
 		if (commandRecord == null)
-			buttonChange.setText(Util.getString(resourceBundle, "buttonChange.add"));			 
+			buttonChange.setText(Util.getString(resourceBundle, "buttonChange.add")); //$NON-NLS-1$			 
 		else {
 			if (!commandRecord.customSet.isEmpty() && !commandRecord.defaultSet.isEmpty()) {
-				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.restore"));
+				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.restore")); //$NON-NLS-1$
 			} else
-				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.remove"));			 
+				buttonChange.setText(Util.getString(resourceBundle, "buttonChange.remove")); //$NON-NLS-1$			 
 		}
+
+		// TODO: MessageFormat is acting wacky
+		//if (validKeySequence) {
+		//	String text = MessageFormat.format(Util.getString(resourceBundle, "labelCommandsForKeySequence.selection"), new Object[] { keySequence.toString() }); //$NON-NLS-1$
+		//	labelCommandsForKeySequence.setText(text);
+		//} else 
+			labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence.noSelection")); //$NON-NLS-1$
 	}
 
 	private void buildCommandRecords(SortedMap tree, String commandId, List commandRecords) {
