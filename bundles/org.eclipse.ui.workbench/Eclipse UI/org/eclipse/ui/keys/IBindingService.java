@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.keys;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -141,4 +142,34 @@ public interface IBindingService extends IService {
 	 *         bindings; <code>false</code> otherwise.
 	 */
 	public boolean isPerfectMatch(TriggerSequence trigger);
+
+	/**
+	 * <p>
+	 * Writes the given active scheme and bindings to the preference store. Only
+	 * the bindings that are of the <code>Binding.USER</code> type will be
+	 * written; the others will be ignored. This should only be used by
+	 * applications trying to persist user preferences. If you are trying to
+	 * change the active scheme as an RCP application, then you should be using
+	 * the <code>plugin_customization.ini</code> file. If you are trying to
+	 * switch between groups of bindings dynamically, you should be using
+	 * contexts.
+	 * </p>
+	 * <p>
+	 * This method also updates the active scheme and bindings in the system to
+	 * match those written to the preference store.
+	 * </p>
+	 * 
+	 * @param activeScheme
+	 *            The scheme which should be persisted; may be <code>null</code>.
+	 * @param bindings
+	 *            The bindings which should be persisted; may be
+	 *            <code>null</code>.
+	 * @throws IOException
+	 *             If something goes wrong while writing to the preference
+	 *             store.
+	 * @see org.eclipse.ui.IWorkbenchPreferenceConstants
+	 * @see org.eclipse.ui.contexts.IContextService
+	 */
+	public void savePreferences(Scheme activeScheme, Set bindings)
+			throws IOException;
 }

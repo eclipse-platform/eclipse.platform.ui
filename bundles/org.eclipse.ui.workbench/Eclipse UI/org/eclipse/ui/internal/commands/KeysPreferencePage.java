@@ -34,7 +34,9 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -43,6 +45,7 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -57,7 +60,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -84,8 +86,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -194,14 +196,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 		}
 	}
 
-	private final static int DIFFERENCE_ADD = 0;
-
-	private final static int DIFFERENCE_CHANGE = 1;
-
-	private final static int DIFFERENCE_MINUS = 2;
-
-	private final static int DIFFERENCE_NONE = 3;
-
 	/**
 	 * The image associate with a binding that exists as part of the system
 	 * definition.
@@ -212,16 +206,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * The image associated with a binding changed by the user.
 	 */
 	private final static Image IMAGE_CHANGE = ImageFactory.getImage("change"); //$NON-NLS-1$
-
-	/**
-	 * The image associated with a binding removed by the user.
-	 */
-	private final static Image IMAGE_MINUS = ImageFactory.getImage("minus"); //$NON-NLS-1$
-
-	/**
-	 * The image associated with a binding added by the user.
-	 */
-	private final static Image IMAGE_PLUS = ImageFactory.getImage("plus"); //$NON-NLS-1$
 
 	/**
 	 * The data key at which the <code>Binding</code> instance for a table
@@ -410,9 +394,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 	/**
 	 * The workbench's help system. This is used to register the page with the
 	 * help system.
+	 * 
+	 * TODO Add a help context
 	 */
-	private IWorkbenchHelpSystem helpSystem;
-
+	// private IWorkbenchHelpSystem helpSystem;
 	/**
 	 * This is the label next to the table showing the bindings matching a
 	 * particular command. The label is disabled if there isn't a selected
@@ -451,12 +436,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 */
 	private final BindingManager localChangeManager = new BindingManager(
 			new ContextManager());
-
-	/**
-	 * The colour associated with table entries that represent bindings removed
-	 * by the user.
-	 */
-	private Color minusColour;
 
 	/**
 	 * A map of all the scheme identifiers indexed by the names that appear in
@@ -519,10 +498,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private KeySequenceText textTriggerSequenceManager;
 
 	protected final Control createContents(final Composite parent) {
-		// Initialize the minus colour.
-		minusColour = getShell().getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_NORMAL_SHADOW);
-
 		tabFolder = new TabFolder(parent, SWT.NULL);
 
 		// View tab
@@ -547,8 +522,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 		// TODO Make this actually do something (i.e., define the help context)
 		// Link a help context to this preference page.
-		//helpSystem.setHelp(parent,
-		//		IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
+		// helpSystem.setHelp(parent,
+		// IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
 
 		return tabFolder;
 	}
@@ -585,7 +560,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 		comboScheme.addSelectionListener(new SelectionAdapter() {
 			public final void widgetSelected(final SelectionEvent e) {
-				update();
+				selectedComboScheme();
 			}
 		});
 
@@ -1245,7 +1220,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		contextService = (IContextService) workbench
 				.getService(IWorkbenchServices.CONTEXT);
 
-		helpSystem = workbench.getHelpSystem();
+		// TODO Add a help context.
+		// helpSystem = workbench.getHelpSystem();
 	}
 
 	/**
@@ -1263,11 +1239,32 @@ public final class KeysPreferencePage extends PreferencePage implements
 		return activityManager.getIdentifier(command.getId()).isEnabled();
 	}
 
+	/**
+	 * Logs the given exception, and opens an error dialog saying that something
+	 * went wrong. The exception is assumed to have something to do with the
+	 * preference store.
+	 * 
+	 * @param exception
+	 *            The exception to be logged; must not be <code>null</code>.
+	 */
+	private final void logPreferenceStoreException(final Throwable exception) {
+		final String message = Util.translateString(RESOURCE_BUNDLE,
+				"PreferenceStoreError.Message"); //$NON-NLS-1$
+		final String title = Util.translateString(RESOURCE_BUNDLE,
+				"PreferenceStoreError.Title"); //$NON-NLS-1$
+		String exceptionMessage = exception.getMessage();
+		if (exceptionMessage == null) {
+			exceptionMessage = message;
+		}
+		final IStatus status = new Status(IStatus.ERROR,
+				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		WorkbenchPlugin.log(message, status);
+		ErrorDialog.openError(tabFolder.getShell(), title, message, status);
+	}
+
 	public final boolean performCancel() {
 		// Save the selected tab for future reference.
-		final IPreferenceStore store = getPreferenceStore();
-		store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
-				tabFolder.getSelectionIndex());
+		persistSelectedTab();
 
 		return super.performCancel();
 	}
@@ -1308,27 +1305,29 @@ public final class KeysPreferencePage extends PreferencePage implements
 	}
 
 	public boolean performOk() {
-		/*
-		 * TODO List preferenceActiveKeyConfigurationDefinitions = new
-		 * ArrayList(); preferenceActiveKeyConfigurationDefinitions .add(new
-		 * ActiveKeyConfigurationDefinition(getSchemeId(), null));
-		 * PreferenceCommandRegistry preferenceCommandRegistry =
-		 * (PreferenceCommandRegistry) commandManager
-		 * .getMutableCommandRegistry(); preferenceCommandRegistry
-		 * .setActiveKeyConfigurationDefinitions(preferenceActiveKeyConfigurationDefinitions);
-		 * List preferenceKeySequenceBindingDefinitions = new ArrayList();
-		 * KeySequenceBindingNode.getKeySequenceBindingDefinitions(tree,
-		 * KeySequence.getInstance(), 0,
-		 * preferenceKeySequenceBindingDefinitions); preferenceCommandRegistry
-		 * .setKeySequenceBindingDefinitions(preferenceKeySequenceBindingDefinitions);
-		 * 
-		 * try { preferenceCommandRegistry.save(); } catch (IOException eIO) { //
-		 * Do nothing } // Save the selected tab for future reference.
-		 * IPreferenceStore store = getPreferenceStore();
-		 * store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
-		 * tabFolder.getSelectionIndex());
-		 */
+		// Save the preferences.
+		try {
+			bindingService.savePreferences(
+					localChangeManager.getActiveScheme(), localChangeManager
+							.getBindings());
+		} catch (final IOException e) {
+			logPreferenceStoreException(e);
+		}
+
+		// Save the selected tab for future reference.
+		persistSelectedTab();
+
 		return super.performOk();
+	}
+
+	/**
+	 * Remembers the currently selected tab for when the preference page next
+	 * opens.
+	 */
+	private final void persistSelectedTab() {
+		final IPreferenceStore store = getPreferenceStore();
+		store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
+				tabFolder.getSelectionIndex());
 	}
 
 	/**
@@ -1427,6 +1426,21 @@ public final class KeysPreferencePage extends PreferencePage implements
 		KeySequence keySequence = getKeySequence();
 		localChangeManager.removeBindings(keySequence, schemeId, contextId,
 				null, null, null, Binding.USER);
+		update();
+	}
+
+	/**
+	 * Updates the local managers active scheme, and then updates the interface.
+	 */
+	private final void selectedComboScheme() {
+		final String activeSchemeId = getSchemeId();
+		final Scheme activeScheme = localChangeManager
+				.getScheme(activeSchemeId);
+		try {
+			localChangeManager.setActiveScheme(activeScheme);
+		} catch (final NotDefinedException e) {
+			// Oh, well.
+		}
 		update();
 	}
 
@@ -2095,31 +2109,22 @@ public final class KeysPreferencePage extends PreferencePage implements
 			final TableItem tableItem = new TableItem(tableBindingsForCommand,
 					SWT.NULL);
 			tableItem.setData(ITEM_DATA_KEY, binding);
+
 			/*
-			 * TODO Implement a way of checking whether a binding is a change,
-			 * addition, subtraction or none of the above.
+			 * Set the associated image based on the type of binding. Either it
+			 * is a user binding or a system binding.
 			 * 
-			 * switch (difference) { case DIFFERENCE_ADD: tableItem.setImage(0,
-			 * IMAGE_PLUS); break;
-			 * 
-			 * case DIFFERENCE_CHANGE: tableItem.setImage(0, IMAGE_CHANGE);
-			 * break;
-			 * 
-			 * case DIFFERENCE_MINUS: tableItem.setImage(0, IMAGE_MINUS); break;
-			 * 
-			 * case DIFFERENCE_NONE: tableItem.setImage(0, IMAGE_BLANK); break; }
+			 * TODO Do we need to do more here?
 			 */
+			if (binding.getType() == Binding.SYSTEM) {
+				tableItem.setImage(0, IMAGE_BLANK);
+			} else {
+				tableItem.setImage(0, IMAGE_CHANGE);
+			}
+
 			tableItem.setText(1, (String) contextUniqueNamesById.get(binding
 					.getContextId()));
 			tableItem.setText(2, binding.getTriggerSequence().format());
-
-			/*
-			 * TODO If the binding is a subtraction, then change the foreground
-			 * colour.
-			 * 
-			 * if (difference == DIFFERENCE_MINUS) {
-			 * tableItem.setForeground(minusColour); }
-			 */
 		}
 	}
 
@@ -2154,31 +2159,21 @@ public final class KeysPreferencePage extends PreferencePage implements
 			tableItem.setData(ITEM_DATA_KEY, binding);
 
 			/*
-			 * TODO Add a check to see if the binding is added, removed, changed
-			 * or none of the above.
+			 * Set the associated image based on the type of binding. Either it
+			 * is a user binding or a system binding.
 			 * 
-			 * switch (difference) { case DIFFERENCE_ADD: tableItem.setImage(0,
-			 * IMAGE_PLUS); break;
-			 * 
-			 * case DIFFERENCE_CHANGE: tableItem.setImage(0, IMAGE_CHANGE);
-			 * break;
-			 * 
-			 * case DIFFERENCE_MINUS: tableItem.setImage(0, IMAGE_MINUS); break;
-			 * 
-			 * case DIFFERENCE_NONE: tableItem.setImage(0, IMAGE_BLANK); break; }
+			 * TODO Do we need to do more here?
 			 */
-			tableItem.setText(1, (String) contextUniqueNamesById.get(binding
-					.getContextId())); //$NON-NLS-1$
+			if (binding.getType() == Binding.SYSTEM) {
+				tableItem.setImage(0, IMAGE_BLANK);
+			} else {
+				tableItem.setImage(0, IMAGE_CHANGE);
+			}
 
+			tableItem.setText(1, (String) contextUniqueNamesById.get(binding
+					.getContextId()));
 			tableItem.setText(2, (String) commandUniqueNamesById.get(binding
 					.getCommandId()));
-			/*
-			 * TODO If the binding is removed, then changed the foreground
-			 * colour.
-			 * 
-			 * if (difference == DIFFERENCE_MINUS) {
-			 * tableItem.setForeground(minusColour); }
-			 */
 		}
 	}
 

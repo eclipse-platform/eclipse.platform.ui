@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -103,5 +105,16 @@ public final class BindingService implements IBindingService {
 
 	public final boolean isPerfectMatch(final TriggerSequence sequence) {
 		return bindingManager.isPerfectMatch(sequence);
+	}
+
+	public final void savePreferences(final Scheme activeScheme,
+			final Set bindings) throws IOException {
+		BindingPersistence.persist(activeScheme, bindings);
+		try {
+			bindingManager.setActiveScheme(activeScheme);
+		} catch (final NotDefinedException e) {
+			// The active scheme is not currently defined.
+		}
+		bindingManager.setBindings(bindings);
 	}
 }
