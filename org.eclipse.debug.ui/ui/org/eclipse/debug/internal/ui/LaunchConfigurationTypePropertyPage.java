@@ -169,6 +169,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	}
 	
 	private Control createForInaccessibleResource(Composite parent) {
+		noDefaultAndApplyButton();
 		Label label= new Label(parent, SWT.LEFT);
 		label.setText("Launcher configuration type information is not available for an inaccessible resource.");
 		label.setFont(parent.getFont());
