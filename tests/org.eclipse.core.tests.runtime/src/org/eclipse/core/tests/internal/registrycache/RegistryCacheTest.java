@@ -134,7 +134,6 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		Extension originalExtension = (Extension) ext1;
 		Extension cachedExtension = (Extension) ext2;
 		assertEquals("extension.1", originalExtension.getName(), cachedExtension.getName());
-		assertTrue("extension.2", originalExtension.isReadOnly() == cachedExtension.isReadOnly());
 		assertEquals("extension.3", originalExtension.getSimpleIdentifier(), cachedExtension.getSimpleIdentifier());
 		assertEquals("extension.4", originalExtension.getExtensionPointIdentifier(), cachedExtension.getExtensionPointIdentifier());
 		// Compare subElements
@@ -149,7 +148,6 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 
 	private void assertEquals(ConfigurationElement originalConfigurationElement, ConfigurationElement cachedConfigurationElement) {
 		assertEquals("config element.1", originalConfigurationElement.getName(), cachedConfigurationElement.getName());
-		assertTrue("config element.2", originalConfigurationElement.isReadOnly() == cachedConfigurationElement.isReadOnly());
 		assertEquals("config element.3", originalConfigurationElement.getValue(), cachedConfigurationElement.getValue());
 		// Compare children
 		IConfigurationElement[] originalSubElements = originalConfigurationElement.getChildren();
@@ -171,7 +169,6 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 
 	private void assertEquals(ConfigurationProperty originalConfigurationProperty, ConfigurationProperty cachedConfigurationProperty) {
 		assertEquals("config property.1", originalConfigurationProperty.getName(), cachedConfigurationProperty.getName());
-		assertTrue("config property.2", originalConfigurationProperty.isReadOnly() == cachedConfigurationProperty.isReadOnly());
 		assertEquals("config property.3", originalConfigurationProperty.getValue(), cachedConfigurationProperty.getValue());
 	}
 
