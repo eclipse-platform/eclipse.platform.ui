@@ -20,9 +20,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
+import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 /**
  * Refreshes resources as specified by a lanunch configuration, when 

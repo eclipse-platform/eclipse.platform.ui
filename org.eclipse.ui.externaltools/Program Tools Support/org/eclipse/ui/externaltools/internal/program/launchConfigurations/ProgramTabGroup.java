@@ -11,7 +11,7 @@ import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsRefreshTab;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsRefreshTab;
 
 public class ProgramTabGroup extends AbstractLaunchConfigurationTabGroup {
 

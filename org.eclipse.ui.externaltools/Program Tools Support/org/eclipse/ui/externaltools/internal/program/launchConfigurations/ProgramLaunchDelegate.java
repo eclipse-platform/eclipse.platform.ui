@@ -19,8 +19,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 /**
  * Launch delegate for a program.

@@ -9,10 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
-import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsMainTab;
-import org.eclipse.ui.externaltools.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.model.ToolUtil;
 
 public class ProgramMainTab extends ExternalToolsMainTab {
 
