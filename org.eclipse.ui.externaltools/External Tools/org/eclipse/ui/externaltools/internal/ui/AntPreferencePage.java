@@ -105,6 +105,7 @@ public class AntPreferencePage extends PreferencePage implements IWorkbenchPrefe
 			Type[] types = (Type[]) contents.toArray(new Type[contents.size()]);
 			AntCorePlugin.getPlugin().getPreferences().setCustomTypes(types);
 		}
+		AntCorePlugin.getPlugin().getPreferences().updatePluginPreferences();
 		return super.performOk();
 	}
 }
