@@ -8,8 +8,7 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.resources;
-import org.eclipse.core.runtime.IPath;
-import java.lang.String;
+import org.eclipse.core.runtime.*;
 /**
  * A callback for requesting information about a resource when using a fast
  * resource visitor. All of the "get" methods on a resource proxy have trivial
@@ -83,6 +82,22 @@ public interface IResourceProxy {
 	 * @see IResource#getName
 	 */
 	public String getName();
+	/**
+	 * Returns the value of the session property of the resource being
+	 * visited, identified by the given key.  Returns <code>null</code> if this
+	 * resource has no such property.
+	 * <p>
+	 * Note that this method can return an out of date property value, or a
+	 * value that no longer exists, if session properties are being modified
+	 * concurrently with the resource visit.
+	 * </p>
+	 *
+	 * @param key the qualified name of the property
+	 * @return the string value of the session property, 
+	 *     or <code>null</code> if the resource has no such property
+	 *	 @see IResource#getSessionProperty
+	 */
+	public Object getSessionProperty(QualifiedName key);
 	/**
 	 * Returns the type of the resource being visited.
 	 * 

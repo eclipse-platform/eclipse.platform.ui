@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.QualifiedName;
 
 /**
  * Implements a resource proxy given a path requestor and the resource
@@ -34,6 +35,9 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	}
 	public String getName() {
 		return requestor.requestName();
+	}
+	public Object getSessionProperty(QualifiedName key) {
+		return info.getSessionProperty(key);
 	}
 	public int getType() {
 		return info.getType();
