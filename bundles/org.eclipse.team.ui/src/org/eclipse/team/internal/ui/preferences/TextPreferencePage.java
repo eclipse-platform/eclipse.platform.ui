@@ -221,6 +221,21 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 		
+		changeButton = new Button(buttons, SWT.PUSH);
+		changeButton.setText(Policy.bind("TextPreferencePage.change")); //$NON-NLS-1$
+		data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, changeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		changeButton.setLayoutData(data);
+		changeButton.setEnabled(false);
+		changeButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event e) {
+				changePattern();
+			}
+		});
+		
 		removeButton= new Button(buttons, SWT.PUSH);
 		removeButton.setText(Policy.bind("TextPreferencePage.remove")); //$NON-NLS-1$
 		data = new GridData();
@@ -236,20 +251,6 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 		
-		changeButton = new Button(buttons, SWT.PUSH);
-		changeButton.setText(Policy.bind("TextPreferencePage.change")); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, changeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		changeButton.setLayoutData(data);
-		changeButton.setEnabled(false);
-		changeButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event e) {
-				changePattern();
-			}
-		});
 		fillTable(Team.getAllTypes());
 		Dialog.applyDialogFont(parent);
 		return parent;
