@@ -13,8 +13,7 @@
   </runtime>
 
   <requires>
-    <import plugin="org.eclipse.core.runtime.osgi" export="true"/>
-    <import plugin="org.eclipse.core.runtime.compatibility" export="true" optional="true"/>
+    <import plugin="org.eclipse.osgi"/>
   </requires>
 
   <extension-point name="%applicationsName" id="applications" schema="schema/applications.mxsd"/>
