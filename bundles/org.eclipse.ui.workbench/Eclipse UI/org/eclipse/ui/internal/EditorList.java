@@ -405,6 +405,7 @@ public class EditorList {
 		public void run() {
 			displayFullPath = !displayFullPath;
 			setChecked(displayFullPath);
+			updateItems();
 			TableItem[] items = editorsTable.getItems();
 			if(items.length == 0) {
 				return;
