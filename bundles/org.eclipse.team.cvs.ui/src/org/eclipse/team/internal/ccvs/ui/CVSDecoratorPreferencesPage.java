@@ -188,7 +188,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		data.horizontalAlignment = GridData.FILL;
 		imageGroup.setLayoutData(data);
 		imageGroup.setText("Icon Overlays");
-		imageShowDirty = createCheckBox(imageGroup, "&Show outgoing");
+		imageShowDirty = createCheckBox(imageGroup, "Sho&w outgoing");
 		imageShowHasRemote = createCheckBox(imageGroup, "Show has &remote");
 		imageShowAdded = createCheckBox(imageGroup, "S&how is added");
 		
@@ -348,8 +348,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				this,
 				contentsProvider,
 				labelProvider,
-				"Select the variables to add to the decoration format:");
-	
+				"Select the &variables to add to the decoration format:");
+		dialog.setTitle("Add Variables");
 		if (dialog.open() != dialog.OK)
 			return;
 	
