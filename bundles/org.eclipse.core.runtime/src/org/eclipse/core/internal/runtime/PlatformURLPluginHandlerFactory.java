@@ -45,6 +45,5 @@ public static void startup() {
 	// initialize plugin and fragment connection support
 	PlatformURLPluginConnection.startup();
 	PlatformURLFragmentConnection.startup();
-	PlatformURLResourceConnection.startup(Platform.getLocation());
 }
 }
