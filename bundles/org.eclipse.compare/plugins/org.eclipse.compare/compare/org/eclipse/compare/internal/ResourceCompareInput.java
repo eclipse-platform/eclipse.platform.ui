@@ -144,21 +144,20 @@ class ResourceCompareInput extends CompareEditorInput {
 				
 			pm.beginTask(Utilities.getString("ResourceCompare.taskName"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 
-			cc.setLeftLabel(buildLabel(fLeftResource));
+			String leftLabel= fLeftResource.getName();
+			cc.setLeftLabel(leftLabel);
 			cc.setLeftImage(CompareUIPlugin.getImage(fLeftResource));
 			
-			cc.setRightLabel(buildLabel(fRightResource));
-			cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
-
-			String leftLabel= fLeftResource.getName();
 			String rightLabel= fRightResource.getName();
+			cc.setRightLabel(rightLabel);
+			cc.setRightImage(CompareUIPlugin.getImage(fRightResource));
 			
 			String title;
 			if (fThreeWay) {			
-				cc.setAncestorLabel(buildLabel(fAncestorResource));
+				String ancestorLabel= fAncestorResource.getName();
+				cc.setAncestorLabel(ancestorLabel);
 				cc.setAncestorImage(CompareUIPlugin.getImage(fAncestorResource));
 				String format= Utilities.getString("ResourceCompare.threeWay.title"); //$NON-NLS-1$
-				String ancestorLabel= fAncestorResource.getName();
 				title= MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel} );
 			} else {
 				String format= Utilities.getString("ResourceCompare.twoWay.title"); //$NON-NLS-1$
@@ -181,15 +180,7 @@ class ResourceCompareInput extends CompareEditorInput {
 			pm.done();
 		}
 	}
-	
-	private String buildLabel(IResource r) {
-		//return r.getName();
-		String n= r.getFullPath().toString();
-		if (n.charAt(0) == IPath.SEPARATOR)
-			return n.substring(1);
-		return n;
-	}
-	
+		
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		super.saveChanges(pm);
 		if (fRoot instanceof DiffNode) {

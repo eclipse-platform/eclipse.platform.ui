@@ -433,7 +433,7 @@ public class EditionSelectionDialog extends Dialog {
 	
 	private Pair createPair(IStructureCreator sc, Object path, ITypedElement input) {
 		IStructureComparator scmp= sc.locate(path, input);
-		if (scmp == null && sc.getStructure(input) == null) {	// parse error
+		if (scmp == null && sc.getStructure(input) == null)	{ // parse error
 			Pair p= new Pair(sc, input);
 			p.fHasError= true;
 			return p;
