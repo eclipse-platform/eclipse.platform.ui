@@ -269,7 +269,7 @@ public final class MutableContextManager
 		if (!this.enabledContextIds.equals(enabledContextIds)) {
 			this.enabledContextIds = enabledContextIds;
 			contextManagerChanged = true;
-			contextEventsByContextId = updateContexts(this.definedContextIds);
+			contextEventsByContextId = updateContexts(contextsById.keySet());
 		}
 
 		if (contextManagerChanged)
