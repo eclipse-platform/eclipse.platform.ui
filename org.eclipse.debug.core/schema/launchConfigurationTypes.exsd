@@ -90,6 +90,13 @@ Launch configuration instances of this type will delegate to instances of this c
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute that specifies this launch configuration type's category. The default value is unspecified (null). Categories are client defined. This attribute was added in the 2.1 release
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -146,15 +153,6 @@ The launch configuration is applicable to .txt and .gif files, and is the defaul
       </appInfo>
       <documentation>
          Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         [Enter information about supplied implementation of this extension point.]
       </documentation>
    </annotation>
 
