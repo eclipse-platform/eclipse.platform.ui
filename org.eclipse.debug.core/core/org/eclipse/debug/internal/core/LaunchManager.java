@@ -1060,7 +1060,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Register source locators.
 	 * 
-	 * @exception CoreException if an exception occurrs reading
+	 * @exception CoreException if an exception occurs reading
 	 *  the extensions
 	 */
 	private void initializeSourceLocators() {
@@ -1086,7 +1086,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * Load comparator extensions.
 	 * 
-	 * @exception CoreException if an exception occurrs reading
+	 * @exception CoreException if an exception occurs reading
 	 *  the extensions
 	 */
 	private void initializeComparators() {

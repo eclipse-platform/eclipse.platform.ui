@@ -157,7 +157,7 @@ public class LaunchConfigurationTabGroupExtension {
 	 * Returns a new tab group defined by this extension
 	 * 
 	 * @return a new tab group defined by this extension
-	 * @exception CoreException if an exception occurrs instantiating
+	 * @exception CoreException if an exception occurs instantiating
 	 * 	the tab group
 	 */
 	public ILaunchConfigurationTabGroup newTabGroup() throws CoreException {

@@ -945,7 +945,7 @@ public class DebugPlugin extends Plugin {
 		}
 		
 		/**
-		 * Filter and dispatch the given events. If an exception occurrs in one
+		 * Filter and dispatch the given events. If an exception occurs in one
 		 * listener, events are still fired to subsequent listeners.
 		 * 
 		 * @param events debug events

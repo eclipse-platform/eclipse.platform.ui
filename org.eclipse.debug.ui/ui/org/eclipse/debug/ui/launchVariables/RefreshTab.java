@@ -283,7 +283,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 * @param configuration launch configuration
 	 * @param context context used to expand variables
 	 * @param monitor progress monitor which may be <code>null</code>
-	 * @throws CoreException if an exception occurrs while refreshing resources
+	 * @throws CoreException if an exception occurs while refreshing resources
 	 */
 	public static void refreshResources(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {

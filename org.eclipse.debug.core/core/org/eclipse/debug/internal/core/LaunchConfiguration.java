@@ -76,7 +76,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * 
 	 * @param memento launch configuration memento
 	 * @exception CoreException if the memento is invalid or
-	 * 	an exception occurrs reading the memento
+	 * 	an exception occurs reading the memento
 	 */
 	protected LaunchConfiguration(String memento) throws CoreException {
 		Exception ex = null;

@@ -734,7 +734,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @param monitor progress monitor
-	 * @exception CoreException if an exception occurrs while building or launching
+	 * @exception CoreException if an exception occurs while building or launching
 	 * @return resulting launch
 	 */
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {

@@ -1156,7 +1156,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	
 	/**
 	 * @return the resulting launch, or <code>null</code> if cancelled.
-	 * @exception CoreException if an exception occurrs launching
+	 * @exception CoreException if an exception occurs launching
 	 */
 	private ILaunch launchWithProgress(final ILaunchConfiguration config) throws CoreException {
 		final ILaunch[] launchResult = new ILaunch[1];
