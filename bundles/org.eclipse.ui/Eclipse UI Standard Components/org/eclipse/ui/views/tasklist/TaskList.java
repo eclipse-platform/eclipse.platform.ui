@@ -979,9 +979,7 @@ boolean showSelections() {
 	}
 }
 
-/**
- * Added by cagatayk@acm.org 
- */
+// showOwnerProject() added by cagatayk@acm.org 
 boolean showOwnerProject() {
 	return getFilter().onResource == TasksFilter.ON_ANY_RESOURCE_OF_SAME_PROJECT;
 }
