@@ -10,14 +10,6 @@ Contributors:
 **********************************************************************/
 
 package org.eclipse.ui;
-
-/**
- * 2.1 - WORK_IN_PROGRESS. Do not use.
- */
-
-
-
-
 /**
  * Should be implemented by editors that wish to contribute to the
  * navigation history. The message <code>createNavigationLocation</code>

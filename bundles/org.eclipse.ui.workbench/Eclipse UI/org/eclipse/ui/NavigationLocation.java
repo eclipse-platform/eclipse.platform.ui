@@ -10,13 +10,6 @@ Contributors:
 **********************************************************************/
 
 package org.eclipse.ui;
-
-
-/**
- * 2.1 - WORK_IN_PROGRESS do not use.
- */
-
-
 /**
  * Default implementation of INavigationLocation. */
 public abstract class NavigationLocation implements INavigationLocation {

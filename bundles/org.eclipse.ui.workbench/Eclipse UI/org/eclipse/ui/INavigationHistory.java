@@ -9,16 +9,6 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 package org.eclipse.ui;
-
-
-
-/**
- * 2.1 - WORK_IN_PROGRESS. Do not use.
- */
-
-
-
-
 /**
  * Manages a list of entries to keep history of locations on editors
  * to enable the user to go back and forward without losing context.

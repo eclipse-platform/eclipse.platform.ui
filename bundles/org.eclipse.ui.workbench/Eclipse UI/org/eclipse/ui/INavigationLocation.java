@@ -9,10 +9,6 @@ Contributors:
     IBM Corporation - Initial implementation
 **********************************************************************/
 package org.eclipse.ui;
-
-/**
- * 2.1 - WORK_IN_PROGRESS. Do not use.
- */
 /**
  * Represents the context marked for the user in the navigation history.
  * 

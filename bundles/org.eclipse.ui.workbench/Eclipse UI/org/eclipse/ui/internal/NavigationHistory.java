@@ -14,6 +14,8 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -86,17 +88,31 @@ public void clear() {
 	history = new ArrayList();
 	updateActions();
 }
+private Display getDisplay() {
+	return page.getWorkbenchWindow().getShell().getDisplay();
+}
 /*
  * Adds an editor to the editor history without getting its location.
  */	
-public void markEditor(IEditorPart part) {
+public void markEditor(final IEditorPart part) {
 	if (ignoreEntries > 0 || part == null)
 		return;
-		
-	NavigationHistoryEntry e = getEntry(activeEntry);
-	if (e != null && part.getEditorInput() != e.editorInput)
-		updateEntry(e);
-	addEntry(part,false);
+	/* Ignore all entries until the async exec runs. Workaround to avoid 
+	 * extra entry when using Open Declaration (F3) that opens another editor. */
+	ignoreEntries++;
+	getDisplay().asyncExec(new Runnable() {
+		public void run() {
+			ignoreEntries--;
+			EditorSite site = (EditorSite)(part.getEditorSite());
+			Control c = site.getPane().getControl();
+			if(c == null || c.isDisposed())
+				return;
+			NavigationHistoryEntry e = getEntry(activeEntry);
+			if (e != null && part.getEditorInput() != e.editorInput)
+				updateEntry(e);
+			addEntry(part,true);
+		}
+	});
 }
 /*
  * (non-Javadoc)
@@ -217,7 +233,7 @@ private void addEntry(IEditorPart part, boolean markLocation) {
 	NavigationHistoryEntry e= new NavigationHistoryEntry(page, part, location);
 	NavigationHistoryEntry current= getEntry(activeEntry);
 	if (current != null)
-		current.restoreEditor();
+	current.restoreEditor();
 	if (current == null || !e.mergeInto(current)) {
 		add(e);
 	} else {
@@ -274,8 +290,8 @@ private void gotoEntry(NavigationHistoryEntry entry) {
 private void updateEntry(NavigationHistoryEntry activeEntry) {
 	if(activeEntry == null || activeEntry.location == null)
 		return;
-	printEntries("updateEntry"); //$NON-NLS-1$
 	activeEntry.location.update();
+	printEntries("updateEntry"); //$NON-NLS-1$
 }
 	
 /*
