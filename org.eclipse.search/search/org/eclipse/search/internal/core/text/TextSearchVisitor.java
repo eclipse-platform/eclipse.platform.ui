@@ -118,6 +118,11 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 	protected boolean visitFile(IFile file) throws CoreException {
 		if (! fScope.encloses(file))
 			return false;
+
+		if (fPattern.length() == 0) {
+			fCollector.accept(file, "", -1, 0, -1); //$NON-NLS-1$
+			return true;
+		}
 			
 		try {
 			BufferedReader reader= null;
@@ -153,6 +158,8 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 					}
 					charCounter+= lineLength + eolStrLength;
 					lineCounter++;
+					if (fProgressMonitor.isCanceled())
+						throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
 				}
 			} finally {
 				if (reader != null)
