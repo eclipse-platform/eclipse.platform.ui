@@ -32,9 +32,9 @@ public class VariablesContentProvidersToggleAction extends Action {
 	private IDebugView fView;
 
 	public VariablesContentProvidersToggleAction(IDebugView view) {
-		super("ToggleVariablesContentProviders", Action.AS_CHECK_BOX);
+		super(null, Action.AS_CHECK_BOX);
 		setView(view);
-		setToolTipText("Toggle variable filters"); 
+		setToolTipText(VariablesViewMessages.getString("VariablesContentProvidersToggleAction.1"));  //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_VARIABLES_CONTENT_PROVIDERS));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_VARIABLES_CONTENT_PROVIDERS));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_VARIABLES_CONTENT_PROVIDERS));
