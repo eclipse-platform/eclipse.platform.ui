@@ -48,16 +48,16 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			registerApplicationService();
 			InternalPlatform.getDefault().setRuntimeInstance(this);
 			super.start(context);
-		} catch (Exception e) {			
-			// need to show any exception that happened, otherwise the platform will not start
-			String message = Policy.bind("meta.platform", e.toString());							
+		} catch (Exception e) {
+			// need to show any exception that happened (because it will prevent the platform from starting)
+			String message = Policy.bind("meta.platform"); //$NON-NLS-1$
 			if (InternalPlatform.getDefault().hasLogWriter()) {
-				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.INTERNAL_ERROR, message, e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.INTERNAL_ERROR, message, e);
 				InternalPlatform.getDefault().log(status);
-			}	else {				
+			} else {
 				// if we cannot count on a log file, let's hope the user has a console open
 				System.err.println(message);
-				e.printStackTrace();				
+				e.printStackTrace();
 			}
 			// let the exception interrupt the activation of the platform bundle
 			throw e;
