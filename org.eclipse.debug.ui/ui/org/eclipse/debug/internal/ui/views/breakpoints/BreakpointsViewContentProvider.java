@@ -38,7 +38,7 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
 			children= breakpoints;
 		} else if (parent instanceof IBreakpointManager) {
 			IBreakpointContainerFactory factory = (IBreakpointContainerFactory) fBreakpointContainerFactories.get(0);
-			children= getFactoryChildren(factory, "", breakpoints);
+			children= getFactoryChildren(factory, "", breakpoints); //$NON-NLS-1$
 		} else if (parent instanceof IBreakpointContainer) {
 			IBreakpointContainer container = ((IBreakpointContainer) parent);
 			IBreakpointContainerFactory parentFactory = container.getParentFactory();
@@ -76,7 +76,7 @@ public class BreakpointsViewContentProvider implements ITreeContentProvider {
 		} else if (parent instanceof IBreakpointManager) {
 			return container.getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public void setBreakpointContainerFactories(List factories) {
