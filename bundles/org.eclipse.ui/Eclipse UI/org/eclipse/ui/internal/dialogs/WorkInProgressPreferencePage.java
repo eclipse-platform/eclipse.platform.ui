@@ -4,6 +4,10 @@
  */
 package org.eclipse.ui.internal.dialogs;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -39,6 +43,12 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	private boolean selectOnHover;
 	private boolean openAfterDelay;
 
+	// State for encoding group
+	private String defaultEnc;
+	private Button defaultEncodingButton;
+	private Button otherEncodingButton;
+	private Combo encodingCombo;
+	
 	/**
 	 *	@see IWorkbenchPreferencePage
 	 */
@@ -117,6 +127,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		createSpace(composite);
 		createSingleClickGroup(composite);
 
+//		createEncodingGroup(composite);
+		
 		return composite;
 	}
 	
@@ -186,6 +198,97 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setEnabled(openOnSingleClick);
 	}
+
+
+	private void createEncodingGroup(Composite parent) {
+		Group group = new Group(parent, SWT.NONE);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		group.setLayout(layout);
+		group.setText(WorkbenchMessages.getString("WorkbenchPreference.encoding")); //$NON-NLS-1$
+		
+		SelectionAdapter buttonListener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean useDefault = e.widget == defaultEncodingButton;
+				updateEncodingState(useDefault);
+			}
+		};
+		
+		defaultEncodingButton = new Button(group, SWT.RADIO);
+		defaultEnc = System.getProperty("file.encoding", "UTF-8");  //$NON-NLS-1$  //$NON-NLS-2$
+		defaultEncodingButton.setText(WorkbenchMessages.format("WorkbenchPreference.defaultEncoding", new String[] { defaultEnc })); //$NON-NLS-1$
+		data = new GridData();
+		data.horizontalSpan = 2;
+		defaultEncodingButton.setLayoutData(data);
+		defaultEncodingButton.addSelectionListener(buttonListener);
+		
+		otherEncodingButton = new Button(group, SWT.RADIO);
+		otherEncodingButton.setText(WorkbenchMessages.getString("WorkbenchPreference.otherEncoding")); //$NON-NLS-1$
+		otherEncodingButton.addSelectionListener(buttonListener);
+		
+		encodingCombo = new Combo(group, SWT.NONE);
+		data = new GridData();
+		data.widthHint = convertWidthInCharsToPixels(15);
+		encodingCombo.setLayoutData(data);
+
+		ArrayList encodings = new ArrayList();
+		int n = 0;
+		try {
+			n = Integer.parseInt(WorkbenchMessages.getString("WorkbenchPreference.numDefaultEncodings")); //$NON-NLS-1$
+		}
+		catch (NumberFormatException e) {
+			// Ignore;
+		}
+		for (int i = 0; i < n; ++i) {
+			String enc = WorkbenchMessages.getString("WorkbenchPreference.defaultEncoding" + (i+1), null); //$NON-NLS-1$
+			if (enc != null) {
+				encodings.add(enc);
+			}
+		}
+		
+		IPreferenceStore store = getPreferenceStore();
+		boolean useDefault = !store.getBoolean(IPreferenceConstants.IS_ENCODING_SET);
+		updateEncodingState(useDefault);
+		
+		if (!encodings.contains(defaultEnc)) {
+			encodings.add(defaultEnc);
+		}
+
+		String enc = store.getString(IPreferenceConstants.ENCODING);
+		if (enc.length() > 0) {
+			encodingCombo.setText(enc);
+		 	if (!encodings.contains(enc)) {
+				encodings.add(enc);
+		 	}
+		}
+		else {
+			encodingCombo.setText(defaultEnc);
+		}
+		
+		Collections.sort(encodings);
+		for (int i = 0; i < encodings.size(); ++i) {
+			encodingCombo.add((String) encodings.get(i));
+		}
+	}
+
+	private boolean isValidEncoding(String enc) {
+		try {
+			new String(new byte[0], enc);
+			return true;
+		}
+		catch (UnsupportedEncodingException e) {
+			return false;
+		}
+	}
+	
+	private void updateEncodingState(boolean useDefault) {
+		defaultEncodingButton.setSelection(useDefault);
+		otherEncodingButton.setSelection(!useDefault);
+		encodingCombo.setEnabled(!useDefault);
+	}
+	
 	/**
 	 * The default button has been pressed. 
 	 */
@@ -208,6 +311,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		coolBarsButton.setSelection(store.getDefaultBoolean("ENABLE_COOL_BARS")); //$NON-NLS-1$				
 //		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
 		
+		updateEncodingState(true);
 	}
 	
 	/**
@@ -233,6 +337,10 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformOk(store);
+		
+		store.setValue(IPreferenceConstants.IS_ENCODING_SET, otherEncodingButton.getSelection());
+		store.setValue(IPreferenceConstants.ENCODING, encodingCombo.getText());
+		
 		return true;
 	}	
 }
