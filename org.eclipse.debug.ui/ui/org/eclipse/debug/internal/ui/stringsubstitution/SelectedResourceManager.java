@@ -50,6 +50,8 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 		if (workbench != null) { //may be running headless
 			workbench.addWindowListener(this);
 			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+			System.out.println("SelectedResourceManager() -- activeWindow is: " +
+					activeWindow);
 			if (activeWindow != null) {
 				windowActivated(activeWindow);
 			}
@@ -72,9 +74,10 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
+		fActiveWindow= window;
 		if (DEBUG) {
 			System.out.println("windowActivated(IWorkbenchWindow); window: " + window);
-			fActiveWindow= window;
+			Thread.dumpStack();	
 		}
 		ISelectionService service = window.getSelectionService(); 
 		service.addSelectionListener(this);
@@ -96,6 +99,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public void windowClosed(IWorkbenchWindow window) {
 		if (DEBUG) {
 			System.out.println("windowClosed(IWorkbenchWindow); window: " + window);
+			Thread.dumpStack();	
 		}
 		window.getSelectionService().removeSelectionListener(this);
 	}
@@ -106,9 +110,10 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public void windowDeactivated(IWorkbenchWindow window) {
 		if (DEBUG) {
 			System.out.println("windowDeactivated(IWorkbenchWindow); window: " + window);
-			if (fActiveWindow == window) {
-				fActiveWindow= null;
-			}
+			Thread.dumpStack();	
+		}
+		if (fActiveWindow == window) {
+			fActiveWindow= null;
 		}
 		window.getSelectionService().removeSelectionListener(this);
 	}
@@ -119,6 +124,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public void windowOpened(IWorkbenchWindow window) {
 		if (DEBUG) {
 			System.out.println("windowOpened(IWorkbenchWindow); window: " + window);
+			Thread.dumpStack();	
 		}
 	}
 
@@ -128,6 +134,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (DEBUG) {
 			System.out.println("selectionChanged(IWorkbenchPart, ISelection); part: " + part + " selection: " + selection);
+			Thread.dumpStack();	
 		}
 		IResource selectedResource = null;
 		if (selection instanceof IStructuredSelection) {
@@ -173,6 +180,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public IResource getSelectedResource() {
 		if (DEBUG) {
 			System.out.println("getSelectedResource; fSelectedResource: " + fSelectedResource);
+			Thread.dumpStack();	
 		}
 		return fSelectedResource;
 	}
@@ -186,6 +194,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public String getSelectedText() {
 		if (DEBUG) {
 			System.out.println("getSelectedText");
+			Thread.dumpStack();	
 		}
 		return fSelectedText;
 	}
