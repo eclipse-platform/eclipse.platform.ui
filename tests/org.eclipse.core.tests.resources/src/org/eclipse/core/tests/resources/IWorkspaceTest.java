@@ -12,7 +12,6 @@ package org.eclipse.core.tests.resources;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
@@ -898,28 +897,29 @@ public class IWorkspaceTest extends EclipseWorkspaceTest {
 		/* normal name */
 		assertTrue("1.1", getWorkspace().validateName("abcdef", IResource.FILE).isOK());
 		/* invalid characters (windows only) */
-		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
-			assertTrue("2.1", !(getWorkspace().validateName("dsa:sf", IResource.FILE).isOK()));
-			assertTrue("2.2", !(getWorkspace().validateName("*dsasf", IResource.FILE).isOK()));
-			assertTrue("2.3", !(getWorkspace().validateName("?dsasf", IResource.FILE).isOK()));
-			assertTrue("2.4", !(getWorkspace().validateName("\"dsasf", IResource.FILE).isOK()));
-			assertTrue("2.5", !(getWorkspace().validateName("<dsasf", IResource.FILE).isOK()));
-			assertTrue("2.6", !(getWorkspace().validateName(">dsasf", IResource.FILE).isOK()));
-			assertTrue("2.7", !(getWorkspace().validateName("|dsasf", IResource.FILE).isOK()));
-			assertTrue("2.8", !(getWorkspace().validateName("\"dsasf", IResource.FILE).isOK()));
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+			assertTrue("2.1", !getWorkspace().validateName("dsa:sf", IResource.FILE).isOK());
+			assertTrue("2.2", !getWorkspace().validateName("*dsasf", IResource.FILE).isOK());
+			assertTrue("2.3", !getWorkspace().validateName("?dsasf", IResource.FILE).isOK());
+			assertTrue("2.4", !getWorkspace().validateName("\"dsasf", IResource.FILE).isOK());
+			assertTrue("2.5", !getWorkspace().validateName("<dsasf", IResource.FILE).isOK());
+			assertTrue("2.6", !getWorkspace().validateName(">dsasf", IResource.FILE).isOK());
+			assertTrue("2.7", !getWorkspace().validateName("|dsasf", IResource.FILE).isOK());
+			assertTrue("2.8", !getWorkspace().validateName("\"dsasf", IResource.FILE).isOK());
+			assertTrue("2.10", !getWorkspace().validateName("\\dsasf", IResource.FILE).isOK());
 		}
 		/* invalid characters on all platforms */
-		assertTrue("2.9", !(getWorkspace().validateName("/dsasf", IResource.FILE).isOK()));
-		assertTrue("2.10", !(getWorkspace().validateName("\\dsasf", IResource.FILE).isOK()));
+		assertTrue("2.9", !getWorkspace().validateName("/dsasf", IResource.FILE).isOK());
+		assertTrue("2.9", !getWorkspace().validateName("", IResource.FILE).isOK());
 
 		/* dots */
-		assertTrue("3.1", !(getWorkspace().validateName(".", IResource.FILE).isOK()));
-		assertTrue("3.2", !(getWorkspace().validateName("..", IResource.FILE).isOK()));
-		assertTrue("3.3", !(getWorkspace().validateName("...", IResource.FILE).isOK()));
-		assertTrue("3.4", !(getWorkspace().validateName("....", IResource.FILE).isOK()));
+		assertTrue("3.1", !getWorkspace().validateName(".", IResource.FILE).isOK());
+		assertTrue("3.2", !getWorkspace().validateName("..", IResource.FILE).isOK());
+		assertTrue("3.3", getWorkspace().validateName("...", IResource.FILE).isOK());
+		assertTrue("3.4", getWorkspace().validateName("....", IResource.FILE).isOK());
 		assertTrue("3.5", getWorkspace().validateName("....abc", IResource.FILE).isOK());
 		assertTrue("3.6", getWorkspace().validateName("abc....def", IResource.FILE).isOK());
-		assertTrue("3.7", !(getWorkspace().validateName("abc....", IResource.FILE).isOK()));
+		assertTrue("3.7", getWorkspace().validateName("abc....", IResource.FILE).isOK());
 	}
 
 	/**
@@ -953,7 +953,8 @@ public class IWorkspaceTest extends EclipseWorkspaceTest {
 		assertTrue("1.1", getWorkspace().validatePath("/one/two/three/four/", IResource.FILE | IResource.FOLDER).isOK());
 
 		/* invalid characters (windows only) */
-		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+		final boolean WINDOWS = Platform.getOS().equals(Constants.OS_WIN32);
+		if (WINDOWS) {
 			assertTrue("2.1", !(getWorkspace().validatePath("\\dsa:sf", IResource.FILE).isOK()));
 			assertTrue("2.2", !(getWorkspace().validatePath("/abc/*dsasf", IResource.FILE).isOK()));
 			assertTrue("2.3", !(getWorkspace().validatePath("/abc/?dsasf", IResource.FILE).isOK()));
@@ -962,25 +963,26 @@ public class IWorkspaceTest extends EclipseWorkspaceTest {
 			assertTrue("2.6", !(getWorkspace().validatePath("/abc/>dsasf", IResource.FILE).isOK()));
 			assertTrue("2.7", !(getWorkspace().validatePath("/abc/|dsasf", IResource.FILE).isOK()));
 			assertTrue("2.8", !(getWorkspace().validatePath("/abc/\"dsasf", IResource.FILE).isOK()));
+
+			assertTrue("5.2", !(getWorkspace().validatePath("\\", IResource.FILE).isOK()));
+			assertTrue("5.4", !(getWorkspace().validatePath("device:/abc/123", IResource.FILE).isOK()));
 		}
 
 		/* dots */
-		assertTrue("3.1", !(getWorkspace().validatePath("/abc/.../defghi", IResource.FILE).isOK()));
-		assertTrue("3.2", !(getWorkspace().validatePath("/abc/..../defghi", IResource.FILE).isOK()));
-		assertTrue("3.3", !(getWorkspace().validatePath("/abc/def..../ghi", IResource.FILE).isOK()));
+		assertTrue("3.1", getWorkspace().validatePath("/abc/.../defghi", IResource.FILE).isOK());
+		assertTrue("3.2", getWorkspace().validatePath("/abc/..../defghi", IResource.FILE).isOK());
+		assertTrue("3.3", getWorkspace().validatePath("/abc/def..../ghi", IResource.FILE).isOK());
 		assertTrue("3.4", getWorkspace().validatePath("/abc/....def/ghi", IResource.FILE).isOK());
 		assertTrue("3.5", getWorkspace().validatePath("/abc/def....ghi/jkl", IResource.FILE).isOK());
 
 		/* test hiding incorrect characters using .. and device separator : */
 		assertTrue("4.1", getWorkspace().validatePath("/abc/.?./../def/as", IResource.FILE).isOK());
 		assertTrue("4.2", getWorkspace().validatePath("/abc/;*?\"'/../def/safd", IResource.FILE).isOK());
-		assertTrue("4.3", !(getWorkspace().validatePath("/abc;*?\"':/def/asdf/sadf", IResource.FILE).isOK()));
+		assertTrue("4.3", getWorkspace().validatePath("/abc;*?\"':/def/asdf/sadf", IResource.FILE).isOK() != WINDOWS);
 
 		/* other invalid paths */
 		assertTrue("5.1", !(getWorkspace().validatePath("/", IResource.FILE).isOK()));
-		assertTrue("5.2", !(getWorkspace().validatePath("\\", IResource.FILE).isOK()));
 		assertTrue("5.3", !(getWorkspace().validatePath("", IResource.FILE).isOK()));
-		assertTrue("5.4", !(getWorkspace().validatePath("device:/abc/123", IResource.FILE).isOK()));
 
 		/* test types / segments */
 		assertTrue("6.6", getWorkspace().validatePath("/asf", IResource.PROJECT).isOK());
@@ -1004,7 +1006,8 @@ public class IWorkspaceTest extends EclipseWorkspaceTest {
 		assertTrue("1.1", workspace.validateProjectLocation(project, new Path("/one/two/three/four/")).isOK());
 
 		/* invalid characters (windows only) */
-		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+		final boolean WINDOWS = Platform.getOS().equals(Constants.OS_WIN32);
+		if (WINDOWS) {
 			assertTrue("2.1", !(workspace.validateProjectLocation(project, new Path("d:\\dsa:sf")).isOK()));
 			assertTrue("2.2", !(workspace.validateProjectLocation(project, new Path("/abc/*dsasf")).isOK()));
 			assertTrue("2.3", !(workspace.validateProjectLocation(project, new Path("/abc/?dsasf")).isOK()));
@@ -1016,9 +1019,9 @@ public class IWorkspaceTest extends EclipseWorkspaceTest {
 		}
 
 		/* dots */
-		assertTrue("3.1", !(workspace.validateProjectLocation(project, new Path("/abc/.../defghi")).isOK()));
-		assertTrue("3.2", !(workspace.validateProjectLocation(project, new Path("/abc/..../defghi")).isOK()));
-		assertTrue("3.3", !(workspace.validateProjectLocation(project, new Path("/abc/def..../ghi")).isOK()));
+		assertTrue("3.1", workspace.validateProjectLocation(project, new Path("/abc/.../defghi")).isOK());
+		assertTrue("3.2", workspace.validateProjectLocation(project, new Path("/abc/..../defghi")).isOK());
+		assertTrue("3.3", workspace.validateProjectLocation(project, new Path("/abc/def..../ghi")).isOK());
 		assertTrue("3.4", workspace.validateProjectLocation(project, new Path("/abc/....def/ghi")).isOK());
 		assertTrue("3.5", workspace.validateProjectLocation(project, new Path("/abc/def....ghi/jkl")).isOK());
 
@@ -1038,7 +1041,8 @@ public class IWorkspaceTest extends EclipseWorkspaceTest {
 		//can overlap platform directory on another device
 		IPath anotherDevice = platformLocation.setDevice("nowear:");
 		assertTrue("6.1", workspace.validateProjectLocation(project, new Path("nowear:", "/")).isOK());
-		assertTrue("6.2", workspace.validateProjectLocation(project, new Path("nowear:", "\\")).isOK());
+		if (WINDOWS)
+			assertTrue("6.2", workspace.validateProjectLocation(project, new Path("nowear:", "\\")).isOK());
 		assertTrue("6.4", workspace.validateProjectLocation(project, anotherDevice).isOK());
 		assertTrue("6.5", workspace.validateProjectLocation(project, anotherDevice.append("foo")).isOK());
 

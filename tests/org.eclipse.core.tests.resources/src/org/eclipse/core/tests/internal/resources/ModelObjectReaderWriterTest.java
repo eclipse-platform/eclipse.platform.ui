@@ -28,7 +28,8 @@ import org.xml.sax.InputSource;
  * 
  */
 public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
-	static final IPath LONG_LOCATION = new Path("D:/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml");
+	private static final boolean WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
+	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(WINDOWS ? "D:" : null);
 
 	public ModelObjectReaderWriterTest() {
 		super();
@@ -313,7 +314,7 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 			LinkDescription value2 = (LinkDescription) links2.get(key);
 			assertTrue(errorTag + ".4." + x, value.getName().equals(value2.getName()));
 			assertEquals(errorTag + ".5." + x, value.getType(), value2.getType());
-			assertTrue(errorTag + ".6." + x, value.getLocation().equals(value2.getLocation()));
+			assertEquals(errorTag + ".6." + x, value.getLocation(), value2.getLocation());
 		}
 	}
 
@@ -461,7 +462,7 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
 		HashMap linkMap = new HashMap();
-		LinkDescription link = new LinkDescription("newLink", 2, new Path("d:/abc/def"));
+		LinkDescription link = new LinkDescription("newLink", 2, Path.fromPortableString("d:/abc/def"));
 		linkMap.put(link.getName(), link);
 		desc.setLinkDescriptions(linkMap);
 		result.put(desc.getName(), desc);
@@ -481,13 +482,13 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 		natures[0] = "org.eclipse.jdt.core.javanature";
 		desc.setNatureIds(natures);
 		linkMap = new HashMap();
-		link = new LinkDescription("newLink", 2, new Path("d:/abc/def"));
+		link = new LinkDescription("newLink", 2, Path.fromPortableString("d:/abc/def"));
 		linkMap.put(link.getName(), link);
-		link = new LinkDescription("link2", 2, new Path("d:/abc"));
+		link = new LinkDescription("link2", 2, Path.fromPortableString("d:/abc"));
 		linkMap.put(link.getName(), link);
-		link = new LinkDescription("link3", 2, new Path("d:/abc/def/ghi"));
+		link = new LinkDescription("link3", 2, Path.fromPortableString("d:/abc/def/ghi"));
 		linkMap.put(link.getName(), link);
-		link = new LinkDescription("link4", 1, new Path("d:/abc/def/afile.txt"));
+		link = new LinkDescription("link4", 1, Path.fromPortableString("d:/abc/def/afile.txt"));
 		linkMap.put(link.getName(), link);
 		desc.setLinkDescriptions(linkMap);
 		result.put(desc.getName(), desc);

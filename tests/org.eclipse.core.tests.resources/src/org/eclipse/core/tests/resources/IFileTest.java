@@ -11,11 +11,10 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Iterator;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -25,12 +24,12 @@ import org.eclipse.osgi.service.environment.Constants;
 public class IFileTest extends EclipseWorkspaceTest {
 	IProject[] projects = null;
 
-	Vector allFiles = new Vector();
-	Vector localOnlyFiles = new Vector();
-	Vector workspaceOnlyFiles = new Vector();
-	Vector nonExistingFiles = new Vector();
-	Vector existingFiles = new Vector();
-	Vector outOfSyncFiles = new Vector();
+	ArrayList allFiles = new ArrayList();
+	ArrayList localOnlyFiles = new ArrayList();
+	ArrayList workspaceOnlyFiles = new ArrayList();
+	ArrayList nonExistingFiles = new ArrayList();
+	ArrayList existingFiles = new ArrayList();
+	ArrayList outOfSyncFiles = new ArrayList();
 
 	//name of files according to sync category
 	public static final String DOES_NOT_EXIST = "DoesNotExistFile";
@@ -71,12 +70,12 @@ public class IFileTest extends EclipseWorkspaceTest {
 	/**
 	 * This method creates the necessary resources
 	 * for the FileTests.  The interesting files are
-	 * placed in vectors that are members of the class.
+	 * placed in ArrayLists that are members of the class.
 	 */
 	protected void generateInterestingFiles() throws CoreException {
-		IProject[] projects = interestingProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
+		IProject[] interestingProjects = interestingProjects();
+		for (int i = 0; i < interestingProjects.length; i++) {
+			IProject project = interestingProjects[i];
 			//file in project
 			generateInterestingFiles(project);
 
@@ -94,37 +93,37 @@ public class IFileTest extends EclipseWorkspaceTest {
 
 	/**
 	 * Creates some interesting files in the specified container.
-	 * Adds these files to the appropriate member vectors.
+	 * Adds these files to the appropriate member ArrayLists.
 	 * Conditions on these files (out of sync, workspace only, etc)
 	 * will be ensured by refreshFiles
 	 */
 	public void generateInterestingFiles(IContainer container) {
 		//non-existent file
 		IFile file = container.getFile(new Path(DOES_NOT_EXIST));
-		nonExistingFiles.addElement(file);
-		allFiles.addElement(file);
+		nonExistingFiles.add(file);
+		allFiles.add(file);
 
 		//exists in filesystem only
 		file = container.getFile(new Path(LOCAL_ONLY));
-		localOnlyFiles.addElement(file);
-		allFiles.addElement(file);
+		localOnlyFiles.add(file);
+		allFiles.add(file);
 
 		if (existsAndOpen(container)) {
 
 			//existing file
 			file = container.getFile(new Path(EXISTING));
-			existingFiles.addElement(file);
-			allFiles.addElement(file);
+			existingFiles.add(file);
+			allFiles.add(file);
 
 			//exists in workspace only
 			file = container.getFile(new Path(WORKSPACE_ONLY));
-			workspaceOnlyFiles.addElement(file);
-			allFiles.addElement(file);
+			workspaceOnlyFiles.add(file);
+			allFiles.add(file);
 
 			//exists in both but is out of sync
 			file = container.getFile(new Path(OUT_OF_SYNC));
-			outOfSyncFiles.addElement(file);
-			allFiles.addElement(file);
+			outOfSyncFiles.add(file);
+			allFiles.add(file);
 		}
 	}
 
@@ -135,7 +134,7 @@ public class IFileTest extends EclipseWorkspaceTest {
 	public IFile[] interestingFiles() {
 		refreshFiles();
 		IFile[] result = new IFile[allFiles.size()];
-		allFiles.copyInto(result);
+		allFiles.toArray(result);
 		return result;
 	}
 
@@ -168,21 +167,21 @@ public class IFileTest extends EclipseWorkspaceTest {
 	 * Returns some interesting input streams
 	 */
 	public InputStream[] interestingStreams() {
-		Vector streams = new Vector();
+		ArrayList streams = new ArrayList();
 
 		//empty stream
 		ByteArrayInputStream bis = new ByteArrayInputStream(new byte[0]);
-		streams.addElement(bis);
+		streams.add(bis);
 
 		// random content
-		streams.addElement(getRandomContents());
+		streams.add(getRandomContents());
 
 		//large stream
 		bis = new ByteArrayInputStream(new byte[10000]);
-		streams.addElement(bis);
+		streams.add(bis);
 
 		InputStream[] results = new InputStream[streams.size()];
-		streams.copyInto(results);
+		streams.toArray(results);
 		return results;
 	}
 
@@ -234,10 +233,8 @@ public class IFileTest extends EclipseWorkspaceTest {
 	 * Makes sure file requirements are met (out of sync, workspace only, etc).
 	 */
 	public void refreshFiles() {
-		for (Enumeration e = allFiles.elements(); e.hasMoreElements();) {
-			IFile file = (IFile) e.nextElement();
-			refreshFile(file);
-		}
+		for (Iterator it = allFiles.iterator(); it.hasNext();) 
+			refreshFile((IFile) it.next());
 	}
 
 	protected void setUp() throws Exception {
@@ -683,11 +680,11 @@ public class IFileTest extends EclipseWorkspaceTest {
 		IProject project = projects[0];
 
 		//should not be able to create a file with invalid path on any platform
-		String[] names = new String[] {":", "", "/"};
+		String[] names = new String[] {"", "/"};
 		for (int i = 0; i < names.length; i++) {
 			try {
 				project.getFile(names[i]);
-				fail("0.99");
+				fail("0.1." + i);
 			} catch (RuntimeException e) {
 				//should fail
 			}
@@ -695,9 +692,9 @@ public class IFileTest extends EclipseWorkspaceTest {
 
 		//do some tests with invalid names
 		names = new String[0];
-		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			//invalid windows names
-			names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
+			names = new String[] {"foo:bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
 		} else {
 			//invalid names on non-windows platforms
 			names = new String[] {};
@@ -715,12 +712,12 @@ public class IFileTest extends EclipseWorkspaceTest {
 		}
 
 		//do some tests with valid names that are *almost* invalid
-		if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			//these names are valid on windows
 			names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		} else {
 			//these names are valid on non-windows platforms
-			names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|", "hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
+			names = new String[] {"foo:bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|", "hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		}
 		for (int i = 0; i < names.length; i++) {
 			IFile file = project.getFile(names[i]);

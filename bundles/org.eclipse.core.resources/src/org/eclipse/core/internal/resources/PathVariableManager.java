@@ -45,7 +45,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public IPath getValue(String varName) {
 		String key = getKeyForName(varName);
 		String value = preferences.getString(key);
-		return value.length() == 0 ? null : new Path(value);
+		return value.length() == 0 ? null : Path.fromPortableString(value);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 				preferences.setToDefault(getKeyForName(varName));
 				eventType = IPathVariableChangeEvent.VARIABLE_DELETED;
 			} else {
-				preferences.setValue(getKeyForName(varName), newValue.toString());
+				preferences.setValue(getKeyForName(varName), newValue.toPortableString());
 				eventType = variableExists ? IPathVariableChangeEvent.VARIABLE_CHANGED : IPathVariableChangeEvent.VARIABLE_CREATED;
 			}
 		}
@@ -238,7 +238,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#startup(IProgressMonitor)
 	 */
-	public void startup(IProgressMonitor monitor) throws CoreException {
+	public void startup(IProgressMonitor monitor) {
 		// since we are accessing the preference store directly, we don't
 		// need to do any setup here.
 	}
@@ -246,7 +246,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	/**
 	 * @see org.eclipse.core.internal.resources.IManager#shutdown(IProgressMonitor)
 	 */
-	public void shutdown(IProgressMonitor monitor) throws CoreException {
+	public void shutdown(IProgressMonitor monitor) {
 		// The preferences for this plug-in are saved in the Plugin.shutdown
 		// method so we don't have to do it here.
 	}

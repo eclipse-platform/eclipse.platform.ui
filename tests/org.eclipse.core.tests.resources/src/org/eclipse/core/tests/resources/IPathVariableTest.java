@@ -47,10 +47,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 				Event that = (Event) obj;
 				if (this.type != that.type || !this.name.equals(that.name))
 					return false;
-				if (this.value == null)
-					return that.value == null;
-				else
-					return this.value.equals(that.value);
+				return this.value == null ? that.value == null : this.value.equals(that.value);
 			}
 
 			public String toString() {
@@ -202,11 +199,12 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	 * Test IPathVariableManager#getValue and IPathVariableManager#setValue
 	 */
 	public void testGetSetValue() {
-		IPath pathOne = new Path("c:\\temp");
+		boolean WINDOWS = java.io.File.separatorChar == '\\';
+		IPath pathOne = WINDOWS ? new Path("c:\\temp") : new Path("/temp");
 		IPath pathTwo = new Path("/tmp/backup");
 		//add device if neccessary
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
-		IPath pathOneEdit = new Path("d:/foobar");
+		IPath pathOneEdit = WINDOWS ? new Path("d:/foobar") : new Path("/foobar");
 
 		// nothing to begin with	
 		assertNull("0.0", manager.getValue("one"));
@@ -266,16 +264,18 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		}
 
 		// set invalid value (with invalid segment)
-		String invalidPathString = "/a/\\:/b";
-		IPath invalidPath = new Path(invalidPathString);
-		assertTrue("6.0", invalidPath.isAbsolute());
-		assertTrue("6.1", !Path.EMPTY.isValidPath(invalidPath.toString()));
-		assertTrue("6.2", !manager.validateValue(invalidPath).isOK());
-		try {
-			manager.setValue("one", invalidPath);
-			fail("6.3 Accepted invalid variable value in setValue()");
-		} catch (CoreException ce) {
-			// success
+		if (WINDOWS) {
+			String invalidPathString = "/a/\\:/b";
+			IPath invalidPath = new Path(invalidPathString);
+			assertTrue("6.0", invalidPath.isAbsolute());
+			assertTrue("6.1", !Path.EMPTY.isValidPath(invalidPath.toString()));
+			assertTrue("6.2", !manager.validateValue(invalidPath).isOK());
+			try {
+				manager.setValue("one", invalidPath);
+				fail("6.3 Accepted invalid variable value in setValue()");
+			} catch (CoreException ce) {
+				// success
+			}
 		}
 
 	}
@@ -303,7 +303,8 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	 * Test IPathVariableManager#resolvePath
 	 */
 	public void testResolvePath() {
-		IPath pathOne = new Path("c:/temp/foo");
+		final boolean WINDOWS = java.io.File.separatorChar == '\\';
+		IPath pathOne = WINDOWS ? new Path("c:/temp/foo") : new Path("/temp/foo");
 		IPath pathTwo = new Path("/tmp/backup");
 		//add device if neccessary
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
@@ -321,7 +322,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 
 		// one substitution
 		IPath path = new Path("one/bar");
-		IPath expected = new Path("c:/temp/foo/bar");
+		IPath expected = new Path("/temp/foo/bar").setDevice(WINDOWS ? "c:" : null);
 		IPath actual = manager.resolvePath(path);
 		assertEquals("1.0", expected, actual);
 
@@ -339,16 +340,18 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 		assertEquals("3.0", expected, actual);
 
 		// device
-		path = new Path("c:/one");
+		path = new Path("/one").setDevice(WINDOWS ? "c:" : null);
 		expected = path;
 		actual = manager.resolvePath(path);
 		assertEquals("4.0", expected, actual);
 
 		// device2
-		path = new Path("c:two");
-		expected = path;
-		actual = manager.resolvePath(path);
-		assertEquals("5.0", expected, actual);
+		if (WINDOWS) {
+			path = new Path("c:two");
+			expected = path;
+			actual = manager.resolvePath(path);
+			assertEquals("5.0", expected, actual);
+		}
 
 		// absolute
 		path = new Path("/one");

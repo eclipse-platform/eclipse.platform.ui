@@ -130,7 +130,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		if (description != null) {
 			writer.printSimpleTag(NAME, description.getName());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
-			writer.printSimpleTag(LOCATION, description.getLocation());
+			writer.printSimpleTag(LOCATION, description.getLocation().toPortableString());
 		}
 		writer.endTag(LINK);
 	}

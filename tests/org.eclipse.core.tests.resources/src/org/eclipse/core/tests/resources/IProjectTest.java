@@ -153,7 +153,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 
 		//should not be able to create a project with invalid path on any platform
-		String[] names = new String[] {":", "", "/"};
+		String[] names = new String[] {"", "/"};
 		for (int i = 0; i < names.length; i++) {
 			try {
 				root.getProject(names[i]);
@@ -166,7 +166,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 		names = new String[0];
 		if (Platform.getOS().equals(Constants.OS_WIN32)) {
 			//invalid windows names
-			names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|"};
+			names = new String[] {"foo:bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|", ":"};
 		} else {
 			//invalid names on non-windows platforms
 			names = new String[] {};
@@ -191,7 +191,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		} else {
 			//these names are valid on non-windows platforms
-			names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|", "hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
+			names = new String[] {"foo:bar", "prn", "nul", "con", "aux", "clock$", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "AUX", "con.foo", "LPT4.txt", "*", "?", "\"", "<", ">", "|", "hello.prn.txt", "null", "con3", "foo.aux", "lpt0", "com0", "com10", "lpt10", ",", "'", ";"};
 		}
 		for (int i = 0; i < names.length; i++) {
 			IProject project = root.getProject(names[i]);

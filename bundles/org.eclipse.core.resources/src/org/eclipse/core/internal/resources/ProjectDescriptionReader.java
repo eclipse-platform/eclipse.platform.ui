@@ -303,7 +303,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			if (!oldLocation.isEmpty()) {
 				parseProblem(Policy.bind("projectDescriptionReader.badLocation", oldLocation.toString(), newLocation)); //$NON-NLS-1$
 			} else {
-				((LinkDescription) objectStack.peek()).setLocation(new Path(newLocation));
+				((LinkDescription) objectStack.peek()).setLocation(Path.fromPortableString(newLocation));
 			}
 			state = S_LINK;
 		}

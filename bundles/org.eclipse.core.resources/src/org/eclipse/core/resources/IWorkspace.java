@@ -1316,16 +1316,10 @@ public interface IWorkspace extends IAdaptable {
 	 * given types.
 	 * <p>
 	 * In addition to the basic restrictions on paths in general (see
-	 * <code>IPath.isValidSegment</code>), a resource name must also obey the
-	 * following rules:
-	 * <ul>
-	 * <li>it must not be empty
-	 * <li>it must not be a single period character (".")
-	 * <li>it must not contain two or more consecutive period characters
-	 * <li>it must not end in a period character
-	 * <li>it must not contain any characters or substrings that are not valid
-	 * on the filesystem on which workspace root is located.
-	 * </ul>
+	 * <code>IPath.isValidSegment</code>), a resource name must also not 
+	 * contain any characters or substrings that are not valid on the filesystem 
+	 * on which workspace root is located. In addition, the names "." and ".."
+	 * are reserved due to their special meaning in file system paths.
 	 * </p>
 	 * <p>
 	 * This validation check is done automatically as a resource is created (but

@@ -616,7 +616,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// preserve local sync info
 		ResourceInfo oldInfo = ((Resource) source).getResourceInfo(true, false);
 		newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
-
+		
 		// forget content-related caching flags
 		newInfo.clear(M_CONTENT_CACHE);
 
@@ -895,7 +895,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				// At this time we need to rebalance the nested operations. It is necessary because
 				// build() and snapshot() should not fail if they are called.
 				workManager.rebalanceNestedOperations();
-
+				
 				//find out if any operation has potentially modified the tree
 				hasTreeChanges = workManager.shouldBuild();
 				//double check if the tree has actually changed
@@ -994,14 +994,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 		return buildOrder;
 	}
-
+	
 	public CharsetManager getCharsetManager() {
 		return charsetManager;
 	}
-
+	
 	public ContentDescriptionManager getContentDescriptionManager() {
 		return contentDescriptionManager;
-	}
+	}	
+	
 
 	/* (non-Javadoc)
 	 * @see IWorkspace#getDanglingReferences()
@@ -1096,7 +1097,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public PropertyManager getPropertyManager() {
 		return propertyManager;
 	}
-
+	
 	/**
 	 * Returns the refresh manager for this workspace
 	 */
@@ -2019,18 +2020,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
-		/* segment must not begin or end with a whitespace */
-		if (Character.isWhitespace(segment.charAt(0)) || Character.isWhitespace(segment.charAt(segment.length() - 1))) {
-			message = Policy.bind("resources.invalidWhitespace", segment); //$NON-NLS-1$
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
-		/* segment must not end with a dot */
-		if (segment.endsWith(".")) { //$NON-NLS-1$
-			message = Policy.bind("resources.invalidDot", segment); //$NON-NLS-1$
-			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-		}
-
 		/* test invalid characters */
 		char[] chars = OS.INVALID_RESOURCE_CHARACTERS;
 		for (int i = 0; i < chars.length; i++)
@@ -2063,7 +2052,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			String message = Policy.bind("resources.pathNull"); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
-		return validatePath(new Path(path), type, false);
+		return validatePath(Path.fromOSString(path), type, false);
 	}
 
 	/**

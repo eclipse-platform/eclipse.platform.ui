@@ -201,7 +201,7 @@ public class LocalMetaArea implements ICoreConstants {
 		return getOldDescriptionLocationFor(project).toFile().exists() || locationFor(project).append(F_PROJECT_LOCATION).toFile().exists();
 	}
 
-	public boolean hasSavedWorkspace() throws CoreException {
+	public boolean hasSavedWorkspace() {
 		return getLocation().toFile().exists() || getBackupLocationFor(getLocation()).toFile().exists();
 	}
 
@@ -212,8 +212,7 @@ public class LocalMetaArea implements ICoreConstants {
 	public IPath locationFor(IResource resource) {
 		if (resource.getType() == IResource.ROOT)
 			return getLocation().append(F_ROOT);
-		else
-			return getLocation().append(F_PROJECTS).append(resource.getProject().getName());
+		return getLocation().append(F_PROJECTS).append(resource.getProject().getName());
 	}
 
 	/**
@@ -245,7 +244,7 @@ public class LocalMetaArea implements ICoreConstants {
 				try {
 					String location = dataIn.readUTF();
 					if (location.length() > 0)
-						description.setLocation(new Path(location));
+						description.setLocation(Path.fromOSString(location));
 				} catch (IOException e) {
 					String msg = Policy.bind("resources.exReadProjectLocation", target.getName()); //$NON-NLS-1$
 					ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
