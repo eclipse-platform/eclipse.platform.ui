@@ -87,10 +87,10 @@ public class PersistentMap extends Hashtable {
 		}
 		try {
 			buf =
-				new PrintWriter(
+				new PrintWriter(new BufferedWriter(
 					new OutputStreamWriter(
 						new BufferedOutputStream(new FileOutputStream(tempfile)),
-						"UTF-8"));
+						"UTF-8")));
 			for (Enumeration e = this.keys(); e.hasMoreElements();) {
 				String name = (String) e.nextElement();
 				buf.println(name + columnSeparator + this.get(name));

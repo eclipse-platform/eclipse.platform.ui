@@ -50,10 +50,10 @@ public class XMLNavGenerator extends XMLGenerator {
 		try {
 			File outputFile = new File(outputDir, NAV_XML_FILENAME);
 			out =
-				new PrintWriter(
+				new PrintWriter(new BufferedWriter(
 					new OutputStreamWriter(
 						new BufferedOutputStream(new FileOutputStream(outputFile)),
-						"UTF-8"));
+						"UTF-8")));
 
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.println("<?xml-stylesheet href=\"tree.xsl\" type=\"text/xsl\"?>");
