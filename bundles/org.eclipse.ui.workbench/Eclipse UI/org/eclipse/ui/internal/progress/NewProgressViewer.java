@@ -1,5 +1,16 @@
 package org.eclipse.ui.internal.progress;
 
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -1404,11 +1415,8 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
 	}
 	
 	void clearAll() {
-		Control[] children= list.getChildren();
-		boolean changed= false;
-		for (int i= 0; i < children.length; i++)
-			changed |= ((JobItem)children[i]).kill(false, true);
-		relayout(changed, changed);
+		
+		finishedJobs.clearAll();		
 		
 		if (DEBUG) {
 			JobTreeElement[] elements = finishedJobs.getJobInfos();
@@ -1605,12 +1613,26 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#removed(org.eclipse.ui.internal.progress.JobInfo)
      */
-    public void removed(JobTreeElement info) {
-		final JobTreeItem ji= findJobItem(info, false);
-		if (ji != null) {
-	        ji.getDisplay().asyncExec(new Runnable() {
+    public void removed(final JobTreeElement info) {
+    	if (list != null && !list.isDisposed()) {
+	        list.getDisplay().asyncExec(new Runnable() {
 	            public void run() {
-	                ji.kill(true, false);
+	            	if (info != null) {	// we got a specific item to remove
+	            		JobTreeItem ji= findJobItem(info, false);
+            			if (ji != null && ji.jobTerminated) {
+            				ji.dispose();
+            				relayout(true, true);
+            			}
+	            	} else {
+	            		// remove all terminated
+	            		Control[] children = list.getChildren();
+	            		for (int i= 0; i < children.length; i++) {
+	            			JobTreeItem ji= (JobItem)children[i];
+	            			if (ji.jobTerminated)
+	            				ji.dispose();
+	            		}
+            			relayout(true, true);
+	            	}
 	            }
 	        });
 		}

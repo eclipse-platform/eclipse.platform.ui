@@ -1,4 +1,14 @@
 package org.eclipse.ui.internal.progress;
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -202,7 +212,7 @@ class FinishedJobs {
 			    		if (otherRoot != myRoot && jte.isJobInfo()) {
 			    			JobInfo ji= (JobInfo) jte;
 			    			Job job= ji.getJob();
-			    			if (job != null && job.belongsTo(myJob)) {
+			    			if (job != null && job != myJob && job.belongsTo(myJob)) {
 			    				if (NewProgressViewer.DEBUG) System.err.println("found other from family " + otherRoot); //$NON-NLS-1$
 			    				if (found == null)
 			    					found= new ArrayList();
@@ -330,5 +340,22 @@ class FinishedJobs {
 
 	public boolean isFinished(JobTreeElement element) {
 		return keptjobinfos.contains(element);
+	}
+
+	public void clearAll() {
+    	synchronized (keptjobinfos) {
+    		JobTreeElement[] all= (JobTreeElement[]) keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
+    		for (int i= 0; i < all.length; i++)
+    			disposeAction(all[i]);
+			keptjobinfos.clear();
+			finishedTime.clear();
+    	}
+		
+        // notify listeners
+        Object l[] = listeners.getListeners();
+        for (int i = 0; i < l.length; i++) {
+            KeptJobsListener jv = (KeptJobsListener) l[i];
+            jv.removed(null);
+        }
 	}
 }
