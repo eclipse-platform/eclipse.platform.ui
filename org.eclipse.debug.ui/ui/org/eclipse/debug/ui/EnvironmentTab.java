@@ -289,7 +289,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * Adds a new environment variable to the table.
 	 */
 	protected void handleEnvAddButtonSelected() {
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.10"), new String[] {NAME_LABEL, VALUE_LABEL}, null, null); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.10"), new String[] {NAME_LABEL, VALUE_LABEL}, null); //$NON-NLS-1$
+		dialog.disallowEmpty(NAME_LABEL);
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
@@ -325,7 +326,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		EnvironmentVariable var =
 			(EnvironmentVariable) sel.getFirstElement();
 		String value= var.getValue();
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {VALUE_LABEL}, new String[] {value}, null); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), MessageFormat.format(LaunchConfigurationsMessages.getString("EnvironmentTab.11"), new String[] {var.getName()}), new String[] {VALUE_LABEL}, new String[] {value}); //$NON-NLS-1$
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}

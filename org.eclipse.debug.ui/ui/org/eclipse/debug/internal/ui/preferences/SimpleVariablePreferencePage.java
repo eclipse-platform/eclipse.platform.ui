@@ -228,7 +228,8 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	}
 	
 	private void handleAddButtonPressed() {
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, null, null); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), DebugPreferencesMessages.getString("SimpleVariablePreferencePage.13"), new String[] {NAME_LABEL, VALUE_LABEL, DESCRIPTION_LABEL}, null); //$NON-NLS-1$
+		dialog.disallowEmpty(NAME_LABEL);
 		if (dialog.open() != Dialog.OK) {
 			return;
 		}
@@ -270,7 +271,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		if (description == null) {
 			description= ""; //$NON-NLS-1$
 		}
-		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14"), new String[] {variable.getName()}), new String[] {VALUE_LABEL, DESCRIPTION_LABEL}, new String[] {value, description}, null); //$NON-NLS-1$
+		MultipleInputDialog dialog= new MultipleInputDialog(getShell(), MessageFormat.format(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.14"), new String[] {variable.getName()}), new String[] {VALUE_LABEL, DESCRIPTION_LABEL}, new String[] {value, description}); //$NON-NLS-1$
 		if (dialog.open() == Dialog.OK) {
 			value= dialog.getValue(VALUE_LABEL);
 			if (value != null) {
