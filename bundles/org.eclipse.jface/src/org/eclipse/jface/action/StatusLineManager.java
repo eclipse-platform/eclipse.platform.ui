@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
  * sophisticated layout is required.
  * </p>
  */
-public class StatusLineManager extends ContributionManager implements IStatusLineWithProgressManager {
+public class StatusLineManager extends ContributionManager implements IStatusLineManager {
 
 	/**
 	 * Global group marker used to control positioning of contributions
@@ -147,7 +147,6 @@ public IProgressMonitor getProgressMonitor() {
 		 */
 		public void done() {
 			progressDelegate.done();
-			clearProgress();
 		}
 		
 		/* (non-Javadoc)
@@ -303,22 +302,5 @@ public void update(boolean force) {
 		}
 	}
 }
-
-/* (non-Javadoc)
- * @see org.eclipse.jface.action.IStatusLineWithProgressManager#clearProgress()
- */
-public void clearProgress() {
-	((StatusLine) statusLine).setMessage(lastImage,lastMessage);
-
-}
-
-/* (non-Javadoc)
- * @see org.eclipse.jface.action.IStatusLineWithProgressManager#setProgressMessage(java.lang.String)
- */
-public void setProgressMessage(String message) {
-	if (statusLineExist())
-		((StatusLine) statusLine).setMessage(message);
-}
-
 
 }
