@@ -7,7 +7,7 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.keys;
+package org.eclipse.ui.keys;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,12 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.NaturalKey;
-import org.eclipse.ui.keys.ParseException;
-import org.eclipse.ui.keys.SpecialKey;
 
 /**
  * A wrapper around the SWT text widget that traps literal key presses and
@@ -179,8 +173,10 @@ public final class KeySequenceText {
 				 * Get a reasonable facsimile of the stroke that is still
 				 * pressed.
 				 */
-				int key = KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
-				KeyStroke remainingStroke = KeySupport.convertAcceleratorToKeyStroke(key);
+				int key =
+					KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
+				KeyStroke remainingStroke =
+					KeySupport.convertAcceleratorToKeyStroke(key);
 				if (!keyStrokes.isEmpty()) {
 					keyStrokes.remove(keyStrokes.size() - 1);
 				}
@@ -244,8 +240,10 @@ public final class KeySequenceText {
 
 			} else if (hasSelection()) {
 				// There is a selection that needs to be replaced.
-				insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
-				if ((stroke.isComplete()) || (insertionIndex >= keyStrokes.size())) {
+				insertionIndex =
+					deleteSelection(keyStrokes, stroke.isComplete());
+				if ((stroke.isComplete())
+					|| (insertionIndex >= keyStrokes.size())) {
 					insertStrokeAt(keyStrokes, stroke, insertionIndex);
 					clearInsertionIndex();
 				}
@@ -267,7 +265,8 @@ public final class KeySequenceText {
 					 * I'm just getting the insertionIndex here. No actual
 					 * deletion should occur.
 					 */
-					insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
+					insertionIndex =
+						deleteSelection(keyStrokes, stroke.isComplete());
 					if (stroke.isComplete()) {
 						insertStrokeAt(keyStrokes, stroke, insertionIndex);
 						clearInsertionIndex();
@@ -308,7 +307,8 @@ public final class KeySequenceText {
 				case SWT.TRAVERSE_TAB_PREVIOUS :
 					// Check if modifiers other than just 'Shift' were
 					// down.
-					if ((event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT)) != 0) {
+					if ((event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT))
+						!= 0) {
 						// Modifiers other than shift were down.
 						event.type = SWT.None;
 						event.doit = false;
@@ -322,7 +322,8 @@ public final class KeySequenceText {
 					// Let the traversal happen, but clear the incomplete
 					// stroke
 					if (hasIncompleteStroke()) {
-						List keyStrokes = new ArrayList(getKeySequence().getKeyStrokes());
+						List keyStrokes =
+							new ArrayList(getKeySequence().getKeyStrokes());
 						if (!keyStrokes.isEmpty()) {
 							keyStrokes.remove(keyStrokes.size() - 1);
 						}
@@ -400,7 +401,8 @@ public final class KeySequenceText {
 	static {
 		TreeSet trappedKeys = new TreeSet();
 		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB));
-		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
+		trappedKeys.add(
+			KeySupport.convertAcceleratorToKeyStroke(SWT.TAB | SWT.SHIFT));
 		trappedKeys.add(KeySupport.convertAcceleratorToKeyStroke(SWT.BS));
 		List trappedKeyList = new ArrayList(trappedKeys);
 		TRAPPED_KEYS = Collections.unmodifiableList(trappedKeyList);
@@ -437,7 +439,8 @@ public final class KeySequenceText {
 	 * The listener that makes sure that the text widget remains up-to-date
 	 * with regards to external modification of the text (e.g., cut & pasting).
 	 */
-	private final UpdateSequenceListener updateSequenceListener = new UpdateSequenceListener();
+	private final UpdateSequenceListener updateSequenceListener =
+		new UpdateSequenceListener();
 
 	/**
 	 * Constructs an instance of <code>KeySequenceTextField</code> with the
@@ -499,7 +502,7 @@ public final class KeySequenceText {
 	 * @return The index at which a subsequent insert should occur. This index
 	 *         only has meaning to the <code>insertStrokeAt</code> method.
 	 */
-	int deleteSelection(List keyStrokes, boolean allowIncomplete) {
+	private int deleteSelection(List keyStrokes, boolean allowIncomplete) {
 		// Get the current selection.
 		Point selection = text.getSelection();
 		int start = selection.x;
@@ -570,7 +573,8 @@ public final class KeySequenceText {
 		 */
 		if (allowIncomplete) {
 			SortedSet modifierKeys = new TreeSet(startStroke.getModifierKeys());
-			KeyStroke incompleteStroke = KeyStroke.getInstance(modifierKeys, null);
+			KeyStroke incompleteStroke =
+				KeyStroke.getInstance(modifierKeys, null);
 			int incompleteStrokeLength = incompleteStroke.format().length();
 			if ((startTextIndex + incompleteStrokeLength) <= start) {
 				keyStrokes.add(startStrokeIndex, incompleteStroke);
@@ -595,7 +599,7 @@ public final class KeySequenceText {
 	 * 
 	 * @return The text contents of this entry; never <code>null</code>.
 	 */
-	String getText() {
+	private String getText() {
 		return text.getText();
 	}
 
@@ -605,7 +609,7 @@ public final class KeySequenceText {
 	 * @return <code>true</code> is there is an incomplete stroke; <code>false</code>
 	 *         otherwise.
 	 */
-	public boolean hasIncompleteStroke() {
+	private boolean hasIncompleteStroke() {
 		return !keySequence.isComplete();
 	}
 
@@ -615,7 +619,7 @@ public final class KeySequenceText {
 	 * @param <code>true</code> if the number of selected characters it greater
 	 *            than zero; <code>false</code> otherwise.
 	 */
-	boolean hasSelection() {
+	private boolean hasSelection() {
 		return (text.getSelectionCount() > 0);
 	}
 
@@ -660,15 +664,20 @@ public final class KeySequenceText {
 	 *            The index at which to insert; must be a valid index into the
 	 *            list of key strokes.
 	 */
-	void insertStrokeAt(List keyStrokes, KeyStroke stroke, int index) {
+	private void insertStrokeAt(List keyStrokes, KeyStroke stroke, int index) {
 		KeyStroke currentStroke =
-			(index >= keyStrokes.size()) ? null : (KeyStroke) keyStrokes.get(index);
+			(index >= keyStrokes.size())
+				? null
+				: (KeyStroke) keyStrokes.get(index);
 		if ((currentStroke != null) && (!currentStroke.isComplete())) {
-			SortedSet modifierKeys = new TreeSet(currentStroke.getModifierKeys());
+			SortedSet modifierKeys =
+				new TreeSet(currentStroke.getModifierKeys());
 			NaturalKey naturalKey = stroke.getNaturalKey();
 			modifierKeys.addAll(stroke.getModifierKeys());
 			keyStrokes.remove(index);
-			keyStrokes.add(index, KeyStroke.getInstance(modifierKeys, naturalKey));
+			keyStrokes.add(
+				index,
+				KeyStroke.getInstance(modifierKeys, naturalKey));
 		} else {
 			keyStrokes.add(index, stroke);
 		}
@@ -681,14 +690,14 @@ public final class KeySequenceText {
 	 * @return <code>true</code> if the selection extends to the last
 	 *         position; <code>false</code> otherwise.
 	 */
-	boolean isCursorInLastPosition() {
+	private boolean isCursorInLastPosition() {
 		return (text.getSelection().y >= getText().length());
 	}
 
 	/**
 	 * Selects all of the text in the widget.
 	 */
-	void selectAll() {
+	private void selectAll() {
 		text.setSelection(0, getText().length());
 	}
 
@@ -733,17 +742,29 @@ public final class KeySequenceText {
 	}
 
 	/**
+	 * Returns the maximum number of strokes that are permitted in this widget
+	 * at one time.
+	 * 
+	 * @return The maximum number of strokes; will be a positive integer or
+	 *         <code>INFINITE</code>.
+	 */
+	public int getKeyStrokeLimit() {
+		return maxStrokes;
+	}
+
+	/**
 	 * A mutator for the maximum number of strokes that are permitted in this
 	 * widget at one time.
 	 * 
-	 * @param maximumStrokes
-	 *            The maximum number of strokes; should be a positive integer
-	 *            or <code>INFINITE</code>.
+	 * @param keyStrokeLimit
+	 *            The maximum number of strokes; must be a positive integer or
+	 *            <code>INFINITE</code>.
 	 */
-	public void setMaxStrokes(int maximumStrokes) {
-		if ((maximumStrokes > 0) || (maximumStrokes == INFINITE)) {
-			maxStrokes = maximumStrokes;
-		}
+	public void setKeyStrokeLimit(int keyStrokeLimit) {
+		if (keyStrokeLimit > 0 || keyStrokeLimit == INFINITE)
+			this.maxStrokes = keyStrokeLimit;
+		else
+			throw new IllegalArgumentException();
 
 		// Make sure we are obeying the new limit.
 		setKeySequence(getKeySequence());

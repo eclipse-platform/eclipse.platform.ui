@@ -66,9 +66,9 @@ import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeySequenceText;
 import org.eclipse.ui.keys.KeyStroke;
 
 public class KeysPreferencePage
@@ -574,7 +574,7 @@ public class KeysPreferencePage
 
 		// The manager for the key sequence text widget.
 		textKeySequenceManager = new KeySequenceText(textKeySequence);
-		textKeySequenceManager.setMaxStrokes(4);
+		textKeySequenceManager.setKeyStrokeLimit(4);
 
 		// Button for adding trapped key strokes
 		buttonAddKey = new Button(groupKeySequence, SWT.LEFT | SWT.ARROW);

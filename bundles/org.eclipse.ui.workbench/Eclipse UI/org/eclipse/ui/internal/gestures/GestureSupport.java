@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.gestures;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.keys.KeySupport;
+import org.eclipse.ui.keys.KeySupport;
 
 public final class GestureSupport {
 

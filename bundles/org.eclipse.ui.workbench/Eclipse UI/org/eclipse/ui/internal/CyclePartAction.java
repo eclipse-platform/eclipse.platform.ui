@@ -44,8 +44,8 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
 
-import org.eclipse.ui.internal.keys.KeySupport;
 
 /**
  * Implements a action to enable the user switch between parts using keyboard.

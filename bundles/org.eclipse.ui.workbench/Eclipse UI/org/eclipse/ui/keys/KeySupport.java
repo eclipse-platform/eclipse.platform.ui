@@ -7,7 +7,7 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.keys;
+package org.eclipse.ui.keys;
 
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -16,12 +16,6 @@ import java.util.TreeSet;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
-
-import org.eclipse.ui.keys.CharacterKey;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.ModifierKey;
-import org.eclipse.ui.keys.NaturalKey;
-import org.eclipse.ui.keys.SpecialKey;
 
 public final class KeySupport {
 
