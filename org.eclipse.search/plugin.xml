@@ -4,31 +4,8 @@
 <!-- ======================================================================= -->
 <!-- Search Plugin                                                           -->
 <!-- ======================================================================= -->
-<plugin
-	name="%pluginName"
-	
-	id="org.eclipse.search"
-	version="3.1.0"
-	provider-name="%providerName"
-	class="org.eclipse.search.internal.ui.SearchPlugin">
+<plugin>
 
-	<requires>
-	  <import plugin="org.eclipse.core.resources"/>
-	  <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
-	</requires>
-	
-	<runtime>
-		<library name="search.jar" >
-			<export name = "*"/>
-		</library>
-	</runtime>
-	
-	
 	<!-- Search extension point definitions -->
 	
 	<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
