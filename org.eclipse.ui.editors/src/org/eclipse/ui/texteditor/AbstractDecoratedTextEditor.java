@@ -54,6 +54,7 @@ import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
 
 /**
@@ -657,7 +658,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @return the change hover to be used by this editors quick diff display
 	 */
 	protected LineChangeHover createChangeHover() {
-		return new LineChangeHover();
+		return new TextChangeHover();
 	}
 
 	/**
