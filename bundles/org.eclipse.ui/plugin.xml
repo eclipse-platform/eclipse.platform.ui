@@ -535,7 +535,7 @@
             id="org.eclipse.ui.edit.text.goto.lineEnd">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.navigate"
             name="%command.goToLine.name"
             description="%command.goToLine.description"
             id="org.eclipse.ui.edit.text.goto.line">
@@ -721,13 +721,13 @@
             id="org.eclipse.ui.edit.text.deleteNextWord">
       </command> 
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.shiftRight.name"
             description="%command.shiftRight.description"
             id="org.eclipse.ui.edit.text.shiftRight">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.shiftLeft.name"
             description="%command.shiftLeft.description"
             id="org.eclipse.ui.edit.text.shiftLeft">
@@ -739,67 +739,67 @@
             id="org.eclipse.ui.edit.text.toggleOverwrite">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.window"
             name="%command.showRulerContextMenu.name"
             description="%command.showRulerContextMenu.description"
             id="org.eclipse.ui.edit.text.showRulerContextMenu">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.us_ascii.name"
             description="%command.us_ascii.description"
             id="org.eclipse.ui.edit.text.encoding.us-ascii">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.iso_8859_1.name"
             description="%command.iso_8859_1.description"
             id="org.eclipse.ui.edit.text.encoding.iso-8859-1">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.utf_8.name"
             description="%command.utf_8.description"
             id="org.eclipse.ui.edit.text.encoding.utf-8">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.utf_16be.name"
             description="%command.utf_16be.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16be">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.utf_16le.name"
             description="%command.utf_16le.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16le">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.utf_16.name"
             description="%command.utf_16.description"
             id="org.eclipse.ui.edit.text.encoding.utf-16">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.system.name"
             description="%command.system.description"
             id="org.eclipse.ui.edit.text.encoding.system">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.custom.name"
             description="%command.custom.description"
             id="org.eclipse.ui.edit.text.encoding.custom">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.contentAssistProposals.name"
             description="%command.contentAssistProposals.description"
             id="org.eclipse.ui.edit.text.contentAssist.proposals">
       </command>
       <command
-			category="org.eclipse.ui.category.textEditor"
+			category="org.eclipse.ui.category.edit"
             name="%command.contentAssistContextInformation.name"
             description="%command.contentAssistContextInformation.description"
             id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
@@ -998,25 +998,25 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findNext"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Shift+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findPrevious"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+J"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findIncremental"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Shift+J"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findIncrementalReverse"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1065,14 +1065,14 @@
       <keyBinding
             locale="zh"
             string="Ctrl+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             locale="zh"
             string="Ctrl+Shift+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1541,28 +1541,28 @@
       <keyBinding
             platform="carbon"
             string="Command+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findNext"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+Shift+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findPrevious"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+J"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findIncremental"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Command+Shift+J"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findIncrementalReverse"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1838,13 +1838,13 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+S"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findIncremental"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+R"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.findIncrementalReverse"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
