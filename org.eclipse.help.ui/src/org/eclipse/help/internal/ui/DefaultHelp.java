@@ -89,36 +89,26 @@ public class DefaultHelp implements IHelp {
 	 * @param relatedTopics topics that will populate related topics view
 	 */
 	public void displayHelp(IContext context, IHelpResource topic) {
-		if (topic == null || topic.getHref() == null)
+		if (context == null || topic == null || topic.getHref() == null)
 			return;
-		// Do not start help view if documentaton is not available, display error
-		if (getTocs().length == 0) {
-			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
-			//Documentation is not installed.
-			return;
-		}
-		getHelpView();
-		activateHelpPerspective();
-		// open related topics view
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench == null)
-			return;
-		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
-		IWorkbenchPage activeP = workbenchWindow.getActivePage();
-		if (activeP == null) {
-			return;
-		}
-		RelatedTopicsView aRelatedTopicsView;
-		try{
-			aRelatedTopicsView =(RelatedTopicsView) activeP.showView(RelatedTopicsView.ID);
-		}catch(PartInitException pie){
-			return;
-		}
-		// check to see if the view was created successfully
-		if (aRelatedTopicsView==null)
-			return;
-		aRelatedTopicsView.displayHelp(context.getRelatedTopics(), topic);
-
+		String contextID = getContextID(context);
+		IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
+		if (appServer == null)
+			return; // may want to display an error message
+		String url =
+			"http://"
+				+ appServer.getHost()
+				+ ":"
+				+ appServer.getPort()
+				+ "/help?tab=links&contextId="
+				+ contextID
+				+ "&topic=http://"
+				+ appServer.getHost()
+				+ ":"
+				+ appServer.getPort()
+				+ "/help/content/help:"
+				+ topic.getHref();
+		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}
 	/**
 	 * Display help.
