@@ -78,28 +78,28 @@ import org.apache.tools.ant.*;
 public class AntRunner implements IPlatformRunnable {
 
 	/** The default build file name */
-	public static final String DEFAULT_BUILD_FILENAME= "build.xml";
+	public static final String DEFAULT_BUILD_FILENAME = "build.xml";
 
 	/** Our current message output status. Follows Project.MSG_XXX */
-	private int msgOutputLevel= Project.MSG_INFO;
+	private int msgOutputLevel = Project.MSG_INFO;
 
 	/** File that we are using for configuration */
 	private File buildFile; /** null */
 
 	/** Stream that we are using for logging */
-	private PrintStream out= System.out;
+	private PrintStream out = System.out;
 
 	/** Stream that we are using for logging error messages */
-	private PrintStream err= System.err;
+	private PrintStream err = System.err;
 
 	/** The build targets */
-	private Vector targets= new Vector(5);
+	private Vector targets = new Vector(5);
 
 	/** Set of properties that can be used by tasks */
-	private Properties definedProps= new Properties();
+	private Properties definedProps = new Properties();
 
 	/** Names of classes to add as listeners to project */
-	private Vector listeners= new Vector(5);
+	private Vector listeners = new Vector(5);
 
 	/** Names of classes to add as listeners to project */
 	private IAntRunnerListener clientListener;
@@ -109,22 +109,22 @@ public class AntRunner implements IPlatformRunnable {
 	 * right to use the 'out' PrintStream. The class must implements the BuildLogger
 	 * interface
 	 */
-	private String loggerClassname= null;
+	private String loggerClassname = null;
 
 	/**
 	 * Indicates whether output to the log is to be unadorned.
 	 */
-	private boolean emacsMode= false;
+	private boolean emacsMode = false;
 
 	/**
 	 * Indicates if this ant should be run.
 	 */
-	private boolean readyToRun= false;
+	private boolean readyToRun = false;
 
 	/**
 	 * Indicates we should only parse and display the project help information
 	 */
-	private boolean projectHelp= false;
+	private boolean projectHelp = false;
 	
 	/**
 	 * Adds a logger and all registered build listeners to an ant project.
@@ -132,14 +132,15 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param project the project to add listeners to
 	 */
 protected void addBuildListeners(Project project) {
-
-	// Add the default listener
-	project.addBuildListener(createLogger());
-
+	// If we have a client listener then use that.  Otherwise add the default listener
+	if (clientListener != null)
+		project.addBuildListener(clientListener);
+	else
+		project.addBuildListener(createLogger());
 	for (int i= 0; i < listeners.size(); i++) {
-		String className= (String) listeners.elementAt(i);
+		String className = (String) listeners.elementAt(i);
 		try {
-			BuildListener listener= (BuildListener) Class.forName(className).newInstance();
+			BuildListener listener = (BuildListener) Class.forName(className).newInstance();
 			project.addBuildListener(listener);
 		} catch (Exception exc) {
 			throw new BuildException(Policy.bind("exception.cannotCreateListener",className), exc);
@@ -153,10 +154,10 @@ protected void addBuildListeners(Project project) {
  * @return the default build logger for logging build events to the ant log
  */
 private BuildLogger createLogger() {
-	BuildLogger logger= null;
+	BuildLogger logger = null;
 	if (loggerClassname != null) {
 		try {
-			logger= (BuildLogger) (Class.forName(loggerClassname).newInstance());
+			logger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 		} catch (ClassCastException e) {
 			System.err.println(Policy.bind("exception.loggerDoesNotImplementInterface",loggerClassname));
 			throw new RuntimeException();
@@ -165,51 +166,42 @@ private BuildLogger createLogger() {
 			throw new RuntimeException();
 		}
 	} else {
-		logger= new DefaultLogger();
+		logger = new DefaultLogger();
 	}
-
 	logger.setMessageOutputLevel(msgOutputLevel);
 	logger.setOutputPrintStream(out);
 	logger.setErrorPrintStream(err);
 	logger.setEmacsMode(emacsMode);
-
 	return logger;
 }
 
 /**
  * Search parent directories for the build file.
  *
- * <P>Takes the given target as a suffix to append to each
- *    parent directory in seach of a build file.  Once the
- *    root of the file-system has been reached an exception
- *    is thrown.
- *
- * @param suffix    Suffix filename to look for in parents.
- * @return          A handle to the build file
- *
- * @exception BuildException    Failed to locate a build file
+ * <p>Takes the given target as a suffix to append to each
+ * parent directory in seach of a build file.  Once the
+ * root of the file-system has been reached an exception
+ * is thrown.
+ * </p>
+ * @param suffix Suffix filename to look for in parents.
+ * @return A handle to the build file
+ * @exception BuildException Failed to locate a build file
  */
 private File findBuildFile(String start, String suffix) throws BuildException {
-
-	clientListener.messageLogged(Policy.bind("info.searchingFor",suffix), Project.MSG_INFO);
-
+	logMessage(Policy.bind("info.searchingFor",suffix), Project.MSG_INFO);
 	File parent = new File(new File(start).getAbsolutePath());
 	File file = new File(parent, suffix);
-
 	// check if the target file exists in the current directory
 	while (!file.exists()) {
 		// change to parent directory
-		parent= getParentFile(parent);
-
+		parent = getParentFile(parent);
 		// if parent is null, then we are at the root of the fs,
 		// complain that we can't find the build file.
 		if (parent == null)
 			throw new BuildException(Policy.bind("exception.noBuildFile"));
-
 		// refresh our file handle
-		file= new File(parent, suffix);
+		file = new File(parent, suffix);
 	}
-
 	return file;
 }
 
@@ -221,33 +213,32 @@ private File findBuildFile(String start, String suffix) throws BuildException {
  * @param name the string whose insertion index into <code>names</code> is to be determined
  */
 private int findTargetPosition(Vector names, String name) {
-	int res= names.size();
-	for (int i= 0; i < names.size() && res == names.size(); i++) {
-		if (name.compareTo((String) names.elementAt(i)) < 0) {
-			res= i;
-		}
+	int result = names.size();
+	for (int i = 0; i < names.size() && res == names.size(); i++) {
+		if (name.compareTo((String) names.elementAt(i)) < 0)
+			result = i;
 	}
-	return res;
+	return result;
 }
 
 /**
  * Helper to get the parent file for a given file.
+ * <p>Added to simulate File.getParentFile() from JDK 1.2.</p>
  *
- * <P>Added to simulate File.getParentFile() from JDK 1.2.
- *
- * @param file   File
- * @return       Parent file or null if none
+ * @param file File
+ * @return Parent file or null if none
  */
 private File getParentFile(File file) {
-	String filename= file.getAbsolutePath();
-	file= new File(filename);
-	filename= file.getParent();
-
-	clientListener.messageLogged(Policy.bind("info.searchingIn",filename), Project.MSG_VERBOSE);
-
+	String filename = file.getAbsolutePath();
+	file = new File(filename);
+	filename = file.getParent();
+	logMessage(Policy.bind("info.searchingIn",filename), Project.MSG_VERBOSE);
 	return (filename == null) ? null : new File(filename);
 }
-
+private void logMessage(String message, int severity) {
+	if (clientListener != null)
+		clientListener.messageLogged(message, severity);
+}
 /**
  * Command-line invocation method.
  * 
@@ -288,9 +279,8 @@ public int getOutputMessageLevel() {
  */
 private void printMessage(Throwable t) {
 	String message= t.getMessage();
-	if (message != null) {
+	if (message != null)
 		System.err.println(message);
-	}
 }
 
 /**
@@ -303,13 +293,13 @@ private void printMessage(Throwable t) {
  */
 private void printTargets(Vector names, Vector descriptions, String heading, int maxlen) {
 	// now, start printing the targets and their descriptions
-	String lSep= System.getProperty("line.separator");
+	String lSep = System.getProperty("line.separator");
 	// got a bit annoyed that I couldn't find a pad function
-	String spaces= "    ";
+	String spaces = "    ";
 	while (spaces.length() < maxlen) {
 		spaces += spaces;
 	}
-	StringBuffer msg= new StringBuffer();
+	StringBuffer msg = new StringBuffer();
 	msg.append(heading + lSep + lSep);
 	for (int i= 0; i < names.size(); i++) {
 		msg.append(" ");
@@ -320,8 +310,7 @@ private void printTargets(Vector names, Vector descriptions, String heading, int
 		}
 		msg.append(lSep);
 	}
-
-	clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
+	logMessage(msg.toString(), Project.MSG_INFO);
 }
 
 /**
@@ -332,31 +321,31 @@ private void printTargets(Vector names, Vector descriptions, String heading, int
  */
 private void printTargets(Project project) {
 	// find the target with the longest name
-	int maxLength= 0;
-	Enumeration ptargets= project.getTargets().elements();
+	int maxLength = 0;
+	Enumeration ptargets = project.getTargets().elements();
 	String targetName;
 	String targetDescription;
 	Target currentTarget;
 	// split the targets in top-level and sub-targets depending
 	// on the presence of a description
-	Vector topNames= new Vector();
-	Vector topDescriptions= new Vector();
-	Vector subNames= new Vector();
+	Vector topNames = new Vector();
+	Vector topDescriptions = new Vector();
+	Vector subNames = new Vector();
 
 	while (ptargets.hasMoreElements()) {
-		currentTarget= (Target) ptargets.nextElement();
-		targetName= currentTarget.getName();
-		targetDescription= currentTarget.getDescription();
+		currentTarget = (Target) ptargets.nextElement();
+		targetName = currentTarget.getName();
+		targetDescription = currentTarget.getDescription();
 		// maintain a sorted list of targets
 		if (targetDescription == null) {
-			int pos= findTargetPosition(subNames, targetName);
+			int pos = findTargetPosition(subNames, targetName);
 			subNames.insertElementAt(targetName, pos);
 		} else {
-			int pos= findTargetPosition(topNames, targetName);
+			int pos = findTargetPosition(topNames, targetName);
 			topNames.insertElementAt(targetName, pos);
 			topDescriptions.insertElementAt(targetDescription, pos);
 			if (targetName.length() > maxLength) {
-				maxLength= targetName.length();
+				maxLength = targetName.length();
 			}
 		}
 	}
@@ -368,8 +357,8 @@ private void printTargets(Project project) {
  * Logs a message with the client outlining the usage of <b>Ant</b>.
  */
 private void printUsage() {
-	String lSep= System.getProperty("line.separator");
-	StringBuffer msg= new StringBuffer();
+	String lSep = System.getProperty("line.separator");
+	StringBuffer msg = new StringBuffer();
 	msg.append("ant [" + Policy.bind("usage.options") + "] [" 
 				+ Policy.bind("usage.target") + " ["
 				+ Policy.bind("usage.target") + "2 ["
@@ -389,7 +378,7 @@ private void printUsage() {
 	msg.append("  -D<property>=<value>   " + Policy.bind("usage.propertiesValues") + lSep);
 	msg.append("  -find <file>           " + Policy.bind("usage.findFileToBuild") + lSep);
 	
-	clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
+	logMessage(msg.toString(), Project.MSG_INFO);
 }
 
 /**
@@ -398,20 +387,20 @@ private void printUsage() {
  */
 private void printVersion() {
 	try {
-		Properties props= new Properties();
-		InputStream in= Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt");
+		Properties props = new Properties();
+		InputStream in = Main.class.getResourceAsStream("/org/apache/tools/ant/version.txt");
 		props.load(in);
 		in.close();
 
-		String lSep= System.getProperty("line.separator");
-		StringBuffer msg= new StringBuffer();
+		String lSep = System.getProperty("line.separator");
+		StringBuffer msg = new StringBuffer();
 		msg.append(Policy.bind("usage.antVersion"));
 		msg.append(props.getProperty("VERSION") + " ");
 		msg.append(Policy.bind("usage.compiledOn"));
 		msg.append(props.getProperty("DATE"));
 		msg.append(lSep);
 		
-		clientListener.messageLogged(msg.toString(), Project.MSG_INFO);
+		logMessage(msg.toString(), Project.MSG_INFO);
 	} catch (IOException ioe) {
 		System.err.println(Policy.bind("exception.cannotLoadVersionInfo"));
 		System.err.println(ioe.getMessage());
@@ -427,49 +416,47 @@ private void printVersion() {
  * @param args the collection of arguments
  */
 protected void processCommandLine(String[] args) throws BuildException {
-
-	String searchForThis= null;
-
+	String searchForThis = null;
 	// cycle through given args
-
 	for (int i= 0; i < args.length; i++) {
-		String arg= args[i];
-
+		String arg = args[i];
 		if (arg.equals("-help")) {
 			printUsage();
 			return;
-		} else if (arg.equals("-version")) {
+		} 
+		if (arg.equals("-version")) {
 			printVersion();
 			return;
-		} else if (arg.equals("-quiet") || arg.equals("-q")) {
-			msgOutputLevel= Project.MSG_WARN;
+		}
+		if (arg.equals("-quiet") || arg.equals("-q")) {
+			msgOutputLevel = Project.MSG_WARN;
 		} else if (arg.equals("-verbose") || arg.equals("-v")) {
 			printVersion();
-			msgOutputLevel= Project.MSG_VERBOSE;
+			msgOutputLevel = Project.MSG_VERBOSE;
 		} else if (arg.equals("-debug")) {
 			printVersion();
-			msgOutputLevel= Project.MSG_DEBUG;
+			msgOutputLevel = Project.MSG_DEBUG;
 		} else if (arg.equals("-logfile") || arg.equals("-l")) {
 			try {
-				File logFile= new File(args[i + 1]);
+				File logFile = new File(args[i + 1]);
 				i++;
 				out= new PrintStream(new FileOutputStream(logFile));
-				err= out;
+				err = out;
 				System.setOut(out);
 				System.setErr(out);
 			} catch (IOException ioe) {
-				clientListener.messageLogged(Policy.bind("exception.cannotWriteToLog"), Project.MSG_INFO);
+				logMessage(Policy.bind("exception.cannotWriteToLog"), Project.MSG_INFO);
 				return;
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				clientListener.messageLogged(Policy.bind("exception.missingLogFile"), Project.MSG_INFO);
+				logMessage(Policy.bind("exception.missingLogFile"), Project.MSG_INFO);
 				return;
 			}
 		} else if (arg.equals("-buildfile") || arg.equals("-file") || arg.equals("-f")) {
 			try {
-				buildFile= new File(args[i + 1]);
+				buildFile = new File(args[i + 1]);
 				i++;
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				clientListener.messageLogged(Policy.bind("exception.missingBuildFile"), Project.MSG_INFO);
+				logMessage(Policy.bind("exception.missingBuildFile"), Project.MSG_INFO);
 				return;
 			}
 		} else if (arg.equals("-listener")) {
@@ -477,7 +464,7 @@ protected void processCommandLine(String[] args) throws BuildException {
 				listeners.addElement(args[i + 1]);
 				i++;
 			} catch (ArrayIndexOutOfBoundsException aioobe) {
-				clientListener.messageLogged(Policy.bind("exception.missingClassName"), Project.MSG_INFO);
+				logMessage(Policy.bind("exception.missingClassName"), Project.MSG_INFO);
 				return;
 			}
 		} else if (arg.startsWith("-D")) {
@@ -493,65 +480,59 @@ protected void processCommandLine(String[] args) throws BuildException {
 			 * to help or not, so we simply look for the equals sign.
 			 */
 
-			String name= arg.substring(2, arg.length());
-			String value= null;
-			int posEq= name.indexOf("=");
+			String name = arg.substring(2, arg.length());
+			String value = null;
+			int posEq = name.indexOf("=");
 			if (posEq > 0) {
-				value= name.substring(posEq + 1);
-				name= name.substring(0, posEq);
+				value = name.substring(posEq + 1);
+				name = name.substring(0, posEq);
 			} else if (i < args.length - 1)
-				value= args[++i];
+				value = args[++i];
 
 			definedProps.put(name, value);
 		} else if (arg.equals("-logger")) {
 			if (loggerClassname != null) {
-				clientListener.messageLogged(Policy.bind("exception.multipleLoggers"), Project.MSG_INFO);
+				logMessage(Policy.bind("exception.multipleLoggers"), Project.MSG_INFO);
 				return;
 			}
-			loggerClassname= args[++i];
+			loggerClassname = args[++i];
 		} else if (arg.equals("-emacs"))
 			emacsMode = true;
 		else if (arg.equals("-projecthelp"))
-			projectHelp= true; // set the flag to display the targets and quit
+			projectHelp = true; // set the flag to display the targets and quit
 		else if (arg.equals("-find")) {
 			// eat up next arg if present, default to build.xml
 			if (i < args.length - 1)
-				searchForThis= args[++i];
+				searchForThis = args[++i];
 			else
-				searchForThis= DEFAULT_BUILD_FILENAME;
+				searchForThis = DEFAULT_BUILD_FILENAME;
 		} else if (arg.startsWith("-")) {
 			// we don't have any more args to recognize!
-			clientListener.messageLogged(Policy.bind("exception.unknownArgument",arg), Project.MSG_INFO);
-			printUsage();
-			return;
+			logMessage(Policy.bind("exception.unknownArgument",arg), Project.MSG_INFO);
+//			printUsage();
+//			return;
 		} else 
 			targets.addElement(arg); // if it's no other arg, it may be the target
-
 	}
-
 	// if buildFile was not specified on the command line,
 	if (buildFile == null) {
 		// but -find then search for it
 		if (searchForThis != null)
-			buildFile= findBuildFile(".", searchForThis);
+			buildFile = findBuildFile(".", searchForThis);
 		else
-			buildFile= new File(DEFAULT_BUILD_FILENAME);
+			buildFile = new File(DEFAULT_BUILD_FILENAME);
 	}
-
 	// make sure buildfile exists
 	if (!buildFile.getAbsoluteFile().exists()) {
-		clientListener.messageLogged(Policy.bind("exception.buildFileNotFound",buildFile.toString()), Project.MSG_INFO);
+		logMessage(Policy.bind("exception.buildFileNotFound",buildFile.toString()), Project.MSG_INFO);
 		throw new BuildException(Policy.bind("error.buildFailed"));
 	}
-
 	// make sure it's not a directory (this falls into the ultra
 	// paranoid lets check everything catagory
-
 	if (buildFile.isDirectory()) {
-		clientListener.messageLogged(Policy.bind("exception.buildFileIsDirectory",buildFile.toString()), Project.MSG_INFO);
+		logMessage(Policy.bind("exception.buildFileIsDirectory",buildFile.toString()), Project.MSG_INFO);
 		throw new BuildException(Policy.bind("error.buildFailed"));
 	}
-
 	readyToRun= true;
 }
 
@@ -563,7 +544,7 @@ protected void processCommandLine(String[] args) throws BuildException {
  * @exception execution exceptions
  */
 public Object run(Object argArray) throws Exception {
-	String[] args= (String[]) argArray;
+	String[] args = (String[]) argArray;
 	processCommandLine(args);
 	try {
 		runBuild();
@@ -600,33 +581,21 @@ public Object run(Object argArray, IAntRunnerListener listener) throws Exception
 private void runBuild() throws BuildException {
 	if (!readyToRun)
 		return;
-
-	clientListener.messageLogged(Policy.bind("label.buildFile",buildFile.toString()),Project.MSG_INFO);
-
+	logMessage(Policy.bind("label.buildFile",buildFile.toString()),Project.MSG_INFO);
 	EclipseProject project = new EclipseProject();
-
-	Throwable error= null;
-
+	Throwable error = null;
 	try {
-		if (clientListener != null)
-			project.addBuildListener(clientListener);
-		else
-			addBuildListeners(project);
-
+		addBuildListeners(project);
 		project.fireBuildStarted();
-
 		project.init();
-
 		// set user-define properties
-		Enumeration e= definedProps.keys();
+		Enumeration e = definedProps.keys();
 		while (e.hasMoreElements()) {
-			String arg= (String) e.nextElement();
-			String value= (String) definedProps.get(arg);
+			String arg = (String) e.nextElement();
+			String value = (String) definedProps.get(arg);
 			project.setUserProperty(arg, value);
 		}
-
 		project.setUserProperty("ant.file", buildFile.getAbsolutePath());
-
 		// first use the ProjectHelper to create the project object
 		// from the given build file.
 		try {
@@ -641,21 +610,19 @@ private void runBuild() throws BuildException {
 		}
 
 		// make sure that we have a target to execute
-		if (targets.size() == 0) {
+		if (targets.size() == 0) 
 			targets.addElement(project.getDefaultTarget());
-		}
 
-		if (projectHelp) {
+		if (projectHelp)
 			printTargets(project);
-		} else {
+		else
 			// actually do some work
 			project.executeTargets(targets);
-		}
 	} catch (RuntimeException exc) {
-		error= exc;
+		error = exc;
 		throw exc;
 	} catch (Error err) {
-		error= err;
+		error = err;
 		throw err;
 	} finally {
 		project.fireBuildFinished(error);

@@ -118,9 +118,11 @@ protected void fireExecuteTargetStarted(Target target) {
     BuildEvent event = new BuildEvent(target);
     Vector buildListeners = getBuildListeners();
     for (int i = 0; i < buildListeners.size(); i++) {
-        IAntRunnerListener listener = (IAntRunnerListener) buildListeners.elementAt(i);
-        listener.executeTargetStarted(event);
-    }
+		if (buildListeners.elementAt(i) instanceof IAntRunnerListener) {
+			IAntRunnerListener listener = (IAntRunnerListener) buildListeners.elementAt(i);
+			listener.executeTargetStarted(event);
+		}
+	}
 }
 /**
  * Sends a target finished notification to all the listeners when an execute target
@@ -131,9 +133,11 @@ protected void fireExecuteTargetFinished(Target target, Throwable exception) {
     event.setException(exception);
     Vector buildListeners = getBuildListeners();
     for (int i = 0; i < buildListeners.size(); i++) {
-        IAntRunnerListener listener = (IAntRunnerListener) buildListeners.elementAt(i);
-        listener.executeTargetFinished(event);
-    }
+		if (buildListeners.elementAt(i) instanceof IAntRunnerListener) {
+			IAntRunnerListener listener = (IAntRunnerListener) buildListeners.elementAt(i);
+			listener.executeTargetFinished(event);
+		}
+	}
 }
 /**
  * Returns a string in which all <code>File.separatorChar</code>
