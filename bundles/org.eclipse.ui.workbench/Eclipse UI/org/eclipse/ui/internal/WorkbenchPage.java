@@ -2009,7 +2009,7 @@ public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescri
 		if (activePartID != null) {
 			IViewReference ref = activePerspective.findView(activePartID);
 			IViewPart view = null;
-			if(ref != null);
+			if(ref != null)
 				view = ref.getView(true);
 			if (view != null)
 				activePart = view;
