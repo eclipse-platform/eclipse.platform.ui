@@ -49,6 +49,10 @@ public class TextNavigationAction implements IAction {
 		fAction= action;
 	}
 
+	protected StyledText getTextWidget() {
+		return fTextWidget;
+	}
+
 	/*
 	 * @see IAction#run()
 	 */

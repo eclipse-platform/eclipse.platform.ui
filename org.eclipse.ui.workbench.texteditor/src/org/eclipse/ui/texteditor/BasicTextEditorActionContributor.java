@@ -67,10 +67,10 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * The status fields to be set to the editor
 	 * @since 2.0
 	 */
-	private final static String[] STATUSFIELDS= {
-		ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE,
-		ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE,
-		ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION
+	private final static String[][] STATUSFIELDS= {
+		{ ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE, null },
+		{ ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE, ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE },
+		{ ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION, ITextEditorActionConstants.GOTO_LINE }
 	};
 	
 	/**
@@ -129,7 +129,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		
 		fStatusFields= new HashMap(3);
 		for (int i= 0; i < STATUSFIELDS.length; i++)
-			fStatusFields.put(STATUSFIELDS[i], new StatusLineContributionItem(STATUSFIELDS[i]));
+			fStatusFields.put(STATUSFIELDS[i], new StatusLineContributionItem(STATUSFIELDS[i][0]));
 	}
 	
 	/**
@@ -149,7 +149,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @return the action, or <code>null</code> if none
 	 */
 	protected final IAction getAction(ITextEditor editor, String actionId) {
-		return (editor == null ? null : editor.getAction(actionId));
+		return (editor == null || actionId == null ? null : editor.getAction(actionId));
 	}
 	
 	/**
@@ -166,7 +166,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		if (fActiveEditorPart instanceof ITextEditorExtension) {
 			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
 			for (int i= 0; i < STATUSFIELDS.length; i++)
-				extension.setStatusField(null, STATUSFIELDS[i]);
+				extension.setStatusField(null, STATUSFIELDS[i][0]);
 		}
 
 		fActiveEditorPart= part;
@@ -184,10 +184,13 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fIncrementalFindReverse.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE));
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 		
-		if (fActiveEditorPart instanceof ITextEditorExtension) {
-			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
-			for (int i= 0; i < STATUSFIELDS.length; i++)
-				extension.setStatusField((IStatusField) fStatusFields.get(STATUSFIELDS[i]), STATUSFIELDS[i]);
+		for (int i= 0; i < STATUSFIELDS.length; i++) {
+			StatusLineContributionItem statusField= (StatusLineContributionItem) fStatusFields.get(STATUSFIELDS[i]);
+			statusField.setActionHandler(getAction(editor, STATUSFIELDS[i][1]));
+			if (fActiveEditorPart instanceof ITextEditorExtension) {
+				ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
+				extension.setStatusField((IStatusField) statusField, STATUSFIELDS[i][0]);
+			}
 		}
 	}
 	

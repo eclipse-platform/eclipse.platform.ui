@@ -26,6 +26,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -37,9 +39,13 @@ import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -820,8 +826,30 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	class ToggleInsertModeAction extends TextNavigationAction {
 		
+		private Caret fOverwriteCaret;
+		private Caret fOriginalCaret;
+	
 		public ToggleInsertModeAction(StyledText textWidget) {
 			super(textWidget, ST.TOGGLE_OVERWRITE);
+			
+			fOriginalCaret= textWidget.getCaret();
+			fOverwriteCaret= createOverwriteCaret();
+			textWidget.setCaret(fOriginalCaret);
+			
+			textWidget.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					if (fOriginalCaret != null) {
+						if (!fOriginalCaret.isDisposed())
+							fOriginalCaret.dispose();
+						fOriginalCaret= null;
+					}
+					if (fOverwriteCaret != null) {
+						if (!fOverwriteCaret.isDisposed())
+							fOverwriteCaret.dispose();
+						fOverwriteCaret= null;
+					}
+				}
+			});
 		}
 		
 		/*
@@ -830,9 +858,40 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void run() {
 			super.run();
 			fOverwriting= !fOverwriting;
+			
+			StyledText styledText= getTextWidget();
+			if (fOverwriting) {
+				Image image= fOverwriteCaret.getImage();
+				fOverwriteCaret.setImage(createOverwriteCaretImage(styledText));
+				image.dispose();
+				styledText.setCaret(fOverwriteCaret);
+			} else {
+				styledText.setCaret(fOriginalCaret);
+			}
+			
 			handleInsertModeChanged();
 		}
+		
+		private Caret createOverwriteCaret() {
+			StyledText styledText= getTextWidget();
+			Caret caret= new Caret(styledText, SWT.NULL);
+			caret.setImage(createOverwriteCaretImage(styledText));
+			return caret;
+		}
 
+		private Image createOverwriteCaretImage(StyledText styledText) {
+			PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
+			ImageData imageData = new ImageData(5, styledText.getLineHeight(), 1, caretPalette);
+			Display display = styledText.getDisplay();
+			Image blockImage= new Image(display, imageData);
+			GC gc = new GC (blockImage);
+			gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
+			gc.drawLine(0, 0, imageData.width -1, 0);
+			gc.drawLine(0, 0, 0, imageData.height -1);
+			gc.drawLine(0, imageData.height -1, imageData.width -1, imageData.height -1);
+			gc.dispose();
+			return blockImage;
+		}
 	};
 
 	/**
@@ -3463,6 +3522,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action= new ToggleInsertModeAction(textWidget);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE);
 		setAction(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, action);
+		textWidget.setKeyBinding(SWT.INSERT, SWT.NULL);
 		
 		action=  new ScrollLinesAction(-1);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SCROLL_LINE_UP);
