@@ -25,7 +25,7 @@ public class AntProjectNode extends AntElementNode {
 
 	protected AntModelProject fProject;
 	protected IAntModel fModel;
-	private Map fNameToDefiningNodeMap;
+	private Map fNameToDefiningNode;
 	protected String fLabel;
 	
 	public AntProjectNode(AntModelProject project, IAntModel antModel) {
@@ -76,19 +76,19 @@ public class AntProjectNode extends AntElementNode {
 	public void reset() {
 		super.reset();
 		fProject.reset();
-		if (fNameToDefiningNodeMap != null && getAntModel() instanceof AntModel) {
-			((AntModel)getAntModel()).setNamesOfOldDefiningNodes(fNameToDefiningNodeMap.keySet());
+		if (fNameToDefiningNode != null && getAntModel() instanceof AntModel) {
+			((AntModel)getAntModel()).setNamesOfOldDefiningNodes(fNameToDefiningNode.keySet());
 		}
-		fNameToDefiningNodeMap= null;
+		fNameToDefiningNode= null;
 		setProblemSeverity(AntModelProblem.NO_PROBLEM);
 		setProblemMessage(null);
         fOffset= -1;
         fLength= -1;
 	}
 	
-	public void addDefiningTaskNode(AntDefiningTaskNode node) {
-		if (fNameToDefiningNodeMap == null) {
-			fNameToDefiningNodeMap= new HashMap();
+	protected void addDefiningTaskNode(AntDefiningTaskNode node) {
+		if (fNameToDefiningNode == null) {
+			fNameToDefiningNode= new HashMap();
 		}
 		String label= node.getLabel();
 		if (label.equalsIgnoreCase("macrodef") //$NON-NLS-1$
@@ -98,12 +98,12 @@ public class AntProjectNode extends AntElementNode {
 			//only add user defined names
 			return;
 		}
-		fNameToDefiningNodeMap.put(node.getLabel(), node);
+		fNameToDefiningNode.put(node.getLabel(), node);
 	}
 	
 	public AntDefiningTaskNode getDefininingTaskNode(String nodeName) {
-		if (fNameToDefiningNodeMap != null) {
-			return (AntDefiningTaskNode)fNameToDefiningNodeMap.get(nodeName);
+		if (fNameToDefiningNode != null) {
+			return (AntDefiningTaskNode)fNameToDefiningNode.get(nodeName);
 		}
 		return null;
 	}
