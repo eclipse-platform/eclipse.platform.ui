@@ -128,7 +128,7 @@ public class StandbyPart implements IIntroConstants {
         container.setLayout(new StandbyLayout());
 
         // return hyper link.
-        ImageUtil.registerImage(ImageUtil.BACK, "full/elcl16/home_nav.gif");
+        ImageUtil.registerImage(ImageUtil.BACK, "full/elcl16/home_nav.gif"); //$NON-NLS-1$
         returnLink = toolkit.createImageHyperlink(container, SWT.WRAP);
         returnLink.setImage(ImageUtil.getImage(ImageUtil.BACK));
         returnLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -209,8 +209,8 @@ public class StandbyPart implements IIntroConstants {
                         setInput(input);
                         return true;
                     } catch (Exception e) {
-                        Log.error("Failed to set the input: " + input
-                                + " on standby part: " + partId, e);
+                        Log.error("Failed to set the input: " + input //$NON-NLS-1$
+                                + " on standby part: " + partId, e); //$NON-NLS-1$
                         return false;
                     }
                 }

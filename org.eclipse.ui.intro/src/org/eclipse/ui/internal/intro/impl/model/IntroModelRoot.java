@@ -458,7 +458,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // not a page. Test for root page.
             if (!pageId.equals(homePage.getId())) {
                 // not a page nor the home page.
-                Log.warning("Could not find Intro page with id: " + pageId);
+                Log.warning("Could not find Intro page with id: " + pageId); //$NON-NLS-1$
                 return false;
             }
         }

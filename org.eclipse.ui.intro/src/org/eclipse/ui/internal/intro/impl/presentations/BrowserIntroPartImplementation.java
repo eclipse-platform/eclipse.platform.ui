@@ -41,7 +41,7 @@ public class BrowserIntroPartImplementation extends
             setImageDescriptor(ImageUtil
                     .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/backward_nav.gif"));
+                    .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -72,7 +72,7 @@ public class BrowserIntroPartImplementation extends
             setImageDescriptor(ImageUtil
                     .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/forward_nav.gif"));
+                    .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -99,11 +99,11 @@ public class BrowserIntroPartImplementation extends
     private Action homeAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip"));
+            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/home_nav.gif"));
+                    .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/home_nav.gif"));
+                    .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -156,7 +156,7 @@ public class BrowserIntroPartImplementation extends
             }
 
             public void completed(ProgressEvent event) {
-                browser.setData("frameNavigation", null);
+                browser.setData("frameNavigation", null); //$NON-NLS-1$
             }
         });
 
@@ -199,7 +199,7 @@ public class BrowserIntroPartImplementation extends
                 // set the URL the browser should display
                 boolean success = browser.setUrl(cachedPage);
                 if (!success) {
-                    Log.error("Unable to set the following ULR in browser: "
+                    Log.error("Unable to set the following ULR in browser: " //$NON-NLS-1$
                             + cachedPage, null);
                     return;
                 }

@@ -56,7 +56,7 @@ public class FormIntroPartImplementation extends
             setImageDescriptor(ImageUtil
                     .createImageDescriptor("full/elcl16/backward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/backward_nav.gif"));
+                    .createImageDescriptor("full/dlcl16/backward_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -84,7 +84,7 @@ public class FormIntroPartImplementation extends
             setImageDescriptor(ImageUtil
                     .createImageDescriptor("full/elcl16/forward_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/forward_nav.gif"));
+                    .createImageDescriptor("full/dlcl16/forward_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -107,11 +107,11 @@ public class FormIntroPartImplementation extends
     private Action homeAction = new Action() {
 
         {
-            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip"));
+            setToolTipText(IntroPlugin.getString("Browser.homeButton_tooltip")); //$NON-NLS-1$
             setImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/elcl16/home_nav.gif"));
+                    .createImageDescriptor("full/elcl16/home_nav.gif")); //$NON-NLS-1$
             setDisabledImageDescriptor(ImageUtil
-                    .createImageDescriptor("full/dlcl16/home_nav.gif"));
+                    .createImageDescriptor("full/dlcl16/home_nav.gif")); //$NON-NLS-1$
         }
 
         public void run() {
@@ -185,7 +185,7 @@ public class FormIntroPartImplementation extends
             mainForm.setBackgroundImage(bgImage);
             String repeat = sharedStyleManager
                     .getProperty("title.image.repeat"); //$NON-NLS-1$
-            if (repeat != null && repeat.equalsIgnoreCase("true"))
+            if (repeat != null && repeat.equalsIgnoreCase("true")) //$NON-NLS-1$
 
                 mainForm.setBackgroundImageTiled(true);
         }

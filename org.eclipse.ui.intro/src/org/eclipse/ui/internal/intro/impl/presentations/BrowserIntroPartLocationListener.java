@@ -63,8 +63,8 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             // cleared by a progress listener, when all the frame navigation is
             // completed.
             Browser browser = (Browser) event.getSource();
-            if (browser.getData("frameNavigation") == null) {
-                browser.setData("frameNavigation", "true");
+            if (browser.getData("frameNavigation") == null) { //$NON-NLS-1$
+                browser.setData("frameNavigation", "true"); //$NON-NLS-1$ //$NON-NLS-2$
                 implementation.updateHistory(url);
             }
         }

@@ -301,7 +301,7 @@ public class Util {
 
             public void run() {
                 DialogUtil.displayErrorMessage(display.getActiveShell(),
-                        IntroPlugin.getString("OpenBroswer.failedToLaunch"), e);
+                        IntroPlugin.getString("OpenBroswer.failedToLaunch"), e); //$NON-NLS-1$
             }
         });
     }

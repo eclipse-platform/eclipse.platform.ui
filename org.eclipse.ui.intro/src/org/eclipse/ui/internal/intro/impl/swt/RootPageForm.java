@@ -124,7 +124,7 @@ public class RootPageForm implements IIntroConstants {
 
         private void updateDescription(String text) {
             if (text == null)
-                text = "";
+                text = ""; //$NON-NLS-1$
             descriptionLabel.setText(text);
             descriptionLabel.getParent().layout();
         }
@@ -294,7 +294,7 @@ public class RootPageForm implements IIntroConstants {
      */
     private Label createHoverLabel(Composite body) {
         Label label = toolkit.createLabel(body, "", SWT.WRAP); //$NON-NLS-1$
-        String key = StringUtil.concat(rootPage.getId(), ".", "hover-text.fg")
+        String key = StringUtil.concat(rootPage.getId(), ".", "hover-text.fg") //$NON-NLS-1$ //$NON-NLS-2$
                 .toString();
         Color fg = rootPageStyleManager.getColor(toolkit, key);
         if (fg == null)

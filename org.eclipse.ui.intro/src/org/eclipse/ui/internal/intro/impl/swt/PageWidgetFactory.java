@@ -118,10 +118,10 @@ public class PageWidgetFactory {
                     break;
                 String linkText = StringUtil
                         .concat(
-                                "<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=",
-                                embddedLink, "\">",
-                                IntroPlugin.getString("HTML.embeddedLink"),
-                                "</a></p>").toString();
+                                "<p><a href=\"http://org.eclipse.ui.intro/openBrowser?url=", //$NON-NLS-1$
+                                embddedLink, "\">", //$NON-NLS-1$
+                                IntroPlugin.getString("HTML.embeddedLink"), //$NON-NLS-1$
+                                "</a></p>").toString(); //$NON-NLS-1$
                 linkText = generateFormText(linkText);
                 c = createFormText(parent, linkText, null);
             }
@@ -323,12 +323,12 @@ public class PageWidgetFactory {
     private String generateFormText(String text) {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append("<form>"); //$NON-NLS-1$
-        if (text.startsWith("<p>"))
+        if (text.startsWith("<p>")) //$NON-NLS-1$
             sbuf.append(text);
         else {
-            sbuf.append("<p>");
+            sbuf.append("<p>"); //$NON-NLS-1$
             sbuf.append(text);
-            sbuf.append("</p>");
+            sbuf.append("</p>"); //$NON-NLS-1$
         }
         sbuf.append("</form>"); //$NON-NLS-1$
         return sbuf.toString();
@@ -343,11 +343,11 @@ public class PageWidgetFactory {
     private String generateBoldFormText(String text) {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append("<form>"); //$NON-NLS-1$
-        sbuf.append("<p>");
-        sbuf.append("<b>");
+        sbuf.append("<p>"); //$NON-NLS-1$
+        sbuf.append("<b>"); //$NON-NLS-1$
         sbuf.append(text);
-        sbuf.append("</b>");
-        sbuf.append("</p>");
+        sbuf.append("</b>"); //$NON-NLS-1$
+        sbuf.append("</p>"); //$NON-NLS-1$
         sbuf.append("</form>"); //$NON-NLS-1$
         return sbuf.toString();
     }

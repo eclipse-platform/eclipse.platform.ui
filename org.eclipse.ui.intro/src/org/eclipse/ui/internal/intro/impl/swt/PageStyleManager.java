@@ -122,36 +122,36 @@ public class PageStyleManager extends SharedStyleManager {
      * default is 1.
      */
     public int getPageNumberOfColumns() {
-        return getIntProperty(page, ".layout.ncolumns", 0);
+        return getIntProperty(page, ".layout.ncolumns", 0); //$NON-NLS-1$
     }
 
 
     public int getNumberOfColumns(IntroGroup group) {
-        return getIntProperty(group, ".layout.ncolumns", 0);
+        return getIntProperty(group, ".layout.ncolumns", 0); //$NON-NLS-1$
     }
 
     public int getPageVerticalSpacing() {
-        return getIntProperty(page, ".layout.vspacing", 5);
+        return getIntProperty(page, ".layout.vspacing", 5); //$NON-NLS-1$
     }
 
     public int getVerticalSpacing(IntroGroup group) {
-        return getIntProperty(group, ".layout.vspacing", 5);
+        return getIntProperty(group, ".layout.vspacing", 5); //$NON-NLS-1$
     }
 
     public int getPageHorizantalSpacing() {
-        return getIntProperty(page, ".layout.hspacing", 5);
+        return getIntProperty(page, ".layout.hspacing", 5); //$NON-NLS-1$
     }
 
     public int getHorizantalSpacing(IntroGroup group) {
-        return getIntProperty(group, ".layout.hspacing", 5);
+        return getIntProperty(group, ".layout.hspacing", 5); //$NON-NLS-1$
     }
 
     public int getColSpan(AbstractBaseIntroElement element) {
-        return getIntProperty(element, ".layout.colspan", 1);
+        return getIntProperty(element, ".layout.colspan", 1); //$NON-NLS-1$
     }
 
     public int getRowSpan(AbstractBaseIntroElement element) {
-        return getIntProperty(element, ".layout.rowspan", 1);
+        return getIntProperty(element, ".layout.rowspan", 1); //$NON-NLS-1$
     }
 
     private int getIntProperty(AbstractBaseIntroElement element,
@@ -324,15 +324,15 @@ public class PageStyleManager extends SharedStyleManager {
         String value = null;
         StringBuffer buff = createPathToElementKey(text);
         if (buff != null) {
-            String key = buff.append(".font.bold").toString();
+            String key = buff.append(".font.bold").toString(); //$NON-NLS-1$
             value = getProperty(key);
             if (value != null)
-                return value.toLowerCase().equals("true");
+                return value.toLowerCase().equals("true"); //$NON-NLS-1$
         }
         if (value == null) {
             // bold is not specified by ID. Check to see if there is a style-id
             // specified for bold.
-            value = getProperty("bold-style-id");
+            value = getProperty("bold-style-id"); //$NON-NLS-1$
             if (value != null && text.getStyleId() != null)
                 return text.getStyleId().equals(value);
         }

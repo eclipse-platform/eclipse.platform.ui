@@ -122,7 +122,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
-                    "CustomizableIntroPart.configNotFound",
+                    "CustomizableIntroPart.configNotFound", //$NON-NLS-1$
                     new Object[] { ModelLoaderUtil.getLogString(
                             getConfigurationElement(), null) }, null);
 

@@ -8,7 +8,6 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
-
 public interface IIntroConstants {
 
     // all attributes here are by default public static final.
@@ -30,7 +29,6 @@ public interface IIntroConstants {
     String MEMENTO_STANDBY_CONTENT_PART_ID_ATT = "contentPartID"; //$NON-NLS-1$
     String MEMENTO_STANDBY_CONTENT_PART_TAG = "standbyContentPart"; //$NON-NLS-1$
 
-
     // Form implementation consts:
     // ---------------------------
     // key to retrieve the into link model object from imageHyperlink widget.
@@ -39,6 +37,5 @@ public interface IIntroConstants {
 
     // key to retrive page sub-title from PageContentForm
     String PAGE_SUBTITLE = "PageSubtitle"; //$NON-NLS-1$
-
 
 }
