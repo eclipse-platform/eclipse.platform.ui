@@ -618,6 +618,10 @@ private void error(String message) {
 	if (InternalPlatform.DEBUG && DEBUG_RESOLVE)
 		System.out.println(error.toString());
 }
+private void information(String message) {
+	if (InternalPlatform.DEBUG && DEBUG_RESOLVE)
+		System.out.println(message);
+}
 public IExtensionPoint getExtensionPoint(PluginDescriptorModel plugin, String extensionPointId) {
 	if (extensionPointId == null)
 		return null;
@@ -751,18 +755,25 @@ private void resolve() {
 	// contains ids only.
 
 	// walk the dependencies and setup constraints
-	ArrayList orphans = new ArrayList();
-	for (int i = 0; i < roots.size(); i++)
+	for (int i = 0; i < roots.size(); i++) {
+		ArrayList orphans = new ArrayList();
 		resolveNode((String) roots.get(i), null, null, null, orphans);
 		// At this point we have set up all the Constraint and
 		// ConstraintsEntry components.  But we may not have found which
 		// plugin is the best match for a given set of constraints.
-	for (int j = 0; j < orphans.size(); j++) {
-		if (!roots.contains(orphans.get(j))) {
-			roots.add(orphans.get(j));
-			if (DEBUG_RESOLVE)
-				debug("orphan " + orphans.get(j));
+		for (int j = 0; j < orphans.size(); j++) {
+			// Adding the orphans to the list of roots is not enough.
+			// Now we need to resolve for these new roots (they may
+			// not have been resolved before, especially if the parent
+			// was looking for an older version and not the latest
+			// version which is what we pick up for the roots).
+			if (!roots.contains(orphans.get(j))) {
+				roots.add(orphans.get(j));
+				if (DEBUG_RESOLVE)
+					debug("orphan " + orphans.get(j));
+			}
 		}
+		orphans = null;
 	}
 
 	// resolve dependencies
@@ -902,22 +913,39 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 	if (parent != null) {
 		childPd = ix.addConstraint(currentConstraint);
 		if (childPd == null) {
-			String message = Policy.bind("parse.unsatisfiedPrereq", parent.getId(), child);
-			error(message);
-			if (DEBUG_RESOLVE)
-				debug("<POP  " + child + " unable to satisfy constraint");
-			cookie.isOk(false);
-			return cookie;
-		} else
-			if (!cookie.addChange(currentConstraint)) {
-				String message = Policy.bind("parse.prereqLoop", parent.getId(), child);
+			if (prq.getOptional()) {
+				// This is an optional prerequisite.  Ignore the conflict and this
+				// prerequisite.
+				information (Policy.bind("parse.unsatisfiedOptPrereq", parent.getId(), child));
+				return cookie;
+			} else {
+				// This prerequisite is mandatory.  
+				String message = Policy.bind("parse.unsatisfiedPrereq", parent.getId(), child);
 				error(message);
 				if (DEBUG_RESOLVE)
-					debug("<POP  " + child + " prerequisite loop");
+					debug("<POP  " + child + " unable to satisfy constraint");
 				cookie.isOk(false);
 				return cookie;
 			}
+		} else
+			if (!cookie.addChange(currentConstraint)) {
+				if (prq.getOptional()) {
+					// This is an optional prerequisite.  Ignore the loop, and the
+					// prerequisite
+					information (Policy.bind("parse.prereqOptLoop", parent.getId(), child));
+					return cookie;
+				} else {
+					String message = Policy.bind("parse.prereqLoop", parent.getId(), child);
+					error(message);
+					if (DEBUG_RESOLVE)
+						debug("<POP  " + child + " prerequisite loop");
+					cookie.isOk(false);
+					return cookie;
+				}
+			}
 	} else {
+		// This is a root node.  There is no prerequisite so this IndexEntry must
+		// exist
 		childPd = ix.getMatchingDescriptorFor(currentConstraint);
 		if (childPd == null) {
 			if (DEBUG_RESOLVE)
@@ -948,12 +976,12 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 		Constraint cookieConstraint;
 		for (Iterator change = cookie.getChanges().iterator(); change.hasNext();) {
 			cookieConstraint = (Constraint) change.next();
+			prereq = cookieConstraint.getPrerequisite();
 			if (childPd == cookieConstraint.getParent()) {
-				prereq = cookieConstraint.getPrerequisite();
-				removeConstraintFor(prereq);
 				if (!orphans.contains(prereq.getPlugin())) // keep track of orphaned subtrees
 					orphans.add(prereq.getPlugin());
 			}
+			removeConstraintFor(prereq);
 		}
 		if (parent != null)
 			error(Policy.bind("parse.prereqDisabled", parent.getId(), child));
