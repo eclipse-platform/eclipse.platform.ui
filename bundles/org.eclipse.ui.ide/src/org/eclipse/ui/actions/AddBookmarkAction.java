@@ -1,5 +1,3 @@
-package org.eclipse.ui.actions;
-
 /******************************************************************************* 
  * Copyright (c) 2000, 2003 IBM Corporation and others. 
  * All rights reserved. This program and the accompanying materials! 
@@ -10,8 +8,10 @@ package org.eclipse.ui.actions;
  * Contributors: 
  *        IBM Corporation - initial API and implementation 
  *   Sebastian Davids <sdavids@gmx.de>
- *     - Fix for bug 20510 - Add Bookmark action has wrong label in navigator or packages view
+ *     - Fix for bug 20510 - Add Bookmark action has wrong label in navigator or
+ *       packages view
 *********************************************************************/
+package org.eclipse.ui.actions;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
