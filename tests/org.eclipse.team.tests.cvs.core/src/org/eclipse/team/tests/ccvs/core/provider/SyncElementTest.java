@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
@@ -50,7 +51,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testGranularityContents"));
+		//return new CVSTestSetup(new SyncElementTest("testSimpleMerge"));
 	}
 	
 	/*
@@ -693,5 +694,44 @@ public class SyncElementTest extends EclipseTest {
 		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertEquals("Base is incorrect", (ICVSResource)tree.getBase(), Session.getManagedResource(copy), false, false);
 
+	 }
+	 
+	 public void testSimpleMerge() throws TeamException, CoreException, IOException {
+		// Create a test project (which commits it as well)
+		IProject project = createProject("testSimpleMerge", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+	
+		// Checkout and modify a copy
+		IProject copy = checkoutCopy(project, "-copy");
+		copy.refreshLocal(IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		
+		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, new CVSTag("v1", CVSTag.VERSION), DEFAULT_MONITOR);
+		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, new CVSTag("branch1", CVSTag.BRANCH), DEFAULT_MONITOR);
+		
+		getProvider(copy).update(new IResource[] {copy}, IResource.DEPTH_INFINITE, new CVSTag("branch1", CVSTag.BRANCH), false, DEFAULT_MONITOR);
+		
+		// make changes on the branch		
+		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
+		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
+		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
+		
+		// make change to workspace working on HEAD
+		changeResources(project, new String[] {"file2.txt"}, false);
+		changeResources(project, new String[] {"file3.txt"}, true);
+		
+		IRemoteResource base = getProvider(project).getRemoteTree(project, new CVSTag("v1", CVSTag.VERSION), DEFAULT_MONITOR);
+		IRemoteResource remote = getProvider(project).getRemoteTree(project, new CVSTag("branch1", CVSTag.BRANCH), DEFAULT_MONITOR);
+		IRemoteSyncElement tree = new CVSRemoteSyncElement(false, project, base, remote);
+		
+		// watch for empty directories and the prune option!!!
+		assertSyncEquals("testSimpleMerge sync check", tree,
+						 new String[] { "addition.txt", "folderAddition/", "folderAddition/new.txt", 
+						 				 "folder1/b.txt", "file1.txt", "file2.txt", "file3.txt"},
+						 new int[] { IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION,
+						 			  IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION,
+						 			  IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION,
+						 			  IRemoteSyncElement.INCOMING | IRemoteSyncElement.DELETION,
+						 			  IRemoteSyncElement.INCOMING | IRemoteSyncElement.CHANGE,
+						 			  IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE,
+						 			  IRemoteSyncElement.OUTGOING | IRemoteSyncElement.CHANGE });				 			  					 			  
 	 }
 }
