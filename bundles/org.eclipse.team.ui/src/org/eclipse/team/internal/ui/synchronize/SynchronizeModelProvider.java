@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -50,9 +51,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeListener, ISynchronizeModelProvider, IResourceChangeListener {
 
 	private static boolean DEBUG = false;
-	
-	// Flags to indicate if tree control should be updated while building the model.
-	private boolean refreshViewer;
 	
 	protected Map resourceMap = Collections.synchronizedMap(new HashMap());
 	
@@ -380,7 +378,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @param node the model element to remove
 	 */
 	protected void removeFromViewer(ISynchronizeModelElement node) {
-		calculateProperties(node, true);
+		propogateConflictState(node, true /* clear the conflict */);
 		clearModelObjects(node);
 		if (canUpdateViewer()) {
 			doRemove(node);
@@ -428,10 +426,66 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	protected void addToViewer(ISynchronizeModelElement node) {
 		associateDiffNode(node);
 		node.addPropertyChangeListener(listener);
-		calculateProperties(node, false);
+		propogateConflictState(node, false);
+		// Set the marker property on this node.
+		// There is no need to propogate this to the parents 
+		// as they will be displaying the proper marker already
+		String property = calculateProblemMarker(node);
+		if (property != null) {
+			node.setProperty(property, true);
+		}
 		if (canUpdateViewer()) {
 			doAdd((SynchronizeModelElement)node.getParent(), node);
 		}
+	}
+
+	/**
+	 * Calculate the problem marker that should be shown on the given 
+	 * element.
+	 * @param element a synchronize model element
+	 * @return the marker property that should be displayed on the element
+	 * or <code>null</code> if no marker should be displayed
+	 */
+	private String calculateProblemMarker(ISynchronizeModelElement element) {
+		IResource resource = element.getResource();
+		String property = null;
+		if (resource != null && resource.exists()) {
+			try {
+				IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, getLogicalModelDepth(resource));
+				for (int i = 0; i < markers.length; i++) {
+					IMarker marker = markers[i];
+					try {
+						Integer severity = (Integer) marker.getAttribute(IMarker.SEVERITY);
+						if (severity != null) {
+							if (severity.intValue() == IMarker.SEVERITY_ERROR) {
+								property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
+								break;
+							} else if (severity.intValue() == IMarker.SEVERITY_WARNING) {
+								property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
+								// Keep going because there may be errors on other resources
+							}
+						}
+					} catch (CoreException e) {
+						if (!resource.exists()) {
+							// Throw to the outer try-catch
+							throw e;
+						}
+						// If the marker exists, log the exception and continue.
+						// Otherwise, just ignore the exception
+						if (marker.exists()) {
+							TeamPlugin.log(e);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				// If the resource exists, log the exception and continue.
+				// Otherwise, just ignore the exception
+				if (resource.exists()) {
+					TeamPlugin.log(e);
+				}
+			}
+		}
+		return property;
 	}
 
 	/* (non-Javadoc)
@@ -572,7 +626,10 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	protected void firePendingLabelUpdates() {
 		try {
-			startLabelUpdateJob((ISynchronizeModelElement[])pendingLabelUpdates.toArray(new ISynchronizeModelElement[pendingLabelUpdates.size()]));
+			if (canUpdateViewer()) {
+				StructuredViewer tree = getViewer();
+				tree.update(pendingLabelUpdates.toArray(new Object[pendingLabelUpdates.size()]), null);
+			}
 		} finally {
 			pendingLabelUpdates.clear();
 		}
@@ -585,49 +642,37 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		}
 	}
 
-	protected void calculateProperties(ISynchronizeModelElement element, boolean clear) {
-		element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, clear ? false : isConflicting(element));
-		propagateProblemMarkers(element, clear);
-		updateParentLabels(element);
+	/**
+	 * Method invoked when a sync element is added or removed or its state changes.
+	 * This method can be invoked from the UI thread or a background thread.
+	 * @param element synchronize element
+	 * @param clear <code>true</code> if the conflict bit of the element was cleared 
+	 * (i.e. the element has been deleted)
+	 */
+	protected void propogateConflictState(ISynchronizeModelElement element, boolean clear) {
+		boolean isConflict = clear ? false : isConflicting(element);
+		boolean wasConflict = element.getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
+		// Only propogate and update parent labels if the state of the element has changed
+		if (isConflict != wasConflict) {
+			element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, isConflict);
+			updateParentLabels(element);
+		}
 	}
 	
 	/**
 	 * Calculate and propagate problem markers in the element model
-	 * @param element
-	 * @param clear
+	 * @param element the ssynchronize element
 	 */
-	private void propagateProblemMarkers(ISynchronizeModelElement element, boolean clear) {
+	private void propagateProblemMarkers(ISynchronizeModelElement element) {
 		IResource resource = element.getResource();
 		if (resource != null) {
-			String property = null;
-			if (!clear) {
-				try {
-					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, getLogicalModelDepth(resource));
-					for (int i = 0; i < markers.length; i++) {
-						IMarker marker = markers[i];
-						Integer severity = (Integer) marker.getAttribute(IMarker.SEVERITY);
-						if (severity != null) {
-							if (severity.intValue() == IMarker.SEVERITY_ERROR) {
-								property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
-								break;
-							} else if (severity.intValue() == IMarker.SEVERITY_WARNING) {
-								property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
-								// Keep going because there may be errors on other resources
-							}
-						}
-					}
-				} catch (CoreException e) {
-					// the marker has been deleted skip this marker and keep going, or if the resource
-					// does not exist anymore. In anycase this will force parents to be recalculated.
-					// continue;
-				}
-			}
+			String property = calculateProblemMarker(element);
 			// If it doesn't have a direct change, a parent might
 			boolean recalculateParentDecorations = hadProblemProperty(element, property);
 			if (recalculateParentDecorations) {
 				ISynchronizeModelElement parent = (ISynchronizeModelElement) element.getParent();
 				if (parent != null) {
-					propagateProblemMarkers(parent, false);
+					propagateProblemMarkers(parent);
 				}
 			}
 		}
@@ -701,7 +746,6 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	public void resourceChanged(final IResourceChangeEvent event) {
 			String[] markerTypes = getMarkerTypes();
-			boolean refreshNeeded = false;
 			Map changes = new HashMap();
 			
 			// Accumulate all distinct resources that have had problem marker
@@ -710,7 +754,6 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				IMarkerDelta[] markerDeltas = event.findMarkerDeltas(markerTypes[idx], true);
 					for (int i = 0; i < markerDeltas.length; i++) {
 						IMarkerDelta delta = markerDeltas[i];
-						int kind = delta.getKind();
 						IResource resource = delta.getResource();
 						if(! changes.containsKey(resource)) {								
 							ISynchronizeModelElement element = getClosestExistingParent(delta.getResource());
@@ -722,7 +765,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				}
 			
 			if (!changes.isEmpty()) {
-				startLabelUpdateJob((ISynchronizeModelElement[]) changes.values().toArray(new ISynchronizeModelElement[changes.size()]));
+				startMarkerUpdateJob((ISynchronizeModelElement[]) changes.values().toArray(new ISynchronizeModelElement[changes.size()]));
 		}
 	}
 	
@@ -735,14 +778,16 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * their labels updated. Note that this will update the annotations on the
 	 * label because the element will already have the correct image and text.
 	 */
-	private void startLabelUpdateJob(final ISynchronizeModelElement[] changes) {
-		Job job = new Job("Synchronize View: Processing label changes") { //$NON-NLS-1$
+	private void startMarkerUpdateJob(final ISynchronizeModelElement[] changes) {
+		Job job = new Job(Policy.bind("SynchronizeModelProvider.0")) { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				long start = System.currentTimeMillis();
 				synchronized (this) {
 					// Changes contains all elements that need their labels updated
 					for (int i = 0; i < changes.length; i++) {
-						calculateProperties(changes[i], false);
+						ISynchronizeModelElement element = changes[i];
+						propagateProblemMarkers(element);
+						updateParentLabels(element);
 					}
 				}
 				if (DEBUG) {
