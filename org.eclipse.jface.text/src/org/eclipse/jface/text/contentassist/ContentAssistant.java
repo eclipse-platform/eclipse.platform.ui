@@ -1091,7 +1091,6 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 					IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fViewer;
 					return extension.requestWidgetToken(this, WIDGET_PRIORITY);
 				}
-				return false;
 		}	
 		return true;
 	}
