@@ -6,9 +6,17 @@ package org.eclipse.ant.internal.ui;
  */
 
 import java.net.*;
-import java.util.*;import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.RGB;import org.eclipse.ui.plugin.AbstractUIPlugin;
+import java.util.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The plug-in runtime class for the AntUI plug-in.
@@ -23,7 +31,12 @@ public final class AntUIPlugin extends AbstractUIPlugin{
 	
 	public static final String PROPERTIES_MESSAGES = "org.eclipse.ant.internal.ui.messages";
 	
-	private static final String ANT_ICON_RELATIVE_PATH = "icons/full/eview16/ant_view.gif";
+	public static final String IMG_ANT_SCRIPT= "icons/full/eview16/ant_view.gif";
+	public static final String IMG_BUILDER= "icons/full/eview16/build_exec.gif";
+	
+	private static final String SETTINGS_COMMAND_HISTORY = "CommandHistory";
+	private static final int MAX_COMMAND_HISTORY = 15;
+	
 	
 	/**
 	 * The single instance of this plug-in runtime class.
@@ -60,6 +73,50 @@ public static ResourceBundle getResourceBundle() {
 }
 
 /**
+ * Adds the given command to the command history.
+ * - if the command doesn't exist: put it at the first place
+ * - if it exists and is already at the first place: does nothing
+ * - if it exists and is not at the first place: move it to the first place
+
+ */
+public void addToCommandHistory(String command) {
+	IDialogSettings settings = getDialogSettings();
+	String[] oldHistory = settings.getArray(SETTINGS_COMMAND_HISTORY);
+	if (oldHistory == null || oldHistory.length == 0) {
+		settings.put(SETTINGS_COMMAND_HISTORY, new String[] {command});
+		return;
+	}
+	if (command.equals(oldHistory[0])) {
+		return;
+	}
+	//search for existing command and move to top if found
+	int index;
+	for (index=1; index<oldHistory.length; index++)
+		if (command.equals(oldHistory[index]))
+			break;
+	if (index < oldHistory.length) {
+		//it was found, so replace it
+		for (int i=index; i>0; i--)
+			oldHistory[i] = oldHistory[i-1];
+		oldHistory[0] = command;
+		settings.put(SETTINGS_COMMAND_HISTORY, oldHistory);
+	}
+	//not found -- add it to the history
+	String[] newHistory;
+	if (oldHistory.length == MAX_COMMAND_HISTORY) {
+		//shift other commands down and add new one
+		System.arraycopy(oldHistory, 0, oldHistory, 1, oldHistory.length-1);
+		oldHistory[0] = command;
+		newHistory = oldHistory;
+	} else {
+		// grow the history array
+		newHistory = new String[oldHistory.length+1];
+		System.arraycopy(oldHistory, 0, newHistory, 1, oldHistory.length);
+		newHistory[0] = command;
+	}
+	settings.put(SETTINGS_COMMAND_HISTORY, newHistory);
+}
+/**
  * Adds the given file to the history: 
  * - if the file doesn't exist: put it at the first place
  * - if it exists and is already at the first place: does nothing
@@ -83,6 +140,12 @@ public void addToHistory(IFile file) {
 }
 
 /**
+ * Returns the history of tool script command that have been run.
+ */
+public String[] getCommandHistory() {
+	return getDialogSettings().getArray(SETTINGS_COMMAND_HISTORY);
+}
+/**
  * Returns the history of the AntPlugin, i.e. the files that were executed previously
  * 
  * @return an array containing the files
@@ -92,14 +155,14 @@ public IFile[] getHistory() {
 }
 
 /**
- * Returns the ImageDescriptor for the Ant icon.
+ * Returns the ImageDescriptor for the icon with the given path
  * 
  * @return the ImageDescriptor object
  */
-ImageDescriptor getAntIconImageDescriptor() {
+public ImageDescriptor getImageDescriptor(String path) {
 	try {
 		URL installURL = getDescriptor().getInstallURL();
-		URL url = new URL(installURL,ANT_ICON_RELATIVE_PATH);
+		URL url = new URL(installURL,path);
 		return ImageDescriptor.createFromURL(url);
 	} catch (MalformedURLException e) {
 		return null;
