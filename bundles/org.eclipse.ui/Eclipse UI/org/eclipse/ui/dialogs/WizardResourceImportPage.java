@@ -271,14 +271,11 @@ protected java.util.List getSelectedResources() {
 
 /**
  * Returns this page's list of currently-specified resources to be 
- * imported. Return null if the monitor is cancelled.
+ * imported filtered by the ElementFilter.
  *
- * @return a list of resources currently selected 
- * for export (element type: <code>IResource</code>)
- * or null if the monitor is cancelled.
  */
-protected java.util.List getSelectedResources(IProgressMonitor monitor) {
-	return this.selectionGroup.getAllCheckedListItems(monitor);
+protected void getSelectedResources(ElementFilter filter, IProgressMonitor monitor) throws InterruptedException{
+	this.selectionGroup.getAllCheckedListItems(filter,monitor);
 }
 
 /**

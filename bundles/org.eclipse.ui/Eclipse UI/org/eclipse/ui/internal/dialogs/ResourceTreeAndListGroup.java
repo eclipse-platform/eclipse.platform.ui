@@ -15,6 +15,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.dialogs.ElementFilter;
+
 import java.io.File;
 
 /**
@@ -37,6 +39,7 @@ public class ResourceTreeAndListGroup implements ICheckStateListener, ISelection
 	// widgets
 	private	CheckboxTreeViewer	treeViewer;
 	private	CheckboxTableViewer	listViewer;
+	
 /**
  *	Create an instance of this class.  Use this constructor if you wish to specify
  *	the width and/or height of the combined widget (to only hardcode one of the
@@ -315,8 +318,8 @@ private void findAllSelectedListElements(
 	Object treeElement,
 	String parentLabel,
 	boolean addAll,
-	Collection result,
-	IProgressMonitor monitor) {
+	ElementFilter filter,
+	IProgressMonitor monitor) throws InterruptedException{
 		
 	String fullLabel = null;
 	if(monitor != null && monitor.isCanceled())
@@ -326,28 +329,25 @@ private void findAllSelectedListElements(
 		monitor.subTask(fullLabel);
 	}
 
-	if (addAll) {
-		Object[] listItems = listContentProvider.getElements(treeElement);
-		for (int i = 0; i < listItems.length; i++) {
-			result.add(listItems[i]);
-		}
-	} else { //Add what we have stored
+	if (addAll) 
+		filter.filterElements(listContentProvider.getElements(treeElement),monitor);
+	else { //Add what we have stored
 		if (checkedStateStore.containsKey(treeElement))
-			result.addAll((Collection) checkedStateStore.get(treeElement));
+			filter.filterElements((Collection) checkedStateStore.get(treeElement),monitor);
 	}
 
 	Object[] treeChildren = treeContentProvider.getChildren(treeElement);
 	for (int i = 0; i < treeChildren.length; i++) {
 		Object child = treeChildren[i];
 		if (addAll)
-			findAllSelectedListElements(child, fullLabel,true, result,monitor);
+			findAllSelectedListElements(child, fullLabel,true, filter,monitor);
 		else { //Only continue for those with checked state
 			if (checkedStateStore.containsKey(child))
 				findAllSelectedListElements(
 					child,
 					fullLabel,
 					whiteCheckedTreeItems.contains(child),
-					result,
+					filter,
 					monitor);
 		}
 
@@ -378,13 +378,12 @@ private void findAllWhiteCheckedItems(Object treeElement, Collection result) {
 }
 /**
  * Returns a flat list of all of the leaf elements which
- * are checked. If monitor is cancelled then return null
+ * are checked. Filter then based on the supplied ElementFilter.
+ * If monitor is cancelled then return null
  * @param monitor IProgressMonitor or null
  * @return all of the leaf elements which are checked
  */
-public List getAllCheckedListItems(IProgressMonitor monitor) {
-
-	List result = new ArrayList();
+public void getAllCheckedListItems(ElementFilter filter, IProgressMonitor monitor) throws InterruptedException{
 
 	//Iterate through the children of the root as the root is not in the store
 	Object[] children = treeContentProvider.getChildren(root);
@@ -393,14 +392,9 @@ public List getAllCheckedListItems(IProgressMonitor monitor) {
 			children[i],
 			null,
 			whiteCheckedTreeItems.contains(children[i]),
-			result,
+			filter,			
 			monitor);
 	}
-
-	if(monitor != null && monitor.isCanceled())
-		return null;
-	else
-		return result;
 }
 
 /**
@@ -410,11 +404,29 @@ public List getAllCheckedListItems(IProgressMonitor monitor) {
  * 	return null in order to keep backwards compatibility.
  */
 public List getAllCheckedListItems() {
-	List returnValue = getAllCheckedListItems(null);
-	if(returnValue == null)
+	
+	final ArrayList returnValue = new ArrayList();
+	
+	ElementFilter passThroughFilter = new ElementFilter() {
+		
+		public void filterElements(Collection elements,IProgressMonitor monitor) throws InterruptedException{
+			returnValue.addAll(elements);
+		}
+		
+		public void filterElements(Object[] elements,IProgressMonitor monitor) throws InterruptedException{
+			for(int i =0; i < elements.length; i ++){
+				returnValue.add(elements[i]);
+			}
+		}
+	};
+	
+	try{
+		getAllCheckedListItems(passThroughFilter,null);
+	}
+	catch (InterruptedException exception){
 		return new ArrayList();
-	else
-		return returnValue;
+	}
+	return returnValue;
 		
 }
 

@@ -7,6 +7,7 @@ package org.eclipse.ui.wizards.datatransfer;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.dialogs.ElementFilter;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -45,6 +47,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 class WizardFileSystemResourceImportPage1
 	extends WizardResourceImportPage
 	implements Listener {
+	
+
 	private IWorkbench workbench;
 	// widgets
 	protected Combo sourceNameField;
@@ -724,10 +728,9 @@ protected void setupSelectionsBasedOnSelectedTypes() {
 	ProgressMonitorDialog dialog = new ProgressMonitorDialog(getContainer().getShell());	
 	final Map selectionMap = new Hashtable();
 	
-	IRunnableWithProgress runnable  = new IRunnableWithProgress() {
-		public void run(final IProgressMonitor monitor) throws InterruptedException{		
-			monitor.beginTask(DataTransferMessages.getString("ImportPage.filterSelections"), IProgressMonitor.UNKNOWN);
-			List files = getSelectedResources(monitor);
+	final ElementFilter filter = new ElementFilter() {
+		
+		public void filterElements(Collection files,IProgressMonitor monitor) throws InterruptedException{
 			if(files == null){
 				throw new InterruptedException();
 			}				
@@ -735,16 +738,39 @@ protected void setupSelectionsBasedOnSelectedTypes() {
 			while (filesList.hasNext()) {
 				if(monitor.isCanceled())
 					throw new InterruptedException();
-				MinimizedFileSystemElement file = (MinimizedFileSystemElement) filesList.next();
-				if (isExportableExtension(file.getFileNameExtension())) {
-					List elements = new ArrayList();
-					FileSystemElement parent = file.getParent();
-					if (selectionMap.containsKey(parent))
-						elements = (List) selectionMap.get(parent);
-					elements.add(file);
-					selectionMap.put(parent, elements);
-				}
+				checkFile(filesList.next());
 			}
+		}
+		
+		public void filterElements(Object[] files,IProgressMonitor monitor) throws InterruptedException{
+			if(files == null){
+				throw new InterruptedException();
+			}						
+			for(int i =0; i < files.length; i ++){
+				if(monitor.isCanceled())
+					throw new InterruptedException();
+				checkFile(files[i]);
+			}
+		}
+		
+		private void checkFile(Object fileElement){
+			MinimizedFileSystemElement file = (MinimizedFileSystemElement) fileElement;
+			if (isExportableExtension(file.getFileNameExtension())) {
+				List elements = new ArrayList();
+				FileSystemElement parent = file.getParent();
+				if (selectionMap.containsKey(parent))
+					elements = (List) selectionMap.get(parent);
+				elements.add(file);
+				selectionMap.put(parent, elements);
+			}
+		}
+
+	};
+	
+	IRunnableWithProgress runnable  = new IRunnableWithProgress() {
+		public void run(final IProgressMonitor monitor) throws InterruptedException{		
+			monitor.beginTask(DataTransferMessages.getString("ImportPage.filterSelections"), IProgressMonitor.UNKNOWN);
+			getSelectedResources(filter,monitor);
 		}
 	};
 	
