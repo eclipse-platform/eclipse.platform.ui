@@ -4,6 +4,7 @@
  */
 package org.eclipse.help.internal.context;
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.Stack;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.help.internal.util.*;
@@ -71,11 +72,14 @@ public class ContextsFileParser extends DefaultHandler {
 		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
 	}
 	public String getMessage(String messageID, SAXParseException ex) {
-		String param1 = ex.getSystemId();
-		String param2 = Integer.toString(ex.getLineNumber());
-		String param3 = Integer.toString(ex.getColumnNumber());
-		String param4 = ex.getMessage();
-		String message = Resources.getString(messageID, param1, param2, param3, param4);
+		String param0 = ex.getSystemId();
+		Integer param1 = new Integer(ex.getLineNumber());
+		Integer param2 = new Integer(ex.getColumnNumber());
+		String param3 = ex.getMessage();
+		String message =
+			MessageFormat.format(
+				Resources.getString(messageID),
+				new Object[] { param0, param1, param2, param3 });
 		return message;
 	}
 	/**
