@@ -15,8 +15,8 @@ import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -65,7 +65,7 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 		if (!store.isRunning()) {
 			//if the store is not running then the resource is in the process of being deleted, 
 			//so report the error as if the resource was not found
-			String message = NLS.bind(Messages.resources_mustExist, target.getFullPath());
+			String message = NLS.bind(CompatibilityMessages.resources_mustExist, target.getFullPath());
 			throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, target.getFullPath(), message, null);
 		}
 	}
@@ -180,7 +180,7 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 			Resource host = getPropertyHost(target);
 			ResourceInfo info = host.getResourceInfo(false, false);
 			if (info == null) {
-				String message = NLS.bind(Messages.properties_storeNotAvailable, target.getFullPath());
+				String message = NLS.bind(CompatibilityMessages.properties_storeNotAvailable, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 			}
 			PropertyStore store = (PropertyStore) info.getPropertyStore();
@@ -190,7 +190,7 @@ public class PropertyManager implements IManager, ILifecycleListener, IPropertyM
 		} catch (Exception e) {
 			if (e instanceof CoreException)
 				throw (CoreException) e;
-			String message = NLS.bind(Messages.properties_storeNotAvailable, target.getFullPath());
+			String message = NLS.bind(CompatibilityMessages.properties_storeNotAvailable, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, e);
 		}
 	}

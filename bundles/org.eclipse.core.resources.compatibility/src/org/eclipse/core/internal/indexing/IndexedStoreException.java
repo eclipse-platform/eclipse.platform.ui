@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.resources.CompatibilityMessages;
 
 
 public class IndexedStoreException extends StoreException {
@@ -95,44 +95,44 @@ public class IndexedStoreException extends StoreException {
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		messages[GenericError] = Messages.indexedStore_genericError;
-		messages[EntryKeyLengthError] = Messages.indexedStore_entryKeyLengthError;
-		messages[EntryNotRemoved] = Messages.indexedStore_entryNotRemoved;
-		messages[EntryValueLengthError] = Messages.indexedStore_entryValueLengthError;
-		messages[EntryValueNotUpdated] = Messages.indexedStore_entryValueNotUpdated;
-		messages[IndexNodeNotRetrieved] = Messages.indexedStore_indexNodeNotRetrieved;
-		messages[IndexNodeNotStored] = Messages.indexedStore_indexNodeNotStored;
-		messages[IndexNodeNotSplit] = Messages.indexedStore_indexNodeNotSplit;
-		messages[IndexNodeNotCreated] = Messages.indexedStore_indexNodeNotCreated;
-		messages[IndexExists] = Messages.indexedStore_indexExists;
-		messages[IndexNotCreated] = Messages.indexedStore_indexNotCreated;
-		messages[IndexNotFound] = Messages.indexedStore_indexNotFound;
-		messages[IndexNotRemoved] = Messages.indexedStore_indexNotRemoved;
-		messages[ObjectExists] = Messages.indexedStore_objectExists;
-		messages[ObjectNotAcquired] = Messages.indexedStore_objectNotAcquired;
-		messages[ObjectNotCreated] = Messages.indexedStore_objectNotCreated;
-		messages[ObjectNotFound] = Messages.indexedStore_objectNotFound;
-		messages[ObjectNotReleased] = Messages.indexedStore_objectNotReleased;
-		messages[ObjectNotRemoved] = Messages.indexedStore_objectNotRemoved;
-		messages[ObjectNotUpdated] = Messages.indexedStore_objectNotUpdated;
-		messages[ObjectNotStored] = Messages.indexedStore_objectNotStored;
-		messages[ObjectTypeError] = Messages.indexedStore_objectTypeError;
-		messages[StoreEmpty] = Messages.indexedStore_storeEmpty;
-		messages[StoreFormatError] = Messages.indexedStore_storeFormatError;
-		messages[StoreNotCreated] = Messages.indexedStore_storeNotCreated;
-		messages[StoreNotOpen] = Messages.indexedStore_storeNotOpen;
-		messages[StoreNotClosed] = Messages.indexedStore_storeNotClosed;
-		messages[StoreNotFlushed] = Messages.indexedStore_storeNotFlushed;
-		messages[StoreNotOpened] = Messages.indexedStore_storeNotOpened;
-		messages[StoreNotReadWrite] = Messages.indexedStore_storeNotReadWrite;
-		messages[ContextNotAvailable] = Messages.indexedStore_contextNotAvailable;
-		messages[ObjectIDInvalid] = Messages.indexedStore_objectIDInvalid;
-		messages[MetadataRequestError] = Messages.indexedStore_metadataRequestError;
-		messages[EntryRemoved] = Messages.indexedStore_entryRemoved;
-		messages[StoreNotConverted] = Messages.indexedStore_storeNotConverted;
-		messages[StoreIsOpen] = Messages.indexedStore_storeIsOpen;
-		messages[StoreNotCommitted] = Messages.indexedStore_storeNotCommitted;
-		messages[StoreNotRolledBack] = Messages.indexedStore_storeNotRolledBack;
+		messages[GenericError] = CompatibilityMessages.indexedStore_genericError;
+		messages[EntryKeyLengthError] = CompatibilityMessages.indexedStore_entryKeyLengthError;
+		messages[EntryNotRemoved] = CompatibilityMessages.indexedStore_entryNotRemoved;
+		messages[EntryValueLengthError] = CompatibilityMessages.indexedStore_entryValueLengthError;
+		messages[EntryValueNotUpdated] = CompatibilityMessages.indexedStore_entryValueNotUpdated;
+		messages[IndexNodeNotRetrieved] = CompatibilityMessages.indexedStore_indexNodeNotRetrieved;
+		messages[IndexNodeNotStored] = CompatibilityMessages.indexedStore_indexNodeNotStored;
+		messages[IndexNodeNotSplit] = CompatibilityMessages.indexedStore_indexNodeNotSplit;
+		messages[IndexNodeNotCreated] = CompatibilityMessages.indexedStore_indexNodeNotCreated;
+		messages[IndexExists] = CompatibilityMessages.indexedStore_indexExists;
+		messages[IndexNotCreated] = CompatibilityMessages.indexedStore_indexNotCreated;
+		messages[IndexNotFound] = CompatibilityMessages.indexedStore_indexNotFound;
+		messages[IndexNotRemoved] = CompatibilityMessages.indexedStore_indexNotRemoved;
+		messages[ObjectExists] = CompatibilityMessages.indexedStore_objectExists;
+		messages[ObjectNotAcquired] = CompatibilityMessages.indexedStore_objectNotAcquired;
+		messages[ObjectNotCreated] = CompatibilityMessages.indexedStore_objectNotCreated;
+		messages[ObjectNotFound] = CompatibilityMessages.indexedStore_objectNotFound;
+		messages[ObjectNotReleased] = CompatibilityMessages.indexedStore_objectNotReleased;
+		messages[ObjectNotRemoved] = CompatibilityMessages.indexedStore_objectNotRemoved;
+		messages[ObjectNotUpdated] = CompatibilityMessages.indexedStore_objectNotUpdated;
+		messages[ObjectNotStored] = CompatibilityMessages.indexedStore_objectNotStored;
+		messages[ObjectTypeError] = CompatibilityMessages.indexedStore_objectTypeError;
+		messages[StoreEmpty] = CompatibilityMessages.indexedStore_storeEmpty;
+		messages[StoreFormatError] = CompatibilityMessages.indexedStore_storeFormatError;
+		messages[StoreNotCreated] = CompatibilityMessages.indexedStore_storeNotCreated;
+		messages[StoreNotOpen] = CompatibilityMessages.indexedStore_storeNotOpen;
+		messages[StoreNotClosed] = CompatibilityMessages.indexedStore_storeNotClosed;
+		messages[StoreNotFlushed] = CompatibilityMessages.indexedStore_storeNotFlushed;
+		messages[StoreNotOpened] = CompatibilityMessages.indexedStore_storeNotOpened;
+		messages[StoreNotReadWrite] = CompatibilityMessages.indexedStore_storeNotReadWrite;
+		messages[ContextNotAvailable] = CompatibilityMessages.indexedStore_contextNotAvailable;
+		messages[ObjectIDInvalid] = CompatibilityMessages.indexedStore_objectIDInvalid;
+		messages[MetadataRequestError] = CompatibilityMessages.indexedStore_metadataRequestError;
+		messages[EntryRemoved] = CompatibilityMessages.indexedStore_entryRemoved;
+		messages[StoreNotConverted] = CompatibilityMessages.indexedStore_storeNotConverted;
+		messages[StoreIsOpen] = CompatibilityMessages.indexedStore_storeIsOpen;
+		messages[StoreNotCommitted] = CompatibilityMessages.indexedStore_storeNotCommitted;
+		messages[StoreNotRolledBack] = CompatibilityMessages.indexedStore_storeNotRolledBack;
 	}
 
 	/**

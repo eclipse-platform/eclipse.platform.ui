@@ -13,8 +13,8 @@ package org.eclipse.core.internal.properties;
 import java.io.File;
 import org.eclipse.core.internal.indexing.IndexCursor;
 import org.eclipse.core.internal.localstore.BucketTree;
+import org.eclipse.core.internal.resources.CompatibilityMessages;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -82,7 +82,7 @@ public class PropertyStoreConverter {
 			destination.getTree().getCurrent().save();
 		} catch (CoreException e) {
 			// failed while visiting the old data or saving the new data
-			String conversionFailed = Messages.properties_conversionFailed;
+			String conversionFailed = CompatibilityMessages.properties_conversionFailed;
 			return new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, new IStatus[] {e.getStatus()}, conversionFailed, null);
 		}
 		if (!worked[0])
@@ -90,7 +90,7 @@ public class PropertyStoreConverter {
 			return Status.OK_STATUS;
 		// conversion actually happened, and everything went fine
 		// leave a note to the user so this does not happen silently			
-		String conversionOk = Messages.properties_conversionSucceeded;
+		String conversionOk = CompatibilityMessages.properties_conversionSucceeded;
 		return new Status(IStatus.INFO, ResourcesPlugin.PI_RESOURCES, IStatus.OK, conversionOk, null);
 	}
 }

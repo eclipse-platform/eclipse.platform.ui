@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.resources.CompatibilityMessages;
 
 
 public class PageStoreException extends StoreException {
@@ -65,19 +65,19 @@ public class PageStoreException extends StoreException {
 	 * Initialize the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = Messages.pageStore_genericFailure;
-		message[CreateFailure] = Messages.pageStore_createFailure;
-		message[OpenFailure] = Messages.pageStore_openFailure;
-		message[LengthFailure] = Messages.pageStore_lengthFailure;
-		message[WriteFailure] = Messages.pageStore_writeFailure;
-		message[ReadFailure] = Messages.pageStore_readFailure;
-		message[CommitFailure] = Messages.pageStore_commitFailure;
-		message[IntegrityFailure] = Messages.pageStore_integrityFailure;
-		message[MetadataRequestFailure] = Messages.pageStore_metadataRequestFailure;
-		message[ConversionFailure] = Messages.pageStore_conversionFailure;
-		message[LogCreateFailure] = Messages.pageStore_logCreateFailure;
-		message[LogOpenFailure] = Messages.pageStore_logOpenFailure;
-		message[LogReadFailure] = Messages.pageStore_logReadFailure;
-		message[LogWriteFailure] = Messages.pageStore_logWriteFailure;
+		message[GenericFailure] = CompatibilityMessages.pageStore_genericFailure;
+		message[CreateFailure] = CompatibilityMessages.pageStore_createFailure;
+		message[OpenFailure] = CompatibilityMessages.pageStore_openFailure;
+		message[LengthFailure] = CompatibilityMessages.pageStore_lengthFailure;
+		message[WriteFailure] = CompatibilityMessages.pageStore_writeFailure;
+		message[ReadFailure] = CompatibilityMessages.pageStore_readFailure;
+		message[CommitFailure] = CompatibilityMessages.pageStore_commitFailure;
+		message[IntegrityFailure] = CompatibilityMessages.pageStore_integrityFailure;
+		message[MetadataRequestFailure] = CompatibilityMessages.pageStore_metadataRequestFailure;
+		message[ConversionFailure] = CompatibilityMessages.pageStore_conversionFailure;
+		message[LogCreateFailure] = CompatibilityMessages.pageStore_logCreateFailure;
+		message[LogOpenFailure] = CompatibilityMessages.pageStore_logOpenFailure;
+		message[LogReadFailure] = CompatibilityMessages.pageStore_logReadFailure;
+		message[LogWriteFailure] = CompatibilityMessages.pageStore_logWriteFailure;
 	}
 }

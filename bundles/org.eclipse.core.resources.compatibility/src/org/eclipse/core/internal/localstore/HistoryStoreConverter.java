@@ -13,7 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.io.*;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.resources.CompatibilityMessages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -36,10 +36,10 @@ public class HistoryStoreConverter {
 			if (!newIndexDir.toFile().isDirectory())
 				// nothing to be converted		
 				return Status.OK_STATUS;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.OK, Messages.history_conversionTransitional, null); //$NON-NLS-1$ 
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.OK, CompatibilityMessages.history_conversionTransitional, null); //$NON-NLS-1$ 
 			convertFromTransitionalFormat(status, newIndexDir.toFile(), destination);
 			Workspace.clear(newIndexDir.toFile());
-			status.add(new ResourceStatus(IStatus.INFO, IStatus.OK, null, Messages.history_conversionSucceeded, null));
+			status.add(new ResourceStatus(IStatus.INFO, IStatus.OK, null, CompatibilityMessages.history_conversionSucceeded, null));
 			return status;
 		}
 		// visit all existing entries and add them to the new history store
@@ -74,7 +74,7 @@ public class HistoryStoreConverter {
 			Policy.debug("Time to convert local history: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 		if (exception[0] != null) {
 			// failed while visiting the old data or saving the new data
-			String conversionFailed = Messages.history_conversionFailed;
+			String conversionFailed = CompatibilityMessages.history_conversionFailed;
 			Status failure = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, new IStatus[] {exception[0].getStatus()}, conversionFailed, null);
 			// we failed, so don't do anything else - we might try converting again later
 			return failure;
@@ -84,7 +84,7 @@ public class HistoryStoreConverter {
 		// so we don't try converting again in the future
 		if (rename)
 			indexFile.toFile().renameTo(indexFile.addFileExtension(Long.toString(System.currentTimeMillis())).toFile());
-		String conversionOk = Messages.history_conversionSucceeded;
+		String conversionOk = CompatibilityMessages.history_conversionSucceeded;
 		// leave a note to the user so this does not happen silently
 		return new Status(IStatus.INFO, ResourcesPlugin.PI_RESOURCES, IStatus.OK, conversionOk, null);
 	}

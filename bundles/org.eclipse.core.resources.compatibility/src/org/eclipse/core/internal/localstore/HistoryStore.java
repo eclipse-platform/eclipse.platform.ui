@@ -84,7 +84,7 @@ public class HistoryStore implements IHistoryStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			String message = Messages.history_problemsAccessing;
+			String message = CompatibilityMessages.history_problemsAccessing;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -158,7 +158,7 @@ public class HistoryStore implements IHistoryStore {
 							cursor.close();
 							return destCount;
 						} catch (Exception e) {
-							String message = Messages.history_problemsAccessing;
+							String message = CompatibilityMessages.history_problemsAccessing;
 							ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
 							ResourcesPlugin.getPlugin().getLog().log(status);
 						}
@@ -178,7 +178,7 @@ public class HistoryStore implements IHistoryStore {
 		byte index = visitor.useNextClearBit(keyPrefix);
 		try {
 			if (index < 0) {
-				String message = NLS.bind(Messages.history_tooManySimUpdates, path, new Date(lastModified));
+				String message = NLS.bind(CompatibilityMessages.history_tooManySimUpdates, path, new Date(lastModified));
 				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, path, message, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return;
@@ -189,7 +189,7 @@ public class HistoryStore implements IHistoryStore {
 			store.getIndex().insert(entryToInsert.getKey(), valueID);
 		} catch (Exception e) {
 			resetIndexedStore();
-			String message = NLS.bind(Messages.history_couldNotAdd, path);
+			String message = NLS.bind(CompatibilityMessages.history_couldNotAdd, path);
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, path, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -258,7 +258,7 @@ public class HistoryStore implements IHistoryStore {
 				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			blobsToRemove = new HashSet();
 		} catch (Exception e) {
-			String message = Messages.history_problemsCleaning;
+			String message = CompatibilityMessages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -292,13 +292,13 @@ public class HistoryStore implements IHistoryStore {
 		// return early if either of the paths are null or if the source and
 		// destination are the same.
 		if (sourceResource == null || destinationResource == null) {
-			String message = Messages.history_copyToNull;
+			String message = CompatibilityMessages.history_copyToNull;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
 		}
 		if (sourceResource.equals(destinationResource)) {
-			String message = Messages.history_copyToSelf;
+			String message = CompatibilityMessages.history_copyToSelf;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, sourceResource.getFullPath(), message, null);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
@@ -322,7 +322,7 @@ public class HistoryStore implements IHistoryStore {
 				// if there are no matching segments then we have an internal error...something
 				// is wrong with the visitor
 				if (prefixSegments == 0) {
-					String message = NLS.bind(Messages.history_interalPathErrors, source, path);
+					String message = NLS.bind(CompatibilityMessages.history_interalPathErrors, source, path);
 					ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, source, message, null);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 					return false;
@@ -363,11 +363,11 @@ public class HistoryStore implements IHistoryStore {
 				removeOldestEntries(removeEntries, maxFileStates);
 			}
 		} catch (IndexedStoreException e) {
-			String message = NLS.bind(Messages.history_problemsPurging, source, destination);
+			String message = NLS.bind(CompatibilityMessages.history_problemsPurging, source, destination);
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, source, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		} catch (CoreException e) {
-			String message = NLS.bind(Messages.history_problemsPurging, source, destination);
+			String message = NLS.bind(CompatibilityMessages.history_problemsPurging, source, destination);
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, source, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -377,7 +377,7 @@ public class HistoryStore implements IHistoryStore {
 		try {
 			store.commit();
 		} catch (CoreException e) {
-			String message = NLS.bind(Messages.history_problemCopying, source, destination);
+			String message = NLS.bind(CompatibilityMessages.history_problemCopying, source, destination);
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, source, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -395,7 +395,7 @@ public class HistoryStore implements IHistoryStore {
 	 */
 	public InputStream getContents(IFileState target) throws CoreException {
 		if (!target.exists()) {
-			String message = Messages.history_notValid;
+			String message = CompatibilityMessages.history_notValid;
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		return blobStore.getBlob(((FileState) target).getUUID());
@@ -450,13 +450,13 @@ public class HistoryStore implements IHistoryStore {
 			} else if (objectIds.size() > 1) {
 				// There is a problem with more than one entry having the same
 				// key.
-				String message = NLS.bind(Messages.history_tooManySimUpdates, entry.getPath(), new Date(entry.getLastModified()));
+				String message = NLS.bind(CompatibilityMessages.history_tooManySimUpdates, entry.getPath(), new Date(entry.getLastModified()));
 				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, entry.getPath(), message, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 		} catch (Exception e) {
 			String[] messageArgs = {entry.getPath().toString(), new Date(entry.getLastModified()).toString(), entry.getUUID().toString()};
-			String message = NLS.bind(Messages.history_specificProblemsCleaning, messageArgs);
+			String message = NLS.bind(CompatibilityMessages.history_specificProblemsCleaning, messageArgs);
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -481,7 +481,7 @@ public class HistoryStore implements IHistoryStore {
 			cursor.close();
 			store.commit();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.history_problemsRemoving, workspace.getRoot().getFullPath());
+			String message = NLS.bind(CompatibilityMessages.history_problemsRemoving, workspace.getRoot().getFullPath());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, workspace.getRoot().getFullPath(), message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -506,7 +506,7 @@ public class HistoryStore implements IHistoryStore {
 			cursor.close();
 			store.commit();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.history_problemsRemoving, path);
+			String message = NLS.bind(CompatibilityMessages.history_problemsRemoving, path);
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, path, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -532,7 +532,7 @@ public class HistoryStore implements IHistoryStore {
 			blobStore.deleteBlobs(blobsToRemove);
 			blobsToRemove = new HashSet();
 		} catch (Exception e) {
-			String message = Messages.history_problemsCleaning;
+			String message = CompatibilityMessages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -568,7 +568,7 @@ public class HistoryStore implements IHistoryStore {
 		java.io.File target = workspace.getMetaArea().getHistoryStoreLocation().toFile();
 		Workspace.clear(target);
 		target.mkdirs();
-		String message = Messages.history_corrupt;
+		String message = CompatibilityMessages.history_corrupt;
 		ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}

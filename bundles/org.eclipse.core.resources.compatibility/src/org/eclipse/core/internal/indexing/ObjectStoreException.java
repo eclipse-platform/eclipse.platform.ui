@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.resources.CompatibilityMessages;
 
 public class ObjectStoreException extends StoreException {
 
@@ -68,24 +68,24 @@ public class ObjectStoreException extends StoreException {
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = Messages.objectStore_genericFailure;
-		message[InternalFailure] = Messages.objectStore_internalFailure;
-		message[StoreCreateFailure] = Messages.objectStore_storeCreateFailure;
-		message[StoreConversionFailure] = Messages.objectStore_storeConversionFailure;
-		message[StoreOpenFailure] = Messages.objectStore_storeOpenFailure;
-		message[StoreCloseFailure] = Messages.objectStore_storeCloseFailure;
-		message[PageReadFailure] = Messages.objectStore_pageReadFailure;
-		message[PageWriteFailure] = Messages.objectStore_pageWriteFailure;
-		message[PageVacancyFailure] = Messages.objectStore_pageVacancyFailure;
-		message[ObjectTypeFailure] = Messages.objectStore_objectTypeFailure;
-		message[ObjectSizeFailure] = Messages.objectStore_objectSizeFailure;
-		message[ObjectExistenceFailure] = Messages.objectStore_objectExistenceFailure;
-		message[ObjectHeaderFailure] = Messages.objectStore_objectHeaderFailure;
-		message[ObjectInsertFailure] = Messages.objectStore_objectInsertFailure;
-		message[ObjectRemoveFailure] = Messages.objectStore_objectRemoveFailure;
-		message[ObjectUpdateFailure] = Messages.objectStore_objectUpdateFailure;
-		message[ObjectIsLocked] = Messages.objectStore_objectIsLocked;
-		message[MetadataRequestFailure] = Messages.objectStore_metadataRequestFailure;
+		message[GenericFailure] = CompatibilityMessages.objectStore_genericFailure;
+		message[InternalFailure] = CompatibilityMessages.objectStore_internalFailure;
+		message[StoreCreateFailure] = CompatibilityMessages.objectStore_storeCreateFailure;
+		message[StoreConversionFailure] = CompatibilityMessages.objectStore_storeConversionFailure;
+		message[StoreOpenFailure] = CompatibilityMessages.objectStore_storeOpenFailure;
+		message[StoreCloseFailure] = CompatibilityMessages.objectStore_storeCloseFailure;
+		message[PageReadFailure] = CompatibilityMessages.objectStore_pageReadFailure;
+		message[PageWriteFailure] = CompatibilityMessages.objectStore_pageWriteFailure;
+		message[PageVacancyFailure] = CompatibilityMessages.objectStore_pageVacancyFailure;
+		message[ObjectTypeFailure] = CompatibilityMessages.objectStore_objectTypeFailure;
+		message[ObjectSizeFailure] = CompatibilityMessages.objectStore_objectSizeFailure;
+		message[ObjectExistenceFailure] = CompatibilityMessages.objectStore_objectExistenceFailure;
+		message[ObjectHeaderFailure] = CompatibilityMessages.objectStore_objectHeaderFailure;
+		message[ObjectInsertFailure] = CompatibilityMessages.objectStore_objectInsertFailure;
+		message[ObjectRemoveFailure] = CompatibilityMessages.objectStore_objectRemoveFailure;
+		message[ObjectUpdateFailure] = CompatibilityMessages.objectStore_objectUpdateFailure;
+		message[ObjectIsLocked] = CompatibilityMessages.objectStore_objectIsLocked;
+		message[MetadataRequestFailure] = CompatibilityMessages.objectStore_metadataRequestFailure;
 	}
 
 }

@@ -11,9 +11,9 @@
 package org.eclipse.core.internal.properties;
 
 import org.eclipse.core.internal.indexing.*;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
-import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -41,7 +41,7 @@ public class IndexedStoreWrapper {
 				store.open(name);
 			}
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotOpen, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotOpen, location.toOSString());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 			throw new CoreException(status);
 		}
@@ -71,7 +71,7 @@ public class IndexedStoreWrapper {
 		try {
 			store.close();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotClose, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotClose, location.toOSString());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		} finally {
@@ -85,7 +85,7 @@ public class IndexedStoreWrapper {
 		try {
 			store.commit();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotCommit, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotCommit, location.toOSString());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 			throw new ResourceException(status);
 		}
@@ -99,7 +99,7 @@ public class IndexedStoreWrapper {
 			//failed to open -- copy store elsewhere and create a new one
 			recreate();
 			if (store == null) {
-				String message = NLS.bind(Messages.indexed_couldNotCreate, location.toOSString());
+				String message = NLS.bind(CompatibilityMessages.indexed_couldNotCreate, location.toOSString());
 				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, null);
 				throw new ResourceException(status);
 			}
@@ -110,7 +110,7 @@ public class IndexedStoreWrapper {
 		try {
 			return getStore().createIndex(INDEX_NAME);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotCreateIndex, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotCreateIndex, location.toOSString());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 			throw new ResourceException(status);
 		}
@@ -133,7 +133,7 @@ public class IndexedStoreWrapper {
 			return null;
 		} finally {
 			if (problem != null) {
-				String message = NLS.bind(Messages.indexed_couldNotGetIndex, location.toOSString());
+				String message = NLS.bind(CompatibilityMessages.indexed_couldNotGetIndex, location.toOSString());
 				ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, location, message, problem);
 				throw new ResourceException(status);
 			}
@@ -146,7 +146,7 @@ public class IndexedStoreWrapper {
 		try {
 			store.rollback();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotCommit, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotCommit, location.toOSString());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
@@ -156,7 +156,7 @@ public class IndexedStoreWrapper {
 		try {
 			return getStore().getObjectAsString(id);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotRead, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotRead, location.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, location, message, e);
 		}
 	}
@@ -171,7 +171,7 @@ public class IndexedStoreWrapper {
 		try {
 			return getIndex().open();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotCreateCursor, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotCreateCursor, location.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, location, message, e);
 		}
 	}
@@ -180,7 +180,7 @@ public class IndexedStoreWrapper {
 		try {
 			return getStore().createObject(s);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotWrite, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotWrite, location.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 		}
 	}
@@ -189,7 +189,7 @@ public class IndexedStoreWrapper {
 		try {
 			return getStore().createObject(b);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotWrite, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotWrite, location.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, location, message, e);
 		}
 	}
@@ -198,7 +198,7 @@ public class IndexedStoreWrapper {
 		try {
 			getStore().removeObject(id);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotDelete, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotDelete, location.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, location, message, e);
 		}
 	}
@@ -207,7 +207,7 @@ public class IndexedStoreWrapper {
 		try {
 			return getStore().getObject(id);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.indexed_couldNotRead, location.toOSString());
+			String message = NLS.bind(CompatibilityMessages.indexed_couldNotRead, location.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, location, message, e);
 		}
 	}

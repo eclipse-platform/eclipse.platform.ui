@@ -13,8 +13,8 @@ package org.eclipse.core.internal.properties;
 import java.util.*;
 import org.eclipse.core.internal.indexing.IndexCursor;
 import org.eclipse.core.internal.indexing.ObjectID;
+import org.eclipse.core.internal.resources.CompatibilityMessages;
 import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -50,7 +50,7 @@ public class PropertyStore {
 			cursor.close();
 			return exists;
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.properties_couldNotReadProp, searchKey.getQualifier(), searchKey.getLocalName());
+			String message = NLS.bind(CompatibilityMessages.properties_couldNotReadProp, searchKey.getQualifier(), searchKey.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, searchKey.getResourceName().getPath(), message, e);
 		}
 	}
@@ -64,7 +64,7 @@ public class PropertyStore {
 			ObjectID valueID = store.createObject(value);
 			store.getIndex().insert(key.toBytes(), valueID);
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
+			String message = NLS.bind(CompatibilityMessages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 		}
 	}
@@ -84,7 +84,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.properties_couldNotDeleteProp, key.getQualifier(), key.getLocalName());
+			String message = NLS.bind(CompatibilityMessages.properties_couldNotDeleteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, resourceName.getPath(), message, e);
 		}
 		return wasFound;
@@ -103,7 +103,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			String message = NLS.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
+			String message = NLS.bind(CompatibilityMessages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 		}
 	}
@@ -284,7 +284,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.properties_storeProblem, e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), CompatibilityMessages.properties_storeProblem, e);
 		}
 	}
 
@@ -309,7 +309,7 @@ public class PropertyStore {
 			cursor.close();
 		} catch (Exception e) {
 			store.reset();
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.properties_storeProblem, e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), CompatibilityMessages.properties_storeProblem, e);
 		}
 	}
 
@@ -333,7 +333,7 @@ public class PropertyStore {
 			cursor.close();
 		} catch (Exception e) {
 			store.reset();
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.properties_storeProblem, e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), CompatibilityMessages.properties_storeProblem, e);
 		}
 	}
 
@@ -480,7 +480,7 @@ public class PropertyStore {
 				propertyValue = store.getObjectAsString(cursor.getValueAsObjectID());
 			visitor.visit(resourceName, new StoredProperty(propertyName, propertyValue), cursor);
 		} catch (Exception e) {
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Messages.properties_storeProblem, e);
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, CompatibilityMessages.properties_storeProblem, e);
 		}
 	}
 
