@@ -339,12 +339,17 @@ public final class CoreRegistry extends AbstractRegistry {
 		return instance;
 	}
 
+	private boolean loaded;
+
 	private CoreRegistry() {
 		super();
 	}
 
 	public void load()
-		throws IOException {
-		new RegistryReader(Platform.getPluginRegistry());			
+		throws IOException {		
+		if (!loaded) {
+			new RegistryReader(Platform.getPluginRegistry());
+			loaded = true;
+		}
 	}
 }
