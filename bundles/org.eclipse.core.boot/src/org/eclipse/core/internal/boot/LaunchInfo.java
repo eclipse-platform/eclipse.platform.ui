@@ -193,8 +193,11 @@ public class LaunchInfo implements IInstallInfo {
 		public static final String SEPARATOR = "_";
 
 		public VersionedIdentifier(String s) {
-			if (s==null || (s=s.trim()).equals(""))
-				throw new IllegalArgumentException();
+			if (s==null || (s=s.trim()).equals("")) {
+				this.id = "";
+				this.version = "";
+			}
+				
 			int ix = s.lastIndexOf(SEPARATOR);
 			if (ix > 0) {
 				this.id = s.substring(0, ix);
