@@ -4,6 +4,7 @@
  */
  
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+var isMozilla10 = isMozilla && navigator.userAgent.indexOf('rv:1') != -1;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 var framesLoaded = false;
@@ -179,7 +180,6 @@ function saveNavigation()
 	} else {
 		temp = null;
 	}
-	alert(temp)
 }
 
 function restoreNavigation()
@@ -189,14 +189,13 @@ function restoreNavigation()
 	
 	switchTab(tempTab);
 	
-	if (temp){
+	if (temp && (isIE || isMozilla10)){
 		// Restore old navigation
-		alert("load " +temp)
 		if (isIE)
 			NavFrame.toc.document.body.innerHTML = temp;
-		else if (isMozilla)
+		else if (isMozilla10)
 			NavFrame.document.getElementById("toc").contentDocument.documentElement.innerHTML = temp;
-
+		
 		if (tempActive)
 			NavFrame.oldActive = tempActive;
 		if (oldTab == "toc")
