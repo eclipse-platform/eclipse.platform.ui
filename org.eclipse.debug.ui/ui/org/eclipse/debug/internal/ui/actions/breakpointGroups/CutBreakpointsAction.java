@@ -21,6 +21,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointSetOrganizer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -68,9 +69,9 @@ public class CutBreakpointsAction extends CopyBreakpointsAction {
         Iterator iterator = removeFromManager.iterator();
         while (iterator.hasNext()) {
             IBreakpoint breakpoint = (IBreakpoint) iterator.next();
-            // TODO: dispose of orphaned breakpoints
             try {
                 DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint(breakpoint, false);
+                BreakpointSetOrganizer.addOrphan(breakpoint);
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
             }

@@ -11,9 +11,13 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -36,7 +40,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate implements IPropertyChangeListener, IBreakpointsListener {
     
+    // flag to ignore additions to default group when pasting
     private static int fgIgnoreAdd = 0;
+    
+    // set of breakpoints cut to the clipboard and never pasted
+    private static Set fgOrphans = new HashSet();
     
     /**
      * Constructs a working set breakpoint organizer. Listens for changes in
@@ -78,6 +86,16 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
         PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
         DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
         DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+        // delete orphans
+        Iterator iterator = fgOrphans.iterator();
+        while (iterator.hasNext()) {
+            IBreakpoint breakpoint = (IBreakpoint) iterator.next();
+            try {
+                breakpoint.delete();
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
+            }
+        }
         super.dispose();
     }
     
@@ -118,14 +136,32 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
                 set.setElements(newElements);
             }
         }
+        for (int i = 0; i < breakpoints.length; i++) {
+            fgOrphans.remove(breakpoints[i]);
+        }
     }
     
+    /**
+     * Sets whether to add breakpoints to the default working set automatically.
+     * 
+     * @param add whether to add breakpoints to the default working set automatically
+     */
     public static void setAddToDefault(boolean add) {
         if (!add) {
             fgIgnoreAdd++;
         } else {
             fgIgnoreAdd--;
         }
+    }
+    
+    /**
+     * Adds the breakpoint to the set of orphaned breakpoints cut to the clipboard.
+     * If never pasted, they are delete at shutdown time.
+     * 
+     * @param breakpoint orphan
+     */
+    public static void addOrphan(IBreakpoint breakpoint) {
+        fgOrphans.add(breakpoint);
     }
 
     /* (non-Javadoc)
