@@ -19,7 +19,7 @@ import java.io.*;
 public class SafeFileOutputStream extends OutputStream {
 	protected File temp;
 	protected File target;
-	protected FileOutputStream output;
+	protected OutputStream output;
 	protected boolean failed;
 	protected static final String EXTENSION = ".bak";
 public SafeFileOutputStream(File file) throws IOException {
@@ -39,11 +39,11 @@ public SafeFileOutputStream(String targetPath, String tempPath) throws IOExcepti
 	// it probably means something wrong happened the last time we tried to write it.
 	// So, try to recover the backup file. And, if successful, write the new one.
 	if (!target.exists() && !temp.exists()) {
-		output = new FileOutputStream(target);
+		output = new BufferedOutputStream(new FileOutputStream(target));
 		return;
 	}
 	copy(temp, target);
-	output = new FileOutputStream(temp);
+	output = new BufferedOutputStream(new FileOutputStream(temp));
 }
 public void close() throws IOException {
 	try {

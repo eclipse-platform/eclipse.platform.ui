@@ -34,6 +34,6 @@ private static InputStream getInputStream(String targetPath, String tempPath) th
 			tempPath = target.getAbsolutePath() + EXTENSION;
 		target = new File(tempPath);
 	}
-	return new FileInputStream(target);
+	return new BufferedInputStream(new FileInputStream(target));
 }
 }
