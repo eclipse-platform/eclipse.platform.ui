@@ -188,11 +188,11 @@ protected void doUpdateItem(Item item, Object element) {
 		ti.setForeground(cprov.getForeground(element));
 		ti.setBackground(cprov.getBackground(element));
 	}
-//  TableTreeItem does not support setFont yet.
-//	if (prov instanceof IFontProvider) {
-//	    IFontProvider fprov = (IFontProvider) prov;
-//	    ti.setFont(fprov.getFont(element));
-//	}			
+	
+	if (prov instanceof IFontProvider) {
+	    IFontProvider fprov = (IFontProvider) prov;
+	    ti.setFont(fprov.getFont(element));
+	}			
 }
 /**
  * Starts editing the given element.
