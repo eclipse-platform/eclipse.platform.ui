@@ -182,9 +182,16 @@ class JobInfo extends JobTreeElement {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object arg0) {
+		
 		if (!(arg0 instanceof JobInfo))
 			return super.compareTo(arg0);
 		JobInfo element = (JobInfo) arg0;
+		
+		//If the receiver is cancelled then it is lowest priority
+		if(isCanceled() && !element.isCanceled())
+				return 1;
+		
+			
 		if (element.getJob().getState() == getJob().getState()){
 			return compareJobs(getJob(),element.getJob());
 		}
@@ -296,6 +303,8 @@ class JobInfo extends JobTreeElement {
 	public void cancel() {
 		this.canceled = true;
 		this.job.cancel();
+		//Call the refresh so that this is updated immediately
+		ProgressManager.getInstance().refreshJobInfo(this);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isCancellable()
