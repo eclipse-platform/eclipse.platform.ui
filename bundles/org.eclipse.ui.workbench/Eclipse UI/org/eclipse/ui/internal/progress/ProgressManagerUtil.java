@@ -81,7 +81,7 @@ class ProgressManagerUtil {
 			return;
 		try {
 			if(WorkbenchPlugin.getDefault()
-					.getPreferenceStore().getBoolean("USE_NEW_PROGRESS"))
+					.getPreferenceStore().getBoolean("USE_NEW_PROGRESS"))//$NON-NLS-1$
 				page.showView(NEW_PROGRESS_ID);
 			else
 				page.showView(PROGRESS_VIEW_ID);
