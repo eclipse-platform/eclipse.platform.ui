@@ -107,6 +107,12 @@ public class FastViewPane {
 			currentPane.getPage().hideView(currentPane.getViewReference());
 		}
 		
+		public void close(IPresentablePart[] parts) {
+			for (int idx = 0; idx < parts.length; idx++) {
+				close(parts[idx]);
+			}
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(org.eclipse.ui.internal.skins.IPresentablePart, boolean)
 		 */
