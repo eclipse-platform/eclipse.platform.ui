@@ -64,11 +64,11 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		};
 		
-		useExternal = createRadioButton(composite, "Use an external program to connect", 1);
+		useExternal = createRadioButton(composite, Policy.bind("ExtMethodPreferencePage.0"), 1); //$NON-NLS-1$
 		useExternal.addSelectionListener(selectionListener);
 		external = createExternalArea(composite);
 		
-		useInternal = createRadioButton(composite, "Use another connection method type to connect", 1);
+		useInternal = createRadioButton(composite, Policy.bind("ExtMethodPreferencePage.1"), 1); //$NON-NLS-1$
 		useInternal.addSelectionListener(selectionListener);
 		internal = createInternalArea(composite);
 		
@@ -182,7 +182,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		}
 		String method = store.getString(ICVSUIConstants.PREF_EXT_CONNECTION_METHOD_PROXY);
-		if (method.equals("ext")) {
+		if (method.equals("ext")) { //$NON-NLS-1$
 			methodType.select(0);
 		} else {
 			methodType.select(methodType.indexOf(method));

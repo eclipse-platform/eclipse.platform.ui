@@ -104,7 +104,7 @@ public class TagRootElement implements IWorkbenchAdapter, IAdaptable {
 		if(typeOfTagRoot==CVSTag.BRANCH) {
 			return Policy.bind("MergeWizardEndPage.branches"); //$NON-NLS-1$
 		} else if(typeOfTagRoot==CVSTag.DATE){
-			return "Dates";
+			return Policy.bind("TagRootElement.0"); //$NON-NLS-1$
 		}else {
 			return Policy.bind("VersionsElement.versions"); //$NON-NLS-1$
 		}	

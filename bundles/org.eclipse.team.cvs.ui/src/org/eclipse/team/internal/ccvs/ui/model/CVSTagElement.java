@@ -30,9 +30,9 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 	CVSTag tag;
 	ICVSRepositoryLocation root;
 
-	private static final String REPO_VIEW_LONG_FORAMT = "dd MMM yyyy HH:mm:ss";
-	private static final String REPO_VIEW_SHORT_FORMAT = "dd MMM yyyy";
-	private static final String TIME_ONLY_COLUMN_FORMAT = "HH:mm:ss";
+	private static final String REPO_VIEW_LONG_FORAMT = "dd MMM yyyy HH:mm:ss"; //$NON-NLS-1$
+	private static final String REPO_VIEW_SHORT_FORMAT = "dd MMM yyyy"; //$NON-NLS-1$
+	private static final String TIME_ONLY_COLUMN_FORMAT = "HH:mm:ss"; //$NON-NLS-1$
 	private static SimpleDateFormat localLongFormat = new SimpleDateFormat(REPO_VIEW_LONG_FORAMT,Locale.getDefault());
 	private static SimpleDateFormat localShortFormat = new SimpleDateFormat(REPO_VIEW_SHORT_FORMAT,Locale.getDefault());
 	private static SimpleDateFormat timeColumnFormat = new SimpleDateFormat(TIME_ONLY_COLUMN_FORMAT, Locale.getDefault());
@@ -40,7 +40,7 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 	static synchronized public String toDisplayString(Date date){
 		String localTime = timeColumnFormat.format(date);
 		timeColumnFormat.setTimeZone(TimeZone.getDefault());
-		if(localTime.equals("00:00:00")){
+		if(localTime.equals("00:00:00")){ //$NON-NLS-1$
 			return localShortFormat.format(date);
 		}
 		return localLongFormat.format(date);

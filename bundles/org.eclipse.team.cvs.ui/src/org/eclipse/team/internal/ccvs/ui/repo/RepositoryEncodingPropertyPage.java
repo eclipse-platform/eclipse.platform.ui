@@ -379,7 +379,7 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 	public boolean performOk() {
 		if (!KnownRepositories.getInstance().isKnownRepository(location.getLocation())) {
 			// The location may have been replaced by the main properties page
-			MessageDialog.openInformation(getShell(), "Cannot Change Encoding", "Location {0} no longer exists." + location.getLocation());
+			MessageDialog.openInformation(getShell(), Policy.bind("RepositoryEncodingPropertyPage.0"), Policy.bind("RepositoryEncodingPropertyPage.1", location.getLocation())); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
 		encoding.store();

@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
 import org.eclipse.team.internal.ui.Utils;
@@ -102,7 +103,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getName()
 	 */
 	public String getName() {
-		return getSubscriber().getName() + " (" + Utils.convertSelection(getSubscriber().roots(), 4) + ")";
+		return Policy.bind("CompareParticipant.0", getSubscriber().getName(), Utils.convertSelection(getSubscriber().roots(), 4)); //$NON-NLS-1$
 	}
 	
 	/*

@@ -402,14 +402,14 @@ public class TagSelectionDialog extends Dialog{
 		updateEnablement();
 	}
 	private void addMenuItemActions(IMenuManager manager) {
-		manager.add(new Action("Add Date...") {
+		manager.add(new Action(Policy.bind("TagSelectionDialog.0")) { //$NON-NLS-1$
 			public void run() {
 				CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryLocationFor(folders[0]));
 				addDateTag(dateTag);
 			}
 		});
 		if(getSelectedDateTagElement().length > 0){
-			manager.add(new Action("Remove") {
+			manager.add(new Action(Policy.bind("TagSelectionDialog.1")) { //$NON-NLS-1$
 				public void run() {
 					deleteDateTag();
 				}

@@ -337,7 +337,7 @@ public class TagConfigurationDialog extends Dialog {
 				}
 			});			
 		Button addDatesButton = new Button(buttonComposite, SWT.PUSH);
-		addDatesButton.setText("Add Date...");
+		addDatesButton.setText(Policy.bind("TagConfigurationDialog.0")); //$NON-NLS-1$
 		data = getStandardButtonData(addDatesButton);
 		data.horizontalAlignment = GridData.FILL;
 		addDatesButton.setLayoutData(data);

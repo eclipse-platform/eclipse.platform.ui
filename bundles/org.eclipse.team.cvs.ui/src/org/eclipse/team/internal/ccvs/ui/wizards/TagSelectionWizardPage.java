@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
@@ -90,8 +91,8 @@ public class TagSelectionWizardPage extends CVSWizardPage {
 				}
 			};
 			useResourceTag = true;
-			useResourceTagButton = createRadioButton(composite, "&Use the tag currently associated with the workspace resources", 1);
-			selectTagButton = createRadioButton(composite, "&Select the tag from the following list", 1);
+			useResourceTagButton = createRadioButton(composite, Policy.bind("TagSelectionWizardPage.0"), 1); //$NON-NLS-1$
+			selectTagButton = createRadioButton(composite, Policy.bind("TagSelectionWizardPage.1"), 1); //$NON-NLS-1$
 			useResourceTagButton.setSelection(useResourceTag);
 			selectTagButton.setSelection(!useResourceTag);
 			useResourceTagButton.addSelectionListener(listener);

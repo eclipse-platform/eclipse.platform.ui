@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
 import org.eclipse.ui.actions.SelectionListenerAction;
@@ -16,7 +17,7 @@ public class RemoveDateTagAction extends SelectionListenerAction {
 	private IStructuredSelection selection;
 	
 	public RemoveDateTagAction() {
-		super("Remove");
+		super(Policy.bind("RemoveDateTagAction.0")); //$NON-NLS-1$
 	}
 
 	public void run() {

@@ -228,7 +228,7 @@ public class KSubstWizard extends Wizard {
 	public boolean performFinish() {
 		try {
 			if (sharedFilesPage.includeSharedFiles() 
-					&& !MessageDialog.openConfirm(getShell(), null, Policy.bind("KSubstWizardSharedFilesPage.contents"))) {
+					&& !MessageDialog.openConfirm(getShell(), null, Policy.bind("KSubstWizardSharedFilesPage.contents"))) { //$NON-NLS-1$
 				return false;
 			}
 			defaultKSubst = mainPage.getKSubstOption();

@@ -211,7 +211,7 @@ public class RepositoriesView extends RemoteViewPart {
 		sub.add(newAction);
 		if (newAnonAction != null)
 			sub.add(newAnonAction);
-		sub.add(new Separator("group1"));
+		sub.add(new Separator("group1")); //$NON-NLS-1$
 	}
 	
 	/*

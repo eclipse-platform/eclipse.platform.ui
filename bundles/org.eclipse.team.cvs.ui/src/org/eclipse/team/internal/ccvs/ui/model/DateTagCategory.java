@@ -15,6 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * The DateTagCategory is the parent of all the date tags in the repositories view.
@@ -43,7 +44,7 @@ public class DateTagCategory extends TagCategory {
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 	 */
 	public String getLabel(Object o) {
-		return "Dates";
+		return Policy.bind("DateTagCategory.0"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

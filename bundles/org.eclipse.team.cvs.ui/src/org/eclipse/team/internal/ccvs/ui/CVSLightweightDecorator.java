@@ -76,7 +76,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 
 	private static ExceptionCollector exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //$NON-NLS-1$;
 	
-	private static String DECORATOR_FORMAT = "yyyy/MM/dd HH:mm:ss";
+	private static String DECORATOR_FORMAT = "yyyy/MM/dd HH:mm:ss"; //$NON-NLS-1$
 	private static SimpleDateFormat decorateFormatter = new SimpleDateFormat(DECORATOR_FORMAT, Locale.getDefault());
 
 	/*

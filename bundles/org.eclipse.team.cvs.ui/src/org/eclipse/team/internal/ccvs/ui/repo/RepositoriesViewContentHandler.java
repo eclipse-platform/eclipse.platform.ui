@@ -35,8 +35,8 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	public static final String MODULE_TAG = "module"; //$NON-NLS-1$
 	public static final String TAG_TAG = "tag"; //$NON-NLS-1$
 	public static final String AUTO_REFRESH_FILE_TAG = "auto-refresh-file"; //$NON-NLS-1$
-	public static final String DATE_TAGS_TAG = "date-tags";
-	public static final String DATE_TAG_TAG = "date-tag";
+	public static final String DATE_TAGS_TAG = "date-tags"; //$NON-NLS-1$
+	public static final String DATE_TAG_TAG = "date-tag"; //$NON-NLS-1$
 	
 	public static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 	public static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$

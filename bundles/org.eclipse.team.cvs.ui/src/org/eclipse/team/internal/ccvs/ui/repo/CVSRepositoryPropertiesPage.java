@@ -365,8 +365,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 			if (!(location.getHost().equals(hostText.getText()) && location.getRootDirectory().equals(pathText.getText()))) {
 				// The host or path has changed
 				if (!MessageDialog.openConfirm(getShell(), 
-						"Confirm Host or Path Change", 
-						"You have chosen to change the host name or repository root path for this location. You should only continue of you are sure you know what you are doing.")) {
+						Policy.bind("CVSRepositoryPropertiesPage.0"),  //$NON-NLS-1$
+						Policy.bind("CVSRepositoryPropertiesPage.1"))) { //$NON-NLS-1$
 					return false;
 				}
 			}

@@ -87,6 +87,6 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction#getActionTitle()
 	 */
 	protected String getActionTitle() {
-		return Policy.bind("ReplaceWithRevisionAction.1");
+		return Policy.bind("ReplaceWithRevisionAction.1"); //$NON-NLS-1$
 	}
 }
