@@ -12,36 +12,39 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Opens the launch configuration dialog on a single launch configuration, based
- * on the the launch associated with the selected element.
+ * Adds the selected launch configuration to the launch favorites.
  */
-public class EditLaunchConfigurationAction extends SelectionListenerAction {
+public class AddToFavoritesAction extends SelectionListenerAction {
 	
 	private ILaunchConfiguration fConfiguration = null;
 	private String fMode =null;
+	private LaunchGroupExtension fGroup = null;
 
 	/**
 	 * Constructs a new action.
 	 */
-	public EditLaunchConfigurationAction() {
+	public AddToFavoritesAction() {
 		super(""); //$NON-NLS-1$
 		setEnabled(false);
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
@@ -73,14 +76,8 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 				if (configuration != null) {
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
-					setText(MessageFormat.format(ActionMessages.getString("EditLaunchConfigurationAction.1"), new String[]{configuration.getName()})); //$NON-NLS-1$
-					ImageDescriptor descriptor = null;
-					try {
-						descriptor = DebugPluginImages.getImageDescriptor(configuration.getType().getIdentifier());
-					} catch (CoreException e) {
-						DebugUIPlugin.log(e);
-					}
-					setImageDescriptor(descriptor);
+					setGroup(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, getMode()));
+					setText(MessageFormat.format(ActionMessages.getString("AddToFavoritesAction.1"), new String[]{getGroup().getLabel()})); //$NON-NLS-1$
 				}
 			}
 		}
@@ -89,8 +86,25 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 		ILaunchConfiguration config = getLaunchConfiguration();
 		if (config == null) {
 			return false;
+		} else {
+			if (DebugUITools.isPrivate(config)) {
+				return false;
+			}
 		}
-		return !DebugUITools.isPrivate(config);
+		
+		if (getGroup() != null) {
+			try {
+				List groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+				if (groups != null) {
+					return !groups.contains(getGroup().getIdentifier());
+				}
+				return true;
+			} catch (CoreException e) {
+			}
+			
+		}
+		
+		return false;
 	}
 
 	protected void setLaunchConfiguration(ILaunchConfiguration configuration) {
@@ -109,15 +123,38 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 		return fMode;
 	}
 	
+	protected void setGroup(LaunchGroupExtension group) {
+		fGroup = group;
+	}
+	
+	protected LaunchGroupExtension getGroup() {
+		return fGroup;
+	}
+	
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchConfiguration(), getMode());
-		if (group != null) {
-			DebugUITools.openLaunchConfigurationDialog(
-				DebugUIPlugin.getShell(), getLaunchConfiguration(),
-				group.getIdentifier(), null);
+		final CoreException[] ex = new CoreException[1];
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			public void run() {
+				try {
+					List list = getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+					if (list == null) {
+						list = new ArrayList();
+					}
+					list.add(getGroup().getIdentifier());
+					ILaunchConfigurationWorkingCopy copy = getLaunchConfiguration().getWorkingCopy();
+					copy.setAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, list);
+					copy.doSave();
+					setEnabled(false);
+				} catch (CoreException e) {
+					ex[0] = e;
+				}
+			}
+		});
+		if (ex[0] != null) {
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.getString("AddToFavoritesAction.2"), ActionMessages.getString("AddToFavoritesAction.3"), ex[0].getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
