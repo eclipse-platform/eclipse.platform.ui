@@ -20,11 +20,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
 
 public class Project extends Container implements IProject {
-	/**
-	 * Used to ensure we don't read the description immediately after writing it.
-	 */
-	private boolean isWritingDescription = false;
-	
+
 protected Project(IPath path, Workspace container) {
 	super(path, container);
 }
@@ -704,7 +700,8 @@ public void open(IProgressMonitor monitor) throws CoreException {
  * @param newDescription the new project description that may have
  * 	changed link descriptions.
  * @param status ok if everything went well, otherwise an ERROR multistatus 
- * 	describing the problems encountered. */
+ * 	describing the problems encountered.
+ */
 public IStatus reconcileLinks(ProjectDescription newDescription) {
 	HashMap newLinks = newDescription.getLinks();
 	IResource[] children = null;
@@ -859,14 +856,19 @@ public void touch(IProgressMonitor monitor) throws CoreException {
  * description file contents.
  */
 protected void updateDescription() throws CoreException {
-	if (isWritingDescription)
+	if (ProjectDescription.isWriting)
 		return;
-	workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
-	ProjectDescription description = getLocalManager().read(this, false);
-	//links can only be created if the project is open
-	if (isOpen())
-		reconcileLinks(description);
-	internalSetDescription(description, true);
+	ProjectDescription.isReading = true;
+	try {
+		workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
+		ProjectDescription description = getLocalManager().read(this, false);
+		//links can only be created if the project is open
+		if (isOpen())
+			reconcileLinks(description);
+		internalSetDescription(description, true);
+	} finally {
+		ProjectDescription.isReading = false;
+	}
 }
 /**
  * Writes the project description file to disk.  This is the only method
@@ -884,11 +886,13 @@ public void writeDescription(int updateFlags) throws CoreException {
  * change and read back from disk.
  */
 public void writeDescription(IProjectDescription description, int updateFlags) throws CoreException {
-	isWritingDescription = true;
+	if (ProjectDescription.isReading)
+		return;
+	ProjectDescription.isWriting = true;
 	try {
 		getLocalManager().internalWrite(this, description, updateFlags);
 	} finally {
-		isWritingDescription = false;
+		ProjectDescription.isWriting = false;
 	}
 }
 }

@@ -26,6 +26,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected HashMap linkDescriptions;
 	protected String comment =""; //$NON-NLS-1$
 	protected boolean dirty = true;
+	
+	//flags to indicate when we are in the middle of reading or writing a workspace description
+	//these can be static because only one description can be read at once.
+	protected static boolean isWriting = false;
+	protected static boolean isReading = false;
+	
 
 	// constants
 	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
@@ -75,7 +81,8 @@ public IPath getLocation() {
 }
 /**
  * Returns the link location for the given resource name.  Returns null
- * if no such link exists. */
+ * if no such link exists.
+ */
 public IPath getLinkLocation(String name) {
 	if (linkDescriptions == null)
 		return null;
