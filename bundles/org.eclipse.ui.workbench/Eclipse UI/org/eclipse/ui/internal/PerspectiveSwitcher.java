@@ -158,6 +158,8 @@ public class PerspectiveSwitcher {
 
 	private DisposeListener toolBarListener;
 
+	private IReorderListener reorderListener;
+
 	/**
      * Creates an instance of the perspective switcher.
 	 * @param window  it's window
@@ -529,18 +531,22 @@ public class PerspectiveSwitcher {
 					if (toolBar.getItem(0) == item)
 						return;
 					ToolItem[] items = toolBar.getItems();
-					ToolItem oldItem = null;
-					int index = -1;
+					ToolItem droppedItem = null;
+					int dropIndex = -1;
 					for (int i = 0; i < items.length; i++) {
 						if (item == items[i])
-							index = i;
+							dropIndex = i;
 						if (items[i].getData() == perspective)
-							oldItem = items[i];
+							droppedItem = items[i];
 					}
-					if (index != -1 && oldItem != null && (oldItem != item)) {
-						perspectiveBar.relocate(
-								(PerspectiveBarContributionItem) oldItem
-										.getData(), index);
+					if (dropIndex != -1 && droppedItem != null && (droppedItem != item)) {
+						PerspectiveBarContributionItem barItem = (PerspectiveBarContributionItem) droppedItem.getData();
+						// policy is to insert at the beginning so mirror the value when indicating a 
+						// new position for the perspective
+						if (reorderListener != null)
+							reorderListener.reorder(barItem.getPerspective(), Math.abs(dropIndex - (items.length - 1)));
+
+						perspectiveBar.relocate(barItem, dropIndex);
 					}
 				}
 
@@ -979,8 +985,8 @@ public class PerspectiveSwitcher {
             // these are returned with the most recently opened one first
             IPerspectiveDescriptor[] perspectives = page
                     .getOpenPerspectives();
-            for (int i = 0; i < perspectives.length; ++i)
-                barManager.add(new PerspectiveBarContributionItem(
+            for (int i = 0; i < perspectives.length; i++)
+                barManager.insert(1, new PerspectiveBarContributionItem(
                         perspectives[i], page));
         }
 
@@ -1191,4 +1197,14 @@ public class PerspectiveSwitcher {
 
         LayoutUtil.resize(perspectiveBar.getControl());
     }
+
+	/**
+	 * Add a listener for reordering of perspectives (usually done through drag
+	 * and drop).
+	 * 
+	 * @param listener
+	 */
+	public void addReorderListener(IReorderListener listener) {
+		reorderListener = listener;	
+	}
 }

@@ -502,6 +502,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *            must not be <code>null</code>
      * @param input
      *            the page input
+     * @throws WorkbenchException on null layout id
      */
     public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input)
             throws WorkbenchException {
@@ -519,6 +520,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *            the parent window
      * @param input
      *            the page input
+     * @throws WorkbenchException 
      */
     public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
             throws WorkbenchException {
@@ -744,8 +746,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
             // Map the current perspective to the original template.
             // If the original template cannot be found then it has been deleted.
-            // In
-            // that case just return. (PR#1GDSABU).
+            // In that case just return. (PR#1GDSABU).
             IPerspectiveRegistry reg = WorkbenchPlugin.getDefault()
                     .getPerspectiveRegistry();
             PerspectiveDescriptor desc = (PerspectiveDescriptor) reg
@@ -1253,6 +1254,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /**
      * Open the tracker to allow the user to move the specified part using
      * keyboard.
+     * @param pane the pane to track
      */
     public void openTracker(ViewPane pane) {
         Perspective persp = getActivePerspective();
@@ -1453,14 +1455,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return ref.getView(true);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IWorkbenchPage
      */
     public IViewReference findViewReference(String viewId) {
         return findViewReference(viewId, null);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IWorkbenchPage
      */
     public IViewReference findViewReference(String viewId, String secondaryId) {
@@ -1846,7 +1852,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
      */
     public void hideView(IViewReference ref) {
@@ -1954,6 +1962,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         editorPresentation = new EditorAreaHelper(this);
         editorMgr = new EditorManager(window, this, editorPresentation);
 
+		// add this page as a client to be notified when the UI has re-orded perspectives 
+		// so that the order can be properly maintained in the receiver.
+		// E.g. a UI might support drag-and-drop and will need to make this known to ensure
+		// #saveState and #restoreState do not lose this re-ordering
+		w.addPerspectiveReorderListener(new IReorderListener() {
+			public void reorder(Object perspective, int newLoc) {
+				perspList.reorder((IPerspectiveDescriptor)perspective, newLoc);				
+			}
+		});
+		
         // Get perspective descriptor.
         if (layoutID != null) {
             PerspectiveDescriptor desc = (PerspectiveDescriptor) WorkbenchPlugin
@@ -3038,8 +3056,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return showView(viewID, null, VIEW_ACTIVATE);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String, java.lang.String, int)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String,
+     *      java.lang.String, int)
      */
     public IViewPart showView(final String viewID, final String secondaryID,
             final int mode) throws PartInitException {
@@ -3593,12 +3614,38 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * Creates an empty instance of the perspective list
          */
         public PerspectiveList() {
-            openedList = new ArrayList(15);
-            usedList = new ArrayList(15);
+            openedList = new ArrayList();
+            usedList = new ArrayList();
         }
+
+        /**
+         * Update the order of the perspectives in the opened list
+         *
+         * @param perspective
+         * @param newLoc
+         */
+        public void reorder(IPerspectiveDescriptor perspective, int newLoc) {
+			int oldLocation = 0;
+			Perspective movedPerspective = null;
+			for (Iterator iterator = openedList.iterator(); iterator.hasNext();) {
+				Perspective openPerspective = (Perspective) iterator.next();
+				if (openPerspective.getDesc().equals(perspective)) {
+					oldLocation = openedList.indexOf(openPerspective);
+					movedPerspective = openPerspective;
+				}
+			}
+			
+			if (oldLocation == newLoc)
+				return;
+			
+			openedList.remove(oldLocation);
+			openedList.add(newLoc, movedPerspective);
+			
+		}
 
 		/**
          * Return all perspectives in the order they were activated.
+         * @return an array of perspectives sorted by activation order
          */
         public Perspective[] getSortedPerspectives() {
             Perspective[] result = new Perspective[usedList.size()];
@@ -3606,8 +3653,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
         /**
-         * Adds a perspective to the list. No check is done for a duplicate
-         * when adding.
+         * Adds a perspective to the list. No check is done for a duplicate when
+         * adding.
+         * @param perspective the perspective to add
+         * @return boolean <code>true</code> if the perspective was added
          */
         public boolean add(Perspective perspective) {
             openedList.add(perspective);
@@ -3770,7 +3819,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return new IViewReference[] { (IViewReference) getReference(part) };
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IWorkbenchPage#getViewStack(org.eclipse.ui.IViewPart)
      */
     public IViewPart[] getViewStack(IViewPart part) {
@@ -3979,10 +4030,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (tracker == null) {
 			tracker = new UIExtensionTracker(getWorkbenchWindow().getWorkbench().getDisplay());
 		}
-		return tracker ;		
+		return tracker;		
 	}
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IWorkbenchPage#getNewWizardShortcuts()
      */
     public String[] getNewWizardShortcuts() {
@@ -3993,7 +4046,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return persp.getNewWizardShortcuts();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IWorkbenchPage#getPerspectiveShortcuts()
      */
     public String[] getPerspectiveShortcuts() {
@@ -4004,7 +4059,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return persp.getPerspectiveShortcuts();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.IWorkbenchPage#getShowViewShortcuts()
      */
     public String[] getShowViewShortcuts() {

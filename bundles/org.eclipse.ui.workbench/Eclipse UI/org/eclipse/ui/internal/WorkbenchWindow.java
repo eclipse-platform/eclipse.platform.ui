@@ -885,6 +885,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
         setLayoutDataForContents();
     }
 
+    /**
+     * Set the perspective bar location
+     * 
+     * @param location the location to place the bar
+     */
     public void setPerspectiveBarLocation(String location) {
         if (perspectiveSwitcher != null)
             perspectiveSwitcher.setPerspectiveBarLocation(location);
@@ -2934,6 +2939,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
     /**
      * Creates the perspective customization dialog.
      * 
+     * @param persp perspective to customize 
+     * 
      * @return a new perspective customization dialog
      * @since 3.1
      */
@@ -2951,5 +2958,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
     IAdaptable getDefaultPageInput() {
         return getWorkbenchImpl().getDefaultPageInput();
     }
+
+	/**
+	 * Add a listener for perspective reordering.
+	 * @param listener
+	 */
+	public void addPerspectiveReorderListener(IReorderListener listener) {
+		if (perspectiveSwitcher != null)
+			perspectiveSwitcher.addReorderListener(listener);
+	}
 
 }
