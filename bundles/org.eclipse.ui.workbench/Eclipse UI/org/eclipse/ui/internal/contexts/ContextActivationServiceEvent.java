@@ -15,11 +15,11 @@ import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.internal.util.Util;
 
-public final class ContextActivationServiceEvent implements IContextActivationServiceEvent {
+final class ContextActivationServiceEvent implements IContextActivationServiceEvent {
 
 	private IContextActivationService contextActivationService;
 
-	public ContextActivationServiceEvent(IContextActivationService contextActivationService)
+	ContextActivationServiceEvent(IContextActivationService contextActivationService)
 		throws IllegalArgumentException {		
 		super();
 		

@@ -15,11 +15,11 @@ import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextEvent;
 import org.eclipse.ui.internal.util.Util;
 
-public final class ContextEvent implements IContextEvent {
+final class ContextEvent implements IContextEvent {
 
 	private IContext context;
 
-	public ContextEvent(IContext context)
+	ContextEvent(IContext context)
 		throws IllegalArgumentException {		
 		super();
 		

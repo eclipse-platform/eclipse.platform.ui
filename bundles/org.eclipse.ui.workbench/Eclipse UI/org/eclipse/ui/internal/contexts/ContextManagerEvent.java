@@ -15,11 +15,11 @@ import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.internal.util.Util;
 
-public final class ContextManagerEvent implements IContextManagerEvent {
+final class ContextManagerEvent implements IContextManagerEvent {
 
 	private IContextManager contextManager;
 
-	public ContextManagerEvent(IContextManager contextManager)
+	ContextManagerEvent(IContextManager contextManager)
 		throws IllegalArgumentException {		
 		super();
 		

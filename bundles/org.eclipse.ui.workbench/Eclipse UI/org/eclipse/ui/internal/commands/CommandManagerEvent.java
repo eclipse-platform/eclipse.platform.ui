@@ -15,11 +15,11 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.internal.util.Util;
 
-public final class CommandManagerEvent implements ICommandManagerEvent {
+final class CommandManagerEvent implements ICommandManagerEvent {
 
 	private ICommandManager commandManager;
 
-	public CommandManagerEvent(ICommandManager commandManager)
+	CommandManagerEvent(ICommandManager commandManager)
 		throws IllegalArgumentException {		
 		super();
 		

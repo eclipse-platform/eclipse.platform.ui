@@ -15,11 +15,11 @@ import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceEvent;
 import org.eclipse.ui.internal.util.Util;
 
-public final class CommandHandlerServiceEvent implements ICommandHandlerServiceEvent {
+final class CommandHandlerServiceEvent implements ICommandHandlerServiceEvent {
 
 	private ICommandHandlerService commandHandlerService;
 
-	public CommandHandlerServiceEvent(ICommandHandlerService commandHandlerService)
+	CommandHandlerServiceEvent(ICommandHandlerService commandHandlerService)
 		throws IllegalArgumentException {		
 		super();
 		

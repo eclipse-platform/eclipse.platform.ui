@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.util.Util;
 
-class Persistence {
+final class Persistence {
 
 	final static String PACKAGE_BASE = "commands"; //$NON-NLS-1$
 	final static String PACKAGE_FULL = "org.eclipse.ui." + PACKAGE_BASE; //$NON-NLS-1$
