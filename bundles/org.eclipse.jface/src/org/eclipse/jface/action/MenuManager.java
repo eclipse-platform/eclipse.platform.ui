@@ -606,6 +606,11 @@ public void updateAll(boolean force) {
  * Does nothing if this menu is not a submenu.
  */
 private void updateMenuItem() {
+/*
+ * Commented out until proper solution to enablement of
+ * menu item for a sub-menu is found. See bug 30833 for
+ * more details.
+ *  
 	if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
 		IContributionItem items[] = getItems();
 		boolean enabled = false;
@@ -618,5 +623,6 @@ private void updateMenuItem() {
 		if (menuItem.getEnabled() != enabled)
 			menuItem.setEnabled(enabled);
 	}
+*/
 }
 }
