@@ -195,6 +195,20 @@ public class Geometry {
     public static Point add(Point point1, Point point2) {
         return new Point(point1.x + point2.x, point1.y + point2.y);
     }
+    
+    /**
+     * Divides both coordinates of the given point by the given scalar. 
+     * 
+     * @since 3.1 
+     *
+     * @param toDivide point to divide
+     * @param scalar denominator
+     * @return a new Point whose coordinates are equal to the original point divided by the scalar
+     */
+    public static Point divide(Point toDivide, int scalar) {
+        return new Point(toDivide.x / scalar, toDivide.y / scalar);
+    }
+    
 
     /**
      * Performs vector subtraction on two points. Returns a new point equal to

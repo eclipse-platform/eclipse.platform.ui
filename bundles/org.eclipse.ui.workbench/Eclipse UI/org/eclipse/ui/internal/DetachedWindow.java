@@ -17,11 +17,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -44,7 +46,7 @@ public class DetachedWindow {
     //Keep the state of a DetachedWindow when switching perspectives.
     private String title;
 
-    private Rectangle bounds;
+    private Rectangle bounds = new Rectangle(0,0,0,0);
 
     private Shell s;
     
@@ -80,9 +82,15 @@ public class DetachedWindow {
     
     public void create() {
         s = ((WorkbenchWindow)page.getWorkbenchWindow()).getDetachedWindowPool().allocateShell(shellListener);
-        s.setData(this);        
-        if (bounds != null)
-            getShell().setBounds(bounds);
+        s.setData(this);
+        if (bounds.isEmpty()) {
+            Point center = Geometry.centerPoint(page.getWorkbenchWindow().getShell().getBounds());
+            Point size = new Point(300, 200);
+            Point upperLeft = Geometry.subtract(center, Geometry.divide(size, 2));
+            
+            bounds = Geometry.createRectangle(upperLeft, size); 
+        }
+        getShell().setBounds(bounds);
 
         configureShell(s);
         
