@@ -89,12 +89,6 @@ public class AntTargetNode extends AntElementNode {
 		}
 		return base;
 	}
-	/**
-	 * @param target The Target to set.
-	 */
-	public void setTarget(Target target) {
-		fTarget = target;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#reset()
