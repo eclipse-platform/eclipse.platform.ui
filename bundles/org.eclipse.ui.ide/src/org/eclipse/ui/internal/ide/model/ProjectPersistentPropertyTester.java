@@ -53,7 +53,15 @@ public class ProjectPersistentPropertyTester extends PropertyTester {
                 // All projects have the persistent property
                 return true;
             }
+        } else if (receiver instanceof IResource) {
+            if (property.equals(IResourceActionFilter.PROJECT_PERSISTENT_PROPERTY)) {
+                if(args == null) return false;
+                String persitentPropertyEntry = (String)args[0];
+                IProject project = ((IResource)receiver).getProject();
+                return filter.testAttribute(project, property, persitentPropertyEntry);
+            }
         }
+        
         return false;
     }
 
