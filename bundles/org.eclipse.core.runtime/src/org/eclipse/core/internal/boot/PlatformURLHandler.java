@@ -70,4 +70,8 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 			//don't register connection classes that don't conform to the spec
 		}
 	}
+	
+	public static void unregister(String type) {
+		connectionType.remove(type);
+	}
 }
