@@ -987,7 +987,7 @@ public final class Workbench implements IWorkbench {
 			newWindow.create();
 
 			// allow the application to specify an initial perspective to open
-			String initialPerspectiveId = getAdviser().getInitialWindowPerspectiveId(newWindow.getWindowConfigurer());
+			String initialPerspectiveId = getAdviser().getInitialWindowPerspectiveId();
 			if (initialPerspectiveId != null) {
 				IPerspectiveDescriptor desc = getPerspectiveRegistry().findPerspectiveWithId(initialPerspectiveId);
 				if (desc != null) {

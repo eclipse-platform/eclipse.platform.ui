@@ -383,19 +383,17 @@ public abstract class WorkbenchAdviser {
 	}
 	
 	/**
-	 * Returns the id of the initial perspective for the workbench window page
-	 * during startup of the workbench.
+	 * Returns the id of the initial perspective for new workbench windows.
 	 * <p>
 	 * This method is called during startup when the workbench is restoring
 	 * the window(s) or creating a new window. The default implementation
 	 * returns <code>null</code>. Subclasses may override.
 	 * </p>
 	 * 
-	 * @param configurer an object for configuring the workbench window
 	 * @return the id of the initial perspective, or <code>null</code> if none
 	 * @issue if this returns null, we're in trouble?
 	 */
-	public String getInitialWindowPerspectiveId(IWorkbenchWindowConfigurer configurer) {
+	public String getInitialWindowPerspectiveId() {
 		// default: no initial perspective
 		return null;
 	}
