@@ -44,9 +44,13 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -72,7 +76,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.internal.ui.util.ListContentProvider;
 
-public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
+public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer, IPageChangeProvider {
 
 	private class TabFolderLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
@@ -124,7 +128,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private boolean fLastEnableState;
 	private Button fCustomizeButton;
 	private Button fReplaceButton;
-	private Label fStatusLabel;
+	private ListenerList fPageChangeListeners;
 
 
 	public SearchDialog(Shell shell, ISelection selection, IEditorPart editor, String pageId) {
@@ -133,6 +137,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		fEditorPart= editor;
 		fDescriptors= filterByActivities(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId));
 		fInitialPageId= pageId;
+		fPageChangeListeners= null;
 		setUseEmbeddedProgressMonitorPart(false);
 	}
 
@@ -164,7 +169,6 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		if (fCurrentPage != null) {
 			fCurrentPage.setVisible(true);
 		}
-
 	}
 
 	private void handleCustomizePressed() {
@@ -431,6 +435,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			fCurrentPage.setVisible(true);
 		}
 		fReplaceButton.setVisible(fCurrentPage instanceof IReplacePage);
+		notifyPageChanged();
 	}
 	
 	private int getPreferredPageIndex() {
@@ -609,18 +614,6 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	private boolean mustResize(Point currentSize, Point newSize) {
 		return currentSize.x < newSize.x || currentSize.y < newSize.y;
 	}
-
-	protected void statusMessage(boolean error, String message) {
-		fStatusLabel.setText(message);
-	
-		if (error)
-			fStatusLabel.setForeground(JFaceColors.getErrorText(fStatusLabel.getDisplay()));
-		else
-			fStatusLabel.setForeground(null);
-	
-		if (error)
-			getShell().getDisplay().beep();
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
@@ -633,5 +626,43 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		return super.close();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#getSelectedPage()
+	 */
+	public Object getSelectedPage() {
+		return fCurrentPage;
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#addPageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
+	 */
+	public void addPageChangedListener(IPageChangedListener listener) {
+		if (fPageChangeListeners == null) {
+			fPageChangeListeners= new ListenerList(3);
+		}
+		fPageChangeListeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangeProvider#removePageChangedListener(org.eclipse.jface.dialogs.IPageChangedListener)
+	 */
+	public void removePageChangedListener(IPageChangedListener listener) {
+		fPageChangeListeners.remove(listener);
+	}
+	
+	private void notifyPageChanged() {
+		if (fPageChangeListeners != null && !fPageChangeListeners.isEmpty()) {
+			// Fires the page change event
+			final PageChangedEvent event= new PageChangedEvent(this, getSelectedPage());
+			Object[] listeners= fPageChangeListeners.getListeners();
+			for (int i= 0; i < listeners.length; ++i) {
+				final IPageChangedListener l= (IPageChangedListener) listeners[i];
+				Platform.run(new SafeRunnable() {
+					public void run() {
+						l.pageChanged(event);
+					}
+				});
+			}
+		}
+	}
 }
