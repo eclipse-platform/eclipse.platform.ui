@@ -779,6 +779,10 @@ public class CheatSheetParser {
 	}
 
 	public CheatSheet parse(URL url) {
+		if(url == null) {
+			return null;
+		}
+
 		InputStream is = null;
 		InputSource inputSource = null;
 

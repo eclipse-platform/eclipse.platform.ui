@@ -66,7 +66,9 @@ public class CheatSheetHistory {
 		Iterator iter = history.iterator();
 		while (iter.hasNext()) {
 			CheatSheetElement element = (CheatSheetElement)iter.next();
-			memento.createChild("element", element.getID()); //$NON-NLS-1$
+			if(element != null) {
+				memento.createChild("element", element.getID()); //$NON-NLS-1$
+			}
 		}
 		return new Status(IStatus.OK,ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID,0,"",null); //$NON-NLS-1$
 	}

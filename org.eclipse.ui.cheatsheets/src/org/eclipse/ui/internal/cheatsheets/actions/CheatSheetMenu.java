@@ -48,6 +48,9 @@ public class CheatSheetMenu extends ContributionItem {
 		private Collator collator = Collator.getInstance();
 
 		public int compare(Object ob1, Object ob2) {
+			if(ob1 == null || ob2 == null) {
+				return -1;
+			}
 			CheatSheetElement d1 = (CheatSheetElement) ob1;
 			CheatSheetElement d2 = (CheatSheetElement) ob2;
 			return collator.compare(d1.getLabel(null), d2.getLabel(null));
@@ -111,7 +114,9 @@ public class CheatSheetMenu extends ContributionItem {
 		// Add cheatsheet shortcuts
 		for (int i = 0; i < cheatsheets.size(); i++) {
 			CheatSheetElement element = (CheatSheetElement) cheatsheets.get(i);
-			createMenuItem(menu, index++, element, element.getID().equals(checkID));
+			if (element != null) {
+				createMenuItem(menu, index++, element, element.getID().equals(checkID));
+			}
 		}
 
 		// Add others item..
