@@ -495,14 +495,14 @@ public void setFastViewSash(Sash s) {
  * Method declared on PartPane.
  */
 /* package */ void shellActivated() {
-	drawGradient();
+//	drawGradient();
 }
 
 /* (non-Javadoc)
  * Method declared on PartPane.
  */
 /* package */ void shellDeactivated() {
-	drawGradient();
+//	drawGradient();
 }
 
 /**
@@ -513,7 +513,15 @@ public void showFocus(boolean inFocus) {
 		return;
 
 	showFocus = inFocus;
-	drawGradient();
+//	drawGradient();
+	Control c = getControl();
+	if (getContainer() instanceof PartTabFolder) {
+		PartTabFolder tf = (PartTabFolder) getContainer();
+		CTabFolder f = (CTabFolder) tf.getControl();
+		f.setBorderVisible(inFocus);
+	}
+	
+	
 }
 
 /**

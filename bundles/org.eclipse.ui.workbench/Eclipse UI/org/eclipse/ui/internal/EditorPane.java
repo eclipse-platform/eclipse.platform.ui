@@ -145,14 +145,15 @@ public void setWorkbook(EditorWorkbook editorWorkbook) {
  * Method declared on PartPane.
  */
 /* package */ void shellActivated() {
-	this.workbook.drawGradient();
+	//this.workbook.drawGradient();
+	
 }
 
 /* (non-Javadoc)
  * Method declared on PartPane.
  */
 /* package */ void shellDeactivated() {
-	this.workbook.drawGradient();
+	//this.workbook.drawGradient();
 }
 /**
  * Indicate focus in part.

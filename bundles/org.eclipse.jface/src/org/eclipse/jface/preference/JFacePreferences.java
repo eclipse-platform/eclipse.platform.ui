@@ -23,7 +23,14 @@ public final class JFacePreferences {
 	public static final String HYPERLINK_COLOR = "HYPERLINK_COLOR"; //$NON-NLS-1$
 	//Identifier for the Active Hyperlink Colour
 	public static final String ACTIVE_HYPERLINK_COLOR = "ACTIVE_HYPERLINK_COLOR"; //$NON-NLS-1$
-
+	//Identifier for the Color Scheme Background Colour
+	public static final String SCHEME_BACKGROUND_COLOR = "SCHEME_BACKGROUND_COLOR"; //$NON-NLS-1$
+	//Identifier for the Color Scheme Foreground Colour
+	public static final String SCHEME_FOREGROUND_COLOR = "SCHEME_FOREGROUND_COLOR"; //$NON-NLS-1$
+	//Identifier for the Color Scheme Selection Background Colour
+	public static final String SCHEME_SELECTION_BACKGROUND_COLOR = "SCHEME_SELECTION_BACKGROUND_COLOR"; //$NON-NLS-1$
+	//Identifier for the Color Scheme Selection Foreground Colour
+	public static final String SCHEME_SELECTION_FOREGROUND_COLOR = "SCHEME_SELECTION_FOREGROUND_COLOR"; //$NON-NLS-1$
 	
 	private static IPreferenceStore preferenceStore;
 	

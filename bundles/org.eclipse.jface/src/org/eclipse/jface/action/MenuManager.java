@@ -195,7 +195,6 @@ public void fill(Menu parent, int index) {
 			menuItem = new MenuItem(parent, SWT.CASCADE, index);
 		else
 			menuItem = new MenuItem(parent, SWT.CASCADE);
-
 		menuItem.setText(menuText);
 
 		if (!menuExist())

@@ -442,6 +442,22 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		//Set the default active hyperlink line colour to blue
 		PreferenceConverter.setDefault(store,JFacePreferences.ACTIVE_HYPERLINK_COLOR, new RGB(0, 0, 255));
 		
+//		
+//		Color selected = new Color(display, 232, 238, 248);
+//		Color unselected = new Color(display, 195, 210, 236);
+//		Color parentbk = new Color(display, 162, 178, 205);
+//		Color selectedfg = new Color(display, 83, 98, 134);
+		
+		//Set the default colour scheme background to light blue		
+		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_BACKGROUND_COLOR, new RGB(195, 210, 236));// new RGB(192, 210, 237));
+		//Set the default colour scheme foreground to light
+		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_FOREGROUND_COLOR, new RGB(83, 98, 134)); // new RGB(231, 238, 248));
+		//Set the default colour scheme background to light blue
+		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, new RGB(232, 238, 248));
+		//Set the default colour scheme foreground to light
+		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, new RGB(83, 98, 134));
+		
+		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable single click

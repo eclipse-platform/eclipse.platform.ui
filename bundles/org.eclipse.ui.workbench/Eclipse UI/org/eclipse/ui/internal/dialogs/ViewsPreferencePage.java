@@ -39,10 +39,18 @@ public class ViewsPreferencePage
 	private Button viewTopButton;
 	private Button viewBottomButton;
 
+	/*
+	 * Editors for working with colors in the Views/Appearance preference page 
+	 */
 	private BooleanFieldEditor colorIconsEditor;
 	private ColorFieldEditor errorColorEditor;
 	private ColorFieldEditor hyperlinkColorEditor;
 	private ColorFieldEditor activeHyperlinkColorEditor;
+	private ColorFieldEditor colorSchemeBGColorEditor;
+	private ColorFieldEditor colorSchemeFGColorEditor;
+	private ColorFieldEditor colorSchemeSelBGColorEditor;
+	private ColorFieldEditor colorSchemeSelFGColorEditor;
+	
 	/*
 	 * No longer supported - removed when confirmed!
 	 * private Button openFloatButton;
@@ -112,7 +120,12 @@ public class ViewsPreferencePage
 			store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 		viewAlignment = store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite outerComposite = new Composite(parent, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		outerComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		outerComposite.setFont(font);
+		
+		Composite composite = new Composite(outerComposite, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setFont(font);
 
@@ -167,13 +180,46 @@ public class ViewsPreferencePage
 		hyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 		hyperlinkColorEditor.load();
 
-			activeHyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.ACTIVE_HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.ActiveHyperlinkText"), //$NON-NLS-1$
+		activeHyperlinkColorEditor = new ColorFieldEditor(JFacePreferences.ACTIVE_HYPERLINK_COLOR, WorkbenchMessages.getString("ViewsPreference.ActiveHyperlinkText"), //$NON-NLS-1$
 	spacingComposite);
 
 		activeHyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 		activeHyperlinkColorEditor.load();
 
-		return composite;
+		Group colorSchemeComposite = new Group(composite, SWT.NONE);
+		colorSchemeComposite.setLayout(new GridLayout());
+		colorSchemeComposite.setText("Workbench Color Theme"); 
+		colorSchemeComposite.setFont(font);
+		colorSchemeComposite.setLayoutData(data); 
+		
+		//Add in an intermediate composite to allow for spacing
+		Composite spacingComposite2 = new Composite(outerComposite, SWT.NONE);
+		GridLayout spacingLayout2 = new GridLayout();
+		spacingLayout2.numColumns = 4;
+		spacingComposite2.setLayout(spacingLayout2);
+		spacingComposite2.setFont(font);
+
+		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite2);
+
+		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeBGColorEditor.load();
+		
+		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite2);
+
+		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeFGColorEditor.load();
+		
+		colorSchemeSelBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite2);
+
+		colorSchemeSelBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeSelBGColorEditor.load();
+		
+		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
+
+		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		colorSchemeSelFGColorEditor.load();
+		
+		return outerComposite;
 	}
 
 	/**
@@ -318,7 +364,11 @@ public class ViewsPreferencePage
 		errorColorEditor.loadDefault();
 		hyperlinkColorEditor.loadDefault();
 		activeHyperlinkColorEditor.loadDefault();
-
+		colorSchemeBGColorEditor.loadDefault();
+		colorSchemeFGColorEditor.loadDefault();
+		colorSchemeSelBGColorEditor.loadDefault();
+		colorSchemeSelFGColorEditor.loadDefault();
+		
 		/*
 		 * No longer supported - remove when confirmed!
 		 * if (openFloatButton != null) 
@@ -346,6 +396,11 @@ public class ViewsPreferencePage
 		errorColorEditor.store();
 		hyperlinkColorEditor.store();
 		activeHyperlinkColorEditor.store();
+		colorSchemeBGColorEditor.store();
+		colorSchemeFGColorEditor.store();
+		colorSchemeSelBGColorEditor.store();
+		colorSchemeSelFGColorEditor.store();
+		
 		return true;
 	}
 }

@@ -17,6 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -57,8 +58,10 @@ public class PartTabFolder extends LayoutPart
 				if (newItem != oldItem)
 					return;
 			}
-			if (PartTabFolder.this.current != null)
+			if (PartTabFolder.this.current != null) {
 				PartTabFolder.this.current.setFocus();
+				tabFolder.setBorderVisible(true);
+			}
 		}
 	};
 
@@ -182,7 +185,11 @@ public void createControl(Composite parent) {
 	// Create control.	
 	this.parent = parent;
 	tabFolder = new CTabFolder(parent, tabLocation | SWT.BORDER);
-
+	tabFolder.setBackground(JFaceColors.getSchemeBackground(parent.getDisplay()));
+	tabFolder.setForeground(JFaceColors.getSchemeForeground(parent.getDisplay()));
+	tabFolder.setSelectionBackground(JFaceColors.getSchemeSelectionBackground(parent.getDisplay()));
+	tabFolder.setSelectionForeground(JFaceColors.getSchemeSelectionForeground(parent.getDisplay()));
+	
 	// listener to switch between visible tabItems
 	tabFolder.addListener(SWT.Selection, new Listener(){
 		public void handleEvent(Event e){
@@ -848,7 +855,7 @@ private void setSelection(LayoutPart part) {
 	}
 
 	
-	  // set the title of the detached window to reflact the active tab
+	  // set the title of the detached window to reflect the active tab
 	  Window window = getWindow();
 	  if (window instanceof DetachedWindow) {
 	  	if (current == null || !(current instanceof PartPane))

@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceColors;
 
 import org.eclipse.ui.IEditorReference;
 
@@ -116,8 +117,12 @@ protected void setControlSize() {
 protected void createPresentation(Composite parent) {
 	usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 	
-	tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
-
+	tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE | tabLocation);
+	tabFolder.setBackground(JFaceColors.getSchemeBackground(parent.getDisplay()));
+	tabFolder.setForeground(JFaceColors.getSchemeForeground(parent.getDisplay()));
+	tabFolder.setSelectionBackground(JFaceColors.getSchemeSelectionBackground(parent.getDisplay()));
+	tabFolder.setSelectionForeground(JFaceColors.getSchemeSelectionForeground(parent.getDisplay()));
+	
 	// prevent close button and scroll buttons from taking focus
 	tabFolder.setTabList(new Control[0]);
 	
@@ -125,7 +130,7 @@ protected void createPresentation(Composite parent) {
 	tabFolder.setData(this);
 
 	// listener to close the editor
-	tabFolder.addCTabFolderListener(new CTabFolderAdapter() {
+	tabFolder.addCTabFolderCloseListener(new CTabFolderAdapter() {
 		public void itemClosed(CTabFolderEvent e) {
 			e.doit = false; // otherwise tab is auto disposed on return
 			EditorPane pane = (EditorPane) mapTabToEditor.get(e.item);
@@ -180,6 +185,7 @@ protected void createPresentation(Composite parent) {
 			if (visibleEditor != null) {
 				// switch to the editor
 				CTabItem item = getTab(visibleEditor);
+				
 				visibleEditor.setFocus();
 				Rectangle bounds = item.getBounds();
 				if (bounds.contains(e.x, e.y)) {
@@ -466,6 +472,14 @@ public void setContainer(ILayoutContainer container) {
 		tabFolder.addListener(SWT.MouseDown, getEditorArea().getMouseDownListener());
 		mouseDownListenerAdded = true;
 	}
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.EditorWorkbook#setBorderVisible(boolean)
+ */
+protected void setBorderVisible(boolean visible) {
+	tabFolder.setBorderVisible(visible);
+	
 }
 
 protected void setVisibleItem(EditorPane editorPane) {

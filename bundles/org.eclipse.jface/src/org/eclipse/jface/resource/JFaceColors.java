@@ -90,6 +90,39 @@ public class JFaceColors {
 	}
 	
 	/**
+	 * Get the default background color to use for the color scheme.
+	 */
+	public static Color getSchemeBackground(Display display) {
+
+		return getColorSetting(display,JFacePreferences.SCHEME_BACKGROUND_COLOR);
+	}
+	
+	
+	/**
+	 * Get the default foreground color to use for the color scheme.
+	 */
+	public static Color getSchemeForeground(Display display) {
+
+		return getColorSetting(display,JFacePreferences.SCHEME_FOREGROUND_COLOR);
+	}
+	
+	/**
+	 * Get the default selection foreground color to use for the color scheme.
+	 */
+	public static Color getSchemeSelectionForeground(Display display) {
+
+		return getColorSetting(display,JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR);
+	}
+
+	/**
+	 * Get the default selection background color to use for the color scheme.
+	 */
+	public static Color getSchemeSelectionBackground(Display display) {
+
+		return getColorSetting(display,JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR);
+	}
+	
+	/**
 	 * Clear out the cached color for name. This is generally
 	 * done when the color preferences changed and any cached colors
 	 * may be disposed. Users of the colors in this class should add a IPropertyChangeListener
@@ -167,5 +200,6 @@ public class JFaceColors {
 		if(background != null)
 			control.setBackground(background);
 	}
+
 		
 }
