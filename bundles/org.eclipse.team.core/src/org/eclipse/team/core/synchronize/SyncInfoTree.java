@@ -152,9 +152,12 @@ public class SyncInfoTree extends SyncInfoSet {
 	public void add(SyncInfo info) {
 		try {
 			beginInput();
+			boolean alreadyExists = getSyncInfo(info.getLocal()) != null;
 			super.add(info);
-			IResource local = info.getLocal();
-			addToParents(local, local);
+			if(! alreadyExists) {
+				IResource local = info.getLocal();
+				addToParents(local, local);
+			}
 		} finally {
 			endInput(null);
 		}
