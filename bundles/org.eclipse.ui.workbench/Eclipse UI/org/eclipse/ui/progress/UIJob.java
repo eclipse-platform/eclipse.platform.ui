@@ -17,6 +17,8 @@ package org.eclipse.ui.progress;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -118,10 +120,12 @@ public abstract class UIJob extends Job {
 			return display;
 		IWorkbenchWindow windows[] =
 			WorkbenchPlugin.getDefault().getWorkbench().getWorkbenchWindows();
-		if (windows.length ==  0 || windows[0].getShell().isDisposed())
+		if (windows.length == 0)
 			return Display.getDefault();
-		else
-			return windows[0].getShell().getDisplay();
+		Shell firstShell = windows[0].getShell();
+		if(firstShell == null || firstShell.isDisposed())
+			return Display.getDefault();
+		return windows[0].getShell().getDisplay();
 			
 		
 
