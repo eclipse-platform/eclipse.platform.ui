@@ -7,6 +7,7 @@
     	<dumper file-name=".syncinfo" class="org.eclipse.core.tools.resources.metadata.SyncInfoDumper"/>
     	<dumper file-name=".syncinfo.snap" class="org.eclipse.core.tools.resources.metadata.SyncInfoSnapshotDumper"/>
     	<dumper file-name=".location" class="org.eclipse.core.tools.resources.metadata.LocationDumper"/>    	    	    	    	    	
+    	<dumper file-name="properties.index" class="org.eclipse.core.tools.resources.metadata.PropertiesIndexDumper"/>    	    	    	    	    	    	
    </extension>
 <!--  Actions -->
    <extension
