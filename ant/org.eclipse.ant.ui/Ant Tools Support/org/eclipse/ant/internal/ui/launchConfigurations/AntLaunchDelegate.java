@@ -143,6 +143,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		String[] arguments = ExternalToolsUtil.getArguments(configuration);
 		
 		Map userProperties= AntUtil.getProperties(configuration);
+		if (userProperties != null) {//create a copy so as to not affect the configuration with transient properties
+			userProperties= new HashMap(userProperties);
+		}
 		String[] propertyFiles= AntUtil.getPropertyFiles(configuration);
 		String[] targets = AntUtil.getTargetNames(configuration);
 		URL[] customClasspath= AntUtil.getCustomClasspath(configuration);
