@@ -70,21 +70,24 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		if (ExternalToolsPlugin.getDefault().getBundle().getState() != Bundle.ACTIVE) {
 			return null;
 		}
+		
+		if (kind == FULL_BUILD) {
+			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
+			if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
+				launchBuild(kind, config, monitor);
+			}
+			forgetLastBuiltState();
+			return getProjectsWithinScope();
+		}
 		//need to build all external tools from one builder (see bug 39713)
 		//if not a full build
 		ICommand[] commands = getProject().getDescription().getBuildSpec();
-		if (kind != FULL_BUILD) {
-			projectsWithinScope= new ArrayList();
-		}
+		projectsWithinScope= new ArrayList();
 		for (int i = 0; i < commands.length; i++) {
 			if (ID.equals(commands[i].getBuilderName())){
 				ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), commands[i].getArguments(), new String[1]);
 				if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
-					if (kind == FULL_BUILD) {
-						launchBuild(kind, config, monitor);
-					} else {
-						doBuildBasedOnScope(kind, config, monitor);
-					}
+					doBuildBasedOnScope(kind, config, monitor);
 				}
 			}
 		}
