@@ -93,6 +93,9 @@
 	</target>
 
 	<target name="WEB-INF/lib/jsp.jar" depends="init" unless="WEB-INF/lib/jsp.jar">
+		<property name="destdir" value="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
+		<delete dir="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
+		<mkdir dir="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
 <!-- custom begin -->
 		<!-- generate java code from JSPs -->
 		<path id="jasper.classpath" > 
@@ -107,7 +110,8 @@
 			classname="org.apache.jasper.JspC"
 			fork="true"
 			failonerror="false"
-			classpathref="jasper.classpath">
+			classpathref="jasper.classpath"
+			output="${temp.folder}/WEB-INF/lib/jsp.jar.bin.log">
 			<arg value="-v3" />
 			<arg value="-d" /><arg value="${temp.folder}/WEB-INF/lib/jsp.jar.src" />
 			<arg value="-die" />
@@ -116,9 +120,6 @@
 			<arg value="-webapp" /><arg value="${basedir}" />
 		</java>
 <!-- custom end -->	
-		<property name="destdir" value="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
-		<delete dir="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
-		<mkdir dir="${temp.folder}/WEB-INF/lib/jsp.jar.bin"/>
 		<!-- compile the source code -->
 		<javac destdir="${temp.folder}/WEB-INF/lib/jsp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;../org.eclipse.help/help.jar;eclipseurl.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help/bin;../org.apache.xerces/bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/boot.jar;WEB-INF/lib/webapp.jar;../org.eclipse.tomcat/servlet.jar;../org.eclipse.tomcat/jasper-runtime.jar;../org.apache.xerces/xmlParserAPIs.jar;../org.eclipse.core.boot/bin">
 			<src path="${temp.folder}/WEB-INF/lib/jsp.jar.src/"/>
