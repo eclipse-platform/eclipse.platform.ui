@@ -75,7 +75,7 @@ public class MergeWizardEndPage extends CVSWizardPage {
 						setPageComplete(true);
 						setMessage(null);
 					} else {
-						setMessage(Policy.bind("MergeWizardEndPage.duplicateTagSelected", result.getName())); //$NON-NLS-1$
+						setMessage(Policy.bind("MergeWizardEndPage.duplicateTagSelected", result.getName()), WARNING); //$NON-NLS-1$
 						setPageComplete(false);
 					}
 				} else {

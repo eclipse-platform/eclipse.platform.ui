@@ -152,7 +152,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		} else {
 			File f = new File(file);
 			if (f.isDirectory()) {
-				setMessage(Policy.bind("ExportProjectSetMainPage.You_have_specified_a_folder_5")); //$NON-NLS-1$
+				setMessage(Policy.bind("ExportProjectSetMainPage.You_have_specified_a_folder_5"), ERROR); //$NON-NLS-1$
 				complete = false;
 			} else {
 				complete = true;

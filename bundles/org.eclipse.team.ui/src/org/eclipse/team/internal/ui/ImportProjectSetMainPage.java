@@ -95,10 +95,10 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			// See if the file exists
 			File f = new File(file);
 			if (!f.exists()) {
-				setMessage(Policy.bind("ImportProjectSetMainPage.The_specified_file_does_not_exist_4")); //$NON-NLS-1$
+				setMessage(Policy.bind("ImportProjectSetMainPage.The_specified_file_does_not_exist_4"), ERROR); //$NON-NLS-1$
 				complete = false;
 			} else if (f.isDirectory()) {
-				setMessage(Policy.bind("ImportProjectSetMainPage.You_have_specified_a_folder_5")); //$NON-NLS-1$
+				setMessage(Policy.bind("ImportProjectSetMainPage.You_have_specified_a_folder_5"), ERROR); //$NON-NLS-1$
 				complete = false;
 			} else {
 				complete = true;
