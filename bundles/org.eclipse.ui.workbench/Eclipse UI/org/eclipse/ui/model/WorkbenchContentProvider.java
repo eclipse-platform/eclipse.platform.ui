@@ -145,6 +145,7 @@ protected void processDelta(IResourceDelta delta) {
 	// Replacing a resource may affect its label and its children
 	if ((changeFlags & IResourceDelta.REPLACED) != 0) {
 		((StructuredViewer) viewer).refresh(resource, true);
+		return;
 	}
 
 	// Handle changed children .
