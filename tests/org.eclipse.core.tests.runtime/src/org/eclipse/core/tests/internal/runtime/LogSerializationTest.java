@@ -13,6 +13,7 @@ package org.eclipse.core.tests.internal.runtime;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.PlatformLogWriter;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -218,7 +219,7 @@ public class LogSerializationTest extends RuntimeTest {
 	protected void writeLog(IStatus[] statuses) {
 		if (logFile.exists())
 			logFile.delete();
-		PlatformLogWriter writer = new PlatformLogWriter();
+		PlatformLogWriter writer = new PlatformLogWriter(InternalPlatform.getDefault().getFrameworkLog());
 		for (int i = 0; i < statuses.length; i++) {
 			writer.logging(statuses[i], "org.eclipse.core.tests.runtime");
 		}

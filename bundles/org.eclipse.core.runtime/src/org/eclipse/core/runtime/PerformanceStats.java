@@ -131,7 +131,7 @@ public class PerformanceStats {
 	/**
 	 * Whether this is a performance failure event
 	 */
-	private boolean failure;
+	private boolean isFailure;
 
 	/**
 	 * The total number of times this event has occurred.
@@ -306,11 +306,8 @@ public class PerformanceStats {
 			return;
 		runCount++;
 		runningTime += elapsed;
-		if (elapsed > getThreshold(event) && TRACE_FAILURE) {
-			//create a failure event object
-			PerformanceStats failure = createFailureStats(contextName, elapsed);
-			PerformanceStatsProcessor.failed(failure, elapsed);
-		}
+		if (TRACE_FAILURE && elapsed > getThreshold(event))
+			PerformanceStatsProcessor.failed(createFailureStats(contextName, elapsed), elapsed);
 		if (TRACE_SUCCESS)
 			PerformanceStatsProcessor.changed(this);
 	}
@@ -323,16 +320,16 @@ public class PerformanceStats {
 	 * @return The failure stats
 	 */
 	private PerformanceStats createFailureStats(String contextName, long elapsed) {
-		PerformanceStats failure = new PerformanceStats(event, blame, contextName);
-		PerformanceStats old = (PerformanceStats) statMap.get(failure);
+		PerformanceStats failedStat = new PerformanceStats(event, blame, contextName);
+		PerformanceStats old = (PerformanceStats) statMap.get(failedStat);
 		if (old == null)
-			statMap.put(failure, failure);
+			statMap.put(failedStat, failedStat);
 		else 
-			failure = old;
-		failure.failure = true;
-		failure.runCount++;
-		failure.runningTime += elapsed;
-		return failure;
+			failedStat = old;
+		failedStat.isFailure = true;
+		failedStat.runCount++;
+		failedStat.runningTime += elapsed;
+		return failedStat;
 	}
 
 	/* (non-Javadoc)
@@ -445,7 +442,7 @@ public class PerformanceStats {
 	 * <code>false</code> otherwise.
 	 */
 	public boolean isFailure() {
-		return failure;
+		return isFailure;
 	}
 
 	/**

@@ -1072,7 +1072,7 @@ public final class InternalPlatform {
 		initialized = true;
 		getMetaArea();
 		initializeAuthorizationHandler();
-		platformLog = new PlatformLogWriter();
+		platformLog = new PlatformLogWriter(getFrameworkLog());
 		addLogListener(platformLog);
 		initializeRuntimeFileManager();
 	}

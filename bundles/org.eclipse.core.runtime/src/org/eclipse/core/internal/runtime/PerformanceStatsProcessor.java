@@ -15,6 +15,9 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PerformanceStats.PerformanceListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Processes, records, and performs notification of performance events
@@ -40,6 +43,7 @@ public class PerformanceStatsProcessor extends Job {
 	 * Event listeners.
 	 */
 	private final ListenerList listeners = new ListenerList();
+	private PlatformLogWriter log;
 
 	/*
 	 * @see PerformanceStats#addListener
@@ -71,13 +75,7 @@ public class PerformanceStatsProcessor extends Job {
 			instance.failures.put(stats, new Long(elapsed));
 		}
 		instance.schedule(SCHEDULE_DELAY);
-		//log the failure
-		final InternalPlatform platform = InternalPlatform.getDefault();
-		String pluginId = platform.getBundleId(stats.getBlame());
-		if (pluginId == null)
-			pluginId = Platform.PI_RUNTIME;
-		String msg = "Performance failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		platform.log(new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException()));
+		instance.logFailure(stats, elapsed);
 	}
 
 	/*
@@ -139,9 +137,46 @@ public class PerformanceStatsProcessor extends Job {
 	 * Private constructor to enforce singleton usage.
 	 */
 	private PerformanceStatsProcessor() {
-		super("Event Stats"); //$NON-NLS-1$
+		super("Performance Stats"); //$NON-NLS-1$
 		setSystem(true);
 		setPriority(DECORATE);
+		BundleContext context = PlatformActivator.getContext();
+		String filter = '(' + FrameworkLog.SERVICE_PERFORMANCE + '=' + Boolean.TRUE.toString() + ')';
+		ServiceReference[] references;
+		FrameworkLog perfLog = null;
+		try {
+			references = context.getServiceReferences(FrameworkLog.class.getName(), filter);
+			if (references != null && references.length > 0) {
+				//just take the first matching service
+				perfLog = (FrameworkLog) context.getService(references[0]);
+				//make sure correct location is set
+				IPath logLocation = Platform.getLogFileLocation();
+				logLocation = logLocation.removeLastSegments(1).append("performance.log"); //$NON-NLS-1$
+				perfLog.setFile(logLocation.toFile(), false);
+			}
+		} catch (Exception e) {
+			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, "Error loading performance log", e); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(error);
+		}
+		//use the platform log if we couldn't create the performance log
+		if (perfLog == null)
+			perfLog = InternalPlatform.getDefault().getFrameworkLog();
+		log = new PlatformLogWriter(perfLog);
+	}
+
+	/**
+	 * Logs performance event failures to the platform's performance log
+	 */
+	private void logFailure(PerformanceStats stats, long elapsed) {
+		//may have failed to get the performance log service
+		if (log == null)
+			return;
+		final InternalPlatform platform = InternalPlatform.getDefault();
+		String pluginId = platform.getBundleId(stats.getBlame());
+		if (pluginId == null)
+			pluginId = Platform.PI_RUNTIME;
+		String msg = "Performance failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		log.logging(new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException()), pluginId);
 	}
 
 	/*
@@ -158,6 +193,8 @@ public class PerformanceStatsProcessor extends Job {
 			failedTimes = (Long[]) failures.values().toArray(new Long[failures.size()]);
 			failures.clear();
 		}
+
+		//notify performance listeners
 		Object[] toNotify = listeners.getListeners();
 		for (int i = 0; i < toNotify.length; i++) {
 			final PerformanceStats.PerformanceListener listener = ((PerformanceStats.PerformanceListener) toNotify[i]);
@@ -174,6 +211,6 @@ public class PerformanceStatsProcessor extends Job {
 	 * @see Job#shouldRun()
 	 */
 	public boolean shouldRun() {
-		return !changes.isEmpty();
+		return !changes.isEmpty() || !failures.isEmpty();
 	}
 }

@@ -12,19 +12,27 @@ package org.eclipse.core.internal.runtime;
 
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 
 /**
  * A log writer that writes log entries.  
  * See PlatformLogReader for reading logs back into memory.
+ * <p>
+ * Note that this class just provides a bridge from the old ILog interface
+ * to the OSGi FrameworkLog interface.
  */
 public class PlatformLogWriter implements ILogListener {
+	private final FrameworkLog frameworkLog;
+
+	public PlatformLogWriter(FrameworkLog frameworkLog) {
+		this.frameworkLog = frameworkLog;
+	}
 	/**
 	 * @see ILogListener#logging(IStatus, String)
 	 */
 	public synchronized void logging(IStatus status, String plugin) {
-		FrameworkLogEntry logEntry = getLog(status);
-		InternalPlatform.getDefault().getFrameworkLog().log(logEntry);
+		frameworkLog.log(getLog(status));
 	}
 
 	protected FrameworkLogEntry getLog(IStatus status) {
