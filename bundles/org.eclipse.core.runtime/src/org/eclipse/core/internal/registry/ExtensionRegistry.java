@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -449,13 +450,24 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		});
 
 	}
-	public class ExtensionEventDispatcherJob extends Job {
+	private final static class ExtensionEventDispatcherJob extends Job {
+		// an "identy rule" that forces extension events to be queued		
+		private final static ISchedulingRule EXTENSION_EVENT_RULE = new ISchedulingRule() {
+			public boolean contains(ISchedulingRule rule) {
+				return rule == this;
+			}
+			public boolean isConflicting(ISchedulingRule rule) {
+				return rule == this;
+			}			
+		};		
 		private Map listeners;
 		private Map deltas;
 		public ExtensionEventDispatcherJob(Map listeners, Map deltas) {
 			super("RegistryChangeEventDispatcherJob"); //$NON-NLS-1$
 			this.listeners = listeners;
 			this.deltas = deltas;
+			// all extension event dispatching jobs use this rule
+			setRule(EXTENSION_EVENT_RULE);
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("pluginEvent.errorListener"), null); //$NON-NLS-1$			
