@@ -221,8 +221,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		// TODO remove the dependancy on Workbench. have Workbench rely on events from CommandManager.
 		if (workbench instanceof Workbench) {
-			((Workbench) workbench).updateActiveActivityIds();
-			((Workbench) workbench).updateActiveWorkbenchWindowMenuManager();
+			((Workbench) workbench).workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
+			((Workbench) workbench).workbenchActivitiesCommandsAndRoles.updateActiveWorkbenchWindowMenuManager();
 		}
 
 		return super.performOk();

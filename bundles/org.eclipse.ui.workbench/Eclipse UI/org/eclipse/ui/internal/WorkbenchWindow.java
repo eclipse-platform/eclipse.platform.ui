@@ -447,7 +447,7 @@ public class WorkbenchWindow
 			}
 		}
 
-		workbench.updateActiveCommandIdsAndActiveActivityIds();
+		workbench.workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
@@ -458,7 +458,7 @@ public class WorkbenchWindow
 				command,
 				new ActionHandler(globalAction));
 
-		workbench.updateActiveCommandIdsAndActiveActivityIds();
+		workbench.workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
 	}
 
 	/*
@@ -1141,8 +1141,8 @@ public class WorkbenchWindow
 		if (keyBindingService == null) {
 			keyBindingService =
 				new KeyBindingService(
-					workbench.getActionService(),
-					workbench.getContextActivationService());
+					workbench.workbenchActivitiesCommandsAndRoles.getActionService(),
+					workbench.workbenchActivitiesCommandsAndRoles.getContextActivationService());
 			updateActiveActions();
 		}
 
