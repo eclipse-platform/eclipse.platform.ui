@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui.views;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -52,12 +53,12 @@ public class LaunchViewer extends TreeViewer {
 	}
 	
 	/**
-	 * @see Viewer#refresh()
+	 * @see StructuredViewer#refresh(Object)
 	 */
-	public void refresh() {
+	public void refresh(Object element) {
 		//@see bug 7965 - Debyg vuew refresh flicker
 		getControl().setRedraw(false);
-		super.refresh();
+		super.refresh(element);
 		getControl().setRedraw(true);
 	}
 }
