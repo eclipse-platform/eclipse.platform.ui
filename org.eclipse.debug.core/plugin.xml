@@ -52,6 +52,7 @@
 <extension point="org.eclipse.debug.core.launchModes">
   <launchMode mode="run"/>
   <launchMode mode="debug"/>
+  <launchMode mode="profile"/>
 </extension>
 
 </plugin>

@@ -453,14 +453,22 @@ public interface IDebugUIConstants {
 	
 	// extensions
 	/**
-	 * Identifier for the standard 'debug' launch group. 
+	 * Identifier for the standard 'debug' launch group.
+	 * @since 2.1 
 	 */
 	public static final String ID_DEBUG_LAUNCH_GROUP = PLUGIN_ID + ".launchGroup.debug"; //$NON-NLS-1$
 	
 	/**
-	 * Identifier for the standard 'run' launch group. 
+	 * Identifier for the standard 'run' launch group.
+	 * @since 2.1 
 	 */
 	public static final String ID_RUN_LAUNCH_GROUP = PLUGIN_ID + ".launchGroup.run"; //$NON-NLS-1$	
+	
+	/**
+	 * Identifier for the standard 'profile' launch group.
+	 * @since 3.0 
+	 */
+	public static final String ID_PROFILE_LAUNCH_GROUP = PLUGIN_ID + ".launchGroup.profile"; //$NON-NLS-1$	
 	
 	// menus 
 	

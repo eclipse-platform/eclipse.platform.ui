@@ -60,6 +60,11 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	private String fLaunchGroupIdentifier;
 	
 	/**
+	 * Presentation wrapper for this action
+	 */
+	private IAction fAction;
+	
+	/**
 	 * Creates a cascading menu action to populate with shortcuts in the given
 	 * launch group.
 	 *  
@@ -268,6 +273,37 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		if (fAction == null) {
+			initialize(action);
+		}
 	}
+	
+	/**
+	 * Set the enabled state of the underlying action based on whether there are any
+	 * registered launch shortcuts for this launch mode.
+	 */
+	private void initialize(IAction action) {
+		fAction = action;
+		action.setEnabled(existsShortcutsForMode());	
+	}	
+
+	/**
+	 * Return whether there are any registered launch shortcuts for
+	 * the mode of this action.
+	 * 
+	 * @return whether there are any registered launch shortcuts for
+	 * the mode of this action
+	 */
+	private boolean existsShortcutsForMode() {
+		List shortcuts = getLaunchConfigurationManager().getLaunchShortcuts(getCategory());
+		Iterator iter = shortcuts.iterator();
+		while (iter.hasNext()) {
+			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+			if (ext.getModes().contains(getMode())) {
+				return true;
+			}
+		}		
+		return false;
+	}	
 }
 

@@ -11,7 +11,9 @@
 package org.eclipse.debug.ui.actions;
 
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -40,6 +42,11 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 	 * Launch group identifier
 	 */
 	private String fIdentifier;
+	
+	/**
+	 * The action used to render this delegate.
+	 */
+	private IAction fAction;	
 	
 	/**
 	 * Constucts an action that opens the launch configuration dialog in
@@ -94,6 +101,45 @@ public class OpenLaunchDialogAction extends Action implements IWorkbenchWindowAc
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		if (fAction == null) {
+			initialize(action);
+		} 		
 	}
+	
+	/**
+	 * Set the enabled state of the underlying action based on whether there are any
+	 * registered launch configuration types that understand how to launch in the
+	 * mode of this action.
+	 */
+	private void initialize(IAction action) {
+		fAction = action;
+		action.setEnabled(existsConfigTypesForMode());	
+	}	
 
+	/**
+	 * Return whether there are any registered launch configuration types for
+	 * the mode of this action.
+	 * 
+	 * @return whether there are any registered launch configuration types for
+	 * the mode of this action
+	 */
+	private boolean existsConfigTypesForMode() {
+		ILaunchConfigurationType[] configTypes = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
+		for (int i = 0; i < configTypes.length; i++) {
+			ILaunchConfigurationType configType = configTypes[i];
+			if (configType.supportsMode(getMode())) {
+				return true;
+			}
+		}		
+		return false;
+	}
+	
+	/**
+	 * Returns the launch mode for this action.
+	 * 
+	 * @return launch mode
+	 */
+	private String getMode() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier).getMode();
+	}
 }

@@ -14,7 +14,9 @@ package org.eclipse.debug.internal.ui.actions;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
@@ -31,6 +33,8 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
 	
 	private IWorkbenchWindow fWorkbenchWindow;
+	
+	private IAction fAction;
 	
 	/**
 	 * @see IWorkbenchWindowActionDelegate
@@ -86,7 +90,39 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection){
+		if (fAction == null) {
+			initialize(action);
+		}		
 	}
+	
+	/**
+	 * Set the enabled state of the underlying action based on whether there are any
+	 * registered launch configuration types that understand how to launch in the
+	 * mode of this action.
+	 */
+	private void initialize(IAction action) {
+		fAction = action;
+		action.setEnabled(existsConfigTypesForMode());	
+	}
+	
+	/**
+	 * Return whether there are any registered launch configuration types for
+	 * the mode of this action.
+	 * 
+	 * @return whether there are any registered launch configuration types for
+	 * the mode of this action
+	 */
+	private boolean existsConfigTypesForMode() {
+		ILaunchConfigurationType[] configTypes = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
+		for (int i = 0; i < configTypes.length; i++) {
+			ILaunchConfigurationType configType = configTypes[i];
+			if (configType.supportsMode(getMode())) {
+				return true;
+			}
+		}		
+		return false;
+	}
+	
 	
 	/**
 	 * Return the last launch that occurred in the workspace.

@@ -36,6 +36,11 @@ public interface ILaunchManager {
 	 * A launch in a special debug mode (value <code>"debug"</code>).
 	 */
 	public static final String DEBUG_MODE= "debug"; //$NON-NLS-1$
+	/**
+	 * A launch in a special profile mode (value <code>"profile"</code>).
+	 * @since 3.0
+	 */
+	public static final String PROFILE_MODE= "profile"; //$NON-NLS-1$	
 	
 	/**
 	 * Adds the given listener to the collection of registered launch listeners.
