@@ -7,23 +7,20 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.LaunchHistoryElement;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Re-runs or re-debugs the last launch.
  */
-public class RelaunchLastAction extends Action implements IWorkbenchWindowActionDelegate {
+public class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
 	
 	/**
 	 * When this action is created as a delegate, this flag indicates
@@ -32,32 +29,6 @@ public class RelaunchLastAction extends Action implements IWorkbenchWindowAction
 	 */
 	private boolean fInitializedImages = false;
 	
-	public RelaunchLastAction() {
-		WorkbenchHelp.setHelp(
-			this,
-			new Object[] { IDebugHelpContextIds.RELAUNCH_LAST_ACTION });
-		setActionImages(this);
-	}
-	
-	/**
-	 * @see IAction
-	 */
-	public void run() {
-		final LaunchHistoryElement recent= DebugUIPlugin.getDefault().getLastLaunch();
-		if (recent == null) {
-			Display.getCurrent().beep();
-		} else {
-			if (!DebugUIPlugin.saveAndBuild()) {
-				return;
-			}
-			BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-				public void run() {
-					RelaunchActionDelegate.relaunch(recent);
-				}
-			});
-		}
-	}
-
 	/**
 	 * @see IWorkbenchWindowActionDelegate
 	 */
@@ -74,7 +45,19 @@ public class RelaunchLastAction extends Action implements IWorkbenchWindowAction
 	 * @see IActionDelegate
 	 */
 	public void run(IAction action){
-		run();
+		final LaunchHistoryElement recent= DebugUIPlugin.getDefault().getLastLaunch();
+		if (recent == null) {
+			Display.getCurrent().beep();
+		} else {
+			if (!DebugUIPlugin.saveAndBuild()) {
+				return;
+			}
+			BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+				public void run() {
+					RelaunchActionDelegate.relaunch(recent);
+				}
+			});
+		}
 	}
 
 	/**
