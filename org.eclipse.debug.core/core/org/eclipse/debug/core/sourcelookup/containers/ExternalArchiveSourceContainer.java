@@ -14,9 +14,12 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
@@ -34,8 +37,8 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
  */
 public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	
-	private boolean fDetectRoot = false;
-	private String fRoot = null;
+	private boolean fDetectRoots = false;
+	private Map fRoots = new HashMap(5);
 	private String fArchivePath = null;
 	/**
 	 * Unique identifier for the external archive source container type
@@ -48,20 +51,24 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * specified location in the local file system. 
 	 * 
 	 * @param archivePath path to the archive in the local file system
-	 * @param detectRootPath whether a root path should be detected. When
+	 * @param detectRootPaths whether root container paths should be detected. When
 	 *   <code>true</code>, searching is performed relative to a root path
-	 *   within the archive based on fully qualified file names. The root
-	 *   path is automatically determined when the first successful search
-	 *   is performed. For example, when searching for a file named
-	 *   <code>a/b/c.d</code>, and an entry in the archive named
-	 *   <code>r/a/b/c.d</code> exists, the root path is set to <code>r</code>.
-	 *   From that point on, searching is performed relative to <code>r</code>.
+	 *   within the archive based on fully qualified file names. A root
+	 *   path is automatically determined for each file type when the first
+	 *   successful search is performed. For example, when searching for a file
+	 *   named <code>a/b/c.d</code>, and an entry in the archive named
+	 *   <code>r/a/b/c.d</code> exists, the root path is set to <code>r</code>
+	 *   for file type <code>d</code>.
+	 *   From that point on, searching is performed relative to <code>r</code>
+	 *   for files of type <code>d</code>.
+	 *   When searching for an unqualified file name, root containers are not
+	 *   considered.
 	 *   When <code>false</code>, searching is performed by
 	 *   matching file names as suffixes to the entries in the archive. 
 	 */
-	public ExternalArchiveSourceContainer(String archivePath, boolean detectRootPath) {
+	public ExternalArchiveSourceContainer(String archivePath, boolean detectRootPaths) {
 		fArchivePath = archivePath;
-		fDetectRoot = detectRootPath;
+		fDetectRoots = detectRootPaths;
 	}
 	
 	/* (non-Javadoc)
@@ -70,13 +77,12 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	public Object[] findSourceElements(String name) throws CoreException {
 		name = name.replace('\\', '/');
 		ZipFile file = getArchive();
-		if (fDetectRoot) {
-			if (fRoot == null) {
-				detectRoot(file, name);
-			}
-			if (fRoot != null) {
-				if (fRoot.length() > 0) {
-					name = fRoot + name;
+		boolean isQualfied = name.indexOf('/') > 0;
+		if (fDetectRoots && isQualfied) {
+			String root = getRoot(file, name);
+			if (root != null) {
+				if (root.length() > 0) {
+					name = root + name;
 				}
 				ZipEntry entry = file.getEntry(name);
 				if (entry != null) {
@@ -114,14 +120,43 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	}
 	
 	/**
-	 * Detects the root path in this archive by searching for an entry
+	 * Returns the root path in this archive for the given file name, based
+	 * on its type, or <code>null</code> if none. Detects a root if a root has
+	 * not yet been detected for the given file type.
+	 * 
+	 * @param file zip file to search in
+	 * @param name file name
+	 * @exception CoreException if an exception occurrs while detecting the root
+	 */
+	private String getRoot(ZipFile file, String name) throws CoreException {
+		int index = name.lastIndexOf('.');
+		String fileType = null;
+		if (index >= 0) {
+			fileType = name.substring(index);
+		} else {
+			// no filetype, use "" as key
+			fileType = ""; //$NON-NLS-1$
+		}
+		String root = (String) fRoots.get(fileType);
+		if (root == null) {
+			root = detectRoot(file, name);
+			if (root != null) {
+				fRoots.put(fileType, root);
+			}
+		}
+		return root;
+	}
+	
+	/**
+	 * Detects and returns the root path in this archive by searching for an entry
 	 * with the given name, as a suffix.
 	 * 
 	 * @param file zip file to search in
 	 * @param name entry to search for
+	 * @return root
 	 * @exception CoreException if an exception occurrs while detecting the root
 	 */
-	private void detectRoot(ZipFile file, String name) throws CoreException {
+	private String detectRoot(ZipFile file, String name) throws CoreException {
 		synchronized (file) {
 			Enumeration entries = file.entries();
 			try {
@@ -131,17 +166,17 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 					if (entryName.endsWith(name)) {
 						int rootLength = entryName.length() - name.length();
 						if (rootLength > 0) {
-							fRoot = entryName.substring(0, rootLength);
+							return entryName.substring(0, rootLength);
 						} else {
-							fRoot = ""; //$NON-NLS-1$
+							return ""; //$NON-NLS-1$
 						}
-						return;
 					}
 				}
 			} catch (IllegalStateException e) {
 				abort(MessageFormat.format(SourceLookupMessages.getString("ExternalArchiveSourceContainer.1"), new String[] {getName()}), e); //$NON-NLS-1$
 			}
-		}		
+		}
+		return null;
 	}
 
 	/**
@@ -179,7 +214,7 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	 * is to be automatically detected
 	 */
 	public boolean isDetectRoot() {
-		return fDetectRoot;
+		return fDetectRoots;
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -194,4 +229,13 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 	public int hashCode() {
 		return getName().hashCode();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		fRoots.clear();
+	}	
 }
