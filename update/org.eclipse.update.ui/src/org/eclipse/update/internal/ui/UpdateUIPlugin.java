@@ -12,7 +12,7 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.tomcat.AppServer;
+import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.model.SiteLocalModel;
 import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
@@ -53,9 +54,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		super(descriptor);
 		plugin = this;
 		try {
-			resourceBundle =
-				ResourceBundle.getBundle(
-					"org.eclipse.update.internal.ui.UpdateUIPluginResources");
+			resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.ui.UpdateUIPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
@@ -74,13 +73,14 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 
 	private IWorkbenchPage internalGetActivePage() {
 		IWorkbenchWindow window = getWorkbench().getActiveWorkbenchWindow();
-		if (window!=null) return window.getActivePage();
+		if (window != null)
+			return window.getActivePage();
 		return null;
 	}
 
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		return window!=null ? window.getShell() : null;
+		return window != null ? window.getShell() : null;
 	}
 
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -90,13 +90,13 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	public static String getPluginId() {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
-	
+
 	public AboutInfo getAboutInfo() {
 		return aboutInfo;
 	}
-	
+
 	public UpdateLabelProvider getLabelProvider() {
-		if (labelProvider==null)
+		if (labelProvider == null)
 			labelProvider = new UpdateLabelProvider();
 		return labelProvider;
 	}
@@ -128,7 +128,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 
 	public static String getFormattedMessage(String key, String arg) {
 		String text = getResourceString(key);
-		return java.text.MessageFormat.format(text, new String [] { arg });
+		return java.text.MessageFormat.format(text, new String[] { arg });
 	}
 
 	/**
@@ -149,48 +149,50 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		authenticator = new UpdateManagerAuthenticator();
 		Authenticator.setDefault(authenticator);
 		int historyPref = getPluginPreferences().getInt(MainPreferencePage.P_HISTORY_SIZE);
-		if(historyPref>0){
-			SiteLocalModel.DEFAULT_HISTORY= historyPref;
+		if (historyPref > 0) {
+			SiteLocalModel.DEFAULT_HISTORY = historyPref;
 		}
 		if (AppServerPreferencePage.getUseApplicationServer()) {
 			try {
 				startWebApp();
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				logException(e);
 			}
 		}
 	}
-	
+
 	public void startWebApp() throws CoreException {
-		
+
 		// configure web install handler
-		if (!AppServer.add(WEB_APP_ID, PLUGIN_ID, "webapp")) {
+		try {
+			WebappManager.start(WEB_APP_ID, PLUGIN_ID, new Path("webapp"));
+		} catch (CoreException e) {
+			UpdateManagerPlugin.warn("",e);
 			return;
 		}
-		appServerHost = AppServer.getHost();
-		appServerPort = AppServer.getPort();
+		
+		appServerHost = WebappManager.getHost();
+		appServerPort = WebappManager.getPort();
 	}
-	
+
 	public void stopWebApp() throws CoreException {
 		try {
-		// unconfigure web install handler
-			AppServer.remove(WEB_APP_ID, PLUGIN_ID);
-		}
-		finally {
+			// unconfigure web install handler
+			WebappManager.stop(WEB_APP_ID);
+		} finally {
 			appServerHost = null;
 			appServerPort = 0;
 		}
 	}
-	
+
 	public boolean isWebAppStarted() {
-		return appServerHost!=null;
+		return appServerHost != null;
 	}
-	
+
 	public String getAppServerHost() {
 		return appServerHost;
 	}
-	
+
 	public int getAppServerPort() {
 		return appServerPort;
 	}
@@ -200,10 +202,10 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		manager.unregisterAdapters(adapterFactory);
 		model.shutdown();
 		UpdateColors.disposeColors();
-		if (labelProvider!=null)
+		if (labelProvider != null)
 			labelProvider.dispose();
 		super.shutdown();
-		
+
 	}
 
 	public UpdateModel getUpdateModel() {
@@ -226,40 +228,23 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 			String message = e.getMessage();
 			if (message == null)
 				message = e.toString();
-			status =
-				new Status(
-					IStatus.ERROR,
-					getPluginId(),
-					IStatus.OK,
-					message,
-					e);
+			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
 		}
 		log(status, showErrorDialog);
 	}
-	
+
 	public static void log(IStatus status, boolean showErrorDialog) {
-		if (status.getSeverity()!=IStatus.INFO){
+		if (status.getSeverity() != IStatus.INFO) {
 			if (showErrorDialog)
-				ErrorDialog.openError(
-					getActiveWorkbenchShell(),
-					null,
-					null,
-					status);
+				ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
 			//ResourcesPlugin.getPlugin().getLog().log(status);
 			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
 		} else {
-			MessageDialog.openInformation(
-				getActiveWorkbenchShell(),
-				null,
-				status.getMessage());			
+			MessageDialog.openInformation(getActiveWorkbenchShell(), null, status.getMessage());
 		}
 	}
 
-	public static IFeature[] searchSite(
-		String featureId,
-		IConfiguredSite site,
-		boolean onlyConfigured)
-		throws CoreException {
+	public static IFeature[] searchSite(String featureId, IConfiguredSite site, boolean onlyConfigured) throws CoreException {
 		IFeatureReference[] references = null;
 
 		if (onlyConfigured)
@@ -277,11 +262,11 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		}
 		return (IFeature[]) result.toArray(new IFeature[result.size()]);
 	}
-	
+
 	public static IFeature[] getInstalledFeatures(IFeature feature) {
 		return getInstalledFeatures(feature, true);
 	}
-	
+
 	public static IFeature[] getInstalledFeatures(IFeature feature, boolean onlyConfigured) {
 		Vector features = new Vector();
 		try {
@@ -304,10 +289,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
-	
-	public static boolean isPatch(
-		IFeature target,
-		IFeature candidate) {
+
+	public static boolean isPatch(IFeature target, IFeature candidate) {
 		VersionedIdentifier vid = target.getVersionedIdentifier();
 		IImport[] imports = candidate.getImports();
 
@@ -323,20 +306,19 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		}
 		return false;
 	}
-	
+
 	public static IInstallConfiguration getBackupConfigurationFor(IFeature feature) {
 		VersionedIdentifier vid = feature.getVersionedIdentifier();
-		String key = "@"+vid.getIdentifier()+"_"+vid.getVersion();
+		String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
 		try {
 			ILocalSite lsite = SiteManager.getLocalSite();
-			IInstallConfiguration [] configs = lsite.getPreservedConfigurations();
-			for (int i=0; i<configs.length; i++) {
+			IInstallConfiguration[] configs = lsite.getPreservedConfigurations();
+			for (int i = 0; i < configs.length; i++) {
 				IInstallConfiguration config = configs[i];
 				if (config.getLabel().startsWith(key))
 					return config;
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 		}
 		return null;
 	}
@@ -348,37 +330,35 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	public UpdateManagerAuthenticator getAuthenticator() {
 		return authenticator;
 	}
-	
+
 	public static URL getOriginatingURL(String id) {
 		IDialogSettings section = getOriginatingURLSection();
-		String value=section.get(id);
-		if (value!=null) {
+		String value = section.get(id);
+		if (value != null) {
 			try {
 				return new URL(value);
-			}
-			catch (MalformedURLException e) {
+			} catch (MalformedURLException e) {
 			}
 		}
 		return null;
 	}
-	
+
 	public static void setOriginatingURL(String id, URL url) {
 		IDialogSettings section = getOriginatingURLSection();
 		section.put(id, url.toString());
 	}
-	
+
 	private static IDialogSettings getOriginatingURLSection() {
 		IDialogSettings settings = getDefault().getDialogSettings();
 		IDialogSettings section = settings.getSection("originatingURLs");
-		if (section==null)
+		if (section == null)
 			section = settings.addNewSection("originatingURLs");
 		return section;
 	}
 
 	private void readInfo() {
 		// determine the identifier of the "dominant" application 
-		IPlatformConfiguration conf =
-			BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
 		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
 
 		if (versionedFeatureId == null) {
@@ -391,9 +371,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 				String mainPluginName = versionedFeatureId.substring(0, index);
 				PluginVersionIdentifier mainPluginVersion = null;
 				try {
-					mainPluginVersion =
-						new PluginVersionIdentifier(
-							versionedFeatureId.substring(index + 1));
+					mainPluginVersion = new PluginVersionIdentifier(versionedFeatureId.substring(index + 1));
 				} catch (Exception e) {
 					IStatus iniStatus = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, "Unknown plugin version " + versionedFeatureId, e); //$NON-NLS-1$
 					log(iniStatus, true); //$NON-NLS-1$
@@ -410,11 +388,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	public static void informRestartNeeded() {
 		String title = UpdateUIPlugin.getResourceString("RestartTitle");
 		String message = UpdateUIPlugin.getResourceString("RestartMessage");
-		boolean restart =
-			MessageDialog.openQuestion(
-				getActiveWorkbenchShell(),
-				title,
-				message);
+		boolean restart = MessageDialog.openQuestion(getActiveWorkbenchShell(), title, message);
 		if (restart)
 			PlatformUI.getWorkbench().restart();
 	}
@@ -440,12 +414,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
 		store.setDefault(MainPreferencePage.P_HISTORY_SIZE, 50);
-		store.setDefault(
-			MainPreferencePage.P_BROWSER,
-			MainPreferencePage.EMBEDDED_VALUE);
-		store.setDefault(
-			MainPreferencePage.P_UPDATE_VERSIONS,
-			MainPreferencePage.EQUIVALENT_VALUE);
+		store.setDefault(MainPreferencePage.P_BROWSER, MainPreferencePage.EMBEDDED_VALUE);
+		store.setDefault(MainPreferencePage.P_UPDATE_VERSIONS, MainPreferencePage.EQUIVALENT_VALUE);
 		store.setDefault(AppServerPreferencePage.P_MASTER_SWITCH, false);
 		store.setDefault(AppServerPreferencePage.P_ENCODE_URLS, true);
 		UpdateColors.setDefaults(store);

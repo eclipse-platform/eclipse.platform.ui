@@ -4,7 +4,7 @@ package org.eclipse.update.tests;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.tomcat.AppServer;
+import org.eclipse.help.internal.appserver.WebappManager;
 
 /**
  * manages the startuo and shutown of the 
@@ -21,7 +21,7 @@ public class UpdateTestsPlugin extends Plugin {
 		plugin = this;
 	}
 
-	public static UpdateTestsPlugin getPlugin(){
+	public static UpdateTestsPlugin getPlugin() {
 		return plugin;
 	}
 
@@ -29,17 +29,16 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() throws CoreException {
-		boolean result = AppServer.add("org.eclipse.update.tests.core.updatetests", "org.eclipse.update.tests.core", "webserver");		
-		appServerHost = AppServer.getHost();
-		appServerPort = AppServer.getPort();
-		
-		String text = "The webServer ";
-		text += (result)?"did":"didn't";
-		text+= " start ip:"+getWebAppServerHost()+":"+getWebAppServerPort();
-		
-		System.out.println(text);
-		if (!result) {
-			IStatus status = new Status(IStatus.ERROR,"org.eclipse.update.tests.core",IStatus.OK,"WebServer not started. Update Tests results are invalid",null);
+
+		try {
+			WebappManager.start("org.eclipse.update.tests.core.updatetests", "org.eclipse.update.tests.core", new Path("webserver"));
+			appServerHost = WebappManager.getHost();
+			appServerPort = WebappManager.getPort();
+
+			String text = "The webServer did start ip:" + getWebAppServerHost() + ":" + getWebAppServerPort();
+		} catch (CoreException e) {
+			String text = "The webServer didn't start ip:" + getWebAppServerHost() + ":" + getWebAppServerPort();
+			IStatus status = new Status(IStatus.ERROR, "org.eclipse.update.tests.core", IStatus.OK, "WebServer not started. Update Tests results are invalid", null);
 			throw new CoreException(status);
 		}
 	}
@@ -50,8 +49,8 @@ public class UpdateTestsPlugin extends Plugin {
 	 *   this plug-in 
 	 */
 	public void shutdown() throws CoreException {
-		AppServer.remove("updatetests", "org.eclipse.update.tests.core");				
-		super.shutdown();		
+		WebappManager.stop("org.eclipse.update.tests.core.updatetests");
+		super.shutdown();
 	}
 
 	/**
