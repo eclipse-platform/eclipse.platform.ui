@@ -71,10 +71,7 @@ public class SyncFileWriter {
 	// Command characters found in the Entries.log file
 	private static final String ADD_TAG="A "; //$NON-NLS-1$
 	private static final String REMOVE_TAG="R "; //$NON-NLS-1$	
-		
-	// file and folder patterns that are ignored by default by the CVS server on import.
-	public static final String[] BASIC_IGNORE_PATTERNS = {"CVS", ".#*"}; //$NON-NLS-1$ //$NON-NLS-2$
-
+	
 	// key for saving the mod stamp for each writen meta file
 	public static final QualifiedName MODSTAMP_KEY = new QualifiedName("org.eclipse.team.cvs.core", "meta-file-modtime"); //$NON-NLS-1$ //$NON-NLS-2$
 	

@@ -41,6 +41,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ReentrantLock;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 
 /**
@@ -313,7 +314,7 @@ public class EclipseSynchronizer {
 	 * @return the patterns, or an empty array if none
 	 * @see #addIgnored
 	 */
-	public String[] getIgnored(IContainer folder) throws CVSException {
+	public FileNameMatcher getIgnored(IContainer folder) throws CVSException {
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) return SessionPropertySyncInfoCache.NULL_IGNORES;
 		try {
 			beginOperation(null);
@@ -336,7 +337,7 @@ public class EclipseSynchronizer {
 		}
 		try {
 			beginOperation(null);
-			String[] ignores = cacheFolderIgnores(folder);
+			String[] ignores = SyncFileWriter.readCVSIgnoreEntries(folder);
 			if (ignores != null) {
 				// verify that the pattern has not already been added
 				for (int i = 0; i < ignores.length; i++) {
@@ -938,7 +939,7 @@ public class EclipseSynchronizer {
 	 * @param container the container
 	 * @return the folder ignore patterns, or an empty array if none
 	 */
-	private String[] cacheFolderIgnores(IContainer container) throws CVSException {
+	private FileNameMatcher cacheFolderIgnores(IContainer container) throws CVSException {
 		return sessionPropertyCache.cacheFolderIgnores(container);
 	}
 	

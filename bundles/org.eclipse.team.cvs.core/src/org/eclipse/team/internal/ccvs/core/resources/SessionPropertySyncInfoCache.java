@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSDecoratorEnablementListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 
 /**
@@ -45,7 +46,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	private static final QualifiedName RESOURCE_SYNC_CACHED_KEY = new QualifiedName(CVSProviderPlugin.ID, "resource-sync-cached"); //$NON-NLS-1$
 	private static final Object RESOURCE_SYNC_CACHED = new Object();
 	
-	/*package*/ static final String[] NULL_IGNORES = new String[0];
+	/*package*/ static final FileNameMatcher NULL_IGNORES = new FileNameMatcher();
 	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private QualifiedName FOLDER_DIRTY_STATE_KEY = new QualifiedName(CVSProviderPlugin.ID, "folder-dirty-state-cached"); //$NON-NLS-1$
@@ -72,16 +73,20 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @param container the container
 	 * @return the folder ignore patterns, or an empty array if none
 	 */
-	/*package*/ String[] cacheFolderIgnores(IContainer container) throws CVSException {
+	/*package*/ FileNameMatcher cacheFolderIgnores(IContainer container) throws CVSException {
 		// don't try to load if the information is already cached
-		String[] ignores = (String[])safeGetSessionProperty(container, IGNORE_SYNC_KEY);
-		if (ignores == null) {
+		FileNameMatcher matcher = (FileNameMatcher)safeGetSessionProperty(container, IGNORE_SYNC_KEY);
+		if (matcher == null) {
 			// read folder ignores and remember it
-			ignores = SyncFileWriter.readCVSIgnoreEntries(container);
-			if (ignores == null) ignores = NULL_IGNORES;
-			safeSetSessionProperty(container, IGNORE_SYNC_KEY, ignores);
+			String[] ignores = SyncFileWriter.readCVSIgnoreEntries(container);
+			if (ignores == null) {
+				matcher = NULL_IGNORES;
+			} else {
+				matcher = new FileNameMatcher(ignores);
+			}
+			safeSetSessionProperty(container, IGNORE_SYNC_KEY, matcher);
 		}
-		return ignores;
+		return matcher;
 	}
 
 	/*package*/ boolean isFolderSyncInfoCached(IContainer container) throws CVSException {
@@ -152,7 +157,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @param ignores the array of ignore patterns
 	 */
 	/*package*/ void setCachedFolderIgnores(IContainer container, String[] ignores) throws CVSException {
-		safeSetSessionProperty(container, IGNORE_SYNC_KEY, ignores);
+		safeSetSessionProperty(container, IGNORE_SYNC_KEY, new FileNameMatcher(ignores));
 	}
 
 

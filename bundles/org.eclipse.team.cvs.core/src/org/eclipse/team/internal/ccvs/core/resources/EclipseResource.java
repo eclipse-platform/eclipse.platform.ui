@@ -9,7 +9,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.IIgnoreInfo;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -21,7 +20,6 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
-import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -122,43 +120,25 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 			return true;
 		}
 		
-		// initialize matcher with global ignores, basic CVS ignore patterns, and ignore patterns
-		// from the .cvsignore file.
-		FileNameMatcher matcher = new FileNameMatcher(SyncFileWriter.BASIC_IGNORE_PATTERNS);
-		String[] cvsIgnorePatterns;;
-		try {
-			cvsIgnorePatterns = EclipseSynchronizer.getInstance().getIgnored(resource.getParent());
-		} catch(CVSException e) {
-			cvsIgnorePatterns = null;
-		}
-		IIgnoreInfo[] ignorePatterns = Team.getAllIgnores();
-		for (int i = 0; i < ignorePatterns.length; i++) {
-			IIgnoreInfo info = ignorePatterns[i];
-			if(info.getEnabled()) {
-				matcher.register(info.getPattern(), "true"); //$NON-NLS-1$
-			}
-		}
-		if(cvsIgnorePatterns!=null) {
-			for (int i = 0; i < cvsIgnorePatterns.length; i++) {
-				matcher.register(cvsIgnorePatterns[i], "true"); //$NON-NLS-1$
-			}
-		}
+		// always ignore CVS
+		String name = getName();
+		if (name.equals("CVS")) return true; //$NON-NLS-1$
 		
-		// check with all the registered patterns
-		boolean ignored = matcher.match(getName());
+		// check the global ignores from Team
+		if (Team.isIgnoredHint(getIResource())) return true;
+		
+		// check ignore patterns from the .cvsignore file.
+		FileNameMatcher matcher = EclipseSynchronizer.getInstance().getIgnored(resource.getParent());
+		if (matcher.match(name)) return true;
 		
 		// check the parent, if the parent is ignored or mapped to CVSROOT/Emptydir
 		// then this resource is ignored also
-		if(!ignored) {
-			ICVSFolder parent = getParent();
-			if(parent==null) return false;
-			if (parent.isIgnored()) return true;
-			FolderSyncInfo info = parent.getFolderSyncInfo();
-			if (info == null) return false;
-			return info.getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY);
-		} else {
-			return ignored;
-		}
+		ICVSFolder parent = getParent();
+		if(parent==null) return false;
+		if (parent.isIgnored()) return true;
+		FolderSyncInfo info = parent.getFolderSyncInfo();
+		if (info == null) return false;
+		return info.getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY);
 	}
 
 	/*
