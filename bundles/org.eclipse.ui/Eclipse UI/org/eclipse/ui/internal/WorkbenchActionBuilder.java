@@ -53,6 +53,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private PinEditorAction pinEditorAction;
 	private CycleEditorAction nextEditorAction;
 	private CycleEditorAction prevEditorAction;
+	private ActivateEditorAction activateEditorAction;
 	
 
 	// menus
@@ -258,6 +259,7 @@ private void createMenuBar() {
 		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
+	popup.add(activateEditorAction);
 	popup.add(nextEditorAction);
 	popup.add(prevEditorAction);
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
@@ -482,6 +484,7 @@ private void makeActions() {
 	// Actions for invisible accelerators
 	nextEditorAction = new CycleEditorAction(window, true);
 	prevEditorAction = new CycleEditorAction(window, false);
+	activateEditorAction = new ActivateEditorAction(window);
 }
 /**
  * Update the menubar and toolbar when

@@ -4,6 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 
@@ -63,6 +64,7 @@ public abstract class PageEventAction extends PartEventAction
  */
 protected PageEventAction(String text, IWorkbenchWindow window) {
 	super(text);
+	Assert.isNotNull(window);
 	this.workbenchWindow = window;
 	this.activePage = window.getActivePage();
 	this.workbenchWindow.addPageListener(this);
