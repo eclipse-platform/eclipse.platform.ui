@@ -2179,6 +2179,12 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 								updateCursorPosition();
 								updateTableSelection();
 								table.setTopIndex(index);
+								
+								// BUG 64831:  to get around SWT problem with
+								// the table cursor not painted properly after
+								// table.setTopIndex is called
+								fCursorManager.getLeadCursor().setVisible(false);
+								fCursorManager.getLeadCursor().setVisible(true);
 							}
 						}
 						else
@@ -2226,6 +2232,12 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 							updateCursorPosition();
 							updateTableSelection();
 							table.setTopIndex(index);
+							
+							// BUG 64831:  to get around SWT problem with
+							// the table cursor not painted properly after
+							// table.setTopIndex is called
+							fCursorManager.getLeadCursor().setVisible(false);
+							fCursorManager.getLeadCursor().setVisible(true);
 						}
 					}
 				}

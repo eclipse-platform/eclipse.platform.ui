@@ -693,7 +693,10 @@ public class ViewTabCursorManager
 	{
 		if (fTableCursor != null)
 		{
-			fTableCursor.dispose();
+			// TableCursor changes the way how it is disposed.
+			// SWT disposes the cursor when the view tab is dispose
+			// disposing the cursor now causes SWT error
+//			fTableCursor.dispose();
 			fTableCursor = null;
 		}
 			
