@@ -993,7 +993,7 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 		try {
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
-			// and assert for programming errors. See checkCopyRequirements for more information.
+			// and assert for programming errors. See checkMoveRequirements for more information.
 			assertMoveRequirements(path, getType(), updateFlags);
 			path = makePathAbsolute(path);
 			workspace.beginOperation(true);
