@@ -946,6 +946,6 @@ public class ResourceSyncInfo {
 			if (remoteDigit != localDigit) return false;
 		}
 		// All the leading digits are equals so the remote is later if the last digit is greater
-		return localDigits[localDigits.length - 1] < remoteDigits[remoteDigits.length - 1] ;
+		return localDigits[remoteDigits.length - 1] < remoteDigits[remoteDigits.length - 1] ;
 	}
 }
