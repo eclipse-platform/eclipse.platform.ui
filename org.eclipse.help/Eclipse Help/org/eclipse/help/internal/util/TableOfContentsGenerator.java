@@ -91,7 +91,7 @@ public class TableOfContentsGenerator {
 			tableOfContents.append("</h3>");
 
 			tableOfContents.append("</body></html>");
-			byte[] bytes = tableOfContents.toString().getBytes("UTF-8");
+			byte[] bytes = tableOfContents.toString().getBytes("UTF8");
 
 			ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
 			return inputStream;

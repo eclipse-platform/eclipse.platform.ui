@@ -32,7 +32,7 @@ public class XMLGenerator {
 					new BufferedWriter(
 						new OutputStreamWriter(
 							new FileOutputStream(outFile),
-							"UTF-8")),false /* no aotoFlush */);
+							"UTF8")),false /* no aotoFlush */);
 				println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			}catch(IOException ioe){
 				Logger.logError(Resources.getString("E014", outFile.getAbsolutePath()), ioe);

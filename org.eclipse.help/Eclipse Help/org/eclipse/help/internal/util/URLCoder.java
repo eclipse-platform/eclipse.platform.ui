@@ -3,14 +3,14 @@ import java.io.*;
 public class URLCoder {
 	public static String encode(String s) {
 		try {
-			return urlEncode(s.getBytes("UTF-8"));
+			return urlEncode(s.getBytes("UTF8"));
 		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}
 	}
 	public static String decode(String s) {
 		try {
-			return new String(urlDecode(s), "UTF-8");
+			return new String(urlDecode(s), "UTF8");
 		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}

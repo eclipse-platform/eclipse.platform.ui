@@ -90,7 +90,7 @@ public class HelpHttpRequest {
 					inputStream = helpURL.openStream();
 				}
 				if (inputStream == null) {
-					out.write(errorStringBytes.getBytes("UTF-8"));
+					out.write(errorStringBytes.getBytes("UTF8"));
 					out.flush();
 					return;
 				}
