@@ -26,6 +26,7 @@ public class AntProjectNode extends AntElementNode {
 	protected AntModelProject fProject;
 	protected IAntModel fModel;
 	private Map fNameToDefiningNodeMap;
+	private String fLabel;
 	
 	public AntProjectNode(AntModelProject project, IAntModel antModel) {
 		super("project"); //$NON-NLS-1$
@@ -37,16 +38,17 @@ public class AntProjectNode extends AntElementNode {
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
 	 */
 	public String getLabel() {
-	    String projectName;
-	    if (fProject != null) {
-	        projectName= fProject.getName();
-	    } else {
-	    	projectName= AntModelMessages.getString("AntProjectNode.0"); //$NON-NLS-1$
+	    if (fLabel == null) {
+	        if (fProject != null) {
+	            fLabel= fProject.getName();
+	        } else {
+	            fLabel= AntModelMessages.getString("AntProjectNode.0"); //$NON-NLS-1$
+	        }
+	        if (fLabel == null || fLabel.length() == 0) {
+	            fLabel= "project"; //$NON-NLS-1$
+	        }
 	    }
-	    if (projectName == null || projectName.length() == 0) {
-            projectName= "project"; //$NON-NLS-1$
-        }
-		return projectName;
+		return fLabel;
 	}
 	
 	/* (non-Javadoc)

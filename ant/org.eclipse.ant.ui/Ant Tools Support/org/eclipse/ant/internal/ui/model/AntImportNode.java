@@ -43,14 +43,17 @@ public class AntImportNode extends AntTaskNode {
 	}
 	
 	public String getLabel() {
-		StringBuffer label= new StringBuffer(getTask().getTaskName());
-		label.append(' ');
-		label.append(fFile);
-		
-		if (isExternal()) {
-			appendEntityName(label);
-		}
-		return label.toString();
+	    if (fLabel == null) {
+	        StringBuffer label= new StringBuffer(getTask().getTaskName());
+	        label.append(' ');
+	        label.append(fFile);
+	        
+	        if (isExternal()) {
+	            appendEntityName(label);
+	        }
+	        fLabel= label.toString();
+	    }
+	    return fLabel;
 	}
 
 	/**
@@ -58,13 +61,13 @@ public class AntImportNode extends AntTaskNode {
 	 * Returns <code>true</code> as the import adds to the Ant model
 	 */
 	public boolean configure(boolean validateFully) {
-		if (configured) {
+		if (fConfigured) {
 			return false;
 		}
 		try {
 			getTask().maybeConfigure();
 			getTask().execute();
-			configured= true;
+			fConfigured= true;
 			return true;
 		} catch (BuildException be) {
 			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_IMPORTS);

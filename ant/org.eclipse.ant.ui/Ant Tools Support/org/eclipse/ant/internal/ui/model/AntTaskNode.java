@@ -22,9 +22,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class AntTaskNode extends AntElementNode {
 
 	private Task fTask= null;
-	private String fLabel= null;
+	private String fBaseLabel= null;
+	protected String fLabel;
 	private String fId= null;
-	protected boolean configured= false;
+	protected boolean fConfigured= false;
 	
 	public AntTaskNode(Task task) {
 		super(task.getTaskName());
@@ -34,26 +35,29 @@ public class AntTaskNode extends AntElementNode {
 	public AntTaskNode(Task task, String label) {
 		super(task.getTaskName());
 		fTask= task;
-		fLabel= label;
+		fBaseLabel= label;
 	}	
 	
 	public String getLabel() {
-		StringBuffer label= new StringBuffer();
-		if (fLabel != null) {
-			label.append(fLabel);
-		} else if (fId != null) {
-			label.append(fId);
-		} else {
-			label.append(fTask.getTaskName());
-		}
-		if (isExternal()) {
-			appendEntityName(label);
-		}
-		return label.toString();
+	    if (fLabel == null) {
+			StringBuffer label= new StringBuffer();
+			if (fBaseLabel != null) {
+				label.append(fBaseLabel);
+			} else if (fId != null) {
+				label.append(fId);
+			} else {
+				label.append(fTask.getTaskName());
+			}
+			if (isExternal()) {
+				appendEntityName(label);
+			}
+			fLabel= label.toString();
+	    }
+	    return fLabel;
 	}
 	
-	public void setLabel(String label) {
-		fLabel= label;
+	public void setBaseLabel(String label) {
+		fBaseLabel= label;
 	}
 	
 	public Task getTask() {
@@ -100,16 +104,20 @@ public class AntTaskNode extends AntElementNode {
 		if (!validateFully || (getParentNode() instanceof AntTaskNode)) {
 			return false;
 		}
-		if (configured) {
+		if (fConfigured) {
 			return false;
 		}
-		try {
-			getTask().maybeConfigure();
-			nodeSpecificConfigure();
-			configured= true;
-			return true;
-		} catch (BuildException be) {
-			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_TASKS);
+		int severity= AntModelProblem.getSeverity(AntEditorPreferenceConstants.PROBLEM_TASKS);
+		if (severity != AntModelProblem.NO_PROBLEM) {
+		    //only configure if the user cares about the problems
+			try {
+				getTask().maybeConfigure();
+				nodeSpecificConfigure();
+				fConfigured= true;
+				return true;
+			} catch (BuildException be) {
+				handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_TASKS);
+			}
 		}
 		return false;
 	}

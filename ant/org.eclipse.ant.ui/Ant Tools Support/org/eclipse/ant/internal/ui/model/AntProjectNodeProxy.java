@@ -108,7 +108,8 @@ public class AntProjectNodeProxy extends AntProjectNode {
 			name.append(getRealNode().getProblemMessage());
 			name.append('>');
 		}
-		return name.toString();
+		fName= name.toString();
+		return fName;
 	}
 	
 	/* (non-Javadoc)

@@ -25,6 +25,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class AntTargetNode extends AntElementNode {
 
 	private Target fTarget= null;
+	private String fLabel= null;
 	
 	public AntTargetNode(Target target) {
 		super("target"); //$NON-NLS-1$
@@ -35,15 +36,18 @@ public class AntTargetNode extends AntElementNode {
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
 	 */
 	public String getLabel() {
-		StringBuffer displayName= new StringBuffer(getTargetName());
-		if (isDefaultTarget()) {
-			displayName.append(AntModelMessages.getString("AntTargetNode.2")); //$NON-NLS-1$
-		}
-		if (isExternal()) {
-			appendEntityName(displayName);
-		}
+	    if (fLabel == null) {
+	        StringBuffer displayName= new StringBuffer(getTargetName());
+	        if (isDefaultTarget()) {
+	            displayName.append(AntModelMessages.getString("AntTargetNode.2")); //$NON-NLS-1$
+	        }
+	        if (isExternal()) {
+	            appendEntityName(displayName);
+	        }
 		
-		return displayName.toString();
+			fLabel= displayName.toString();
+	    }
+	    return fLabel;
 	}
 	
 	public Target getTarget() {

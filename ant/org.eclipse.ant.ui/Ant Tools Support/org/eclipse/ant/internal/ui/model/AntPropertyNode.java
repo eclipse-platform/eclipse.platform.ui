@@ -57,7 +57,7 @@ public class AntPropertyNode extends AntTaskNode {
          } else {
          	fValue= attributes.getValue(IAntModelConstants.ATTR_VALUE);
          }
-         setLabel(label);
+         setBaseLabel(label);
 	}
 	
 	public String getValue() {
@@ -82,14 +82,14 @@ public class AntPropertyNode extends AntTaskNode {
 	 * Sets the properties in the project.
 	 */
 	public boolean configure(boolean validateFully) {
-		if (configured) {
+		if (fConfigured) {
 			return false;
 		}
 		try {
 			getProjectNode().setCurrentConfiguringProperty(this);
 			getTask().maybeConfigure();
 			getTask().execute();
-			configured= true;
+			fConfigured= true;
 		} catch (BuildException be) {
 			handleBuildException(be, AntEditorPreferenceConstants.PROBLEM_PROPERTIES);
 		} finally {
