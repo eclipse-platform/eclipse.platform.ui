@@ -394,10 +394,11 @@ public void showFocus(boolean inFocus) {
 }
 
 /**
- * Show a title label menu for this pane.
+ * Shows the pane menu (system menu) for this pane.
  */
 public void showPaneMenu() {
-	if(isFastView() && (page.getActiveFastView() != this.getPart()))
+	// If this is a fast view, it may have been minimized. Do nothing in this case.
+	if(isFastView() && (page.getActiveFastView() != getPart()))
 		return;
 	Rectangle bounds = titleLabel.getBounds();
 	showPaneMenu(titleLabel,new Point(0,bounds.height),isFastView());
@@ -473,12 +474,13 @@ protected void addMoveItems(Menu moveMenu) {
 }
 
 /**
- * Show the context menu for this window.
+ * Show the view menu for this window.
  */
 public void showViewMenu() {
 	if (isvMenuMgr == null)
 		return;
-	if(isFastView() && (page.getActiveFastView() != this))
+	// If this is a fast view, it may have been minimized. Do nothing in this case.
+	if(isFastView() && (page.getActiveFastView() != getPart()))
 		return;
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
 	Rectangle bounds = pullDownButton.getBounds();
