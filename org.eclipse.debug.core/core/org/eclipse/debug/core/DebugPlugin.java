@@ -768,8 +768,16 @@ public class DebugPlugin extends Plugin {
 	 */
 	class AsynchJob extends Job {
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.internal.jobs.InternalJob#isSystem()
+		 */
+		public boolean isSystem() {
+			return true;
+		}
+
 		public AsynchJob() {
 			super(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
+			setPriority(Job.INTERACTIVE);
 		}
 
 		/* (non-Javadoc)
