@@ -15,6 +15,8 @@ public final class JFacePreferences {
 	public static final String ERROR_COLOR = "ERROR_COLOR"; //$NON-NLS-1$
 	//Identifier for the Hyperlink Colour
 	public static final String HYPERLINK_COLOR = "HYPERLINK_COLOR"; //$NON-NLS-1$
+	//Identifier for the Active Hyperlink Colour
+	public static final String ACTIVE_HYPERLINK_COLOR = "ACTIVE_HYPERLINK_COLOR"; //$NON-NLS-1$
 
 	
 	private static IPreferenceStore preferenceStore;

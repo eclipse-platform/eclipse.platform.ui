@@ -32,6 +32,7 @@ public class ViewsPreferencePage
 
 	private ColorFieldEditor errorColorEditor;
 	private ColorFieldEditor hyperlinkColorEditor;
+	private ColorFieldEditor activeHyperlinkColorEditor;
 	/*
 	 * No longer supported - removed when confirmed!
 	 * private Button openFloatButton;
@@ -162,6 +163,14 @@ protected Control createContents(Composite parent) {
 	hyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
 	hyperlinkColorEditor.load();
 	
+	activeHyperlinkColorEditor = new ColorFieldEditor(
+			JFacePreferences.ACTIVE_HYPERLINK_COLOR,
+			WorkbenchMessages.getString("ViewsPreference.ActiveHyperlinkText"), //$NON-NLS-1$
+			spacingComposite);
+			
+	activeHyperlinkColorEditor.setPreferenceStore(doGetPreferenceStore());
+	activeHyperlinkColorEditor.load();
+	
 	return composite;
 }
 /**
@@ -278,6 +287,7 @@ protected void performDefaults() {
 	
 	errorColorEditor.loadDefault();
 	hyperlinkColorEditor.loadDefault();
+	activeHyperlinkColorEditor.loadDefault();
 	
 	/*
 	 * No longer supported - remove when confirmed!
@@ -301,6 +311,7 @@ public boolean performOk() {
 		
 	errorColorEditor.store();
 	hyperlinkColorEditor.store();
+	activeHyperlinkColorEditor.store();
 	return true;
 }
 }

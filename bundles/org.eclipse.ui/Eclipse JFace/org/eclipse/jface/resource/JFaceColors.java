@@ -54,9 +54,24 @@ public class JFaceColors {
 	}
 	
 	/**
-	 * Get the defualt color to use for displaying hyperlinks.
+	 * Get the default color to use for displaying hyperlinks.
 	 */
 	public static Color getHyperlinkText(Display display) {
+
+		IPreferenceStore store = JFacePreferences.getPreferenceStore();
+		if (store == null)
+			//Dark blue is the default if there is no store
+			return new Color(display,0,0,153);
+		else
+			return new Color(
+				display,
+				PreferenceConverter.getColor(store, JFacePreferences.HYPERLINK_COLOR));
+	}
+	
+	/**
+	 * Get the default color to use for displaying active hyperlinks.
+	 */
+	public static Color getActiveHyperlinkText(Display display) {
 
 		IPreferenceStore store = JFacePreferences.getPreferenceStore();
 		if (store == null)
@@ -65,7 +80,7 @@ public class JFaceColors {
 		else
 			return new Color(
 				display,
-				PreferenceConverter.getColor(store, JFacePreferences.HYPERLINK_COLOR));
+				PreferenceConverter.getColor(store, JFacePreferences.ACTIVE_HYPERLINK_COLOR));
 	}
 
 }
