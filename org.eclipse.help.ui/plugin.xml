@@ -61,10 +61,16 @@
 				class="org.eclipse.help.internal.ui.HelpContentsAction"
 				icon="icons/view.gif"
 				tooltip="%openhelpcontents"/>
-				
+
+			<action id="org.eclipse.help.ui.OpenHelpSearchPage"
+				menubarPath="org.eclipse.search.menu/dialogGroup"
+				label="%openHelpSearchPageAction.label"
+	        	icon="icons/searchview.gif"
+				class="org.eclipse.help.internal.ui.OpenHelpSearchPageAction"/>
+
 		</actionSet>
 	</extension>
-
+			
 	<!-- WebBrowsers -->
 	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.iexplorer"
