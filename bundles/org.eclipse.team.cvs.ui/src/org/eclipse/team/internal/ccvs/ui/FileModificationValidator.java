@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -123,15 +124,25 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 				
 				// Run the edit in a runnable in order to get a busy cursor.
 				// This runnable is syncExeced in order to get a busy cursor
-				CVSUIPlugin.runWithProgress(shell, false, new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							edit(files, monitor);
-						} catch (CVSException e) {
-							new InvocationTargetException(e);
-						}
-					}
-				}, CVSUIPlugin.PERFORM_SYNC_EXEC);
+				IRunnableWithProgress editRunnable = new IRunnableWithProgress() {
+		        	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		        		try {
+		        			edit(files, monitor);
+		        		} catch (CVSException e) {
+		        			new InvocationTargetException(e);
+		        		}
+		        	}
+		        };
+				if (isRunningInUIThread()) {
+				    // Only show a busy cursor if validate edit is blocking the UI
+	                CVSUIPlugin.runWithProgress(shell, false, editRunnable);
+				} else {
+				    // We can't show a busy cursor (i.e., run in the UI thread)
+				    // since this thread may hold locks and
+				    // running an edit in the UI thread could try to obtain the
+				    // same locks, resulting in a deadlock.
+				    editRunnable.run(new NullProgressMonitor());
+				}
 			} catch (InvocationTargetException e) {
 				return getStatus(e);
 			} catch (InterruptedException e) {
@@ -150,7 +161,11 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		
 	}
 
-	private boolean promptToEditFiles(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
+    private boolean isRunningInUIThread() {
+        return Display.getCurrent() != null;
+    }
+
+    private boolean promptToEditFiles(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
 		if (files.length == 0)
 			return true;		
 
@@ -172,11 +187,12 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		// Open the dialog using a sync exec (there are no guarentees that we
 		// were called from the UI thread
 		final boolean[] result = new boolean[] { false };
+		int flags = isRunningInUIThread() ? 0 : CVSUIPlugin.PERFORM_SYNC_EXEC;
 		CVSUIPlugin.openDialog(shell, new CVSUIPlugin.IOpenableInShell() {
 			public void open(Shell shell) {
 				result[0] = MessageDialog.openQuestion(shell,Policy.bind("FileModificationValidator.3"),Policy.bind("FileModificationValidator.4")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-		}, CVSUIPlugin.PERFORM_SYNC_EXEC);
+		}, flags);
 		return result[0];
 	}
 
@@ -186,12 +202,21 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	
 	private EditorsAction fetchEditors(IFile[] files, Shell shell) throws InvocationTargetException, InterruptedException {
 		final EditorsAction editors = new EditorsAction(getProvider(files), files);
-		// Fetch the editors in a runnable in order to get the busy cursor
-		CVSUIPlugin.runWithProgress(shell, false, new IRunnableWithProgress() {
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				editors.run(monitor);
 			}
-		}, CVSUIPlugin.PERFORM_SYNC_EXEC);
+		};
+		if (isRunningInUIThread()) {
+		    // Show a busy cursor if we are running in the UI thread
+		    CVSUIPlugin.runWithProgress(shell, false, runnable);
+		} else {
+		    // We can't show a busy cursor (i.e., run in the UI thread)
+		    // since this thread may hold locks and
+		    // running a CVS operation in the UI thread could try to obtain the
+		    // same locks, resulting in a deadlock.
+		    runnable.run(new NullProgressMonitor());
+		}
 		return editors;
 	}
 
