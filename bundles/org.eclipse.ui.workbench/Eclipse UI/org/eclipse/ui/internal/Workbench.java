@@ -426,9 +426,9 @@ public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnabl
 			if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
 				consumeKeyStroke = true;			
 
-			// clear mode
+			// clear mode			
 			commandManager.setMode(KeySequence.getInstance());	
-			modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(modeAfterKeyStroke) : modeAfterKeyStroke.format());				
+			modeContributionItem.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(KeySequence.getInstance()) : KeySequence.getInstance().format());				
 		}
 
 		// TODO is this necessary?		
