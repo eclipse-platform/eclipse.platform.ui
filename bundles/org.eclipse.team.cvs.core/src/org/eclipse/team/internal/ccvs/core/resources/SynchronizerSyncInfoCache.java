@@ -24,12 +24,17 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
@@ -259,21 +264,34 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 	 * @see org.eclipse.team.internal.ccvs.core.resources.SyncInfoCache#setCachedSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
 	/*package*/ void setCachedSyncBytes(IResource resource, byte[] syncBytes) throws CVSException {
+		byte[] oldBytes = getCachedSyncBytes(resource);
 		try {
 			if (syncBytes == null) {
-				if (resource.exists() || resource.isPhantom()) {
+				if (oldBytes != null && (resource.exists() || resource.isPhantom())) {
 					getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
 				}
 			} else {
 				// ensure that the sync info is not already set to the same thing.
 				// We do this to avoid causing a resource delta when the sync info is 
 				// initially loaded (i.e. the synchronizer has it and so does the Entries file
-				byte[] oldBytes = getCachedSyncBytes(resource);
 				if (oldBytes == null || !equals(syncBytes, oldBytes))
 					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 			}
 		} catch (CoreException e) {
-			throw CVSException.wrapException(e);
+			if (e.getStatus().getCode() == IResourceStatus.WORKSPACE_NOT_OPEN) {
+				// This can occur if the resource sync is loaded during the POST_CHANGE delta phase.
+				// The sync info being set should match what is already in the synchronizer but it doesn't
+				// Log the error and leave the sync info as is
+				// (see bug 29521)
+				CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 
+					Policy.bind("SynchrnoizerSyncInfoCache.failedToSetSyncBytes", new Object[] {
+						resource.getFullPath().toString(),
+						oldBytes == null ? Policy.bind("null") : new String(oldBytes),
+						syncBytes == null ? Policy.bind("null") : new String(syncBytes)}), 
+					e));
+			} else {
+				throw CVSException.wrapException(e);
+			}
 		}
 	}
 	
