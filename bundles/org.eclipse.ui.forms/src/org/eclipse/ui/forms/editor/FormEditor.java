@@ -151,6 +151,22 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	}
 
 	/**
+	 * Adds the form page to this editor at the specified index (0-based). Form
+	 * page will be loaded lazily. Its part control will not be created until it
+	 * is activated for the first time.
+	 * 
+	 * @param index
+	 *            the position to add the page at (0-based)
+	 * @param page
+	 *            the form page to add
+	 * @since 3.1
+	 */
+	public void addPage(int index, IFormPage page) throws PartInitException {
+		super.addPage(index, page.getPartControl());
+		configurePage(index, page);
+	}
+
+	/**
 	 * Adds a simple SWT control as a page. Overrides superclass implementation
 	 * to keep track of pages.
 	 * 

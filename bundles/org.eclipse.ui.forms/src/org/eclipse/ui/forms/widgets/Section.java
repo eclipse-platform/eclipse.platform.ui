@@ -51,7 +51,10 @@ public final class Section extends ExpandableComposite {
 	 *            the style to use
 	 */
 	public Section(Composite parent, int style) {
-		super(parent, SWT.NULL, style);
+		this(parent, SWT.NULL, style);
+	}
+	Section(Composite parent, int cstyle, int style) {
+		super(parent, cstyle, style);
 		if ((style & DESCRIPTION) != 0) {
 			descriptionLabel = new Label(this, SWT.WRAP);
 		}

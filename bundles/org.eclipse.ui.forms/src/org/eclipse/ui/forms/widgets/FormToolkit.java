@@ -13,6 +13,7 @@ package org.eclipse.ui.forms.widgets;
 import java.io.File;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -59,6 +60,8 @@ public class FormToolkit {
 	private int borderStyle = SWT.NULL;
 
 	private FormColors colors;
+
+	private int orientation = Window.getDefaultOrientation();
 
 	// private KeyListener deleteListener;
 	private BorderPainter borderPainter;
@@ -111,9 +114,9 @@ public class FormToolkit {
 					gc.setForeground(c.getBackground());
 					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 							b.height + 1);
-//					gc.setForeground(getBorderStyle() == SWT.BORDER ? colors
-//							.getBorderColor() : colors.getForeground());
-					gc.setForeground(colors.getBorderColor());					
+					// gc.setForeground(getBorderStyle() == SWT.BORDER ? colors
+					// .getBorderColor() : colors.getForeground());
+					gc.setForeground(colors.getBorderColor());
 					if (c instanceof CCombo)
 						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 								b.height + 1);
@@ -215,7 +218,7 @@ public class FormToolkit {
 	 * @return the button widget
 	 */
 	public Button createButton(Composite parent, String text, int style) {
-		Button button = new Button(parent, style | SWT.FLAT);
+		Button button = new Button(parent, style | SWT.FLAT | orientation);
 		if (text != null)
 			button.setText(text);
 		adapt(button, true, true);
@@ -243,7 +246,7 @@ public class FormToolkit {
 	 * @return the composite widget
 	 */
 	public Composite createComposite(Composite parent, int style) {
-		Composite composite = new LayoutComposite(parent, style);
+		Composite composite = new LayoutComposite(parent, style | orientation);
 		adapt(composite);
 		return composite;
 	}
@@ -258,7 +261,7 @@ public class FormToolkit {
 	 * @return the separator widget
 	 */
 	public Composite createCompositeSeparator(Composite parent) {
-		final Composite composite = new Composite(parent, SWT.NONE);
+		final Composite composite = new Composite(parent, orientation);
 		composite.addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event e) {
 				if (composite.isDisposed())
@@ -302,7 +305,7 @@ public class FormToolkit {
 	 * @return the label widget
 	 */
 	public Label createLabel(Composite parent, String text, int style) {
-		Label label = new Label(parent, style);
+		Label label = new Label(parent, style | orientation);
 		if (text != null)
 			label.setText(text);
 		adapt(label, false, false);
@@ -322,7 +325,7 @@ public class FormToolkit {
 	 * @return the hyperlink widget
 	 */
 	public Hyperlink createHyperlink(Composite parent, String text, int style) {
-		Hyperlink hyperlink = new Hyperlink(parent, style);
+		Hyperlink hyperlink = new Hyperlink(parent, style | orientation);
 		if (text != null)
 			hyperlink.setText(text);
 		hyperlink.addFocusListener(visibilityHandler);
@@ -342,7 +345,8 @@ public class FormToolkit {
 	 * @return the image hyperlink widget
 	 */
 	public ImageHyperlink createImageHyperlink(Composite parent, int style) {
-		ImageHyperlink hyperlink = new ImageHyperlink(parent, style);
+		ImageHyperlink hyperlink = new ImageHyperlink(parent, style
+				| orientation);
 		hyperlink.addFocusListener(visibilityHandler);
 		hyperlink.addKeyListener(keyboardHandler);
 		hyperlinkGroup.add(hyperlink);
@@ -361,7 +365,7 @@ public class FormToolkit {
 	 * @return the rich text widget
 	 */
 	public FormText createFormText(Composite parent, boolean trackFocus) {
-		FormText engine = new FormText(parent, SWT.WRAP);
+		FormText engine = new FormText(parent, SWT.WRAP | orientation);
 		engine.marginWidth = 1;
 		engine.marginHeight = 0;
 		engine.setHyperlinkSettings(getHyperlinkGroup());
@@ -439,7 +443,7 @@ public class FormToolkit {
 	 * @return the section widget
 	 */
 	public Section createSection(Composite parent, int sectionStyle) {
-		Section section = new Section(parent, sectionStyle);
+		Section section = new Section(parent, orientation, sectionStyle);
 		section.setBackground(colors.getBackground());
 		section.setForeground(colors.getForeground());
 		section.setMenu(parent.getMenu());
@@ -482,7 +486,7 @@ public class FormToolkit {
 	 */
 	public ExpandableComposite createExpandableComposite(Composite parent,
 			int expansionStyle) {
-		ExpandableComposite ec = new ExpandableComposite(parent, SWT.NULL,
+		ExpandableComposite ec = new ExpandableComposite(parent, orientation,
 				expansionStyle);
 		ec.setMenu(parent.getMenu());
 		ec.setBackground(colors.getBackground());
@@ -510,7 +514,7 @@ public class FormToolkit {
 	 * @return the separator label
 	 */
 	public Label createSeparator(Composite parent, int style) {
-		Label label = new Label(parent, SWT.SEPARATOR | style);
+		Label label = new Label(parent, SWT.SEPARATOR | style | orientation);
 		label.setBackground(colors.getBackground());
 		label.setForeground(colors.getBorderColor());
 		return label;
@@ -526,7 +530,7 @@ public class FormToolkit {
 	 * @return the table widget
 	 */
 	public Table createTable(Composite parent, int style) {
-		Table table = new Table(parent, style | borderStyle);
+		Table table = new Table(parent, style | borderStyle | orientation);
 		adapt(table, false, false);
 		// hookDeleteListener(table);
 		return table;
@@ -557,7 +561,7 @@ public class FormToolkit {
 	 * @return the text widget
 	 */
 	public Text createText(Composite parent, String value, int style) {
-		Text text = new Text(parent, borderStyle | style);
+		Text text = new Text(parent, borderStyle | style | orientation);
 		if (value != null)
 			text.setText(value);
 		text.setForeground(colors.getForeground());
@@ -575,7 +579,7 @@ public class FormToolkit {
 	 * @return the tree widget
 	 */
 	public Tree createTree(Composite parent, int style) {
-		Tree tree = new Tree(parent, borderStyle | style);
+		Tree tree = new Tree(parent, borderStyle | style | orientation);
 		adapt(tree, false, false);
 		// hookDeleteListener(tree);
 		return tree;
@@ -592,7 +596,8 @@ public class FormToolkit {
 	 * @see #createForm
 	 */
 	public ScrolledForm createScrolledForm(Composite parent) {
-		ScrolledForm form = new ScrolledForm(parent);
+		ScrolledForm form = new ScrolledForm(parent, SWT.V_SCROLL
+				| SWT.H_SCROLL | orientation);
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		form.setBackground(colors.getBackground());
@@ -612,7 +617,7 @@ public class FormToolkit {
 	 * @see #createScrolledForm
 	 */
 	public Form createForm(Composite parent) {
-		Form formContent = new Form(parent, SWT.NULL);
+		Form formContent = new Form(parent, orientation);
 		formContent.setBackground(colors.getBackground());
 		formContent.setForeground(colors.getColor(FormColors.TITLE));
 		formContent.setFont(JFaceResources.getHeaderFont());
@@ -631,7 +636,8 @@ public class FormToolkit {
 	 * @return the scrolled page book widget
 	 */
 	public ScrolledPageBook createPageBook(Composite parent, int style) {
-		ScrolledPageBook book = new ScrolledPageBook(parent, style);
+		ScrolledPageBook book = new ScrolledPageBook(parent, style
+				| orientation);
 		adapt(book, true, true);
 		book.setMenu(parent.getMenu());
 		return book;
@@ -693,20 +699,12 @@ public class FormToolkit {
 	 * <pre>
 	 * 
 	 *  
-	 *   
-	 *    
-	 *     
-	 *      
-	 *        widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-	 *        
-	 *        or
-	 *        
-	 *        widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-	 *       
-	 *      
-	 *     
-	 *    
-	 *   
+	 *          widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+	 *          
+	 *          or
+	 *          
+	 *          widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+	 *         
 	 *  
 	 * </pre>
 	 * 
@@ -805,5 +803,33 @@ public class FormToolkit {
 					borderStyle = SWT.BORDER;
 			}
 		}
+	}
+
+	/**
+	 * Returns the orientation that all the widgets created by this toolkit will
+	 * inherit, if set. Can be <code>SWT.NULL</code>,
+	 * <code>SWT.LEFT_TO_RIGHT</code> and <code>SWT.RIGHT_TO_LEFT</code>.
+	 * 
+	 * @return orientation style for this toolkit, or <code>SWT.NULL</code> if
+	 *         not set.
+	 * @since 3.1
+	 */
+
+	public int getOrientation() {
+		return orientation;
+	}
+
+	/**
+	 * Sets the orientation that all the widgets created by this toolkit will
+	 * inherit. Can be <code>SWT.NULL</code>, <code>SWT.LEFT_TO_RIGHT</code>
+	 * and <code>SWT.RIGHT_TO_LEFT</code>.
+	 * 
+	 * @param orientation
+	 *            style for this toolkit.
+	 * @since 3.1           
+	 */
+
+	public void setOrientation(int orientation) {
+		this.orientation = orientation;
 	}
 }
