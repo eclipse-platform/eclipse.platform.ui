@@ -190,12 +190,6 @@ protected Control createDialogArea(Composite parent) {
 	actionViewer.setSorter(new WorkbenchViewerSorter());
 	actionViewer.getTable().setEnabled(false);
 	actionViewer.getTable().setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-	TableLayout tableLayout = new TableLayout();
-	tableLayout.addColumnData(new ColumnWeightData(100));
-	actionViewer.getTable().setLayout(tableLayout);
-	TableColumn tc = new TableColumn(actionViewer.getTable(), SWT.NONE, 0);
-	tc.setResizable(false);
-
 	
 	// initialize page
 	checkInitialSelections();
