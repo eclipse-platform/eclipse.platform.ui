@@ -126,8 +126,12 @@ public class Tocs
 
 	private void genToc(Element toc, Writer out) throws IOException
 	{
-		out.write("<ul class='expanded'>");
-				
+		out.write("<ul class='expanded' id='root'>");
+			
+		out.write("<a class='book' href='javascript: void 0;'><nobr class='book'>");
+		out.write(toc.getAttribute("label"));
+		out.write("</nobr></a>");
+		
 		NodeList topics = toc.getChildNodes();
 		for (int i = 0; i < topics.getLength(); i++)
 		{
@@ -139,9 +143,13 @@ public class Tocs
 	}
 	private void genTopic(Element topic, Writer out) throws IOException
 	{
-		out.write("<li class=");
-		out.write(topic.hasChildNodes() ? "'node'>" : "'leaf'>");
-		out.write("<a href=");
+		boolean hasNodes = topic.hasChildNodes();
+		if (hasNodes)
+			out.write("<li class='collapsed'>");
+		else
+			out.write("<li class='leaf'>");
+		out.write("<a class=");
+		out.write(hasNodes ? "'node'  href=" : "'leaf' href=");	
 		String href = topic.getAttribute("href");
 		if (href != null && href.length() > 0)
 		{
@@ -151,11 +159,15 @@ public class Tocs
 		}
 		else
 			href = "about:blank";
-		out.write("'" + href + "'>");
+			
+		out.write("'");
+		out.write(href);
+		out.write("' >");
+
 		// do this for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 		out.write("<nobr>");
 		out.write(topic.getAttribute("label") + "</nobr></a>");
-		if (topic.hasChildNodes())
+		if (hasNodes)
 		{
 			out.write("<ul class='collapsed'>");
 			NodeList topics = topic.getChildNodes();

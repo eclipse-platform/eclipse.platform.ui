@@ -8,23 +8,64 @@
 
 <html>
 <head>
- 	<meta http-equiv="Pragma" content="no-cache">
- 	<meta http-equiv="Expires" content="-1">
-	<title>Search</title>
-	<link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
- 	<base target="MainFrame">
-	<script language="JavaScript" src="toc.js"></script>
-	<script language="JavaScript">		
-		function refresh() 
-		{ 
-			parent.QueryFrame.document.forms[0].submit(); 
-		}
-	</script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<base target="MainFrame">
+<script language="JavaScript" src="list.js"></script>
+<script language="JavaScript">		
+function refresh() 
+{ 
+	window.location.replace("search_results.jsp?<%=request.getQueryString()%>");
+}
+</script>
+
+<style type="text/css">
+BODY {
+	background-color: Window;
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
+	margin-top:5px;
+	margin-left:5px;
+	padding:0;
+	border:0;
+	cursor:default;
+
+	scrollbar-highlight-color:ThreeDShadow;
+	scrollbar-shadow-color:ThreeDShadow;
+	scrollbar-arrow-color:#000000;
+	scrollbar-darkshadow-color:Window;
+	scrollbar-face-color:ActiveBorder;
+}
+
+A {
+	text-decoration:none; 
+	color:WindowText; 
+	height:18;
+	padding:0px;
+	/* this works in ie5.5, but not in ie5.0  */
+	white-space: nowrap;
+	cursor:default;
+}
+
+DIV.list {
+}
+     
+DIV.active { 
+	background:ActiveBorder;
+}
+
+TABLE , TD {
+	background-color: Window;
+	font: 8pt Tahoma;
+}
+
+</style>
 
 </head>
 
 
-<body onload="adjustMargins()" >
+<body >
 
 <%
 	// Generate the results
@@ -40,19 +81,18 @@
 		{
 			if (topic.startsWith("/"))
 			{
-				StringBuffer url = request.getRequestURL();
-				url.setLength(url.length() - "search_results.jsp".length());
-				url.append("content/help:");
-				url.append(topic);
-				topic = url.toString();
+				topic = request.getContextPath() + "/content/help:" + topic;
 			}
+			/*
 			// remove the port if the port is 80
 			int i = topic.indexOf(":80/");
 			if (i != -1)
 				topic = topic.substring(0,i) + topic.substring(i+3);
+			*/
 %>
 			<script language="JavaScript">
-		 	selectTopic('<%=topic%>');
+			var topic = window.location.protocol + "//" +window.location.host + '<%=topic%>';
+		 	selectTopic(topic);
 			</script>
 <%
 		}

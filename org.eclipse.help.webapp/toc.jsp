@@ -3,10 +3,9 @@
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
-	
 %>
 
-<% 
+<%
 	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
 	if (tocs == null)
 		return;
@@ -44,16 +43,120 @@
 
 <html>
 <head>
-	<title>Help</title>    
-    <link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
-    <script language="JavaScript" src="toc.js"></script>
-	<base target="MainFrame">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<style type="text/css">
+
+BODY {
+	background-color: Window;
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
+	margin:0;
+	padding:0;
+	border:0;
+	cursor:default;
+
+	scrollbar-highlight-color:ThreeDShadow;
+	scrollbar-shadow-color:ThreeDShadow;
+	scrollbar-arrow-color:#000000;
+	scrollbar-darkshadow-color:Window;
+	scrollbar-face-color:ActiveBorder;
+}
+
+UL { 
+	border-width:0; 
+	margin-left:20px; 
+}
+
+#root {
+	margin-left:4px;
+}
+  
+UL.expanded {
+	display:block; 
+}
+
+UL.collapsed { 
+	display: none;
+}
+
+LI.expanded {
+	list-style-image: url("images/minus.gif");
+}
+
+LI.collapsed {
+	list-style-image: url("images/plus.gif");
+}
+
+LI.leaf {
+	list-style-image:none;
+	list-style-type:none;
+}
+
+A {
+	text-decoration:none; 
+	text-indent:20px;
+	color:WindowText; 
+	padding:0px;;
+	/* this works in ie5.5, but not in ie5.0  */
+	white-space: nowrap;
+	cursor:default;
+}
+
+A.node {
+	background-image: url("images/container_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+      
+A.leaf {
+	background-image: url("images/topic_obj.gif");
+	background-position:top left;
+	background-repeat:no-repeat;
+}
+
+
+A.activeNode { 
+	background:ActiveBorder;
+	background-image: url("images/container_obj.gif");
+	background-position:top left;
+	background-repeat:no-repeat;
+}
+     
+A.activeLeaf { 
+	background:ActiveBorder;
+	background-image: url("images/topic_obj.gif");
+	background-position:top left;
+	background-repeat:no-repeat;
+}
+    
+
+A.book {
+	background-image: url("images/container_obj.gif");
+	background-position:top left;
+	background-repeat:no-repeat;
+	margin-top:5px;
+}
+
+</style>  
+    
+<base target="MainFrame">
+<script language="JavaScript" src="toc.js"></script>
+ <script language="JavaScript">
+ var extraStyle = "";
+  if (isMozilla)
+  	 extraStyle = "<style type='text/css'>A { padding-top:2px; } NOBR { margin-left:20px;  }</style>";
+  else if (isIE)
+ 	extraStyle =  "<style type='text/css'>A {	height:18px; } A.book { margin-left:-24px; }</style>";
+ 	
+ document.write(extraStyle);
+</script>
+
+
 </head>
 
 <body onload="onloadHandler('<%=tocHref%>', '<%=label%>')">
-	<ul><li class='bookshelf'>
-    <a target='_self' href='javascript:parent.showBookshelf()''><nobr><%=WebappResources.getString("Bookshelf", null)%></nobr></a>
-    </li></ul>
+
 
 <%
 	// Generate the tree

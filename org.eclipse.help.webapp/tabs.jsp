@@ -5,138 +5,104 @@
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
 %>
 
+<%
+	 String  ContentStr = WebappResources.getString("Content", null);
+	 String  SearchStr = WebappResources.getString("SearchResults", null);
+	 String  LinksStr = WebappResources.getString("Links", null);
+%>
+
 <html>
 <head>
 <title>Tabs</title>
-
-<link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="sea">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     
 <style type="text/css">
 
+/* need this one for Mozilla */
+HTML { 
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+ }
+ 
 BODY {
-	/*background-color:ActiveBorder;*/
-	background-color:#D4D0C8;
-	background-image:url(images/eclipse_tabbackground.gif);
-	background-repeat:repeat-x;
-	margin-width:0;
-	margin-left:0px;
-	border-bottom: 2px solid #848284;
+	margin:0px;
+	padding:0px;
+	border:1px black solid;
+	background:#000000;
+	height:100%;
 }
 
-
+/* tabs at the bottom */
 .tab {
-	top:0;
-	height:20;
-	margin-top:2;
-	padding:0px 2px 0px 2px;
-	border:0;
+	background:ActiveBorder;
+	margin:0px;
+	padding:0px;
+ 	border:1px ActiveBorder solid;
 	cursor:default;
+	align:center;
 }
 
 .pressed {
-	top:0;
-	margin-top:1;
-	padding:0px 2px 0px 2px;
-	height:20;
-	border-bottom:1px solid #ffffff;
-	border-top:1px solid #ffffff;
+	background:Window;
+	margin:0px;
+	padding:0px;
+	border:1px black solid;
 	cursor:default;
+	align:center;
 }
 
+.separator {
+	margin:0px;
+	padding:0px;
+	border:0px;
+	height:100%;
+	/*background-color:ThreeDShadow;*/
+	background-color:black;
+}
+
+A {
+	text-decoration:none;
+	margin:0px;
+	padding:0px;
+	border:0px;
+	align:center;
+}
 
 IMG {
-	margin:0;
-	border:0;
-	padding-left:0;
+	border:0px;
+	margin:0px;
+	padding:0px;
+	align:center;
 }
 </style>
-     
-<script language="JavaScript">
  
-// input parameters
-var args = parent.parseQueryString();
-var switchTabTimerSet;
-var switchTabArg;
-
-/* 
- * Switch tabs.
- */ 
-function switchTab(nav)
-{
-	// wait for parent.NavFrame.turnToFrame
-	if(!parent.NavFrame.turnToFrame)
-	{
-		if(!this.switchTabTimerSet)
-		{
-			this.switchTabArg=nav;
-			this.switchTabTimerSet=setInterval("switchTab(switchTabArg)", 10);
-		}
-		return;
-	}
-	if(this.switchTabTimerSet)
-		clearInterval(this.switchTabTimerSet);
-		
-	// show appropriate IFrame
-	parent.NavFrame.turnToFrame(nav);
- 
- 	// show the appropriate pressed tab
-  	var buttons = document.body.getElementsByTagName("A");
-  	for (var i=0; i<buttons.length; i++)
-  	{
-  		if (buttons[i].id == nav) // Note: assumes the same id shared by tabs and iframes
-			buttons[i].className = "pressed";
-		else
-			buttons[i].className = "tab";
- 	 }
-  
-  	// set the images for borders
-  	var tocI = document.getElementById("tocI");
-  	var searchI = document.getElementById("searchI");
-  	var linksI = document.getElementById("linksI");
-  	if (nav == "toc")
-  	{
-  		tocI.src = "images/rightBorder.gif";
-		searchI.src = "images/middleBorder.gif";
-		linksI.src = "images/noBorder.gif";
-  	}
-  	else if (nav == "search")
-  	{
-  		tocI.src = "images/leftBorder.gif";
-		searchI.src = "images/rightBorder.gif";
-		linksI.src = "images/noBorder.gif";
-  	}
-  	else if (nav == "links")
-  	{
-  		tocI.src = "images/middleBorder.gif";
-		searchI.src = "images/leftBorder.gif";
-		linksI.src = "images/rightBorder.gif";
-  	}	
-}
- 
-function onloadHandler()
-{	
-	var tab = "toc";
-	if (args && args["tab"])
-	    tab = args["tab"];
-	switchTab(tab);
-}
- 
+ <script language="JavaScript">
+ var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+ var extraStyle = "";
+  if (isMozilla)
+  	 extraStyle = "<style type='text/css'>BODY { height:21px;} </style>";
+ 	
+ document.write(extraStyle);
 </script>
 
 
 </head>
    
-<body onload="onloadHandler()">
-   <table cellspacing="0" cellpadding="0" border="0">
+<body>
+
+  <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr>
-   <td><a class="tab" id="toc" href="javascript:switchTab('toc')" onclick="this.blur()">&nbsp;<%=WebappResources.getString("Content", null)%></a></td>
-   <td><img id="tocI" src="images/rightBorder.gif" width="2" height="20"></td>
-   <td><a class="tab" id="search" href="javascript:switchTab('search')" onclick="this.blur()"><%=WebappResources.getString("Search", null)%></a></td>
-   <td><img id="searchI" src="images/middleBorder.gif" width="2" height="20"></td>
-   <td><a class="tab" id="links" href="javascript:switchTab('links')" onclick="this.blur()"><%=WebappResources.getString("Links", null)%></a></td>
-   <td><img id="linksI" src="images/noBorder.gif" width="2" height="20"></td>
+   <td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' onclick='this.blur()'><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="images/contents_view.gif"></a></td>
+   <td width="1px" class="separator"></td>
+   <td  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' onclick="this.blur()"><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="images/search_results_view.gif"></a></td>
+    <td width="1px" class="separator"></td>
+   <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' onclick="this.blur()"><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="images/links_view.gif"></a></td>
    </tr>
    </table>
+
 </body>
 </html>
 

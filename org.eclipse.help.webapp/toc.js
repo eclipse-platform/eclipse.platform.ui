@@ -1,6 +1,6 @@
 // Common scripts for IE and Mozilla.
 
-var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
+var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
 /**
@@ -61,6 +61,8 @@ function getAnchorNode(node) {
  */
 function collapse(node) {
   node.className = "collapsed";
+  // workaround for missing CSS functionality
+  node.parentNode.className = "collapsed";
 }
 
 /**
@@ -68,6 +70,8 @@ function collapse(node) {
  */
 function expand(node) {
   node.className = "expanded";
+  // workaround for missing CSS functionality
+   node.parentNode.className = "expanded";
 }
 
 /**
@@ -174,12 +178,20 @@ function highlightTopic(topic)
   var a = getAnchorNode(topic); 
   if (a != null)
   {
-  	a.className = "active";
-  	a.blur();
-  	if (oldActive && oldActive != a) {
-    	oldActive.className="";
+  	  if (oldActive && oldActive != a) {
+  		if (oldActive.className == "activeLeaf" )
+  			oldActive.className = "leaf";
+  		else if (oldActive.className == "activeNode")
+    		oldActive.className="node";
   	}
   	oldActive = a;
+  	
+  	if (a.className == "leaf")
+  		a.className = "activeLeaf";
+  	else if (a.className == "node")
+  		a.className = "activeNode";
+  		
+  	a.blur();
   }
 }
 
@@ -264,11 +276,7 @@ function onloadHandler(toc, title)
 	if (isMozilla)
 		adjustMargins();
  		
-	parent.tocTitle=title;
-	if(parent.currentNavFrame=="toc")
-	{
-		parent.setToolbarTitle(title);
-	}
+	parent.parent.setToolbarTitle(title);
 }
 
 // listen for clicks

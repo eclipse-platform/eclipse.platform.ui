@@ -9,55 +9,39 @@
 <html>
 <head>
 <title>Toolbar </title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ 
  
 <script language="JavaScript">
 
-var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
+var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
-
-// preload rollover images
 var navVisible = true;
-var imgs = new Array();
 
-imgs[0] = new Image();
-imgs[0].src = 'images/eclipse_collapse_over.gif';
-imgs[1] = new Image();
-imgs[1].src = 'images/eclipse_sync_over.gif';
-imgs[2] = new Image();		
-imgs[2].src = 'images/eclipse_print_over.gif';
-imgs[3] = new Image();	
-imgs[3].src = 'images/eclipse_close_over.gif';	
 
 function showBookshelf(button)
 {
-	parent.TabsFrame.switchTab("toc");
+	parent.NavFrame.switchTab("toc");
 	parent.NavFrame.showBookshelf();
 	if (isIE) button.blur();
 }
 
-function search(button)
-{
-	parent.TabsFrame.showNavFrame("search");
-	if (isIE) button.blur();
-}
 
 function toggleNav(button)
 {
 // Mozilla browser do not support this yet, waiting for a fix..
 
-	var frameset = parent.document.getElementById("contentFrameset"); 
+	var frameset = parent.document.getElementById("helpFrameset"); 
 	var navFrameSize = frameset.getAttribute("cols");
 
 	if (navVisible)
 	{
-		document["hide_nav"].src = "images/eclipse_collapsedepressed.gif";
 		parent.oldSize = navFrameSize;
 		frameset.setAttribute("cols", "*,100%");
 	}
 	else
 	{
-		document["hide_nav"].src = "images/eclipse_collapse.gif";
 		frameset.setAttribute("cols", parent.oldSize);
 	}
 	navVisible = !navVisible;
@@ -70,7 +54,7 @@ function resynch(button)
 	try
 	{
 		var topic = parent.MainFrame.window.location.href;
-		parent.NavFrame.displayTocFor(topic);
+		parent.displayTocFor(topic);
 	}
 	catch(e)
 	{
@@ -95,28 +79,55 @@ function setTitle(label)
 
 
 </script>
+
+<style type="text/css">
+
+/* need this one for Mozilla */
+HTML { 
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+	border:0px;
+ }
+ 
+BODY {
+	font: 8pt Tahoma;
+	background:ActiveBorder;
+	border-bottom:1px black solid;
+	border-right:1px black solid;
+	xxxxheight:100%;
+	/* need to set this for Mozilla */
+	height:23px;
+}
+
+SPAN {
+	margin:0px;
+	border:0px;
+	padding:0px;
+}
+
+</style>
+
    </head>
    
-   <body style="font: 8pt Tahoma;" leftmargin="0" topmargin="0" marginheight="0" marginwidth="0" bgcolor="#D4D0C8">
+   <body  leftmargin="0" topmargin="0" marginheight="0" marginwidth="0">
  	  
-	  <div id="title" style="position:absolute; top:4; left:24; z-order:20; color:#ffffff;">&nbsp;<%=WebappResources.getString("Bookshelf", null)%></div>
+	  <div id="title" style="position:absolute; bottom:2px; text-indent:4px; z-order:20; font-weight:bold;">&nbsp;<%=WebappResources.getString("Bookshelf", null)%></div>
+		
+		<div style="right:5px; top:4px; bottom:3px;position:absolute;">
+		<!--
+		<a  href="#" onclick="showBookshelf(this);"><img src="images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", null)%>' border="0" name="bookshelf"></a>
+		<span style="width:4px;"></span>
+		-->
+		<a href="#" onclick="toggleNav(this);" ><img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", null)%>' border="0" name="hide_nav"></a>
+		<span style="width:4px;"></span>
+		<a  href="#" onclick="resynch(this);"><img src="images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", null)%>' border="0" name="sync_nav"></a>
+		<span style="width:3px;"></span>
+		<a  href="#" onclick="printContent(this);" ><img  src="images/print_edit.gif" alt='<%=WebappResources.getString("Print", null)%>' border="0" name="print"></a>
 
-	  <table width="100%" height="23" cellspacing="0" cellpadding="0" border="0">
-	  	<tr>
-			<td width="100%" colspan="8" bgcolor="#FFFFFF"><img src="images/transparentDot.gif" width="1" height="1" alt="" border="0"/></td>
-	  	</tr>
-	  	<tr>
-
-		<td width="100%" bgcolor="#223E7F"><img src="images/eclipse_appicon.gif" height="22" alt="" border="0"/></td>
-		<td><img src="images/eclipse_titleGradient.gif" width="253" height="22" alt="" border="0"></td>
-		<td><a href="#" onclick="showBookshelf(this);"><img src="images/home.gif" alt='<%=WebappResources.getString("Bookshelf", null)%>' border="0" name="bookshelf"></a></td>
-		<td><a href="#" onclick="toggleNav(this);" onmouseover="if(navVisible) document['hide_nav'].src=imgs[0].src;" onmouseout="if(navVisible) document['hide_nav'].src='images/eclipse_collapse.gif';"><img src="images/eclipse_collapse.gif" alt='<%=WebappResources.getString("Toggle", null)%>' border="0" name="hide_nav"></a></td>
-		<td><a href="#" onclick="resynch(this);" onmouseover="document['sync_nav'].src=imgs[1].src;" onmouseout="document['sync_nav'].src='images/eclipse_sync.gif';"><img src="images/eclipse_sync.gif" alt='<%=WebappResources.getString("Synch", null)%>' border="0" name="sync_nav"></a></td>
-		<td><a href="#" onclick="printContent(this);" onmouseover="document['print'].src=imgs[2].src;" onmouseout="document['print'].src='images/eclipse_print.gif';"><img src="images/eclipse_print.gif" alt='<%=WebappResources.getString("Print", null)%>' border="0" name="print"></a></td>
-		<td><a href="#" onclick="parent.window.close(this);" onmouseover="document['close'].src=imgs[3].src;" onmouseout="document['close'].src='images/eclipse_close.gif';" ><img src="images/eclipse_close.gif" alt='<%=WebappResources.getString("Close", null)%>' border="0" name="close"></a></td>
-
-		</tr>
-	  </table>
+		</div>
+	  
       <iframe name="liveHelpFrame" style="visibility:hidden" frameborder="no" width="0" height="0" scrolling="no">
       </iframe>
 

@@ -8,37 +8,72 @@
 
 <html>
 <head>
-    <link rel="stylesheet" TYPE="text/css" HREF="help.css" TITLE="nav">
-    <script language="JavaScript" src="toc.js"></script>
-      
-<script language="JavaScript">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-/**
- * Loads the specified table of contents
- */		
-function loadTOC(tocId)
-{
-	// clear the content page
-	parent.parent.MainFrame.location="home.jsp?toc="+tocId;
-	// navigate to this toc
-	window.location.replace("toc.jsp?toc="+tocId);
+<style type="text/css" >
+
+BODY {
+	background-color: Window;
+	/*font: 9pt ms sans serif,sans-serif;*/
+	font: 8pt Tahoma;
+	margin-top:5px;
+	padding:0;
+	border:0;
+	cursor:default;
+
+	scrollbar-highlight-color:ThreeDShadow;
+	scrollbar-shadow-color:ThreeDShadow;
+	scrollbar-arrow-color:#000000;
+	scrollbar-darkshadow-color:Window;
+	scrollbar-face-color:ActiveBorder;
 }
 
-/**
- * This method is called when synchronizing the toc
- */
-function selectTopic(topic)
-{
-	return false;
+A {
+	text-decoration:none; 
+	color:WindowText; 
+	height:18;
+	padding:0px;
+	/* this works in ie5.5, but not in ie5.0  */
+	white-space: nowrap;
 }
 
-</script>
+DIV {
+	padding-left:20px;
+}
 
+DIV {
+	background-image: url("images/container_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+     
+DIV.active { 
+	background:ActiveBorder;
+	background-image: url("images/container_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+
+#bookshelf {
+	background-image: url("images/home_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+     
+#bookshelf.active { 
+	background:ActiveBorder;
+	background-image: url("images/home_obj.gif");
+	background-position:center left;
+	background-repeat:no-repeat;
+}
+
+
+</style>
+  
 </head>
 
-<body onload='onloadHandler("", "<%=WebappResources.getString("Bookshelf", null)%>")'>
+<body >
 
-<ul class='expanded'>
 <% 
 	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
 	if (tocs == null)
@@ -49,6 +84,18 @@ function selectTopic(topic)
 	Element selectedTOC = (Element)session.getAttribute("org.eclipse.help.selectedTOC");
 	Element[] tocNodes = tocs.getTocs();
 	
+	String bookshelf = WebappResources.getString("Bookshelf", null);
+	if (selectedTOC == null)
+	{
+%>
+		<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
+<%
+	} else {
+%>
+		<div id='bookshelf' class='list'><a  href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
+<%
+	}
+	
 	for (int i=0; i<tocNodes.length; i++)
 	{
 		String label = tocNodes[i].getAttribute("label");
@@ -57,11 +104,11 @@ function selectTopic(topic)
 		if (tocNodes[i] == selectedTOC)
 		{
 %>
-		<li class='node'><a class="active" href='javascript:loadTOC("<%=id%>")' xonmouseover='window.status="<%=label%>"'> <nobr> <%=label%> </nobr> </a></li>
+		<div class='active'><a  href='javascript:parent.parent.loadTOC("<%=id%>")' onmouseover='window.status="<%=label%>"'> <nobr> <%=label%> </nobr> </a></div>
 <%
 		}else{
 %>
-		<li class='node'><a href='javascript:loadTOC("<%=id%>");' xonmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></li>
+		<div class='list'><a  href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></div>
 <%
 		}		
 	}

@@ -56,17 +56,14 @@ public class Links {
 			out.write(WebappResources.getString("Nothing_found", null));
 			return;
 		}
-		out.write("<ul class='expanded'>");
 		for (int i = 0; i < topics.getLength(); i++) {
 			Node n = topics.item(i);
 			if (n.getNodeType() == Node.ELEMENT_NODE)
 				genTopic((Element) n, out);
 		}
-		out.write("</ul>");
 	}
 	private void genTopic(Element topic, Writer out) throws IOException {
-		out.write("<li class=");
-		out.write(topic.hasChildNodes() ? "'node'>" : "'leaf'>");
+		out.write("<div class='list'>");
 		out.write("<a href=");
 		String href = topic.getAttribute("href");
 		if (href != null && href.length() > 0) {
@@ -79,18 +76,7 @@ public class Links {
 		// do this for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 		out.write("<nobr>");
 		out.write(topic.getAttribute("label") + "</nobr></a>");
-		if (topic.hasChildNodes()) {
-			out.write("<ul class='collapsed'>");
-			NodeList topics = topic.getChildNodes();
-			for (int i = 0; i < topics.getLength(); i++) {
-				Node n = topics.item(i);
-				if (n.getNodeType() == Node.ELEMENT_NODE)
-					genTopic((Element) n, out);
-			}
-			out.write("</ul>");
-		}
-		out.write("</li>");
+		out.write("</div>");
 	}
-
 
 }
