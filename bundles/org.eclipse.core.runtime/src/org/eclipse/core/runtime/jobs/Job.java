@@ -55,8 +55,8 @@ public abstract class Job extends InternalJob {
 	/** 
 	 * Job priority constant (value 10) for interactive jobs.
 	 * Interactive jobs generally have priority over all other jobs.
-	 * Interactive jobs must be relatively fast running in order to avoid
-	 * blocking other interactive jobs from running.
+	 * Interactive jobs should be either fast running or very low on CPU
+	 * usage to avoid blocking other interactive jobs from running.
 	 * 
 	 * @see IJobManager#getPriority
 	 * @see IJobManager#setPriority
