@@ -182,10 +182,14 @@ public class ProgressView extends ViewPart implements IViewPart {
 	private void createCancelAction() {
 			cancelAction = new Action(ProgressMessages.getString("ProgressView.CancelAction")) {//$NON-NLS-1$
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
+	  * @see org.eclipse.jface.action.Action#run()
 	 */
 			public void run() {
 				JobInfo element = getSelectedInfo();
+				//Check it case it got removed after enablement
+				if (element == null) {
+					return;
+				}
 				element.getJob().cancel();
 
 			}
@@ -204,6 +208,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 			public void run() {
 				JobInfo element = getSelectedInfo();
+				//Check it case it got removed after enablement
+				if (element == null) {
+					return;
+				}
 				JobProgressManager.getInstance().clearJob(element.getJob());
 			}
 		};
@@ -214,10 +222,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @return Action
 	 */
 	private void createClearErrorsAction() {
-		clearErrorsAction = new Action(ProgressMessages.getString("ProgressView.ClearAllAction")) {//$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
+			clearErrorsAction = new Action(ProgressMessages.getString("ProgressView.ClearAllAction")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
 			public void run() {
 				JobProgressManager.getInstance().clearAllErrors();
 			}
