@@ -104,7 +104,9 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 					fLastStreamWriteEnd= getLength();
 					return;
 				} catch (IOException ioe) {
-					DebugUIPlugin.logError(ioe);
+					if (!isClosed()) {
+						DebugUIPlugin.logError(ioe);
+					}
 				}
 			}
 		}
