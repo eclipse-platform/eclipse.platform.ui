@@ -291,6 +291,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 							}
 
 						}, Policy.monitorFor(null));
+					} else {
+						// The resource is not managed or ignored. Make sure there is an addition marker on it
+						IMarker marker = getAdditionMarker(resource);
+						if (marker == null) {
+							createAdditonMarker(resource);
+						}
 					}
 				} else if (resource.getType() == IResource.FOLDER) {
 					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);

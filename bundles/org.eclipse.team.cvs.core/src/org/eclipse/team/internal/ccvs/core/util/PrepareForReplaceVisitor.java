@@ -43,7 +43,6 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			// If the file is unmanaged, just leave it as is
 		} else if (info.isAdded()) {
 			// For added files, delete and unmanage
-			file.delete();
 			file.unmanage(null);
 		} else if (info.isDeleted()) {
 			// If deleted, null the sync info so the file will be refetched
