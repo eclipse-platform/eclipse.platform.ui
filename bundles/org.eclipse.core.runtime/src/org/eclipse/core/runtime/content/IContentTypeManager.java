@@ -38,7 +38,7 @@ public interface IContentTypeManager {
 	 * IllegalArgumentException will be thrown. 
 	 * </p>
 	 * 
-	 * @param contents a resettable input stream (isMarkSupported must be <code>true</code>)
+	 * @param contents a resettable input stream (#markSupported must be <code>true</code>)
 	 * @param set the content types to be taken into account, or <code>null</code>, 
 	 * for all content types in the catalog 
 	 * @return the most appropriate content type for the given contents, or <code>null</code>
