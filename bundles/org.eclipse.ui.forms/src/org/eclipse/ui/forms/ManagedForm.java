@@ -37,6 +37,7 @@ public class ManagedForm implements IManagedForm {
 	private FormToolkit toolkit;
 	private Object container;
 	private boolean ownsToolkit;
+	private boolean initialized;	
 	private Vector parts = new Vector();
 	/**
 	 * Creates a managed form in the provided parent. Form toolkit and widget
@@ -128,14 +129,19 @@ public class ManagedForm implements IManagedForm {
 			}
 		}
 	}
+
 	/**
-	 * Initializes all the parts in this form.
+	 * Initializes the form by looping through the managed
+	 * parts and initializing them. Has no effect if
+	 * already called once.
 	 */
 	public void initialize() {
+		if (initialized) return;
 		for (int i = 0; i < parts.size(); i++) {
 			IFormPart part = (IFormPart) parts.get(i);
 			part.initialize(this);
 		}
+		initialized=true;
 	}
 	/**
 	 * Disposes all the parts in this form.

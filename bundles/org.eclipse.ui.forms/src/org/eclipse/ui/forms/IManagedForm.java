@@ -29,6 +29,14 @@ import org.eclipse.ui.forms.widgets.*;
  */
 public interface IManagedForm {
 	/**
+	 * Initializes the form by looping through the managed
+	 * parts and initializing them. Has no effect if
+	 * already called once.
+	 * 
+	 * @since 3.1
+	 */
+	public void initialize();
+	/**
 	 * Returns the toolkit used by this form.
 	 * 
 	 * @return the toolkit
