@@ -25,6 +25,8 @@ public class EditorList {
 
 	private SaveAction saveAction;
 	private CloseEditorAction closeAction;
+	private SelectionAction selectCleanAction;
+	private SelectionAction selectionInvertAction;
 	private SelectionAction selectAllAction;
 	private FullNameAction fullNameAction;
 	private SetScopeAction windowScopeAction;
@@ -49,6 +51,8 @@ public class EditorList {
 		this.workbook = workbook;
 		saveAction = new SaveAction();
 		closeAction = new CloseEditorAction();
+		selectCleanAction = new SelectionAction(SELECT_CLEAN);
+		selectionInvertAction = new SelectionAction(INVERT_SELECTION);
 		selectAllAction = new SelectionAction(SELECT_ALL);
 		fullNameAction = new FullNameAction();
 		windowScopeAction = new SetScopeAction(SET_WINDOW_SCOPE);
@@ -85,8 +89,8 @@ public class EditorList {
 			}
 		});
 		editorsTable.addMouseListener(new MouseAdapter() {
-			public void mouseUp(MouseEvent e) {
-				if (e.stateMask == SWT.BUTTON1) {
+			public void mouseDown(MouseEvent e) {
+				if (e.button != 3) {
 					handleSelectionEvent();
 				}
 			}
@@ -213,6 +217,7 @@ public class EditorList {
 			updateItem(item,e);
 			if((selection != null) && (selection == e.editorRef.getPart(false))) {
 				editorsTable.setSelection(new TableItem[]{item});
+				saveAction.setEnabled(e.isDirty());
 			}
 		}
 	}
@@ -222,6 +227,8 @@ public class EditorList {
 		menuMgr.add(saveAction);
 		menuMgr.add(closeAction);
 		menuMgr.add(new Separator());
+		menuMgr.add(selectCleanAction);
+		menuMgr.add(selectionInvertAction);
 		menuMgr.add(selectAllAction);
 		menuMgr.add(new Separator());
 		menuMgr.add(fullNameAction);
@@ -392,6 +399,7 @@ public class EditorList {
 					editorsTable.setSelection(selectClean(editorsTable.getItems()));
 					break;
 			}
+			handleSelectionEvent();
 		}
 	}
 	
@@ -415,7 +423,9 @@ public class EditorList {
 		public void run() {
 			displayFullPath = !displayFullPath;
 			setChecked(displayFullPath);
+			int[] indices = editorsTable.getSelectionIndices();
 			updateItems();
+			editorsTable.setSelection(indices);
 		}
 	}
 	
