@@ -62,7 +62,7 @@ public abstract class WorkspaceAction extends CVSAction {
 	 * performing the associated operation
 	 */
 	protected boolean isSyncInfoLoaded(IResource[] resources) throws CVSException {
-		return EclipseSynchronizer.getInstance().isSyncInfoLoaded(resources, getActionDepth());
+		return EclipseSynchronizer.getInstance().isSyncInfoLoaded(resources, getEnablementDepth());
 	}
 
 	/**
@@ -74,6 +74,15 @@ public abstract class WorkspaceAction extends CVSAction {
 		return IResource.DEPTH_INFINITE;
 	}
 
+	/**
+	 * Returns the resource depth of the action enablement for use in determining if the required
+	 * sync info is loaded. The default is IResource.DEPTH_ZERO. Sunclasses can override
+	 * as required.
+	 */
+	protected int getEnablementDepth() {
+		return IResource.DEPTH_ZERO;
+	}
+	
 	/**
 	 * Ensure that the sync info for all the provided resources has been loaded.
 	 * If an out-of-sync resource is found, prompt to refresh all the projects involved.

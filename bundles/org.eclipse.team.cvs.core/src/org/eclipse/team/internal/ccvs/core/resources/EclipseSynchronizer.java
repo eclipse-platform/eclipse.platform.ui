@@ -980,17 +980,19 @@ public class EclipseSynchronizer {
 				folders.add(resource.getParent());
 			}
 			// use the depth to gather child folders when appropriate
-			try {
-				resource.accept(new IResourceVisitor() {
-					public boolean visit(IResource resource) throws CoreException {
-						if (resource.getType() == IResource.FOLDER)
-							folders.add(resource);
-						// let the depth determine who we visit
-						return true;
-					}
-				}, depth, false);
-			} catch (CoreException e) {
-				throw CVSException.wrapException(e);
+			if (depth != IResource.DEPTH_ZERO) {
+				try {
+					resource.accept(new IResourceVisitor() {
+						public boolean visit(IResource resource) throws CoreException {
+							if (resource.getType() == IResource.FOLDER)
+								folders.add(resource);
+							// let the depth determine who we visit
+							return true;
+						}
+					}, depth, false);
+				} catch (CoreException e) {
+					throw CVSException.wrapException(e);
+				}
 			}
 		}
 		return (IContainer[]) folders.toArray(new IContainer[folders.size()]);
