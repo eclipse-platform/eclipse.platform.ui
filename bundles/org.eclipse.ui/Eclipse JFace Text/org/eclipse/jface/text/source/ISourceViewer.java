@@ -49,6 +49,11 @@ public interface ISourceViewer extends ITextViewer {
 	static final int FORMAT= ITextOperationTarget.STRIP_PREFIX + 3;
 	
 	/**
+	 * Text operation code for requesting information at the current insertion position.
+	 */
+	static final int INFORMATION= ITextOperationTarget.STRIP_PREFIX + 4;
+	
+	/**
 	 * Configures the source viewer using the given configuration.
 	 * 
 	 * @param configuration the source viewer configuration to be used

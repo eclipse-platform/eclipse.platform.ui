@@ -23,6 +23,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEventConsumer;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.util.Assert;
@@ -162,7 +164,6 @@ public class ContentAssistant implements IContentAssistant {
 	class AutoAssistListener implements IContentAssistListener, Runnable {
 		
 		private Thread fThread;
-		private int fDelayInterval;
 		private boolean fIsReset= false;
 		private Object fMutex= new Object();
 		private int fShowStyle;
@@ -170,8 +171,7 @@ public class ContentAssistant implements IContentAssistant {
 		private final static int SHOW_PROPOSALS= 1;
 		private final static int SHOW_CONTEXT_INFO= 2;
 		
-		protected AutoAssistListener(int delayInterval) {
-			fDelayInterval= delayInterval;
+		protected AutoAssistListener() {
 		}
 
 		protected void start(int showStyle) {
@@ -184,7 +184,7 @@ public class ContentAssistant implements IContentAssistant {
 			try {
 				while (true) {
 					synchronized (fMutex) {
-						fMutex.wait(fDelayInterval);
+						fMutex.wait(fAutoActivationDelay);
 						if (fIsReset) {
 							fIsReset= false;
 							continue;
@@ -375,37 +375,46 @@ public class ContentAssistant implements IContentAssistant {
 					fContextInfoPopupOrientation == CONTEXT_INFO_BELOW &&
 					Helper.okToUse(fShells[LAYOUT_CONTEXT_INFO_POPUP])) {
 				// Stack proposal selector beneath the tip box.
-				fShells[LAYOUT_PROPOSAL_SELECTOR].setLocation(getStackedLocation(fShells[LAYOUT_CONTEXT_INFO_POPUP]));
+				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
+				Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
+				shell.setLocation(getStackedLocation(shell, parent));
 			} else if (fContextType != LAYOUT_CONTEXT_SELECTOR ||
 						!Helper.okToUse(fShells[LAYOUT_CONTEXT_SELECTOR])) {
 				// There are no other presentations to be concerned with,
 				// so place the proposal selector beneath the cursor line.
-				fShells[LAYOUT_PROPOSAL_SELECTOR].setLocation(getBelowLocation());
+				Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
+				shell.setLocation(getBelowLocation(shell));
 			} else {
 				switch (fProposalPopupOrientation) {
-					case PROPOSAL_REMOVE:
+					case PROPOSAL_REMOVE: {
 						// Remove the tip selector and place the
 						// proposal selector beneath the cursor line.
 						fShells[LAYOUT_CONTEXT_SELECTOR].dispose();
-						fShells[LAYOUT_PROPOSAL_SELECTOR].setLocation(getBelowLocation());
+						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
+						shell.setLocation(getBelowLocation(shell));
 						break;
-	
-					case PROPOSAL_OVERLAY:
+					}
+					case PROPOSAL_OVERLAY: {
 						// Overlay the tip selector with the proposal selector.
-						fShells[LAYOUT_PROPOSAL_SELECTOR].setLocation(getBelowLocation());
+						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
+						shell.setLocation(getBelowLocation(shell));
 						break;
-	
-					case PROPOSAL_STACKED:
+					}
+					case PROPOSAL_STACKED: {
 						// Stack the proposal selector beneath the tip selector.
-						fShells[LAYOUT_PROPOSAL_SELECTOR].setLocation(getStackedLocation(fShells[LAYOUT_CONTEXT_SELECTOR]));
+						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
+						Shell parent= fShells[LAYOUT_CONTEXT_SELECTOR];
+						shell.setLocation(getStackedLocation(shell, parent));
 						break;
+					}
 				}
 			}
 		}
 		
 		protected void layoutContextSelector() {
 			// Always place the context selector beneath the cursor line.
-			fShells[LAYOUT_CONTEXT_SELECTOR].setLocation(getBelowLocation());
+			Shell shell= fShells[LAYOUT_CONTEXT_SELECTOR];
+			shell.setLocation(getBelowLocation(shell));
 			
 			if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 				switch (fProposalPopupOrientation) {
@@ -418,52 +427,100 @@ public class ContentAssistant implements IContentAssistant {
 						// The proposal selector has been overlayed by the tip selector.
 						break;
 	
-					case PROPOSAL_STACKED:
+					case PROPOSAL_STACKED: {
 						// Stack the proposal selector beneath the tip selector.
-						fShells[LAYOUT_PROPOSAL_SELECTOR].setLocation(getStackedLocation(fShells[LAYOUT_CONTEXT_SELECTOR]));
+						shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
+						Shell parent= fShells[LAYOUT_CONTEXT_SELECTOR];
+						shell.setLocation(getStackedLocation(shell, parent));
 						break;
+					}
 				}
 			}
 		}
 		
 		protected void layoutContextInfoPopup() {
 			switch (fContextInfoPopupOrientation) {
-				case CONTEXT_INFO_ABOVE:
+				case CONTEXT_INFO_ABOVE: {
 					// Place the popup above the cursor line.
-					Point position= getAboveLocation();
-					position.y -= fShells[LAYOUT_CONTEXT_INFO_POPUP].getSize().y;
-					fShells[LAYOUT_CONTEXT_INFO_POPUP].setLocation(position);
+					Shell shell= fShells[LAYOUT_CONTEXT_INFO_POPUP];
+					shell.setLocation(getAboveLocation(shell));
 					break;
-				
-				case CONTEXT_INFO_BELOW:
+				}
+				case CONTEXT_INFO_BELOW: {
 					// Place the popup beneath the cursor line.
-					fShells[LAYOUT_CONTEXT_INFO_POPUP].setLocation(getBelowLocation());
+					Shell parent= fShells[LAYOUT_CONTEXT_INFO_POPUP];
+					parent.setLocation(getBelowLocation(parent));
 					if (Helper.okToUse(fShells[LAYOUT_PROPOSAL_SELECTOR])) {
 						// Stack the proposal selector beneath the context info popup.
-						fShells[LAYOUT_PROPOSAL_SELECTOR].setLocation(getStackedLocation(fShells[LAYOUT_CONTEXT_INFO_POPUP]));
+						Shell shell= fShells[LAYOUT_PROPOSAL_SELECTOR];
+						shell.setLocation(getStackedLocation(shell, parent));
 					}
 					break;
+				}
 			}
 		}
 		
-		protected Point getAboveLocation() {
+		protected void shiftLeftLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
+			if (location.x + shellBounds.width > displayBounds.width)
+				location.x= displayBounds.width - shellBounds.width;
+		}
+		
+		protected void shiftDownLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
+			if (location.y < displayBounds.y)
+				location.y= displayBounds.y;
+		}
+		
+		protected void shiftUpLocation(Point location, Rectangle shellBounds, Rectangle displayBounds) {
+			if (location.y + shellBounds.height > displayBounds.height)
+				location.y= displayBounds.height - shellBounds.height;
+		}
+		
+		protected Point getAboveLocation(Shell shell) {
 			StyledText text= fViewer.getTextWidget();
 			int start= text.getSelectionRange().x;
-			Point p= text.getLocationAtOffset(start);
-			return text.toDisplay(p);
+			Point location= text.getLocationAtOffset(start);
+			location= text.toDisplay(location);
+			
+			Rectangle shellBounds= shell.getBounds();
+			Rectangle displayBounds= shell.getDisplay().getClientArea();
+			
+			location.y=location.y - shellBounds.height;
+			
+			shiftLeftLocation(location, shellBounds, displayBounds);
+			shiftDownLocation(location, shellBounds, displayBounds);
+			
+			return location;
 		}
-	
-		protected Point getBelowLocation() {
+		
+		protected Point getBelowLocation(Shell shell) {
 			StyledText text= fViewer.getTextWidget();
-			Point p= getAboveLocation();
-			return new Point(p.x, p.y + text.getLineHeight());
-		}
-	
-		protected Point getStackedLocation(Shell shell) {
-			Point p= shell.getLocation();
-			Point size= shell.getSize();
+			int start= text.getSelectionRange().x;
+			Point location= text.getLocationAtOffset(start);
+			location= text.toDisplay(location);
+			
+			Rectangle shellBounds= shell.getBounds();
+			Rectangle displayBounds= shell.getDisplay().getClientArea();
+			
+			location.y= location.y + text.getLineHeight();
+			shiftLeftLocation(location, shellBounds, displayBounds);
+			shiftUpLocation(location, shellBounds, displayBounds);
+			
+			return location;
+		}	
+		
+		protected Point getStackedLocation(Shell shell, Shell parent) {
+			Point p= parent.getLocation();
+			Point size= parent.getSize();
 			p.x += size.x / 4;
 			p.y += size.y;
+			
+			p= parent.toDisplay(p);
+
+			Rectangle shellBounds= shell.getBounds();
+			Rectangle displayBounds= shell.getDisplay().getClientArea();
+			shiftLeftLocation(p, shellBounds, displayBounds);
+			shiftUpLocation(p, shellBounds, displayBounds);
+			
 			return p;
 		}
 
@@ -533,14 +590,21 @@ public class ContentAssistant implements IContentAssistant {
 	final static int CONTEXT_SELECTOR= 1;
 	final static int PROPOSAL_SELECTOR= 2;
 	final static int CONTEXT_INFO_POPUP= 3;
-		
+	
+	private IInformationControlCreator fInformationControlCreator;
 	private int fAutoActivationDelay= 500;
 	private boolean fIsAutoActivated= false;
 	private int fProposalPopupOrientation= PROPOSAL_OVERLAY;
-	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;
-	private Color fContextInfoPopupBackground;
+	private int fContextInfoPopupOrientation= CONTEXT_INFO_ABOVE;	
 	private Map fProcessors;	
 	
+	private Color fContextInfoPopupBackground;
+	private Color fContextInfoPopupForeground;
+	private Color fContextSelectorBackground;
+	private Color fContextSelectorForeground;
+	private Color fProposalSelectorBackground;
+	private Color fProposalSelectorForeground;
+
 	private ITextViewer fViewer;
 	private String fLastErrorMessage;
 	
@@ -563,7 +627,7 @@ public class ContentAssistant implements IContentAssistant {
 	 */	
 	public ContentAssistant() {
 	}
-		
+	
 	/**
 	 * Registers a given content assist processor for a particular content type.
 	 * If there is already a processor registered for this type, the new processor 
@@ -670,8 +734,107 @@ public class ContentAssistant implements IContentAssistant {
 	 *
 	 * @return the background of the context information popup
 	 */
-	Color getContextInfoPopupBackground() {
+	Color getContextInformationPopupBackground() {
 		return fContextInfoPopupBackground;
+	}
+	
+	/**
+	 * Sets the context information popup's foreground color.
+	 *
+	 * @param foreground the foreground color
+	 */
+	public void setContextInformationPopupForeground(Color foreground) {
+		fContextInfoPopupForeground= foreground;
+	}
+	
+	/**
+	 * Returns the foreground of the context information popup.
+	 *
+	 * @return the foreground of the context information popup
+	 */
+	Color getContextInformationPopupForeground() {
+		return fContextInfoPopupForeground;
+	}
+	
+	/**
+	 * Sets the proposal selector's background color.
+	 *
+	 * @param background the background color
+	 */
+	public void setProposalSelectorBackground(Color background) {
+		fProposalSelectorBackground= background;
+	}
+	
+	/**
+	 * Returns the background of the proposal selector.
+	 *
+	 * @return the background of the proposal selector
+	 */
+	Color getProposalSelectorBackground() {
+		return fProposalSelectorBackground;
+	}
+	
+	/**
+	 * Sets the proposal's foreground color.
+	 *
+	 * @param foreground the foreground color
+	 */
+	public void setProposalSelectorForeground(Color foreground) {
+		fProposalSelectorForeground= foreground;
+	}
+	
+	/**
+	 * Returns the foreground of the proposal selector.
+	 *
+	 * @return the foreground of the proposal selector
+	 */
+	Color getProposalSelectorForeground() {
+		return fProposalSelectorForeground;
+	}
+	
+	/**
+	 * Sets the context selector's background color.
+	 *
+	 * @param background the background color
+	 */
+	public void setContextSelectorBackground(Color background) {
+		fContextSelectorBackground= background;
+	}
+	
+	/**
+	 * Returns the background of the context selector.
+	 *
+	 * @return the background of the context selector
+	 */
+	Color getContextSelectorBackground() {
+		return fContextSelectorBackground;
+	}
+	
+	/**
+	 * Sets the context selector's foreground color.
+	 *
+	 * @param foreground the foreground color
+	 */
+	public void setContextSelectorForeground(Color foreground) {
+		fContextSelectorForeground= foreground;
+	}
+	
+	/**
+	 * Returns the foreground of the context selector.
+	 *
+	 * @return the foreground of the context selector
+	 */
+	Color getContextSelectorForeground() {
+		return fContextSelectorForeground;
+	}
+	
+	/**
+	 * Sets the information control creator for the additional information control.
+	 * 
+	 * @param creator the information control creator for the additional information control
+	 */
+	public void setInformationControlCreator(IInformationControlCreator creator) {
+		fInformationControlCreator= creator;
 	}
 	
 	/*
@@ -686,10 +849,10 @@ public class ContentAssistant implements IContentAssistant {
 		fInternalListener= new InternalListener();
 		
 		fContextInfoPopup= new ContextInformationPopup(this, fViewer);
-		fProposalPopup= new CompletionProposalPopup(this, fViewer, new AdditionalInfoPopup(fAutoActivationDelay));
+		fProposalPopup= new CompletionProposalPopup(this, fViewer, new AdditionalInfoController(fInformationControlCreator, Math.round(fAutoActivationDelay * 1.5f)));
 		
 		if (fIsAutoActivated) {
-			fAutoAssistListener= new AutoAssistListener(fAutoActivationDelay);
+			fAutoAssistListener= new AutoAssistListener();
 			addContentAssistListener(fAutoAssistListener, AUTO_ASSIST);
 		}
 	}

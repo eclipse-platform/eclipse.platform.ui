@@ -255,7 +255,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			if (e.getDocument() == getVisibleDocument()) {
 				fWidgetCommand.setEvent(e);
-				if (fTextHoveringController != null && (fThread == null || !fThread.isAlive())) {
+				if (fTextHoverManager != null && (fThread == null || !fThread.isAlive())) {
 					fThread= new Thread(this, JFaceTextMessages.getString("TextViewer.timer.name")); //$NON-NLS-1$
 					fThread.start();
 				}
@@ -270,11 +270,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				
 				updateTextListeners(fWidgetCommand);
 				
-				if (fTextHoveringController != null) {
+				if (fTextHoverManager != null) {
 					synchronized (fSyncPoint) {
 						fIsReset= true;
 					}
-					fTextHoveringController.uninstall();
+					fTextHoverManager.setEnabled(false);
 				}
 			}
 		}
@@ -301,15 +301,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			
 			fThread= null;
 			
-			if (fTextHoveringController != null) {
+			if (fTextHoverManager != null) {
 				Control c= getControl();
 				if (c != null && !c.isDisposed()) {
 					Display d= c.getDisplay();
 					if (d != null) {
 						d.asyncExec(new Runnable() {
 							public void run() {
-								if (fTextHoveringController != null)
-									fTextHoveringController.install();
+								if (fTextHoverManager != null)
+									fTextHoverManager.setEnabled(true);
 							}
 						});
 					}
@@ -419,7 +419,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	/** The text viewer's double click strategies connector */
 	private TextDoubleClickStrategyConnector fDoubleClickStrategyConnector;
 	/** The text viewer's hovering controller */
-	private TextHoveringController fTextHoveringController;
+	private AbstractHoverInformationControlManager fTextHoverManager;
 	/** The text viewer's viewport guard */
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */ 
@@ -452,6 +452,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	protected Map fAutoIndentStrategies;
 	/** The text viewer's text hovers */
 	protected Map fTextHovers;
+	/** The creator of the text hover control */
+	protected IInformationControlCreator fHoverControlCreator;
 	/** All registered viewport listeners> */
 	protected List fViewportListeners;
 	/** The last visible vertical position of the top line */
@@ -572,9 +574,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
 		}
 		
-		if (fTextHovers != null && !fTextHovers.isEmpty() && fTextHoveringController == null) {
-			fTextHoveringController= new TextHoveringController(this);
-			fTextHoveringController.install();
+		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {			
+			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
+			fTextHoverManager.install(this.getTextWidget());
 		}
 		
 		if (fUndoManager != null) {
@@ -632,9 +634,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		fDoubleClickStrategyConnector= null;
 		
-		if (fTextHoveringController != null) {
-			fTextHoveringController.dispose();
-			fTextHoveringController= null;
+		if (fTextHoverManager != null) {
+			fTextHoverManager.dispose();
+			fTextHoverManager= null;
 		}
 		
 		if (fDocumentListener != null) {
@@ -745,14 +747,14 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		} else if (fDefaultPrefixChars != null)
 			fDefaultPrefixChars.remove(contentType);
 	}
-			
+	
 	/*
 	 * @see ITextViewer#setUndoManager
 	 */
 	public void setUndoManager(IUndoManager undoManager) {
 		fUndoManager= undoManager;
 	}
-		
+	
 	/*
 	 * @see ITextViewer#setTextHover
 	 */
@@ -766,11 +768,32 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fTextHovers.remove(contentType);
 	}
 	
-	/*
+	/**
 	 * Returns the text hover for a given offset.
+	 * 
+	 * @param offset the offset for which to return the text hover
+	 * @return the text hover for the given offset
 	 */
-	ITextHover getTextHover(int offset) {
+	protected ITextHover getTextHover(int offset) {
 		return (ITextHover) selectContentTypePlugin(offset, fTextHovers);
+	}
+	
+	/**
+	 * Returns the text hovering controller of this viewer.
+	 * 
+	 * @return the text hovering controller of this viewer
+	 */
+	protected AbstractInformationControlManager getTextHoveringController() {
+		return fTextHoverManager;
+	}
+	
+	/**
+	 * Sets the creator for the hover controls.
+	 *  
+	 * @param creator the hover control creator
+	 */
+	public void setHoverControlCreator(IInformationControlCreator creator) {
+		fHoverControlCreator= creator;
 	}
 	
 	
@@ -2044,7 +2067,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * @return the viewer's printable mode
 	 */
 	protected boolean isPrintable() {
-		return true;
+		/*
+		 * 1GK7Q10: ITPUI:WIN98 - internal error after invoking print at editor view
+		 * Changed from returning true to testing the length of the printer queue
+		 */
+		PrinterData[] printerList= Printer.getPrinterList();
+		return (printerList != null && printerList.length > 0);
 	}
 	
 	/**

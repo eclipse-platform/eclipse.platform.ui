@@ -134,13 +134,22 @@ class ContextInformationPopup implements IContentAssistListener {
 			return;
 		
 		Control control= fViewer.getTextWidget();
+		Display display= control.getDisplay();
+		
 		fContextInfoPopup= new Shell(control.getShell(), SWT.NO_TRIM | SWT.ON_TOP);
-		Color c= fContextInfoPopup.getDisplay().getSystemColor(SWT.COLOR_BLACK);
-		fContextInfoPopup.setBackground(c);
+		fContextInfoPopup.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		
 		fContextInfoText= new StyledText(fContextInfoPopup, SWT.MULTI | SWT.READ_ONLY);
-		c= fContentAssistant.getContextInfoPopupBackground();
-		if (c != null)
-			fContextInfoText.setBackground(c);
+		
+		Color c= fContentAssistant.getContextInformationPopupBackground();
+		if (c == null)
+			c= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		fContextInfoText.setBackground(c);
+		
+		c= fContentAssistant.getContextInformationPopupForeground();
+		if (c == null)
+			c= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		fContextInfoText.setForeground(c);			
 	}
 	
 	private void setContextInformation(IContextInformation information) {
@@ -191,7 +200,17 @@ class ContextInformationPopup implements IContentAssistListener {
 
 		fContextSelectorShell.setSize(300, fContextSelectorTable.getItemHeight() * 10);
 		fContextSelectorTable.setBounds(fContextSelectorShell.getClientArea());
-
+		
+		Color c= fContentAssistant.getContextSelectorBackground();
+		if (c == null)
+			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		fContextSelectorTable.setBackground(c);
+		
+		c= fContentAssistant.getContextSelectorForeground();
+		if (c == null)
+			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		fContextSelectorTable.setForeground(c);				
+		
 		fContextSelectorTable.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 			}

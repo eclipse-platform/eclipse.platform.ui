@@ -9,7 +9,8 @@ package org.eclipse.ui.texteditor;
 import java.lang.reflect.InvocationTargetException;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;import java.util.Map;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IStorage;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.NullProgressMonitor;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.custom.VerifyKeyListener;import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Menu;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.action.Separator;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IDialogConstants;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.resource.JFaceResources;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.ITextListener;import org.eclipse.jface.text.ITextOperationTarget;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.TextEvent;import org.eclipse.jface.text.source.Annotation;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.ISourceViewer;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.text.source.SourceViewer;import org.eclipse.jface.text.source.SourceViewerConfiguration;import org.eclipse.jface.text.source.VerticalRuler;import org.eclipse.jface.util.Assert;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorSite;import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPartListener;import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.PartInitException;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.actions.WorkspaceModifyOperation;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.IPartListener;import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.PartInitException;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.actions.WorkspaceModifyOperation;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -23,7 +24,7 @@ import org.eclipse.ui.IPartListener;import org.eclipse.ui.IStorageEditorInput;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor {
 	
 	/**
 	 * Internal element state listener.
@@ -719,7 +720,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 		StyledText styledText= fSourceViewer.getTextWidget();
 		initializeWidgetFont(styledText);
-//		initializeWidgetColors(styledText);
+		initializeWidgetColors(styledText);
 		
 		if (getHelpContextId() != null)
 			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
@@ -783,19 +784,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	
 	/**
-	 * 
+	 * Creates a color from the information stored in the given preference store.
+	 * Returns <code>null</code> if there is no such information available.
 	 */
 	private Color createColor(IPreferenceStore store, String key, Display display) {
 	
 		RGB rgb= null;		
-		if (store.contains(key) && !store.isDefault(key))
-			rgb= PreferenceConverter.getColor(store, key);
-		else
-			rgb= PreferenceConverter.getDefaultColor(store, key);
 		
-		if (rgb != null)
-			return new Color(display, rgb);
+		if (store.contains(key)) {
 			
+			if (store.isDefault(key))
+				rgb= PreferenceConverter.getDefaultColor(store, key);
+			else
+				rgb= PreferenceConverter.getColor(store, key);
+		
+			if (rgb != null)
+				return new Color(display, rgb);
+		}
+		
 		return null;
 	}
 	

@@ -6,16 +6,22 @@ package org.eclipse.jface.text.source;
  */
 
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.DefaultUndoManager;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
+import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
@@ -33,8 +39,6 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  *
  * @see ISourceViewer
  */
-
-
 public class SourceViewerConfiguration {
 	
 	
@@ -185,6 +189,35 @@ public class SourceViewerConfiguration {
 	 * @return a text hover or <code>null</code> if no hover support should be installed
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		return null;
+	}
+	
+	/**
+	 * Returns the information control creator. The creator is a factory creating information
+	 * controls for the given source viewer. This implementation always returns a creator for
+	 * <code>DefaultInformationControl</code> instances.
+	 * 
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return the information control creator or <code>null</code> if no information support should be installed
+	 */
+	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent);
+			}
+		};
+	}
+	
+	/**
+	 * Returns the information presenter which will determine and shown
+	 * information requested for the current cursor position. This implementation
+	 * always returns <code>null</code>.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return an information presenter <code>null</code> if  no information
+	 * 		presenter should be installed
+	 */
+	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		return null;
 	}
 	

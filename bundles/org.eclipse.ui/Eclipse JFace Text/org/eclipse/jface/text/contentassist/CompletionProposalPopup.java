@@ -11,6 +11,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -36,7 +37,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	
 	private ITextViewer fViewer;
 	private ContentAssistant fContentAssistant;
-	private AdditionalInfoPopup fAdditionalInfoPopup;
+	private AdditionalInfoController fAdditionalInfoController;
 	private int fListenerCount= 0;
 
 	private PopupCloser fPopupCloser= new PopupCloser();
@@ -46,10 +47,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private boolean fIgnoreConsumedEvents= false;
 	private String fLineDelimiter= null;
 
-	public CompletionProposalPopup(ContentAssistant contentAssistant, ITextViewer viewer, AdditionalInfoPopup presenter) {
+	public CompletionProposalPopup(ContentAssistant contentAssistant, ITextViewer viewer, AdditionalInfoController infoController) {
 		fContentAssistant= contentAssistant;
 		fViewer= viewer;
-		fAdditionalInfoPopup= presenter;
+		fAdditionalInfoController= infoController;
 	}
 
 	public String showProposals(final boolean beep) {
@@ -66,9 +67,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					createProposalSelector();
 					setProposals(proposals);
 					displayProposals();
-					
-					fAdditionalInfoPopup.install(fProposalInput, fViewer, fProposalShell, fProposalTable);
-				
+									
 				} else if (beep) 
 					styledText.getDisplay().beep();
 			}
@@ -96,7 +95,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fProposalShell.setSize(300, fProposalTable.getItemHeight() * 10);
 		fProposalTable.setBounds(fProposalShell.getClientArea());
-
+		
+		Color c= fContentAssistant.getProposalSelectorBackground();
+		if (c == null)
+			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		fProposalTable.setBackground(c);
+		
+		c= fContentAssistant.getProposalSelectorForeground();
+		if (c == null)
+			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		fProposalTable.setForeground(c);
+		
 		fProposalTable.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 			}
@@ -108,6 +117,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		});
 
 		fPopupCloser.install(fContentAssistant, fProposalTable);
+		
+		fAdditionalInfoController.install(fProposalTable);
 
 		fProposalTable.setHeaderVisible(false);
 		fContentAssistant.addToLayout(this, fProposalShell, ContentAssistant.LayoutManager.LAYOUT_PROPOSAL_SELECTOR);
@@ -178,6 +189,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				if (p.getImage() != null)
 					item.setImage(p.getImage());
 				item.setText(p.getDisplayString());
+				item.setData(p);
 			}
 
 			Point currentLocation= fProposalShell.getLocation();
@@ -185,7 +197,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if ((newLocation.x < currentLocation.x && newLocation.y == currentLocation.y) || newLocation.y < currentLocation.y) 
 				fProposalShell.setLocation(newLocation);
 
-			fProposalTable.select(0);
+			selectProposal(0);
 			fProposalTable.setRedraw(true);
 		}
 	}
@@ -201,6 +213,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void displayProposals() {
 		fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR);
 		fProposalShell.setVisible(true);
+		selectProposal(0);
 	}
 	
 	public boolean verifyKey(VerifyEvent e) {
@@ -259,8 +272,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 					return true;
 			}
 			
-			fProposalTable.setSelection(newSelection);
-			fProposalTable.showSelection();
+			selectProposal(newSelection);
+			
 			e.doit= false;
 			return false;
 
@@ -270,6 +283,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 			filterProposal();
 		}
 		return true;
+	}
+	
+	private void selectProposal(int index) {
+		fProposalTable.setSelection(index);
+		fProposalTable.showSelection();
+		fAdditionalInfoController.handleTableSelectionChanged();
 	}
 	
 	public void processEvent(VerifyEvent event) {
