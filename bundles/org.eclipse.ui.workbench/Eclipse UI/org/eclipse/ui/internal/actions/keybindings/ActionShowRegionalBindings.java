@@ -15,15 +15,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.SortedSet;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
-public class ActionShowRegionalBindings extends org.eclipse.jface.action.Action
-	implements IWorkbenchWindowActionDelegate {
+public class ActionShowRegionalBindings extends org.eclipse.jface.action.Action {
 
 	public ActionShowRegionalBindings() {
 		super(WorkbenchMessages.getString("ActionShowRegionalBindings.text")); //$NON-NLS-1$
@@ -31,13 +26,7 @@ public class ActionShowRegionalBindings extends org.eclipse.jface.action.Action
 		//WorkbenchHelp.setHelp(this, IHelpContextIds.ACTION_SHOW_REGIONAL_BINDINGS);
 	}
 
-	public void dispose() {
-	}
-
-	public void init(IWorkbenchWindow window) {
-	}	
-
-	public void run(IAction action) {
+	public void run() {
 		XMLMemento xmlMemento = XMLMemento.createWriteRoot("regionalBindingSet");
 		SortedSet regionalBindingSet = Registry.getInstance().getRegionalBindingSet();
 		KeyManager.writeRegionalBindingSet(xmlMemento, regionalBindingSet);
@@ -51,7 +40,4 @@ public class ActionShowRegionalBindings extends org.eclipse.jface.action.Action
 		} catch (IOException eIO) {			
 		}
 	}	
-
-	public void selectionChanged(IAction action, ISelection selection) {	
-	}
 }

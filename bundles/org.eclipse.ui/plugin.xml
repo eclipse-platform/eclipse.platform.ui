@@ -78,13 +78,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.actionDefinitions">
-		<!--
-      <actionDefinition
-            name="%ActionDefinition.showRegionalBindings.name"
-            description="%ActionDefinition.showRegionalBindings.description"
-            id="org.eclipse.ui.showRegionalBindings">
-      </actionDefinition>
-      	-->
       <actionDefinition
             name="%ActionDefinition.newWizard.name"
             description="%ActionDefinition.newWizard.description"
@@ -1796,21 +1789,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
-      <!--
-      <actionSet
-            label="%KeyBindingsActionSet.label"
-            description="%KeyBindingsActionSet.description"
-            visible="true"
-            id="org.eclipse.ui.KeyBindingsActionSet">
-         <action
-               definitionId="org.eclipse.ui.showRegionalBindings"
-               label="%Action.showRegionalBindings.label"
-               class="org.eclipse.ui.internal.actions.keybindings.ActionShowRegionalBindings"
-               menubarPath="help/"
-               id="org.eclipse.ui.action.showRegionalBindings">
-         </action>
-      </actionSet>
-      -->
       <actionSet
             label="%NavigateActionSet.label"
             description="%NavigateActionSet.description"
