@@ -27,6 +27,8 @@ public class StatusLineManager extends ContributionManager implements IStatusLin
 	 * creation and after disposal.
 	 */
 	private StatusLine statusLine = null;
+	
+	private boolean enabledAllowed = true;
 /**
  * Creates a new status line manager.
  * Use the <code>createControl</code> method to create the 
@@ -116,6 +118,7 @@ public void setMessage(Image image, String message) {
 	if (statusLineExist())
 		statusLine.setMessage(image, message);
 }
+
 /**
  * Returns whether the status line control is created
  * and not disposed.
@@ -136,13 +139,10 @@ public void update(boolean force) {
 	if (isDirty() || force) {
 		
 		if (statusLineExist()) {
-
 			statusLine.setRedraw(false);
 	
 //			if (DEBUG) System.out.println("update:");
-
 			if (false) {	// non-incremental update
-
 				Control ws[]= statusLine.getChildren();
 				for (int i= 0; i < ws.length; i++) {
 					Control w= ws[i];
@@ -153,12 +153,19 @@ public void update(boolean force) {
 					}
 				}
 				
+				int oldChildCount = statusLine.getChildren().length;
 				IContributionItem[] items= getItems();
 				for (int i = 0; i < items.length; ++i) {
 					IContributionItem ci= items[i];
 					if (ci.isVisible()) {						
 						ci.fill(statusLine);
 //						if (DEBUG) System.out.println("  added item: " + ci);
+						// associate controls with contribution item
+						Control[] newChildren = statusLine.getChildren();
+						for (int j = oldChildCount; j < newChildren.length; j++) {
+							newChildren[j].setData(ci);
+						}
+						oldChildCount = newChildren.length;							
 					}
 				}
 				
@@ -171,7 +178,6 @@ public void update(boolean force) {
 					if (ci.isVisible())
 						ht.put(ci, ci);
 				}
-
 				// remove obsolete (removed or non active)
 				Control ws[]= statusLine.getChildren();
 				for (int i= 0; i < ws.length; i++) {
@@ -184,18 +190,17 @@ public void update(boolean force) {
 						}
 					}
 				}
-
 				// add new
 				IContributionItem src, dest;
 				ws= statusLine.getChildren();
 				int srcIx= 2;
 				int destIx= 0;
+				int oldChildCount = ws.length;
 				for (int i = 0; i < items.length; ++i) {
 					src= (IContributionItem) items[i];
 					
 					if (! src.isVisible())	// if not active skip this one
 						continue;	// we don't bounce the destIx!
-
 					// get corresponding item in SWT widget
 					if (srcIx < ws.length)
 						dest= (IContributionItem) ws[srcIx].getData();
@@ -209,6 +214,12 @@ public void update(boolean force) {
 						// src is a new one: insert it at next position
 						src.fill(statusLine);
 					//	if (DEBUG) System.out.println("  added at " + destIx + ": ");
+						// associate controls with contribution item
+						Control[] newChildren = statusLine.getChildren();
+						for (int j = oldChildCount; j < newChildren.length; j++) {
+							newChildren[j].setData(src);
+						}
+						oldChildCount = newChildren.length;
 					}
 					destIx++;
 				}
