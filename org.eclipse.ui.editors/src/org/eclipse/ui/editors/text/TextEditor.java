@@ -451,7 +451,7 @@ public class TextEditor extends StatusTextEditor {
 	private final static String PRINT_MARGIN_COLUMN= TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
 
 	private IOverviewRuler fOverviewRuler;
-	private IAnnotationAccess fAnnotationAccess= new AnnotationAccess();
+	private IAnnotationAccess fAnnotationAccess;
 	private SourceViewerDecorationSupport fSourceViewerDecorationSupport;
 	private LineNumberRulerColumn fLineNumberRulerColumn;
 	
@@ -459,6 +459,7 @@ public class TextEditor extends StatusTextEditor {
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		fAnnotationAccess= createAnnotationAccess();
 		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
 		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
 		fOverviewRuler.addHeaderAnnotationType(AnnotationType.WARNING);
@@ -469,6 +470,14 @@ public class TextEditor extends StatusTextEditor {
 		configureSourceViewerDecorationSupport();
 		
 		return sourceViewer;
+	}
+	
+	/**
+	 * Creates the annotation access for this editor.
+	 * @return the created annotation access
+	 */
+	protected IAnnotationAccess createAnnotationAccess() {
+		return new AnnotationAccess();
 	}
 
 	private void configureSourceViewerDecorationSupport() {
