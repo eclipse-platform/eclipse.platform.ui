@@ -23,6 +23,9 @@
 		/>
 		<copy file="plugin.xml" todir="${dest}"/>
 		<copy file="plugin.properties" todir="${dest}"/>
+        <copy todir="${dest}/icons">
+            <fileset dir="icons" /> 
+        </copy>
 		<zip zipfile="${dest}/refuisrc.zip">
 		    <fileset dir="src" />
   		</zip>		
