@@ -784,7 +784,7 @@ public class SyncElementTest extends EclipseTest {
 		// (Special behavior is provider by the CVS move/delete hook but this is not part of CVS core)
 		project.getFolder("folder1").delete(false, false, null);
 		ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(project.getFolder("folder1"));
-		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged());
+		assertTrue("Deleted folder not in proper state", ! folder.exists() && folder.isManaged() && folder.isCVSFolder());
 		
 		// The files should show up as outgoing deletions
 		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);

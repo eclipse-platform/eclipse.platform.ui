@@ -18,7 +18,7 @@
 <runtime>
    <library name="teamui.jar">
       <export name="*"/>
-      <packages prefixes="org.eclipse.team.internal.ui"/>
+      <packages prefixes="org.eclipse.team.ui, org.eclipse.team.internal.ui"/>
    </library>
 </runtime>
 
