@@ -116,8 +116,8 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 			return false;
 		}
 		
-		// If the resource is a derived resource, it is ignored
-		if (resource.isDerived()) {
+		// If the resource is a derived or linked resource, it is ignored
+		if (resource.isDerived() || resource.isLinked()) {
 			return true;
 		}
 		

@@ -152,9 +152,9 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		
 		monitor.beginTask(null, 100);
 		try {
-			if (!ensureCheckedOut(folder, tree, Policy.subMonitorFor(monitor, 30))) return true;
 			final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
 			if (cvsFolder.isManaged()) {
+				if (!ensureCheckedOut(folder, tree, Policy.subMonitorFor(monitor, 30))) return true;
 				EclipseSynchronizer.getInstance().run(new ICVSRunnable() {
 					public void run(IProgressMonitor monitor) throws CVSException {
 						try {
@@ -223,10 +223,10 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		
 		monitor.beginTask(null, 100);
 		try {
-			if (!ensureCheckedOut(source, tree, Policy.subMonitorFor(monitor, 30))) return true;
-			if (!ensureCheckedOut(destination, tree, Policy.subMonitorFor(monitor, 10))) return true;
 			final ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(source);
 			if (cvsFolder.isManaged()) {
+				if (!ensureCheckedOut(source, tree, Policy.subMonitorFor(monitor, 30))) return true;
+				if (!ensureCheckedOut(destination, tree, Policy.subMonitorFor(monitor, 10))) return true;
 				EclipseSynchronizer.getInstance().run(new ICVSRunnable() {
 					public void run(IProgressMonitor monitor) throws CVSException {
 						try {
