@@ -64,6 +64,18 @@
    <!-- ========================================================================== -->
    <extension-point id="contexts" name="%contexts_extention_point_name"/>
 
+   <!-- ========================================================================== -->
+   <!--   </extension>                                                             -->
+   <!--       	<config class="com.xyzCompany.xyzAppServerImpl"/>                   -->
+   <!--   <extension point="org.eclipse.help.app-server">                          -->
+   <!-- Sample usage:                                                              -->
+   <!-- Extension Implementation: must implement org.eclipse.help.IAppServer       -->
+   <!--          Only one app server can be registered to the platform.            -->
+   <!-- Purpose: Extension point for configuring an app server (servlet engine).   -->
+   <!-- Extension point: org.eclipse.help.app-server                               -->
+   <!-- ========================================================================== -->
+   <extension-point id="app-server" name="%app_server" />
+   
 	<extension point="org.eclipse.core.runtime.urlHandlers"> 
 		<handler protocol="help" class="org.eclipse.help.internal.protocols.help.Handler"/> 
 	</extension> 
