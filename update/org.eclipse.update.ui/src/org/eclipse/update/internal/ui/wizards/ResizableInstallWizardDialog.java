@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.operations.*;
 
 public class ResizableInstallWizardDialog extends WizardDialog {
 	private String title;
@@ -34,7 +36,6 @@ public class ResizableInstallWizardDialog extends WizardDialog {
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	public void create() {
-		// TODO Auto-generated method stub
 		super.create();
 		
 		getShell().setText(title);
@@ -46,6 +47,16 @@ public class ResizableInstallWizardDialog extends WizardDialog {
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			ErrorDialog.openError(
+					UpdateUI.getActiveWorkbenchShell(),
+					null,
+					null,
+					status);
+			return IDialogConstants.ABORT_ID;
+		}
+		
 		int returnValue = super.open();
 		
 		if (returnValue == IDialogConstants.OK_ID)
