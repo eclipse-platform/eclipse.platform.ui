@@ -12,8 +12,8 @@ import java.util.Vector;
  * <p>
  * Version identifier. In its string representation, 
  * it consists of up to 4 tokens separated by decimal point.
- * The first 3 tokens are integer numbers, the last token
- * is an uninterpreted string (no whitespace characters allowed).
+ * The first 3 tokens are positive integer numbers, the last token
+ * is an uninterpreted string.
  * For example, the following are valid version identifiers 
  * (as strings):
  * <ul>
@@ -70,7 +70,8 @@ public Version(int major, int minor, int service) {
  * @param major major component of the version identifier
  * @param minor minor component of the version identifier
  * @param service service update component of the version identifier
- * @param qualoifier component of the version identifier
+ * @param qualifier component of the version identifier. Qualifier
+ * characters that are not a letter or a digit are replaced.
  * @since 2.0 
  */
 
@@ -84,7 +85,7 @@ public Version(int major, int minor, int service, String qualifier) {
 	this.major = major;
 	this.minor = minor;
 	this.service = service;
-	this.qualifier = removeWhiteSpace(qualifier);
+	this.qualifier = verifyQualifier(qualifier);
 }
 
 /**
@@ -102,7 +103,8 @@ public Version(int major, int minor, int service, String qualifier) {
  * </ul>
  * </p>
  * 
- * @param versionId string representation of the version identifier
+ * @param versionId string representation of the version identifier.
+ * Qualifier characters that are not a letter or a digit are replaced.
  * @since 2.0 
  */
 
@@ -122,7 +124,6 @@ public Version(String versionId) {
 		String s = versionId.trim();
 	
 		StringTokenizer st = new StringTokenizer(s, SEPARATOR);
-		Integer token;
 		Vector elements = new Vector(4);
 
 		while(st.hasMoreTokens()) {
@@ -132,7 +133,7 @@ public Version(String versionId) {
 		if (elements.size()>=1) this.major = (new Integer((String)elements.elementAt(0))).intValue();
 		if (elements.size()>=2) this.minor = (new Integer((String)elements.elementAt(1))).intValue();
 		if (elements.size()>=3) this.service = (new Integer((String)elements.elementAt(2))).intValue();
-		if (elements.size()>=4) this.qualifier = removeWhiteSpace((String)elements.elementAt(3));
+		if (elements.size()>=4) this.qualifier = verifyQualifier((String)elements.elementAt(3));
 		
 	} catch (Exception e) { // use default version 0.0.0
 	}
@@ -248,12 +249,12 @@ public String toString() {
 	return s;
 }
 
-private String removeWhiteSpace(String s) {
+private String verifyQualifier(String s) {
 	char[] chars = s.trim().toCharArray();
 	boolean whitespace = false;
 	for(int i=0; i<chars.length; i++) {
-		if (Character.isWhitespace(chars[i])) {
-			chars[i] = '_';
+		if (!Character.isLetterOrDigit(chars[i])) {
+			chars[i] = '-';
 			whitespace = true;
 		}
 	}
