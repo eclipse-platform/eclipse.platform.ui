@@ -80,6 +80,15 @@ public class AntTaskNode extends AntElementNode {
 	}
 	
 	/**
+	 * Returns the reference id for this task or <code>null</code>
+	 * if it has no reference id.
+	 * @return The reference id for this task
+	 */
+	public String getId() {
+		return fId;
+	}
+	
+	/**
 	 * Configures the associated task if required.
 	 * Allows subclasses to do specific configuration (such as executing the task) by
 	 * calling <code>nodeSpecificConfigure</code>

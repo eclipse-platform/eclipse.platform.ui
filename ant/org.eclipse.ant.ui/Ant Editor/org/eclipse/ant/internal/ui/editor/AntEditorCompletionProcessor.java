@@ -364,13 +364,22 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		if (refIds.isEmpty()) {
 			return NO_PROPOSALS;
 		}
-			
+		AntElementNode node= antModel.getNode(cursorPosition, false);
+		while (node.getParentNode() instanceof AntTaskNode) {
+			node= node.getParentNode();
+		}
+		String id= null;
+		if (node instanceof AntTaskNode) {
+			id= ((AntTaskNode)node).getId();
+		}
 		List proposals= new ArrayList(refIds.size());
 		int i= 0;
+		String refId;
+		ICompletionProposal proposal;
 		for (Iterator iter = refIds.iterator(); iter.hasNext(); i++) {
-			String refId = (String) iter.next();
-			if (prefix.length() == 0 || refId.toLowerCase().startsWith(prefix)) {
-				ICompletionProposal proposal = new AntCompletionProposal(refId, cursorPosition - prefix.length(), prefix.length(), refId.length(), null, refId, null, AntCompletionProposal.TASK_PROPOSAL);
+			refId= (String) iter.next();
+			if (!refId.equals(id) && (prefix.length() == 0 || refId.toLowerCase().startsWith(prefix))) {
+				proposal= new AntCompletionProposal(refId, cursorPosition - prefix.length(), prefix.length(), refId.length(), null, refId, null, AntCompletionProposal.TASK_PROPOSAL);
 				proposals.add(proposal);
 			}
 		}

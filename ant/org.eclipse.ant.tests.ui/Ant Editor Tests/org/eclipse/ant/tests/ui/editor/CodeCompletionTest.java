@@ -596,6 +596,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	//for sure should have project.class.path and project.class.path2
     	assertTrue(proposals.length >= 2);
     	assertContains("project.class.path", proposals);
+    	assertDoesNotContain("project.class.path2", proposals);
     }
 
 }
