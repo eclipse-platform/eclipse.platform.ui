@@ -29,13 +29,14 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 //@issue illegal reference to org.eclipse.ui.internal.dialogs.WorkbenchWizardElement
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  *	Instances can launch arbitrary resource creation wizards
  *	that have been marked as being available as workbench shortcut
  *	items
  */
-public class NewWizardShortcutAction extends Action {
+public class NewWizardShortcutAction extends Action implements IPluginContribution {
 	private WorkbenchWizardElement wizardElement;
 	private IWorkbenchWindow window;
 	/**
@@ -95,5 +96,23 @@ public class NewWizardShortcutAction extends Action {
 		dialog.create();
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD_SHORTCUT);
 		dialog.open();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 */
+	public boolean fromPlugin() {		
+		return wizardElement.fromPlugin();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return wizardElement.getLocalId();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {		
+		return wizardElement.getPluginId();
 	}
 }

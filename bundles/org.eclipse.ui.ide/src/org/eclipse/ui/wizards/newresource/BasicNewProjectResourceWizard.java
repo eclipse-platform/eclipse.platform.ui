@@ -15,7 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
@@ -32,12 +34,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -47,15 +51,15 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.MessageDialogWithToggle;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
 /**
@@ -379,15 +383,22 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	// Map perspective id to descriptor.
 	IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 	IPerspectiveDescriptor finalPersp = reg.findPerspectiveWithId(finalPerspId);
-	if (finalPersp != null) {
-		// @issue IWorkbenchConstants is internal 
-		//Enable the role if required.
-		IObjectActivityManager activityManager = 
-		(/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).
-				getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
-		if (activityManager != null) {
-			activityManager.setEnablementFor(finalPerspId, true);
-		}
+    // @issue IPluginContribution and WorkbenchActivityHelper are internal
+	if (finalPersp != null && finalPersp instanceof IPluginContribution) {
+        IPluginContribution contribution = (IPluginContribution) finalPersp;
+        if (contribution.fromPlugin()) {            
+            IIdentifier identifier = PlatformUI
+                .getWorkbench()
+                .getActivityManager()
+                .getIdentifier(
+                        WorkbenchActivityHelper.createUnifiedId(contribution));
+            Set idActivities = identifier.getActivityIds();
+            if (!idActivities.isEmpty()) {
+                Set enabledIds = new HashSet(PlatformUI.getWorkbench().getActivityManager().getEnabledActivityIds());
+                if (enabledIds.addAll(idActivities)) 
+                	PlatformUI.getWorkbench().setEnabledActivityIds(enabledIds);
+            }
+        }
 	}
 	else {
 		IDEWorkbenchPlugin.log("Unable to find persective " //$NON-NLS-1$

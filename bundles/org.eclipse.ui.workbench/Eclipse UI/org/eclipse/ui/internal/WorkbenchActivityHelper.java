@@ -22,11 +22,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.internal.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.IPluginContribution;
-import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 
 /**
  * Utility class that manages the preservation of active activities as well as
@@ -124,8 +121,6 @@ public class WorkbenchActivityHelper {
             IMutableActivityManager activityManager = (IMutableActivityManager) PlatformUI.getWorkbench().getActivityManager();
             activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
         }
-
-        createNewWizardMappings();
     }
     
     /**
@@ -154,26 +149,6 @@ public class WorkbenchActivityHelper {
 	 */
     public void shutdown() {
         saveEnabledStates();
-    }
-
-    /**
-	 * Create the mappings for the new wizard object activity manager. Objects
-	 * of interest in this manager are Strings (wizard IDs).
-	 */
-    private void createNewWizardMappings() {
-        NewWizardsRegistryReader reader = new NewWizardsRegistryReader(false);
-        WizardCollectionElement wizardCollection = reader.getWizardElements();
-        IObjectActivityManager manager = (/* TODO bad cast */ (Workbench) PlatformUI.getWorkbench()).getObjectActivityManager(IWorkbenchConstants.PL_NEW, true);
-        Object[] wizards = flattenWizards(wizardCollection);
-        for (int i = 0; i < wizards.length; i++) {
-            WorkbenchWizardElement element = (WorkbenchWizardElement) wizards[i];
-            manager.addObject(
-                element.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(),
-                element.getID(),
-                element.getID());
-
-        }
-        manager.applyPatternBindings();
     }
     
     /**

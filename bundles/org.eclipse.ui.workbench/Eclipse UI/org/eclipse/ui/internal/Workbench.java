@@ -93,13 +93,6 @@ import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
-import org.eclipse.ui.progress.IProgressService;
-
-import org.eclipse.ui.internal.activities.IObjectActivityManager;
-import org.eclipse.ui.internal.activities.ObjectActivityManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
@@ -108,6 +101,10 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -1858,19 +1855,6 @@ public final class Workbench implements IWorkbench {
 	public IElementFactory getElementFactory(String factoryId) {
 		Assert.isNotNull(factoryId);
 		return WorkbenchPlugin.getDefault().getElementFactory(factoryId);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbench#getActivityManager(java.lang.String,
-	 *      boolean)
-	 */
-	public IObjectActivityManager getObjectActivityManager(String id, boolean create) {
-		//		if(RoleManager.getInstance().isFiltering())
-		return ObjectActivityManager.getManager(id, create);
-		//		else
-		//		return null;
 	}
 
 	/*

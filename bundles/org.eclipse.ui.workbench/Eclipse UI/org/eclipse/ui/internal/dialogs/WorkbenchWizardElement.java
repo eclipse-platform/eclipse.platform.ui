@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IPluginContribution;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
@@ -23,7 +24,7 @@ import org.eclipse.ui.model.WorkbenchAdapter;
 /**
  *	Instances represent registered wizards.
  */
-public class WorkbenchWizardElement extends WorkbenchAdapter implements IAdaptable {
+public class WorkbenchWizardElement extends WorkbenchAdapter implements IAdaptable, IPluginContribution {
 	private String id;
 	private String name;
 	private ImageDescriptor imageDescriptor;
@@ -202,5 +203,25 @@ private IStructuredSelection convertToResources(IStructuredSelection originalSel
 //	}
 //	
 //	return new StructuredSelection(result.toArray());						// all converted fine, answer new selection
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+ */
+public boolean fromPlugin() {	
+	return configurationElement != null;
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+ */
+public String getLocalId() {
+	return getID();
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+ */
+public String getPluginId() {
+	return fromPlugin() ? configurationElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier() : null;
 }
 }
