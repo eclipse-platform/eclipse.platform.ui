@@ -33,6 +33,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -552,7 +554,17 @@ public abstract class AbstractUIPlugin extends Plugin {
      * @see #getImageRegistry
      */
     protected ImageRegistry createImageRegistry() {
-        return new ImageRegistry(Display.getDefault());
+    	
+    	//If we are in the UI Thread use that
+    	if(Display.getCurrent() != null)
+    		 return new ImageRegistry(Display.getCurrent());
+    	
+    	if(PlatformUI.isWorkbenchRunning())
+    		return new ImageRegistry(PlatformUI.getWorkbench().getDisplay());
+    	
+    	//Invalid thread access if it is not the UI Thread 
+    	//and the workbench is not created.
+    	throw new SWTError(SWT.ERROR_THREAD_INVALID_ACCESS);
     }
     
     /**
