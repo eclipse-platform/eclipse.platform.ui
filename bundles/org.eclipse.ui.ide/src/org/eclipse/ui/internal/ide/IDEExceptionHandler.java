@@ -12,12 +12,16 @@ package org.eclipse.ui.internal.ide;
 
 import java.text.MessageFormat;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+
 import org.eclipse.ui.application.IWorkbenchConfigurer;
+
 import org.eclipse.ui.internal.ide.dialogs.InternalErrorDialog;
 
 /**
@@ -144,7 +148,10 @@ public final class IDEExceptionHandler {
 			Throwable detail = internalError;
 			if (!Policy.DEBUG_OPEN_ERROR_DIALOG)
 				detail = null;
-			return InternalErrorDialog.openQuestion(null, IDEWorkbenchMessages.getString("Internal_error"), msg + MSG_FATAL_ERROR, detail, 1); //$NON-NLS-1$
+			return InternalErrorDialog.openQuestion(
+					null, IDEWorkbenchMessages.getString("Internal_error"),//$NON-NLS-1$
+					MessageFormat.format(MSG_FATAL_ERROR, new Object[] {msg}), 
+					detail, 1); 
 		} catch (Throwable th) {
 			// Workbench may be in such bad shape (no OS handles left, out of memory, etc)
 			// that is cannot show a message to the user. Just bail out now.
@@ -169,7 +176,7 @@ public final class IDEExceptionHandler {
 				null, 
 				message,
 				detail, 
-				InternalErrorDialog.QUESTION,
+				MessageDialog.QUESTION,
 				labels,
 				defaultIndex);
 
