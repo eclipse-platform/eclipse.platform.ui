@@ -41,11 +41,18 @@ public class WidgetHider {
 					return;
 				}
 				
-				Point position = display.getCursorLocation();
+				if (event.widget instanceof Control) {
 				
-				Rectangle bounds = DragUtil.getDisplayBounds(toHide);
-				
-				toHide.setVisible(bounds.contains(position));
+					Rectangle displayWidgetBounds = DragUtil.getDisplayBounds(((Control)event.widget));
+					
+					Point position = new Point(event.x, event.y);
+					position.x += displayWidgetBounds.x;
+					position.y += displayWidgetBounds.y;
+					
+					Rectangle bounds = DragUtil.getDisplayBounds(toHide);
+					
+					toHide.setVisible(bounds.contains(position));
+				}
 			}
 		}
 	};

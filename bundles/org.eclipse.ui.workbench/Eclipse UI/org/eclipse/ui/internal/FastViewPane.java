@@ -402,6 +402,7 @@ class FastViewPane {
 	 */
 	public void hideFastViewSash() {
 		if (fastViewSash != null) {
+			hider.setEnabled(false);
 			fastViewSash.setBounds(new Rectangle(0, 0, 0, 0));
 		}
 	}
@@ -410,10 +411,12 @@ class FastViewPane {
 	 * Hides the currently visible fastview.
 	 */
 	public void hideView() {
-
+		
 		if (currentPane == null) {
 			return;
 		}
+		
+		hider.setEnabled(false);
 		
 		clientComposite.removeListener(SWT.Resize, resizeListener);
 		
