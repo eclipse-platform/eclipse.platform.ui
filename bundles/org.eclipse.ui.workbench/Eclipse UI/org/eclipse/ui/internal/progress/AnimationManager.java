@@ -512,31 +512,5 @@ public class AnimationManager {
 		else
 			return animatedData[0].width;
 	}
-	/**
-	 * Return whether or not details are being shown.
-	 */
-	boolean showingDetails() {
-		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-				IPreferenceConstants.SHOW_FLOATING_PROGRESS);
-	}
-	/**
-	 * Toggle the floating windows for the receiver.
-	 */
-	public void toggleFloatingWindow() {
-		boolean detailsShowing = showingDetails();
-		
-		//Only both with windows if there are any
-		if (animated) {
-			AnimationItem[] animationItems = getAnimationItems();
-			for (int i = 0; i < animationItems.length; i++) {
-				AnimationItem item = animationItems[i];
-				if (detailsShowing)
-					item.closeFloatingWindow();
-				else
-					item.openFloatingWindow();
-			}
-		}
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
-				IPreferenceConstants.SHOW_FLOATING_PROGRESS, !detailsShowing);
-	}
+	
 }

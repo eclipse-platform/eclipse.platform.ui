@@ -150,9 +150,6 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseHover(MouseEvent e) {
-				//Abort if we are already showing the window
-				if (AnimationManager.getInstance().showingDetails())
-					return;
 				openFloatingWindow();
 			}
 		});
@@ -275,16 +272,9 @@ public class AnimationItem {
 	 * The animation has begun.
 	 */
 	void animationStart() {
-		if (AnimationManager.getInstance().showingDetails() && isActiveWorkbenchItem())
-			openFloatingWindow();
 		animationContainer.animationStart();
 	}
-	/**
-	 * Check to see if this workbench is the main workbench.
-	 */
-	private boolean isActiveWorkbenchItem() {
-		return (window == window.getWorkbench().getActiveWorkbenchWindow());
-	}
+	
 	/**
 	 * The animation has ended.
 	 */
