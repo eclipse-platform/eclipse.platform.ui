@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 class FullDecoratorDefinition extends DecoratorDefinition {
 
-	private ILabelDecorator decorator;
+	ILabelDecorator decorator;
 
 	/**
 	 * Create a new instance of the receiver with the
