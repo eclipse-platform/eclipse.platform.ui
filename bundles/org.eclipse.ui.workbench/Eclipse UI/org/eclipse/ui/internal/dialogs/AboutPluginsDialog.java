@@ -280,7 +280,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
             return false;
 
         AboutBundleData bundleInfo = bundleInfos[vendorInfo.getSelectionIndex()];
-        URL infoURL = getMoreInfoURL(bundleInfo);
+        URL infoURL = getMoreInfoURL(bundleInfo, false);
 
         // only report ini problems if the -debug command line argument is used
         if (infoURL == null && WorkbenchPlugin.DEBUG)
@@ -315,7 +315,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         if (bundleInfo == null)
             return;
 
-        if (!openBrowser(getMoreInfoURL(bundleInfo)))
+        if (!openBrowser(getMoreInfoURL(bundleInfo, true)))
             MessageDialog.openError(getShell(), WorkbenchMessages.AboutPluginsDialog_errorTitle, //$NON-NLS-1$
                     NLS.bind(WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,PLUGININFO, bundleInfo.getId()));
     }
@@ -403,21 +403,38 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      * Return an url to the plugin's about.html file (what is shown when "More info" is
      * pressed) or null if no such file exists.  The method does nl lookup to allow for
      * i18n.
-     * @return the url
+     * 
+     * @param bundleInfo the bundle info
+     * @param makeLocal whether to make the about content local
+     * @return the url or <code>null</code>
      */
-    private URL getMoreInfoURL(AboutBundleData bundleInfo) {
+    private URL getMoreInfoURL(AboutBundleData bundleInfo, boolean makeLocal) {
         Bundle bundle = Platform.getBundle(bundleInfo.getId());
         if (bundle == null)
             return null;
 
         URL aboutUrl = Platform.find(bundle, baseNLPath.append(PLUGININFO), null);
-		if (aboutUrl != null)
+        if (!makeLocal) {
+            return aboutUrl;
+        }
+		if (aboutUrl != null) {
 		    try {
-		        return Platform.resolve(aboutUrl);
+				URL result = Platform.asLocalURL(aboutUrl);
+				try {
+				    // Make local all content in the "about" directory.
+				    // This is needed to handle jar'ed plug-ins.
+				    // See Bug 88240 [About] About dialog needs to extract subdirs.
+					URL about = new URL(aboutUrl, "about"); //$NON-NLS-1$
+					if (about != null)
+						Platform.asLocalURL(about);
+				} catch (IOException e) {
+					// skip the about dir if its not found or there are other problems.
+				}
+				return result;
 		    } catch(IOException e) {
 		        // do nothing
 		    }
-
+        }
 		return null;
     }
 }
