@@ -1,9 +1,9 @@
 /**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
+ * Copyright (c) 2000,2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at http://www.eclipse.
+ * org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -62,8 +62,9 @@ public void testContentIterator() {
 	setupElementTree(tree, n);
 	final Vector elts = new Vector();
 	IElementPathContentVisitor elementContentVisitor = new IElementPathContentVisitor() {
-		public void visitElement(ElementTree tree, IPath elementID, Object info) {
+		public boolean visitElement(ElementTree tree, IPath elementID, Object info) {
 			elts.addElement(elementID);
+			return true;
 		}
 	};
 	new ElementTreeIterator().iterateWithPath(tree, elementContentVisitor, Path.ROOT);
