@@ -516,7 +516,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 			try{
 				StringTokenizer st = new StringTokenizer(v, VER_SEPARATOR);
-				Integer token;
 				ArrayList elements = new ArrayList(4);
 
 				while(st.hasMoreTokens()) {
