@@ -53,6 +53,7 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -174,7 +175,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			return;
 		}
 
-		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).clearCache();
 		if (frame != null) {
 			setDebugModel(frame.getModelIdentifier());
 		}
@@ -230,7 +230,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// add tree viewer
 		TreeViewer vv = new TreeViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		vv.setContentProvider(new VariablesViewContentProvider());
+		vv.setContentProvider(createContentProvider());
 		vv.setLabelProvider(getModelPresentation());
 		vv.setUseHashlookup(true);
 		
@@ -249,10 +249,29 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// listen to selection in debug view
 		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		setEventHandler(new VariablesViewEventHandler(this, vv));
+		setEventHandler(createEventHandler(vv));
 		
 		return vv;
 	}
+	
+	/**
+	 * Creates this view's content provider.
+	 * 
+	 * @return a content provider
+	 */
+	protected IContentProvider createContentProvider() {
+		return new VariablesViewContentProvider();
+	}
+	
+	/**
+	 * Creates this view's event handler.
+	 * 
+	 * @param viewer the viewer associated with this view
+	 * @return an event handler
+	 */
+	protected AbstractDebugEventHandler createEventHandler(Viewer viewer) {
+		return new VariablesViewEventHandler(this, viewer);
+	}	
 	
 	
 	/**
@@ -325,7 +344,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fLastSashWeights = weights;
 	}
 
-	protected void setInitialContent(ISelection selection) {
+	/**
+	 * Initializes the viewer input on creation
+	 */
+	protected void setInitialContent() {
+		ISelection selection = DebugSelectionManager.getDefault().getSelection(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			setViewerInput((IStructuredSelection) selection);
 		}
@@ -390,8 +413,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		updateAction(ITextEditorActionConstants.FIND);
 		
 		// set initial content here, as viewer has to be set
-		ISelection selection = DebugSelectionManager.getDefault().getSelection(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		setInitialContent(selection);
+		setInitialContent();
 	} 
 
 	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {

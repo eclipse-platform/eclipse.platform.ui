@@ -19,6 +19,13 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class VariablesViewContentProvider implements ITreeContentProvider {
 	
+	/**
+	 * A table that maps children to their parent element
+	 * such that this content provider can walk back up the
+	 * parent chain (since values do not know their
+	 * parent).
+	 * Map of <code>IVariable</code> (child) -> <code>IVariable</code> (parent).
+	 */
 	private HashMap fParentCache;
 	
 	/**
@@ -43,9 +50,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				children = ((IVariable)parent).getValue().getVariables();
 			}
 			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					fParentCache.put(children[i], parent);
-				}
+				cache(parent, children);
 				return children;
 			}
 		} catch (DebugException e) {
@@ -61,6 +66,19 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		return getChildren(parent);
 	}
 
+	/**
+	 * Caches the given elememts as children of the given
+	 * parent.
+	 * 
+	 * @param parent parent element
+	 * @param children children elements
+	 */
+	protected void cache(Object parent, Object[] children) {		
+		for (int i = 0; i < children.length; i++) {
+			fParentCache.put(children[i], parent);
+		}		
+	}
+	
 	/**
 	 * @see ITreeContentProvider
 	 */
@@ -78,7 +96,9 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	}
 	
 	protected void clearCache() {
-		fParentCache.clear();
+		if (fParentCache != null) {
+			fParentCache.clear();
+		}
 	}
 	
 	/**
@@ -92,6 +112,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		clearCache();
 	}
 
 }

@@ -23,6 +23,7 @@ import org.eclipse.debug.internal.core.RuntimeProcess;
  * <ul>
  * <li>access to the breakpoint manager</li>
  * <li>access to the launch manager</li>
+ * <li>access to the expression manager</li>
  * <li>access to the registered launcher extensions</li>
  * <li>debug event notification</li>
  * </ul>
@@ -184,6 +185,17 @@ public class DebugPlugin extends Plugin {
 	public ILaunchManager getLaunchManager() {
 		return fLaunchManager;
 	}
+	
+	/**
+	 * Returns the expression manager.
+	 *
+	 * @return the expression manager
+	 * @see IExpressionManager
+	 * @since 2.0
+	 */
+	public IExpressionManager getExpressionManager() {
+		return null;
+	}	
 
 	/**
 	 * Creates proxy launchers for all launcher delegates
