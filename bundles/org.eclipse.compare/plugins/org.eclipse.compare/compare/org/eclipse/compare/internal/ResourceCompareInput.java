@@ -1,6 +1,8 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2003 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  */
 package org.eclipse.compare.internal;
 
@@ -9,7 +11,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.widgets.Composite;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.core.resources.*;
@@ -34,7 +40,8 @@ class ResourceCompareInput extends CompareEditorInput {
 	private IResource fAncestorResource;
 	private IResource fLeftResource;
 	private IResource fRightResource;
-	private DiffTreeViewer fDiffViewer;	
+	private DiffTreeViewer fDiffViewer;
+	private IAction fOpenAction;
 	
 	class MyDiffNode extends DiffNode {
 		
@@ -79,12 +86,42 @@ class ResourceCompareInput extends CompareEditorInput {
 	ResourceCompareInput(CompareConfiguration config) {
 		super(config);
 	}
-		
+			
 	public Viewer createDiffViewer(Composite parent) {
-		Viewer v= super.createDiffViewer(parent);
-		if (v instanceof DiffTreeViewer)
-			fDiffViewer= (DiffTreeViewer) v;
-		return v;
+		fDiffViewer= new DiffTreeViewer(parent, getCompareConfiguration()) {
+			protected void fillContextMenu(IMenuManager manager) {
+				
+				if (fOpenAction == null) {
+					fOpenAction= new Action() {
+						public void run() {
+							handleOpen(null);
+						}
+					};
+					Utilities.initAction(fOpenAction, getBundle(), "action.CompareContents."); //$NON-NLS-1$
+				}
+				
+				boolean enable= false;
+				ISelection selection= getSelection();
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ss= (IStructuredSelection)selection;
+					if (ss.size() == 1) {
+						Object element= ss.getFirstElement();
+						if (element instanceof MyDiffNode) {
+							ITypedElement te= ((MyDiffNode) element).getId();
+							if (te != null)
+								enable= !ITypedElement.FOLDER_TYPE.equals(te.getType());
+						} else
+							enable= true;
+					}
+				}
+				fOpenAction.setEnabled(enable);
+				
+				manager.add(fOpenAction);
+				
+				super.fillContextMenu(manager);
+			}
+		};
+		return fDiffViewer;
 	}
 
 	/**
@@ -246,7 +283,6 @@ class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	private String buildLabel(IResource r) {
-		//return r.getName();
 		String n= r.getFullPath().toString();
 		if (n.charAt(0) == IPath.SEPARATOR)
 			return n.substring(1);

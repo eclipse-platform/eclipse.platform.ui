@@ -1,11 +1,8 @@
 /*
- * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * Copyright (c) 2000, 2003 IBM Corp.  All rights reserved.
  * This file is made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
  */
 package org.eclipse.compare; 
 
@@ -18,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.custom.BusyIndicator;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IPersistableElement;
@@ -26,7 +24,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
