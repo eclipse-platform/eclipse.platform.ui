@@ -449,7 +449,7 @@ public final class InternalPlatform implements IPlatform {
 		if (args == null)
 			return args;
 		allArgs = args;
-		int[] configArgs = new int[args.length];
+		int[] configArgs = new int[100];
 		//need to initialize the first element to something that could not be an index.
 		configArgs[0] = -1;
 		int configArgIndex = 0;
