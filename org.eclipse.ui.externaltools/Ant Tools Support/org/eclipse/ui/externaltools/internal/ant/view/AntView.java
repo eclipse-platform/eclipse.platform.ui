@@ -108,6 +108,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	public static final int VERTICAL_ORIENTATION= SWT.VERTICAL;
 	public static final int HORIZONTAL_ORIENTATION= SWT.HORIZONTAL;
 	public static final int SINGLE_ORIENTATION= SWT.SINGLE;
+	
+	private int lastSplitOrientation= VERTICAL_ORIENTATION;
 
 	/**
 	 * XML tag used to identify an ant project in storage
@@ -634,7 +636,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	public void activateSelectedTargets() {
 		if (sashForm.getMaximizedControl() != null) { //SINGLE ORIENTATION
-			setViewOrientation(VERTICAL_ORIENTATION);
+			setViewOrientation(getLastSplitOrientation());
 		}
 		TreeItem[] items = projectViewer.getTree().getSelection();
 		for (int i = 0; i < items.length; i++) {
@@ -663,9 +665,27 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		} else {
 			if (toggledDetailOnce) {
 				setLastSashWeights(sashForm.getWeights());
+				setLastSplitOrientation(sashForm.getOrientation());
 			}
 			sashForm.setMaximizedControl(projectForm);
 		}
+	}
+	
+	/**
+	 * Sets the current orientation of the sash form, so that the sash form can
+	 * be reset to this orientation at a later time.
+	 */
+	private void setLastSplitOrientation(int orientation) {
+		lastSplitOrientation= orientation;
+	}
+	
+	/**
+	 * Returns the orientation that was in effect the last time both panes were
+	 * visible in the sash form, or the default orientation if both panes have
+	 * not yet been made visible.
+	 */
+	private int getLastSplitOrientation() {
+		return lastSplitOrientation;
 	}
 	
 	/**
