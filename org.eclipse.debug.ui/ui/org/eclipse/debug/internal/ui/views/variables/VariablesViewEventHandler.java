@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.views.variables;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.model.ISuspendResume;
@@ -33,33 +35,10 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 			DebugEvent event = events[i];
 			switch (event.getKind()) {
 				case DebugEvent.SUSPEND:
-					if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-						if (event.getSource() instanceof ISuspendResume) {
-							if (!((ISuspendResume)event.getSource()).isSuspended()) {
-								// no longer suspended
-								return;
-							}
-						}						
-						// Don't refresh everytime an implicit evaluation finishes
-						refresh();
-						if (event.getDetail() == DebugEvent.STEP_END) {
-							getVariablesView().populateDetailPane();
-						}
-						// return since we've done a complete refresh
-						return;
-					}
+					doHandleSuspendEvent(event);
 					break;
 				case DebugEvent.CHANGE:
-					if (event.getDetail() == DebugEvent.STATE) {
-						// only process variable state changes
-						if (event.getSource() instanceof IVariable) {
-							refresh(event.getSource());
-						}
-					} else {
-						refresh();
-						// return since we've done a complete refresh
-						return;
-					}
+					doHandleChangeEvent(event);
 					break;
 				case DebugEvent.RESUME:
 					doHandleResumeEvent(event);
@@ -79,7 +58,7 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 			// Clear existing variables from the view
 			getViewer().setInput(null);
 			// clear the cache of expanded variables for the resumed thread/target
-			getVariablesView().clearExpandedVariables(event.getSource());
+			// getVariablesView().clearExpandedVariables(event.getSource());
 		}
 	}
 
@@ -90,7 +69,39 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	protected void doHandleTerminateEvent(DebugEvent event) {
 		getVariablesView().clearExpandedVariables(event.getSource());
 	}
-
+	
+	/**
+	 * Process a SUSPEND event
+	 */
+	protected void doHandleSuspendEvent(DebugEvent event) {
+		if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+			if (event.getSource() instanceof ISuspendResume) {
+				if (!((ISuspendResume)event.getSource()).isSuspended()) {
+					// no longer suspended
+					return;
+				}
+			}						
+			// Don't refresh everytime an implicit evaluation finishes
+			refresh();
+			if (event.getDetail() == DebugEvent.STEP_END) {
+				getVariablesView().populateDetailPane();
+			}
+		}		
+	}
+	
+	/**
+	 * Process a CHANGE event
+	 */
+	protected void doHandleChangeEvent(DebugEvent event) {
+		if (event.getDetail() == DebugEvent.STATE) {
+			// only process variable state changes
+			if (event.getSource() instanceof IVariable) {
+				refresh(event.getSource());
+			}
+		} else {
+			refresh();
+		}	
+	}	
 
 	protected VariablesView getVariablesView() {
 		return (VariablesView)getView();
