@@ -78,6 +78,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
         createSpace(composite);
         createOpenModeGroup(composite);
+        
+        applyDialogFont(composite);
 
         return composite;
     }
@@ -112,7 +114,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
                 | GridData.HORIZONTAL_ALIGN_FILL));
-        composite.setFont(parent.getFont());
         return composite;
     }
 
@@ -120,7 +121,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         stickyCycleButton = new Button(composite, SWT.CHECK);
         stickyCycleButton.setText(WorkbenchMessages
                 .getString("WorkbenchPreference.stickyCycleButton")); //$NON-NLS-1$
-        stickyCycleButton.setFont(composite.getFont());
         stickyCycleButton.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.STICKY_CYCLE));
     }
@@ -137,7 +137,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         buttonComposite.setLayoutData(data);
         buttonComposite.setText(WorkbenchMessages
                 .getString("WorkbenchPreference.openMode")); //$NON-NLS-1$
-        buttonComposite.setFont(font);
 
         String label = WorkbenchMessages
                 .getString("WorkbenchPreference.doubleClick"); //$NON-NLS-1$	
@@ -164,7 +163,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                 .getString("WorkbenchPreference.singleClick_SelectOnHover"); //$NON-NLS-1$				
         selectOnHoverButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
         selectOnHoverButton.setText(label);
-        selectOnHoverButton.setFont(font);
         selectOnHoverButton.setEnabled(openOnSingleClick);
         selectOnHoverButton.setSelection(selectOnHover);
         selectOnHoverButton.addSelectionListener(new SelectionAdapter() {
@@ -183,7 +181,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         openAfterDelayButton.setText(label);
         openAfterDelayButton.setEnabled(openOnSingleClick);
         openAfterDelayButton.setSelection(openAfterDelay);
-        openAfterDelayButton.setFont(font);
         openAfterDelayButton.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
@@ -219,7 +216,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
     protected static Button createRadioButton(Composite parent, String label) {
         Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
         button.setText(label);
-        button.setFont(parent.getFont());
         return button;
     }
 
@@ -235,7 +231,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
         combo.setLayoutData(data);
-        combo.setFont(parent.getFont());
         return combo;
     }
 
@@ -252,7 +247,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
     protected static Label createLabel(Composite parent, String text) {
         Label label = new Label(parent, SWT.LEFT);
         label.setText(text);
-        label.setFont(parent.getFont());
         GridData data = new GridData();
         data.horizontalSpan = 1;
         data.horizontalAlignment = GridData.FILL;

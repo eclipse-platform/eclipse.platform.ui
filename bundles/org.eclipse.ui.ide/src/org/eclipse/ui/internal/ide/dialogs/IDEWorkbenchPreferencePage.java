@@ -79,7 +79,9 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         createSaveIntervalGroup(composite);
 
         createSpace(composite);
-        createOpenModeGroup(composite);       
+        createOpenModeGroup(composite);   
+        
+        applyDialogFont(composite);
 
         return composite;
     }
@@ -90,7 +92,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
                 .getString("WorkbenchPreference.savePriorToBuilding")); //$NON-NLS-1$
         autoSaveAllButton.setToolTipText(IDEWorkbenchMessages
                 .getString("WorkbenchPreference.savePriorToBuildingToolTip")); //$NON-NLS-1$
-        autoSaveAllButton.setFont(composite.getFont());
         autoSaveAllButton.setSelection(getIDEPreferenceStore().getBoolean(
                 IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
     }
@@ -101,7 +102,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
                 .getString("WorkbenchPreference.autobuild")); //$NON-NLS-1$
         autoBuildButton.setToolTipText(IDEWorkbenchMessages
                 .getString("WorkbenchPreference.autobuildToolTip")); //$NON-NLS-1$
-        autoBuildButton.setFont(composite.getFont());
         autoBuildButton.setSelection(ResourcesPlugin.getWorkspace()
                 .isAutoBuilding());
     }
@@ -120,7 +120,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         gd.horizontalAlignment = GridData.FILL;
         gd.grabExcessHorizontalSpace = true;
         groupComposite.setLayoutData(gd);
-        groupComposite.setFont(composite.getFont());
 
         saveInterval = new IntegerFieldEditor(
                 IDEInternalPreferences.SAVE_INTERVAL, IDEWorkbenchMessages
