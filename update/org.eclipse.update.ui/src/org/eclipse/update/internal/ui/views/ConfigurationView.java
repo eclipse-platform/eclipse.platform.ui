@@ -508,7 +508,7 @@ public class ConfigurationView
 		
 		propertiesAction =
 			new PropertyDialogAction(
-				UpdateUI.getActiveWorkbenchShell(),
+				getConfigurationWindow().getShell(),
 				treeViewer);
 		WorkbenchHelp.setHelp(
 			propertiesAction,
