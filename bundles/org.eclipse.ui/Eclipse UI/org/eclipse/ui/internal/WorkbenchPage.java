@@ -974,7 +974,7 @@ private boolean isActionSwitchForced(IWorkbenchPart newPart) {
 	if (lastActiveEditor == null)
 		return true;
 		
-	if (lastActiveEditor == newPart)
+	if (lastActiveEditor == newPart && activePart != null)
 		return false;
 		
 	if (newPart instanceof IViewPart)
