@@ -55,16 +55,16 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
      * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
      */
     public void fillActionBars(IActionBars actionBars) {
-        openWithActions.fillActionBars(actionBars);
-        refactorActions.fillActionBars(actionBars);
+        if (openWithActions != null) openWithActions.fillActionBars(actionBars);
+        if (refactorActions != null) refactorActions.fillActionBars(actionBars);
     }
 	
 	/* (non-Javadoc)
      * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
      */
     public void updateActionBars() {
-        openWithActions.updateActionBars();
-        refactorActions.updateActionBars();
+        if (openWithActions != null) openWithActions.updateActionBars();
+        if (refactorActions != null) refactorActions.updateActionBars();
     }
 	
 	/* (non-Javadoc)
@@ -98,7 +98,7 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
      * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
      */
     public void setContext(ActionContext context) {
-        if (openWithActions != null)  openWithActions.setContext(context);
-        if (refactorActions != null)  refactorActions.setContext(context);
+        if (openWithActions != null) openWithActions.setContext(context);
+        if (refactorActions != null) refactorActions.setContext(context);
     }
 }
