@@ -288,6 +288,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		store.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, showDirty.getSelection());
 		
 		CVSDecorator.refresh();
+		
+		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
 

@@ -97,6 +97,7 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 		store.setValue(UIConstants.PREF_ALWAYS_IN_INCOMING_OUTGOING, syncModeButton.getSelection());
+		TeamUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
 	/**

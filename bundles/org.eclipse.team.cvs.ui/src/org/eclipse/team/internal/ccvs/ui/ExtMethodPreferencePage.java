@@ -139,6 +139,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(ICVSUIConstants.PREF_CVS_SERVER, cvsServer.getText());
 		CVSProviderPlugin.getPlugin().setCvsRshCommand(cvsRsh.getText());
 		CVSProviderPlugin.getPlugin().setCvsServer(cvsServer.getText());
+		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return super.performOk();
 	}
 	/*

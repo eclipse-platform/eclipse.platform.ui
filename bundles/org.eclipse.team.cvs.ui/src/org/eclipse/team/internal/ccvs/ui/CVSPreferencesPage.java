@@ -346,6 +346,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators
 		if (! oldKSubst.equals(newKSubst)) CVSDecorator.refresh();
+		
+		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
 
