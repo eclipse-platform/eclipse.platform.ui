@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 
@@ -55,8 +54,9 @@ import org.eclipse.jface.text.TextViewer;
 
 
 /**
- * A vertical ruler column showing graphical representations of  annotations.
+ * A vertical ruler column showing graphical representations of annotations.
  * Will become final. Do not subclass.
+ * 
  * @since 2.0
  */
 public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension {
@@ -167,7 +167,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private IAnnotationModel fModel;
 	/** Cache for the actual scroll position in pixels */
 	private int fScrollPos;
-	/** The drawable for double buffering */
+	/** The buffer for double buffering */
 	private Image fBuffer;
 	/** The internal listener */
 	private InternalListener fInternalListener= new InternalListener();
@@ -365,6 +365,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		return fCanvas;
 	}
 	
+	/**
+	 * Creates a canvas with the given parent.
+	 * 
+	 * @param parent the parent 
+	 * @return the created canvas
+	 */
 	private Canvas createCanvas(Composite parent) {
 		return new Canvas(parent, SWT.NO_BACKGROUND) {
 			/*
@@ -538,7 +544,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 	/**
 	 * Returns the document offset of the upper left corner of the source viewer's
-	 * viewport, possibly including partially visible lines.
+	 * view port, possibly including partially visible lines.
 	 * 
 	 * @return document offset of the upper left corner including partially visible lines
 	 */
@@ -569,10 +575,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	}
 	
 	/**
-	 * Returns the first invisible document offset of the lower right corner of the source viewer's viewport,
+	 * Returns the first invisible document offset of the lower right corner of the source viewer's view port,
 	 * possibly including partially visible lines.
 	 * 
-	 * @return the first invisible document offset of the lower right corner of the viewport
+	 * @return the first invisible document offset of the lower right corner of the view port
 	 */
 	private int getExclusiveBottomIndexEndOffset() {
 		

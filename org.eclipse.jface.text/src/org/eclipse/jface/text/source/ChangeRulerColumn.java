@@ -130,7 +130,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	private Canvas fCanvas;
 	/** Cache for the actual scroll position in pixels */
 	private int fScrollPos;
-	/** The drawable for double buffering */
+	/** The buffer for double buffering */
 	private Image fBuffer;
 	/** The internal listener */
 	private InternalListener fInternalListener= new InternalListener();
@@ -276,9 +276,9 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	}
 	
 	/**
-	 * Returns the viewport height in lines.
+	 * Returns the view port height in lines.
 	 *
-	 * @return the viewport height in lines
+	 * @return the view port height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
 		Rectangle clArea= fCachedTextWidget.getClientArea();

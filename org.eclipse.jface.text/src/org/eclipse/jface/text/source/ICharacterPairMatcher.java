@@ -14,12 +14,14 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * A character pair matcher finds to a character at a certain document offset the matching peer character.
- * It is the matchers responsibility to define the concepts of "matching" and "peer". The matching process 
- * starts at a given offset. Starting of this offset, the matcher chooses a character close to this offset. The
- * anchor defines whether the chosen character is left or right of the initial offset. The matcher then searches
- * for the matching peer character of the chosen character and if it finds one, delivers the minimal region of
- * the document that contains both characters.
+ * A character pair matcher finds to a character at a certain document offset
+ * the matching peer character. It is the matchers responsibility to define the
+ * concepts of "matching" and "peer". The matching process starts at a given
+ * offset. Starting of this offset, the matcher chooses a character close to
+ * this offset. The anchor defines whether the chosen character is left or right
+ * of the initial offset. The matcher then searches for the matching peer
+ * character of the chosen character and if it finds one, delivers the minimal
+ * region of the document that contains both characters.
  * 
  * @since 2.1
  */
@@ -55,7 +57,7 @@ public interface ICharacterPairMatcher {
 	 * 
 	 * @param iDocument the document to work on
 	 * @param i the start offset
-	 * @return the minimal region containg the peer characters
+	 * @return the minimal region containing the peer characters
 	 */
 	IRegion match(IDocument iDocument, int i);
 

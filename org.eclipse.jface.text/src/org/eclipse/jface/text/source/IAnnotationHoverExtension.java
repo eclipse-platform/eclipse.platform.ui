@@ -13,7 +13,7 @@ package org.eclipse.jface.text.source;
 import org.eclipse.jface.text.IInformationControlCreator;
 
 /**
- * Extension to <code>IAnnotationHover</code> for
+ * Extension interface for {@link org.eclipse.jface.text.source.IAnnotationHover} for
  * <ul>
  * <li>providing its own information control creator</li>
  * <li>providing the range of lines for which the hover for a given line is valid</li>

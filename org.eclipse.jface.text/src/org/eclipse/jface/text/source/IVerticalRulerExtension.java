@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
  
@@ -16,8 +15,10 @@ import org.eclipse.swt.graphics.Font;
 
 
 /**
- * Extension interface for <code>IVerticalRuler</code>. Allows to set the font of the
- * vertical ruler and to set the location of the last mouse button activity.
+ * Extension interface for {@link IVerticalRuler}.
+ * <p>
+ * Allows to set the font of the vertical ruler and to set the location of the
+ * last mouse button activity.
  * 
  * @since 2.0
  */

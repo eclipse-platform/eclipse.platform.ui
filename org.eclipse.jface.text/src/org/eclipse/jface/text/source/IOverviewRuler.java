@@ -16,11 +16,11 @@ import org.eclipse.swt.widgets.Control;
 /**
  * This interface defines a visual component which may serve
  * text viewers as an overview annotation presentation area.  This means,
- * presentation of annotations is independent from the actual viewport of
+ * presentation of annotations is independent from the actual view port of
  * the text viewer. The annotations of the viewer's whole document are 
  * visible in the overview ruler.
  * 
- * This interfaces comprises three contracts:
+ * This interfaces embodies three contracts:
  * <ul>
  * <li>	The overview ruler retrieves the annotations it presents from an annotation model.
  * <li>	The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Control;
 public interface IOverviewRuler extends IVerticalRuler {
 	
 	/**
-	 * Returns whether there is an annotation an the given y coordinate. This
+	 * Returns whether there is an annotation an the given vertical coordinate. This
 	 * method takes the compression factor of the overview ruler into account.
 	 * 
 	 * @param y the y-coordinate

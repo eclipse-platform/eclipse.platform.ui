@@ -21,19 +21,36 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * In addition to the text viewer functionality a source viewer supports:
  * <ul>
- * <li> visual annotations based on an annotation model
- * <li> visual range indication
- * <li> management of text viewer add-ons
- * <li> explicit configuration
+ * <li>visual annotations based on an annotation model
+ * <li>visual range indication
+ * <li>management of text viewer add-ons
+ * <li>explicit configuration
  * </ul>
- * It is assumed that range indication and visual annotations are shown
- * inside the same presentation area. There are no assumptions about 
- * whether this area is different from the viewer's text widget.<p>
- * As the visibility of visual annotations can dynamically be changed, 
- * it is assumed that the annotation presentation area can dynamically 
- * be hidden if it is different from the text widget.<p>
- * Clients may implement this interface or use the default implementation provided
- * by <code>SourceViewer</code>.
+ * It is assumed that range indication and visual annotations are shown inside
+ * the same presentation area. There are no assumptions about whether this area
+ * is different from the viewer's text widget.
+ * <p>
+ * As the visibility of visual annotations can dynamically be changed, it is
+ * assumed that the annotation presentation area can dynamically be hidden if it
+ * is different from the text widget.
+ * <p>
+ * In order to provide backward compatibility for clients of
+ * <code>ISourceViewer</code>, extension interfaces are used as a means of
+ * evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension} since version 2.1
+ * introducing the concept of an annotation overview.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension2} since version 3.0
+ * allowing source viewers to roll back a previously performed configuration and
+ * allows access to the viewer's visual annotation model.</li>
+ * </ul>
+ * <p>
+ * Clients may implement this interface and its extension interfaces or use the
+ * default implementation provided by
+ * {@link org.eclipse.jface.text.source.SourceViewer}.
+ * 
+ * @see org.eclipse.jface.text.source.ISourceViewerExtension
+ * @see org.eclipse.jface.text.source.ISourceViewerExtension2
  */
 public interface ISourceViewer extends ITextViewer {
 	
@@ -113,8 +130,10 @@ public interface ISourceViewer extends ITextViewer {
 	void setDocument(IDocument document, IAnnotationModel annotationModel, int modelRangeOffset, int modelRangeLength);
 	
 	/**
-	 * Returns this viewer's annotation model.
-	 *
+	 * Returns this viewer's annotation model. Use
+	 * {@link ISourceViewerExtension2#getVisualAnnotationModel()}in order to
+	 * get access to the viewer's visual annotation model.
+	 * 
 	 * @return this viewer's annotation model
 	 */
 	IAnnotationModel getAnnotationModel();

@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
 /**
- * Interface for annotations that know how to represent themselves.
+ * Interface for annotations that can take care of their own visible representation.
  *
  * @since 3.0
  */

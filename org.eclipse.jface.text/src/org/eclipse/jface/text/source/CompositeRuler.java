@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 
@@ -54,21 +53,25 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 
 
 /**
- * Standard implementation of <code>IVerticalRuler</code>. This ruler does not have a 
- * a visual representation of its own.  The presentation comes from the configurable list 
- * of decorators. Decorators must implement the <code>IVerticalRulerColumn</code>
- * interface.<p>
+ * Standard implementation of
+ * {@link org.eclipse.jface.text.source.IVerticalRuler}.
+ * <p>
+ * This ruler does not have a a visual representation of its own. The
+ * presentation comes from the configurable list of vertical ruler columns. Such
+ * columns must implement the
+ * {@link org.eclipse.jface.text.source.IVerticalRulerColumn}. interface.
+ * <p>
  * Clients may instantiate and configure this class.
- *
- * @see IVerticalRulerColumn
- * @see ITextViewer
+ * 
+ * @see org.eclipse.jface.text.source.IVerticalRulerColumn
+ * @see org.eclipse.jface.text.ITextViewer
  * @since 2.0
  */
 public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, IVerticalRulerInfoExtension {
 	
 	
 	/**
-	 * Layout of the composite vertical ruler. Arranges the list of decorators.
+	 * Layout of the composite vertical ruler. Arranges the list of columns.
 	 */
 	class RulerLayout extends Layout {
 		
@@ -214,7 +217,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		}
 		
 		/**
-		 * Removes the given listener object as listner of the given type (<code>clazz</code>) from
+		 * Removes the given listener object as listener of the given type (<code>clazz</code>) from
 		 * the given control.
 		 * 
 		 * @param clazz the listener type
@@ -507,7 +510,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	private CompositeRulerCanvas fComposite;
 	/** The ruler's annotation model */
 	private IAnnotationModel fModel;
-	/** The list of decorators */
+	/** The list of columns */
 	private List fDecorators= new ArrayList(2);
 	/** The cached location of the last mouse button activity */
 	private Point fLocation= new Point(-1, -1);
@@ -539,8 +542,8 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	}
 	
 	/**
-	 * Inserts the given decorator at the specfied slot to this composite ruler.
-	 * Decorators are counted from left to right.
+	 * Inserts the given column at the specified slot to this composite ruler.
+	 * Columns are counted from left to right.
 	 * 
 	 * @param index the index
 	 * @param rulerColumn the decorator to be inserted
@@ -587,8 +590,8 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	}
 
 	/**
-	 * Relayouts the text viewer. This also causes this ruler to get
-	 * relayouted.
+	 * Layouts the text viewer. This also causes this ruler to get
+	 * be layouted.
 	 */
 	private void layoutTextViewer() {
 		

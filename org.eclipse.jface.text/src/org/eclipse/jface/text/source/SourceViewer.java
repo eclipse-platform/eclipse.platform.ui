@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 import java.util.Stack;
@@ -47,15 +46,22 @@ import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
 /**
- * SWT based implementation of <code>ISourceViewer</code>. The same rules apply 
- * as for <code>TextViewer</code>. A source viewer uses an <code>IVerticalRuler</code>
- * as its annotation presentation area. The vertical ruler is a small strip shown left
- * of the viewer's text widget. A source viewer uses an <code>IOverviewRuler</code>
- * as its presentation area for the annotation overview. The overview ruler is a small strip
- * shown right of the viewer's text widget.<p>
- * Clients are supposed to instantiate a source viewer and subsequently to communicate
- * with it exclusively using the <code>ISourceViewer</code> interface. Clients should not
- * subclass this class as it is rather likely that subclasses will be broken by future releases. 
+ * SWT based implementation of
+ * {@link org.eclipse.jface.text.source.ISourceViewer}and its extension
+ * interfaces. The same rules apply as for
+ * {@link org.eclipse.jface.text.TextViewer}. A source viewer uses an
+ * <code>IVerticalRuler</code> as its annotation presentation area. The
+ * vertical ruler is a small strip shown left of the viewer's text widget. A
+ * source viewer uses an <code>IOverviewRuler</code> as its presentation area
+ * for the annotation overview. The overview ruler is a small strip shown right
+ * of the viewer's text widget.
+ * <p>
+ * Clients are supposed to instantiate a source viewer and subsequently to
+ * communicate with it exclusively using the <code>ISourceViewer</code>
+ * interface.
+ * <p>
+ * Clients should not subclass this class as it is rather likely that subclasses
+ * will be broken by future releases.
  */
 public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2 {
 

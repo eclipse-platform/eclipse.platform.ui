@@ -11,9 +11,22 @@
 package org.eclipse.jface.text.source;
 
 /**
- * An annotation access provides access to information that is not available via the
- * API of <code>Annotation</code>. Clients usually implement this interface. 
+ * An annotation access provides access to information that is not available via
+ * the API of {@link org.eclipse.jface.text.source.Annotation}. With version
+ * 3.0 all this information is now available from the annotation itself.
+ * <p>
  * 
+ * In order to provide backward compatibility for clients of
+ * <code>IAnnotationAccess</code>, extension interfaces are used as a means
+ * of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.source.IAnnotationAccessExtension}since
+ *     version 3.0 replacing all methods in that interface</li>
+ * </ul>
+ * <p>
+ * Clients usually implement this interface and its extension interfaces.
+ * 
+ * @see org.eclipse.jface.text.source.IAnnotationAccessExtension
  * @see org.eclipse.jface.text.source.Annotation
  * @since 2.1
  */

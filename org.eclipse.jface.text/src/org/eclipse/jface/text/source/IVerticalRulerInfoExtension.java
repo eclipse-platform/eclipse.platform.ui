@@ -11,21 +11,34 @@
 package org.eclipse.jface.text.source;
 
 /**
- * Extends <code>IVerticalRulerInfo</code> with the ability to define a custom hover to be used
- * when hovering over the <code>IVerticalRuler</code> described by this info instance, and to
- * specify the <code>IAnnotationModel</code> used by it.
+ * Extension interface for
+ * {@link org.eclipse.jface.text.source.IVerticalRulerInfo}.
+ * <p>
+ * Introduces the ability to define a custom hover to be used when hovering over
+ * the vertical ruler described by this info instance, and to specify the
+ * annotation model used by it.
+ * <p>
+ * It also allows client to register as listeners on the represented vertical
+ * ruler and sends out notifications similar to selection events such as that a
+ * particular annotation presented in the vertical ruler has been selected.
+ * 
+ * @see org.eclipse.jface.text.source.IVerticalRuler
+ * @see org.eclipse.jface.text.source.IAnnotationModel
  * @since 3.0
  */
 public interface IVerticalRulerInfoExtension {
 	/**
 	 * Returns the hover for this vertical ruler (column).
+	 * 
 	 * @return the hover for this column
 	 */
 	IAnnotationHover getHover();
 	
 	/**
 	 * Returns the model currently used by the receiver.
-	 * @return the model of the receiver, or <code>null</code> if no model is installed.
+	 * 
+	 * @return the model of the receiver, or <code>null</code> if no model is
+	 *         installed.
 	 */
 	IAnnotationModel getModel();
 	

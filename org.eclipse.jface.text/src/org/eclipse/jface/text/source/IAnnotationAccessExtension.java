@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 import org.eclipse.swt.graphics.GC;
@@ -16,10 +15,17 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
 /**
- * Extension interface for <code>IAnnotationAccess</code>.
- * Allows to get a label for the annotation's type.
- * </code>.
+ * Extension interface for {@link org.eclipse.jface.text.source.IAnnotationAccess}.<p>
+ * This interface replaces the methods of <code>IAnnotationAccess</code>.<p>
+ * This interface provides
+ * <ul>
+ * <li> a label for the annotation type of a given annotation</li>
+ * <li> the paint layer of a given annotation</li>
+ * <li> means to paint a given annotation</li>
+ * <li> information about the type hierarchy of the annotation type of a given annotation</li>
+ * <ul>.
  * 
+ * @see org.eclipse.jface.text.source.IAnnotationAccess
  * @since 3.0
  */
 public interface IAnnotationAccessExtension {
@@ -62,7 +68,7 @@ public interface IAnnotationAccessExtension {
 	 * Returns <code>true</code> if painting <code>annotation</code> will produce something
 	 * meaningful, <code>false</code> if not. E.g. if no image is available.
 	 * 
-	 * @param annotation the annotation to check for paintability
+	 * @param annotation the annotation to check whether it can be painted
 	 * @return <code>true</code> if painting <code>annotation</code> will succeed
 	 */
 	boolean isPaintable(Annotation annotation);
@@ -73,7 +79,7 @@ public interface IAnnotationAccessExtension {
 	 * 
 	 * @param annotationType the annotation type
 	 * @param potentialSupertype the potential super annotation type
-	 * @return <code>true</code> if annotation type is a subtype of the potential annotation super type
+	 * @return <code>true</code> if annotation type is a sub-type of the potential annotation super type
 	 */
 	boolean isSubtype(Object annotationType, Object potentialSupertype);
 	

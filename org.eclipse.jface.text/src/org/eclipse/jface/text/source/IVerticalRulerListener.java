@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Menu;
 public interface IVerticalRulerListener {
 	
 	/**
-	 * Called when an annotation is selected in the UI.
+	 * Called when an annotation is selected in the vertical ruler.
 	 * 
 	 * @param event the annotation event that occurred
 	 */
@@ -32,14 +32,15 @@ public interface IVerticalRulerListener {
 	
 	/**
 	 * Called when a default selection occurs on an 
-	 * annotation.
+	 * annotation in the vertical ruler.
 	 * 
 	 * @param event the annotation event that occurred
 	 */
 	void annotationDefaultSelected(VerticalRulerEvent event);
 	
 	/** 
-	 * Called when the context menu is opened on an annotation.
+	 * Called when the context menu is opened on an annotation in the 
+	 * vertical ruler.
 	 * 
 	 * @param event the annotation event that occurred
 	 * @param menu the menu that is about to be shown

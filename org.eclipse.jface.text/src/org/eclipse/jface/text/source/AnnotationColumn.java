@@ -13,7 +13,7 @@ package org.eclipse.jface.text.source;
 
 
 /**
- * @deprecated use <code>AnnotationRulerColumn</code> instead.
+ * @deprecated use {@link org.eclipse.jface.text.source.AnnotationRulerColumn} instead.
  * @since 2.0
  */
 public final class AnnotationColumn extends AnnotationRulerColumn {

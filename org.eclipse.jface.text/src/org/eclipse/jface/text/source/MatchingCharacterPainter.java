@@ -28,8 +28,10 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 
 /**
- * Highlights the peer character matching the character near the caret position. This
- * painter can be configured with an <code>ICharacterPairMatcher</code>.
+ * Highlights the peer character matching the character near the caret position.
+ * This painter can be configured with an
+ * {@link org.eclipse.jface.text.source.ICharacterPairMatcher}.
+ * <p>
  * Clients instantiate and configure object of this class.
  * 
  * @since 2.1
@@ -46,7 +48,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	private Color fColor;
 	/** The paint position manager */
 	private IPaintPositionManager fPaintPositionManager;
-	/** The startegy for finding matching characters */
+	/** The strategy for finding matching characters */
 	private ICharacterPairMatcher fMatcher;
 	/** The position tracking the matching characters */
 	private Position fPairPosition= new Position(0, 0);
@@ -58,7 +60,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 * Creates a new MatchingCharacterPainter for the given source viewer using
 	 * the given character pair matcher. The character matcher is not adopted by
 	 * this painter. Thus,  it is not disposed. However, this painter requires
-	 * exlucsive access to the given pair matcher.
+	 * exclusive access to the given pair matcher.
 	 * 
 	 * @param sourceViewer
 	 * @param matcher
@@ -116,7 +118,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Handles a redraw request.
 	 * 
-	 * @param gc the gc to draw into.
+	 * @param gc the GC to draw into.
 	 */
 	private void handleDrawRequest(GC gc) {
 		
@@ -165,7 +167,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	/**
 	 * Highlights the given widget region.
 	 * 
-	 * @param gc the gc to draw into
+	 * @param gc the GC to draw into
 	 * @param offset the offset of the widget region
 	 * @param length the length of the widget region
 	 */

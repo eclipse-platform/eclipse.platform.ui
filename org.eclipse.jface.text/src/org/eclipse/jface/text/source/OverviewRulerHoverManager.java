@@ -57,7 +57,7 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 	 * @return the graphical extend where the hover is valid
 	 */
 	private Rectangle computeArea(int y) {
-		// This is ok (see constructor)
+		// This is OK (see constructor)
 		IOverviewRuler overviewRuler= (IOverviewRuler) getVerticalRulerInfo();
 
 		int hover_height= overviewRuler.getAnnotationHeight();

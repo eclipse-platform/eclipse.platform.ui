@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 
@@ -18,11 +17,12 @@ import org.eclipse.swt.widgets.Control;
 
 
 /**
- * A <code>IVerticalRulerColumn</code> is an element that can be added
- * to a composite vertical ruler. A composite vertical ruler is a vertical ruler
- * with a dynamically changing appearance and behavior depending on its
- * actual arrangement of ruler columns. A vertical ruler column supports a
- * subset of the contract of a  vertical ruler.
+ * A vertical ruler column is an element that can be added to a composite
+ * vertical ruler ({@link org.eclipse.jface.text.source.CompositeRuler}). A
+ * composite vertical ruler is a vertical ruler with  dynamically changing
+ * appearance and behavior depending on its actual arrangement of ruler columns.
+ * A vertical ruler column supports a subset of the contract of a vertical
+ * ruler.
  * 
  * @see org.eclipse.jface.text.source.CompositeRuler
  * @since 2.0

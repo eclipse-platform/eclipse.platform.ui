@@ -11,8 +11,6 @@
 package org.eclipse.jface.text.source;
 
 
-
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -23,7 +21,7 @@ import org.eclipse.jface.text.Position;
 
 /**
  * Annotation model for visual annotations. Assume a viewer's input element is annotated with
- * some semantic annotation such as a breakpoint and that it is simultanously shown in multiple
+ * some semantic annotation such as a breakpoint and that it is simultaneously shown in multiple
  * viewers. A source viewer, e.g., supports visual range indication for which it utilizes
  * annotations. The range indicating annotation is specific to the visual presentation
  * of the input element in this viewer and thus should only be visible in this viewer. The

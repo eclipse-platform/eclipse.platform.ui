@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 
@@ -45,8 +44,14 @@ import org.eclipse.jface.text.TextPresentation;
 
 
 /**
- * Paints annotations provided by an annotation model as squiggly lines and/or
- * highlighted onto an associated source viewer.
+ * Paints decorations for annotations provided by an annotation model and/or
+ * highlights them in the associated source viewer.
+ * <p>
+ * The annotation painter can be configured with drawing strategies. A drawing
+ * strategy defines the visual presentation of a particular type of annotation
+ * decoration.
+ * <p>
+ * 
  * Clients usually instantiate and configure objects of this class.
  * 
  * @since 2.1
@@ -155,6 +160,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	
 	/**
 	 * Drawing strategy that does nothing.
+	 * 
 	 * @since 3.0
 	 */
 	public static final class NullStrategy implements IDrawingStrategy {
@@ -324,21 +330,21 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private boolean fInputDocumentAboutToBeChanged;
 	/**
-	 * Maps annotation types to drawing strategy ids.
+	 * Maps annotation types to drawing strategy identifiers.
 	 * @since 3.0
 	 */
 	private Map fAnnotationType2DrawingStrategyId= new HashMap();
 	/**
-	 * Maps drawing strategy ids to drawing strategies.
+	 * Maps drawing strategy identifiers to drawing strategies.
 	 * @since 3.0
 	 */
 	private Map fRegisteredDrawingStrategies= new HashMap();
 	
 	
 	/**
-	 * Creates a new annotation painter for the given source viewer and with the given
-	 * annotation access. The painter is uninitialized, i.e.  no annotation types are configured
-	 * to be painted.
+	 * Creates a new annotation painter for the given source viewer and with the
+	 * given annotation access. The painter is not initialized, i.e. no
+	 * annotation types are configured to be painted.
 	 * 
 	 * @param sourceViewer the source viewer for this painter
 	 * @param access the annotation access for this painter
@@ -348,7 +354,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		fAnnotationAccess= access;
 		fTextWidget= sourceViewer.getTextWidget();
 		
-		// default drawing strategies: squiggles are the only pre-3.0 drawing style,
+		// default drawing strategies: squiggles were the only decoration style before version 3.0
 		fRegisteredDrawingStrategies.put(SQUIGGLES, fgSquigglyDrawer);
 	}
 	
@@ -822,7 +828,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/*
-	 * @see ITextPresentationListener#applyTextPresentation(TextPresentation)
+	 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
 	 * @since 3.0
 	 */
 	public void applyTextPresentation(TextPresentation tp) {
@@ -877,7 +883,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/*
-	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
+	 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
 	 */
 	public synchronized void modelChanged(final IAnnotationModel model) {
 		if (DEBUG)
@@ -887,7 +893,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/*
-	 * @see IAnnotationModelListenerExtension#modelChanged(AnnotationModelEvent)
+	 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
 	 */
 	public void modelChanged(final AnnotationModelEvent event) {
 		if (fTextWidget != null && !fTextWidget.isDisposed()) {
@@ -1071,7 +1077,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/*
-	 * @see IPainter#dispose()
+	 * @see org.eclipse.jface.text.IPainter#dispose()
 	 */
 	public void dispose() {
 		
@@ -1108,10 +1114,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/**
-	 * Returns the document offset of the upper left corner of the source viewer's viewport,
+	 * Returns the document offset of the upper left corner of the source viewer's view port,
 	 * possibly including partially visible lines.
 	 * 
-	 * @return the document offset if the upper left corner of the viewport
+	 * @return the document offset if the upper left corner of the view port
 	 */
 	private int getInclusiveTopIndexStartOffset() {
 		
@@ -1140,10 +1146,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/**
-	 * Returns the first invisible document offset of the lower right corner of the source viewer's viewport,
+	 * Returns the first invisible document offset of the lower right corner of the source viewer's view port,
 	 * possibly including partially visible lines.
 	 * 
-	 * @return the first invisible document offset of the lower right corner of the viewport
+	 * @return the first invisible document offset of the lower right corner of the view port
 	 */
 	private int getExclusiveBottomIndexEndOffset() {
 		
@@ -1166,7 +1172,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/*
-	 * @see PaintListener#paintControl(PaintEvent)
+	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
 	 */
 	public void paintControl(PaintEvent event) {
 		if (fTextWidget != null)
@@ -1332,7 +1338,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/*
-	 * @see IPainter#deactivate(boolean)
+	 * @see org.eclipse.jface.text.IPainter#deactivate(boolean)
 	 */
 	public void deactivate(boolean redraw) {
 		if (fIsActive) {
@@ -1368,7 +1374,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/*
-	 * @see IPainter#paint(int)
+	 * @see org.eclipse.jface.text.IPainter#paint(int)
 	 */
 	public void paint(int reason) {
 		if (fSourceViewer.getDocument() == null) {

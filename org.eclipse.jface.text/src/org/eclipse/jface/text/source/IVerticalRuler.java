@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 
@@ -19,26 +18,39 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * This interface defines a visual component which may serve text viewers as an annotation presentation 
- * area. Implementers of this interface have to define the presentation modus. This can either depend
- * on the connected viewer's view port or not. If the modus is view port dependent the ruler only shows 
- * those annotations that are attached to document regions that are visible in the view port. If independent,
- * the presented annotations can also be attached to invisible document regions.
+ * This interface defines a visual component which may serve text viewers as an
+ * annotation presentation area. Implementers of this interface have to define
+ * the presentation modus. This can either depend on the connected viewer's view
+ * port or not. If the modus is view port dependent the ruler only shows those
+ * annotations that are attached to document regions that are visible in the
+ * view port. If independent, the presented annotations can also be attached to
+ * invisible document regions.
  * 
  * This interfaces comprises three contracts:
  * <ul>
- * <li> The vertical ruler retrieves the annotations it presents from an annotation model.
- * <li> The ruler is a visual component which must be integrated in a hierarchy of SWT controls.
- * <li> The ruler provides interested clients with mapping and
- * 		interaction information. This covers the mapping between
- * 		coordinates of the ruler's control and line numbers based 
- * 		on the connected text viewer's document (<code>IVerticalRulerInfo</code>).
+ * <li>The vertical ruler retrieves the annotations it presents from an
+ *     annotation model.
+ * <li>The ruler is a visual component which must be integrated in a hierarchy
+ *     of SWT controls.
+ * <li>The ruler provides interested clients with mapping and interaction
+ *     information. This covers the mapping between coordinates of the ruler's
+ *     control and line numbers based on the connected text viewer's document (see
+ *     {@link org.eclipse.jface.text.source.IVerticalRulerInfo}).
  * </ul>
- * Clients may implement this interface or use the default implementation provided
- * by <code>CompositeRuler</code> and <code>VerticalRuler</code>.
- *  
- * @see ITextViewer
- * @see IVerticalRulerInfo
+ * <p>
+ * In order to provide backward compatibility for clients of
+ * <code>IVerticalRuler</code>, extension interfaces are used as a means of
+ * evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.source.IVerticalRulerExtension} since
+ *     version 2.0 introducing setters for font and mouse button activity location.</li>
+ * </ul>
+ * Clients may implement this interface or use the default implementation
+ * provided by {@link org.eclipse.jface.text.source.CompositeRuler} and
+ * {@link org.eclipse.jface.text.source.VerticalRuler}.
+ * 
+ * @see org.eclipse.jface.text.source.IVerticalRulerExtension
+ * @see org.eclipse.jface.text.ITextViewer
  */
 public interface IVerticalRuler extends IVerticalRulerInfo {
 
@@ -60,7 +72,7 @@ public interface IVerticalRuler extends IVerticalRulerInfo {
 		
 	/**
 	 * Forces the vertical ruler to synchronize itself with its 
-	 * annotation model and its viewer's viewport.
+	 * annotation model and its viewer's view port.
 	 */
 	void update();
 	

@@ -268,7 +268,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	}	
 	
 	/*
-	 * @see AbstractHoverInformationControlManager#computeInformation()
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformation()
 	 */
 	protected void computeInformation() {
 		fAllowMouseExit= false;
@@ -294,6 +294,16 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			
 	}
 	
+	/**
+	 * Adapts a given line range so that the result is a line range that does
+	 * not overlap with any collapsed region and fits into the view port of the
+	 * attached viewer.
+	 * 
+	 * @param lineRange the original line range
+	 * @param line the anchor line
+	 * @return the adapted line range
+	 * @since 3.0
+	 */
 	private ILineRange adaptLineRange(ILineRange lineRange, int line) {
 		if (lineRange != null) {
 			lineRange= adaptLineRangeToFolding(lineRange, line);
@@ -303,6 +313,15 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		return null;
 	}
 	
+	/**
+	 * Adapts a given line range so that the result is a line range that does
+	 * not overlap with any collapsed region of the attached viewer.
+	 * 
+	 * @param lineRange the original line range
+	 * @param line the anchor line
+	 * @return the adapted line range
+	 * @since 3.0
+	 */
 	private ILineRange adaptLineRangeToFolding(ILineRange lineRange, int line) {
 				
 		if (fSourceViewer instanceof ITextViewerExtension5) {
@@ -326,6 +345,14 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		return lineRange;	
 	}
 	
+	/**
+	 * Adapts a given line range so that the result is a line range that fits
+	 * into the view port of the attached viewer.
+	 * 
+	 * @param lineRange the original line range
+	 * @return the adapted line range
+	 * @since 3.0
+	 */
 	private ILineRange adaptLineRangeToViewport(ILineRange lineRange) {
 		
 		try {
@@ -352,6 +379,13 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		return null;
 	}
 	
+	/**
+	 * Converts a line range into a character range.
+	 * 
+	 * @param lineRange the line range
+	 * @return the corresponding character range
+	 * @throws BadLocationException in case the given line range is invalid
+	 */
 	private IRegion convertToRegion(ILineRange lineRange) throws BadLocationException {
 		IDocument document= fSourceViewer.getDocument();
 		int startOffset= document.getLineOffset(lineRange.getStartLine());
@@ -361,6 +395,15 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		return new Region(startOffset, endOffset - startOffset);
 	}
 	
+	/**
+	 * Returns the region out of the given set that contains the given line or
+	 * <code>null</code>.
+	 * 
+	 * @param regions the set of regions
+	 * @param line the line
+	 * @return the region of the set that contains the line
+	 * @throws BadLocationException in case line is invalid
+	 */
 	private IRegion findRegionContainingLine(IRegion[] regions, int line) throws BadLocationException {
 		IDocument document= fSourceViewer.getDocument();
 		IRegion lineInfo= document.getLineInformation(line);
@@ -370,7 +413,14 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Converts a given character region into a line range.
+	 * 
+	 * @param region the character region
+	 * @return the corresponding line range
+	 * @throws BadLocationException in case the given region in invalid
+	 */
 	private ILineRange convertToLineRange(IRegion region) throws BadLocationException {
 		IDocument document= fSourceViewer.getDocument();
 		int startLine= document.getLineOfOffset(region.getOffset());
@@ -378,6 +428,13 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		return new LineRange(startLine, endLine - startLine + 1);
 	}
 	
+	/**
+	 * Returns the visible area of the vertical ruler covered by the given line
+	 * range.
+	 * 
+	 * @param lineRange the line range
+	 * @return the visible area
+	 */
 	private Rectangle computeArea(ILineRange lineRange) {
 		try {
 			StyledText text= fSourceViewer.getTextWidget();
@@ -390,6 +447,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		return null;
 	}
 	
+	/**
+	 * Returns the number of the currently visible lines.
+	 * 
+	 * @return the number of the currently visible lines
+	 */
 	private int computeNumberOfVisibleLines() {
 		StyledText text= fSourceViewer.getTextWidget();
 		Point size= fVerticalRulerInfo.getControl().getSize();

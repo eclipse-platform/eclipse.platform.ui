@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
 
@@ -35,17 +34,20 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 
 
 /**
- * This class bundles the whole configuration space of a source viewer.
- * Instances of this class are passed to the <code>configure</code> method of
- * <code>ISourceViewer</code>.<p>
- * Each method in this class get as argument the source viewer for which it should
- * provide a particular configurational setting such as a presentation reconciler.
- * Based on its specific knowledge about the returned object, the configuration 
- * might share such objects or compute them according to some rules.<p>
- * Clients should subclass and override just those methods which must be specific to
- * their needs.
- *
- * @see ISourceViewer
+ * This class bundles the configuration space of a source viewer. Instances of
+ * this class are passed to the <code>configure</code> method of
+ * <code>ISourceViewer</code>.
+ * <p>
+ * Each method in this class get as argument the source viewer for which it
+ * should provide a particular configuration setting such as a presentation
+ * reconciler. Based on its specific knowledge about the returned object, the
+ * configuration might share such objects or compute them according to some
+ * rules.
+ * <p>
+ * Clients should subclass and override just those methods which must be
+ * specific to their needs.
+ * 
+ * @see org.eclipse.jface.text.source.ISourceViewer
  */
 public class SourceViewerConfiguration {
 	

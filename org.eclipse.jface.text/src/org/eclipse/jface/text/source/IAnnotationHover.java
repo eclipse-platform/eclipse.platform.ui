@@ -12,11 +12,23 @@ package org.eclipse.jface.text.source;
 
 
 
-
 /**
- * Provides the information to be displayed in a hover popup window
- * which appears over the presentation area of annotations. Clients
- * may implement this interface.
+ * Provides the information to be displayed in a hover popup window which
+ * appears over the presentation area of annotations.
+ * <p>
+ * In order to provide backward compatibility for clients of
+ * <code>IAnnotationHover</code>, extension interfaces are used as a means of
+ * evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link org.eclipse.jface.text.source.IAnnotationHoverExtension}since
+ *     version 3.0 allowing a text hover to provide a creator for the hover control.
+ *     This allows for sophisticated hovers in a way that information computed by
+ *     the hover can be displayed in the best possible form.</li>
+ * </ul>
+ * <p>
+ * Clients may implement this interface.
+ * 
+ * @see org.eclipse.jface.text.source.IAnnotationHoverExtension
  */
 public interface IAnnotationHover {
 		

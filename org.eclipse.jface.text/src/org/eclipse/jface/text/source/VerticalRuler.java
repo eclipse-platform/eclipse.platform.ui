@@ -11,8 +11,6 @@
 package org.eclipse.jface.text.source;
 
 
-
-
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
@@ -46,12 +44,14 @@ import org.eclipse.jface.text.TextEvent;
 
 
 /**
- * A vertical ruler which is connected to a text viewer. Single column standard 
- * implementation of <code>IVerticalRuler</code>. The same can be achieved by 
- * using <code>CompositeRuler</code> configured with an <code>AnnotationRulerColumn</code>.
- * Clients may use this class as is.
- *
- * @see ITextViewer
+ * A vertical ruler which is connected to a text viewer. Single column standard
+ * implementation of {@link org.eclipse.jface.text.source.IVerticalRuler}.
+ * <p>
+ * The same can be achieved by using <code>CompositeRuler</code> configured
+ * with an <code>AnnotationRulerColumn</code>. Clients may use this class as
+ * is.
+ * 
+ * @see org.eclipse.jface.text.ITextViewer
  */
 public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtension {
 
@@ -92,7 +92,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	private IAnnotationModel fModel;
 	/** Cache for the actual scroll position in pixels */
 	private int fScrollPos;
-	/** The drawable for double buffering */
+	/** The buffer for double buffering */
 	private Image fBuffer;
 	/** The line of the last mouse button activity */
 	private int fLastMouseButtonActivityLine= -1;
@@ -242,7 +242,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	
 	/**
 	 * Returns the document offset of the upper left corner of the
-	 * widgets viewport, possibly including partially visible lines.
+	 * widgets view port, possibly including partially visible lines.
 	 * 
 	 * @return the document offset of the upper left corner including partially visible lines
 	 * @since 2.0

@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,7 +102,12 @@ public class OverviewRuler implements IOverviewRuler {
 		private Annotation fNext;
 		private int fStyle;
 		
-				
+		/**
+		 * Creates a new filter iterator with the given specification.
+		 * 
+		 * @param annotationType the annotation type
+		 * @param style the style
+		 */
 		public FilterIterator(Object annotationType, int style) {
 			fType= annotationType;
 			fStyle= style;
@@ -112,6 +117,13 @@ public class OverviewRuler implements IOverviewRuler {
 			}
 		}
 		
+		/**
+		 * Creates a new filter iterator with the given specification.
+		 * 
+		 * @param annotationType the annotation type
+		 * @param style the style
+		 * @param iterator the iterator
+		 */
 		public FilterIterator(Object annotationType, int style, Iterator iterator) {
 			fType= annotationType;
 			fStyle= style;
@@ -186,10 +198,18 @@ public class OverviewRuler implements IOverviewRuler {
 		private Color fIndicatorColor;
 		private Color fSeparatorColor;
 		
+		/**
+		 * Creates a new header painter.
+		 */
 		public HeaderPainter() {
 			fSeparatorColor= fSharedTextColors.getColor(ViewForm.borderInsideRGB);
 		}
 		
+		/**
+		 * Sets the header color.
+		 * 
+		 * @param color the header color
+		 */
 		public void setColor(Color color) {
 			fIndicatorColor= color;
 		}
@@ -237,7 +257,7 @@ public class OverviewRuler implements IOverviewRuler {
 	private Canvas fCanvas;
 	/** The ruler's header */
 	private Canvas fHeader;
-	/** The drawable for double buffering */
+	/** The buffer for double buffering */
 	private Image fBuffer;
 	/** The internal listener */
 	private InternalListener fInternalListener= new InternalListener();

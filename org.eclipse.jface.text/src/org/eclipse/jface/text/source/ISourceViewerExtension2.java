@@ -12,18 +12,19 @@
 package org.eclipse.jface.text.source;
 
 /**
- * Extension interface for {@link ISourceViewer}.
- * Extends the source viewer with the functionality of explicit
- * unconfiguration.
+ * Extension interface for {@link org.eclipse.jface.text.source.ISourceViewer}.<p>
+ * Allows the source viewer to roll back a previous configuration process and allows
+ * clients access to the viewer's visual annotation model.
  * 
  * @since 3.0
  */
 public interface ISourceViewerExtension2 {
 	
 	/**
-	 * Unconfigures this source viewer. The source viewer can be configured again
-	 * after a call to this method. Unlike {@link ISourceViewer#configure(SourceViewerConfiguration)}
-	 * this method can be called more than once without interleaving calls to
+	 * Rolls back the configuration process of this source viewer. The source
+	 * viewer can be configured again after a call to this method. Unlike
+	 * {@link ISourceViewer#configure(SourceViewerConfiguration)} this method
+	 * can be called more than once without interleaving calls to
 	 * {@link ISourceViewer#configure(SourceViewerConfiguration)}.
 	 */
 	void unconfigure();
