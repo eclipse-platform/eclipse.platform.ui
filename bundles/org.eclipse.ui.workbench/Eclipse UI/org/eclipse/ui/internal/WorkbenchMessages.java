@@ -342,6 +342,7 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	public static String PreferenceNode_errorTitle;
 	public static String PreferenceNode_errorMessage;
+    public static String PreferenceNode_NotFound;
 	public static String Preference_note;
 
 	// --- Import/Export ---
