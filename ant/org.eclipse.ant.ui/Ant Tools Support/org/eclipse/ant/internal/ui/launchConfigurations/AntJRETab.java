@@ -424,7 +424,8 @@ public class AntJRETab extends JavaJRETab {
 		try {
 			defaultInstall = JavaRuntime.computeVMInstall(config);
 		} catch (CoreException e) {
-			AntUIPlugin.log(e);
+			//core exception thrown for non-Java project
+			defaultInstall= JavaRuntime.getDefaultVMInstall();
 		}
 		if (defaultInstall != null) {
 			String vmName = defaultInstall.getName();
