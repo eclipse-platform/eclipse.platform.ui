@@ -4,25 +4,14 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSource;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.ReadOnlyStateChecker;
 import org.eclipse.ui.part.ResourceTransfer;
 
@@ -33,8 +22,8 @@ import org.eclipse.ui.part.ResourceTransfer;
 /* package */ class NavigatorDragAdapter extends DragSourceAdapter {
 	ISelectionProvider selectionProvider;
 
-private static final String CHECK_MOVE_TITLE = WorkbenchMessages.getString("MoveResourceAction.title"); //$NON-NLS-1$
-private static final String CHECK_MOVE_MESSAGE = WorkbenchMessages.getString("MoveResourceAction.checkMoveMessage"); //$NON-NLS-1$
+private static final String CHECK_MOVE_TITLE = ResourceNavigatorMessages.getString("DragAdapter.title"); //$NON-NLS-1$
+private static final String CHECK_MOVE_MESSAGE = ResourceNavigatorMessages.getString("DragAdapter.checkMoveMessage"); //$NON-NLS-1$
 
 /**
  * NavigatorDragAction constructor comment.
