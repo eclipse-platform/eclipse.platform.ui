@@ -1,92 +1,84 @@
 package org.eclipse.update.core;
-
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
-import java.net.MalformedURLException;
+
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.model.URLEntryModel;
- 
- /**
-  *
-  * 
-  */
- 
+/**
+ * Feature reference.
+ * A reference to a feature on a particular update site.
+ * <p>
+ * Clients may implement this interface. However, in most cases clients should 
+ * directly instantiate or subclass the provided implementation of this 
+ * interface.
+ * </p>
+ * @see org.eclipse.update.core.FeatureReference
+ * @since 2.0
+ */
 public interface IFeatureReference {
-	
-	
+
 	/**
-	 * Returns the URL that points at the Feature.
-	 * This URL is the unique identifier of the feature
-	 * within the site.
+	 * Returns the referenced feature URL.
 	 * 
-	 * The URL is declared in the <code>feature.xml</code> file.	
-	 * 
-	 * @return the URL identifying feature in the Site.
+	 * @return feature URL 
 	 * @since 2.0 
 	 */
 	URL getURL();
-	
-	
-	/**
-	 * Sets the URL that points at the DefaultFeature.
-	 * @param the URL identifying feature in the Site.
-	 * @since 2.0 
-	 */
-	void setURL(URL url) throws CoreException ;	
 
 	/**
-	 * Returns the Site of the FeatureReference
-	 * @return the Site of the Feature reference
+	 * Returns the update site for the referenced feature
+	 * 
+	 * @return feature site
 	 * @since 2.0 
 	 */
 	ISite getSite();
-	
-	
-	/**
-	 * Returns the Site of the FeatureReference
-	 * @param the Site of the Feature reference
-	 * @since 2.0 
-	 */
-	void setSite(ISite site);	
-
 
 	/**
-	 * Returns the array of categories the feature belong to.
+	 * Returns an array of categories the referenced feature belong to.
 	 * 
-	 * The categories are declared in the <code>site.xml</code> file.
-	 * 
-	 * @see ICategory
-	 * @return the array of categories this feature belong to. Returns an empty array
-	 * if there are no cateopries.
+	 * @return an array of categories, or an empty array
 	 * @since 2.0 
 	 */
-
 	ICategory[] getCategories();
 
-	
 	/**
-	 * Returns the feature this reference points to
-	 *  @return teh feature on teh Site
+	 * Returns the referenced feature.
+	 * This is a factory method that creates the full feature object.
+	 * 
+	 * @return the referenced feature
 	 * @since 2.0 
 	 */
-
 	IFeature getFeature() throws CoreException;
-	
-	
+
 	/**
-	 * Adds the feature to the category
+	 * Adds a category to the referenced feature.
+	 * 
+	 * @param category new category
 	 * @since 2.0 
 	 */
-
 	void addCategory(ICategory category);
-	
-	
-		
+
+	/**
+	 * Sets the feature reference URL.
+	 * This is typically performed as part of the feature reference creation
+	 * operation. Once set, the url should not be reset.
+	 * 
+	 * @param url reference URL
+	 * @since 2.0 
+	 */
+	void setURL(URL url) throws CoreException;
+
+	/**
+	 * Associates a site with the feature reference.
+	 * This is typically performed as part of the feature reference creation
+	 * operation. Once set, the site should not be reset.
+	 * 
+	 * @param site site for the feature reference
+	 * @since 2.0 
+	 */
+	void setSite(ISite site);
+
 }
-
-
