@@ -174,16 +174,10 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		public Image getImage(Object anElement) {
 			XmlElement tempElement = (XmlElement)anElement;
 			if("target".equals(tempElement.getName())) { //$NON-NLS-1$
-				XmlElement projectNode= tempElement.getParentNode();
-				XmlAttribute attribute= projectNode.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
-				String defaultTarget= ""; //$NON-NLS-1$
 				ImageDescriptor base = null;
 				int flags = 0;
 				
-				if (attribute != null) {
-					defaultTarget= attribute.getValue();
-				}
-				if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue().equals(defaultTarget)) {
+				if (isDefaultTargetNode(tempElement)) {
 					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
 				}
 				if (tempElement.isErrorNode()) {
@@ -240,9 +234,11 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		XmlElement parent= node.getParentNode();
 		if (parent != null) {
 			type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
-			while (parent != null && !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT)){
+			while (parent != null && (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT))) {
 				parent= parent.getParentNode();
-				type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+				if (parent != null) {
+					type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+				}
 			}
 		} 
 		if (parent == null) {
