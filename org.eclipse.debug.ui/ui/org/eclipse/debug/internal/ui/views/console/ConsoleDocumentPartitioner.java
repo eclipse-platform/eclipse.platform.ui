@@ -94,8 +94,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		public StreamListener(String streamIdentifier, IStreamMonitor streamMonitor) {
 			fStreamIdentifier = streamIdentifier;
 			fStreamMonitor = streamMonitor;
-			fIsSystemOut = IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB.equals(streamIdentifier);
-			fIsSystemErr = IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB.equals(streamIdentifier); 
+			fIsSystemOut = IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM.equals(streamIdentifier);
+			fIsSystemErr = IDebugUIConstants.ID_STANDARD_ERROR_STREAM.equals(streamIdentifier); 
 		}
 		
 		public void streamAppended(String newText, IStreamMonitor monitor) {
