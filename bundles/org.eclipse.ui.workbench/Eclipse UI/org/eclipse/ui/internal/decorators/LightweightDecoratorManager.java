@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -76,9 +75,6 @@ class LightweightDecoratorManager {
     }
 
     private LightweightRunnable runnable = new LightweightRunnable();
-
-    //The cachedDecorators are a 1-many mapping of type to full decorator.
-    private HashMap cachedLightweightDecorators = new HashMap();
 
     //The lightweight definitionsread from the registry
     private LightweightDecoratorDefinition[] lightweightDefinitions;
@@ -203,7 +199,6 @@ class LightweightDecoratorManager {
      * Reset any cached values.
      */
     void reset() {
-        cachedLightweightDecorators.clear();
         runnable.clearReferences();
     }
 
@@ -243,25 +238,15 @@ class LightweightDecoratorManager {
         if (element == null)
             return EMPTY_LIGHTWEIGHT_DEF;
 
-        String className = element.getClass().getName();
-        LightweightDecoratorDefinition[] decoratorArray = (LightweightDecoratorDefinition[]) cachedLightweightDecorators
-                .get(className);
-        if (decoratorArray != null) {
-            return decoratorArray;
-        }
-
         Collection decorators = DecoratorManager.getDecoratorsFor(element,
                 enabledDefinitions());
-
-        if (decorators.size() == 0)
-            decoratorArray = EMPTY_LIGHTWEIGHT_DEF;
-        else {
+		LightweightDecoratorDefinition[] decoratorArray = EMPTY_LIGHTWEIGHT_DEF;
+        if (decorators.size() > 0) {
             decoratorArray = new LightweightDecoratorDefinition[decorators
                     .size()];
             decorators.toArray(decoratorArray);
         }
 
-        cachedLightweightDecorators.put(className, decoratorArray);
         return decoratorArray;
     }
 
@@ -284,10 +269,8 @@ class LightweightDecoratorManager {
             //only applying the adaptable decorations
             if (adaptableDecoration && !decorators[i].isAdaptable())
                 continue;
-            if (decorators[i].getEnablement().isEnabledFor(element)) {
-                decoration.setCurrentDefinition(decorators[i]);
-                decorate(element, decoration, decorators[i]);
-            }
+            decoration.setCurrentDefinition(decorators[i]);
+            decorate(element, decoration, decorators[i]);
         }
     }
 

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.decorators;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -45,7 +44,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.LegacyResourceSupport;
@@ -77,9 +75,6 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     //Hold onto the list of listeners to be told if a change has occured
     private ListenerList listeners = new ListenerList();
-
-    //The cachedDecorators are a 1-many mapping of type to full decorator.
-    private HashMap cachedFullDecorators = new HashMap();
 
     //The full definitions read from the registry
     private FullDecoratorDefinition[] fullDefinitions;
@@ -192,8 +187,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         ArrayList decorators = new ArrayList();
 
         for (int i = 0; i < enabledDefinitions.length; i++) {
-            if (enabledDefinitions[i].getEnablement().isEnabledForExpression(
-                    element, ActionExpression.EXP_TYPE_OBJECT_CLASS))
+            if (enabledDefinitions[i].getEnablement().isEnabledFor(element))
                 decorators.add(enabledDefinitions[i]);
         }
 
@@ -515,7 +509,6 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * enablement.
      */
     public void clearCaches() {
-        cachedFullDecorators.clear();
         getLightweightManager().reset();
         fullTextRunnable.clearReferences();
         fullImageRunnable.clearReferences();
@@ -785,24 +778,14 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         if (element == null)
             return EMPTY_FULL_DEF;
 
-        String className = element.getClass().getName();
-        FullDecoratorDefinition[] decoratorArray = (FullDecoratorDefinition[]) cachedFullDecorators
-                .get(className);
-        if (decoratorArray != null) {
-            return decoratorArray;
-        }
-
-        Collection decorators = getDecoratorsFor(element,
+          Collection decorators = getDecoratorsFor(element,
                 enabledFullDefinitions());
-
-        if (decorators.size() == 0)
-            decoratorArray = EMPTY_FULL_DEF;
-        else {
+	    FullDecoratorDefinition[] decoratorArray = EMPTY_FULL_DEF;
+        if (decorators.size() > 0){
             decoratorArray = new FullDecoratorDefinition[decorators.size()];
             decorators.toArray(decoratorArray);
         }
 
-        cachedFullDecorators.put(className, decoratorArray);
         return decoratorArray;
     }
 
