@@ -33,10 +33,8 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantyCompletionProcessor;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantySaxDefaultHandler;
-import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.externaltools.internal.ant.editor.support.TestTextCompletionProcessor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -54,117 +52,6 @@ import org.xml.sax.SAXParseException;
  */
 public class CodeCompletionTest extends TestCase {
 
-    class TestPlantyEditor extends PlantyEditor {
-        public void initializeEditor() {
-        }
-        /** 
-         * Returns '10'.
-         * @see org.eclipse.ui.texteditor.AbstractTextEditor#getCursorPosition()
-         */
-        protected String getCursorPosition() {
-            return "10";
-        }
-
-    }
-
-    
-    class TestPlantyTextCompletionProcessor extends PlantyCompletionProcessor {
-        
-        TestPlantyTextCompletionProcessor() {
-            cursorPosition = 10;
-        }
-        
-        public ICompletionProposal[] getAttributeProposals(
-            String aTaskName,
-            String aPrefix) {
-            return super.getAttributeProposals(aTaskName, aPrefix);
-        }
-        
-        /**
-         * Returns always 10.
-         */
-        protected int getCursorPosition(ITextEditor textEditor) {
-            return 10;
-        }
-
-        public Element findChildElementNamedOf(
-            Element anElement,
-            String aChildElementName) {
-            return super.findChildElementNamedOf(anElement, aChildElementName);
-        }
-
-        public ICompletionProposal[] getTaskProposals(String aWholeDocumentString,
-            Element aParentTaskElement,
-            String aPrefix) {
-            return super.getTaskProposals(aWholeDocumentString, aParentTaskElement, aPrefix);
-        }
-
-        public int determineProposalMode(
-            String aWholeDocumentString,
-            int aCursorPosition,
-            String aPrefix) {
-            return super.determineProposalMode(
-                aWholeDocumentString,
-                aCursorPosition,
-                aPrefix);
-        }
-
-        public Element findParentElement(
-            String aWholeDocumentString,
-            int aLineNumber,
-            int aColumnNumber) {
-            return super.findParentElement(
-                aWholeDocumentString,
-                aLineNumber,
-                aColumnNumber);
-        }
-
-        public String getPrefixFromDocument(
-            String aDocumentText,
-            int anOffset) {
-            return super.getPrefixFromDocument(aDocumentText, anOffset);
-        }
-
-        public ICompletionProposal[] getPropertyProposals(
-            String aDocumentText,
-            String aPrefix, int aCursorPosition) {
-            return super.getPropertyProposals(aDocumentText, aPrefix, aCursorPosition);
-        }
-
-		File editedFile;
-
-        /**
-         * Returns the edited File that org.eclipse.ui.externaltools.internal.ant.editorfore or a temporary 
-         * file, which only serves as a dummy.
-         * @see org.eclipse.ui.externaltools.internal.ant.editor.PlantyCompletionProcessor#getEditedFile()
-         */
-        protected File getEditedFile() {
-            File tempFile = null;
-            try {
-                tempFile = File.createTempFile("test", null);
-            } catch (IOException e) {
-                TestCase.fail(e.getMessage());
-            }
-            tempFile.deleteOnExit();
-            return tempFile;
-        }
-        
-
-		protected void setEditedFile(File aFile) {
-			editedFile = aFile;
-		}
-
-        protected void setLineNumber(int aLineNumber) {
-        	lineNumber = aLineNumber;
-        }
-
-        protected void setColumnNumber(int aColumnNumber) {
-        	columnNumber = aColumnNumber;
-        }
-
-    }        
-
- 
     /**
      * Constructor for CodeCompletionTest.
      * @param arg0
@@ -178,7 +65,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests the code completion for attributes of tasks.
      */
     public void testAttributeProposals() throws IOException {
-        TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
 
         ICompletionProposal[] tempProposals = tempProcessor.getAttributeProposals("contains", "ca");
         assertEquals(1, tempProposals.length);
@@ -229,7 +116,7 @@ public class CodeCompletionTest extends TestCase {
      * Test the code completion for properties.
      */
     public void testPropertyProposals1() {
-        TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
+		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
 
         String tempDocumentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
         tempDocumentText += "<property name=\"prop2\" value=\"val2\" />\n";
@@ -345,7 +232,7 @@ public class CodeCompletionTest extends TestCase {
 	 * a dependent targets.
 	 */
     public void testPropertyProposalDefinedInDependendTargets() throws FileNotFoundException {
-        TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
 
         URL tempURL = getClass().getResource("dependencytest.xml");
         assertNotNull(tempURL);
@@ -372,7 +259,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests the code completion for tasks having parent tasks.
      */
     public void testTaskProposals() throws IOException, ParserConfigurationException {
-        TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
+		TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
 
         DocumentBuilder tempDocBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document tempDocument = tempDocBuilder.newDocument();
@@ -456,7 +343,7 @@ public class CodeCompletionTest extends TestCase {
         tempParentElement.appendChild(tempChildElement);
         
         // Create the processor
-        TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
         
         // Test it!
         tempChildElement = tempProcessor.findChildElementNamedOf(tempParentElement, "jkl");
@@ -498,7 +385,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests how the processor determines the proposal mode.
      */
     public void testDeterminingProposalMode() throws IOException {
-        TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
 
         // Modes:
         // 0 None
@@ -556,7 +443,7 @@ public class CodeCompletionTest extends TestCase {
      * Tests how the prefix will be determined.
      */
     public void testDeterminingPrefix() {
-        TestPlantyTextCompletionProcessor tempProcessor = new TestPlantyTextCompletionProcessor();
+        TestTextCompletionProcessor tempProcessor = new TestTextCompletionProcessor(this);
 
         // cursor after ${
         String tempPrefix = tempProcessor.getPrefixFromDocument("<project><target name=\"${}\"", 25);

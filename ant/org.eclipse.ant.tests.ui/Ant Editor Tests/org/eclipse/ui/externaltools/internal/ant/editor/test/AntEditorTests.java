@@ -1,6 +1,3 @@
-//
-// PlantyTests.java
-//
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
 // und Informatik-Technologien mbH, 
@@ -14,22 +11,20 @@ import junit.framework.TestSuite;
 
 
 /**
- * Test suite for Planty.
+ * Test suite for the Ant Editor
  * 
- * @version 25.09.2002
  * @author Alf Schiefelbein
  */
-public class PlantyTests extends TestSuite {
+public class AntEditorTests extends TestSuite {
 
     public static Test suite() {
 
-        TestSuite suite= new PlantyTests();
-        suite.setName("Planty Unit Test");
+        TestSuite suite= new AntEditorTests();
+        suite.setName("Ant Editor Unit Tests");
         suite.addTest(CodeCompletionTest.suite());
         suite.addTest(TaskDescriptionProviderTest.suite());
-        suite.addTest(PlantyContentOutlineTest.suite());
+        suite.addTest(AntEditorContentOutlineTests.suite());
         suite.addTest(EnclosingTargetSearchingHandlerTest.suite());
         return suite;
     }
-        
 }
