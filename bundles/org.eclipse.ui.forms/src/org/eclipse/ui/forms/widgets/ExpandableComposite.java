@@ -887,7 +887,7 @@ public class ExpandableComposite extends Composite {
 		int loc = down?index+1:index-1;
 		while (loc>=0 && loc <children.length) {
 			Control c = children [loc];
-			if (c instanceof ExpandableComposite) 
+			if (c instanceof ExpandableComposite && c.isVisible()) 
 				return (ExpandableComposite)c;
 			loc = down?loc+1:loc-1;
 		}
