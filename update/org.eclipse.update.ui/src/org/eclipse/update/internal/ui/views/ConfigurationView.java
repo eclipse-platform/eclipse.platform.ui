@@ -950,6 +950,10 @@ public class ConfigurationView
 				
 				uninstallFeatureAction.setFeature(adapter);
 				uninstallFeatureAction.setEnabled(enable && uninstallFeatureAction.canUninstall());
+				if (adapter.isConfigured())
+					uninstallFeatureAction.setDescription(UpdateUI.getString("ConfigurationView.uninstallDesc2"));
+				else
+					uninstallFeatureAction.setDescription(UpdateUI.getString("ConfigurationView.uninstallDesc"));	
 
 				if (enable && adapter.isConfigured()) {
 					IFeature[] features = UpdateUtils.getInstalledFeatures(feature, false);
