@@ -1556,7 +1556,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 		// Do the UI-related things required after a save
-		setWorkingCopy(null);
 		setLastSavedName(fUnderlyingConfig.getName());	
 		updateButtons();
 	}
