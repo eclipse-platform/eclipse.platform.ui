@@ -16,7 +16,7 @@ package org.eclipse.core.resources;
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
  *    <code>PRE_AUTO_BUILD</code>, and <code>getDelta</code> returns
- *    the hierachical delta. The resource delta is rooted at the 
+ *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties immediately before
  *    any auto-building and happen whether or not auto-building is enabled.  The
  *	   workspace is open for change during notification of these events.	 
@@ -30,7 +30,7 @@ package org.eclipse.core.resources;
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
  *    <code>POST_AUTO_BUILD</code>, and <code>getDelta</code> returns
- *    the hierachical delta. The resource delta is rooted at the 
+ *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties immediately after
  *    any auto-building and happen whether or not auto-building is enabled.  The
  *	   workspace is open for change during notification of these events.
@@ -44,7 +44,7 @@ package org.eclipse.core.resources;
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
  *    <code>POST_CHANGE</code>, and <code>getDelta</code> returns
- *    the hierachical delta. The resource delta is rooted at the 
+ *    the hierarchical delta. The resource delta is rooted at the 
  *    workspace root.  These events are broadcast to interested parties immediately after
  *    any <code>POST_AUTO_BUILD</code> events and happen whether 
  *    or not auto-building is enabled.  The workspace is closed for change during 
@@ -80,6 +80,7 @@ public interface IResourceChangeEvent {
 	 * report of creations, deletions, and modifications
 	 * to one or more resources expressed as a hierarchical
 	 * resource delta as returned by <code>getDelta</code>.
+	 * See class comments for further details.
 	 *
 	 * @see #getType
 	 * @see #getDelta
@@ -90,6 +91,7 @@ public interface IResourceChangeEvent {
 	 * Event type constant (bit mask) indicating a before-the-fact 
 	 * report of the impending closure of a single
 	 * project as returned by <code>getResource</code>.
+	 * See class comments for further details.
 	 *
 	 * @see #getType
 	 * @see #getResource
@@ -100,6 +102,7 @@ public interface IResourceChangeEvent {
 	 * Event type constant (bit mask) indicating a before-the-fact 
 	 * report of the impending deletion of a single
 	 * project as returned by <code>getResource</code>.
+	 * See class comments for further details.
 	 *
 	 * @see #getType
 	 * @see #getResource
@@ -111,6 +114,7 @@ public interface IResourceChangeEvent {
 	 * report of creations, deletions, and modifications
 	 * to one or more resources expressed as a hierarchical
 	 * resource delta as returned by <code>getDelta</code>.
+	 * See class comments for further details.
 	 *
 	 * @see #getType
 	 * @see #getResource
@@ -122,6 +126,7 @@ public interface IResourceChangeEvent {
 	 * report of creations, deletions, and modifications
 	 * to one or more resources expressed as a hierarchical
 	 * resource delta as returned by <code>getDelta</code>.
+	 * See class comments for further details.
 	 *
 	 * @see #getType
 	 * @see #getResource
