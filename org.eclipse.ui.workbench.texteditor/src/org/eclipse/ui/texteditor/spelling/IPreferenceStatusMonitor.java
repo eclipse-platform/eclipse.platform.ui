@@ -16,8 +16,6 @@ import org.eclipse.core.runtime.IStatus;
  * A monitor that can be notified about status changes.
  * <p>
  * This interface is intended to be implemented by clients.
- * </p><p>
- * Not yet for public use. API under construction.
  * </p>
  * 
  * @see ISpellingPreferenceBlock#initialize(IPreferenceStatusMonitor)

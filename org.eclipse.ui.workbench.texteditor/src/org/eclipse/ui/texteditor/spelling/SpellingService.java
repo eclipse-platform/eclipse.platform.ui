@@ -29,8 +29,6 @@ import org.eclipse.ui.internal.texteditor.spelling.SpellingEngineRegistry;
  * System wide spelling service.
  * <p>
  * This class is not intended to be subclassed by clients.
- * </p><p>
- * Not yet for public use. API under construction.
  * </p>
  * 
  * @since 3.1

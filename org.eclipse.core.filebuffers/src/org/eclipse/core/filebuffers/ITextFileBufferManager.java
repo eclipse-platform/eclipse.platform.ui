@@ -93,7 +93,6 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @param location the location to check
 	 * @return <code>true</code> if the location is a text file location

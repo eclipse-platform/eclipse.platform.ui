@@ -21,8 +21,6 @@ import org.eclipse.swt.widgets.Control;
  * selected.
  * <p>
  * This interface is intended to be implemented by clients.
- * </p><p>
- * Not yet for public use. API under construction.
  * </p>
  * 
  * @since 3.1

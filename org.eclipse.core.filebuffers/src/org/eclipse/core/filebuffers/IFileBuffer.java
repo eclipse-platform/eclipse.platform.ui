@@ -76,8 +76,6 @@ public interface IFileBuffer {
 	/**
 	 * Returns whether this file buffer is commitable. This is the case when the
 	 * file buffer's state has been successfully validated.
-	 * <p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @return <code>true</code> if the file buffer is commitable,
 	 *         <code>false</code> otherwise
@@ -87,8 +85,6 @@ public interface IFileBuffer {
 	
 	/**
 	 * Computes the scheduling rule that is required for committing a changed buffer.
-	 * <p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @return the commit scheduling rule or <code>null</code>
 	 * @since 3.1
@@ -129,8 +125,6 @@ public interface IFileBuffer {
 	 * Sets the dirty state of the file buffer to the given value. A direct
 	 * subsequent call to <code>isDirty</code> returns the previously set 
 	 * value.
-	 * <p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @param isDirty <code>true</code> if the buffer should be marked dirty, <code>false</code> otherwise
 	 * @since 3.1
@@ -139,8 +133,6 @@ public interface IFileBuffer {
 		
 	/**
 	 * Computes the scheduling rule that is required for validating the state of the buffer.
-	 * <p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @return the validate state scheduling rule or <code>null</code>
 	 * @since 3.1
@@ -183,8 +175,6 @@ public interface IFileBuffer {
 	/**
 	 * The caller requests that the synchronization context is used to
 	 * synchronize this file buffer with its underlying file.
-	 * <p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @since 3.1
 	 */
@@ -193,8 +183,6 @@ public interface IFileBuffer {
 	/**
 	 * The caller no longer requests the synchronization context for this file
 	 * buffer.
-	 * <p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @since 3.1
 	 */
@@ -203,8 +191,6 @@ public interface IFileBuffer {
 	/**
 	 * Returns whether a synchronization context has been requested for this
 	 * file buffer and not yet released.
-	 * <p>
-	 * Not yet for public use. API under construction.
 	 * 
 	 * @return <code>true</code> if a synchronization context is requested,
 	 *         <code>false</code> otherwise
@@ -216,9 +202,6 @@ public interface IFileBuffer {
 	 * Returns the content type of this file buffer or <code>null</code>
 	 * if none could be determined. If the file buffer is dirty, the
 	 * returned content type is determined by the buffer's dirty state.
-	 * <p>
-	 * Not yet for public use. API under construction.
-	 * </p>
 	 * 
 	 * @return the content type or <code>null</code>
 	 * @throws CoreException if reading or accessing the underlying file

@@ -20,9 +20,6 @@ import org.eclipse.core.runtime.content.IContentType;
  * This class is not intended to be subclassed by clients. The amount of
  * information provided in this context may grow over time.
  * </p>
- * <p>
- * Not yet for public use. API under construction.
- * </p>
  * 
  * @since 3.1
  */

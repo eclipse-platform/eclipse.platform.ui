@@ -147,8 +147,7 @@ public interface IFileBufferManager {
 	 * buffers which do not support state validation are left untouched.
 	 * <p>
 	 * In case of a single file buffer, {@link IFileBuffer#validateState(IProgressMonitor, Object)} should be used.
-	 * <p>
-	 * Not yet for public use. API under construction.
+	 * </p>
 	 * 
 	 * @param fileBuffers the file buffers to validate
 	 * @param monitor the progress monitor

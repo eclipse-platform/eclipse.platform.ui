@@ -19,8 +19,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
  * {@link ISpellingProblemCollector}.
  * <p>
  * This class is intended to be subclassed by clients.
- * </p><p>
- * Not yet for public use. API under construction.
  * </p>
  * 
  * @see SpellingService

@@ -24,8 +24,6 @@ import org.eclipse.ui.internal.texteditor.spelling.EmptySpellingPreferenceBlock;
  * Describes an extension to the <code>spellingEngine</code> extension point.
  * <p>
  * This class is not intended to be subclassed by clients.
- * </p><p>
- * Not yet for public use. API under construction.
  * </p>
  * 
  * @since 3.1

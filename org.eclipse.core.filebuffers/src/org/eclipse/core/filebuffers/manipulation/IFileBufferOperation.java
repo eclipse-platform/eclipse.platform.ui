@@ -25,8 +25,6 @@ import org.eclipse.core.filebuffers.IFileBuffer;
  * manipulation such as creating file buffers, state validation, committing file
  * buffers, etc. Thus, the purpose of <code>IFileBufferOperation</code> is
  * constrained to buffer content manipulation.
- * <p>
- * Not yet for public use. API under construction.
  * 
  * @see org.eclipse.core.filebuffers.manipulation.FileBufferOperationRunner
  * @since 3.1 

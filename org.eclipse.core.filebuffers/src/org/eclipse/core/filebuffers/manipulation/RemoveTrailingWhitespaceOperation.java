@@ -29,9 +29,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * A text file buffer operations that removes all trailing whitespace.
- * <p>
- * Not yet for public use. API under construction.
+ * A text file buffer operation that removes all trailing whitespace.
  * 
  * @since 3.1
  */

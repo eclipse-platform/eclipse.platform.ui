@@ -24,8 +24,6 @@ import org.eclipse.jface.text.IRegion;
  * support the text {@link org.eclipse.core.runtime.content.IContentType content type}.
  * <p>
  * This interface is intended to be implemented by clients.
- * </p><p>
- * Not yet for public use. API under construction.
  * </p>
  * 
  * @since 3.1

@@ -20,8 +20,6 @@ import org.eclipse.core.runtime.content.IContentType;
  * of a given element.
  * <p>
  * This interface may be implemented by clients.
- * </p><p>
- * Not yet for public use. API under construction.
  * </p>
  * 
  * @see org.eclipse.ui.texteditor.IDocumentProvider
@@ -34,14 +32,11 @@ public interface IDocumentProviderExtension4 {
 	 * <code>null</code> if none could be determined. If the element's
 	 * document can be saved, the returned content type is determined by the
 	 * document's current content.
-	 * <p>
-	 * Not yet for public use. API under construction.
-	 * </p>
+	 * 
 	 * @param element the element
 	 * @return the content type or <code>null</code>
 	 * @throws CoreException if reading or accessing the underlying store
 	 *                 fails
-	 * @since 3.1
 	 */
 	IContentType getContentType(Object element) throws CoreException;
 }

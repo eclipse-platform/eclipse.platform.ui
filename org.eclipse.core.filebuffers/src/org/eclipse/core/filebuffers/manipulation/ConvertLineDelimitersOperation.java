@@ -29,10 +29,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * A text file buffer operations that changes the line delimiters to a specified
+ * A text file buffer operation that changes the line delimiters to a specified
  * line delimiter.
- * <p>
- * Not yet for public use. API under construction.
  * 
  * @since 3.1
  */

@@ -22,7 +22,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Not yet for public use. API under construction.
+ * Multi-text edit with progress reporting. 
  * 
  * @since 3.1
  */

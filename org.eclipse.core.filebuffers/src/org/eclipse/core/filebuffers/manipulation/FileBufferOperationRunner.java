@@ -43,8 +43,7 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
  * The runner takes care of all aspects that are not operation specific.
  * <p>
  * This class is not intended to be subclassed. Clients instantiate this class.
- * <p>
- * Not yet for public use. API under construction.
+ * </p>
  * 
  * @see org.eclipse.core.filebuffers.manipulation.IFileBufferOperation
  * @since 3.1

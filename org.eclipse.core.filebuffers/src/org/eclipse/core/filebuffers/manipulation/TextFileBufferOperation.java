@@ -39,8 +39,6 @@ import org.eclipse.jface.text.TextUtilities;
  * Subclasses have to override the <code>computeTextEdits</code> method in
  * order to provide a sequence of {@link org.eclipse.text.edits.TextEdit}
  * objects.
- * <p>
- * Not yet for public use. API under construction.
  * 
  * @since 3.1
  */
