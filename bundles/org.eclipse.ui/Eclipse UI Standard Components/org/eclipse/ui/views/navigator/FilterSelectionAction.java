@@ -11,17 +11,16 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * The FilterAction is the class that adds the filter views to a ResourceNavigator.
+ * The FilterSelectionAction opens the filters dialog.
  */
 public class FilterSelectionAction extends ResourceNavigatorAction {
 	private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.getString("FilterSelection.toolTip"); //$NON-NLS-1$
 	private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.getString("FilterSelection.message"); //$NON-NLS-1$
 	private static final String FILTER_TITLE_MESSAGE = ResourceNavigatorMessages.getString("FilterSelection.title"); //$NON-NLS-1$
 	
-	private Shell shell;
 /**
- * Create a new filter action
- * @param shell the shell that will be used for the list selection
+ * Creates the action.
+ * 
  * @param navigator the resource navigator
  * @param label the label for the action
  */
@@ -31,18 +30,19 @@ public FilterSelectionAction(IResourceNavigatorPart navigator, String label) {
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.FILTER_SELECTION_ACTION);
 	setEnabled(true);
 }
-/**
+
+/*
  * Implementation of method defined on <code>IAction</code>.
  */
 public void run() {
 
-	ResourcePatternFilter filter = this.getNavigator().getPatternFilter();
+	ResourcePatternFilter filter = getNavigator().getPatternFilter();
 	FiltersContentProvider contentProvider = new FiltersContentProvider(filter);
 
 	ListSelectionDialog dialog =
 		new ListSelectionDialog(
-			this.shell,
-			this.getResourceViewer(),
+			getShell(),
+			getResourceViewer(),
 			contentProvider,
 			new LabelProvider(),
 			FILTER_SELECTION_MESSAGE);
