@@ -48,10 +48,12 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -78,7 +80,58 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 																	IPropertyChangeListener,
 																	IValueDetailListener,
 																	IDebugExceptionHandler {
+	/**
+	 * The selection provider for the variables view changes depending on whether
+	 * the variables viewer or detail pane source viewer have focus. This "super" 
+	 * provider ensures the correct selection is sent to all listeners.
+	 */
+	class VariablesViewSelectionProvider implements ISelectionProvider {
+		private ListenerList fListeners= new ListenerList();
+		private ISelectionProvider fUnderlyingSelectionProvider;
+		/**
+		 * @see ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
+		 */
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			fListeners.add(listener);
+		}
 
+		/**
+		 * @see ISelectionProvider#getSelection()
+		 */
+		public ISelection getSelection() {
+			return getUnderlyingSelectionProvider().getSelection();
+		}
+
+		/**
+		 * @see ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener)
+		 */
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			fListeners.remove(listener);
+		}
+
+		/**
+		 * @see ISelectionProvider#setSelection(ISelection)
+		 */
+		public void setSelection(ISelection selection) {
+			getUnderlyingSelectionProvider().setSelection(selection);
+		}
+		
+		protected ISelectionProvider getUnderlyingSelectionProvider() {
+			return fUnderlyingSelectionProvider;
+		}
+
+		protected void setUnderlyingSelectionProvider(ISelectionProvider underlyingSelectionProvider) {
+			fUnderlyingSelectionProvider = underlyingSelectionProvider;
+		}
+		
+		protected void fireSelectionChanged(SelectionChangedEvent event) {
+			Object[] listeners= fListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				ISelectionChangedListener listener = (ISelectionChangedListener)listeners[i];
+				listener.selectionChanged(event);
+			}
+		}
+	}
 	
 	/**
 	 * The model presentation used as the label provider for the tree viewer,
@@ -117,6 +170,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private ISelectionChangedListener fTreeSelectionChangedListener;
 	private ISelectionChangedListener fDetailSelectionChangedListener;
 	private IDocumentListener fDetailDocumentListener;
+	
+	/**
+	 * Selection provider for this view.
+	 */
+	private VariablesViewSelectionProvider fSelectionProvider= new VariablesViewSelectionProvider();
 	
 	/**
 	 * Collections for tracking actions.
@@ -242,12 +300,16 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		vv.setLabelProvider(getModelPresentation());
 		vv.setUseHashlookup(true);
 		vv.getControl().addFocusListener(new FocusAdapter() {
+			/**
+			 * @see FocusListener#focusGained(FocusEvent)
+			 */
 			public void focusGained(FocusEvent e) {
-				getSite().setSelectionProvider(vv);
+				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(vv);
 			}
 		});
 		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
-		getSite().setSelectionProvider(vv);
+		getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(vv);
+		getSite().setSelectionProvider(getVariablesViewSelectionProvider());
 		
 		// add text viewer
 		SourceViewer dv= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
@@ -260,8 +322,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		dv.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
 
 		dv.getControl().addFocusListener(new FocusAdapter() {
+			/**
+			 * @see FocusListener#focusGained(FocusEvent)
+			 */
 			public void focusGained(FocusEvent e) {
-				getSite().setSelectionProvider(getDetailViewer().getSelectionProvider());
+				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(getDetailViewer().getSelectionProvider());
 			}
 		});
 		// add a context menu to the detail area
@@ -518,7 +583,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 					// if the detail pane is not visible, don't waste time retrieving details
 					if (getSashForm().getMaximizedControl() == getViewer().getControl()) {
 						return;
-					}					
+					}	
+					getVariablesViewSelectionProvider().fireSelectionChanged(event);				
 					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
 					populateDetailPaneFromSelection(selection);
 				}					
@@ -571,7 +637,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		if (fDetailSelectionChangedListener == null) {
 			fDetailSelectionChangedListener = new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					updateSelectionDependentActions();					
+					getVariablesViewSelectionProvider().fireSelectionChanged(event);
+					updateSelectionDependentActions();				
 				}
 			};
 		}
@@ -728,5 +795,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void handleException(DebugException e) {
 		showMessage(e.getMessage());
+	}
+	
+	protected VariablesViewSelectionProvider getVariablesViewSelectionProvider() {
+		return fSelectionProvider;
 	}
 }
