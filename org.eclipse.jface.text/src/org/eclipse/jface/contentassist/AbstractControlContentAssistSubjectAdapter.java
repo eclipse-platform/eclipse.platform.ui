@@ -600,6 +600,13 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				if (DEBUG)
 					System.out.println("Focus Gained: " + e.widget); //$NON-NLS-1$
 
+				install();
+			}
+
+			/**
+			 * Installs the cue and hover handlers.
+			 */
+			public void install() {
 				if (fHoverHandler == null) {
 					fHoverHandler= new HoverHandler(this);
 					fControl.addMouseTrackListener(fHoverHandler);
@@ -630,6 +637,13 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					Thread.dumpStack();
 				}
 
+				uninstall();
+			}
+
+			/**
+			 * Uninstalls the cue and hover handlers.
+			 */
+			public void uninstall() {
 				if (fHoverHandler != null)
 					fControl.removeMouseTrackListener(fHoverHandler);
 				
@@ -763,12 +777,16 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 					focuslistener= new FieldFocusListener(control);
 					control.setData(SMART_FOCUS_LISTENER, focuslistener);
 					control.addFocusListener(focuslistener);
+					if (control.isFocusControl())
+						focuslistener.install();
 				}
 			} else {
 				// remove smart stuff
 				if (focuslistener != null) {
 					control.removeFocusListener(focuslistener);
 					control.setData(SMART_FOCUS_LISTENER, null);
+					if (control.isFocusControl())
+						focuslistener.uninstall();
 				}
 				
 				if (fCueImage != null) {
