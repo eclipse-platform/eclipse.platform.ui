@@ -451,8 +451,7 @@ private void grayUpdateHierarchy(Object treeElement) {
 
 	boolean shouldBeAtLeastGray = determineShouldBeAtLeastGrayChecked(treeElement);
 
-	treeViewer.setChecked(treeElement, shouldBeAtLeastGray);
-	treeViewer.setGrayed(treeElement, shouldBeAtLeastGray);
+	treeViewer.setGrayChecked(treeElement, shouldBeAtLeastGray);
 
 	if (whiteCheckedTreeItems.contains(treeElement))
 		whiteCheckedTreeItems.remove(treeElement);
@@ -838,8 +837,7 @@ public void updateSelections(final Map items) {
 	while (checkedStateIterator.hasNext()) {
 		Object nextDeselection = checkedStateIterator.next();
 		if (!selectedNodes.contains(nextDeselection)) {
-			treeViewer.setChecked(nextDeselection, false);
-			treeViewer.setGrayed(nextDeselection, false);
+			treeViewer.setGrayChecked(nextDeselection, false);
 			setWhiteChecked(nextDeselection, false);
 			checkedStateStore.remove(nextDeselection);
 		}
