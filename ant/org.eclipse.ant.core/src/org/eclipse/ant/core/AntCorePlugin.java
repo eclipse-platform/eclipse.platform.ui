@@ -124,12 +124,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	}
 
 	/**
-	 * @see Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-	}
-
-	/**
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
@@ -139,7 +133,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 		}
 		preferences.updatePluginPreferences();
 		savePluginPreferences();
-		
 	}
 
 	/**
