@@ -103,6 +103,8 @@ public final class InternalPlatform {
 	
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
+	
+	private static final String METADATA_VERSION = "org.eclipse.core.runtime=1"; //$NON-NLS-1$
 
 
 /**
@@ -589,72 +591,22 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 	loadKeyring();
 }
 /** 
- * Write out the version of the Runtime plug-in into a known file. If the file
- * already exists then merge with its current contents.
- * <p>
- * It is very important that this code be run after the plug-in registry has
- * been initialized.
+ * Write out the version of the metadata into a known file. Overwrite
+ * any existing file contents.
  */
 private static void writeVersion() {
 	File versionFile = metaArea.getVersionPath().toFile();
-	Properties settings = new Properties();
-
-	// if a file already exists then load the current settings
-	if (versionFile.exists()) {
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(new FileInputStream(versionFile));
-			settings.load(input);
-		} catch (FileNotFoundException e) {
-			// shouldn't happen because of the java.io.File.exists() check above
-		} catch (IOException e) {
-			// Return here rather than continue. If we continue then we run the risk
-			// of overwriting the file later and losing any already existing values
-			// that we don't know about.
-			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.readVersion", versionFile.toString()), e)); //$NON-NLS-1$
-			return;
-		} finally {
-			if (input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					// ignore
-				}
-		}
-	}
-
-	// Add this check to ensure that we don't get an NPE if we mistakenly call this
-	// method before the plug-in registry has been initialized.	
-	if (registry == null)
-		return;
-
-	IPluginDescriptor plugin = registry.getPluginDescriptor(Platform.PI_RUNTIME);
-	if (plugin == null) {
-		// log a message saying that we couldn't find the runtime plug-in.
-		// this shouldn't happen.
-		log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.noRuntime"), null)); //$NON-NLS-1$
-		return;
-	}
-
-	// add our plug-in version to the file
-	settings.put(plugin.getUniqueIdentifier(), plugin.getVersionIdentifier().toString());
-
-	// write the file to disk
-	OutputStream output = null;
 	try {
-		output = new BufferedOutputStream(new FileOutputStream(versionFile));
-		settings.store(output, null);
-	} catch (IOException e) {
+		OutputStream output = new BufferedOutputStream(new FileOutputStream(versionFile));
+		try {
+			output.write(METADATA_VERSION.getBytes("UTF-8")); //$NON-NLS-1$
+		} finally {
+			output.close();
+		}
+	} catch (Exception e) {
 		// Fail silently. Not a catastrophe if we can't write the version file. We don't
 		// want to fail execution.
 		log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, Policy.bind("meta.writeVersion", versionFile.toString()), e)); //$NON-NLS-1$
-	} finally {
-		if (output != null)
-			try {
-				output.close();
-			} catch (IOException e) {
-				// ignore
-			}
 	}
 }
 /**
