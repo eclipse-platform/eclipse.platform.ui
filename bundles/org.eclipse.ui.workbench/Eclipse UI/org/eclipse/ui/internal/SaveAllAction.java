@@ -47,9 +47,9 @@ public class SaveAllAction extends PageEventAction
  * The default constructor.
  */
 public SaveAllAction(IWorkbenchWindow window) {
-	super(WorkbenchMessages.getString("SaveAll.text"), window);//$NON-NLS-1$
+	super(WorkbenchMessages.getString("SaveAll.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
-	setId(IWorkbenchActionConstants.SAVE_ALL);
+	setId("saveAll"); //$NON-NLS-1$
 	setEnabled(false);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ALL_ACTION);
 	setImageDescriptor(

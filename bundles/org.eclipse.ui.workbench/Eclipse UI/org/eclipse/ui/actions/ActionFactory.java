@@ -54,7 +54,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * <pre>
  * MenuManager menu = ...;
  * ActionFactory.IWorkbenchAction closeEditorAction
- * 	  = ActionFactory.CLOSE_EDITOR.create(window);
+ * 	  = ActionFactory.CLOSE.create(window);
  * menu.add(closeEditorAction);
  * </pre>
  * </p>
@@ -64,8 +64,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * </p>
  * 
  * @since 3.0
- * @issue should this class be in org.eclipse.ui package? should capability be on PlatformUI?
- * @issue should this capability only be available to application?
  */
 public abstract class ActionFactory {
 	
@@ -159,14 +157,14 @@ public abstract class ActionFactory {
 	 * Workbench action: Close the active editor.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory CLOSE_EDITOR = new ActionFactory("close") { //$NON-NLS-1$
+	public static final ActionFactory CLOSE = new ActionFactory("close") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CloseEditorAction(window);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -175,13 +173,14 @@ public abstract class ActionFactory {
 	 * Workbench action: Close all open editors.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory CLOSE_ALL_EDITORS = new ActionFactory("closeAll") { //$NON-NLS-1$
+	public static final ActionFactory CLOSE_ALL = new ActionFactory("closeAll") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CloseAllAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -191,13 +190,14 @@ public abstract class ActionFactory {
 	 * changes.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory CLOSE_ALL_CLEAN_EDITORS = new ActionFactory("closeAllSaved") { //$NON-NLS-1$
+	public static final ActionFactory CLOSE_ALL_SAVED = new ActionFactory("closeAllSaved") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CloseAllSavedAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -206,13 +206,14 @@ public abstract class ActionFactory {
 	 * Workbench action: Toggle whether the editor is pinned.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory PIN_EDITOR = new ActionFactory("org.eclipse.ui.internal.PinEditorAction") { //$NON-NLS-1$
+	public static final ActionFactory PIN_EDITOR = new ActionFactory("pinEditor") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new PinEditorAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -221,13 +222,14 @@ public abstract class ActionFactory {
 	 * Workbench action: Save the active editor.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory SAVE_EDITOR = new ActionFactory("save") { //$NON-NLS-1$
+	public static final ActionFactory SAVE = new ActionFactory("save") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new SaveAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -236,13 +238,14 @@ public abstract class ActionFactory {
 	 * Workbench action: Save all open editors with unsaved changes.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory SAVE_ALL_EDITORS = new ActionFactory("saveAll") { //$NON-NLS-1$
+	public static final ActionFactory SAVE_ALL = new ActionFactory("saveAll") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new SaveAllAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -251,13 +254,14 @@ public abstract class ActionFactory {
 	 * Workbench action: Save As for the active editor.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory SAVE_EDITOR_AS = new ActionFactory("saveAs") { //$NON-NLS-1$
+	public static final ActionFactory SAVE_AS = new ActionFactory("saveAs") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new SaveAsAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -273,6 +277,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new AboutAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -288,6 +293,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new OpenPreferencesAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -303,6 +309,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ToggleEditorsVisibilityAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -318,6 +325,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new SavePerspectiveAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -333,6 +341,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ResetPerspectiveAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -348,6 +357,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ClosePerspectiveAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -363,6 +373,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CloseAllPerspectivesAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -371,13 +382,14 @@ public abstract class ActionFactory {
 	 * Workbench action: Maximize/restore the active part.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory MAXIMIZE_PART = new ActionFactory("maximize") { //$NON-NLS-1$
+	public static final ActionFactory MAXIMIZE = new ActionFactory("maximize") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new MaximizePartAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -393,6 +405,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ActivateEditorAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -408,6 +421,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new EditActionSetsAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -423,6 +437,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new LockToolBarAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -438,6 +453,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ShowPartPaneMenuAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -453,6 +469,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ShowViewMenuAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -468,6 +485,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new WorkbenchEditorsAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -489,6 +507,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CyclePartAction(window, true);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -510,6 +529,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CyclePartAction(window, false);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -531,6 +551,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CycleEditorAction(window, true);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -552,6 +573,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CycleEditorAction(window, false);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -573,6 +595,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CyclePerspectiveAction(window, true);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -594,6 +617,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CyclePerspectiveAction(window, false);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -609,6 +633,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new QuitAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -624,6 +649,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new NavigationHistoryAction(window, true);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -639,6 +665,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new NavigationHistoryAction(window, false);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -654,6 +681,7 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new OpenInNewWindowAction(window);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -880,7 +908,6 @@ public abstract class ActionFactory {
 	 * Workbench action: Find.
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "find". This action maintains its enablement state.
-	 * @issue straighten out ids
 	 */
 	public static final ActionFactory FIND = new ActionFactory("find") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
@@ -1022,26 +1049,6 @@ public abstract class ActionFactory {
 			action.setToolTipText(WorkbenchMessages.getString("Workbench.up.ToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.navigate.up"); //$NON-NLS-1$
-			return action;
-		}
-	};
-
-	/**
-	 * Workbench action: Down.
-	 * This action is a {@link Retarget Retarget} action with 
-	 * id "down". This action maintains its enablement state.
-	 * @issue added for symmetry; not used in IDE
-	 */
-	public static final ActionFactory DOWN = new ActionFactory("down") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			RetargetAction action = new LabelRetargetAction(getId(), WorkbenchMessages.getString("Workbench.down")); //$NON-NLS-1$  //$NON-NLS-2$
-			action.setToolTipText(WorkbenchMessages.getString("Workbench.down.ToolTip")); //$NON-NLS-1$
-			window.getPartService().addPartListener(action);
-			action.setActionDefinitionId("org.eclipse.ui.navigate.down"); //$NON-NLS-1$
 			return action;
 		}
 	};

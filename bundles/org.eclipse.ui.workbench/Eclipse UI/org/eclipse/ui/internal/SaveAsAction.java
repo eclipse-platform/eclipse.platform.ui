@@ -28,7 +28,7 @@ public class SaveAsAction extends BaseSaveAction {
 		super(WorkbenchMessages.getString("SaveAs.text"), window); //$NON-NLS-1$
 		setText(WorkbenchMessages.getString("SaveAs.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("SaveAs.toolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.SAVE_AS);
+		setId("saveAs"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_AS_ACTION);
 		setImageDescriptor(
 			WorkbenchImages.getImageDescriptor(

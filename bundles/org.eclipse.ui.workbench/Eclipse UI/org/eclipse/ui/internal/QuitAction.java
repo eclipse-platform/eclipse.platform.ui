@@ -41,7 +41,7 @@ public QuitAction(IWorkbenchWindow window) {
 	this.workbenchWindow = window;
 	setText(WorkbenchMessages.getString("Exit.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("Exit.toolTip")); //$NON-NLS-1$
-	setId(IWorkbenchActionConstants.QUIT);
+	setId("quit"); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.QUIT_ACTION);
 }
 
