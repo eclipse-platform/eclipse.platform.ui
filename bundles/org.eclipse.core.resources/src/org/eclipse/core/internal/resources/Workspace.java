@@ -180,7 +180,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				prepareOperation(rule, monitor);
 				beginOperation(true);
+				broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
 				getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+				broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())
@@ -1163,7 +1165,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void initializeValidator() {
 		shouldValidate = false;
-		IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
+		IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
 		// no-one is plugged into the extension point so disable validation
 		if (configs == null || configs.length == 0) {
 			return;
@@ -1196,7 +1198,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void initializeMoveDeleteHook() {
 		try {
-			IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MOVE_DELETE_HOOK);
+			IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MOVE_DELETE_HOOK);
 			// no-one is plugged into the extension point so disable validation
 			if (configs == null || configs.length == 0) {
 				return;
@@ -1232,7 +1234,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected void initializeTeamHook() {
 		try {
-			IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_TEAM_HOOK);
+			IConfigurationElement[] configs = Platform.getExtensionRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_TEAM_HOOK);
 			// no-one is plugged into the extension point so disable validation
 			if (configs == null || configs.length == 0) {
 				return;
