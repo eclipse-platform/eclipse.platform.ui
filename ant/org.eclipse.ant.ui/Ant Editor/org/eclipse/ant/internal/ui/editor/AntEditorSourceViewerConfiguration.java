@@ -18,7 +18,6 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.ColorManager;
@@ -36,7 +35,7 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IAutoIndentStrategy;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -66,9 +65,9 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 
     private XMLTextHover fTextHover;
     
-    private ContentAssistant contentAssistant;
+    private ContentAssistant fContentAssistant;
     
-    private AntAutoIndentStrategy autoIndentStrategy;
+    private AntAutoEditStrategy[] fAutoEditorStategies;
     
     /**
      * Creates an instance with the specified color manager.
@@ -82,11 +81,11 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
      */
     public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
-        contentAssistant= new ContentAssistant();
+        fContentAssistant= new ContentAssistant();
         AntEditorCompletionProcessor processor = new AntEditorCompletionProcessor(fEditor.getAntModel()); 
-		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-		contentAssistant.setContentAssistProcessor(processor, AntEditorPartitionScanner.XML_TAG);
-        contentAssistant.setDocumentPartitioning(AntDocumentSetupParticipant.ANT_PARTITIONING);
+		fContentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		fContentAssistant.setContentAssistProcessor(processor, AntEditorPartitionScanner.XML_TAG);
+        fContentAssistant.setDocumentPartitioning(AntDocumentSetupParticipant.ANT_PARTITIONING);
         
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		
@@ -95,28 +94,28 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 			processor.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 		}
 				
-		contentAssistant.enableAutoInsert(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
-		contentAssistant.enableAutoActivation(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
-		contentAssistant.setAutoActivationDelay(store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
-		contentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
-		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-		contentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+		fContentAssistant.enableAutoInsert(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
+		fContentAssistant.enableAutoActivation(store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
+		fContentAssistant.setAutoActivationDelay(store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
+		fContentAssistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
+		fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
+		fContentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
 		ColorManager manager= ColorManager.getDefault();	
 		Color background= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);			
-		contentAssistant.setContextInformationPopupBackground(background);
-		contentAssistant.setContextSelectorBackground(background);
-		contentAssistant.setProposalSelectorBackground(background);
+		fContentAssistant.setContextInformationPopupBackground(background);
+		fContentAssistant.setContextSelectorBackground(background);
+		fContentAssistant.setProposalSelectorBackground(background);
 
 		Color foreground= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
-		contentAssistant.setContextInformationPopupForeground(foreground);
-		contentAssistant.setContextSelectorForeground(foreground);
-		contentAssistant.setProposalSelectorForeground(foreground);
+		fContentAssistant.setContextInformationPopupForeground(foreground);
+		fContentAssistant.setContextSelectorForeground(foreground);
+		fContentAssistant.setProposalSelectorForeground(foreground);
 			
         IInformationControlCreator creator = getInformationControlCreator(true);
-		contentAssistant.setInformationControlCreator(creator);
+		fContentAssistant.setInformationControlCreator(creator);
 
-        return contentAssistant;
+        return fContentAssistant;
     }
 
     protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
@@ -174,19 +173,19 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		ColorManager manager= ColorManager.getDefault();
 		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
-			contentAssistant.enableAutoActivation(enabled);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p) && contentAssistant != null) {
+			fContentAssistant.enableAutoActivation(enabled);
+		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p) && fContentAssistant != null) {
 			int delay= store.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
-			contentAssistant.setAutoActivationDelay(delay);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p) && contentAssistant != null) {
+			fContentAssistant.setAutoActivationDelay(delay);
+		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p) && fContentAssistant != null) {
 			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
-			contentAssistant.setProposalSelectorForeground(c);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p) && contentAssistant != null) {
+			fContentAssistant.setProposalSelectorForeground(c);
+		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p) && fContentAssistant != null) {
 			Color c= getColor(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
-			contentAssistant.setProposalSelectorBackground(c);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p) && contentAssistant != null) {
+			fContentAssistant.setProposalSelectorBackground(c);
+		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p) && fContentAssistant != null) {
 			boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);
-			contentAssistant.enableAutoInsert(enabled);
+			fContentAssistant.enableAutoInsert(enabled);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS.equals(p)) {
 			changeContentAssistProcessor(store);
 		}
@@ -195,7 +194,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	private void changeContentAssistProcessor(IPreferenceStore store) {
 		String triggers= store.getString(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS);
 		if (triggers != null) {
-			AntEditorCompletionProcessor cp= (AntEditorCompletionProcessor)contentAssistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
+			AntEditorCompletionProcessor cp= (AntEditorCompletionProcessor)fContentAssistant.getContentAssistProcessor(IDocument.DEFAULT_CONTENT_TYPE);
 			if (cp != null) {
 				cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
@@ -218,19 +217,6 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		//formatter.setSlaveStrategy(new XmlCommentFormattingStrategy(), AntEditorPartitionScanner.XML_COMMENT);
 		 
 		return formatter;
-	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoIndentStrategy(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
-	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
-		if (AntEditorPartitionScanner.XML_COMMENT.equals(contentType)) {
-			return super.getAutoIndentStrategy(sourceViewer, contentType);
-		} 
-		if (autoIndentStrategy == null) {
-			autoIndentStrategy= new AntAutoIndentStrategy(fEditor.getAntModel());
-		}
-		return autoIndentStrategy;
 	}
 	
 	/* (non-Javadoc)
@@ -303,5 +289,18 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		list.add(""); //$NON-NLS-1$
 		
 		return (String[]) list.toArray(new String[list.size()]);	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
+		if (AntEditorPartitionScanner.XML_COMMENT.equals(contentType)) {
+			return super.getAutoEditStrategies(sourceViewer, contentType);
+		} 
+		if (fAutoEditorStategies == null) {
+			fAutoEditorStategies= new AntAutoEditStrategy[] {new AntAutoEditStrategy(fEditor.getAntModel())};
+		}
+		return fAutoEditorStategies;
 	}
 }

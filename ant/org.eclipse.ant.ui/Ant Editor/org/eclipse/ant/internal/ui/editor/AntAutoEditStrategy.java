@@ -15,7 +15,7 @@ import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultAutoIndentStrategy;
+import org.eclipse.jface.text.DefaultIndentLineAutoEditStrategy;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
@@ -24,14 +24,15 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 /**
- * Auto indent strategy for Ant build files
+ * Auto edit strategy for Ant build files
+ * Current does special indenting.
  */
-public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
+public class AntAutoEditStrategy extends DefaultIndentLineAutoEditStrategy {
 	
 	private AntModel fModel;
 	private int fAccumulatedChange= 0;
 	
-	public AntAutoIndentStrategy(AntModel model) {
+	public AntAutoEditStrategy(AntModel model) {
 		fModel= model;
 	}
 	

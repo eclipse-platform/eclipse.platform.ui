@@ -49,7 +49,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
-import org.eclipse.jface.text.IAutoIndentStrategy;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -980,9 +980,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (config == null) {
 			return; //editor has been disposed.
 		}
-		IAutoIndentStrategy strategy= config.getAutoIndentStrategy(null, null);
-		if (strategy instanceof AntAutoIndentStrategy) {
-			((AntAutoIndentStrategy)strategy).reconciled();
+		IAutoEditStrategy[] strategies= config.getAutoEditStrategies(getViewer(), null);
+		for (int i = 0; i < strategies.length; i++) {
+			IAutoEditStrategy strategy = strategies[i];
+			if (strategy instanceof AntAutoEditStrategy) {
+				((AntAutoEditStrategy)strategy).reconciled();
+			}
 		}
 		
 		Shell shell= getSite().getShell();
