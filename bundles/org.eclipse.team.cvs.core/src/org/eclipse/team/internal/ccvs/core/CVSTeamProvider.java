@@ -706,12 +706,11 @@ public class CVSTeamProvider extends RepositoryProvider {
 						CVSWorkspaceRoot.getCVSResourceFor(resources[i]).accept(new ICVSResourceVisitor() {
 							public void visitFile(ICVSFile file) throws CVSException {
 								monitor.worked(1);
-								ResourceSyncInfo info = file.getSyncInfo();
-								if (info != null) {
-									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", info.getName())); //$NON-NLS-1$
-									MutableResourceSyncInfo newInfo = info.cloneMutable();
-									newInfo.setTag(tag);
-									file.setSyncInfo(newInfo);
+								//ResourceSyncInfo info = file.getSyncInfo();
+								byte[] syncBytes = file.getSyncBytes();
+								if (syncBytes != null) {
+									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", file.getName())); //$NON-NLS-1$
+									file.setSyncBytes(ResourceSyncInfo.setTag(syncBytes, tag));
 								}
 							};
 							public void visitFolder(ICVSFolder folder) throws CVSException {
@@ -965,20 +964,18 @@ public class CVSTeamProvider extends RepositoryProvider {
 					if (! mFile.isManaged()) continue;
 					
 					// only set keyword substitution if new differs from actual
-					ResourceSyncInfo info = mFile.getSyncInfo();
-					KSubstOption fromKSubst = info.getKeywordMode();
+					byte[] syncBytes = mFile.getSyncBytes();
+					KSubstOption fromKSubst = ResourceSyncInfo.getKeywordMode(syncBytes);
 					if (toKSubst.equals(fromKSubst)) continue;
 					
 					// change resource sync info immediately for an outgoing addition
-					if (info.isAdded()) {
-						MutableResourceSyncInfo newInfo = info.cloneMutable();
-						newInfo.setKeywordMode(toKSubst);
-						mFile.setSyncInfo(newInfo);
+					if (ResourceSyncInfo.isAddition(syncBytes)) {
+						mFile.setSyncBytes(ResourceSyncInfo.setKeywordMode(syncBytes, toKSubst));
 						continue;
 					}
 
 					// nothing do to for deletions
-					if (info.isDeleted()) continue;
+					if (ResourceSyncInfo.isDeletion(syncBytes)) continue;
 
 					// file exists remotely so we'll have to commit it
 					if (fromKSubst.isBinary() && ! toKSubst.isBinary()) {

@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -84,9 +83,9 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						handleCVSDir((IContainer)resource, kind);
 					} else {
 						// Inform the synchronizer about folder creations
-						if (kind == IResourceDelta.ADDED && resource.getType() == IResource.FOLDER) {
+						if (kind == IResourceDelta.ADDED) {
 							try {
-								CVSProviderPlugin.getPlugin().getFileModificationManager().folderCreated((IFolder)resource);
+								CVSProviderPlugin.getPlugin().getFileModificationManager().created(resource);
 							} catch (CVSException e) {
 								throw new CoreException(e.getStatus());
 							}

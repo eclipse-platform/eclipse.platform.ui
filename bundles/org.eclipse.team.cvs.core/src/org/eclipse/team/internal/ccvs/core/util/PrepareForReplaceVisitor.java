@@ -40,16 +40,16 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	 * @see ICVSResourceVisitor#visitFile(ICVSFile)
 	 */
 	public void visitFile(ICVSFile file) throws CVSException {
-		ResourceSyncInfo info = file.getSyncInfo();
-		if (info == null) {
+		byte[] syncBytes = file.getSyncBytes();
+		if (syncBytes == null) {
 			// Delete unmanaged files if the user wants them deleted
 			if (CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
 				file.delete();
 			}
-		} else if (info.isAdded()) {
+		} else if (ResourceSyncInfo.isAddition(syncBytes)) {
 			file.delete();
 			file.unmanage(null);
-		} else if (info.isDeleted()) {
+		} else if (ResourceSyncInfo.isDeletion(syncBytes)) {
 			// If deleted, null the sync info so the file will be refetched
 			file.unmanage(null);
 		} else if (file.isModified()) {

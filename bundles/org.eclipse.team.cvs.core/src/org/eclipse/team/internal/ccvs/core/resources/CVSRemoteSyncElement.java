@@ -17,8 +17,8 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -420,14 +420,14 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		}
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)e1);
 		try {
-			ResourceSyncInfo info1 = cvsFile.getSyncInfo();
-			ResourceSyncInfo info2 = ((ICVSRemoteResource)e2).getSyncInfo();
+			byte[] syncBytes1 = cvsFile.getSyncBytes();
+			byte[] syncBytes2 = ((ICVSRemoteFile)e2).getSyncBytes();
 			
-			if(info1 != null) {
-				if(info1.isDeleted() || info1.isMerged() || cvsFile.isModified()) {
+			if(syncBytes1 != null) {
+				if(ResourceSyncInfo.isDeletion(syncBytes1) || ResourceSyncInfo.isMerge(syncBytes1) || cvsFile.isModified()) {
 					return false;
 				}
-				return info1.getRevision().equals(info2.getRevision());
+				return ResourceSyncInfo.getRevision(syncBytes1).equals(ResourceSyncInfo.getRevision(syncBytes2));
 			}
 			return false;
 		} catch(CVSException e) {

@@ -169,28 +169,40 @@ public class Connection {
 	 * Sends the given string to the server.
 	 */
 	public void write(String s) throws CVSException {
-		write(s, false);
+		write(s.getBytes(), 0, s.length(), false);
+	}
+	/**
+	 * Sends the given bytes to the server.
+	 */
+	public void write(byte[] b, int off, int len) throws CVSException {
+		write(b, off, len, false);
 	}
 	/**
 	 * Sends the given string and a newline to the server. 
 	 */
 	public void writeLine(String s) throws CVSException {
-		write(s, true);
+		write(s.getBytes(), 0, s.length(), true);
+	}
+	/**
+	 * Sends the given bytes and a newline to the server.
+	 */
+	public void writeLine(byte[] b, int off, int len) throws CVSException {
+		write(b, off, len, true);
 	}
 	/**
 	 * Low level method to write a string to the server. All write* methods are
 	 * funneled through this method.
 	 */
-	void write(String s, boolean newline) throws CVSException {
+	void write(byte[] b, int off, int len, boolean newline) throws CVSException {
 		if (!isEstablished())
 			throw new CVSCommunicationException(Policy.bind("Connection.writeUnestablishedConnection"));//$NON-NLS-1$
 			
 		if (Policy.DEBUG_CVS_PROTOCOL)
-			System.out.print(s + (newline ? "\n" : ""));//$NON-NLS-1$ //$NON-NLS-2$ 
+			System.out.print(new String(b) + (newline ? "\n" : ""));//$NON-NLS-1$ //$NON-NLS-2$ 
 	
 		try {
 			OutputStream out= getOutputStream();
-			out.write(s.getBytes());
+			out.write(b, off, len);
 			if (newline)
 				out.write(NEWLINE);
 			out.flush();

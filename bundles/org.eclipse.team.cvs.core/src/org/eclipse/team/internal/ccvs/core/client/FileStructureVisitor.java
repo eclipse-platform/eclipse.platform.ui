@@ -5,9 +5,6 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -28,7 +25,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 class FileStructureVisitor extends AbstractStructureVisitor {
 
 	private final boolean sendEmptyFolders;
-	private final Set sentFiles;
 
 	/**
 	 * Constructor for the visitor
@@ -40,7 +36,6 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 			
 		super(session, true, sendModifiedContents, monitor);
 		this.sendEmptyFolders = sendEmptyFolders;
-		sentFiles = new HashSet();
 	}
 
 	/**
@@ -86,25 +81,5 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 			folders[i].accept(this);
 		}
 	}
-	
-	protected void sendFile(ICVSFile mFile) throws CVSException {
 
-		// Send the parent folder if it hasn't been sent already
-		sendFolder(mFile.getParent());
-
-		// Send the file
-		super.sendFile(mFile);
-		
-		// Record all managed files we sent
-		if (mFile.isManaged()) {
-			sentFiles.add(mFile);
-		}
-	}
-
-	/**
-	 * Return all the files that have been send to the server
-	 */
-	public ICVSFile[] getSentFiles() {
-		return (ICVSFile[]) sentFiles.toArray(new ICVSFile[sentFiles.size()]);
-	}
 }

@@ -562,7 +562,7 @@ public class Session {
 				// of the object, we can simpy reset the info for each moved resource
 				desiredFolder.accept(new ICVSResourceVisitor() {
 					public void visitFile(ICVSFile file) throws CVSException {
-						file.setSyncInfo(file.getSyncInfo());
+						file.setSyncBytes(file.getSyncBytes());
 					}
 					public void visitFolder(ICVSFolder folder) throws CVSException {
 						folder.setFolderSyncInfo(folder.getFolderSyncInfo());
@@ -756,8 +756,29 @@ public class Session {
 	 * 
 	 * @param entryLine the formatted entry line of the managed file.
 	 */
-	public void sendEntry(String entryLine) throws CVSException {
-		connection.writeLine("Entry " + entryLine); //$NON-NLS-1$
+	public void sendEntry(byte[] syncBytes, String serverTimestamp) throws CVSException {
+		connection.write("Entry "); //$NON-NLS-1$
+		if (serverTimestamp == null) {
+			connection.writeLine(syncBytes, 0, syncBytes.length);
+		} else {
+			int start = Util.getOffsetOfDelimeter(syncBytes, (byte)'/', 0, 3);
+			if (start == -1) {
+				// something is wrong with the entry line so just send it as is
+				// and let the server report the error.
+				connection.writeLine(syncBytes, 0, syncBytes.length);
+				return;
+			}
+			int end = Util.getOffsetOfDelimeter(syncBytes, (byte)'/', start + 1, 1);
+			if (end == -1) {
+				// something is wrong with the entry line so just send it as is
+				// and let the server report the error.
+				connection.writeLine(syncBytes, 0, syncBytes.length);
+				return;
+			}
+			connection.write(syncBytes, 0, start + 1);
+			connection.write(serverTimestamp);
+			connection.writeLine(syncBytes, end, syncBytes.length - end);
+		}
 	}
 
 	/**
@@ -857,13 +878,8 @@ public class Session {
 		
 		String filename = file.getName();
 		connection.writeLine("Modified " + filename); //$NON-NLS-1$
-		ResourceSyncInfo info = file.getSyncInfo();
-		if (info != null) {
-			connection.writeLine(info.getPermissions());
-		} else {
-			// for new resources send the default permissions
-			connection.writeLine(ResourceSyncInfo.getDefaultPermissions());
-		}
+		// send the default permissions for now
+		connection.writeLine(ResourceSyncInfo.getDefaultPermissions());
 		sendFile(file, isBinary, monitor);
 	}
 	

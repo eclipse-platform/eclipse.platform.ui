@@ -67,6 +67,25 @@ public interface ICVSFile extends ICVSResource {
 	public void setContents(InputStream stream, int responseType, boolean keepLocalHistory, IProgressMonitor monitor) throws CVSException;
 
 	/**
+	 * Answers the workspace synchronization information for this resource. This would 
+	 * typically include information from the <b>Entries</b> file that is used to track
+	 * the base revisions of local CVS resources.
+	 * 
+	 * @return the synchronization information for this resource, or <code>null</code>
+	 * if the resource does not have synchronization information available.
+	 */
+	public byte[] getSyncBytes() throws CVSException;
+	
+	/**
+	 * Called to set the workspace synchronization information for a resource. To
+	 * clear sync information call <code>unmanage</code>. The sync info will
+	 * become the persisted between workbench sessions.
+	 * 
+	 * @param info the resource synchronization to associate with this resource.
+	 */	
+	public void setSyncBytes(byte[] syncBytes) throws CVSException;
+	
+	/**
 	 * Sets the file to read-only (<code>true</code>) or writable (<code>false</code>).
 	 * 
 	 * This method is used by the command framework and should not be used by other clients.

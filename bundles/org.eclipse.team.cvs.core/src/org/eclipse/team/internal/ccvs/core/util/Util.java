@@ -240,4 +240,68 @@ public class Util {
 		result.add(next);
 		return (String[]) result.toArray(new String[result.size()]);
 	}
+	
+	/**
+	 * Return the substring at the given index (starting at 0) where each
+	 * element is delimited by the provided delimiter.
+	 * 
+	 * @param bytes
+	 * @param delimiter
+	 * @param index
+	 * @param includeRest
+	 * @return String
+	 */
+	public static String getSubstring(byte[] bytes, byte delimiter, int index, boolean includeRest) {
+		return new String(getBytesForSlot(bytes, delimiter, index, includeRest));
+	}
+	
+	/**
+	 * Return the offset the the Nth delimeter from the given start index.
+	 * @param bytes
+	 * @param delimiter
+	 * @param start
+	 * @param n
+	 * @return int
+	 */
+	public static int getOffsetOfDelimeter(byte[] bytes, byte delimiter, int start, int n) {
+		int count = 0;
+		for (int i = start; i < bytes.length; i++) {
+			if (bytes[i] == delimiter) count++;
+			if (count == n) return i;
+		}
+		// the Nth delimeter was not found
+		return -1;
+	}
+	
+	/**
+	 * Method getBytesForSlot.
+	 * @param syncBytes
+	 * @param SEPARATOR_BYTE
+	 * @param i
+	 * @param b
+	 * @return byte[]
+	 */
+	public static byte[] getBytesForSlot(byte[] bytes, byte delimiter, int index, boolean includeRest) {
+		// Find the starting index
+		int start;
+		if (index == 0) {
+			// make start -1 so that end determination will start at offset 0.
+			start = -1;
+		} else {
+			start = getOffsetOfDelimeter(bytes, delimiter, 0, index);
+			if (start == -1) return null;
+		}
+		// Find the ending index
+		int end = getOffsetOfDelimeter(bytes, delimiter, start + 1, 1);
+		// Calculate the length
+		int length;
+		if (end == -1 || includeRest) {
+			length = bytes.length - start - 1;
+		} else {
+			length = end - start - 1;
+		}
+		byte[] result = new byte[length];
+		System.arraycopy(bytes, start + 1, result, 0, length);
+		return result;
+	}
 }

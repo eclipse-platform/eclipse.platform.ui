@@ -35,7 +35,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -124,14 +123,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	private void handleDeletedFile(IFile resource) {
 		try {
 			ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-			if (mFile.isManaged()) {
-				ResourceSyncInfo info = mFile.getSyncInfo();
-				if (info.isAdded()) {
+			byte[] syncBytes = mFile.getSyncBytes();
+			if (syncBytes != null) {
+				if (ResourceSyncInfo.isAddition(syncBytes)) {
 					mFile.unmanage(null);
-				} else if ( ! info.isDeleted()) {
-					MutableResourceSyncInfo deletedInfo = info.cloneMutable();
-					deletedInfo.setDeleted(true);
-					mFile.setSyncInfo(deletedInfo);
+				} else if ( ! ResourceSyncInfo.isDeletion(syncBytes)) {
+					mFile.setSyncBytes(ResourceSyncInfo.convertToDeletion(syncBytes));
 				}
 			}
 		} catch (CVSException e) {
@@ -145,21 +142,20 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	 */
 	private void handleAddedFile(IFile resource) {
 		try {
+			CVSProviderPlugin.getPlugin().getFileModificationManager().created(resource);	
 			ICVSFile mFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-			if (mFile.isManaged()) {
-				ResourceSyncInfo info = mFile.getSyncInfo();
-				if (info.isDeleted()) {
+			byte[] syncBytes = mFile.getSyncBytes();
+			if (syncBytes != null) {
+				if (ResourceSyncInfo.isDeletion(syncBytes)) {
 					// Handle a replaced deletion
-					MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
-					undeletedInfo.setDeleted(false);
-					mFile.setSyncInfo(undeletedInfo);
+					mFile.setSyncBytes(ResourceSyncInfo.convertFromDeletion(syncBytes));
 					try {
 						IMarker marker = getDeletionMarker(resource);
 						if (marker != null) marker.delete();
 					} catch (CoreException e) {
 						CVSProviderPlugin.log(e.getStatus());
 					}
-				} else if (info.isDirectory()) {
+				} else if (ResourceSyncInfo.isFolder(syncBytes)) {
 					// This is a gender change against the server! 
 					// We will allow it but the user will get an error if they try to commit
 					mFile.unmanage(null);
@@ -173,7 +169,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 	
 	private void handleAddedFolder(IFolder resource) {
 		try {
-			CVSProviderPlugin.getPlugin().getFileModificationManager().folderCreated(resource);			
+			CVSProviderPlugin.getPlugin().getFileModificationManager().created(resource);			
 			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(resource);
 			if (mFolder.isManaged()) {
 				ResourceSyncInfo info = mFolder.getSyncInfo();
@@ -266,7 +262,8 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			root.accept(new ICVSResourceVisitor() {
 				public void visitFile(ICVSFile file) throws CVSException {
 					if (file.getParent().isCVSFolder()) {
-						if (file.isManaged() && file.getSyncInfo().isDeleted()) {
+						byte[] syncBytes = file.getSyncBytes();
+						if (syncBytes != null && ResourceSyncInfo.isDeletion(syncBytes)) {
 							createDeleteMarker(project.getFile(file.getRelativePath(root)));
 						} else if ( ! file.isManaged() && ! file.isIgnored()) {
 							createAdditonMarker(project.getFile(file.getRelativePath(root)));

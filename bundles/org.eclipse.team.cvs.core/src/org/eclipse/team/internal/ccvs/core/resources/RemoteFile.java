@@ -81,12 +81,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * even if the resource does exists remotely (e.g. created by another party).
 	 */
 	public static RemoteFile getBase(RemoteFolder parent, ICVSFile managed) throws CVSException {
-		ResourceSyncInfo info = managed.getSyncInfo();
-		if ((info == null) || info.isAdded()) {
+		byte[] syncBytes = managed.getSyncBytes();
+		if ((syncBytes == null) || ResourceSyncInfo.isAddition(syncBytes)) {
 			// Either the file is unmanaged or has just been added (i.e. doesn't necessarily have a remote)
 			return null;
 		}
-		RemoteFile file = new RemoteFile(parent, managed.getSyncInfo());
+		RemoteFile file = new RemoteFile(parent, syncBytes);
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
@@ -108,14 +108,20 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		newInfo.setTag(tag);
 		info = newInfo;
 	}
-	
-	public RemoteFile(RemoteFolder parent, ResourceSyncInfo info) {
-		this(parent, Update.STATE_NONE, info);
+		
+	public RemoteFile(RemoteFolder parent, byte[] syncBytes) {
+		this(parent, Update.STATE_NONE, syncBytes);
 	}
 	
-	public RemoteFile(RemoteFolder parent, int workspaceSyncState, ResourceSyncInfo newInfo) {
+	public RemoteFile(RemoteFolder parent, int workspaceSyncState, byte[] syncBytes) {
 		this.parent = parent;
-		info = newInfo;
+		if (syncBytes == null)
+			info = null;
+		else
+			try {
+				info = new ResourceSyncInfo(syncBytes);
+			} catch (CVSException e) {
+			}
 		setWorkspaceSyncState(workspaceSyncState);
 	}
 
@@ -600,6 +606,18 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public boolean isEdited() throws CVSException {
 		return false;
+	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#getSyncBytes()
+	 */
+	public byte[] getSyncBytes() throws CVSException {
+		return getSyncInfo().getBytes();
+	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setSyncBytes(byte[])
+	 */
+	public void setSyncBytes(byte[] syncBytes) throws CVSException {
+		setSyncInfo(new ResourceSyncInfo(syncBytes));
 	}
 
 }

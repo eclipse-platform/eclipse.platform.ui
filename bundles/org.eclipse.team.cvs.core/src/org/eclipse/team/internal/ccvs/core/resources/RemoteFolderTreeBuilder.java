@@ -38,7 +38,6 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -280,10 +279,11 @@ public class RemoteFolderTreeBuilder {
 			if (deltas == null || deltas.isEmpty()) {
 				// If the file is an addition, return null as the remote
 				// Note: If there was a conflicting addition, the delta would not be empty
-				if ( ! file.isManaged() || file.getSyncInfo().isAdded()) {
+				byte[] syncBytes = file.getSyncBytes();
+				if ( syncBytes == null || ResourceSyncInfo.isAddition(syncBytes)) {
 					return null;
 				}
-				remoteFile = new RemoteFile(remoteRoot, file.getSyncInfo());
+				remoteFile = new RemoteFile(remoteRoot, syncBytes);
 			} else {
 				DeltaNode d = (DeltaNode)deltas.get(file.getName());
 				if (d.getRevision() == DELETED) {
@@ -344,20 +344,18 @@ public class RemoteFolderTreeBuilder {
 		ICVSResource[] files = local.members(ICVSFolder.FILE_MEMBERS);
 		for (int i=0;i<files.length;i++) {
 			ICVSFile file = (ICVSFile)files[i];
-			ResourceSyncInfo info = file.getSyncInfo();
+			byte[] syncBytes = file.getSyncBytes();
 			// if there is no sync info then there is no base
-			if (info==null)
+			if (syncBytes==null)
 				continue;
 			// There is no remote if the file was added
-			if (info.isAdded())
+			if (ResourceSyncInfo.isAddition(syncBytes))
 				continue;
 			// If the file was deleted locally, we need to generate a new sync info without the delete flag
-			if (info.isDeleted()) {
-				MutableResourceSyncInfo undeletedInfo = info.cloneMutable();
-				undeletedInfo.setDeleted(false);
-				info = undeletedInfo;
+			if (ResourceSyncInfo.isDeletion(syncBytes)) {
+				syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
 			}
-			children.add(new RemoteFile(remote, info));
+			children.add(new RemoteFile(remote, syncBytes));
 			monitor.worked(1);
 		}
 
@@ -414,20 +412,20 @@ public class RemoteFolderTreeBuilder {
 				ICVSFile file = (ICVSFile)files[i];
 
 				DeltaNode d = (DeltaNode)deltas.get(file.getName());
-				ResourceSyncInfo info = file.getSyncInfo();
+				byte[] syncBytes = file.getSyncBytes();
 				// if there is no sync info then there isn't a remote file for this local file on the
 				// server.
-				if (info==null)
+				if (syncBytes==null)
 					continue;
 				// There is no remote if the file was added and we didn't get a conflict (C) indicator from the server
-				if (info.isAdded() && d==null)
+				if (ResourceSyncInfo.isAddition(syncBytes) && d==null)
 					continue;
 				// There is no remote if the file was deleted and we didn;t get a remove (R) indicator from the server
-				if (info.isDeleted() && d==null)
+				if (ResourceSyncInfo.isDeletion(syncBytes) && d==null)
 					continue;
 					
 				int type = d==null ? Update.STATE_NONE : d.getSyncState();
-				children.put(file.getName(), new RemoteFile(remote, type, info));
+				children.put(file.getName(), new RemoteFile(remote, type, syncBytes));
 			}
 		}
 		

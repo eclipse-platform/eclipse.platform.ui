@@ -17,7 +17,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class Commit extends Command {
 	/*** Local options: specific to commit ***/
@@ -49,7 +48,7 @@ public class Commit extends Command {
 		visitor.visit(session, resources);
 		
 		// Send the changed files as arguments (because this is what other cvs clients do)
-		ICVSFile[] changedFiles = visitor.getSentFiles();
+		ICVSFile[] changedFiles = visitor.getModifiedFiles();
 		for (int i = 0; i < changedFiles.length; i++) {
 			session.sendArgument(changedFiles[i].getRelativePath(session.getLocalRoot()));
 		}
@@ -88,7 +87,7 @@ public class Commit extends Command {
 	}
 	
 	protected IStatus clearModifiedState(ICVSFile cvsFile) throws CVSException {
-		ResourceSyncInfo info = cvsFile.getSyncInfo();
+		byte[] info = cvsFile.getSyncBytes();
 		if (info == null) {
 			// There should be sync info. Log the problem
 			return new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("Commit.syncInfoMissing", cvsFile.getIResource().getFullPath().toString()), null); //$NON-NLS-1$

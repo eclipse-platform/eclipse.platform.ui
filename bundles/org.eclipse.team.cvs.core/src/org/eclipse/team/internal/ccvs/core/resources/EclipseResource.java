@@ -178,14 +178,14 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	 * @see ICVSResource#isManaged()
 	 */
 	public boolean isManaged() throws CVSException {
-		return isManaged(getSyncInfo());
+		return isManaged(getSyncBytes());
 	}
 	
 	/*
 	 * Helper method that captures the sematics of isManaged given a ResourceSyncInfo
 	 */
-	public boolean isManaged(ResourceSyncInfo info) {
-		return info != null;
+	public boolean isManaged(byte[] syncBytes) {
+		return syncBytes != null;
 	}
 	
 	/**
@@ -215,6 +215,13 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		return false;
 	}
 	
+	/*
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#getSyncBytes()
+	 */
+	public byte[] getSyncBytes() throws CVSException {
+		return EclipseSynchronizer.getInstance().getSyncBytes(getIResource());
+	}
+		
 	/*
 	 * @see ICVSResource#getSyncInfo()
 	 */
@@ -267,23 +274,13 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		return resource;
 	}
 
-	/*
-	 * Flush all cached modification info for the resource and it's ancestors
-	 */
-	protected abstract void flushModificationCache() throws CVSException;
-
 	public abstract boolean handleModification(boolean forAddition) throws CVSException;
 	
 	/*
 	 * Flush all cached info for the file and it's ancestors
 	 */
 	protected void flushWithAncestors() throws CVSException {
-		if (resource.getType() == IResource.ROOT) return;
-		try {
-			flushModificationCache();
-		} finally {
-			((EclipseResource)getParent()).flushWithAncestors();
-		}
+		EclipseSynchronizer.getInstance().flushDirtyCacheWithAncestors(getIResource());
 	}
 	
 	protected String getDirtyIndicator() throws CVSException {
@@ -295,21 +292,19 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	}
 	
 	/*
-	 * Method prepareToBeDeleted is invoked by the move/delete hook to allow the
-	 * resource to prepare to be deleted.
+	 * Method syncInfoChanged is invoked by the sync file change listener.
 	 */
-	protected void prepareToBeDeleted() throws CVSException {
-		// Flush the dirty info for the resource and it's ancestors.
-		// Although we could be smarter, we need to do this because the
-		// deletion may fail.
+	protected abstract void syncInfoChanged() throws CVSException;
+	
+	/**
+	 * Method created is invoked after a resource is created
+	 */
+	protected void created() throws CVSException {
+		// flush the dirty cache for the ancestors
 		String indicator = EclipseSynchronizer.getInstance().getDirtyIndicator(getIResource());
 		if (indicator != null) {
 			flushWithAncestors();
 		}
+		EclipseSynchronizer.getInstance().created(getIResource());
 	}
-	
-	/*
-	 * Method syncInfoChanged is invoked by the sync file change listener.
-	 */
-	protected abstract void syncInfoChanged() throws CVSException;
 }

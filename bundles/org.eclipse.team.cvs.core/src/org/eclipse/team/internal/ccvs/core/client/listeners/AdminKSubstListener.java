@@ -18,7 +18,6 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -69,12 +68,11 @@ public class AdminKSubstListener extends CommandOutputListener {
 			rcsFilePath = rcsFilePath.removeFirstSegments(remoteRootPath.segmentCount());
 			try {
 				ICVSFile file = commandRoot.getFile(rcsFilePath.toString());
-				ResourceSyncInfo info = file.getSyncInfo();
-				if (info != null) {
+				//ResourceSyncInfo info = file.getSyncInfo();
+				byte[] syncBytes = file.getSyncBytes();
+				if (syncBytes != null) {
 					// only update sync info if we have it locally
-					MutableResourceSyncInfo newInfo = info.cloneMutable();
-					newInfo.setKeywordMode(ksubstMode);
-					file.setSyncInfo(newInfo);
+					file.setSyncBytes(ResourceSyncInfo.setKeywordMode(syncBytes, ksubstMode));
 				}
 			} catch (CVSException e) {
 				return new CVSStatus(CVSStatus.ERROR,

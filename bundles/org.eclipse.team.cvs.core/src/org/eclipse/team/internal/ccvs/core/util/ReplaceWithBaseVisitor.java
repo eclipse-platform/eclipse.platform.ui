@@ -28,7 +28,6 @@ import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
@@ -40,23 +39,22 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 	 * @see ICVSResourceVisitor#visitFile(ICVSFile)
 	 */
 	public void visitFile(final ICVSFile file) throws CVSException {
-		ResourceSyncInfo info = file.getSyncInfo();
-		if (info == null) {
+		byte[] syncBytes = file.getSyncBytes();
+		if (syncBytes == null) {
 			// Delete unmanaged files if the user wants them deleted
 			if (CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
 				file.delete();
 			}
-		} else if (info.isAdded()) {
+		} else if (ResourceSyncInfo.isAddition(syncBytes)) {
 			file.delete();
 			file.unmanage(null);
 		} else {
-			CVSTag tag = info.getTag();
+			byte[] tagBytes = ResourceSyncInfo.getTagBytes(syncBytes);
 			boolean isModified = file.isModified();
-			if (info.isDeleted()) {
+			if (ResourceSyncInfo.isDeletion(syncBytes)) {
 				// If deleted, null the sync info so the file will be refetched
-				MutableResourceSyncInfo mutable = info.cloneMutable();
-				mutable.setDeleted(false);
-				file.setSyncInfo(mutable);
+				syncBytes = ResourceSyncInfo.convertFromDeletion(syncBytes);
+				file.setSyncBytes(syncBytes);
 				isModified = true;
 			}
 			// Fetch the file from the server
@@ -72,10 +70,9 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 				}, Policy.subMonitorFor(monitor, 1));
 	
 				// Set the tag to be the original tag
-				info = file.getSyncInfo();
-				MutableResourceSyncInfo mutable = info.cloneMutable();
-				mutable.setTag(tag);
-				file.setSyncInfo(mutable);
+				syncBytes = file.getSyncBytes();
+				syncBytes = ResourceSyncInfo.setTag(syncBytes, tagBytes);
+				file.setSyncBytes(syncBytes);
 			}
 		}
 		monitor.worked(1);

@@ -28,8 +28,7 @@ class DiffStructureVisitor extends FileStructureVisitor {
 	 * Send unmanaged files as modified with a default entry line.
 	 */
 	protected void sendFile(ICVSFile mFile) throws CVSException {
-		KSubstOption ksubst;
-		ResourceSyncInfo info = mFile.getSyncInfo();
+		byte[] info = mFile.getSyncBytes();
 		boolean addedFile = (info==null);
 
 		// Send the parent folder if it hasn't been sent already
@@ -38,6 +37,7 @@ class DiffStructureVisitor extends FileStructureVisitor {
 		Policy.checkCanceled(monitor);
 
 		if (addedFile) {
+			KSubstOption ksubst;
 			if (mFile instanceof EclipseFile) {
 				EclipseFile file = (EclipseFile)mFile;
 				ksubst = KSubstOption.fromFile(file.getIFile());
@@ -46,19 +46,16 @@ class DiffStructureVisitor extends FileStructureVisitor {
 			}
 			MutableResourceSyncInfo newInfo = new MutableResourceSyncInfo(mFile.getName(), null);	
 			newInfo.setKeywordMode(ksubst);
-			info = newInfo;
-		} else {
-			// existing file
-			ksubst = info.getKeywordMode();
+			info = newInfo.getBytes();
 		}
-		session.sendEntry(info.getServerEntryLine(null));
+		session.sendEntry(info, null);
 		
 		if (!mFile.exists()) {
 			return;
 		}
 
 		if (mFile.isModified() || addedFile) {
-			session.sendModified(mFile, ksubst.isBinary(), monitor);
+			session.sendModified(mFile, ResourceSyncInfo.isBinary(info), monitor);
 		} else {
 			session.sendUnchanged(mFile);
 		}

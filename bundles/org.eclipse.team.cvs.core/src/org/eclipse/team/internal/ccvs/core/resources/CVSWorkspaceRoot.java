@@ -675,9 +675,9 @@ public class CVSWorkspaceRoot {
 					return cvsResource.isManaged();
 				}
 			} else {
-				ResourceSyncInfo info = cvsResource.getSyncInfo();
-				if(info!=null) {
-					return !info.isAdded();
+				byte[] syncBytes = ((ICVSFile)cvsResource).getSyncBytes();
+				if(syncBytes!=null) {
+					return !ResourceSyncInfo.isAddition(syncBytes);
 				} else {
 					return false;
 				}

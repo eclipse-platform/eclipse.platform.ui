@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -32,7 +31,6 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 
 /**
  * This class performs several functions related to determining the modified
@@ -75,7 +73,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 						}
 					}
 					
-					if (resource.getType()==IResource.FILE && delta.getKind() == IResourceDelta.CHANGED) {
+					if (resource.getType()==IResource.FILE && delta.getKind() == IResourceDelta.CHANGED && resource.exists()) {
 						contentsChanged((IFile)resource);
 					} else if (delta.getKind() == IResourceDelta.ADDED) {
 						resourceAdded(resource);
@@ -168,9 +166,9 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		}
 	}
 	
-	public void folderCreated(IFolder folder) throws CVSException {
-		EclipseFolder cvsFolder = (EclipseFolder)CVSWorkspaceRoot.getCVSFolderFor(folder);
-		cvsFolder.folderCreated();
+	public void created(IResource resource) throws CVSException {
+		EclipseResource cvsResource = (EclipseResource)CVSWorkspaceRoot.getCVSResourceFor(resource);
+		cvsResource.created();
 	}
 	
 	/*
@@ -185,13 +183,6 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		} catch (CVSException e) {
 			throw e.toCoreException();
 		}
-	}
-	/**
-	 * Method prepareToDelete.
-	 * @param resource
-	 */
-	public void prepareToDelete(ICVSResource resource) throws CVSException {
-		((EclipseResource)resource).prepareToBeDeleted();
 	}
 }
 
