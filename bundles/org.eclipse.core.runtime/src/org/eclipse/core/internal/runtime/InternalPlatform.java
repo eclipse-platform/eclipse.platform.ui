@@ -62,8 +62,8 @@ public final class InternalPlatform {
 	// execution options
 	private static final String OPTION_DEBUG = Platform.PI_RUNTIME + "/debug";
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = Platform.PI_RUNTIME + "/debug/context";
-	private static final String OPTION_DEBUG_STARTUP = Platform.PI_RUNTIME + "/debug/startup";
-	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/debug/shutdown";
+	private static final String OPTION_DEBUG_STARTUP = Platform.PI_RUNTIME + "/timing/startup";
+	private static final String OPTION_DEBUG_SHUTDOWN = Platform.PI_RUNTIME + "/timing/shutdown";
 	private static final String OPTION_DEBUG_PLUGINS = Platform.PI_RUNTIME + "/registry/debug";
 	private static final String OPTION_DEBUG_PLUGINS_DUMP = Platform.PI_RUNTIME + "/registry/debug/dump";
 
@@ -645,7 +645,6 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	InternalFactory factory = new InternalFactory(problems);
 
 	IPath path = getMetaArea().getRegistryPath();
-	IPath tempPath = getMetaArea().getBackupFilePathFor(path);
 	DataInputStream input = null;
 	registry = null;
 	// augment the plugin path with any additional platform entries
@@ -653,7 +652,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);
 	if (path.toFile().exists() && cacheRegistry) {
 		try {
-			input = new DataInputStream(new BufferedInputStream(new SafeFileInputStream(path.toOSString(), tempPath.toOSString())));
+			input = new DataInputStream(new BufferedInputStream(new FileInputStream(path.toFile())));
 			try {
 				long start = System.currentTimeMillis();
 				RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
