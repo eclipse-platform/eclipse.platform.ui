@@ -17,6 +17,8 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -31,7 +33,7 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
  * Handles breakpoint events and activity manager events (which can affect filtering),
  * updating the breakpoints view and viewer.
  */
-public class BreakpointsViewEventHandler implements IBreakpointsListener, IActivityManagerListener {
+public class BreakpointsViewEventHandler implements IBreakpointsListener, IActivityManagerListener, IBreakpointManagerListener {
 
 	private BreakpointsView fView;
 
@@ -40,7 +42,9 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	 */
 	public BreakpointsViewEventHandler(BreakpointsView view) {
 		fView= view;
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointListener(this);
+		IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+		breakpointManager.addBreakpointListener(this);
+		breakpointManager.addBreakpointManagerListener(this);
 		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		if (activitySupport != null) {
 			activitySupport.getActivityManager().addActivityManagerListener(this);
@@ -51,7 +55,9 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	 * When this event handler is disposed, remove it as a listener.
 	 */
 	public void dispose() {
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+		IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+		breakpointManager.removeBreakpointListener(this);
+		breakpointManager.removeBreakpointManagerListener(this);
 		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		if (activitySupport != null) {
 			activitySupport.getActivityManager().removeActivityManagerListener(this);
@@ -161,5 +167,18 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 				}
 			});
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
+	 */
+	public void breakpointManagerEnablementChanged(boolean enabled) {
+		if (fView.isAvailable() & fView.isVisible()) {
+			fView.asyncExec(new Runnable() {
+				public void run() {
+					fView.getViewer().refresh();
+				}
+			});
+		}		
 	}
 }

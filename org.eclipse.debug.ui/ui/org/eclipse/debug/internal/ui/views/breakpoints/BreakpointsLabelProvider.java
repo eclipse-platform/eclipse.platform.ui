@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.CompositeDebugImageDescriptor;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.viewers.IFontProvider;
@@ -51,8 +54,29 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         if (element instanceof IBreakpoint) {
             return fPresentation.getImage(element);
         }
-        return fWorkbenchLabelProvider.getImage(element);
+        Image image = fWorkbenchLabelProvider.getImage(element);
+        if (image != null) {
+            int flags= computeAdornmentFlags();
+            if (flags > 0) {
+                CompositeDebugImageDescriptor descriptor= new CompositeDebugImageDescriptor(image, flags);
+                return DebugUIPlugin.getImageDescriptorRegistry().get(descriptor);
+            }
+        }
+        return image;        
     }
+    
+	/**
+     * Computes and return common adornment flags for the given category.
+     * 
+     * @param element breakoint category
+     * @return adornment flags defined in CompositeDebugImageDescriptor
+     */
+    private int computeAdornmentFlags() {
+        if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+            return CompositeDebugImageDescriptor.SKIP_BREAKPOINT;
+        }
+        return 0;
+    }    
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
