@@ -55,6 +55,7 @@ public interface IHelpUIConstants {
 	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page";
 
 	static final String ENGINE_EXP_ID = "org.eclipse.help.ui.searchEngine";
+	static final String TAG_ENGINE = "engine";
 	static final String ATT_ID = "id";
 	static final String ATT_LABEL ="label"; //$NON-NLS-1$
 	static final String ATT_ICON = "icon";//$NON-NLS-1$
@@ -63,7 +64,7 @@ public interface IHelpUIConstants {
 	static final String ATT_REMOVABLE = "removable"; //$NON-NLS-1$	
 	static final String ATT_PAGE_CLASS = "pageClass";//$NON-NLS-1$
 	static final String ATT_CATEGORY = "category";//$NON-NLS-1$
-	static final String EL_DESC = "description"; //$NON-NLS-1$
+	static final String TAG_DESC = "description"; //$NON-NLS-1$
 	static final String ATT_SCOPE_FACTORY = "scopeFactory";//$NON-NLS-1$
 	static final String ATT_ENGINE_TYPE_ID = "engineTypeId";
 	static final String ATT_NAME = "name";//$NON-NLS-1$

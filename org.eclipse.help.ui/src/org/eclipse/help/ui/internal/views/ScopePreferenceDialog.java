@@ -1,5 +1,7 @@
 package org.eclipse.help.ui.internal.views;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
@@ -11,6 +13,16 @@ import org.eclipse.swt.widgets.*;
 
 public class ScopePreferenceDialog extends PreferenceDialog {
 	private EngineTypeDescriptor [] engineTypes;
+	private ArrayList pendingOperations;
+	
+	class PendingOperation {
+		int action;
+		EngineDescriptor desc;
+		public PendingOperation(int action, EngineDescriptor desc) {
+			this.action = action;
+			this.desc = desc;
+		}
+	}
 	/**
 	 * The Add button id.
 	 */
@@ -96,6 +108,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 			IPreferenceNode node = mng.addNode(desc);
 			getTreeViewer().refresh();
 			getTreeViewer().setSelection(new StructuredSelection(node));
+			scheduleOperation(NEW_ID, desc);
 		}
 	}
 	
@@ -104,5 +117,16 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	}
 
 	private void doDelete() {
+	}
+	private void scheduleOperation(int action, EngineDescriptor desc) {
+		if (pendingOperations==null)
+			pendingOperations = new ArrayList();
+		pendingOperations.add(new PendingOperation(action, desc));
+	}
+	protected void okPressed() {
+		super.okPressed();
+		if (pendingOperations!=null) {
+			// process pending operations
+		}
 	}
 }

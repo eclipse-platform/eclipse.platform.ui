@@ -113,7 +113,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		String cdesc = null;
 		if (config != null) {
 			IConfigurationElement[] children = config
-					.getChildren(IHelpUIConstants.EL_DESC);
+					.getChildren(IHelpUIConstants.TAG_DESC);
 			if (children.length == 1)
 				cdesc = children[0].getValue();
 		}
@@ -174,7 +174,6 @@ public class EngineDescriptor implements IEngineDescriptor {
 
 	public void setLabel(String label) {
 		this.label = label;
-
 	}
 
 	public void setDescription(String desc) {
@@ -188,5 +187,4 @@ public class EngineDescriptor implements IEngineDescriptor {
 	void setUserDefined(boolean userDefined) {
 		this.userDefined = userDefined;
 	}
-
 }

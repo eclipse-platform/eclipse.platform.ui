@@ -62,7 +62,7 @@ public class EngineTypeDescriptor {
 	}
 	public String getDescription() {
 		String desc = null;
-		IConfigurationElement [] children = config.getChildren(IHelpUIConstants.EL_DESC);
+		IConfigurationElement [] children = config.getChildren(IHelpUIConstants.TAG_DESC);
 		if (children.length==1) 
 			desc = children[0].getValue();
 		return desc;

@@ -30,9 +30,15 @@ import org.eclipse.swt.widgets.*;
 public abstract class RootScopePage extends PreferencePage implements
 		ISearchScopePage {
 	private IEngineDescriptor ed;
+
 	private String scopeSetName;
+
 	private Button masterButton;
+
+	private Label spacer;
+
 	private Text labelText;
+
 	private Text descText;
 
 	/**
@@ -65,8 +71,12 @@ public abstract class RootScopePage extends PreferencePage implements
 		masterButton = new Button(container, SWT.CHECK);
 		masterButton.setText("Enable search engine");
 		GridData gd = new GridData();
-		gd.horizontalSpan = ed.isRemovable()?2:1;
+		gd.horizontalSpan = ed.isRemovable() ? 2 : 1;
 		masterButton.setLayoutData(gd);
+		Label spacer = new Label(container, SWT.NULL);
+		gd = new GridData();
+		gd.horizontalSpan = ed.isRemovable() ? 2 : 1;
+		spacer.setLayoutData(gd);
 		boolean masterValue = getPreferenceStore().getBoolean(
 				ScopeSet.getMasterKey(ed.getId()));
 		masterButton.setSelection(masterValue);
@@ -86,24 +96,28 @@ public abstract class RootScopePage extends PreferencePage implements
 			label.setText("Description:");
 			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			label.setLayoutData(gd);
-			descText = new Text(container, SWT.BORDER|SWT.MULTI|SWT.WRAP);
+			descText = new Text(container, SWT.BORDER | SWT.MULTI | SWT.WRAP);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = 200;
 			gd.heightHint = 48;
 			descText.setLayoutData(gd);
 		}
 		int ccol = createScopeContents(container);
-		if (ccol>layout.numColumns)
+		// adjust number of columns if needed
+		if (ccol > layout.numColumns) {
 			layout.numColumns = ccol;
-		gd = (GridData)masterButton.getLayoutData();
-		gd.horizontalSpan = layout.numColumns;
-		if (ed.isRemovable()) {
-			gd = (GridData)labelText.getData();
-			gd.horizontalSpan = layout.numColumns-1;
-			gd = (GridData)descText.getData();
-			gd.horizontalSpan = layout.numColumns-1;
+			gd = (GridData) masterButton.getLayoutData();
+			gd.horizontalSpan = layout.numColumns;
+			gd = (GridData) spacer.getLayoutData();
+			gd.horizontalSpan = layout.numColumns;
+			if (ed.isRemovable()) {
+				gd = (GridData) labelText.getLayoutData();
+				gd.horizontalSpan = layout.numColumns - 1;
+				gd = (GridData) descText.getLayoutData();
+				gd.horizontalSpan = layout.numColumns - 1;
+			}
 		}
-		updateControls();
+		updateControls(true);
 		return container;
 	}
 
@@ -118,6 +132,18 @@ public abstract class RootScopePage extends PreferencePage implements
 	 */
 
 	protected void masterValueChanged(boolean value) {
+		updateEnableState(value);
+	}
+
+	private void updateEnableState(boolean enabled) {
+		Composite container = masterButton.getParent();
+		Control[] children = container.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			Control child = children[i];
+			if (child == masterButton)
+				continue;
+			child.setEnabled(enabled);
+		}
 	}
 
 	/**
@@ -129,12 +155,13 @@ public abstract class RootScopePage extends PreferencePage implements
 	protected String getScopeSetName() {
 		return scopeSetName;
 	}
-	
+
 	/**
 	 * Returns the descriptor of the engine associated with this page.
+	 * 
 	 * @return the engine descriptor
 	 */
-	
+
 	protected IEngineDescriptor getEngineDescriptor() {
 		return ed;
 	}
@@ -172,17 +199,19 @@ public abstract class RootScopePage extends PreferencePage implements
 	 */
 	protected void performDefaults() {
 		getPreferenceStore().setToDefault(ScopeSet.getMasterKey(ed.getId()));
-		updateControls();
+		updateControls(false);
 		super.performDefaults();
 	}
-	
-	private void updateControls() {
-		boolean value = getPreferenceStore().getBoolean(ScopeSet.getMasterKey(ed.getId()));
+
+	private void updateControls(boolean first) {
+		boolean value = getPreferenceStore().getBoolean(
+				ScopeSet.getMasterKey(ed.getId()));
 		boolean cvalue = masterButton.getSelection();
-		if (value!=cvalue) {
+		if (value != cvalue) {
 			masterButton.setSelection(value);
 			masterValueChanged(value);
-		}
+		} else if (first)
+			masterValueChanged(value);
 		if (ed.isRemovable()) {
 			labelText.setText(ed.getLabel());
 			descText.setText(ed.getDescription());
@@ -190,16 +219,18 @@ public abstract class RootScopePage extends PreferencePage implements
 	}
 
 	/**
-	 * Initializes default values of the store to be
-	 * used when the user presses 'Defaults' button. Subclasses
-	 * may override but must call 'super'.
+	 * Initializes default values of the store to be used when the user presses
+	 * 'Defaults' button. Subclasses may override but must call 'super'.
 	 * 
-	 * @param store the preference store
+	 * @param store
+	 *            the preference store
 	 */
-	
+
 	protected void initializeDefaults(IPreferenceStore store) {
-		Boolean value = (Boolean)ed.getParameters().get(EngineDescriptor.P_MASTER);
-		store.setDefault(ScopeSet.getMasterKey(ed.getId()), value.booleanValue());
+		Boolean value = (Boolean) ed.getParameters().get(
+				EngineDescriptor.P_MASTER);
+		store.setDefault(ScopeSet.getMasterKey(ed.getId()), value
+				.booleanValue());
 	}
 
 	/**
