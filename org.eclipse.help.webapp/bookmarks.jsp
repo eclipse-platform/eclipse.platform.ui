@@ -104,7 +104,47 @@ function addBookmark(url)
 		url = url.substring(0, i);
 
 	liveAction("org.eclipse.help", "org.eclipse.help.internal.webapp.AddBookmarkAction", url);
+	
+	var table = document.getElementById("list");
+	var msg = document.getElementById("msg");
+	if (msg != null)
+		table.removeNode(msg);
+		
+	createBookmark(url);
 }
+
+/**
+ * Create a bookmark node using DOM API's
+ */
+function createBookmark(url)
+{
+	var table = document.getElementById("list");
+	var numBookmarks = table.rows.length;
+	var tr = document.createElement("TR");
+	tr.setAttribute("class", "list");
+	tr.setAttribute("id", "r"+numBookmarks); //ids start from 0
+	
+	table.appendChild(tr);
+
+	var td = document.createElement("TD");
+	td.setAttribute("align", "left");
+	td.setAttribute("class",  "label");
+	td.nowrap = true;
+	
+	tr.appendChild(td);
+	
+	var a = document.createElement("A");
+	a.setAttribute("id", "a"+numBookmarks);
+	a.setAttribute("href", url);
+	//a.setAttribute(); 	
+	
+	td.appendChild(a);
+	
+	var text = document.createTextNode("bookmark");
+	
+	a.appendChild(text);
+}
+
 </script>
 
 </head>
@@ -127,24 +167,23 @@ if (application.getAttribute("org.eclipse.help.servlet.eclipse") == null)
 		{
 			Element pref = (Element)prefs.item(i);
 			String name = pref.getAttribute("name");
-			System.out.println(name);
 			if (name.equals("bookmarks"))
 			{
 				bookmarks = new StringTokenizer(pref.getAttribute("value"), ",");
-				System.out.println(pref.getAttribute("value"));
 				break;
 			}
 		}
 	}
 }
 
-if (bookmarks != null && bookmarks.hasMoreTokens())
-{
+
 %>
 
 <table id='list'  cellspacing='0' >
 
 <%
+if (bookmarks != null && bookmarks.hasMoreTokens())
+{
 	for (int i=0; bookmarks.hasMoreTokens(); i++) 
 	{
 		String bookmark = bookmarks.nextToken();
@@ -176,14 +215,15 @@ if (bookmarks != null && bookmarks.hasMoreTokens())
 
 <%
 	}
+}else{
+	out.write("<tr id='msg'><td>"+WebappResources.getString("addBookmark", request) + "</td></tr>");
+}
 %>
 
 </table>
 
 <%
-}else{
-	out.write(WebappResources.getString("addBookmark", request));
-}
+
 %>
 
 </body>
