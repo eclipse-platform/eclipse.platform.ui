@@ -29,6 +29,7 @@ class FiltersAction extends Action {
 	public FiltersAction(TableView view, Dialog dialog) {
 		super(Messages.getString("filtersAction.title")); //$NON-NLS-1$
 		setImageDescriptor(ImageFactory.getImageDescriptor("clcl16/filter_ps.gif")); //$NON-NLS-1$
+		setToolTipText(Messages.getString("filtersAction.tooltip")); //$NON-NLS-1$
 		this.view = view;
 		this.dialog = dialog;
 		setEnabled(true);
