@@ -14,7 +14,6 @@ package org.eclipse.ui.internal;
 **********************************************************************/
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -27,21 +26,15 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -78,25 +71,15 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	// toolbar that is not part of the view form
 	private boolean locked = true;
 
-	private ToolBar viewToolBar;
-	private ToolBarManager viewToolBarMgr;
 	ToolBar isvToolBar;
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
-	private ToolItem pullDownButton;
 	boolean hasFocus;
-
-	//private ToolItem lockToolBarButton;
-	
-	//private ToolbarFloatingWindow floatingWindow;
 	
 	/**
 	 * Indicates whether a toolbar button is shown for the view local menu.
 	 */
-	private boolean showMenuButton = false;
-
-	//Created in o.e.ui.Perspective, disposed there.
-	private Sash fastViewSash;
+	private boolean hadViewMenu = false;
 
 	/**
 	 * Toolbar manager for the ISV toolbar.
@@ -110,10 +93,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			toolBarResized(toolBar, newCount);
 			
 			toolBar.layout();
-			Composite parent = toolBar.getParent();
-			parent.layout();
-			if (parent.getParent() != null)
-				parent.getParent().layout();
 		}
 	}
 
@@ -125,124 +104,15 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			super("View Local Menu"); //$NON-NLS-1$
 		}
 		protected void update(boolean force, boolean recursive) {
-			// Changes to the menu can affect whether the toolbar has a menu button.
-			// Update it if necessary.
-			if (showMenuButton != !isEmpty()) {
-				viewToolBarMgr.update(true);
-			}
 			super.update(force, recursive);
-		}
-	}
-
-	/**
-	 * Contributes system actions to toolbar.
-	 */
-	class SystemContribution extends ContributionItem {
-		public boolean isDynamic() {
-			return true;
-		}
-
-		public void fill(ToolBar toolbar, int index) {
-			showMenuButton = (isvMenuMgr != null && !isvMenuMgr.isEmpty());
 			
-/*			// if we have a toolbar then we want to support floating it
-			if (isvToolBarMgr != null) {
-				// create the button to allow for a floating toolbar
-				lockToolBarButton = new ToolItem(toolbar, SWT.CHECK, index++);
-				lockToolBarButton.setSelection(locked);
-				Image hoverImage =
-					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER);
-				lockToolBarButton.setDisabledImage(hoverImage);
-				// PR#1GE56QT - Avoid creation of unnecessary image.
-				lockToolBarButton.setImage(hoverImage);
-				//				pullDownButton.setHotImage(hoverImage);
-				lockToolBarButton.setToolTipText("Lock in View"); 
-				lockToolBarButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						if (lockToolBarButton.getSelection() == locked)
-							return;
-						locked = lockToolBarButton.getSelection();
-						recreateToolbars();
-					}
-				});
-			}*/
-			
-			if (showMenuButton) {
-				pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
-				Image hoverImage =
-					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
-				pullDownButton.setDisabledImage(hoverImage); // TODO: comment this out?
-				// PR#1GE56QT - Avoid creation of unnecessary image.
-				pullDownButton.setImage(hoverImage);
-				//				pullDownButton.setHotImage(hoverImage);
-				pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
-				pullDownButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						showViewMenu();
-					}
-				});
-			} else {
-				// clear out the button if we don't need it anymore
-				pullDownButton = null;
+			boolean hasMenu = !isEmpty();
+			if (hasMenu != hadViewMenu) {
+				hadViewMenu = hasMenu;
+				presentableAdapter.firePropertyChange(IPresentablePart.PROP_PANE_MENU);
 			}
-
-			// check the current internal fast view state
-//			if (fast) {
-//				ToolItem dockButton = new ToolItem(toolbar, SWT.CHECK, index++);
-//				dockButton.setSelection(true);
-//				//				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
-//				Image hoverImage =
-//					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER);
-//				dockButton.setDisabledImage(hoverImage);
-//				// PR#1GE56QT - Avoid creation of unnecessary image.
-//				dockButton.setImage(hoverImage);
-//				//				dockButton.setHotImage(hoverImage);
-//				dockButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
-//				dockButton.addSelectionListener(new SelectionAdapter() {
-//					public void widgetSelected(SelectionEvent e) {
-//						doDock();
-//					}
-//				});
-//
-//				ToolItem minimizeButton = new ToolItem(toolbar, SWT.PUSH, index++);
-//				//				img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
-//				hoverImage =
-//					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_HOVER);
-//				minimizeButton.setDisabledImage(hoverImage);
-//				// PR#1GE56QT - Avoid creation of unnecessary image.
-//				minimizeButton.setImage(hoverImage);
-//				//				minimizeButton.setHotImage(img);
-//				minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
-//				minimizeButton.addSelectionListener(new SelectionAdapter() {
-//					public void widgetSelected(SelectionEvent e) {
-//						doMinimize();
-//					}
-//				});
-//			}
-
-//			TODO: RCP will need a close button when views have a titlebar and no tabs etc..
-//			need to figure out how to query this combination			
-/*			if (isCloseable()) {
-				ToolItem closeButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				// Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
-				Image hoverImage =
-					WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER);
-				closeButton.setDisabledImage(hoverImage);
-				// PR#1GE56QT - Avoid creation of unnecessary image.
-				closeButton.setImage(hoverImage);
-				// closeButton.setHotImage(hoverImage);
-				closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
-				closeButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						doHide();
-					}
-				});
-			}*/
 		}
 	}
-
-	private SystemContribution systemContribution = new SystemContribution();
 
 	/**
 	 * Constructs a view pane for a view part.
@@ -288,14 +158,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// Only include the ISV toolbar and the content in the tab list.
 		// All actions on the System toolbar should be accessible on the pane menu.
 		if (control.getContent() == null) {
-			// content can be null if view creation failed
-			if (locked)
-				control.setTabList(new Control[] { isvToolBar , viewToolBar });
 		} else {
-			if (locked)
-				control.setTabList(new Control[] { viewToolBar, control.getContent()});
-			else
-				control.setTabList(new Control[] {control.getContent()});
+			control.setTabList(new Control[] {control.getContent()});
 		}
 	}
 	
@@ -347,9 +211,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// create new toolbars
 		updateActionBars();
 		
-		// the lock button in the receivers toolbar was selected so we know
-		// we are active
-/*		showFloatingWindow(true, true);*/
 	}	
 	
 	protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
@@ -389,22 +250,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		// register for D&D operations
 		return isMoveable() && !overImage(p.x) && !isZoomed();
 	}
-
-	/**
-	 * Create a floating shell used to contain the toolbar when it is 
-	 * not "locked" in the view.
-	 * 
-	 * @return a <code>ToolBarFloatingWindow</code> to contain the toolbar 
-	 */
-/*	private ToolbarFloatingWindow getFloatingWindow() {
-		if (floatingWindow != null) 
-			return floatingWindow;
-		
-		floatingWindow = new ToolbarFloatingWindow(getWorkbenchWindow().getShell(), this.getControl(), AssociatedWindow.TRACK_OUTER_TOP_RHS);
-		return floatingWindow;
-	}*/
 	
-		/*
+	/*
 	 * Return true if <code>x</code> is over the label image.
 	 */
 	private boolean overImage(int x) {
@@ -423,7 +270,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	protected void createTitleBar() {
 		// Only do this once.
-		if (viewToolBar != null)
+		if (status != null)
 			return;
 
 		status = new CLabel(control, SWT.LEFT);
@@ -439,13 +286,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	}
 	
 	private void toolBarResized(ToolBar toolBar, int newSize) {
-		if (locked) {
-			if (toolBar == viewToolBar) {
-				((ViewForm)control).setTopRight(newSize == 0 ? null :viewToolBar);
-			} else if (toolBar == isvToolBar) {
-				((ViewForm)control).setTopCenter(newSize == 0 ? null : isvToolBar);
-			}
-		}
+		presentableAdapter.firePropertyChange(IPresentablePart.PROP_TOOLBAR);
 	}
 	
 	/**
@@ -454,43 +295,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	private void createToolBars() {
 		Composite parentControl = control;
 		int barStyle = SWT.FLAT | SWT.WRAP;
-/*		if (!locked) {
-			parentControl = getFloatingWindow().getControl();
-			barStyle = barStyle | SWT.VERTICAL;
-		}*/
-		
-		// View toolbar
-		viewToolBar = new ToolBar(parentControl, barStyle);
-		if (locked) {
-			//((ViewForm2)parentControl).setTopRight(viewToolBar);
-			viewToolBar.addMouseListener(new MouseAdapter() {
-				public void mouseDoubleClick(MouseEvent event) {
-					if (viewToolBar.getItem(new Point(event.x, event.y)) == null)
-						doZoom();
-				}
-			});
-		} else {
-			viewToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));	
-		}
-		
-		IContributionItem[] viewItems = null;
-		if (viewToolBarMgr != null) {
-			viewItems = viewToolBarMgr.getItems();
-			viewToolBarMgr.dispose();
-		}
-		
-				// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-		viewToolBarMgr = new PaneToolBarManager(viewToolBar);
-		if (viewItems != null && viewItems.length != 0) {
-			for (int i = 0; i < viewItems.length; i++) {
-				viewToolBarMgr.add(viewItems[i]);
-			}
-		} else
-			viewToolBarMgr.add(systemContribution);
 		
 		// ISV toolbar.
 		//			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
-		isvToolBar = new ToolBar(parentControl, barStyle);
+		isvToolBar = new ToolBar(parentControl.getParent(), barStyle);
 		
 		
 		
@@ -503,7 +311,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				}
 			});
 		} else {
-			isvToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));
+			//isvToolBar.setLayoutData(new GridData(GridData.FILL_BOTH));
 		}
 		IContributionItem[] isvItems = null;
 		if (isvToolBarMgr != null) {
@@ -519,27 +327,9 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		setTabList();
         // only do this once for the non-floating toolbar case.  Otherwise update colors
 		// whenever updating the tab colors
-		if (viewToolBar != null)
-		    ColorSchemeService.setViewColors(viewToolBar);
-		ColorSchemeService.setViewColors(isvToolBar);
-		ColorSchemeService.setViewColors(isvToolBar.getParent());
+		ColorSchemeService.setViewColors(parentControl);
 	}
 	
-	/**
-     * 
-     */
-//    private void setToolBarColors() {
-//        
-//		setToolBarColors(
-//		        getViewReference()
-//		        .getPage()
-//		        .getWorkbenchWindow()
-//		        .getWorkbench()
-//		        .getThemeManager()
-//		        .getCurrentTheme()
-//		        .getColorRegistry()
-//		        .get(IWorkbenchPresentationConstants.BACKGROUND));
-//    }
     public void dispose() {
 		super.dispose();
 
@@ -553,18 +343,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
 			isvMenuMgr.dispose();
 		if (isvToolBarMgr != null)
 			isvToolBarMgr.dispose();
-		if (viewToolBarMgr != null)
-			viewToolBarMgr.dispose();
-/*		if (floatingWindow != null) {
-			floatingWindow.close();
-		}*/
 	}
 	/**
 	 * @see PartPane#doHide
 	 */
 	public void doHide() {
 		getPage().hideView(getViewReference());
-		//hideToolBarShell();
 	}
 
 	
@@ -588,12 +372,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		
 		getPage().addFastView(getViewReference());
 	}
-//	/**
-//	 * Hide the fast view
-//	 */
-//	protected void doMinimize() {
-//		getPage().toggleFastView(getViewReference());
-//	}
+
 	/**
 	 * Pin the view.
 	 */
@@ -605,7 +384,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Returns the drag control.
 	 */
 	public Control getDragHandle() {
-		return viewToolBar;
+		return status;
 	}
 	/**
 	 * @see ViewActionBars
@@ -660,12 +439,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	public void setFast(boolean b) {
 		fast = b;
-		if (viewToolBarMgr != null) {
-			viewToolBarMgr.update(true);
-		}
-	}
-	public void setFastViewSash(Sash s) {
-		fastViewSash = s;
 	}
 
 	/* (non-Javadoc)
@@ -692,71 +465,15 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	void setActive(boolean active){
 		hasFocus = active;
 		
-/*		if (active) {
-			setToolBarColors(WorkbenchColors.getActiveEditorGradientEnd());
-		} else {
-			setToolBarColors(WorkbenchColors.getActiveNoFocusEditorGradientEnd());
-		}*/
-/*		showFloatingWindow(active, false);
-*/			
 		if(getContainer() instanceof PartTabFolder){
 			((PartTabFolder) getContainer()).setActive(active);
 		}
 	}
-
-	/**
-	 * @param color
-	 */
-//	private void setToolBarColors(Color color) {
-//		if (viewToolBar != null)
-//			viewToolBar.setBackground(color);
-//		isvToolBar.setBackground(color);
-//		isvToolBar.getParent().setBackground(color);
-//	}
-	
-	/**
-	 * Ensure the visible/invisible state of the floating window matches the 
-	 * current locked/unlocked setting.
-	 * 
-	 * @param active <code>boolean</code> the view is currently the active view
-	 * @param lockChanged <code>boolean</code> has the state of locked/unlocked just 
-	 * 			been changed
-	 */
-/*	private void showFloatingWindow(boolean active, boolean lockChanged) {
-		// if we have a locked toolbar and the toolbar has not just 
-		// been locked then we have no floating window to worry about
-		if (locked & !lockChanged)
-			return;
-		// first time opening the floating shell, set bounds
-		if (lockChanged & !locked) {
-			getFloatingWindow().initializeBounds();
-			ViewForm2 vf = (ViewForm2)getControl();
-			vf.setTopCenter(null);
-			vf.setTopRight(null);
-			vf.layout();			
-		} else if (lockChanged && locked) {
-			((ViewForm2)getControl()).layout();
-		}
-		// active, then open the window, else close
-		if (active & !locked) {
-			getFloatingWindow().initializeBounds();
-			getFloatingWindow().open();
-		} else if (floatingWindow != null) {
-			getFloatingWindow().getShell().setVisible(false);
-		}		
-	}*/
 	
 	/**
 	 * Indicate focus in part.
 	 */
 	public void showFocus(boolean inFocus) {
-		//	showFocus = inFocus;
-		//
-		//	if (getContainer() instanceof PartTabFolder) {
-		//		PartTabFolder tf = (PartTabFolder) getContainer();
-		//		CTabFolder2 f = (CTabFolder2) tf.getControl();
-		//		f.setBorderVisible(inFocus);
-		//	}
 		setActive(inFocus);
 
 	}
@@ -765,14 +482,13 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Shows the pane menu (system menu) for this pane.
 	 */
 	public void showPaneMenu() {
-		// If this is a fast view, it may have been minimized. Do nothing in this case.
-		if (isFastView() && (page.getActiveFastView() != getViewReference()))
-			return;
-		// TODO should position menu relative to tab, as is done
-		// with editors.  Also need to take into account view titlebar if present
-		Control ref = control.getContent() != null ? control.getContent() : control;
-		Point pos = ref.toDisplay(ref.getLocation());
-		showPaneMenu(ref, pos);
+		ILayoutContainer container = getContainer();
+		
+		if (container instanceof PartTabFolder) {
+			PartTabFolder folder = (PartTabFolder) container;
+			
+			folder.showSystemMenu();
+		}		
 	}
 	/**
 	 * Return true if this view is a fast view.
@@ -797,10 +513,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	protected Sashes findSashes() {
 		Sashes result = new Sashes();
-		if (isFastView()) {
-			result.right = fastViewSash;
-			return result;
-		}
 		
 		ILayoutContainer container = getContainer();
 		
@@ -811,67 +523,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		container.findSashes(this, result);
 		return result;
 	}
-	/**
-	 * Add the Fast View menu item to the view title menu.
-	 */
-	protected void addFastViewMenuItem(Menu parent, boolean isFastView) {
-		if (isMoveable() && isCloseable()) {
-		// add fast view item
-		MenuItem item = new MenuItem(parent, SWT.CHECK);
-		item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
-		item.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (isFastView())
-					doDock();
-				else
-					doMakeFast();
-			}
-		});
-		item.setSelection(isFastView);
-
-//		if (isFastView) {
-//			item = new MenuItem(parent, SWT.NONE);
-//			item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
-//			item.addSelectionListener(new SelectionAdapter() {
-//				public void widgetSelected(SelectionEvent e) {
-//					doMinimize();
-//				}
-//			});
-//			item.setEnabled(true);
-//		}
-	}
-	}
-	/**
-	 * Add the View and Tab Group items to the Move menu.
-	 */
-	protected void addMoveItems(Menu moveMenu) {
-		// See also similar restrictions in isDragAllowed method.
-		// No need to worry about mouse cursor over image, just
-		// fast views.
-		boolean moveAllowed = !isZoomed() && !isFastView();
-
-		// Add move view only menu item
-		MenuItem item = new MenuItem(moveMenu, SWT.NONE);
-		item.setText(WorkbenchMessages.getString("ViewPane.moveView")); //$NON-NLS-1$
-		item.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				page.openTracker(ViewPane.this);
-			}
-		});
-		item.setEnabled(moveAllowed);
-
-		// Add move view's tab folder menu item
-		item = new MenuItem(moveMenu, SWT.NONE);
-		item.setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
-		item.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				ILayoutContainer container = getContainer();
-				if (container instanceof PartTabFolder)
-					 ((PartTabFolder) container).openTracker((PartTabFolder) container);
-			}
-		});
-		item.setEnabled(moveAllowed && (getContainer() instanceof PartTabFolder));
-	}
 
 	/**
 	 * Return if there should be a view menu at all.
@@ -880,33 +531,37 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * inactive fast view.
 	 */
 	public boolean hasViewMenu() {
-		if (isvMenuMgr == null)
-			return false;
-
-		//If there is no pull down button there is no associated menu
-		if (pullDownButton == null || pullDownButton.isDisposed())
-			return false;
-
-		return true;
+		
+		if (isvMenuMgr != null) {
+			return !isvMenuMgr.isEmpty();
+		}
+		
+		return false;		
 	}
 
 	/**
 	 * Show the view menu for this window.
 	 */
 	public void showViewMenu() {
-
+		ILayoutContainer container = getContainer();
+		
+		if (container instanceof PartTabFolder) {
+			PartTabFolder folder = (PartTabFolder) container;
+			
+			folder.showPaneMenu();
+		}		
+	}
+	
+	public void showViewMenu(Point location) {
 		if (!hasViewMenu())
 			return;
-
+	
 		// If this is a fast view, it may have been minimized. Do nothing in this case.
 		if (isFastView() && (page.getActiveFastView() != getViewReference()))
 			return;
-
-		Menu aMenu = isvMenuMgr.createContextMenu(getControl());
-		Rectangle bounds = pullDownButton.getBounds();
-		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
-		topLeft = viewToolBar.toDisplay(topLeft);
-		aMenu.setLocation(topLeft.x, topLeft.y);
+	
+		Menu aMenu = isvMenuMgr.createContextMenu(getControl().getParent());
+		aMenu.setLocation(location.x, location.y);
 		aMenu.setVisible(true);
 	}
 	
@@ -920,8 +575,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public void updateActionBars() {
 		if (isvMenuMgr != null)
 			isvMenuMgr.updateAll(false);
-		if (viewToolBarMgr != null)
-			viewToolBarMgr.update(false);
 		if (isvToolBarMgr != null)
 			isvToolBarMgr.update(false);
 
@@ -933,7 +586,8 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		IViewReference ref = getViewReference();
 		
 		if (status != null && !status.isDisposed()) {
-			status.setBackground(status.getParent().getBackground());
+			ColorSchemeService.setViewColors(status);
+			//status.setBackground(status.getParent().getBackground());
 			boolean changed = false;
 			String text = ref.getTitle();
 			
@@ -970,48 +624,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				page.updateTitle(ref);
 			}
 		}
-
-		/*
-		IViewReference ref = getViewReference();
-		if (titleLabel != null && !titleLabel.isDisposed()) {
-			boolean changed = false;
-
-			// only update if text or image has changed 
-			String text = ref.getTitle();
-			if (text == null)
-				text = ""; //$NON-NLS-1$
-			if (!text.equals(titleLabel.getText())) {
-				titleLabel.setText(text);
-				changed = true;
-			}
-			Image image = ref.getTitleImage();
-			if (image != titleLabel.getImage()) {
-				titleLabel.setImage(image);
-				changed = true;
-			}
-			// only relayout if text or image has changed
-			if (changed) {
-				((Composite) getControl()).layout();
-			}
-
-			String tooltip = ref.getTitleToolTip();
-			if (!(tooltip == null
-				? titleLabel.getToolTipText() == null
-				: tooltip.equals(titleLabel.getToolTipText()))) {
-				titleLabel.setToolTipText(ref.getTitleToolTip());
-				changed = true;
-			}
-
-			if (changed) {
-				// XXX: Workaround for 1GCGA89: SWT:ALL - CLabel tool tip does not always update properly
-				titleLabel.update();
-
-				// notify the page that this view's title has changed
-				// in case it needs to update its fast view button
-				page.updateTitle(ref);
-			}
-		}
-		*/
 	}
 
 	/* (non-Javadoc)
@@ -1019,30 +631,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	void setImage(CTabItem item, Image image) {
 		titleLabel.setImage(image);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartPane#addCloseMenuItem(org.eclipse.swt.widgets.Menu)
-	 */
-	protected void addCloseMenuItem(Menu menu) {
-		if(isCloseable())
-			super.addCloseMenuItem(menu);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartPane#addMoveMenuItem(org.eclipse.swt.widgets.Menu)
-	 */
-	protected void addMoveMenuItem(Menu menu) {
-		if(isMoveable())
-			super.addMoveMenuItem(menu);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartPane#addPinEditorItem(org.eclipse.swt.widgets.Menu)
-	 */
-	protected void addPinEditorItem(Menu parent) {
-		if(isMoveable() && isCloseable())
-			super.addPinEditorItem(parent);
 	}
 
 	/* (non-Javadoc)
@@ -1085,4 +673,36 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	public IPresentablePart getPresentablePart() {
 		return presentableAdapter;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#reparent(org.eclipse.swt.widgets.Composite)
+	 */
+	public void reparent(Composite newParent) {
+		super.reparent(newParent);
+		
+		if (isvToolBar != null) {
+			isvToolBar.setParent(newParent);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#moveAbove(org.eclipse.swt.widgets.Control)
+	 */
+	public void moveAbove(Control refControl) {
+		super.moveAbove(refControl);
+		
+		isvToolBar.moveAbove(control);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#setVisible(boolean)
+	 */
+	public void setVisible(boolean makeVisible) {
+		super.setVisible(makeVisible);
+		
+		if (isvToolBar != null) {
+			isvToolBar.setVisible(makeVisible);
+		}
+	}
+	
 }
