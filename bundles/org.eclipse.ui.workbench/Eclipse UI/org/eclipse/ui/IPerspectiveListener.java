@@ -20,10 +20,10 @@ package org.eclipse.ui;
  */
 public interface IPerspectiveListener {
     /**
-     * Notifies this listener that the given page's perspective
+     * Notifies this listener that a perspective in the given page
      * has been activated.
      *
-     * @param page the page whose perspective was activated
+     * @param page the page containing the activated perspective
      * @param perspective the perspective descriptor that was activated
      * @see IWorkbenchPage#setPerspective
      */
@@ -31,11 +31,11 @@ public interface IPerspectiveListener {
             IPerspectiveDescriptor perspective);
 
     /**
-     * Notifies this listener that the given page's perspective
-     * has changed in some way (for example, editor area hidden, perspective reset,
+     * Notifies this listener that a perspective has changed in some way 
+     * (for example, editor area hidden, perspective reset,
      * view show/hide, editor open/close, etc).
      *
-     * @param page the page whose perspective was reset
+     * @param page the page containing the affected perspective
      * @param perspective the perspective descriptor
      * @param changeId one of the <code>CHANGE_*</code> constants on IWorkbenchPage
      */
