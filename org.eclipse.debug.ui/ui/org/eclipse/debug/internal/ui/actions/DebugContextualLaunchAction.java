@@ -13,12 +13,6 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.actions.ContextualLaunchAction;
 
-/**
- * @author DWright
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class DebugContextualLaunchAction extends ContextualLaunchAction {
 	
 	public DebugContextualLaunchAction() {
