@@ -56,7 +56,7 @@ public class Cipher {
 	 * mode and to set the password.
 	 *
 	 * @param mode
-	 * @param password
+	 * @param passwordString
 	 */
 	public Cipher(int mode, String passwordString) {
 		this.mode = mode;

@@ -69,6 +69,7 @@ public class FindSupport {
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
 	 * 
+	 * TODO fix these comments
 	 * @param path file path relative to plug-in installation location
 	 * @param override map of override substitution arguments to be used for
 	 * any $arg$ path elements. The map keys correspond to the substitution

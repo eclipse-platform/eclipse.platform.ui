@@ -171,12 +171,12 @@ public class ContentTypeManager implements IContentTypeManager {
 		// files associated by name should appear before those associated by extension		
 		SortedSet allByFileName = (SortedSet) fileNames.get(fileName);
 		if (allByFileName != null && !allByFileName.isEmpty())
-			result[count++] = (IContentType) ((ContentType) allByFileName.first()).getTarget();
+			result[count++] = ((ContentType) allByFileName.first()).getTarget();
 		String fileExtension = getFileExtension(fileName);
 		if (fileExtension != null) {
 			SortedSet allByFileExtension = (SortedSet) fileExtensions.get(fileExtension);
 			if (allByFileExtension != null && !allByFileExtension.isEmpty())
-				result[count++] = (IContentType) ((ContentType) allByFileExtension.first()).getTarget();
+				result[count++] = ((ContentType) allByFileExtension.first()).getTarget();
 		}
 		if (count == 0)
 			return new IContentType[0];

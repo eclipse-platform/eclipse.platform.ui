@@ -182,7 +182,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	}
 
 	public IExtension getDeclaringExtension() {
-		return (IExtension) getParentExtension();
+		return getParentExtension();
 	}
 
 	/**
@@ -283,7 +283,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 *
-	 * @see #isReadOnly
+	 * @see RegistryModelObject#isReadOnly()
 	 */
 	public void markReadOnly() {
 		super.markReadOnly();

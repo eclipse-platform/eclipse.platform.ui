@@ -38,14 +38,14 @@ public class CipherInputStream extends FilterInputStream {
 	}
 
 	/**
-	 * @see InputStream#markSupported
+	 * @see InputStream#markSupported()
 	 */
 	public boolean markSupported() {
 		return false;
 	}
 
 	/**
-	 * @see InputStream#read
+	 * @see InputStream#read()
 	 */
 	public int read() throws IOException {
 		int b = super.read();
@@ -59,7 +59,7 @@ public class CipherInputStream extends FilterInputStream {
 	}
 
 	/**
-	 * @see InputStream#read(byte, int, int)
+	 * @see InputStream#read(byte[], int, int)
 	 */
 	public int read(byte b[], int off, int len) throws IOException {
 		int bytesRead = in.read(b, off, len);

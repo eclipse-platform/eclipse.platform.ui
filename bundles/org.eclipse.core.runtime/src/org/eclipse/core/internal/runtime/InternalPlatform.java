@@ -167,7 +167,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	/**
-	 * @see Platform#addLogListener
+	 * @see Platform#addLogListener(ILogListener)
 	 */
 	public void addLogListener(ILogListener listener) {
 		assertInitialized();
@@ -240,7 +240,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	/**
-	 * @see Platform#getAdapterManager
+	 * @see Platform#getAdapterManager()
 	 */
 	public IAdapterManager getAdapterManager() {
 		assertInitialized();
@@ -287,7 +287,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	/**
-	 * @see Platform#getLocation
+	 * @see Platform#getLocation()
 	 */
 	public IPath getLocation() throws IllegalStateException {
 		Location location = getInstanceLocation();
@@ -363,6 +363,8 @@ public final class InternalPlatform implements IPlatform {
 	 * This method is used by the platform boot loader; is must
 	 * not be called directly by client code.
 	 * </p>
+	 * TODO: fix these comments
+	 * @param context
 	 * @param pluginPath the list of places to look for plug-in specifications.  This may
 	 *		identify individual plug-in files or directories containing directories which contain
 	 *		plug-in files.
@@ -585,7 +587,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	/**
-	 * @see Platform#removeLogListener
+	 * @see Platform#removeLogListener(ILogListener)
 	 */
 	public void removeLogListener(ILogListener listener) {
 		assertInitialized();
@@ -656,6 +658,7 @@ public final class InternalPlatform implements IPlatform {
 	 * plugin's fragments. This properties file can be used to translate
 	 * preference values.
 	 * 
+	 * TODO fix these comments
 	 * @param pluginDescriptor the descriptor of the plugin
 	 *   who has the preferences
 	 * @param basePrefFileName the base name of the preference file
@@ -684,6 +687,7 @@ public final class InternalPlatform implements IPlatform {
 	 * Takes a preference value and a related resource bundle and
 	 * returns the translated version of this value (if one exists).
 	 * 
+	 * TODO: fix these comments
 	 * @param value the preference value for potential translation
 	 * @param bundle the bundle containing the translated values
 	 * 

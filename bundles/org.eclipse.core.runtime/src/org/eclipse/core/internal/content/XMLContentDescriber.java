@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.content.IContentDescription;
 /**
  * A content interpreter for XML files. 
  * 
- * @see http://www.w3.org/TR/REC-xml *
+ * @see "http://www.w3.org/TR/REC-xml *"
  */
 public class XMLContentDescriber implements IContentDescriber {
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$

@@ -108,7 +108,7 @@ public class ExtensionsParser extends DefaultHandler {
 	 * with other document events.</p>
 	 *
 	 * @param locator A locator for all SAX document events.
-	 * @see org.xml.sax.ContentHandler#setDocumentLocator
+	 * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
 	 * @see org.xml.sax.Locator
 	 */
 	public void setDocumentLocator(Locator locator) {
@@ -135,6 +135,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	public void endDocument() {
+		// do nothing
 	}
 
 	public void endElement(String uri, String elementName, String qName) {
@@ -309,6 +310,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	public void ignoreableWhitespace(char[] ch, int start, int length) {
+		// do nothing
 	}
 
 	private void logStatus(SAXParseException ex) {

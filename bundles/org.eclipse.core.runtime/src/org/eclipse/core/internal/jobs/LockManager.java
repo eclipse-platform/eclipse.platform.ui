@@ -78,6 +78,7 @@ public class LockManager {
 	private HashMap suspendedLocks = new HashMap();
 
 	public LockManager() {
+		super();
 	}
 
 	/* (non-Javadoc)

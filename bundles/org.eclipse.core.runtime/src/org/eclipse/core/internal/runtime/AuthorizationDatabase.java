@@ -64,7 +64,7 @@ public class AuthorizationDatabase {
 	 *		"c:/temp/database"
 	 * @param password the password to access the database. For example,
 	 *		"secret"
-	 * @exception Exception if there are problems creating the database.
+	 * @exception CoreException if there are problems creating the database.
 	 *		Reasons include:
 	 * <ul>
 	 * <li>The database could not be opened because the wrong password was given.

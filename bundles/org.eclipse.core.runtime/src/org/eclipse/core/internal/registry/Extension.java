@@ -102,7 +102,7 @@ public class Extension extends RegistryModelObject implements IExtension {
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 *
-	 * @see #isReadOnly
+	 * @see RegistryModelObject#isReadOnly()
 	 */
 	public void markReadOnly() {
 		super.markReadOnly();
@@ -113,10 +113,7 @@ public class Extension extends RegistryModelObject implements IExtension {
 
 	/**
 	 * Set the extension point with which this extension is associated.
-	 * This object must not be read-only.
-	 *
-	 * @return the extension point with which this extension is associated.  
-	 *		May be <code>null</code>.
+	 *	May be <code>null</code>. This object must not be read-only.
 	 */
 	public void setExtensionPointIdentifier(String value) {
 		assertIsWriteable();

@@ -20,7 +20,7 @@ import org.eclipse.osgi.framework.log.FrameworkLogEntry;
  */
 public class PlatformLogWriter implements ILogListener {
 	/**
-	 * @see ILogListener#logging.
+	 * @see ILogListener#logging(IStatus, String)
 	 */
 	public synchronized void logging(IStatus status, String plugin) {
 		FrameworkLogEntry logEntry = getLog(status);

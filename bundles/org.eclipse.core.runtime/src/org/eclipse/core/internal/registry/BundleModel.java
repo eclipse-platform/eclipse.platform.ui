@@ -28,10 +28,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	private String hostId;
 	private IExtensionPoint[] extensionPoints;
 	private IExtension[] extensions;
-
-	private transient boolean bundleNotFound;
 	private transient ResourceBundle resourceBundle;
-
 	private long bundleId; //Introduced to fix #46308 //TODO Here may consider keeping the bundle object instead of keeping the id.
 
 	//Introduced for UI backward compatibility
@@ -141,8 +138,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	 * Fixes up the extension declarations in the given pre-3.0 plug-in or fragment to compensate
 	 * for extension points that were renamed between release 2.1 and 3.0.
 	 * 
-	 * @param plugin the pre-3.0 plug-in or fragment
-	 * @param factory the factory for creating new model objects
 	 * @since 3.0
 	 */
 	private void fixRenamedExtensionPoints() {

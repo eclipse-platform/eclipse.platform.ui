@@ -55,7 +55,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#clear
+	 * @see Map#clear()
 	 */
 	public void clear() {
 		elements = null;
@@ -70,7 +70,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#containsKey
+	 * @see Map#containsKey(java.lang.Object)
 	 */
 	public boolean containsKey(Object key) {
 		if (elements == null || count == 0)
@@ -82,7 +82,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#containsValue
+	 * @see Map#containsValue(java.lang.Object)
 	 */
 	public boolean containsValue(Object value) {
 		if (elements == null || count == 0)
@@ -94,16 +94,18 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#entrySet This implementation does not conform properly to the
-	 *          specification in the Map interface. The returned collection will not
-	 *          be bound to this map and will not remain in sync with this map.
+	 * @see Map#entrySet()
+	 *  
+	 * Note: This implementation does not conform properly to the
+	 * specification in the Map interface. The returned collection will not
+	 * be bound to this map and will not remain in sync with this map.
 	 */
 	public Set entrySet() {
 		return toHashMap().entrySet();
 	}
 
 	/**
-	 * See Object#equals
+	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (!(o instanceof Map))
@@ -124,7 +126,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#get
+	 * @see Map#get(java.lang.Object)
 	 */
 	public Object get(Object key) {
 		if (elements == null || count == 0)
@@ -146,7 +148,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * See Object#hashCode
+	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
 		int hash = 0;
@@ -159,16 +161,18 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#isEmpty
+	 * @see Map#isEmpty()
 	 */
 	public boolean isEmpty() {
 		return count == 0;
 	}
 
 	/**
-	 * @see Map#keySet This implementation does not conform properly to the
-	 *          specification in the Map interface. The returned collection will not
-	 *          be bound to this map and will not remain in sync with this map.
+	 * @see Map#keySet() 
+	 * 
+	 * Note: This implementation does not conform properly to the
+	 * specification in the Map interface. The returned collection will not
+	 * be bound to this map and will not remain in sync with this map.
 	 */
 	public Set keySet() {
 		Set result = new HashSet(size());
@@ -181,7 +185,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#put
+	 * @see Map#put(java.lang.Object, java.lang.Object)
 	 */
 	public Object put(Object key, Object value) {
 		if (key == null)
@@ -221,7 +225,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#putAll
+	 * @see Map#putAll(java.util.Map)
 	 */
 	public void putAll(Map map) {
 		for (Iterator i = map.keySet().iterator(); i.hasNext();) {
@@ -232,7 +236,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#remove
+	 * @see Map#remove(java.lang.Object)
 	 */
 	public Object remove(Object key) {
 		if (elements == null || count == 0)
@@ -250,7 +254,7 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#size
+	 * @see Map#size()
 	 */
 	public int size() {
 		return count;
@@ -270,9 +274,11 @@ public class ObjectMap implements Map {
 	}
 
 	/**
-	 * @see Map#values This implementation does not conform properly to the
-	 *          specification in the Map interface. The returned collection will not
-	 *          be bound to this map and will not remain in sync with this map.
+	 * @see Map#values() 
+	 * 
+	 * Note: This implementation does not conform properly to the
+	 * specification in the Map interface. The returned collection will not
+	 * be bound to this map and will not remain in sync with this map.
 	 */
 	public Collection values() {
 		Set result = new HashSet(size());

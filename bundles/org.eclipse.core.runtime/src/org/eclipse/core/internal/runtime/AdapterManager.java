@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.*;
  * superinterfaces) </il>
  * </ul>
  * 
- * @see IAdapter
+ * @see IAdapterFactory
  * @see IAdapterManager
  */
 public final class AdapterManager implements IAdapterManager, IRegistryChangeListener {

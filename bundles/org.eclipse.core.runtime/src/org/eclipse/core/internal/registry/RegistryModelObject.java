@@ -60,7 +60,7 @@ public abstract class RegistryModelObject {
 	 * 
 	 * @return <code>true</code> if this model object is read-only,
 	 *		<code>false</code> otherwise
-	 * @see #markReadOnly
+	 * @see #markReadOnly()
 	 */
 	public boolean isReadOnly() {
 		return (flags & M_READ_ONLY) == M_READ_ONLY;
@@ -70,7 +70,7 @@ public abstract class RegistryModelObject {
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
 	 *
-	 * @see #isReadOnly
+	 * @see #isReadOnly()
 	 */
 	public void markReadOnly() {
 		flags |= M_READ_ONLY;

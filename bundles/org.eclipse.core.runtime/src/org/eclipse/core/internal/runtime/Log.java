@@ -30,7 +30,7 @@ public class Log implements ILog {
 	 * Adds the given log listener to this log.  Subsequently the log listener will
 	 * receive notification of all log events passing through this log.
 	 *
-	 * @see Platform#addLogListener
+	 * @see Platform#addLogListener(ILogListener)
 	 */
 	public void addLogListener(ILogListener listener) {
 		synchronized (logListeners) {
@@ -49,7 +49,7 @@ public class Log implements ILog {
 	 * Logs the given status.  The status is distributed to the log listeners
 	 * installed on this log and then to the log listeners installed on the platform.
 	 *
-	 * @see Plugin#getLogMask
+	 * @see Plugin#getLog()
 	 */
 	public void log(final IStatus status) {
 		// Log to the platform log first in case a listener throws an error.
@@ -78,7 +78,7 @@ public class Log implements ILog {
 	 * Removes the given log listener to this log.  Subsequently the log listener will
 	 * no longer receive notification of log events passing through this log.
 	 *
-	 * @see Platform#removeLogListener
+	 * @see Platform#removeLogListener(ILogListener)
 	 */
 	public void removeLogListener(ILogListener listener) {
 		synchronized (logListeners) {
