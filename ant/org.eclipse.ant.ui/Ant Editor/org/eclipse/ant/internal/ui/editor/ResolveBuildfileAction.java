@@ -21,8 +21,8 @@ import org.eclipse.jface.action.Action;
 public class ResolveBuildfileAction extends Action {
 	
 	public ResolveBuildfileAction() {
-		super("Resolve Buildfile",  AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT));
-		setToolTipText("Resolve the Ant Buildfile to Check for Errors");
+		super(AntEditorMessages.getString("ResolveBuildfileAction.0"),  AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT)); //$NON-NLS-1$
+		setToolTipText(AntEditorMessages.getString("ResolveBuildfileAction.1")); //$NON-NLS-1$
 		setChecked(AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.RESOLVE_BUILDFILES));
 	}
 	
