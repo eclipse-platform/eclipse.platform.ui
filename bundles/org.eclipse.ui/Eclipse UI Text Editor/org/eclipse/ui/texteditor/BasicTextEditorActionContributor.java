@@ -60,11 +60,6 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	
 	/** The active editor part */
 	private IEditorPart fActiveEditorPart;
-
-	/** The undo action */
-	private RetargetTextEditorAction fUndo;
-	/** The redo action */
-	private RetargetTextEditorAction fRedo;
 	/** The delete line action */
 	private RetargetTextEditorAction fDeleteLine;
 	/** The delete line to beginning action */
@@ -96,9 +91,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * @see org.eclipse.ui.IEditorActionBarContributor#init
 	 */
 	public BasicTextEditorActionContributor() {
-
-		fUndo= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Undo."); //$NON-NLS-1$
-		fRedo= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Redo."); //$NON-NLS-1$		
+		
 		fDeleteLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "DeleteLine."); //$NON-NLS-1$
 		fDeleteLineToBeginning= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "DeleteLineToBeginning."); //$NON-NLS-1$
 		fDeleteLineToEnd= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "DeleteLineToEnd."); //$NON-NLS-1$
@@ -159,8 +152,6 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 				actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 		}
 
-		fUndo.setAction(getAction(editor, ITextEditorActionConstants.UNDO));
-		fRedo.setAction(getAction(editor, ITextEditorActionConstants.REDO));
 		fDeleteLine.setAction(getAction(editor, ITextEditorActionConstants.DELETE_LINE));
 		fDeleteLineToBeginning.setAction(getAction(editor, ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING));
 		fDeleteLineToEnd.setAction(getAction(editor, ITextEditorActionConstants.DELETE_LINE_TO_END));
