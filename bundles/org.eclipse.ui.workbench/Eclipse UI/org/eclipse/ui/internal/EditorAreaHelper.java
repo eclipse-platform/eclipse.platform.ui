@@ -48,10 +48,7 @@ public class EditorAreaHelper {
         IHandler openEditorDropDownHandler = new AbstractHandler() {
 
             public Object execute(Map parameterValuesByName) throws ExecutionException {
-            	EditorStack activeWorkbook = editorArea.getActiveWorkbook();
-            	if (activeWorkbook != null) {
-            		activeWorkbook.showPartList();
-            	}
+            	displayEditorList();
                 return null;
             }
         };
@@ -62,6 +59,16 @@ public class EditorAreaHelper {
     	PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
                 openEditorDropDownHandlerSubmission);
 	}
+	/**
+	 * Displays a list of open editors
+	 */
+	public void displayEditorList() {
+		EditorStack activeWorkbook = editorArea.getActiveWorkbook();
+    	if (activeWorkbook != null) {
+    		activeWorkbook.showPartList();
+    	}
+	}
+	
 	/**
 	 * Closes all of the editors.
 	 */

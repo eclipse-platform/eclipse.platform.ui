@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.WorkbookEditorsAction;
 import org.eclipse.ui.internal.about.AboutAction;
 
 /**
@@ -1017,6 +1018,22 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new WorkbenchEditorsAction(window);
+			action.setId(getId());
+			return action;
+		}
+	};
+	
+	/**
+	 * Workbench action (id "showWorkbookEditors"): Shows a list of open editors
+	 * in the current or last active workbook.
+	 */
+		public static final ActionFactory SHOW_WORKBOOK_EDITORS = new ActionFactory("showWorkBookEditors") {//$NON-NLS-1$
+	/* (non-javadoc) method declared on ActionFactory */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new WorkbookEditorsAction(window);
 			action.setId(getId());
 			return action;
 		}

@@ -82,6 +82,7 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction activateEditorAction;
 	private IWorkbenchAction maximizePartAction;
 	private IWorkbenchAction workbenchEditorsAction;
+	private IWorkbenchAction workbookEditorsAction;
 	private IWorkbenchAction backwardHistoryAction;
 	private IWorkbenchAction forwardHistoryAction;
 
@@ -481,8 +482,6 @@ public final class WorkbenchActionBuilder {
 		addPerspectiveActions(menu);
 		menu.add(new Separator());
 		addKeyboardShortcuts(menu);
-		menu.add(new Separator());
-		menu.add(workbenchEditorsAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
         menu.add(openPreferencesAction);
@@ -543,6 +542,7 @@ public final class WorkbenchActionBuilder {
 		subMenu.add(activateEditorAction);
 		subMenu.add(nextEditorAction);
 		subMenu.add(prevEditorAction);
+		subMenu.add(workbookEditorsAction);
 		subMenu.add(new Separator());
 		subMenu.add(nextPartAction);
 		subMenu.add(prevPartAction);
@@ -848,6 +848,7 @@ public final class WorkbenchActionBuilder {
 		activateEditorAction.dispose();
 		maximizePartAction.dispose();
 		workbenchEditorsAction.dispose();
+		workbookEditorsAction.dispose();
 		backwardHistoryAction.dispose();
 		forwardHistoryAction.dispose();
 		undoAction.dispose();
@@ -1072,6 +1073,9 @@ public final class WorkbenchActionBuilder {
 		
 		workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS.create(getWindow());
 		registerGlobalAction(workbenchEditorsAction);
+		
+		workbookEditorsAction = ActionFactory.SHOW_WORKBOOK_EDITORS.create(getWindow());
+		registerGlobalAction(workbookEditorsAction);
 
 		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(getWindow());
 		registerGlobalAction(hideShowEditorAction);
