@@ -62,8 +62,7 @@ public final class InternalPlatform {
 	private static boolean dynamic = false;
 	private static String pluginCustomizationFile = null;
 
-	private static File lockFile = null;
-	private static RandomAccessFile lockRAF = null;
+	private static PlatformMetaAreaLock metaAreaLock = null;
 	
 	/**
 	 * Whether to perform the workspace metadata version check.
@@ -203,18 +202,8 @@ private static void assertInitialized() {
  * attempt to delete the file.
  */
 private static synchronized void clearLockFile() {
-	try {
-		if (lockRAF != null) {
-			lockRAF.close();
-			lockRAF = null;
-		}
-	} catch (IOException e) {
-		//don't complain, we're making a best effort to clean up
-	}
-	if (lockFile != null) {
-		lockFile.delete();
-		lockFile = null;
-	}
+	if (metaAreaLock != null)
+		metaAreaLock.release();
 }
 /**
  * Creates a lock file in the meta-area that indicates the meta-area
@@ -222,21 +211,14 @@ private static synchronized void clearLockFile() {
  * using the same meta-area.
  */
 private static synchronized void createLockFile() throws CoreException {
-	String lockLocation = metaArea.getLocation().append(PlatformMetaArea.F_LOCK_FILE).toOSString();
-	lockFile = new File(lockLocation);
-	//if the lock file already exists, try to delete,
-	//assume failure means another eclipse has it open
-	if (lockFile.exists())
-		lockFile.delete();
-	if (lockFile.exists()) {
-		String message = Policy.bind("meta.inUse", lockLocation); //$NON-NLS-1$
-		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
-	}
+	String lockLocation = metaArea.getLocation().append(PlatformMetaArea.F_LOCK_FILE).toOSString();	
+	metaAreaLock = new PlatformMetaAreaLock(new File(lockLocation));
 	try {
-		//open the lock file so other instances can't co-exist
-		lockRAF = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
-		lockRAF.writeByte(0);
-	} catch (IOException e) {
+		if (!metaAreaLock.acquire()) {
+			String message = Policy.bind("meta.inUse", lockLocation); //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
+		}
+	} catch (IOException e) {	
 		String message = Policy.bind("meta.failCreateLock", lockLocation); //$NON-NLS-1$
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
 	}
