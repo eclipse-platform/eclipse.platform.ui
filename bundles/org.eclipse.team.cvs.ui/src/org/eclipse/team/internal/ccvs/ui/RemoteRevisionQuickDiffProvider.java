@@ -27,7 +27,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.texteditor.*;
-import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
+import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
 /**
  * A QuickDiff provider that provides a reference to the latest revision of a file
@@ -52,7 +52,7 @@ import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
  * 
  * @since 3.0
  */
-public class RemoteRevisionQuickDiffProvider implements IQuickDiffProviderImplementation {
+public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvider {
 	// The editor showing this quickdiff and provides access to the editor input and
 	// ultimatly the IFile.
 	private ITextEditor fEditor = null;	
