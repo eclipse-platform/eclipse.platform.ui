@@ -45,8 +45,6 @@ public class AntAction extends Action {
 		if (file == null)
 			return;
 
-		saveDirtyEditors();
-
 		AntTargetList targetList = AntUtil.getTargetList(file.getLocation());
 		if (targetList == null) {
 			MessageDialog.openError(
@@ -61,15 +59,5 @@ public class AntAction extends Action {
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();
 		dialog.open();
-	}
-
-	/**
-	 * Saves any dirty editors if user preference
-	 */
-	private void saveDirtyEditors() {
-		IPreferenceStore store = ExternalToolsPlugin.getDefault().getPreferenceStore();
-		boolean autoSave = store.getBoolean(IPreferenceConstants.AUTO_SAVE);
-		if (autoSave)
-			window.getActivePage().saveAllEditors(false);
 	}
 }

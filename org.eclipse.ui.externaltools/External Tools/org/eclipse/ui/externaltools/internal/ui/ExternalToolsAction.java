@@ -33,6 +33,7 @@ import org.eclipse.ui.externaltools.internal.core.DefaultRunnerContext;
 import org.eclipse.ui.externaltools.internal.core.ExternalTool;
 import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.core.ToolMessages;
+import org.eclipse.ui.externaltools.internal.core.ToolUtil;
 
 /**
  * This action will display the external tool configuration dialog.
@@ -163,7 +164,14 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 	private void runTool(ExternalTool tool) {
 		if (tool == null)
 			return;
-
+			
+		ToolUtil.saveDirtyEditors(window);
+			
+		if (tool.getShowLog()) {
+			ToolUtil.showLogConsole(window);
+			ToolUtil.clearLogDocument();
+		}
+			
 		DefaultRunnerContext context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
 		context.run(null, window.getShell());
 	}

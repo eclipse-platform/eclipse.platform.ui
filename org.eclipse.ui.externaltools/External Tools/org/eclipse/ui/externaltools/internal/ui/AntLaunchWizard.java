@@ -104,6 +104,7 @@ public class AntLaunchWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		updateTool();
+		ToolUtil.saveDirtyEditors(window);
 		if (antTool.getShowLog()) {
 			ToolUtil.showLogConsole(window);
 			ToolUtil.clearLogDocument();

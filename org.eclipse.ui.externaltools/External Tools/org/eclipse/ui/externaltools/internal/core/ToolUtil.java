@@ -11,6 +11,7 @@ Contributors:
 **********************************************************************/
 import java.util.ArrayList;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -183,6 +184,23 @@ public final class ToolUtil {
 		if (ExternalTool.TOOL_TYPE_ANT.equals(type))
 			return new AntFileRunner();
 		return null;
+	}
+	
+	/**
+	 * Saves any dirty editors if user preference
+	 */
+	public static void saveDirtyEditors(IWorkbenchWindow window) {
+		IPreferenceStore store = ExternalToolsPlugin.getDefault().getPreferenceStore();
+		boolean autoSave = store.getBoolean(IPreferenceConstants.AUTO_SAVE);
+		if (autoSave) {
+			IWorkbenchWindow[] windows = window.getWorkbench().getWorkbenchWindows();
+			for (int i=0; i < windows.length; i++) {
+				IWorkbenchPage[] pages = windows[i].getPages();
+				for (int j = 0; j < pages.length; j++) {
+					pages[j].saveAllEditors(false);
+				}
+			}
+		}
 	}
 	
 	/**
