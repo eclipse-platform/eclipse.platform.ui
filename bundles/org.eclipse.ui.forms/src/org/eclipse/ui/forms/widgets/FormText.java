@@ -1089,14 +1089,19 @@ public final class FormText extends Canvas {
 	}
 
 	private boolean advance(boolean next) {
-		IHyperlinkSegment current = getSelectedLink();
-		if (current != null)
-			exitLink(current, SWT.NULL);
+		IFocusSelectable current = model.getSelectedSegment();
+		if (current != null && current instanceof IHyperlinkSegment)
+			exitLink((IHyperlinkSegment)current, SWT.NULL);
 		boolean valid = model.traverseFocusSelectableObjects(next);
-		IHyperlinkSegment newLink = getSelectedLink();
+		IFocusSelectable newSegment = model.getSelectedSegment();
+		if (newSegment!=null)
+			newSegment.setFocus(resourceTable);
+		IHyperlinkSegment newLink = newSegment instanceof IHyperlinkSegment?(IHyperlinkSegment)newSegment:null;
 		if (valid)
 			enterLink(newLink, SWT.NULL);
-		paintFocusTransfer(current, newLink);
+		IHyperlinkSegment oldLink = current instanceof IHyperlinkSegment?(IHyperlinkSegment)current:null;
+		if (oldLink!=null || newLink!=null)
+			paintFocusTransfer(oldLink, newLink);
 		if (newLink != null)
 			ensureVisible(newLink);
 		return !valid;
