@@ -111,55 +111,13 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				// Determine whether the new folder can be managed by the parent
 				ICVSFolder projectFolder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
 				String root = projectFolder.getFolderSyncInfo().getRoot();
-				if (root.equals(mFolder.getFolderSyncInfo().getRoot())
-					&& promptToManageFolder(mFolder)) {
-					// The user indicated that they would like the new folder managed
-					manageFolder(mFolder, root);
-				} else {
-					mFolder.unmanage(null);
-				}
+				mFolder.unmanage(null);
 				return true;
 			}
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		}
 		return false;
-	}
-
-	/**
-	 * Method manageFolder.
-	 * @param mFolder
-	 */
-	private void manageFolder(ICVSFolder mFolder, String root) throws CVSException {
-		ICVSFolder parent = mFolder.getParent();
-		if (!parent.isCVSFolder()) {
-			// set the folder sync appropriately and manage the parent folder
-			parent.setFolderSyncInfo(new FolderSyncInfo(FolderSyncInfo.VIRTUAL_DIRECTORY, root, CVSTag.DEFAULT, true));
-			manageFolder(parent, root);
-		}
-		mFolder.setSyncInfo(new ResourceSyncInfo(mFolder.getName()));
-	}
-	
-	public static interface IManageFolderPrompter {
-		public boolean promptToManageFolder(ICVSFolder mFolder);
-	}
-	
-	private static IManageFolderPrompter manageFolderPrompter;
-	
-	public static void setManageFolderPrompter(IManageFolderPrompter prompter) {
-		manageFolderPrompter = prompter;
-	}
-
-	/**
-	 * Method promptToManageFolder.
-	 * @param mFolder
-	 * @return boolean
-	 */
-	private boolean promptToManageFolder(ICVSFolder mFolder) {
-		if (manageFolderPrompter == null)
-			return false;
-		else
-			return manageFolderPrompter.promptToManageFolder(mFolder);
 	}
 
 	/*
