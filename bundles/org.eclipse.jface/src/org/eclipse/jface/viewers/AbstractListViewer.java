@@ -318,15 +318,21 @@ public abstract class AbstractListViewer extends StructuredViewer {
             List selection = getSelectionFromWidget();
 
             list.setRedraw(false);
-            listRemoveAll();
+			listRemoveAll();
+            
             Object[] children = getSortedChildren(getRoot());
-            ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
-            for (int i = 0; i < children.length; i++) {
+			String[] items = new String[children.length];
+			
+			ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+			
+			for (int i = 0; i < items.length; i++) {
                 Object el = children[i];
-                listAdd(getLabelProviderText(labelProvider, el), i);
+                items[i] = getLabelProviderText(labelProvider, el);
                 listMap.add(el);
                 mapElement(el, list); // must map it, since findItem only looks in map, if enabled
             }
+			
+			listSetItems(items);
             list.setRedraw(true);
             setSelectionToWidget(selection, false);
         } else {
