@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
@@ -66,7 +67,7 @@ class GotoMarkerAction extends Action {
 
 		IEditorPart editor= page.findEditor(input);
 		if (editor == null) {
-				if (fEditor != null && !fEditor.isDirty())
+				if (fEditor != null && !fEditor.isDirty() && !isPinned(fEditor))
 					page.closeEditor(fEditor, false);
 			try {
 				editor= page.openEditor(input, editorId, false);
@@ -82,6 +83,20 @@ class GotoMarkerAction extends Action {
 			editor.gotoMarker(marker);
 			fEditor= editor;
 		}
+	}
+
+	private boolean isPinned(IEditorPart editor) {
+		if (editor == null)
+			return false;
+		
+		IEditorReference[] editorRefs= editor.getEditorSite().getPage().getEditorReferences();
+		int i= 0;
+		while (i < editorRefs.length) {
+			if (editor.equals(editorRefs[i].getEditor(false)))
+				return editorRefs[i].isPinned();
+			i++;
+		}
+		return false;
 	}
 	
 	private void showWithoutReuse(IMarker marker) {
