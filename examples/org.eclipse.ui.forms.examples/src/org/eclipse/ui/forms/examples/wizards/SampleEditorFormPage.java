@@ -2,12 +2,20 @@ package org.eclipse.ui.forms.examples.wizards;
 
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.forms.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.internal.forms.IFormToolkitProvider;
 
 public class SampleEditorFormPage extends WizardPage {
 	private Label dirLabel;
@@ -120,7 +128,7 @@ public class SampleEditorFormPage extends WizardPage {
 
 		setControl(container);
 		container.setData("__adapted__", Boolean.TRUE);
-		WorkbenchHelp.setHelp(container,"org.eclipse.pde.doc.user."+
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(container,"org.eclipse.pde.doc.user."+
 				"new_project_structure_page");		
 	}
 	

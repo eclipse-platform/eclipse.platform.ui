@@ -12,7 +12,7 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui" optional="true"/>
       <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
