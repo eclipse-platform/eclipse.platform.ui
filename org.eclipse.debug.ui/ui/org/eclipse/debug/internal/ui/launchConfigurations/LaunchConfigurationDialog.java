@@ -98,7 +98,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private ILaunchConfiguration fFirstConfig;
 	
 	/**
-	 * Whether to perform single-click lanuching when
+	 * Whether to perform single-click launching when
 	 * opened (if the pref is on).
 	 */
 	private boolean fTrySingleClick = true;
