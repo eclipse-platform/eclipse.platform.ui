@@ -1587,13 +1587,7 @@ public IEditorPart openEditor(IEditorInput input, String editorID, boolean activ
  */
 private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file) 
 	throws PartInitException
-{	
-	if(file != null) {
-		// Update the default editor for this file.
-		WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
-			file, editorID);
-	}
-		
+{			
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
 	if (editor != null) {
@@ -1647,6 +1641,13 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 	
 //	getClientComposite().setRedraw(true);
 
+	// This code will not be reached if an exception occurs
+	// when attempting to open an editor.
+	if(file != null) {
+		// Update the default editor for this file.
+		WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
+			file, editorID);
+	}
 	return editor;
 }
 /**
