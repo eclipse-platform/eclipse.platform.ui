@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
@@ -23,13 +24,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
@@ -44,7 +50,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
@@ -81,7 +86,6 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
-import org.eclipse.ui.internal.commands.ws.WorkbenchWindowCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -118,11 +122,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private MenuItem restoreItem;
 	private AnimationItem animationItem;
 
-	private CoolBarManager coolBarManager = new CoolBarManager();
 	private Label noOpenPerspective;
 	private Rectangle normalBounds;
 	private boolean asMaximizedState = false;
-
+	
 	/**
 	 * Bit flags indication which submenus (New, Show Views, ...) this
 	 * window contains. Initially none.
@@ -214,8 +217,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private static final int FILL_ALL_ACTION_BARS =
 		WorkbenchAdvisor.FILL_MENU_BAR
-			| WorkbenchAdvisor.FILL_TOOL_BAR
-			| WorkbenchAdvisor.FILL_STATUS_LINE;
+		| WorkbenchAdvisor.FILL_TOOL_BAR
+		| WorkbenchAdvisor.FILL_STATUS_LINE;
 
 	/**
 	 * The layout for the workbench window's shell.
@@ -235,7 +238,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			for (int i = 0; i < ws.length; i++) {
 				Control w = ws[i];
 				boolean skip = false;
-				if (w == getToolBarControl()) {
+				if (w == getCoolBarControl()) {
 					skip = true;
 					result.y += BAR_SIZE;
 				} else if (getShortcutBar() != null && w == getShortcutBar().getControl()) {
@@ -268,32 +271,44 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				clientArea.height -= sep1Size.y;
 			}
 
-			int toolBarWidth = clientArea.width;
+			int coolBarWidth = clientArea.width;
 
-			//Layout the toolbar	
-			Control toolBar = getToolBarControl();
-			if (toolBar != null) {
-				if (getWindowConfigurer().getShowToolBar()) {
+			//Layout the coolbar	
+			Control coolBar = getCoolBarControl();
+			if (coolBar != null) {
+				if (getWindowConfigurer().getShowCoolBar()) {
 					int height = BAR_SIZE;
 
-					if (toolBarChildrenExist()) {
-						Point toolBarSize =
-							toolBar.computeSize(clientArea.width, SWT.DEFAULT, flushCache);
-						height = toolBarSize.y;
+					if (coolBarChildrenExist()) {
+						Point coolBarSize =
+							coolBar.computeSize(
+								clientArea.width,
+								SWT.DEFAULT,
+								flushCache);
+						height = coolBarSize.y;
 					}
-					toolBar.setBounds(clientArea.x, clientArea.y, toolBarWidth, height);
+					coolBar.setBounds(
+						clientArea.x,
+						clientArea.y,
+						coolBarWidth,
+						height);
 					clientArea.y += height;
 					clientArea.height -= height;
 				} else
-					getToolBarControl().setBounds(0, 0, 0, 0);
+					getCoolBarControl().setBounds(0, 0, 0, 0);
 			}
 
 			//Layout side seperator
 			Control sep2 = getSeparator2();
 			if (sep2 != null) {
-				if (getWindowConfigurer().getShowToolBar()) {
-					Point sep2Size = sep2.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-					sep2.setBounds(clientArea.x, clientArea.y, clientArea.width, sep2Size.y);
+				if (getWindowConfigurer().getShowCoolBar()) {
+					Point sep2Size =
+						sep2.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+					sep2.setBounds(
+						clientArea.x,
+						clientArea.y,
+						clientArea.width,
+						sep2Size.y);
 					clientArea.y += sep2Size.y;
 					clientArea.height -= sep2Size.y;
 				} else
@@ -409,7 +424,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		// Setup window.
 		addMenuBar();
-		addToolBar(SWT.FLAT);
+		addCoolBar(SWT.FLAT);
 
 		addStatusLine();
 		addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
@@ -439,7 +454,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			getWindowConfigurer().getActionBarConfigurer(),
 			FILL_ALL_ACTION_BARS);
 
-		workbenchWindowCommandSupport = new WorkbenchWindowCommandSupport(this);
 		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);
 	}
 
@@ -520,14 +534,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			shortcutBar.add(new Separator(WorkbenchWindow.GRP_FAST_VIEWS));
 			shortcutBar.add(new ShowFastViewContribution(this));
 		}
-	}
-	/**
-	 * Configures this window to have a cool bar.
-	 * This method must be called before this window's shell is created.
-	 */
-	protected void addToolBar(int style) {
-		if (getShell() == null)
-			coolBarManager = new CoolBarManager(style);
 	}
 	/**
 	 * Close the window.
@@ -631,8 +637,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/**
 	 * Return whether or not the coolbar layout is locked.
 	 */
-	protected boolean isToolBarLocked() {
-		return getCoolBarManager().isLayoutLocked();
+	protected boolean isCoolBarLocked() {
+		return getCoolBarManager().getLockLayout();
 	}
 
 	/**
@@ -750,8 +756,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				}
 			}
 		};
-		getToolBarControl().addListener(SWT.MouseDown, listener);
-		Control[] children = ((Composite) getStatusLineManager().getControl()).getChildren();
+		getCoolBarControl().addListener(SWT.MouseDown, listener);
+		Control[] children =
+			((Composite) getStatusLineManager().getControl()).getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] != null)
 				children[i].addListener(SWT.MouseDown, listener);
@@ -783,23 +790,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 		});
 	}
-	/**
-	 * Creates the control for the cool bar control.  
-	 * </p>
-	 * @return a Control
-	 */
-	protected Control createToolBarControl(Shell shell) {
-		CoolBarManager manager = getCoolBarManager();
-		return manager.createControl(shell);
-	}
-	/**
-	 *  Do not create a toolbarmanager.  WorkbenchWindow uses CoolBarManager.  
-	 * </p>
-	 * @return a Control
-	 */
-	protected ToolBarManager createToolBarManager(int style) {
-		return null;
-	}
+
 
 	/* (non-Javadoc)
 	 * Method declared on ApplicationWindow.
@@ -896,7 +887,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/**
 	 * Returns the action bars for this window.
 	 */
-	public IActionBars getActionBars() {
+	public WWinActionBars getActionBars() {
 		if (actionBars == null) {
 			actionBars = new WWinActionBars(this);
 		}
@@ -919,25 +910,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	/* package */
 	WorkbenchPage getActiveWorkbenchPage() {
 		return pageList.getActive();
-	}
-	/**
-	 * Returns cool bar control for the window. Overridden
-	 * to support CoolBars.
-	 * </p>
-	 * @return a Control
-	 */
-	protected CoolBar getCoolBarControl() {
-		return getCoolBarManager().getControl();
-	}
-	/**
-	 * Returns the CoolBarManager for this window.
-	 * 
-	 * @return theCoolBarManager, or <code>null</code> if
-	 *   this window does not have a CoolBar.
-	 * @see  #addCoolBar
-	 */
-	public CoolBarManager getCoolBarManager() {
-		return coolBarManager;
 	}
 	/**
 	 * Get the workbench client area.
@@ -1084,25 +1056,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * Returns tool bar control for the window. Overridden
-	 * to support CoolBars.
-	 * </p>
-	 * @return a Control
-	 */
-	protected Control getToolBarControl() {
-		return getCoolBarControl();
-	}
-
-	/**
-	 * WorkbenchWindow uses CoolBarManager, so return null here.
-	 * </p>
-	 * @return a Control
-	 */
-	public ToolBarManager getToolBarManager() {
-		return null;
-	}
-
-	/**
 	 * @see IWorkbenchWindow
 	 */
 	public IWorkbench getWorkbench() {
@@ -1148,7 +1101,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * Return whether or not given id matches the id of the coolitems that
+	 * Return whether or not the given id matches the id of the coolitems that
 	 * the application creates.
 	 */
 	/* package */
@@ -1161,8 +1114,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @param lock whether the CoolBar should be locked or unlocked
 	 */
 	/* package */
-	void lockToolBar(boolean lock) {
-		getCoolBarManager().lockLayout(lock);
+	void lockCoolBar(boolean lock) {
+		getCoolBarManager().setLockLayout(lock);
 	}
 	/**
 	 * Called when this window is about to be closed.
@@ -1292,6 +1245,66 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			//		getShell().setMinimized(true);
 		}
 
+		// Restore the cool bar order by creating all the tool bar contribution items
+		// This needs to be done before pages are created to ensure proper canonical creation
+		// of cool items
+		if (getCoolBarManager() != null) {
+			CoolBarManager coolBarMgr = getCoolBarManager();
+			IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
+			// The new layout of the cool bar manager
+			ArrayList layout = new ArrayList();
+			// Traverse through all the cool item in the memento
+			IMemento contributionMems[] = coolBarMem.getChildren(IWorkbenchConstants.TAG_COOLITEM);
+			for(int i=0; i < contributionMems.length; i++) {
+				IMemento contributionMem = contributionMems[i];
+				String type = contributionMem.getString(IWorkbenchConstants.TAG_ITEM_TYPE);
+				String id = contributionMem.getString(IWorkbenchConstants.TAG_ID);
+				IContributionItem newItem = null;
+				if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
+					if (id != null) {
+						newItem = new Separator(id);
+					}else {
+						newItem = new Separator();
+					}
+				}else if (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
+					newItem = new GroupMarker(id);
+				}else if (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION)) {
+					
+					// Get Width and height
+					Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
+					Integer height = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_Y);
+					// Look for the object in the current cool bar manager
+					IContributionItem oldItem = coolBarMgr.find(id);
+					// If a tool bar contribution item already exists for this id then use the old object
+					if (oldItem instanceof ToolBarContributionItem) {
+						newItem = (ToolBarContributionItem)oldItem;
+					}else {
+						newItem = new ToolBarContributionItem(new ToolBarManager(coolBarMgr.getStyle()), id);
+						// make it invisible by default
+						newItem.setVisible(false);
+						// Need to add the item to the cool bar manager so that its canonical order can be preserved
+						IContributionItem refItem = findAlphabeticalOrder(IWorkbenchActionConstants.MB_ADDITIONS,id,coolBarMgr);
+						coolBarMgr.insertAfter(refItem.getId(),newItem);
+					}
+					// Set the current height and width
+					if (width != null) {
+						((ToolBarContributionItem)newItem).setCurrentWidth(width.intValue());
+					}
+					if (height != null) {
+						((ToolBarContributionItem)newItem).setCurrentHeight(height.intValue());
+					}
+				}
+				// Add new item into cool bar manager
+				if (newItem != null) {
+					layout.add(newItem);
+					newItem.setParent(coolBarMgr);
+					coolBarMgr.markDirty();
+				}
+			}
+			// Set the cool bar layout to the given layout.
+			coolBarMgr.setLayout(layout);
+		}
+		
 		// Recreate each page in the window. 
 		IWorkbenchPage newActivePage = null;
 		IMemento[] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
@@ -1372,13 +1385,47 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		setActivePage(newActivePage);
 
-		// Restore the coolbar manager state. 
-		IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		if (coolBarMem != null)
-			getCoolBarManager().restoreState(coolBarMem);
-
 		return result;
 	}
+	
+	/**
+	 * Returns the contribution item that the given contribution item should be inserted after.
+	 * 
+	 * @param startId the location to start looking alphabetically.
+	 * @param itemId the target item id.
+	 * @param mgr the contribution manager.
+	 * @return the contribution item that the given items should be returned after.
+	 */
+	private IContributionItem findAlphabeticalOrder(String startId, String itemId, IContributionManager mgr) {
+		IContributionItem[] items = mgr.getItems();
+		int insertIndex = 0;
+		
+		// look for starting point
+		while (insertIndex < items.length) {
+			IContributionItem item = items[insertIndex];
+			if (item.getId().equals(startId))
+				break;
+			++insertIndex;
+		}
+		
+		// Find the index that this item should be inserted in
+		for (int i= insertIndex+1; i < items.length; i++) {
+			IContributionItem item = (IContributionItem) items[i];
+			String testId = item.getId();
+			
+			if (item.isGroupMarker()) break;
+			
+			if (itemId != null) {
+				if (itemId.compareTo(testId) < 1)
+					break;
+			}
+			insertIndex = i;
+		}
+		
+		return items[insertIndex];
+	}
+	
+	
 	/* (non-Javadoc)
 	 * Method declared on IRunnableContext.
 	 */
@@ -1444,9 +1491,34 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
 		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, normalBounds.height);
 
-		// Save the coolbar manager state. 
-		IMemento coolBarMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		getCoolBarManager().saveState(coolBarMem);
+		// Save the order of the cool bar contribution items
+		if (getCoolBarManager() != null) {
+			getCoolBarManager().refresh();
+			IMemento coolBarMem = memento.createChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
+			IContributionItem[] items = getCoolBarManager().getItems();
+			for(int i=0; i < items.length; i++) {
+				IMemento coolItemMem = coolBarMem.createChild(IWorkbenchConstants.TAG_COOLITEM);
+				IContributionItem item = items[i];
+				// The id of the contribution item
+				if (item.getId() != null) {
+					coolItemMem.putString(IWorkbenchConstants.TAG_ID,item.getId());
+				}
+				// Write out type and size if applicable
+				if (item.isSeparator()) {
+					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,IWorkbenchConstants.TAG_TYPE_SEPARATOR);
+				}else if (item.isGroupMarker() && !item.isSeparator()) {
+					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
+				}else {
+					// Assume that it is a ToolBarContributionItem
+					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
+					ToolBarContributionItem tbItem = (ToolBarContributionItem)item;
+					tbItem.saveWidgetState();
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_X, tbItem.getCurrentWidth());
+					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_Y, tbItem.getCurrentHeight());
+				}
+			}
+		}
+		
 
 		// Save each page.
 		Iterator enum = pageList.iterator();
@@ -1655,16 +1727,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 	}
 	/**
-	 * Returns whether or not children exist for the Window's toolbar control.
-	 * Overridden for coolbar support.
-	 * <p>
-	 * @return boolean true if children exist, false otherwise
-	 */
-	protected boolean toolBarChildrenExist() {
-		CoolBar coolBarControl = getCoolBarControl();
-		return coolBarControl.getItemCount() > 0;
-	}
-	/**
 	 * Hooks a listener to track the activation and
 	 * deactivation of the window's shell. Notifies
 	 * the active part and editor of the change
@@ -1764,8 +1826,12 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		WorkbenchPage currentPage = getActiveWorkbenchPage();
 		if (currentPage == null)
 			actionPresentation.clearActionSets();
-		else
+		else { 
+			if (getCoolBarManager() != null) {
+				getCoolBarManager().refresh();
+			}
 			actionPresentation.setActionSets(currentPage.getActionSets());
+		}
 		updateActionBars();
 
 		// hide the launch menu if it is empty

@@ -217,7 +217,7 @@ public class EditorManager {
 		}
 
 		// Create a new action bar set.
-		actionBars = new EditorActionBars(page.getActionBars(), type);
+		actionBars = new EditorActionBars((WWinActionBars)page.getActionBars(), type);
 		actionBars.addRef();
 		actionCache.put(type, actionBars);
 
@@ -248,7 +248,7 @@ public class EditorManager {
 
 		// Create a new action bar set.
 		// Note: It is an empty set.
-		EditorActionBars actionBars = new EditorActionBars(page.getActionBars(), type);
+		EditorActionBars actionBars = new EditorActionBars((WWinActionBars)page.getActionBars(), type);
 		actionBars.addRef();
 		actionCache.put(type, actionBars);
 

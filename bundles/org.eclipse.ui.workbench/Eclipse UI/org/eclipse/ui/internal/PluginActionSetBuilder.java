@@ -15,7 +15,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
 
 /**
  * This builder reads the actions for an action set from the registry.
@@ -34,7 +36,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 	public PluginActionSetBuilder() {
 	}
 	/**
-	 * Read the actions within a config element.
+	 * Read the actions within a config element. Called by customize perspective
 	 */
 	public void buildMenuAndToolBarStructure(PluginActionSet set, IWorkbenchWindow window) {
 		this.actionSet = set;
@@ -240,6 +242,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		 * managers.
 		 */
 		public void contribute(IActionBars bars, boolean menuAppendIfMissing, boolean toolAppendIfMissing) {
+			
 			IMenuManager menuMgr = bars.getMenuManager();
 			IToolBarManager toolBarMgr = bars.getToolBarManager();
 			if (menus != null && menuMgr != null) {
@@ -248,14 +251,14 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 					contributeMenu(menuElement, menuMgr, menuAppendIfMissing);
 				}
 			}
-			boolean isCoolBarContribution = (toolBarMgr != null) && (toolBarMgr instanceof CoolItemToolBarManager);
+
 			if (actions != null) {
 				for (int i = 0; i < actions.size(); i++) {
 					ActionDescriptor ad = (ActionDescriptor) actions.get(i);
 					if (menuMgr != null)
 						contributeMenuAction(ad, menuMgr, menuAppendIfMissing);
 					if (toolBarMgr != null) {
-						if (isCoolBarContribution) {
+						if (bars instanceof ActionSetActionBars) {
 							contributeCoolbarAction(ad, (ActionSetActionBars)bars);
 						} else {
 							contributeToolbarAction(ad, toolBarMgr, toolAppendIfMissing);
@@ -273,32 +276,33 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			String toolGroupId = ad.getToolbarGroupId();
 
 			String contributingId = bars.getActionSetId();
-			CoolBarManager coolBarMgr = ((CoolItemToolBarManager)bars.getToolBarManager()).getParentManager();
+			ICoolBarManager coolBarMgr = bars.getCoolBarManager();
+			if (coolBarMgr == null) {
+				return;
+			}
+			
 			PluginAction action = ad.getAction();
 			PluginActionCoolBarContributionItem actionContribution = new PluginActionCoolBarContributionItem(action);
 			
 			bars.addAdjunctContribution(actionContribution);
 
 			// create a coolitem for the toolbar id if it does not yet exist				
-			CoolItemToolBarManager activeManager;
-			CoolBarContributionItem cbItem = (CoolBarContributionItem)coolBarMgr.find(toolBarId);
-			if (cbItem == null) {
-				cbItem = new CoolBarContributionItem(coolBarMgr, toolBarId); 
-	 			cbItem.setVisible(true);
-				IContributionItem refItem = findCoolItemInsertionPoint(toolBarId, coolBarMgr);
-				if (refItem == null) {
-					coolBarMgr.add(cbItem);
-				} else {
-					coolBarMgr.insertAfter(refItem.getId(), cbItem);
-				}
-			}
-			activeManager = cbItem.getToolBarManager();		
-			IContributionItem groupMarker = activeManager.find(toolGroupId);
+			IToolBarManager toolBarManager = bars.getToolBarManager(toolBarId);
+			
+			
+			// Check to see if the group already exists
+			IContributionItem groupMarker = toolBarManager.find(toolGroupId);
+			// Add a group marker if one does not exist
 			if (groupMarker == null) {
-				activeManager.addAdjunctGroup(toolGroupId, contributingId);
-			} 			
-			activeManager.addAdjunctItemToGroup(toolGroupId, contributingId, actionContribution);		 
+				toolBarManager.add(new Separator(toolGroupId));
+			}
+			IContributionItem refItem = findAlphabeticalOrder(toolGroupId,contributingId,toolBarManager);
+			toolBarManager.insertAfter(refItem.getId(),actionContribution);
+			//toolBarManager.appendToGroup(toolGroupId, actionContribution);
+			toolBarManager.update(false);
+			
 		}
+		
 		/**
 		 * Contributes action from the action descriptor into the cool bar manager.
 		 */
@@ -308,7 +312,6 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			if (toolBarId == null && toolGroupId == null)return;
 
 			String contributingId = bars.getActionSetId();
-			CoolBarManager coolBarMgr = ((CoolItemToolBarManager)bars.getToolBarManager()).getParentManager();
 			
 			if (toolBarId == null || toolBarId.equals("")) { //$NON-NLS-1$ 
 				// the item is being added to the coolitem for its action set
@@ -317,7 +320,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
 			if (!toolBarId.equals(contributingId)) {
 				// adding to another action set, validate the id
-				if (!coolBarMgr.isValidCoolItemId(toolBarId, window)) {
+				if (!isValidCoolItemId(toolBarId, window)) {
 					// toolbarid not valid, add the item to the coolitem for its action set
 					toolBarId = contributingId;
 				} else {
@@ -325,32 +328,40 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 					return;
 				}	
 			} 
-				
+			
+			// Create the action
 			PluginAction action = ad.getAction();
 			PluginActionCoolBarContributionItem actionContribution = new PluginActionCoolBarContributionItem(action);
 
-			// create a coolitem for the toolbar id if it does not yet exist
-			CoolItemToolBarManager activeManager;
-			CoolBarContributionItem cbItem = (CoolBarContributionItem)coolBarMgr.find(toolBarId);
-			if (cbItem == null) {
-				activeManager = (CoolItemToolBarManager)bars.getToolBarManager();
-				cbItem = activeManager.getCoolBarItem();
-	 			cbItem.setVisible(true);
-				IContributionItem refItem = findCoolItemInsertionPoint(toolBarId, coolBarMgr);
-				if (refItem == null) {
-					coolBarMgr.add(cbItem);
-				} else {
-					coolBarMgr.insertAfter(refItem.getId(), cbItem);
-				}
-			}
+			// retreive the toolbar from the action bars.
+			IToolBarManager toolBar = bars.getToolBarManager(toolBarId);
 			
-			activeManager = cbItem.getToolBarManager();		
-			IContributionItem groupMarker = activeManager.find(toolGroupId);
+			
+			// Check to see if the group already exists
+			IContributionItem groupMarker = toolBar.find(toolGroupId);
+			// Add a group marker if one does not exist
 			if (groupMarker == null) {
-				activeManager.addBaseGroup(toolGroupId, true);
-			} 			
-			activeManager.addBaseItemToGroup(toolGroupId, actionContribution);		 
+				toolBar.add(new Separator(toolGroupId));
+			}
+			IContributionItem refItem = findAlphabeticalOrder(toolGroupId,actionContribution.getId(),toolBar);
+			toolBar.insertAfter(refItem.getId(),actionContribution);
+			//toolBar.appendToGroup(toolGroupId, actionContribution);
+			toolBar.update(false);
+			
 		}
+		
+		/**
+		 * Checks to see if the cool item id is in the given window.
+		 */
+		private boolean isValidCoolItemId(String id, WorkbenchWindow window) {
+			ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
+			if (registry.findActionSet(id) != null) return true;
+			if (window != null) {
+				return window.isWorkbenchCoolItemId(id);
+			}
+			return false;
+		}
+		
 		/* (non-Javadoc)
 		 * Method declared on Basic Contribution.
 		 */
@@ -376,43 +387,41 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 
 			menu.add(marker);
 		}
-		public IContributionItem findCoolItemInsertionPoint(String sortId, CoolBarManager mgr) {
-			// Get items.
+		
+		public IContributionItem findAlphabeticalOrder(String startId, String itemId, IContributionManager mgr) {
 			IContributionItem[] items = mgr.getItems();
-			String startId = IWorkbenchActionConstants.MB_ADDITIONS;
-	
-			// Find the reference item.
 			int insertIndex = 0;
-			// looking for the org.eclipse.ui.workbench.file toolbar
+			
+			// look for starting point
 			while (insertIndex < items.length) {
-				CoolBarContributionItem item = (CoolBarContributionItem) items[insertIndex];
-				IContributionItem foundItem = item.getToolBarManager().find(startId);
-				if (foundItem != null)
+				IContributionItem item = items[insertIndex];
+				if (item.getId().equals(startId))
 					break;
 				++insertIndex;
 			}
-			if (insertIndex >= items.length)
-				return null;
-	
-			// Find the insertion point for the new item.  We do this by iterating 
-			// through all of the previous action set contributions.  This code 
-			// assumes action set contributions are done in alphabetical order.
-			for (int i = insertIndex + 1; i < items.length; i++) {
-				CoolBarContributionItem item = (CoolBarContributionItem) items[i];
-				String testId = item.getId();
-				if (window != null) {
-					if (window.isWorkbenchCoolItemId(testId)) break;
+			
+			// Find the index that this item should be inserted in
+			for (int i= insertIndex+1; i < items.length; i++) {
+				IContributionItem item = (IContributionItem) items[i];
+				if (item.isGroupMarker()) break;
+				
+				String testId;
+				if (item instanceof PluginActionCoolBarContributionItem) {
+					testId = ((PluginActionCoolBarContributionItem)item).getActionSetId();
+				}else {
+					testId = item.getId(); 
 				}
-				// sort based only on existing action sets
-				if (sortId != null) {
-					if (sortId.compareTo(testId) < 1)
+				
+				if (itemId != null) {
+					if (itemId.compareTo(testId) < 1)
 						break;
 				}
 				insertIndex = i;
 			}
-			// Return item.
+			
 			return items[insertIndex];
 		}
+		
 		public boolean isAdjunctContributor() {
 			return adjunctActions.size() > 0;
 		}

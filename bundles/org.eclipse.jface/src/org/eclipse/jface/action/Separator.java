@@ -16,7 +16,8 @@ import org.eclipse.swt.widgets.*;
 /**
  * A separator is a special kind of contribution item which acts
  * as a visual separator and, optionally, acts as a group marker.
- * Unlike group markers, separators do have a visual representation.
+ * Unlike group markers, separators do have a visual representation for
+ * menus and toolbars.
  * <p>
  * This class may be instantiated; it is not intended to be 
  * subclassed outside the framework.
@@ -59,6 +60,14 @@ public void fill(ToolBar toolbar, int index) {
 	else
 		new ToolItem(toolbar, SWT.SEPARATOR);
 }
+/* (non-Javadoc)
+ * Method declared on IContributionItem.
+ * 
+ */
+public void fill(CoolBar coolBar, int index) {
+	
+}
+
 /** 
  * The <code>Separator</code> implementation of this <code>IContributionItem</code> 
  * method returns <code>true</code>

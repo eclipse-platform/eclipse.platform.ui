@@ -80,8 +80,12 @@ public void removeActionSet(IActionSetDescriptor desc) {
 		mapDescToRec.remove(desc);
 		IActionSet set = rec.set;
 		SubActionBars bars = rec.bars;
-		bars.dispose();
-		set.dispose();
+		if (bars != null) {
+			bars.dispose();
+		}
+		if (set != null) {
+			set.dispose();
+		}
 	}
 }
 /**
@@ -97,7 +101,18 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 	while (iter.hasNext()) {
 		IActionSetDescriptor desc = (IActionSetDescriptor)iter.next();
 		if (!newList.contains(desc)) {
-			removeActionSet(desc);
+			SetRec rec = (SetRec)mapDescToRec.get(desc);
+			if (rec != null) {
+				IActionSet set = rec.set;
+				SubActionBars bars = rec.bars;
+				if (bars != null) {
+					bars.deactivate();
+				}
+				if (set != null) {
+					set.dispose();
+				}
+				rec.set = null;
+			}
 		}
 	}
 	
@@ -115,9 +130,26 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 				mapDescToRec.put(desc, rec);
 				set.init(window, bars);
 				sets.add(set);
+				bars.activate();
 			} catch (CoreException e) {
 				WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
 			}
+		}else {
+			SetRec rec = (SetRec)mapDescToRec.get(desc);
+			IActionSet set = rec.set;
+			SubActionBars bars = rec.bars;
+			if (set == null) {
+				try {
+					bars.activate();
+					set = desc.createActionSet();
+					set.init(window,bars);
+					rec.set = set;
+				} catch (CoreException e) {
+					WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
+				}
+			}
+			
+			
 		}
 	}
 	// We process action sets in two passes for coolbar purposes.  First we process base contributions
@@ -131,6 +163,13 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 		PluginActionSet set = (PluginActionSet)iter.next();
 		set.getBars().activate();
 	}
+}
+
+public void setInvisibleActionSets(IActionSetDescriptor [] newArray) {
+	List invisibleActionSets = Arrays.asList(newArray);
+	List oldList = copyActionSets();
+	
+	
 }
 /**
  */

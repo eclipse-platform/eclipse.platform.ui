@@ -15,6 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ICoolBarManager;
 
 /**
  * Interface providing special access for configuring the action bars
@@ -37,42 +38,22 @@ public interface IActionBarConfigurer {
 	 * @return the menu manager
 	 */
 	public IMenuManager getMenuManager();
-		
-	/**
-	 * Adds a tool bar with the given id to the tool bars of a workbench
-	 * window. The new tool bar is added after any existing ones.
-	 * 
-	 * @param id the id assigned to this tool bar
-	 * @return the tool bar manager for the new tool bar
-	 */
-	public IToolBarManager addToolBar(String id);
 	
 	/**
-	 * Removes the tool bar with the given id from the tool bar of a
-	 * workbench window. Ignored if there is no tool bar with the given id. 
+	 * Returns the status line manager of a workbench window.
 	 * 
-	 * @param id the tool bar id
+	 * @return the status line manager
 	 */
-	public void removeToolBar(String id);
+	public IStatusLineManager getStatusLineManager();
+	
 	
 	/**
-	 * Returns the tool bar manager for the tool bar with the given id,
-	 * or <code>null</code> if there is no such tool bar.
+	 * Returns the cool bar manager of the workbench window.
 	 * 
-	 * @param id the id of the tool bar item
-	 * @return the tool bar manager or <code>null</code>
+	 * @return the cool bar manager
 	 */
-	public IToolBarManager getToolBar(String id);
-
-	/**
-	 * Adds a group to the tool bar of a workbench window. The new group is 
-	 * added after any existing contributions to the tool bar.
-	 *
-	 * @param toolBarMgr the tool bar manager to add the group to 
-	 * @param id the unique group identifier
-	 * @param asSeparator whether the group should have a seperator
-	 */
-	public void addToolBarGroup(IToolBarManager toolBarMgr, String id, boolean asSeparator);
+	public ICoolBarManager getCoolBarManager();
+	
 	
 	/**
 	 * Register the action as a global action with a workbench
@@ -90,29 +71,5 @@ public interface IActionBarConfigurer {
 	 */
 	public void registerGlobalAction(IAction action);
 	
-	/**
-	 * Adds a menu item to the context menu for the tool bars of a workbench window.
-	 * 
-	 * @param menuItem the action contribution item to add to the menu
-	 */
-	public void addToToolBarMenu(ActionContributionItem menuItem);
-	
-	/**
-	 * Adds the special editor tool bar group to the tool bar of a workbench
-	 * window. The new tool bar item is added after any existing ones. The id
-	 * of editor tool bar item is always 
-	 * {@link EDITOR_TOOLBAR_ID EDITOR_TOOLBAR_ID}, and consists of a canned
-	 * arrangement of buttons pre-bound to editor-specific commands.
-	 * 
-	 * @return the tool bar manager for the new tool bar item
-	 * @issue where is EDITOR_TOOLBAR_ID defined?
-	 */
-	public void addEditorToolBarGroup();
-	
-	/**
-	 * Returns the status line manager of a workbench window.
-	 * 
-	 * @return the status line manager
-	 */
-	public IStatusLineManager getStatusLineManager();
+
 }

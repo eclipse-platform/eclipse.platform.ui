@@ -547,7 +547,10 @@ public interface IWorkbenchActionConstants {
 	 * @since 2.1
 	 */
 	public static final String GROUP_SHOW_IN = "group.showIn"; //$NON-NLS-1$
-
+	/**
+	 * Coolbar: name of group for application created actions
+	 */
+	public static final String GROUP_APP = "group.application"; //$NON-NLS-1$
 	/**
 	 * Toolbar: name of group for editor action bars.
 	 */

@@ -18,15 +18,14 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.CoolBarContributionItem;
-import org.eclipse.ui.internal.CoolBarManager;
-import org.eclipse.ui.internal.CoolItemToolBarManager;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockAction;
@@ -143,40 +142,24 @@ public class EditorActionBarsTest extends UITestCase {
 	 */
 	protected void verifyToolItemState(IAction action, boolean enabled) {
 		String actionText = action.getText();
-		IToolBarManager tbm = ((WorkbenchWindow)fWindow).getCoolBarManager();
-		if (tbm instanceof ToolBarManager) {
-			ToolBar tb = ((ToolBarManager) tbm).getControl();
-            verifyNullToolbar(tb, actionText, tbm);
-            if (tb != null) {
-    			ToolItem [] items = tb.getItems();
-    			for (int i = 0; i < items.length; i ++) {
-    				String itemText = items[i].getToolTipText();
-    				if (actionText.equals(itemText)) {
-    					assertEquals(enabled, items[i].getEnabled());
-    					return;
-    				}
-    			}
-            }
-		}
-		else if (tbm instanceof CoolBarManager) {
-			IContributionItem[] coolItems = tbm.getItems();
-			for (int i = 0; i < coolItems.length; ++i) {
-				if (coolItems[i] instanceof CoolBarContributionItem) {
-					CoolBarContributionItem coolItem = (CoolBarContributionItem) coolItems[i];
-					ToolBarManager citbm = coolItem.getToolBarManager();
-					ToolBar tb = ((ToolBarManager) citbm).getControl();
-                    verifyNullToolbar(tb, actionText, citbm);
-                    if (tb != null) {
-    					ToolItem [] items = tb.getItems();
-    					for (int j = 0; j < items.length; j ++) {
-    						String itemText = items[j].getToolTipText();
-    						if (actionText.equals(itemText)) {
-    							assertEquals(enabled, items[j].getEnabled());
-    							return;
-    						}
-    					}
-                    }
-				}
+		ICoolBarManager tbm = ((WorkbenchWindow)fWindow).getCoolBarManager();
+		IContributionItem[] coolItems = tbm.getItems();
+		for (int i = 0; i < coolItems.length; ++i) {
+			if (coolItems[i] instanceof ToolBarContributionItem) {
+				ToolBarContributionItem coolItem = (ToolBarContributionItem) coolItems[i];
+				IToolBarManager citbm = coolItem.getToolBarManager();
+				ToolBar tb = ((ToolBarManager) citbm).getControl();
+                verifyNullToolbar(tb, actionText, citbm);
+                if (tb != null) {
+					ToolItem [] items = tb.getItems();
+					for (int j = 0; j < items.length; j ++) {
+						String itemText = items[j].getToolTipText();
+						if (actionText.equals(itemText)) {
+							assertEquals(enabled, items[j].getEnabled());
+							return;
+						}
+					}
+                }
 			}
 		}
 		fail("Action for " + actionText + " not found");
@@ -198,19 +181,15 @@ public class EditorActionBarsTest extends UITestCase {
      */
     private void verifyNullToolbar(ToolBar tb, String actionText, IToolBarManager manager) {        
         if (tb == null) { // toolbar should only be null if the given manager is
-            if (manager instanceof CoolItemToolBarManager) {
-                // a CoolBarManager and it contains only separators or invisible 
-                // objects.  
-                IContributionItem [] items = manager.getItems();
-                for (int i = 0; i < items.length; i++) {
-                    if (!(items[i] instanceof Separator) && items[i].isVisible()) {
-                        fail("No toolbar for a visible action text \"" + actionText + "\"");    
-                    }
+            // a CoolBarManager and it contains only separators or invisible 
+            // objects.  
+            IContributionItem [] items = manager.getItems();
+            for (int i = 0; i < items.length; i++) {
+                if (!(items[i] instanceof Separator) && items[i].isVisible()) {
+                    fail("No toolbar for a visible action text \"" + actionText + "\"");    
                 }
             }
-            else {                
-                fail("No toolbar for non-CoolBarManager for action \"" + actionText + "\"");
-            }
+
         }
     }
 }

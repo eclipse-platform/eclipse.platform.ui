@@ -146,9 +146,15 @@ public interface IWorkbenchConstants {
 	public static final String TAG_WORKING_SET = "workingSet";	//$NON-NLS-1$		
 	public static final String TAG_ITEM = "item";	//$NON-NLS-1$			
 	public static final String TAG_EDIT_PAGE_ID = "editPageId";	//$NON-NLS-1$
-	public static final String TAG_TOOLBAR_LAYOUT = "toolbarLayout";	//$NON-NLS-1$
+	public static final String TAG_COOLBAR_LAYOUT = "coolbarLayout";	//$NON-NLS-1$
 	public static final String TAG_ITEM_SIZE = "itemSize";	//$NON-NLS-1$
-	public static final String TAG_ITEM_WRAP_INDEX = "wrapIndex";	//$NON-NLS-1$
+	public static final String TAG_ITEM_X = "x";	//$NON-NLS-1$
+	public static final String TAG_ITEM_Y = "y";	//$NON-NLS-1$
+	public static final String TAG_ITEM_TYPE = "itemType";	//$NON-NLS-1$
+	public static final String TAG_TYPE_SEPARATOR = "typeSeparator";	//$NON-NLS-1$
+	public static final String TAG_TYPE_GROUPMARKER = "typeGroupMarker";	//$NON-NLS-1$
+	public static final String TAG_TYPE_TOOLBARCONTRIBUTION = "typeToolBarContribution"; //$NON-NLS-1$
+	public static final String TAG_COOLITEM = "coolItem";	//$NON-NLS-1$
 	public static final String TAG_INDEX = "index";	//$NON-NLS-1$
 	public static final String TAG_PINNED = "pinned";	//$NON-NLS-1$
 	public static final String TAG_PATH = "path";//$NON-NLS-1$

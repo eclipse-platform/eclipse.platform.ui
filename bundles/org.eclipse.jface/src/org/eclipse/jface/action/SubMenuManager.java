@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 
@@ -294,5 +295,17 @@ public class SubMenuManager extends SubContributionManager implements IMenuManag
 		mgr.setVisible(isVisible());
 		return mgr;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
+	 */
+	public void fill(CoolBar parent, int index) {
+		
+	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
+	 */
+	public void saveWidgetState() {	
+	}
 }

@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
- 
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.jface.action.*;
-import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IActionBars2;
 
-public class WWinActionBars implements IActionBars {
+public class WWinActionBars implements IActionBars2 {
 	private WorkbenchWindow window;
 /**
  * PerspActionBars constructor comment.
@@ -29,10 +29,19 @@ public WWinActionBars(WorkbenchWindow window) {
 public void clearGlobalActionHandlers() {
 }
 /**
+ * Returns the tool bar manager.
+ * 
+ */
+public IToolBarManager getToolBarManager() {
+	// This should never be called
+	Assert.isTrue(false);
+	return null;
+}
+/**
  * Returns the cool bar manager.
  * 
  */
-public CoolBarManager getCoolBarManager() {
+public ICoolBarManager getCoolBarManager() {
 	return window.getCoolBarManager();
 }
 /**
@@ -63,15 +72,7 @@ public IMenuManager getMenuManager() {
 public IStatusLineManager getStatusLineManager() {
 	return window.getStatusLineManager();
 }
-/**
- * Returns the tool bar manager.  If items are added or
- * removed from the manager be sure to call <code>updateActionBars</code>.
- *
- * @return the tool bar manager
- */
-public IToolBarManager getToolBarManager() {
-	return window.getCoolBarManager();
-}
+
 /**
  * Add a handler for a window action.
  *

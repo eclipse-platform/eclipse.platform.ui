@@ -12,7 +12,6 @@ package org.eclipse.ui.part;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.CoolItemMultiToolBarManager;
 
 /**
  * Standard implementation of <code>IEditorActionBarContributor</code>.
@@ -85,6 +84,19 @@ public void contributeToStatusLine(IStatusLineManager statusLineManager) {
 public void contributeToToolBar(IToolBarManager toolBarManager) {
 }
 /**
+ * Contributes to the given cool bar.
+ * <p>
+ * The <code>EditorActionBarContributor</code> implementation of this method
+ * does nothing. Subclasses may reimplement to add to the cool bar portion of
+ * this contribution. There can only be conributions from a cool bar or a tool bar.
+ * </p>
+ *
+ * @param coolBarManager the manager that controls the workbench cool bar
+ */
+public void contributeToCoolBar(ICoolBarManager coolBarManager) {
+}
+
+/**
  * Returns this contributor's action bars.
  *
  * @return the action bars
@@ -124,6 +136,8 @@ public void init(IActionBars bars, IWorkbenchPage page) {
  *  <li><code>contributeToMenu</code> with <code>bars</code>' menu manager</li>
  *  <li><code>contributeToToolBar</code> with <code>bars</code>' tool bar
  *    manager</li>
+ *  <li><code>contributeToCoolBar</code> with <code>bars</code>' cool bar
+ *    manager if <code>IActionBars</code> is of extended type <code>IActionBars2</code> </li>
  *  <li><code>contributeToStatusLine</code> with <code>bars</code>' status line
  *    manager</li>
  * </ul>
@@ -136,14 +150,11 @@ public void init(IActionBars bars) {
 	this.bars = bars;
 	contributeToMenu(bars.getMenuManager());
 	contributeToToolBar(bars.getToolBarManager());
-	contributeToStatusLine(bars.getStatusLineManager());
-	// If the editor action bar supports multiple CoolItems, create
-	// those cool items.  Workaround for [Bug 17477].
-	IToolBarManager tBarMgr = bars.getToolBarManager();
-	if (tBarMgr instanceof CoolItemMultiToolBarManager) {
-		((CoolItemMultiToolBarManager)tBarMgr).createCoolBarContributionItems();
+	if (bars instanceof IActionBars2) {
+		contributeToCoolBar(((IActionBars2)bars).getCoolBarManager());
 	}
-		
+	contributeToStatusLine(bars.getStatusLineManager());
+	
 }
 /**
  * Sets the active editor for the contributor.

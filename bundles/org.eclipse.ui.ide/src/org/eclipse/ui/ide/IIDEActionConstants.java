@@ -168,9 +168,13 @@ public interface IIDEActionConstants {
 	public static final String GROUP_ADD = "group.add"; //$NON-NLS-1$
 	
 	/**
-	 * Pop-up menu: name of group for File actions (value <code>"group.file"</code>).
+	 * Pop-up menu and cool bar: name of group for File actions (value <code>"group.file"</code>).
 	 */
 	public static final String GROUP_FILE = "group.file"; //$NON-NLS-1$
+	/**
+	 * Coolbar: name of group for Navigate actions (value <code>"group.nav"</code>).
+	 */
+	public static final String GROUP_NAV = "group.nav"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for Show In actions (value <code>"group.showIn"</code>).
