@@ -17,7 +17,7 @@ package org.eclipse.ui.internal.roles;
 public class RoleManager {
 
 	private static RoleManager singleton;
-	private boolean filterRoles = true;
+	private boolean filterRoles = false;
 
 	private Role[] roles;
 
@@ -72,14 +72,29 @@ public class RoleManager {
 	 * @return
 	 */
 	public boolean isEnabledId(String id) {
-		
-		if(!filterRoles)
+
+		if (!filterRoles)
 			return true;
 		for (int i = 0; i < roles.length; i++) {
 			if (roles[i].patternMatches(id))
 				return roles[i].enabled;
 		}
 		return true;
+	}
+
+	/**
+	 * Enable the roles that satisfy pattern.
+	 * @param pattern
+	 */
+	public void enableRoles(String pattern) {
+		if (!filterRoles)
+			return;
+		if(pattern == null)
+			return;
+		for (int i = 0; i < roles.length; i++) {
+			if (roles[i].patternMatches(pattern))
+				roles[i].setEnabled(true);
+		}
 	}
 
 }
