@@ -170,7 +170,11 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
 
         restoreWidgetValues();
         // updateWidgetEnablements();
-        setPageComplete();
+		
+		// can not finish initially, but don't want to start with an error message either
+		if (!validDestination())
+			setPageComplete(false);
+
         setPreferenceTransfers();
         setControl(composite);
 
@@ -183,15 +187,19 @@ public abstract class WizardPreferencesPage extends WizardDataTransferPage {
     protected abstract void createTransferArea(Composite composite);
 
     protected final boolean validateDestinationGroup() {
-        File file = new File(getDestinationValue());
-        if (file.getPath().length() <= 0 || file.isDirectory()) {
-            setMessage(PreferencesMessages.WizardPreferencesExportPage1_noPrefFile);
-            return false;
+        if (!validDestination()) {
+            setErrorMessage(PreferencesMessages.WizardPreferencesExportPage1_noPrefFile);
+			return false;
         }
 
         return true;
     }
 
+	protected boolean validDestination() {
+		File file = new File(getDestinationValue());
+        return !(file.getPath().length() <= 0 || file.isDirectory());
+	}
+	
     /**
      * 
      */
