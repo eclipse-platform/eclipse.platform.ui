@@ -16,9 +16,9 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
 /**
- * Implements a input for a MultiEditor
+ * Implements a input for a MultiEditor.
  * 
- * This class is intended to be instanciated by clients but its is 
+ * This class is intended to be instanciated by clients but is 
  * not intented to be subclassed.
  */
 public class MultiEditorInput implements IEditorInput {
