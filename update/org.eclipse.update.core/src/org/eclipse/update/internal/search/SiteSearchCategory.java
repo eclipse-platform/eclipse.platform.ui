@@ -22,12 +22,12 @@ import org.eclipse.update.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class UnifiedSiteSearchCategory extends UpdateSearchCategory {
+public class SiteSearchCategory extends UpdateSearchCategory {
 	private IUpdateSearchQuery[] queries;
 	private static final String CATEGORY_ID =
 		"org.eclipse.update.core.unified-search";
 
-	private static class UnifiedQuery implements IUpdateSearchQuery {
+	private static class Query implements IUpdateSearchQuery {
 		public void run(
 			ISite site,
 			String[] categoriesToSkip,
@@ -85,9 +85,9 @@ public class UnifiedSiteSearchCategory extends UpdateSearchCategory {
 		}
 	}
 
-	public UnifiedSiteSearchCategory() {
+	public SiteSearchCategory() {
 		super(CATEGORY_ID);
-		queries = new IUpdateSearchQuery[] { new UnifiedQuery()};
+		queries = new IUpdateSearchQuery[] { new Query()};
 	}
 
 	public IUpdateSearchQuery[] getQueries() {

@@ -130,7 +130,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		setTitle("Update sites to visit");
 		setDescription("Select update sites to visit while looking for new features.");
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		searchRequest = new UpdateSearchRequest(new UnifiedSiteSearchCategory(), new UpdateSearchScope());
+		searchRequest = new UpdateSearchRequest(new SiteSearchCategory(), new UpdateSearchScope());
 		searchRequest.addFilter(new BackLevelFilter());
 		envFilter = new EnvironmentFilter();
 		this.searchRunner = searchRunner;

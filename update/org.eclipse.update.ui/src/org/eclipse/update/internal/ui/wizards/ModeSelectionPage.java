@@ -56,7 +56,7 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		if (searchRequest!=null) return;
 		UpdateSearchScope scope = new UpdateSearchScope();
 		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
-		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
+		UpdatesSearchCategory category = new UpdatesSearchCategory();
 		searchRequest = new UpdateSearchRequest(category, scope);
 		searchRequest.addFilter(new EnvironmentFilter());
 	}

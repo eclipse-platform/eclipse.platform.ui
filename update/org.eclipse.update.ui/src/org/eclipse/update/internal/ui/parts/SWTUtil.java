@@ -14,6 +14,7 @@ package org.eclipse.update.internal.ui.parts;
  * @author
  */
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
@@ -66,6 +67,8 @@ public class SWTUtil {
 	 * Returns a width hint for a button control.
 	 */
 	public static int getButtonWidthHint(Button button) {
+		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+			button.setFont(JFaceResources.getDialogFont());
 		PixelConverter converter= new PixelConverter(button);
 		int widthHint= converter.convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		return Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
@@ -75,6 +78,8 @@ public class SWTUtil {
 	 * Returns a height hint for a button control.
 	 */		
 	public static int getButtonHeigthHint(Button button) {
+		if (button.getFont().equals(JFaceResources.getDefaultFont()))
+			button.setFont(JFaceResources.getDialogFont());
 		PixelConverter converter= new PixelConverter(button);
 		return converter.convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 	}	

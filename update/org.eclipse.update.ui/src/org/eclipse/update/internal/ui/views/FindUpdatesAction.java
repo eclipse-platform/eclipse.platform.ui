@@ -38,7 +38,7 @@ public class FindUpdatesAction extends Action {
 	public void run() {
 		UpdateSearchScope scope = new UpdateSearchScope();
 		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
-		UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
+		UpdatesSearchCategory category = new UpdatesSearchCategory();
 		final UpdateSearchRequest searchRequest = new UpdateSearchRequest(category, scope);
 		searchRequest.addFilter(new EnvironmentFilter());
 		if (feature!=null)

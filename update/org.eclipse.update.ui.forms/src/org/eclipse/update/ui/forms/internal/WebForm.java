@@ -182,7 +182,7 @@ public class WebForm extends AbstractSectionForm {
 
 	public void propertyChange(PropertyChangeEvent event) {
 		titleFont = JFaceResources.getHeaderFont();
-		if (control != null) {
+		if (control != null && !control.isDisposed()) {
 			control.layout();
 		}
 	}

@@ -177,7 +177,7 @@ public class InstallServlet extends HttpServlet {
 
 		final UpdateSearchRequest searchRequest =
 			new UpdateSearchRequest(
-				new UnifiedSiteSearchCategory(),
+				new SiteSearchCategory(),
 				searchScope);
 	
 		searchRequest.addFilter(new VersionedIdentifiersFilter(vids));

@@ -28,7 +28,7 @@ public class SearchCommand extends ScriptedCommand {
 			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite));
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite("remoteSite", remoteSiteURL, new String[0]);
-			searchRequest = new UpdateSearchRequest(new UnifiedSiteSearchCategory(), searchScope);
+			searchRequest = new UpdateSearchRequest(new SiteSearchCategory(), searchScope);
 			collector = new UpdateSearchResultCollector();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

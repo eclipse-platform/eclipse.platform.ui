@@ -70,7 +70,7 @@ public class InstallCommand extends ScriptedCommand {
 
 			searchRequest =
 				new UpdateSearchRequest(
-					new UnifiedSiteSearchCategory(),
+					new SiteSearchCategory(),
 					searchScope);
 			VersionedIdentifier vid = new VersionedIdentifier(featureId, version);
 			searchRequest.addFilter(new VersionedIdentifiersFilter(new VersionedIdentifier[]{vid}));

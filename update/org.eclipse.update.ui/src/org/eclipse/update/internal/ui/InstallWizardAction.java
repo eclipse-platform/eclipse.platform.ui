@@ -21,14 +21,14 @@ import org.eclipse.update.internal.ui.wizards.*;
  * Insert the type's description here.
  * @see IWorkbenchWindowActionDelegate
  */
-public class UnifiedWizardAction implements IWorkbenchWindowActionDelegate {
+public class InstallWizardAction implements IWorkbenchWindowActionDelegate {
 	private static final String KEY_TITLE = "NewUpdates.noUpdates.title";
 
 	IWorkbenchWindow window;
 	/**
 	 * The constructor.
 	 */
-	public UnifiedWizardAction() {
+	public InstallWizardAction() {
 	}
 
 	/**

@@ -20,7 +20,7 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
-public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
+public class UpdatesSearchCategory extends UpdateSearchCategory {
 	private static final String CATEGORY_ID =
 		"org.eclipse.update.core.new-updates";
 	private IFeature [] features;
@@ -277,7 +277,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 
 	private ArrayList candidates;
 
-	public UnifiedUpdatesSearchCategory() {
+	public UpdatesSearchCategory() {
 		super(CATEGORY_ID);
 	}
 

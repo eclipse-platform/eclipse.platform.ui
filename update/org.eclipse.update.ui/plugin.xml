@@ -55,7 +55,7 @@
                label="%actionSets.unifiedUpdates.label"
                icon="icons/full/obj16/usearch_obj.gif"
                helpContextId="org.eclipse.update.ui.newUpdates"
-               class="org.eclipse.update.internal.ui.UnifiedWizardAction"
+               class="org.eclipse.update.internal.ui.InstallWizardAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
                id="org.eclipse.update.ui.newUpdates">
          </action>

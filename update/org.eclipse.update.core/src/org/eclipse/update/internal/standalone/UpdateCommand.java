@@ -58,7 +58,7 @@ public class UpdateCommand extends ScriptedCommand {
 			
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
-			UnifiedUpdatesSearchCategory category = new UnifiedUpdatesSearchCategory();
+			UpdatesSearchCategory category = new UpdatesSearchCategory();
 			searchRequest = new UpdateSearchRequest(category, searchScope);
 			searchRequest.addFilter(new EnvironmentFilter());
 			collector = new UpdateSearchResultCollector();
