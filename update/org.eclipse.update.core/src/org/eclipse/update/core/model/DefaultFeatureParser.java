@@ -757,8 +757,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 				}
 				if (objectStack.peek() instanceof URLEntryModel) {
 					info = (URLEntryModel) objectStack.pop();
-					if (text != null)
+					if (text != null){
 						info.setAnnotation(text);
+					} 
 
 					innerState = ((Integer) stateStack.peek()).intValue();
 					switch (innerState) {
@@ -789,8 +790,11 @@ public class DefaultFeatureParser extends DefaultHandler {
 				}
 				if (objectStack.peek() instanceof URLEntryModel) {
 					info = (URLEntryModel) objectStack.pop();
-					if (text != null)
+					if (text == null || "".equalsIgnoreCase(text.trim())){
+						internalError(Policy.bind("DefaultFeatureParser.NoLicenseText"));//$NON-NLS-1$						
+					} else {
 						info.setAnnotation(text);
+					}
 
 					innerState = ((Integer) stateStack.peek()).intValue();
 					switch (innerState) {
