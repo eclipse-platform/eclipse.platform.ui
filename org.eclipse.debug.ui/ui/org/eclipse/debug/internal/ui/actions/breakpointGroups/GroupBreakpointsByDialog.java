@@ -139,8 +139,10 @@ public class GroupBreakpointsByDialog extends Dialog {
 			fAvailableOrganizersProvider.addAvailable(organizers[i]);
 		}
 		organizers = fView.getBreakpointOrganizers();
-		for (int i = 0; i < organizers.length; i++) {
-            fSelectedOrganizersProvider.addSelected(organizers[i]);
+        if (organizers != null) {
+    		for (int i = 0; i < organizers.length; i++) {
+                fSelectedOrganizersProvider.addSelected(organizers[i]);
+            }
         }
 	}
 
