@@ -28,7 +28,7 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
@@ -111,8 +111,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 				saveEditors.add(editor);
 			} 
 		}
-		AdaptableList input = new AdaptableList();
-		input.add(saveEditors.iterator());
+		AdaptableList input = new AdaptableList(saveEditors);
 		ListSelectionDialog dlg =
 			new ListSelectionDialog(getShell(), input, new WorkbenchContentProvider(), new WorkbenchPartLabelProvider(), IDEWorkbenchMessages.getString("EditorManager.saveResourcesMessage")); //$NON-NLS-1$
 
