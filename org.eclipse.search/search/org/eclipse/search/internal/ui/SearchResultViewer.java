@@ -12,6 +12,8 @@ package org.eclipse.search.internal.ui;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -330,14 +332,23 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 	private boolean isPotentialMatchSelected() {
+		if (getSelectedEntriesCount() == 0)
+			return false;
+
+		Iterator iter= Collections.EMPTY_LIST.iterator();
 		ISelection selection= getSelection();
-		if (selection instanceof IStructuredSelection) {
-			Object entry= ((IStructuredSelection)selection).getFirstElement();
+		if (selection instanceof IStructuredSelection)
+			iter= ((IStructuredSelection)selection).iterator();
+
+		while (iter.hasNext()) {
+			Object entry= iter.next();
 			if (entry instanceof ISearchResultViewEntry) {
 				IMarker marker= ((ISearchResultViewEntry)entry).getSelectedMarker();
-				return marker != null && marker.getAttribute(SearchUI.POTENTIAL_MATCH, false);
+				if (marker != null && marker.getAttribute(SearchUI.POTENTIAL_MATCH, false))
+					return true;
 			}
 		}
+
 		return false;
 	}
 

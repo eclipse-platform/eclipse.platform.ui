@@ -11,13 +11,15 @@
 package org.eclipse.search.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IWorkbenchSite;
 
@@ -27,12 +29,19 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 class RemovePotentialMatchesAction extends Action {
 
-	IWorkbenchSite fSite;
+	private IWorkbenchSite fSite;
 
 	public RemovePotentialMatchesAction(IWorkbenchSite site) {
-		super(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatches.text")); //$NON-NLS-1$
-		setToolTipText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatches.tooltip")); //$NON-NLS-1$
 		fSite= site;
+
+		if (usePluralLabel()) {
+			setText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatches.text")); //$NON-NLS-1$
+			setToolTipText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatches.tooltip")); //$NON-NLS-1$
+		}
+		else {
+			setText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatch.text")); //$NON-NLS-1$
+			setToolTipText(SearchMessages.getString("RemovePotentialMatchesAction.removePotentialMatch.tooltip")); //$NON-NLS-1$
+		}
 	}
 	
 	public void run() {
@@ -54,22 +63,55 @@ class RemovePotentialMatchesAction extends Action {
 	}
 	
 	private IMarker[] getMarkers() {
-		IMarker[] markers;
-		try {
-			markers= SearchPlugin.getWorkspace().getRoot().findMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
-		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.findMarkers.title"), SearchMessages.getString("Search.Error.findMarkers.message")); //$NON-NLS-2$ //$NON-NLS-1$
+
+		ISelection s= fSite.getSelectionProvider().getSelection();
+		if (! (s instanceof IStructuredSelection))
 			return null;
-		}
-		
-		ArrayList potentialMatches= new ArrayList(markers.length);
-		for (int i= 0; i < markers.length; i++) {
-			if (markers[i].getAttribute(SearchUI.POTENTIAL_MATCH, false))
-				potentialMatches.add(markers[i]);
-		}
-		if (potentialMatches.size() == 0)
+		IStructuredSelection selection= (IStructuredSelection)s;
+
+		int size= selection.size();
+		if (size <= 0)
 			return null;
-		
-		return (IMarker[])potentialMatches.toArray(new IMarker[potentialMatches.size()]);
+
+		ArrayList markers= new ArrayList(size * 3);
+		Iterator iter= selection.iterator();
+		for(int i= 0; iter.hasNext(); i++) {
+			SearchResultViewEntry entry= (SearchResultViewEntry)iter.next();
+			Iterator entryIter= entry.getMarkers().iterator();
+			while (entryIter.hasNext()) {
+				IMarker marker= (IMarker)entryIter.next();
+				if (marker.getAttribute(SearchUI.POTENTIAL_MATCH, false))
+					markers.add(marker);
+			}
+		}
+		return (IMarker[])markers.toArray(new IMarker[markers.size()]);
+	}
+
+	private boolean usePluralLabel() {
+		ISelection s= fSite.getSelectionProvider().getSelection();
+
+		if (! (s instanceof IStructuredSelection) || s.isEmpty())
+			return false;
+	
+		IStructuredSelection selection= (IStructuredSelection)s;
+		int size= selection.size();
+		if (size <= 0)
+			return false;
+
+		int markerCount= 0;
+		Iterator iter= selection.iterator();
+		for(int i= 0; iter.hasNext(); i++) {
+			SearchResultViewEntry entry= (SearchResultViewEntry)iter.next();
+			Iterator entryIter= entry.getMarkers().iterator();
+			while (entryIter.hasNext()) {
+				IMarker marker= (IMarker)entryIter.next();
+				if (marker.getAttribute(SearchUI.POTENTIAL_MATCH, false)) {
+					markerCount++;
+				}
+				if (markerCount > 1)
+					return true;
+			}
+		}
+		return false;
 	}
 }
