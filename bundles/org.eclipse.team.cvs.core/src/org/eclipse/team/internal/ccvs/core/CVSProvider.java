@@ -26,6 +26,7 @@ import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
+import org.eclipse.team.ccvs.core.CVSCommandOptions.QuietOption;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
@@ -297,10 +298,11 @@ public class CVSProvider implements ICVSProvider {
 	}
 	
 	public static String[] getDefaultGlobalOptions() {
-		if ("".equals(CVSProviderPlugin.getPlugin().getQuietness()))
+		QuietOption option = CVSProviderPlugin.getPlugin().getQuietness();
+		if (option == null)
 			return Client.EMPTY_ARGS_LIST;
 		else
-			return new String[] {CVSProviderPlugin.getPlugin().getQuietness()};
+			return new String[] {option.getOption()};
 	}
 	
 	/**
