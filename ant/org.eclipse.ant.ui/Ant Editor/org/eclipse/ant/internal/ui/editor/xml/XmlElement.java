@@ -81,39 +81,6 @@ public class XmlElement implements IAdaptable {
      * The (tag-)name of the element.
      */
     protected String name;
-    
-    
-    /**
-     * The startingRow where the element begins at.
-     * <P>
-     * The first startingRow has the index '1'.
-     */
-    protected int startingRow;
-
-
-    /**
-     * The startingColumn where the element begins at.
-     * <P>
-     * The first startingColumn has the index '1'.
-     */
-    protected int startingColumn;
-
-
-    /**
-     * The row where the element ends at.
-     * <P>
-     * The first ending row has the index '1'.
-     */
-    protected int endingRow;
-
-
-    /**
-     * The column where the element ends at.
-     * <P>
-     * The first ending column has the index '1'.
-     * The ending column is actually the index on this line after '>'.
-     */
-    protected int endingColumn;
 
 	/**
 	 * Whether this element has been generated as part of an element hierarchy
@@ -243,57 +210,6 @@ public class XmlElement implements IAdaptable {
 
 
     /**
-     * Returns the startingColumn.
-     * <P>
-     * The first column has the index '1'.
-     */
-    public int getStartingColumn() {
-        return startingColumn;
-    }
-
-
-    /**
-     * Returns the startingRow.
-     * <P>
-     * The first row has the index '1'.
-     */
-    public int getStartingRow() {
-        return startingRow;
-    }
-
-
-    /**
-     * Returns the endingRow.
-     * <P>
-     * The first row has the index '1'.
-     */
-    public int getEndingRow() {
-        return endingRow;
-    }
-
-
-    /**
-     * Sets the endingRow.
-     * <P>
-     * The first row has the index '1'.
-     */
-    public void setEndingRow(int endingRow) {
-        this.endingRow = endingRow;
-    }
-
-
-    /**
-     * Returns the ending column.
-     * <P>
-     * The first column has the index '1'.
-     * The ending column is actually the index right after '>' on the ending 
-     * line.
-     */
-    public int getEndingColumn() {
-        return endingColumn;
-    }
-
-	/**
 	 * Sets the absolute file system path of the file this element is defined
 	 * within.
 	 */
@@ -317,38 +233,6 @@ public class XmlElement implements IAdaptable {
 	}
 
     /**
-     * Sets the endingColumn.
-     * <P>
-     * The first column has the index '1'.
-     * The ending column is actually the index right after '>' on the ending 
-     * line.
-     */
-    public void setEndingColumn(int endingColumn) {
-        this.endingColumn = endingColumn;
-    }
-
-
-    /**
-     * Sets the startingColumn.
-     * <P>
-     * The first column has the index '1'.
-     */
-    public void setStartingColumn(int startingColumn) {
-        this.startingColumn = startingColumn;
-    }
-
-
-    /**
-     * Sets the startingRow.
-     * <P>
-     * The first row has the index '1'.
-     */
-    public void setStartingRow(int startingRow) {
-        this.startingRow = startingRow;
-    }
-
-
-	/**
 	 * Returns the 0-based index of the first character of the source code for this element,
 	 * relative to the source buffer in which this element is contained.
 	 * 
@@ -369,7 +253,6 @@ public class XmlElement implements IAdaptable {
 		offset = anOffset;
 	}
 	
-
 	/**
 	 * Returns the number of characters of the source code for this element,
 	 * relative to the source buffer in which this element is contained.
@@ -380,7 +263,6 @@ public class XmlElement implements IAdaptable {
     public int getLength() {
         return length;
     }
-    
 
 	/**
 	 * Sets the length.
@@ -391,12 +273,11 @@ public class XmlElement implements IAdaptable {
 		length = aLength;
 	}
 
-
 	/**
 	 * Returns a string representation of this element.
 	 */
 	public String toString() {
-		return MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_toString"), new String[]{name, Integer.toString(startingRow), Integer.toString(startingColumn), Integer.toString(endingRow), Integer.toString(endingColumn)}); //$NON-NLS-1$
+		return MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_toString"), new String[]{name, Integer.toString(offset), Integer.toString(length)}); //$NON-NLS-1$
 	}
 	
 	/**
@@ -561,5 +442,4 @@ public class XmlElement implements IAdaptable {
 		}
 		return null;
 	}
-
 }
