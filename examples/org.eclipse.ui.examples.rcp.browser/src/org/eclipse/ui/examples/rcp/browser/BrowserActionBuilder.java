@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.rcp.browser;
 
+import org.eclipse.swt.SWT;
+
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
@@ -21,6 +24,7 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
@@ -63,17 +67,31 @@ public class BrowserActionBuilder {
 	}
 	
 	private void makeActions() {
+		ISharedImages images = window.getWorkbench().getSharedImages();
+		
 		newWindowAction = ActionFactory.OPEN_NEW_WINDOW.create(window);
 		newWindowAction.setText("New Window");
+		
 		quitAction = ActionFactory.QUIT.create(window);
-		backAction = new RetargetAction("back", "Back");  //$NON-NLS-1$
+		
+		backAction = new RetargetAction("back", "&Back");  //$NON-NLS-1$
+		backAction.setToolTipText("Back");
+		backAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
 		window.getPartService().addPartListener(backAction);
-		forwardAction = new RetargetAction("forward", "Forward");  //$NON-NLS-2$
+		
+		forwardAction = new RetargetAction("forward", "&Forward");  //$NON-NLS-1$
+		forwardAction.setToolTipText("Forward");
+		forwardAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
 		window.getPartService().addPartListener(forwardAction);
-		stopAction = new RetargetAction("stop", "Stop");  //$NON-NLS-1$
+		
+		stopAction = new RetargetAction("stop", "Sto&p");  //$NON-NLS-1$
+		stopAction.setToolTipText("Stop");
 		window.getPartService().addPartListener(stopAction);
-		refreshAction = new RetargetAction("refresh", "Refresh");  //$NON-NLS-1$
+		
+		refreshAction = new RetargetAction("refresh", "&Refresh");  //$NON-NLS-1$
+		refreshAction.setToolTipText("Refresh");
 		window.getPartService().addPartListener(refreshAction);
+		
 		aboutAction = new Action() {
 			{ setText("&About"); }
 			public void run() {
@@ -95,10 +113,8 @@ public class BrowserActionBuilder {
 		
 		IMenuManager viewMenu = new MenuManager("&View", "view");  //$NON-NLS-2$
 		menuBar.add(viewMenu);
-		IMenuManager goToMenu = new MenuManager("Go To", "goto");  //$NON-NLS-2$
-		viewMenu.add(goToMenu);
-		goToMenu.add(backAction);
-		goToMenu.add(forwardAction);
+		viewMenu.add(backAction);
+		viewMenu.add(forwardAction);
 		viewMenu.add(stopAction);
 		viewMenu.add(refreshAction);
 
@@ -108,10 +124,20 @@ public class BrowserActionBuilder {
 	}
 
 	public void fillCoolBar(ICoolBarManager coolBar) {
-		IToolBarManager toolBar = new ToolBarManager(coolBar.getStyle());
+		IToolBarManager toolBar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
 		coolBar.add(new ToolBarContributionItem(toolBar, "standard"));
-		toolBar.add(backAction);
-		toolBar.add(forwardAction);
+		
+		// For the Back and Forward actions, force their text to be shown on the toolbar,
+		// not just their image.  For the remaining actions, the ActionContributionItem
+		// is created implicitly with the default presentation mode.
+		ActionContributionItem backCI = new ActionContributionItem(backAction);
+		backCI.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBar.add(backCI);
+		
+		ActionContributionItem forwardCI = new ActionContributionItem(forwardAction);
+		forwardCI.setMode(ActionContributionItem.MODE_FORCE_TEXT);
+		toolBar.add(forwardCI);
+		
 		toolBar.add(stopAction);
 		toolBar.add(refreshAction);
 	}

@@ -44,6 +44,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class ActionContributionItem extends ContributionItem {
 
+	/**
+	 * Mode bit: Show text on tool items, even if an image is present.
+	 * If this mode bit is not set, text is only shown on tool items if there is 
+	 * no image present.
+	 */
+	public static int MODE_FORCE_TEXT = 1;
+	
 	private static class ImageCache {
 
 		private class Entry {
@@ -139,6 +146,11 @@ public class ActionContributionItem extends ContributionItem {
 		USE_COLOR_ICONS = useColorIcons;
 	}
 
+	/**
+	 * The presentation mode.
+	 */
+	private int mode = 0;
+	
 	/**
 	 * The action.
 	 */
@@ -414,6 +426,21 @@ public class ActionContributionItem extends ContributionItem {
 		}
 		return menuItemListener;
 	}
+	
+	/**
+	 * Returns the presentation mode, which is the inclusive-or of the 
+	 * <code>MODE_*</code> constants.  The default mode setting is 0, meaning
+	 * that for menu items, both text and image are shown (if present), but for
+	 * tool items, the text is shown only if there is no image.
+	 * 
+	 * @return the presentation mode settings
+	 * 
+	 * @since 3.0
+	 */
+	public int getMode() {
+		return mode;
+	}
+	
 	/**
 	 * Returns the listener for SWT tool item widget events.
 	 * 
@@ -597,6 +624,19 @@ public class ActionContributionItem extends ContributionItem {
 	}
 
 	/**
+	 * Sets the presentation mode, which is the inclusive-or of the 
+	 * <code>MODE_*</code> constants.
+	 * 
+	 * @return the presentation mode settings
+	 * 
+	 * @since 3.0
+	 */
+	public void setMode(int mode) {
+		this.mode = mode;
+		update();
+	}
+	
+	/**
 	 * The action item implementation of this <code>IContributionItem</code>
 	 * method calls <code>update(null)</code>.
 	 */
@@ -627,35 +667,43 @@ public class ActionContributionItem extends ContributionItem {
 
 			if (widget instanceof ToolItem) {
 				ToolItem ti = (ToolItem) widget;
-				boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
+				String text = action.getText();
+				// the set text is shown only if there is no image or if forced by MODE_FORCE_TEXT
+				boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
+				
+				// only do the trimming if the text will be used
+				if (showText && text != null) {
+					text = Action.removeAcceleratorText(text);
+					text = Action.removeMnemonics(text);
+				}
 
 				if (textChanged) {
-					String text = action.getText();
-					if (rightStyle) {
-						// always set text if using SWT.RIGHT
-						if (text == null) {
-							// workaround for bug 50151: Using SWT.RIGHT on a ToolBar leaves blank space 
-							ti.setText(""); //$NON-NLS-1$
-						}
-						else {
-							text = Action.removeAcceleratorText(text);
-							ti.setText(text);
-						}
+					if (showText) {
+						ti.setText(text);
 					}
 					else {
-						if (text != null && !hasImages(action)) {
-							text = Action.removeAcceleratorText(text);
-							ti.setText(text);
-						}
+						// In addition to being required to update the text if it
+						// gets nulled out in the action, this is also a workaround 
+						// for bug 50151: Using SWT.RIGHT on a ToolBar leaves blank space
+						ti.setText(""); //$NON-NLS-1$
 					}
 				}
 
-				if (imageChanged)
-					updateImages(action.getText() == null);
-				// only substitute a missing image if it has no text
+				if (imageChanged) {
+					// only substitute a missing image if it has no text
+					updateImages(!showText);
+				}
 
-				if (tooltipTextChanged)
-					ti.setToolTipText(action.getToolTipText());
+				if (tooltipTextChanged || textChanged) {
+					String toolTip = action.getToolTipText();
+					// if the text is showing, then only set the tooltip if different
+					if (!showText || toolTip != null && !toolTip.equals(text)) {
+						ti.setToolTipText(action.getToolTipText());
+					}
+					else {
+						ti.setToolTipText(null);
+					}
+				}
 
 				if (enableStateChanged) {
 					boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();

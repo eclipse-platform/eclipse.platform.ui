@@ -812,6 +812,45 @@ public abstract class Action implements IAction {
 			return text.substring(0, index);
 		return text;
 	}
+	
+	/**
+	 * Convenience method for removing any mnemonics from the given string.
+	 * For example, <code>removeMnemonics("&Open")</code> will return <code>"Open"</code>.
+	 *
+	 * @param text the text
+	 * @return the text sans mnemonics
+	 * 
+	 * @since 3.0
+	 */
+	public static String removeMnemonics(String text) {
+		int index = text.indexOf('&');
+		if (index == -1) {
+			return text;
+		}
+		int len = text.length();
+		StringBuffer sb = new StringBuffer(len);
+		int lastIndex = 0;
+		while (index != -1) {
+			// ignore & at the end
+			if (index == len - 1) {
+				break;
+			}
+			// handle the && case
+			if (text.charAt(index + 1) == '&') {
+				++index;
+			}
+			sb.append(text.substring(lastIndex, index));
+			// skip the &
+			++index;
+			lastIndex = index;
+			index = text.indexOf('&', index);
+		}
+		if (lastIndex < len) {
+			sb.append(text.substring(lastIndex, len));
+		}
+		return sb.toString();
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IAction.
 	 */
