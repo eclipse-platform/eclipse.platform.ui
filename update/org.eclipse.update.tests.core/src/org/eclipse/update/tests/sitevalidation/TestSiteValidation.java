@@ -9,17 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.tests.sitevalidation;
-import java.io.File;
-import java.net.URL;
-
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
-import org.eclipse.core.internal.boot.OldPlatformConfiguration;
+import java.io.*;
+import java.net.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.configurator.IPlatformConfiguration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.tests.*;
 
 public class TestSiteValidation extends UpdateManagerTestCase {
 
@@ -33,7 +30,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 
 	private void removeConfigSite(URL url) throws Exception {
 		// get new config object
-		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration cfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		ISiteEntry s1 = cfig.findConfiguredSite(url);
 		assertNotNull("Unable to find site entry:"+url,s1);
 		cfig.unconfigureSite(s1);
@@ -136,7 +133,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 		
 			// get new config object
 		URL url = configuredSite.getSite().getURL();
-		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration cfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		ISiteEntry s1 = cfig.findConfiguredSite(url);
 		assertNotNull("Site entry not found:"+url,s1);
 		cfig.unconfigureSite(s1);

@@ -15,7 +15,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -295,7 +296,7 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 	}
 	
 	public String getEclipseRoot() {
-		return BootLoader.getInstallURL().toExternalForm().replaceFirst(
+		return ConfiguratorUtils.getInstallURL().toExternalForm().replaceFirst(
 			"file:",
 			"");
 	}
@@ -351,7 +352,7 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 		// Create command string for launching the process
 		String vm = System.getProperty("java.vm.name");
 		String executable = "J9".equals(vm) ? "j9" : "java";
-		if (BootLoader.OS_WIN32.equals(BootLoader.getOS()))
+		if (org.eclipse.osgi.service.environment.Constants.OS_WIN32.equals(Platform.getOS()))
 			executable += "w.exe";
 
 		String javaInstallDir =

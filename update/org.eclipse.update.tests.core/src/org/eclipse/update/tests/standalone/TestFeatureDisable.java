@@ -12,7 +12,6 @@
 package org.eclipse.update.tests.standalone;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.*;
@@ -62,10 +61,6 @@ public class TestFeatureDisable extends StandaloneManagerTestCase {
 	}
 
 	public void testFeatureStatus() throws Exception {
-		URL configURL = BootLoader.getCurrentPlatformConfiguration().getConfigurationLocation();
-		String config = new File(configURL.getFile()).getParent();
-		ISite localSite = SiteManager.getSite(new URL("file", null, config), null);
-
 		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		System.out.println(localFile.getAbsolutePath());
 		assertTrue(localFile.exists());

@@ -9,15 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.tests.regularInstall;
-import java.io.File;
-import java.net.URL;
-
-import org.eclipse.core.boot.IPlatformConfiguration;
+import java.io.*;
+import java.net.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.ConfigurationPolicyModel;
-import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.eclipse.update.internal.model.*;
+import org.eclipse.update.tests.*;
 
 public class TestLocalSite extends UpdateManagerTestCase {
 	
@@ -31,7 +30,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testCreationConfigFile() throws Exception {
 
 		//clean up
-		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();;
 		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		InternalSiteManager.localSite=null;	
@@ -50,7 +48,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testDefaultConfigFile() throws Exception {
 
 		//clean up
-		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
+
 		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		InternalSiteManager.localSite=null;
@@ -155,7 +153,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testRetriveConfig() throws Exception {
 
 		//clean up
-		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
 		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		InternalSiteManager.localSite=null;		
@@ -234,7 +231,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testRetriveConfigHTTPInstall() throws Exception {
 
 		//clean up
-		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
 		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 		InternalSiteManager.localSite=null;		

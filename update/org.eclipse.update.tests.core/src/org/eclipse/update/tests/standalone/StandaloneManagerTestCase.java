@@ -15,9 +15,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.*;
@@ -166,7 +167,7 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	 * @param ver : version of feature being installed, enabled, etc. (optional - can be null)
 	 * @param config : location of configuration info (i.e. file:D:\temp\.config\)
 	 * @param remoteLoc : remote site url (required for installing/searching from remote site)
-	 * @param toLocalSiteUrl : target site directory (required unless updating/searching)
+	 * @param localLoc : target site directory (required unless updating/searching)
 	 * @return a string array consisting of commands and their arguments to
 	 * be run
 	 */
@@ -189,7 +190,7 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 		final String FLAG_FROM = "-from";
 		final String FLAG_TO = "-to";
 		final String FLAG_CONFIG = "-configuration";
-		final String FLAG_URL = "-mirrorURL";
+//		final String FLAG_URL = "-mirrorURL";
 		final String FLAG_SPLASH = "-nosplash";
 		final String FLAG_CONSOLELOG = "-consolelog";
 		final String data =
@@ -228,7 +229,7 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 		// Create command string for launching the process
 		String vm = System.getProperty("java.vm.name");
 		String executable = "J9".equals(vm) ? "j9" : "java";
-		if (BootLoader.OS_WIN32.equals(BootLoader.getOS()))
+		if (org.eclipse.osgi.service.environment.Constants.OS_WIN32.equals(Platform.getOS()))
 			executable += "w.exe";
 
 		String javaInstallDir =
@@ -262,7 +263,7 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	}
 	
 	public String getEclipseRoot() {
-		return BootLoader.getInstallURL().toExternalForm().replaceFirst(
+		return ConfiguratorUtils.getInstallURL().toExternalForm().replaceFirst(
 			"file:",
 			"");
 	}

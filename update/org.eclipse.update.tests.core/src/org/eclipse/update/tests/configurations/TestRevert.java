@@ -12,8 +12,8 @@ package org.eclipse.update.tests.configurations;
 import java.io.File;
 import java.net.URL;
 
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.model.ConfigurationPolicyModel;

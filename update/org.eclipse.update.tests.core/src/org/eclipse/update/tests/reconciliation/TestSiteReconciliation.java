@@ -9,19 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.tests.reconciliation;
-import java.io.File;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
-import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
-import org.eclipse.core.internal.boot.OldPlatformConfiguration;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.configurator.IPlatformConfiguration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.eclipse.update.tests.*;
 
 public class TestSiteReconciliation extends UpdateManagerTestCase {
 	
@@ -40,7 +37,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(new File(xmlFile));		
 		InternalSiteManager.localSite=null;
 		// get new config object
-		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration cfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		ISitePolicy p1 = cfig.createSitePolicy(policy, listOfPlugins);	
 		ISiteEntry s1 = cfig.createSiteEntry(url,p1);
 		cfig.configureSite(s1);	
@@ -48,7 +45,7 @@ public class TestSiteReconciliation extends UpdateManagerTestCase {
 	
 	private void removeConfigSite(URL url) throws Exception {
 		// get new config object
-		OldPlatformConfiguration cfig = (OldPlatformConfiguration)BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration cfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		ISiteEntry s1 = cfig.findConfiguredSite(url);
 		assertNotNull("Unable to find site entry:"+url,s1);
 		cfig.unconfigureSite(s1);
