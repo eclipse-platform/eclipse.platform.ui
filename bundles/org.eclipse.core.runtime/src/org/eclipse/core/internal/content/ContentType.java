@@ -21,12 +21,14 @@ import org.osgi.service.prefs.Preferences;
 
 public final class ContentType implements IContentType {
 
-	/* A placeholder for missing/invalid describers. */
-	private class InvalidDescriber implements IContentDescriber {
+	/* A placeholder for missing/invalid binary/text describers. */
+	private class InvalidDescriber implements IContentDescriber, ITextContentDescriber {
 		public int describe(InputStream contents, IContentDescription description) throws IOException {
 			return INVALID;
 		}
-
+		public int describe(Reader contents, IContentDescription description) throws IOException {
+			return INVALID;
+		}
 		public QualifiedName[] getSupportedOptions() {
 			return new QualifiedName[0];
 		}
