@@ -33,7 +33,7 @@
 function removeBookmark() 
 {
 	if (!active) 
-		return;
+		return false;
 		
 	var bookmark = active;
 	active = null;
@@ -53,7 +53,7 @@ function removeBookmark()
 		title = url;
 			
 	window.location.replace("bookmarksView.jsp?operation=remove&bookmark="+url+"&title="+escape(title));
-	return false;
+	return true;
 }
 
 /**
