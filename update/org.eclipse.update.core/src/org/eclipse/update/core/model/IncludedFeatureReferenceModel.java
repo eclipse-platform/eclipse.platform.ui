@@ -35,12 +35,13 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	private boolean isOptional;
 	private int searchLocation;
 	
-	// since 2.1
-	private String os;
-	private String ws;
-	private String arch;
-	private String nl;
-	
+	// These are already defined by FeatureReferenceModel, we don't need to duplicate them here
+//	// since 2.1
+//	private String os;
+//	private String ws;
+//	private String arch;
+//	private String nl;
+//	
 	/**
 	 * Construct a included feature reference
 	 * 
@@ -154,69 +155,4 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 	public void setSearchLocation(int searchLocation) {
 		this.searchLocation = searchLocation;
 	}
-
-	/**
-	 * Returns the arch.
-	 * @return String
-	 */
-	public String getOSArch() {
-		return arch;
-	}
-
-	/**
-	 * Returns the os.
-	 * @return String
-	 */
-	public String getOS() {
-		return os;
-	}
-
-	/**
-	 * Returns the ws.
-	 * @return String
-	 */
-	public String getWS() {
-		return ws;
-	}
-
-	/**
-	 * Sets the arch.
-	 * @param arch The arch to set
-	 */
-	public void setArch(String arch) {
-		this.arch = arch;
-	}
-
-	/**
-	 * Sets the os.
-	 * @param os The os to set
-	 */
-	public void setOS(String os) {
-		this.os = os;
-	}
-
-	/**
-	 * Sets the ws.
-	 * @param ws The ws to set
-	 */
-	public void setWS(String ws) {
-		this.ws = ws;
-	}
-
-	/**
-	 * Returns the nl.
-	 * @return String
-	 */
-	public String getNL() {
-		return nl;
-	}
-
-	/**
-	 * Sets the nl.
-	 * @param nl The nl to set
-	 */
-	public void setNL(String nl) {
-		this.nl = nl;
-	}
-
 }
