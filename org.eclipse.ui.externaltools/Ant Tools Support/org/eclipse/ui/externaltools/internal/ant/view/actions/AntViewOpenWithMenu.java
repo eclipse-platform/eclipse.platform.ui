@@ -8,10 +8,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 *********************************************************************/
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -170,13 +172,6 @@ public class AntViewOpenWithMenu extends ContributionItem {
 		Object[] editors= registry.getEditors(file);
 		Arrays.sort(editors, new Comparator() {
 			/**
-			 * @see java.util.Comparator#equals(java.lang.Object)
-			 */
-			public boolean equals(Object obj) {
-				return false;
-			}
-
-			/**
 			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Object o1, Object o2) {
@@ -190,9 +185,12 @@ public class AntViewOpenWithMenu extends ContributionItem {
 		
 		boolean defaultFound = false;
 		boolean plantyFound= false;
-
+		List alreadyAddedEditors= new ArrayList(editors.length);
 		for (int i = 0; i < editors.length; i++) {
 			IEditorDescriptor editor = (IEditorDescriptor) editors[i];
+			if (alreadyAddedEditors.contains(editor.getId())) {
+				continue;
+			}
 			createMenuItem(menu, editor, preferredEditor);
 			if (defaultEditor != null && editor.getId().equals(defaultEditor.getId())) {
 				defaultFound = true;
@@ -200,6 +198,8 @@ public class AntViewOpenWithMenu extends ContributionItem {
 			if (plantyEditor != null && editor.getId().equals(plantyEditor.getId())) {
 				plantyFound= true;
 			}
+			alreadyAddedEditors.add(editor.getId());
+			
 		}
 
 		// Only add a separator if there is something to separate
