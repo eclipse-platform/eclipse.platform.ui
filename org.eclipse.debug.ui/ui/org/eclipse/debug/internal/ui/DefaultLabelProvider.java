@@ -383,32 +383,27 @@ public class DefaultLabelProvider implements ILabelProvider {
 	        				//access and modification
 	        				if (enabled) {
 	        					return IDebugUIConstants.IMG_OBJS_WATCHPOINT;
-	        				} else {
-	        					return IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED;
-	        				}
-	        			} else {
-	        				if (enabled) {
-	        					return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT;
-	        				} else {
-	        					return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED;
-	        				}
+	        				} 
+	        				return IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED;
 	        			}
+	        			if (enabled) {
+        					return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT;
+        				} 
+	        			return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED;
 	        		} else if (watchpoint.isModification()) {
 	        			if (enabled) {
 	        				return IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT;
-	        			} else {
-	        				return IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED;
-	        			}
+	        			} 
+	        			return IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED;
 	        		} else {
 	        			//neither access nor modification
 	        			return IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED;
 	        		}
-	            } else {
-					if (enabled) {
-						return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
-					} 
-					return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
 	            }
+			    if (enabled) {
+					return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
+				} 
+				return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
 		    } catch (CoreException e) {
 		    }
 		}
