@@ -22,7 +22,10 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * A <code>KeyStroke</code> is defined as an optional set of modifier keys
  * followed optionally by a natural key. A <code>KeyStroke</code> is said to
- * be complete if it contains a natural key.
+ * be complete if it contains a natural key. A natural key is any Unicode
+ * character (e.g., "backspace", etc.), any character belonging to a natural
+ * language (e.g., "A", "1", "[", etc.), or any special control character
+ * specific to computers (e.g., "F10", "PageUp", etc.).
  * </p>
  * <p>
  * All <code>KeyStroke</code> objects have a formal string representation
@@ -31,19 +34,18 @@ import org.eclipse.ui.internal.util.Util;
  * which can parse this formal string representation.
  * </p>
  * <p>
- * All <code>KeyStroke</code> objects, via the <code>format()</code>
- * method, provide a version of their formal string representation translated
- * by platform and locale, suitable for display to a user.
+ * All <code>KeyStroke</code> objects, via the <code>format()</code> method,
+ * provide a version of their formal string representation translated by
+ * platform and locale, suitable for display to a user.
  * </p>
  * <p>
  * <code>KeyStroke</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
+ * @see org.eclipse.ui.keys.ModifierKey
+ * @see org.eclipse.ui.keys.NaturalKey
  */
 public final class KeyStroke implements Comparable {
 
@@ -162,7 +164,9 @@ public final class KeyStroke implements Comparable {
 						(ModifierKey) ModifierKey.modifierKeysByName.get(token);
 
 					if (modifierKey == null || !modifierKeys.add(modifierKey))
-						throw new ParseException();
+						throw new ParseException(
+                                    "Cannot create key stroke with duplicate or non-existent modifier key: " //$NON-NLS-1$
+                                            + token);
 				} else if (token.length() == 1) {
 					naturalKey = CharacterKey.getInstance(token.charAt(0));
 					break;
@@ -174,7 +178,9 @@ public final class KeyStroke implements Comparable {
 						naturalKey = (NaturalKey) SpecialKey.specialKeysByName.get(token);
 
 					if (naturalKey == null)
-						throw new ParseException();
+						throw new ParseException(
+                                    "Cannot create key stroke with invalid natural key: " //$NON-NLS-1$
+                                            + token);
 				}
 			}
 
@@ -184,7 +190,8 @@ public final class KeyStroke implements Comparable {
 		try {
 			return new KeyStroke(modifierKeys, naturalKey);
 		} catch (Throwable t) {
-			throw new ParseException();
+			throw new ParseException("Cannot create key stroke with " //$NON-NLS-1$
+                    + modifierKeys + " and " + naturalKey); //$NON-NLS-1$
 		}
 	}
 
@@ -236,11 +243,9 @@ public final class KeyStroke implements Comparable {
 			(ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[this.modifierKeys.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+	/**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
 	public int compareTo(Object object) {
 		KeyStroke castedObject = (KeyStroke) object;
 		int compareTo = Util.compare(modifierKeysAsArray, castedObject.modifierKeysAsArray);
@@ -251,11 +256,9 @@ public final class KeyStroke implements Comparable {
 		return compareTo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	/**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
 	public boolean equals(Object object) {
 		if (!(object instanceof KeyStroke))
 			return false;
@@ -297,11 +300,9 @@ public final class KeyStroke implements Comparable {
 		return naturalKey;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	/**
+     * @see java.lang.Object#hashCode()
+     */
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;

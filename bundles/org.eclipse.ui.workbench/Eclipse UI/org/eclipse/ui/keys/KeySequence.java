@@ -21,29 +21,26 @@ import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
- * A <code>KeySequence</code> is defined as a list of zero or more <code>KeyStrokes</code>,
- * with the stipulation that all <code>KeyStroke</code> objects must be
- * complete, save for the last one, whose completeness is optional. A <code>KeySequence</code>
- * is said to be complete if all of its <code>KeyStroke</code> objects are
- * complete.
+ * A <code>KeySequence</code> is defined as a list of zero or more
+ * <code>KeyStrokes</code>, with the stipulation that all
+ * <code>KeyStroke</code> objects must be complete, save for the last one,
+ * whose completeness is optional. A <code>KeySequence</code> is said to be
+ * complete if all of its <code>KeyStroke</code> objects are complete.
  * </p>
  * <p>
  * All <code>KeySequence</code> objects have a formal string representation
  * available via the <code>toString()</code> method. There are a number of
- * methods to get instances of <code>KeySequence</code> objects, including
- * one which can parse this formal string representation.
+ * methods to get instances of <code>KeySequence</code> objects, including one
+ * which can parse this formal string representation.
  * </p>
  * <p>
  * All <code>KeySequence</code> objects, via the <code>format()</code>
- * method, provide a version of their formal string representation translated
- * by platform and locale, suitable for display to a user.
+ * method, provide a version of their formal string representation translated by
+ * platform and locale, suitable for display to a user.
  * </p>
  * <p>
  * <code>KeySequence</code> objects are immutable. Clients are not permitted
  * to extend this class.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
@@ -179,7 +176,9 @@ public final class KeySequence implements Comparable {
 		try {
 			return new KeySequence(keyStrokes);
 		} catch (Throwable t) {
-			throw new ParseException();
+			throw new ParseException(
+                    "Could not construct key sequence with these key strokes: " //$NON-NLS-1$
+                            + keyStrokes);
 		}
 	}
 
@@ -222,11 +221,9 @@ public final class KeySequence implements Comparable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	/**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
 	public int compareTo(Object object) {
 		KeySequence castedObject = (KeySequence) object;
 		int compareTo = Util.compare(keyStrokes, castedObject.keyStrokes);
@@ -252,11 +249,9 @@ public final class KeySequence implements Comparable {
 		return Util.endsWith(keyStrokes, keySequence.keyStrokes, equals);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	/**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
 	public boolean equals(Object object) {
 		if (!(object instanceof KeySequence))
 			return false;
@@ -288,11 +283,9 @@ public final class KeySequence implements Comparable {
 		return keyStrokes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	/**
+     * @see java.lang.Object#hashCode()
+     */
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;

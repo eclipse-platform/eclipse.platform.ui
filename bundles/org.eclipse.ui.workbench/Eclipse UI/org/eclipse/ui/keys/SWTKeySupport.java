@@ -199,14 +199,20 @@ public final class SWTKeySupport {
 	}
 
 	/**
-	 * Converts the given event into an SWT accelerator value -- considering
-	 * the modified character with the shift modifier. This is the third
-	 * accelerator value that should be checked.
-	 * 
-	 * @param event
-	 *            The event to be converted; must not be <code>null</code>.
-	 * @return The combination of the state mask and the unmodified character.
-	 */
+     * <p>
+     * Converts the given event into an SWT accelerator value -- considering the
+     * modified character with the shift modifier. This is the third accelerator
+     * value that should be checked.
+     * </p>
+     * <p>
+     * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
+     * "Ctrl+Shift+%".
+     * </p>
+     * 
+     * @param event
+     *            The event to be converted; must not be <code>null</code>.
+     * @return The combination of the state mask and the unmodified character.
+     */
 	public static int convertEventToModifiedAccelerator(Event event) {
 		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
 		char character = topKey(event);
@@ -214,15 +220,21 @@ public final class SWTKeySupport {
 	}
 
 	/**
-	 * Converts the given event into an SWT accelerator value -- considering
-	 * the unmodified character with all modifier keys. This is the first
-	 * accelerator value that should be checked. However, all alphabetic
-	 * characters are considered as their uppercase equivalents.
-	 * 
-	 * @param event
-	 *            The event to be converted; must not be <code>null</code>.
-	 * @return The combination of the state mask and the unmodified character.
-	 */
+     * <p>
+     * Converts the given event into an SWT accelerator value -- considering the
+     * unmodified character with all modifier keys. This is the first
+     * accelerator value that should be checked. However, all alphabetic
+     * characters are considered as their uppercase equivalents.
+     * </p>
+     * <p>
+     * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
+     * "Ctrl+Shift+5".
+     * </p>
+     * 
+     * @param event
+     *            The event to be converted; must not be <code>null</code>.
+     * @return The combination of the state mask and the unmodified character.
+     */
 	public static int convertEventToUnmodifiedAccelerator(Event event) {
 		return convertEventToUnmodifiedAccelerator(
 			event.stateMask,
@@ -230,17 +242,23 @@ public final class SWTKeySupport {
 	}
 
 	/**
-	 * Converts the given state mask and key code into an SWT accelerator value --
-	 * considering the unmodified character with all modifier keys. All
-	 * alphabetic characters are considered as their uppercase equivalents.
-	 * 
-	 * @param stateMask
-	 *            The integer mask of modifiers keys depressed when this was
-	 *            pressed.
-	 * @param keyCode
-	 *            The key that was pressed, before being modified.
-	 * @return The combination of the state mask and the unmodified character.
-	 */
+     * <p>
+     * Converts the given state mask and key code into an SWT accelerator value --
+     * considering the unmodified character with all modifier keys. All
+     * alphabetic characters are considered as their uppercase equivalents.
+     * </p>
+     * <p>
+     * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
+     * "Ctrl+Shift+5".
+     * </p>
+     * 
+     * @param stateMask
+     *            The integer mask of modifiers keys depressed when this was
+     *            pressed.
+     * @param keyCode
+     *            The key that was pressed, before being modified.
+     * @return The combination of the state mask and the unmodified character.
+     */
 	private static int convertEventToUnmodifiedAccelerator(
 		int stateMask,
 		int keyCode) {
@@ -250,15 +268,21 @@ public final class SWTKeySupport {
 	}
 
 	/**
-	 * Converts the given event into an SWT accelerator value -- considering
-	 * the unmodified character with all modifier keys. This is the first
-	 * accelerator value that should be checked. However, all alphabetic
-	 * characters are considered as their uppercase equivalents.
-	 * 
-	 * @param event
-	 *            The event to be converted; must not be <code>null</code>.
-	 * @return The combination of the state mask and the unmodified character.
-	 */
+     * <p>
+     * Converts the given event into an SWT accelerator value -- considering the
+     * unmodified character with all modifier keys. This is the first
+     * accelerator value that should be checked. However, all alphabetic
+     * characters are considered as their uppercase equivalents.
+     * </p>
+     * <p>
+     * For example, on a standard US keyboard, "Ctrl+Shift+5" would be viewed as
+     * "Ctrl+%".
+     * </p>
+     * 
+     * @param event
+     *            The event to be converted; must not be <code>null</code>.
+     * @return The combination of the state mask and the unmodified character.
+     */
 	public static int convertEventToUnmodifiedAccelerator(KeyEvent event) {
 		return convertEventToUnmodifiedAccelerator(
 			event.stateMask,
@@ -374,7 +398,7 @@ public final class SWTKeySupport {
 	 * current instance.
 	 * 
 	 * @return an instance of <code>IKeyFormatter</code> appropriate for the
-	 *         current instance. never <code>null</code>.
+	 *         current instance; never <code>null</code>.
 	 */
 	public static IKeyFormatter getKeyFormatterForPlatform() {
 		return NATIVE_FORMATTER;

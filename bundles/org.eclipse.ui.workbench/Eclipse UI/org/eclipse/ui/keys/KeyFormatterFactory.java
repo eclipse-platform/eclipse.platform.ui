@@ -16,10 +16,12 @@ import org.eclipse.ui.internal.keys.EmacsKeyFormatter;
 import org.eclipse.ui.internal.keys.FormalKeyFormatter;
 
 /**
- * A cache for formatters. It keeps a bunch of formatters around for use within
- * the application.
+ * A cache for formatters. It keeps a few instances of pre-defined instances of
+ * <code>IKeyFormatter</code> available for use. It also allows the default
+ * formatter to be changed.
  * 
  * @since 3.0
+ * @see org.eclipse.ui.keys.IKeyFormatter
  */
 public final class KeyFormatterFactory {
 	private static final IKeyFormatter COMPACT_KEY_FORMATTER =
@@ -49,7 +51,7 @@ public final class KeyFormatterFactory {
 	}
 
 	/**
-	 * Provides an instance of <code>XemacsKeyFormatter</code>.
+	 * Provides an instance of <code>EmacsKeyFormatter</code>.
 	 * 
 	 * @return The Xemacs formatter; never <code>null</code>.
 	 */
@@ -69,7 +71,7 @@ public final class KeyFormatterFactory {
 	/**
 	 * Sets the default key formatter.
 	 * 
-	 * @param formatter
+	 * @param defaultKeyFormatter
 	 *            the default key formatter. Must not be <code>null</code>.
 	 */
 	public static void setDefault(IKeyFormatter defaultKeyFormatter) {
@@ -80,5 +82,6 @@ public final class KeyFormatterFactory {
 	}
 
 	private KeyFormatterFactory() {
+	    // Not to be constructred.
 	}
 }

@@ -13,15 +13,15 @@ package org.eclipse.ui.keys;
 
 /**
  * </p>
- * Instances of <code>NaturalKey</code> represent all keys on the keyboard
- * not known by convention as 'modifier keys'.
+ * Instances of <code>NaturalKey</code> represent all keys on the keyboard not
+ * known by convention as 'modifier keys'. These can either be keys that belong
+ * to a natural language of some kind(e.g., "A", "1"), any Unicode character
+ * (e.g., "backspace"), or they can be special controls keys used by computers
+ * (e.g., "F10", "PageUp").
  * </p>
  * <p>
- * <code>NaturalKey</code> objects are immutable. Clients are not permitted
- * to extend this class.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
+ * <code>NaturalKey</code> objects are immutable. Clients are not permitted to
+ * extend this class.
  * </p>
  * 
  * @since 3.0

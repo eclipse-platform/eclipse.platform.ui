@@ -20,17 +20,16 @@ import org.eclipse.swt.SWT;
  * <p>
  * Instances of <code>ModifierKey</code> represent the four keys on the
  * keyboard recognized by convention as 'modifier keys', those keys typically
- * pressed in combination with themselves and/or a 'natural key'.
+ * pressed in combination with themselves and/or a
+ * {@link org.eclipse.ui.keys.NaturalKey}.
  * </p>
  * <p>
  * <code>ModifierKey</code> objects are immutable. Clients are not permitted
  * to extend this class.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
+ * @see org.eclipse.ui.keys.NaturalKey
  */
 public final class ModifierKey extends Key {
 

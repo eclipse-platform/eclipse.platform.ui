@@ -15,14 +15,15 @@ import java.util.TreeMap;
 /**
  * <p>
  * Instances of <code>SpecialKey</code> represent the keys on keyboard
- * recognized as neither modifier keys nor character keys.
+ * recognized as neither modifier keys nor character keys. These are special
+ * control keys specific to computers (e.g., "left arrow", "page down", "F10",
+ * etc.). They do not include keys representing letters, numbers or punctuation
+ * from a natural language, nor do they include any key that can be represented
+ * by a Unicode character (e.g., "backspace").
  * </p>
  * <p>
- * <code>SpecialKey</code> objects are immutable. Clients are not permitted
- * to extend this class.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
+ * <code>SpecialKey</code> objects are immutable. Clients are not permitted to
+ * extend this class.
  * </p>
  * 
  * @since 3.0

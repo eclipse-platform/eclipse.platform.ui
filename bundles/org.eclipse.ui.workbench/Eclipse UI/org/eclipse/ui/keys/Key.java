@@ -26,11 +26,8 @@ package org.eclipse.ui.keys;
  * platform and locale, suitable for display to a user.
  * </p>
  * <p>
- * <code>Key</code> objects are immutable. Clients are not permitted to
- * extend this class.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
+ * <code>Key</code> objects are immutable. Clients are not permitted to extend
+ * this class.
  * </p>
  * 
  * @since 3.0
@@ -82,22 +79,18 @@ public abstract class Key implements Comparable {
 		this.name = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+	/**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
 	public int compareTo(Object object) {
 		Key castedObject = (Key) object;
 		int compareTo = name.compareTo(castedObject.name);
 		return compareTo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	/**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
 	public boolean equals(Object object) {
 		if (!(object instanceof Key))
 			return false;
@@ -108,11 +101,9 @@ public abstract class Key implements Comparable {
 		return equals;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	/**
+     * @see java.lang.Object#hashCode()
+     */
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
