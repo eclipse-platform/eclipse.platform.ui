@@ -58,7 +58,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 public class AntEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 		
 	private final String[][] fAppearanceColorListModel= new String[][] {
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.lineNumberForegroundColor"), AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.lineNumberForegroundColor"), ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.currentLineHighlighColor"), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColor"), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_text_1"), IAntEditorColorConstants.P_DEFAULT, null}, //$NON-NLS-1$
@@ -74,8 +74,6 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	private final String[][] fContentAssistColorListModel= new String[][] {
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.backgroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND }, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.foregroundForCompletionProposals"), AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND }, //$NON-NLS-1$
-		//{AntPreferencesMessages.getString("AntEditorPreferencePage.backgroundForCompletionReplacement"), AntEditorPreferenceConstants.CODEASSIST_REPLACEMENT_BACKGROUND }, //$NON-NLS-1$
-		//{AntPreferencesMessages.getString("AntEditorPreferencePage.foregroundForCompletionReplacement"), AntEditorPreferenceConstants.CODEASSIST_REPLACEMENT_FOREGROUND } //$NON-NLS-1$
 	};
 
 	private OverlayPreferenceStore fOverlayStore;
@@ -234,7 +232,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
+		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
