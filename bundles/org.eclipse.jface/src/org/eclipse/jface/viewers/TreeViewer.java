@@ -14,6 +14,7 @@ package org.eclipse.jface.viewers;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
@@ -24,8 +25,6 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete viewer based on an SWT <code>Tree</code> control.
@@ -91,6 +90,13 @@ protected void addTreeListener(Control c, TreeListener listener) {
  * Method declared in AbstractTreeViewer.
  */
 protected void doUpdateItem(final Item item, Object element) {
+	
+	if(item.isDisposed()){
+		unmapElement(element);
+		Assert.isTrue(!item.isDisposed(),"Update to disposed element " + element.toString());//$NON-NLS-1$
+		return;
+	}
+	
 	// update icon and label
 	IBaseLabelProvider baseProvider = getLabelProvider();
 	if (baseProvider instanceof IViewerLabelProvider) {

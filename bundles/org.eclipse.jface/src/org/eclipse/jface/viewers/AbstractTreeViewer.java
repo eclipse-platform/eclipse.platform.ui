@@ -345,6 +345,11 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 				// don't complain and remove all "dummies" ...
 				if (tis != null) {
 					for (int i = 0; i < tis.length; i++) {
+						if (tis[i].getData() != null){
+							disassociate(tis[i]);
+							Assert.isTrue(tis[i].getData() == null, "Second or later child is non -null");//$NON-NLS-1$
+							
+						}
 						tis[i].dispose();
 					}
 				}
