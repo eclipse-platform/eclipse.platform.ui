@@ -100,7 +100,7 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	public final static String DISPLAY_VARIABLE_TYPE_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayVariableTypeNames"; //$NON-NLS-1$
 	/**
 	 * Sets a presentation attribute of this label provider. For example,
-	 * see the presentation attribute <code>DISPLAY_QUALIFIED_NAMES</code>
+	 * see the presentation attribute <code>DISPLAY_VARIABLE_TYPE_NAMES</code>
 	 * defined by this interface.
 	 *
 	 * @param attribute the presentation attribute identifier
