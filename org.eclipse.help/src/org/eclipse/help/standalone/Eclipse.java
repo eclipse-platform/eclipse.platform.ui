@@ -3,17 +3,21 @@ package org.eclipse.help.standalone;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.net.*;
-import java.util.ResourceBundle;
-
+import java.util.*;
 
 /**
  * Eclipse launcher
  */
 class Eclipse {
-	private static final String HELP_APPLICATION = "org.eclipse.help.helpApplication";
+	private static final String HELP_APPLICATION =
+		"org.eclipse.help.helpApplication";
+	private static final String PI_BOOT = "org.eclipse.core.boot";
+	private static final String BOOTJAR = "boot.jar";
+	private static final String BOOTLOADER = "org.eclipse.core.boot.BootLoader";
+
 	private Class bootLoader;
 	private Object platformRunnable;
 	private Method runMethod;
@@ -23,13 +27,15 @@ class Eclipse {
 	/**
 	 * Constructor
 	 */
-	public Eclipse(String pluginsDir, String tempDir) 
-	{
+	public Eclipse(String pluginsDir, String tempDir) {
 		if (pluginsDir == null)
 			return;
 		this.pluginsDir = pluginsDir.replace('\\', '/');
 		if (tempDir == null)
-			tempDir = System.getProperty("java.io.tmpdir") +  File.separator + "help_system";
+			tempDir =
+				System.getProperty("java.io.tmpdir")
+					+ File.separator
+					+ "help_system";
 		this.tempDir = tempDir;
 		init();
 	}
@@ -53,10 +59,10 @@ class Eclipse {
 	 * Displays help for specified help resource
 	 */
 	public Boolean displayHelp(String href) throws Exception {
-		
+
 		//System.out.println("displayHelp");
 		Object[] params = new Object[1];
-		params[0] = new Object[] { "displayHelp", href};
+		params[0] = new Object[] { "displayHelp", href };
 		Object retObj = runMethod.invoke(platformRunnable, params);
 		if (retObj != null && retObj instanceof Boolean)
 			return (Boolean) retObj;
@@ -64,17 +70,19 @@ class Eclipse {
 			return new Boolean(false);
 
 	}
-	
+
 	/**
 	 * Displays context sensitive help
 	 */
-	public Boolean displayContext(String contextId, int x, int y) throws Exception {
-		
+	public Boolean displayContext(String contextId, int x, int y)
+		throws Exception {
+
 		//System.out.println("displayContext " + contextId+ " ("+x+","+y+")");
 		Object[] params = new Object[1];
 		//params[0] = new Object[] { "displayContext", contextId, new Integer(x), new Integer(y)};
-		String queryString = "contextId="+ URLEncoder.encode(contextId)+"&tab=links";
-		params[0] = new Object[] {"displayHelpResource", queryString };
+		String queryString =
+			"contextId=" + URLEncoder.encode(contextId) + "&tab=links";
+		params[0] = new Object[] { "displayHelpResource", queryString };
 		Object retObj = runMethod.invoke(platformRunnable, params);
 		if (retObj != null && retObj instanceof Boolean)
 			return (Boolean) retObj;
@@ -82,18 +90,20 @@ class Eclipse {
 			return new Boolean(false);
 
 	}
-	
+
 	/**
 	 * Displays context sensitive help (as infopop).
 	 * Note: For now this is not supported, so we still open the full help view.
 	 */
-	public Boolean displayContextInfopop(String contextId, int x, int y) throws Exception {
-		
+	public Boolean displayContextInfopop(String contextId, int x, int y)
+		throws Exception {
+
 		//System.out.println("displayContext " + contextId+ " ("+x+","+y+")");
 		Object[] params = new Object[1];
 		//params[0] = new Object[] { "displayContext", contextId, new Integer(x), new Integer(y)};
-		String queryString =  "contextId="+ URLEncoder.encode(contextId)+"&tab=links";
-		params[0] = new Object[] {"displayHelpResource", queryString};
+		String queryString =
+			"contextId=" + URLEncoder.encode(contextId) + "&tab=links";
+		params[0] = new Object[] { "displayHelpResource", queryString };
 		Object retObj = runMethod.invoke(platformRunnable, params);
 		if (retObj != null && retObj instanceof Boolean)
 			return (Boolean) retObj;
@@ -101,26 +111,28 @@ class Eclipse {
 			return new Boolean(false);
 
 	}
-	
-	
+
 	/**
 	 * returns a platform <code>BootLoader</code> which can be used to start
 	 * up and run the platform.
 	 */
 	private Class getBootLoader() throws Exception {
 		if (bootLoader == null) {
-			
-			URL bootUrl = new URL("file", null, pluginsDir + "/org.eclipse.core.boot/boot.jar");
-				//System.out.println("URL for bootloader:"+bootUrl);
+
+			File f = new File(pluginsDir);
+			String path = searchForBoot(f);
+
+			URL bootUrl = new URL("file", null, path);
+
 			bootLoader =
 				new URLClassLoader(new URL[] { bootUrl }, null).loadClass(
-					"org.eclipse.core.boot.BootLoader");
+					BOOTLOADER);
 		}
 		return bootLoader;
 	}
 
-	private synchronized void init(){
-		System.out.println("init eclipse");
+	private synchronized void init() {
+		//System.out.println("init eclipse");
 		try {
 			if (platformRunnable == null) {
 				//System.out.println("getting boot loader");
@@ -129,27 +141,147 @@ class Eclipse {
 				Method mStartup =
 					bootLoader.getMethod(
 						"startup",
-						new Class[] { URL.class, String.class, String[].class });
+						new Class[] {
+							URL.class,
+							String.class,
+							String[].class });
 
 				//System.out.println("starting eclipse");
-				mStartup.invoke(bootLoader, new Object[] { null, tempDir, new String[] {
+				mStartup
+					.invoke(
+						bootLoader,
+						new Object[] { null, tempDir, new String[] {
 					}
 				});
 
 				Method mGetRunnable =
-					bootLoader.getMethod("getRunnable", new Class[] { String.class });
+					bootLoader.getMethod(
+						"getRunnable",
+						new Class[] { String.class });
 
 				//System.out.println("get platform runnable");
 				platformRunnable =
-					mGetRunnable.invoke(bootLoader, new Object[] { HELP_APPLICATION });
+					mGetRunnable.invoke(
+						bootLoader,
+						new Object[] { HELP_APPLICATION });
 
 				runMethod =
-					platformRunnable.getClass().getMethod("run", new Class[] { Object.class });
+					platformRunnable.getClass().getMethod(
+						"run",
+						new Class[] { Object.class });
 			}
 
 		} catch (Throwable e) {
 			System.out.println("Problem occured initializing Eclipse");
 		}
+	}
+
+	/**
+	* Searches for a boot directory starting in the "plugins" subdirectory
+	* of the given location.  If one is found then this location is returned; 
+	* otherwise an exception is thrown.
+	* 
+	* @return the location where boot directory was found
+	* @param start the location to begin searching at
+	*/
+	protected String searchForBoot(File start) {
+		//System.out.println("search boot in " + start);
+		FileFilter filter = new FileFilter() {
+			public boolean accept(File candidate) {
+					//System.out.println("candidate: " + candidate);
+	return candidate.isDirectory() && (candidate.getName().equals(PI_BOOT) || candidate.getName().startsWith(PI_BOOT + "_")); //$NON-NLS-1$
+			}
+		};
+		File[] boots = start.listFiles(filter); //$NON-NLS-1$
+		if (boots == null)
+			throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot."); //$NON-NLS-1$
+		String result = null;
+		Object maxVersion = null;
+		for (int i = 0; i < boots.length; i++) {
+			String name = boots[i].getName();
+			//System.out.println("try " + name);
+			int index = name.indexOf('_');
+			String version;
+			Object currentVersion;
+			if (index == -1)
+				version = ""; //$NON-NLS-1$ // Note: directory with version suffix is always > than directory without version suffix
+			else
+				version = name.substring(index + 1);
+			currentVersion = getVersionElements(version);
+			if (maxVersion == null) {
+				result = boots[i].getAbsolutePath();
+				maxVersion = currentVersion;
+			} else {
+				if (compareVersion((Object[]) maxVersion,
+					(Object[]) currentVersion)
+					< 0) {
+					result = boots[i].getAbsolutePath();
+					maxVersion = currentVersion;
+				}
+			}
+		}
+		if (result == null)
+			throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot."); //$NON-NLS-1$
+		return result.replace(File.separatorChar, '/') + "/" + BOOTJAR; //$NON-NLS-1$
+	}
+
+	/**
+	 * Compares version strings. 
+	 * @return result of comparison, as integer;
+	 * <code><0</code> if left < right;
+	 * <code>0</code> if left == right;
+	 * <code>>0</code> if left > right;
+	 */
+	private int compareVersion(Object[] left, Object[] right) {
+
+		int result = ((Integer) left[0]).compareTo((Integer) right[0]);
+		// compare major
+		if (result != 0)
+			return result;
+
+		result = ((Integer) left[1]).compareTo((Integer) right[1]);
+		// compare minor
+		if (result != 0)
+			return result;
+
+		result = ((Integer) left[2]).compareTo((Integer) right[2]);
+		// compare service
+		if (result != 0)
+			return result;
+
+		return ((String) left[3]).compareTo((String) right[3]);
+		// compare qualifier
+	}
+
+	/**
+	 * Do a quick parse of version identifier so its elements can be correctly compared.
+	 * If we are unable to parse the full version, remaining elements are initialized
+	 * with suitable defaults.
+	 * @return an array of size 4; first three elements are of type Integer (representing
+	 * major, minor and service) and the fourth element is of type String (representing
+	 * qualifier). Note, that returning anything else will cause exceptions in the caller.
+	 */
+	private Object[] getVersionElements(String version) {
+		Object[] result = { new Integer(0), new Integer(0), new Integer(0), "" }; //$NON-NLS-1$
+		StringTokenizer t = new StringTokenizer(version, "."); //$NON-NLS-1$
+		String token;
+		int i = 0;
+		while (t.hasMoreTokens() && i < 4) {
+			token = t.nextToken();
+			if (i < 3) {
+				// major, minor or service ... numeric values
+				try {
+					result[i++] = new Integer(token);
+				} catch (Exception e) {
+					// invalid number format - use default numbers (0) for the rest
+					break;
+				}
+			} else {
+				// qualifier ... string value
+				result[i++] = token;
+			}
+		}
+		return result;
 	}
 
 }
