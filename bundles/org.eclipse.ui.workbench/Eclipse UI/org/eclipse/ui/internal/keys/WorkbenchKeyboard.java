@@ -64,6 +64,74 @@ import org.eclipse.ui.keys.IBindingService;
 public final class WorkbenchKeyboard {
 
 	/**
+	 * A display filter for handling key bindings. This filter can either be
+	 * enabled or disabled. If disabled, the filter does not process incoming
+	 * events. The filter starts enabled.
+	 * 
+	 * @since 3.1
+	 */
+	public final class KeyDownFilter implements Listener {
+
+		/**
+		 * Whether the filter is enabled.
+		 */
+		private transient boolean enabled = true;
+
+		/**
+		 * Handles an incoming traverse or key down event.
+		 * 
+		 * @param event
+		 *            The event to process; must not be <code>null</code>.
+		 */
+		public final void handleEvent(final Event event) {
+			if (!enabled) {
+				return;
+			}
+			
+			if (DEBUG && DEBUG_VERBOSE) {
+				System.out.print("KEYS >>> Listener.handleEvent(type = "); //$NON-NLS-1$
+				switch (event.type) {
+				case SWT.KeyDown:
+					System.out.print("KeyDown"); //$NON-NLS-1$
+					break;
+				case SWT.Traverse:
+					System.out.print("Traverse"); //$NON-NLS-1$
+					break;
+				default:
+					System.out.print(event.type);
+				}
+				System.out.println(", stateMask = 0x" //$NON-NLS-1$
+						+ Integer.toHexString(event.stateMask)
+						+ ", keyCode = 0x" //$NON-NLS-1$
+						+ Integer.toHexString(event.keyCode) + ", time = " //$NON-NLS-1$
+						+ Integer.toHexString(event.time) + ", character = 0x" //$NON-NLS-1$
+						+ Integer.toHexString(event.character) + ")"); //$NON-NLS-1$
+			}
+
+			filterKeySequenceBindings(event);
+		}
+
+		/**
+		 * Returns whether the key binding filter is enabled.
+		 * 
+		 * @return Whether the key filter is enabled.
+		 */
+		public final boolean isEnabled() {
+			return enabled;
+		}
+
+		/**
+		 * Sets whether this filter should be enabled or disabled.
+		 * 
+		 * @param enabled
+		 *            Whether key binding filter should be enabled.
+		 */
+		public final void setEnabled(final boolean enabled) {
+			this.enabled = enabled;
+		}
+	}
+
+	/**
 	 * Whether the keyboard should kick into debugging mode. This causes real
 	 * key bindings trapped by the key binding architecture to be reported.
 	 */
@@ -191,42 +259,17 @@ public final class WorkbenchKeyboard {
 	private final IBindingService bindingService;
 
 	/**
-	 * The listener that runs key events past the global key bindings.
-	 */
-	private final Listener keyDownFilter = new Listener() {
-
-		public void handleEvent(Event event) {
-			if (DEBUG && DEBUG_VERBOSE) {
-				System.out.print("KEYS >>> Listener.handleEvent(type = "); //$NON-NLS-1$
-				switch (event.type) {
-				case SWT.KeyDown:
-					System.out.print("KeyDown"); //$NON-NLS-1$
-					break;
-				case SWT.Traverse:
-					System.out.print("Traverse"); //$NON-NLS-1$
-					break;
-				default:
-					System.out.print(event.type);
-				}
-				System.out.println(", stateMask = 0x" //$NON-NLS-1$
-						+ Integer.toHexString(event.stateMask)
-						+ ", keyCode = 0x" //$NON-NLS-1$
-						+ Integer.toHexString(event.keyCode) + ", time = " //$NON-NLS-1$
-						+ Integer.toHexString(event.time) + ", character = 0x" //$NON-NLS-1$
-						+ Integer.toHexString(event.character) + ")"); //$NON-NLS-1$
-			}
-
-			filterKeySequenceBindings(event);
-		}
-	};
-
-	/**
 	 * The <code>KeyAssistDialog</code> displayed to the user to assist them
 	 * in completing a multi-stroke keyboard shortcut.
 	 * 
 	 * @since 3.1
 	 */
 	private KeyAssistDialog keyAssistDialog = null;
+
+	/**
+	 * The listener that runs key events past the global key bindings.
+	 */
+	private final KeyDownFilter keyDownFilter = new KeyDownFilter();
 
 	/**
 	 * The single out-of-order listener used by the workbench. This listener is
@@ -517,7 +560,7 @@ public final class WorkbenchKeyboard {
 	 * 
 	 * @return The global key down and traverse filter; never <code>null</code>.
 	 */
-	public Listener getKeyDownFilter() {
+	public KeyDownFilter getKeyDownFilter() {
 		return keyDownFilter;
 	}
 

@@ -132,13 +132,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     private WorkbenchKeyboard keyboard;
 
-    /**
-     * Whether the key binding service is currently active. That is, whether it
-     * is currently listening for (and possibly eating) key events on the
-     * display.
-     */
-    private volatile boolean keyFilterEnabled;
-
     private IMutableContextManager mutableContextManager;
 
     private IPageListener pageListener = new IPageListener() {
@@ -567,7 +560,10 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     public final void initialize() {
         // Hook up the key binding support.
         keyboard = new WorkbenchKeyboard(workbench);
-        setKeyFilterEnabled(true);
+		final Display display = workbench.getDisplay();
+		final Listener listener = keyboard.getKeyDownFilter();
+        display.addFilter(SWT.KeyDown, listener);
+        display.addFilter(SWT.Traverse, listener);
     }
 
     /*
@@ -575,10 +571,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * 
      * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#isKeyFilterEnabled()
      */
-    public boolean isKeyFilterEnabled() {
-        synchronized (keyboard) {
-            return keyFilterEnabled;
-        }
+    public final boolean isKeyFilterEnabled() {
+		return keyboard.getKeyDownFilter().isEnabled();
     }
 
     /*
@@ -864,20 +858,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#setKeyFilterEnabled(boolean)
      */
     public void setKeyFilterEnabled(boolean enabled) {
-        synchronized (keyboard) {
-            Display currentDisplay = Display.getCurrent();
-            Listener keyFilter = keyboard.getKeyDownFilter();
-
-            if (enabled) {
-                currentDisplay.addFilter(SWT.KeyDown, keyFilter);
-                currentDisplay.addFilter(SWT.Traverse, keyFilter);
-            } else {
-                currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
-                currentDisplay.removeFilter(SWT.Traverse, keyFilter);
-            }
-
-            keyFilterEnabled = enabled;
-        }
+		keyboard.getKeyDownFilter().setEnabled(enabled);
     }
 
     /**
