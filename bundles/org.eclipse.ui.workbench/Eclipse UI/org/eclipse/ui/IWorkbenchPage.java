@@ -644,4 +644,16 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * @since 3.0
 	 */
 	Object getAdapter(Class adapter);
+	
+	/**
+	 * Returns an array of IViewParts that are stacked with the given part.
+	 * 
+	 * <em>EXPERIMENTAL</em>
+	 * 
+	 * @param part the part to test
+	 * @return the parts that are stacked with this part, including the part in question.  
+	 * <code>null</code> is returned if the part does not belong to this page.
+	 * @since 3.0
+	 */
+	IViewPart [] getViewStack(IViewPart part);
 }
