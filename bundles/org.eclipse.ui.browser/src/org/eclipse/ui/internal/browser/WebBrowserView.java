@@ -17,13 +17,30 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class WebBrowserView extends ViewPart {
 	public static final String WEB_BROWSER_VIEW_ID = "org.eclipse.ui.browser.view";
+    private static final int DEFAULT_STYLE = BrowserViewer.BUTTON_BAR | BrowserViewer.LOCATION_BAR;
 
 	protected BrowserViewer viewer;
 
 	public void createPartControl(Composite parent) {
-		int style = BrowserViewer.BUTTON_BAR | BrowserViewer.LOCATION_BAR;
-		viewer = new BrowserViewer(parent, style);
+        int style = decodeStyle(getViewSite().getSecondaryId());
+        viewer = new BrowserViewer(parent, style);
 	}
+    
+    public static String encodeStyle(String browserId, int style) {
+        return browserId+"-"+style;
+    }
+    
+    private int decodeStyle(String secondaryId) {
+        int sep = secondaryId.lastIndexOf('-');
+        if (sep== -1) return DEFAULT_STYLE;
+        String stoken = secondaryId.substring(sep+1);
+        try {
+            return Integer.parseInt(stoken);
+        }
+        catch (NumberFormatException e) {
+            return DEFAULT_STYLE;
+        }
+    }
 
 	public void setURL(String url) {
 		if (viewer != null)

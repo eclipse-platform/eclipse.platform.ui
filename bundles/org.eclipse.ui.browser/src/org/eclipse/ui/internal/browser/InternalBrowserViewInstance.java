@@ -30,22 +30,19 @@ public class InternalBrowserViewInstance extends AbstractWebBrowser {
 	protected IPartListener listener;
 
 	public InternalBrowserViewInstance(String id, int style, String name, String tooltip) {
-		super(id);
+		super(WebBrowserView.encodeStyle(id, style));
 		this.style = style;
 		this.name = name;
 		this.tooltip = tooltip;
 	}
 
 	public void openURL(URL url) throws PartInitException {
-		if (view != null) {
-			view.setURL(url.toExternalForm());
-		} else {
-			try {
-				IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
-				final IWorkbenchPage page = workbenchWindow.getActivePage();
+        IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
+        final IWorkbenchPage page = workbenchWindow.getActivePage();
+		if (view == null) {
+            try {
 				IViewPart viewPart = page.showView(WebBrowserView.WEB_BROWSER_VIEW_ID, getId(), IWorkbenchPage.VIEW_CREATE);
 				view = (WebBrowserView) viewPart;
-				view.setURL(url.toExternalForm());
 				listener = new IPartListener() {
 					public void partActivated(IWorkbenchPart part) {
 						// ignore
@@ -76,6 +73,10 @@ public class InternalBrowserViewInstance extends AbstractWebBrowser {
 				Trace.trace(Trace.SEVERE, "Error opening Web browser", e);
 			}
 		}
+        if (view!=null) {
+            page.bringToTop(view);
+            view.setURL(url.toExternalForm());
+        }
 	}
 
 	public boolean close() {
