@@ -49,6 +49,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -291,6 +292,17 @@ public class PreferenceDialog extends Dialog implements
                 if (lastShellSize == null)
                     lastShellSize = getShell().getSize();
             }
+            
+            
+        });
+        newShell.addListener(SWT.Resize, new Listener(){
+        	/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void handleEvent(Event event) {
+				updateMessage();
+
+			}
         });
     }
 
@@ -483,6 +495,7 @@ public class PreferenceDialog extends Dialog implements
                 }
             }
         };
+        
         titleArea.addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent event) {
                 JFaceResources.getFontRegistry().removeListener(fontListener);
@@ -500,6 +513,7 @@ public class PreferenceDialog extends Dialog implements
         titleImage.setLayoutData(imageData);
         messageArea.setTitleLayoutData(createMessageAreaData());
         messageArea.setMessageLayoutData(createMessageAreaData());
+        
         return titleArea;
     }
 
@@ -1269,4 +1283,5 @@ public class PreferenceDialog extends Dialog implements
     protected void updateTreeFont(Font dialogFont) {
         getTreeViewer().getControl().setFont(dialogFont);
     }
+    
 }
