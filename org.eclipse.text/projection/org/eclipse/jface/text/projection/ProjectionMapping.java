@@ -46,6 +46,12 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 	private Position[] fCachedSegments;
 	/** Cached fragments */
 	private Position[] fCachedFragments;
+	/** Thread local indices */
+	private static ThreadLocal sfIndices= new ThreadLocal() {
+		protected Object initialValue() {
+			return new int[2];
+		}
+	};
 	
 
 	/**
@@ -186,7 +192,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		return (Fragment) fragments[index];
 	}
 	
-	private Fragment[] findFragments(IRegion region, boolean exact) throws BadLocationException {
+	private void findFragmentIndices(IRegion region, boolean exact, int[] result) throws BadLocationException {
 		int offset= region.getOffset();
 		if (offset < 0 || fMasterDocument.getLength() < offset)
 			throw new BadLocationException();
@@ -196,12 +202,16 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 			throw new BadLocationException();
 		
 		int startIndex= findFragmentIndex(offset, exact ? NONE : LEFT);
-		if (startIndex == -1)
-			return new Fragment[0];
+		if (startIndex == -1) {
+			result[0]= -1;
+			return;
+		}
 		
 		int endIndex= findFragmentIndex(inclusiveEndOffset, exact ? NONE : RIGHT);
-		if (endIndex == -1)
-			return new Fragment[0];
+		if (endIndex == -1) {
+			result[0]= -1;
+			return;
+		}
 		
 		Position[] fragments= getFragments();
 		while (startIndex <= endIndex && !fragments[startIndex].overlapsWith(region.getOffset(), region.getLength()))
@@ -210,11 +220,13 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 		while (endIndex >= startIndex && !fragments[endIndex].overlapsWith(region.getOffset(), region.getLength()))
 			--endIndex;
 		
-		int length= Math.max(0, endIndex - startIndex + 1);
-		Fragment[] result= new Fragment[length];
-		for (int i= 0; i < length; i++)
-			result[i]= (Fragment) fragments[startIndex + i];
-		return result;
+		if (startIndex > endIndex) {
+			result[0]= -1;
+			return;
+		}
+		
+		result[0]= startIndex;
+		result[1]= endIndex;
 	}
 	
 	private IRegion toImageRegion(IRegion originRegion, boolean exact) throws BadLocationException {
@@ -223,11 +235,14 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 			return imageOffset == -1 ? null : new Region(imageOffset, 0);
 		}
 		
-		Fragment[] fragments= findFragments(originRegion, exact);
-		if (fragments.length > 0) {
+		int[] indices= (int[]) sfIndices.get();
+		findFragmentIndices(originRegion, exact, indices);
+		if (indices[0] >= 0) {
+			
+			Position[] fragments= getFragments();
 			
 			// translate start offset
-			Fragment fragment= fragments[0];
+			Fragment fragment= (Fragment) fragments[indices[0]];
 			int originOffset= originRegion.getOffset();
 			int relative= originOffset - fragment.getOffset();
 			if (relative < 0) {
@@ -237,7 +252,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 			int imageOffset= fragment.segment.getOffset() + relative;
 			
 			// translate end offset
-			fragment= fragments[fragments.length - 1];
+			fragment= (Fragment) fragments[indices[1]];
 			int exclusiveOriginEndOffset= originRegion.getOffset() + originRegion.getLength();
 			relative= exclusiveOriginEndOffset - fragment.getOffset();
 			if (relative > fragment.getLength()) {

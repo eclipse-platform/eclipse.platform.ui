@@ -168,6 +168,41 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 	
 	/**
+	 * Implementation of <code>IRegion</code> that can be reused
+	 * by setting the offset and the length. 
+	 */
+	private static class ReusableRegion implements IRegion {
+		
+		private int fOffset;
+		private int fLength;
+
+		/*
+		 * @see org.eclipse.jface.text.IRegion#getLength()
+		 */
+		public int getLength() {
+			return fLength;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IRegion#getOffset()
+		 */
+		public int getOffset() {
+			return fOffset;
+		}
+		
+		/**
+		 * Updates this region.
+		 * 
+		 * @param offset the new offset
+		 * @param length the new length
+		 */
+		public void update(int offset, int length) {
+			fOffset= offset;
+			fLength= length;
+		}
+	}
+	
+	/**
 	 * Tells whether this class is in debug mode.
 	 * @since 3.0
 	 */
@@ -1059,6 +1094,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			// is already disposed
 			return;
 		}
+		ReusableRegion range= new ReusableRegion();
 
 		int vOffset= getInclusiveTopIndexStartOffset();
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
@@ -1090,12 +1126,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						int endLine= document.getLineOfOffset(lastInclusive);
 						
 						for (int i= startLine; i <= endLine; i++) {
-							IRegion line= document.getLineInformation(i);
-							int paintStart= Math.max(line.getOffset(), p.getOffset());
-							int paintEnd= Math.min(line.getOffset() + line.getLength(), p.getOffset() + p.getLength());
+							int lineOffset= document.getLineOffset(i);
+							int lineLength= document.getLineLength(i);
+							int paintStart= Math.max(lineOffset, p.getOffset());
+							int paintEnd= Math.min(lineOffset + lineLength, p.getOffset() + p.getLength());
 							if (paintEnd >= paintStart) {
 								// otherwise inside a line delimiter
-								IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
+								range.update(paintStart, paintEnd - paintStart);
+								IRegion widgetRange= getWidgetRange(range);
 								if (widgetRange != null)
 									pp.fPainter.draw(a, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 							}
@@ -1115,14 +1153,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @param p the region in the viewer's document
 	 * @return the corresponding widget region
 	 */
-	private IRegion getWidgetRange(Position p) {
-		if (p == null || p.offset == Integer.MAX_VALUE)
+	private IRegion getWidgetRange(IRegion p) {
+		if (p == null || p.getOffset() == Integer.MAX_VALUE)
 			return null;
 		
 		if (fSourceViewer instanceof ITextViewerExtension5) {
 			
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-			return extension.modelRange2WidgetRange(new Region(p.getOffset(), p.getLength()));
+			return extension.modelRange2WidgetRange(p);
 		
 		} else {
 			
@@ -1130,7 +1168,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int offset= region.getOffset();
 			int length= region.getLength();
 			
-			if (p.overlapsWith(offset , length)) {
+			if (overlapsWith(p, region)) {
 				int p1= Math.max(offset, p.getOffset());
 				int p2= Math.min(offset + length, p.getOffset() + p.getLength());
 				return new Region(p1 - offset, p2 - p1);
@@ -1138,6 +1176,34 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Checks whether the intersection of the given text ranges
+	 * is empty or not.
+	 *
+	 * @param range1 the first range to check
+	 * @param range2 the second range to check
+	 * @return <code>true</code> if intersection is not empty
+	 */
+	private boolean overlapsWith(IRegion range1, IRegion range2) {
+		int offset1= range1.getOffset();
+		int length1= range1.getLength();
+		int offset2= range2.getOffset();
+		int length2= range2.getLength();
+		
+		int end= offset2 + length2;
+		int thisEnd= offset1 + length1;
+		
+		if (length2 > 0) {
+			if (length1 > 0)
+				return offset1 < end && offset2 < thisEnd;
+			return  offset2 <= offset1 && offset1 < end;
+		}
+		
+		if (length1 > 0)
+			return offset1 <= offset2 && offset2 < thisEnd;
+		return offset1 == offset2;
 	}
 	
 	/*
