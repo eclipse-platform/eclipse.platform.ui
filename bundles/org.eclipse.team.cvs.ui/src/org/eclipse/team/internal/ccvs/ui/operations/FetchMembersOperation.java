@@ -97,7 +97,7 @@ public class FetchMembersOperation extends RemoteOperation {
 	 */
 	protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
 		ICVSRemoteFolder remote = getRemoteFolder();
-		if (remote instanceof RemoteFolder) {
+		if (remote.getClass().equals(RemoteFolder.class)) {
 			monitor = Policy.monitorFor(monitor);
 			boolean isRoot = remote.getName().equals(ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME);
 			monitor.beginTask(null, 100 + (isRoot ? 30 : 0));
