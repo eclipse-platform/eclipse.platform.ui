@@ -279,6 +279,9 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			public void run() {
 				if (isAvailable()) {		
 					refresh(launch);
+					if (launch.hasChildren()) {
+						getLaunchView().autoExpand(launch, false, true);
+					}
 				}
 			}
 		};
@@ -294,9 +297,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			public void run() {
 				if (isAvailable()) {		
 					insert(newLaunch);
-					if (newLaunch.hasChildren()) {
-						getLaunchView().autoExpand(newLaunch, false, true);
-					}
 				}
 			}
 		};
