@@ -7,7 +7,8 @@ package org.eclipse.debug.ui;
 
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.internal.ui.*;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.swt.graphics.Image;import org.eclipse.ui.*;
+import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.internal.ui.*;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.swt.graphics.Image;import org.eclipse.ui.*;
 
 /**
  * This class provides utilities for clients of the debug UI.
@@ -26,6 +27,8 @@ import org.eclipse.debug.core.model.IValue;import org.eclipse.debug.internal.ui
  * </p>
  */
 public class DebugUITools {
+
+	private static DefaultLabelProvider fgDefaultLabelProvider= new DefaultLabelProvider();
 
 	/**
 	 * Shows and selects the given value in an inspector view with the specified label.
@@ -87,6 +90,29 @@ public class DebugUITools {
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return DebugPluginImages.getImageDescriptor(key);
+	}
+	
+	/**
+	 * Returns the default label provider for the debug UI.
+	 */
+	public static ILabelProvider getDefaultLabelProvider() {
+		return fgDefaultLabelProvider;
+	}
+	
+	/**
+	 * Returns the default image descriptor for the given element
+	 * or <code>null</code> if none is defined.
+	 */
+	public static ImageDescriptor getDefaultImageDescriptor(Object element) {
+		String imageKey= getDefaultImageKey(element);
+		if (imageKey == null) {
+			return null;
+		}
+		return DebugPluginImages.getImageDescriptor(imageKey);
+	}
+	
+	private static String getDefaultImageKey(Object element) {
+		return fgDefaultLabelProvider.getDefaultImageKey(element);
 	}
 	
 	/**

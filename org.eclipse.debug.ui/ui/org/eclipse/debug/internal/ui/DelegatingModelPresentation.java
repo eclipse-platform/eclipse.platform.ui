@@ -30,12 +30,12 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -193,86 +193,14 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * Returns a default image for the debug element
 	 */
 	protected String getDefaultText(Object element) {
-		if (element instanceof IDebugElement) {
-			try {
-				switch (((IDebugElement) element).getElementType()) {
-					case IDebugElement.DEBUG_TARGET:
-						return ((IDebugTarget)element).getName();
-					case IDebugElement.THREAD:
-						return ((IThread)element).getName();
-					case IDebugElement.STACK_FRAME:
-						return ((IStackFrame)element).getName();
-					case IDebugElement.VARIABLE:
-						return ((IVariable)element).getName();
-					default:
-						return ""; //$NON-NLS-1$
-				}
-			} catch (DebugException de) {
-				DebugUIPlugin.logError(de);
-			}
-		} else
-			if (element instanceof IMarker) {
-				IMarker m= (IMarker) element;
-				try {
-					if (m.exists() && m.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
-						return DebugUIMessages.getString("DelegatingModelPresentation.Breakpoint_3"); //$NON-NLS-1$
-					}
-				} catch (CoreException e) {
-					DebugUIPlugin.logError(e);
-				}
-			}
-		return DebugUIMessages.getString("DelegatingModelPresentation.<unknown>_4"); //$NON-NLS-1$
+		return DebugUITools.getDefaultLabelProvider().getText(element);
 	}
 
 	/**
 	 * Returns a default image for the debug element
 	 */
 	protected Image getDefaultImage(Object element) {
-		ImageRegistry iRegistry= DebugUIPlugin.getDefault().getImageRegistry();
-		if (element instanceof IThread) {
-			IThread thread = (IThread)element;
-			if (thread.isSuspended()) {
-				return iRegistry.get(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED);
-			} else if (thread.isTerminated()) {
-				return iRegistry.get(IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED);
-			} else {
-				return iRegistry.get(IDebugUIConstants.IMG_OBJS_THREAD_RUNNING);
-			}
-		} else
-			if (element instanceof IStackFrame) {
-				return iRegistry.get(IDebugUIConstants.IMG_OBJS_STACKFRAME);
-			} else
-				if (element instanceof IProcess) {
-					if (((IProcess) element).isTerminated()) {
-						return iRegistry.get(IDebugUIConstants.IMG_OBJS_OS_PROCESS_TERMINATED);
-					} else {
-						return iRegistry.get(IDebugUIConstants.IMG_OBJS_OS_PROCESS);
-					}
-				} else
-					if (element instanceof IDebugTarget) {
-						IDebugTarget target= (IDebugTarget) element;
-						if (target.isTerminated() || target.isDisconnected()) {
-							return iRegistry.get(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED);
-						} else {
-							return iRegistry.get(IDebugUIConstants.IMG_OBJS_DEBUG_TARGET);
-						}
-					} else
-						if (element instanceof IMarker) {
-							try {
-								IMarker marker= (IMarker) element;
-								IBreakpoint breakpoint= DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(marker);
-								if (breakpoint != null && marker.exists()) {
-									if (breakpoint.isEnabled()) {
-										return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT);
-									} else {
-										return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED);
-									}
-								}
-							} catch (CoreException e) {
-								DebugUIPlugin.logError(e);
-							}
-						}
-		return null;
+		return DebugUITools.getDefaultLabelProvider().getImage(element);
 	}
 
 	/**
