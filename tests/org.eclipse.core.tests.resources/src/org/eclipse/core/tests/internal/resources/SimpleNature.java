@@ -10,13 +10,51 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  */
 public class SimpleNature extends TestNature {
+	private static SimpleNature instance;
+	public boolean wasConfigured;
+	public boolean wasDeconfigured;
+
+	/**
+	 * Returns the instance of this nature.
+	 */
+	public static SimpleNature getInstance() {
+		if (instance == null)
+			new SimpleNature();
+		return instance;
+	}
+
 	/**
 	 * Constructor for SimpleNature.
 	 */
 	public SimpleNature() {
 		super();
+		instance = this;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IProjectNature#configure()
+	 */
+	public void configure() throws CoreException {
+		super.configure();
+		wasConfigured = true;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IProjectNature#deconfigure()
+	 */
+	public void deconfigure() throws CoreException {
+		super.deconfigure();
+		wasDeconfigured = true;
+	}
+
+	/**
+	 * Resets validation flags
+	 */
+	public void reset() {
+		wasConfigured = false;
+		wasDeconfigured = false;
 	}
 }

@@ -652,8 +652,15 @@ public interface IProject extends IContainer, IAdaptable {
 	 * a project is deleted from the workspace.
 	 * </p>
 	 * <p>
-	 * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
-	 * are ignored.
+	 * The <code>AVOID_NATURE_CONFIG</code> update flag controls whether or 
+	 * not added and removed natures should be configured or deconfigured. If this
+	 * flag is not specified, then added natures will be configurd and removed natures
+	 * will be deconfigured. If this flag is specified, natures can still be added or
+	 * removed, but they will not be configured or deconfigured.
+	 * </p>
+	 * <p>
+	 * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code>,
+	 * and <code>AVOID_NATURE_CONFIG</code> are ignored.
 	 * </p>
 	 * <p>
 	 * Prior to modifying the the project description file, the file modification
@@ -674,7 +681,8 @@ public interface IProject extends IContainer, IAdaptable {
 	 *
 	 * @param description the project description
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+	 *   (<code>FORCE</code>, <code>KEEP_HISTORY</code> and
+	 * <code>AVOID_NATURE_CONFIG</code>)
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -698,6 +706,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IProjectNature#deconfigure()
 	 * @see IResource#FORCE
 	 * @see IResource#KEEP_HISTORY
+	 * @see IResource#AVOID_NATURE_CONFIG
 	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 * @since 2.0
 	 */

@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.internal.resources.SimpleNature;
 
 /**
  * Tests all aspects of project natures.  These tests only
@@ -46,11 +47,22 @@ public class NatureTest extends EclipseWorkspaceTest {
 	 * does not match the "shouldFail" argument, an assertion error
 	 * with the given message is thrown.
 	 */
-	protected void setNatures(String message, boolean shouldFail, IProject project, String[] natures) {
+	protected void setNatures(String message, IProject project, String[] natures, boolean shouldFail) {
+		setNatures(message, project, natures, shouldFail, false);
+	}
+	/**
+	 * Sets the given set of natures for the project.  If success
+	 * does not match the "shouldFail" argument, an assertion error
+	 * with the given message is thrown.
+	 */
+	protected void setNatures(String message, IProject project, String[] natures, boolean shouldFail, boolean silent) {
 		try {
 			IProjectDescription desc = project.getDescription();
 			desc.setNatureIds(natures);
-			project.setDescription(desc, getMonitor());
+			int flags = IResource.KEEP_HISTORY;
+			if (silent)
+				flags |= IResource.AVOID_NATURE_CONFIG;
+			project.setDescription(desc, flags, getMonitor());
 			if (shouldFail)
 				fail(message);
 		} catch (CoreException e) {
@@ -72,10 +84,10 @@ public class NatureTest extends EclipseWorkspaceTest {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 		IProject project = ws.getRoot().getProject("Project");
 		ensureExistsInWorkspace(project, true);
-		setNatures("1.0", false, project, new String[] {NATURE_SIMPLE});
+		setNatures("1.0", project, new String[] {NATURE_SIMPLE}, false);
 
 		//Adding a nature that is not available. 
-		setNatures("2.0", true, project, new String[] {NATURE_SIMPLE, NATURE_MISSING});
+		setNatures("2.0", project, new String[] {NATURE_SIMPLE, NATURE_MISSING}, true);
 		try {
 			assertTrue("2.1", project.hasNature(NATURE_SIMPLE));
 			assertTrue("2.2", !project.hasNature(NATURE_MISSING));
@@ -85,7 +97,7 @@ public class NatureTest extends EclipseWorkspaceTest {
 			fail("2.99", e);
 		}
 		//Adding a nature that has a missing prerequisite. 
-		setNatures("3.0", true, project, new String[] {NATURE_SIMPLE, NATURE_SNOW});
+		setNatures("3.0", project, new String[] {NATURE_SIMPLE, NATURE_SNOW}, true);
 		try {
 			assertTrue("3.1", project.hasNature(NATURE_SIMPLE));
 			assertTrue("3.2", !project.hasNature(NATURE_SNOW));
@@ -95,8 +107,8 @@ public class NatureTest extends EclipseWorkspaceTest {
 			fail("3.99", e);
 		}
 		//Adding a nature that creates a duplicated set member. 
-		setNatures("4.0", false, project, new String[] {NATURE_EARTH});
-		setNatures("4.1", true, project, new String[] {NATURE_EARTH, NATURE_WATER});
+		setNatures("4.0", project, new String[] {NATURE_EARTH}, false);
+		setNatures("4.1", project, new String[] {NATURE_EARTH, NATURE_WATER}, true);
 		try {
 			assertTrue("3.1", project.hasNature(NATURE_EARTH));
 			assertTrue("3.2", !project.hasNature(NATURE_WATER));
@@ -116,8 +128,8 @@ public class NatureTest extends EclipseWorkspaceTest {
 		ensureExistsInWorkspace(project, true);
 
 		//Removing a nature that still has dependents.
-		setNatures("1.0", false, project, new String[] {NATURE_WATER, NATURE_SNOW});
-		setNatures("2.0", true, project, new String[] {NATURE_SNOW});
+		setNatures("1.0", project, new String[] {NATURE_WATER, NATURE_SNOW}, false);
+		setNatures("2.0", project, new String[] {NATURE_SNOW}, true);
 		try {
 			assertTrue("2.1", project.hasNature(NATURE_WATER));
 			assertTrue("2.2", project.hasNature(NATURE_SNOW));
@@ -126,6 +138,38 @@ public class NatureTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
+	}
+	public void testNatureLifecyle() {
+		IWorkspace ws = ResourcesPlugin.getWorkspace();
+		IProject project = ws.getRoot().getProject("Project");
+		ensureExistsInWorkspace(project, true);
+
+		//add simple nature
+		setNatures("1.0", project, new String[] {NATURE_SIMPLE}, false);
+		SimpleNature instance = SimpleNature.getInstance();
+		assertTrue("1.1", instance.wasConfigured);
+		assertTrue("1.2", !instance.wasDeconfigured);
+		instance.reset();
+		
+		//remove simple nature
+		setNatures("1.3", project, new String[0], false);
+		instance = SimpleNature.getInstance();
+		assertTrue("1.4", !instance.wasConfigured);
+		assertTrue("1.5", instance.wasDeconfigured);
+		
+		//add with AVOID_NATURE_CONFIG
+		instance.reset();
+		setNatures("2.0", project, new String[] {NATURE_SIMPLE}, false, true);
+		instance = SimpleNature.getInstance();
+		assertTrue("2.1", !instance.wasConfigured);
+		assertTrue("2.2", !instance.wasDeconfigured);
+
+		//remove with AVOID_NATURE_CONFIG
+		instance.reset();
+		setNatures("2.3", project, new String[0], false, true);
+		instance = SimpleNature.getInstance();
+		assertTrue("2.4", !instance.wasConfigured);
+		assertTrue("2.5", !instance.wasDeconfigured);
 
 	}
 
@@ -139,16 +183,16 @@ public class NatureTest extends EclipseWorkspaceTest {
 
 		String[][] valid = getValidNatureSets();
 		for (int i = 0; i < valid.length; i++) {
-			setNatures("valid: " + i, false, project, valid[i]);
+			setNatures("valid: " + i, project, valid[i], false);
 		}
 		//configure a valid nature before starting invalid tests
 		String[] currentSet = new String[] {NATURE_SIMPLE};
-		setNatures("1.0", false, project, currentSet);
+		setNatures("1.0", project, currentSet, false);
 
 		//now do invalid tests and ensure simple nature is still configured	
 		String[][] invalid = getInvalidNatureSets();
 		for (int i = 0; i < invalid.length; i++) {
-			setNatures("invalid: " + i, true, project, invalid[i]);
+			setNatures("invalid: " + i, project, invalid[i], true);
 			try {
 				assertTrue("2.0", project.hasNature(NATURE_SIMPLE));
 				assertTrue("2.1", !project.hasNature(NATURE_EARTH));

@@ -30,7 +30,7 @@ public class Project extends Container implements IProject {
 	 * Otherwise it is being called via #setDescription. The difference is that we don't allow
 	 * some description fields to change value after project creation. (e.g. project location)
 	 */
-	protected MultiStatus basicSetDescription(ProjectDescription description) {
+	protected MultiStatus basicSetDescription(ProjectDescription description, int updateFlags) {
 		String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, message, null);
 		ProjectDescription current = internalGetDescription();
@@ -57,7 +57,8 @@ public class Project extends Container implements IProject {
 			workspace.flushBuildOrder();
 
 		// the natures last as this may cause recursive calls to setDescription.
-		workspace.getNatureManager().configureNatures(this, current, description, result);
+		if ((updateFlags & IResource.AVOID_NATURE_CONFIG) == 0)
+			workspace.getNatureManager().configureNatures(this, current, description, result);
 		return result;
 	}
 
@@ -878,7 +879,7 @@ public class Project extends Container implements IProject {
 					hadSavedDescription = workspace.getMetaArea().hasSavedProject(this);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 				workspace.beginOperation(true);
-				MultiStatus status = basicSetDescription((ProjectDescription) description);
+				MultiStatus status = basicSetDescription((ProjectDescription) description, updateFlags);
 				if (hadSavedDescription && !status.isOK())
 					throw new CoreException(status);
 				//write the new description to the .project file
