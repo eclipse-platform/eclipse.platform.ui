@@ -34,7 +34,7 @@ public class InstallConfigurationModel extends ModelObject {
 	private boolean isCurrent;
 	private URL locationURL;
 	private String locationURLString;
-	private Date date;
+	protected Date date;
 	private String label;
 	private List /* of ConfiguretionActivityModel */ activities;
 	private List /* of configurationSiteModel */ configurationSites;

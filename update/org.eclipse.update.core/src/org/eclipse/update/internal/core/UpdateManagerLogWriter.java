@@ -101,7 +101,7 @@ public class UpdateManagerLogWriter {
 	 * 
 	 */
 	public void log(IInstallConfiguration installConfig) {
-		safeWriteConfiguration(installConfig.getLabel(), installConfig.getActivities());
+		safeWriteConfiguration(installConfig.getCreationDate().toString(), installConfig.getActivities());
 	}
 	
 	

@@ -310,9 +310,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @return true if restart is needed
 	 */
 	public boolean save(boolean isTransient) throws CoreException {
-		// log configuration and activities
-		if ("file".equalsIgnoreCase(getURL().getProtocol()))
-			UpdateCore.log(this);
 		
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
@@ -375,6 +372,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 		try {
 			runtimeConfiguration.save();
+			// log configuration and activities
+			this.date = new Date(runtimeConfiguration.getChangeStamp());
+			if ("file".equalsIgnoreCase(getURL().getProtocol()))
+				UpdateCore.log(this);
 			resetActivities();
 			return applyChanges(runtimeConfiguration);
 		} catch (IOException e) {
