@@ -37,8 +37,8 @@ public PreferenceExportTest(String name) {
  * as the default-default value.  See bug 31458.
  */
 public void testExportEmptyPreference() {
-	final String key1 = "SomeTestKey";
-	final String key2 = "OtherTestKey";
+	final String key1 = "testExportEmptyPreferenceKey1";
+	final String key2 = "testExportEmptyPreferenceKey2";
 	final String default1 = "SomeTestValue";
 	final int default2 = 5;
 	IPath exportPath = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
@@ -91,7 +91,7 @@ public void testExportEmptyPreference() {
  * See bug 20193.
  */
 public void testKeyIdentityAfterExport() {
-	final String key = "SomeTestKey";
+	final String key = "testKeyIdentityAfterExport";
 	String initialValue = "SomeTestValue";
 	IPath exportPath = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
 	exportPath.toFile().delete();
