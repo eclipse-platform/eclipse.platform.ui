@@ -279,8 +279,13 @@ public class FilteredList extends Composite {
 	public void setSelection(int[] selection) {
 		if (selection == null || selection.length == 0)
 			fList.deselectAll();
-		else
-			fList.setSelection(selection);
+		else {
+			//If there is a current working update defer the setting
+			if (fUpdateThread == null || fUpdateThread.fStop)
+				fList.setSelection(selection);
+			else
+				fUpdateThread.selectIndices(selection);
+		}
 	}
 
 	/**
@@ -342,7 +347,7 @@ public class FilteredList extends Composite {
 				indices[i] = 0;
 		}
 
-		fList.setSelection(indices);
+		setSelection(indices);
 	}
 
 	/**
@@ -467,6 +472,7 @@ public class FilteredList extends Composite {
 	private interface IncrementalRunnable extends Runnable {
 		public int getCount();
 		public void cancel();
+		public void updateSelection(int[] indices);
 	}
 
 	private class TableUpdater implements IncrementalRunnable {
@@ -520,12 +526,6 @@ public class FilteredList extends Composite {
 						item.setText(label.string);
 						item.setImage(label.image);
 
-						// select first item
-						if (index == 0) {
-							fTable.setSelection(0);
-							fTable.notifyListeners(SWT.Selection, new Event());
-						}
-
 						// finish
 					} else {
 						if (fCount < itemCount) {
@@ -541,6 +541,16 @@ public class FilteredList extends Composite {
 				}
 			});
 		}
+
+		public void updateSelection(final int[] indices) {
+
+			fDisplay.syncExec(new Runnable() {
+				public void run() {
+					fTable.setSelection(indices);
+				}
+			});
+
+		}
 	}
 
 	private static class UpdateThread extends Thread {
@@ -549,6 +559,8 @@ public class FilteredList extends Composite {
 		private final IncrementalRunnable fRunnable;
 		/** A flag indicating a thread stop request */
 		private boolean fStop;
+		/** The indices to select*/
+		int[] indices;
 
 		/**
 		 * Creates an update thread.
@@ -583,6 +595,19 @@ public class FilteredList extends Composite {
 
 				fRunnable.run();
 			}
+
+			if (indices != null)
+				fRunnable.updateSelection(indices);
+			requestStop();
+
+		}
+
+		/**
+		 * Set the indices we wish to select after running.
+		 * @param indicesToSelect
+		 */
+		public void selectIndices(int[] indicesToSelect) {
+			indices = indicesToSelect;
 		}
 	}
 
