@@ -435,9 +435,9 @@ public class Preferences {
 	/**
 	 * Returns whether the given property is known to this preference object,
 	 * either by having an explicit setting or by having a default
-	 * setting.
+	 * setting. Returns <code>false</code> if the given name is <code>null</code>.
 	 *
-	 * @param name the name of the property
+	 * @param name the name of the property, or <code>null</code>
 	 * @return <code>true</code> if either a current value or a default
 	 *  value is known for the named property, and <code>false</code>otherwise
 	 */
@@ -485,6 +485,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>false</code>) if there
 	 * is no property with the given name, or if the current value 
 	 * cannot be treated as a boolean.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the boolean-valued property
@@ -499,7 +500,7 @@ public class Preferences {
 
 	/**
 	 * Sets the current value of the boolean-valued property with the
-	 * given name.
+	 * given name. The given name must not be <code>null</code>.
 	 * <p>
 	 * A property change event is reported if the current value of the 
 	 * property actually changes from its previous value. In the event
@@ -542,6 +543,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>false</code>) if there
 	 * is no default property with the given name, or if the default 
 	 * value cannot be treated as a boolean.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the default value of the named property
@@ -556,7 +558,7 @@ public class Preferences {
 
 	/**
 	 * Sets the default value for the boolean-valued property with the
-	 * given name. 
+	 * given name. The given name must not be <code>null</code>.
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -579,6 +581,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0.0</code>) if there
 	 * is no property with the given name, or if the current value 
 	 * cannot be treated as a double.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the double-valued property
@@ -589,7 +592,7 @@ public class Preferences {
 
 	/**
 	 * Sets the current value of the double-valued property with the
-	 * given name.
+	 * given name. The given name must not be <code>null</code>.
 	 * <p>
 	 * A property change event is reported if the current value of the 
 	 * property actually changes from its previous value. In the event
@@ -636,6 +639,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0.0</code>) if there
 	 * is no default property with the given name, or if the default 
 	 * value cannot be treated as a double.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the default value of the named property
@@ -646,7 +650,7 @@ public class Preferences {
 
 	/**
 	 * Sets the default value for the double-valued property with the
-	 * given name. 
+	 * given name. The given name must not be <code>null</code>. 
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -695,6 +699,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0.0f</code>) if there
 	 * is no property with the given name, or if the current value 
 	 * cannot be treated as a float.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the float-valued property
@@ -705,7 +710,7 @@ public class Preferences {
 
 	/**
 	 * Sets the current value of the float-valued property with the
-	 * given name.
+	 * given name. The given name must not be <code>null</code>.
 	 * <p>
 	 * A property change event is reported if the current value of the 
 	 * property actually changes from its previous value. In the event
@@ -752,6 +757,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0.0f</code>) if there
 	 * is no default property with the given name, or if the default 
 	 * value cannot be treated as a float.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the default value of the named property
@@ -762,7 +768,7 @@ public class Preferences {
 
 	/**
 	 * Sets the default value for the float-valued property with the
-	 * given name. 
+	 * given name. The given name must not be <code>null</code>. 
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -811,6 +817,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0</code>) if there
 	 * is no property with the given name, or if the current value 
 	 * cannot be treated as an integter.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the int-valued property
@@ -821,7 +828,7 @@ public class Preferences {
 
 	/**
 	 * Sets the current value of the integer-valued property with the
-	 * given name.
+	 * given name. The given name must not be <code>null</code>.
 	 * <p>
 	 * A property change event is reported if the current value of the 
 	 * property actually changes from its previous value. In the event
@@ -864,6 +871,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0</code>) if there
 	 * is no default property with the given name, or if the default 
 	 * value cannot be treated as an integer.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the default value of the named property
@@ -874,7 +882,7 @@ public class Preferences {
 
 	/**
 	 * Sets the default value for the integer-valued property with the
-	 * given name. 
+	 * given name. The given name must not be <code>null</code>. 
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -919,6 +927,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0L</code>) if there
 	 * is no property with the given name, or if the current value 
 	 * cannot be treated as a long.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the long-valued property
@@ -929,7 +938,7 @@ public class Preferences {
 
 	/**
 	 * Sets the current value of the long-valued property with the
-	 * given name.
+	 * given name. The given name must not be <code>null</code>.
 	 * <p>
 	 * A property change event is reported if the current value of the 
 	 * property actually changes from its previous value. In the event
@@ -972,6 +981,7 @@ public class Preferences {
 	 * Returns the default-default value (<code>0L</code>) if there
 	 * is no default property with the given name, or if the default 
 	 * value cannot be treated as a long.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the default value of the named property
@@ -982,7 +992,7 @@ public class Preferences {
 
 	/**
 	 * Sets the default value for the long-valued property with the
-	 * given name. 
+	 * given name. The given name must not be <code>null</code>. 
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -1026,6 +1036,7 @@ public class Preferences {
 	 * given name.
 	 * Returns the default-default value (the empty string <code>""</code>)
 	 * if there is no property with the given name.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the string-valued property
@@ -1037,7 +1048,7 @@ public class Preferences {
 
 	/**
 	 * Sets the current value of the string-valued property with the
-	 * given name.
+	 * given name. The given name must not be <code>null</code>.
 	 * <p>
 	 * A property change event is reported if the current value of the 
 	 * property actually changes from its previous value. In the event
@@ -1083,6 +1094,7 @@ public class Preferences {
 	 * Returns the default-default value (the empty string <code>""</code>) 
 	 * is no default property with the given name, or if the default 
 	 * value cannot be treated as a string.
+	 * The given name must not be <code>null</code>.
 	 *
 	 * @param name the name of the property
 	 * @return the default value of the named property
@@ -1094,7 +1106,7 @@ public class Preferences {
 
 	/**
 	 * Sets the default value for the string-valued property with the
-	 * given name. 
+	 * given name. The given name must not be <code>null</code>. 
 	 * <p>
 	 * Note that the current value of the property is affected if
 	 * the property's current value was its old default value, in which
@@ -1117,8 +1129,9 @@ public class Preferences {
 	/**
 	 * Returns whether the property with the given name has the default value in
 	 * virtue of having no explicitly set value.
+	 * Returns <code>false</code> if the given name is <code>null</code>.
 	 *
-	 * @param name the name of the property
+	 * @param name the name of the property, or <code>null</code>
 	 * @return <code>true</code> if the property has no explicitly set value,
 	 * and <code>false</code> otherwise (including the case where the property
 	 * is unknown to this object)
@@ -1130,7 +1143,7 @@ public class Preferences {
 	/**
 	 * Sets the current value of the property with the given name back
 	 * to its default value. Has no effect if the property does not have
-	 * its own current value.
+	 * its own current value. The given name must not be <code>null</code>.
 	 * <p>
 	 * Note that the recommended way of re-initializing a property to the
 	 * appropriate default value is to call <code>setToDefault</code>.
