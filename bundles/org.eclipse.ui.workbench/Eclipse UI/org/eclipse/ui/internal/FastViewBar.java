@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -29,6 +33,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
@@ -60,12 +65,31 @@ class FastViewBar implements IWindowTrim {
 	private MenuItem showOn;
 	private Cursor moveCursor;
 	private MenuItem closeItem;
+	private MenuItem orientationItem;
 	private IntModel side = new IntModel(SWT.LEFT);
+	private IntModel currentOrientation = new IntModel(SWT.VERTICAL);
 	private RadioMenu radioButtons;
 	private IViewReference selectedView;
 	private int lastSide;
 	private Label fastViewLabel;
 	private int oldLength = 0;
+	private IChangeListener orientationChangeListener = new IChangeListener() {
+		public void update(boolean changed) {
+			if (changed && selectedView != null) {
+				viewOrientation.put(selectedView.getId(), currentOrientation.getState());
+				Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+				
+				IViewReference ref = persp.getActiveFastView();
+				if (ref != null) {
+					persp.setActiveFastView(null);
+				}
+				persp.setActiveFastView(selectedView);
+			}
+		}
+	};
+	
+	// Map of string view IDs onto Booleans (true iff horizontally aligned)
+	private Map viewOrientation = new HashMap();
 	
 	/**
 	 * Constructs a new fast view bar for the given workbench window.
@@ -96,6 +120,9 @@ class FastViewBar implements IWindowTrim {
 				lastSide = getSide();
 			}
 		});
+		
+		currentOrientation.addChangeListener(orientationChangeListener);
+		
 		createChildControls();
 	}
 	
@@ -108,8 +135,6 @@ class FastViewBar implements IWindowTrim {
 	protected void createChildControls() {
 		int newSide = getSide();
 		int flags = Geometry.isHorizontal(newSide) ? SWT.HORIZONTAL : SWT.VERTICAL;
-		
-		//flags = SWT.HORIZONTAL;
 		
 		fastViewBar = new ToolBarManager(SWT.FLAT /*| SWT.WRAP*/ | flags);
 		fastViewBar.add(new ShowFastViewContribution(window));
@@ -348,6 +373,18 @@ class FastViewBar implements IWindowTrim {
 					}
 				}
 			});
+
+			orientationItem = new MenuItem(menu, SWT.CASCADE);
+			{
+				orientationItem.setText(WorkbenchMessages.getString("FastViewBar.view_orientation")); //$NON-NLS-1$
+				
+				Menu orientationSwtMenu = new Menu(orientationItem);
+				RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu, currentOrientation);
+				orientationMenu.addMenuItem(WorkbenchMessages.getString("FastViewBar.horizontal"), new Integer(SWT.HORIZONTAL)); //$NON-NLS-1$
+				orientationMenu.addMenuItem(WorkbenchMessages.getString("FastViewBar.vertical"), new Integer(SWT.VERTICAL)); //$NON-NLS-1$
+				
+				orientationItem.setMenu(orientationSwtMenu);
+			}
 			
 			new MenuItem(menu, SWT.SEPARATOR);
 			
@@ -371,7 +408,14 @@ class FastViewBar implements IWindowTrim {
 		boolean selectingView = (selectedView != null);
 		restoreItem.setEnabled(selectingView);
 		closeItem.setEnabled(selectingView);
-
+		orientationItem.setEnabled(selectingView);
+		if (selectingView) {
+			// Set the new orientation, but avoid re-sending the event to our own
+			// listener
+			currentOrientation.set(isHorizontal(selectedView) ? SWT.HORIZONTAL : SWT.VERTICAL,
+					orientationChangeListener);
+		}
+		
 		fastViewBarMenu.setLocation(pt.x, pt.y);
 		fastViewBarMenu.setVisible(true);		
 	}
@@ -446,6 +490,12 @@ class FastViewBar implements IWindowTrim {
 			control.getParent().layout();
 			oldLength = items.length;
 		}
+		
+		for (int idx = 0; idx < items.length; idx++) {
+			 IViewReference view = getViewFor(items[idx]);
+			 
+			 viewOrientation.put(view.getId(), new Integer(isHorizontal(view) ? SWT.HORIZONTAL : SWT.VERTICAL));
+		}		
 	}
 
 	/**
@@ -462,7 +512,8 @@ class FastViewBar implements IWindowTrim {
 	 * 
 	 * @param selected the currently selected fastview, or null if none
 	 */
-	public void setSelection(IViewReference selected) {
+	public void setSelection(IViewReference selected) {	
+
 		ToolItem[] items = fastViewBar.getControl().getItems();
 		for(int i=0; i<items.length; i++) {
 			ToolItem item = items[i];
@@ -537,6 +588,73 @@ class FastViewBar implements IWindowTrim {
 	 */
 	public void addDockingListener(IChangeListener listener) {
 		this.side.addChangeListener(listener);
+	}
+
+	private boolean isHorizontal(IViewReference ref) {
+		Integer orientation = (Integer)viewOrientation.get(ref.getId());
+		boolean horizontalBar = Geometry.isHorizontal(getSide()); 
+		boolean horizontal = horizontalBar;
+		if (orientation != null) {
+			horizontal = orientation.intValue() == SWT.HORIZONTAL;
+		} else {
+			ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
+			
+			if (pane != null && pane.getControl() != null) {
+				Rectangle bounds = pane.getBounds();
+				
+				if (bounds.width != bounds.height) {
+					horizontal = bounds.width > bounds.height;
+				}
+			}
+		}
+		
+		return horizontal;
+	}
+	
+	/**
+	 * @param ref
+	 * @return
+	 */
+	public int getViewSide(IViewReference ref) {
+		boolean horizontal = isHorizontal(ref);
+		
+		if (horizontal) {
+			return (getSide() == SWT.BOTTOM) ? SWT.BOTTOM : SWT.TOP;
+		} else {
+			return (getSide() == SWT.RIGHT) ? SWT.RIGHT : SWT.LEFT;
+		}
+	}
+
+	public void saveState(IMemento memento) {
+		memento.putInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE, getSide());
+		
+		Iterator iter = viewOrientation.keySet().iterator();
+		while (iter.hasNext()) {
+			String next = (String)iter.next();
+			IMemento orientation = memento.createChild(IWorkbenchConstants.TAG_FAST_VIEW_ORIENTATION);
+		
+			orientation.putString(IWorkbenchConstants.TAG_VIEW, next);
+			orientation.putInteger(IWorkbenchConstants.TAG_POSITION, ((Integer)viewOrientation.get(next)).intValue());
+		}
+		
+	}
+	
+	/**
+	 * @param fastViewMem
+	 */
+	public void restoreState(IMemento memento) {
+		Integer bigInt;
+		bigInt = memento.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
+		if (bigInt != null) {
+			dock(bigInt.intValue()); 
+		}
+		
+		IMemento[] orientations = memento.getChildren(IWorkbenchConstants.TAG_FAST_VIEW_ORIENTATION);
+		for (int i = 0; i < orientations.length; i++) {
+			IMemento next = orientations[i];
+			
+			viewOrientation.put(next.getString(IWorkbenchConstants.TAG_VIEW), next.getInteger(IWorkbenchConstants.TAG_POSITION));		
+		}
 	}
 	
 }

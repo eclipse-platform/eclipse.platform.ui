@@ -56,6 +56,10 @@ public class Model {
 	 * listeners should be notified). 
 	 */
 	public void setState(Object newState, IChangeListener toOmit) {
+		if (areEqual(newState, state)) {
+			return;
+		}
+		
 		state = newState;
 		
 		Iterator iter = views.iterator();
@@ -68,6 +72,17 @@ public class Model {
 		}
 	}
 
+	private boolean areEqual(Object o1, Object o2) {
+		if (o1 == null) {
+			return o2 == null;
+		}
+		if (o2 == null) {
+			return false;
+		}
+		
+		return o1.equals(o2);
+	}
+	
 	/**
 	 * Adds the given listener to the set of listeners that will be
 	 * notified when the state changes. 

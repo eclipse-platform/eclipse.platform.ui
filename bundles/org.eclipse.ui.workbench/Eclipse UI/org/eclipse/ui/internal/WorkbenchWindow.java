@@ -1041,12 +1041,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// Read window's bounds and state.
 		Rectangle displayBounds = getShell().getDisplay().getBounds();
 		Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
-		Integer bigInt;
-		bigInt = memento.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
-		if (bigInt != null) {
-			fastViewBar.dock(bigInt.intValue()); 
-		}
 		
+		IMemento fastViewMem = memento.getChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+		if (fastViewMem != null) {
+			fastViewBar.restoreState(fastViewMem);
+		}
+		Integer bigInt;
+
 		bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
 		shellBounds.x = bigInt == null ? 0 : bigInt.intValue();
 		bigInt = memento.getInteger(IWorkbenchConstants.TAG_Y);
@@ -1542,7 +1543,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (normalBounds == null) {
 			normalBounds = getShell().getBounds();
 		}
-		memento.putInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE, fastViewBar.getSide());
+		IMemento fastViewBarMem = memento.createChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
+		fastViewBar.saveState(fastViewBarMem);
+		
 		memento.putInteger(IWorkbenchConstants.TAG_X, normalBounds.x);
 		memento.putInteger(IWorkbenchConstants.TAG_Y, normalBounds.y);
 		memento.putInteger(IWorkbenchConstants.TAG_WIDTH, normalBounds.width);
