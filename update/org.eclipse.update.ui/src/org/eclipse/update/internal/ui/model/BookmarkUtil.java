@@ -231,7 +231,7 @@ public class BookmarkUtil {
 			if (bookmark.getDescription() != null) {
 				writer.println(">"); //$NON-NLS-1$
 				writer.print(indent+"  <description>"); //$NON-NLS-1$
-				writer.print(bookmark.getDescription());
+				writer.print(UpdateManagerUtils.getWritableXMLString(bookmark.getDescription()));
 				writer.println("</description>"); //$NON-NLS-1$
 				writer.println(indent +"</site>"); //$NON-NLS-1$
 			} else {
