@@ -62,7 +62,7 @@ public class CharsetManager implements IManager {
 		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
-			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Messages.resources_updatingEncoding, null);			
+			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Messages.resources_updatingEncoding, null);
 			monitor = Policy.monitorFor(monitor);
 			try {
 				monitor.beginTask(Messages.resources_charsetUpdating, Policy.totalWork);
@@ -77,8 +77,11 @@ public class CharsetManager implements IManager {
 						if (systemBundle.getState() != Bundle.ACTIVE)
 							return Status.OK_STATUS;
 						try {
-							if (next.isAccessible())
-								getPreferences(next).flush();
+							if (next.isAccessible()) {
+								Preferences projectPrefs = getPreferences(next, false);
+								if (projectPrefs != null)
+									projectPrefs.flush();
+							}
 						} catch (BackingStoreException e) {
 							// we got an error saving					
 							String detailMessage = Messages.resources_savingEncoding;
@@ -117,7 +120,10 @@ public class CharsetManager implements IManager {
 			// been moved/deleted
 			boolean resourceChanges = false;
 			IProject currentProject = (IProject) projectDelta.getResource();
-			Preferences projectPrefs = getPreferences(currentProject);
+			Preferences projectPrefs = getPreferences(currentProject, false);
+			if (projectPrefs == null)
+				// no preferences for this project, just bail
+				return;
 			String[] affectedResources;
 			try {
 				affectedResources = projectPrefs.keys();
@@ -140,7 +146,7 @@ public class CharsetManager implements IManager {
 					if ((memberDelta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
 						// if moving, copy the setting for the new location
 						IProject targetProject = workspace.getRoot().getProject(memberDelta.getMovedToPath().segment(0));
-						Preferences targetPrefs = getPreferences(targetProject);
+						Preferences targetPrefs = getPreferences(targetProject, true);
 						targetPrefs.put(getKeyFor(memberDelta.getMovedToPath()), currentValue);
 						if (targetProject != currentProject)
 							projectsToSave.add(targetProject);
@@ -181,10 +187,6 @@ public class CharsetManager implements IManager {
 		this.workspace = workspace;
 	}
 
-	public String getCharsetFor(IPath resourcePath) {
-		return getCharsetFor(resourcePath, false);
-	}
-
 	/**
 	 * Returns the charset explicitly set by the user for the given resource, 
 	 * or <code>null</code>. If no setting exists for the given resource and 
@@ -198,7 +200,11 @@ public class CharsetManager implements IManager {
 	public String getCharsetFor(IPath resourcePath, boolean recurse) {
 		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
-		Preferences encodingSettings = getPreferences(project);
+		Preferences encodingSettings = getPreferences(project, false);
+		if (encodingSettings == null)
+			// no preferences found - for performance reasons, short-circuit 
+			// lookup by falling back to workspace's default setting			
+			return recurse ? ResourcesPlugin.getEncoding() : null;
 		return internalGetCharsetFor(resourcePath, encodingSettings, recurse);
 	}
 
@@ -218,8 +224,28 @@ public class CharsetManager implements IManager {
 		return resourcePath.segmentCount() > 1 ? resourcePath.removeFirstSegments(1).toString() : PROJECT_KEY;
 	}
 
-	Preferences getPreferences(IProject project) {
-		return new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES).node(ENCODING_PREF_NODE);
+	Preferences getPreferences(IProject project, boolean create) {
+		if (create)
+			// create all nodes down to the one we are interested in
+			return new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES).node(ENCODING_PREF_NODE);
+		// be careful looking up for our node so not to create any nodes as side effect
+		Preferences node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
+		try {
+			if (!node.nodeExists(project.getName()))
+				return null;
+			node = node.node(project.getName());
+			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES))
+				return null;
+			node = node.node(ResourcesPlugin.PI_RESOURCES);
+			if (!node.nodeExists(ENCODING_PREF_NODE))
+				return null;
+			return node.node(ENCODING_PREF_NODE);
+		} catch (BackingStoreException e) {
+			// nodeExists failed
+			String message = Messages.resources_readingEncoding;
+			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
+		}
+		return null;
 	}
 
 	public void setCharsetFor(IPath resourcePath, String newCharset) throws CoreException {
@@ -235,7 +261,7 @@ public class CharsetManager implements IManager {
 		}
 		// for all other cases, we set a property in the corresponding project
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
-		Preferences encodingSettings = getPreferences(project);
+		Preferences encodingSettings = getPreferences(project, true);
 		if (newCharset == null || newCharset.trim().length() == 0)
 			encodingSettings.remove(getKeyFor(resourcePath));
 		else
