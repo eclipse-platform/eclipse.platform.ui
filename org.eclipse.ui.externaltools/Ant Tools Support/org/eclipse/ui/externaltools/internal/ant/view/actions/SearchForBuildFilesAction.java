@@ -43,14 +43,19 @@ public class SearchForBuildFilesAction extends Action {
 			final IFile[] files= dialog.getResults();
 			final boolean includeErrorNodes= dialog.getIncludeErrorResults();
 			final ProgressMonitorDialog progressDialog= new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
+			final ProjectNode[] existingProjects= view.getProjects();
 			try {
 				progressDialog.run(true, true, new IRunnableWithProgress() {
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						monitor.beginTask("Processing search results", files.length);
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
-							String fileName= files[i].getLocation().toString();
-							monitor.subTask(MessageFormat.format("Adding {0}", new String[] {fileName}));
-							final ProjectNode project= new ProjectNode(fileName);
+							String buildFileName= files[i].getLocation().toString();
+							monitor.subTask(MessageFormat.format("Adding {0}", new String[] {buildFileName}));
+							if (alreadyAdded(buildFileName)) {
+								// Don't parse projects that have already been added.
+								continue;
+							}
+							final ProjectNode project= new ProjectNode(buildFileName);
 							// Force the project to be parsed so the error state is set.
 							project.getName();
 							monitor.worked(1);
@@ -62,6 +67,19 @@ public class SearchForBuildFilesAction extends Action {
 								});
 							}
 						}
+					}
+					/**
+					 * Returns whether or not the given build file already
+					 * exists in the ant view.
+					 */
+					private boolean alreadyAdded(String buildFileName) {
+						for (int j = 0; j < existingProjects.length; j++) {
+							ProjectNode existingProject = existingProjects[j];
+							if (existingProject.getBuildFileName().equals(buildFileName)) {
+								return true;
+							}
+						}
+						return false;
 					}
 				});
 			} catch (InvocationTargetException e) {

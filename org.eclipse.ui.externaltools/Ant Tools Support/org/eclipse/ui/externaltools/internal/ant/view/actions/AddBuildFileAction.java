@@ -41,7 +41,16 @@ public class AddBuildFileAction extends Action {
 		if (file == null) {
 			return;
 		}
-		ProjectNode project= new ProjectNode(file.getLocation().toString());
+		String buildFileName= file.getLocation().toString();
+		ProjectNode[] existingProjects= view.getProjects();
+		for (int j = 0; j < existingProjects.length; j++) {
+			ProjectNode existingProject = existingProjects[j];
+			if (existingProject.getBuildFileName().equals(buildFileName)) {
+				// Don't parse projects that have already been added.
+				return;
+			}
+		}
+		ProjectNode project= new ProjectNode(buildFileName);
 		view.addProject(project);
 	}
 
