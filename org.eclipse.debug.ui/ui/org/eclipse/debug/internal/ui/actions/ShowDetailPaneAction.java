@@ -10,6 +10,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -22,6 +23,8 @@ public class ShowDetailPaneAction extends Action {
 		setVariablesView(view);
 		setToolTipText(ActionMessages.getString("ShowDetailPaneAction.Show_detail_pane_2")); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE));
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE));
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ShowDetailPaneAction"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION);
 	}

@@ -67,7 +67,10 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_ACT_RUN, CTOOL + "run_exc.gif"); //$NON-NLS-1$
 
 		//menus
-
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_CHANGE_VARIABLE_VALUE, LOCALTOOL + "changevariablevalue_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_CHANGE_VARIABLE_VALUE, DLCL + "changevariablevalue_co.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_CHANGE_VARIABLE_VALUE, ELCL + "changevariablevalue_co.gif"); //$NON-NLS-1$
+		
 		//Local toolbars
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_RESUME, LOCALTOOL + "resume_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_SUSPEND, LOCALTOOL + "suspend_co.gif"); //$NON-NLS-1$
@@ -85,6 +88,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_ALL, LOCALTOOL + "rem_all_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_RELAUNCH, LOCALTOOL + "relaunch_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_COPY, LOCALTOOL + "copy_edit.gif"); //$NON-NLS-1$
+		declareRegistryImage(IDebugUIConstants.IMG_LCL_DETAIL_PANE, LOCALTOOL + "toggledetailpane_co.gif"); //$NON-NLS-1$
 			
 		// disabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESUME, DLCL + "resume_co.gif"); //$NON-NLS-1$
@@ -104,6 +108,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_INSPECT, DLCL + "inpsect_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH, DLCL + "relaunch_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_COPY, DLCL + "copy_edit.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE, ELCL + "toggledetailpane_co.gif"); //$NON-NLS-1$
 
 		// enabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESUME, ELCL + "resume_co.gif"); //$NON-NLS-1$
@@ -123,7 +128,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_INSPECT, ELCL + "inpsect_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH, ELCL + "relaunch_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_COPY, ELCL + "copy_edit.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE, ELCL + "hidenav.gif"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE, ELCL + "toggledetailpane_co.gif"); //$NON-NLS-1$
 
 		//Object
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.gif"); //$NON-NLS-1$

@@ -298,6 +298,12 @@ public interface IDebugUIConstants {
 
 	/** Copy-to-clipboard action image identifier.*/
 	public static final String IMG_LCL_COPY= "IMG_LCL_COPY"; //$NON-NLS-1$
+	
+	/** Toggle detail pane action image identifier.*/
+	public static final String IMG_LCL_DETAIL_PANE= "IMG_LCL_DETAIL_PANE"; //$NON-NLS-1$
+	
+	/** Change variable value action image identifier.*/
+	public static final String IMG_LCL_CHANGE_VARIABLE_VALUE= "IMG_LCL_CHANGE_VARIABLE_VALUE"; //$NON-NLS-1$
 
 	
 	// Debug element images
