@@ -81,11 +81,13 @@ public class IgnoreAction extends Action {
 		IResource resource = node.getResource();
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		try {
-			return !cvsResource.isManaged();
+			if (cvsResource.isManaged()) return false;
+			if (cvsResource.isIgnored()) return false;
 		} catch (CVSException e) {
 			CVSUIPlugin.log(e.getStatus());
 			return false;
 		}
+		return true;
 	}
 	public void update() {
 		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();
