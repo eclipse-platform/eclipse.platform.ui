@@ -289,7 +289,7 @@ public abstract class AbstractTableInformationControl {
 					TableItem tItem = fTableViewer.getTable().getItem(new Point(e.x, e.y));
 					if (tItem != null) {
 						Menu menu = new Menu(fTableViewer.getTable());
-						MenuItem mItem = new MenuItem(menu, SWT.DEFAULT);
+						MenuItem mItem = new MenuItem(menu, SWT.NONE);
 						mItem.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
 						mItem.addSelectionListener(new SelectionAdapter() {
 							public void widgetSelected(SelectionEvent selectionEvent) {
