@@ -69,8 +69,10 @@ class DeadlockDetector {
 	private static int NO_STATE = 0;
 	//state variables in the graph
 	private static int WAITING_FOR_LOCK = -1;
+	//empty matrix
+	private static final int[][] EMPTY_MATRIX = new int[0][0];
 	//matrix of relationships between threads and locks
-	private int[][] graph = new int[0][0];
+	private int[][] graph = EMPTY_MATRIX;
 	//index is column in adjacency matrix for the lock
 	private final ArrayList locks = new ArrayList();
 	//index is row in adjacency matrix for the thread
@@ -499,14 +501,15 @@ class DeadlockDetector {
 	 * can be removed.
 	 */
 	private void reduceGraph(int row, ISchedulingRule lock) {
-		boolean[] emptyColumns = new boolean[locks.size()];
+		int numLocks = locks.size();
+		boolean[] emptyColumns = new boolean[numLocks];
 		Arrays.fill(emptyColumns, false);
 
 		/**
 		 * find all columns that could possibly be empty
 		 * (consist of locks which conflict with the given lock, or of locks which are rules)
 		 */
-		for (int j = 0; j < locks.size(); j++) {
+		for (int j = 0; j < numLocks; j++) {
 			if ((lock.isConflicting((ISchedulingRule) locks.get(j))) || !(locks.get(j) instanceof ILock))
 				emptyColumns[j] = true;
 		}
@@ -545,8 +548,15 @@ class DeadlockDetector {
 		if (rowEmpty)
 			lockThreads.remove(row);
 
-		//new graph (the list of locks and the list of threads are  already updated)
-		int[][] temp = new int[lockThreads.size()][locks.size()];
+		//new graph (the list of locks and the list of threads are already updated)
+		final int numThreads = lockThreads.size();
+		numLocks = locks.size();
+		//optimize empty graph case
+		if (numThreads == 0 && numLocks == 0) {
+			graph = EMPTY_MATRIX;
+			return;
+		}
+		int[][] tempGraph = new int[numThreads][numLocks];
 
 		//the number of rows we need to skip to get the correct entry from the old graph
 		int numRowsSkipped = 0;
@@ -570,13 +580,12 @@ class DeadlockDetector {
 				//need to break out of the outer loop
 				if (j >= graph[i].length - numColsSkipped)
 					break;
-				temp[i][j] = graph[i + numRowsSkipped][j + numColsSkipped];
+				tempGraph[i][j] = graph[i + numRowsSkipped][j + numColsSkipped];
 			}
 		}
-		graph = null;
-		graph = temp;
-		Assert.isTrue(lockThreads.size() == graph.length, "Rows and threads don't match."); //$NON-NLS-1$
-		Assert.isTrue(locks.size() == ((graph.length > 0) ? graph[0].length : 0), "Columns and locks don't match."); //$NON-NLS-1$
+		graph = tempGraph;
+		Assert.isTrue(numThreads == graph.length, "Rows and threads don't match."); //$NON-NLS-1$
+		Assert.isTrue(numLocks == ((graph.length > 0) ? graph[0].length : 0), "Columns and locks don't match."); //$NON-NLS-1$
 	}
 
 	/**
@@ -612,7 +621,14 @@ class DeadlockDetector {
 		// a new row and/or a new column was added to the graph.
 		// since new rows/columns are always added to the end, just transfer
 		// old entries to the new graph, with the same indices.
-		int[][] tempGraph = new int[lockThreads.size()][locks.size()];
+		final int newRows = lockThreads.size();
+		final int newCols = locks.size();
+		//optimize 0x0 and 1x1 matrices
+		if (newRows == 0 && newCols == 0) {
+			graph = EMPTY_MATRIX;
+			return;
+		}
+		int[][] tempGraph = new int[newRows][newCols];
 		for (int i = 0; i < graph.length; i++)
 			System.arraycopy(graph[i], 0, tempGraph[i], 0, graph[i].length);
 		graph = tempGraph;
