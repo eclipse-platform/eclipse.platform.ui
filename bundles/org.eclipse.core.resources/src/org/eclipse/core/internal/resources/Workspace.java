@@ -2104,11 +2104,4 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!status[0].isOK())
 			throw new ResourceException(status[0]);
 	}
-	/**
-	 * @deprecated
-	 */
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
-		run(action, rule, IResource.NONE, monitor);
-	}
-
 }

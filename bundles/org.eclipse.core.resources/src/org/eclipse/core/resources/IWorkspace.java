@@ -839,7 +839,10 @@ public interface IWorkspace extends IAdaptable {
 	 * running, the calling thread will be blocked until that change completes.
 	 * If the action attempts to make changes to the workspace that were not
 	 * specified in the scheduling rule, it will fail. If no scheduling rule is
-	 * supplied, then any attempt to change resources will fail.
+	 * supplied, then any attempt to change resources will fail.  If a non-<code>null</code>
+	 * scheduling rule is supplied, this operation must always support cancelation
+	 * in the case where this operation becomes blocked by a long running background
+	 * operation.
 	 * </p>
 	 * <p>
 	 * The AVOID_UPDATE flag controls whether periodic resource change
@@ -860,7 +863,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @param flags bit-wise or of flag constants (only AVOID_UPDATE is relevant
 	 * here)
 	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * reporting and cancellation are not desired
+	 * reporting and cancellation are not desired. 
 	 * @exception CoreException if the operation failed.
 	 * 
 	 * @see #AVOID_UPDATE
@@ -1383,9 +1386,4 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.1
 	 */
 	public IPathVariableManager getPathVariableManager();
-	/**
-	 * @deprecated Use run(IWorkspaceRunnable, ISchedulingRule, int,
-	 * IProgressMonitor). This method will be removed before the 3.0 release.
-	 */
-	public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException;
 }
