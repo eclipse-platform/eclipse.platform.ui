@@ -2671,14 +2671,20 @@ public class TextViewer extends Viewer implements
 		fDocumentCommand.setEvent(e, modelRange);
 		customizeDocumentCommand(fDocumentCommand);
 		if (!fDocumentCommand.fillEvent(e, modelRange)) {
+			
+			boolean compoundChange= fDocumentCommand.getCommandCount() > 1;
 			try {
+				
 				fVerifyListener.forward(false);
 				
+				if (compoundChange && fUndoManager != null)
+					fUndoManager.beginCompoundChange();
+								
 				if (fSlaveDocumentManager != null) {
 					IDocument visible= getVisibleDocument();
 					try {
 						fSlaveDocumentManager.setAutoExpandMode(visible, true);
-				fDocumentCommand.execute(getDocument());
+						fDocumentCommand.execute(getDocument());
 					} finally {
 						fSlaveDocumentManager.setAutoExpandMode(visible, false);
 					}
@@ -2711,10 +2717,17 @@ public class TextViewer extends Viewer implements
 					fTextWidget.showSelection();
 				}
 			} catch (BadLocationException x) {
+				
 				if (TRACE_ERRORS)
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
+					
 			} finally {
+				
+				if (compoundChange && fUndoManager != null)
+					fUndoManager.endCompoundChange();
+								
 				fVerifyListener.forward(true);
+				
 			}
 		}	
 	}
