@@ -13,6 +13,7 @@ package org.eclipse.core.resources;
 import java.io.InputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 /**
  * Files are leaf resources which contain data.
@@ -471,7 +472,27 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 */
 	public String getCharset(boolean checkImplicit) throws CoreException;
 
+	/**
+	 * Returns a description for this file's current contents. Returns 
+	 * <code>null</code> if a description cannot be obtained.
+	 * <p>
+	 * This method produces the same observable effect as calling
+	 * <code>getDescriptionFor(getContents(), getName(), IContentDescription.ALL)</code> 
+	 * on <code>IContentTypeManager</code>, but provides better 
+	 * opportunities for improved performance. Therefore, when manipulating 
+	 * <code>IFile</code>s, clients should call this method instead of 
+	 * <code>IContentTypeManager.getDescriptionFor</code>. 
+	 * </p>
+	 *  
+	 * @return a description for this file's current contents, or 
+	 * <code>null</code>
+	 * @throws CoreException
+	 * @see IContentDescription
+	 * @see IContentTypeManager#getDescriptionFor(InputStream, QualifiedName[])
+	 * @since 3.0
+	 */
 	public IContentDescription getContentDescription() throws CoreException;
+
 	/**
 	 * Returns an open input stream on the contents of this file.
 	 * This refinement of the corresponding <code>IStorage</code> method 
