@@ -216,7 +216,6 @@ public class BookmarkView extends MarkerView {
 	 */
 	protected void updateFilterSelection(IResource[] resources) {
 		bookmarkFilter.setFocusResource(resources);
-		refresh();
 	}
 
 }

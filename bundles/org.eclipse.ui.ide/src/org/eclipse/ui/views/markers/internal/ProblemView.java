@@ -261,7 +261,6 @@ public class ProblemView extends MarkerView {
 	 */
 	protected void updateFilterSelection(IResource[] resources) {
 		problemFilter.setFocusResource(resources);
-		refresh();
 	}
 
 }

@@ -524,8 +524,9 @@ public abstract class MarkerView extends TableView {
 	void updateFocusResource(IResource[] resources) {
 		boolean updateNeeded = updateNeeded(focusResources, resources);
 		focusResources = resources;
+		updateFilterSelection(resources);
 		if (updateNeeded) {
-			updateFilterSelection(resources);
+			refresh();
 		}
 	}
 

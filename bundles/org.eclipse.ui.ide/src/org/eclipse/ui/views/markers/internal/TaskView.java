@@ -310,6 +310,5 @@ public class TaskView extends MarkerView {
 	 */
 	protected void updateFilterSelection(IResource[] resources) {
 		taskFilter.setFocusResource(resources);
-		refresh();
 	}
 }
