@@ -200,12 +200,12 @@ public class ContentTypeCatalog {
 		final List selected = new ArrayList(5);
 		// files associated by name should appear before those associated by extension		
 		Set allByFileName = (Set) fileNames.get(FileSpec.getMappingKeyFor(fileName));
-		collectMatchingByName(allByFileName, selected, fileName, IContentType.FILE_NAME_SPEC, false);
+		collectMatchingByName(allByFileName, selected, fileName, IContentType.FILE_NAME_SPEC);
 		int boundary = selected.size();
 		final String fileExtension = ContentTypeManager.getFileExtension(fileName);
 		if (fileExtension != null) {
 			Set allByFileExtension = (Set) fileExtensions.get(FileSpec.getMappingKeyFor(fileExtension));
-			collectMatchingByName(allByFileExtension, selected, fileExtension, IContentType.FILE_EXTENSION_SPEC, true);
+			collectMatchingByName(allByFileExtension, selected, fileExtension, IContentType.FILE_EXTENSION_SPEC);
 		}
 		IContentType[] result = (IContentType[]) selected.toArray(new IContentType[selected.size()]);
 		if (sortingPolicy == null)
@@ -217,7 +217,7 @@ public class ContentTypeCatalog {
 		return result;
 	}
 
-	private void collectMatchingByName(Collection source, final Collection destination, final String fileSpecText, final int fileSpecType, final boolean checkDuplicates) {
+	private void collectMatchingByName(Collection source, final Collection destination, final String fileSpecText, final int fileSpecType) {
 		if (source == null || source.isEmpty())
 			return;
 		for (Iterator i = source.iterator(); i.hasNext();) {
@@ -225,9 +225,12 @@ public class ContentTypeCatalog {
 			internalAccept(new ContentTypeVisitor() {
 				public int visit(ContentType type) {
 					if (type.hasAnyFileSpec())
+						// this content type has its own file specs
 						if (!type.hasFileSpec(fileSpecText, fileSpecType))
+							// but it does not match the file name - do not look into its children
 							return RETURN;
-					if (!checkDuplicates || !destination.contains(type))
+					// we have got a candidate, make sure we don't add it twice (e.g. for file name and file extension)
+					if (!destination.contains(type))
 						destination.add(type);
 					return CONTINUE;
 				}
@@ -368,7 +371,7 @@ public class ContentTypeCatalog {
 
 	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
 		if (!root.isValid() || root.isAlias(this))
-			return false;;
+			return false;
 		int result = visitor.visit(root);
 		switch (result) {
 			// stop traversing the tree
