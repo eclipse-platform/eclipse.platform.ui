@@ -350,7 +350,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	public IAntClasspathEntry[] getDefaultAntHomeEntries() {
 		if (defaultAntHomeEntries== null) {
-			List result = new ArrayList(2);
+			List result = new ArrayList(29);
 			Plugin antPlugin= Platform.getPlugin("org.apache.ant"); //$NON-NLS-1$
 			if (antPlugin != null) {
 				IPluginDescriptor descriptor = antPlugin.getDescriptor(); 
@@ -894,7 +894,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void initializePluginClassLoaders() {
 		pluginClassLoaders = new ArrayList(10);
-		// ant.core should always be present (provides access to Xerces as well)
+		// ant.core should always be present
 		pluginClassLoaders.add(Platform.getPlugin(AntCorePlugin.PI_ANTCORE).getDescriptor().getPluginClassLoader());
 	}
 
