@@ -53,8 +53,20 @@ public final class ActiveShellExpression extends Expression {
 		this.activeShell = activeShell;
 	}
 
+	/**
+	 * Evaluates this expression. If the active shell defined by the context
+	 * matches the shell from this expression, then this evaluates to
+	 * <code>EvaluationResult.TRUE</code>. Similarly, if the active workbench
+	 * window shell defined by the context matches the shell from this
+	 * expression, then this evaluates to <code>EvaluationResult.TRUE</code>.
+	 * 
+	 * @param context
+	 *            The context from which the current state is determined; must
+	 *            not be <code>null</code>.
+	 * @return <code>EvaluationResult.TRUE</code> if the shell is active;
+	 *         <code>EvaluationResult.FALSE</code> otherwise.
+	 */
 	public final EvaluationResult evaluate(final IEvaluationContext context) {
-
 		if (activeShell != null) {
 			Object value = context.getVariable(ISources.ACTIVE_SHELL_NAME);
 			if (!activeShell.equals(value)) {

@@ -69,6 +69,18 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 		this.activeSite = activeSite;
 	}
 
+	/**
+	 * Evaluates this expression. This tests the three conditions against the
+	 * current state of the application (as defined by <code>context</code>).
+	 * If a condition is <code>null</code>, then it matches any possible
+	 * value (i.e., it is not tested at all).
+	 * 
+	 * @param context
+	 *            The context providing the current workbench state; must not be
+	 *            <code>null</code>.
+	 * @return <code>EvaluationResult.TRUE</code> if the conditions all
+	 *         matches; <code>EvaluationResult.FALSE</code> otherwise.
+	 */
 	public final EvaluationResult evaluate(final IEvaluationContext context) {
 		if (activePartId != null) {
 			final Object value = context.getVariable(ISources.ACTIVE_PART_NAME);
