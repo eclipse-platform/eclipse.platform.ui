@@ -1023,16 +1023,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             return;
         }
 
-        Rectangle initialBounds = null;
-        Control ctrl = getControl();
-        
-        // If this stack is visible, animate the transition
-        if (ctrl != null && !isDisposed()) {
-            initialBounds = Geometry.toDisplay(ctrl.getParent(), getBounds());
-        }
-        // Note: leave initialBounds set to null if we're not animating -- we'll check for this at
-        // the end of the method
-        
         int oldState = presentationSite.getState();
 
         if (current != null) {
@@ -1061,13 +1051,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             if (page != null) {
                 page.refreshActiveView();
             }
-        }
-
-        // InitialBounds will be set to null if we're not supposed to show an animation
-        if (initialBounds != null) {
-	        Rectangle finalBounds = Geometry.toDisplay(ctrl.getParent(), getBounds());
-	        RectangleAnimation animation = new RectangleAnimation(getWorkbenchWindow().getShell(), initialBounds, finalBounds);
-	        animation.schedule(1);
         }
     }
 
