@@ -82,6 +82,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 		IWizardPage page = fWizardDialog.getCurrentPage();
 		IWizardPage defaultEditPage = registry.getDefaultWorkingSetPage();
+		String defaultEditPageClassName = defaultEditPage.getClass().getName(); 
 		assertTrue((page instanceof WorkingSetTypePage) == fWorkingSetDescriptors.length > 1);
 
 		if (page instanceof WorkingSetTypePage) {
@@ -94,9 +95,9 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 			TableItem[] items = table.getItems();
 			String workingSetName = null;
 			for (int descriptorIndex = 0; descriptorIndex < fWorkingSetDescriptors.length; descriptorIndex++) {
-				Class pageClass = Class.forName(fWorkingSetDescriptors[descriptorIndex].getPageClassName());
-				if (pageClass == defaultEditPage.getClass()) {
-					workingSetName = fWorkingSetDescriptors[descriptorIndex].getName();
+				WorkingSetDescriptor descriptor = fWorkingSetDescriptors[descriptorIndex]; 
+				if (descriptor.getPageClassName() == defaultEditPageClassName) {
+					workingSetName = descriptor.getName();
 					break;
 				}
 			}
