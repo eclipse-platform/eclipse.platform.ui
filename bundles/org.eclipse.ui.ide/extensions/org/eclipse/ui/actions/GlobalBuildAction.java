@@ -10,20 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -153,6 +150,8 @@ private String getOperationMessage() {
 	else
 		return IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildAllOperationTitle"); //$NON-NLS-1$
 }
+
+
 /**
  * Builds all projects within the workspace. Does
  * not save any open editors.
@@ -166,14 +165,18 @@ public void doBuild() {
  */
 /* package */ void doBuildOperation() {
 	
-	final MultiStatus status = new MultiStatus(
-		PlatformUI.PLUGIN_ID,
-		0,
-		IDEWorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
-		null);
-
-	IRunnableWithProgress op = new IRunnableWithProgress() {
-		public void run(IProgressMonitor monitor) {
+	Job buildJob = new Job(IDEWorkbenchMessages.getString("GlobalBuildAction.jobTitle")){
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			
+			final MultiStatus status = new MultiStatus(
+					PlatformUI.PLUGIN_ID,
+					0,
+					IDEWorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
+					null);
+			
 			monitor.beginTask("", 1); //$NON-NLS-1$
 			// Fix for bug 31768 - Don't provide a task name in beginTask
 			// as it will be appended to each subTask message. Need to
@@ -189,35 +192,14 @@ public void doBuild() {
 			finally {
 				monitor.done();
 			}
+			
+			return status;
 		}
 	};
 	
-	try {
-		new ProgressMonitorDialog(getShell()).run(true, true, op);
-	}
-	catch (InterruptedException e) {
-		// do nothing
-	}
-	catch (InvocationTargetException e) {
-		// Unexpected runtime exceptions
-		IDEWorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e.getTargetException());//$NON-NLS-2$//$NON-NLS-1$
-		MessageDialog.openError(
-			getShell(), 
-			IDEWorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
-			IDEWorkbenchMessages.format(
-				"GlobalBuildAction.internalError", //$NON-NLS-1$
-				new Object[] {e.getTargetException().getMessage()}));
-		return;
-	}
-
-	// If errors occurred, open an error dialog
-	if (!status.isOK()) {
-		ErrorDialog.openError(
-			getShell(),
-			IDEWorkbenchMessages.getString("GlobalBuildAction.problemTitle"), //$NON-NLS-1$
-			null, // no special message
-			status);
-	}
+	buildJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+	buildJob.schedule();
+	
 }
 /**
  * Returns an array of all projects in the workspace
