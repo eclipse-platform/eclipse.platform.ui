@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point is used to define presentation properties of markers in the Default Text Editor. Extensions provided for this extension point can be accessed using org.eclipse.ui.texteditor.MarkerAnnotationPreferences.
       </documentation>
    </annotation>
 
