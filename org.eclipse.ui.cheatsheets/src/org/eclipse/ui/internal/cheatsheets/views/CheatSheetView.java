@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -89,8 +88,6 @@ public class CheatSheetView extends ViewPart {
 
 	//Composites
 	private Composite parent;
-//	private Composite infoArea; 
-//	private ScrolledComposite scrolledComposite;
 
 	private Cursor busyCursor;
 	
@@ -199,7 +196,7 @@ public class CheatSheetView extends ViewPart {
 //				fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
 				currentItem = nextItem;
 			}
-			updateScrolledComposite();
+
 			scrollIfNeeded();
 		} else if (index == viewItemList.size()) {
 			saveCurrentSheet();
@@ -208,10 +205,6 @@ public class CheatSheetView extends ViewPart {
 		}
 
 		saveCurrentSheet();
-// TODO: LP - Needed? 20040321 
-//		scrolledComposite.layout(true);
-//		infoArea.layout(true);
-//		layoutMyItems();
 	}
 
 	/*package*/ void advanceSubItem(ImageHyperlink mylabel, boolean markAsCompleted, int subItemIndex) {
@@ -263,13 +256,8 @@ public class CheatSheetView extends ViewPart {
 			return;
 		}
 
-		updateScrolledComposite();
 		scrollIfNeeded();
 		saveCurrentSheet();
-// TODO: LP - Needed? 20040321 
-//		scrolledComposite.layout(true);
-//		infoArea.layout(true);
-//		layoutMyItems();
 	}
 
 	private void callDisposeOnViewElements() {
@@ -278,9 +266,6 @@ public class CheatSheetView extends ViewPart {
 		for (int i = 0; i < myitems.length; i++) {
 			myitems[i].dispose();
 		}
-		
-//		infoArea = null;
-//		scrolledComposite = null;
 
 		if(errorPage != null) {
 			errorPage.dispose();
@@ -534,7 +519,6 @@ public class CheatSheetView extends ViewPart {
 //			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, getViewItemArray()[0]);
 		}
 
-		updateScrolledComposite();
 		scrollIfNeeded();
 		savedProps = null;
 	}
@@ -548,7 +532,7 @@ public class CheatSheetView extends ViewPart {
 
 	private void clearIcons(ViewItem[] myview) {
 		for (int i = 0; i < myview.length; i++) {
-			if (myview[i].isCompleted() || myview[i].expanded || myview[i].isSkipped())
+			if (myview[i].isCompleted() || myview[i].isExpanded() || myview[i].isSkipped())
 				if (i > 0)
 					 ((CoreItem) myview[i]).setIncomplete();
 				else
@@ -562,7 +546,7 @@ public class CheatSheetView extends ViewPart {
 		try {
 			for (int i = items.length - 1; i >= 0; i--) {
 
-				if (i != currentItemNum && items[i].expanded) {
+				if (i != currentItemNum && items[i].isExpanded()) {
 					items[i].setCollapsed();
 					if (fromAction)
 						expandRestoreList.add(Integer.toString(i));
@@ -650,9 +634,6 @@ public class CheatSheetView extends ViewPart {
 
 		busyCursor = new Cursor(display, SWT.CURSOR_WAIT);
 
-//TODO: Port problem!
-//		FastViewHack.enableFollowingFastViewOnly(this);
-
 		if (!actionBarContributed) {
 			contributeToActionBars();
 			actionBarContributed = true;
@@ -683,45 +664,6 @@ public class CheatSheetView extends ViewPart {
 			parent.dispose();
 
 	}
-
-	/* LP-item event */
-//	private void fireManagerItemEvent(int eventType, ViewItem currentItem) {
-//		String mid = null;
-//		String subid = null;
-//		if (currentItem.contentItem instanceof ContentItem)
-//			mid = ((ContentItem) currentItem.contentItem).getID();
-//		else if (currentItem.contentItem instanceof ContentItemWithSubItems) {
-//			mid = ((ContentItemWithSubItems) currentItem.contentItem).getID();
-//		}
-//		getCheatsheetManager().fireEvent(new CheatSheetItemEvent(eventType, currentID, mid, subid, getCheatsheetManager()));
-//	}
-
-	/* LP-subitem event */
-//	private void fireManagerSubItemEvent(int eventType, ViewItem currentItem, String subItemID) {
-//		String mid = null;
-//		String subid = subItemID;
-//		if (currentItem.contentItem instanceof ContentItem)
-//			mid = ((ContentItem) currentItem.contentItem).getID();
-//		else if (currentItem.contentItem instanceof ContentItemWithSubItems) {
-//			mid = ((ContentItemWithSubItems) currentItem.contentItem).getID();
-//		}
-//		if (contentElement != null && currentID != null)
-//			getCheatsheetManager().fireEvent(new CheatSheetItemEvent(eventType, currentID, mid, subid, getCheatsheetManager()));
-//	}
-
-//	private void fireEvent(int eventType) {
-//		getCheatsheetManager().fireEvent(new CheatSheetEvent(eventType, currentID, getCheatsheetManager()));
-//	}
-
-// LP - Needed? 20040321
-//	/**
-//	 * Returns the title obtained from the parser
-//	 */
-//	private String getBannerTitle() {
-//		if (parser.getTitle() == null)
-//			return ""; //$NON-NLS-1$
-//		return parser.getTitle();
-//	}
 
 	private CheatSheetManager getCheatsheetManager() {
 		if (manager == null) {
@@ -819,14 +761,6 @@ public class CheatSheetView extends ViewPart {
 		this.memento = memento;
 	}
 	
-	public Control getControl() {
-		if (cheatSheetPage.getControl()!=null)
-			return cheatSheetPage.getControl();
-		if (errorPage.getControl()!=null)
-			return errorPage.getControl();
-		return null;
-	}
-
 	private void initCheatSheetView() {
 
 		//Re-initialize list to store items collapsed by expand/restore action on c.s. toolbar.
@@ -848,14 +782,11 @@ public class CheatSheetView extends ViewPart {
 		// add checker here in case file could not be parsed.  No file parsed, no composite should
 		// be created.
 		boolean parsedOK = readFile();
-//		parsedOK = false;
 		if(!parsedOK){
 			// Exception thrown during parsing.
 			// Something is wrong with the Cheat sheet content file at the xml level.
 			errorPage = new ErrorPage();
 			errorPage.createPart(parent);
-//			infoArea = errorPage.getInfoArea();
-//			scrolledComposite = errorPage.getScrolledComposite();
 			hascontent = true;
 			parent.layout(true);
 			return;
@@ -863,8 +794,6 @@ public class CheatSheetView extends ViewPart {
 		
 		cheatSheetPage = new CheatSheetPage(parser, viewItemList, this);
 		cheatSheetPage.createPart(parent);
-//	  	infoArea = cheatSheetPage.getInfoArea();
-//	  	scrolledComposite = cheatSheetPage.getScrolledComposite();
 		hascontent = true;
 		listOfContentItems = parser.getItems();
 
@@ -874,14 +803,8 @@ public class CheatSheetView extends ViewPart {
 
 		parent.layout(true);
 
-//		if (currentItem != null)
-//			currentItem.getExpandToggle().setFocus();
-
-		//		System.out.println("Firing open event!");
-//		scrolledComposite.layout(true);
-//		infoArea.layout(true);
-// TODO: LP - Needed? 20040321 
-//		layoutMyItems();
+		if (currentItem != null)
+			currentItem.getMainItemComposite().setFocus();
 	}
 	
 	private void killDynamicData(ViewItem[] myitems){
@@ -896,18 +819,6 @@ public class CheatSheetView extends ViewPart {
 			}
 					
 		}
-	}
-
-	/*package*/ void layout(){
-// TODO: LP - Needed? 20040321 
-//		infoArea.layout(true);
-	}
-	
-	private void layoutMyItems() {
-		ViewItem[] items = getViewItemArray();
-//		for (int i = 0; i < items.length; i++) {
-//			items[i].getCheckAndMainItemComposite().layout(true);
-//		}
 	}
 
 	/**
@@ -937,7 +848,7 @@ public class CheatSheetView extends ViewPart {
 		try {
 			for (int i = 0; i < expandRestoreList.size(); i++) {
 				int index = Integer.parseInt(((String) expandRestoreList.get(i)));
-				if (!items[index].expanded) {
+				if (!items[index].isExpanded()) {
 					items[index].setExpanded();
 				}
 			}
@@ -1210,8 +1121,8 @@ public class CheatSheetView extends ViewPart {
 //		if (infoArea != null && !infoArea.isDisposed())
 //			infoArea.setFocus();
 		//need this to have current item selected. (Assumes that when you reactivate the view you will work with current item.)
-//		if (currentItem != null)
-//			currentItem.getExpandToggle().setFocus();
+		if (currentItem != null)
+			currentItem.getMainItemComposite().setFocus();
 	}
 
 
@@ -1228,13 +1139,5 @@ public class CheatSheetView extends ViewPart {
 			saveCurrentSheet();
 		}
 
-	}
-
-	/*package*/ void updateScrolledComposite() {
-//		ScrolledComposite sc = scrolledComposite;
-//		if(infoArea == null) return;
-//		Point newSize = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-//		infoArea.setSize(newSize);
-//		scrolledComposite.setMinSize(newSize);
 	}
 }

@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -33,15 +32,12 @@ import org.eclipse.ui.internal.cheatsheets.data.Item;
 public class CoreItem extends ViewItem {
 	protected Composite bodyWrapperComposite;
 	protected boolean buttonsHandled = false;
-//	protected boolean complete;
 	protected ImageHyperlink completeButton;
 	protected Image completeImage;
 	private ArrayList listOfSubItemCompositeHolders;
 	protected Image restartImage;
-//	protected boolean skip;
 	protected ImageHyperlink skipButton;
 	protected Image skipImage;
-//	protected boolean start;
 	protected ImageHyperlink startButton;
 	protected Image startImage;
 
@@ -51,8 +47,8 @@ public class CoreItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public CoreItem(Composite parent, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
-		super(parent, contentItem, itemColor, theview);
+	public CoreItem(ScrolledForm form, Composite parent, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
+		super(form, parent, contentItem, itemColor, theview);
 	}
 
 	/**
@@ -70,25 +66,6 @@ public class CoreItem extends ViewItem {
 		if (restartImage != null)
 			restartImage.dispose();
 	}
-
-/* TODO: Remove this! */
-//	private int[] getActionCodeArray(String actionPhrase) {
-//		int[] actionCodes = { -1, -1, -1 };
-//		StringTokenizer mytoken = new StringTokenizer(actionPhrase, ","); //$NON-NLS-1$
-//
-//		for (int j = 0; j < 3; j++) {
-//			if (mytoken.hasMoreTokens()) {
-//				String mytokenstring = mytoken.nextToken();
-//				//System.out.println("Token"+mytokenstring);
-//				try {
-//					actionCodes[j] = Integer.parseInt(mytokenstring);
-//				} catch (Exception e) {
-//				}
-//			}
-//		}
-//
-//		return actionCodes;
-//	}
 
 	public ArrayList getListOfSubItemCompositeHolders() {
 		return listOfSubItemCompositeHolders;
@@ -131,33 +108,6 @@ public class CoreItem extends ViewItem {
 		GridData filldata = new GridData();
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
-
-/* TODO: Remove this! */
-//		start = false;
-//		complete = false;
-//		skip = false;
-//		int[] actionCodes = null;
-//
-//		//Get the action codes to display buttons for.
-//
-//		actionCodes = getActionCodeArray(((Item) contentItem).getButtonCodes());
-//
-//
-//		
-//
-//		//Add the icons in order.  Check each one when you add it.
-//		for (int i = 0; i < actionCodes.length; i++) {
-//			if (actionCodes[i] == 0) {
-//				//perform
-//				start = true;
-//			} else if (actionCodes[i] == 1) {
-//				//continue/skip
-//				skip = true;
-//			} else if (actionCodes[i] == 2) {
-//				//done	
-//				complete = true;
-//			}
-//		}
 
 		if (((Item)contentItem).isPerform()) {
 			startButton = new ImageHyperlink(buttonComposite, SWT.NULL);
@@ -282,27 +232,6 @@ public class CoreItem extends ViewItem {
 			//			StyleRange r = new StyleRange(0, label.getText().length(), null, null, SWT.BOLD);
 			//			label.setStyleRange(r);
 
-/* TODO: Remove this! */
-//			start = false;
-//			complete = false;
-//			skip = false;
-//
-//			//Get the action codes to display buttons for.
-//			int[] actionCodes = getActionCodeArray(sub.getButtonCodes());
-//
-//			//Add the icons in order.  Check each one when you add it.
-//			for (int j = 0; j < actionCodes.length; j++) {
-//				if (actionCodes[j] == 0) {
-//					//perform
-//					start = true;
-//				} else if (actionCodes[j] == 1) {
-//					//continue/skip
-//					skip = true;
-//				} else if (actionCodes[j] == 2) {
-//					//done	
-//					complete = true;
-//				}
-//			}
 			final int fi = i;
 
 			if (sub.isPerform()) {
@@ -393,14 +322,6 @@ public class CoreItem extends ViewItem {
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		restartImage = imageDescriptor.createImage();
 	}
-	/**
-	 * Returns the complete.
-	 * @return boolean
-	 */
-	//	public boolean isComplete() {
-	//		//System.out.println("in isComplete()	"+hashCode()+"	"+titleText.getText()+"	"+start+"	"+skip+"	"+complete);
-	//		return complete;
-	//	}
 
 	/**
 	 * @param composite

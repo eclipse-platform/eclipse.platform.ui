@@ -1,9 +1,13 @@
-/*
- * Created on Mar 22, 2004
- *
- * @todo To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2002, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import org.eclipse.jface.resource.*;
@@ -16,12 +20,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
 
-/**
- * @author lparsons
- *
- * @todo To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public abstract class Page {
 	protected Composite cheatSheetComposite;
 	protected ScrolledComposite scrolledComposite;
@@ -38,7 +36,7 @@ public abstract class Page {
 	private final RGB topRGB = new RGB(217, 217, 252);
 
 	protected FormToolkit toolkit;
-	public static ScrolledForm form;
+	protected ScrolledForm form;
 
 	public Page() {
 	}
@@ -59,10 +57,6 @@ public abstract class Page {
 		createInfoArea(cheatSheetComposite);
 	}
 	
-	public Control getControl() {
-		return cheatSheetComposite;
-	}
-
 	/**
 	 * Creates the main composite area of the view.
 	 *
@@ -70,31 +64,6 @@ public abstract class Page {
 	 * @return the created info area composite
 	 */
 	protected void createInfoArea(Composite parent) {
-		// Create the title area which will contain
-		// a title, message, and image.
-//		scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-//		GridData gridData = new GridData(GridData.FILL_BOTH);
-//		scrolledComposite.setLayoutData(gridData);
-//	
-//		//This infoArea composite is the composite for the items.
-//		//It is owned by the scrolled composite which in turn is owned
-//		//by the cheatSheetComposite.
-//		infoArea = new Composite(scrolledComposite, SWT.NONE);
-//		GridLayout layout = new GridLayout();
-//		layout.numColumns = 1;
-//		layout.marginHeight = 9;
-//		layout.marginWidth = 7;
-//		layout.verticalSpacing = 3;
-//		infoArea.setLayout(layout);
-//		gridData = new GridData(GridData.FILL_HORIZONTAL);
-//		infoArea.setLayoutData(gridData);
-//		infoArea.setBackground(backgroundColor);
-
-
-
-
-
-
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -140,16 +109,6 @@ public abstract class Page {
 	
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		messageLabel.setLayoutData(gridData);
-	
-		//		Point titleSize = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		//		Point newTitleSize = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		//		if(newTitleSize == null){
-		//			
-		//		}else{
-		//			
-		//		}
-		//		cheatsheetMinimumWidth = titleSize.x;
-		//		cheatsheetMinimumWidth = newTitleSize.x;
 	}
 
 	public void dispose() {
@@ -167,20 +126,6 @@ public abstract class Page {
 		if (cheatSheetComposite != null)
 			cheatSheetComposite.dispose();
 	}
-	/**
-	 * @return Returns the infoArea.
-	 * @todo Generated comment
-	 */
-//	public Composite getInfoArea() {
-//		return infoArea;
-//	}
-	/**
-	 * @return Returns the scrolledComposite.
-	 * @todo Generated comment
-	 */
-//	public ScrolledComposite getScrolledComposite() {
-//		return scrolledComposite;
-//	}
 	
 	protected void init(Display display) {
 		// Get the background color for the cheatsheet controls				

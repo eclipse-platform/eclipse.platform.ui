@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -42,14 +40,11 @@ public abstract class ViewItem {
 
 	protected Label bodyText;
 	private Composite bodyWrapperComposite;
-	private Cursor busyCursor;
 	protected Composite buttonComposite;
 
 	protected ArrayList buttonCompositeList;
 	private boolean buttonExpanded = true;
-//	private Composite checkAndMainItemComposite;
 	private Label checkDoneLabel;
-	private Image collapseImage;
 	private boolean completed = false;
 
 	private Image completeImage;
@@ -58,30 +53,26 @@ public abstract class ViewItem {
 	protected Color darkGrey;
 	private final RGB darkGreyRGB = new RGB(160, 192, 208);
 
-	protected boolean expanded = true;
-	private Image expandImage;
-
-//	private ToggleButton expandToggle;
 	private Image helpImage;
 	private final RGB HIGHLIGHT_RGB = new RGB(230, 230, 230);
 	private boolean isSkipped = false;
 	protected Color itemColor;
 	protected Color lightGrey;
-//	private Composite mainItemComposite;
 	private ExpandableComposite mainItemComposite;
 
 	private Composite parent;
 	private Image skipImage;
 	protected CheatSheetView theview;
 	private Composite titleComposite;
-	protected StyledText titleText;
 	protected Color white;
+	protected ScrolledForm form;
 
 	/**
 	 * Constructor for ViewItem.
 	 */
-	public ViewItem(Composite parent, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
+	public ViewItem(ScrolledForm form, Composite parent, IContainsContent contentItem, Color itemColor, CheatSheetView theview) {
 		super();
+		this.form = form;
 		this.parent = parent;
 		this.contentItem = contentItem;
 		this.itemColor = itemColor;
@@ -99,11 +90,6 @@ public abstract class ViewItem {
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		skipImage = imageDescriptor.createImage();
 
-		imageFileName = "icons/full/obj16/collapse_state.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		collapseImage = imageDescriptor.createImage();
-
 		imageFileName = "icons/full/obj16/complete_status.gif"; //$NON-NLS-1$
 		imageURL = mydesc.find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
@@ -113,13 +99,6 @@ public abstract class ViewItem {
 		imageURL = mydesc.find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		helpImage = imageDescriptor.createImage();
-
-		imageFileName = "icons/full/obj16/expand_state.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		expandImage = imageDescriptor.createImage();
-
-		busyCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_WAIT);
 
 		addItem();
 	}
@@ -131,46 +110,13 @@ public abstract class ViewItem {
 		Color bg = JFaceColors.getBannerBackground(display);
 		white = bg;
 
-		//		Get the images.****************************************************************
-
 		//		Set up the main composite for the item.******************************************
-//		checkAndMainItemComposite = new Composite(parent, SWT.NULL);
-//		TableWrapLayout checklayout = new TableWrapLayout();
-//		checklayout.numColumns = 2;
-//		GridLayout checklayout = new GridLayout(2, false);
-//		GridData checkdata = new GridData(GridData.FILL_HORIZONTAL);
-//		checkdata.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
-//		TableWrapData checkdata = new new TableWrapData(TableWrapData.FILL_GRAB);
-
-//		checklayout.marginHeight = 0;
-//		checklayout.marginWidth = 0;
-//		checklayout.verticalSpacing = 0;
-//		checkAndMainItemComposite.setBackground(white);
-//		checkAndMainItemComposite.setLayout(checklayout);
-//		checkAndMainItemComposite.setLayoutData(checkdata);
-
 		checkDoneLabel = new Label(parent, SWT.NULL);
 		checkDoneLabel.setText(" "); //$NON-NLS-1$
-
-//		GridData checkdonelabeldata = new GridData();
-//		checkdonelabeldata.verticalAlignment = GridData.BEGINNING;
-//		checkdonelabeldata.grabExcessVerticalSpace = true;
-//		checkdonelabeldata.widthHint = Math.max(completeImage.getBounds().width, skipImage.getBounds().width);
-//		checkDoneLabel.setLayoutData(checkdonelabeldata);
 		checkDoneLabel.setBackground(white);
 //		TableWrapData checkdonelabeldata = new TableWrapData();
 //		checkdonelabeldata.widthHint = Math.max(completeImage.getBounds().width, skipImage.getBounds().width);
 
-//		mainItemComposite = new Composite(checkAndMainItemComposite, SWT.NULL);
-//		GridLayout mylayout = new GridLayout(1, true);
-//		GridData mydata = new GridData(GridData.FILL_HORIZONTAL);
-//		mylayout.marginHeight = 0;
-//		mylayout.marginWidth = 0;
-//		mylayout.verticalSpacing = 0;
-//		mainItemComposite.setBackground(itemColor);
-
-//		mainItemComposite.setLayout(mylayout);
-//		mainItemComposite.setLayoutData(mydata);
 
 		mainItemComposite = new ExpandableComposite(parent, SWT.NULL, ExpandableComposite.TREE_NODE);
 		mainItemComposite.setBackground(itemColor);
@@ -178,15 +124,12 @@ public abstract class ViewItem {
 		String title = contentItem.getTitle();
 		if (title != null) {
 			mainItemComposite.setText(title);
-//		} else {
-//			mainItemComposite.setText(" "); //$NON-NLS-1$
 		}
-//		mainItemComposite.setText(title);
 
 		
 		mainItemComposite.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
-				Page.form.reflow(true);
+				form.reflow(true);
 			}
 		});
 		
@@ -199,49 +142,6 @@ public abstract class ViewItem {
 				AbstractItemExtensionElement[] eea = (AbstractItemExtensionElement[]) al.get(g);
 				number += eea.length;
 			}
-
-//		//		Set up the title composite for the item.*****************************************
-//		titleComposite = new Composite(mainItemComposite, SWT.NULL);
-//		mylayout = new GridLayout(number, false);
-//		mydata = new GridData(GridData.FILL_BOTH);
-
-//		titleComposite.setLayout(mylayout);
-//		titleComposite.setLayoutData(mydata);
-//		mylayout.marginWidth = 0;
-//		mylayout.marginHeight = 0;
-//		mylayout.verticalSpacing = 0;
-//		titleComposite.setBackground(itemColor);
-//
-//		//		Set the title bar composite content *********************************************
-//		expandToggle = new ToggleButton(titleComposite, SWT.NULL, expandImage, collapseImage);
-//		expandToggle.setFAccessibleDescription(contentItem.getText());
-//		expandToggle.setFAccessibleName(contentItem.getTitle() + " " + contentItem.getText()); //$NON-NLS-1$
-//		expandToggle.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				if (expandToggle.isCollapsed())
-//					setCollapsed();
-//				else
-//					setExpanded();
-//				theview.saveCurrentSheet();
-//			}
-//		});
-//		expandToggle.setBackground(itemColor);
-//
-//		titleText = new StyledText(titleComposite, SWT.BOLD | SWT.WRAP | SWT.READ_ONLY);
-//		String title = contentItem.getTitle();
-//		if (title != null) {
-//			titleText.setText(title);
-//		} else {
-//			titleText.setText(" "); //$NON-NLS-1$
-//		}
-//		titleText.getCaret().setVisible(false);
-//		GridData egridData = new GridData();
-//		egridData.verticalAlignment = GridData.BEGINNING;
-//		egridData.horizontalAlignment = GridData.FILL;
-//		egridData.grabExcessHorizontalSpace = true;
-//		titleText.setLayoutData(egridData);
-//		titleText.setBackground(itemColor);
-//		titleText.setEnabled(false);
 
 		//		Set up the title composite for the item.*****************************************
 		titleComposite = new Composite(mainItemComposite, SWT.NULL);
@@ -281,9 +181,7 @@ public abstract class ViewItem {
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					ImageHyperlink helpButton = (ImageHyperlink) e.widget;
-//					helpButton.setCursor(busyCursor);
 					openHelpTopic(contentItem.getHref());
-//					helpButton.setCursor(null);
 				}
 			});
 		}
@@ -293,31 +191,8 @@ public abstract class ViewItem {
 		mainItemComposite.setClient(bodyWrapperComposite);
 		TableWrapLayout wrapperLayout = new TableWrapLayout();
 		bodyWrapperComposite.setLayout(wrapperLayout);
-
-//		GridLayout wrapperLayout = new GridLayout();
-//		wrapperLayout.marginHeight = 0;
-//		wrapperLayout.marginWidth = 0;
-//		wrapperLayout.verticalSpacing = 0;
-//		GridData wrapperData = new GridData(GridData.FILL_HORIZONTAL);
-//		bodyWrapperComposite.setLayout(wrapperLayout);
-//		bodyWrapperComposite.setLayoutData(wrapperData);
 		bodyWrapperComposite.setBackground(itemColor);
 
-//		//		Set up the body composite, for the body of the item text.
-//		bodyComp = new Composite(bodyWrapperComposite, SWT.NULL);
-//		GridLayout bodylayout = new GridLayout(1, false);
-//		bodylayout.marginHeight = 0;
-//		bodylayout.marginWidth = 0;
-//		bodylayout.verticalSpacing = 0;
-//
-//		GridData bodyData = new GridData(GridData.FILL_HORIZONTAL);
-//		bodyData.grabExcessHorizontalSpace = true;
-//
-//		bodyComp.setLayout(bodylayout);
-//		bodyComp.setLayoutData(bodyData);
-//		bodyComp.setBackground(itemColor);
-//
-//		bodyText = new StyledText(bodyWrapperComposite, SWT.WRAP | SWT.READ_ONLY | SWT.NULL);
 		bodyText = new Label(bodyWrapperComposite, SWT.WRAP);
 
 		String btext = contentItem.getText();
@@ -328,12 +203,6 @@ public abstract class ViewItem {
 		}
 
 		//Set up the body text portion here.		
-//		GridData bgridData = new GridData();
-//		bgridData.verticalAlignment = GridData.BEGINNING;
-//		bgridData.horizontalAlignment = GridData.FILL;
-//		bgridData.grabExcessHorizontalSpace = true;
-//		bodyText.setLayoutData(bgridData);
-//		bodyText.setEnabled(false);
 		bodyText.setBackground(itemColor);
 		bodyText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 
@@ -348,9 +217,6 @@ public abstract class ViewItem {
 			handleButtons(bodyWrapperComposite);
 		}
 
-//		mainItemComposite.pack();
-//		mainItemComposite.layout(true);
-
 		setButtonsCollapsed();
 		setCollapsed();
 	}
@@ -363,20 +229,12 @@ public abstract class ViewItem {
 	}
 
 	public void dispose() {
-		if (busyCursor != null)
-			busyCursor.dispose();
 		if (lightGrey != null)
 			lightGrey.dispose();
 		if (darkGrey != null)
 			darkGrey.dispose();
-//		if (checkAndMainItemComposite != null)
-//			checkAndMainItemComposite.dispose();
 		if (checkDoneLabel != null)
 			checkDoneLabel.dispose();
-		if (titleText != null)
-			titleText.dispose();
-//		if (expandToggle != null)
-//			expandToggle.dispose();
 		if (bodyText != null)
 			bodyText.dispose();
 		if (buttonComposite != null)
@@ -389,10 +247,6 @@ public abstract class ViewItem {
 			mainItemComposite.dispose();
 		if (completeImage != null)
 			completeImage.dispose();
-		if (collapseImage != null)
-			collapseImage.dispose();
-		if (expandImage != null)
-			expandImage.dispose();
 		if (helpImage != null)
 			helpImage.dispose();
 		if (skipImage != null)
@@ -403,14 +257,6 @@ public abstract class ViewItem {
 			titleComposite.dispose();
 
 	}
-	/**
-	 * Returns the checkAndMainItemComposite.
-	 * @return Composite
-	 */
-	/*package*/
-//	Composite getCheckAndMainItemComposite() {
-//		return checkAndMainItemComposite;
-//	}
 
 	/**
 	 * @return
@@ -426,15 +272,6 @@ public abstract class ViewItem {
 	public IContainsContent getContentItem() {
 		return contentItem;
 	}
-
-	/**
-	 * Returns the expandToggle.
-	 * @return Label
-	 */
-	/*package*/
-//	ToggleButton getExpandToggle() {
-//		return expandToggle;
-//	}
 
 	/**
 	 * Returns the mainItemComposite.
@@ -470,16 +307,12 @@ public abstract class ViewItem {
 	}
 
 	public boolean isExpanded() {
-		return expanded;
+		return mainItemComposite.isExpanded();
 	}
 
 	/*package*/
 	boolean isSkipped() {
 		return isSkipped;
-	}
-
-	private void layoutBody() {
-//		bodyComp.layout(true);
 	}
 
 	/**
@@ -545,14 +378,14 @@ public abstract class ViewItem {
 			setButtonsExpanded();
 		setExpanded();
 		boldTitle();
-		layoutBody();
+		mainItemComposite.setFocus();
 //		getExpandToggle().setFocus();
 	}
 
 	/*package*/
 	void setAsNormalCollapsed() {
 		setColorAsCurrent(false);
-		if (expanded)
+		if (mainItemComposite.isExpanded())
 			setCollapsed();
 		unboldTitle();
 	}
@@ -566,7 +399,6 @@ public abstract class ViewItem {
 	private void setBodyColor(Color color) {
 		mainItemComposite.setBackground(color);
 		bodyWrapperComposite.setBackground(color);
-//		bodyComp.setBackground(color);
 
 		if (buttonComposite != null)
 			buttonComposite.setBackground(color);
@@ -605,7 +437,6 @@ public abstract class ViewItem {
 				parent.layout(true);
 				mainItemComposite.layout(true);
 				bodyWrapperComposite.layout(true);
-				theview.layout();
 			}
 
 	}
@@ -627,8 +458,6 @@ public abstract class ViewItem {
 			parent.layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
-			theview.layout();
-			theview.updateScrolledComposite();
 			theview.scrollIfNeeded();
 		}
 	}
@@ -636,21 +465,17 @@ public abstract class ViewItem {
 	//collapses the item
 	/*package*/
 	void setCollapsed() {
-		if (expanded) {
+		if (mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(false);
-			Page.form.reflow(true);
-//			bodyWrapperComposite.setVisible(false);
-//			expandToggle.setCollapsed(true);
+			form.reflow(true);
 
 //			GridData mydata = (GridData) bodyWrapperComposite.getLayoutData();
 //			mydata.heightHint = 0;
-			expanded = false;
+//			expanded = false;
 			parent.getParent().layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
-			theview.layout();
 
-			theview.updateScrolledComposite();
 			theview.scrollIfNeeded();
 		}
 	}
@@ -668,13 +493,8 @@ public abstract class ViewItem {
 	//marks the item as complete.
 	/*package*/
 	void setComplete() {
-		try {
-			completed = true;
-			checkDoneLabel.setImage(completeImage);
-//			checkAndMainItemComposite.layout(true);
-		} catch (Exception e) {
-			//			System.out.println("in set complete");	
-		}
+		completed = true;
+		checkDoneLabel.setImage(completeImage);
 
 	}
 
@@ -682,33 +502,22 @@ public abstract class ViewItem {
 	/*package*/
 	void setExpanded() {
 		// System.out.println("Item is already expanded? : " + expanded);
-		if (!expanded) {
+		if (!mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(true);
-			Page.form.reflow(true);
-//			bodyWrapperComposite.setVisible(true);
-//			expandToggle.setCollapsed(false);
-//
-//			GridData mydata = (GridData) bodyWrapperComposite.getLayoutData();
-//			mydata.heightHint = SWT.DEFAULT;
-			expanded = true;
+			form.reflow(true);
 
 			parent.getParent().layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
-			theview.layout();
-			theview.updateScrolledComposite();
 			theview.scrollIfNeeded();
-			//theview.saveCurrentSheet();
 		}
 	}
 
 	/*package*/
 	void setIncomplete() {
 		checkDoneLabel.setImage(null);
-//		checkAndMainItemComposite.layout(true);
 		completed = false;
 		setStartImage();
-		//setCollapsed();
 	}
 
 	/**
@@ -734,7 +543,6 @@ public abstract class ViewItem {
 		try {
 			isSkipped = true;
 			checkDoneLabel.setImage(skipImage);
-//			checkAndMainItemComposite.layout(true);
 		} catch (Exception e) {
 
 		}

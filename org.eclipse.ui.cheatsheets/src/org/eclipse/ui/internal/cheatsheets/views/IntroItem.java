@@ -15,7 +15,6 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -38,8 +37,8 @@ public class IntroItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public IntroItem(Composite parent, Item contentItem, Color itemColor, CheatSheetView theview) {
-		super(parent, contentItem, itemColor, theview);
+	public IntroItem(ScrolledForm form, Composite parent, Item contentItem, Color itemColor, CheatSheetView theview) {
+		super(form, parent, contentItem, itemColor, theview);
 
 	}
 
