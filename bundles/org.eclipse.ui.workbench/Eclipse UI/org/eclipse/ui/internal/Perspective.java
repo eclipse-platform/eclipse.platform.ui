@@ -1629,7 +1629,7 @@ public boolean isCloseable(IViewReference reference) {
 }
 
 /**
- * Returns whether the given view is closeable in this perspective.
+ * Returns whether the given view is moveable in this perspective.
  * 
  * @since 3.0
  */
