@@ -21,10 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.HelpEvent;
@@ -46,8 +43,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 
@@ -113,8 +113,8 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	//The id of the last page that was selected
 	private static String lastPreferenceId = null;
 
-	//The last known sash weights
-	private static int[] lastSashWeights = null;
+	//The last known tree width
+	private static int lastTreeWidth = 150;
 
 	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR; //$NON-NLS-1$
 	/**
@@ -126,7 +126,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif")); //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * The Cancel button.
 	 */
@@ -340,34 +340,64 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	protected Control createDialogArea(Composite parent) {
 		final Composite composite = (Composite) super.createDialogArea(parent);
-		((GridLayout) composite.getLayout()).numColumns = 1;
-		final SashForm form = new SashForm(composite, SWT.HORIZONTAL);
-		form.setLayoutData(new GridData(GridData.FILL_BOTH));
+		((GridLayout) composite.getLayout()).numColumns = 3;
+		final Control treeControl = createTreeAreaContents(composite);
 
-		createTreeAreaContents(form);
+		final Sash sash = new Sash(composite, SWT.VERTICAL);
+		sash.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		
+		// the following listener resizes the tree control based on sash deltas.
+		// If necessary, it will also grow/shrink the dialog.
+		sash.addListener(SWT.Selection, new Listener() {
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 */
+			public void handleEvent(Event event) {
+				if (event.detail == SWT.DRAG)
+					return;
 
-		Composite pageAreaComposite = new Composite(form, SWT.NONE);
+				int shift = event.x - sash.getBounds().x;
+				GridData data = (GridData) treeControl.getLayoutData();
+				int newWidthHint = data.widthHint + shift;
+				if (newWidthHint < 20)
+					return;
+				
+				Point computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point currentSize = getShell().getSize();
+				
+				// if the dialog wasn't of a custom size we know we can shrink 
+				// it if necessary based on sash movement.  
+				boolean customSize = !computedSize.equals(currentSize);
+				
+				data.widthHint = newWidthHint;
+				setLastTreeWidth(newWidthHint);
+				composite.layout(true);
+				
+				// recompute based on new widget size
+				computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				
+				// if the dialog was of a custom size then increase it only if 
+				// necessary.
+				if (customSize)   
+					computedSize.x = Math.max(computedSize.x, currentSize.x);					
+				
+				computedSize.y = Math.max(computedSize.y, currentSize.y);
+				
+				if (computedSize.equals(currentSize))
+					return;
+				
+				setShellSize(computedSize.x, computedSize.y);
+				lastShellSize = getShell().getSize();
+			}
+		});
+
+		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
+		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginHeight = 0;
 		layout.marginWidth = 10;
 		pageAreaComposite.setLayout(layout);
-
-		pageAreaComposite.addControlListener(new ControlListener() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
-			 */
-			public void controlMoved(ControlEvent e) {
-				// no-op
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
-			 */
-			public void controlResized(ControlEvent e) {
-				setFormWeights(form.getWeights());
-			}
-		});
 
 		// Build the title area and separator line
 		Composite titleComposite = new Composite(pageAreaComposite, SWT.NONE);
@@ -385,15 +415,9 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		pageContainer = createPageContainer(pageAreaComposite);
 		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		int[] weights = getFormWeights();
-		if (weights == null)
-			weights = new int[] { 1, 3 };
-		form.setWeights(weights);
-
 		// Build the separator line
 		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
 
 		return composite;
@@ -503,9 +527,10 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 
 	/**
 	 * @param parent the SWT parent for the tree area controls.
+	 * @return the new <code>Control</code>.
 	 * @since 3.0
 	 */
-	protected void createTreeAreaContents(Composite parent) {
+	protected Control createTreeAreaContents(Composite parent) {
 		// Build the tree an put it into the composite.
 		treeViewer = createTreeViewer(parent);
 		treeViewer.setLabelProvider(new PreferenceLabelProvider());
@@ -513,6 +538,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		treeViewer.setInput(preferenceManager);
 
 		layoutTreeAreaControl(treeViewer.getControl());
+		return treeViewer.getControl();
 	}
 
 	/**
@@ -600,12 +626,12 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	}
 
 	/**
-	 * Get the last known sash weights.
+	 * Get the last known tree width.
 	 * 
-	 * @return the sash weights, or <code>null</code> if unknown.
+	 * @return the width.
 	 */
-	private int[] getFormWeights() {
-		return lastSashWeights;
+	private int getLastTreeWidth() {
+		return lastTreeWidth;
 	}
 
 	/**
@@ -730,8 +756,8 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 */
 	protected void layoutTreeAreaControl(Control control) {
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = 150;
-		gd.verticalSpan = 2;
+		gd.widthHint = getLastTreeWidth();
+		gd.verticalSpan = 1;
 		control.setLayoutData(gd);
 	}
 
@@ -850,12 +876,12 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	}
 
 	/**
-	 * Save the last known sash weights.
+	 * Save the last known tree width.
 	 * 
-	 * @param weights the weights.
+	 * @param width the width.
 	 */
-	private void setFormWeights(int[] weights) {
-		lastSashWeights = weights;
+	private void setLastTreeWidth(int width) {
+		lastTreeWidth = width;
 	}
 
 	/**

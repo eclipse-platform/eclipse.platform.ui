@@ -15,6 +15,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -54,7 +55,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeArea(org.eclipse.swt.widgets.Composite)
 	 */
-	protected void createTreeAreaContents(Composite composite) {
+	protected Control createTreeAreaContents(Composite composite) {
 		
 		if (WorkbenchActivityHelper.isFiltering()) {			
 			tabFolder = new TabFolder(composite, SWT.NONE);
@@ -75,6 +76,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			});			
 			
 			layoutTreeAreaControl(tabFolder);
+			return tabFolder;
 		}
 		else {
 			unfilteredViewer = createTreeViewer(composite);
@@ -82,7 +84,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			unfilteredViewer.setContentProvider(new FilteredPreferenceContentProvider(false));
 			unfilteredViewer.setInput(getPreferenceManager());
 			
-			layoutTreeAreaControl(unfilteredViewer.getControl());			
+			layoutTreeAreaControl(unfilteredViewer.getControl());	
+			return unfilteredViewer.getControl();
 		}
 	}
 		
