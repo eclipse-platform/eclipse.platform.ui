@@ -25,6 +25,7 @@ public abstract class AbstractSite implements ISite {
 
 	private static final String SITE_XML= "site.xml";
 	private boolean isManageable = true;
+	private boolean isInitialized = false;
 	private DefaultSiteParser parser;
 	
 	/**
@@ -43,9 +44,11 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * Constructor for AbstractSite
 	 */
-	public AbstractSite(URL siteReference) {
+	public AbstractSite(URL siteReference) throws CoreException {
 		super();
 		this.siteURL = siteReference;
+		// FIXME: not lazy... upfront loading
+		initializeSite();
 	}
 	
 	/**
@@ -71,8 +74,19 @@ public abstract class AbstractSite implements ISite {
 		} finally {
 			try {
 			 inStream.close();
+			 isInitialized = true;
 			} catch (Exception e){}
 		}
+	}
+	
+	/**
+	 * Logs that an attempt to read a non initialize variable has been made
+	 */
+	private void logNotInitialized(){
+		Exception trace = new Exception("Attempt to read uninitialized variable");
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,"the program is reading a variable of Site before loading it",trace);
+		UpdateManagerPlugin.getPlugin().getLog().log(status);
 	}
 	
 	/**
@@ -99,7 +113,7 @@ public abstract class AbstractSite implements ISite {
 	public void install(IFeature sourceFeature, IProgressMonitor monitor) throws CoreException {
 		// should start Unit Of Work and manage Progress Monitor
 		AbstractFeature localFeature = createExecutableFeature(sourceFeature);
-		sourceFeature.install(localFeature);
+		((AbstractFeature)sourceFeature).install(localFeature);
 		this.addFeature(localFeature);
 		
 		// notify listeners
@@ -163,12 +177,19 @@ public abstract class AbstractSite implements ISite {
 	 * @return Returns a IFeature[]
 	 */
 	public IFeature[] getFeatures() throws CoreException {
-		IFeature[] result = null;
+		IFeature[] result = new IFeature[0];
 		if (isManageable){
-			if (features==null) initializeSite();
+			if (!isInitialized) initializeSite();
 			if (!(features==null || features.isEmpty())){
 				result = new IFeature[features.size()];
 				features.toArray(result);
+			}
+			
+			//FIXME: initialize Each Feature
+			if (result.length!=0){
+				for (int i=0; i<result.length;i++){
+					((AbstractFeature)result[i]).initializeFeature();
+				}
 			}
 		}
 		return result;
@@ -189,10 +210,10 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * @see ISite#getArchives()
 	 */
-	public IInfo[] getArchives() throws CoreException {
-		IInfo[] result = null;
+	public IInfo[] getArchives() {
+		IInfo[] result = new IInfo[0];
 		if (isManageable){
-			if (archives==null) initializeSite();
+			if (archives==null && !isInitialized) logNotInitialized();
 			if (!(archives==null || archives.isEmpty())){
 				result = new IInfo[archives.size()];
 				archives.toArray(result);
@@ -232,10 +253,14 @@ public abstract class AbstractSite implements ISite {
 		if (archives==null){
 			archives = new ArrayList(0);
 		}
-		if (getArchiveURLfor(archive.getText())!=null)
-			Assert.isTrue(false,"The Archive with ID:"+archive.getText()+"already exist on the site.");
-		else
+		if (getArchiveURLfor(archive.getText())!=null){
+			// DEBUG:		
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+				System.out.println("The Archive with ID:"+archive.getText()+" already exist on the site.");		
+			}
+		}else {
 			this.archives.add(archive);
+		}
 	}
 
 	/**
@@ -254,9 +279,9 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * @see ISite#getInfoURL()
 	 */
-	public URL getInfoURL() throws CoreException {
+	public URL getInfoURL() {
 		if (isManageable){
-			if (infoURL==null) initializeSite();
+			if (infoURL==null && !isInitialized) logNotInitialized();
 		}
 		return infoURL;
 	}
@@ -272,10 +297,10 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * @see ISite#getCategories()
 	 */
-	public ICategory[] getCategories() throws CoreException {
-		ICategory[] result = null;
+	public ICategory[] getCategories() {
+		ICategory[] result = new ICategory[0];
 		if (isManageable) {
-			if (categories == null)	initializeSite();
+			if (categories==null && !isInitialized)	logNotInitialized();
 			//FIXME: I do not like this pattern.. List or Array ???
 			if (!categories.isEmpty()) {
 				result = new ICategory[categories.size()];
@@ -299,12 +324,12 @@ public abstract class AbstractSite implements ISite {
 	/**
 	 * returns the associated ICategory
 	 */
-	public ICategory getCategory(String key) throws CoreException {
+	public ICategory getCategory(String key) {
 		ICategory result = null;
 		boolean found = false;		
 		
 		if (isManageable) {
-			if (categories == null)	initializeSite();
+			if (categories == null)	logNotInitialized();
 				Iterator iter = categories.iterator();
 				ICategory currentCategory;
 				while (iter.hasNext() && !found){

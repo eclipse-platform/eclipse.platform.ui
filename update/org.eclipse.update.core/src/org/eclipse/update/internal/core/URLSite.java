@@ -22,7 +22,7 @@ public class URLSite extends AbstractSite {
 	/**
 	 * Constructor for HTTPSite
 	 */
-	public URLSite(URL siteReference) {
+	public URLSite(URL siteReference) throws CoreException {
 		super(siteReference);
 	}
 
@@ -59,7 +59,7 @@ public class URLSite extends AbstractSite {
 	 * @see IPluginContainer#getPluginEntries()
 	 */
 	public IPluginEntry[] getPluginEntries() {
-		IPluginEntry[] result = null;
+		IPluginEntry[] result = new IPluginEntry[0];
 		if (!(pluginEntries==null || pluginEntries.isEmpty())){
 			result = new IPluginEntry[pluginEntries.size()];
 			pluginEntries.toArray(result);

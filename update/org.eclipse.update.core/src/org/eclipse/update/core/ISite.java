@@ -10,14 +10,56 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
 public interface ISite extends IPluginContainer {
+	
+	/**
+	 * Returns an array of feature this site contains
+	 * 
+	 * @return the list of features. Returns an empty array
+	 * if there are no feature.
+	 */
 	IFeature [] getFeatures() throws CoreException ;
+	
+	/**
+	 * 
+	 * @param feature the Feature to install
+	 * @param monitor the Progress Monitor
+	 */
 	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * 
+	 * @param feature the Feature to remove
+	 * @param monitor the Progress Monitor
+	 */
 	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	
+	
 	void addSiteChangedListener(ISiteChangedListener listener);
 	void removeSiteChangedListener(ISiteChangedListener listener);
+
+	/**
+	 * 
+	 * @return teh URL of the site
+	 */
 	URL getURL() ;
-	URL getInfoURL() throws CoreException ;
-	ICategory[] getCategories() throws CoreException ;
-	IInfo[] getArchives() throws CoreException ;
+	
+	
+	URL getInfoURL();
+
+	/**
+	 * Returns an array of categories for this site
+	 * 
+	 * @return the list of categories. Returns an empty array
+	 * if there are no categories.
+	 */
+	ICategory[] getCategories()  ;
+
+	/**
+	 * Returns an array of archives this site contains
+	 * 
+	 * @return the list of archives. Returns an empty array
+	 * if there are no archive.
+	 */
+	IInfo[] getArchives();
 	
 }

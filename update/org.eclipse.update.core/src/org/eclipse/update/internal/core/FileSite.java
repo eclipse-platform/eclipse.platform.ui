@@ -21,7 +21,7 @@ public class FileSite extends URLSite {
 	/**
 	 * Constructor for FileSite
 	 */
-	public FileSite(URL siteReference) {
+	public FileSite(URL siteReference) throws CoreException {
 		super(siteReference);
 	}
 

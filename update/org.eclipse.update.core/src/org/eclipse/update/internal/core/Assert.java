@@ -16,10 +16,6 @@ package org.eclipse.update.internal.core;
  * position where you need to catch an assertion failure, you have most 
  * certainly written your program incorrectly.</b>
  * </p>
- * <p>
- * Note that an <code>assert</code> statement is slated to be added to the
- * Java language in JDK 1.4, rending this class obsolete.
- * </p>
  */
 public final class Assert {
 	

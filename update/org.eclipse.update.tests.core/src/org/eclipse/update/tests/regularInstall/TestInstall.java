@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -20,9 +21,10 @@ public class TestInstall extends UpdateManagerTestCase {
 	}
 	
 	
-	private IFeature getFeature1(ISite site) throws MalformedURLException {
+	private IFeature getFeature1(ISite site) throws MalformedURLException,CoreException {
 		URL id = UpdateManagerUtils.getURL(site.getURL(),"features/org.eclipse.update.core.tests.feature1_1.0.4.jar",null);
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
+		remoteFeature.initializeFeature(); 
 		return remoteFeature;
 	}	
 	
@@ -47,9 +49,10 @@ public class TestInstall extends UpdateManagerTestCase {
 		removeFromFileSystem(pluginFile);
 
 	}
-	private IFeature getFeature2(ISite site) throws MalformedURLException {
+	private IFeature getFeature2(ISite site) throws MalformedURLException,CoreException{
 		URL id = UpdateManagerUtils.getURL(site.getURL(),"features/features2.jar",null);
 		DefaultPackagedFeature remoteFeature = new DefaultPackagedFeature(id,site);
+		remoteFeature.initializeFeature();
 		return remoteFeature;
 	}	
 	

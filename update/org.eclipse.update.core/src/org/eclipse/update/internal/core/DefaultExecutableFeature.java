@@ -79,7 +79,7 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	 */
 	public String[] getStorageUnitNames(IPluginEntry pluginEntry) throws CoreException {
 		
-		String[] result = null;
+		String[] result = new String[0];
 		
 		try {
 			// return the list of all subdirectories
@@ -150,10 +150,11 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	/**
 	 * @see AbstractFeature#getContentReferences()
 	 */
-	public String[] getContentReferences() throws CoreException {
+	public String[] getContentReferences() {
 		String[] names = new String[getPluginEntryCount()];
+		IPluginEntry[] entries = getPluginEntries();
 		for (int i = 0; i < getPluginEntryCount(); i++) {
-			names[i] = getArchiveID(getPluginEntries()[i]);
+			names[i] = getArchiveID(entries[i]);
 		}
 		return names;
 	}
@@ -199,7 +200,7 @@ public class DefaultExecutableFeature extends AbstractFeature {
 	 * @see AbstractFeature#getStorageUnitNames()
 	 */
 	protected String[] getStorageUnitNames()  throws CoreException {
-		String[] result = null;
+		String[] result = new String[0];
 		try {
 			File featureDir = new File(getFeaturePath());
 			List files = getFileNames(featureDir);

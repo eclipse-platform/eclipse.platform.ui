@@ -27,10 +27,10 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * the feature to test
 	 */
-	private AbstractFeature getFeature() throws MalformedURLException {
+	private AbstractFeature getFeature() throws MalformedURLException, CoreException {
 		if (remoteFeature == null){
 
-		ISite site = new FileSite(SOURCE_FILE_SITE);
+		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 		URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);
 		remoteFeature = new DefaultExecutableFeature(id,site);
 
@@ -48,14 +48,16 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		VersionedIdentifier ident2 = new VersionedIdentifier("org.test1.ident2","1.0.0");		
 		
 
-			ISite site = new FileSite(SOURCE_FILE_SITE);
+			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 			
 			URL url1 = UpdateManagerUtils.getURL(site.getURL(),id1,null);			
 			remoteFeature = new DefaultExecutableFeature(url1,site);
+			remoteFeature.setIdentifier(ident1);
 			assertEquals(ident1.toString(),remoteFeature.getIdentifier().toString());
 		
 			 URL url2 = UpdateManagerUtils.getURL(site.getURL(),id2,null);		
 			remoteFeature = new DefaultExecutableFeature(url2,site);
+			remoteFeature.setIdentifier(ident2);
 			assertEquals(ident2.toString(),remoteFeature.getIdentifier().toString());
 		
 
@@ -65,10 +67,10 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	/**
 	 * @see IFeature#testSite()
 	 */
-	public void testSite() throws MalformedURLException{
+	public void testSite() throws MalformedURLException, CoreException{
 		String ident1 = "org.eclipse.test.feature_1.0.0.jar";		
 
-			ISite site = new FileSite(SOURCE_FILE_SITE);
+			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
 			
 			URL id = UpdateManagerUtils.getURL(site.getURL(),ident1,null);			
 			remoteFeature = new DefaultExecutableFeature(id,site);

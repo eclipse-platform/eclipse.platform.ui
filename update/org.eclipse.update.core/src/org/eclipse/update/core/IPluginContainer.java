@@ -8,13 +8,57 @@ package org.eclipse.update.core;
 import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * A PluginContainer manages plug-in archives.
+ * A feature and a site are plugin container as they both
+ * logically or physically manage the archives that contain
+ * plug-ins.
+ * 
+ */
+//FIXME: javadoc
+
 public interface IPluginContainer {
-	IPluginEntry [] getPluginEntries() throws CoreException ;
-	int getPluginEntryCount()throws CoreException ;
-	int getDownloadSize(IPluginEntry entry) throws CoreException ;
-	int getInstallSize(IPluginEntry entry) throws CoreException ;
+	/**
+	 * Returns an array of plug-ins managed by the container
+	 * 
+	 * @return the accessible plug-ins. Returns an empty array
+	 * if there are no plug-ins.
+	 */
+	IPluginEntry [] getPluginEntries()  ;
 	
+	/**
+	 * Returns the number of managed plug-ins
+	 * @return the number of plug-ins
+	 */
+	int getPluginEntryCount() ;
+	
+	/**
+	 * Size of the archives in Kilo-Bytes
+	 * @return the size of the archive to be downloaded
+	 */
+	int getDownloadSize(IPluginEntry entry) ;
+	
+	/**
+	 * Size of the plug-in in KiloBytes
+	 * @return the size of the plug-in when installed
+	 */
+	int getInstallSize(IPluginEntry entry) ;
+
+	/**
+	 * Adds a pluginEntry to the list of managed pluginEntry
+	 * 
+	 * @param entry the plugin entry
+	 */	
 	void addPluginEntry(IPluginEntry pluginEntry);
-	void store(IPluginEntry pluginEntry, String contentKey, InputStream inStream) throws CoreException ;
+	
+	/**
+	 * Create a file in a plugin 
+	 * 
+	 * @param entry the plugin entry
+	 * @param name the file to be created in the plugin
+	 * @param inStream the content of the remote file to be transfered in the new file
+	 */
+	void store(IPluginEntry entry, String name, InputStream inStream) throws CoreException;
+	
 }
 

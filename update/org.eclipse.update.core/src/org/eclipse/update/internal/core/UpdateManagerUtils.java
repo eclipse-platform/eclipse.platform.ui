@@ -155,7 +155,7 @@ public class UpdateManagerUtils {
 		String name =
 			(fileIndex != -1 && fileIndex < dotIndex)
 				? remotePath.substring(fileIndex, dotIndex)
-				: "";
+				: "Eclipse_Update_TMP_";
 
 		Date date = new Date();
 		String result = name + date.getTime() + ext;

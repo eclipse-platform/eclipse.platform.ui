@@ -211,7 +211,32 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * process the Archive info
 	 */
 	private void processImport(Attributes attributes){
-		//TODO:
+		String id  = attributes.getValue("plugin");
+		String ver = attributes.getValue("version");
+		String match = attributes.getValue("match");
+		
+		int rule = IImport.RULE_NONE;
+		if (match==null || match.trim().equals("")){
+				rule = IImport.RULE_COMPATIBLE;
+		} else {
+		if (match.trim().equalsIgnoreCase("compatible")) 
+			rule = IImport.RULE_COMPATIBLE;
+			else if (match.trim().equalsIgnoreCase("equal")) 
+				rule = IImport.RULE_EQUAL;
+				else	if (match.trim().equalsIgnoreCase("equivalent"))
+					rule = IImport.RULE_EQUIVALENT ;
+					else if (match.trim().equalsIgnoreCase("higher"))
+						rule = IImport.RULE_HIGER; 
+		}
+		
+		feature.addImport(new DefaultImport(id,ver,rule));
+
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
+			UpdateManagerPlugin.getPlugin().debug("Processed require: id:"+id+" ver:"+ver);
+			UpdateManagerPlugin.getPlugin().debug("Processed require: match:"+match+" ->:"+rule);			
+		}
+		
 	}	
 	
 	/** 
@@ -290,8 +315,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 */
 	public void endElement(String uri, String localName, String qName)
 		throws SAXException {
-		try {
-		if (text!= null) {
+		if (text!= null) {
 
 			String tag = localName.trim();
 			if (tag.equalsIgnoreCase(DESCRIPTION)) {
@@ -329,9 +353,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING){
 			UpdateManagerPlugin.getPlugin().debug("End Element:"+uri+":"+localName+":"+qName);
 		}
-		} catch (CoreException e){
-			throw new SAXException(e);
-		}
 	}
 
 	/**
@@ -345,7 +366,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 * @see DefaultHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		text = new String(ch,start,length);
+		text = new String(ch,start,length).trim();
 	}
 
 }
