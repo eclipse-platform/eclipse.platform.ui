@@ -146,7 +146,7 @@ public class WebBrowser implements OleListener {
 
 		Variant pVarResult = oleObject.invoke(dispIdMember);
 
-		if (pVarResult == null)
+		if (pVarResult == null || pVarResult.getType() == OLE.VT_EMPTY)
 			return 0;
 		return pVarResult.getInt();
 	}
@@ -211,7 +211,7 @@ public class WebBrowser implements OleListener {
 		int dispIdMember = rgdispid[0];
 
 		Variant pVarResult = oleObject.invoke(dispIdMember);
-		if (pVarResult == null)
+		if (pVarResult == null || pVarResult.getType() == OLE.VT_EMPTY)
 			return 0;
 		return pVarResult.getInt();
 	}
@@ -231,7 +231,7 @@ public class WebBrowser implements OleListener {
 			oleObject.getIDsOfNames(new String[] { "LocationName" });
 		int dispIdMember = rgdispid[0];
 		Variant pVarResult = oleObject.getProperty(dispIdMember);
-		if (pVarResult == null)
+		if (pVarResult == null || pVarResult.getType() == OLE.VT_EMPTY)
 			return null;
 		return pVarResult.getString();
 	}
@@ -248,7 +248,7 @@ public class WebBrowser implements OleListener {
 		int dispIdMember = rgdispid[0];
 
 		Variant pVarResult = oleObject.getProperty(dispIdMember);
-		if (pVarResult == null)
+		if (pVarResult == null || pVarResult.getType() == OLE.VT_EMPTY)
 			return null;
 		return pVarResult.getString();
 	}
@@ -278,7 +278,7 @@ public class WebBrowser implements OleListener {
 		int dispIdMember = rgdispid[0];
 
 		Variant pVarResult = oleObject.getProperty(dispIdMember);
-		if (pVarResult == null)
+		if (pVarResult == null || pVarResult.getType() == OLE.VT_EMPTY)
 			return -1;
 		return pVarResult.getInt();
 	}
@@ -291,12 +291,12 @@ public class WebBrowser implements OleListener {
 				boolean enabled = false;
 
 				Variant varResult = event.arguments[0];
-				if (varResult != null) {
+				if (varResult != null && varResult.getType() != OLE.VT_EMPTY) {
 					command = varResult.getInt();
 				}
 
 				varResult = event.arguments[1];
-				if (varResult != null) {
+				if (varResult != null && varResult.getType() != OLE.VT_EMPTY) {
 					enabled = varResult.getBoolean();
 				}
 
@@ -326,7 +326,7 @@ public class WebBrowser implements OleListener {
 		int dispIdMember = rgdispid[0];
 
 		Variant pVarResult = oleObject.invoke(dispIdMember);
-		if (pVarResult == null)
+		if (pVarResult == null || pVarResult.getType() == OLE.VT_EMPTY)
 			return 0;
 		return pVarResult.getInt();
 	}
@@ -424,7 +424,7 @@ public class WebBrowser implements OleListener {
 		int dispIdMember = rgdispid[0];
 
 		Variant pVarResult = oleObject.invoke(dispIdMember);
-		if (pVarResult == null)
+		if (pVarResult == null || pVarResult.getType() == OLE.VT_EMPTY)
 			return 0;
 		return pVarResult.getInt();
 	}

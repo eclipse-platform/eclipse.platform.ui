@@ -182,6 +182,12 @@
             class="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             id="org.eclipse.update.internal.ui.preferences.MainPreferencePage">
       </page>
+      <page
+            name="%appServerPreference.name"
+            category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
+            class="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage"
+            id="org.eclipse.update.internal.ui.preferences.AppServerPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.update.core.deltaHandler">

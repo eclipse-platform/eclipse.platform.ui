@@ -33,6 +33,7 @@ import org.eclipse.update.internal.ui.security.UpdateManagerAuthenticator;
  */
 public class UpdateUIPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.update.ui";
+	public static final String WEB_APP_ID = "org.eclipse.update";
 	//The shared instance.
 	private static UpdateUIPlugin plugin;
 	//Resource bundle.
@@ -151,20 +152,39 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		if(historyPref>0){
 			SiteLocalModel.DEFAULT_HISTORY= historyPref;
 		}
-		//startupWebApp();
+		if (AppServerPreferencePage.getUseApplicationServer()) {
+			try {
+				startWebApp();
+			}
+			catch (CoreException e) {
+				logException(e);
+			}
+		}
 	}
 	
-	private void startupWebApp() throws CoreException {
+	public void startWebApp() throws CoreException {
 		
 		// configure web install handler
-		if (!AppServer.add("org.eclipse.update", "org.eclipse.update.ui", "webapp")) {
+		if (!AppServer.add(WEB_APP_ID, PLUGIN_ID, "webapp")) {
 			return;
 		}
-
 		appServerHost = AppServer.getHost();
 		appServerPort = AppServer.getPort();
-		System.out.println("Web app host: "+appServerHost);
-		System.out.println("Web app port: "+appServerPort);
+	}
+	
+	public void stopWebApp() throws CoreException {
+		try {
+		// unconfigure web install handler
+			AppServer.remove(WEB_APP_ID, PLUGIN_ID);
+		}
+		finally {
+			appServerHost = null;
+			appServerPort = 0;
+		}
+	}
+	
+	public boolean isWebAppStarted() {
+		return appServerHost!=null;
 	}
 	
 	public String getAppServerHost() {
@@ -437,6 +457,8 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		store.setDefault(
 			MainPreferencePage.P_UPDATE_VERSIONS,
 			MainPreferencePage.EQUIVALENT_VALUE);
+		store.setDefault(AppServerPreferencePage.P_MASTER_SWITCH, true);
+		store.setDefault(AppServerPreferencePage.P_ENCODE_URLS, true);
 		UpdateColors.setDefaults(store);
 	}
 }

@@ -155,8 +155,8 @@ public class SiteForm extends UpdateWebForm {
 	}
 	public URL getURLforSite(ISite site) {
 		URL link = getRawURL(site);
-		if (link == null)
-			return null;
+		return link;
+		/*
 		String callback = WebInstallHandler.getCallbackString();
 		if (callback == null)
 			return link;
@@ -165,6 +165,7 @@ public class SiteForm extends UpdateWebForm {
 		} catch (MalformedURLException e) {
 			return link;
 		}
+		*/
 	}
 
 	private boolean computeWebSiteFlag(ISiteAdapter adapter) {

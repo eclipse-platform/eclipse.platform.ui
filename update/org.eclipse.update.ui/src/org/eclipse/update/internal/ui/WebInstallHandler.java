@@ -1,10 +1,13 @@
-package org.eclipse.update.core;
+package org.eclipse.update.internal.ui;
+
+import java.net.URLEncoder;
+
+import org.eclipse.update.internal.ui.preferences.AppServerPreferencePage;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * This is a utility class used find information about the update
@@ -23,7 +26,7 @@ public abstract class WebInstallHandler {
 	 * @since 2.0
 	 */
 	public static String getWebAppServerHost() {
-		return UpdateManagerPlugin.getWebAppServerHost();
+		return UpdateUIPlugin.getDefault().getAppServerHost();
 	}
 
 	/**
@@ -35,22 +38,25 @@ public abstract class WebInstallHandler {
 	 * @since 2.0
 	 */
 	public static int getWebAppServerPort() {
-		return UpdateManagerPlugin.getWebAppServerPort();
+		return UpdateUIPlugin.getDefault().getAppServerPort();
 	}
 
-	/**
-	 * Returns the callback string to be passed to the web page
-	 * containing install triggers.
-	 * 
-	 * @return callback string
-	 * @since 2.0
-	 */
-	public static String getCallbackString() {
-		String url = getCallbackURLAsString();
-		if (url == null)
-			return null;
+	public static String getEncodedURLName(String urlName) {
+		if (AppServerPreferencePage.getUseApplicationServer() == false
+			|| AppServerPreferencePage.getEncodeURLs() == false)
+			return urlName;
+		return encode(urlName);
+	}
+
+	private static String encode(String urlName) {
+		String callbackURL = getCallbackURLAsString();
+		if (callbackURL == null)
+			return urlName;
+		String callbackParameter = "updateURL=" + callbackURL;
+		if (urlName.indexOf('?') != -1)
+			return urlName + "&" + callbackParameter;
 		else
-			return "?eclipse=" + url; //$NON-NLS-1$
+			return urlName + "?" + callbackParameter;
 	}
 
 	/**
@@ -65,9 +71,16 @@ public abstract class WebInstallHandler {
 		int port = getWebAppServerPort();
 		if (host == null || port == 0)
 			return null;
-		else
-			return "http://" + host + ":" + port + "/install";
-		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		else {
+			String value =
+				"http://"
+					+ host
+					+ ":"
+					+ port
+					+ "/"
+					+ UpdateUIPlugin.WEB_APP_ID
+					+ "/install";
+			return URLEncoder.encode(value);
+		}
 	}
-
 }

@@ -108,6 +108,8 @@ public class DetailsView extends MultiPageView {
 		boolean useEmbedded = false;
 		boolean focusGrabbed = false;
 		boolean win32 = SWT.getPlatform().equals("win32");
+		
+		url = WebInstallHandler.getEncodedURLName(url);
 		if (win32) {
 			useEmbedded = MainPreferencePage.getUseEmbeddedBrowser();
 		}

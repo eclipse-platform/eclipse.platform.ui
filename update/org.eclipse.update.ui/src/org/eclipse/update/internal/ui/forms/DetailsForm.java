@@ -860,18 +860,33 @@ public class DetailsForm extends PropertyWebForm {
 					return;
 			}
 			PendingChange job = createPendingChange(mode);
-			executeJob(job);
+			executeJob(getControl().getShell(), job);
 		}
 	}
 
 	private void executeOptionalInstall(MissingFeature mf) {
+		VersionedIdentifier vid = mf.getVersionedIdentifier();
+		URL siteURL = mf.getOriginatingSiteURL();
+		IConfiguredSite targetSite = null;
+		if (mf.getParent()!=null) {
+			ISite psite = mf.getParent().getSite();
+			targetSite = psite.getCurrentConfiguredSite();
+		}
+		IFeature feature = fetchFeatureFromServer(getControl().getShell(), siteURL, vid);
+		if (feature!=null) {
+			PendingChange job = new PendingChange(feature, targetSite);
+			executeJob(getControl().getShell(), job);
+		}		
+	}
+	
+	public static IFeature fetchFeatureFromServer(Shell shell, final URL siteURL, final VersionedIdentifier vid) {
 		// Locate remote site, find the optional feature
 		// and install it
-		final VersionedIdentifier vid = mf.getVersionedIdentifier();
-		final URL siteURL = mf.getOriginatingSiteURL();
+
 		final IFeature [] result = new IFeature[1];
 		final CoreException [] exception = new CoreException [1];
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+
+		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				try {
 					ISite site = SiteManager.getSite(siteURL);
@@ -888,13 +903,7 @@ public class DetailsForm extends PropertyWebForm {
 			status = exception[0].getStatus();
 		}
 		else if (result[0]!=null) {
-			IConfiguredSite targetSite = null;
-			if (mf.getParent()!=null) {
-				ISite psite = mf.getParent().getSite();
-				targetSite = psite.getCurrentConfiguredSite();
-			}
-			PendingChange job = new PendingChange(result[0], targetSite);
-			executeJob(job);
+			return result[0];
 		}
 		else {
 			String message = UpdateUIPlugin.getFormattedMessage(KEY_OPTIONAL_INSTALL_MESSAGE, siteURL.toString());
@@ -902,11 +911,12 @@ public class DetailsForm extends PropertyWebForm {
 		}
 		if (status!=null) {
 			// Show error dialog
-			ErrorDialog.openError(getControl().getShell(), UpdateUIPlugin.getResourceString(KEY_OPTIONAL_INSTALL_TITLE), null, status);
+			ErrorDialog.openError(shell, UpdateUIPlugin.getResourceString(KEY_OPTIONAL_INSTALL_TITLE), null, status);
 		}
+		return null;
 	}
 	
-	private IFeature findFeature(VersionedIdentifier vid, IFeatureReference [] refs) {
+	private static IFeature findFeature(VersionedIdentifier vid, IFeatureReference [] refs) {
 		for (int i=0; i<refs.length; i++) {
 			IFeatureReference ref = refs[i];
 			try {
@@ -927,7 +937,7 @@ public class DetailsForm extends PropertyWebForm {
 		return null;
 	}
 
-	private void executeJob(final PendingChange job) {
+	public static void executeJob(Shell shell, final PendingChange job) {
 		IStatus validationStatus =
 			ActivityConstraints.validatePendingChange(job);
 		if (validationStatus != null) {
@@ -940,10 +950,10 @@ public class DetailsForm extends PropertyWebForm {
 		}
 		if (job.getJobType()==PendingChange.UNCONFIGURE &&
 			UpdateUIPlugin.isPatch(job.getFeature())) {
-			unconfigurePatch(job.getFeature());
+			unconfigurePatch(shell, job.getFeature());
 			return;
 		}
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
+		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
 				InstallWizard wizard = new InstallWizard(job);
 				WizardDialog dialog =
@@ -959,11 +969,11 @@ public class DetailsForm extends PropertyWebForm {
 		});
 	}
 	
-	private void unconfigurePatch(IFeature feature) {
+	private static void unconfigurePatch(Shell shell, IFeature feature) {
 		IInstallConfiguration config = UpdateUIPlugin.getBackupConfigurationFor(feature);
 		if (config==null) {
 			String message = "This feature is a patch and cannot be directly disabled. Locate a configuration before it was installed and revert to it instead.";
-			MessageDialog.openError(getControl().getShell(), "Disable Feature", message);
+			MessageDialog.openError(shell, "Disable Feature", message);
 			return;
 		}
 		try {
