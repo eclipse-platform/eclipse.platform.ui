@@ -48,8 +48,6 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 
-	private static final String URL_PROTOCOL_FILE = "file"; //$NON-NLS-1$
-
 	// Places to look for library files 
 	private static String[] WS_JAR_VARIANTS = buildWSVariants();
 	private static String[] OS_JAR_VARIANTS = buildOSVariants();
@@ -612,7 +610,7 @@ public String getResourceString(String value, ResourceBundle b) {
 		return b.getString(key.substring(1));
 	} catch(MissingResourceException e) {
 		//this will avoid requiring a bundle access on the next lookup
-		return "%" + dflt;
+		return "%" + dflt; //$NON-NLS-1$
 	}
 }
 /**
