@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -188,6 +190,11 @@ public class DefaultLabelProvider implements ILabelProvider {
 			if (element instanceof ITerminate) {
 				if (((ITerminate) element).isTerminated()) {
 					label.insert(0, DebugUIMessages.getString("DefaultLabelProvider.<terminated>_1")); //$NON-NLS-1$
+					if (element instanceof IProcess) {
+						IProcess process = (IProcess)element;
+						int exit = process.getExitValue();
+						label.append(MessageFormat.format(DebugUIMessages.getString("DefaultLabelProvider.16"), new String[]{new Integer(exit).toString()})); //$NON-NLS-1$
+					}					
 				}
 			} else if (element instanceof IDisconnect) {
 				if (((IDisconnect) element).isDisconnected()) {
