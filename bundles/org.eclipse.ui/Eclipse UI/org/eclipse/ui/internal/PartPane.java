@@ -348,7 +348,9 @@ public void setContainer(ILayoutContainer container) {
  */
 public void setFocus() {
 	requestActivation();
-	partReference.getPart(true).setFocus();
+	IWorkbenchPart part = partReference.getPart(true);
+	if(part != null)
+		part.setFocus();
 }
 /**
  * Sets the workbench page of the view. 

@@ -789,6 +789,7 @@ public class EditorManager {
 				IAdaptable input = factory.createElement(inputMem);
 				if (input == null) {
 					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
+					errors[0]++;
 					return;
 				}
 				if (!(input instanceof IEditorInput)) {
@@ -1117,7 +1118,16 @@ public class EditorManager {
 				return part;
 			if(!restore || editorMemento == null)
 				return null;
-			restoreEditor(this,editorMemento,new int[1]);
+			int errors[] = new int[1];
+			restoreEditor(this,editorMemento,errors);
+			Workbench workbench = (Workbench)window.getWorkbench();
+			if(!workbench.isStarting() && errors[0] > 0) {
+				page.closeEditor(this,false);	
+				MessageDialog.openInformation(
+					window.getShell(),
+					WorkbenchMessages.getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("EditorManager.unableToRestoreEditorMessage",new String[]{getName()}));  //$NON-NLS-1$
+			} 
 			setPane(this.pane);
 			this.pane = null;	
 			editorMemento = null;
