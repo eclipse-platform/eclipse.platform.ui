@@ -54,4 +54,8 @@ public interface IPreferenceConstants {
 
 	//Identifier for enabled decorators
 	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS"; //$NON-NLS-1$
+	
+	//Boolean: true = refresh workspace on startup if the command line does 
+	//not have the -refresh option
+	public static final String REFRESH_WORKSPACE_ON_STARTUP = "REFRESH_WORKSPACE_ON_STARTUP"; //$NON-NLS-1$
 }
