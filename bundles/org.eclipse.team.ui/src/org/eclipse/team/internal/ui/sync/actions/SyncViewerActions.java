@@ -17,7 +17,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
@@ -293,9 +292,5 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			PlatformUI.getWorkbench().getWorkingSetManager().addRecentWorkingSet(workingSet);
 		}
 		workingSetGroup.setWorkingSet(workingSet);
-	}
-
-	public void handleKeyPressed(KeyEvent event) {
-		refactoringActions.handleKeyPressed(event);
 	}
 }

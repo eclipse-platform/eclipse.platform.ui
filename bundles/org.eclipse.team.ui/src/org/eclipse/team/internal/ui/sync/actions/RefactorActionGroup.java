@@ -17,20 +17,19 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.MoveResourceAction;
 import org.eclipse.ui.actions.RenameResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
-import org.eclipse.team.internal.ui.Policy;
 
 /**
  * This action group is modeled after the class of the same name in 
@@ -92,26 +91,15 @@ public class RefactorActionGroup extends SyncViewerActionGroup {
 		textActionHandler.setCopyAction(copyAction);
 		textActionHandler.setPasteAction(pasteAction);
 		textActionHandler.setDeleteAction(deleteAction);
-		renameAction.setTextActionHandler(textActionHandler);
-		
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.MOVE, moveAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.RENAME, renameAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, deleteAction);		
-	}
-
-	/**
-	 * Handles a key pressed event by invoking the appropriate action.
-	 */
-	public void handleKeyPressed(KeyEvent event) {
-		if (event.character == SWT.DEL && event.stateMask == 0) {
-			if (deleteAction.isEnabled()) {
-				deleteAction.run();
-			}
-		}
+		renameAction.setTextActionHandler(textActionHandler);		
 	}
 
 	protected void makeActions() {
-		Shell shell = getSyncView().getSite().getShell();
+		// Get the key binding service for registering actions with commands. 
+		final IWorkbenchPartSite site = getSyncView().getSite();
+		final IKeyBindingService keyBindingService = site.getKeyBindingService();
+		
+		Shell shell = site.getShell();
 		clipboard = new Clipboard(shell.getDisplay());
 		
 		pasteAction = new PasteAction(shell, clipboard);
@@ -132,6 +120,12 @@ public class RefactorActionGroup extends SyncViewerActionGroup {
 		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));		
 		deleteAction.setHoverImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_HOVER));
+		/* NOTE: This is defined in "plugin.xml" in "org.eclipse.ui".  It is
+		 * only publicly declared in code in IWorkbenchActionDefinitionIds in
+		 * "org.eclipse.ui.workbench.texteditor".
+		 */
+		deleteAction.setActionDefinitionId("org.eclipse.ui.edit.delete");  //$NON-NLS-1$
+		keyBindingService.registerAction(deleteAction);
 	}
 
 	public void updateActionBars() {

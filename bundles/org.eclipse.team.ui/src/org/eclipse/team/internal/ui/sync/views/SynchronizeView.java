@@ -40,8 +40,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
@@ -295,14 +293,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 				handleOpen(event);
 			}
 		});
-		viewer.getControl().addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent event) {
-				handleKeyPressed(event);
-			}
-			public void keyReleased(KeyEvent event) {
-				// do nothing
-			}
-		});
 		
 		// Register for feedback from subscriber jobs.
 		// Synchronize so the state doesn't change while setting the cursor
@@ -453,14 +443,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			}
 		}
 
-	}
-	
-	/**
-	 * Handles a key press event from the viewer.
-	 * Delegates to the action group.
-	 */
-	protected void handleKeyPressed(KeyEvent event) {
-		actions.handleKeyPressed(event);
 	}
 	
 	public void activateSubscriber(TeamSubscriber subscriber) {
