@@ -65,7 +65,7 @@ public class CheatSheetCategoryBasedSelectionAction extends Action {
 
 		CheatSheetElement result = (CheatSheetElement)dialog.getResult()[0];
 
-		new LaunchCheatSheetAction(result.getID()).run(); //$NON-NLS-1$
+		new OpenCheatSheetAction(result.getID()).run();
 	}
 }
 

@@ -23,11 +23,11 @@ package org.eclipse.ui.internal.cheatsheets.data;
  * step in the cheat sheet (represented by IItem) has.</p>
  *  
   */
-public class SubContentItem extends ActionItem {
+public class SubItem extends ActionItem {
 	
 	private String label;
 
-	public SubContentItem() {
+	public SubItem() {
 		super();
 	}
 

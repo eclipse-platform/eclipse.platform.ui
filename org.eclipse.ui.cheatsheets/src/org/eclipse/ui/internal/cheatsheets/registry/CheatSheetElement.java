@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.cheatsheets.registry;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -22,9 +21,9 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
 	private String contentFile;
 	private String id;
 	private String name;
-	private ImageDescriptor imageDescriptor;
 	private String description;
 	private IConfigurationElement configurationElement;
+	private String listenerClass;
 
 	/**
 	 *	Create a new instance of this class
@@ -83,24 +82,17 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
 	}
 
 	/**
-	 * Answer the icon of this element.
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		return imageDescriptor;
-	}
-
-	/**
-	 * Returns the name of this cheatsheet element.
-	 */
-	public ImageDescriptor getImageDescriptor(Object element) {
-		return imageDescriptor;
-	}
-
-	/**
 	 * Returns the name of this cheatsheet element.
 	 */
 	public String getLabel(Object element) {
 		return name;
+	}
+
+	/**
+	 * Returns the listener class name of this cheatsheet element.
+	 */
+	public String getListenerClass() {
+		return listenerClass;
 	}
 
 	/**
@@ -139,9 +131,9 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
 	}
 
 	/**
-	 * Set the icon of this element.
+	 * Set the listener class name of this element.
 	 */
-	public void setImageDescriptor(ImageDescriptor value) {
-		imageDescriptor = value;
+	public void setListenerClass(String value) {
+		listenerClass = value;
 	}
 }

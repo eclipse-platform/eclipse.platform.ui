@@ -28,6 +28,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
+import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.cheatsheets.ICheatSheetAction;
 
@@ -447,7 +448,7 @@ public abstract class ViewItem {
 
 	/*package*/
 	byte runAction(CheatSheetManager csm) {
-		return runAction(((ContentItem) contentItem).getActionPluginID(), ((ContentItem) contentItem).getActionClass(), ((ContentItem) contentItem).getActionParams(), csm);
+		return runAction(((Item) contentItem).getActionPluginID(), ((Item) contentItem).getActionClass(), ((Item) contentItem).getActionParams(), csm);
 	}
 
 	/**

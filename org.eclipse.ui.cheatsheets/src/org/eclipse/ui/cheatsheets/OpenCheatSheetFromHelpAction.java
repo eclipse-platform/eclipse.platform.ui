@@ -53,7 +53,7 @@ public final class OpenCheatSheetFromHelpAction implements ILiveHelpAction {
 		// Active help does not run on the UI thread, so we must use syncExec
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
-				new LaunchCheatSheetAction(cheatsheetID).run(); //$NON-NLS-1$
+				new OpenCheatSheetAction(cheatsheetID).run();
 			}
 		});
 	}

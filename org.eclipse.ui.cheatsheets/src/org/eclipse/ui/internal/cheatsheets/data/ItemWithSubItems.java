@@ -31,7 +31,7 @@ import java.util.*;
  * <p>Note:  You may only use these methods to change the step if it has been marked as
  * "dynamic" in the cheat sheet content file.</p>
  */
-public class ContentItemWithSubItems extends AbstractItem implements IContainsContent {
+public class ItemWithSubItems extends AbstractItem implements IContainsContent {
 	private Content content;
 
 	private ArrayList subItems;
@@ -39,7 +39,7 @@ public class ContentItemWithSubItems extends AbstractItem implements IContainsCo
 	/**
 	 * 
 	 */
-	public ContentItemWithSubItems() {
+	public ItemWithSubItems() {
 		super();
 		content = new Content();
 		subItems = new ArrayList(10);
@@ -51,7 +51,7 @@ public class ContentItemWithSubItems extends AbstractItem implements IContainsCo
 	 * @return true if it was added, false if it was not added
 	 * @throws IllegalArgumentException if the sub item passed is not an ISubItem
 	 */
-	public boolean addSubItem(SubContentItem sub) {
+	public boolean addSubItem(SubItem sub) {
 		if(isDuplicateId(sub.getID()))
 			return false;
 		if(subItems == null)
@@ -68,7 +68,7 @@ public class ContentItemWithSubItems extends AbstractItem implements IContainsCo
 	 * @return true if it was added, false if not
 	 * @throws IndexOutOfBoundsException if the index specified is out of bounds
 	 */
-	public boolean addSubItem(SubContentItem sub, int index) throws IndexOutOfBoundsException {
+	public boolean addSubItem(SubItem sub, int index) throws IndexOutOfBoundsException {
 		if(isDuplicateId(sub.getID()))
 			return false;
 		subItems.add(index, sub);
@@ -80,7 +80,7 @@ public class ContentItemWithSubItems extends AbstractItem implements IContainsCo
 	 * @param subitems an array of ISubItem's
 	 * @throws IllegalArgumentException if the array is not an array of ISubItem's
 	 */
-	public void addSubItems(SubContentItem[] subitems) {
+	public void addSubItems(SubItem[] subitems) {
 		if (subitems == null)
 			this.subItems = null;
 		else
@@ -105,18 +105,18 @@ public class ContentItemWithSubItems extends AbstractItem implements IContainsCo
 	 * @return the ISubItem 
 	 * @throws IndexOutOfBoundsException if the sub item at the index does not exist
 	 */
-	public SubContentItem getSubItem(int index) throws IndexOutOfBoundsException {
-		return (SubContentItem) subItems.get(index);
+	public SubItem getSubItem(int index) throws IndexOutOfBoundsException {
+		return (SubItem) subItems.get(index);
 	}
 
 	/**
 	 * This method returns an array of the sub items specified for this item in the cheat sheet.
 	 * @return an array of the ISubItems
 	 */
-	public SubContentItem[] getSubItems() {
+	public SubItem[] getSubItems() {
 		if(subItems == null)
 			return null;
-		return (SubContentItem[]) subItems.toArray(new SubContentItem[subItems.size()]);
+		return (SubItem[]) subItems.toArray(new SubItem[subItems.size()]);
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class ContentItemWithSubItems extends AbstractItem implements IContainsCo
 	private boolean isDuplicateId(String id){
 		if(subItems!=null)
 		for(int i=0; i<subItems.size(); i++){
-			SubContentItem isi = (SubContentItem)subItems.get(i);	
+			SubItem isi = (SubItem)subItems.get(i);	
 			if(isi.getID().equals(id))
 				return true;
 		}
@@ -165,7 +165,7 @@ public class ContentItemWithSubItems extends AbstractItem implements IContainsCo
 	 * @param item the ISubItem to remove.
 	 * @return true if removed, false if it either does not exist or could not be removed
 	 */
-	public boolean removeSubItem(SubContentItem item) {
+	public boolean removeSubItem(SubItem item) {
 		int index = subItems.indexOf(item);
 		if (index != -1) {
 			subItems.remove(index);

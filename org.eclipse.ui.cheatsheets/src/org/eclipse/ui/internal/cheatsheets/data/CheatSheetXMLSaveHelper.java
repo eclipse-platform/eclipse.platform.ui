@@ -362,8 +362,8 @@ public class CheatSheetXMLSaveHelper {
 				ViewItem item = items[i];
 				IContainsContent c = item.getContentItem();
 				if (c.isDynamic()) {
-					if (c instanceof ContentItem) {
-						ContentItem ci = (ContentItem) c;
+					if (c instanceof Item) {
+						Item ci = (Item) c;
 						Element dynamicTag = doc.createElement(IParserTags.DYNAMICDATA);
 						dynamicTag.setAttribute(IParserTags.ITEM, ci.getID());
 						dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, ci.getButtonCodes());
@@ -373,13 +373,13 @@ public class CheatSheetXMLSaveHelper {
 						for (int j = 0; j < params.length; j++)
 							dynamicTag.setAttribute(IParserTags.ACTIONPARAM + j, params[j]);
 						root.appendChild(dynamicTag);
-					} else if (c instanceof ContentItemWithSubItems) {
-						ContentItemWithSubItems ciws = (ContentItemWithSubItems) c;
+					} else if (c instanceof ItemWithSubItems) {
+						ItemWithSubItems ciws = (ItemWithSubItems) c;
 						String itemid = ciws.getID();
-						SubContentItem[] subs = ciws.getSubItems();
+						SubItem[] subs = ciws.getSubItems();
 						if (subs != null)
 							for (int j = 0; j < subs.length; j++) {
-								SubContentItem s = subs[j];
+								SubItem s = subs[j];
 								String subitemid = s.getID();
 								Element dynamicTag = doc.createElement(IParserTags.DYNAMICSUBITEMDATA);
 								dynamicTag.setAttribute(IParserTags.ITEM, itemid);

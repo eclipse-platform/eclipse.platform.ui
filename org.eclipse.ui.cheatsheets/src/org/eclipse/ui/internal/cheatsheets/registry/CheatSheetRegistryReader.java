@@ -48,23 +48,20 @@ public class CheatSheetRegistryReader extends RegistryReader {
 			return path;
 		}
 	}
+
+	// constants
 	private final static String ATT_CATEGORY = "category"; //$NON-NLS-1$
 	public final static String ATT_CONTENTFILE = "contentFile"; //$NON-NLS-1$
 	protected final static String ATT_ICON = "icon"; //$NON-NLS-1$
 	protected final static String ATT_ID = "id"; //$NON-NLS-1$
-	protected final static String ATT_LISTENERCLASS = "class"; //$NON-NLS-1$	
+	protected final static String ATT_LISTENERCLASS = "listener"; //$NON-NLS-1$
 	protected final static String ATT_NAME = "name"; //$NON-NLS-1$
-	protected final static String ATT_PLUGINCLASSID = "classPluginId"; //$NON-NLS-1$	
 	protected final static String ATT_CLASS = "class"; //$NON-NLS-1$
-	protected final static String ATT_TARGETCHEATSHEETID = "targetCheatSheetId"; //$NON-NLS-1$	
 	private final static String CATEGORY_SEPARATOR = "/"; //$NON-NLS-1$
 	private final static String ATT_ITEM_ATTRIBUTE = "itemAttribute"; //$NON-NLS-1$
 	private static CheatSheetRegistryReader instance;
 	private final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
-
-	// constants
 	protected final static String TAG_CHEATSHEET = "cheatSheet"; //$NON-NLS-1$
-	protected final static String TAG_CHEATSHEET_LISTENER = "cheatSheetListener"; //$NON-NLS-1$
 	protected final static String TAG_ITEM_EXTENSION = "itemExtension"; //$NON-NLS-1$
 	protected final static String trueString = "TRUE"; //$NON-NLS-1$
 	private final static String UNCATEGORIZED_CHEATSHEET_CATEGORY = "org.eclipse.ui.Other"; //$NON-NLS-1$
@@ -82,15 +79,11 @@ public class CheatSheetRegistryReader extends RegistryReader {
 
 		return instance;
 	}
-	protected ArrayList cheatsheetListeners;
-	protected ArrayList cheatsheetItemExtensions;
 
+	protected ArrayList cheatsheetItemExtensions;
 	protected AdaptableList cheatsheets;
 	private ArrayList deferCategories = null;
-
-	//	private boolean shouldPrune = true;
 	private ArrayList deferCheatSheets = null;
-	private final String pluginListenerPoint = "cheatSheetListener"; //$NON-NLS-1$
 	private final String pluginPoint = "cheatSheetContent"; //$NON-NLS-1$
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
 	private final Class[] stringArray = { String.class };
@@ -155,21 +148,6 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	 */
 	protected AdaptableList createEmptyCheatSheetCollection() {
 		return new CheatSheetCollectionElement("root", "root", null); //$NON-NLS-2$//$NON-NLS-1$
-	}
-
-	private void createListenerElement(IConfigurationElement element) {
-		String listenerID = element.getAttribute(ATT_ID);
-		String targetCheatsheetID = element.getAttribute(ATT_TARGETCHEATSHEETID);
-		String className = element.getAttribute(ATT_LISTENERCLASS);
-		String listenerClassPluginID = element.getAttribute(ATT_PLUGINCLASSID);
-		if(listenerClassPluginID==null)
-			listenerClassPluginID = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-		if (listenerID == null || targetCheatsheetID == null || className == null || listenerClassPluginID == null)
-			return;
-		CheatSheetListenerElement listenerElement = new CheatSheetListenerElement(listenerID, className, listenerClassPluginID, targetCheatsheetID);
-		if (cheatsheetListeners == null)
-			cheatsheetListeners = new ArrayList(20);
-		cheatsheetListeners.add(listenerElement);
 	}
 
 	/**
@@ -342,10 +320,6 @@ public class CheatSheetRegistryReader extends RegistryReader {
 		return result;
 	}
 
-	public ArrayList getCheatsheetListenerElements() {
-		return cheatsheetListeners;
-	}
-
 	/**
 	 * Returns a list of cheatsheets, project and not.
 	 *
@@ -388,15 +362,7 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	protected boolean initializeCheatSheet(CheatSheetElement element, IConfigurationElement config) {
 		element.setID(config.getAttribute(ATT_ID));
 		element.setDescription(getDescription(config));
-
-		// apply CONTENTFILE and ICON properties	
 		element.setConfigurationElement(config);
-//TODO: Port problem, need to fix. 
-//		String iconName = config.getAttribute(ATT_ICON);
-//		if (iconName != null) {
-//			IExtension extension = config.getDeclaringExtension();
-//			element.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(extension, iconName));
-//		}
 
 		String contentFile = config.getAttribute(ATT_CONTENTFILE);
 		if (contentFile != null) {
@@ -404,9 +370,14 @@ public class CheatSheetRegistryReader extends RegistryReader {
 		}
 
 		// ensure that a contentfile was specified
-		if (element.getConfigurationElement() == null) {
+		if (element.getConfigurationElement() == null || element.getContentFile() == null) {
 			logMissingAttribute(config, ATT_CONTENTFILE);
 			return false;
+		}
+
+		String listenerClass = config.getAttribute(ATT_LISTENERCLASS);
+		if (listenerClass != null) {
+			element.setListenerClass(listenerClass);
 		}
 		return true;
 	}
@@ -461,10 +432,6 @@ public class CheatSheetRegistryReader extends RegistryReader {
 			CheatSheetCollectionElement parent = (CheatSheetCollectionElement) cheatsheets;
 			pruneEmptyCategories(parent);
 		}
-
-		//Now read the cheatsheet listeners here from the plugin registry.
-		readRegistry(pregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, pluginListenerPoint);
-
 	}
 
 	public ArrayList readItemExtensions() {
@@ -516,9 +483,6 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(TAG_CATEGORY)) {
 			deferCategory(element);
-			return true;
-		} else if (element.getName().equals(TAG_CHEATSHEET_LISTENER)) {
-			createListenerElement(element);
 			return true;
 		} else if (element.getName().equals(TAG_ITEM_EXTENSION)) {
 			createItemExtensionElement(element);

@@ -15,10 +15,8 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
@@ -56,8 +54,6 @@ public class CheatSheetMenu extends ContributionItem {
 		}
 	};
 
-	private static Hashtable imageCache = new Hashtable(7);
-
 	/**
 	 * Constructs a new instance of <code>CheatSheetMenu</code>.  
 	 */
@@ -77,10 +73,6 @@ public class CheatSheetMenu extends ContributionItem {
 
 		MenuItem mi = new MenuItem(menu, bCheck ? SWT.RADIO : SWT.PUSH, index);
 		mi.setText(element.getLabel(null));
-		Image image = getImage(element);
-		if (image != null) {
-			mi.setImage(image);
-		}
 		mi.setSelection(bCheck);
 		mi.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -246,28 +238,6 @@ public class CheatSheetMenu extends ContributionItem {
 	}
 
 	/**
-	 * Returns an image to show for the corresponding cheatsheet descriptor.
-	 *
-	 * @param element the cheatsheet element
-	 * @return the image or null
-	 */
-	private Image getImage(CheatSheetElement element) {
-		ImageDescriptor imageDesc = element.getImageDescriptor();
-
-		if (imageDesc == null) {
-			return null;
-		}
-
-		Image image = (Image) imageCache.get(imageDesc);
-		if (image == null) {
-			image = imageDesc.createImage();
-			imageCache.put(imageDesc, image);
-		}
-		return image;
-	}
-
-
-	/**
 	 * Returns whether the menu item representing the active cheatsheet
 	 * will have a check mark.
 	 *
@@ -298,7 +268,7 @@ public class CheatSheetMenu extends ContributionItem {
 	 * @param event SelectionEvent - the event send along with the selection callback
 	 */
 	protected void run(CheatSheetElement element, SelectionEvent event) {
-		new LaunchCheatSheetAction(element.getID()).run();
+		new OpenCheatSheetAction(element.getID()).run();
 	}
 
 	/* (non-Javadoc)

@@ -12,18 +12,18 @@ package org.eclipse.ui.internal.cheatsheets.data;
 
 import java.util.ArrayList;
 
-public class ContentItem extends ActionItem implements IContainsContent {
+public class Item extends ActionItem implements IContainsContent {
 	private Content content;
 
 	/**
 	 * Constructor for ContentItem.
 	 */
-	public ContentItem() {
+	public Item() {
 		super();
 		content = new Content();
 	}
 	
-	public ContentItem(String title, String description, String href){
+	public Item(String title, String description, String href){
 		super();
 		content = new Content();
 		content.setText(description);

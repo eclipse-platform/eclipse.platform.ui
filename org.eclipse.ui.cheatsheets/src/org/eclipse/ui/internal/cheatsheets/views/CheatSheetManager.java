@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.util.*;
 
-import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.cheatsheets.*;
 
@@ -24,7 +23,7 @@ import org.eclipse.ui.cheatsheets.*;
 public class CheatSheetManager implements ICheatSheetManager {
 
 	private String cheatsheetID;
-	private Hashtable listenerMap = new Hashtable(20);
+//	private Hashtable listenerMap = new Hashtable(20);
 	private Hashtable viewListenerMap = new Hashtable(20);
 	private Hashtable dataTable = null;
 	private CheatSheetView csview;
@@ -70,9 +69,9 @@ public class CheatSheetManager implements ICheatSheetManager {
 		}
 	}
 
-	public ContentItemWithSubItems convertToIItemWithSubItems(AbstractItem ai) {
-		if (ai instanceof ContentItemWithSubItems)
-					return (ContentItemWithSubItems)ai;
+	public ItemWithSubItems convertToIItemWithSubItems(AbstractItem ai) {
+		if (ai instanceof ItemWithSubItems)
+					return (ItemWithSubItems)ai;
 		if (!(ai instanceof ActionItem))
 			return null;
 		String id = ai.getID();
@@ -80,7 +79,7 @@ public class CheatSheetManager implements ICheatSheetManager {
 		for (int i = 0; i < contentItems.size(); i++) {
 			AbstractItem contentItem = (AbstractItem) contentItems.get(i);
 			if (contentItem.getID().equals(id)) {
-				ContentItemWithSubItems itemws = convertThisIItem((ContentItem) contentItem);
+				ItemWithSubItems itemws = convertThisIItem((Item) contentItem);
 				//replace item in list with new item.
 				contentItems.set(i, itemws);
 				//replace coreItem's contentItem with our new one.
@@ -96,48 +95,26 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return null;
 	}
 
-	private ContentItemWithSubItems convertThisIItem(ContentItem item) {
-		if (!(item instanceof ContentItem))
-			return null;
-		else {
-			ContentItem cc = (ContentItem) item;
-			ContentItemWithSubItems itemws = new ContentItemWithSubItems();
-			itemws.setContent(cc.getContent());
-			itemws.setID(cc.getID());
-			return itemws;
-		}
-	}
-
-	private void fillListenerMaps(String cheatsheetID) {
-		ArrayList newList = CheatSheetPlugin.getPlugin().getListenerObjects(cheatsheetID);
-		if (newList != null) {
-			listenerMap.put(cheatsheetID, newList);
-			ArrayList itemList = new ArrayList(20);
-			ArrayList viewList = new ArrayList(20);
-			for (int i = 0; i < newList.size(); i++) {
-				CheatSheetListener c = (CheatSheetListener) newList.get(i);
-				viewList.add(newList.get(i));
-			}
-			if (viewList.size() > 0)
-				viewListenerMap.put(cheatsheetID, viewList);
-		}
-
+	private ItemWithSubItems convertThisIItem(Item item) {
+		Item cc = (Item) item;
+		ItemWithSubItems itemws = new ItemWithSubItems();
+		itemws.setContent(cc.getContent());
+		itemws.setID(cc.getID());
+		return itemws;
 	}
 
 	//Package protected:  We don't want anyone else firing events but the view.
 	//this method will be called by the c.s. view when events occur.
-	void fireEvent(ICheatSheetEvent e) {
+	void fireEvent(int eventType) {
 		//		System.out.println("Inside Manager Fire Event!");
-		String cheatsheetID = e.getCheatSheetID();
-		if (cheatsheetID == null)
-			return;
+		ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
 
-		//First check to see if we have the listener classes for this cheatsheet id.
-		ArrayList list = (ArrayList) listenerMap.get(cheatsheetID);
-		if (list == null)
-			fillListenerMaps(cheatsheetID);
+//		//First check to see if we have the listener classes for this cheatsheet id.
+//		ArrayList list = (ArrayList) listenerMap.get(cheatsheetID);
+//		if (list == null)
+//			fillListenerMaps(cheatsheetID);
 
-		notifyListeners(e, cheatsheetID);
+		notifyListeners(event, cheatsheetID);
 	}
 
 	/**

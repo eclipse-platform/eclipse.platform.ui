@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.*;
 
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
+import org.eclipse.ui.internal.cheatsheets.data.Item;
 
 public class CoreItem extends ViewItem {
 	protected Composite bodyWrapperComposite;
@@ -92,7 +93,7 @@ public class CoreItem extends ViewItem {
 	 * @see org.eclipse.ui.internal.cheatsheets.data.ViewItem#handleButtons(Composite)
 	 */
 	/*package*/ void handleButtons(Composite bodyWrapperComposite) {
-		if (contentItem instanceof ContentItemWithSubItems) {
+		if (contentItem instanceof ItemWithSubItems) {
 			try{
 			handleSubButtons(bodyWrapperComposite);
 			}catch(Exception e){
@@ -133,7 +134,7 @@ public class CoreItem extends ViewItem {
 
 		//Get the action codes to display buttons for.
 
-		actionCodes = getActionCodeArray(((ContentItem) contentItem).getButtonCodes());
+		actionCodes = getActionCodeArray(((Item) contentItem).getButtonCodes());
 
 
 		
@@ -211,7 +212,7 @@ public class CoreItem extends ViewItem {
 		//Instantiate the list to store the sub item composites.
 		listOfSubItemCompositeHolders = new ArrayList(20);
 
-		SubContentItem[] sublist = ((ContentItemWithSubItems) contentItem).getSubItems();
+		SubItem[] sublist = ((ItemWithSubItems) contentItem).getSubItems();
 		
 		if(sublist.length<=1)
 			throw new Exception(ICheatSheetResource.LESS_THAN_2_SUBITEMS);
@@ -234,7 +235,7 @@ public class CoreItem extends ViewItem {
 		for (int i = 0; i < sublist.length; i++) {
 			int added = 0;
 			//Get the sub item to add.
-			SubContentItem sub = (SubContentItem) sublist[i];
+			SubItem sub = (SubItem) sublist[i];
 
 			//composite added.
 			Composite b = new Composite(buttonComposite, SWT.NULL);

@@ -21,7 +21,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.data.ContentItem;
+import org.eclipse.ui.internal.cheatsheets.data.Item;
 
 public class IntroItem extends ViewItem {
 	private Image startButtonImage;
@@ -34,7 +34,7 @@ public class IntroItem extends ViewItem {
 	 * @param parent
 	 * @param contentItem
 	 */
-	public IntroItem(Composite parent, ContentItem contentItem, Color itemColor, CheatSheetView theview) {
+	public IntroItem(Composite parent, Item contentItem, Color itemColor, CheatSheetView theview) {
 		super(parent, contentItem, itemColor, theview);
 
 	}

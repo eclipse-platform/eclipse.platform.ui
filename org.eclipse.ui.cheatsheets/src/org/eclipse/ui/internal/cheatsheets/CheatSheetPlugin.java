@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.*;
-import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
@@ -37,12 +36,11 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 	//Resource bundle.
 	private ResourceBundle resourceBundle;
 	private CheatSheetHistory history;
-	private ArrayList cheatsheetListeners;
 
 	private static final String DEFAULT_CHEATSHEET_STATE_FILENAME = "cheatsheet.xml"; //$NON-NLS-1$
 	private static final String MEMENTO_TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 	private static final String MEMENTO_TAG_VERSION = "version"; //$NON-NLS-1$
-	private static final String VERSION_STRING[] = { "0.0", "5.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String VERSION_STRING[] = { "0.0", "3.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String MEMENTO_TAG_CHEATSHEET_HISTORY = "cheatsheetHistory"; //$NON-NLS-1$	
 
 /*
@@ -83,8 +81,6 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 		if (collection.getCheatSheets().length <= 0 && collection.getChildren().length <= 0) {
 			return;
 		}
-
-		cheatsheetListeners = CheatSheetRegistryReader.getInstance().getCheatsheetListenerElements();
 
 		WindowLoop : for (int windowCount = 0; windowCount < windows.length; ++windowCount) {
 
@@ -318,45 +314,22 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 		return aClass;
 	}
 
-	public ArrayList getListenerObjects(String id) {
-		if (cheatsheetListeners == null)
-			return null;
-
-		ArrayList returnList = null;
-		for (int i = 0; i < cheatsheetListeners.size(); i++) {
-			CheatSheetListenerElement el = (CheatSheetListenerElement) cheatsheetListeners.get(i);
-			if (el.getTargetCheatsheetID().equals(id)) {
-				if (returnList == null)
-					returnList = new ArrayList(20);
-				Class c = loadClass(el.getListenerClass(), el.getListenerClassPluginID());
-				if (c != null) {
-					try {
-						CheatSheetListener l = (CheatSheetListener) c.newInstance();
-						returnList.add(l);
-					} catch (Exception e) {
-						//return VIEWITEM_DONOT_ADVANCE;
-					}
-				}
-			}
-		}
-		return returnList;
-	}
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-
-		plugin = this;
-		startup();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		shutdown();
-	}
+//	/* (non-Javadoc)
+//	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+//	 */
+//	public void start(BundleContext context) throws Exception {
+//		super.start(context);
+//
+//		plugin = this;
+//		startup();
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+//	 */
+//	public void stop(BundleContext context) throws Exception {
+//		super.stop(context);
+//		shutdown();
+//	}
 
 }

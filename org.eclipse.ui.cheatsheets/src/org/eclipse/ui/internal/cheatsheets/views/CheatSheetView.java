@@ -32,6 +32,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
 import org.eclipse.ui.internal.cheatsheets.data.*;
+import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 
 /**
@@ -60,58 +61,60 @@ public class CheatSheetView extends ViewPart {
 
 	private final static int HORZ_SCROLL_INCREMENT = 20;
 	private final static int VERT_SCROLL_INCREMENT = 20;
-	private boolean actionBarContributed = false;
 	
 	//booleans
+	private boolean actionBarContributed = false;
 	private boolean allCollapsed = false;
 
 	//Colors
 	private Color backgroundColor;
+
 	private final RGB bottomRGB = new RGB(249, 247, 251);
-	private Cursor busyCursor;
-	private Composite cheatSheetComposite;
-	private int cheatsheetMinimumWidth;
+	private final RGB midRGB = new RGB(234, 234, 252);
+	private final RGB topRGB = new RGB(217, 217, 252);
 	private Color[] colorArray;
+
+	private final RGB darkGreyRGB = new RGB(160, 192, 208);
+	private final RGB HIGHLIGHT_RGB = new RGB(230, 230, 230);
+	private Color darkGrey;
+	private Color lightGrey;
 
 	//CS Elements
 	private CheatSheetElement contentElement;
 	private URL contentURL;
 	private float csversion = 1.0f;
-
 	private String currentID;
+	private int currentItemNum;
+	private boolean hascontent = false;
+	private boolean isStarted = false;
+
+	private CheatSheetDomParser parser;
+	private CheatSheetManager manager;
+	private CheatSheetSaveHelper saveHelper;
+
+	private CheatSheetExpandRestoreAction hideFields;
+
+	private Properties savedProps = null;
+
+	private IMemento memento;
 
 	//ITEMS
 	private ViewItem currentItem;
-
-	//Numba's
-	private int currentItemNum;
-	private Color darkGrey;
-	private final RGB darkGreyRGB = new RGB(160, 192, 208);
+	private ViewItem nextItem;
 
 	//Lists
 	private ArrayList expandRestoreList = new ArrayList();
-	private boolean hascontent = false;
-	private CheatSheetExpandRestoreAction hideFields;
-	private final RGB HIGHLIGHT_RGB = new RGB(230, 230, 230);
+	private ArrayList listOfContentItems;
+	private ArrayList viewItemList = new ArrayList();
 
 	//Composites
-	private Composite infoArea; 
-	private boolean isStarted = false;
-	private Color lightGrey;
-	private ArrayList listOfContentItems;
-	private CheatSheetManager manager;
-
-	private IMemento memento;
-	private final RGB midRGB = new RGB(234, 234, 252);
-	private ViewItem nextItem;
 	private Composite parent;
-	private CheatSheetDomParser parser;
-
-	private Properties savedProps = null;
-	private CheatSheetSaveHelper saveHelper;
+	private Composite cheatSheetComposite;
+	private Composite infoArea; 
 	private ScrolledComposite scrolledComposite;
-	private final RGB topRGB = new RGB(217, 217, 252);
-	private ArrayList viewItemList = new ArrayList();
+
+	private Cursor busyCursor;
+	private int cheatsheetMinimumWidth;
 
 	/**
 	 * The constructor.
@@ -151,9 +154,9 @@ public class CheatSheetView extends ViewPart {
 
 
 		if (isStarted)
-			fireEvent(ICheatSheetEvent.CHEATSHEET_RESTARTED);
+			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_RESTARTED);
 		else
-			fireEvent(ICheatSheetEvent.CHEATSHEET_STARTED);
+			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_STARTED);
 
 		isStarted = true;
 		IntroItem introItem = (IntroItem) viewItemList.get(0);
@@ -220,7 +223,7 @@ public class CheatSheetView extends ViewPart {
 		} else if (index == viewItemList.size()) {
 			saveCurrentSheet();
 			getViewItemArray()[0].setExpanded();
-			fireEvent(ICheatSheetEvent.CHEATSHEET_END_REACHED);
+			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 		}
 
 		saveCurrentSheet();
@@ -244,8 +247,8 @@ public class CheatSheetView extends ViewPart {
 
 		if (ciws != null) {
 			IContainsContent ci = ((ViewItem) ciws).contentItem;
-			if (ci instanceof ContentItemWithSubItems)
-				subItemID = ((ContentItemWithSubItems) ci).getSubItem(subItemIndex).getID();
+			if (ci instanceof ItemWithSubItems)
+				subItemID = ((ItemWithSubItems) ci).getSubItem(subItemIndex).getID();
 			list = ciws.getListOfSubItemCompositeHolders();
 			sich = (SubItemCompositeHolder) list.get(subItemIndex);
 			l = sich.getIconLabel();
@@ -348,8 +351,8 @@ public class CheatSheetView extends ViewPart {
 				if (abItem == null) {
 					continue;
 				} else {
-					if (abItem instanceof ContentItem) {
-						ContentItem c = (ContentItem) abItem;
+					if (abItem instanceof Item) {
+						Item c = (Item) abItem;
 						if (c.isDynamic()) {
 							c.setActionClass(aclass);
 							c.setActionPluginID(actionpid);
@@ -375,21 +378,21 @@ public class CheatSheetView extends ViewPart {
 				if (abItem == null) {
 					continue;
 				} else {
-					if (abItem instanceof ContentItem) {
-						ContentItem c = (ContentItem) abItem;
+					if (abItem instanceof Item) {
+						Item c = (Item) abItem;
 						if (c.isDynamic()) {
-							ContentItemWithSubItems ciws = convertThisIItem(c);
+							ItemWithSubItems ciws = convertThisIItem(c);
 							replaceThisContentItem(c, ciws);
-							SubContentItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
+							SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
 							ciws.addSubItem(subItem);
 						}
-					} else if (abItem instanceof ContentItemWithSubItems) {
+					} else if (abItem instanceof ItemWithSubItems) {
 						boolean handled = false;
-						ContentItemWithSubItems c = (ContentItemWithSubItems) abItem;
+						ItemWithSubItems c = (ItemWithSubItems) abItem;
 						if (c.isDynamic()) {
-							SubContentItem[] subs = c.getSubItems();
+							SubItem[] subs = c.getSubItems();
 							sublabel : for (int j = 0; j < subs.length; j++) {
-								SubContentItem s = subs[j];
+								SubItem s = subs[j];
 								if (s.getID().equals(subitemid)) {
 									s.setActionClass(aclass);
 									s.setActionPluginID(actionpid);
@@ -401,7 +404,7 @@ public class CheatSheetView extends ViewPart {
 								}
 							}
 							if (!handled) {
-								SubContentItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
+								SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
 								c.addSubItem(subItem);
 								handled = true;
 							}
@@ -608,20 +611,16 @@ public class CheatSheetView extends ViewPart {
 		menuManager.add(cheatsheetMenuMenuItem);
 	}
 
-	private ContentItemWithSubItems convertThisIItem(ContentItem item) {
-		if (!(item instanceof ContentItem))
-			return null;
-		else {
-			ContentItem cc = (ContentItem) item;
-			ContentItemWithSubItems itemws = new ContentItemWithSubItems();
-			itemws.setContent(cc.getContent());
-			itemws.setID(cc.getID());
-			return itemws;
-		}
+	private ItemWithSubItems convertThisIItem(Item item) {
+		Item cc = (Item) item;
+		ItemWithSubItems itemws = new ItemWithSubItems();
+		itemws.setContent(cc.getContent());
+		itemws.setID(cc.getID());
+		return itemws;
 	}
 
-	private SubContentItem createASubItem(String subid, String actionCodes, String actionPID, String actionClass, String[] params, String label) {
-		SubContentItem subItem = new SubContentItem();
+	private SubItem createASubItem(String subid, String actionCodes, String actionPID, String actionClass, String[] params, String label) {
+		SubItem subItem = new SubItem();
 		subItem.setActionClass(actionClass);
 		subItem.setButtonCodes(actionCodes);
 		subItem.setActionParams(params);
@@ -804,20 +803,20 @@ public class CheatSheetView extends ViewPart {
 
 		for (int i = 0; i < items.size(); i++) {
 			if (switcher == 0) {
-				if (items.get(i) instanceof ContentItemWithSubItems) {
-					CoreItem ciws = new CoreItem(infoArea, (ContentItemWithSubItems) items.get(i), backgroundColor, this);
+				if (items.get(i) instanceof ItemWithSubItems) {
+					CoreItem ciws = new CoreItem(infoArea, (ItemWithSubItems) items.get(i), backgroundColor, this);
 					viewItemList.add(ciws);
 				} else {
-					CoreItem mycore = new CoreItem(infoArea, (ContentItem) items.get(i), backgroundColor, this);
+					CoreItem mycore = new CoreItem(infoArea, (Item) items.get(i), backgroundColor, this);
 					viewItemList.add(mycore);
 				}
 				switcher = 1;
 			} else {
-				if (items.get(i) instanceof ContentItemWithSubItems) {
-					CoreItem ciws = new CoreItem(infoArea, (ContentItemWithSubItems) items.get(i), lightGrey, this);
+				if (items.get(i) instanceof ItemWithSubItems) {
+					CoreItem ciws = new CoreItem(infoArea, (ItemWithSubItems) items.get(i), lightGrey, this);
 					viewItemList.add(ciws);
 				} else {
-					CoreItem mycore = new CoreItem(infoArea, (ContentItem) items.get(i), lightGrey, this);
+					CoreItem mycore = new CoreItem(infoArea, (Item) items.get(i), lightGrey, this);
 					viewItemList.add(mycore);
 				}
 				switcher = 0;
@@ -972,7 +971,7 @@ public class CheatSheetView extends ViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		fireEvent(ICheatSheetEvent.CHEATSHEET_CLOSED);
+		manager.fireEvent(ICheatSheetEvent.CHEATSHEET_CLOSED);
 
 		super.dispose();
 
@@ -1023,9 +1022,9 @@ public class CheatSheetView extends ViewPart {
 //			getCheatsheetManager().fireEvent(new CheatSheetItemEvent(eventType, currentID, mid, subid, getCheatsheetManager()));
 //	}
 
-	private void fireEvent(int eventType) {
-		getCheatsheetManager().fireEvent(new CheatSheetEvent(eventType, currentID, getCheatsheetManager()));
-	}
+//	private void fireEvent(int eventType) {
+//		getCheatsheetManager().fireEvent(new CheatSheetEvent(eventType, currentID, getCheatsheetManager()));
+//	}
 
 	/**
 	 * Returns the title obtained from the parser
@@ -1192,7 +1191,7 @@ public class CheatSheetView extends ViewPart {
 
 		checkSavedState();
 
-		fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
+		manager.fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
 
 		parent.layout(true);
 
@@ -1212,8 +1211,8 @@ public class CheatSheetView extends ViewPart {
 		for (int i=0; i<myitems.length; i++){
 			if(myitems[i].contentItem.isDynamic()){
 				((CoreItem)myitems[i]).setButtonsHandled(false);
-				if(myitems[i].contentItem instanceof ContentItemWithSubItems)
-					((ContentItemWithSubItems)myitems[i].contentItem).addSubItems(null);
+				if(myitems[i].contentItem instanceof ItemWithSubItems)
+					((ItemWithSubItems)myitems[i].contentItem).addSubItems(null);
 			}
 					
 		}
@@ -1240,7 +1239,7 @@ public class CheatSheetView extends ViewPart {
 		return retBool;
 	}
 
-	private boolean replaceThisContentItem(ContentItem ci, ContentItemWithSubItems ciws) {
+	private boolean replaceThisContentItem(Item ci, ItemWithSubItems ciws) {
 		ArrayList list = parser.getItems();
 		for (int i = 0; i < list.size(); i++) {
 			AbstractItem oci = (AbstractItem) list.get(i);
@@ -1321,9 +1320,9 @@ public class CheatSheetView extends ViewPart {
 
 		try {
 			if (ciws != null) {
-				if (ciws.contentItem instanceof ContentItemWithSubItems) {
-					ContentItemWithSubItems contentWithSubs = (ContentItemWithSubItems) ciws.contentItem;
-					SubContentItem isi = contentWithSubs.getSubItem(subItemIndex);
+				if (ciws.contentItem instanceof ItemWithSubItems) {
+					ItemWithSubItems contentWithSubs = (ItemWithSubItems) ciws.contentItem;
+					SubItem isi = contentWithSubs.getSubItem(subItemIndex);
 					String[] params = isi.getActionParams();
 					if ((ciws.runAction(isi.getActionPluginID(), isi.getActionClass(), params, getCheatsheetManager()) == ViewItem.VIEWITEM_ADVANCE)) { 
 						//set that item as complete.
@@ -1477,11 +1476,11 @@ public class CheatSheetView extends ViewPart {
 
 	public void setContent(CheatSheetElement element) {
 
+		if (element == null || element.equals(contentElement))
+			return;
+
 		if (contentURL != null)
 			saveCurrentSheet();
-
-		if (element == null)
-			return;
 
 		// Cleanup previous contents
 		if (getHasContent()) {

@@ -61,7 +61,7 @@ public class CheatSheetSelectionAction extends Action {
 		if(dialog.open() != Window.OK || dialog.getResult().length != 1)
 			return;
 
-		new LaunchCheatSheetAction(((CheatSheetElement)dialog.getResult()[0]).getID()).run(); //$NON-NLS-1$
+		new OpenCheatSheetAction(((CheatSheetElement)dialog.getResult()[0]).getID()).run();
 	}
 }
 

@@ -20,7 +20,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.WorkbenchPage; // illegal
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
@@ -38,7 +37,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
  * TODO (lorne) - marked as final
  * @since 3.0
  */
-public final class LaunchCheatSheetAction extends Action {
+public final class OpenCheatSheetAction extends Action {
 	CheatSheetElement element;
 	URL csURL;
 
@@ -52,7 +51,7 @@ public final class LaunchCheatSheetAction extends Action {
 	 * @exception IllegalArgumentException if <code>id</code>
 	 * is <code>null</code>
 	 */
-	public LaunchCheatSheetAction(String id) {
+	public OpenCheatSheetAction(String id) {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
@@ -71,7 +70,7 @@ public final class LaunchCheatSheetAction extends Action {
 	 * @exception IllegalArgumentException if <code>url</code>
 	 * is <code>null</code>
 	 */
-	public LaunchCheatSheetAction(URL url, String name, String id){
+	public OpenCheatSheetAction(URL url, String name, String id){
 		if (url == null) {
 			throw new IllegalArgumentException();
 		}
@@ -106,10 +105,7 @@ public final class LaunchCheatSheetAction extends Action {
 
 		IWorkbench myworkbench = CheatSheetPlugin.getPlugin().getWorkbench();
 		IWorkbenchWindow window = myworkbench.getActiveWorkbenchWindow();
-
 		IWorkbenchPage page = window.getActivePage();
-		// TODO (lorne) - the plug-in must not reference internal classes (like WorkbenchPage) of other plug-ins
-		WorkbenchPage realpage = (WorkbenchPage) page;
 
 		CheatSheetView newview = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 		if (newview != null) {
@@ -121,9 +117,10 @@ public final class LaunchCheatSheetAction extends Action {
 //TODO: Port problem, update the following to open the view correctly.
 //				IViewReference viewref = realpage.getViewFactory().createView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 //				CheatSheetView view = (CheatSheetView) viewref.getPart(true);
-				CheatSheetView view = (CheatSheetView)realpage.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
+//				CheatSheetView view = (CheatSheetView)realpage.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 //				IViewReference viewref = realpage.findViewReference(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 //				realpage.addFastView(viewref);
+				CheatSheetView view = (CheatSheetView)page.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 				page.activate(view);
 				view.setContent(element);
 			} catch (PartInitException pie) {

@@ -41,7 +41,7 @@ public class CheatSheetDomParser {
 	private float csversion;
 	private DocumentBuilder documentBuilder;
 	private ArrayList idChecker;
-	private ContentItem introItem;
+	private Item introItem;
 	private ArrayList items;
 	private Document myDocument;
 	private InputSource mysource;
@@ -116,7 +116,7 @@ public class CheatSheetDomParser {
 	/**
 	 * Returns the intro item.
 	 */
-	public ContentItem getIntroItem() {
+	public Item getIntroItem() {
 		return introItem;
 	}
 
@@ -245,7 +245,7 @@ public class CheatSheetDomParser {
 			String introtext = introelement.getFirstChild().getNodeValue();
 			// comment out for defect 25997 undo text formatting.introtext = formatBodyString(introtext);
 			//introtext = formatBodyString(introtext);
-			introItem = new ContentItem(introTitle, introtext, introHref);
+			introItem = new Item(introTitle, introtext, introHref);
 
 			//Get the items.
 			NodeList itemList = myDocument.getElementsByTagName(IParserTags.ITEM);
@@ -375,7 +375,7 @@ public class CheatSheetDomParser {
 
 			//Create the cheatsheetitem and fill it with data.
 			if (subItemArrayList == null) {
-				ContentItem itemtoadd = new ContentItem();
+				Item itemtoadd = new Item();
 				itemtoadd.setActionPluginID(actionPid);
 				itemtoadd.setActionClass(actionClass);
 				itemtoadd.setHref(topicHref);
@@ -391,7 +391,7 @@ public class CheatSheetDomParser {
 				//Add the item to the list of items to build the view from.
 				localList.add(itemtoadd);
 			} else {
-				ContentItemWithSubItems itemtoadd = new ContentItemWithSubItems();
+				ItemWithSubItems itemtoadd = new ItemWithSubItems();
 				itemtoadd.setHref(topicHref);
 				itemtoadd.setTitle(title);
 				itemtoadd.setText(bodyString);
@@ -401,7 +401,7 @@ public class CheatSheetDomParser {
 				ArrayList subs = parseSubItems(subItemArrayList);
 				if (subs == null || subs.size() <=1 )
 					return null;
-				itemtoadd.addSubItems((SubContentItem[]) subs.toArray(new SubContentItem[subs.size()]));
+				itemtoadd.addSubItems((SubItem[]) subs.toArray(new SubItem[subs.size()]));
 
 				if (itemExtensionElements != null)
 					itemtoadd.setItemExtensions(itemExtensionElements);
@@ -488,7 +488,7 @@ public class CheatSheetDomParser {
 			} catch (Exception e) {
 				actionParamList = null;
 			}
-			SubContentItem sub = new SubContentItem();
+			SubItem sub = new SubItem();
 			sub.setID(subItemID);
 			sub.setLabel(label);
 			//			sub.setSuperItem(superItem);
