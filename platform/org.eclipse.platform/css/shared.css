@@ -213,10 +213,6 @@ body, .page{
 /*#navigation-links a#news:active img { background-image : url(graphics/icons/ctool/whatsnew48sel.gif); }*/
 
 #navigation-links a#workbench { position : absolute;  right : 0px; top : -35px; text-align : right;}
-#navigation-links a#workbench .link-label { visibility : hidden; }
-#navigation-links a#workbench:hover .link-label,
-#navigation-links a#workbench:focus .link-label,
-#navigation-links a#workbench:active .link-label { visibility : visible; }
 #navigation-links a#workbench .text { display : none; }
 #navigation-links a#workbench img { background-image : url(graphics/icons/etool/wb48.gif); width : 53px; height : 53px;}
 #navigation-links a#workbench:hover img,

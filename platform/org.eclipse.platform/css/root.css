@@ -148,27 +148,41 @@ a#news .background-image { background-image : url(graphics/icons/ctool/whatsnew7
 	top : 20px;
 }
 
-a#workbench { 
+#action-links a#workbench { 
 	position : absolute; 
 	top : -16px;
 	right : -8px;
 	text-align : right;  
 }
 
-a#workbench img {
-	background-image : url(graphics/icons/etool/wb48.gif); 
-	height : 56px;
-	width : 56px;
+#action-links a .background-image,
+#action-links a #workbench_img {
+	height : 53px;
+	width : 53px;
 	text-align : center;
+	vertical-align : top;
+}
+/* special case for mozilla */
+#action-links a > .background-image,
+#action-links a > #workbench_img { vertical-align : middle; }
+
+/* remove the hover image from the flow of the document,
+   so it doesn't take up space and change the position
+   of the main image */
+#action-links a .background-image { 
+	position : absolute; 
+}
+#action-links a#workbench .background-image {
+	background-image : url(graphics/icons/ctool/wb48.gif);
+	visibility : hidden;
 }
 
-a#workbench:hover img,
-a#workbench:focus img,
-a#workbench:active img {
-	background-image : url(graphics/icons/ctool/wb48.gif); 
-	height : 56px;
-	width : 56px;
+#action-links a#workbench:hover .background-image,
+#action-links a#workbench:focus .background-image,
+#action-links a#workbench:active .background-image {
+	visibility : visible;
 }
+
 /* hide the link and description until users hover over the link */
 #action-links a p .text, #action-links a .link-label { display : none; }
 

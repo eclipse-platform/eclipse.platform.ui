@@ -27,6 +27,7 @@
     </group>
     <group id="action-links">
       <link url="http://org.eclipse.ui.intro/close" label="Workbench" id="workbench">
+        <img id="workbench_img" style-id="content-img" src="css/graphics/icons/etool/wb48.gif" alt="Go to the workbench"></img>
         <text>Go to the workbench</text>
       </link>
     </group>
@@ -75,7 +76,11 @@
           <text>Find out what is new in this release</text>
         </link>
       </group>
-      <include path="root/action-links"/>
+      <group id="action-links">
+      	<link url="http://org.eclipse.ui.intro/close" label="Workbench" id="workbench">
+        	<text>Go to the workbench</text>
+      	</link>
+      </group>
     </group>
     <!-- -->
     <group id="page-content">
