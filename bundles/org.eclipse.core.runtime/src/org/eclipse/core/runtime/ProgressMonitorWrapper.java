@@ -15,12 +15,12 @@ import org.eclipse.core.internal.runtime.Assert;
 /**
  * An abstract wrapper around a progress monitor which,
  * unless overridden, forwards <code>IProgressMonitor</code>
- * and <code>IProgressBlockedMonitor</code> methods to the wrapped progress monitor.
+ * and <code>IProgressMonitorWithBlocking</code> methods to the wrapped progress monitor.
  * <p>
  * Clients may subclass.
  * </p>
  */
-public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgressBlockedMonitor {
+public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgressMonitorWithBlocking {
 
 	/** The wrapped progress monitor. */
 	private IProgressMonitor progressMonitor;
@@ -44,6 +44,19 @@ protected ProgressMonitorWrapper(IProgressMonitor monitor) {
  */
 public void beginTask(String name, int totalWork) {
 	progressMonitor.beginTask(name, totalWork);
+}
+/**
+ * This implementation of a <code>IProgressMonitorWithBlocking</code>
+ * method forwards to the wrapped progress monitor.
+ * Clients may override this method to do additional
+ * processing.
+ *
+ * @see IProgressMonitor#clearBlocked
+ * @since 3.0
+ */
+public void clearBlocked() {
+	if (progressMonitor instanceof IProgressMonitorWithBlocking)
+		((IProgressMonitorWithBlocking)progressMonitor).clearBlocked();
 }
 /**
  * This implementation of a <code>IProgressMonitor</code>
@@ -81,27 +94,13 @@ public void internalWorked(double work) {
  * Clients may override this method to do additional
  * processing.
  *
- * @see IProgressMonitor#isBlocked
- * @since 3.0
- */
-public boolean isBlocked() {
-	if (progressMonitor instanceof IProgressBlockedMonitor)
-		return ((IProgressBlockedMonitor)progressMonitor).isBlocked();
-	return false;
-}
-/**
- * This implementation of a <code>IProgressMonitor</code>
- * method forwards to the wrapped progress monitor.
- * Clients may override this method to do additional
- * processing.
- *
  * @see IProgressMonitor#isCanceled
  */
 public boolean isCanceled() {
 	return progressMonitor.isCanceled();
 }
 /**
- * This implementation of a <code>IProgressMonitor</code>
+ * This implementation of a <code>IProgressMonitorWithBlocking</code>
  * method forwards to the wrapped progress monitor.
  * Clients may override this method to do additional
  * processing.
@@ -109,9 +108,9 @@ public boolean isCanceled() {
  * @see IProgressMonitor#setBlocked
  * @since 3.0
  */
-public void setBlocked(boolean value) {
-	if (progressMonitor instanceof IProgressBlockedMonitor)
-		((IProgressBlockedMonitor)progressMonitor).setBlocked(value);
+public void setBlocked(IStatus reason) {
+	if (progressMonitor instanceof IProgressMonitorWithBlocking)
+		((IProgressMonitorWithBlocking)progressMonitor).setBlocked(reason);
 }
 /**
  * This implementation of a <code>IProgressMonitor</code>
