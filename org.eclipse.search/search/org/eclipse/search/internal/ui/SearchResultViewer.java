@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.ui.IMemento;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -445,4 +446,14 @@ class SearchResultViewer extends TableViewer {
 		Widget item= findItem(entry);
 		updateItem(item, entry);
 	}
+
+	//--- Persistency -------------------------------------------------
+
+	void restoreState(IMemento memento) {
+		fSortDropDownAction.restoreState(memento);
+	}
+	
+	void saveState(IMemento memento) {
+		fSortDropDownAction.saveState(memento);
+	}	
 }

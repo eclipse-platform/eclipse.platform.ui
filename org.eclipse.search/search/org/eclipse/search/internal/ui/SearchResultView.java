@@ -24,6 +24,9 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
@@ -38,15 +41,38 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	
 	private SearchResultViewer fViewer;
 	private Map fResponse;
-	private Map fSorters;
-
-	
+	private IMemento fMemento;
+
+	/*
+	 * Implements method from IViewPart.
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		fMemento= memento;
+	}
+
+	/*
+	 * Implements method from IViewPart.
+	 */
+	public void saveState(IMemento memento) {
+		if (fViewer == null) {
+			// part has not been created
+			if (fMemento != null) //Keep the old state;
+				memento.putMemento(fMemento);
+			return;
+		}
+		fViewer.saveState(memento);
+	}	
+
 	/**
 	 * Creates the search list inner viewer.
 	 */
 	public void createPartControl(Composite parent) {
 		Assert.isTrue(fViewer == null);
 		fViewer= new SearchResultViewer(this, parent);
+		if (fMemento != null)
+			fViewer.restoreState(fMemento);
+		fMemento= null;
 		IWorkspace workspace= SearchPlugin.getWorkspace();
 		SearchManager.getDefault().addSearchChangeListener(fViewer);
 		Search search= SearchManager.getDefault().getCurrentSearch();
