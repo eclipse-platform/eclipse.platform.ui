@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+/* bug 82520 : need to include stdlib.h */
+# include <stdlib.h>
 # include <sys/types.h>
 # include <sys/statfs.h>
 # include <update.h>
