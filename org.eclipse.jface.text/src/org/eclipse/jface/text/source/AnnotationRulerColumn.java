@@ -602,6 +602,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 */
 	public void removeAnnotationType(Object annotationType) {
 		fConfiguredAnnotationTypes.remove(annotationType);
+		fAllowedAnnotationTypes.clear();
 	}
 	
 	/**
