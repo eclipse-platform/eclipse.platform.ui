@@ -8,20 +8,51 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog; // otherwise ambiguous
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 /**
  * A preference dialog is a hierarchical presentation of preference
  * pages.  Each page is represented by a node in the tree shown
@@ -208,10 +239,15 @@ public class PreferenceDialog
 				.getElements(PreferenceManager.PRE_ORDER)
 				.iterator();
 		while (nodes.hasNext()) {
-			IPreferenceNode node = (IPreferenceNode) nodes.next();
+			final IPreferenceNode node = (IPreferenceNode) nodes.next();
 			if (node.getPage() != null) {
-				if (!node.getPage().performCancel())
-					return;
+				Platform.run(new SafeRunnable() {
+					public void run() {
+						if (!node.getPage().performCancel())
+							return;
+					}
+				});
+
 			}
 		}
 		setReturnCode(CANCEL);
@@ -376,11 +412,12 @@ public class PreferenceDialog
 		titleArea.setLayout(layout);
 		titleArea.setLayoutData(layoutData);
 		titleArea.setBackground(background);
-		
-		final Color borderColor = new Color(titleArea.getDisplay(),ViewForm.borderOutsideRGB);
-		
-		titleArea.addPaintListener(new PaintListener(){
-			public void paintControl(PaintEvent e){
+
+		final Color borderColor =
+			new Color(titleArea.getDisplay(), ViewForm.borderOutsideRGB);
+
+		titleArea.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
 				e.gc.setForeground(borderColor);
 				Rectangle bounds = titleArea.getClientArea();
 				bounds.height = bounds.height - 2;
