@@ -7,12 +7,15 @@ package org.eclipse.ui.internal.registry;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A capability is the user interface aspect of a project's nature. There is
@@ -25,7 +28,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * natures represented by these capabilites.
  * </p>
  */
-public class Capability {
+public class Capability extends WorkbenchAdapter implements IAdaptable {
 	private static final String ATT_ID = "id";
 	private static final String ATT_NAME = "name";
 	private static final String ATT_ICON = "icon";
@@ -54,24 +57,24 @@ public class Capability {
 		throws WorkbenchException
 	{
 		boolean missingAttribute = false;
-		String attr_id = element.getAttribute(ATT_ID);
-		String attr_name = element.getAttribute(ATT_NAME);
-		String attr_nature = element.getAttribute(ATT_NATURE_ID);
+		String attr_id = configElement.getAttribute(ATT_ID);
+		String attr_name = configElement.getAttribute(ATT_NAME);
+		String attr_nature = configElement.getAttribute(ATT_NATURE_ID);
 			
 		if (attr_id == null) {
-			reader.logMissingAttribute(element, ATT_ID);
+			reader.logMissingAttribute(configElement, ATT_ID);
 			missingAttribute = true;
 		}
 		if (attr_name == null) {
-			reader.logMissingAttribute(element, ATT_NAME);
+			reader.logMissingAttribute(configElement, ATT_NAME);
 			missingAttribute = true;
 		}
 		if (attr_nature == null) {
-			reader.logMissingAttribute(element, ATT_NATURE_ID);
+			reader.logMissingAttribute(configElement, ATT_NATURE_ID);
 			missingAttribute = true;
 		}
-		if (element.getAttribute(ATT_INSTALL_WIZARD) == null) {
-			reader.logMissingAttribute(element, ATT_INSTALL_WIZARD);
+		if (configElement.getAttribute(ATT_INSTALL_WIZARD) == null) {
+			reader.logMissingAttribute(configElement, ATT_INSTALL_WIZARD);
 			missingAttribute = true;
 		}
 		
@@ -98,6 +101,13 @@ public class Capability {
 		return id;
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on IWorkbenchAdapter.
+	 */
+	public String getLabel(Object o) {
+		return name;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -113,6 +123,16 @@ public class Capability {
 	
 	public String getNatureId() {
 		return natureId;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IAdaptable.
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class) 
+			return this;
+		else
+			return null;
 	}
 	
 	public String getCategoryPath() {

@@ -102,6 +102,7 @@ public interface IHelpContextIds {
 
 	// Property pages
 	public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX + "project_reference_property_page_context"; //$NON-NLS-1$
+	public static final String PROJECT_CAPABILITY_PROPERTY_PAGE = PREFIX + "project_capability_property_page_context"; //$NON-NLS-1$
 	public static final String RESOURCE_INFO_PROPERTY_PAGE = PREFIX + "resource_info_property_page_context"; //$NON-NLS-1$
 		
 	// Windows

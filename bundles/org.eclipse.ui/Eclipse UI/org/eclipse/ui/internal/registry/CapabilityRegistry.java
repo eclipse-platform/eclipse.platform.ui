@@ -9,16 +9,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * This class represents a registry of project capabilities and categories of 
  * capabilities.
  */
-public class CapabilityRegistry {
-	private static final String[] EMPTY_LIST = new String[0];
+public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
+	private static final String[] EMPTY_ID_LIST = new String[0];
+	private static final Capability[] EMPTY_CAP_LIST = new Capability[0];
 	
 	private HashMap natureToCapability;
 	private ArrayList capabilities;
@@ -87,11 +93,28 @@ public class CapabilityRegistry {
 		return results;
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on IAdaptable.
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class) 
+			return this;
+		else
+			return null;
+	}
+	
 	/**
 	 * Returns the list of capabilities in the registry
 	 */
 	public List getCapabilities() {
 		return capabilities;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IWorkbenchAdapter.
+	 */
+	public Object[] getChildren(Object o) {
+		return capabilities.toArray();
 	}
 	
 	/**
@@ -102,21 +125,21 @@ public class CapabilityRegistry {
 		IProjectNatureDescriptor desc;
 		desc = ResourcesPlugin.getWorkspace().getNatureDescriptor(capability.getNatureId());
 		if (desc == null)
-			return EMPTY_LIST;
+			return EMPTY_ID_LIST;
 			
 		String[] natureIds = desc.getRequiredNatureIds();
 		if (natureIds.length == 0)
-			return EMPTY_LIST;
+			return EMPTY_ID_LIST;
 			
 		ArrayList results = new ArrayList(natureIds.length);
 		for (int i = 0; i < natureIds.length; i++) {
 			Capability cap = (Capability)natureToCapability.get(natureIds[i]);
 			if (cap != null)
-				results.add(cap);
+				results.add(cap.getId());
 		}
 		
 		if (results.size() == 0) {
-			return EMPTY_LIST;
+			return EMPTY_ID_LIST;
 		} else {
 			String[] ids = new String[results.size()];
 			results.toArray(ids);
@@ -124,6 +147,32 @@ public class CapabilityRegistry {
 		}
 	}
 
+	/**
+	 * Returns the capabilities assigned to the specified project
+	 */
+	public Capability[] getProjectCapabilities(IProject project) {
+		try {
+			String[] natureIds = project.getDescription().getNatureIds();
+			ArrayList results = new ArrayList(natureIds.length);
+			for (int i = 0; i < natureIds.length; i++) {
+				Capability cap = (Capability)natureToCapability.get(natureIds[i]);
+				if (cap != null)
+					results.add(cap);
+			}
+			
+			if (results.size() == 0) {
+				return EMPTY_CAP_LIST;
+			} else {
+				Capability[] caps = new Capability[results.size()];
+				results.toArray(caps);
+				return caps;
+			}
+		}
+		catch (CoreException e) {
+			return EMPTY_CAP_LIST;
+		}
+	}
+	
 	/**
 	 * Returns whether the specified capability has any prerequisites.
 	 */

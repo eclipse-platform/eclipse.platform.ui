@@ -245,6 +245,12 @@
 
 <extension
 	point="org.eclipse.ui.propertyPages">
+   	<page id="org.eclipse.ui.propertypages.project.capability"
+   	      name="%PropertyPages.project.capability"
+          objectClass="org.eclipse.core.resources.IProject"
+          class="org.eclipse.ui.internal.dialogs.ProjectCapabilityPage"
+          adaptable="true">
+   	</page>
    	<page id="org.eclipse.ui.propertypages.project.reference"
    	      name="%PropertyPages.project.reference"
           objectClass="org.eclipse.core.resources.IProject"
