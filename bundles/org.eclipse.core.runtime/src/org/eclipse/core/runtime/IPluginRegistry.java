@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.runtime;
 
-import java.net.URL;
-
 /**
  * The plug-in registry holds the master list of all
  * discovered plug-ins, extension points, and extensions.

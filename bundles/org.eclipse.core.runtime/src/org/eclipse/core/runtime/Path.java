@@ -10,9 +10,9 @@
  **********************************************************************/
 package org.eclipse.core.runtime;
 
-import org.eclipse.core.internal.runtime.Assert;
-import java.util.*;
 import java.io.File;
+
+import org.eclipse.core.internal.runtime.Assert;
 
 /** 
  * The standard implementation of the <code>IPath</code> interface.

@@ -10,17 +10,14 @@
  **********************************************************************/
 package org.eclipse.core.runtime;
 
-import org.eclipse.core.boot.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.model.Factory;
 import org.eclipse.core.runtime.model.PluginRegistryModel;
-import org.eclipse.core.internal.plugins.PluginClassLoader;
-import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.internal.runtime.*;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Map;
 
 /**
  * The central class of the Eclipse Platform Runtime. This class cannot

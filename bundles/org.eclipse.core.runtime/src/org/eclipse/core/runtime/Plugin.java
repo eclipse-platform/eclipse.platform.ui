@@ -10,22 +10,15 @@
  ******************************************************************************/
 package org.eclipse.core.runtime;
 
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+
+import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.plugins.DefaultPlugin;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.runtime.model.PluginFragmentModel;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.boot.PlatformURLHandler;
-
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.Map;
-import java.net.*;
-import java.io.*;
 
 /**
  * The abstract superclass of all plug-in runtime class

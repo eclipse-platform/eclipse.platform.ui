@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.core.runtime;
 
-import java.io.File;
-
 /**
  * A path is an ordered collection of string segments,
  * separated by a standard separator character, "/".
