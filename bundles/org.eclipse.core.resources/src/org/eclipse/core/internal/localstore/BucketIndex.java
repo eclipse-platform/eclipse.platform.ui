@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.*;
 public class BucketIndex {
 
 	/**
-	 * A entry in the bucket index. Each entry has one file path and a collection
+	 * A entry in the bucket index. Each entry has one path and a collection
 	 * of states, which by their turn contain a (UUID, timestamp) pair.  
 	 */
 	public static final class Entry {
@@ -31,9 +31,18 @@ public class BucketIndex {
 		// the length of a UUID in bytes
 		private final static int UUID_LENGTH = UniversalUniqueIdentifier.BYTES_SIZE;
 		// the length of each component of the data array
-		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;		
-		byte[][] data;
-		IPath path;
+		public final static int DATA_LENGTH = UUID_LENGTH + LONG_LENGTH;
+		
+		/**
+		 * The history states. The first array dimension is the number of states. The
+		 * second dimension is an encoding of the {UUID,timestamp} pair for that entry.
+		 */
+		private byte[][] data;
+		/**
+		 * Logical path of the object we are storing history for. This does not
+		 * correspond to a file system path.
+		 */
+		private IPath path;
 
 		/**
 		 * Returns the byte array representation of a (UUID, timestamp) pair. 
@@ -48,18 +57,18 @@ public class BucketIndex {
 			return item;
 		}
 
-		public static long getTimestamp(byte[] item) {
+		static long getTimestamp(byte[] item) {
 			long timestamp = 0;
 			for (int j = 0; j < LONG_LENGTH; j++)
 				timestamp += (item[UUID_LENGTH + j] & 0xFFL) << j * 8;
 			return timestamp;
 		}
 
-		public static UniversalUniqueIdentifier getUUID(byte[] item) {
+		private static UniversalUniqueIdentifier getUUID(byte[] item) {
 			return new UniversalUniqueIdentifier(item);
 		}
 
-		public static void sortStates(byte[][] data) {
+		private static void sortStates(byte[][] data) {
 			Arrays.sort(data, new Comparator() {
 				// sort in inverse order
 				public int compare(Object o1, Object o2) {
@@ -106,7 +115,7 @@ public class BucketIndex {
 			data[i] = null;
 		}
 
-		public byte[][] getData() {
+		byte[][] getData() {
 			return getData(false);
 		}
 
@@ -166,15 +175,24 @@ public class BucketIndex {
 
 	public final static byte VERSION = 1;
 
-	//	private static final int UUID_LENGTH = new UniversalUniqueIdentifier().toString().length();
-
-	//	private static RecyclableBufferedInputStream bufferedInputStream = new RecyclableBufferedInputStream();
-
-	//	private static RecyclableBufferedOutputStream bufferedOutputStream = new RecyclableBufferedOutputStream();
-	private Map entries;
+	/**
+	 * Map of the history entries in this bucket. Maps (String -> byte[][]),
+	 * where the key is the path of the object we are storing history for, and
+	 * the value is the history entry data (UUID,timestamp) pairs.
+	 */
+	private final Map entries;
+	/**
+	 * The file system location of this bucket index file.
+	 */
 	private File location;
+	/**
+	 * Whether the in-memory bucket is dirty and needs saving
+	 */
 	private boolean needSaving = false;
 
+	/**
+	 * The root directory of the bucket indexes on disk.
+	 */
 	private File root;
 
 	private static int indexOf(byte[][] array, byte[] item, int length) {
@@ -287,7 +305,7 @@ public class BucketIndex {
 		needSaving = true;
 	}
 
-	private boolean contains(byte[][] array, byte[] item) {
+	private static boolean contains(byte[][] array, byte[] item) {
 		return indexOf(array, item, UniversalUniqueIdentifier.BYTES_SIZE) >= 0;
 	}
 

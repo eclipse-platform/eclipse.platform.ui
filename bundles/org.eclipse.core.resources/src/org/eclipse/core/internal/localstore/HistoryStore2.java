@@ -45,7 +45,7 @@ public class HistoryStore2 implements IHistoryStore {
 	 * @param root
 	 * @param depth
 	 */
-	public void accept(Visitor visitor, IPath root, int depth) throws CoreException {
+	private void accept(Visitor visitor, IPath root, int depth) throws CoreException {
 		// we only do anything for the root if depth == infinite
 		if (root.isRoot()) {
 			if (depth != IResource.DEPTH_INFINITE)
