@@ -161,6 +161,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		}
 		
 		protected void shutdown() {
+			if (fWindow == null) {
+				return;
+			}
 			Shell shell= fWindow.getShell();
 			if (shell == null || shell.isDisposed()) {
 				return;
