@@ -63,10 +63,10 @@ public class AcceleratorScope {
 	 * used only if there is no other action using this accelerator
 	 * defined in XML.
 	 */
-	public void registerAction(int accelerator,IAction action) {
+	public void registerAction(int accelerator,String actionDefId) {
 		if(accelerator == 0)
 			return;
-		defaultAcceleratorToAction.put(new Integer(accelerator),new DefaultAction(action));
+		defaultAcceleratorToAction.put(new Integer(accelerator),new AcceleratorAction(actionDefId));
 	}
 	/**
 	 * Returns the parent scope of the current scope. For example, if the current
@@ -212,7 +212,7 @@ public class AcceleratorScope {
 		return null;
 	}
 	/**
-	 * Adapter for an IAction with a definition in XML.
+	 * Adapter for an IAction.
 	 */
 	public static class AcceleratorAction {
 		String id;
@@ -230,22 +230,7 @@ public class AcceleratorScope {
 			resetMode(service);
 		}
 	}
-	/**
-	 * Adapter for an IAction without a definition in XML.
-	 */
-	public static class DefaultAction extends AcceleratorAction {
-		IAction action;
-		DefaultAction(IAction action) {
-			super(null);
-			this.action = action;
-		}
-		public boolean isMode() {
-			return false;
-		}
-		public void run(KeyBindingService service,KeyEvent e) {
-			action.run();
-		}
-	}
+
 	/**
 	 * Adapter for a Mode.
 	 * 

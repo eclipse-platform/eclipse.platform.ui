@@ -15,6 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.Accelerator;
 import org.eclipse.ui.internal.registry.AcceleratorRegistry;
 import org.eclipse.ui.internal.registry.AcceleratorScope;
@@ -88,10 +89,12 @@ public class KeyBindingService implements IKeyBindingService {
 	public void registerAction(IAction action) {
     	if(parentUpdateNumber != parent.getUpdateNumber())
     		initializeMapping();
-		defIdToAction.put(action.getActionDefinitionId(),action);
-		allDefIdToAction.put(action.getActionDefinitionId(),action);
+    	String defId = action.getActionDefinitionId();
+    	Assert.isNotNull(defId,"All registered action must have a definition id"); //$NON-NLS-1$
+		defIdToAction.put(defId,action);
+		allDefIdToAction.put(defId,action);
 		if(scope != null)
-			scope.registerAction(action.getAccelerator(),action);
+			scope.registerAction(action.getAccelerator(),defId);
     }
     /*
 	 * @see IKeyBindingService#registerAction(IAction)
