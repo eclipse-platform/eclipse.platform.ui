@@ -364,17 +364,13 @@ public class EditorActionBars extends SubActionBars2 {
      * @param visible
      *            the new visibility
      * @param forceVisibility
-     *            whether to change the visibility or just the enablement
-     *            state. This parameter is ignored if visible is <code>true</code>.
+	 *            <code>true</code> to change the visibility or <code>false</code> 
+	 *            to change just the enablement state. This parameter is ignored 
+	 *            if visible is <code>true</code>.
      */
     private void setVisible(boolean visible, boolean forceVisibility) {
         if (visible) {
-            if (forceVisibility) {
-                // Make the items visible
-                if (!enabledAllowed) setEnabledAllowed(true);
-            } else {
-                if (enabledAllowed) setEnabledAllowed(false);
-            }
+			setEnabledAllowed(true);
             if (!isVisible()) setVisible(true);
         } else {
             if (forceVisibility)
@@ -390,7 +386,7 @@ public class EditorActionBars extends SubActionBars2 {
             IContributionItem[] items = coolItemToolBarMgr.getItems();
             for (int i = 0; i < items.length; i++) {
                 IContributionItem item = items[i];
-                item.setVisible(visible);
+				item.setVisible(visible || !forceVisibility);
                 coolItemToolBarMgr.markDirty();
                 if (!coolBarManager.isDirty()) {
                     coolBarManager.markDirty();
@@ -399,7 +395,7 @@ public class EditorActionBars extends SubActionBars2 {
             // Update the manager
             coolItemToolBarMgr.update(false);
             if (toolBarContributionItem != null) {
-                toolBarContributionItem.setVisible(visible);
+				toolBarContributionItem.setVisible(visible || !forceVisibility);
             }
             coolBarManager.update(false);
         }
