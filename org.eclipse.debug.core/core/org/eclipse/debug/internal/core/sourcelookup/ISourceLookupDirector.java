@@ -118,4 +118,11 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 */
 	public void removeParticipants(ISourceLookupParticipant[] participants);
 	
+	/**
+	 * Returns the identifier of this type of source locator.
+	 * 
+	 * @return the identifier of this type of source locator
+	 */
+	public String getId();
+	
 }

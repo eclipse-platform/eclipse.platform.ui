@@ -330,6 +330,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 		if (isDirty()) {
 			if (fLocator == null) {
 				configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
+				configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 				return;
 			}
 			ILaunchConfigurationWorkingCopy workingCopy = null;			
@@ -354,6 +355,7 @@ public class SourceContainerLookupPanel extends AbstractLaunchConfigurationTab i
 			//writing to the file will cause a change event and the listeners will be updated
 			try{			
 				workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, fLocator.getMemento());
+				workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, fLocator.getId());
 				if(configuration == null) 
 					workingCopy.doSave(); 
 				setDirty(false);

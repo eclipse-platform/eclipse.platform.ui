@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.internal.core.sourcelookup.containers.ArchiveSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.internal.core.sourcelookup.containers.FolderSourceContainer;
@@ -52,11 +53,15 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 			FolderSourceContainer container = (FolderSourceContainer) o;
 			return SourceElementWorkbenchAdapter.getQualifiedName(container.getContainer().getFullPath());
 		}
+		if (o instanceof ArchiveSourceContainer) {
+			ArchiveSourceContainer container = (ArchiveSourceContainer)o;
+			return SourceElementWorkbenchAdapter.getQualifiedName(container.getFile().getFullPath());
+		}		
 		if (o instanceof ExternalArchiveSourceContainer) {
 			ExternalArchiveSourceContainer container = (ExternalArchiveSourceContainer)o;
 			IPath path = new Path(container.getName());
 			return SourceElementWorkbenchAdapter.getQualifiedName(path);
-		}
+		}		
 		return ""; //$NON-NLS-1$
 	}
 	/* (non-Javadoc)

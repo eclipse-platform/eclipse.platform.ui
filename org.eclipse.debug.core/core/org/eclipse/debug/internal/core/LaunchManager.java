@@ -80,6 +80,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.core.sourcelookup.AbstractSourceLookupDirector;
 import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.osgi.service.environment.Constants;
@@ -1146,7 +1147,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugException.INTERNAL_ERROR,
 				MessageFormat.format(DebugCoreMessages.getString("LaunchManager.Source_locator_does_not_exist__{0}_13"), new String[] {identifier} ), null)); //$NON-NLS-1$
 		} else {
-			return (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
+			IPersistableSourceLocator sourceLocator = (IPersistableSourceLocator)config.createExecutableExtension("class"); //$NON-NLS-1$
+			if (sourceLocator instanceof AbstractSourceLookupDirector) {
+				((AbstractSourceLookupDirector)sourceLocator).setId(identifier);
+			}
+			return sourceLocator;
 		}
 		
 	}

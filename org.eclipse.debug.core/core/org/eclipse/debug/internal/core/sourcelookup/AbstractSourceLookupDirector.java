@@ -66,6 +66,8 @@ import org.w3c.dom.NodeList;
  */
 public abstract class AbstractSourceLookupDirector implements ISourceLookupDirector, ILaunchConfigurationListener, ILaunchListener {
 	
+	// source locator type identifire
+	protected String fId;
 	//ISourceLocatorParticipants that are listening for container changes
 	protected ArrayList fParticipants = new ArrayList();
 	//list of current source containers
@@ -146,6 +148,16 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * Constructs source lookup director
 	 */
 	public AbstractSourceLookupDirector() {
+	}
+	
+	/**
+	 * Sets the type identifier for this source locator's type
+	 *  
+	 * @param id corresponds to source locator type identifier for a
+	 *  persistable source locator 
+	 */
+	public void setId(String id) {
+		fId = id;
 	}
 	
 	/* (non-Javadoc)
@@ -609,4 +621,10 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#getId()
+	 */
+	public String getId() {
+		return fId;
+	}
 }
