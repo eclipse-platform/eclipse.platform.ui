@@ -84,8 +84,7 @@ public interface IPluginDescriptor {
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtension(id + "." + extensionName) 
 	 * </pre>
-	 * where <code>id</code> is the symbolic name of the bundle associated with 
-	 * the relevant plug-in.
+	 * where <code>id</code> is the plug-in id.
 	 */
 	public IExtension getExtension(String extensionName);
 
@@ -100,8 +99,7 @@ public interface IPluginDescriptor {
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtensionPoint(id, extensionPointId) 
 	 * </pre>
-	 * where <code>id</code> is the symbolic name of the bundle associated with 
-	 * the relevant plug-in.
+	 * where <code>id</code> is the plug-in id.
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 
@@ -115,8 +113,7 @@ public interface IPluginDescriptor {
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtensionPoints(id) 
 	 * </pre>
-	 * where <code>id</code> is the symbolic name of the bundle associated with 
-	 * the relevant plug-in.
+	 * where <code>id</code> is the plug-in id.
 	 */
 	public IExtensionPoint[] getExtensionPoints();
 
@@ -130,8 +127,7 @@ public interface IPluginDescriptor {
 	 * <pre>
 	 *     Platform.getExtensionRegistry().getExtensions(id) 
 	 * </pre>
-	 * where <code>id</code> is the symbolic name of the bundle associated with 
-	 * the relevant plug-in.
+	 * where <code>id</code> is the plug-in id.
 	 */
 	public IExtension[] getExtensions();
 
