@@ -184,7 +184,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Refresh Scope";
+		return "Refresh";
 	}
 	
 	/**
