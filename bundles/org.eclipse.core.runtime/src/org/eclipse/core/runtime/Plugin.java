@@ -100,12 +100,6 @@ public abstract class Plugin implements BundleActivator {
 	private Bundle bundle;
 	
 	/**
-	 * The context in which this plug-in operates.  Note that this value is private and should not be
-	 * shared with others as this posses a security risk.
-	 */
-	// TODO consider removing this field.  It is used only in start()
-	private BundleContext context;		
-	/**
 	 * The debug flag for this plug-in.  The flag is false by default.
 	 * It can be set to true either by the plug-in itself or in the platform 
 	 * debug options.
@@ -158,36 +152,6 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 3.0
 	 */
 	public Plugin() {
-	}
-	/**
-	 * Creates a new plug-in runtime object associated with the given bundle context.
-	 * The resultant instance is not managed by the runtime and
-	 * so should be remembered by the client (typically using a Singleton pattern).
-	 * This method must never be called for plug-ins which require the compatibility layer.
-	 * <p>
-	 * This constructor is only required if this class is <b>not</b> to be used as a bundle
-	 * activator.  In that case, your <code>BundleActivator</code> may call this method.
-	 * </p><p>
-	 * Note: The class loader typically has monitors acquired during invocation of this method.  It is 
-	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
-	 * as this would lead to deadlock vulnerability.
-	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is an early access API to the new OSGI-based Eclipse 3.0
-	 * Platform Runtime. Because the APIs for the new runtime have not yet been fully
-	 * stabilized, they should only be used by clients needing to take particular
-	 * advantage of new OSGI-specific functionality, and only then with the understanding
-	 * that these APIs may well change in incompatible ways until they reach
-	 * their finished, stable form (post-3.0). </p>
-	 *
-	 * @param context the bundle context
-	 * @since 3.0
-	 */
-	// TODO can we remove this?  It added so you could have a different bundle
-	// activator.  That case is somewhat spurious and can be handled by the 
-	// zero arg constructor and calling start().
-	public Plugin(BundleContext context) {
-		this.context = context;
 	}
 	/**
 	 * Creates a new plug-in runtime object for the given plug-in descriptor.
@@ -279,7 +243,7 @@ public abstract class Plugin implements BundleActivator {
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor!=null)
 			return descriptor;
-		IPluginDescriptor descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
+		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
 		if (descriptor != null)
 			CompatibilityHelper.setPlugin(descriptor, this);
 		return descriptor;
@@ -592,7 +556,7 @@ public abstract class Plugin implements BundleActivator {
 	public void shutdown() throws CoreException {
 		Method m;
 		try {
-			m = descriptor.getClass().getMethod("doPluginDeactivation", new Class[0]);
+			m = descriptor.getClass().getMethod("doPluginDeactivation", new Class[0]); //$NON-NLS-1$
 			m.invoke(descriptor, null);
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
@@ -709,7 +673,6 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 3.0
 	 */
 	public void start(BundleContext context) throws Exception {
-		this.context = context;
 		bundle = context.getBundle();
 		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
 		CompatibilityHelper.setPlugin(descriptor, this);
@@ -749,7 +712,6 @@ public abstract class Plugin implements BundleActivator {
 	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
-		this.context = null;
 	}
 	
 	/**

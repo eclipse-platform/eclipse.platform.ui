@@ -420,6 +420,7 @@ public final class Platform {
 	 * as described above.  If the compatibility layer is not installed, <code>null</code>
 	 * is returned in all cases.
 	 */
+	//TODO Throws IllegalStateException
 	public static Plugin getPlugin(String id) {
 		try {
 			// TODO check for a null registry (no compatibiity layer) and return null.

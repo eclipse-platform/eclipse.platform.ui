@@ -18,8 +18,6 @@ import org.osgi.service.startlevel.StartLevel;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class PluginActivator implements BundleActivator {
-
-	private static final String PI_APPLICATION_RUNNER = "org.eclipse.core.applicationrunner"; //$NON-NLS-1$ //TODO To remove
 	private BundleContext context;
 	private Plugin plugin;
 
@@ -47,8 +45,8 @@ public class PluginActivator implements BundleActivator {
 		this.context = context;
 		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getSymbolicName());
 		plugin = pd.getPlugin();
+		plugin.start(context);
 		plugin.startup();
-		plugin.start(context);	//TODO Why do we need to call startup before start()?
 	}
 
 	private void ensureNormalStartup(BundleContext context) throws BundleException {

@@ -366,11 +366,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	synchronized void doPluginActivation() throws CoreException {
-		// this method is called by the class loader just prior 
-		// to getting a class. It needs to handle the
-		// case where it is called multiple times during the activation
+		//This class is only called when getPlugin() is invoked.
+		// It needs to handle the case where it is called multiple times during the activation
 		// processing itself (as a result of other classes from this
-		// plugin being directly referenced by the plugin class)	//TODO Invalid comment
+		// plugin being directly referenced by the plugin class)
 
 		// NOTE: there is a remote scenario where the plugin class can
 		// deadlock, if it starts separate thread(s) within its
