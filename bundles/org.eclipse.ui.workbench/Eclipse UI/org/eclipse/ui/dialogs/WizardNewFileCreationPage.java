@@ -22,12 +22,18 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 /**
  * Standard main page for a wizard that creates a file resource.
@@ -55,9 +61,8 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	// cache of newly-created file
 	private IFile newFile;
 	
-	// link target location
-	private String linkTarget;
-
+	private IPath linkTargetPath;
+		
 	// initial value stores
 	private String initialFileName;
 	private IPath initialContainerFullPath;
@@ -65,6 +70,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	// widgets
 	private Composite topLevel;
 	private ResourceAndContainerGroup resourceGroup;
+	private Button advancedButton;
+	private CreateLinkedResourceGroup linkedResourceGroup;
+	
 /**
  * Creates a new file creation wizard page. If the initial resource selection 
  * contains exactly one container resource then it will be used as the default
@@ -78,10 +86,29 @@ public WizardNewFileCreationPage(String pageName, IStructuredSelection selection
 	setPageComplete(false);
 	this.currentSelection = selection;
 }
+/**
+ * Creates the widget for advanced options.
+ *  
+ * @param parent the parent composite
+ */
+protected void createAdvancedControls(Composite parent) {
+	advancedButton = new Button(parent, SWT.PUSH);
+	advancedButton.setFont(parent.getFont());
+	advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed"));
+	GridData data = setButtonLayoutData(advancedButton);
+	data.horizontalAlignment = GridData.BEGINNING;
+	advancedButton.setLayoutData(data);
+	advancedButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handleAdvancedButtonSelect();
+		}
+	});
+}
 /** (non-Javadoc)
  * Method declared on IDialogPage.
  */
 public void createControl(Composite parent) {
+	initializeDialogUnits(parent);
 	// top level group
 	topLevel = new Composite(parent,SWT.NONE);
 	topLevel.setLayout(new GridLayout());
@@ -96,6 +123,7 @@ public void createControl(Composite parent) {
 	initialPopulateContainerNameField();
 	if (initialFileName != null)
 		resourceGroup.setResource(initialFileName);
+	createAdvancedControls(topLevel);
 	validatePage();
 	// Show description on opening
 	setErrorMessage(null);
@@ -118,8 +146,8 @@ protected void createFile(IFile fileHandle, InputStream contents, IProgressMonit
 
 	try {
 		// Create a new file resource in the workspace
-		if (linkTarget != null) 
-			fileHandle.createLink(new Path(linkTarget), IResource.NONE, monitor);
+		if (linkTargetPath != null) 
+			fileHandle.createLink(linkTargetPath, IResource.ALLOW_MISSING_LOCAL, monitor);
 		else
 			fileHandle.create(contents, false, monitor);
 	}
@@ -145,6 +173,17 @@ protected void createFile(IFile fileHandle, InputStream contents, IProgressMonit
  */
 protected IFile createFileHandle(IPath filePath) {
 	return WorkbenchPlugin.getPluginWorkspace().getRoot().getFile(filePath);
+}
+/**
+ * Creates the link target path if a link target has been specified. 
+ */
+protected void createLinkTarget() {
+	if (linkedResourceGroup != null) {
+		String linkTarget = linkedResourceGroup.getLinkTarget();
+		linkTargetPath = new Path(linkTarget);
+	}
+	else
+		linkTargetPath = null;
 }
 /**
  * Creates a new file resource in the selected container and with the selected
@@ -178,7 +217,8 @@ public IFile createNewFile() {
 	IPath newFilePath = containerPath.append(resourceGroup.getResource());
 	final IFile newFileHandle = createFileHandle(newFilePath);
 	final InputStream initialContents = getInitialContents();
-
+	
+	createLinkTarget();
 	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		protected void execute(IProgressMonitor monitor) throws CoreException,
 			InterruptedException
@@ -265,6 +305,48 @@ protected String getNewFileLabel() {
 	return WorkbenchMessages.getString("WizardNewFileCreationPage.fileLabel"); //$NON-NLS-1$
 }
 /**
+ * Shows/hides the advanced option widgets. 
+ */
+protected void handleAdvancedButtonSelect() {
+	Shell shell = getShell();
+	
+	if (linkedResourceGroup != null) {
+		Composite composite = (Composite) getControl();
+		linkedResourceGroup.dispose();
+		linkedResourceGroup = null;
+		setPageComplete(validatePage());
+		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonCollapsed"));
+		
+		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point oldSize = composite.getSize();
+		int heightDelta = newSize.y - oldSize.y; 
+		if (heightDelta < 0) {
+			Point shellSize = shell.getSize();
+			shell.setSize(shellSize.x, shellSize.y + heightDelta);
+		}
+	} else {
+		Composite composite = (Composite) getControl();
+		linkedResourceGroup = new CreateLinkedResourceGroup(
+			IResource.FILE,
+			new Listener() {
+				public void handleEvent(Event e) {
+					setPageComplete(validatePage());
+				}
+			});
+		linkedResourceGroup.createContents(composite);
+		advancedButton.setText(WorkbenchMessages.getString("WizardNewFileCreationPage.advancedButtonExpanded"));
+		
+		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point oldSize = composite.getSize();
+		int widthDelta = Math.max(newSize.x - oldSize.x, 0);
+		int heightDelta = Math.max(newSize.y - oldSize.y, 0); 
+		if (widthDelta > 0 || heightDelta > 0) {
+			Point shellSize = shell.getSize();
+			shell.setSize(shellSize.x + widthDelta, shellSize.y + heightDelta);
+		}
+	}
+}
+/**
  * The <code>WizardNewFileCreationPage</code> implementation of this 
  * <code>Listener</code> method handles all events and enablements for controls
  * on this page. Subclasses may extend.
@@ -324,14 +406,24 @@ public void setFileName(String value) {
 		resourceGroup.setResource(value);
 }
 /**
- * Sets the link target.
- * 
- * @param value the path to the link target. <code>null</code> if the 
- * 	new file should not be linked.
- * @since 2.1
+ * Checks whether the linked resource target is valid.
+ * Sets the error message accordingly and returns the status.
+ *  
+ * @return IStatus validation result from the CreateLinkedResourceGroup
  */
-public void setLinkTarget(String value) {
-	linkTarget = value;
+protected IStatus validateLinkedResource() {
+	IPath containerPath = resourceGroup.getContainerFullPath();
+	IPath newFilePath = containerPath.append(resourceGroup.getResource());
+	IFile newFileHandle = createFileHandle(newFilePath);
+	IStatus status = linkedResourceGroup.validateLinkLocation(newFileHandle);
+
+	if (status.getSeverity() == IStatus.ERROR) {
+		setErrorMessage(status.getMessage());
+	} else if (status.getSeverity() == IStatus.WARNING) {
+		setMessage(status.getMessage(), WARNING);
+		setErrorMessage(null);		
+	}		
+	return status;	
 }
 /**
  * Returns whether this page's controls currently all contain valid 
@@ -342,13 +434,10 @@ public void setLinkTarget(String value) {
  */
 protected boolean validatePage() {
 	boolean valid = true;
-	
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
-
 	String fileName = getFileName();	
+	IStatus nameStatus = workspace.validateName(fileName, IResource.FILE);
 	
-	IStatus nameStatus =
-		workspace.validateName(fileName, IResource.FILE);
 	if (!nameStatus.isOK()) {
 		setErrorMessage(nameStatus.getMessage());
 		return false;
@@ -359,7 +448,7 @@ protected boolean validatePage() {
 		if (resourceGroup.getProblemType() == ResourceAndContainerGroup.PROBLEM_RESOURCE_EMPTY
 			|| resourceGroup.getProblemType() == ResourceAndContainerGroup.PROBLEM_CONTAINER_EMPTY) {
 			setMessage(resourceGroup.getProblemMessage());
-			setErrorMessage(null);
+			setErrorMessage(null);			
 		} else
 			setErrorMessage(resourceGroup.getProblemMessage());
 		valid = false;
@@ -372,16 +461,19 @@ protected boolean validatePage() {
 		valid = false;
 	}
 
-	// Avoid draw flicker by clearing error message
-	// if all is valid.
-	if (valid) {
+	IStatus linkedResourceStatus = null;
+	if (valid && linkedResourceGroup != null) {
+		linkedResourceStatus = validateLinkedResource();
+		if (linkedResourceStatus.getCode() == IStatus.ERROR)
+			valid = false;
+	}		
+	// validateLinkedResource sets messages itself
+	if (valid && (linkedResourceStatus == null || linkedResourceStatus.isOK())) {
 		setMessage(null);
 		setErrorMessage(null);
 	}
-
 	return valid;
 }
-
 /*
  * @see DialogPage.setVisible(boolean)
  */

@@ -9,16 +9,15 @@
  */
 package org.eclipse.ui.dialogs;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,7 +25,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.PathVariableSelectionDialog;
+import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
 
 /**
  * The NewFolderDialog is used to create a new folder.
@@ -46,10 +45,8 @@ public class NewFolderDialog extends SelectionDialog {
 
 	// widgets
 	private Text folderNameField;
-	private Text linkTargetField;
-	private Label statusMessageLabel;
-	private Button browseButton;
-	private Button variablesButton;
+	private CreateLinkedResourceGroup linkedResourceGroup;
+	private MessageLine statusLine;	
 
 	private boolean createLink = false;
 
@@ -64,90 +61,14 @@ public class NewFolderDialog extends SelectionDialog {
 public NewFolderDialog(Shell parentShell, IContainer container) {
 	super(parentShell);
 	this.container = container;
-	setTitle(WorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
-}
-/**
- * Checks the message and informs the user if it is not null. 
- *
- * @param message the error message to show. may be null.
- */
-private void applyValidationResult(String message) {
-	if (message == null) {
-		statusMessageLabel.setText("");//$NON-NLS-1$
-		getOkButton().setEnabled(true);
-	} else {
-		statusMessageLabel.setForeground(
-			JFaceColors.getErrorText(
-				statusMessageLabel.getDisplay()));
-		statusMessageLabel.setText(message);
-		getOkButton().setEnabled(false);
-	}
-}
-/**
- * Checks whether the folder name and link location are valid.
- * 
- * @return null if the folder name and link location are valid.
- * 	a message that indicates the problem otherwise.
- */
-private String checkValid() {
-	String valid = checkValidName();
-	if (valid != null)
-		return valid;
-	return checkValidLocation();
-}
-/**
- * Checks if the link location is valid. 
- * 
- * @return null if the link location is valid.
- * 	a message that indicates the problem otherwise.
- */
-private String checkValidLocation() {
-	if (createLink == false)
-		return null;
-	else {
-		String linkTargetName = linkTargetField.getText();
-		if (linkTargetName.equals("")) {//$NON-NLS-1$
-			return(WorkbenchMessages.getString("NewFolderDialog.linkTargetEmpty")); //$NON-NLS-1$
-		}
-		else {
-			IPath path = new Path("");//$NON-NLS-1$
-			if (!path.isValidPath(linkTargetName)) {
-				return WorkbenchMessages.getString("NewFolderDialog.linkTargetInvalid"); //$NON-NLS-1$
+	linkedResourceGroup = new CreateLinkedResourceGroup(
+		IResource.FOLDER,
+		new Listener() {
+			public void handleEvent(Event e) {
+				validateLinkedResource();
 			}
-		}
-		File linkTargetFile = new Path(linkTargetName).toFile();
-		if (linkTargetFile.exists() == false) {
-			return WorkbenchMessages.getString("NewFolderDialog.linkTargetNonExistent"); //$NON-NLS-1$
-		}
-		IStatus locationStatus =
-			container.getWorkspace().validateLinkLocation(
-				container,
-				new Path(linkTargetName));
-
-		if (!locationStatus.isOK())
-			return WorkbenchMessages.getString("NewFolderDialog.linkTargetLocationInvalid"); //$NON-NLS-1$
-
-		return null;
-	}
-}
-/**
- * Checks if the folder name is valid. 
- * 
- * @return null if the new folder name is valid.
- * 	a message that indicates the problem otherwise.
- */
-private String checkValidName() {
-	String name = folderNameField.getText();
-	IWorkspace workspace = container.getWorkspace();
-	IStatus nameStatus = workspace.validateName(name, IResource.FOLDER);
-	if (!nameStatus.isOK())
-		return nameStatus.getMessage();
-	IFolder newFolder = container.getFolder(new Path(name));
-	if (newFolder.exists()) {
-		return WorkbenchMessages.format("NewFolderDialog.alreadyExists", new Object[] { name }); //$NON-NLS-1$
-	}
-
-	return null;
+		});
+	setTitle(WorkbenchMessages.getString("NewFolderDialog.title")); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared in Window.
@@ -169,62 +90,20 @@ public void create() {
  * Method declared on Dialog.
  */
 protected Control createDialogArea(Composite parent) {
-	// page group
+	Font font = parent.getFont();
 	Composite composite = (Composite) super.createDialogArea(parent);
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	createFolderNameGroup(composite);
-	createLinkLocationGroup(composite);
-	createValidationListener();
-	
-	// add in a label for status messages if required
-	statusMessageLabel = new Label(composite, SWT.WRAP);
-	statusMessageLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-	statusMessageLabel.setFont(parent.getFont());
+	linkedResourceGroup.createContents(composite);
+	statusLine = new MessageLine(composite);
+	statusLine.setAlignment(SWT.LEFT);
+	statusLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	statusLine.setErrorStatus(null);
+	statusLine.setFont(font);
 	
 	return composite;
-}
-/**
- * Creates the linked folder option button 
- *
- * @param parent the parent composite
- */
-private void createLinkLocationGroup(Composite parent) {
-	Font font = parent.getFont();
-	
-	Composite folderGroup = new Composite(parent, SWT.NONE);
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 3;
-	folderGroup.setLayout(layout);
-	folderGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	folderGroup.setFont(font);
-	
-	final Button createLinkButton =
-		new Button(folderGroup, SWT.CHECK | SWT.RIGHT);
-	createLinkButton.setText(WorkbenchMessages.getString("NewFolderDialog.createLinkButton")); //$NON-NLS-1$
-	createLinkButton.setSelection(createLink);
-	GridData data = new GridData();
-	data.horizontalSpan = 3;
-	createLinkButton.setLayoutData(data);
-	createLinkButton.setFont(font);
-	createLinkButton.setEnabled(container instanceof IProject);
-	
-	createUserSpecifiedLinkLocationGroup(folderGroup, createLink);
-
-	SelectionListener listener = new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			createLink = createLinkButton.getSelection();
-			browseButton.setEnabled(createLink);
-			variablesButton.setEnabled(createLink);
-			linkTargetField.setEnabled(createLink);
-			if (!createLink)
-				linkTargetField.setText(""); //$NON-NLS-1$
-			else
-				applyValidationResult(checkValid());
-		}
-	};
-	createLinkButton.addSelectionListener(listener);
 }
 /**
  * Creates the folder name specification controls.
@@ -251,6 +130,18 @@ private void createFolderNameGroup(Composite parent) {
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	folderNameField.setLayoutData(data);
 	folderNameField.setFont(font);
+	folderNameField.addListener(SWT.Modify, new Listener() {
+		public void handleEvent(Event event) {
+			validateLinkedResource();
+		}
+	});
+}
+private IFolder createFolderHandle(String folderName) {
+	IWorkspaceRoot workspaceRoot = container.getWorkspace().getRoot();
+	IPath folderPath = container.getFullPath().append(folderName);
+	IFolder folderHandle = workspaceRoot.getFolder(folderPath);
+	
+	return folderHandle;
 }
 /**
  * Creates a new folder with the given name and optionally linking to
@@ -261,9 +152,7 @@ private void createFolderNameGroup(Composite parent) {
  * @return IFolder the new folder
  */
 private IFolder createNewFolder(String folderName, final String linkTargetName) {
-	IWorkspaceRoot workspaceRoot = container.getWorkspace().getRoot(); 
-	IPath folderPath = container.getFullPath().append(folderName);
-	final IFolder folderHandle = workspaceRoot.getFolder(folderPath);
+	final IFolder folderHandle = createFolderHandle(folderName);
 	
 	WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 		public void execute(IProgressMonitor monitor) throws CoreException {
@@ -309,120 +198,88 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
 	return folderHandle;
 }
 /**
- * Creates the link target location specification controls.
- *
- * @param folderGroup the parent composite
- * @param enabled sets the initial enabled state of the widgets
- */
-private void createUserSpecifiedLinkLocationGroup(Composite folderGroup, boolean enabled) {
-	Font font = folderGroup.getFont();
-	Label fill = new Label(folderGroup, SWT.NONE);
-	GridData data = new GridData();
-	Button button = new Button(folderGroup, SWT.CHECK);
-	data.widthHint = button.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-	button.dispose();
-	fill.setLayoutData(data);
-		
-	// project location entry field
-	linkTargetField = new Text(folderGroup, SWT.BORDER);
-	data = new GridData();
-	data.widthHint = SIZING_TEXT_FIELD_WIDTH;	
-	linkTargetField.setLayoutData(data);
-	linkTargetField.setFont(font);
-	linkTargetField.setEnabled(enabled);
-
-	// browse button
-	browseButton = new Button(folderGroup, SWT.PUSH);
-	setButtonLayoutData(browseButton);
-	browseButton.setFont(font);
-	browseButton.setText(WorkbenchMessages.getString("NewFolderDialog.browseButton")); //$NON-NLS-1$
-	browseButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent event) {
-			handleLinkTargetBrowseButtonPressed();
-		}
-	});
-	browseButton.setEnabled(enabled);
-
-	fill = new Label(folderGroup, SWT.NONE);
-	data = new GridData();
-	data.horizontalSpan = 2;
-	fill.setLayoutData(data);
-
-	// variables button
-	variablesButton = new Button(folderGroup, SWT.PUSH);
-	setButtonLayoutData(variablesButton);
-	variablesButton.setFont(font);
-	variablesButton.setText(WorkbenchMessages.getString("NewFolderDialog.variablesButton")); //$NON-NLS-1$
-	variablesButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent event) {
-			handleVariablesButtonPressed();
-		}
-	});
-	variablesButton.setEnabled(enabled);
-}
-/**
- * Create the listener that is used to validate the folder name and 
- * link location entered by the user
- */
-private void createValidationListener() {
-	Listener listener = new Listener() {
-		public void handleEvent(Event event) {
-			applyValidationResult(checkValid());
-		}
-	};
-	linkTargetField.addListener(SWT.Modify, listener);
-	folderNameField.addListener(SWT.Modify, listener);
-}
-/**
- * Opens a directory browser
- */
-private void handleLinkTargetBrowseButtonPressed() {
-	DirectoryDialog dialog = new DirectoryDialog(linkTargetField.getShell());
-	dialog.setMessage(WorkbenchMessages.getString("NewFolderDialog.targetFolderLabel")); //$NON-NLS-1$
-	
-	String dirName = linkTargetField.getText();
-	if (!dirName.equals("")) {//$NON-NLS-1$
-		File path = new File(dirName);
-		if (path.exists())
-			dialog.setFilterPath(dirName);
-	}
-
-	String selectedDirectory = dialog.open();
-	if (selectedDirectory != null)
-		linkTargetField.setText(selectedDirectory);
-}
-/**
- * Opens a path variable selection dialog
- */
-private void handleVariablesButtonPressed() {
-	PathVariableSelectionDialog dialog = 
-		new PathVariableSelectionDialog(
-			linkTargetField.getShell(),
-			IResource.FOLDER);
-	
-	if (dialog.open() == IDialogConstants.OK_ID) {
-		String[] variableNames = (String[]) dialog.getResult();
-		IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-		IPath path = pathVariableManager.getValue(variableNames[0]);
-		
-		if (path != null) {
-			linkTargetField.setText(path.toOSString());
-		}
-	}
-}
-/**
  * Creates the folder using the name and link target entered
  * by the user.
  * Sets the dialog result to the created folder.  
  */
 protected void okPressed() {
 	String linkTarget = null; 
-
-	if(createLink)
-		linkTarget = linkTargetField.getText();
-
+		
+	if(createLink) {
+		linkTarget = linkedResourceGroup.getLinkTarget();
+	}
 	IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
 	setSelectionResult(new IFolder[] {folder});
 	super.okPressed();
+}
+/**
+ * Update the dialog's status line to reflect the given status. It is safe to call
+ * this method before the dialog has been opened.
+ */
+private void updateStatus(IStatus status) {
+	if (statusLine != null && statusLine.isDisposed() == false) {
+		statusLine.setErrorStatus(status);
+	}
+}
+/**
+ * Update the dialog's status line to reflect the given status. It is safe to call
+ * this method before the dialog has been opened.
+ */
+private void updateStatus(int severity, String message) {
+	updateStatus(
+		new Status(
+			severity,
+			WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+			severity,
+			message,
+			null));
+}
+/**
+ * Checks whether the folder name and link location are valid.
+ *
+ * @return null if the folder name and link location are valid.
+ * 	a message that indicates the problem otherwise.
+ */
+private void validateLinkedResource() {
+	boolean valid = validateFolderName();
+
+	if (valid) {
+		IFolder linkHandle = createFolderHandle(folderNameField.getText());
+		IStatus status = linkedResourceGroup.validateLinkLocation(linkHandle);
+		
+		if (status.getSeverity() != IStatus.ERROR)
+			getOkButton().setEnabled(true);
+		else
+			getOkButton().setEnabled(false);
+			
+		updateStatus(status);
+	}
+}
+/**
+ * Checks if the folder name is valid.
+ *
+ * @return null if the new folder name is valid.
+ * 	a message that indicates the problem otherwise.
+ */
+private boolean validateFolderName() {
+	String name = folderNameField.getText();
+	IWorkspace workspace = container.getWorkspace();
+	IStatus nameStatus = workspace.validateName(name, IResource.FOLDER);
+
+	if ("".equals(name)) {
+		updateStatus(IStatus.ERROR, WorkbenchMessages.getString("NewFolderDialog.folderNameEmpty"));	//$NON-NLS-1$
+		return false;
+	}
+	if (nameStatus.isOK() == false) {
+		updateStatus(nameStatus);
+		return false;
+	}
+	IFolder newFolder = container.getFolder(new Path(name));
+	if (newFolder.exists()) {
+		updateStatus(IStatus.ERROR, WorkbenchMessages.format("NewFolderDialog.alreadyExists", new Object[] { name }));	//$NON-NLS-1$
+		return false;
+	}
+	updateStatus(null);
+	return true;
 }
 }

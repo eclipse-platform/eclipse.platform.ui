@@ -28,12 +28,16 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 /**
  * Standard main page for a wizard that creates a folder resource.
@@ -53,10 +57,12 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 	private IFolder newFolder;
 	// link target location
-	private String linkTarget;
+	private IPath linkTargetPath;
 	
 	// widgets
 	private ResourceAndContainerGroup resourceGroup;
+	private Button advancedButton;
+	private CreateLinkedResourceGroup linkedResourceGroup;
 /**
  * Creates a new folder creation wizard page. If the initial resource selection 
  * contains exactly one container resource then it will be used as the default
@@ -70,6 +76,21 @@ public WizardNewFolderMainPage(String pageName, IStructuredSelection selection) 
 	setTitle(pageName);
 	setDescription(WorkbenchMessages.getString("WizardNewFolderMainPage.description")); //$NON-NLS-1$
 	this.currentSelection = selection;
+}
+/**
+ * Creates the widget for advanced options.
+ *  
+ * @param parent the parent composite
+ */
+protected void createAdvancedControls(Composite parent) {
+	advancedButton = new Button(parent, SWT.PUSH);
+	advancedButton.setFont(parent.getFont());
+	advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonCollapsed"));
+	advancedButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			handleAdvancedButtonSelect();
+		}
+	});
 }
 /** (non-Javadoc)
  * Method declared on IDialogPage.
@@ -87,6 +108,7 @@ public void createControl(Composite parent) {
 	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel"), false); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initializePage();
+	createAdvancedControls(composite);	
 	validatePage();
 	// Show description on opening
 	setErrorMessage(null);
@@ -110,8 +132,8 @@ protected void createFolder(IFolder folderHandle, IProgressMonitor monitor) thro
             if (parent instanceof IFolder && (!((IFolder)parent).exists())) {
                 createFolder((IFolder)parent, monitor);
             }
-            if (linkTarget != null)
-            	folderHandle.createLink(new Path(linkTarget), IResource.NONE, monitor);
+            if (linkTargetPath != null)
+            	folderHandle.createLink(linkTargetPath, IResource.ALLOW_MISSING_LOCAL, monitor);
             else
         		folderHandle.create(false, true, monitor);
         }
@@ -139,6 +161,17 @@ protected void createFolder(IFolder folderHandle, IProgressMonitor monitor) thro
  */
 protected IFolder createFolderHandle(IPath folderPath) {
 	return WorkbenchPlugin.getPluginWorkspace().getRoot().getFolder(folderPath);
+}
+/**
+ * Creates the link target path if a link target has been specified. 
+ */
+protected void createLinkTarget() {
+	if (linkedResourceGroup != null) {
+		String linkTarget = linkedResourceGroup.getLinkTarget();
+		linkTargetPath = new Path(linkTarget);
+	}
+	else
+		linkTargetPath = null;
 }
 /**
  * Creates a new folder resource in the selected container and with the selected
@@ -171,6 +204,7 @@ public IFolder createNewFolder() {
 	IPath newFolderPath = containerPath.append(resourceGroup.getResource());
 	final IFolder newFolderHandle = createFolderHandle(newFolderPath);
 
+	createLinkTarget();
 	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 		public void execute(IProgressMonitor monitor) throws CoreException {
 			try {
@@ -210,15 +244,46 @@ public IFolder createNewFolder() {
 	return newFolder;
 }
 /**
- * Returns the current full path of the containing resource as entered or 
- * selected by the user
- *
- * @return the container's full path, or <code>null</code> if no path 
- * 	is known
- * @since 2.1
+ * Shows/hides the advanced option widgets. 
  */
-public IPath getContainerFullPath() {
-	return resourceGroup.getContainerFullPath();
+protected void handleAdvancedButtonSelect() {
+	Shell shell = getShell();
+	
+	if (linkedResourceGroup != null) {
+		Composite composite = (Composite) getControl();
+		linkedResourceGroup.dispose();
+		linkedResourceGroup = null;
+		setPageComplete(validatePage());
+		advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonCollapsed"));
+		
+		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point oldSize = composite.getSize();
+		int heightDelta = newSize.y - oldSize.y; 
+		if (heightDelta < 0) {
+			Point shellSize = shell.getSize();
+			shell.setSize(shellSize.x, shellSize.y + heightDelta);
+		}
+	} else {
+		Composite composite = (Composite) getControl();
+		linkedResourceGroup = new CreateLinkedResourceGroup(
+			IResource.FOLDER,
+			new Listener() {
+				public void handleEvent(Event e) {
+					setPageComplete(validatePage());
+				}
+			});
+		linkedResourceGroup.createContents(composite);
+		advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonExpanded"));
+		
+		Point newSize = composite.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		Point oldSize = composite.getSize();
+		int widthDelta = Math.max(newSize.x - oldSize.x, 0);
+		int heightDelta = Math.max(newSize.y - oldSize.y, 0); 
+		if (widthDelta > 0 || heightDelta > 0) {
+			Point shellSize = shell.getSize();
+			shell.setSize(shellSize.x + widthDelta, shellSize.y + heightDelta);
+		}
+	}
 }
 /**
  * The <code>WizardNewFolderCreationPage</code> implementation of this 
@@ -250,6 +315,26 @@ protected void initializePage() {
 	}
 
 	setPageComplete(false);
+}
+/**
+ * Checks whether the linked resource target is valid.
+ * Sets the error message accordingly and returns the status.
+ *  
+ * @return IStatus validation result from the CreateLinkedResourceGroup
+ */
+protected IStatus validateLinkedResource() {
+	IPath containerPath = resourceGroup.getContainerFullPath();
+	IPath newFolderPath = containerPath.append(resourceGroup.getResource());
+	IFolder newFolderHandle = createFolderHandle(newFolderPath);
+	IStatus status = linkedResourceGroup.validateLinkLocation(newFolderHandle);
+
+	if (status.getSeverity() == IStatus.ERROR) {
+		setErrorMessage(status.getMessage());
+	} else if (status.getSeverity() == IStatus.WARNING) {
+		setMessage(status.getMessage(), WARNING);
+		setErrorMessage(null);		
+	}		
+	return status;	
 }
 /**
  * Returns whether this page's controls currently all contain valid 
@@ -297,24 +382,18 @@ protected boolean validatePage() {
 		valid = false;
 	}
 
-	// Avoid draw flicker by clearing error message
-	// if all is valid.
-	if (valid) {
-		setErrorMessage(null);
-		setMessage(null);
+	IStatus linkedResourceStatus = null;
+	if (valid && linkedResourceGroup != null) {
+		linkedResourceStatus = validateLinkedResource();
+		if (linkedResourceStatus.getCode() == IStatus.ERROR)
+			valid = false;
 	}
-
+	// validateLinkedResource sets messages itself
+	if (valid && (linkedResourceStatus == null || linkedResourceStatus.isOK())) {
+		setMessage(null);
+		setErrorMessage(null);
+	}
 	return valid;
-}
-/**
- * Sets the link target.
- *
- * @param value the path to the link target. <code>null</code> if the 
- *	new folder should not be linked.
- * @since 2.1
- */
-public void setLinkTarget(String value) {
-	linkTarget = value;
 }
 /*
  * @see DialogPage.setVisible(boolean)
