@@ -1473,15 +1473,15 @@ class ActivationList {
 		parts.remove(part);
 		parts.add(part);
 	}
-	WorkbenchPart getActive() {
+	IWorkbenchPart getActive() {
 		if(parts.isEmpty())
 			return null;
-		return (WorkbenchPart)parts.get(parts.size() - 1);
+		return (IWorkbenchPart)parts.get(parts.size() - 1);
 	}
-	WorkbenchPart getPreviouslyActive() {
+	IWorkbenchPart getPreviouslyActive() {
 		if(parts.size() < 2) 
 			return null;
-		return (WorkbenchPart)parts.get(parts.size() - 2);	
+		return (IWorkbenchPart)parts.get(parts.size() - 2);	
 	}
 	boolean remove(Object part) {
 		return parts.remove(part);
