@@ -462,6 +462,52 @@ private void createShortcutBar(Shell shell) {
 /* (non-Javadoc)
  * Method declared on ApplicationWindow.
  */
+
+protected MenuManager createMenuManager() {
+	final MenuManager result = super.createMenuManager();
+	result.setOverrides(new IContributionManagerOverrides() {
+		public Integer getAccelerator(IContributionItem item) {
+			if(getKeyBindingService().acceleratorsAllowed())
+				return null;
+			return new Integer(0);
+		}
+		public String getAcceleratorText(IContributionItem item) {
+			if(getKeyBindingService().acceleratorsAllowed())
+				return null;
+			if(!(item instanceof ActionContributionItem))
+				return null;
+			ActionContributionItem aci = (ActionContributionItem)item;
+			String defId = aci.getAction().getActionDefinitionId();
+			if(defId == null)
+				return null;
+			return getKeyBindingService().getAcceleratorText(defId);
+		}
+		public String getText(IContributionItem item) {
+			if(getKeyBindingService().acceleratorsAllowed())
+				return null;
+			if(!(item instanceof MenuManager))
+				return null;
+			MenuManager itemManager = (MenuManager)item;
+			if(itemManager.getParent() != result)
+				return null;		
+			String text = itemManager.getMenu().getParentItem().getText();
+			int index = text.indexOf('&');
+			if (index < 0)
+				return null;
+			else if (index == 0)
+				return text.substring(1);
+			else
+				return text.substring(0, index) + text.substring(index + 1);
+		}
+		public boolean getEnabledAllowed(IContributionItem item) {
+			return true;
+		}
+	});
+	return result;
+}
+/* (non-Javadoc)
+ * Method declared on ApplicationWindow.
+ */
 protected ToolBarManager createToolBarManager(int style) {
 	return new WindowToolBarManager(style);
 }

@@ -118,7 +118,7 @@
             id="org.eclipse.ui.window.showViewMenu">
       </actionDefinition>
       <actionDefinition
-            id="org.eclipse.ui.window.activeEditor">
+            id="org.eclipse.ui.window.activateEditor">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.nextEditor">
@@ -354,7 +354,7 @@
          </accelerator>
          <accelerator
                key="F12"
-               id="org.eclipse.ui.window.activeEditor">
+               id="org.eclipse.ui.window.activateEditor">
          </accelerator>
          <accelerator
                key="Ctrl+F6"
@@ -593,7 +593,7 @@
          </accelerator>
          <accelerator
                key="F12"
-               id="org.eclipse.ui.window.activeEditor">
+               id="org.eclipse.ui.window.activateEditor">
          </accelerator>
          <accelerator
                key="Ctrl+F6"

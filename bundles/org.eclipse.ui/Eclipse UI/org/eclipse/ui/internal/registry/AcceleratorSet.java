@@ -59,4 +59,23 @@ public class AcceleratorSet {
 	public boolean add(Accelerator a) {
 		return accelerators.add(a);
 	}
+	/**
+	 * Find and return an accelerator with the specified id.
+	 * 
+	 * @return Accelerator or null.
+	 */
+	public Accelerator getAccelerator(String id) {
+		for (Iterator iterator = accelerators.iterator(); iterator.hasNext();) {
+			Accelerator acc = (Accelerator) iterator.next();
+			if(acc.getId().equals(id))
+				return acc;
+		}
+		return null;
+	}
+	/**
+	 * Remove the specified Accelerator from this set.
+	 */
+	public void removeAccelerator(Accelerator acc) {
+		accelerators.remove(acc);
+	}
 }

@@ -171,6 +171,15 @@ public IContributionManagerOverrides getOverrides() {
 			public boolean getEnabledAllowed(IContributionItem item) {
 				return true;
 			}
+			public Integer getAccelerator(IContributionItem item) {
+				return null;
+			}
+			public String getAcceleratorText(IContributionItem item) {
+				return null;
+			}
+			public String getText(IContributionItem item) {
+				return null;
+			}
 		};
 	}
 	return overrides;

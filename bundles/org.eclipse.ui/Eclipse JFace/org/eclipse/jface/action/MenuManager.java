@@ -263,6 +263,15 @@ public IContributionManagerOverrides getOverrides() {
 				public boolean getEnabledAllowed(IContributionItem item) {
 					return true;
 				}
+				public Integer getAccelerator(IContributionItem item) {
+					return null;
+				}
+				public String getAcceleratorText(IContributionItem item) {
+					return null;
+				}
+				public String getText(IContributionItem item) {
+					return null;
+				}
 			};
 		} else {
 			overrides = parent.getOverrides();
@@ -434,15 +443,19 @@ public void update() {
 public void update(boolean force) {
 	update(force, false);
 }
-/**
- * The <code>MenuManager</code> implementation of this 
- * method declared on <code>IContributionItem</code> updates
- * all of the items.
- */
-public void update(String id) {
-	IContributionItem[] items = getItems();
+public void update(String property) {
+	IContributionItem items[] = getItems();
 	for (int i = 0; i < items.length; i++) {
-		items[i].update(id);
+		items[i].update(property);		
+	}
+	if(menu != null && (IAction.TEXT.equals(property))) {
+		String text = getOverrides().getText(this);
+		if(text == null)
+			text = menuText;
+		if(menu == null || menu.isDisposed())
+			return;
+		if((text != null) && (menu.getParentItem() != null))
+			menu.getParentItem().setText(text);
 	}
 }
 /**
@@ -514,10 +527,10 @@ protected void update(boolean force, boolean recursive) {
 					int start= menu.getItemCount();
 					src.fill(menu, destIx);
 					int newItems= menu.getItemCount()-start;
-					Item[] tis= menu.getItems();
-					for (int i= 0; i < newItems; i++)
-						tis[destIx+i].setData(src);
-					destIx+= newItems;
+					for (int i= 0; i < newItems; i++) {
+						MenuItem item = menu.getItem(destIx++);
+						item.setData(src);
+					}
 				}	
 				
 				// May be we can optimize this call. If the menu has just
@@ -553,7 +566,7 @@ protected void update(boolean force, boolean recursive) {
 			}
 		}
 	}
-	updateAccelerators();
+//	updateAccelerators();
 }
 /* (non-Javadoc)
  * Method declared on IMenuManager.
@@ -572,56 +585,6 @@ private void updateMenuItem() {
 		// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
 		if (menuItem.getEnabled() != enabled)
 			menuItem.setEnabled(enabled);
-	}
-}
-/*
- * Returns whether menus can have accelerators or not.
- */
-public static boolean getAcceleratorsAllowed(Menu menu) {
-	if(menu == null)
-		return true;
-	Shell s = menu.getShell();
-	if((s == null) || (s.getMenuBar() == null))
-		return true;
-	Boolean b = (Boolean)s.getMenuBar().getData(ACCELERATORS_ALLOWED);
-	if(b == null)
-		return true;
-	return b.booleanValue();
-}
-/*
- * Set whether menus can have accelerators or not.
- */
-public static void setAcceleratorsAllowed(Menu menu,boolean b) {
-	menu.getShell().getMenuBar().setData(ACCELERATORS_ALLOWED,new Boolean(b));
-}
-/*
- * Updates accelerators of menu items.
- */
-private void updateAccelerators() {
-	Menu m = getMenu();
-	if (m != null) {
-		if (getAcceleratorsAllowed(menu)) {
-			restoreAccelerators(m);
-		} else {
-			clearAccelerators(m);
-			if (m == m.getShell().getMenuBar()) {
-				Item items[] = m.getItems();
-				for (int i = 0; i < items.length; i++) {
-					Item item = items[i];
-					String oldLabel = item.getText();
-					int index = oldLabel.indexOf('&');
-					if (index >= 0) {
-						String newLabel;
-						if (index == 0)
-							newLabel = oldLabel.substring(1);
-						else
-							newLabel = oldLabel.substring(0, index) + oldLabel.substring(index + 1);
-						item.setText(newLabel);
-						item.setData(OLD_LABEL, oldLabel);
-					}
-				}
-			}
-		}
 	}
 }
 /*
@@ -679,6 +642,4 @@ private void restoreAccelerators(MenuItem item) {
 	if (label != null)
 		item.setText(label);
 }
-
-
 }

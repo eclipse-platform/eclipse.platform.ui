@@ -487,21 +487,41 @@ public void update(String propertyName) {
 			MenuItem mi = (MenuItem) widget;
 			boolean isContextMenu = belongsToContextMenu(mi);
 			
-			if (textChanged) {
+			// We only install an accelerator if the menu item doesn't
+			// belong to a context menu (right mouse button menu).
+			if (textChanged && isContextMenu) {
 				String text = action.getText();
 				if (text != null) {
-					boolean accAllowed = MenuManager.getAcceleratorsAllowed(mi.getParent());
-					if (isContextMenu || !accAllowed)
-						text = Action.removeAcceleratorText(text);
-					else {
-						// We only install an accelerator if the menu item doesn't
-						// belong to a context menu (right mouse button menu).
-						int acc = action.getAccelerator();
-						if (acc > 0)
-							mi.setAccelerator(acc);
-						text = text.replace('@', '\t');
-					}
+					text = Action.removeAcceleratorText(text);
 					mi.setText(text);
+				}
+			} else {
+				String text = null;
+				IContributionManagerOverrides overrides = null;
+				if(getParent() != null)
+					overrides = getParent().getOverrides();
+				if(overrides != null)
+					text = getParent().getOverrides().getText(this);
+				if(text == null)
+					text = action.getText();
+				if (text != null) {
+					String label = Action.removeAcceleratorText(text);
+					String accText = null;
+					Integer acc = null;
+					if(overrides != null) {
+					 	accText = overrides.getAcceleratorText(this);
+					 	acc = overrides.getAccelerator(this);
+					}
+					if((accText == null) && (label.length() + 1 < text.length()))
+						accText = text.substring(label.length() + 1);
+					if(acc == null)
+						acc = new Integer(action.getAccelerator());
+					if (acc.intValue() >= 0)
+						mi.setAccelerator(acc.intValue());
+					if(accText == null)
+						mi.setText(label);
+					else
+						mi.setText(label + '\t' + accText);
 				}
 			}
 			if (imageChanged) {

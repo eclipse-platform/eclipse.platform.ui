@@ -21,11 +21,18 @@ import org.eclipse.swt.SWT;
  * used.
  */
 public class Accelerator {
+	//The id defined in XML
 	private String id;
+	//The key sequence defined in XML
 	private String key;
+	//The key sequence after being localized.
+	private String text;
+	//The locale which this accelerator was defined for.
 	private String locale;
+	//The platform which this accelerator was defined for.
 	private String platform;
-	private Integer accelerators[][];
+	//he key sequence after being converted to ints.
+	private int accelerators[][];
 	
 	public static final String DEFAULT_LOCALE  = "all";
 	public static final String DEFAULT_PLATFORM = "all";
@@ -51,8 +58,8 @@ public class Accelerator {
 	 */	
 	public Accelerator(String id,int accelerator) {
 		this(id,null,null,null);
-		accelerators = new Integer[1][];
-		accelerators[0] = new Integer[]{new Integer(accelerator)};
+		accelerators = new int[1][];
+		accelerators[0] = new int[]{accelerator};
 	}
 	/**
 	 * Return this accelerators' id
@@ -61,10 +68,31 @@ public class Accelerator {
 		return id;
 	}
 	/**
-	 * Return this accelerators' id or null if none is specified.
+	 * Return this accelerators' key or null if none is specified.
 	 */
 	public String getKey() {
 		return key;	
+	}
+	/**
+	 * Return this accelerator's key as a localized String.
+	 */
+	public String getText() {
+		if(text != null)
+			return text;
+   		int acc[][] = getAccelerators();
+    	StringBuffer accBuffer = new StringBuffer();
+    	for (int i = 0; i < acc.length; i++) {
+    		int orAcc[] = acc[i];
+			for (int j = 0; j < orAcc.length; j++) {
+				accBuffer.append(Action.convertAccelerator(orAcc[j]));
+				if(j + 1 < orAcc.length)
+					accBuffer.append(' ');
+			}
+			if(i + 1 < acc.length)
+				accBuffer.append(", ");
+		}
+		text = new String(accBuffer);
+		return text;		
 	}
 	/**
 	 * Return this accelerators' locale of DEFAULT_LOCALE if none is spefified.
@@ -86,50 +114,32 @@ public class Accelerator {
 	 * result[0] will have 2 elements: SWT.CTRL | 'X' and SWT.CTRL | 'C'; and 
 	 * result[1] will have 1 element: SWT.CTRL | SWT.SHIFT | SWT.F4.
 	 */
-	public Integer[][] getAccelerators() {
+	public int[][] getAccelerators() {
 		if(accelerators == null)
 			accelerators = convertAccelerator();
 		return accelerators;
 	}
 	/**
 	 * Parses the given accelerator text, and converts it to a
-	 * Integer[][] (possibly of length 1) of accelerator key codes.
+	 * int[][] (possibly of length 1) of accelerator key codes.
 	 */
-	private Integer[][] convertAccelerator() {
+	private int[][] convertAccelerator() {
 		List accelerators = new ArrayList(1);
 		StringTokenizer orTokenizer = new StringTokenizer(key,"||");
 		while (orTokenizer.hasMoreTokens()) {
 			List acc = new ArrayList(2);
 			StringTokenizer spaceTokenizer = new StringTokenizer(orTokenizer.nextToken());
 			while (spaceTokenizer.hasMoreTokens()) {
-				int accelerator = 0;
-				StringTokenizer keyTok = new StringTokenizer(spaceTokenizer.nextToken(), "+");    //$NON-NLS-1$
-				int keyCode = -1;
-				
-				while (keyTok.hasMoreTokens()) {
-					String token = keyTok.nextToken();
-					// Every token except the last must be one of the modifiers Ctrl, Shift, or Alt.
-					if (keyTok.hasMoreTokens()) {
-						int modifier = Action.findModifier(token);
-						if (modifier != 0) {
-							accelerator |= modifier;
-						} else {//Leave if there are none
-							return new Integer[0][0];
-						}
-					} else {
-						keyCode = Action.findKeyCode(token);
-					}
-				}
-				if (keyCode != -1) {
-					accelerator |= keyCode;
-				}
+				int accelerator = Action.convertAccelerator(spaceTokenizer.nextToken());
 				acc.add(new Integer(accelerator));
 			}
-			Integer result[] = new Integer[acc.size()];
-			acc.toArray(result);
+			int result[] = new int[acc.size()];
+			for (int i = 0; i < result.length; i++) {
+				result[i] = ((Integer)acc.get(i)).intValue();
+			}
 			accelerators.add(result);		
 		}
-		Integer result[][] = new Integer[accelerators.size()][];
+		int result[][] = new int[accelerators.size()][];
 		accelerators.toArray(result);
 		return result;
 	}

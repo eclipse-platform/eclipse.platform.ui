@@ -3,10 +3,13 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.Locale;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
@@ -38,7 +41,10 @@ public class AcceleratorRegistryReader extends RegistryReader{
 	private static final String ACCEL_ATT_KEY = "key";
 	private static final String ACCEL_ATT_LOCALE = "locale";
 	private static final String ACCEL_ATT_PLATFORM = "platform";
-	
+ 
+ 	private static final String PLATFORM = SWT.getPlatform();
+ 	private static final String EMPTY = "";
+ 	
 	private AcceleratorRegistry acceleratorRegistry;
 	private AcceleratorSet acceleratorSet;
 
@@ -125,19 +131,15 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		}
 
 		String pluginId = element.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
-		acceleratorSet = new AcceleratorSet(configurationId, scopeId,  pluginId);
-		acceleratorRegistry.addSet(acceleratorSet);
-		
-		String configId = acceleratorSet.getConfigurationId();
-//		if(configId == IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID)
-			readElementChildren(element);
-//		if(configId == keyBindingService.getActiveAcceleratorConfigurationId())		
-//			readElementChildren(element);
-
+		acceleratorSet = acceleratorRegistry.getSet(configurationId,scopeId,pluginId);
+		if(acceleratorSet == null) {
+			acceleratorSet = new AcceleratorSet(configurationId, scopeId,  pluginId);
+			acceleratorRegistry.addSet(acceleratorSet);
+		}
+		readElementChildren(element);
 		return true;	
 	}
-
-	/**
+	/*
 	 * Reads an element if it is an accelerator, and stores it in it's accelerator
 	 * set in the accelerator registry.
 	 */	
@@ -153,12 +155,97 @@ public class AcceleratorRegistryReader extends RegistryReader{
 		if (key==null) {
 			logMissingAttribute(element, ACCEL_ATT_KEY);	
 		}
-		
-		Accelerator accelerator = new Accelerator(id, key, locale, platform);
-		acceleratorSet.add(accelerator);		
-		return true;	
+		Accelerator oldAcc = acceleratorSet.getAccelerator(id);
+		Accelerator newAcc = new Accelerator(id, key, locale, platform);
+		int newAccMatchValue = computeValue(newAcc);
+		if(newAccMatchValue < 0)
+			return true;
+		if(oldAcc == null) {
+			acceleratorSet.add(newAcc);
+		} else {
+			int oldAccMatchValue = computeValue(oldAcc);
+			if(oldAccMatchValue < newAccMatchValue) {
+				acceleratorSet.removeAccelerator(oldAcc);
+				acceleratorSet.add(newAcc);
+			}
+		}
+		return true;
 	}
-	
+	/*
+	 * Return a value representing how well acc has match platform and locale.
+	 * Return -1 if acc should not be include in the current platform, ie, if the
+	 * platform and/or locale are specified and don't match.
+	 * Return a number between 0 and 7 if platform and/or locale match.
+	 */
+	private int computeValue(Accelerator acc) {
+		int result = 0;
+		Locale defaultLocale = Locale.getDefault();
+		if(defaultLocale.toString().equals(acc.getLocale())) {
+			result = result + 3;
+		} else {
+			String[] localeArray = parseLocale(acc.getLocale());
+			//Language
+			if(localeArray[0].equals(defaultLocale.getLanguage()))
+				result++;
+			else if(localeArray[0] != EMPTY)
+				return -1;
+			//Country
+			if(localeArray[1].equals(defaultLocale.getCountry()))
+				result++;
+			else if(localeArray[1] != EMPTY)
+				return -1;
+			//Variant
+			if(localeArray[2].equals(defaultLocale.getVariant()))
+				result++;
+			else if(localeArray[2] != EMPTY)
+				return -1;	
+		}
+		//Platform
+		if(PLATFORM.equals(acc.getPlatform()))
+			result = result + 4;
+		else if(!Accelerator.DEFAULT_PLATFORM.equals(acc.getPlatform()))
+			return -1;
+		return result;
+	}
+	/*
+	 * Return a new String[3]{language,country,variant} 
+	 */
+	private String[] parseLocale(String locale) {
+		//Parse language
+		String localeArray[] = {EMPTY,EMPTY,EMPTY};
+		if(Accelerator.DEFAULT_LOCALE.equals(locale))
+			return localeArray;
+			
+		int index = locale.indexOf("_");
+		if(index < 0) {
+			localeArray[0] = locale;
+			return localeArray;
+		} else if(index >= 0) {
+			localeArray[0] = locale.substring(0,index);
+		}
+		if(index + 1 >= locale.length())
+			return localeArray;
+		//Parse country
+		int newIndex = locale.indexOf("_",index + 1);
+		if(newIndex < 0) {
+			localeArray[1] = locale.substring(index + 1);
+			return localeArray;
+		} else if(newIndex > 0) {
+			localeArray[1] = locale.substring(index + 1,newIndex);
+		}
+		index = newIndex;
+		if(index + 1 >= locale.length())
+			return localeArray;
+		//Parse variant
+		newIndex = locale.indexOf("_",index + 1);
+		if(newIndex < 0) {
+			localeArray[2] = locale.substring(index + 1);
+			return localeArray;
+		} else if(newIndex > 0) {
+			localeArray[2] = locale.substring(index + 1,newIndex);
+		}
+		return localeArray;
+	}	
 	/**
 	 * Reads from the plugin registry and stores results in the accelerator
 	 * registry.

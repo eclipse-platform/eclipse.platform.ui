@@ -14,8 +14,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.internal.registry.Accelerator;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
 import org.eclipse.ui.internal.registry.AcceleratorRegistry;
+import org.eclipse.ui.internal.registry.AcceleratorScope;
 import org.eclipse.ui.internal.registry.IActionSet;
 
 /**
@@ -23,7 +25,7 @@ import org.eclipse.ui.internal.registry.IActionSet;
  * @author
  */
 public class WWinKeyBindingService {
-	
+	boolean acceleratorsAllowed = true;
 	/* A number increased whenever the action mapping changes so
 	 * its children can keep their mapping in sync with the ones in
 	 * the parent.
@@ -37,6 +39,8 @@ public class WWinKeyBindingService {
 	 * be updated whenever the active configuration changes.
 	 */
 	private IPropertyChangeListener propertyListener;
+	/* The current KeyBindindService */
+	private KeyBindingService activeService;
 	/* A number used to generate definition id for the action
 	 * without one 
 	 */
@@ -170,24 +174,46 @@ public class WWinKeyBindingService {
 	/**
 	 * Remove or restore the accelerators in the menus.
 	 */
-   	private static void update(IWorkbenchPart part) {
+   	private void update(IWorkbenchPart part) {
    		if(part==null)
    			return;
+   		boolean oldAllowed = acceleratorsAllowed;
+   		AcceleratorScope oldScope = null;
+   		if(activeService != null)
+   			oldScope = activeService.getActiveAcceleratorScope();
+   			
     	IWorkbenchPartSite site = part.getSite();
     	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
     	MenuManager menuManager = w.getMenuManager();
     	if(part instanceof IViewPart) {
-    		menuManager.setAcceleratorsAllowed(menuManager.getMenu(),true);
+    		activeService = null;
+    		acceleratorsAllowed = true;
     	} else if(part instanceof IEditorPart) {
-    		KeyBindingService service = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
+    		activeService = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
     		AcceleratorConfiguration config = ((Workbench)w.getWorkbench()).getActiveAcceleratorConfiguration();
-    		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID))) {
-    			boolean useAcc = !service.isParticipating();
-				menuManager.setAcceleratorsAllowed(menuManager.getMenu(),useAcc);
-    		} else {
-				menuManager.setAcceleratorsAllowed(menuManager.getMenu(),true);
-    		}
+    		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID)))
+    			acceleratorsAllowed = !activeService.isParticipating();
+	   		else
+    			acceleratorsAllowed = true;
     	}
-		menuManager.updateAll(true);
+   		AcceleratorScope newScope = null;
+   		if(activeService != null)
+   			newScope = activeService.getActiveAcceleratorScope();
+
+    	if((oldAllowed != acceleratorsAllowed) || (oldScope != newScope))
+ 			menuManager.update(IAction.TEXT);
+    }
+    public boolean acceleratorsAllowed() {
+    	return acceleratorsAllowed;
+    }
+    public String getAcceleratorText(String definitionId) {
+    	if(activeService == null) return null;
+    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
+    	if(scope == null) return null;
+    	Accelerator acc = scope.getAccelerator(definitionId);
+		String result = acc.getText();
+		if(result.length() == 0)
+			return null;
+    	return result;
     }
 }

@@ -3,23 +3,13 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
+import java.util.HashMap;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.MenuManager;
-
+import org.eclipse.swt.events.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.internal.registry.Accelerator;
-import org.eclipse.ui.internal.registry.AcceleratorRegistry;
-import org.eclipse.ui.internal.registry.AcceleratorScope;
-import org.eclipse.ui.internal.registry.AcceleratorSet;
+import org.eclipse.ui.internal.registry.*;
 
 /** 
  * Implementation of an IKeyBindingService.
@@ -32,6 +22,9 @@ import org.eclipse.ui.internal.registry.AcceleratorSet;
  * </ul>
  */
 public class KeyBindingService implements IKeyBindingService {
+	private IPartListener partListener;
+	private ShellListener shellListener;
+	
 	/* Maps action definition id to action. */
 	private HashMap defIdToAction = new HashMap();
 	/* Maps action definition id to action. Includes the actions 
@@ -57,8 +50,24 @@ public class KeyBindingService implements IKeyBindingService {
 	 * it with its parent.
 	 */		
 	public KeyBindingService(WWinKeyBindingService service) {
+		partListener = new IPartListener() {
+			public void partActivated(IWorkbenchPart part) {}
+			public void partBroughtToTop(IWorkbenchPart part) {}
+			public void partClosed(IWorkbenchPart part) {}
+			public void partDeactivated(IWorkbenchPart part) {
+				AcceleratorScope.resetMode(KeyBindingService.this);
+			}
+			public void partOpened(IWorkbenchPart part) {}
+		};
+		shellListener = new ShellAdapter() {
+			public void shellDeactivated(ShellEvent e) {
+				AcceleratorScope.resetMode(KeyBindingService.this);	
+			}
+		};
 		parent = service;
 		parentUpdateNumber = parent.getUpdateNumber() - 1;
+		service.getWindow().getPartService().addPartListener(partListener);
+		service.getWindow().getShell().addShellListener(shellListener);
 	}
 	/*
 	 * Merge the actions from its parents with its registered actions
@@ -68,6 +77,13 @@ public class KeyBindingService implements IKeyBindingService {
 		parentUpdateNumber = parent.getUpdateNumber();
 		allDefIdToAction = parent.getMapping();
 		allDefIdToAction.putAll(defIdToAction);
+	}
+	/** 
+	 * Remove the part listener when the editor site is disposed.
+	 */
+	public void dispose() {
+		getWindow().getPartService().removePartListener(partListener);
+		getWindow().getShell().removeShellListener(shellListener);
 	}
 	/*
 	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
@@ -117,6 +133,10 @@ public class KeyBindingService implements IKeyBindingService {
 	 */
 	public String getActiveAcceleratorScopeId() {
     	return scope.getId();
+    }
+    
+	public AcceleratorScope getActiveAcceleratorScope() {
+    	return scope;
     }
     /**
      * Returns the workbench window.

@@ -23,7 +23,11 @@ public class AcceleratorScope {
 	private String parentScopeString;
 	private AcceleratorScope parentScope;
 	private AcceleratorConfiguration configuration;
+	
+	private HashMap defIdToAccelerator = new HashMap();
+	private HashMap defaultActionToAccelerator = new HashMap();
 	private HashMap defaultAcceleratorToAction = new HashMap();
+	
 	
 	private static AcceleratorMode currentMode;
 	private static AcceleratorMode defaultMode;
@@ -67,6 +71,16 @@ public class AcceleratorScope {
 		if(accelerator == 0)
 			return;
 		defaultAcceleratorToAction.put(new Integer(accelerator),new AcceleratorAction(actionDefId));
+		defaultActionToAccelerator.put(actionDefId,new Accelerator(actionDefId,accelerator));
+	}
+	/**
+	 * Return the accelerator for this scope.
+	 */
+	public Accelerator getAccelerator(String defId) {
+		Accelerator result = (Accelerator)defIdToAccelerator.get(defId);
+		if(result == null)
+			result = (Accelerator)defaultActionToAccelerator.get(defId);
+		return result;
 	}
 	/**
 	 * Returns the parent scope of the current scope. For example, if the current
@@ -87,7 +101,7 @@ public class AcceleratorScope {
 	/**
 	 * Reset the current mode
 	 */
-	private static void resetMode(KeyBindingService service) {
+	public static void resetMode(KeyBindingService service) {
 		currentMode = defaultMode;
 		if(getStatusLineManager(service)!=null)
 			getStatusLineManager(service).setMessage("");	
@@ -98,7 +112,7 @@ public class AcceleratorScope {
 	private static void setCurrentMode(KeyBindingService service,AcceleratorMode mode) {
 		if(service == currentService)
 			currentMode = mode;
-		else
+		else 
 			currentMode = mode;
 	}
 	/**
@@ -122,32 +136,31 @@ public class AcceleratorScope {
 		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
 		defaultMode = new AcceleratorMode();
 		currentMode = defaultMode;
-		initializeAccelerators(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID,defaultMode,registry);
+		initializeAccelerators(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID,defaultMode,registry,defIdToAccelerator);
 		if(!IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID.equals(configuration.getId()))
-			initializeAccelerators(configuration.getId(),defaultMode,registry);
+			initializeAccelerators(configuration.getId(),defaultMode,registry,defIdToAccelerator);
 	}
 	/**
 	 * Recurcive initialize this scope. First initialize its parents
 	 * and then override with the accelerators defined in this scope.
 	 */	
-	private void initializeAccelerators(String configId,AcceleratorMode mode,AcceleratorRegistry registry) {
-		//ISSUE: Must resolve conflicts
+	private void initializeAccelerators(String configId,AcceleratorMode mode,AcceleratorRegistry registry,HashMap defIdToAcc) {
 		AcceleratorScope parent = getParentScope();
 		if(parent != null)
-			parent.initializeAccelerators(configId,mode,registry);
+			parent.initializeAccelerators(configId,mode,registry,defIdToAcc);
 		Accelerator accelerators[] = registry.getAccelerators(configId,getId());
 		for (int i = 0; i < accelerators.length; i++) {
-			Integer accKeys[][] = accelerators[i].getAccelerators();
+			int accKeys[][] = accelerators[i].getAccelerators();
+			defIdToAcc.put(accelerators[i].getId(),accelerators[i]);
 			for (int j = 0; j < accKeys.length; j++) {
 				AcceleratorMode childMode = mode;
 				for (int k = 0; k < accKeys[j].length - 1; k++) {
-					AcceleratorAction a = mode.getAction(accKeys[j][k]);
+					AcceleratorAction a = childMode.getAction(accKeys[j][k]);
 					if ((a == null) || (!a.isMode())) {
 						AcceleratorMode newMode = new AcceleratorMode();
 						childMode.addAction(accKeys[j][k], newMode);
 						childMode = newMode;
 					} else {
-						//if a is not instance of AcceleratorMode, there is a conflict.
 						childMode = (AcceleratorMode) a;
 					}
 				}
@@ -167,20 +180,20 @@ public class AcceleratorScope {
 			case SWT.CONTROL:
 			case SWT.ALT:
 			case SWT.SHIFT:
-				return true;
+ 				return true;
     	}
     	return false;
     }
 	/*
 	 * Convert and event to an Integer.
 	 */
-	private static Integer convertEvent(KeyEvent event) {
+	private static int convertEvent(KeyEvent event) {
 		//ISSUE: Must fix the number 64.
 		char upper = Character.toUpperCase(event.character);
     	if(((event.stateMask & SWT.CONTROL) != 0) && (event.keyCode == 0))
 			if (0 <= upper && upper <= 64) 
-				return new Integer(event.stateMask | upper + 64);
-    	return new Integer(event.stateMask | event.keyCode | upper);
+				return event.stateMask | upper + 64;
+    	return event.stateMask | event.keyCode | upper;
     	
     }
     /**
@@ -192,10 +205,12 @@ public class AcceleratorScope {
 		if(isModifierOnly(e))
 			return false;
 		verifyService(service);
-		Integer event = convertEvent(e);
+		int event = convertEvent(e);
 		AcceleratorAction a = currentMode.getAction(event);
-		if(a == null)
-			a = (AcceleratorAction)defaultAcceleratorToAction.get(event);
+		if(a == null) {
+			a = (AcceleratorAction)defaultAcceleratorToAction.get(new Integer(event));
+			resetMode(service);	
+		}
 		if(a == null) {
 			if(currentMode == defaultMode)
 				return false;
@@ -266,7 +281,7 @@ public class AcceleratorScope {
 		 * line.
 		 */
 		private void setStatusLineMessage(KeyBindingService service, KeyEvent e) {
-			String keyString = Action.convertAccelerator(convertEvent(e).intValue());
+			String keyString = Action.convertAccelerator(convertEvent(e));
 			if(currentMode==defaultMode) {
 				getStatusLineManager(service).setMessage(keyString);
 				previousMessage = keyString;
@@ -275,11 +290,11 @@ public class AcceleratorScope {
 				previousMessage = previousMessage+" "+keyString;
 			}		
 		}
-		public AcceleratorAction getAction(Integer keyCode) {
-			return (AcceleratorAction)acceleratorToAction.get(keyCode);	
+		public AcceleratorAction getAction(int keyCode) {
+			return (AcceleratorAction)acceleratorToAction.get(new Integer(keyCode));	
 		}
-		public void addAction(Integer keyCode,AcceleratorAction acc) {
-			acceleratorToAction.put(keyCode,acc);
+		public void addAction(int keyCode,AcceleratorAction acc) {
+			acceleratorToAction.put(new Integer(keyCode),acc);
 		}
 	}
 }

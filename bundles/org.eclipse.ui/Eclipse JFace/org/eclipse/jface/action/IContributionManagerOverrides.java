@@ -30,4 +30,8 @@ public interface IContributionManagerOverrides {
 	 * @since 2.0
 	 */
 	public boolean getEnabledAllowed(IContributionItem item);
+	
+	public Integer getAccelerator(IContributionItem item);
+	public String getAcceleratorText(IContributionItem item);
+	public String getText(IContributionItem item);
 }

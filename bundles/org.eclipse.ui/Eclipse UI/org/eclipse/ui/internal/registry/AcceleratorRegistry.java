@@ -3,8 +3,12 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.text.Collator;
 import java.util.*;
 
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginPrerequisite;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -77,7 +81,23 @@ public class AcceleratorRegistry {
 	 */	
 	public boolean addSet(AcceleratorSet a) {
 		return sets.add(a);
-	}	
+	}
+	/**
+	 * Finds the set with the specified configuration, scope and plugin Ids and
+	 * return it. 
+	 * 
+	 * @return an AcceleratorSet or null
+	 */
+	public AcceleratorSet getSet(String configId, String scopeId,String pluginId) {
+		for (Iterator iterator = sets.iterator(); iterator.hasNext();) {
+			AcceleratorSet set = (AcceleratorSet) iterator.next();
+			if(set.getConfigurationId().equals(configId) &&
+				set.getScopeId().equals(scopeId) &&
+					set.getPluginId().equals(pluginId))
+						return set;
+		}
+		return null;
+	}
 	/**
 	 * Loads the accelerator registry from the platform's
 	 * plugin registry.
@@ -97,6 +117,7 @@ public class AcceleratorRegistry {
 	 */
 	public Accelerator[] getAccelerators(String configId, String scopeId) {
 		List accelarators = new ArrayList();
+		List matchingList = new ArrayList();
 		if(scopeId.equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID))
 			accelarators.addAll(getFakeAccelerators());	
 		for(int i=0;i<sets.size();i++) {
@@ -104,12 +125,51 @@ public class AcceleratorRegistry {
 			String setConfigId = set.getConfigurationId();
 			String setScopeId = set.getScopeId();
 			if(configId.equals(setConfigId) && setScopeId.equals(setScopeId)) {
-				accelarators.addAll(Arrays.asList(set.getAccelerators()));
+				matchingList.add(set);
 			}
+		}
+		AcceleratorSet matchingSets[] = new AcceleratorSet[matchingList.size()];
+		matchingList.toArray(matchingSets);
+		sortSets(matchingSets);
+		for (int i = 0; i < matchingSets.length; i++) {
+			accelarators.addAll(Arrays.asList(matchingSets[i].getAccelerators()));
 		}
 		Accelerator[] result = new Accelerator[accelarators.size()];
 		accelarators.toArray(result);
 		return result;
+	}
+	/*
+	 * Sort the AcceleratorSets according to the plugin they are defined in.
+	 * If plugin A requeres B. A comes first.
+	 * If plugin A does not requere B they are sorted by id.
+	 */ 
+	private void sortSets(AcceleratorSet matchingSets[]) {
+		final IPluginRegistry registry = Platform.getPluginRegistry();
+		Arrays.sort(matchingSets,new Comparator() {
+			public int compare(Object o1, Object o2) {
+				String plug1 = ((AcceleratorSet)o1).getPluginId();
+				String plug2 = ((AcceleratorSet)o2).getPluginId();
+				IPluginDescriptor desc1 = registry.getPluginDescriptor(plug1);
+				IPluginDescriptor desc2 = registry.getPluginDescriptor(plug2);
+				if(dependsOn(registry,desc1,desc2))
+					return 1;
+				else if(dependsOn(registry,desc1,desc2))
+					return -1;	
+				return plug2.compareTo(plug1);
+			}
+		});
+	}
+	private boolean dependsOn(IPluginRegistry registry,IPluginDescriptor descriptor0, IPluginDescriptor descriptor1) {
+		IPluginPrerequisite[] prerequisites= descriptor0.getPluginPrerequisites();
+		for (int i= 0; i < prerequisites.length; i++) {
+			IPluginPrerequisite prerequisite= prerequisites[i];
+			String id= prerequisite.getUniqueIdentifier();			
+			IPluginDescriptor descriptor= registry.getPluginDescriptor(id);
+			if (descriptor != null && (descriptor.equals(descriptor1) || dependsOn(registry,descriptor, descriptor1)))
+				return true;
+		}
+		
+		return false;
 	}
 	/**
 	 * Returns a List with all actions without definition registered

@@ -38,6 +38,15 @@ public class EditorToolBarManager extends SubToolBarManager
 				(((ActionContributionItem)item).getAction() instanceof RetargetAction)) ||
 				enabledAllowed;
 		}
+		public Integer getAccelerator(IContributionItem item) {
+			return null;
+		}
+		public String getAcceleratorText(IContributionItem item) {
+			return null;
+		}
+		public String getText(IContributionItem item) {
+			return null;
+		}
 	}
 	private Overrides overrides = new Overrides();
 	
