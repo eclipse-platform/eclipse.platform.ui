@@ -7,20 +7,22 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Phil Loats/Erxiang Liu (IBM Corp.) - fix to use only foundation APIs  
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
-import java.nio.channels.*;
+//PAL nio optional
+//import java.nio.channels.*;
 import java.util.*;
 
 import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
-
+//PAL cdcFoundation
+//import javax.xml.transform.*;
+//import javax.xml.transform.dom.*;
+//import javax.xml.transform.stream.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.update.configurator.*;
@@ -42,7 +44,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private static PlatformConfiguration currentPlatformConfiguration = null;
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	//PAL cdcFoundation
+	//private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+	private static final String XML_ENCODING = "UTF-8";
 
 	private Configuration config;
 	private URL configLocation;
@@ -52,7 +56,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private boolean featuresChangeStampIsValid;
 	private long pluginsChangeStamp;
 	private boolean pluginsChangeStampIsValid;
-	private FileLock lock;
+	//PAL nio optional
+	//private FileLock lock;
+	private Locker lock = null;
+	private static boolean checkNio = false;
+	private static boolean useNio;
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_HISTORY = "history"; //$NON-NLS-1$
@@ -215,7 +223,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		SiteEntry result = config.getSiteEntry(key);	
 		if (result == null) { // retry with decoded URL string
 			try {
-				key = URLDecoder.decode(key, "UTF-8"); //$NON-NLS-1$
+				//PAL foundation
+				//key = URLDecoder.decode(key, "UTF-8"); //$NON-NLS-1$
+				key = UpdateURLDecoder.decode(key, "UTF-8"); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException e) {
 				// ignore
 			}
@@ -751,24 +761,42 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 		File lockFile = new File(url.getFile(), ConfigurationActivator.NAME_SPACE+ File.separator+CONFIG_FILE_LOCK_SUFFIX);
 		verifyPath(url);
+		// PAL nio optional
+		lock = createLocker(lockFile); 
 		try {
-			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
-			lock = raf.getChannel().lock();
+			lock.lock();
 		} catch (IOException ioe) {
 			lock = null;
 		}	
 	}
 	
 	private void clearConfigurationLock() {
+		// PAL nio optional
 		if (lock != null) {
-			try {
-				lock.channel().close();
-			} catch (IOException ioe) {
-			}
+			lock.release();
 		}
 	}
 	
-
+	/**
+	 * Create a locker using java new I/O or regular I/O
+	 * depending whether we run in J2SE or cdcFoundation
+	 * PAL nio optional
+	 */
+	private static Locker createLocker(File lock) {
+		if (!checkNio) {
+			useNio = true;
+			try {
+				 Class.forName("java.nio.channels.FileLock"); //$NON-NLS-1$
+			} catch (ClassNotFoundException e) {
+				useNio = false;
+			}
+		}
+		if (useNio)
+			return new Locker_JavaNio(lock);
+		else
+			return new Locker_JavaIo(lock);
+	}
+	
 	private long computeChangeStamp() {
 		featuresChangeStamp = computeFeaturesChangeStamp();
 		pluginsChangeStamp = computePluginsChangeStamp();
@@ -1073,6 +1101,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return installURL;
 	}
 	
+//	PAL cdcFoundation	
+	/*	
 	private void saveAsXML(OutputStream stream) throws CoreException {	
 		StreamResult result = null;
 		try {
@@ -1106,6 +1136,34 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			result = null;
 		}
 	}
+*/
+	private void saveAsXML(OutputStream stream) throws CoreException,IOException {	
+		OutputStreamWriter xmlWriter = new OutputStreamWriter(stream,XML_ENCODING);
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setExpandEntityReferences(false);
+			factory.setValidating(false);
+			factory.setIgnoringComments(true);
+			DocumentBuilder docBuilder = factory.newDocumentBuilder();
+			Document doc = docBuilder.newDocument();
+			
+			if (config == null)
+				throw Utils.newCoreException(Messages.getString("PlatformConfiguration.cannotSaveNonExistingConfig"),null); //$NON-NLS-1$
+			
+			config.setDate(new Date());
+			Element configElement = config.toXML(doc);
+			doc.appendChild(configElement);
+			
+			XMLPrintHandler.printComment(xmlWriter,"Created on " + config.getDate().toString());
+			XMLPrintHandler.printNode(xmlWriter,doc,XML_ENCODING);
+			
+		} catch (Exception e) {
+			throw Utils.newCoreException("", e); //$NON-NLS-1$
+		} finally {
+			xmlWriter.close();
+			xmlWriter = null;
+		}
+	} 
 	
 	private void reconcile() throws CoreException {
 		long lastChange = config.getDate().getTime();
