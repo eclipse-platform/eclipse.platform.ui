@@ -144,6 +144,13 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			monitor.done();
 		}
 	}
+	
+	/**
+	 * Factory method for creating history stores. 
+	 */
+	private static IHistoryStore createHistoryStore(Workspace workspace, IPath location, int limit) {
+		return new HistoryStore(workspace, location, limit);
+	}	
 
 	public void delete(IResource target, boolean force, boolean convertToPhantom, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
@@ -697,7 +704,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		IPath location = getWorkspace().getMetaArea().getHistoryStoreLocation();
 		location.toFile().mkdirs();
-		historyStore = new HistoryStore(getWorkspace(), location, 256);
+		historyStore = createHistoryStore(getWorkspace(), location, 256);
 		historyStore.startup(monitor);
 	}
 

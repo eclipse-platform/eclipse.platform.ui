@@ -34,10 +34,10 @@ public class TestingSupport {
 	}
 	
 	/**
-	 * Call HistoryStore.removeGarbage().
+	 * Call IHistoryStore.removeGarbage().
 	 * @since 3.0
 	 */
-	public static void removeGarbage(HistoryStore store) {
+	public static void removeGarbage(IHistoryStore store) {
 		store.removeGarbage();
 	}
 }

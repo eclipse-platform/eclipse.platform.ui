@@ -283,26 +283,34 @@ public class HistoryStore implements IHistoryStore {
 	 * @see IHistoryStore#copyHistory(IPath, IPath)
 	 * @since  2.1
 	 */
-	public void copyHistory(final IPath source, final IPath destination) {
+	public void copyHistory(final IResource sourceResource, final IResource destinationResource) {
+		// Note that if any states in the local history for destination
+		// have the same timestamp as a state for the local history
+		// for source, the local history for destination will appear 
+		// as an older state than the one for source.
+	
+		// return early if either of the paths are null or if the source and
+		// destination are the same.
+		if (sourceResource == null || destinationResource == null) {
+			String message = Policy.bind("history.copyToNull"); //$NON-NLS-1$
+			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+			return;
+		}
+		if (sourceResource.equals(destinationResource)) {
+			String message = Policy.bind("history.copyToSelf"); //$NON-NLS-1$
+			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, sourceResource.getFullPath(), message, null);
+			ResourcesPlugin.getPlugin().getLog().log(status);
+			return;
+		}
+
+		final IPath source = sourceResource.getFullPath();
+		final IPath destination = destinationResource.getFullPath();
 		// Note that if any states in the local history for destination
 		// have the same timestamp as a state for the local history
 		// for source, the local history for destination will appear 
 		// as an older state than the one for source.
 
-		// return early if either of the paths are null or if the source and
-		// destination are the same.
-		if (source == null || destination == null) {
-			String message = Policy.bind("history.copyToNull"); //$NON-NLS-1$
-			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, source, message, null);
-			ResourcesPlugin.getPlugin().getLog().log(status);
-			return;
-		}
-		if (source.equals(destination)) {
-			String message = Policy.bind("history.copyToSelf"); //$NON-NLS-1$
-			ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, source, message, null);
-			ResourcesPlugin.getPlugin().getLog().log(status);
-			return;
-		}
 		// matches will be a list of all the places we add local history (without
 		// any duplicates).
 		final Set matches = new HashSet();
@@ -509,10 +517,9 @@ public class HistoryStore implements IHistoryStore {
 	 * Check the instance variable which holds onto a set of UUIDs of potential 
 	 * candidates to be removed.
 	 * 
-	 * As of 3.0, this method is used for testing purposes only. Otherwise the history
-	 * store is garbage collected during the #clean method.
+	 * @see IHistoryStore#removeGarbage() 
 	 */
-	void removeGarbage() {
+	public void removeGarbage() {
 		try {
 			IndexCursor cursor = store.getCursor();
 			cursor.findFirstEntry();

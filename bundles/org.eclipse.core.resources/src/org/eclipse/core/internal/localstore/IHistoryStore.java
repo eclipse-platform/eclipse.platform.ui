@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.Set;
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.resources.IFileState;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -97,12 +98,12 @@ public interface IHistoryStore extends IManager {
 	 * that this is a DEPTH_INFINITY operation. That is, history will be copied for partial
 	 * matches of the source path.
 	 * 
-	 * @param source the path containing the original copy of the history store information
-	 * @param destination the target path for the copy
+	 * @param source the resource containing the original copy of the history store information
+	 * @param destination the target resource where to copy the history
 	 * 
 	 * TODO: should this method take a progress monitor?
 	 */
-	public void copyHistory(IPath source, IPath destination);
+	public void copyHistory(IResource source, IResource destination);
 
 	/**
 	 * Verifies existence of specified resource in the history store. Returns
@@ -174,4 +175,12 @@ public interface IHistoryStore extends IManager {
 	 *    reporting is not desired
 	 */
 	public void remove(IPath path, IProgressMonitor monitor);
+	
+	/**
+	 * Go through the history store and remove all of the unreferenced states.
+ * 
+	 * As of 3.0, this method is used for testing purposes only. Otherwise the history
+	 * store is garbage collected during the #clean method.
+	 */	
+	public void removeGarbage();
 }
