@@ -118,7 +118,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 		}
 		String[] OSes = osList.split(",\\s*"); //$NON-NLS-1$
 		for (int i = 0; i < OSes.length; i++) {
-			if (os.toLowerCase().startsWith(OSes[i].toLowerCase())) {
+			if (os.toLowerCase(Locale.ENGLISH).startsWith(OSes[i].toLowerCase(Locale.ENGLISH))) {
 				return true;
 			}
 		}
