@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.editors.text;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+
 
 
 /**
@@ -29,7 +32,14 @@ public class QuickDiffPreferencePage extends AbstractConfigurationBlockPreferenc
 	protected String getHelpId() {
 		return null; // FIXME: Needs help context ID
 	}
-
+	
+	/*
+	 * @see org.eclipse.jface.preference.PreferencePage#createDescriptionLabel(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Label createDescriptionLabel(Composite parent) {
+		return null; // no description for new look
+	}
+	
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */

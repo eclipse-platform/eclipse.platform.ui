@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -334,6 +335,11 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 		
 		fOverlayStore= createOverlayStore();
+	}
+	
+	
+	protected Label createDescriptionLabel(Composite parent) {
+		return null; // no description for new look
 	}
 	
 	private OverlayPreferenceStore createOverlayStore() {

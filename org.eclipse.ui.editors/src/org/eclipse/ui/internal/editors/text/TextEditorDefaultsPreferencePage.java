@@ -362,7 +362,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	
 	public TextEditorDefaultsPreferencePage() {
-		setDescription("Default Text Editor settings:"); //$NON-NLS-1$
+		setDescription(TextEditorMessages.getString("TextEditorDefaultsPreferencePage.description")); //$NON-NLS-1$
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 		
 		fOverlayStore= createOverlayStore();
