@@ -1831,14 +1831,15 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		message = Policy.bind("links.locationOverlapsProject", location.toOSString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
+	
+	//warnings (all errors must be checked before all warnings)
 	//check that the location is absolute
-	//Note: this check must be done last because we tolerate this condition in createLink
 	if (!location.isAbsolute()) {
 		if (location.segmentCount() > 0)
 			message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0));//$NON-NLS-1$
 		else
 			message = Policy.bind("links.relativePath", location.toOSString());//$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
+		return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, null, message);
 	}
 	// Iterate over each known project and ensure that the location does not
 	// conflict with any project locations or linked resource locations

@@ -125,9 +125,9 @@ protected void assertLinkRequirements(IPath localLocation, int updateFlags) thro
 	checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
 	boolean allowMissingLocal = (updateFlags & IResource.ALLOW_MISSING_LOCAL) != 0;
 	IStatus locationStatus = workspace.validateLinkLocation(this, localLocation);
-	//the only error we tolerate is an undefined path variable in the allow missing local case
-	if (locationStatus.getSeverity() == IStatus.ERROR && 
-		(locationStatus.getCode() != IResourceStatus.VARIABLE_NOT_DEFINED || !allowMissingLocal)) 
+	//we only tolerate an undefined path variable in the allow missing local case
+	if (locationStatus.getSeverity() == IStatus.ERROR || 
+		(locationStatus.getCode() == IResourceStatus.VARIABLE_NOT_DEFINED_WARNING && !allowMissingLocal)) 
 		throw new ResourceException(locationStatus);
 	//check that the parent exists and is open
 	Container parent = (Container) getParent();

@@ -132,13 +132,13 @@ public interface IResourceStatus extends IStatus {
 	/** Status code constant (value 276) indicating a file exists in the
 	 * file system but is not of the expected type (file instead of directory,
 	 * or vice-versa).
- 	 * Severity: error. Category: workspace.
+ 	 * Severity: error. Category: local file system.
  	 */
 	public static final int WRONG_TYPE_LOCAL = 276;
 
 	/** Status code constant (value 277) indicating that the parent
 	 * file in the file system is marked as read-only.
- 	 * Severity: error. Category: workspace.
+ 	 * Severity: error. Category: local file system.
  	 * @since 2.1
  	 */
 	public static final int PARENT_READ_ONLY = 277;
@@ -147,6 +147,13 @@ public interface IResourceStatus extends IStatus {
 	// Information Only [300-332]
 
 	// Warnings [333-365]
+
+	/** Status code constant (value 333) indicating that a workspace path 
+	 * variable unexpectedly does not exist.
+	 *  Severity: warning. Category: workspace.
+	 * @since 2.1
+	 */
+	public static final int VARIABLE_NOT_DEFINED_WARNING = 333;
 
 	// Errors [366-398]
 	
