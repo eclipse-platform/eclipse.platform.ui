@@ -495,7 +495,7 @@ public class StringVariableManager implements IStringVariableManager {
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#performStringSubstitution(java.lang.String, boolean)
 	 */
 	public String performStringSubstitution(String expression,	boolean reportUndefinedVariables) throws CoreException {
-		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables);
+		return new StringSubstitutionEngine().performStringSubstitution(expression, reportUndefinedVariables, this);
 	}
 
 }
