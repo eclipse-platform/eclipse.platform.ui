@@ -257,6 +257,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			try {
 				if (getLocalManager().hasSavedProject(this)) {
 					updateDescription();
+					workspace.getMetaArea().writeLocation(this);
 				} else {
 					//write out the project
 					getLocalManager().write(this, IResource.FORCE);
