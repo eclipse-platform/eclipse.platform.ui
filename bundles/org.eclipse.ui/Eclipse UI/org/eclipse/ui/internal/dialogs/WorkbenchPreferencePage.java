@@ -179,6 +179,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditors.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
+				reuseEditorsThreshold.getLabelControl(groupComposite).setEnabled(reuseEditors.getSelection());
 				reuseEditorsThreshold.getTextControl(groupComposite).setEnabled(reuseEditors.getSelection());
 			}
 		});
@@ -192,6 +193,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		reuseEditorsThreshold.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		reuseEditorsThreshold.setValidRange(1, 99);
 		reuseEditorsThreshold.load();
+		reuseEditorsThreshold.getLabelControl(groupComposite).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.getTextControl(groupComposite).setEnabled(reuseEditors.getSelection());
 		reuseEditorsThreshold.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

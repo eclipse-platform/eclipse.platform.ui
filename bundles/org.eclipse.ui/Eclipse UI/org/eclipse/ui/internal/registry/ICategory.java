@@ -12,6 +12,7 @@ Contributors:
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -31,12 +32,12 @@ public interface ICategory extends IWorkbenchAdapter, IAdaptable {
 	/**
 	 * Name of the miscellaneous category
 	 */
-	public final static String MISC_NAME = "Other";//$NON-NLS-1$
+	public final static String MISC_NAME = WorkbenchMessages.getString("ICategory.other"); //$NON-NLS-1$
 	
 	/**
 	 * Identifier of the miscellaneous category
 	 */
-	public final static String MISC_ID = "org.eclipse.ui.internal.otherCategory";//$NON-NLS-1$
+	public final static String MISC_ID = "org.eclipse.ui.internal.otherCategory"; //$NON-NLS-1$
 	
 	/**
 	 * Adds an element as being part of this category

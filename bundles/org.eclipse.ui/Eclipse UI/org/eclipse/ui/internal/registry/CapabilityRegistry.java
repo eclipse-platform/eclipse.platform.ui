@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -31,6 +32,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * capabilities.
  */
 public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
+	public static final String UNKNOWN_NAME = WorkbenchMessages.getString("Capability.unknownCategory"); //$NON-NLS-1$
+	public static final String UNKNOWN_ID = "org.eclipse.ui.internal.unknownCategory"; //$NON-NLS-1$
+
 	private static final String[] EMPTY_ID_LIST = new String[0];
 	private static final Capability[] EMPTY_CAP_LIST = new Capability[0];
 	
@@ -38,6 +42,7 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	private ArrayList capabilities;
 	private ArrayList categories;
 	private Category miscCategory;
+	private Category unknownCategory;
 	
 	/**
 	 * Creates a new instance of <code>CapabilityRegistry</code>
@@ -153,7 +158,8 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	
 	/**
 	 * Returns the list of categories in the registry
-	 * which contain at least one capability.
+	 * which contain at least one capability. Does not
+	 * include the misc and unknown categories.
 	 */
 	public ArrayList getUsedCategories() {
 		ArrayList results = new ArrayList(categories.size());
@@ -184,7 +190,6 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	 * Method declared on IWorkbenchAdapter.
 	 */
 	public Object[] getChildren(Object o) {
-		//return getUsedCategories().toArray();
 		return capabilities.toArray();
 	}
 	
@@ -200,6 +205,22 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 		return desc.getNatureSetIds();
 	}
 
+	/**
+	 * Returns the miscellaneous category, or <code>null</code>
+	 * if none.
+	 */
+	public ICategory getMiscCategory() {
+		return miscCategory;
+	}
+	
+	/**
+	 * Returns the unknown category, or <code>null</code>
+	 * if none.
+	 */
+	public ICategory getUnknownCategory() {
+		return unknownCategory;
+	}
+	
 	/**
 	 * Returns the capability ids that are prerequisites
 	 * of the specified capability.
@@ -238,8 +259,11 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 			ArrayList results = new ArrayList(natureIds.length);
 			for (int i = 0; i < natureIds.length; i++) {
 				Capability cap = (Capability)natureToCapability.get(natureIds[i]);
-				if (cap != null)
-					results.add(cap);
+				if (cap == null) {
+					cap = new Capability(natureIds[i]);
+					mapCapability(cap);
+				}
+				results.add(cap);
 			}
 			
 			if (results.size() == 0) {
@@ -291,10 +315,17 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 		natureToCapability = new HashMap();
 		
 		Iterator enum = capabilities.iterator();
-		while (enum.hasNext()) {
-			Capability cap = (Capability) enum.next();
-			
-			// Map to category
+		while (enum.hasNext())
+			mapCapability((Capability) enum.next());
+	}
+
+	private void mapCapability(Capability cap) {
+		// Map to category
+		if (!cap.isValid()) {
+			if (unknownCategory == null)
+				unknownCategory = new Category(UNKNOWN_ID, UNKNOWN_NAME);
+			unknownCategory.addElement(cap);
+		} else {
 			Category cat = null;
 			String catPath = cap.getCategoryPath();
 			if (catPath != null)
@@ -302,16 +333,14 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 			if (cat != null) {
 				cat.addElement(cap);
 			} else {
-				if (miscCategory == null) {
+				if (miscCategory == null)
 					miscCategory = new Category();
-					categories.add(miscCategory);
-				}
 				miscCategory.addElement(cap);
 			}
-			
-			// Map to nature id
-			natureToCapability.put(cap.getNatureId(), cap);
 		}
+		
+		// Map to nature id
+		natureToCapability.put(cap.getNatureId(), cap);
 	}
 
 	/**

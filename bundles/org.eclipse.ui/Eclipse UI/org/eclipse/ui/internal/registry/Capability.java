@@ -70,6 +70,8 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	public Capability(IConfigurationElement configElement, CapabilityRegistryReader reader)
 		throws WorkbenchException
 	{
+		super();
+		
 		boolean missingAttribute = false;
 		String attr_id = configElement.getAttribute(ATT_ID);
 		String attr_nature = configElement.getAttribute(ATT_NATURE_ID);
@@ -93,6 +95,19 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		id = attr_id;
 		natureId = attr_nature;
 		element = configElement;
+		natureDescriptor = ResourcesPlugin.getWorkspace().getNatureDescriptor(natureId);
+	}
+	
+	/**
+	 * Creates an instance of <code>Capability</code> as an unknown one
+	 * for a given nature id.
+	 * 
+	 * @param natureId the nature id for the unknown capbility
+	 */
+	public Capability(String natureId) {
+		super();
+		this.id = natureId;
+		this.natureId = natureId;
 	}
 	
 	/**
@@ -127,15 +142,14 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	public String getName() {
-		IProjectNatureDescriptor desc = getNatureDescriptor();
-		if (desc == null)
-			return WorkbenchMessages.format("Capability.nameMissing", new Object[] {getId()}); //$NON-NLS-1$
+		if (isValid())
+			return natureDescriptor.getLabel();
 		else
-			return desc.getLabel();
+			return WorkbenchMessages.format("Capability.nameMissing", new Object[] {id}); //$NON-NLS-1$
 	}
 	
 	public ImageDescriptor getIconDescriptor() {
-		if (icon == null) {
+		if (icon == null && isValid()) {
 			IExtension extension = element.getDeclaringExtension();
 			String location = element.getAttribute(ATT_ICON);
 			icon = WorkbenchImages.getImageDescriptorFromExtension(extension, location);
@@ -148,9 +162,6 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * none exist.
 	 */
 	public IProjectNatureDescriptor getNatureDescriptor() {
-		if (natureDescriptor == null)
-			natureDescriptor = ResourcesPlugin.getWorkspace().getNatureDescriptor(natureId);
-			
 		return natureDescriptor;
 	}
 	
@@ -169,7 +180,10 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	public String getCategoryPath() {
-		return element.getAttribute(ATT_CATEGORY);
+		if (element == null)
+			return ""; //$NON-NLS-1$;
+		else
+			return element.getAttribute(ATT_CATEGORY);
 	}
 	
 	/**
@@ -182,6 +196,9 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * 		<code>null</code> if the wizard cannot be created.
 	 */
 	public ICapabilityInstallWizard getInstallWizard() {
+		if (!isValid())
+			return null;
+			
 		try {
 			return (ICapabilityInstallWizard)element.createExecutableExtension(ATT_INSTALL_WIZARD);
 		} catch (CoreException e) {
@@ -195,6 +212,8 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * or <code>null</code> if none supplied.
 	 */
 	public String getInstallDetails() {
+		if (!isValid())
+			return null;
 		return element.getAttribute(ATT_INSTALL_DETAILS);
 	}
 	
@@ -208,6 +227,9 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * 		<code>null</code> if the wizard cannot be created.
 	 */
 	public ICapabilityUninstallWizard getUninstallWizard() {
+		if (!isValid())
+			return null;
+			
 		try {
 			return (ICapabilityUninstallWizard)element.createExecutableExtension(ATT_UNINSTALL_WIZARD);
 		} catch (CoreException e) {
@@ -221,10 +243,14 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 * or <code>null</code> if none supplied.
 	 */
 	public String getUninstallDetails() {
+		if (!isValid())
+			return null;
 		return element.getAttribute(ATT_UNINSTALL_DETAILS);
 	}
 	
 	public String getDescription() {
+		if (!isValid())
+			return ""; //$NON-NLS-1$;
 		String description = element.getAttribute(ATT_DESCRIPTION);
 		if (description == null)
 			description = ""; //$NON-NLS-1$
@@ -247,5 +273,12 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 */
 	public ArrayList getPerspectiveChoices() {
 		return perspectiveChoices;	
+	}
+	
+	/**
+	 * Returns whether this capability is valid
+	 */
+	public boolean isValid() {
+		return natureDescriptor != null;
 	}
 }

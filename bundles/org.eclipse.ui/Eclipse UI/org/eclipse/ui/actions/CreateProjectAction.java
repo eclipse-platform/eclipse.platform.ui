@@ -139,7 +139,7 @@ public class CreateProjectAction extends Action {
 			ArrayList results = new ArrayList(ids.length);
 			for (int i = 0; i < ids.length; i++) {
 				Capability cap = reg.findCapability(ids[i]);
-				if (cap != null)
+				if (cap != null && cap.isValid())
 					results.add(cap);
 			}
 			if (results.isEmpty())
