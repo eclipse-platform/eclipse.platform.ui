@@ -36,39 +36,22 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * -Works only for remote folders
  * -Does not prompt for project name; uses folder name instead
  */
-public class AddToWorkspaceAction extends CVSAction {
+public class AddToWorkspaceAction extends CheckoutAction {
 	/**
-	 * Returns the selected remote folders
+	 * Returns the selected remote folders. 
+	 * Remove any module aliases as they may cause problems on checkout this way
 	 */
 	protected ICVSRemoteFolder[] getSelectedRemoteFolders() {
-		ArrayList resources = null;
-		if (!selection.isEmpty()) {
-			resources = new ArrayList();
-			Iterator elements = ((IStructuredSelection) selection).iterator();
-			while (elements.hasNext()) {
-				Object next = elements.next();
-				if (next instanceof ICVSRemoteFolder) {
-					if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)next).getLocalOptions())) {
-						resources.add(next);
-					}
-					continue;
-				}
-				if (next instanceof IAdaptable) {
-					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
-					if (adapter instanceof ICVSRemoteFolder) {
-						if (!Checkout.ALIAS.isElementOf(((ICVSRemoteFolder)adapter).getLocalOptions())) {
-							resources.add(adapter);
-						}
-						continue;
-					}
-				}
+		ICVSRemoteFolder[] allFolders = super.getSelectedRemoteFolders();
+		if (allFolders.length == 0) return allFolders;
+		ArrayList resources = new ArrayList();
+		for (int i = 0; i < allFolders.length; i++) {
+			ICVSRemoteFolder folder = allFolders[i];
+			if (!Checkout.ALIAS.isElementOf(folder.getLocalOptions())) {
+				resources.add(folder);
 			}
 		}
-		if (resources != null && !resources.isEmpty()) {
-			return (ICVSRemoteFolder[])resources.toArray(new ICVSRemoteFolder[resources.size()]);
-		}
-		return new ICVSRemoteFolder[0];
+		return (ICVSRemoteFolder[])resources.toArray(new ICVSRemoteFolder[resources.size()]);
 	}
 
 	/*
@@ -115,40 +98,6 @@ public class AddToWorkspaceAction extends CVSAction {
 				}
 			}
 		}, Policy.bind("AddToWorkspaceAction.checkoutFailed"), this.PROGRESS_DIALOG); //$NON-NLS-1$
-	}
-	
-	private static String getTaskName(ICVSRemoteFolder[] remoteFolders) {
-		if (remoteFolders.length == 1) {
-			ICVSRemoteFolder folder = remoteFolders[0];
-			return Policy.bind("AddToWorkspace.taskName1", folder.getRepositoryRelativePath());  //$NON-NLS-1$
-		}
-		else {
-			return Policy.bind("AddToWorkspace.taskNameN", new Integer(remoteFolders.length).toString());  //$NON-NLS-1$
-		}
-	}
-	
-	protected IPromptCondition getOverwriteLocalAndFileSystemPrompt() {
-		return new IPromptCondition() {
-			// prompt if resource in workspace exists or exists in local file system
-			public boolean needsPrompt(IResource resource) {
-				File localLocation  = getFileLocation(resource);
-				if(resource.exists() || localLocation.exists()) {
-					return true;
-				}
-				return false;
-			}
-			public String promptMessage(IResource resource) {
-				File localLocation  = getFileLocation(resource);
-				if(resource.exists()) {
-					return Policy.bind("AddToWorkspaceAction.thisResourceExists", resource.getName());//$NON-NLS-1$
-				} else {
-					return Policy.bind("AddToWorkspaceAction.thisExternalFileExists", resource.getName());//$NON-NLS-1$
-				}//$NON-NLS-1$
-			}
-			private File getFileLocation(IResource resource) {
-				return new File(resource.getParent().getLocation().toFile(), resource.getName());
-			}
-		};
 	}
 		
 	/*

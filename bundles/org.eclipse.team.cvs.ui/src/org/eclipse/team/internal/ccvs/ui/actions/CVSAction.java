@@ -35,6 +35,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.AvoidableMessageDialog;
@@ -281,7 +282,37 @@ abstract public class CVSAction extends TeamAction {
 		}
 		return new ICVSResource[0];
 	}
-	
+
+	/**
+	 * Get selected CVS remote folders
+	 */
+	protected ICVSRemoteFolder[] getSelectedRemoteFolders() {
+		ArrayList resources = null;
+		if (!selection.isEmpty()) {
+			resources = new ArrayList();
+			Iterator elements = ((IStructuredSelection) selection).iterator();
+			while (elements.hasNext()) {
+				Object next = elements.next();
+				if (next instanceof ICVSRemoteFolder) {
+					resources.add(next);
+					continue;
+				}
+				if (next instanceof IAdaptable) {
+					IAdaptable a = (IAdaptable) next;
+					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
+					if (adapter instanceof ICVSRemoteFolder) {
+						resources.add(adapter);
+						continue;
+					}
+				}
+			}
+		}
+		if (resources != null && !resources.isEmpty()) {
+			return (ICVSRemoteFolder[])resources.toArray(new ICVSRemoteFolder[resources.size()]);
+		}
+		return new ICVSRemoteFolder[0];
+	}
+		
 	/**
 	 * Checks if a the resources' parent's tags are different then the given tag. 
 	 * Prompts the user that they are adding mixed tags and returns <code>true</code> if 

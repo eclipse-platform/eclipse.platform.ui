@@ -313,6 +313,16 @@
                id="org.eclipse.team.ccvs.ui.showHistory">
          </action>
       </objectContribution>
+          <objectContribution
+            objectClass="org.eclipse.team.internal.ccvs.core.resources.RemoteModule"
+            id="org.eclipse.team.ccvs.ui.RemoteModuleContributions">
+         <action
+               label="%CheckoutAction.label"
+               tooltip="%CheckoutAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAction"
+               id="org.eclipse.team.ccvs.ui.checkout">
+         </action>       
+      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ILogEntry"
             id="org.eclipse.team.ccvs.ui.LogEntryContributions">
