@@ -25,11 +25,18 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -107,6 +114,17 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private Text publicKeyText;
   private KeyPair kpair=null;
   private String kpairComment;
+ 
+  public static final String AUTH_SCHEME = "";//$NON-NLS-1$ 
+  public static final URL FAKE_URL;
+
+  static {
+    URL temp = null;
+    try{
+      temp = new URL("http://org.eclipse.team.cvs.ssh2");//$NON-NLS-1$ 
+    }catch (MalformedURLException e){}
+    FAKE_URL = temp;
+  } 
 
   public CVSSSH2PreferencePage() {
 //    super(GRID);
@@ -910,8 +928,15 @@ public class CVSSSH2PreferencePage extends PreferencePage
     proxyTypeCombo.select(store.getString(KEY_PROXY_TYPE).equals(HTTP)?0:1);
     useAuth=store.getString(KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
     enableAuth.setSelection(useAuth);
-    proxyUserText.setText(store.getString(KEY_PROXY_USER));
-    proxyPassText.setText(store.getString(KEY_PROXY_PASS));
+    
+    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME);
+    if(map!=null){
+      String username=(String) map.get(KEY_PROXY_USER);
+      if(username!=null) proxyUserText.setText(username);
+      String password=(String) map.get(KEY_PROXY_PASS);
+      if(password!=null) proxyPassText.setText(password);
+    }
+
     proxyPassText.setEchoChar('*');
     updateControls();
   }
@@ -946,9 +971,16 @@ public class CVSSSH2PreferencePage extends PreferencePage
       store.setValue(KEY_PROXY_PORT, proxyPortText.getText());
 
       store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
-      store.setValue(KEY_PROXY_USER, proxyUserText.getText());
-      store.setValue(KEY_PROXY_PASS, proxyPassText.getText());
-      
+      store.setValue(KEY_PROXY_USER, "");
+      store.setValue(KEY_PROXY_PASS, "");
+ 
+      Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME);
+      if(map==null) map=new java.util.HashMap(10);
+      map.put(KEY_PROXY_USER, proxyUserText.getText());
+      map.put(KEY_PROXY_PASS, proxyPassText.getText());
+      try{ Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);}
+      catch(CoreException e){}
+
       store.setValue(KEY_USE_SSH2, enableSSH2.getSelection());
     }
     CVSSSH2Plugin.getDefault().savePluginPreferences();
@@ -999,8 +1031,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
     store.setValue(KEY_PROXY_PORT, proxyPortText.getText());
 
     store.setValue(KEY_PROXY_AUTH, enableAuth.getSelection());
-    store.setValue(KEY_PROXY_USER, proxyUserText.getText());
-    store.setValue(KEY_PROXY_PASS, proxyPassText.getText());
+
+    Map map = Platform.getAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME);
+    if(map==null) map=new java.util.HashMap(10);
+    map.put(KEY_PROXY_USER, proxyUserText.getText());
+    map.put(KEY_PROXY_PASS, proxyPassText.getText());
+    try{Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);}
+    catch (CoreException e) {}
   }
 
   protected void performDefaults(){
