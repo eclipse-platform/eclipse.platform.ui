@@ -482,20 +482,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				DebugPlugin.logError(e);
 			}
 		}
-		// persist project indicies of launch configs
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isOpen()) {
-				persistIndex(projects[i]);
-			}
-		}
-		// persist local index of launch configs
-		List configs = getLocalLaunchConfigurations();
-		IPath path= DebugPlugin.getDefault().getStateLocation().append(".launchindex"); //$NON-NLS-1$
-		persistIndex(configs, path);
 		
 		// persist the mapping of file extensions to default config types
-		path = DebugPlugin.getDefault().getStateLocation().append(".defaultlaunchconfigs"); //$NON-NLS-1$
+		IPath path = DebugPlugin.getDefault().getStateLocation().append(".defaultlaunchconfigs"); //$NON-NLS-1$
 		persistDefaultConfigTypeMap(path);
 		
 		fLaunchConfigurationTypes.clear();
@@ -926,6 +915,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected void launchConfigurationDeleted(ILaunchConfiguration config) {
 		removeInfo(config);
 		fLaunchConfigurationIndex.remove(config);
+		updateLaunchConfigIndex(config);
 		if (fLaunchConfigurationListeners.size() > 0) {
 			Object[] listeners = fLaunchConfigurationListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -945,6 +935,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	protected void launchConfigurationAdded(ILaunchConfiguration config) {
 		fLaunchConfigurationIndex.add(config);
+		updateLaunchConfigIndex(config);
 		if (fLaunchConfigurationListeners.size() > 0) {
 			Object[] listeners = fLaunchConfigurationListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -984,6 +975,24 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				listener.launchConfigurationChanged(configuration);
 			}
 		}		
+	}
+	
+	/**
+	 * Updates the index that pertains to the given launch
+	 * configuration.
+	 * 
+	 * @param config launch configuration
+	 */
+	protected void updateLaunchConfigIndex(ILaunchConfiguration config) {
+		try {
+			if (config.isLocal()) {
+				persistLocalLaunchConfigIndex();
+			} else {
+				persistIndex(config.getFile().getProject());
+			}
+		} catch (CoreException e) {
+			DebugPlugin.logError(e);
+		}
 	}
 	
 	/**
@@ -1079,6 +1088,18 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			);				
 		}
 	}	
+	
+	/**
+	 * Persists the index for local launch configurations
+	 * 
+	 * @exception CoreException if an exception occurrs writing
+	 *  the index file
+	 */
+	protected void persistLocalLaunchConfigIndex() throws CoreException {
+		List configs = getLocalLaunchConfigurations();
+		IPath path= DebugPlugin.getDefault().getStateLocation().append(".launchindex"); //$NON-NLS-1$
+		persistIndex(configs, path);
+	}
 	
 	/**
 	 * Restores the launch configurations from the index file of
@@ -1263,8 +1284,8 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	/**
-	 * The specified project has just closed - persist its
-	 * launch configuration index.
+	 * The specified project has just closed - remove its
+	 * launch configurations from the cached index.
 	 * 
 	 * @param project the project that has been closed
 	 * @exception CoreException if writing the index fails
@@ -1272,7 +1293,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected void projectClosed(IProject project) throws CoreException {
 		List configs = getLaunchConfigurations(project);
 		if (!configs.isEmpty()) {
-			persistIndex(project);
 			fLaunchConfigurationIndex.removeAll(configs);
 		}
 	}	
