@@ -18,7 +18,7 @@ import java.io.OutputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.PollingInputStream;
 import org.eclipse.team.internal.core.streams.PollingOutputStream;
 import org.eclipse.team.internal.core.streams.TimeoutInputStream;
@@ -95,7 +95,7 @@ public class ExtConnection implements IServerConnection {
 		String[] command = ((CVSRepositoryLocation)location).getExtCommand(password);
 		boolean connected = false;
 		try {
-			process = Runtime.getRuntime().exec(command);
+			process = Util.createProcess(command, monitor);
 
 			inputStream = new PollingInputStream(new TimeoutInputStream(process.getInputStream(),
 				8192 /*bufferSize*/, 1000 /*readTimeout*/, -1 /*closeTimeout*/), location.getTimeout(), monitor);
@@ -111,7 +111,7 @@ public class ExtConnection implements IServerConnection {
 				try {
 					close();
 				} finally {
-					throw new IOException(Policy.bind("EXTServerConnection.ioError", command[0])); //$NON-NLS-1$
+					// Ignore any exceptions during close
 				}
 			}
 		}

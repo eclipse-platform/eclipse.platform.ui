@@ -168,8 +168,7 @@ public class Util {
 	
 	/**
 	 * Helper method that will time out when making a socket connection.
-	 * This i
-	 * s required because there is no way to provide a timeout value
+	 * This is required because there is no way to provide a timeout value
 	 * when creating a socket and in some instances, they don't seem to
 	 * timeout at all.
 	 */
@@ -240,6 +239,76 @@ public class Util {
 			throw new InterruptedIOException(Policy.bind("Util.timeout", host)); //$NON-NLS-1$
 		}
 		return socket[0];
+	}
+	
+	/**
+	 * Helper method that will time out when running an external command.
+	 * This is required because there is no way to provide a timeout value
+	 * when executing an external command and in some instances, they don't seem to
+	 * timeout at all.
+	 */
+	public static Process createProcess(final String[] command, IProgressMonitor monitor) throws IOException {
+		
+		// Start a thread to execute the command and get a handle to the process
+		final Process[] process = new Process[] { null };
+		final Exception[] exception = new Exception[] {null };
+		final Thread thread = new Thread(new Runnable() {
+			public void run() {
+				try {
+					Process newProcess = Runtime.getRuntime().exec(command);
+					synchronized (process) {
+						if (Thread.interrupted()) {
+							// we we're either cancelled or timed out so just destroy the process
+							newProcess.destroy();
+						} else {
+							process[0] = newProcess;
+						}
+					}
+				} catch (IOException e) {
+					exception[0] = e;
+				}
+			}
+		});
+		thread.start();
+		
+		// Wait the appropriate number of seconds
+		int timeout = CVSProviderPlugin.getPlugin().getTimeout();
+		if (timeout == 0) timeout = CVSProviderPlugin.DEFAULT_TIMEOUT;
+		for (int i = 0; i < timeout; i++) {
+			try {
+				// wait for the thread to complete or 1 second, which ever comes first
+				thread.join(1000);
+			} catch (InterruptedException e) {
+				// I think this means the thread was interupted but not necessarily timed out
+				// so we don't need to do anything
+			}
+			synchronized (process) {
+				// if the user cancelled, clean up before preempting the operation
+				if (monitor.isCanceled()) {
+					if (thread.isAlive()) {
+						thread.interrupt();
+					}
+					if (process[0] != null) {
+						process[0].destroy();
+					}
+					// this method will throw the proper exception
+					Policy.checkCanceled(monitor);
+				}
+			}
+		}
+		// If the thread is still running (i.e. we timed out) signal that it is too late
+		synchronized (process) {
+			if (thread.isAlive()) {
+				thread.interrupt();
+			}
+		}
+		if (exception[0] != null) {
+			throw (IOException)exception[0];
+		}
+		if (process[0] == null) {
+			throw new InterruptedIOException(Policy.bind("Util.processTimeout", command[0])); //$NON-NLS-1$
+		}
+		return process[0];
 	}
 	
 	public static String[] parseIntoSubstrings(String string, String delimiter) {
